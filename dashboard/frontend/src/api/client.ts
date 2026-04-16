@@ -12,7 +12,7 @@ import axios, { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from 'ax
 import { useToast } from '../components/UI/Toast';
 
 // Configuration
-const API_URL = import.meta.env.VITE_API_HOST || '';
+const API_URL = import.meta.env.VITE_API_HOST || localStorage.getItem('swarm_api_host') || 'http://localhost:8000';
 const MAX_RETRIES = 3;
 const RETRY_DELAY = 1000; // ms
 

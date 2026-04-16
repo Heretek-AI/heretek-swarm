@@ -58,7 +58,7 @@ interface SystemMetric {
 }
 
 // Use environment variable or relative path (nginx proxies /api to api:8000)
-const API_URL = import.meta.env.VITE_API_HOST || '';
+const API_URL = import.meta.env.VITE_API_HOST || localStorage.getItem('swarm_api_host') || 'http://localhost:8000';
 
 export function UnifiedDashboard() {
   // State

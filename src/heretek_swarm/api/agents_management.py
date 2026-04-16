@@ -29,7 +29,7 @@ from heretek_swarm.api.agents import (
 
 logger = structlog.get_logger()
 
-router = APIRouter()
+router = APIRouter(prefix="/api/agents")
 
 # Include routers from submodules
 router.include_router(core.router, tags=["core"])

@@ -15,7 +15,7 @@ export interface SwarmHealthMetrics {
   task_completion_rate: number;
 }
 
-const API_URL = import.meta.env.VITE_API_HOST || '';
+const API_URL = import.meta.env.VITE_API_HOST || localStorage.getItem('swarm_api_host') || 'http://localhost:8000';
 
 const POLL_INTERVAL = 10000; // 10 seconds
 

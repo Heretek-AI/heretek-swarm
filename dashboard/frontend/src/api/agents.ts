@@ -5,7 +5,7 @@
 import axios from 'axios';
 
 // Use environment variable or relative path (nginx proxies /api to api:8000)
-const API_URL = import.meta.env.VITE_API_HOST || '';
+const API_URL = import.meta.env.VITE_API_HOST || localStorage.getItem('swarm_api_host') || 'http://localhost:8000';
 
 const api = axios.create({
   baseURL: API_URL,
@@ -16,7 +16,7 @@ const api = axios.create({
 
 // Add API key interceptor
 api.interceptors.request.use((config) => {
-  const apiKey = import.meta.env.VITE_API_KEY;
+  const apiKey = localStorage.getItem('api_key') || import.meta.env.VITE_API_KEY;
   if (apiKey) {
     config.headers.Authorization = `Bearer ${apiKey}`;
   }

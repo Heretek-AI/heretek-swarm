@@ -12,7 +12,7 @@ import { ErrorBoundary, SimpleErrorFallback } from '../UI/ErrorBoundary';
 import { EmptyState } from '../UI/EmptyState';
 
 // API URL configuration
-const API_URL = import.meta.env.VITE_API_HOST || '';
+const API_URL = import.meta.env.VITE_API_HOST || localStorage.getItem('swarm_api_host') || 'http://localhost:8000';
 
 // Types
 interface SystemHealth {

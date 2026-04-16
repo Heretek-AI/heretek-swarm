@@ -55,6 +55,7 @@ def _get_embedding_provider_factory():
     """Get embedding provider factory functions with lazy resolution."""
     return _embedding_factory
 
+
 logger = structlog.get_logger("api.configuration")
 
 router = APIRouter(prefix="/api/config", tags=["Configuration"])
@@ -64,6 +65,7 @@ router = APIRouter(prefix="/api/config", tags=["Configuration"])
 # Helper Functions
 # =============================================================================
 
+
 def get_service() -> ConfigurationService:
     """Dependency injection for ConfigurationService."""
     return get_config_service()
@@ -72,6 +74,7 @@ def get_service() -> ConfigurationService:
 # =============================================================================
 # User Configuration Endpoints
 # =============================================================================
+
 
 @router.get("")
 async def get_all_configs(
@@ -149,6 +152,7 @@ async def delete_config(
 # LLM Provider Endpoints
 # =============================================================================
 
+
 @router.get("/llm/types")
 async def list_llm_provider_types() -> dict[str, Any]:
     """List available LLM provider types."""
@@ -159,15 +163,13 @@ async def list_llm_provider_types() -> dict[str, Any]:
 
 @router.get("/llm/providers")
 async def list_llm_providers(
-    provider_type: str | None = Query(None, description="Filter by provider type"),
     enabled_only: bool = Query(False, description="Only return enabled providers"),
     authenticated: str = Depends(verify_auth),
     service: ConfigurationService = Depends(get_service),
 ) -> dict[str, Any]:
     """List configured LLM providers."""
     providers = await service.list_llm_providers(
-        provider_type=provider_type,
-        enabled_only=enabled_only,
+        include_disabled=not enabled_only,
     )
     return {
         "providers": [p.model_dump() for p in providers],
@@ -251,7 +253,7 @@ async def test_llm_provider(
                 "api_key": "test-key",  # In production, decrypt the actual key
                 "default_model": test_request.model or provider.default_model,
                 "extra_config": provider.extra_config,
-            }
+            },
         )
 
         # Test connectivity
@@ -280,6 +282,7 @@ async def test_llm_provider(
 # Embedding Provider Endpoints
 # =============================================================================
 
+
 @router.get("/embedding/types")
 async def list_embedding_provider_types() -> dict[str, Any]:
     """List available embedding provider types."""
@@ -290,15 +293,13 @@ async def list_embedding_provider_types() -> dict[str, Any]:
 
 @router.get("/embedding/providers")
 async def list_embedding_providers(
-    provider_type: str | None = Query(None, description="Filter by provider type"),
     enabled_only: bool = Query(False, description="Only return enabled providers"),
     authenticated: str = Depends(verify_auth),
     service: ConfigurationService = Depends(get_service),
 ) -> dict[str, Any]:
     """List configured embedding providers."""
     providers = await service.list_embedding_providers(
-        provider_type=provider_type,
-        enabled_only=enabled_only,
+        include_disabled=not enabled_only,
     )
     return {
         "providers": [p.model_dump() for p in providers],
@@ -341,7 +342,9 @@ async def update_embedding_provider(
     service: ConfigurationService = Depends(get_service),
 ) -> dict[str, Any]:
     """Update an embedding provider."""
-    provider = await service.update_embedding_provider(provider_id, update, changed_by=authenticated)
+    provider = await service.update_embedding_provider(
+        provider_id, update, changed_by=authenticated
+    )
     if not provider:
         raise HTTPException(404, f"Embedding provider '{provider_id}' not found")
     return provider.model_dump()
@@ -381,11 +384,12 @@ async def test_embedding_provider(
                 "api_key": "test-key",  # In production, decrypt the actual key
                 "default_model": test_request.model or provider.default_model,
                 "extra_config": provider.extra_config,
-            }
+            },
         )
 
         # Test connectivity by generating an embedding
         import time
+
         start_time = time.time()
         response = await embedding_provider.embed(
             texts=[test_request.text],
@@ -414,6 +418,7 @@ async def test_embedding_provider(
 # =============================================================================
 # Agent Configuration Endpoints
 # =============================================================================
+
 
 @router.get("/agent/configs")
 async def list_agent_configs(
@@ -488,6 +493,7 @@ async def delete_agent_config(
 # Audit Log Endpoints
 # =============================================================================
 
+
 @router.get("/audit-log")
 async def get_audit_log(
     entity_type: str | None = Query(None, description="Filter by entity type"),
@@ -506,6 +512,7 @@ async def get_audit_log(
 # =============================================================================
 # Import/Export Endpoints
 # =============================================================================
+
 
 @router.get("/export")
 async def export_configurations(
@@ -533,6 +540,7 @@ async def import_configurations(
 # Migration Endpoint
 # =============================================================================
 
+
 @router.post("/migrate-from-env")
 async def migrate_from_env(
     authenticated: str = Depends(verify_auth),
@@ -545,6 +553,7 @@ async def migrate_from_env(
 # =============================================================================
 # Configuration Reload Endpoint
 # =============================================================================
+
 
 @router.post("/reload")
 async def reload_configurations(
@@ -579,7 +588,9 @@ async def reload_configurations(
             "cache_count": reload_result.get("cache_count", 0),
             "cache_stats": cache_stats,
             "reloaded_by": authenticated,
-            "reloaded_at": datetime.now(UTC).isoformat() if hasattr(datetime, "utcnow") else datetime.now().isoformat(),
+            "reloaded_at": datetime.now(UTC).isoformat()
+            if hasattr(datetime, "utcnow")
+            else datetime.now().isoformat(),
         }
     except Exception as e:
         logger.error("Configuration reload failed", error=str(e))
@@ -589,6 +600,7 @@ async def reload_configurations(
 # =============================================================================
 # Configuration Health Check Endpoint
 # =============================================================================
+
 
 @router.get("/health")
 async def configuration_health(
@@ -605,7 +617,9 @@ async def configuration_health(
     try:
         # Test database connectivity
         test_config = await service.get_config("system.health_check")
-        database_healthy = test_config is not None or True  # Config may not exist but connection works
+        database_healthy = (
+            test_config is not None or True
+        )  # Config may not exist but connection works
 
         # Get cache stats
         loader = get_config_loader()
@@ -628,6 +642,7 @@ async def configuration_health(
 # =============================================================================
 # Configuration Import/Export Enhanced Endpoints
 # =============================================================================
+
 
 @router.get("/export/bundle")
 async def export_configuration_bundle(
