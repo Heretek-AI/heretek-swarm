@@ -287,6 +287,59 @@ This roadmap maps 34 v1 requirements across three implementation phases. Each ph
 
 ---
 
+## Phase 1.2: Self-Healing & Emergent Intelligence
+
+**Duration:** ~4-6 weeks
+**Focus:** Autonomous failure recovery, auto-scaling, and emergent behavior validation
+
+### Key Deliverables
+
+1. **Self-Healing Infrastructure**
+   - Autonomous failure detection and recovery
+   - Agent failover with automatic restart/recreate
+   - Health-based routing around failed agents
+   - *Delivered by:* HEAL-01
+
+2. **Auto-Scaling System**
+   - Load-based agent population adjustment
+   - Queue depth and latency-based scaling triggers
+   - Scale-down with graceful agent retirement
+   - *Delivered by:* HEAL-02
+
+3. **Self-Maintenance**
+   - Automated log rotation and cleanup
+   - Database maintenance routines
+   - Configuration drift detection
+   - *Delivered by:* HEAL-03
+
+4. **Emergent Intelligence Validation**
+   - Collective vs. individual performance metrics
+   - Novel solution detection and classification
+   - Emergence impact scoring
+   - *Delivered by:* EMER-01, EMER-02
+
+### Requirements Covered
+
+| ID | Requirement | Owner |
+|----|-------------|-------|
+| HEAL-01 | Autonomous failure detection and recovery | Steward |
+| HEAL-02 | Auto-scaling based on load | Coordinator |
+| HEAL-03 | Self-maintenance without external intervention | Steward |
+| EMER-01 | Measurable collective intelligence | Steward/Historian |
+| EMER-02 | Novel solutions not explicitly programmed | Prism |
+
+### Success Criteria
+
+| Criterion | Measurement |
+|-----------|-------------|
+| Failure recovery time | < 30 seconds |
+| Agent restart success rate | ≥ 99% |
+| Auto-scale adjustment latency | < 60 seconds |
+| Collective intelligence factor | ≥ 0.6 weighted by validation |
+| Novel solution detection | ≥ 1 per evaluation window |
+
+---
+
 ## Phase Dependencies
 
 ```
@@ -363,6 +416,7 @@ Each phase gate requires sign-off from Core Triad before proceeding:
 |------|-----------|--------------|
 | **Gate 1** | Phase 1 → Phase 2 | Zero-trust integrated; Core Triad operational; NATS mesh stable; ≥ 12 agents reporting health |
 | **Gate 2** | Phase 2 → Phase 3 | Consensus without deadlock demonstrated; Safety agents pass stress tests; Coder safety bounds proven; coordination_ratio ≤ 0.40 |
+| **Gate 1.2** | Phase 1.2 → (release) | Failure recovery < 30s; Auto-scale triggers configurable; Collective intelligence factor ≥ 0.6 |
 
 ---
 
@@ -380,12 +434,12 @@ These must be resolved before or during implementation:
 
 ## Confidence Assessment
 
-| Domain | Phase 1 | Phase 2 | Phase 3 |
-|--------|---------|---------|---------|
-| **Technology** | HIGH | HIGH | MEDIUM |
-| **Dependencies** | HIGH | MEDIUM | MEDIUM |
-| **Risk Mitigation** | MEDIUM | MEDIUM | MEDIUM-LOW |
-| **Requirements Clarity** | HIGH | HIGH | MEDIUM |
+| Domain | Phase 1 | Phase 2 | Phase 3 | Phase 1.2 |
+|--------|---------|---------|---------|-----------|
+| **Technology** | HIGH | HIGH | MEDIUM | HIGH |
+| **Dependencies** | HIGH | MEDIUM | MEDIUM | HIGH |
+| **Risk Mitigation** | MEDIUM | MEDIUM | MEDIUM-LOW | MEDIUM |
+| **Requirements Clarity** | HIGH | HIGH | MEDIUM | HIGH |
 
 ---
 
@@ -397,60 +451,8 @@ Archived to [.planning/milestones/v1.1-ROADMAP.md](milestones/v1.1-ROADMAP.md)
 
 ---
 
-## v1.2 Milestone: Self-Healing & Emergent Intelligence
-
-**Duration:** ~4-6 weeks
-**Focus:** Autonomous failure recovery, auto-scaling, and emergent behavior validation
-
-### Key Deliverables
-
-1. **Self-Healing Infrastructure**
-   - Autonomous failure detection and recovery
-   - Agent failover with automatic restart/recreate
-   - Health-based routing around failed agents
-   - *Delivered by:* HEAL-01
-
-2. **Auto-Scaling System**
-   - Load-based agent population adjustment
-   - Queue depth and latency-based scaling triggers
-   - Scale-down with graceful agent retirement
-   - *Delivered by:* HEAL-02
-
-3. **Self-Maintenance**
-   - Automated log rotation and cleanup
-   - Database maintenance routines
-   - Configuration drift detection
-   - *Delivered by:* HEAL-03
-
-4. **Emergent Intelligence Validation**
-   - Collective vs. individual performance metrics
-   - Novel solution detection and classification
-   - Emergence impact scoring
-   - *Delivered by:* EMER-01, EMER-02
-
-### Success Criteria
-
-| Criterion | Measurement |
-|-----------|-------------|
-| Failure recovery time | < 30 seconds |
-| Agent restart success rate | ≥ 99% |
-| Auto-scale adjustment latency | < 60 seconds |
-| Collective intelligence factor | ≥ 0.6 weighted by validation |
-| Novel solution detection | ≥ 1 per evaluation window |
-
-### Gate 1.2 Assessment (Pending)
-
-| Criterion | Threshold | Status |
-|-----------|-----------|--------|
-| Failure detection time | < 10s | ❌ PENDING |
-| Recovery success rate | ≥ 99% | ❌ PENDING |
-| Auto-scale triggers | Configurable | ❌ PENDING |
-| Novel solution validated | Evidence-based | ❌ PENDING |
-
----
-
 *Roadmap created: 2026-04-13*
 *v1.0 released: 2026-04-15*
 *v1.1 released: 2026-04-16*
 *v1.2 started: 2026-04-16*
-*Next action: /gsd-plan-phase 1.2 to execute v1.2*
+*Next action: /gsd-plan-phase 1.2 to execute Phase 1.2*
