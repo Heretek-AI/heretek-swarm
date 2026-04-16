@@ -1,7 +1,7 @@
 {
   "repository_name": "heretek-swarm",
-  "timestamp": "2026-04-16T15:18:29.772631+00:00",
-  "overall_score": 0.991465892597968,
+  "timestamp": "2026-04-16T15:33:04.689195+00:00",
+  "overall_score": 0.9902011944106222,
   "check_summaries": [
     {
       "check_name": "function_size",
@@ -790,11 +790,180 @@
       "description": "Detects unused imports, variables, functions, and dead code via LSP diagnostics",
       "language": "Python",
       "check_type": "standard",
-      "total_entities_checked": 0,
-      "findings_count": 0,
-      "warning_count": 0,
-      "score": 1.0,
-      "finding_groups": []
+      "total_entities_checked": 22,
+      "findings_count": 22,
+      "warning_count": 10,
+      "score": 0.0,
+      "finding_groups": [
+        {
+          "severity": "info",
+          "threshold": 0,
+          "description": "Variables declared but never used",
+          "entities": [
+            {
+              "entity_name": "[unused_variable] \"score\" is not accessed",
+              "file_path": "src/heretek_swarm/security/zero_trust.py",
+              "line_start": 1176,
+              "line_end": 1176,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"layer2_external\" is not accessed",
+              "file_path": "src/heretek_swarm/security/zero_trust.py",
+              "line_start": 1438,
+              "line_end": 1438,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"AlertPriority\" is not accessed",
+              "file_path": "src/heretek_swarm/security/__init__.py",
+              "line_start": 193,
+              "line_end": 193,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"ContainmentAction\" is not accessed",
+              "file_path": "src/heretek_swarm/security/__init__.py",
+              "line_start": 194,
+              "line_end": 194,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"ExternalThreatDetector\" is not accessed",
+              "file_path": "src/heretek_swarm/security/__init__.py",
+              "line_start": 195,
+              "line_end": 195,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"ExternalThreatType\" is not accessed",
+              "file_path": "src/heretek_swarm/security/__init__.py",
+              "line_start": 196,
+              "line_end": 196,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"ThreatDetectionConfig\" is not accessed",
+              "file_path": "src/heretek_swarm/security/__init__.py",
+              "line_start": 197,
+              "line_end": 197,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"ThreatDetectionResult\" is not accessed",
+              "file_path": "src/heretek_swarm/security/__init__.py",
+              "line_start": 198,
+              "line_end": 198,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"ThreatIntelligence\" is not accessed",
+              "file_path": "src/heretek_swarm/security/__init__.py",
+              "line_start": 199,
+              "line_end": 199,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"ThreatSource\" is not accessed",
+              "file_path": "src/heretek_swarm/security/__init__.py",
+              "line_start": 201,
+              "line_end": 201,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"create_default_threat_detector\" is not accessed",
+              "file_path": "src/heretek_swarm/security/__init__.py",
+              "line_start": 204,
+              "line_end": 204,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"create_strict_threat_detector\" is not accessed",
+              "file_path": "src/heretek_swarm/security/__init__.py",
+              "line_start": 207,
+              "line_end": 207,
+              "metric_value": 0.0
+            }
+          ]
+        },
+        {
+          "severity": "warning",
+          "threshold": 0,
+          "description": "Unused import statements that should be removed",
+          "entities": [
+            {
+              "entity_name": "[unused_import] Import \"AlertPriority\" is not accessed",
+              "file_path": "src/heretek_swarm/security/__init__.py",
+              "line_start": 193,
+              "line_end": 193,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"ContainmentAction\" is not accessed",
+              "file_path": "src/heretek_swarm/security/__init__.py",
+              "line_start": 194,
+              "line_end": 194,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"ExternalThreatDetector\" is not accessed",
+              "file_path": "src/heretek_swarm/security/__init__.py",
+              "line_start": 195,
+              "line_end": 195,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"ExternalThreatType\" is not accessed",
+              "file_path": "src/heretek_swarm/security/__init__.py",
+              "line_start": 196,
+              "line_end": 196,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"ThreatDetectionConfig\" is not accessed",
+              "file_path": "src/heretek_swarm/security/__init__.py",
+              "line_start": 197,
+              "line_end": 197,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"ThreatDetectionResult\" is not accessed",
+              "file_path": "src/heretek_swarm/security/__init__.py",
+              "line_start": 198,
+              "line_end": 198,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"ThreatIntelligence\" is not accessed",
+              "file_path": "src/heretek_swarm/security/__init__.py",
+              "line_start": 199,
+              "line_end": 199,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"ThreatSource\" is not accessed",
+              "file_path": "src/heretek_swarm/security/__init__.py",
+              "line_start": 201,
+              "line_end": 201,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"create_default_threat_detector\" is not accessed",
+              "file_path": "src/heretek_swarm/security/__init__.py",
+              "line_start": 204,
+              "line_end": 204,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"create_strict_threat_detector\" is not accessed",
+              "file_path": "src/heretek_swarm/security/__init__.py",
+              "line_start": 207,
+              "line_end": 207,
+              "metric_value": 0.0
+            }
+          ]
+        }
+      ]
     },
     {
       "check_name": "function_size",
@@ -1132,6 +1301,12 @@
   ],
   "file_summaries": [
     {
+      "file_path": "src/heretek_swarm/security/__init__.py",
+      "total_findings": 20,
+      "warning_findings": 10,
+      "composite_risk_score": 100.0
+    },
+    {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
       "total_findings": 3,
       "warning_findings": 3,
@@ -1241,12 +1416,6 @@
     },
     {
       "file_path": "src/heretek_swarm/actors/coordinator.py",
-      "total_findings": 2,
-      "warning_findings": 2,
-      "composite_risk_score": 30.0
-    },
-    {
-      "file_path": "src/heretek_swarm/consensus/immune.py",
       "total_findings": 2,
       "warning_findings": 2,
       "composite_risk_score": 30.0

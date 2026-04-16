@@ -1037,251 +1037,9 @@ class AuditLogger:
 # =============================================================================
 
 
-class ZeroTrustValidator:
-    """
-    Enhanced Zero-Trust Security Orchestrator
-
-    Coordinates all 4 validation layers:
-    - Layer 1: Input Validation
-    - Layer 2: Context Validation
-    - Layer 3: Output Validation
-    - Layer 4: Audit Logging
-
-    Target Performance:
-    - Validation latency < 50ms p95
-    - False negative rate < 0.1%
-    - Throughput > 1000 validations/second
-    """
-
-    def __init__(
-        self,
-        input_config: InputValidationConfig | None = None,
-        context_config: ContextValidationConfig | None = None,
-        output_config: OutputValidationConfig | None = None,
-        audit_config: AuditLogConfig | None = None,
-    ):
-        self.input_validator = InputValidator(input_config)
-        self.context_validator = ContextValidator(context_config)
-        self.output_validator = OutputValidator(output_config)
-        self.audit_logger = AuditLogger(audit_config)
-
-        # Performance metrics
-        self._validation_count = 0
-        self._total_latency_ms = 0.0
-        self._failed_validations = 0
-
-    async def validate_request(
-        self,
-        data: dict[str, Any],
-        context: dict[str, Any] | None = None,
-        agent_id: str | None = None,
-        request_id: str | None = None,
-        model_class: type[ValidatedInput] | None = None,
-    ) -> ZeroTrustResult:
-        """
-        Validate a request through all 4 layers.
-
-        Args:
-            data: Input data to validate
-            context: Additional context for Layer 2
-            agent_id: Agent ID for logging and behavioral analysis
-            request_id: Unique request ID (UUID v4)
-            model_class: Optional Pydantic model for strict validation
-
-        Returns:
-            ZeroTrustResult with all layer results
-        """
-        start_time = time.time()
-        request_id = request_id or str(uuid.uuid4())
-
-        # Layer 1: Input Validation
-        layer1 = self.input_validator.validate(data, model_class, agent_id)
-
-        # Layer 2: Context Validation (skip if Layer 1 failed critically)
-        if layer1.severity == Severity.CRITICAL:
-            layer2 = LayerResult(
-                layer="context",
-                passed=True,
-                reason="Skipped due to Layer 1 critical failure",
-                severity=Severity.INFO,
-            )
-        else:
-            layer2 = self.context_validator.validate(data, context, agent_id)
-
-        # Layer 3: Output Validation (for response data, pass-through for input)
-        layer3 = LayerResult(
-            layer="output",
-            passed=True,
-            reason="Input validation - output layer applied on response",
-            severity=Severity.INFO,
-        )
-
-        # Determine overall pass/fail
-        passed = layer1.passed and layer2.passed
-
-        # Calculate total latency
-        latency_ms = (time.time() - start_time) * 1000
-
-        # Create result
-        result = ZeroTrustResult(
-            passed=passed,
-            layer1=layer1,
-            layer2=layer2,
-            layer3=layer3,
-            layer4=LayerResult(layer="audit", passed=True, severity=Severity.INFO),
-            request_id=request_id,
-            agent_id=agent_id,
-            total_latency_ms=latency_ms,
-        )
-
-        # Layer 4: Audit Logging
-        result.layer4 = self.audit_logger.log(
-            event_type="request_validation",
-            result=result,
-            additional_context={
-                "layer1_passed": layer1.passed,
-                "layer2_passed": layer2.passed,
-            },
-        )
-
-        # Update metrics
-        self._validation_count += 1
-        self._total_latency_ms += latency_ms
-        if not passed:
-            self._failed_validations += 1
-
-        return result
-
-    async def validate_response(
-        self,
-        output: Any,
-        agent_id: str | None = None,
-        request_id: str | None = None,
-    ) -> ZeroTrustResult:
-        """
-        Validate a response through output validation layer.
-
-        Args:
-            output: Output data to validate
-            agent_id: Agent ID for logging
-            request_id: Associated request ID
-
-        Returns:
-            ZeroTrustResult with output validation results
-        """
-        start_time = time.time()
-        request_id = request_id or str(uuid.uuid4())
-
-        # Skip layers 1-2 for response validation
-        layer1 = LayerResult(
-            layer="input",
-            passed=True,
-            reason="Response validation - input layer skipped",
-            severity=Severity.INFO,
-        )
-        layer2 = LayerResult(
-            layer="context",
-            passed=True,
-            reason="Response validation - context layer skipped",
-            severity=Severity.INFO,
-        )
-
-        # Layer 3: Output Validation
-        layer3 = self.output_validator.validate(output, agent_id)
-
-        latency_ms = (time.time() - start_time) * 1000
-
-        # Extract sanitized output from layer3 details if available
-        sanitized = layer3.details.get("sanitized_output")
-
-        result = ZeroTrustResult(
-            passed=layer3.passed,
-            layer1=layer1,
-            layer2=layer2,
-            layer3=layer3,
-            layer4=LayerResult(layer="audit", passed=True, severity=Severity.INFO),
-            request_id=request_id,
-            agent_id=agent_id,
-            total_latency_ms=latency_ms,
-            sanitized_output=sanitized,
-        )
-
-        # Layer 4: Audit Logging
-        result.layer4 = self.audit_logger.log(
-            event_type="response_validation",
-            result=result,
-            additional_context={
-                "layer3_passed": layer3.passed,
-                "pii_detected": layer3.details.get("pii_detected", []),
-            },
-        )
-
-        return result
-
-    def get_metrics(self) -> dict[str, Any]:
-        """Get validation metrics."""
-        avg_latency = (
-            self._total_latency_ms / self._validation_count if self._validation_count > 0 else 0
-        )
-
-        return {
-            "total_validations": self._validation_count,
-            "failed_validations": self._failed_validations,
-            "success_rate": (
-                (self._validation_count - self._failed_validations) / self._validation_count
-                if self._validation_count > 0
-                else 1.0
-            ),
-            "avg_latency_ms": avg_latency,
-            "event_counts": self.audit_logger.get_event_counts(),
-        }
-
-    def get_high_severity_events(self, limit: int = 100) -> list[dict[str, Any]]:
-        """Get recent high severity security events."""
-        return self.audit_logger.get_high_severity_events(limit)
-
-
 # =============================================================================
-# Convenience Functions
+# External Threat Detection Integration (SAFE-02)
 # =============================================================================
-
-
-def create_default_validator() -> ZeroTrustValidator:
-    """Create a ZeroTrustValidator with default configuration."""
-    return ZeroTrustValidator(
-        input_config=InputValidationConfig(),
-        context_config=ContextValidationConfig(),
-        output_config=OutputValidationConfig(),
-        audit_config=AuditLogConfig(),
-    )
-
-
-def create_strict_validator() -> ZeroTrustValidator:
-    """Create a ZeroTrustValidator with strict security configuration."""
-    return ZeroTrustValidator(
-        input_config=InputValidationConfig(
-            max_content_size=5120,
-            require_uuid_v4=True,
-            max_nesting_depth=5,
-        ),
-        context_config=ContextValidationConfig(
-            enable_injection_detection=True,
-            enable_behavioral_analysis=True,
-            enable_anomaly_detection=True,
-            anomaly_threshold=2.0,
-        ),
-        output_config=OutputValidationConfig(
-            enable_pii_detection=True,
-            enable_sensitive_data_filtering=True,
-            redact_pii=True,
-            max_output_size=50000,
-        ),
-        audit_config=AuditLogConfig(
-            enable_logging=True,
-            log_all_events=True,
-            retention_days=90,
-        ),
-    )
 
 
 # =============================================================================
@@ -1455,9 +1213,18 @@ class ZeroTrustValidator:
     Enhanced Zero-Trust Security Orchestrator with External Threat Detection.
 
     Extends the standard 4-layer validation with:
+    - Layer 1: Input Validation
+    - Layer 2: Context Validation
+    - Layer 3: Output Validation
+    - Layer 4: Audit Logging
     - External input validation (SAFE-02)
     - Prompt injection detection
     - Source reputation checking
+
+    Target Performance:
+    - Validation latency < 50ms p95
+    - False negative rate < 0.1%
+    - Throughput > 1000 validations/second
     """
 
     def __init__(
@@ -1477,6 +1244,154 @@ class ZeroTrustValidator:
         self._validation_count = 0
         self._total_latency_ms = 0.0
         self._failed_validations = 0
+
+    async def validate_request(
+        self,
+        data: dict[str, Any],
+        context: dict[str, Any] | None = None,
+        agent_id: str | None = None,
+        request_id: str | None = None,
+        model_class: type[ValidatedInput] | None = None,
+    ) -> ZeroTrustResult:
+        """
+        Validate a request through all 4 layers.
+
+        Args:
+            data: Input data to validate
+            context: Additional context for Layer 2
+            agent_id: Agent ID for logging and behavioral analysis
+            request_id: Unique request ID (UUID v4)
+            model_class: Optional Pydantic model for strict validation
+
+        Returns:
+            ZeroTrustResult with all layer results
+        """
+        start_time = time.time()
+        request_id = request_id or str(uuid.uuid4())
+
+        # Layer 1: Input Validation
+        layer1 = self.input_validator.validate(data, model_class, agent_id)
+
+        # Layer 2: Context Validation (skip if Layer 1 failed critically)
+        if layer1.severity == Severity.CRITICAL:
+            layer2 = LayerResult(
+                layer="context",
+                passed=True,
+                reason="Skipped due to Layer 1 critical failure",
+                severity=Severity.INFO,
+            )
+        else:
+            layer2 = self.context_validator.validate(data, context, agent_id)
+
+        # Layer 3: Output Validation (for response data, pass-through for input)
+        layer3 = LayerResult(
+            layer="output",
+            passed=True,
+            reason="Input validation - output layer applied on response",
+            severity=Severity.INFO,
+        )
+
+        # Determine overall pass/fail
+        passed = layer1.passed and layer2.passed
+
+        # Calculate total latency
+        latency_ms = (time.time() - start_time) * 1000
+
+        # Create result
+        result = ZeroTrustResult(
+            passed=passed,
+            layer1=layer1,
+            layer2=layer2,
+            layer3=layer3,
+            layer4=LayerResult(layer="audit", passed=True, severity=Severity.INFO),
+            request_id=request_id,
+            agent_id=agent_id,
+            total_latency_ms=latency_ms,
+        )
+
+        # Layer 4: Audit Logging
+        result.layer4 = self.audit_logger.log(
+            event_type="request_validation",
+            result=result,
+            additional_context={
+                "layer1_passed": layer1.passed,
+                "layer2_passed": layer2.passed,
+            },
+        )
+
+        # Update metrics
+        self._validation_count += 1
+        self._total_latency_ms += latency_ms
+        if not passed:
+            self._failed_validations += 1
+
+        return result
+
+    async def validate_response(
+        self,
+        output: Any,
+        agent_id: str | None = None,
+        request_id: str | None = None,
+    ) -> ZeroTrustResult:
+        """
+        Validate a response through output validation layer.
+
+        Args:
+            output: Output data to validate
+            agent_id: Agent ID for logging
+            request_id: Associated request ID
+
+        Returns:
+            ZeroTrustResult with output validation results
+        """
+        start_time = time.time()
+        request_id = request_id or str(uuid.uuid4())
+
+        # Skip layers 1-2 for response validation
+        layer1 = LayerResult(
+            layer="input",
+            passed=True,
+            reason="Response validation - input layer skipped",
+            severity=Severity.INFO,
+        )
+        layer2 = LayerResult(
+            layer="context",
+            passed=True,
+            reason="Response validation - context layer skipped",
+            severity=Severity.INFO,
+        )
+
+        # Layer 3: Output Validation
+        layer3 = self.output_validator.validate(output, agent_id)
+
+        latency_ms = (time.time() - start_time) * 1000
+
+        # Extract sanitized output from layer3 details if available
+        sanitized = layer3.details.get("sanitized_output")
+
+        result = ZeroTrustResult(
+            passed=layer3.passed,
+            layer1=layer1,
+            layer2=layer2,
+            layer3=layer3,
+            layer4=LayerResult(layer="audit", passed=True, severity=Severity.INFO),
+            request_id=request_id,
+            agent_id=agent_id,
+            total_latency_ms=latency_ms,
+            sanitized_output=sanitized,
+        )
+
+        # Layer 4: Audit Logging
+        result.layer4 = self.audit_logger.log(
+            event_type="response_validation",
+            result=result,
+            additional_context={
+                "layer3_passed": layer3.passed,
+                "pii_detected": layer3.details.get("pii_detected", []),
+            },
+        )
+
+        return result
 
     async def validate_external_input(
         self,
@@ -1570,6 +1485,71 @@ class ZeroTrustValidator:
             self.external_validator.update_reputation(source, False)
 
         return result
+
+    def get_metrics(self) -> dict[str, Any]:
+        """Get validation metrics."""
+        avg_latency = (
+            self._total_latency_ms / self._validation_count if self._validation_count > 0 else 0
+        )
+
+        return {
+            "total_validations": self._validation_count,
+            "failed_validations": self._failed_validations,
+            "success_rate": (
+                (self._validation_count - self._failed_validations) / self._validation_count
+                if self._validation_count > 0
+                else 1.0
+            ),
+            "avg_latency_ms": avg_latency,
+            "event_counts": self.audit_logger.get_event_counts(),
+        }
+
+    def get_high_severity_events(self, limit: int = 100) -> list[dict[str, Any]]:
+        """Get recent high severity security events."""
+        return self.audit_logger.get_high_severity_events(limit)
+
+
+# =============================================================================
+# Convenience Functions
+# =============================================================================
+
+
+def create_default_validator() -> ZeroTrustValidator:
+    """Create a ZeroTrustValidator with default configuration."""
+    return ZeroTrustValidator(
+        input_config=InputValidationConfig(),
+        context_config=ContextValidationConfig(),
+        output_config=OutputValidationConfig(),
+        audit_config=AuditLogConfig(),
+    )
+
+
+def create_strict_validator() -> ZeroTrustValidator:
+    """Create a ZeroTrustValidator with strict security configuration."""
+    return ZeroTrustValidator(
+        input_config=InputValidationConfig(
+            max_content_size=5120,
+            require_uuid_v4=True,
+            max_nesting_depth=5,
+        ),
+        context_config=ContextValidationConfig(
+            enable_injection_detection=True,
+            enable_behavioral_analysis=True,
+            enable_anomaly_detection=True,
+            anomaly_threshold=2.0,
+        ),
+        output_config=OutputValidationConfig(
+            enable_pii_detection=True,
+            enable_sensitive_data_filtering=True,
+            redact_pii=True,
+            max_output_size=50000,
+        ),
+        audit_config=AuditLogConfig(
+            enable_logging=True,
+            log_all_events=True,
+            retention_days=90,
+        ),
+    )
 
 
 def create_external_validator() -> ExternalInputValidator:

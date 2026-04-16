@@ -109,6 +109,10 @@ from heretek_swarm.security.zero_trust import (
     # Convenience functions
     create_default_validator,
     create_strict_validator,
+    create_external_validator,
+    # External threat detection
+    ExternalInputValidator,
+    ExternalThreatConfig,
 )
 
 __all__ = [
@@ -142,6 +146,8 @@ __all__ = [
     "DDoSProtection",
     "DDoSSeverity",
     "DetectionMatch",
+    "ExternalInputValidator",
+    "ExternalThreatConfig",
     "FilterResult",
     "GuardrailsAction",
     "GuardrailsConfig",
@@ -178,6 +184,7 @@ __all__ = [
     "create_default_detector",
     "create_default_protection",
     "create_default_validator",
+    "create_external_validator",
     "create_strict_detector",
     "create_strict_protection",
     "create_strict_validator",

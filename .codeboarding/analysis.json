@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-16T15:18:28.281466+00:00",
+    "generated_at": "2026-04-16T15:33:03.144656+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -36808,7 +36808,7 @@
       ]
     },
     "src/heretek_swarm/security/zero_trust.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.security.zero_trust.Severity",
@@ -36860,11 +36860,32 @@
           "status": "unchanged"
         },
         {
+          "qualified_name": "src.heretek_swarm.security.zero_trust.get_exception_rule",
+          "start_line": 146,
+          "end_line": 165,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
           "qualified_name": "src.heretek_swarm.security.zero_trust.InputValidator",
           "start_line": 161,
           "end_line": 345,
           "node_type": "CLASS",
           "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.security.zero_trust.is_exception_topic",
+          "start_line": 168,
+          "end_line": 178,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.security.zero_trust.should_sanitize",
+          "start_line": 181,
+          "end_line": 194,
+          "node_type": "FUNCTION",
+          "status": "added"
         },
         {
           "qualified_name": "src.heretek_swarm.security.zero_trust.InputValidator.__init__",
@@ -37021,20 +37042,6 @@
           "status": "unchanged"
         },
         {
-          "qualified_name": "src.heretek_swarm.security.zero_trust.create_default_validator",
-          "start_line": 1080,
-          "end_line": 1087,
-          "node_type": "FUNCTION",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.security.zero_trust.create_strict_validator",
-          "start_line": 1090,
-          "end_line": 1115,
-          "node_type": "FUNCTION",
-          "status": "unchanged"
-        },
-        {
           "qualified_name": "src.heretek_swarm.security.zero_trust.ExternalThreatConfig",
           "start_line": 1124,
           "end_line": 1135,
@@ -37077,17 +37084,24 @@
           "status": "unchanged"
         },
         {
+          "qualified_name": "src.heretek_swarm.security.zero_trust.ZeroTrustValidator",
+          "start_line": 1211,
+          "end_line": 1509,
+          "node_type": "CLASS",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.security.zero_trust.ZeroTrustValidator.validate_request",
+          "start_line": 1248,
+          "end_line": 1328,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
           "qualified_name": "src.heretek_swarm.security.zero_trust.ExternalInputValidator.get_validation_failures",
           "start_line": 1273,
           "end_line": 1281,
           "node_type": "METHOD",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.security.zero_trust.ZeroTrustValidator",
-          "start_line": 1284,
-          "end_line": 1403,
-          "node_type": "CLASS",
           "status": "unchanged"
         },
         {
@@ -37105,11 +37119,46 @@
           "status": "unchanged"
         },
         {
+          "qualified_name": "src.heretek_swarm.security.zero_trust.ZeroTrustValidator.validate_response",
+          "start_line": 1330,
+          "end_line": 1394,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
           "qualified_name": "src.heretek_swarm.security.zero_trust.create_external_validator",
           "start_line": 1406,
           "end_line": 1411,
           "node_type": "FUNCTION",
           "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.security.zero_trust.ZeroTrustValidator.get_metrics",
+          "start_line": 1489,
+          "end_line": 1505,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.security.zero_trust.ZeroTrustValidator.get_high_severity_events",
+          "start_line": 1507,
+          "end_line": 1509,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.security.zero_trust.create_default_validator",
+          "start_line": 1517,
+          "end_line": 1524,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.security.zero_trust.create_strict_validator",
+          "start_line": 1527,
+          "end_line": 1552,
+          "node_type": "FUNCTION",
+          "status": "added"
         }
       ]
     },
@@ -95677,6 +95726,14 @@
       "type": "CLASS",
       "status": "unchanged"
     },
+    "src/heretek_swarm/security/zero_trust.py|src.heretek_swarm.security.zero_trust.get_exception_rule": {
+      "file_path": "src/heretek_swarm/security/zero_trust.py",
+      "qualified_name": "src.heretek_swarm.security.zero_trust.get_exception_rule",
+      "start_line": 146,
+      "end_line": 165,
+      "type": "FUNCTION",
+      "status": "added"
+    },
     "src/heretek_swarm/security/zero_trust.py|src.heretek_swarm.security.zero_trust.InputValidator": {
       "file_path": "src/heretek_swarm/security/zero_trust.py",
       "qualified_name": "src.heretek_swarm.security.zero_trust.InputValidator",
@@ -95684,6 +95741,22 @@
       "end_line": 345,
       "type": "CLASS",
       "status": "unchanged"
+    },
+    "src/heretek_swarm/security/zero_trust.py|src.heretek_swarm.security.zero_trust.is_exception_topic": {
+      "file_path": "src/heretek_swarm/security/zero_trust.py",
+      "qualified_name": "src.heretek_swarm.security.zero_trust.is_exception_topic",
+      "start_line": 168,
+      "end_line": 178,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/security/zero_trust.py|src.heretek_swarm.security.zero_trust.should_sanitize": {
+      "file_path": "src/heretek_swarm/security/zero_trust.py",
+      "qualified_name": "src.heretek_swarm.security.zero_trust.should_sanitize",
+      "start_line": 181,
+      "end_line": 194,
+      "type": "FUNCTION",
+      "status": "added"
     },
     "src/heretek_swarm/security/zero_trust.py|src.heretek_swarm.security.zero_trust.InputValidator.__init__": {
       "file_path": "src/heretek_swarm/security/zero_trust.py",
@@ -95861,22 +95934,6 @@
       "type": "METHOD",
       "status": "unchanged"
     },
-    "src/heretek_swarm/security/zero_trust.py|src.heretek_swarm.security.zero_trust.create_default_validator": {
-      "file_path": "src/heretek_swarm/security/zero_trust.py",
-      "qualified_name": "src.heretek_swarm.security.zero_trust.create_default_validator",
-      "start_line": 1080,
-      "end_line": 1087,
-      "type": "FUNCTION",
-      "status": "unchanged"
-    },
-    "src/heretek_swarm/security/zero_trust.py|src.heretek_swarm.security.zero_trust.create_strict_validator": {
-      "file_path": "src/heretek_swarm/security/zero_trust.py",
-      "qualified_name": "src.heretek_swarm.security.zero_trust.create_strict_validator",
-      "start_line": 1090,
-      "end_line": 1115,
-      "type": "FUNCTION",
-      "status": "unchanged"
-    },
     "src/heretek_swarm/security/zero_trust.py|src.heretek_swarm.security.zero_trust.ExternalThreatConfig": {
       "file_path": "src/heretek_swarm/security/zero_trust.py",
       "qualified_name": "src.heretek_swarm.security.zero_trust.ExternalThreatConfig",
@@ -95925,20 +95982,28 @@
       "type": "METHOD",
       "status": "unchanged"
     },
+    "src/heretek_swarm/security/zero_trust.py|src.heretek_swarm.security.zero_trust.ZeroTrustValidator": {
+      "file_path": "src/heretek_swarm/security/zero_trust.py",
+      "qualified_name": "src.heretek_swarm.security.zero_trust.ZeroTrustValidator",
+      "start_line": 1211,
+      "end_line": 1509,
+      "type": "CLASS",
+      "status": "modified"
+    },
+    "src/heretek_swarm/security/zero_trust.py|src.heretek_swarm.security.zero_trust.ZeroTrustValidator.validate_request": {
+      "file_path": "src/heretek_swarm/security/zero_trust.py",
+      "qualified_name": "src.heretek_swarm.security.zero_trust.ZeroTrustValidator.validate_request",
+      "start_line": 1248,
+      "end_line": 1328,
+      "type": "METHOD",
+      "status": "added"
+    },
     "src/heretek_swarm/security/zero_trust.py|src.heretek_swarm.security.zero_trust.ExternalInputValidator.get_validation_failures": {
       "file_path": "src/heretek_swarm/security/zero_trust.py",
       "qualified_name": "src.heretek_swarm.security.zero_trust.ExternalInputValidator.get_validation_failures",
       "start_line": 1273,
       "end_line": 1281,
       "type": "METHOD",
-      "status": "unchanged"
-    },
-    "src/heretek_swarm/security/zero_trust.py|src.heretek_swarm.security.zero_trust.ZeroTrustValidator": {
-      "file_path": "src/heretek_swarm/security/zero_trust.py",
-      "qualified_name": "src.heretek_swarm.security.zero_trust.ZeroTrustValidator",
-      "start_line": 1284,
-      "end_line": 1403,
-      "type": "CLASS",
       "status": "unchanged"
     },
     "src/heretek_swarm/security/zero_trust.py|src.heretek_swarm.security.zero_trust.ZeroTrustValidator.__init__": {
@@ -95957,6 +96022,14 @@
       "type": "METHOD",
       "status": "unchanged"
     },
+    "src/heretek_swarm/security/zero_trust.py|src.heretek_swarm.security.zero_trust.ZeroTrustValidator.validate_response": {
+      "file_path": "src/heretek_swarm/security/zero_trust.py",
+      "qualified_name": "src.heretek_swarm.security.zero_trust.ZeroTrustValidator.validate_response",
+      "start_line": 1330,
+      "end_line": 1394,
+      "type": "METHOD",
+      "status": "added"
+    },
     "src/heretek_swarm/security/zero_trust.py|src.heretek_swarm.security.zero_trust.create_external_validator": {
       "file_path": "src/heretek_swarm/security/zero_trust.py",
       "qualified_name": "src.heretek_swarm.security.zero_trust.create_external_validator",
@@ -95964,6 +96037,38 @@
       "end_line": 1411,
       "type": "FUNCTION",
       "status": "unchanged"
+    },
+    "src/heretek_swarm/security/zero_trust.py|src.heretek_swarm.security.zero_trust.ZeroTrustValidator.get_metrics": {
+      "file_path": "src/heretek_swarm/security/zero_trust.py",
+      "qualified_name": "src.heretek_swarm.security.zero_trust.ZeroTrustValidator.get_metrics",
+      "start_line": 1489,
+      "end_line": 1505,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/security/zero_trust.py|src.heretek_swarm.security.zero_trust.ZeroTrustValidator.get_high_severity_events": {
+      "file_path": "src/heretek_swarm/security/zero_trust.py",
+      "qualified_name": "src.heretek_swarm.security.zero_trust.ZeroTrustValidator.get_high_severity_events",
+      "start_line": 1507,
+      "end_line": 1509,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/security/zero_trust.py|src.heretek_swarm.security.zero_trust.create_default_validator": {
+      "file_path": "src/heretek_swarm/security/zero_trust.py",
+      "qualified_name": "src.heretek_swarm.security.zero_trust.create_default_validator",
+      "start_line": 1517,
+      "end_line": 1524,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/security/zero_trust.py|src.heretek_swarm.security.zero_trust.create_strict_validator": {
+      "file_path": "src/heretek_swarm/security/zero_trust.py",
+      "qualified_name": "src.heretek_swarm.security.zero_trust.create_strict_validator",
+      "start_line": 1527,
+      "end_line": 1552,
+      "type": "FUNCTION",
+      "status": "added"
     },
     "src/heretek_swarm/state/event_store.py|src.heretek_swarm.state.event_store.EventType": {
       "file_path": "src/heretek_swarm/state/event_store.py",
@@ -121906,7 +122011,7 @@
         },
         {
           "file_path": "src/heretek_swarm/security/zero_trust.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "src.heretek_swarm.security.zero_trust.Severity",
             "src.heretek_swarm.security.zero_trust.LayerResult",
@@ -121915,7 +122020,10 @@
             "src.heretek_swarm.security.zero_trust.ValidatedInput",
             "src.heretek_swarm.security.zero_trust.ValidatedInput.validate_request_id",
             "src.heretek_swarm.security.zero_trust.InputValidationConfig",
+            "src.heretek_swarm.security.zero_trust.get_exception_rule",
             "src.heretek_swarm.security.zero_trust.InputValidator",
+            "src.heretek_swarm.security.zero_trust.is_exception_topic",
+            "src.heretek_swarm.security.zero_trust.should_sanitize",
             "src.heretek_swarm.security.zero_trust.InputValidator.__init__",
             "src.heretek_swarm.security.zero_trust.InputValidator.validate",
             "src.heretek_swarm.security.zero_trust.InputValidator._calculate_depth",
@@ -121938,19 +122046,23 @@
             "src.heretek_swarm.security.zero_trust.AuditLogger.log",
             "src.heretek_swarm.security.zero_trust.AuditLogger.get_event_counts",
             "src.heretek_swarm.security.zero_trust.AuditLogger.get_high_severity_events",
-            "src.heretek_swarm.security.zero_trust.create_default_validator",
-            "src.heretek_swarm.security.zero_trust.create_strict_validator",
             "src.heretek_swarm.security.zero_trust.ExternalThreatConfig",
             "src.heretek_swarm.security.zero_trust.ExternalInputValidator",
             "src.heretek_swarm.security.zero_trust.ExternalInputValidator.__init__",
             "src.heretek_swarm.security.zero_trust.ExternalInputValidator.check_reputation",
             "src.heretek_swarm.security.zero_trust.ExternalInputValidator.update_reputation",
             "src.heretek_swarm.security.zero_trust.ExternalInputValidator.validate_external_input",
-            "src.heretek_swarm.security.zero_trust.ExternalInputValidator.get_validation_failures",
             "src.heretek_swarm.security.zero_trust.ZeroTrustValidator",
+            "src.heretek_swarm.security.zero_trust.ZeroTrustValidator.validate_request",
+            "src.heretek_swarm.security.zero_trust.ExternalInputValidator.get_validation_failures",
             "src.heretek_swarm.security.zero_trust.ZeroTrustValidator.__init__",
             "src.heretek_swarm.security.zero_trust.ZeroTrustValidator.validate_external_input",
-            "src.heretek_swarm.security.zero_trust.create_external_validator"
+            "src.heretek_swarm.security.zero_trust.ZeroTrustValidator.validate_response",
+            "src.heretek_swarm.security.zero_trust.create_external_validator",
+            "src.heretek_swarm.security.zero_trust.ZeroTrustValidator.get_metrics",
+            "src.heretek_swarm.security.zero_trust.ZeroTrustValidator.get_high_severity_events",
+            "src.heretek_swarm.security.zero_trust.create_default_validator",
+            "src.heretek_swarm.security.zero_trust.create_strict_validator"
           ]
         },
         {
@@ -126805,7 +126917,7 @@
             },
             {
               "file_path": "src/heretek_swarm/security/zero_trust.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.heretek_swarm.security.zero_trust.Severity",
                 "src.heretek_swarm.security.zero_trust.LayerResult",
@@ -126814,7 +126926,10 @@
                 "src.heretek_swarm.security.zero_trust.ValidatedInput",
                 "src.heretek_swarm.security.zero_trust.ValidatedInput.validate_request_id",
                 "src.heretek_swarm.security.zero_trust.InputValidationConfig",
+                "src.heretek_swarm.security.zero_trust.get_exception_rule",
                 "src.heretek_swarm.security.zero_trust.InputValidator",
+                "src.heretek_swarm.security.zero_trust.is_exception_topic",
+                "src.heretek_swarm.security.zero_trust.should_sanitize",
                 "src.heretek_swarm.security.zero_trust.InputValidator.__init__",
                 "src.heretek_swarm.security.zero_trust.InputValidator.validate",
                 "src.heretek_swarm.security.zero_trust.InputValidator._calculate_depth",
@@ -126837,19 +126952,23 @@
                 "src.heretek_swarm.security.zero_trust.AuditLogger.log",
                 "src.heretek_swarm.security.zero_trust.AuditLogger.get_event_counts",
                 "src.heretek_swarm.security.zero_trust.AuditLogger.get_high_severity_events",
-                "src.heretek_swarm.security.zero_trust.create_default_validator",
-                "src.heretek_swarm.security.zero_trust.create_strict_validator",
                 "src.heretek_swarm.security.zero_trust.ExternalThreatConfig",
                 "src.heretek_swarm.security.zero_trust.ExternalInputValidator",
                 "src.heretek_swarm.security.zero_trust.ExternalInputValidator.__init__",
                 "src.heretek_swarm.security.zero_trust.ExternalInputValidator.check_reputation",
                 "src.heretek_swarm.security.zero_trust.ExternalInputValidator.update_reputation",
                 "src.heretek_swarm.security.zero_trust.ExternalInputValidator.validate_external_input",
-                "src.heretek_swarm.security.zero_trust.ExternalInputValidator.get_validation_failures",
                 "src.heretek_swarm.security.zero_trust.ZeroTrustValidator",
+                "src.heretek_swarm.security.zero_trust.ZeroTrustValidator.validate_request",
+                "src.heretek_swarm.security.zero_trust.ExternalInputValidator.get_validation_failures",
                 "src.heretek_swarm.security.zero_trust.ZeroTrustValidator.__init__",
                 "src.heretek_swarm.security.zero_trust.ZeroTrustValidator.validate_external_input",
-                "src.heretek_swarm.security.zero_trust.create_external_validator"
+                "src.heretek_swarm.security.zero_trust.ZeroTrustValidator.validate_response",
+                "src.heretek_swarm.security.zero_trust.create_external_validator",
+                "src.heretek_swarm.security.zero_trust.ZeroTrustValidator.get_metrics",
+                "src.heretek_swarm.security.zero_trust.ZeroTrustValidator.get_high_severity_events",
+                "src.heretek_swarm.security.zero_trust.create_default_validator",
+                "src.heretek_swarm.security.zero_trust.create_strict_validator"
               ]
             },
             {
@@ -145314,7 +145433,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/security/zero_trust.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.security.zero_trust.Severity",
                     "src.heretek_swarm.security.zero_trust.LayerResult",
@@ -145323,7 +145442,10 @@
                     "src.heretek_swarm.security.zero_trust.ValidatedInput",
                     "src.heretek_swarm.security.zero_trust.ValidatedInput.validate_request_id",
                     "src.heretek_swarm.security.zero_trust.InputValidationConfig",
+                    "src.heretek_swarm.security.zero_trust.get_exception_rule",
                     "src.heretek_swarm.security.zero_trust.InputValidator",
+                    "src.heretek_swarm.security.zero_trust.is_exception_topic",
+                    "src.heretek_swarm.security.zero_trust.should_sanitize",
                     "src.heretek_swarm.security.zero_trust.InputValidator.__init__",
                     "src.heretek_swarm.security.zero_trust.InputValidator.validate",
                     "src.heretek_swarm.security.zero_trust.InputValidator._calculate_depth",
@@ -145346,19 +145468,23 @@
                     "src.heretek_swarm.security.zero_trust.AuditLogger.log",
                     "src.heretek_swarm.security.zero_trust.AuditLogger.get_event_counts",
                     "src.heretek_swarm.security.zero_trust.AuditLogger.get_high_severity_events",
-                    "src.heretek_swarm.security.zero_trust.create_default_validator",
-                    "src.heretek_swarm.security.zero_trust.create_strict_validator",
                     "src.heretek_swarm.security.zero_trust.ExternalThreatConfig",
                     "src.heretek_swarm.security.zero_trust.ExternalInputValidator",
                     "src.heretek_swarm.security.zero_trust.ExternalInputValidator.__init__",
                     "src.heretek_swarm.security.zero_trust.ExternalInputValidator.check_reputation",
                     "src.heretek_swarm.security.zero_trust.ExternalInputValidator.update_reputation",
                     "src.heretek_swarm.security.zero_trust.ExternalInputValidator.validate_external_input",
-                    "src.heretek_swarm.security.zero_trust.ExternalInputValidator.get_validation_failures",
                     "src.heretek_swarm.security.zero_trust.ZeroTrustValidator",
+                    "src.heretek_swarm.security.zero_trust.ZeroTrustValidator.validate_request",
+                    "src.heretek_swarm.security.zero_trust.ExternalInputValidator.get_validation_failures",
                     "src.heretek_swarm.security.zero_trust.ZeroTrustValidator.__init__",
                     "src.heretek_swarm.security.zero_trust.ZeroTrustValidator.validate_external_input",
-                    "src.heretek_swarm.security.zero_trust.create_external_validator"
+                    "src.heretek_swarm.security.zero_trust.ZeroTrustValidator.validate_response",
+                    "src.heretek_swarm.security.zero_trust.create_external_validator",
+                    "src.heretek_swarm.security.zero_trust.ZeroTrustValidator.get_metrics",
+                    "src.heretek_swarm.security.zero_trust.ZeroTrustValidator.get_high_severity_events",
+                    "src.heretek_swarm.security.zero_trust.create_default_validator",
+                    "src.heretek_swarm.security.zero_trust.create_strict_validator"
                   ]
                 },
                 {
@@ -145544,7 +145670,7 @@
                     },
                     {
                       "file_path": "src/heretek_swarm/security/zero_trust.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.security.zero_trust.Severity",
                         "src.heretek_swarm.security.zero_trust.LayerResult",
@@ -145553,7 +145679,10 @@
                         "src.heretek_swarm.security.zero_trust.ValidatedInput",
                         "src.heretek_swarm.security.zero_trust.ValidatedInput.validate_request_id",
                         "src.heretek_swarm.security.zero_trust.InputValidationConfig",
+                        "src.heretek_swarm.security.zero_trust.get_exception_rule",
                         "src.heretek_swarm.security.zero_trust.InputValidator",
+                        "src.heretek_swarm.security.zero_trust.is_exception_topic",
+                        "src.heretek_swarm.security.zero_trust.should_sanitize",
                         "src.heretek_swarm.security.zero_trust.InputValidator.__init__",
                         "src.heretek_swarm.security.zero_trust.InputValidator.validate",
                         "src.heretek_swarm.security.zero_trust.InputValidator._calculate_depth",
@@ -145576,19 +145705,23 @@
                         "src.heretek_swarm.security.zero_trust.AuditLogger.log",
                         "src.heretek_swarm.security.zero_trust.AuditLogger.get_event_counts",
                         "src.heretek_swarm.security.zero_trust.AuditLogger.get_high_severity_events",
-                        "src.heretek_swarm.security.zero_trust.create_default_validator",
-                        "src.heretek_swarm.security.zero_trust.create_strict_validator",
                         "src.heretek_swarm.security.zero_trust.ExternalThreatConfig",
                         "src.heretek_swarm.security.zero_trust.ExternalInputValidator",
                         "src.heretek_swarm.security.zero_trust.ExternalInputValidator.__init__",
                         "src.heretek_swarm.security.zero_trust.ExternalInputValidator.check_reputation",
                         "src.heretek_swarm.security.zero_trust.ExternalInputValidator.update_reputation",
                         "src.heretek_swarm.security.zero_trust.ExternalInputValidator.validate_external_input",
-                        "src.heretek_swarm.security.zero_trust.ExternalInputValidator.get_validation_failures",
                         "src.heretek_swarm.security.zero_trust.ZeroTrustValidator",
+                        "src.heretek_swarm.security.zero_trust.ZeroTrustValidator.validate_request",
+                        "src.heretek_swarm.security.zero_trust.ExternalInputValidator.get_validation_failures",
                         "src.heretek_swarm.security.zero_trust.ZeroTrustValidator.__init__",
                         "src.heretek_swarm.security.zero_trust.ZeroTrustValidator.validate_external_input",
-                        "src.heretek_swarm.security.zero_trust.create_external_validator"
+                        "src.heretek_swarm.security.zero_trust.ZeroTrustValidator.validate_response",
+                        "src.heretek_swarm.security.zero_trust.create_external_validator",
+                        "src.heretek_swarm.security.zero_trust.ZeroTrustValidator.get_metrics",
+                        "src.heretek_swarm.security.zero_trust.ZeroTrustValidator.get_high_severity_events",
+                        "src.heretek_swarm.security.zero_trust.create_default_validator",
+                        "src.heretek_swarm.security.zero_trust.create_strict_validator"
                       ]
                     }
                   ],
@@ -145735,7 +145868,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/security/zero_trust.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.security.zero_trust.Severity",
                             "src.heretek_swarm.security.zero_trust.LayerResult",
@@ -145767,16 +145900,14 @@
                             "src.heretek_swarm.security.zero_trust.AuditLogger.log",
                             "src.heretek_swarm.security.zero_trust.AuditLogger.get_event_counts",
                             "src.heretek_swarm.security.zero_trust.AuditLogger.get_high_severity_events",
-                            "src.heretek_swarm.security.zero_trust.create_default_validator",
-                            "src.heretek_swarm.security.zero_trust.create_strict_validator",
                             "src.heretek_swarm.security.zero_trust.ExternalThreatConfig",
                             "src.heretek_swarm.security.zero_trust.ExternalInputValidator",
                             "src.heretek_swarm.security.zero_trust.ExternalInputValidator.__init__",
                             "src.heretek_swarm.security.zero_trust.ExternalInputValidator.check_reputation",
                             "src.heretek_swarm.security.zero_trust.ExternalInputValidator.update_reputation",
                             "src.heretek_swarm.security.zero_trust.ExternalInputValidator.validate_external_input",
-                            "src.heretek_swarm.security.zero_trust.ExternalInputValidator.get_validation_failures",
                             "src.heretek_swarm.security.zero_trust.ZeroTrustValidator",
+                            "src.heretek_swarm.security.zero_trust.ExternalInputValidator.get_validation_failures",
                             "src.heretek_swarm.security.zero_trust.ZeroTrustValidator.__init__",
                             "src.heretek_swarm.security.zero_trust.ZeroTrustValidator.validate_external_input",
                             "src.heretek_swarm.security.zero_trust.create_external_validator"
