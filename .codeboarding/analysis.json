@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-16T18:20:07.825475+00:00",
+    "generated_at": "2026-04-16T18:21:01.754800+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -1155,33 +1155,26 @@
       ]
     },
     "src/heretek_swarm/actors/base/message_handling.py": {
-      "file_status": "modified",
+      "file_status": "unchanged",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling",
           "start_line": 23,
           "end_line": 803,
           "node_type": "CLASS",
-          "status": "modified"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling.send",
           "start_line": 26,
           "end_line": 75,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._send_via_event_mesh",
           "start_line": 77,
           "end_line": 123,
-          "node_type": "METHOD",
-          "status": "added"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._queue_message",
-          "start_line": 122,
-          "end_line": 130,
           "node_type": "METHOD",
           "status": "unchanged"
         },
@@ -1190,119 +1183,126 @@
           "start_line": 125,
           "end_line": 166,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._queue_message",
+          "start_line": 168,
+          "end_line": 176,
+          "node_type": "METHOD",
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling.send_to_actor",
-          "start_line": 132,
-          "end_line": 191,
+          "start_line": 178,
+          "end_line": 237,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling.send_with_reply",
-          "start_line": 193,
-          "end_line": 271,
+          "start_line": 239,
+          "end_line": 317,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling.send_with_reply.handle_reply",
-          "start_line": 231,
-          "end_line": 233,
+          "start_line": 277,
+          "end_line": 279,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling.put_message",
-          "start_line": 273,
-          "end_line": 309,
+          "start_line": 319,
+          "end_line": 355,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._process_mailbox",
-          "start_line": 311,
-          "end_line": 355,
+          "start_line": 357,
+          "end_line": 401,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling.process_message",
-          "start_line": 357,
-          "end_line": 409,
+          "start_line": 403,
+          "end_line": 455,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling.broadcast",
-          "start_line": 411,
-          "end_line": 485,
+          "start_line": 457,
+          "end_line": 531,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._handle_health_check",
-          "start_line": 488,
-          "end_line": 515,
+          "start_line": 534,
+          "end_line": 561,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._handle_suspend",
-          "start_line": 514,
-          "end_line": 522,
+          "start_line": 563,
+          "end_line": 571,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._handle_resume",
-          "start_line": 524,
-          "end_line": 532,
+          "start_line": 573,
+          "end_line": 581,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._handle_terminate",
-          "start_line": 534,
-          "end_line": 544,
+          "start_line": 583,
+          "end_line": 593,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._handle_collective_task",
-          "start_line": 549,
-          "end_line": 610,
+          "start_line": 595,
+          "end_line": 656,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._generate_collective_contribution",
-          "start_line": 612,
-          "end_line": 669,
+          "start_line": 658,
+          "end_line": 715,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._get_actor_registry",
-          "start_line": 671,
-          "end_line": 688,
+          "start_line": 717,
+          "end_line": 734,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling.run_with_llm",
-          "start_line": 686,
-          "end_line": 719,
+          "start_line": 736,
+          "end_line": 769,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._heartbeat_loop",
-          "start_line": 725,
-          "end_line": 757,
+          "start_line": 771,
+          "end_line": 803,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "unchanged"
         }
       ]
     },
@@ -56151,7 +56151,7 @@
       "start_line": 23,
       "end_line": 803,
       "type": "CLASS",
-      "status": "modified"
+      "status": "unchanged"
     },
     "src/heretek_swarm/actors/base/message_handling.py|src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling.send": {
       "file_path": "src/heretek_swarm/actors/base/message_handling.py",
@@ -56159,21 +56159,13 @@
       "start_line": 26,
       "end_line": 75,
       "type": "METHOD",
-      "status": "modified"
+      "status": "unchanged"
     },
     "src/heretek_swarm/actors/base/message_handling.py|src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._send_via_event_mesh": {
       "file_path": "src/heretek_swarm/actors/base/message_handling.py",
       "qualified_name": "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._send_via_event_mesh",
       "start_line": 77,
       "end_line": 123,
-      "type": "METHOD",
-      "status": "added"
-    },
-    "src/heretek_swarm/actors/base/message_handling.py|src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._queue_message": {
-      "file_path": "src/heretek_swarm/actors/base/message_handling.py",
-      "qualified_name": "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._queue_message",
-      "start_line": 122,
-      "end_line": 130,
       "type": "METHOD",
       "status": "unchanged"
     },
@@ -56183,135 +56175,143 @@
       "start_line": 125,
       "end_line": 166,
       "type": "METHOD",
-      "status": "added"
+      "status": "unchanged"
+    },
+    "src/heretek_swarm/actors/base/message_handling.py|src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._queue_message": {
+      "file_path": "src/heretek_swarm/actors/base/message_handling.py",
+      "qualified_name": "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._queue_message",
+      "start_line": 168,
+      "end_line": 176,
+      "type": "METHOD",
+      "status": "unchanged"
     },
     "src/heretek_swarm/actors/base/message_handling.py|src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling.send_to_actor": {
       "file_path": "src/heretek_swarm/actors/base/message_handling.py",
       "qualified_name": "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling.send_to_actor",
-      "start_line": 132,
-      "end_line": 191,
+      "start_line": 178,
+      "end_line": 237,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/actors/base/message_handling.py|src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling.send_with_reply": {
       "file_path": "src/heretek_swarm/actors/base/message_handling.py",
       "qualified_name": "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling.send_with_reply",
-      "start_line": 193,
-      "end_line": 271,
+      "start_line": 239,
+      "end_line": 317,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/actors/base/message_handling.py|src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling.send_with_reply.handle_reply": {
       "file_path": "src/heretek_swarm/actors/base/message_handling.py",
       "qualified_name": "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling.send_with_reply.handle_reply",
-      "start_line": 231,
-      "end_line": 233,
+      "start_line": 277,
+      "end_line": 279,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/actors/base/message_handling.py|src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling.put_message": {
       "file_path": "src/heretek_swarm/actors/base/message_handling.py",
       "qualified_name": "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling.put_message",
-      "start_line": 273,
-      "end_line": 309,
+      "start_line": 319,
+      "end_line": 355,
       "type": "METHOD",
-      "status": "modified"
+      "status": "unchanged"
     },
     "src/heretek_swarm/actors/base/message_handling.py|src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._process_mailbox": {
       "file_path": "src/heretek_swarm/actors/base/message_handling.py",
       "qualified_name": "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._process_mailbox",
-      "start_line": 311,
-      "end_line": 355,
+      "start_line": 357,
+      "end_line": 401,
       "type": "METHOD",
-      "status": "modified"
+      "status": "unchanged"
     },
     "src/heretek_swarm/actors/base/message_handling.py|src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling.process_message": {
       "file_path": "src/heretek_swarm/actors/base/message_handling.py",
       "qualified_name": "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling.process_message",
-      "start_line": 357,
-      "end_line": 409,
+      "start_line": 403,
+      "end_line": 455,
       "type": "METHOD",
-      "status": "modified"
+      "status": "unchanged"
     },
     "src/heretek_swarm/actors/base/message_handling.py|src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling.broadcast": {
       "file_path": "src/heretek_swarm/actors/base/message_handling.py",
       "qualified_name": "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling.broadcast",
-      "start_line": 411,
-      "end_line": 485,
+      "start_line": 457,
+      "end_line": 531,
       "type": "METHOD",
-      "status": "modified"
+      "status": "unchanged"
     },
     "src/heretek_swarm/actors/base/message_handling.py|src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._handle_health_check": {
       "file_path": "src/heretek_swarm/actors/base/message_handling.py",
       "qualified_name": "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._handle_health_check",
-      "start_line": 488,
-      "end_line": 515,
+      "start_line": 534,
+      "end_line": 561,
       "type": "METHOD",
-      "status": "modified"
+      "status": "unchanged"
     },
     "src/heretek_swarm/actors/base/message_handling.py|src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._handle_suspend": {
       "file_path": "src/heretek_swarm/actors/base/message_handling.py",
       "qualified_name": "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._handle_suspend",
-      "start_line": 514,
-      "end_line": 522,
+      "start_line": 563,
+      "end_line": 571,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/actors/base/message_handling.py|src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._handle_resume": {
       "file_path": "src/heretek_swarm/actors/base/message_handling.py",
       "qualified_name": "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._handle_resume",
-      "start_line": 524,
-      "end_line": 532,
+      "start_line": 573,
+      "end_line": 581,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/actors/base/message_handling.py|src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._handle_terminate": {
       "file_path": "src/heretek_swarm/actors/base/message_handling.py",
       "qualified_name": "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._handle_terminate",
-      "start_line": 534,
-      "end_line": 544,
+      "start_line": 583,
+      "end_line": 593,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/actors/base/message_handling.py|src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._handle_collective_task": {
       "file_path": "src/heretek_swarm/actors/base/message_handling.py",
       "qualified_name": "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._handle_collective_task",
-      "start_line": 549,
-      "end_line": 610,
+      "start_line": 595,
+      "end_line": 656,
       "type": "METHOD",
-      "status": "modified"
+      "status": "unchanged"
     },
     "src/heretek_swarm/actors/base/message_handling.py|src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._generate_collective_contribution": {
       "file_path": "src/heretek_swarm/actors/base/message_handling.py",
       "qualified_name": "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._generate_collective_contribution",
-      "start_line": 612,
-      "end_line": 669,
+      "start_line": 658,
+      "end_line": 715,
       "type": "METHOD",
-      "status": "modified"
+      "status": "unchanged"
     },
     "src/heretek_swarm/actors/base/message_handling.py|src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._get_actor_registry": {
       "file_path": "src/heretek_swarm/actors/base/message_handling.py",
       "qualified_name": "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._get_actor_registry",
-      "start_line": 671,
-      "end_line": 688,
+      "start_line": 717,
+      "end_line": 734,
       "type": "METHOD",
-      "status": "modified"
+      "status": "unchanged"
     },
     "src/heretek_swarm/actors/base/message_handling.py|src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling.run_with_llm": {
       "file_path": "src/heretek_swarm/actors/base/message_handling.py",
       "qualified_name": "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling.run_with_llm",
-      "start_line": 686,
-      "end_line": 719,
+      "start_line": 736,
+      "end_line": 769,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/actors/base/message_handling.py|src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._heartbeat_loop": {
       "file_path": "src/heretek_swarm/actors/base/message_handling.py",
       "qualified_name": "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._heartbeat_loop",
-      "start_line": 725,
-      "end_line": 757,
+      "start_line": 771,
+      "end_line": 803,
       "type": "METHOD",
-      "status": "modified"
+      "status": "unchanged"
     },
     "src/heretek_swarm/actors/base/state_management.py|src.heretek_swarm.actors.base.state_management.AgentActorStateManagement": {
       "file_path": "src/heretek_swarm/actors/base/state_management.py",
@@ -116002,13 +116002,13 @@
         },
         {
           "file_path": "src/heretek_swarm/actors/base/message_handling.py",
-          "file_status": "modified",
+          "file_status": "unchanged",
           "methods": [
             "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling",
             "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling.send",
             "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._send_via_event_mesh",
-            "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._queue_message",
             "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._deliver_to_registry_actors",
+            "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._queue_message",
             "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling.send_to_actor",
             "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling.send_with_reply",
             "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling.send_with_reply.handle_reply",
@@ -122862,13 +122862,13 @@
             },
             {
               "file_path": "src/heretek_swarm/actors/base/message_handling.py",
-              "file_status": "modified",
+              "file_status": "unchanged",
               "methods": [
                 "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling",
                 "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling.send",
                 "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._send_via_event_mesh",
-                "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._queue_message",
                 "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._deliver_to_registry_actors",
+                "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._queue_message",
                 "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling.send_to_actor",
                 "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling.send_with_reply",
                 "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling.send_with_reply.handle_reply",
@@ -127403,13 +127403,13 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/actors/base/message_handling.py",
-                  "file_status": "modified",
+                  "file_status": "unchanged",
                   "methods": [
                     "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling",
                     "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling.send",
                     "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._send_via_event_mesh",
-                    "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._queue_message",
                     "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._deliver_to_registry_actors",
+                    "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._queue_message",
                     "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling.send_to_actor",
                     "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling.send_with_reply",
                     "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling.send_with_reply.handle_reply",
@@ -128266,13 +128266,13 @@
                     },
                     {
                       "file_path": "src/heretek_swarm/actors/base/message_handling.py",
-                      "file_status": "modified",
+                      "file_status": "unchanged",
                       "methods": [
                         "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling",
                         "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling.send",
                         "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._send_via_event_mesh",
-                        "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._queue_message",
                         "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._deliver_to_registry_actors",
+                        "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._queue_message",
                         "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling.send_to_actor",
                         "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling.send_with_reply",
                         "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling.send_with_reply.handle_reply",
@@ -128417,13 +128417,13 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/actors/base/message_handling.py",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling",
                             "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling.send",
                             "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._send_via_event_mesh",
-                            "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._queue_message",
                             "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._deliver_to_registry_actors",
+                            "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._queue_message",
                             "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling.send_to_actor",
                             "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling.send_with_reply",
                             "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling.send_with_reply.handle_reply",
