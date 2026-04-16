@@ -1,7 +1,7 @@
 {
   "repository_name": "heretek-swarm",
-  "timestamp": "2026-04-16T16:25:38.962477+00:00",
-  "overall_score": 0.9900289855072464,
+  "timestamp": "2026-04-16T18:20:09.299428+00:00",
+  "overall_score": 0.989971595849516,
   "check_summaries": [
     {
       "check_name": "function_size",
@@ -790,8 +790,8 @@
       "description": "Detects unused imports, variables, functions, and dead code via LSP diagnostics",
       "language": "Python",
       "check_type": "standard",
-      "total_entities_checked": 25,
-      "findings_count": 25,
+      "total_entities_checked": 26,
+      "findings_count": 26,
       "warning_count": 10,
       "score": 0.0,
       "finding_groups": [
@@ -903,6 +903,13 @@
               "file_path": "src/heretek_swarm/actors/mixins/health_reporting.py",
               "line_start": 109,
               "line_end": 109,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"protocol\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/base/message_handling.py",
+              "line_start": 664,
+              "line_end": 664,
               "metric_value": 0.0
             }
           ]

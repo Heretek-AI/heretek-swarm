@@ -30,7 +30,27 @@ class AgentActorStateManagement(AgentActor):
         Saves actor state with version tracking for optimistic locking.
         Falls back to legacy file system persistence if repository not available.
         """
-        state_data = {
+        state_data = self._build_state_data()
+
+        # Tier 1: Try StateRepository
+        if await self._persist_via_repository(state_data):
+            return
+
+        # Tier 2: Try database pool (legacy)
+        if await self._persist_via_db_pool(state_data):
+            return
+
+        # Tier 3: Persist to file system (last resort)
+        await self._persist_via_filesystem(state_data)
+
+    def _build_state_data(self) -> dict[str, Any]:
+        """
+        Build the state data dictionary for persistence.
+
+        Returns:
+            Dictionary containing all actor state fields
+        """
+        return {
             "internal_state": self.internal_state,
             "message_count": self.message_count,
             "error_count": self.error_count,
@@ -42,82 +62,110 @@ class AgentActorStateManagement(AgentActor):
             "saved_at": datetime.now(UTC).isoformat(),
         }
 
-        # Use state repository if available
-        if self._state_repository is not None:
-            try:
-                # Get current version from stored record
-                version = None
-                if self._state_record:
-                    version = self._state_record.version + 1
+    async def _persist_via_repository(self, state_data: dict[str, Any]) -> bool:
+        """
+        Attempt to persist state via StateRepository.
 
-                self._state_record = await self._state_repository.save_state(
-                    agent_id=self.agent_id,
-                    state=state_data,
-                    agent_type=self.actor_type,
-                    version=version,
-                )
-                logger.info(
-                    f"[{self.agent_id}] State persisted via StateRepository",
-                    extra={"state": self.state.value, "version": self._state_record.version},
-                )
-                return
-            except Exception as e:
-                logger.error(
-                    f"[{self.agent_id}] StateRepository persistence failed: {e}",
-                    exc_info=True,
-                )
+        Args:
+            state_data: State dictionary to persist
 
-        # Legacy fallback: try get_db_pool() stub (injectable for testing)
+        Returns:
+            True if persisted successfully, False if repository not available or failed
+        """
+        if self._state_repository is None:
+            return False
+
+        try:
+            version = None
+            if self._state_record:
+                version = self._state_record.version + 1
+
+            self._state_record = await self._state_repository.save_state(
+                agent_id=self.agent_id,
+                state=state_data,
+                agent_type=self.actor_type,
+                version=version,
+            )
+            logger.info(
+                f"[{self.agent_id}] State persisted via StateRepository",
+                extra={"state": self.state.value, "version": self._state_record.version},
+            )
+            return True
+        except Exception as e:
+            logger.error(
+                f"[{self.agent_id}] StateRepository persistence failed: {e}",
+                exc_info=True,
+            )
+            return False
+
+    async def _persist_via_db_pool(self, state_data: dict[str, Any]) -> bool:
+        """
+        Attempt to persist state via database pool (legacy fallback).
+
+        Args:
+            state_data: State dictionary to persist
+
+        Returns:
+            True if persisted successfully, False if no pool available or failed
+        """
         from heretek_swarm.actors import stubs as _actor_stubs
 
         db_pool = _actor_stubs.get_db_pool()
         if db_pool is None:
             db_pool = self.get_state("_db_pool")
-        if db_pool is not None:
-            try:
-                # Support mock database (has execute method with SQL parsing)
-                if hasattr(db_pool, "execute") and hasattr(db_pool, "_tables"):
-                    # Ensure table exists in mock
-                    if "agent_states" not in db_pool._tables:
-                        db_pool._tables["agent_states"] = []
-                    db_pool._tables["agent_states"].append({
-                        "id": len(db_pool._tables["agent_states"]) + 1,
-                        "agent_id": self.agent_id,
-                        "agent_type": self.actor_type,
-                        "state": json.dumps(state_data),
-                        "created_at": datetime.now(UTC).isoformat(),
-                    })
-                elif not hasattr(db_pool, "acquire"):
-                    # Generic async execute interface
-                    await db_pool.execute(
-                        "INSERT INTO agent_states (agent_id, agent_type, state) VALUES (%s, %s, %s)",
-                        (self.agent_id, self.actor_type, json.dumps(state_data)),
-                    )
-                else:
-                    async with db_pool.acquire() as conn:
-                        await conn.execute(
-                            """
-                            INSERT INTO agent_states (id, agent_id, agent_type, state, version, updated_at, is_active)
-                            VALUES (gen_random_uuid(), $1, $2, $3, 1, NOW(), true)
-                            ON CONFLICT (agent_id) DO UPDATE
-                            SET state = $3, version = agent_states.version + 1, updated_at = NOW()
-                            """,
-                            self.agent_id,
-                            self.actor_type,
-                            json.dumps(state_data),
-                        )
-                logger.info(
-                    f"[{self.agent_id}] State persisted to database (legacy)",
-                    extra={"state": self.state.value},
-                )
-                return
-            except Exception as e:
-                logger.error(
-                    f"[{self.agent_id}] Database persistence failed: {e}",
-                    exc_info=True,
-                )
+        if db_pool is None:
+            return False
 
-        # Final fallback: persist to file system
+        try:
+            if hasattr(db_pool, "execute") and hasattr(db_pool, "_tables"):
+                # Support mock database (has execute method with SQL parsing)
+                if "agent_states" not in db_pool._tables:
+                    db_pool._tables["agent_states"] = []
+                db_pool._tables["agent_states"].append({
+                    "id": len(db_pool._tables["agent_states"]) + 1,
+                    "agent_id": self.agent_id,
+                    "agent_type": self.actor_type,
+                    "state": json.dumps(state_data),
+                    "created_at": datetime.now(UTC).isoformat(),
+                })
+            elif not hasattr(db_pool, "acquire"):
+                # Generic async execute interface
+                await db_pool.execute(
+                    "INSERT INTO agent_states (agent_id, agent_type, state) VALUES (%s, %s, %s)",
+                    (self.agent_id, self.actor_type, json.dumps(state_data)),
+                )
+            else:
+                async with db_pool.acquire() as conn:
+                    await conn.execute(
+                        """
+                        INSERT INTO agent_states (id, agent_id, agent_type, state, version, updated_at, is_active)
+                        VALUES (gen_random_uuid(), $1, $2, $3, 1, NOW(), true)
+                        ON CONFLICT (agent_id) DO UPDATE
+                        SET state = $3, version = agent_states.version + 1, updated_at = NOW()
+                        """,
+                        self.agent_id,
+                        self.actor_type,
+                        json.dumps(state_data),
+                    )
+            logger.info(
+                f"[{self.agent_id}] State persisted to database (legacy)",
+                extra={"state": self.state.value},
+            )
+            return True
+        except Exception as e:
+            logger.error(
+                f"[{self.agent_id}] Database persistence failed: {e}",
+                exc_info=True,
+            )
+            return False
+
+    async def _persist_via_filesystem(self, state_data: dict[str, Any]) -> None:
+        """
+        Persist state to file system (final fallback).
+
+        Args:
+            state_data: State dictionary to persist
+        """
         try:
             import os
             state_dir = os.path.join(os.getcwd(), ".actor_states")
@@ -413,6 +461,10 @@ class AgentActorStateManagement(AgentActor):
 
 # Bind state management methods to AgentActor
 AgentActor.save_state = AgentActorStateManagement.save_state
+AgentActor._build_state_data = AgentActorStateManagement._build_state_data
+AgentActor._persist_via_repository = AgentActorStateManagement._persist_via_repository
+AgentActor._persist_via_db_pool = AgentActorStateManagement._persist_via_db_pool
+AgentActor._persist_via_filesystem = AgentActorStateManagement._persist_via_filesystem
 AgentActor.load_state = AgentActorStateManagement.load_state
 AgentActor.save_checkpoint = AgentActorStateManagement.save_checkpoint
 AgentActor.restore_from_checkpoint = AgentActorStateManagement.restore_from_checkpoint

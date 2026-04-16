@@ -58,66 +58,112 @@ class AgentActorMessageHandling(AgentActor):
             metadata=metadata or {},
         )
 
-        # Route through event mesh if available
-        event_mesh = self._event_mesh or self.get_state("_event_mesh")
-        if event_mesh is not None:
-            try:
-                # Send via event mesh
-                await event_mesh.send_to_json(
-                    topic,
-                    {
-                        "type": message_type,
-                        "from": self.agent_id,
-                        "content": content,
-                        "correlation_id": correlation_id,
-                        "reply_to": reply_to,
-                        "metadata": metadata or {},
-                        "timestamp": datetime.now(UTC).isoformat(),
-                    },
-                )
-                logger.info(
-                    f"[{self.agent_id}] Message {message_id} sent via event mesh to {topic}",
-                    extra={"message_type": message_type},
-                )
-                return message_id
-            except Exception as e:
-                logger.error(
-                    f"[{self.agent_id}] Event mesh send failed: {e}",
-                    extra={"message_id": message_id, "topic": topic},
-                )
+        # Tier 1: Route through event mesh if available
+        if await self._send_via_event_mesh(topic, message, message_id, message_type):
+            return message_id
 
-        # Fallback: Direct delivery to actors subscribed to topic
-        # Use global actor registry from supervisor
-        actor_registry = self._get_actor_registry()
-        if actor_registry is not None:
-            try:
-                # Find actors subscribed to this topic
-                delivered = False
-                for reg_actor in actor_registry.values():
-                    if topic in getattr(reg_actor, "topics", []):
-                        await reg_actor.put_message(message)
-                        delivered = True
-                if delivered:
-                    logger.info(
-                        f"[{self.agent_id}] Message {message_id} delivered directly to topic subscribers",
-                        extra={"message_type": message_type},
-                    )
-                    return message_id
-            except Exception as e:
-                logger.error(
-                    f"[{self.agent_id}] Direct delivery failed: {e}",
-                    extra={"message_id": message_id, "topic": topic},
-                )
+        # Tier 2: Direct delivery to actors subscribed to topic
+        if await self._deliver_to_registry_actors(topic, message, message_id, message_type):
+            return message_id
 
-        # Last resort: log the message (should not happen in production)
+        # Tier 3: Queue for later delivery (last resort)
         logger.warning(
             f"[{self.agent_id}] Message {message_id} queued (no delivery mechanism available)",
             extra={"message_type": message_type, "topic": topic},
         )
-
-        # Store in internal queue for later delivery
         self._queue_message(message)
         return message_id
+
+    async def _send_via_event_mesh(
+        self,
+        topic: str,
+        message: ActorMessage,
+        message_id: str,
+        message_type: str,
+    ) -> bool:
+        """
+        Attempt to send message via event mesh.
+
+        Args:
+            topic: Target topic
+            message: The ActorMessage to send
+            message_id: Message identifier for logging
+            message_type: Message type for logging
+
+        Returns:
+            True if sent successfully, False otherwise
+        """
+        event_mesh = self._event_mesh or self.get_state("_event_mesh")
+        if event_mesh is None:
+            return False
+
+        try:
+            await event_mesh.send_to_json(
+                topic,
+                {
+                    "type": message.message_type,
+                    "from": self.agent_id,
+                    "content": message.content,
+                    "correlation_id": message.correlation_id,
+                    "reply_to": message.reply_to,
+                    "metadata": message.metadata,
+                    "timestamp": message.timestamp,
+                },
+            )
+            logger.info(
+                f"[{self.agent_id}] Message {message_id} sent via event mesh to {topic}",
+                extra={"message_type": message_type},
+            )
+            return True
+        except Exception as e:
+            logger.error(
+                f"[{self.agent_id}] Event mesh send failed: {e}",
+                extra={"message_id": message_id, "topic": topic},
+            )
+            return False
+
+    async def _deliver_to_registry_actors(
+        self,
+        topic: str,
+        message: ActorMessage,
+        message_id: str,
+        message_type: str,
+    ) -> bool:
+        """
+        Attempt to deliver message directly to actors subscribed to the topic.
+
+        Args:
+            topic: Target topic
+            message: The ActorMessage to deliver
+            message_id: Message identifier for logging
+            message_type: Message type for logging
+
+        Returns:
+            True if delivered successfully to at least one actor, False otherwise
+        """
+        actor_registry = self._get_actor_registry()
+        if actor_registry is None:
+            return False
+
+        try:
+            delivered = False
+            for reg_actor in actor_registry.values():
+                if topic in getattr(reg_actor, "topics", []):
+                    await reg_actor.put_message(message)
+                    delivered = True
+            if delivered:
+                logger.info(
+                    f"[{self.agent_id}] Message {message_id} delivered directly to topic subscribers",
+                    extra={"message_type": message_type},
+                )
+                return True
+            return False
+        except Exception as e:
+            logger.error(
+                f"[{self.agent_id}] Direct delivery failed: {e}",
+                extra={"message_id": message_id, "topic": topic},
+            )
+            return False
 
     def _queue_message(self, message: ActorMessage) -> None:
         """Queue a message for later delivery when event mesh becomes available."""
@@ -759,6 +805,8 @@ Please provide your analysis and recommendation for this collective task."""
 
 # Bind message handling methods to AgentActor
 AgentActor.send = AgentActorMessageHandling.send
+AgentActor._send_via_event_mesh = AgentActorMessageHandling._send_via_event_mesh
+AgentActor._deliver_to_registry_actors = AgentActorMessageHandling._deliver_to_registry_actors
 AgentActor._queue_message = AgentActorMessageHandling._queue_message
 AgentActor.send_to_actor = AgentActorMessageHandling.send_to_actor
 AgentActor.send_with_reply = AgentActorMessageHandling.send_with_reply

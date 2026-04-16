@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-16T16:25:37.480215+00:00",
+    "generated_at": "2026-04-16T18:20:07.825475+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -1160,16 +1160,23 @@
         {
           "qualified_name": "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling",
           "start_line": 23,
-          "end_line": 757,
+          "end_line": 803,
           "node_type": "CLASS",
           "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling.send",
           "start_line": 26,
-          "end_line": 120,
+          "end_line": 75,
           "node_type": "METHOD",
           "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._send_via_event_mesh",
+          "start_line": 77,
+          "end_line": 123,
+          "node_type": "METHOD",
+          "status": "added"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._queue_message",
@@ -1177,6 +1184,13 @@
           "end_line": 130,
           "node_type": "METHOD",
           "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._deliver_to_registry_actors",
+          "start_line": 125,
+          "end_line": 166,
+          "node_type": "METHOD",
+          "status": "added"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling.send_to_actor",
@@ -1298,16 +1312,37 @@
         {
           "qualified_name": "src.heretek_swarm.actors.base.state_management.AgentActorStateManagement",
           "start_line": 23,
-          "end_line": 411,
+          "end_line": 459,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.base.state_management.AgentActorStateManagement.save_state",
           "start_line": 26,
-          "end_line": 138,
+          "end_line": 44,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.actors.base.state_management.AgentActorStateManagement._build_state_data",
+          "start_line": 46,
+          "end_line": 63,
+          "node_type": "METHOD",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.actors.base.state_management.AgentActorStateManagement._persist_via_repository",
+          "start_line": 65,
+          "end_line": 99,
+          "node_type": "METHOD",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.actors.base.state_management.AgentActorStateManagement._persist_via_db_pool",
+          "start_line": 101,
+          "end_line": 160,
+          "node_type": "METHOD",
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.base.state_management.AgentActorStateManagement.load_state",
@@ -1315,6 +1350,13 @@
           "end_line": 232,
           "node_type": "METHOD",
           "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.actors.base.state_management.AgentActorStateManagement._persist_via_filesystem",
+          "start_line": 162,
+          "end_line": 186,
+          "node_type": "METHOD",
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.base.state_management.AgentActorStateManagement.save_checkpoint",
@@ -56107,7 +56149,7 @@
       "file_path": "src/heretek_swarm/actors/base/message_handling.py",
       "qualified_name": "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling",
       "start_line": 23,
-      "end_line": 757,
+      "end_line": 803,
       "type": "CLASS",
       "status": "modified"
     },
@@ -56115,9 +56157,17 @@
       "file_path": "src/heretek_swarm/actors/base/message_handling.py",
       "qualified_name": "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling.send",
       "start_line": 26,
-      "end_line": 120,
+      "end_line": 75,
       "type": "METHOD",
       "status": "modified"
+    },
+    "src/heretek_swarm/actors/base/message_handling.py|src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._send_via_event_mesh": {
+      "file_path": "src/heretek_swarm/actors/base/message_handling.py",
+      "qualified_name": "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._send_via_event_mesh",
+      "start_line": 77,
+      "end_line": 123,
+      "type": "METHOD",
+      "status": "added"
     },
     "src/heretek_swarm/actors/base/message_handling.py|src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._queue_message": {
       "file_path": "src/heretek_swarm/actors/base/message_handling.py",
@@ -56126,6 +56176,14 @@
       "end_line": 130,
       "type": "METHOD",
       "status": "unchanged"
+    },
+    "src/heretek_swarm/actors/base/message_handling.py|src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._deliver_to_registry_actors": {
+      "file_path": "src/heretek_swarm/actors/base/message_handling.py",
+      "qualified_name": "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._deliver_to_registry_actors",
+      "start_line": 125,
+      "end_line": 166,
+      "type": "METHOD",
+      "status": "added"
     },
     "src/heretek_swarm/actors/base/message_handling.py|src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling.send_to_actor": {
       "file_path": "src/heretek_swarm/actors/base/message_handling.py",
@@ -56259,17 +56317,41 @@
       "file_path": "src/heretek_swarm/actors/base/state_management.py",
       "qualified_name": "src.heretek_swarm.actors.base.state_management.AgentActorStateManagement",
       "start_line": 23,
-      "end_line": 411,
+      "end_line": 459,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/base/state_management.py|src.heretek_swarm.actors.base.state_management.AgentActorStateManagement.save_state": {
       "file_path": "src/heretek_swarm/actors/base/state_management.py",
       "qualified_name": "src.heretek_swarm.actors.base.state_management.AgentActorStateManagement.save_state",
       "start_line": 26,
-      "end_line": 138,
+      "end_line": 44,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
+    },
+    "src/heretek_swarm/actors/base/state_management.py|src.heretek_swarm.actors.base.state_management.AgentActorStateManagement._build_state_data": {
+      "file_path": "src/heretek_swarm/actors/base/state_management.py",
+      "qualified_name": "src.heretek_swarm.actors.base.state_management.AgentActorStateManagement._build_state_data",
+      "start_line": 46,
+      "end_line": 63,
+      "type": "METHOD",
+      "status": "modified"
+    },
+    "src/heretek_swarm/actors/base/state_management.py|src.heretek_swarm.actors.base.state_management.AgentActorStateManagement._persist_via_repository": {
+      "file_path": "src/heretek_swarm/actors/base/state_management.py",
+      "qualified_name": "src.heretek_swarm.actors.base.state_management.AgentActorStateManagement._persist_via_repository",
+      "start_line": 65,
+      "end_line": 99,
+      "type": "METHOD",
+      "status": "modified"
+    },
+    "src/heretek_swarm/actors/base/state_management.py|src.heretek_swarm.actors.base.state_management.AgentActorStateManagement._persist_via_db_pool": {
+      "file_path": "src/heretek_swarm/actors/base/state_management.py",
+      "qualified_name": "src.heretek_swarm.actors.base.state_management.AgentActorStateManagement._persist_via_db_pool",
+      "start_line": 101,
+      "end_line": 160,
+      "type": "METHOD",
+      "status": "modified"
     },
     "src/heretek_swarm/actors/base/state_management.py|src.heretek_swarm.actors.base.state_management.AgentActorStateManagement.load_state": {
       "file_path": "src/heretek_swarm/actors/base/state_management.py",
@@ -56278,6 +56360,14 @@
       "end_line": 232,
       "type": "METHOD",
       "status": "unchanged"
+    },
+    "src/heretek_swarm/actors/base/state_management.py|src.heretek_swarm.actors.base.state_management.AgentActorStateManagement._persist_via_filesystem": {
+      "file_path": "src/heretek_swarm/actors/base/state_management.py",
+      "qualified_name": "src.heretek_swarm.actors.base.state_management.AgentActorStateManagement._persist_via_filesystem",
+      "start_line": 162,
+      "end_line": 186,
+      "type": "METHOD",
+      "status": "modified"
     },
     "src/heretek_swarm/actors/base/state_management.py|src.heretek_swarm.actors.base.state_management.AgentActorStateManagement.save_checkpoint": {
       "file_path": "src/heretek_swarm/actors/base/state_management.py",
@@ -115916,7 +116006,9 @@
           "methods": [
             "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling",
             "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling.send",
+            "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._send_via_event_mesh",
             "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._queue_message",
+            "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._deliver_to_registry_actors",
             "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling.send_to_actor",
             "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling.send_with_reply",
             "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling.send_with_reply.handle_reply",
@@ -115941,7 +116033,11 @@
           "methods": [
             "src.heretek_swarm.actors.base.state_management.AgentActorStateManagement",
             "src.heretek_swarm.actors.base.state_management.AgentActorStateManagement.save_state",
+            "src.heretek_swarm.actors.base.state_management.AgentActorStateManagement._build_state_data",
+            "src.heretek_swarm.actors.base.state_management.AgentActorStateManagement._persist_via_repository",
+            "src.heretek_swarm.actors.base.state_management.AgentActorStateManagement._persist_via_db_pool",
             "src.heretek_swarm.actors.base.state_management.AgentActorStateManagement.load_state",
+            "src.heretek_swarm.actors.base.state_management.AgentActorStateManagement._persist_via_filesystem",
             "src.heretek_swarm.actors.base.state_management.AgentActorStateManagement.save_checkpoint",
             "src.heretek_swarm.actors.base.state_management.AgentActorStateManagement.restore_from_checkpoint",
             "src.heretek_swarm.actors.base.state_management.AgentActorStateManagement.get_checkpoints",
@@ -122770,7 +122866,9 @@
               "methods": [
                 "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling",
                 "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling.send",
+                "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._send_via_event_mesh",
                 "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._queue_message",
+                "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._deliver_to_registry_actors",
                 "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling.send_to_actor",
                 "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling.send_with_reply",
                 "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling.send_with_reply.handle_reply",
@@ -122795,7 +122893,11 @@
               "methods": [
                 "src.heretek_swarm.actors.base.state_management.AgentActorStateManagement",
                 "src.heretek_swarm.actors.base.state_management.AgentActorStateManagement.save_state",
+                "src.heretek_swarm.actors.base.state_management.AgentActorStateManagement._build_state_data",
+                "src.heretek_swarm.actors.base.state_management.AgentActorStateManagement._persist_via_repository",
+                "src.heretek_swarm.actors.base.state_management.AgentActorStateManagement._persist_via_db_pool",
                 "src.heretek_swarm.actors.base.state_management.AgentActorStateManagement.load_state",
+                "src.heretek_swarm.actors.base.state_management.AgentActorStateManagement._persist_via_filesystem",
                 "src.heretek_swarm.actors.base.state_management.AgentActorStateManagement.save_checkpoint",
                 "src.heretek_swarm.actors.base.state_management.AgentActorStateManagement.restore_from_checkpoint",
                 "src.heretek_swarm.actors.base.state_management.AgentActorStateManagement.get_checkpoints",
@@ -127305,7 +127407,9 @@
                   "methods": [
                     "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling",
                     "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling.send",
+                    "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._send_via_event_mesh",
                     "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._queue_message",
+                    "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._deliver_to_registry_actors",
                     "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling.send_to_actor",
                     "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling.send_with_reply",
                     "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling.send_with_reply.handle_reply",
@@ -127330,7 +127434,11 @@
                   "methods": [
                     "src.heretek_swarm.actors.base.state_management.AgentActorStateManagement",
                     "src.heretek_swarm.actors.base.state_management.AgentActorStateManagement.save_state",
+                    "src.heretek_swarm.actors.base.state_management.AgentActorStateManagement._build_state_data",
+                    "src.heretek_swarm.actors.base.state_management.AgentActorStateManagement._persist_via_repository",
+                    "src.heretek_swarm.actors.base.state_management.AgentActorStateManagement._persist_via_db_pool",
                     "src.heretek_swarm.actors.base.state_management.AgentActorStateManagement.load_state",
+                    "src.heretek_swarm.actors.base.state_management.AgentActorStateManagement._persist_via_filesystem",
                     "src.heretek_swarm.actors.base.state_management.AgentActorStateManagement.save_checkpoint",
                     "src.heretek_swarm.actors.base.state_management.AgentActorStateManagement.restore_from_checkpoint",
                     "src.heretek_swarm.actors.base.state_management.AgentActorStateManagement.get_checkpoints",
@@ -128162,7 +128270,9 @@
                       "methods": [
                         "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling",
                         "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling.send",
+                        "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._send_via_event_mesh",
                         "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._queue_message",
+                        "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._deliver_to_registry_actors",
                         "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling.send_to_actor",
                         "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling.send_with_reply",
                         "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling.send_with_reply.handle_reply",
@@ -128187,7 +128297,11 @@
                       "methods": [
                         "src.heretek_swarm.actors.base.state_management.AgentActorStateManagement",
                         "src.heretek_swarm.actors.base.state_management.AgentActorStateManagement.save_state",
+                        "src.heretek_swarm.actors.base.state_management.AgentActorStateManagement._build_state_data",
+                        "src.heretek_swarm.actors.base.state_management.AgentActorStateManagement._persist_via_repository",
+                        "src.heretek_swarm.actors.base.state_management.AgentActorStateManagement._persist_via_db_pool",
                         "src.heretek_swarm.actors.base.state_management.AgentActorStateManagement.load_state",
+                        "src.heretek_swarm.actors.base.state_management.AgentActorStateManagement._persist_via_filesystem",
                         "src.heretek_swarm.actors.base.state_management.AgentActorStateManagement.save_checkpoint",
                         "src.heretek_swarm.actors.base.state_management.AgentActorStateManagement.restore_from_checkpoint",
                         "src.heretek_swarm.actors.base.state_management.AgentActorStateManagement.get_checkpoints",
@@ -128307,7 +128421,9 @@
                           "methods": [
                             "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling",
                             "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling.send",
+                            "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._send_via_event_mesh",
                             "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._queue_message",
+                            "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling._deliver_to_registry_actors",
                             "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling.send_to_actor",
                             "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling.send_with_reply",
                             "src.heretek_swarm.actors.base.message_handling.AgentActorMessageHandling.send_with_reply.handle_reply",
@@ -128332,7 +128448,11 @@
                           "methods": [
                             "src.heretek_swarm.actors.base.state_management.AgentActorStateManagement",
                             "src.heretek_swarm.actors.base.state_management.AgentActorStateManagement.save_state",
+                            "src.heretek_swarm.actors.base.state_management.AgentActorStateManagement._build_state_data",
+                            "src.heretek_swarm.actors.base.state_management.AgentActorStateManagement._persist_via_repository",
+                            "src.heretek_swarm.actors.base.state_management.AgentActorStateManagement._persist_via_db_pool",
                             "src.heretek_swarm.actors.base.state_management.AgentActorStateManagement.load_state",
+                            "src.heretek_swarm.actors.base.state_management.AgentActorStateManagement._persist_via_filesystem",
                             "src.heretek_swarm.actors.base.state_management.AgentActorStateManagement.save_checkpoint",
                             "src.heretek_swarm.actors.base.state_management.AgentActorStateManagement.restore_from_checkpoint",
                             "src.heretek_swarm.actors.base.state_management.AgentActorStateManagement.get_checkpoints",
