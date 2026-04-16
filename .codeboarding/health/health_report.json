@@ -1,7 +1,7 @@
 {
   "repository_name": "heretek-swarm",
-  "timestamp": "2026-04-16T18:22:26.230464+00:00",
-  "overall_score": 0.989971595849516,
+  "timestamp": "2026-04-16T18:40:21.997297+00:00",
+  "overall_score": 0.9885962373371925,
   "check_summaries": [
     {
       "check_name": "function_size",
@@ -790,9 +790,9 @@
       "description": "Detects unused imports, variables, functions, and dead code via LSP diagnostics",
       "language": "Python",
       "check_type": "standard",
-      "total_entities_checked": 26,
-      "findings_count": 26,
-      "warning_count": 10,
+      "total_entities_checked": 50,
+      "findings_count": 50,
+      "warning_count": 11,
       "score": 0.0,
       "finding_groups": [
         {
@@ -911,6 +911,167 @@
               "line_start": 664,
               "line_end": 664,
               "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/rag.py",
+              "line_start": 57,
+              "line_end": 57,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_config\" is not accessed",
+              "file_path": "src/heretek_swarm/api/rag.py",
+              "line_start": 78,
+              "line_end": 78,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/rag.py",
+              "line_start": 115,
+              "line_end": 115,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/rag.py",
+              "line_start": 184,
+              "line_end": 184,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/rag.py",
+              "line_start": 233,
+              "line_end": 233,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/rag.py",
+              "line_start": 272,
+              "line_end": 272,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/rag.py",
+              "line_start": 316,
+              "line_end": 316,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/rag.py",
+              "line_start": 353,
+              "line_end": 353,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/rag.py",
+              "line_start": 393,
+              "line_end": 393,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"UTC\" is not accessed",
+              "file_path": "src/heretek_swarm/api/main.py",
+              "line_start": 18,
+              "line_end": 18,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"app\" is not accessed",
+              "file_path": "src/heretek_swarm/api/main.py",
+              "line_start": 87,
+              "line_end": 87,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/main.py",
+              "line_start": 451,
+              "line_end": 451,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/main.py",
+              "line_start": 480,
+              "line_end": 480,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/main.py",
+              "line_start": 514,
+              "line_end": 514,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/main.py",
+              "line_start": 542,
+              "line_end": 542,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/main.py",
+              "line_start": 572,
+              "line_end": 572,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/main.py",
+              "line_start": 591,
+              "line_end": 591,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/main.py",
+              "line_start": 657,
+              "line_end": 657,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/main.py",
+              "line_start": 702,
+              "line_end": 702,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/main.py",
+              "line_start": 724,
+              "line_end": 724,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/main.py",
+              "line_start": 769,
+              "line_end": 769,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/main.py",
+              "line_start": 808,
+              "line_end": 808,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"api_key\" is not accessed",
+              "file_path": "src/heretek_swarm/api/wizard.py",
+              "line_start": 570,
+              "line_end": 570,
+              "metric_value": 0.0
             }
           ]
         },
@@ -987,6 +1148,13 @@
               "file_path": "src/heretek_swarm/security/__init__.py",
               "line_start": 207,
               "line_end": 207,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"UTC\" is not accessed",
+              "file_path": "src/heretek_swarm/api/main.py",
+              "line_start": 18,
+              "line_end": 18,
               "metric_value": 0.0
             }
           ]
@@ -1335,6 +1503,18 @@
       "composite_risk_score": 100.0
     },
     {
+      "file_path": "src/heretek_swarm/api/main.py",
+      "total_findings": 14,
+      "warning_findings": 1,
+      "composite_risk_score": 55.0
+    },
+    {
+      "file_path": "src/heretek_swarm/api/rag.py",
+      "total_findings": 9,
+      "warning_findings": 0,
+      "composite_risk_score": 50.0
+    },
+    {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
       "total_findings": 3,
       "warning_findings": 3,
@@ -1432,18 +1612,6 @@
     },
     {
       "file_path": "src/heretek_swarm/consciousness/phi_training.py",
-      "total_findings": 2,
-      "warning_findings": 2,
-      "composite_risk_score": 30.0
-    },
-    {
-      "file_path": "src/heretek_swarm/collective/adaptive_learning.py",
-      "total_findings": 2,
-      "warning_findings": 2,
-      "composite_risk_score": 30.0
-    },
-    {
-      "file_path": "src/heretek_swarm/config/crud.py",
       "total_findings": 2,
       "warning_findings": 2,
       "composite_risk_score": 30.0

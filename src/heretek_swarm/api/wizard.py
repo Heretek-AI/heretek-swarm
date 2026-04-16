@@ -399,6 +399,56 @@ async def get_config_status() -> dict[str, Any]:
 
 
 # =============================================================================
+# Validation Error Messages (Constants)
+# =============================================================================
+
+API_KEY_REQUIRED = "API key is required"
+CONNECTION_TIMED_OUT = "Connection timed out"
+CONNECTION_FAILED = "Connection failed: {error}"
+INVALID_API_KEY = "Invalid API key"
+LITE_LLM_NOT_HEALTHY = "LiteLLM proxy not healthy"
+OLLAMA_NOT_RUNNING = "Connection timed out - is Ollama running?"
+UNKNOWN_PROVIDER_TYPE = "Unknown provider type"
+VALIDATION_FAILED = "Validation failed: {error}"
+
+
+# =============================================================================
+# Provider Validation Dispatch
+# =============================================================================
+
+async def _dispatch_validation(
+    provider_id: str,
+    api_key: str | None,
+    base_url: str,
+) -> dict[str, Any]:
+    """
+    Dispatch to the appropriate validator based on provider type.
+
+    Args:
+        provider_id: Provider identifier
+        api_key: API key to validate
+        base_url: Base URL for the provider
+
+    Returns:
+        Validation result
+    """
+    validators = {
+        "anthropic": _validate_anthropic,
+        "openai": _validate_openai,
+        "ollama": _validate_ollama,
+        "groq": _validate_groq,
+        "mistral": _validate_mistral,
+        "deepseek": _validate_deepseek,
+        "local": _validate_local,
+    }
+
+    validator = validators.get(provider_id)
+    if validator:
+        return await validator(api_key, base_url)
+    return {"valid": False, "error": UNKNOWN_PROVIDER_TYPE}
+
+
+# =============================================================================
 # Validation Endpoint
 # =============================================================================
 
@@ -432,28 +482,18 @@ async def validate_credentials(
             "provider_id": provider_id,
         }
 
-    # Perform validation based on provider type
+    # Perform validation via dispatch
     try:
-        if provider_id == "anthropic":
-            return await _validate_anthropic(api_key, base_url or provider["base_url"])
-        if provider_id == "openai":
-            return await _validate_openai(api_key, base_url or provider["base_url"])
-        if provider_id == "ollama":
-            return await _validate_ollama(api_key, base_url or provider["base_url"])
-        if provider_id == "groq":
-            return await _validate_groq(api_key, base_url or provider["base_url"])
-        if provider_id == "mistral":
-            return await _validate_mistral(api_key, base_url or provider["base_url"])
-        if provider_id == "deepseek":
-            return await _validate_deepseek(api_key, base_url or provider["base_url"])
-        if provider_id == "local":
-            return await _validate_local(base_url or provider["base_url"], api_key)
-        return {"valid": False, "error": "Unknown provider type"}
+        result = await _dispatch_validation(
+            provider_id, api_key, base_url or provider["base_url"]
+        )
+        result["provider_id"] = provider_id
+        return result
     except Exception as e:
         logger.error("Provider validation failed", provider=provider_id, error=str(e))
         return {
             "valid": False,
-            "error": f"Validation failed: {e!s}",
+            "error": VALIDATION_FAILED.format(error=str(e)),
             "provider_id": provider_id,
         }
 

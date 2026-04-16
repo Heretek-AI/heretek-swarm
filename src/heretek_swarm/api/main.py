@@ -91,13 +91,40 @@ async def lifespan(app: FastAPI):
     # Startup
     logger.info("Starting Heretek Swarm API...")
 
-    # Initialize ConfigurationService FIRST before other services
+    await _init_config_service()
+    await _init_supervisor()
+    await _init_memory_store()
+    await _init_mem0()
+    await _log_startup_complete()
+
+    yield
+
+    # Shutdown
+    logger.info("Shutting down Heretek Swarm API...")
+
+    if supervisor:
+        await supervisor.terminate_all()
+
+    if mem0_backend:
+        await mem0_backend.shutdown()
+
+    if memory_store:
+        await memory_store.disconnect()
+
+    # Shutdown ConfigurationService
+    await shutdown_config_service()
+    logger.info("ConfigurationService shutdown complete")
+
+
+async def _init_config_service() -> None:
+    """Initialize ConfigurationService and loader."""
+    global mem0_backend
+
     config_source = "environment"
     try:
         await initialize_config_service()
         await initialize_config_loader()
 
-        # Check if configurations are loaded from database
         config_service = get_config_service()
         rate_limit_config = await config_service.get_config("rate_limit.enabled")
         if rate_limit_config is not None:
@@ -106,7 +133,6 @@ async def lifespan(app: FastAPI):
         else:
             logger.info("Configuration falling back to environment variables")
 
-        # Migrate LLM and Embedding providers from .env to database
         try:
             migration_result = await config_service.migrate_from_env()
             if migration_result["migrated"]:
@@ -117,13 +143,22 @@ async def lifespan(app: FastAPI):
         logger.warning("ConfigurationService not available", error=str(e))
         logger.info("Using environment variables for configuration")
 
-    # Initialize supervisor
+    return config_source
+
+
+async def _init_supervisor() -> None:
+    """Initialize ActorSupervisor."""
+    global supervisor
+
     supervisor = ActorSupervisor()
     logger.info("ActorSupervisor initialized")
 
-    # Initialize memory store
+
+async def _init_memory_store() -> None:
+    """Initialize PersistentMemoryStore."""
+    global memory_store
+
     try:
-        # Use ConfigurationService to get DATABASE_URL
         database_url = await get_config("database.url", default=os.environ.get("DATABASE_URL"))
         if not database_url:
             raise ValueError("DATABASE_URL is required")
@@ -134,7 +169,11 @@ async def lifespan(app: FastAPI):
         logger.warning("PersistentMemoryStore not available", error=str(e))
         memory_store = None
 
-    # Initialize mem0 backend if available
+
+async def _init_mem0() -> None:
+    """Initialize Mem0Backend if available."""
+    global mem0_backend
+
     if MEM0_AVAILABLE:
         try:
             qdrant_host = await get_config(
@@ -161,30 +200,13 @@ async def lifespan(app: FastAPI):
     else:
         logger.info("mem0 not installed - using PostgreSQL memory only")
 
-    # Log configuration source
+
+async def _log_startup_complete() -> None:
+    """Log application startup completion."""
     logger.info(
         "Application startup complete",
-        config_source=config_source,
         rate_limit_enabled=await get_config("rate_limit.enabled", default=True),
     )
-
-    yield
-
-    # Shutdown
-    logger.info("Shutting down Heretek Swarm API...")
-
-    if supervisor:
-        await supervisor.terminate_all()
-
-    if mem0_backend:
-        await mem0_backend.shutdown()
-
-    if memory_store:
-        await memory_store.disconnect()
-
-    # Shutdown ConfigurationService
-    await shutdown_config_service()
-    logger.info("ConfigurationService shutdown complete")
 
 
 # Create FastAPI application

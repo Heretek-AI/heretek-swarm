@@ -405,41 +405,10 @@ async def update_rag_config(
     pipeline = await get_rag_pipeline()
 
     try:
-        # Update chunking config
-        if "chunking" in config:
-            chunking = config["chunking"]
-            if "strategy" in chunking:
-                pipeline.config.processing.chunk_strategy = chunking["strategy"]
-            if "chunk_size" in chunking:
-                pipeline.config.processing.chunk_size = chunking["chunk_size"]
-            if "chunk_overlap" in chunking:
-                pipeline.config.processing.chunk_overlap = chunking["chunk_overlap"]
-
-        # Update embedding config
-        if "embedding" in config:
-            embedding = config["embedding"]
-            if "provider" in embedding:
-                pipeline.config.embedding.provider = embedding["provider"]
-            if "model" in embedding:
-                pipeline.config.embedding.model = embedding["model"]
-
-        # Update retrieval config
-        if "retrieval" in config:
-            retrieval = config["retrieval"]
-            if "mode" in retrieval:
-                pipeline.config.retrieval.mode = retrieval["mode"]
-            if "top_k" in retrieval:
-                pipeline.config.retrieval.top_k = retrieval["top_k"]
-            if "similarity_threshold" in retrieval:
-                pipeline.config.retrieval.similarity_threshold = retrieval["similarity_threshold"]
-
-        # Update storage config
-        if "storage" in config:
-            storage = config["storage"]
-            if "collection_name" in storage:
-                pipeline.config.collection_name = storage["collection_name"]
-            if "persist_processed" in storage:
-                pipeline.config.persist_processed = storage["persist_processed"]
+        _update_chunking_config(pipeline, config.get("chunking"))
+        _update_embedding_config(pipeline, config.get("embedding"))
+        _update_retrieval_config(pipeline, config.get("retrieval"))
+        _update_storage_config(pipeline, config.get("storage"))
 
         logger.info("rag_config_updated", config=config)
 
@@ -471,3 +440,47 @@ async def update_rag_config(
     except Exception as e:
         logger.error("update_rag_config_failed", error=str(e))
         raise HTTPException(status_code=500, detail=f"Failed to update RAG config: {e!s}")
+
+
+def _update_chunking_config(pipeline: RAGPipeline, chunking: dict[str, Any] | None) -> None:
+    """Update chunking configuration."""
+    if not chunking:
+        return
+    if "strategy" in chunking:
+        pipeline.config.processing.chunk_strategy = chunking["strategy"]
+    if "chunk_size" in chunking:
+        pipeline.config.processing.chunk_size = chunking["chunk_size"]
+    if "chunk_overlap" in chunking:
+        pipeline.config.processing.chunk_overlap = chunking["chunk_overlap"]
+
+
+def _update_embedding_config(pipeline: RAGPipeline, embedding: dict[str, Any] | None) -> None:
+    """Update embedding configuration."""
+    if not embedding:
+        return
+    if "provider" in embedding:
+        pipeline.config.embedding.provider = embedding["provider"]
+    if "model" in embedding:
+        pipeline.config.embedding.model = embedding["model"]
+
+
+def _update_retrieval_config(pipeline: RAGPipeline, retrieval: dict[str, Any] | None) -> None:
+    """Update retrieval configuration."""
+    if not retrieval:
+        return
+    if "mode" in retrieval:
+        pipeline.config.retrieval.mode = retrieval["mode"]
+    if "top_k" in retrieval:
+        pipeline.config.retrieval.top_k = retrieval["top_k"]
+    if "similarity_threshold" in retrieval:
+        pipeline.config.retrieval.similarity_threshold = retrieval["similarity_threshold"]
+
+
+def _update_storage_config(pipeline: RAGPipeline, storage: dict[str, Any] | None) -> None:
+    """Update storage configuration."""
+    if not storage:
+        return
+    if "collection_name" in storage:
+        pipeline.config.collection_name = storage["collection_name"]
+    if "persist_processed" in storage:
+        pipeline.config.persist_processed = storage["persist_processed"]
