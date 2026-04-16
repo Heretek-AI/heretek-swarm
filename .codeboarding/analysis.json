@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-16T18:40:20.499138+00:00",
+    "generated_at": "2026-04-16T18:45:06.785108+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -19044,7 +19044,7 @@
       ]
     },
     "src/heretek_swarm/consensus/deliberation.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.consensus.deliberation.Position",
@@ -19131,6 +19131,13 @@
           "status": "unchanged"
         },
         {
+          "qualified_name": "src.heretek_swarm.consensus.deliberation.PositionChange",
+          "start_line": 300,
+          "end_line": 318,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
           "qualified_name": "src.heretek_swarm.consensus.deliberation.ConsensusConfidence",
           "start_line": 311,
           "end_line": 368,
@@ -19159,13 +19166,6 @@
           "status": "unchanged"
         },
         {
-          "qualified_name": "src.heretek_swarm.consensus.deliberation.DeliberationEngine",
-          "start_line": 429,
-          "end_line": 1067,
-          "node_type": "CLASS",
-          "status": "unchanged"
-        },
-        {
           "qualified_name": "src.heretek_swarm.consensus.deliberation.DeliberationEngine.__init__",
           "start_line": 444,
           "end_line": 476,
@@ -19178,6 +19178,13 @@
           "end_line": 527,
           "node_type": "METHOD",
           "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consensus.deliberation.DeliberationEngine",
+          "start_line": 481,
+          "end_line": 1398,
+          "node_type": "CLASS",
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.consensus.deliberation.DeliberationEngine.submit_argument",
@@ -19250,6 +19257,13 @@
           "status": "unchanged"
         },
         {
+          "qualified_name": "src.heretek_swarm.consensus.deliberation.DeliberationEngine.record_position_change",
+          "start_line": 975,
+          "end_line": 1014,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
           "qualified_name": "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_deliberation_state",
           "start_line": 1016,
           "end_line": 1018,
@@ -19257,11 +19271,25 @@
           "status": "unchanged"
         },
         {
+          "qualified_name": "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_position_change_history",
+          "start_line": 1016,
+          "end_line": 1029,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
           "qualified_name": "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_position_distribution",
           "start_line": 1020,
           "end_line": 1039,
           "node_type": "METHOD",
           "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_agent_position_changes",
+          "start_line": 1031,
+          "end_line": 1047,
+          "node_type": "METHOD",
+          "status": "added"
         },
         {
           "qualified_name": "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_round_history",
@@ -19278,11 +19306,46 @@
           "status": "unchanged"
         },
         {
+          "qualified_name": "src.heretek_swarm.consensus.deliberation.DeliberationEngine.steward_tiebreaker",
+          "start_line": 1049,
+          "end_line": 1138,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
           "qualified_name": "src.heretek_swarm.consensus.deliberation.DeliberationEngine.cleanup_deliberation",
           "start_line": 1059,
           "end_line": 1067,
           "node_type": "METHOD",
           "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consensus.deliberation.DeliberationEngine._tiebreak_weighted_confidence",
+          "start_line": 1140,
+          "end_line": 1161,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consensus.deliberation.DeliberationEngine._tiebreak_first_position",
+          "start_line": 1163,
+          "end_line": 1185,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consensus.deliberation.DeliberationEngine._tiebreak_most_challenges",
+          "start_line": 1187,
+          "end_line": 1209,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consensus.deliberation.DeliberationEngine._determine_tiebreak_outcome",
+          "start_line": 1211,
+          "end_line": 1225,
+          "node_type": "METHOD",
+          "status": "added"
         }
       ]
     },
@@ -19834,18 +19897,18 @@
           "status": "unchanged"
         },
         {
-          "qualified_name": "src.heretek_swarm.consensus.immune.ImmuneResponseEngine",
-          "start_line": 961,
-          "end_line": 1395,
-          "node_type": "CLASS",
-          "status": "modified"
-        },
-        {
           "qualified_name": "src.heretek_swarm.consensus.immune.ImmuneResponseEngine.__init__",
           "start_line": 977,
           "end_line": 1018,
           "node_type": "METHOD",
           "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consensus.immune.ImmuneResponseEngine",
+          "start_line": 986,
+          "end_line": 1459,
+          "node_type": "CLASS",
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.consensus.immune.ImmuneResponseEngine.record_response",
@@ -19863,10 +19926,10 @@
         },
         {
           "qualified_name": "src.heretek_swarm.consensus.immune.ImmuneResponseEngine.analyze_and_learn",
-          "start_line": 1108,
+          "start_line": 1133,
           "end_line": 1172,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.consensus.immune.ImmuneResponseEngine.calculate_false_positive_rate",
@@ -19876,6 +19939,13 @@
           "status": "unchanged"
         },
         {
+          "qualified_name": "src.heretek_swarm.consensus.immune.ImmuneResponseEngine._classify_pattern_confirmation",
+          "start_line": 1174,
+          "end_line": 1205,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
           "qualified_name": "src.heretek_swarm.consensus.immune.ImmuneResponseEngine.get_pattern_recommendations",
           "start_line": 1190,
           "end_line": 1218,
@@ -19883,11 +19953,25 @@
           "status": "unchanged"
         },
         {
+          "qualified_name": "src.heretek_swarm.consensus.immune.ImmuneResponseEngine._handle_new_pattern",
+          "start_line": 1207,
+          "end_line": 1225,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
           "qualified_name": "src.heretek_swarm.consensus.immune.ImmuneResponseEngine.request_baseline_change",
           "start_line": 1220,
           "end_line": 1262,
           "node_type": "METHOD",
           "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consensus.immune.ImmuneResponseEngine._handle_existing_pattern",
+          "start_line": 1227,
+          "end_line": 1236,
+          "node_type": "METHOD",
+          "status": "added"
         },
         {
           "qualified_name": "src.heretek_swarm.consensus.immune.ImmuneResponseEngine._get_recent_responses",
@@ -20086,7 +20170,7 @@
       ]
     },
     "src/heretek_swarm/consensus/maker_enhanced.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.ReasoningChainStatus",
@@ -20105,9 +20189,9 @@
         {
           "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.ReasoningChain",
           "start_line": 103,
-          "end_line": 195,
+          "end_line": 206,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.ReasoningChain.add_step",
@@ -20119,9 +20203,23 @@
         {
           "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.ReasoningChain.validate_chain",
           "start_line": 143,
+          "end_line": 179,
+          "node_type": "METHOD",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.ReasoningChain._check_circular_reasoning",
+          "start_line": 181,
           "end_line": 195,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.ReasoningChain._check_confidence_consistency",
+          "start_line": 197,
+          "end_line": 206,
+          "node_type": "METHOD",
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EvidenceQuality",
@@ -20181,10 +20279,10 @@
         },
         {
           "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus",
-          "start_line": 334,
-          "end_line": 1393,
+          "start_line": 345,
+          "end_line": 1459,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.__init__",
@@ -20272,10 +20370,17 @@
         },
         {
           "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._cross_validate_reasoning",
-          "start_line": 952,
-          "end_line": 1056,
+          "start_line": 963,
+          "end_line": 1027,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._check_chain_contradictions",
+          "start_line": 1029,
+          "end_line": 1075,
+          "node_type": "METHOD",
+          "status": "added"
         },
         {
           "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._get_validation_results",
@@ -20292,11 +20397,25 @@
           "status": "unchanged"
         },
         {
+          "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._calculate_validation_scores",
+          "start_line": 1077,
+          "end_line": 1100,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
           "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.get_reasoning_chains",
           "start_line": 1090,
           "end_line": 1103,
           "node_type": "METHOD",
           "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._extract_domain",
+          "start_line": 1102,
+          "end_line": 1122,
+          "node_type": "METHOD",
+          "status": "added"
         },
         {
           "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.rollback_decision",
@@ -76167,6 +76286,14 @@
       "type": "CLASS",
       "status": "unchanged"
     },
+    "src/heretek_swarm/consensus/deliberation.py|src.heretek_swarm.consensus.deliberation.PositionChange": {
+      "file_path": "src/heretek_swarm/consensus/deliberation.py",
+      "qualified_name": "src.heretek_swarm.consensus.deliberation.PositionChange",
+      "start_line": 300,
+      "end_line": 318,
+      "type": "CLASS",
+      "status": "added"
+    },
     "src/heretek_swarm/consensus/deliberation.py|src.heretek_swarm.consensus.deliberation.ConsensusConfidence": {
       "file_path": "src/heretek_swarm/consensus/deliberation.py",
       "qualified_name": "src.heretek_swarm.consensus.deliberation.ConsensusConfidence",
@@ -76199,14 +76326,6 @@
       "type": "CLASS",
       "status": "unchanged"
     },
-    "src/heretek_swarm/consensus/deliberation.py|src.heretek_swarm.consensus.deliberation.DeliberationEngine": {
-      "file_path": "src/heretek_swarm/consensus/deliberation.py",
-      "qualified_name": "src.heretek_swarm.consensus.deliberation.DeliberationEngine",
-      "start_line": 429,
-      "end_line": 1067,
-      "type": "CLASS",
-      "status": "unchanged"
-    },
     "src/heretek_swarm/consensus/deliberation.py|src.heretek_swarm.consensus.deliberation.DeliberationEngine.__init__": {
       "file_path": "src/heretek_swarm/consensus/deliberation.py",
       "qualified_name": "src.heretek_swarm.consensus.deliberation.DeliberationEngine.__init__",
@@ -76222,6 +76341,14 @@
       "end_line": 527,
       "type": "METHOD",
       "status": "unchanged"
+    },
+    "src/heretek_swarm/consensus/deliberation.py|src.heretek_swarm.consensus.deliberation.DeliberationEngine": {
+      "file_path": "src/heretek_swarm/consensus/deliberation.py",
+      "qualified_name": "src.heretek_swarm.consensus.deliberation.DeliberationEngine",
+      "start_line": 481,
+      "end_line": 1398,
+      "type": "CLASS",
+      "status": "modified"
     },
     "src/heretek_swarm/consensus/deliberation.py|src.heretek_swarm.consensus.deliberation.DeliberationEngine.submit_argument": {
       "file_path": "src/heretek_swarm/consensus/deliberation.py",
@@ -76303,6 +76430,14 @@
       "type": "METHOD",
       "status": "unchanged"
     },
+    "src/heretek_swarm/consensus/deliberation.py|src.heretek_swarm.consensus.deliberation.DeliberationEngine.record_position_change": {
+      "file_path": "src/heretek_swarm/consensus/deliberation.py",
+      "qualified_name": "src.heretek_swarm.consensus.deliberation.DeliberationEngine.record_position_change",
+      "start_line": 975,
+      "end_line": 1014,
+      "type": "METHOD",
+      "status": "added"
+    },
     "src/heretek_swarm/consensus/deliberation.py|src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_deliberation_state": {
       "file_path": "src/heretek_swarm/consensus/deliberation.py",
       "qualified_name": "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_deliberation_state",
@@ -76311,6 +76446,14 @@
       "type": "METHOD",
       "status": "unchanged"
     },
+    "src/heretek_swarm/consensus/deliberation.py|src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_position_change_history": {
+      "file_path": "src/heretek_swarm/consensus/deliberation.py",
+      "qualified_name": "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_position_change_history",
+      "start_line": 1016,
+      "end_line": 1029,
+      "type": "METHOD",
+      "status": "added"
+    },
     "src/heretek_swarm/consensus/deliberation.py|src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_position_distribution": {
       "file_path": "src/heretek_swarm/consensus/deliberation.py",
       "qualified_name": "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_position_distribution",
@@ -76318,6 +76461,14 @@
       "end_line": 1039,
       "type": "METHOD",
       "status": "unchanged"
+    },
+    "src/heretek_swarm/consensus/deliberation.py|src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_agent_position_changes": {
+      "file_path": "src/heretek_swarm/consensus/deliberation.py",
+      "qualified_name": "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_agent_position_changes",
+      "start_line": 1031,
+      "end_line": 1047,
+      "type": "METHOD",
+      "status": "added"
     },
     "src/heretek_swarm/consensus/deliberation.py|src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_round_history": {
       "file_path": "src/heretek_swarm/consensus/deliberation.py",
@@ -76335,6 +76486,14 @@
       "type": "METHOD",
       "status": "unchanged"
     },
+    "src/heretek_swarm/consensus/deliberation.py|src.heretek_swarm.consensus.deliberation.DeliberationEngine.steward_tiebreaker": {
+      "file_path": "src/heretek_swarm/consensus/deliberation.py",
+      "qualified_name": "src.heretek_swarm.consensus.deliberation.DeliberationEngine.steward_tiebreaker",
+      "start_line": 1049,
+      "end_line": 1138,
+      "type": "METHOD",
+      "status": "added"
+    },
     "src/heretek_swarm/consensus/deliberation.py|src.heretek_swarm.consensus.deliberation.DeliberationEngine.cleanup_deliberation": {
       "file_path": "src/heretek_swarm/consensus/deliberation.py",
       "qualified_name": "src.heretek_swarm.consensus.deliberation.DeliberationEngine.cleanup_deliberation",
@@ -76342,6 +76501,38 @@
       "end_line": 1067,
       "type": "METHOD",
       "status": "unchanged"
+    },
+    "src/heretek_swarm/consensus/deliberation.py|src.heretek_swarm.consensus.deliberation.DeliberationEngine._tiebreak_weighted_confidence": {
+      "file_path": "src/heretek_swarm/consensus/deliberation.py",
+      "qualified_name": "src.heretek_swarm.consensus.deliberation.DeliberationEngine._tiebreak_weighted_confidence",
+      "start_line": 1140,
+      "end_line": 1161,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/consensus/deliberation.py|src.heretek_swarm.consensus.deliberation.DeliberationEngine._tiebreak_first_position": {
+      "file_path": "src/heretek_swarm/consensus/deliberation.py",
+      "qualified_name": "src.heretek_swarm.consensus.deliberation.DeliberationEngine._tiebreak_first_position",
+      "start_line": 1163,
+      "end_line": 1185,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/consensus/deliberation.py|src.heretek_swarm.consensus.deliberation.DeliberationEngine._tiebreak_most_challenges": {
+      "file_path": "src/heretek_swarm/consensus/deliberation.py",
+      "qualified_name": "src.heretek_swarm.consensus.deliberation.DeliberationEngine._tiebreak_most_challenges",
+      "start_line": 1187,
+      "end_line": 1209,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/consensus/deliberation.py|src.heretek_swarm.consensus.deliberation.DeliberationEngine._determine_tiebreak_outcome": {
+      "file_path": "src/heretek_swarm/consensus/deliberation.py",
+      "qualified_name": "src.heretek_swarm.consensus.deliberation.DeliberationEngine._determine_tiebreak_outcome",
+      "start_line": 1211,
+      "end_line": 1225,
+      "type": "METHOD",
+      "status": "added"
     },
     "src/heretek_swarm/consensus/expertise.py|src.heretek_swarm.consensus.expertise.ExpertiseLevel": {
       "file_path": "src/heretek_swarm/consensus/expertise.py",
@@ -76959,14 +77150,6 @@
       "type": "METHOD",
       "status": "unchanged"
     },
-    "src/heretek_swarm/consensus/immune.py|src.heretek_swarm.consensus.immune.ImmuneResponseEngine": {
-      "file_path": "src/heretek_swarm/consensus/immune.py",
-      "qualified_name": "src.heretek_swarm.consensus.immune.ImmuneResponseEngine",
-      "start_line": 961,
-      "end_line": 1395,
-      "type": "CLASS",
-      "status": "modified"
-    },
     "src/heretek_swarm/consensus/immune.py|src.heretek_swarm.consensus.immune.ImmuneResponseEngine.__init__": {
       "file_path": "src/heretek_swarm/consensus/immune.py",
       "qualified_name": "src.heretek_swarm.consensus.immune.ImmuneResponseEngine.__init__",
@@ -76974,6 +77157,14 @@
       "end_line": 1018,
       "type": "METHOD",
       "status": "unchanged"
+    },
+    "src/heretek_swarm/consensus/immune.py|src.heretek_swarm.consensus.immune.ImmuneResponseEngine": {
+      "file_path": "src/heretek_swarm/consensus/immune.py",
+      "qualified_name": "src.heretek_swarm.consensus.immune.ImmuneResponseEngine",
+      "start_line": 986,
+      "end_line": 1459,
+      "type": "CLASS",
+      "status": "modified"
     },
     "src/heretek_swarm/consensus/immune.py|src.heretek_swarm.consensus.immune.ImmuneResponseEngine.record_response": {
       "file_path": "src/heretek_swarm/consensus/immune.py",
@@ -76994,10 +77185,10 @@
     "src/heretek_swarm/consensus/immune.py|src.heretek_swarm.consensus.immune.ImmuneResponseEngine.analyze_and_learn": {
       "file_path": "src/heretek_swarm/consensus/immune.py",
       "qualified_name": "src.heretek_swarm.consensus.immune.ImmuneResponseEngine.analyze_and_learn",
-      "start_line": 1108,
+      "start_line": 1133,
       "end_line": 1172,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/consensus/immune.py|src.heretek_swarm.consensus.immune.ImmuneResponseEngine.calculate_false_positive_rate": {
       "file_path": "src/heretek_swarm/consensus/immune.py",
@@ -77007,6 +77198,14 @@
       "type": "METHOD",
       "status": "unchanged"
     },
+    "src/heretek_swarm/consensus/immune.py|src.heretek_swarm.consensus.immune.ImmuneResponseEngine._classify_pattern_confirmation": {
+      "file_path": "src/heretek_swarm/consensus/immune.py",
+      "qualified_name": "src.heretek_swarm.consensus.immune.ImmuneResponseEngine._classify_pattern_confirmation",
+      "start_line": 1174,
+      "end_line": 1205,
+      "type": "METHOD",
+      "status": "added"
+    },
     "src/heretek_swarm/consensus/immune.py|src.heretek_swarm.consensus.immune.ImmuneResponseEngine.get_pattern_recommendations": {
       "file_path": "src/heretek_swarm/consensus/immune.py",
       "qualified_name": "src.heretek_swarm.consensus.immune.ImmuneResponseEngine.get_pattern_recommendations",
@@ -77015,6 +77214,14 @@
       "type": "METHOD",
       "status": "unchanged"
     },
+    "src/heretek_swarm/consensus/immune.py|src.heretek_swarm.consensus.immune.ImmuneResponseEngine._handle_new_pattern": {
+      "file_path": "src/heretek_swarm/consensus/immune.py",
+      "qualified_name": "src.heretek_swarm.consensus.immune.ImmuneResponseEngine._handle_new_pattern",
+      "start_line": 1207,
+      "end_line": 1225,
+      "type": "METHOD",
+      "status": "added"
+    },
     "src/heretek_swarm/consensus/immune.py|src.heretek_swarm.consensus.immune.ImmuneResponseEngine.request_baseline_change": {
       "file_path": "src/heretek_swarm/consensus/immune.py",
       "qualified_name": "src.heretek_swarm.consensus.immune.ImmuneResponseEngine.request_baseline_change",
@@ -77022,6 +77229,14 @@
       "end_line": 1262,
       "type": "METHOD",
       "status": "modified"
+    },
+    "src/heretek_swarm/consensus/immune.py|src.heretek_swarm.consensus.immune.ImmuneResponseEngine._handle_existing_pattern": {
+      "file_path": "src/heretek_swarm/consensus/immune.py",
+      "qualified_name": "src.heretek_swarm.consensus.immune.ImmuneResponseEngine._handle_existing_pattern",
+      "start_line": 1227,
+      "end_line": 1236,
+      "type": "METHOD",
+      "status": "added"
     },
     "src/heretek_swarm/consensus/immune.py|src.heretek_swarm.consensus.immune.ImmuneResponseEngine._get_recent_responses": {
       "file_path": "src/heretek_swarm/consensus/immune.py",
@@ -77259,9 +77474,9 @@
       "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
       "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.ReasoningChain",
       "start_line": 103,
-      "end_line": 195,
+      "end_line": 206,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/consensus/maker_enhanced.py|src.heretek_swarm.consensus.maker_enhanced.ReasoningChain.add_step": {
       "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
@@ -77275,9 +77490,25 @@
       "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
       "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.ReasoningChain.validate_chain",
       "start_line": 143,
+      "end_line": 179,
+      "type": "METHOD",
+      "status": "modified"
+    },
+    "src/heretek_swarm/consensus/maker_enhanced.py|src.heretek_swarm.consensus.maker_enhanced.ReasoningChain._check_circular_reasoning": {
+      "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
+      "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.ReasoningChain._check_circular_reasoning",
+      "start_line": 181,
       "end_line": 195,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
+    },
+    "src/heretek_swarm/consensus/maker_enhanced.py|src.heretek_swarm.consensus.maker_enhanced.ReasoningChain._check_confidence_consistency": {
+      "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
+      "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.ReasoningChain._check_confidence_consistency",
+      "start_line": 197,
+      "end_line": 206,
+      "type": "METHOD",
+      "status": "modified"
     },
     "src/heretek_swarm/consensus/maker_enhanced.py|src.heretek_swarm.consensus.maker_enhanced.EvidenceQuality": {
       "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
@@ -77346,10 +77577,10 @@
     "src/heretek_swarm/consensus/maker_enhanced.py|src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus": {
       "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
       "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus",
-      "start_line": 334,
-      "end_line": 1393,
+      "start_line": 345,
+      "end_line": 1459,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/consensus/maker_enhanced.py|src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.__init__": {
       "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
@@ -77450,10 +77681,18 @@
     "src/heretek_swarm/consensus/maker_enhanced.py|src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._cross_validate_reasoning": {
       "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
       "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._cross_validate_reasoning",
-      "start_line": 952,
-      "end_line": 1056,
+      "start_line": 963,
+      "end_line": 1027,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
+    },
+    "src/heretek_swarm/consensus/maker_enhanced.py|src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._check_chain_contradictions": {
+      "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
+      "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._check_chain_contradictions",
+      "start_line": 1029,
+      "end_line": 1075,
+      "type": "METHOD",
+      "status": "added"
     },
     "src/heretek_swarm/consensus/maker_enhanced.py|src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._get_validation_results": {
       "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
@@ -77471,6 +77710,14 @@
       "type": "METHOD",
       "status": "unchanged"
     },
+    "src/heretek_swarm/consensus/maker_enhanced.py|src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._calculate_validation_scores": {
+      "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
+      "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._calculate_validation_scores",
+      "start_line": 1077,
+      "end_line": 1100,
+      "type": "METHOD",
+      "status": "added"
+    },
     "src/heretek_swarm/consensus/maker_enhanced.py|src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.get_reasoning_chains": {
       "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
       "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.get_reasoning_chains",
@@ -77478,6 +77725,14 @@
       "end_line": 1103,
       "type": "METHOD",
       "status": "unchanged"
+    },
+    "src/heretek_swarm/consensus/maker_enhanced.py|src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._extract_domain": {
+      "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
+      "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._extract_domain",
+      "start_line": 1102,
+      "end_line": 1122,
+      "type": "METHOD",
+      "status": "added"
     },
     "src/heretek_swarm/consensus/maker_enhanced.py|src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.rollback_decision": {
       "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
@@ -119239,7 +119494,7 @@
         },
         {
           "file_path": "src/heretek_swarm/consensus/deliberation.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "src.heretek_swarm.consensus.deliberation.Position",
             "src.heretek_swarm.consensus.deliberation.DeliberationOutcome",
@@ -119253,13 +119508,14 @@
             "src.heretek_swarm.consensus.deliberation.CounterArgument.calculate_effectiveness",
             "src.heretek_swarm.consensus.deliberation.DeliberationRound",
             "src.heretek_swarm.consensus.deliberation.DissentRecord",
+            "src.heretek_swarm.consensus.deliberation.PositionChange",
             "src.heretek_swarm.consensus.deliberation.ConsensusConfidence",
             "src.heretek_swarm.consensus.deliberation.ConsensusConfidence.calculate",
             "src.heretek_swarm.consensus.deliberation.DeliberationResult",
             "src.heretek_swarm.consensus.deliberation.DeliberationConfig",
-            "src.heretek_swarm.consensus.deliberation.DeliberationEngine",
             "src.heretek_swarm.consensus.deliberation.DeliberationEngine.__init__",
             "src.heretek_swarm.consensus.deliberation.DeliberationEngine.start_deliberation",
+            "src.heretek_swarm.consensus.deliberation.DeliberationEngine",
             "src.heretek_swarm.consensus.deliberation.DeliberationEngine.submit_argument",
             "src.heretek_swarm.consensus.deliberation.DeliberationEngine.submit_counter_argument",
             "src.heretek_swarm.consensus.deliberation.DeliberationEngine.submit_evidence",
@@ -119270,11 +119526,19 @@
             "src.heretek_swarm.consensus.deliberation.DeliberationEngine.calculate_consensus_confidence",
             "src.heretek_swarm.consensus.deliberation.DeliberationEngine._calculate_position_weights",
             "src.heretek_swarm.consensus.deliberation.DeliberationEngine.finalize_deliberation",
+            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.record_position_change",
             "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_deliberation_state",
+            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_position_change_history",
             "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_position_distribution",
+            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_agent_position_changes",
             "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_round_history",
             "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_statistics",
-            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.cleanup_deliberation"
+            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.steward_tiebreaker",
+            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.cleanup_deliberation",
+            "src.heretek_swarm.consensus.deliberation.DeliberationEngine._tiebreak_weighted_confidence",
+            "src.heretek_swarm.consensus.deliberation.DeliberationEngine._tiebreak_first_position",
+            "src.heretek_swarm.consensus.deliberation.DeliberationEngine._tiebreak_most_challenges",
+            "src.heretek_swarm.consensus.deliberation.DeliberationEngine._determine_tiebreak_outcome"
           ]
         },
         {
@@ -119364,14 +119628,17 @@
             "src.heretek_swarm.consensus.immune.AnomalyResponse",
             "src.heretek_swarm.consensus.immune.ImmuneLearningResult",
             "src.heretek_swarm.consensus.immune.ImmuneLearningResult.to_dict",
-            "src.heretek_swarm.consensus.immune.ImmuneResponseEngine",
             "src.heretek_swarm.consensus.immune.ImmuneResponseEngine.__init__",
+            "src.heretek_swarm.consensus.immune.ImmuneResponseEngine",
             "src.heretek_swarm.consensus.immune.ImmuneResponseEngine.record_response",
             "src.heretek_swarm.consensus.immune.ImmuneResponseEngine.confirm_detection",
             "src.heretek_swarm.consensus.immune.ImmuneResponseEngine.analyze_and_learn",
             "src.heretek_swarm.consensus.immune.ImmuneResponseEngine.calculate_false_positive_rate",
+            "src.heretek_swarm.consensus.immune.ImmuneResponseEngine._classify_pattern_confirmation",
             "src.heretek_swarm.consensus.immune.ImmuneResponseEngine.get_pattern_recommendations",
+            "src.heretek_swarm.consensus.immune.ImmuneResponseEngine._handle_new_pattern",
             "src.heretek_swarm.consensus.immune.ImmuneResponseEngine.request_baseline_change",
+            "src.heretek_swarm.consensus.immune.ImmuneResponseEngine._handle_existing_pattern",
             "src.heretek_swarm.consensus.immune.ImmuneResponseEngine._get_recent_responses",
             "src.heretek_swarm.consensus.immune.ImmuneResponseEngine._get_pattern_key",
             "src.heretek_swarm.consensus.immune.ImmuneResponseEngine._find_matching_pattern",
@@ -119409,13 +119676,15 @@
         },
         {
           "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "src.heretek_swarm.consensus.maker_enhanced.ReasoningChainStatus",
             "src.heretek_swarm.consensus.maker_enhanced.ReasoningStep",
             "src.heretek_swarm.consensus.maker_enhanced.ReasoningChain",
             "src.heretek_swarm.consensus.maker_enhanced.ReasoningChain.add_step",
             "src.heretek_swarm.consensus.maker_enhanced.ReasoningChain.validate_chain",
+            "src.heretek_swarm.consensus.maker_enhanced.ReasoningChain._check_circular_reasoning",
+            "src.heretek_swarm.consensus.maker_enhanced.ReasoningChain._check_confidence_consistency",
             "src.heretek_swarm.consensus.maker_enhanced.EvidenceQuality",
             "src.heretek_swarm.consensus.maker_enhanced.EvidenceQuality.calculate_quality_score",
             "src.heretek_swarm.consensus.maker_enhanced.EnhancedVote",
@@ -119438,9 +119707,12 @@
             "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.compute_consensus",
             "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.compute_consensus_with_validation",
             "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._cross_validate_reasoning",
+            "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._check_chain_contradictions",
             "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._get_validation_results",
             "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.get_decision_provenance",
+            "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._calculate_validation_scores",
             "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.get_reasoning_chains",
+            "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._extract_domain",
             "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.rollback_decision",
             "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.export_provenance",
             "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.get_enhanced_statistics",
@@ -125131,14 +125403,17 @@
                 "src.heretek_swarm.consensus.immune.AnomalyResponse",
                 "src.heretek_swarm.consensus.immune.ImmuneLearningResult",
                 "src.heretek_swarm.consensus.immune.ImmuneLearningResult.to_dict",
-                "src.heretek_swarm.consensus.immune.ImmuneResponseEngine",
                 "src.heretek_swarm.consensus.immune.ImmuneResponseEngine.__init__",
+                "src.heretek_swarm.consensus.immune.ImmuneResponseEngine",
                 "src.heretek_swarm.consensus.immune.ImmuneResponseEngine.record_response",
                 "src.heretek_swarm.consensus.immune.ImmuneResponseEngine.confirm_detection",
                 "src.heretek_swarm.consensus.immune.ImmuneResponseEngine.analyze_and_learn",
                 "src.heretek_swarm.consensus.immune.ImmuneResponseEngine.calculate_false_positive_rate",
+                "src.heretek_swarm.consensus.immune.ImmuneResponseEngine._classify_pattern_confirmation",
                 "src.heretek_swarm.consensus.immune.ImmuneResponseEngine.get_pattern_recommendations",
+                "src.heretek_swarm.consensus.immune.ImmuneResponseEngine._handle_new_pattern",
                 "src.heretek_swarm.consensus.immune.ImmuneResponseEngine.request_baseline_change",
+                "src.heretek_swarm.consensus.immune.ImmuneResponseEngine._handle_existing_pattern",
                 "src.heretek_swarm.consensus.immune.ImmuneResponseEngine._get_recent_responses",
                 "src.heretek_swarm.consensus.immune.ImmuneResponseEngine._get_pattern_key",
                 "src.heretek_swarm.consensus.immune.ImmuneResponseEngine._find_matching_pattern",
@@ -125176,13 +125451,15 @@
             },
             {
               "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.heretek_swarm.consensus.maker_enhanced.ReasoningChainStatus",
                 "src.heretek_swarm.consensus.maker_enhanced.ReasoningStep",
                 "src.heretek_swarm.consensus.maker_enhanced.ReasoningChain",
                 "src.heretek_swarm.consensus.maker_enhanced.ReasoningChain.add_step",
                 "src.heretek_swarm.consensus.maker_enhanced.ReasoningChain.validate_chain",
+                "src.heretek_swarm.consensus.maker_enhanced.ReasoningChain._check_circular_reasoning",
+                "src.heretek_swarm.consensus.maker_enhanced.ReasoningChain._check_confidence_consistency",
                 "src.heretek_swarm.consensus.maker_enhanced.EvidenceQuality",
                 "src.heretek_swarm.consensus.maker_enhanced.EvidenceQuality.calculate_quality_score",
                 "src.heretek_swarm.consensus.maker_enhanced.EnhancedVote",
@@ -125205,9 +125482,12 @@
                 "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.compute_consensus",
                 "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.compute_consensus_with_validation",
                 "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._cross_validate_reasoning",
+                "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._check_chain_contradictions",
                 "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._get_validation_results",
                 "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.get_decision_provenance",
+                "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._calculate_validation_scores",
                 "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.get_reasoning_chains",
+                "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._extract_domain",
                 "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.rollback_decision",
                 "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.export_provenance",
                 "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.get_enhanced_statistics",
@@ -128186,14 +128466,17 @@
                     "src.heretek_swarm.consensus.immune.AnomalyResponse",
                     "src.heretek_swarm.consensus.immune.ImmuneLearningResult",
                     "src.heretek_swarm.consensus.immune.ImmuneLearningResult.to_dict",
-                    "src.heretek_swarm.consensus.immune.ImmuneResponseEngine",
                     "src.heretek_swarm.consensus.immune.ImmuneResponseEngine.__init__",
+                    "src.heretek_swarm.consensus.immune.ImmuneResponseEngine",
                     "src.heretek_swarm.consensus.immune.ImmuneResponseEngine.record_response",
                     "src.heretek_swarm.consensus.immune.ImmuneResponseEngine.confirm_detection",
                     "src.heretek_swarm.consensus.immune.ImmuneResponseEngine.analyze_and_learn",
                     "src.heretek_swarm.consensus.immune.ImmuneResponseEngine.calculate_false_positive_rate",
+                    "src.heretek_swarm.consensus.immune.ImmuneResponseEngine._classify_pattern_confirmation",
                     "src.heretek_swarm.consensus.immune.ImmuneResponseEngine.get_pattern_recommendations",
+                    "src.heretek_swarm.consensus.immune.ImmuneResponseEngine._handle_new_pattern",
                     "src.heretek_swarm.consensus.immune.ImmuneResponseEngine.request_baseline_change",
+                    "src.heretek_swarm.consensus.immune.ImmuneResponseEngine._handle_existing_pattern",
                     "src.heretek_swarm.consensus.immune.ImmuneResponseEngine._get_recent_responses",
                     "src.heretek_swarm.consensus.immune.ImmuneResponseEngine._get_pattern_key",
                     "src.heretek_swarm.consensus.immune.ImmuneResponseEngine._find_matching_pattern",
@@ -130604,14 +130887,17 @@
                         "src.heretek_swarm.consensus.immune.AnomalyResponse",
                         "src.heretek_swarm.consensus.immune.ImmuneLearningResult",
                         "src.heretek_swarm.consensus.immune.ImmuneLearningResult.to_dict",
-                        "src.heretek_swarm.consensus.immune.ImmuneResponseEngine",
                         "src.heretek_swarm.consensus.immune.ImmuneResponseEngine.__init__",
+                        "src.heretek_swarm.consensus.immune.ImmuneResponseEngine",
                         "src.heretek_swarm.consensus.immune.ImmuneResponseEngine.record_response",
                         "src.heretek_swarm.consensus.immune.ImmuneResponseEngine.confirm_detection",
                         "src.heretek_swarm.consensus.immune.ImmuneResponseEngine.analyze_and_learn",
                         "src.heretek_swarm.consensus.immune.ImmuneResponseEngine.calculate_false_positive_rate",
+                        "src.heretek_swarm.consensus.immune.ImmuneResponseEngine._classify_pattern_confirmation",
                         "src.heretek_swarm.consensus.immune.ImmuneResponseEngine.get_pattern_recommendations",
+                        "src.heretek_swarm.consensus.immune.ImmuneResponseEngine._handle_new_pattern",
                         "src.heretek_swarm.consensus.immune.ImmuneResponseEngine.request_baseline_change",
+                        "src.heretek_swarm.consensus.immune.ImmuneResponseEngine._handle_existing_pattern",
                         "src.heretek_swarm.consensus.immune.ImmuneResponseEngine._get_recent_responses",
                         "src.heretek_swarm.consensus.immune.ImmuneResponseEngine._get_pattern_key",
                         "src.heretek_swarm.consensus.immune.ImmuneResponseEngine._find_matching_pattern",
@@ -130799,8 +131085,8 @@
                             "src.heretek_swarm.consensus.immune.ImmuneResponseBuilding.get_audit_trail",
                             "src.heretek_swarm.consensus.immune.ResponseAction",
                             "src.heretek_swarm.consensus.immune.ImmuneLearningResult.to_dict",
-                            "src.heretek_swarm.consensus.immune.ImmuneResponseEngine",
                             "src.heretek_swarm.consensus.immune.ImmuneResponseEngine.__init__",
+                            "src.heretek_swarm.consensus.immune.ImmuneResponseEngine",
                             "src.heretek_swarm.consensus.immune.ImmuneResponseEngine.confirm_detection",
                             "src.heretek_swarm.consensus.immune.ImmuneResponseEngine.get_pattern_recommendations",
                             "src.heretek_swarm.consensus.immune.ImmuneResponseEngine.request_baseline_change",
@@ -140787,13 +141073,15 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.consensus.maker_enhanced.ReasoningChainStatus",
                     "src.heretek_swarm.consensus.maker_enhanced.ReasoningStep",
                     "src.heretek_swarm.consensus.maker_enhanced.ReasoningChain",
                     "src.heretek_swarm.consensus.maker_enhanced.ReasoningChain.add_step",
                     "src.heretek_swarm.consensus.maker_enhanced.ReasoningChain.validate_chain",
+                    "src.heretek_swarm.consensus.maker_enhanced.ReasoningChain._check_circular_reasoning",
+                    "src.heretek_swarm.consensus.maker_enhanced.ReasoningChain._check_confidence_consistency",
                     "src.heretek_swarm.consensus.maker_enhanced.EvidenceQuality",
                     "src.heretek_swarm.consensus.maker_enhanced.EvidenceQuality.calculate_quality_score",
                     "src.heretek_swarm.consensus.maker_enhanced.EnhancedVote",
@@ -140816,9 +141104,12 @@
                     "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.compute_consensus",
                     "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.compute_consensus_with_validation",
                     "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._cross_validate_reasoning",
+                    "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._check_chain_contradictions",
                     "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._get_validation_results",
                     "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.get_decision_provenance",
+                    "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._calculate_validation_scores",
                     "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.get_reasoning_chains",
+                    "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._extract_domain",
                     "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.rollback_decision",
                     "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.export_provenance",
                     "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.get_enhanced_statistics",
@@ -141201,13 +141492,15 @@
                     },
                     {
                       "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.consensus.maker_enhanced.ReasoningChainStatus",
                         "src.heretek_swarm.consensus.maker_enhanced.ReasoningStep",
                         "src.heretek_swarm.consensus.maker_enhanced.ReasoningChain",
                         "src.heretek_swarm.consensus.maker_enhanced.ReasoningChain.add_step",
                         "src.heretek_swarm.consensus.maker_enhanced.ReasoningChain.validate_chain",
+                        "src.heretek_swarm.consensus.maker_enhanced.ReasoningChain._check_circular_reasoning",
+                        "src.heretek_swarm.consensus.maker_enhanced.ReasoningChain._check_confidence_consistency",
                         "src.heretek_swarm.consensus.maker_enhanced.EvidenceQuality",
                         "src.heretek_swarm.consensus.maker_enhanced.EvidenceQuality.calculate_quality_score",
                         "src.heretek_swarm.consensus.maker_enhanced.EnhancedVote",
@@ -141230,9 +141523,12 @@
                         "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.compute_consensus",
                         "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.compute_consensus_with_validation",
                         "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._cross_validate_reasoning",
+                        "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._check_chain_contradictions",
                         "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._get_validation_results",
                         "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.get_decision_provenance",
+                        "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._calculate_validation_scores",
                         "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.get_reasoning_chains",
+                        "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._extract_domain",
                         "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.rollback_decision",
                         "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.export_provenance",
                         "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.get_enhanced_statistics",
@@ -141344,7 +141640,7 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.consensus.maker_enhanced.ReasoningStep",
                             "src.heretek_swarm.consensus.maker_enhanced.ReasoningChain",
@@ -141443,7 +141739,7 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.consensus.maker_enhanced.ReasoningChainStatus",
                             "src.heretek_swarm.consensus.maker_enhanced.EvidenceQuality",
@@ -141515,7 +141811,7 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._calculate_expertise_score"
                           ]
@@ -148187,7 +148483,7 @@
             },
             {
               "file_path": "src/heretek_swarm/consensus/deliberation.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.heretek_swarm.consensus.deliberation.Position",
                 "src.heretek_swarm.consensus.deliberation.DeliberationOutcome",
@@ -148201,13 +148497,14 @@
                 "src.heretek_swarm.consensus.deliberation.CounterArgument.calculate_effectiveness",
                 "src.heretek_swarm.consensus.deliberation.DeliberationRound",
                 "src.heretek_swarm.consensus.deliberation.DissentRecord",
+                "src.heretek_swarm.consensus.deliberation.PositionChange",
                 "src.heretek_swarm.consensus.deliberation.ConsensusConfidence",
                 "src.heretek_swarm.consensus.deliberation.ConsensusConfidence.calculate",
                 "src.heretek_swarm.consensus.deliberation.DeliberationResult",
                 "src.heretek_swarm.consensus.deliberation.DeliberationConfig",
-                "src.heretek_swarm.consensus.deliberation.DeliberationEngine",
                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.__init__",
                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.start_deliberation",
+                "src.heretek_swarm.consensus.deliberation.DeliberationEngine",
                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.submit_argument",
                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.submit_counter_argument",
                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.submit_evidence",
@@ -148218,11 +148515,19 @@
                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.calculate_consensus_confidence",
                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine._calculate_position_weights",
                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.finalize_deliberation",
+                "src.heretek_swarm.consensus.deliberation.DeliberationEngine.record_position_change",
                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_deliberation_state",
+                "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_position_change_history",
                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_position_distribution",
+                "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_agent_position_changes",
                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_round_history",
                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_statistics",
-                "src.heretek_swarm.consensus.deliberation.DeliberationEngine.cleanup_deliberation"
+                "src.heretek_swarm.consensus.deliberation.DeliberationEngine.steward_tiebreaker",
+                "src.heretek_swarm.consensus.deliberation.DeliberationEngine.cleanup_deliberation",
+                "src.heretek_swarm.consensus.deliberation.DeliberationEngine._tiebreak_weighted_confidence",
+                "src.heretek_swarm.consensus.deliberation.DeliberationEngine._tiebreak_first_position",
+                "src.heretek_swarm.consensus.deliberation.DeliberationEngine._tiebreak_most_challenges",
+                "src.heretek_swarm.consensus.deliberation.DeliberationEngine._determine_tiebreak_outcome"
               ]
             },
             {
@@ -150115,7 +150420,7 @@
               "file_methods": [
                 {
                   "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.consensus.deliberation.Position",
                     "src.heretek_swarm.consensus.deliberation.DeliberationOutcome",
@@ -150129,13 +150434,14 @@
                     "src.heretek_swarm.consensus.deliberation.CounterArgument.calculate_effectiveness",
                     "src.heretek_swarm.consensus.deliberation.DeliberationRound",
                     "src.heretek_swarm.consensus.deliberation.DissentRecord",
+                    "src.heretek_swarm.consensus.deliberation.PositionChange",
                     "src.heretek_swarm.consensus.deliberation.ConsensusConfidence",
                     "src.heretek_swarm.consensus.deliberation.ConsensusConfidence.calculate",
                     "src.heretek_swarm.consensus.deliberation.DeliberationResult",
                     "src.heretek_swarm.consensus.deliberation.DeliberationConfig",
-                    "src.heretek_swarm.consensus.deliberation.DeliberationEngine",
                     "src.heretek_swarm.consensus.deliberation.DeliberationEngine.__init__",
                     "src.heretek_swarm.consensus.deliberation.DeliberationEngine.start_deliberation",
+                    "src.heretek_swarm.consensus.deliberation.DeliberationEngine",
                     "src.heretek_swarm.consensus.deliberation.DeliberationEngine.submit_argument",
                     "src.heretek_swarm.consensus.deliberation.DeliberationEngine.submit_counter_argument",
                     "src.heretek_swarm.consensus.deliberation.DeliberationEngine.submit_evidence",
@@ -150146,11 +150452,19 @@
                     "src.heretek_swarm.consensus.deliberation.DeliberationEngine.calculate_consensus_confidence",
                     "src.heretek_swarm.consensus.deliberation.DeliberationEngine._calculate_position_weights",
                     "src.heretek_swarm.consensus.deliberation.DeliberationEngine.finalize_deliberation",
+                    "src.heretek_swarm.consensus.deliberation.DeliberationEngine.record_position_change",
                     "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_deliberation_state",
+                    "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_position_change_history",
                     "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_position_distribution",
+                    "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_agent_position_changes",
                     "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_round_history",
                     "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_statistics",
-                    "src.heretek_swarm.consensus.deliberation.DeliberationEngine.cleanup_deliberation"
+                    "src.heretek_swarm.consensus.deliberation.DeliberationEngine.steward_tiebreaker",
+                    "src.heretek_swarm.consensus.deliberation.DeliberationEngine.cleanup_deliberation",
+                    "src.heretek_swarm.consensus.deliberation.DeliberationEngine._tiebreak_weighted_confidence",
+                    "src.heretek_swarm.consensus.deliberation.DeliberationEngine._tiebreak_first_position",
+                    "src.heretek_swarm.consensus.deliberation.DeliberationEngine._tiebreak_most_challenges",
+                    "src.heretek_swarm.consensus.deliberation.DeliberationEngine._determine_tiebreak_outcome"
                   ]
                 }
               ],
@@ -150188,17 +150502,26 @@
                   "file_methods": [
                     {
                       "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.consensus.deliberation.Evidence.calculate_quality",
                         "src.heretek_swarm.consensus.deliberation.CounterArgument.calculate_effectiveness",
+                        "src.heretek_swarm.consensus.deliberation.PositionChange",
                         "src.heretek_swarm.consensus.deliberation.DeliberationEngine.__init__",
                         "src.heretek_swarm.consensus.deliberation.DeliberationEngine.submit_argument",
                         "src.heretek_swarm.consensus.deliberation.DeliberationEngine.submit_evidence",
                         "src.heretek_swarm.consensus.deliberation.DeliberationEngine.run_deliberation_round",
                         "src.heretek_swarm.consensus.deliberation.DeliberationEngine._count_position_changes",
                         "src.heretek_swarm.consensus.deliberation.DeliberationEngine.track_dissent",
-                        "src.heretek_swarm.consensus.deliberation.DeliberationEngine.finalize_deliberation"
+                        "src.heretek_swarm.consensus.deliberation.DeliberationEngine.finalize_deliberation",
+                        "src.heretek_swarm.consensus.deliberation.DeliberationEngine.record_position_change",
+                        "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_position_change_history",
+                        "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_agent_position_changes",
+                        "src.heretek_swarm.consensus.deliberation.DeliberationEngine.steward_tiebreaker",
+                        "src.heretek_swarm.consensus.deliberation.DeliberationEngine._tiebreak_weighted_confidence",
+                        "src.heretek_swarm.consensus.deliberation.DeliberationEngine._tiebreak_first_position",
+                        "src.heretek_swarm.consensus.deliberation.DeliberationEngine._tiebreak_most_challenges",
+                        "src.heretek_swarm.consensus.deliberation.DeliberationEngine._determine_tiebreak_outcome"
                       ]
                     }
                   ],
@@ -150233,7 +150556,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.consensus.deliberation.Position",
                             "src.heretek_swarm.consensus.deliberation.DeliberationOutcome",
@@ -150246,6 +150569,7 @@
                             "src.heretek_swarm.consensus.deliberation.CounterArgument.calculate_effectiveness",
                             "src.heretek_swarm.consensus.deliberation.DeliberationRound",
                             "src.heretek_swarm.consensus.deliberation.DissentRecord",
+                            "src.heretek_swarm.consensus.deliberation.PositionChange",
                             "src.heretek_swarm.consensus.deliberation.ConsensusConfidence",
                             "src.heretek_swarm.consensus.deliberation.DeliberationResult",
                             "src.heretek_swarm.consensus.deliberation.DeliberationConfig",
@@ -150253,7 +150577,15 @@
                             "src.heretek_swarm.consensus.deliberation.DeliberationEngine.submit_argument",
                             "src.heretek_swarm.consensus.deliberation.DeliberationEngine.submit_evidence",
                             "src.heretek_swarm.consensus.deliberation.DeliberationEngine._count_position_changes",
-                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.track_dissent"
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.track_dissent",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.record_position_change",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_position_change_history",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_agent_position_changes",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.steward_tiebreaker",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine._tiebreak_weighted_confidence",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine._tiebreak_first_position",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine._tiebreak_most_challenges",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine._determine_tiebreak_outcome"
                           ]
                         }
                       ],
@@ -150276,7 +150608,7 @@
                           "file_methods": [
                             {
                               "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "src.heretek_swarm.consensus.deliberation.CounterArgument.calculate_effectiveness",
                                 "src.heretek_swarm.consensus.deliberation.ConsensusConfidence.calculate",
@@ -150314,7 +150646,7 @@
                           "file_methods": [
                             {
                               "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "src.heretek_swarm.consensus.deliberation.Position",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationOutcome",
@@ -150349,7 +150681,7 @@
                           "file_methods": [
                             {
                               "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_deliberation_state",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_position_distribution",
@@ -150374,7 +150706,7 @@
                           "file_methods": [
                             {
                               "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.submit_counter_argument",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine._calculate_consensus_score",
@@ -150400,7 +150732,7 @@
                           "file_methods": [
                             {
                               "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "src.heretek_swarm.consensus.deliberation.Evidence.calculate_quality",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.__init__",
@@ -150520,12 +150852,21 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
+                            "src.heretek_swarm.consensus.deliberation.PositionChange",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.record_position_change",
                             "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_deliberation_state",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_position_change_history",
                             "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_position_distribution",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_agent_position_changes",
                             "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_round_history",
-                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.cleanup_deliberation"
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.steward_tiebreaker",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.cleanup_deliberation",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine._tiebreak_weighted_confidence",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine._tiebreak_first_position",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine._tiebreak_most_challenges",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine._determine_tiebreak_outcome"
                           ]
                         }
                       ],
@@ -150545,7 +150886,7 @@
                           "file_methods": [
                             {
                               "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "src.heretek_swarm.consensus.deliberation.Evidence.calculate_quality",
                                 "src.heretek_swarm.consensus.deliberation.CounterArgument.calculate_effectiveness",
@@ -150570,7 +150911,7 @@
                           "file_methods": [
                             {
                               "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "src.heretek_swarm.consensus.deliberation.ConsensusConfidence.calculate",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_position_distribution",
@@ -150596,7 +150937,7 @@
                           "file_methods": [
                             {
                               "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.start_deliberation",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.submit_argument",
@@ -150626,7 +150967,7 @@
                           "file_methods": [
                             {
                               "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "src.heretek_swarm.consensus.deliberation.Position",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationOutcome",
@@ -150746,14 +151087,23 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.consensus.deliberation.Evidence.calculate_quality",
+                            "src.heretek_swarm.consensus.deliberation.PositionChange",
                             "src.heretek_swarm.consensus.deliberation.DeliberationEngine.__init__",
                             "src.heretek_swarm.consensus.deliberation.DeliberationEngine.submit_counter_argument",
                             "src.heretek_swarm.consensus.deliberation.DeliberationEngine.run_deliberation_round",
                             "src.heretek_swarm.consensus.deliberation.DeliberationEngine._calculate_position_weights",
-                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.finalize_deliberation"
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.finalize_deliberation",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.record_position_change",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_position_change_history",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_agent_position_changes",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.steward_tiebreaker",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine._tiebreak_weighted_confidence",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine._tiebreak_first_position",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine._tiebreak_most_challenges",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine._determine_tiebreak_outcome"
                           ]
                         }
                       ],
@@ -150775,7 +151125,7 @@
                           "file_methods": [
                             {
                               "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "src.heretek_swarm.consensus.deliberation.Position",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationOutcome",
@@ -150791,8 +151141,8 @@
                                 "src.heretek_swarm.consensus.deliberation.ConsensusConfidence",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationResult",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationConfig",
-                                "src.heretek_swarm.consensus.deliberation.DeliberationEngine",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.__init__",
+                                "src.heretek_swarm.consensus.deliberation.DeliberationEngine",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.run_deliberation_round",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.finalize_deliberation"
                               ]
@@ -150815,7 +151165,7 @@
                           "file_methods": [
                             {
                               "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.submit_counter_argument",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine._calculate_consensus_score",
@@ -150842,7 +151192,7 @@
                           "file_methods": [
                             {
                               "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.start_deliberation",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_deliberation_state",
@@ -150870,7 +151220,7 @@
                           "file_methods": [
                             {
                               "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "src.heretek_swarm.consensus.deliberation.CounterArgument.calculate_effectiveness",
                                 "src.heretek_swarm.consensus.deliberation.ConsensusConfidence.calculate",
@@ -150965,13 +151315,22 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
+                            "src.heretek_swarm.consensus.deliberation.PositionChange",
                             "src.heretek_swarm.consensus.deliberation.ConsensusConfidence.calculate",
                             "src.heretek_swarm.consensus.deliberation.DeliberationEngine.start_deliberation",
                             "src.heretek_swarm.consensus.deliberation.DeliberationEngine._calculate_consensus_score",
                             "src.heretek_swarm.consensus.deliberation.DeliberationEngine.calculate_consensus_confidence",
-                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_statistics"
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.record_position_change",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_position_change_history",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_agent_position_changes",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_statistics",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.steward_tiebreaker",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine._tiebreak_weighted_confidence",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine._tiebreak_first_position",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine._tiebreak_most_challenges",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine._determine_tiebreak_outcome"
                           ]
                         }
                       ],
@@ -150994,7 +151353,7 @@
                           "file_methods": [
                             {
                               "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "src.heretek_swarm.consensus.deliberation.CounterArgument.calculate_effectiveness",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.submit_argument",
@@ -151023,7 +151382,7 @@
                           "file_methods": [
                             {
                               "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "src.heretek_swarm.consensus.deliberation.Evidence.calculate_quality",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.__init__",
@@ -151046,7 +151405,7 @@
                           "file_methods": [
                             {
                               "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.submit_counter_argument",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine._calculate_position_weights"
@@ -151070,7 +151429,7 @@
                           "file_methods": [
                             {
                               "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.start_deliberation",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_deliberation_state",
@@ -151093,7 +151452,7 @@
                           "file_methods": [
                             {
                               "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "src.heretek_swarm.consensus.deliberation.Position",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationOutcome",
@@ -151126,7 +151485,7 @@
                           "file_methods": [
                             {
                               "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "src.heretek_swarm.consensus.deliberation.ConsensusConfidence.calculate",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_statistics"
@@ -151328,14 +151687,23 @@
                   "file_methods": [
                     {
                       "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
+                        "src.heretek_swarm.consensus.deliberation.PositionChange",
                         "src.heretek_swarm.consensus.deliberation.ConsensusConfidence.calculate",
                         "src.heretek_swarm.consensus.deliberation.DeliberationEngine.start_deliberation",
+                        "src.heretek_swarm.consensus.deliberation.DeliberationEngine.record_position_change",
                         "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_deliberation_state",
+                        "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_position_change_history",
                         "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_position_distribution",
+                        "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_agent_position_changes",
                         "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_round_history",
-                        "src.heretek_swarm.consensus.deliberation.DeliberationEngine.cleanup_deliberation"
+                        "src.heretek_swarm.consensus.deliberation.DeliberationEngine.steward_tiebreaker",
+                        "src.heretek_swarm.consensus.deliberation.DeliberationEngine.cleanup_deliberation",
+                        "src.heretek_swarm.consensus.deliberation.DeliberationEngine._tiebreak_weighted_confidence",
+                        "src.heretek_swarm.consensus.deliberation.DeliberationEngine._tiebreak_first_position",
+                        "src.heretek_swarm.consensus.deliberation.DeliberationEngine._tiebreak_most_challenges",
+                        "src.heretek_swarm.consensus.deliberation.DeliberationEngine._determine_tiebreak_outcome"
                       ]
                     }
                   ],
@@ -151361,7 +151729,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.consensus.deliberation.Position",
                             "src.heretek_swarm.consensus.deliberation.DeliberationOutcome",
@@ -151373,12 +151741,21 @@
                             "src.heretek_swarm.consensus.deliberation.CounterArgument",
                             "src.heretek_swarm.consensus.deliberation.DeliberationRound",
                             "src.heretek_swarm.consensus.deliberation.DissentRecord",
+                            "src.heretek_swarm.consensus.deliberation.PositionChange",
                             "src.heretek_swarm.consensus.deliberation.ConsensusConfidence",
                             "src.heretek_swarm.consensus.deliberation.DeliberationResult",
                             "src.heretek_swarm.consensus.deliberation.DeliberationConfig",
                             "src.heretek_swarm.consensus.deliberation.DeliberationEngine",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.record_position_change",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_position_change_history",
                             "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_position_distribution",
-                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_round_history"
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_agent_position_changes",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_round_history",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.steward_tiebreaker",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine._tiebreak_weighted_confidence",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine._tiebreak_first_position",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine._tiebreak_most_challenges",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine._determine_tiebreak_outcome"
                           ]
                         }
                       ],
@@ -151422,7 +151799,7 @@
                           "file_methods": [
                             {
                               "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "src.heretek_swarm.consensus.deliberation.ConsensusConfidence.calculate",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.calculate_consensus_confidence",
@@ -151482,7 +151859,7 @@
                           "file_methods": [
                             {
                               "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "src.heretek_swarm.consensus.deliberation.CounterArgument.calculate_effectiveness",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.submit_argument",
@@ -151509,7 +151886,7 @@
                           "file_methods": [
                             {
                               "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine._calculate_consensus_score",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine._calculate_position_weights"
@@ -151573,7 +151950,7 @@
                           "file_methods": [
                             {
                               "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "src.heretek_swarm.consensus.deliberation.Evidence.calculate_quality",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.__init__",
@@ -151605,7 +151982,7 @@
                           "file_methods": [
                             {
                               "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "src.heretek_swarm.consensus.deliberation.Position",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationOutcome",
@@ -151759,10 +152136,19 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
+                            "src.heretek_swarm.consensus.deliberation.PositionChange",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.record_position_change",
                             "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_deliberation_state",
-                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.cleanup_deliberation"
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_position_change_history",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_agent_position_changes",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.steward_tiebreaker",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.cleanup_deliberation",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine._tiebreak_weighted_confidence",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine._tiebreak_first_position",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine._tiebreak_most_challenges",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine._determine_tiebreak_outcome"
                           ]
                         }
                       ],
@@ -151781,7 +152167,7 @@
                           "file_methods": [
                             {
                               "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "src.heretek_swarm.consensus.deliberation.Position",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationOutcome",
@@ -151820,7 +152206,7 @@
                           "file_methods": [
                             {
                               "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.submit_argument",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.submit_evidence",
@@ -151847,7 +152233,7 @@
                           "file_methods": [
                             {
                               "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.start_deliberation",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.calculate_consensus_confidence",
@@ -151876,7 +152262,7 @@
                           "file_methods": [
                             {
                               "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "src.heretek_swarm.consensus.deliberation.Evidence.calculate_quality",
                                 "src.heretek_swarm.consensus.deliberation.ConsensusConfidence.calculate",
@@ -151999,12 +152385,21 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.consensus.deliberation.CounterArgument.calculate_effectiveness",
+                            "src.heretek_swarm.consensus.deliberation.PositionChange",
                             "src.heretek_swarm.consensus.deliberation.DeliberationEngine.submit_argument",
                             "src.heretek_swarm.consensus.deliberation.DeliberationEngine.submit_evidence",
-                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine._count_position_changes"
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine._count_position_changes",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.record_position_change",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_position_change_history",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_agent_position_changes",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.steward_tiebreaker",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine._tiebreak_weighted_confidence",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine._tiebreak_first_position",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine._tiebreak_most_challenges",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine._determine_tiebreak_outcome"
                           ]
                         }
                       ],
@@ -152025,7 +152420,7 @@
                           "file_methods": [
                             {
                               "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "src.heretek_swarm.consensus.deliberation.CounterArgument.calculate_effectiveness",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.submit_argument",
@@ -152049,7 +152444,7 @@
                           "file_methods": [
                             {
                               "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_round_history",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.cleanup_deliberation"
@@ -152073,7 +152468,7 @@
                           "file_methods": [
                             {
                               "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "src.heretek_swarm.consensus.deliberation.ConsensusConfidence.calculate",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.start_deliberation",
@@ -152102,7 +152497,7 @@
                           "file_methods": [
                             {
                               "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "src.heretek_swarm.consensus.deliberation.Evidence.calculate_quality",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.__init__",
@@ -152128,7 +152523,7 @@
                           "file_methods": [
                             {
                               "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "src.heretek_swarm.consensus.deliberation.Position",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationOutcome",
@@ -152253,16 +152648,25 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.consensus.deliberation.Evidence.calculate_quality",
+                            "src.heretek_swarm.consensus.deliberation.PositionChange",
                             "src.heretek_swarm.consensus.deliberation.DeliberationEngine.__init__",
                             "src.heretek_swarm.consensus.deliberation.DeliberationEngine.start_deliberation",
                             "src.heretek_swarm.consensus.deliberation.DeliberationEngine.run_deliberation_round",
                             "src.heretek_swarm.consensus.deliberation.DeliberationEngine._calculate_consensus_score",
                             "src.heretek_swarm.consensus.deliberation.DeliberationEngine.calculate_consensus_confidence",
                             "src.heretek_swarm.consensus.deliberation.DeliberationEngine.finalize_deliberation",
-                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_statistics"
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.record_position_change",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_position_change_history",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_agent_position_changes",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_statistics",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.steward_tiebreaker",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine._tiebreak_weighted_confidence",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine._tiebreak_first_position",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine._tiebreak_most_challenges",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine._determine_tiebreak_outcome"
                           ]
                         }
                       ],
@@ -152292,7 +152696,7 @@
                           "file_methods": [
                             {
                               "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "src.heretek_swarm.consensus.deliberation.Position",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationOutcome",
@@ -152308,8 +152712,8 @@
                                 "src.heretek_swarm.consensus.deliberation.ConsensusConfidence",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationResult",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationConfig",
-                                "src.heretek_swarm.consensus.deliberation.DeliberationEngine",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.__init__",
+                                "src.heretek_swarm.consensus.deliberation.DeliberationEngine",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.run_deliberation_round",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.finalize_deliberation"
                               ]
@@ -152339,7 +152743,7 @@
                           "file_methods": [
                             {
                               "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "src.heretek_swarm.consensus.deliberation.CounterArgument.calculate_effectiveness",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine._calculate_consensus_score",
@@ -152387,7 +152791,7 @@
                           "file_methods": [
                             {
                               "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "src.heretek_swarm.consensus.deliberation.ConsensusConfidence.calculate",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_deliberation_state",
@@ -152476,7 +152880,7 @@
                           "file_methods": [
                             {
                               "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.start_deliberation",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.submit_argument",
@@ -152590,12 +152994,21 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
+                            "src.heretek_swarm.consensus.deliberation.PositionChange",
                             "src.heretek_swarm.consensus.deliberation.ConsensusConfidence.calculate",
                             "src.heretek_swarm.consensus.deliberation.DeliberationEngine.submit_counter_argument",
                             "src.heretek_swarm.consensus.deliberation.DeliberationEngine.track_dissent",
-                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine._calculate_position_weights"
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine._calculate_position_weights",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.record_position_change",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_position_change_history",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_agent_position_changes",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.steward_tiebreaker",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine._tiebreak_weighted_confidence",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine._tiebreak_first_position",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine._tiebreak_most_challenges",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine._determine_tiebreak_outcome"
                           ]
                         }
                       ],
@@ -152618,7 +153031,7 @@
                           "file_methods": [
                             {
                               "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "src.heretek_swarm.consensus.deliberation.Evidence.calculate_quality",
                                 "src.heretek_swarm.consensus.deliberation.ConsensusConfidence.calculate",
@@ -152644,7 +153057,7 @@
                           "file_methods": [
                             {
                               "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.submit_counter_argument",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.track_dissent",
@@ -152668,7 +153081,7 @@
                           "file_methods": [
                             {
                               "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "src.heretek_swarm.consensus.deliberation.CounterArgument.calculate_effectiveness",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.submit_argument",
@@ -152692,7 +153105,7 @@
                           "file_methods": [
                             {
                               "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "src.heretek_swarm.consensus.deliberation.Position",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationOutcome",
@@ -152730,7 +153143,7 @@
                           "file_methods": [
                             {
                               "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.start_deliberation",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_deliberation_state",
@@ -152946,7 +153359,7 @@
                   "file_methods": [
                     {
                       "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.consensus.deliberation.Position",
                         "src.heretek_swarm.consensus.deliberation.DeliberationOutcome",
@@ -152958,6 +153371,7 @@
                         "src.heretek_swarm.consensus.deliberation.CounterArgument",
                         "src.heretek_swarm.consensus.deliberation.DeliberationRound",
                         "src.heretek_swarm.consensus.deliberation.DissentRecord",
+                        "src.heretek_swarm.consensus.deliberation.PositionChange",
                         "src.heretek_swarm.consensus.deliberation.ConsensusConfidence",
                         "src.heretek_swarm.consensus.deliberation.DeliberationResult",
                         "src.heretek_swarm.consensus.deliberation.DeliberationConfig",
@@ -152966,7 +153380,15 @@
                         "src.heretek_swarm.consensus.deliberation.DeliberationEngine._calculate_consensus_score",
                         "src.heretek_swarm.consensus.deliberation.DeliberationEngine.calculate_consensus_confidence",
                         "src.heretek_swarm.consensus.deliberation.DeliberationEngine._calculate_position_weights",
-                        "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_statistics"
+                        "src.heretek_swarm.consensus.deliberation.DeliberationEngine.record_position_change",
+                        "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_position_change_history",
+                        "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_agent_position_changes",
+                        "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_statistics",
+                        "src.heretek_swarm.consensus.deliberation.DeliberationEngine.steward_tiebreaker",
+                        "src.heretek_swarm.consensus.deliberation.DeliberationEngine._tiebreak_weighted_confidence",
+                        "src.heretek_swarm.consensus.deliberation.DeliberationEngine._tiebreak_first_position",
+                        "src.heretek_swarm.consensus.deliberation.DeliberationEngine._tiebreak_most_challenges",
+                        "src.heretek_swarm.consensus.deliberation.DeliberationEngine._determine_tiebreak_outcome"
                       ]
                     }
                   ],
@@ -152997,7 +153419,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.consensus.deliberation.Position",
                             "src.heretek_swarm.consensus.deliberation.DeliberationOutcome",
@@ -153010,13 +153432,22 @@
                             "src.heretek_swarm.consensus.deliberation.CounterArgument",
                             "src.heretek_swarm.consensus.deliberation.DeliberationRound",
                             "src.heretek_swarm.consensus.deliberation.DissentRecord",
+                            "src.heretek_swarm.consensus.deliberation.PositionChange",
                             "src.heretek_swarm.consensus.deliberation.ConsensusConfidence",
                             "src.heretek_swarm.consensus.deliberation.DeliberationResult",
                             "src.heretek_swarm.consensus.deliberation.DeliberationConfig",
-                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine",
                             "src.heretek_swarm.consensus.deliberation.DeliberationEngine.__init__",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine",
                             "src.heretek_swarm.consensus.deliberation.DeliberationEngine.run_deliberation_round",
-                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.finalize_deliberation"
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.finalize_deliberation",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.record_position_change",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_position_change_history",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_agent_position_changes",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.steward_tiebreaker",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine._tiebreak_weighted_confidence",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine._tiebreak_first_position",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine._tiebreak_most_challenges",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine._determine_tiebreak_outcome"
                           ]
                         }
                       ],
@@ -153034,7 +153465,7 @@
                           "file_methods": [
                             {
                               "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.run_deliberation_round",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.finalize_deliberation"
@@ -153056,7 +153487,7 @@
                           "file_methods": [
                             {
                               "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "src.heretek_swarm.consensus.deliberation.Evidence.calculate_quality",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.__init__",
@@ -153084,7 +153515,7 @@
                           "file_methods": [
                             {
                               "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "src.heretek_swarm.consensus.deliberation.Position",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationOutcome",
@@ -153130,7 +153561,7 @@
                           "file_methods": [
                             {
                               "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "src.heretek_swarm.consensus.deliberation.ConsensusConfidence.calculate",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.start_deliberation",
@@ -153251,11 +153682,20 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
+                            "src.heretek_swarm.consensus.deliberation.PositionChange",
                             "src.heretek_swarm.consensus.deliberation.DeliberationEngine.submit_counter_argument",
                             "src.heretek_swarm.consensus.deliberation.DeliberationEngine._calculate_consensus_score",
-                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine._calculate_position_weights"
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine._calculate_position_weights",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.record_position_change",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_position_change_history",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_agent_position_changes",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.steward_tiebreaker",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine._tiebreak_weighted_confidence",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine._tiebreak_first_position",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine._tiebreak_most_challenges",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine._determine_tiebreak_outcome"
                           ]
                         }
                       ],
@@ -153291,7 +153731,7 @@
                           "file_methods": [
                             {
                               "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "src.heretek_swarm.consensus.deliberation.Position",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationOutcome",
@@ -153307,8 +153747,8 @@
                                 "src.heretek_swarm.consensus.deliberation.ConsensusConfidence",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationResult",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationConfig",
-                                "src.heretek_swarm.consensus.deliberation.DeliberationEngine",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.__init__",
+                                "src.heretek_swarm.consensus.deliberation.DeliberationEngine",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.submit_counter_argument",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.calculate_consensus_confidence",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine._calculate_position_weights"
@@ -153364,7 +153804,7 @@
                           "file_methods": [
                             {
                               "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "src.heretek_swarm.consensus.deliberation.CounterArgument.calculate_effectiveness",
                                 "src.heretek_swarm.consensus.deliberation.ConsensusConfidence.calculate",
@@ -153426,7 +153866,7 @@
                           "file_methods": [
                             {
                               "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_deliberation_state",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_position_distribution",
@@ -153473,7 +153913,7 @@
                           "file_methods": [
                             {
                               "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.start_deliberation",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.run_deliberation_round",
@@ -153585,13 +154025,22 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.consensus.deliberation.CounterArgument.calculate_effectiveness",
+                            "src.heretek_swarm.consensus.deliberation.PositionChange",
                             "src.heretek_swarm.consensus.deliberation.DeliberationEngine.submit_argument",
                             "src.heretek_swarm.consensus.deliberation.DeliberationEngine.submit_evidence",
                             "src.heretek_swarm.consensus.deliberation.DeliberationEngine._count_position_changes",
-                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.track_dissent"
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.track_dissent",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.record_position_change",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_position_change_history",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_agent_position_changes",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.steward_tiebreaker",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine._tiebreak_weighted_confidence",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine._tiebreak_first_position",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine._tiebreak_most_challenges",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine._determine_tiebreak_outcome"
                           ]
                         }
                       ],
@@ -153617,7 +154066,7 @@
                           "file_methods": [
                             {
                               "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "src.heretek_swarm.consensus.deliberation.CounterArgument.calculate_effectiveness",
                                 "src.heretek_swarm.consensus.deliberation.ConsensusConfidence.calculate",
@@ -153648,7 +154097,7 @@
                           "file_methods": [
                             {
                               "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "src.heretek_swarm.consensus.deliberation.Position",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationOutcome",
@@ -153664,8 +154113,8 @@
                                 "src.heretek_swarm.consensus.deliberation.ConsensusConfidence",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationResult",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationConfig",
-                                "src.heretek_swarm.consensus.deliberation.DeliberationEngine",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.__init__",
+                                "src.heretek_swarm.consensus.deliberation.DeliberationEngine",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine._calculate_consensus_score"
                               ]
                             }
@@ -153684,7 +154133,7 @@
                           "file_methods": [
                             {
                               "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.submit_counter_argument",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine._calculate_position_weights"
@@ -153706,7 +154155,7 @@
                           "file_methods": [
                             {
                               "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_position_distribution",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_round_history",
@@ -153728,7 +154177,7 @@
                           "file_methods": [
                             {
                               "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.run_deliberation_round",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.finalize_deliberation"
@@ -153866,13 +154315,22 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
+                            "src.heretek_swarm.consensus.deliberation.PositionChange",
                             "src.heretek_swarm.consensus.deliberation.DeliberationEngine.start_deliberation",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.record_position_change",
                             "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_deliberation_state",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_position_change_history",
                             "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_position_distribution",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_agent_position_changes",
                             "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_round_history",
-                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.cleanup_deliberation"
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.steward_tiebreaker",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.cleanup_deliberation",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine._tiebreak_weighted_confidence",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine._tiebreak_first_position",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine._tiebreak_most_challenges",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine._determine_tiebreak_outcome"
                           ]
                         }
                       ],
@@ -153892,7 +154350,7 @@
                           "file_methods": [
                             {
                               "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "src.heretek_swarm.consensus.deliberation.Evidence.calculate_quality",
                                 "src.heretek_swarm.consensus.deliberation.CounterArgument.calculate_effectiveness",
@@ -153916,7 +154374,7 @@
                           "file_methods": [
                             {
                               "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "src.heretek_swarm.consensus.deliberation.ConsensusConfidence.calculate",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_position_distribution",
@@ -153940,7 +154398,7 @@
                           "file_methods": [
                             {
                               "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.submit_argument",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.submit_evidence",
@@ -153965,7 +154423,7 @@
                           "file_methods": [
                             {
                               "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.start_deliberation",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine._calculate_consensus_score",
@@ -153993,7 +154451,7 @@
                           "file_methods": [
                             {
                               "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "src.heretek_swarm.consensus.deliberation.Position",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationOutcome",
@@ -154160,11 +154618,20 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
+                            "src.heretek_swarm.consensus.deliberation.PositionChange",
                             "src.heretek_swarm.consensus.deliberation.ConsensusConfidence.calculate",
                             "src.heretek_swarm.consensus.deliberation.DeliberationEngine.calculate_consensus_confidence",
-                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_statistics"
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.record_position_change",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_position_change_history",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_agent_position_changes",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_statistics",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine.steward_tiebreaker",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine._tiebreak_weighted_confidence",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine._tiebreak_first_position",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine._tiebreak_most_challenges",
+                            "src.heretek_swarm.consensus.deliberation.DeliberationEngine._determine_tiebreak_outcome"
                           ]
                         }
                       ],
@@ -154194,7 +154661,7 @@
                           "file_methods": [
                             {
                               "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "src.heretek_swarm.consensus.deliberation.ConsensusConfidence.calculate",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.get_deliberation_state",
@@ -154224,7 +154691,7 @@
                           "file_methods": [
                             {
                               "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "src.heretek_swarm.consensus.deliberation.Position",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationOutcome",
@@ -154277,7 +154744,7 @@
                           "file_methods": [
                             {
                               "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "src.heretek_swarm.consensus.deliberation.Evidence.calculate_quality",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.__init__",
@@ -154388,7 +154855,7 @@
                           "file_methods": [
                             {
                               "file_path": "src/heretek_swarm/consensus/deliberation.py",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "src.heretek_swarm.consensus.deliberation.CounterArgument.calculate_effectiveness",
                                 "src.heretek_swarm.consensus.deliberation.DeliberationEngine.submit_argument",

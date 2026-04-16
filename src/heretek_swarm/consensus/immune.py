@@ -1143,6 +1143,7 @@ class ImmuneResponseEngine:
 
         recent_responses = self._get_recent_responses(self._false_positive_rate_window)
 
+        # Group responses by pattern
         pattern_confirmations: dict[str, list[AnomalyResponse]] = {}
         for response in recent_responses:
             if response.was_correct is None:
@@ -1153,37 +1154,11 @@ class ImmuneResponseEngine:
                 pattern_confirmations[key] = []
             pattern_confirmations[key].append(response)
 
+        # Classify each pattern and update baseline
         for pattern_key, responses in pattern_confirmations.items():
-            correct = sum(1 for r in responses if r.was_correct)
-            incorrect = sum(1 for r in responses if not r.was_correct)
-
-            if incorrect > correct:
-                result.false_positives_identified += 1
-                pattern_id = self._find_matching_pattern(response)
-                if pattern_id and self._baseline_store:
-                    self._baseline_store.record_false_positive(pattern_id)
-
-            if correct >= self._confirmation_threshold:
-                pattern = self._create_pattern_from_responses(pattern_key, responses)
-                if pattern and self._baseline_store:
-                    existing = self._baseline_store.get_pattern(pattern.pattern_id)
-                    if not existing:
-                        self._baseline_store.add_provisional_pattern(pattern)
-                        result.new_patterns_proposed += 1
-                        self._stats["patterns_proposed"] += 1
-
-                        pattern_high_confidence = all(r.was_correct for r in responses[-3:])
-                        if (
-                            pattern_high_confidence
-                            and pattern.confidence >= self._novel_attack_threshold
-                        ):
-                            self._baseline_store.request_human_review(pattern.pattern_id)
-                            result.novel_attacks_flagged += 1
-                            self._stats["novel_attacks_flagged"] += 1
-                    else:
-                        for _ in range(correct):
-                            self._baseline_store.confirm_pattern(pattern.pattern_id)
-                        result.patterns_confirmed += 1
+            self._classify_pattern_confirmation(
+                pattern_key, responses, result
+            )
 
         logger.info(
             "immune_analysis_complete",
@@ -1195,6 +1170,70 @@ class ImmuneResponseEngine:
         )
 
         return result
+
+    def _classify_pattern_confirmation(
+        self,
+        pattern_key: str,
+        responses: list[AnomalyResponse],
+        result: ImmuneLearningResult,
+    ) -> None:
+        """
+        Classify a pattern confirmation and update baseline.
+
+        Args:
+            pattern_key: Pattern key identifier
+            responses: List of responses for this pattern
+            result: Learning result to update
+        """
+        correct = sum(1 for r in responses if r.was_correct)
+        incorrect = sum(1 for r in responses if not r.was_correct)
+
+        if incorrect > correct:
+            result.false_positives_identified += 1
+            pattern_id = self._find_matching_pattern(responses[0])
+            if pattern_id and self._baseline_store:
+                self._baseline_store.record_false_positive(pattern_id)
+            return
+
+        if correct >= self._confirmation_threshold:
+            pattern = self._create_pattern_from_responses(pattern_key, responses)
+            if pattern and self._baseline_store:
+                existing = self._baseline_store.get_pattern(pattern.pattern_id)
+                if not existing:
+                    self._handle_new_pattern(pattern, responses, result)
+                else:
+                    self._handle_existing_pattern(pattern, correct, result)
+
+    def _handle_new_pattern(
+        self,
+        pattern: ImmunePattern,
+        responses: list[AnomalyResponse],
+        result: ImmuneLearningResult,
+    ) -> None:
+        """Handle a newly discovered pattern."""
+        self._baseline_store.add_provisional_pattern(pattern)
+        result.new_patterns_proposed += 1
+        self._stats["patterns_proposed"] += 1
+
+        pattern_high_confidence = all(r.was_correct for r in responses[-3:])
+        if (
+            pattern_high_confidence
+            and pattern.confidence >= self._novel_attack_threshold
+        ):
+            self._baseline_store.request_human_review(pattern.pattern_id)
+            result.novel_attacks_flagged += 1
+            self._stats["novel_attacks_flagged"] += 1
+
+    def _handle_existing_pattern(
+        self,
+        pattern: ImmunePattern,
+        correct: int,
+        result: ImmuneLearningResult,
+    ) -> None:
+        """Handle confirmation of an existing pattern."""
+        for _ in range(correct):
+            self._baseline_store.confirm_pattern(pattern.pattern_id)
+        result.patterns_confirmed += 1
 
     def calculate_false_positive_rate(self) -> float:
         """

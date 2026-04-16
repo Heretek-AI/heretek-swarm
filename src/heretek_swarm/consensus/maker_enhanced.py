@@ -164,8 +164,23 @@ class ReasoningChain:
         if "observation" not in step_types:
             errors.append("Missing observation step")
 
-        # Check for circular reasoning (simplified check)
-        [s for s in self.steps if s.step_type == "conclusion"]
+        # Check for circular reasoning
+        errors.extend(self._check_circular_reasoning())
+
+        # Check confidence consistency
+        errors.extend(self._check_confidence_consistency())
+
+        if errors:
+            self.validation_errors = errors
+            self.status = ReasoningChainStatus.INVALID
+            return False
+
+        self.status = ReasoningChainStatus.VALID
+        return True
+
+    def _check_circular_reasoning(self) -> list[str]:
+        """Check for circular reasoning in the chain."""
+        errors = []
         for step in self.steps:
             if step.step_type == "observation":
                 # Observations should not reference conclusions
@@ -177,22 +192,18 @@ class ReasoningChain:
                         errors.append("Circular reasoning detected")
                         self.status = ReasoningChainStatus.CIRCULAR
                         break
+        return errors
 
-        # Check confidence consistency
+    def _check_confidence_consistency(self) -> list[str]:
+        """Check for confidence consistency across steps."""
+        errors = []
         confidences = [s.confidence for s in self.steps]
         if confidences:
             statistics.mean(confidences)
             low_confidence_steps = [s for s in self.steps if s.confidence < 0.5]
             if len(low_confidence_steps) > len(self.steps) / 2:
                 errors.append("Majority of steps have low confidence")
-
-        if errors:
-            self.validation_errors = errors
-            self.status = ReasoningChainStatus.INVALID
-            return False
-
-        self.status = ReasoningChainStatus.VALID
-        return True
+        return errors
 
 
 @dataclass
@@ -975,61 +986,21 @@ class EnhancedMAKERConsensus(MAKERConsensus):
             "cross_validations": [],
         }
 
-        # Validate individual chains
+        # Count valid/invalid chains
         for chain in chains:
             if chain.status == ReasoningChainStatus.VALID:
                 validation_results["valid_chains"] += 1
             else:
                 validation_results["invalid_chains"] += 1
 
-        # Cross-validate between chains (check for consistency)
-        decisions_by_chain: dict[str, str] = {}
-        for ev in enhanced_votes:
-            if ev.reasoning_chain:
-                decisions_by_chain[ev.reasoning_chain.chain_id] = ev.decision
+        # Check for contradictory patterns between chains
+        validation_results["cross_validations"] = self._check_chain_contradictions(
+            chains, enhanced_votes
+        )
 
-        # Check for contradictory reasoning supporting same decision
-        for i, chain1 in enumerate(chains):
-            for chain2 in chains[i + 1 :]:
-                if chain1.status == ReasoningChainStatus.VALID and chain2.status == ReasoningChainStatus.VALID:
-                    # Check if chains reference contradictory patterns
-                    if self.enable_pattern_library:
-                        common_patterns = set(chain1.pattern_references) & set(
-                            chain2.pattern_references
-                        )
-                        if common_patterns:
-                            # Chains share pattern references - check consistency
-                            decision1 = decisions_by_chain.get(chain1.chain_id)
-                            decision2 = decisions_by_chain.get(chain2.chain_id)
-                            if decision1 != decision2:
-                                validation_results["cross_validations"].append({
-                                    "chain1": chain1.chain_id,
-                                    "chain2": chain2.chain_id,
-                                    "issue": "contradictory_conclusions",
-                                    "shared_patterns": list(common_patterns),
-                                })
-
-        # Calculate validation scores and vote weights for each enhanced vote
-        domain = None
-        if consensus_id in self.decision_provenance:
-            domain_agents = [
-                a
-                for a in self.decision_provenance[consensus_id].participating_agents
-                if a.startswith("_domain:")
-            ]
-            if domain_agents:
-                domain = domain_agents[0].replace("_domain:", "")
-
-        for ev in enhanced_votes:
-            if ev.reasoning_chain:
-                if ev.reasoning_chain.status == ReasoningChainStatus.VALID:
-                    ev.validation_score = 0.8 + (0.2 * ev.confidence)
-                else:
-                    ev.validation_score = 0.3
-                ev.cross_validated = True
-
-            # Calculate vote weight using the new weighting system
-            self.calculate_vote_weight(consensus_id, ev, domain)
+        # Calculate validation scores and vote weights
+        domain = self._extract_domain(consensus_id)
+        self._calculate_validation_scores(enhanced_votes, domain, consensus_id)
 
         validation_results["average_validation_score"] = (
             statistics.mean(
@@ -1054,6 +1025,101 @@ class EnhancedMAKERConsensus(MAKERConsensus):
         )
 
         return validation_results
+
+    def _check_chain_contradictions(
+        self,
+        chains: list[ReasoningChain],
+        enhanced_votes: list[EnhancedVote],
+    ) -> list[dict[str, Any]]:
+        """
+        Check for contradictory reasoning between chains.
+
+        Args:
+            chains: List of reasoning chains
+            enhanced_votes: List of enhanced votes
+
+        Returns:
+            List of cross-validation issues found
+        """
+        contradictions: list[dict[str, Any]] = []
+
+        if not self.enable_pattern_library:
+            return contradictions
+
+        # Build decisions map
+        decisions_by_chain: dict[str, str] = {}
+        for ev in enhanced_votes:
+            if ev.reasoning_chain:
+                decisions_by_chain[ev.reasoning_chain.chain_id] = ev.decision
+
+        # Check for contradictory reasoning supporting same decision
+        for i, chain1 in enumerate(chains):
+            for chain2 in chains[i + 1:]:
+                if chain1.status == ReasoningChainStatus.VALID and chain2.status == ReasoningChainStatus.VALID:
+                    # Check if chains reference contradictory patterns
+                    common_patterns = set(chain1.pattern_references) & set(
+                        chain2.pattern_references
+                    )
+                    if common_patterns:
+                        # Chains share pattern references - check consistency
+                        decision1 = decisions_by_chain.get(chain1.chain_id)
+                        decision2 = decisions_by_chain.get(chain2.chain_id)
+                        if decision1 != decision2:
+                            contradictions.append({
+                                "chain1": chain1.chain_id,
+                                "chain2": chain2.chain_id,
+                                "issue": "contradictory_conclusions",
+                                "shared_patterns": list(common_patterns),
+                            })
+
+        return contradictions
+
+    def _calculate_validation_scores(
+        self,
+        enhanced_votes: list[EnhancedVote],
+        domain: str | None,
+        consensus_id: str,
+    ) -> None:
+        """
+        Calculate validation scores for enhanced votes.
+
+        Args:
+            enhanced_votes: List of enhanced votes
+            domain: Domain for expertise weighting
+            consensus_id: Consensus process identifier
+        """
+        for ev in enhanced_votes:
+            if ev.reasoning_chain:
+                if ev.reasoning_chain.status == ReasoningChainStatus.VALID:
+                    ev.validation_score = 0.8 + (0.2 * ev.confidence)
+                else:
+                    ev.validation_score = 0.3
+                ev.cross_validated = True
+
+            # Calculate vote weight using the new weighting system
+            self.calculate_vote_weight(consensus_id, ev, domain)
+
+    def _extract_domain(self, consensus_id: str) -> str | None:
+        """
+        Extract domain from decision provenance.
+
+        Args:
+            consensus_id: Consensus process identifier
+
+        Returns:
+            Domain string or None
+        """
+        if consensus_id not in self.decision_provenance:
+            return None
+
+        domain_agents = [
+            a
+            for a in self.decision_provenance[consensus_id].participating_agents
+            if a.startswith("_domain:")
+        ]
+        if domain_agents:
+            return domain_agents[0].replace("_domain:", "")
+        return None
 
     def _get_validation_results(
         self,

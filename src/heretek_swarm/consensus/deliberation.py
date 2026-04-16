@@ -1080,53 +1080,25 @@ class DeliberationEngine:
         )
 
         data = self.active_deliberations[deliberation_id]
-        positions = data.get("positions", {})
         arguments = data.get("arguments", [])
         evidence = data.get("evidence", {})
 
-        for_weight, against_weight, total_weight = self._calculate_position_weights(deliberation_id)
+        # Dispatch to appropriate tiebreaker method
+        tiebreakers = {
+            "weighted_confidence": self._tiebreak_weighted_confidence,
+            "first_position": self._tiebreak_first_position,
+            "most_challenges": self._tiebreak_most_challenges,
+        }
 
-        if criteria == "weighted_confidence":
-            if for_weight > against_weight:
-                final_position = Position.FOR
-            elif against_weight > for_weight:
-                final_position = Position.AGAINST
-            else:
-                final_position = Position.NEUTRAL
-
-        elif criteria == "first_position":
-            sorted_agents = sorted(positions.keys())
-            if sorted_agents:
-                first_agent = sorted_agents[0]
-                final_position = positions[first_agent]["position"]
-            else:
-                final_position = Position.NEUTRAL
-
-        elif criteria == "most_challenges":
-            challenge_counts: dict[str, int] = {}
-            for arg in arguments:
-                challenge_counts[arg.agent_id] = challenge_counts.get(arg.agent_id, 0) + len(
-                    arg.rebuttals
-                )
-            if challenge_counts:
-                final_position = Position.AGAINST
-            else:
-                final_position = Position.NEUTRAL
-
-        else:
-            final_position = Position.NEUTRAL
+        tiebreaker_func = tiebreakers.get(criteria, lambda **_: Position.NEUTRAL)
+        final_position = tiebreaker_func(
+            deliberation_id=deliberation_id,
+            arguments=arguments,
+        )
 
         consensus_score = self._calculate_consensus_score(deliberation_id)
-
-        if consensus_score >= self.config.consensus_threshold:
-            outcome = DeliberationOutcome.CONSENSUS
-        elif consensus_score > 0.5:
-            outcome = DeliberationOutcome.MAJORITY
-        else:
-            outcome = DeliberationOutcome.DEADLOCK
-
+        outcome = self._determine_tiebreak_outcome(consensus_score)
         confidence = self.calculate_consensus_confidence(deliberation_id)
-
         dissenting_agents = [d.agent_id for d in self.dissent_records.get(deliberation_id, [])]
         minority_report = self.dissent_records.get(deliberation_id, [])
 
@@ -1164,6 +1136,93 @@ class DeliberationEngine:
         )
 
         return result
+
+    def _tiebreak_weighted_confidence(
+        self,
+        deliberation_id: str,
+        arguments: list[Argument],
+    ) -> Position:
+        """
+        Break tie using weighted confidence.
+
+        Args:
+            deliberation_id: Deliberation identifier
+            arguments: List of arguments
+
+        Returns:
+            Final position based on weighted confidence
+        """
+        for_weight, against_weight, _ = self._calculate_position_weights(deliberation_id)
+
+        if for_weight > against_weight:
+            return Position.FOR
+        if against_weight > for_weight:
+            return Position.AGAINST
+        return Position.NEUTRAL
+
+    def _tiebreak_first_position(
+        self,
+        deliberation_id: str,
+        arguments: list[Argument],
+    ) -> Position:
+        """
+        Break tie using first position.
+
+        Args:
+            deliberation_id: Deliberation identifier
+            arguments: List of arguments
+
+        Returns:
+            Final position based on first agent's position
+        """
+        data = self.active_deliberations[deliberation_id]
+        positions = data.get("positions", {})
+        sorted_agents = sorted(positions.keys())
+
+        if sorted_agents:
+            first_agent = sorted_agents[0]
+            return positions[first_agent]["position"]
+        return Position.NEUTRAL
+
+    def _tiebreak_most_challenges(
+        self,
+        deliberation_id: str,
+        arguments: list[Argument],
+    ) -> Position:
+        """
+        Break tie using most challenges.
+
+        Args:
+            deliberation_id: Deliberation identifier
+            arguments: List of arguments
+
+        Returns:
+            Final position based on challenge counts
+        """
+        challenge_counts: dict[str, int] = {}
+        for arg in arguments:
+            challenge_counts[arg.agent_id] = challenge_counts.get(arg.agent_id, 0) + len(
+                arg.rebuttals
+            )
+        if challenge_counts:
+            return Position.AGAINST
+        return Position.NEUTRAL
+
+    def _determine_tiebreak_outcome(self, consensus_score: float) -> DeliberationOutcome:
+        """
+        Determine outcome based on consensus score.
+
+        Args:
+            consensus_score: Calculated consensus score
+
+        Returns:
+            Deliberation outcome
+        """
+        if consensus_score >= self.config.consensus_threshold:
+            return DeliberationOutcome.CONSENSUS
+        if consensus_score > 0.5:
+            return DeliberationOutcome.MAJORITY
+        return DeliberationOutcome.DEADLOCK
 
     def _calculate_position_weights(
         self,
