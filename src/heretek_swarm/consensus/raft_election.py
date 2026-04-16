@@ -116,7 +116,7 @@ class LogEntry:
     index: int
     term: int
     data: dict[str, Any]
-    timestamp: str = field(default_factory=datetime.now(UTC).isoformat)
+    timestamp: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
 
 
 @dataclass

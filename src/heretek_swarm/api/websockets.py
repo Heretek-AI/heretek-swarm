@@ -14,7 +14,10 @@ import json
 import os
 import secrets
 from datetime import UTC, datetime, timedelta
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from heretek_swarm.api.websockets import ConnectionManager
 
 import structlog
 from fastapi import APIRouter, Query, WebSocket, WebSocketDisconnect
@@ -133,6 +136,123 @@ async def authenticate_websocket(
         return False, None, "Rate limit exceeded"
 
     return True, user_id, None
+
+
+async def _ws_authenticate_and_accept(
+    websocket: WebSocket, token: str | None, error_action: str
+) -> tuple[bool, str | None]:
+    """
+    Authenticate a WebSocket connection and accept it if valid.
+
+    Returns:
+        Tuple of (authenticated, user_id). On failure, sends error and closes.
+    """
+    is_authenticated, user_id, error = await authenticate_websocket(websocket, token)
+    if not is_authenticated:
+        try:
+            await websocket.accept()
+            await websocket.send_json({"type": "error", "error": f"Authentication failed: {error}"})
+            await websocket.close()
+        except Exception:
+            pass
+        logger.warning(f"websocket_{error_action}_auth_failed", error=error)
+        return False, None
+    return True, user_id
+
+
+async def _ws_handle_agent_subscribe(
+    websocket: WebSocket, message: dict, subscribed_agents: set, agent_id: str | None, manager: "ConnectionManager"
+) -> None:
+    """Handle a subscribe action for an agent resource."""
+    sub_agent_id = message.get("agentId") or agent_id
+    if sub_agent_id:
+        subscribed_agents.add(sub_agent_id)
+        manager.subscribe_agent_status(sub_agent_id, websocket)
+        logger.info("Subscribed to agent status", agent_id=sub_agent_id)
+        if sub_agent_id in _agent_states:
+            await websocket.send_json(
+                {"type": "agent_status", "agentId": sub_agent_id, **_agent_states[sub_agent_id]}
+            )
+
+
+async def _ws_handle_agent_unsubscribe(
+    subscribed_agents: set, agent_id: str | None, manager: "ConnectionManager"
+) -> None:
+    """Handle an unsubscribe action for an agent resource."""
+    sub_agent_id = agent_id
+    if sub_agent_id in subscribed_agents:
+        manager.unsubscribe_agent_status(sub_agent_id)
+        subscribed_agents.discard(sub_agent_id)
+        logger.info("Unsubscribed from agent status", agent_id=sub_agent_id)
+
+
+async def _ws_handle_workflow_subscribe(
+    websocket: WebSocket, message: dict, subscribed_workflows: set, workflow_id: str | None, manager: "ConnectionManager"
+) -> None:
+    """Handle a subscribe action for a workflow resource."""
+    sub_workflow_id = message.get("workflowId") or workflow_id
+    if sub_workflow_id:
+        subscribed_workflows.add(sub_workflow_id)
+        manager.subscribe_workflow_progress(sub_workflow_id, websocket)
+        logger.info("Subscribed to workflow progress", workflow_id=sub_workflow_id)
+
+
+async def _ws_handle_workflow_unsubscribe(
+    subscribed_workflows: set, workflow_id: str | None, websocket: WebSocket, manager: "ConnectionManager"
+) -> None:
+    """Handle an unsubscribe action for a workflow resource."""
+    sub_workflow_id = workflow_id
+    if sub_workflow_id in subscribed_workflows:
+        manager.unsubscribe_workflow_progress(sub_workflow_id, websocket)
+        subscribed_workflows.discard(sub_workflow_id)
+        logger.info("Unsubscribed from workflow progress", workflow_id=sub_workflow_id)
+
+
+async def _ws_handle_metrics_subscribe(
+    websocket: WebSocket, message: dict, subscribed_agents: set, agent_id: str | None, manager: "ConnectionManager"
+) -> None:
+    """Handle a subscribe action for agent metrics."""
+    sub_agent_id = message.get("agentId") or agent_id
+    if sub_agent_id:
+        subscribed_agents.add(sub_agent_id)
+        manager.subscribe_metrics(sub_agent_id, websocket)
+        logger.info("Subscribed to agent metrics", agent_id=sub_agent_id)
+
+
+async def _ws_handle_metrics_unsubscribe(
+    subscribed_agents: set, agent_id: str | None, websocket: WebSocket, manager: "ConnectionManager"
+) -> None:
+    """Handle an unsubscribe action for agent metrics."""
+    sub_agent_id = agent_id
+    if sub_agent_id in subscribed_agents:
+        manager.unsubscribe_metrics(sub_agent_id, websocket)
+        subscribed_agents.discard(sub_agent_id)
+        logger.info("Unsubscribed from agent metrics", agent_id=sub_agent_id)
+
+
+async def _ws_handle_dashboard_message(
+    websocket: WebSocket, message: dict, subscriptions: dict
+) -> None:
+    """Handle a client message for the dashboard WebSocket."""
+    action = message.get("action")
+
+    if action == "ping":
+        await websocket.send_json(
+            {
+                "type": "pong",
+                "timestamp": datetime.now(UTC).isoformat(),
+            }
+        )
+    elif action == "subscribe":
+        channel = message.get("channel")
+        if channel in subscriptions:
+            subscriptions[channel] = True
+            logger.info("Dashboard subscribed to channel", channel=channel)
+    elif action == "unsubscribe":
+        channel = message.get("channel")
+        if channel in subscriptions:
+            subscriptions[channel] = False
+            logger.info("Dashboard unsubscribed from channel", channel=channel)
 
 
 # Create WebSocket router
@@ -729,56 +849,28 @@ async def agent_status_websocket(
         token: Authentication token (required)
     """
     # SECURITY: Authenticate connection
-    is_authenticated, _user_id, error = await authenticate_websocket(websocket, token)
-    if not is_authenticated:
-        try:
-            await websocket.accept()
-            await websocket.send_json({"type": "error", "error": f"Authentication failed: {error}"})
-            await websocket.close()
-        except Exception:
-            pass
-        logger.warning("websocket_agent_status_auth_failed", error=error)
+    authenticated, user_id = await _ws_authenticate_and_accept(websocket, token, "agent_status")
+    if not authenticated:
         return
 
     await websocket.accept()
     logger.info("Agent status WebSocket connected", agent_id=agent_id)
 
-    subscribed_agents = set()
+    subscribed_agents: set = set()
 
     try:
         while True:
             try:
                 data = await asyncio.wait_for(websocket.receive_text(), timeout=60.0)
                 message = json.loads(data)
-
-                # Handle subscription/unsubscription
                 action = message.get("action")
+
                 if action == "subscribe":
-                    sub_agent_id = message.get("agentId") or agent_id
-                    if sub_agent_id:
-                        manager.subscribe_agent_status(sub_agent_id, websocket)
-                        subscribed_agents.add(sub_agent_id)
-                        logger.info("Subscribed to agent status", agent_id=sub_agent_id)
-
-                        # Send current state if available
-                        if sub_agent_id in _agent_states:
-                            await websocket.send_json(
-                                {
-                                    "type": "agent_status",
-                                    "agentId": sub_agent_id,
-                                    **_agent_states[sub_agent_id],
-                                }
-                            )
-
+                    await _ws_handle_agent_subscribe(websocket, message, subscribed_agents, agent_id, manager)
                 elif action == "unsubscribe":
-                    sub_agent_id = message.get("agentId") or agent_id
-                    if sub_agent_id in subscribed_agents:
-                        manager.unsubscribe_agent_status(sub_agent_id)
-                        subscribed_agents.discard(sub_agent_id)
-                        logger.info("Unsubscribed from agent status", agent_id=sub_agent_id)
+                    await _ws_handle_agent_unsubscribe(subscribed_agents, agent_id, manager)
 
             except TimeoutError:
-                # Send heartbeat
                 await websocket.send_json(
                     {
                         "type": "heartbeat",
@@ -791,7 +883,6 @@ async def agent_status_websocket(
     except Exception as e:
         logger.error("Agent status WebSocket error", error=str(e))
     finally:
-        # Cleanup subscriptions
         for sub_agent_id in subscribed_agents:
             manager.unsubscribe_agent_status(sub_agent_id)
 
@@ -831,48 +922,28 @@ async def workflow_progress_websocket(
         token: Authentication token (required)
     """
     # SECURITY: Authenticate connection
-    is_authenticated, _user_id, error = await authenticate_websocket(websocket, token)
-    if not is_authenticated:
-        try:
-            await websocket.accept()
-            await websocket.send_json({"type": "error", "error": f"Authentication failed: {error}"})
-            await websocket.close()
-        except Exception:
-            pass
-        logger.warning("websocket_workflow_progress_auth_failed", error=error)
+    authenticated, user_id = await _ws_authenticate_and_accept(websocket, token, "workflow_progress")
+    if not authenticated:
         return
 
     await websocket.accept()
     logger.info("Workflow progress WebSocket connected", workflow_id=workflow_id)
 
-    subscribed_workflows = set()
+    subscribed_workflows: set = set()
 
     try:
         while True:
             try:
                 data = await asyncio.wait_for(websocket.receive_text(), timeout=60.0)
                 message = json.loads(data)
-
-                # Handle subscription/unsubscription
                 action = message.get("action")
-                if action == "subscribe":
-                    sub_workflow_id = message.get("workflowId") or workflow_id
-                    if sub_workflow_id:
-                        manager.subscribe_workflow_progress(sub_workflow_id, websocket)
-                        subscribed_workflows.add(sub_workflow_id)
-                        logger.info("Subscribed to workflow progress", workflow_id=sub_workflow_id)
 
+                if action == "subscribe":
+                    await _ws_handle_workflow_subscribe(websocket, message, subscribed_workflows, workflow_id, manager)
                 elif action == "unsubscribe":
-                    sub_workflow_id = message.get("workflowId") or workflow_id
-                    if sub_workflow_id in subscribed_workflows:
-                        manager.unsubscribe_workflow_progress(sub_workflow_id, websocket)
-                        subscribed_workflows.discard(sub_workflow_id)
-                        logger.info(
-                            "Unsubscribed from workflow progress", workflow_id=sub_workflow_id
-                        )
+                    await _ws_handle_workflow_unsubscribe(subscribed_workflows, workflow_id, websocket, manager)
 
             except TimeoutError:
-                # Send heartbeat
                 await websocket.send_json(
                     {
                         "type": "heartbeat",
@@ -885,7 +956,6 @@ async def workflow_progress_websocket(
     except Exception as e:
         logger.error("Workflow progress WebSocket error", error=str(e))
     finally:
-        # Cleanup subscriptions
         for sub_workflow_id in subscribed_workflows:
             manager.unsubscribe_workflow_progress(sub_workflow_id, websocket)
 
@@ -929,46 +999,28 @@ async def agent_metrics_websocket(
         token: Authentication token (required)
     """
     # SECURITY: Authenticate connection
-    is_authenticated, _user_id, error = await authenticate_websocket(websocket, token)
-    if not is_authenticated:
-        try:
-            await websocket.accept()
-            await websocket.send_json({"type": "error", "error": f"Authentication failed: {error}"})
-            await websocket.close()
-        except Exception:
-            pass
-        logger.warning("websocket_agent_metrics_auth_failed", error=error)
+    authenticated, user_id = await _ws_authenticate_and_accept(websocket, token, "agent_metrics")
+    if not authenticated:
         return
 
     await websocket.accept()
     logger.info("Agent metrics WebSocket connected", agent_id=agent_id)
 
-    subscribed_agents = set()
+    subscribed_agents: set = set()
 
     try:
         while True:
             try:
                 data = await asyncio.wait_for(websocket.receive_text(), timeout=60.0)
                 message = json.loads(data)
-
-                # Handle subscription/unsubscription
                 action = message.get("action")
-                if action == "subscribe":
-                    sub_agent_id = message.get("agentId") or agent_id
-                    if sub_agent_id:
-                        manager.subscribe_metrics(sub_agent_id, websocket)
-                        subscribed_agents.add(sub_agent_id)
-                        logger.info("Subscribed to agent metrics", agent_id=sub_agent_id)
 
+                if action == "subscribe":
+                    await _ws_handle_metrics_subscribe(websocket, message, subscribed_agents, agent_id, manager)
                 elif action == "unsubscribe":
-                    sub_agent_id = message.get("agentId") or agent_id
-                    if sub_agent_id in subscribed_agents:
-                        manager.unsubscribe_metrics(sub_agent_id, websocket)
-                        subscribed_agents.discard(sub_agent_id)
-                        logger.info("Unsubscribed from agent metrics", agent_id=sub_agent_id)
+                    await _ws_handle_metrics_unsubscribe(subscribed_agents, agent_id, websocket, manager)
 
             except TimeoutError:
-                # Send heartbeat
                 await websocket.send_json(
                     {
                         "type": "heartbeat",
@@ -981,7 +1033,6 @@ async def agent_metrics_websocket(
     except Exception as e:
         logger.error("Agent metrics WebSocket error", error=str(e))
     finally:
-        # Cleanup subscriptions
         for sub_agent_id in subscribed_agents:
             manager.unsubscribe_metrics(sub_agent_id, websocket)
 
@@ -1015,19 +1066,11 @@ async def dashboard_websocket(
     }
     """
     # SECURITY: Authenticate connection
-    is_authenticated, _user_id, error = await authenticate_websocket(websocket, token)
-    if not is_authenticated:
-        try:
-            await websocket.accept()
-            await websocket.send_json({"type": "error", "error": f"Authentication failed: {error}"})
-            await websocket.close()
-        except Exception:
-            pass
-        logger.warning("websocket_dashboard_auth_failed", error=error)
+    authenticated, user_id = await _ws_authenticate_and_accept(websocket, token, "dashboard")
+    if not authenticated:
         return
 
     await manager.connect_dashboard(websocket)
-
     logger.info("Dashboard WebSocket connected")
 
     # Track subscriptions
@@ -1038,37 +1081,13 @@ async def dashboard_websocket(
     }
 
     try:
-        # Keep connection alive and stream updates
         while True:
             try:
-                # Wait for client messages (heartbeat, subscriptions)
                 data = await asyncio.wait_for(websocket.receive_text(), timeout=60.0)
                 message = json.loads(data)
-
-                # Handle client requests
-                if message.get("action") == "ping":
-                    await websocket.send_json(
-                        {
-                            "type": "pong",
-                            "timestamp": datetime.now(UTC).isoformat(),
-                        }
-                    )
-
-                # Handle channel subscriptions
-                elif message.get("action") == "subscribe":
-                    channel = message.get("channel")
-                    if channel in subscriptions:
-                        subscriptions[channel] = True
-                        logger.info("Dashboard subscribed to channel", channel=channel)
-
-                elif message.get("action") == "unsubscribe":
-                    channel = message.get("channel")
-                    if channel in subscriptions:
-                        subscriptions[channel] = False
-                        logger.info("Dashboard unsubscribed from channel", channel=channel)
+                await _ws_handle_dashboard_message(websocket, message, subscriptions)
 
             except TimeoutError:
-                # Send heartbeat
                 await websocket.send_json(
                     {
                         "type": "heartbeat",

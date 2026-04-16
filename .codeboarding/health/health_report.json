@@ -1,7 +1,7 @@
 {
   "repository_name": "heretek-swarm",
-  "timestamp": "2026-04-16T18:45:08.260281+00:00",
-  "overall_score": 0.988367382371665,
+  "timestamp": "2026-04-16T19:02:42.459164+00:00",
+  "overall_score": 0.9877385772122614,
   "check_summaries": [
     {
       "check_name": "function_size",
@@ -790,8 +790,8 @@
       "description": "Detects unused imports, variables, functions, and dead code via LSP diagnostics",
       "language": "Python",
       "check_type": "standard",
-      "total_entities_checked": 54,
-      "findings_count": 54,
+      "total_entities_checked": 65,
+      "findings_count": 65,
       "warning_count": 11,
       "score": 0.0,
       "finding_groups": [
@@ -1099,6 +1099,83 @@
               "file_path": "src/heretek_swarm/consensus/deliberation.py",
               "line_start": 1189,
               "line_end": 1189,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"websocket\" is not accessed",
+              "file_path": "src/heretek_swarm/api/websockets.py",
+              "line_start": 122,
+              "line_end": 122,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_user_id\" is not accessed",
+              "file_path": "src/heretek_swarm/api/websockets.py",
+              "line_start": 554,
+              "line_end": 554,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_user_id\" is not accessed",
+              "file_path": "src/heretek_swarm/api/websockets.py",
+              "line_start": 681,
+              "line_end": 681,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_user_id\" is not accessed",
+              "file_path": "src/heretek_swarm/api/websockets.py",
+              "line_start": 774,
+              "line_end": 774,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"user_id\" is not accessed",
+              "file_path": "src/heretek_swarm/api/websockets.py",
+              "line_start": 852,
+              "line_end": 852,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"user_id\" is not accessed",
+              "file_path": "src/heretek_swarm/api/websockets.py",
+              "line_start": 925,
+              "line_end": 925,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"user_id\" is not accessed",
+              "file_path": "src/heretek_swarm/api/websockets.py",
+              "line_start": 1002,
+              "line_end": 1002,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"user_id\" is not accessed",
+              "file_path": "src/heretek_swarm/api/websockets.py",
+              "line_start": 1069,
+              "line_end": 1069,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_user_id\" is not accessed",
+              "file_path": "src/heretek_swarm/api/websockets.py",
+              "line_start": 1135,
+              "line_end": 1135,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_user_id\" is not accessed",
+              "file_path": "src/heretek_swarm/api/websockets.py",
+              "line_start": 1234,
+              "line_end": 1234,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_all_agent_listeners\" is not accessed",
+              "file_path": "src/heretek_swarm/api/websockets.py",
+              "line_start": 1250,
+              "line_end": 1250,
               "metric_value": 0.0
             }
           ]
@@ -1543,6 +1620,12 @@
       "composite_risk_score": 50.0
     },
     {
+      "file_path": "src/heretek_swarm/api/websockets.py",
+      "total_findings": 11,
+      "warning_findings": 0,
+      "composite_risk_score": 50.0
+    },
+    {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
       "total_findings": 3,
       "warning_findings": 3,
@@ -1634,12 +1717,6 @@
     },
     {
       "file_path": "src/heretek_swarm/collective/swarm_intelligence.py",
-      "total_findings": 2,
-      "warning_findings": 2,
-      "composite_risk_score": 30.0
-    },
-    {
-      "file_path": "serverless/handler.py",
       "total_findings": 2,
       "warning_findings": 2,
       "composite_risk_score": 30.0

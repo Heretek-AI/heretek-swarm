@@ -61,7 +61,7 @@ class AgentConversation:
     agent_id: str
     messages: list[dict[str, str]] = field(default_factory=list)
     state: ConversationState = ConversationState.IDLE
-    created_at: str = field(default_factory=datetime.now(UTC).isoformat)
+    created_at: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
     updated_at: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
     metadata: dict[str, Any] = field(default_factory=dict)
 

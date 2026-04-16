@@ -67,7 +67,7 @@ class NATSMessage:
     data: dict[str, Any]
     reply: str | None = None
     sid: str | None = None
-    timestamp: str = field(default_factory=datetime.now(UTC).isoformat)
+    timestamp: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
 
 
 class NATSEventMesh:
