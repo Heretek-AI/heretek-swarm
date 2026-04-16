@@ -101,6 +101,18 @@ class StewardAgent(
         self._monitor_task: asyncio.Task | None = None
         self._failed_agents: set[str] = set()
 
+        # GOV-01-F: Steward availability tracking
+        self._consecutive_missed_heartbeats: int = 0
+        self._heartbeat_interval: float = 10.0  # seconds between heartbeats
+        self._max_missed_heartbeats: int = 3  # failover threshold
+
+        # GOV-05-Q: Quorum constants
+        self.QUORUM_MIN_AGENTS: int = 3  # Minimum for triad + 1
+        self.QUORUM_TRIAD_WEIGHT: float = 0.4  # Triad votes = 40% of total
+        self.QUORUM_CONSENSUS_THRESHOLD: float = 0.67  # 2/3 required for non-critical
+        self.QUORUM_CRITICAL_THRESHOLD: float = 0.75  # 3/4 for critical decisions
+        self._quorum_metrics: dict[str, Any] = {}
+
         logger.info(f"[{self.agent_id}] Steward agent initialized")
 
     async def initialize(self) -> None:
@@ -410,6 +422,183 @@ class StewardAgent(
                 "timestamp": datetime.now(UTC).isoformat(),
             },
         )
+
+    def is_available(self) -> bool:
+        """
+        Check if Steward is available (heartbeat healthy).
+
+        Returns False when heartbeat missed for 3 consecutive intervals
+        (>30 seconds with default 10s interval).
+
+        GOV-01-F: Steward failover detection
+        """
+        if not self._agent_heartbeats:
+            return True  # No heartbeats recorded yet, assume available
+
+        cutoff = datetime.now(UTC) - timedelta(
+            seconds=self._heartbeat_interval * self._max_missed_heartbeats
+        )
+        for ts_str in self._agent_heartbeats.values():
+            last_hb = datetime.fromisoformat(ts_str)
+            if last_hb >= cutoff:
+                return True
+        return False
+
+    async def publish_heartbeat(self) -> None:
+        """Publish heartbeat to NATS for Charlie to monitor."""
+        await self.send(
+            topic="system.heartbeat",
+            content={
+                "message_type": "heartbeat",
+                "agent_id": self.agent_id,
+                "timestamp": datetime.now(UTC).isoformat(),
+                "available": True,
+            },
+        )
+
+    async def publish_recovery(self) -> None:
+        """Publish recovery event when Steward resumes after failover."""
+        logger.info(f"[{self.agent_id}] Publishing STEWARD_RECOVERY event")
+        await self.send(
+            topic="system.recovery",
+            content={
+                "message_type": "steward_recovery",
+                "agent_id": self.agent_id,
+                "timestamp": datetime.now(UTC).isoformat(),
+                "from": "charlie",
+                "to": "steward",
+            },
+        )
+
+    def get_quorum_metrics(self) -> dict[str, Any]:
+        """Get quorum attendance metrics."""
+        return dict(self._quorum_metrics)
+
+    async def convene_triad(
+        self,
+        topic: str | None = None,
+        triad_members: list[str] | None = None,
+        problem: str | None = None,
+        context: dict[str, Any] | None = None,
+        vote_weights: dict[str, float] | None = None,
+    ) -> str | None:
+        """
+        Coordinate a triad deliberation with quorum check.
+
+        GOV-05-Q: Integrates quorum logic into triad coordination.
+        """
+        deliberation_id = f"del_{datetime.now(UTC).strftime('%Y%m%d_%H%M%S')}"
+        effective_topic = topic or problem
+        participating = triad_members or []
+
+        # GOV-05-Q: Quorum check before proceeding
+        if vote_weights:
+            weights = vote_weights
+        else:
+            weights = {m: 1.0 for m in participating}
+
+        quorum_met, quorum_details = self.check_quorum(participating, weights)
+
+        self._quorum_metrics = {
+            "quorum_met": quorum_met,
+            "participating_agents": participating,
+            "triad_weight_ratio": quorum_details.get("triad_weight_ratio", 0.0),
+            "timestamp": datetime.now(UTC).isoformat(),
+        }
+
+        # Publish quorum check event to NATS
+        await self.send(
+            topic="triad.quorum_check",
+            content={
+                "message_type": "quorum_check",
+                "deliberation_id": deliberation_id,
+                "quorum_met": quorum_met,
+                "participating_agents": participating,
+                "triad_weight_ratio": quorum_details.get("triad_weight_ratio", 0.0),
+                "timestamp": datetime.now(UTC).isoformat(),
+            },
+        )
+
+        if not quorum_met:
+            logger.error(
+                f"[{self.agent_id}] Quorum not met for triad {deliberation_id}, deliberation blocked"
+            )
+            return None
+
+        await self.send(
+            topic="triad",
+            content={
+                "message_type": "start_deliberation",
+                "deliberation_id": deliberation_id,
+                "topic": effective_topic,
+                "triad_members": participating,
+                "context": context or {},
+            },
+        )
+
+        deliberation_record = {
+            "session_id": deliberation_id,
+            "topic": effective_topic,
+            "phase": "initiated",
+            "status": "pending",
+            "timestamp": datetime.now(UTC).isoformat(),
+        }
+        self.active_deliberations[deliberation_id] = deliberation_record
+
+        return deliberation_id
+
+    def check_quorum(
+        self,
+        participating_agents: list[str],
+        vote_weights: dict[str, float],
+    ) -> tuple[bool, dict[str, Any]]:
+        """
+        Check if quorum is met for deliberation to proceed.
+
+        GOV-05-Q: Quorum requires minimum agents AND triad weight threshold.
+
+        Args:
+            participating_agents: List of agent IDs participating
+            vote_weights: Dict mapping agent_id to vote weight
+
+        Returns:
+            Tuple of (quorum_met: bool, details: dict)
+        """
+        if not participating_agents or not vote_weights:
+            return False, {
+                "has_min_agents": False,
+                "has_triad_weight": False,
+                "triad_weight_ratio": 0.0,
+            }
+
+        total_weight = sum(vote_weights.values())
+        triad_agents = ["alpha", "beta", "charlie"]
+        triad_votes = sum(v for a, v in vote_weights.items() if a in triad_agents)
+
+        has_min_agents = len(participating_agents) >= self.QUORUM_MIN_AGENTS
+        has_triad_weight = (
+            (triad_votes / total_weight) >= self.QUORUM_TRIAD_WEIGHT if total_weight > 0 else False
+        )
+        triad_weight_ratio = (triad_votes / total_weight) if total_weight > 0 else 0.0
+
+        details = {
+            "has_min_agents": has_min_agents,
+            "has_triad_weight": has_triad_weight,
+            "triad_weight_ratio": triad_weight_ratio,
+            "total_weight": total_weight,
+            "triad_votes": triad_votes,
+            "participating_count": len(participating_agents),
+        }
+
+        quorum_met = has_min_agents and has_triad_weight
+
+        logger.info(
+            f"[{self.agent_id}] Quorum check: met={quorum_met}, "
+            f"min_agents={has_min_agents}, triad_weight={has_triad_weight}, "
+            f"ratio={triad_weight_ratio:.2f}"
+        )
+
+        return quorum_met, details
 
     async def _cancel_tasks(self) -> None:
         """Cancel all running tasks including the heartbeat monitor."""

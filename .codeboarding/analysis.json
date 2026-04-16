@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-16T01:50:23.606458+00:00",
+    "generated_at": "2026-04-16T02:07:18.634264+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -1693,28 +1693,21 @@
       ]
     },
     "src/heretek_swarm/actors/charlie.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.actors.charlie.CharlieAgent",
           "start_line": 25,
-          "end_line": 292,
+          "end_line": 393,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.charlie.CharlieAgent.__init__",
           "start_line": 36,
-          "end_line": 79,
+          "end_line": 95,
           "node_type": "METHOD",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.actors.charlie.CharlieAgent.initialize",
-          "start_line": 81,
-          "end_line": 87,
-          "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.charlie.CharlieAgent.process_message",
@@ -1722,6 +1715,13 @@
           "end_line": 112,
           "node_type": "METHOD",
           "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.actors.charlie.CharlieAgent.initialize",
+          "start_line": 97,
+          "end_line": 106,
+          "node_type": "METHOD",
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.charlie.CharlieAgent._handle_deliberation_request",
@@ -1771,6 +1771,41 @@
           "end_line": 292,
           "node_type": "METHOD",
           "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.actors.charlie.CharlieAgent.assume_steward_role",
+          "start_line": 313,
+          "end_line": 340,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.actors.charlie.CharlieAgent._handle_heartbeat",
+          "start_line": 342,
+          "end_line": 363,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.actors.charlie.CharlieAgent._handle_steward_recovery",
+          "start_line": 365,
+          "end_line": 375,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.actors.charlie.CharlieAgent.can_call_tribunal",
+          "start_line": 377,
+          "end_line": 383,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.actors.charlie.CharlieAgent.deliberation_vote_weight",
+          "start_line": 385,
+          "end_line": 393,
+          "node_type": "METHOD",
+          "status": "added"
         }
       ]
     },
@@ -7773,21 +7808,21 @@
       ]
     },
     "src/heretek_swarm/actors/steward.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.actors.steward.StewardAgent",
           "start_line": 34,
-          "end_line": 422,
+          "end_line": 611,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.steward.StewardAgent.__init__",
           "start_line": 55,
-          "end_line": 104,
+          "end_line": 116,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.steward.StewardAgent.initialize",
@@ -7907,6 +7942,48 @@
           "end_line": 422,
           "node_type": "METHOD",
           "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.actors.steward.StewardAgent.is_available",
+          "start_line": 426,
+          "end_line": 445,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.actors.steward.StewardAgent.publish_heartbeat",
+          "start_line": 447,
+          "end_line": 457,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.actors.steward.StewardAgent.publish_recovery",
+          "start_line": 459,
+          "end_line": 471,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.actors.steward.StewardAgent.get_quorum_metrics",
+          "start_line": 473,
+          "end_line": 475,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.actors.steward.StewardAgent.convene_triad",
+          "start_line": 477,
+          "end_line": 548,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.actors.steward.StewardAgent.check_quorum",
+          "start_line": 550,
+          "end_line": 601,
+          "node_type": "METHOD",
+          "status": "added"
         }
       ]
     },
@@ -37551,14 +37628,14 @@
       ]
     },
     "src/heretek_swarm/state/repository.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.state.repository.AgentStateRecord",
-          "start_line": 34,
-          "end_line": 90,
+          "start_line": 44,
+          "end_line": 101,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.state.repository.AgentStateRecord.to_dict",
@@ -37576,10 +37653,10 @@
         },
         {
           "qualified_name": "src.heretek_swarm.state.repository.StateCheckpoint",
-          "start_line": 94,
-          "end_line": 124,
+          "start_line": 105,
+          "end_line": 136,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.state.repository.StateCheckpoint.to_dict",
@@ -37590,10 +37667,10 @@
         },
         {
           "qualified_name": "src.heretek_swarm.state.repository.StateRepository",
-          "start_line": 127,
-          "end_line": 702,
+          "start_line": 139,
+          "end_line": 851,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.state.repository.StateRepository.__init__",
@@ -37617,6 +37694,13 @@
           "status": "unchanged"
         },
         {
+          "qualified_name": "src.heretek_swarm.state.repository.StateRepository.create_pool",
+          "start_line": 283,
+          "end_line": 317,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
           "qualified_name": "src.heretek_swarm.state.repository.StateRepository.save_state",
           "start_line": 299,
           "end_line": 333,
@@ -37624,11 +37708,25 @@
           "status": "unchanged"
         },
         {
-          "qualified_name": "src.heretek_swarm.state.repository.StateRepository._save_to_db",
-          "start_line": 335,
-          "end_line": 392,
+          "qualified_name": "src.heretek_swarm.state.repository.StateRepository.close_pool",
+          "start_line": 320,
+          "end_line": 325,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.state.repository.StateRepository.get_pool",
+          "start_line": 328,
+          "end_line": 337,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.state.repository.StateRepository.get_pool_stats",
+          "start_line": 340,
+          "end_line": 385,
+          "node_type": "METHOD",
+          "status": "added"
         },
         {
           "qualified_name": "src.heretek_swarm.state.repository.StateRepository._save_to_memory",
@@ -37673,6 +37771,13 @@
           "status": "unchanged"
         },
         {
+          "qualified_name": "src.heretek_swarm.state.repository.StateRepository._save_to_db",
+          "start_line": 486,
+          "end_line": 541,
+          "node_type": "METHOD",
+          "status": "modified"
+        },
+        {
           "qualified_name": "src.heretek_swarm.state.repository.StateRepository.checkpoint",
           "start_line": 518,
           "end_line": 577,
@@ -37715,13 +37820,6 @@
           "status": "unchanged"
         },
         {
-          "qualified_name": "src.heretek_swarm.state.repository.EventSourcedRepository",
-          "start_line": 713,
-          "end_line": 986,
-          "node_type": "CLASS",
-          "status": "unchanged"
-        },
-        {
           "qualified_name": "src.heretek_swarm.state.repository.EventSourcedRepository.__init__",
           "start_line": 741,
           "end_line": 773,
@@ -37736,18 +37834,18 @@
           "status": "unchanged"
         },
         {
-          "qualified_name": "src.heretek_swarm.state.repository.EventSourcedRepository.save_state_with_event",
-          "start_line": 787,
-          "end_line": 845,
-          "node_type": "METHOD",
-          "status": "unchanged"
-        },
-        {
           "qualified_name": "src.heretek_swarm.state.repository.EventSourcedRepository.reconstruct_state",
           "start_line": 847,
           "end_line": 873,
           "node_type": "METHOD",
           "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.state.repository.EventSourcedRepository",
+          "start_line": 863,
+          "end_line": 1138,
+          "node_type": "CLASS",
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.state.repository.EventSourcedRepository._apply_event",
@@ -37783,6 +37881,13 @@
           "end_line": 941,
           "node_type": "METHOD",
           "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.state.repository.EventSourcedRepository.save_state_with_event",
+          "start_line": 937,
+          "end_line": 997,
+          "node_type": "METHOD",
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.state.repository.EventSourcedRepository.create_state_snapshot",
@@ -50429,7 +50534,7 @@
       ]
     },
     "dashboard/frontend/src/hooks/useDockerDetection.tsx": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "dashboard.frontend.src.hooks.useDockerDetection.DockerStatus",
@@ -50450,21 +50555,21 @@
           "start_line": 34,
           "end_line": 192,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "dashboard.frontend.src.hooks.useDockerDetection.checkDocker",
           "start_line": 46,
           "end_line": 96,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.hooks.useDockerDetection.useDockerDetection.checkDocker.useCallback() callback",
           "start_line": 46,
           "end_line": 96,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "dashboard.frontend.src.hooks.useDockerDetection.useDockerDetection.checkDocker.useCallback() callback.setDockerStatus() callback",
@@ -50478,21 +50583,21 @@
           "start_line": 99,
           "end_line": 146,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.hooks.useDockerDetection.useDockerDetection.checkServices.useCallback() callback",
           "start_line": 99,
           "end_line": 146,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "dashboard.frontend.src.hooks.useDockerDetection.useDockerDetection.checkServices.useCallback() callback.updatedServices",
           "start_line": 108,
           "end_line": 142,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.hooks.useDockerDetection.useDockerDetection.checkServices.useCallback() callback.updatedServices.DEFAULT_SERVICES.map() callback",
@@ -50506,7 +50611,7 @@
           "start_line": 149,
           "end_line": 152,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.hooks.useDockerDetection.useDockerDetection.useEffect() callback",
@@ -50520,7 +50625,7 @@
           "start_line": 156,
           "end_line": 160,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.hooks.useDockerDetection.useDockerDetection.useEffect() callback.interval.setInterval() callback",
@@ -50534,7 +50639,7 @@
           "start_line": 166,
           "end_line": 172,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.hooks.useDockerDetection.useDockerDetection.startServices.useCallback() callback",
@@ -50548,7 +50653,7 @@
           "start_line": 175,
           "end_line": 181,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.hooks.useDockerDetection.useDockerDetection.stopServices.useCallback() callback",
@@ -56380,25 +56485,17 @@
       "file_path": "src/heretek_swarm/actors/charlie.py",
       "qualified_name": "src.heretek_swarm.actors.charlie.CharlieAgent",
       "start_line": 25,
-      "end_line": 292,
+      "end_line": 393,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/charlie.py|src.heretek_swarm.actors.charlie.CharlieAgent.__init__": {
       "file_path": "src/heretek_swarm/actors/charlie.py",
       "qualified_name": "src.heretek_swarm.actors.charlie.CharlieAgent.__init__",
       "start_line": 36,
-      "end_line": 79,
+      "end_line": 95,
       "type": "METHOD",
-      "status": "unchanged"
-    },
-    "src/heretek_swarm/actors/charlie.py|src.heretek_swarm.actors.charlie.CharlieAgent.initialize": {
-      "file_path": "src/heretek_swarm/actors/charlie.py",
-      "qualified_name": "src.heretek_swarm.actors.charlie.CharlieAgent.initialize",
-      "start_line": 81,
-      "end_line": 87,
-      "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/charlie.py|src.heretek_swarm.actors.charlie.CharlieAgent.process_message": {
       "file_path": "src/heretek_swarm/actors/charlie.py",
@@ -56407,6 +56504,14 @@
       "end_line": 112,
       "type": "METHOD",
       "status": "unchanged"
+    },
+    "src/heretek_swarm/actors/charlie.py|src.heretek_swarm.actors.charlie.CharlieAgent.initialize": {
+      "file_path": "src/heretek_swarm/actors/charlie.py",
+      "qualified_name": "src.heretek_swarm.actors.charlie.CharlieAgent.initialize",
+      "start_line": 97,
+      "end_line": 106,
+      "type": "METHOD",
+      "status": "modified"
     },
     "src/heretek_swarm/actors/charlie.py|src.heretek_swarm.actors.charlie.CharlieAgent._handle_deliberation_request": {
       "file_path": "src/heretek_swarm/actors/charlie.py",
@@ -56463,6 +56568,46 @@
       "end_line": 292,
       "type": "METHOD",
       "status": "unchanged"
+    },
+    "src/heretek_swarm/actors/charlie.py|src.heretek_swarm.actors.charlie.CharlieAgent.assume_steward_role": {
+      "file_path": "src/heretek_swarm/actors/charlie.py",
+      "qualified_name": "src.heretek_swarm.actors.charlie.CharlieAgent.assume_steward_role",
+      "start_line": 313,
+      "end_line": 340,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/actors/charlie.py|src.heretek_swarm.actors.charlie.CharlieAgent._handle_heartbeat": {
+      "file_path": "src/heretek_swarm/actors/charlie.py",
+      "qualified_name": "src.heretek_swarm.actors.charlie.CharlieAgent._handle_heartbeat",
+      "start_line": 342,
+      "end_line": 363,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/actors/charlie.py|src.heretek_swarm.actors.charlie.CharlieAgent._handle_steward_recovery": {
+      "file_path": "src/heretek_swarm/actors/charlie.py",
+      "qualified_name": "src.heretek_swarm.actors.charlie.CharlieAgent._handle_steward_recovery",
+      "start_line": 365,
+      "end_line": 375,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/actors/charlie.py|src.heretek_swarm.actors.charlie.CharlieAgent.can_call_tribunal": {
+      "file_path": "src/heretek_swarm/actors/charlie.py",
+      "qualified_name": "src.heretek_swarm.actors.charlie.CharlieAgent.can_call_tribunal",
+      "start_line": 377,
+      "end_line": 383,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/actors/charlie.py|src.heretek_swarm.actors.charlie.CharlieAgent.deliberation_vote_weight": {
+      "file_path": "src/heretek_swarm/actors/charlie.py",
+      "qualified_name": "src.heretek_swarm.actors.charlie.CharlieAgent.deliberation_vote_weight",
+      "start_line": 385,
+      "end_line": 393,
+      "type": "METHOD",
+      "status": "added"
     },
     "src/heretek_swarm/actors/chronos.py|src.heretek_swarm.actors.chronos.ScheduleStatus": {
       "file_path": "src/heretek_swarm/actors/chronos.py",
@@ -63140,17 +63285,17 @@
       "file_path": "src/heretek_swarm/actors/steward.py",
       "qualified_name": "src.heretek_swarm.actors.steward.StewardAgent",
       "start_line": 34,
-      "end_line": 422,
+      "end_line": 611,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/steward.py|src.heretek_swarm.actors.steward.StewardAgent.__init__": {
       "file_path": "src/heretek_swarm/actors/steward.py",
       "qualified_name": "src.heretek_swarm.actors.steward.StewardAgent.__init__",
       "start_line": 55,
-      "end_line": 104,
+      "end_line": 116,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/steward.py|src.heretek_swarm.actors.steward.StewardAgent.initialize": {
       "file_path": "src/heretek_swarm/actors/steward.py",
@@ -63287,6 +63432,54 @@
       "end_line": 422,
       "type": "METHOD",
       "status": "unchanged"
+    },
+    "src/heretek_swarm/actors/steward.py|src.heretek_swarm.actors.steward.StewardAgent.is_available": {
+      "file_path": "src/heretek_swarm/actors/steward.py",
+      "qualified_name": "src.heretek_swarm.actors.steward.StewardAgent.is_available",
+      "start_line": 426,
+      "end_line": 445,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/actors/steward.py|src.heretek_swarm.actors.steward.StewardAgent.publish_heartbeat": {
+      "file_path": "src/heretek_swarm/actors/steward.py",
+      "qualified_name": "src.heretek_swarm.actors.steward.StewardAgent.publish_heartbeat",
+      "start_line": 447,
+      "end_line": 457,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/actors/steward.py|src.heretek_swarm.actors.steward.StewardAgent.publish_recovery": {
+      "file_path": "src/heretek_swarm/actors/steward.py",
+      "qualified_name": "src.heretek_swarm.actors.steward.StewardAgent.publish_recovery",
+      "start_line": 459,
+      "end_line": 471,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/actors/steward.py|src.heretek_swarm.actors.steward.StewardAgent.get_quorum_metrics": {
+      "file_path": "src/heretek_swarm/actors/steward.py",
+      "qualified_name": "src.heretek_swarm.actors.steward.StewardAgent.get_quorum_metrics",
+      "start_line": 473,
+      "end_line": 475,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/actors/steward.py|src.heretek_swarm.actors.steward.StewardAgent.convene_triad": {
+      "file_path": "src/heretek_swarm/actors/steward.py",
+      "qualified_name": "src.heretek_swarm.actors.steward.StewardAgent.convene_triad",
+      "start_line": 477,
+      "end_line": 548,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/actors/steward.py|src.heretek_swarm.actors.steward.StewardAgent.check_quorum": {
+      "file_path": "src/heretek_swarm/actors/steward.py",
+      "qualified_name": "src.heretek_swarm.actors.steward.StewardAgent.check_quorum",
+      "start_line": 550,
+      "end_line": 601,
+      "type": "METHOD",
+      "status": "added"
     },
     "src/heretek_swarm/actors/stubs.py|src.heretek_swarm.actors.stubs.get_nats_event_mesh": {
       "file_path": "src/heretek_swarm/actors/stubs.py",
@@ -96211,10 +96404,10 @@
     "src/heretek_swarm/state/repository.py|src.heretek_swarm.state.repository.AgentStateRecord": {
       "file_path": "src/heretek_swarm/state/repository.py",
       "qualified_name": "src.heretek_swarm.state.repository.AgentStateRecord",
-      "start_line": 34,
-      "end_line": 90,
+      "start_line": 44,
+      "end_line": 101,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/state/repository.py|src.heretek_swarm.state.repository.AgentStateRecord.to_dict": {
       "file_path": "src/heretek_swarm/state/repository.py",
@@ -96235,10 +96428,10 @@
     "src/heretek_swarm/state/repository.py|src.heretek_swarm.state.repository.StateCheckpoint": {
       "file_path": "src/heretek_swarm/state/repository.py",
       "qualified_name": "src.heretek_swarm.state.repository.StateCheckpoint",
-      "start_line": 94,
-      "end_line": 124,
+      "start_line": 105,
+      "end_line": 136,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/state/repository.py|src.heretek_swarm.state.repository.StateCheckpoint.to_dict": {
       "file_path": "src/heretek_swarm/state/repository.py",
@@ -96251,10 +96444,10 @@
     "src/heretek_swarm/state/repository.py|src.heretek_swarm.state.repository.StateRepository": {
       "file_path": "src/heretek_swarm/state/repository.py",
       "qualified_name": "src.heretek_swarm.state.repository.StateRepository",
-      "start_line": 127,
-      "end_line": 702,
+      "start_line": 139,
+      "end_line": 851,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/state/repository.py|src.heretek_swarm.state.repository.StateRepository.__init__": {
       "file_path": "src/heretek_swarm/state/repository.py",
@@ -96280,6 +96473,14 @@
       "type": "METHOD",
       "status": "unchanged"
     },
+    "src/heretek_swarm/state/repository.py|src.heretek_swarm.state.repository.StateRepository.create_pool": {
+      "file_path": "src/heretek_swarm/state/repository.py",
+      "qualified_name": "src.heretek_swarm.state.repository.StateRepository.create_pool",
+      "start_line": 283,
+      "end_line": 317,
+      "type": "METHOD",
+      "status": "added"
+    },
     "src/heretek_swarm/state/repository.py|src.heretek_swarm.state.repository.StateRepository.save_state": {
       "file_path": "src/heretek_swarm/state/repository.py",
       "qualified_name": "src.heretek_swarm.state.repository.StateRepository.save_state",
@@ -96288,13 +96489,29 @@
       "type": "METHOD",
       "status": "unchanged"
     },
-    "src/heretek_swarm/state/repository.py|src.heretek_swarm.state.repository.StateRepository._save_to_db": {
+    "src/heretek_swarm/state/repository.py|src.heretek_swarm.state.repository.StateRepository.close_pool": {
       "file_path": "src/heretek_swarm/state/repository.py",
-      "qualified_name": "src.heretek_swarm.state.repository.StateRepository._save_to_db",
-      "start_line": 335,
-      "end_line": 392,
+      "qualified_name": "src.heretek_swarm.state.repository.StateRepository.close_pool",
+      "start_line": 320,
+      "end_line": 325,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "added"
+    },
+    "src/heretek_swarm/state/repository.py|src.heretek_swarm.state.repository.StateRepository.get_pool": {
+      "file_path": "src/heretek_swarm/state/repository.py",
+      "qualified_name": "src.heretek_swarm.state.repository.StateRepository.get_pool",
+      "start_line": 328,
+      "end_line": 337,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/state/repository.py|src.heretek_swarm.state.repository.StateRepository.get_pool_stats": {
+      "file_path": "src/heretek_swarm/state/repository.py",
+      "qualified_name": "src.heretek_swarm.state.repository.StateRepository.get_pool_stats",
+      "start_line": 340,
+      "end_line": 385,
+      "type": "METHOD",
+      "status": "added"
     },
     "src/heretek_swarm/state/repository.py|src.heretek_swarm.state.repository.StateRepository._save_to_memory": {
       "file_path": "src/heretek_swarm/state/repository.py",
@@ -96344,6 +96561,14 @@
       "type": "METHOD",
       "status": "unchanged"
     },
+    "src/heretek_swarm/state/repository.py|src.heretek_swarm.state.repository.StateRepository._save_to_db": {
+      "file_path": "src/heretek_swarm/state/repository.py",
+      "qualified_name": "src.heretek_swarm.state.repository.StateRepository._save_to_db",
+      "start_line": 486,
+      "end_line": 541,
+      "type": "METHOD",
+      "status": "modified"
+    },
     "src/heretek_swarm/state/repository.py|src.heretek_swarm.state.repository.StateRepository.checkpoint": {
       "file_path": "src/heretek_swarm/state/repository.py",
       "qualified_name": "src.heretek_swarm.state.repository.StateRepository.checkpoint",
@@ -96392,14 +96617,6 @@
       "type": "CLASS",
       "status": "unchanged"
     },
-    "src/heretek_swarm/state/repository.py|src.heretek_swarm.state.repository.EventSourcedRepository": {
-      "file_path": "src/heretek_swarm/state/repository.py",
-      "qualified_name": "src.heretek_swarm.state.repository.EventSourcedRepository",
-      "start_line": 713,
-      "end_line": 986,
-      "type": "CLASS",
-      "status": "unchanged"
-    },
     "src/heretek_swarm/state/repository.py|src.heretek_swarm.state.repository.EventSourcedRepository.__init__": {
       "file_path": "src/heretek_swarm/state/repository.py",
       "qualified_name": "src.heretek_swarm.state.repository.EventSourcedRepository.__init__",
@@ -96416,14 +96633,6 @@
       "type": "METHOD",
       "status": "unchanged"
     },
-    "src/heretek_swarm/state/repository.py|src.heretek_swarm.state.repository.EventSourcedRepository.save_state_with_event": {
-      "file_path": "src/heretek_swarm/state/repository.py",
-      "qualified_name": "src.heretek_swarm.state.repository.EventSourcedRepository.save_state_with_event",
-      "start_line": 787,
-      "end_line": 845,
-      "type": "METHOD",
-      "status": "unchanged"
-    },
     "src/heretek_swarm/state/repository.py|src.heretek_swarm.state.repository.EventSourcedRepository.reconstruct_state": {
       "file_path": "src/heretek_swarm/state/repository.py",
       "qualified_name": "src.heretek_swarm.state.repository.EventSourcedRepository.reconstruct_state",
@@ -96431,6 +96640,14 @@
       "end_line": 873,
       "type": "METHOD",
       "status": "unchanged"
+    },
+    "src/heretek_swarm/state/repository.py|src.heretek_swarm.state.repository.EventSourcedRepository": {
+      "file_path": "src/heretek_swarm/state/repository.py",
+      "qualified_name": "src.heretek_swarm.state.repository.EventSourcedRepository",
+      "start_line": 863,
+      "end_line": 1138,
+      "type": "CLASS",
+      "status": "modified"
     },
     "src/heretek_swarm/state/repository.py|src.heretek_swarm.state.repository.EventSourcedRepository._apply_event": {
       "file_path": "src/heretek_swarm/state/repository.py",
@@ -96471,6 +96688,14 @@
       "end_line": 941,
       "type": "METHOD",
       "status": "unchanged"
+    },
+    "src/heretek_swarm/state/repository.py|src.heretek_swarm.state.repository.EventSourcedRepository.save_state_with_event": {
+      "file_path": "src/heretek_swarm/state/repository.py",
+      "qualified_name": "src.heretek_swarm.state.repository.EventSourcedRepository.save_state_with_event",
+      "start_line": 937,
+      "end_line": 997,
+      "type": "METHOD",
+      "status": "modified"
     },
     "src/heretek_swarm/state/repository.py|src.heretek_swarm.state.repository.EventSourcedRepository.create_state_snapshot": {
       "file_path": "src/heretek_swarm/state/repository.py",
@@ -110422,7 +110647,7 @@
       "start_line": 34,
       "end_line": 192,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "dashboard/frontend/src/hooks/useDockerDetection.tsx|dashboard.frontend.src.hooks.useDockerDetection.checkDocker": {
       "file_path": "dashboard/frontend/src/hooks/useDockerDetection.tsx",
@@ -110430,7 +110655,7 @@
       "start_line": 46,
       "end_line": 96,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "dashboard/frontend/src/hooks/useDockerDetection.tsx|dashboard.frontend.src.hooks.useDockerDetection.useDockerDetection.checkDocker.useCallback() callback": {
       "file_path": "dashboard/frontend/src/hooks/useDockerDetection.tsx",
@@ -110438,7 +110663,7 @@
       "start_line": 46,
       "end_line": 96,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "dashboard/frontend/src/hooks/useDockerDetection.tsx|dashboard.frontend.src.hooks.useDockerDetection.useDockerDetection.checkDocker.useCallback() callback.setDockerStatus() callback": {
       "file_path": "dashboard/frontend/src/hooks/useDockerDetection.tsx",
@@ -110454,7 +110679,7 @@
       "start_line": 99,
       "end_line": 146,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "dashboard/frontend/src/hooks/useDockerDetection.tsx|dashboard.frontend.src.hooks.useDockerDetection.useDockerDetection.checkServices.useCallback() callback": {
       "file_path": "dashboard/frontend/src/hooks/useDockerDetection.tsx",
@@ -110462,7 +110687,7 @@
       "start_line": 99,
       "end_line": 146,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "dashboard/frontend/src/hooks/useDockerDetection.tsx|dashboard.frontend.src.hooks.useDockerDetection.useDockerDetection.checkServices.useCallback() callback.updatedServices": {
       "file_path": "dashboard/frontend/src/hooks/useDockerDetection.tsx",
@@ -110470,7 +110695,7 @@
       "start_line": 108,
       "end_line": 142,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "dashboard/frontend/src/hooks/useDockerDetection.tsx|dashboard.frontend.src.hooks.useDockerDetection.useDockerDetection.checkServices.useCallback() callback.updatedServices.DEFAULT_SERVICES.map() callback": {
       "file_path": "dashboard/frontend/src/hooks/useDockerDetection.tsx",
@@ -110486,7 +110711,7 @@
       "start_line": 149,
       "end_line": 152,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "dashboard/frontend/src/hooks/useDockerDetection.tsx|dashboard.frontend.src.hooks.useDockerDetection.useDockerDetection.useEffect() callback": {
       "file_path": "dashboard/frontend/src/hooks/useDockerDetection.tsx",
@@ -110502,7 +110727,7 @@
       "start_line": 156,
       "end_line": 160,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "dashboard/frontend/src/hooks/useDockerDetection.tsx|dashboard.frontend.src.hooks.useDockerDetection.useDockerDetection.useEffect() callback.interval.setInterval() callback": {
       "file_path": "dashboard/frontend/src/hooks/useDockerDetection.tsx",
@@ -110518,7 +110743,7 @@
       "start_line": 166,
       "end_line": 172,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "dashboard/frontend/src/hooks/useDockerDetection.tsx|dashboard.frontend.src.hooks.useDockerDetection.useDockerDetection.startServices.useCallback() callback": {
       "file_path": "dashboard/frontend/src/hooks/useDockerDetection.tsx",
@@ -110534,7 +110759,7 @@
       "start_line": 175,
       "end_line": 181,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "dashboard/frontend/src/hooks/useDockerDetection.tsx|dashboard.frontend.src.hooks.useDockerDetection.useDockerDetection.stopServices.useCallback() callback": {
       "file_path": "dashboard/frontend/src/hooks/useDockerDetection.tsx",
@@ -115331,19 +115556,24 @@
         },
         {
           "file_path": "src/heretek_swarm/actors/charlie.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "src.heretek_swarm.actors.charlie.CharlieAgent",
             "src.heretek_swarm.actors.charlie.CharlieAgent.__init__",
-            "src.heretek_swarm.actors.charlie.CharlieAgent.initialize",
             "src.heretek_swarm.actors.charlie.CharlieAgent.process_message",
+            "src.heretek_swarm.actors.charlie.CharlieAgent.initialize",
             "src.heretek_swarm.actors.charlie.CharlieAgent._handle_deliberation_request",
             "src.heretek_swarm.actors.charlie.CharlieAgent._handle_challenge_request",
             "src.heretek_swarm.actors.charlie.CharlieAgent._handle_risk_assessment",
             "src.heretek_swarm.actors.charlie.CharlieAgent._perform_analysis",
             "src.heretek_swarm.actors.charlie.CharlieAgent._generate_challenges",
             "src.heretek_swarm.actors.charlie.CharlieAgent._assess_risks",
-            "src.heretek_swarm.actors.charlie.CharlieAgent.get_challenge_statistics"
+            "src.heretek_swarm.actors.charlie.CharlieAgent.get_challenge_statistics",
+            "src.heretek_swarm.actors.charlie.CharlieAgent.assume_steward_role",
+            "src.heretek_swarm.actors.charlie.CharlieAgent._handle_heartbeat",
+            "src.heretek_swarm.actors.charlie.CharlieAgent._handle_steward_recovery",
+            "src.heretek_swarm.actors.charlie.CharlieAgent.can_call_tribunal",
+            "src.heretek_swarm.actors.charlie.CharlieAgent.deliberation_vote_weight"
           ]
         },
         {
@@ -116374,7 +116604,7 @@
         },
         {
           "file_path": "src/heretek_swarm/actors/steward.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "src.heretek_swarm.actors.steward.StewardAgent",
             "src.heretek_swarm.actors.steward.StewardAgent.__init__",
@@ -116394,7 +116624,13 @@
             "src.heretek_swarm.actors.steward.StewardAgent._monitor_loop",
             "src.heretek_swarm.actors.steward.StewardAgent._handle_agent_failure",
             "src.heretek_swarm.actors.steward.StewardAgent.initiate_failover",
-            "src.heretek_swarm.actors.steward.StewardAgent._cancel_tasks"
+            "src.heretek_swarm.actors.steward.StewardAgent._cancel_tasks",
+            "src.heretek_swarm.actors.steward.StewardAgent.is_available",
+            "src.heretek_swarm.actors.steward.StewardAgent.publish_heartbeat",
+            "src.heretek_swarm.actors.steward.StewardAgent.publish_recovery",
+            "src.heretek_swarm.actors.steward.StewardAgent.get_quorum_metrics",
+            "src.heretek_swarm.actors.steward.StewardAgent.convene_triad",
+            "src.heretek_swarm.actors.steward.StewardAgent.check_quorum"
           ]
         },
         {
@@ -121516,7 +121752,7 @@
         },
         {
           "file_path": "src/heretek_swarm/state/repository.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "src.heretek_swarm.state.repository.AgentStateRecord",
             "src.heretek_swarm.state.repository.AgentStateRecord.to_dict",
@@ -121527,30 +121763,34 @@
             "src.heretek_swarm.state.repository.StateRepository.__init__",
             "src.heretek_swarm.state.repository.StateRepository.initialize",
             "src.heretek_swarm.state.repository.StateRepository._create_checkpoint_table",
+            "src.heretek_swarm.state.repository.StateRepository.create_pool",
             "src.heretek_swarm.state.repository.StateRepository.save_state",
-            "src.heretek_swarm.state.repository.StateRepository._save_to_db",
+            "src.heretek_swarm.state.repository.StateRepository.close_pool",
+            "src.heretek_swarm.state.repository.StateRepository.get_pool",
+            "src.heretek_swarm.state.repository.StateRepository.get_pool_stats",
             "src.heretek_swarm.state.repository.StateRepository._save_to_memory",
             "src.heretek_swarm.state.repository.StateRepository.load_state",
             "src.heretek_swarm.state.repository.StateRepository._load_from_db",
             "src.heretek_swarm.state.repository.StateRepository._load_from_memory",
             "src.heretek_swarm.state.repository.StateRepository.delete_state",
             "src.heretek_swarm.state.repository.StateRepository.list_active_states",
+            "src.heretek_swarm.state.repository.StateRepository._save_to_db",
             "src.heretek_swarm.state.repository.StateRepository.checkpoint",
             "src.heretek_swarm.state.repository.StateRepository.get_checkpoint",
             "src.heretek_swarm.state.repository.StateRepository.get_checkpoints",
             "src.heretek_swarm.state.repository.StateRepository.restore_from_checkpoint",
             "src.heretek_swarm.state.repository.StateRepository.get_stats",
             "src.heretek_swarm.state.repository.ConcurrencyError",
-            "src.heretek_swarm.state.repository.EventSourcedRepository",
             "src.heretek_swarm.state.repository.EventSourcedRepository.__init__",
             "src.heretek_swarm.state.repository.EventSourcedRepository.initialize",
-            "src.heretek_swarm.state.repository.EventSourcedRepository.save_state_with_event",
             "src.heretek_swarm.state.repository.EventSourcedRepository.reconstruct_state",
+            "src.heretek_swarm.state.repository.EventSourcedRepository",
             "src.heretek_swarm.state.repository.EventSourcedRepository._apply_event",
             "src.heretek_swarm.state.repository.EventSourcedRepository._apply_agent_state_changed",
             "src.heretek_swarm.state.repository.EventSourcedRepository._apply_agent_config_updated",
             "src.heretek_swarm.state.repository.EventSourcedRepository._apply_agent_created",
             "src.heretek_swarm.state.repository.EventSourcedRepository.get_event_history",
+            "src.heretek_swarm.state.repository.EventSourcedRepository.save_state_with_event",
             "src.heretek_swarm.state.repository.EventSourcedRepository.create_state_snapshot",
             "src.heretek_swarm.state.repository.EventSourcedRepository.register_event_applier",
             "src.heretek_swarm.state.repository.get_event_sourced_repository"
@@ -122153,19 +122393,24 @@
             },
             {
               "file_path": "src/heretek_swarm/actors/charlie.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.heretek_swarm.actors.charlie.CharlieAgent",
                 "src.heretek_swarm.actors.charlie.CharlieAgent.__init__",
-                "src.heretek_swarm.actors.charlie.CharlieAgent.initialize",
                 "src.heretek_swarm.actors.charlie.CharlieAgent.process_message",
+                "src.heretek_swarm.actors.charlie.CharlieAgent.initialize",
                 "src.heretek_swarm.actors.charlie.CharlieAgent._handle_deliberation_request",
                 "src.heretek_swarm.actors.charlie.CharlieAgent._handle_challenge_request",
                 "src.heretek_swarm.actors.charlie.CharlieAgent._handle_risk_assessment",
                 "src.heretek_swarm.actors.charlie.CharlieAgent._perform_analysis",
                 "src.heretek_swarm.actors.charlie.CharlieAgent._generate_challenges",
                 "src.heretek_swarm.actors.charlie.CharlieAgent._assess_risks",
-                "src.heretek_swarm.actors.charlie.CharlieAgent.get_challenge_statistics"
+                "src.heretek_swarm.actors.charlie.CharlieAgent.get_challenge_statistics",
+                "src.heretek_swarm.actors.charlie.CharlieAgent.assume_steward_role",
+                "src.heretek_swarm.actors.charlie.CharlieAgent._handle_heartbeat",
+                "src.heretek_swarm.actors.charlie.CharlieAgent._handle_steward_recovery",
+                "src.heretek_swarm.actors.charlie.CharlieAgent.can_call_tribunal",
+                "src.heretek_swarm.actors.charlie.CharlieAgent.deliberation_vote_weight"
               ]
             },
             {
@@ -122990,7 +123235,7 @@
             },
             {
               "file_path": "src/heretek_swarm/actors/steward.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.heretek_swarm.actors.steward.StewardAgent",
                 "src.heretek_swarm.actors.steward.StewardAgent.__init__",
@@ -123010,7 +123255,13 @@
                 "src.heretek_swarm.actors.steward.StewardAgent._monitor_loop",
                 "src.heretek_swarm.actors.steward.StewardAgent._handle_agent_failure",
                 "src.heretek_swarm.actors.steward.StewardAgent.initiate_failover",
-                "src.heretek_swarm.actors.steward.StewardAgent._cancel_tasks"
+                "src.heretek_swarm.actors.steward.StewardAgent._cancel_tasks",
+                "src.heretek_swarm.actors.steward.StewardAgent.is_available",
+                "src.heretek_swarm.actors.steward.StewardAgent.publish_heartbeat",
+                "src.heretek_swarm.actors.steward.StewardAgent.publish_recovery",
+                "src.heretek_swarm.actors.steward.StewardAgent.get_quorum_metrics",
+                "src.heretek_swarm.actors.steward.StewardAgent.convene_triad",
+                "src.heretek_swarm.actors.steward.StewardAgent.check_quorum"
               ]
             },
             {
@@ -131005,19 +131256,24 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/actors/charlie.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.actors.charlie.CharlieAgent",
                     "src.heretek_swarm.actors.charlie.CharlieAgent.__init__",
-                    "src.heretek_swarm.actors.charlie.CharlieAgent.initialize",
                     "src.heretek_swarm.actors.charlie.CharlieAgent.process_message",
+                    "src.heretek_swarm.actors.charlie.CharlieAgent.initialize",
                     "src.heretek_swarm.actors.charlie.CharlieAgent._handle_deliberation_request",
                     "src.heretek_swarm.actors.charlie.CharlieAgent._handle_challenge_request",
                     "src.heretek_swarm.actors.charlie.CharlieAgent._handle_risk_assessment",
                     "src.heretek_swarm.actors.charlie.CharlieAgent._perform_analysis",
                     "src.heretek_swarm.actors.charlie.CharlieAgent._generate_challenges",
                     "src.heretek_swarm.actors.charlie.CharlieAgent._assess_risks",
-                    "src.heretek_swarm.actors.charlie.CharlieAgent.get_challenge_statistics"
+                    "src.heretek_swarm.actors.charlie.CharlieAgent.get_challenge_statistics",
+                    "src.heretek_swarm.actors.charlie.CharlieAgent.assume_steward_role",
+                    "src.heretek_swarm.actors.charlie.CharlieAgent._handle_heartbeat",
+                    "src.heretek_swarm.actors.charlie.CharlieAgent._handle_steward_recovery",
+                    "src.heretek_swarm.actors.charlie.CharlieAgent.can_call_tribunal",
+                    "src.heretek_swarm.actors.charlie.CharlieAgent.deliberation_vote_weight"
                   ]
                 },
                 {
@@ -131428,7 +131684,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/actors/steward.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.actors.steward.StewardAgent",
                     "src.heretek_swarm.actors.steward.StewardAgent.__init__",
@@ -131448,7 +131704,13 @@
                     "src.heretek_swarm.actors.steward.StewardAgent._monitor_loop",
                     "src.heretek_swarm.actors.steward.StewardAgent._handle_agent_failure",
                     "src.heretek_swarm.actors.steward.StewardAgent.initiate_failover",
-                    "src.heretek_swarm.actors.steward.StewardAgent._cancel_tasks"
+                    "src.heretek_swarm.actors.steward.StewardAgent._cancel_tasks",
+                    "src.heretek_swarm.actors.steward.StewardAgent.is_available",
+                    "src.heretek_swarm.actors.steward.StewardAgent.publish_heartbeat",
+                    "src.heretek_swarm.actors.steward.StewardAgent.publish_recovery",
+                    "src.heretek_swarm.actors.steward.StewardAgent.get_quorum_metrics",
+                    "src.heretek_swarm.actors.steward.StewardAgent.convene_triad",
+                    "src.heretek_swarm.actors.steward.StewardAgent.check_quorum"
                   ]
                 },
                 {
@@ -133337,19 +133599,24 @@
                     },
                     {
                       "file_path": "src/heretek_swarm/actors/charlie.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.actors.charlie.CharlieAgent",
                         "src.heretek_swarm.actors.charlie.CharlieAgent.__init__",
-                        "src.heretek_swarm.actors.charlie.CharlieAgent.initialize",
                         "src.heretek_swarm.actors.charlie.CharlieAgent.process_message",
+                        "src.heretek_swarm.actors.charlie.CharlieAgent.initialize",
                         "src.heretek_swarm.actors.charlie.CharlieAgent._handle_deliberation_request",
                         "src.heretek_swarm.actors.charlie.CharlieAgent._handle_challenge_request",
                         "src.heretek_swarm.actors.charlie.CharlieAgent._handle_risk_assessment",
                         "src.heretek_swarm.actors.charlie.CharlieAgent._perform_analysis",
                         "src.heretek_swarm.actors.charlie.CharlieAgent._generate_challenges",
                         "src.heretek_swarm.actors.charlie.CharlieAgent._assess_risks",
-                        "src.heretek_swarm.actors.charlie.CharlieAgent.get_challenge_statistics"
+                        "src.heretek_swarm.actors.charlie.CharlieAgent.get_challenge_statistics",
+                        "src.heretek_swarm.actors.charlie.CharlieAgent.assume_steward_role",
+                        "src.heretek_swarm.actors.charlie.CharlieAgent._handle_heartbeat",
+                        "src.heretek_swarm.actors.charlie.CharlieAgent._handle_steward_recovery",
+                        "src.heretek_swarm.actors.charlie.CharlieAgent.can_call_tribunal",
+                        "src.heretek_swarm.actors.charlie.CharlieAgent.deliberation_vote_weight"
                       ]
                     },
                     {
@@ -133720,7 +133987,7 @@
                     },
                     {
                       "file_path": "src/heretek_swarm/actors/steward.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.actors.steward.StewardAgent",
                         "src.heretek_swarm.actors.steward.StewardAgent.__init__",
@@ -133740,7 +134007,13 @@
                         "src.heretek_swarm.actors.steward.StewardAgent._monitor_loop",
                         "src.heretek_swarm.actors.steward.StewardAgent._handle_agent_failure",
                         "src.heretek_swarm.actors.steward.StewardAgent.initiate_failover",
-                        "src.heretek_swarm.actors.steward.StewardAgent._cancel_tasks"
+                        "src.heretek_swarm.actors.steward.StewardAgent._cancel_tasks",
+                        "src.heretek_swarm.actors.steward.StewardAgent.is_available",
+                        "src.heretek_swarm.actors.steward.StewardAgent.publish_heartbeat",
+                        "src.heretek_swarm.actors.steward.StewardAgent.publish_recovery",
+                        "src.heretek_swarm.actors.steward.StewardAgent.get_quorum_metrics",
+                        "src.heretek_swarm.actors.steward.StewardAgent.convene_triad",
+                        "src.heretek_swarm.actors.steward.StewardAgent.check_quorum"
                       ]
                     },
                     {
@@ -134859,19 +135132,24 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/actors/charlie.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.actors.charlie.CharlieAgent",
                             "src.heretek_swarm.actors.charlie.CharlieAgent.__init__",
-                            "src.heretek_swarm.actors.charlie.CharlieAgent.initialize",
                             "src.heretek_swarm.actors.charlie.CharlieAgent.process_message",
+                            "src.heretek_swarm.actors.charlie.CharlieAgent.initialize",
                             "src.heretek_swarm.actors.charlie.CharlieAgent._handle_deliberation_request",
                             "src.heretek_swarm.actors.charlie.CharlieAgent._handle_challenge_request",
                             "src.heretek_swarm.actors.charlie.CharlieAgent._handle_risk_assessment",
                             "src.heretek_swarm.actors.charlie.CharlieAgent._perform_analysis",
                             "src.heretek_swarm.actors.charlie.CharlieAgent._generate_challenges",
                             "src.heretek_swarm.actors.charlie.CharlieAgent._assess_risks",
-                            "src.heretek_swarm.actors.charlie.CharlieAgent.get_challenge_statistics"
+                            "src.heretek_swarm.actors.charlie.CharlieAgent.get_challenge_statistics",
+                            "src.heretek_swarm.actors.charlie.CharlieAgent.assume_steward_role",
+                            "src.heretek_swarm.actors.charlie.CharlieAgent._handle_heartbeat",
+                            "src.heretek_swarm.actors.charlie.CharlieAgent._handle_steward_recovery",
+                            "src.heretek_swarm.actors.charlie.CharlieAgent.can_call_tribunal",
+                            "src.heretek_swarm.actors.charlie.CharlieAgent.deliberation_vote_weight"
                           ]
                         },
                         {
@@ -135187,7 +135465,7 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/actors/steward.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.actors.steward.StewardAgent",
                             "src.heretek_swarm.actors.steward.StewardAgent.__init__",
@@ -135207,7 +135485,13 @@
                             "src.heretek_swarm.actors.steward.StewardAgent._monitor_loop",
                             "src.heretek_swarm.actors.steward.StewardAgent._handle_agent_failure",
                             "src.heretek_swarm.actors.steward.StewardAgent.initiate_failover",
-                            "src.heretek_swarm.actors.steward.StewardAgent._cancel_tasks"
+                            "src.heretek_swarm.actors.steward.StewardAgent._cancel_tasks",
+                            "src.heretek_swarm.actors.steward.StewardAgent.is_available",
+                            "src.heretek_swarm.actors.steward.StewardAgent.publish_heartbeat",
+                            "src.heretek_swarm.actors.steward.StewardAgent.publish_recovery",
+                            "src.heretek_swarm.actors.steward.StewardAgent.get_quorum_metrics",
+                            "src.heretek_swarm.actors.steward.StewardAgent.convene_triad",
+                            "src.heretek_swarm.actors.steward.StewardAgent.check_quorum"
                           ]
                         },
                         {
@@ -173557,7 +173841,7 @@
             },
             {
               "file_path": "src/heretek_swarm/state/repository.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.heretek_swarm.state.repository.AgentStateRecord",
                 "src.heretek_swarm.state.repository.AgentStateRecord.to_dict",
@@ -173568,30 +173852,34 @@
                 "src.heretek_swarm.state.repository.StateRepository.__init__",
                 "src.heretek_swarm.state.repository.StateRepository.initialize",
                 "src.heretek_swarm.state.repository.StateRepository._create_checkpoint_table",
+                "src.heretek_swarm.state.repository.StateRepository.create_pool",
                 "src.heretek_swarm.state.repository.StateRepository.save_state",
-                "src.heretek_swarm.state.repository.StateRepository._save_to_db",
+                "src.heretek_swarm.state.repository.StateRepository.close_pool",
+                "src.heretek_swarm.state.repository.StateRepository.get_pool",
+                "src.heretek_swarm.state.repository.StateRepository.get_pool_stats",
                 "src.heretek_swarm.state.repository.StateRepository._save_to_memory",
                 "src.heretek_swarm.state.repository.StateRepository.load_state",
                 "src.heretek_swarm.state.repository.StateRepository._load_from_db",
                 "src.heretek_swarm.state.repository.StateRepository._load_from_memory",
                 "src.heretek_swarm.state.repository.StateRepository.delete_state",
                 "src.heretek_swarm.state.repository.StateRepository.list_active_states",
+                "src.heretek_swarm.state.repository.StateRepository._save_to_db",
                 "src.heretek_swarm.state.repository.StateRepository.checkpoint",
                 "src.heretek_swarm.state.repository.StateRepository.get_checkpoint",
                 "src.heretek_swarm.state.repository.StateRepository.get_checkpoints",
                 "src.heretek_swarm.state.repository.StateRepository.restore_from_checkpoint",
                 "src.heretek_swarm.state.repository.StateRepository.get_stats",
                 "src.heretek_swarm.state.repository.ConcurrencyError",
-                "src.heretek_swarm.state.repository.EventSourcedRepository",
                 "src.heretek_swarm.state.repository.EventSourcedRepository.__init__",
                 "src.heretek_swarm.state.repository.EventSourcedRepository.initialize",
-                "src.heretek_swarm.state.repository.EventSourcedRepository.save_state_with_event",
                 "src.heretek_swarm.state.repository.EventSourcedRepository.reconstruct_state",
+                "src.heretek_swarm.state.repository.EventSourcedRepository",
                 "src.heretek_swarm.state.repository.EventSourcedRepository._apply_event",
                 "src.heretek_swarm.state.repository.EventSourcedRepository._apply_agent_state_changed",
                 "src.heretek_swarm.state.repository.EventSourcedRepository._apply_agent_config_updated",
                 "src.heretek_swarm.state.repository.EventSourcedRepository._apply_agent_created",
                 "src.heretek_swarm.state.repository.EventSourcedRepository.get_event_history",
+                "src.heretek_swarm.state.repository.EventSourcedRepository.save_state_with_event",
                 "src.heretek_swarm.state.repository.EventSourcedRepository.create_state_snapshot",
                 "src.heretek_swarm.state.repository.EventSourcedRepository.register_event_applier",
                 "src.heretek_swarm.state.repository.get_event_sourced_repository"
@@ -173746,7 +174034,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/state/repository.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.state.repository.AgentStateRecord",
                     "src.heretek_swarm.state.repository.AgentStateRecord.to_dict",
@@ -173757,30 +174045,34 @@
                     "src.heretek_swarm.state.repository.StateRepository.__init__",
                     "src.heretek_swarm.state.repository.StateRepository.initialize",
                     "src.heretek_swarm.state.repository.StateRepository._create_checkpoint_table",
+                    "src.heretek_swarm.state.repository.StateRepository.create_pool",
                     "src.heretek_swarm.state.repository.StateRepository.save_state",
-                    "src.heretek_swarm.state.repository.StateRepository._save_to_db",
+                    "src.heretek_swarm.state.repository.StateRepository.close_pool",
+                    "src.heretek_swarm.state.repository.StateRepository.get_pool",
+                    "src.heretek_swarm.state.repository.StateRepository.get_pool_stats",
                     "src.heretek_swarm.state.repository.StateRepository._save_to_memory",
                     "src.heretek_swarm.state.repository.StateRepository.load_state",
                     "src.heretek_swarm.state.repository.StateRepository._load_from_db",
                     "src.heretek_swarm.state.repository.StateRepository._load_from_memory",
                     "src.heretek_swarm.state.repository.StateRepository.delete_state",
                     "src.heretek_swarm.state.repository.StateRepository.list_active_states",
+                    "src.heretek_swarm.state.repository.StateRepository._save_to_db",
                     "src.heretek_swarm.state.repository.StateRepository.checkpoint",
                     "src.heretek_swarm.state.repository.StateRepository.get_checkpoint",
                     "src.heretek_swarm.state.repository.StateRepository.get_checkpoints",
                     "src.heretek_swarm.state.repository.StateRepository.restore_from_checkpoint",
                     "src.heretek_swarm.state.repository.StateRepository.get_stats",
                     "src.heretek_swarm.state.repository.ConcurrencyError",
-                    "src.heretek_swarm.state.repository.EventSourcedRepository",
                     "src.heretek_swarm.state.repository.EventSourcedRepository.__init__",
                     "src.heretek_swarm.state.repository.EventSourcedRepository.initialize",
-                    "src.heretek_swarm.state.repository.EventSourcedRepository.save_state_with_event",
                     "src.heretek_swarm.state.repository.EventSourcedRepository.reconstruct_state",
+                    "src.heretek_swarm.state.repository.EventSourcedRepository",
                     "src.heretek_swarm.state.repository.EventSourcedRepository._apply_event",
                     "src.heretek_swarm.state.repository.EventSourcedRepository._apply_agent_state_changed",
                     "src.heretek_swarm.state.repository.EventSourcedRepository._apply_agent_config_updated",
                     "src.heretek_swarm.state.repository.EventSourcedRepository._apply_agent_created",
                     "src.heretek_swarm.state.repository.EventSourcedRepository.get_event_history",
+                    "src.heretek_swarm.state.repository.EventSourcedRepository.save_state_with_event",
                     "src.heretek_swarm.state.repository.EventSourcedRepository.create_state_snapshot",
                     "src.heretek_swarm.state.repository.EventSourcedRepository.register_event_applier",
                     "src.heretek_swarm.state.repository.get_event_sourced_repository"
@@ -174193,7 +174485,7 @@
                   "file_methods": [
                     {
                       "file_path": "src/heretek_swarm/state/repository.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.state.repository.AgentStateRecord",
                         "src.heretek_swarm.state.repository.AgentStateRecord.to_dict",
@@ -174204,30 +174496,34 @@
                         "src.heretek_swarm.state.repository.StateRepository.__init__",
                         "src.heretek_swarm.state.repository.StateRepository.initialize",
                         "src.heretek_swarm.state.repository.StateRepository._create_checkpoint_table",
+                        "src.heretek_swarm.state.repository.StateRepository.create_pool",
                         "src.heretek_swarm.state.repository.StateRepository.save_state",
-                        "src.heretek_swarm.state.repository.StateRepository._save_to_db",
+                        "src.heretek_swarm.state.repository.StateRepository.close_pool",
+                        "src.heretek_swarm.state.repository.StateRepository.get_pool",
+                        "src.heretek_swarm.state.repository.StateRepository.get_pool_stats",
                         "src.heretek_swarm.state.repository.StateRepository._save_to_memory",
                         "src.heretek_swarm.state.repository.StateRepository.load_state",
                         "src.heretek_swarm.state.repository.StateRepository._load_from_db",
                         "src.heretek_swarm.state.repository.StateRepository._load_from_memory",
                         "src.heretek_swarm.state.repository.StateRepository.delete_state",
                         "src.heretek_swarm.state.repository.StateRepository.list_active_states",
+                        "src.heretek_swarm.state.repository.StateRepository._save_to_db",
                         "src.heretek_swarm.state.repository.StateRepository.checkpoint",
                         "src.heretek_swarm.state.repository.StateRepository.get_checkpoint",
                         "src.heretek_swarm.state.repository.StateRepository.get_checkpoints",
                         "src.heretek_swarm.state.repository.StateRepository.restore_from_checkpoint",
                         "src.heretek_swarm.state.repository.StateRepository.get_stats",
                         "src.heretek_swarm.state.repository.ConcurrencyError",
-                        "src.heretek_swarm.state.repository.EventSourcedRepository",
                         "src.heretek_swarm.state.repository.EventSourcedRepository.__init__",
                         "src.heretek_swarm.state.repository.EventSourcedRepository.initialize",
-                        "src.heretek_swarm.state.repository.EventSourcedRepository.save_state_with_event",
                         "src.heretek_swarm.state.repository.EventSourcedRepository.reconstruct_state",
+                        "src.heretek_swarm.state.repository.EventSourcedRepository",
                         "src.heretek_swarm.state.repository.EventSourcedRepository._apply_event",
                         "src.heretek_swarm.state.repository.EventSourcedRepository._apply_agent_state_changed",
                         "src.heretek_swarm.state.repository.EventSourcedRepository._apply_agent_config_updated",
                         "src.heretek_swarm.state.repository.EventSourcedRepository._apply_agent_created",
                         "src.heretek_swarm.state.repository.EventSourcedRepository.get_event_history",
+                        "src.heretek_swarm.state.repository.EventSourcedRepository.save_state_with_event",
                         "src.heretek_swarm.state.repository.EventSourcedRepository.create_state_snapshot",
                         "src.heretek_swarm.state.repository.EventSourcedRepository.register_event_applier",
                         "src.heretek_swarm.state.repository.get_event_sourced_repository"
@@ -174274,7 +174570,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/state/repository.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.state.repository.AgentStateRecord",
                             "src.heretek_swarm.state.repository.AgentStateRecord.to_dict",
@@ -174284,17 +174580,17 @@
                             "src.heretek_swarm.state.repository.StateRepository.initialize",
                             "src.heretek_swarm.state.repository.StateRepository._create_checkpoint_table",
                             "src.heretek_swarm.state.repository.StateRepository.save_state",
-                            "src.heretek_swarm.state.repository.StateRepository._save_to_db",
                             "src.heretek_swarm.state.repository.StateRepository._save_to_memory",
                             "src.heretek_swarm.state.repository.StateRepository._load_from_db",
                             "src.heretek_swarm.state.repository.StateRepository.delete_state",
                             "src.heretek_swarm.state.repository.StateRepository.list_active_states",
+                            "src.heretek_swarm.state.repository.StateRepository._save_to_db",
                             "src.heretek_swarm.state.repository.StateRepository.get_stats",
                             "src.heretek_swarm.state.repository.ConcurrencyError",
-                            "src.heretek_swarm.state.repository.EventSourcedRepository",
                             "src.heretek_swarm.state.repository.EventSourcedRepository.initialize",
-                            "src.heretek_swarm.state.repository.EventSourcedRepository.save_state_with_event",
+                            "src.heretek_swarm.state.repository.EventSourcedRepository",
                             "src.heretek_swarm.state.repository.EventSourcedRepository.get_event_history",
+                            "src.heretek_swarm.state.repository.EventSourcedRepository.save_state_with_event",
                             "src.heretek_swarm.state.repository.EventSourcedRepository.register_event_applier",
                             "src.heretek_swarm.state.repository.get_event_sourced_repository"
                           ]
@@ -174333,7 +174629,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/state/repository.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.state.repository.StateRepository.__init__",
                             "src.heretek_swarm.state.repository.StateRepository.load_state",
@@ -174380,7 +174676,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/state/repository.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.state.repository.StateCheckpoint",
                             "src.heretek_swarm.state.repository.StateRepository.checkpoint",
@@ -247673,25 +247969,18 @@
         },
         {
           "file_path": "dashboard/frontend/src/hooks/useDockerDetection.tsx",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "dashboard.frontend.src.hooks.useDockerDetection.DockerStatus",
             "dashboard.frontend.src.hooks.useDockerDetection.ServiceStatus",
             "dashboard.frontend.src.hooks.useDockerDetection.useDockerDetection",
-            "dashboard.frontend.src.hooks.useDockerDetection.checkDocker",
             "dashboard.frontend.src.hooks.useDockerDetection.useDockerDetection.checkDocker.useCallback() callback",
             "dashboard.frontend.src.hooks.useDockerDetection.useDockerDetection.checkDocker.useCallback() callback.setDockerStatus() callback",
-            "dashboard.frontend.src.hooks.useDockerDetection.checkServices",
             "dashboard.frontend.src.hooks.useDockerDetection.useDockerDetection.checkServices.useCallback() callback",
-            "dashboard.frontend.src.hooks.useDockerDetection.useDockerDetection.checkServices.useCallback() callback.updatedServices",
             "dashboard.frontend.src.hooks.useDockerDetection.useDockerDetection.checkServices.useCallback() callback.updatedServices.DEFAULT_SERVICES.map() callback",
-            "dashboard.frontend.src.hooks.useDockerDetection.useEffect() callback",
             "dashboard.frontend.src.hooks.useDockerDetection.useDockerDetection.useEffect() callback",
-            "dashboard.frontend.src.hooks.useDockerDetection.useDockerDetection.useEffect() callback.interval",
             "dashboard.frontend.src.hooks.useDockerDetection.useDockerDetection.useEffect() callback.interval.setInterval() callback",
-            "dashboard.frontend.src.hooks.useDockerDetection.startServices",
             "dashboard.frontend.src.hooks.useDockerDetection.useDockerDetection.startServices.useCallback() callback",
-            "dashboard.frontend.src.hooks.useDockerDetection.stopServices",
             "dashboard.frontend.src.hooks.useDockerDetection.useDockerDetection.stopServices.useCallback() callback",
             "dashboard.frontend.src.hooks.useDockerDetection.DockerStatusIndicator",
             "dashboard.frontend.src.hooks.useDockerDetection.ServiceStatusList",
@@ -266863,25 +267152,18 @@
             },
             {
               "file_path": "dashboard/frontend/src/hooks/useDockerDetection.tsx",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "dashboard.frontend.src.hooks.useDockerDetection.DockerStatus",
                 "dashboard.frontend.src.hooks.useDockerDetection.ServiceStatus",
                 "dashboard.frontend.src.hooks.useDockerDetection.useDockerDetection",
-                "dashboard.frontend.src.hooks.useDockerDetection.checkDocker",
                 "dashboard.frontend.src.hooks.useDockerDetection.useDockerDetection.checkDocker.useCallback() callback",
                 "dashboard.frontend.src.hooks.useDockerDetection.useDockerDetection.checkDocker.useCallback() callback.setDockerStatus() callback",
-                "dashboard.frontend.src.hooks.useDockerDetection.checkServices",
                 "dashboard.frontend.src.hooks.useDockerDetection.useDockerDetection.checkServices.useCallback() callback",
-                "dashboard.frontend.src.hooks.useDockerDetection.useDockerDetection.checkServices.useCallback() callback.updatedServices",
                 "dashboard.frontend.src.hooks.useDockerDetection.useDockerDetection.checkServices.useCallback() callback.updatedServices.DEFAULT_SERVICES.map() callback",
-                "dashboard.frontend.src.hooks.useDockerDetection.useEffect() callback",
                 "dashboard.frontend.src.hooks.useDockerDetection.useDockerDetection.useEffect() callback",
-                "dashboard.frontend.src.hooks.useDockerDetection.useDockerDetection.useEffect() callback.interval",
                 "dashboard.frontend.src.hooks.useDockerDetection.useDockerDetection.useEffect() callback.interval.setInterval() callback",
-                "dashboard.frontend.src.hooks.useDockerDetection.startServices",
                 "dashboard.frontend.src.hooks.useDockerDetection.useDockerDetection.startServices.useCallback() callback",
-                "dashboard.frontend.src.hooks.useDockerDetection.stopServices",
                 "dashboard.frontend.src.hooks.useDockerDetection.useDockerDetection.stopServices.useCallback() callback",
                 "dashboard.frontend.src.hooks.useDockerDetection.DockerStatusIndicator",
                 "dashboard.frontend.src.hooks.useDockerDetection.ServiceStatusList",
@@ -268475,25 +268757,18 @@
                 },
                 {
                   "file_path": "dashboard/frontend/src/hooks/useDockerDetection.tsx",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "dashboard.frontend.src.hooks.useDockerDetection.DockerStatus",
                     "dashboard.frontend.src.hooks.useDockerDetection.ServiceStatus",
                     "dashboard.frontend.src.hooks.useDockerDetection.useDockerDetection",
-                    "dashboard.frontend.src.hooks.useDockerDetection.checkDocker",
                     "dashboard.frontend.src.hooks.useDockerDetection.useDockerDetection.checkDocker.useCallback() callback",
                     "dashboard.frontend.src.hooks.useDockerDetection.useDockerDetection.checkDocker.useCallback() callback.setDockerStatus() callback",
-                    "dashboard.frontend.src.hooks.useDockerDetection.checkServices",
                     "dashboard.frontend.src.hooks.useDockerDetection.useDockerDetection.checkServices.useCallback() callback",
-                    "dashboard.frontend.src.hooks.useDockerDetection.useDockerDetection.checkServices.useCallback() callback.updatedServices",
                     "dashboard.frontend.src.hooks.useDockerDetection.useDockerDetection.checkServices.useCallback() callback.updatedServices.DEFAULT_SERVICES.map() callback",
-                    "dashboard.frontend.src.hooks.useDockerDetection.useEffect() callback",
                     "dashboard.frontend.src.hooks.useDockerDetection.useDockerDetection.useEffect() callback",
-                    "dashboard.frontend.src.hooks.useDockerDetection.useDockerDetection.useEffect() callback.interval",
                     "dashboard.frontend.src.hooks.useDockerDetection.useDockerDetection.useEffect() callback.interval.setInterval() callback",
-                    "dashboard.frontend.src.hooks.useDockerDetection.startServices",
                     "dashboard.frontend.src.hooks.useDockerDetection.useDockerDetection.startServices.useCallback() callback",
-                    "dashboard.frontend.src.hooks.useDockerDetection.stopServices",
                     "dashboard.frontend.src.hooks.useDockerDetection.useDockerDetection.stopServices.useCallback() callback",
                     "dashboard.frontend.src.hooks.useDockerDetection.DockerStatusIndicator",
                     "dashboard.frontend.src.hooks.useDockerDetection.ServiceStatusList",
@@ -270039,25 +270314,18 @@
                     },
                     {
                       "file_path": "dashboard/frontend/src/hooks/useDockerDetection.tsx",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "dashboard.frontend.src.hooks.useDockerDetection.DockerStatus",
                         "dashboard.frontend.src.hooks.useDockerDetection.ServiceStatus",
                         "dashboard.frontend.src.hooks.useDockerDetection.useDockerDetection",
-                        "dashboard.frontend.src.hooks.useDockerDetection.checkDocker",
                         "dashboard.frontend.src.hooks.useDockerDetection.useDockerDetection.checkDocker.useCallback() callback",
                         "dashboard.frontend.src.hooks.useDockerDetection.useDockerDetection.checkDocker.useCallback() callback.setDockerStatus() callback",
-                        "dashboard.frontend.src.hooks.useDockerDetection.checkServices",
                         "dashboard.frontend.src.hooks.useDockerDetection.useDockerDetection.checkServices.useCallback() callback",
-                        "dashboard.frontend.src.hooks.useDockerDetection.useDockerDetection.checkServices.useCallback() callback.updatedServices",
                         "dashboard.frontend.src.hooks.useDockerDetection.useDockerDetection.checkServices.useCallback() callback.updatedServices.DEFAULT_SERVICES.map() callback",
-                        "dashboard.frontend.src.hooks.useDockerDetection.useEffect() callback",
                         "dashboard.frontend.src.hooks.useDockerDetection.useDockerDetection.useEffect() callback",
-                        "dashboard.frontend.src.hooks.useDockerDetection.useDockerDetection.useEffect() callback.interval",
                         "dashboard.frontend.src.hooks.useDockerDetection.useDockerDetection.useEffect() callback.interval.setInterval() callback",
-                        "dashboard.frontend.src.hooks.useDockerDetection.startServices",
                         "dashboard.frontend.src.hooks.useDockerDetection.useDockerDetection.startServices.useCallback() callback",
-                        "dashboard.frontend.src.hooks.useDockerDetection.stopServices",
                         "dashboard.frontend.src.hooks.useDockerDetection.useDockerDetection.stopServices.useCallback() callback",
                         "dashboard.frontend.src.hooks.useDockerDetection.DockerStatusIndicator",
                         "dashboard.frontend.src.hooks.useDockerDetection.ServiceStatusList",
@@ -271652,25 +271920,18 @@
                         },
                         {
                           "file_path": "dashboard/frontend/src/hooks/useDockerDetection.tsx",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "dashboard.frontend.src.hooks.useDockerDetection.DockerStatus",
                             "dashboard.frontend.src.hooks.useDockerDetection.ServiceStatus",
                             "dashboard.frontend.src.hooks.useDockerDetection.useDockerDetection",
-                            "dashboard.frontend.src.hooks.useDockerDetection.checkDocker",
                             "dashboard.frontend.src.hooks.useDockerDetection.useDockerDetection.checkDocker.useCallback() callback",
                             "dashboard.frontend.src.hooks.useDockerDetection.useDockerDetection.checkDocker.useCallback() callback.setDockerStatus() callback",
-                            "dashboard.frontend.src.hooks.useDockerDetection.checkServices",
                             "dashboard.frontend.src.hooks.useDockerDetection.useDockerDetection.checkServices.useCallback() callback",
-                            "dashboard.frontend.src.hooks.useDockerDetection.useDockerDetection.checkServices.useCallback() callback.updatedServices",
                             "dashboard.frontend.src.hooks.useDockerDetection.useDockerDetection.checkServices.useCallback() callback.updatedServices.DEFAULT_SERVICES.map() callback",
-                            "dashboard.frontend.src.hooks.useDockerDetection.useEffect() callback",
                             "dashboard.frontend.src.hooks.useDockerDetection.useDockerDetection.useEffect() callback",
-                            "dashboard.frontend.src.hooks.useDockerDetection.useDockerDetection.useEffect() callback.interval",
                             "dashboard.frontend.src.hooks.useDockerDetection.useDockerDetection.useEffect() callback.interval.setInterval() callback",
-                            "dashboard.frontend.src.hooks.useDockerDetection.startServices",
                             "dashboard.frontend.src.hooks.useDockerDetection.useDockerDetection.startServices.useCallback() callback",
-                            "dashboard.frontend.src.hooks.useDockerDetection.stopServices",
                             "dashboard.frontend.src.hooks.useDockerDetection.useDockerDetection.stopServices.useCallback() callback",
                             "dashboard.frontend.src.hooks.useDockerDetection.DockerStatusIndicator",
                             "dashboard.frontend.src.hooks.useDockerDetection.ServiceStatusList",

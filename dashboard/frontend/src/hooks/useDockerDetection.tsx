@@ -60,7 +60,7 @@ export function useDockerDetection() {
         // Fallback for browser/dev mode
         // Try to fetch from API
         try {
-          const response = await fetch('http://localhost:8000/health');
+          const response = await fetch('/health');
           if (response.ok) {
             setDockerStatus({
               available: true,
@@ -100,9 +100,9 @@ export function useDockerDetection() {
     setServicesLoading(true);
     
     const healthEndpoints: Record<string, string> = {
-      api: 'http://localhost:8000/health',
-      prometheus: 'http://localhost:9090/-/healthy',
-      loki: 'http://localhost:3100/ready',
+      api: '/health',
+      prometheus: '/-/healthy',
+      loki: '/ready',
     };
 
     const updatedServices = await Promise.all(

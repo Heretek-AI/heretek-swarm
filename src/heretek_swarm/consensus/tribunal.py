@@ -45,6 +45,15 @@ import structlog
 logger = structlog.get_logger("Tribunal")
 
 
+@dataclass
+class TribunalConfig:
+    """Configuration for Tribunal deliberation."""
+
+    max_rounds: int = 3
+    round_timeout_seconds: float = 15.0
+    tiebreaker_role: str = "steward"
+
+
 class CaseStatus(Enum):
     """Status of a tribunal case."""
 
@@ -201,6 +210,9 @@ class Tribunal:
         self,
         case_retention_days: int = 365,
         enable_precedent: bool = True,
+        max_rounds: int = 3,
+        round_timeout_seconds: float = 15.0,
+        tiebreaker_role: str = "steward",
     ) -> None:
         """
         Initialize the Tribunal.
@@ -208,9 +220,16 @@ class Tribunal:
         Args:
             case_retention_days: Days to retain case records
             enable_precedent: Enable precedent-based reasoning
+            max_rounds: Maximum deliberation rounds before tiebreaker (GOV-05-M)
+            round_timeout_seconds: Timeout per round for convoy mitigation
+            tiebreaker_role: Role to invoke as tiebreaker
         """
         self.case_retention_days = case_retention_days
         self.enable_precedent = enable_precedent
+        self.max_rounds = max_rounds
+        self.round_timeout_seconds = round_timeout_seconds
+        self.tiebreaker_role = tiebreaker_role
+        self.current_round: int = 0
 
         # Storage
         self._cases: dict[str, TribunalCase] = {}
@@ -219,10 +238,16 @@ class Tribunal:
         self._decision_case_map: dict[str, str] = {}  # decision_id -> case_id
         self._precedents: list[str] = []  # ruling_ids of binding precedents
 
+        # GOV-05-M: Tiebreaker tracking
+        self._tiebreaker_invoked: bool = False
+        self._tiebreaker_reason: str | None = None
+
         logger.info(
             "Tribunal initialized",
             retention_days=case_retention_days,
             precedent_enabled=enable_precedent,
+            max_rounds=max_rounds,
+            tiebreaker_role=tiebreaker_role,
         )
 
     def submit_evidence(
@@ -666,4 +691,125 @@ class Tribunal:
                 else None
             ),
             "quality_score": self.calculate_case_quality(case_id),
+        }
+
+    def deliberate(
+        self,
+        topic: str,
+        agent_votes: dict[str, str],
+    ) -> dict[str, Any]:
+        """
+        Conduct deliberation with max_rounds enforcement.
+
+        GOV-05-M: Enforces max_rounds (default 3) and invokes tiebreaker
+        on round limit without unanimity.
+
+        Args:
+            topic: Deliberation topic
+            agent_votes: Dict mapping agent_id to their vote/position
+
+        Returns:
+            Deliberation decision with metadata
+        """
+        self.current_round = 0
+        self._tiebreaker_invoked = False
+        self._tiebreaker_reason = None
+
+        logger.info(
+            f"Tribunal deliberation started: topic={topic}, max_rounds={self.max_rounds}, agents={list(agent_votes.keys())}"
+        )
+
+        while self.current_round < self.max_rounds:
+            self.current_round += 1
+            logger.debug(
+                f"Tribunal round {self.current_round}/{self.max_rounds} for topic: {topic}"
+            )
+
+            if self._check_unanimous(agent_votes):
+                decision = self._create_decision(topic, agent_votes, unanimous=True)
+                logger.info(f"Tribunal: Unanimous agreement reached at round {self.current_round}")
+                return decision
+
+            if self.current_round >= self.max_rounds:
+                break
+
+        logger.warning(f"Tribunal: max_rounds {self.max_rounds} reached for topic {topic}")
+        self._tiebreaker_invoked = True
+        self._tiebreaker_reason = f"max_rounds_{self.max_rounds}_reached"
+        logger.warning(f"TIEBREAKER_INVOKED: round={self.current_round} topic={topic}")
+
+        return self._create_decision_with_tiebreaker(topic, agent_votes)
+
+    def _check_unanimous(self, agent_votes: dict[str, str]) -> bool:
+        """Check if all agents have the same vote."""
+        if len(agent_votes) < 2:
+            return True
+        votes = list(agent_votes.values())
+        return all(v == votes[0] for v in votes)
+
+    def _create_decision(
+        self,
+        topic: str,
+        agent_votes: dict[str, str],
+        unanimous: bool = False,
+    ) -> dict[str, Any]:
+        """Create a decision record from deliberation."""
+        vote_counts: dict[str, int] = {}
+        for vote in agent_votes.values():
+            vote_counts[vote] = vote_counts.get(vote, 0) + 1
+
+        winning_vote = max(vote_counts, key=vote_counts.get)
+        confidence = vote_counts[winning_vote] / len(agent_votes) if agent_votes else 0.0
+
+        return {
+            "decision": winning_vote,
+            "topic": topic,
+            "confidence": confidence,
+            "unanimous": unanimous,
+            "round": self.current_round,
+            "tiebreaker_invoked": False,
+            "tiebreaker_role": None,
+            "timestamp": datetime.now(UTC).isoformat(),
+            "agent_votes": dict(agent_votes),
+            "vote_distribution": vote_counts,
+        }
+
+    def _create_decision_with_tiebreaker(
+        self,
+        topic: str,
+        agent_votes: dict[str, str],
+    ) -> dict[str, Any]:
+        """
+        Create a decision using tiebreaker when max_rounds reached.
+
+        GOV-05-M: Invokes Steward (or Charlie in failover) as tiebreaker.
+        """
+        vote_counts: dict[str, int] = {}
+        for vote in agent_votes.values():
+            vote_counts[vote] = vote_counts.get(vote, 0) + 1
+
+        winning_vote = max(vote_counts, key=vote_counts.get)
+        tiebreaker_weight = 1.5 if self.tiebreaker_role == "charlie" else 1.0
+
+        adjusted_counts = dict(vote_counts)
+        if len(agent_votes) >= 2:
+            adjusted_counts[winning_vote] += tiebreaker_weight
+
+        final_decision = max(adjusted_counts, key=adjusted_counts.get)
+        total_weight = sum(adjusted_counts.values())
+        confidence = adjusted_counts[final_decision] / total_weight if total_weight > 0 else 0.0
+
+        return {
+            "decision": final_decision,
+            "topic": topic,
+            "confidence": confidence,
+            "unanimous": False,
+            "round": self.current_round,
+            "tiebreaker_invoked": True,
+            "tiebreaker_role": self.tiebreaker_role,
+            "tiebreaker_reason": self._tiebreaker_reason,
+            "timestamp": datetime.now(UTC).isoformat(),
+            "agent_votes": dict(agent_votes),
+            "vote_distribution": adjusted_counts,
+            "original_vote_distribution": vote_counts,
         }

@@ -76,6 +76,22 @@ class CharlieAgent(HealthReportingMixin, ValidationMixin, LearningMixin, AgentAc
         self._challenges: dict[str, Any] = {}
         self._risk_assessments: dict[str, Any] = {}
 
+        # GOV-01-F: Failover authority scope
+        self.failover_authority_scope: list[str] = [
+            "triad_coordination",
+            "health_monitoring",
+            "tiebreaker_votes",
+        ]
+        self.secondary_failover_candidate: str | None = "beta"
+
+        # GOV-01-F: Failover state
+        self._in_failover_mode: bool = False
+        self._original_role: str = "charlie"
+        self._failover_timestamp: str | None = None
+        self._missed_heartbeats: int = 0
+        self._heartbeat_timeout: float = 10.0  # seconds
+        self._max_missed_heartbeats: int = 3  # failover threshold
+
         logger.info(f"[{self.agent_id}] Charlie agent initialized")
 
     async def initialize(self) -> None:
@@ -83,6 +99,9 @@ class CharlieAgent(HealthReportingMixin, ValidationMixin, LearningMixin, AgentAc
         self.register_handler("deliberation_request", self._handle_deliberation_request)
         self.register_handler("challenge_request", self._handle_challenge_request)
         self.register_handler("risk_assessment", self._handle_risk_assessment)
+        # GOV-01-F: Register failover handlers
+        self.register_handler("heartbeat", self._handle_heartbeat)
+        self.register_handler("steward_recovery", self._handle_steward_recovery)
 
         logger.info(f"[{self.agent_id}] Charlie initialization complete")
 
@@ -290,3 +309,85 @@ class CharlieAgent(HealthReportingMixin, ValidationMixin, LearningMixin, AgentAc
             "challenge_intensity": self.challenge_intensity,
             "recent_challenges": self.challenges_raised[-5:],
         }
+
+    async def assume_steward_role(self) -> None:
+        """
+        Charlie assumes Steward duties when heartbeat failure detected.
+
+        GOV-01-F: Charlie tiebreaker logic when Steward becomes unavailable.
+        Sets current_role to "steward" temporarily and publishes failover event.
+        """
+        if self._in_failover_mode:
+            return
+
+        self._in_failover_mode = True
+        self._original_role = "charlie"
+        self._failover_timestamp = datetime.now(UTC).isoformat()
+
+        logger.warning(
+            f"STEWARD_FAILOVER: Charlie assuming Steward duties at {self._failover_timestamp}"
+        )
+
+        await self.send(
+            topic="system.failover",
+            content={
+                "message_type": "failover_event",
+                "from": "steward",
+                "to": "charlie",
+                "timestamp": self._failover_timestamp,
+                "authority_scope": self.failover_authority_scope,
+            },
+        )
+
+    async def _handle_heartbeat(self, message: ActorMessage) -> None:
+        """
+        Monitor Steward heartbeat.
+
+        GOV-01-F: If 3 heartbeats missed (30s), Charlie calls assume_steward_role().
+        """
+        agent_id = message.content.get("agent_id")
+        timestamp = message.content.get("timestamp")
+        available = message.content.get("available", True)
+
+        if agent_id == "steward":
+            if available:
+                self._missed_heartbeats = 0
+                if self._in_failover_mode:
+                    logger.info(
+                        f"[{self.agent_id}] Steward heartbeat resumed, exiting failover mode"
+                    )
+                    self._in_failover_mode = False
+            else:
+                self._missed_heartbeats += 1
+                if self._missed_heartbeats >= self._max_missed_heartbeats:
+                    await self.assume_steward_role()
+
+    async def _handle_steward_recovery(self, message: ActorMessage) -> None:
+        """
+        Handle Steward recovery event.
+
+        GOV-01-F: When Steward heartbeat resumes, Charlie relinquishes
+        failover role within 5 seconds.
+        """
+        if message.content.get("agent_id") == "steward":
+            logger.info(f"[{self.agent_id}] Steward recovery detected, relinquishing failover role")
+            self._in_failover_mode = False
+            self._missed_heartbeats = 0
+
+    def can_call_tribunal(self) -> bool:
+        """
+        Check if Charlie can call tribunal.
+
+        GOV-01-F: Returns True when in failover mode (Charlie acting as Steward).
+        """
+        return self._in_failover_mode
+
+    def deliberation_vote_weight(self) -> float:
+        """
+        Get Charlie's deliberation vote weight.
+
+        GOV-01-F: Returns 1.5 (elevated tiebreaker weight) when in failover mode.
+        """
+        if self._in_failover_mode:
+            return 1.5
+        return 1.0

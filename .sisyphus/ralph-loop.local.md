@@ -4,421 +4,80 @@ iteration: 1
 max_iterations: 500
 completion_promise: "DONE"
 initial_completion_promise: "DONE"
-started_at: "2026-04-16T01:44:09.581Z"
-session_id: "ses_26cd3b686ffeldevmSB9Ea0r6u"
+started_at: "2026-04-16T02:07:54.325Z"
+session_id: "ses_26bf795c1ffexxzPADVIb3W78v"
 ultrawork: true
 strategy: "continue"
-message_count_at_start: 350
+message_count_at_start: 3
 ---
-THe dashboard has a lot of error: "index-Q13a9owa.js:42  GET http://localhost:8000/api/consciousness/visualization/network 401 (Unauthorized)
-(anonymous) @ index-Q13a9owa.js:42
-xhr @ index-Q13a9owa.js:42
-nm @ index-Q13a9owa.js:44
-Promise.then
-_request @ index-Q13a9owa.js:45
-request @ index-Q13a9owa.js:44
-Nr.<computed> @ index-Q13a9owa.js:45
-(anonymous) @ index-Q13a9owa.js:40
-S2 @ index-Q13a9owa.js:45
-(anonymous) @ index-Q13a9owa.js:45
-(anonymous) @ index-Q13a9owa.js:45
-setInterval
-(anonymous) @ index-Q13a9owa.js:45
-Sl @ index-Q13a9owa.js:40
-hs @ index-Q13a9owa.js:40
-nj @ index-Q13a9owa.js:40
-dr @ index-Q13a9owa.js:40
-Pp @ index-Q13a9owa.js:40
-ar @ index-Q13a9owa.js:38
-(anonymous) @ index-Q13a9owa.js:40
-index-Q13a9owa.js:45 Failed to fetch network visualization: AxiosError: Request failed with status code 401
-    at Ny (index-Q13a9owa.js:42:1087)
-    at XMLHttpRequest.m (index-Q13a9owa.js:42:5927)
-    at Nr.request (index-Q13a9owa.js:44:2094)
-    at async S2 (index-Q13a9owa.js:45:40314)
-    at async index-Q13a9owa.js:45:40863
-    at async Promise.all (:3000/index 2)
-    at async index-Q13a9owa.js:45:40988
-(anonymous) @ index-Q13a9owa.js:45
-await in (anonymous)
-(anonymous) @ index-Q13a9owa.js:45
-setInterval
-(anonymous) @ index-Q13a9owa.js:45
-Sl @ index-Q13a9owa.js:40
-hs @ index-Q13a9owa.js:40
-nj @ index-Q13a9owa.js:40
-dr @ index-Q13a9owa.js:40
-Pp @ index-Q13a9owa.js:40
-ar @ index-Q13a9owa.js:38
-(anonymous) @ index-Q13a9owa.js:40
-index-Q13a9owa.js:42  GET http://localhost:8000/api/consciousness/statistics 401 (Unauthorized)
-(anonymous) @ index-Q13a9owa.js:42
-xhr @ index-Q13a9owa.js:42
-nm @ index-Q13a9owa.js:44
-Promise.then
-_request @ index-Q13a9owa.js:45
-request @ index-Q13a9owa.js:44
-Nr.<computed> @ index-Q13a9owa.js:45
-(anonymous) @ index-Q13a9owa.js:40
-j2 @ index-Q13a9owa.js:45
-(anonymous) @ index-Q13a9owa.js:45
-(anonymous) @ index-Q13a9owa.js:45
-setInterval
-(anonymous) @ index-Q13a9owa.js:45
-Sl @ index-Q13a9owa.js:40
-hs @ index-Q13a9owa.js:40
-nj @ index-Q13a9owa.js:40
-dr @ index-Q13a9owa.js:40
-Pp @ index-Q13a9owa.js:40
-ar @ index-Q13a9owa.js:38
-(anonymous) @ index-Q13a9owa.js:40
-index-Q13a9owa.js:45 Failed to fetch consciousness statistics: AxiosError: Request failed with status code 401
-    at Ny (index-Q13a9owa.js:42:1087)
-    at XMLHttpRequest.m (index-Q13a9owa.js:42:5927)
-    at Nr.request (index-Q13a9owa.js:44:2094)
-    at async j2 (index-Q13a9owa.js:45:40249)
-    at async index-Q13a9owa.js:45:40615
-    at async Promise.all (:3000/index 0)
-    at async index-Q13a9owa.js:45:40988
-(anonymous) @ index-Q13a9owa.js:45
-await in (anonymous)
-(anonymous) @ index-Q13a9owa.js:45
-setInterval
-(anonymous) @ index-Q13a9owa.js:45
-Sl @ index-Q13a9owa.js:40
-hs @ index-Q13a9owa.js:40
-nj @ index-Q13a9owa.js:40
-dr @ index-Q13a9owa.js:40
-Pp @ index-Q13a9owa.js:40
-ar @ index-Q13a9owa.js:38
-(anonymous) @ index-Q13a9owa.js:40
-index-Q13a9owa.js:42  GET http://localhost:8000/api/consciousness/states 401 (Unauthorized)
-(anonymous) @ index-Q13a9owa.js:42
-xhr @ index-Q13a9owa.js:42
-nm @ index-Q13a9owa.js:44
-Promise.then
-_request @ index-Q13a9owa.js:45
-request @ index-Q13a9owa.js:44
-Nr.<computed> @ index-Q13a9owa.js:45
-(anonymous) @ index-Q13a9owa.js:40
-k2 @ index-Q13a9owa.js:45
-(anonymous) @ index-Q13a9owa.js:45
-(anonymous) @ index-Q13a9owa.js:45
-setInterval
-(anonymous) @ index-Q13a9owa.js:45
-Sl @ index-Q13a9owa.js:40
-hs @ index-Q13a9owa.js:40
-nj @ index-Q13a9owa.js:40
-dr @ index-Q13a9owa.js:40
-Pp @ index-Q13a9owa.js:40
-ar @ index-Q13a9owa.js:38
-(anonymous) @ index-Q13a9owa.js:40
-index-Q13a9owa.js:45 Failed to fetch agent states: AxiosError: Request failed with status code 401
-    at Ny (index-Q13a9owa.js:42:1087)
-    at XMLHttpRequest.m (index-Q13a9owa.js:42:5927)
-    at Nr.request (index-Q13a9owa.js:44:2094)
-    at async k2 (index-Q13a9owa.js:45:40390)
-    at async index-Q13a9owa.js:45:40745
-    at async Promise.all (:3000/index 1)
-    at async index-Q13a9owa.js:45:40988
-(anonymous) @ index-Q13a9owa.js:45
-await in (anonymous)
-(anonymous) @ index-Q13a9owa.js:45
-setInterval
-(anonymous) @ index-Q13a9owa.js:45
-Sl @ index-Q13a9owa.js:40
-hs @ index-Q13a9owa.js:40
-nj @ index-Q13a9owa.js:40
-dr @ index-Q13a9owa.js:40
-Pp @ index-Q13a9owa.js:40
-ar @ index-Q13a9owa.js:38
-(anonymous) @ index-Q13a9owa.js:40
-index-Q13a9owa.js:42  GET http://localhost:8000/api/consciousness/visualization/network 401 (Unauthorized)
-(anonymous) @ index-Q13a9owa.js:42
-xhr @ index-Q13a9owa.js:42
-nm @ index-Q13a9owa.js:44
-Promise.then
-_request @ index-Q13a9owa.js:45
-request @ index-Q13a9owa.js:44
-Nr.<computed> @ index-Q13a9owa.js:45
-(anonymous) @ index-Q13a9owa.js:40
-S2 @ index-Q13a9owa.js:45
-(anonymous) @ index-Q13a9owa.js:45
-(anonymous) @ index-Q13a9owa.js:45
-setInterval
-(anonymous) @ index-Q13a9owa.js:45
-Sl @ index-Q13a9owa.js:40
-hs @ index-Q13a9owa.js:40
-nj @ index-Q13a9owa.js:40
-dr @ index-Q13a9owa.js:40
-Pp @ index-Q13a9owa.js:40
-ar @ index-Q13a9owa.js:38
-(anonymous) @ index-Q13a9owa.js:40
-index-Q13a9owa.js:45 Failed to fetch network visualization: AxiosError: Request failed with status code 401
-    at Ny (index-Q13a9owa.js:42:1087)
-    at XMLHttpRequest.m (index-Q13a9owa.js:42:5927)
-    at Nr.request (index-Q13a9owa.js:44:2094)
-    at async S2 (index-Q13a9owa.js:45:40314)
-    at async index-Q13a9owa.js:45:40863
-    at async Promise.all (:3000/index 2)
-    at async index-Q13a9owa.js:45:40988
-(anonymous) @ index-Q13a9owa.js:45
-await in (anonymous)
-(anonymous) @ index-Q13a9owa.js:45
-setInterval
-(anonymous) @ index-Q13a9owa.js:45
-Sl @ index-Q13a9owa.js:40
-hs @ index-Q13a9owa.js:40
-nj @ index-Q13a9owa.js:40
-dr @ index-Q13a9owa.js:40
-Pp @ index-Q13a9owa.js:40
-ar @ index-Q13a9owa.js:38
-(anonymous) @ index-Q13a9owa.js:40
-index-Q13a9owa.js:42  GET http://localhost:8000/api/consciousness/states 401 (Unauthorized)
-(anonymous) @ index-Q13a9owa.js:42
-xhr @ index-Q13a9owa.js:42
-nm @ index-Q13a9owa.js:44
-Promise.then
-_request @ index-Q13a9owa.js:45
-request @ index-Q13a9owa.js:44
-Nr.<computed> @ index-Q13a9owa.js:45
-(anonymous) @ index-Q13a9owa.js:40
-k2 @ index-Q13a9owa.js:45
-(anonymous) @ index-Q13a9owa.js:45
-(anonymous) @ index-Q13a9owa.js:45
-setInterval
-(anonymous) @ index-Q13a9owa.js:45
-Sl @ index-Q13a9owa.js:40
-hs @ index-Q13a9owa.js:40
-nj @ index-Q13a9owa.js:40
-dr @ index-Q13a9owa.js:40
-Pp @ index-Q13a9owa.js:40
-ar @ index-Q13a9owa.js:38
-(anonymous) @ index-Q13a9owa.js:40
-index-Q13a9owa.js:45 Failed to fetch agent states: AxiosError: Request failed with status code 401
-    at Ny (index-Q13a9owa.js:42:1087)
-    at XMLHttpRequest.m (index-Q13a9owa.js:42:5927)
-    at Nr.request (index-Q13a9owa.js:44:2094)
-    at async k2 (index-Q13a9owa.js:45:40390)
-    at async index-Q13a9owa.js:45:40745
-    at async Promise.all (:3000/index 1)
-    at async index-Q13a9owa.js:45:40988
-(anonymous) @ index-Q13a9owa.js:45
-await in (anonymous)
-(anonymous) @ index-Q13a9owa.js:45
-setInterval
-(anonymous) @ index-Q13a9owa.js:45
-Sl @ index-Q13a9owa.js:40
-hs @ index-Q13a9owa.js:40
-nj @ index-Q13a9owa.js:40
-dr @ index-Q13a9owa.js:40
-Pp @ index-Q13a9owa.js:40
-ar @ index-Q13a9owa.js:38
-(anonymous) @ index-Q13a9owa.js:40
-index-Q13a9owa.js:42  GET http://localhost:8000/api/consciousness/statistics 401 (Unauthorized)
-(anonymous) @ index-Q13a9owa.js:42
-xhr @ index-Q13a9owa.js:42
-nm @ index-Q13a9owa.js:44
-Promise.then
-_request @ index-Q13a9owa.js:45
-request @ index-Q13a9owa.js:44
-Nr.<computed> @ index-Q13a9owa.js:45
-(anonymous) @ index-Q13a9owa.js:40
-j2 @ index-Q13a9owa.js:45
-(anonymous) @ index-Q13a9owa.js:45
-(anonymous) @ index-Q13a9owa.js:45
-setInterval
-(anonymous) @ index-Q13a9owa.js:45
-Sl @ index-Q13a9owa.js:40
-hs @ index-Q13a9owa.js:40
-nj @ index-Q13a9owa.js:40
-dr @ index-Q13a9owa.js:40
-Pp @ index-Q13a9owa.js:40
-ar @ index-Q13a9owa.js:38
-(anonymous) @ index-Q13a9owa.js:40
-index-Q13a9owa.js:45 Failed to fetch consciousness statistics: AxiosError: Request failed with status code 401
-    at Ny (index-Q13a9owa.js:42:1087)
-    at XMLHttpRequest.m (index-Q13a9owa.js:42:5927)
-    at Nr.request (index-Q13a9owa.js:44:2094)
-    at async j2 (index-Q13a9owa.js:45:40249)
-    at async index-Q13a9owa.js:45:40615
-    at async Promise.all (:3000/index 0)
-    at async index-Q13a9owa.js:45:40988
-(anonymous) @ index-Q13a9owa.js:45
-await in (anonymous)
-(anonymous) @ index-Q13a9owa.js:45
-setInterval
-(anonymous) @ index-Q13a9owa.js:45
-Sl @ index-Q13a9owa.js:40
-hs @ index-Q13a9owa.js:40
-nj @ index-Q13a9owa.js:40
-dr @ index-Q13a9owa.js:40
-Pp @ index-Q13a9owa.js:40
-ar @ index-Q13a9owa.js:38
-(anonymous) @ index-Q13a9owa.js:40
-index-Q13a9owa.js:42  GET http://localhost:8000/api/consciousness/visualization/network 401 (Unauthorized)
-(anonymous) @ index-Q13a9owa.js:42
-xhr @ index-Q13a9owa.js:42
-nm @ index-Q13a9owa.js:44
-Promise.then
-_request @ index-Q13a9owa.js:45
-request @ index-Q13a9owa.js:44
-Nr.<computed> @ index-Q13a9owa.js:45
-(anonymous) @ index-Q13a9owa.js:40
-S2 @ index-Q13a9owa.js:45
-(anonymous) @ index-Q13a9owa.js:45
-(anonymous) @ index-Q13a9owa.js:45
-setInterval
-(anonymous) @ index-Q13a9owa.js:45
-Sl @ index-Q13a9owa.js:40
-hs @ index-Q13a9owa.js:40
-nj @ index-Q13a9owa.js:40
-dr @ index-Q13a9owa.js:40
-Pp @ index-Q13a9owa.js:40
-ar @ index-Q13a9owa.js:38
-(anonymous) @ index-Q13a9owa.js:40
-index-Q13a9owa.js:45 Failed to fetch network visualization: AxiosError: Request failed with status code 401
-    at Ny (index-Q13a9owa.js:42:1087)
-    at XMLHttpRequest.m (index-Q13a9owa.js:42:5927)
-    at Nr.request (index-Q13a9owa.js:44:2094)
-    at async S2 (index-Q13a9owa.js:45:40314)
-    at async index-Q13a9owa.js:45:40863
-    at async Promise.all (:3000/index 2)
-    at async index-Q13a9owa.js:45:40988
-(anonymous) @ index-Q13a9owa.js:45
-await in (anonymous)
-(anonymous) @ index-Q13a9owa.js:45
-setInterval
-(anonymous) @ index-Q13a9owa.js:45
-Sl @ index-Q13a9owa.js:40
-hs @ index-Q13a9owa.js:40
-nj @ index-Q13a9owa.js:40
-dr @ index-Q13a9owa.js:40
-Pp @ index-Q13a9owa.js:40
-ar @ index-Q13a9owa.js:38
-(anonymous) @ index-Q13a9owa.js:40
-index-Q13a9owa.js:42  GET http://localhost:8000/api/consciousness/statistics 401 (Unauthorized)
-(anonymous) @ index-Q13a9owa.js:42
-xhr @ index-Q13a9owa.js:42
-nm @ index-Q13a9owa.js:44
-Promise.then
-_request @ index-Q13a9owa.js:45
-request @ index-Q13a9owa.js:44
-Nr.<computed> @ index-Q13a9owa.js:45
-(anonymous) @ index-Q13a9owa.js:40
-j2 @ index-Q13a9owa.js:45
-(anonymous) @ index-Q13a9owa.js:45
-(anonymous) @ index-Q13a9owa.js:45
-setInterval
-(anonymous) @ index-Q13a9owa.js:45
-Sl @ index-Q13a9owa.js:40
-hs @ index-Q13a9owa.js:40
-nj @ index-Q13a9owa.js:40
-dr @ index-Q13a9owa.js:40
-Pp @ index-Q13a9owa.js:40
-ar @ index-Q13a9owa.js:38
-(anonymous) @ index-Q13a9owa.js:40
-index-Q13a9owa.js:45 Failed to fetch consciousness statistics: AxiosError: Request failed with status code 401
-    at Ny (index-Q13a9owa.js:42:1087)
-    at XMLHttpRequest.m (index-Q13a9owa.js:42:5927)
-    at Nr.request (index-Q13a9owa.js:44:2094)
-    at async j2 (index-Q13a9owa.js:45:40249)
-    at async index-Q13a9owa.js:45:40615
-    at async Promise.all (:3000/index 0)
-    at async index-Q13a9owa.js:45:40988
-(anonymous) @ index-Q13a9owa.js:45
-await in (anonymous)
-(anonymous) @ index-Q13a9owa.js:45
-setInterval
-(anonymous) @ index-Q13a9owa.js:45
-Sl @ index-Q13a9owa.js:40
-hs @ index-Q13a9owa.js:40
-nj @ index-Q13a9owa.js:40
-dr @ index-Q13a9owa.js:40
-Pp @ index-Q13a9owa.js:40
-ar @ index-Q13a9owa.js:38
-(anonymous) @ index-Q13a9owa.js:40
-index-Q13a9owa.js:42  GET http://localhost:8000/api/consciousness/states 401 (Unauthorized)
-(anonymous) @ index-Q13a9owa.js:42
-xhr @ index-Q13a9owa.js:42
-nm @ index-Q13a9owa.js:44
-Promise.then
-_request @ index-Q13a9owa.js:45
-request @ index-Q13a9owa.js:44
-Nr.<computed> @ index-Q13a9owa.js:45
-(anonymous) @ index-Q13a9owa.js:40
-k2 @ index-Q13a9owa.js:45
-(anonymous) @ index-Q13a9owa.js:45
-(anonymous) @ index-Q13a9owa.js:45
-setInterval
-(anonymous) @ index-Q13a9owa.js:45
-Sl @ index-Q13a9owa.js:40
-hs @ index-Q13a9owa.js:40
-nj @ index-Q13a9owa.js:40
-dr @ index-Q13a9owa.js:40
-Pp @ index-Q13a9owa.js:40
-ar @ index-Q13a9owa.js:38
-(anonymous) @ index-Q13a9owa.js:40
-index-Q13a9owa.js:45 Failed to fetch agent states: AxiosError: Request failed with status code 401
-    at Ny (index-Q13a9owa.js:42:1087)
-    at XMLHttpRequest.m (index-Q13a9owa.js:42:5927)
-    at Nr.request (index-Q13a9owa.js:44:2094)
-    at async k2 (index-Q13a9owa.js:45:40390)
-    at async index-Q13a9owa.js:45:40745
-    at async Promise.all (:3000/index 1)
-    at async index-Q13a9owa.js:45:40988
-(anonymous) @ index-Q13a9owa.js:45
-await in (anonymous)
-(anonymous) @ index-Q13a9owa.js:45
-setInterval
-(anonymous) @ index-Q13a9owa.js:45
-Sl @ index-Q13a9owa.js:40
-hs @ index-Q13a9owa.js:40
-nj @ index-Q13a9owa.js:40
-dr @ index-Q13a9owa.js:40
-Pp @ index-Q13a9owa.js:40
-ar @ index-Q13a9owa.js:38
-(anonymous) @ index-Q13a9owa.js:40
-index-Q13a9owa.js:42  GET http://localhost:8000/api/consciousness/visualization/network 401 (Unauthorized)
-(anonymous) @ index-Q13a9owa.js:42
-xhr @ index-Q13a9owa.js:42
-nm @ index-Q13a9owa.js:44
-Promise.then
-_request @ index-Q13a9owa.js:45
-request @ index-Q13a9owa.js:44
-Nr.<computed> @ index-Q13a9owa.js:45
-(anonymous) @ index-Q13a9owa.js:40
-S2 @ index-Q13a9owa.js:45
-(anonymous) @ index-Q13a9owa.js:45
-(anonymous) @ index-Q13a9owa.js:45
-setInterval
-(anonymous) @ index-Q13a9owa.js:45
-Sl @ index-Q13a9owa.js:40
-hs @ index-Q13a9owa.js:40
-nj @ index-Q13a9owa.js:40
-dr @ index-Q13a9owa.js:40
-Pp @ index-Q13a9owa.js:40
-ar @ index-Q13a9owa.js:38
-(anonymous) @ index-Q13a9owa.js:40
-index-Q13a9owa.js:45 Failed to fetch network visualization: AxiosError: Request failed with status code 401
-    at Ny (index-Q13a9owa.js:42:1087)
-    at XMLHttpRequest.m (index-Q13a9owa.js:42:5927)
-    at Nr.request (index-Q13a9owa.js:44:2094)
-    at async S2 (index-Q13a9owa.js:45:40314)
-    at async index-Q13a9owa.js:45:40863
-    at async Promise.all (:3000/index 2)
-    at async index-Q13a9owa.js:45:40988
-(anonymous) @ index-Q13a9owa.js:45
-await in (anonymous)
-(anonymous) @ index-Q13a9owa.js:45
-setInterval
-(anonymous) @ index-Q13a9owa.js:45
-Sl @ index-Q13a9owa.js:40
-hs @ index-Q13a9owa.js:40
-nj @ index-Q13a9owa.js:40
-dr @ index-Q13a9owa.js:40
-Pp @ index-Q13a9owa.js:40
-ar @ index-Q13a9owa.js:38
-(anonymous) @ index-Q13a9owa.js:40
-(index):1 Access to XMLHttpRequest at 'http://localhost:8000/api/config/embedding/providers/47510b70-a125-425b-8a67-3b1974143b58' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
-index-Q13a9owa.js:42  DELETE http://localhost:8000/api/config/embedding/providers/47510b70-a125-425b-8a67-3b1974143b58 net::ERR_FAILED 500 (Internal Server Error) "
+Attempting to deploy an agent on http://localhost:3000 shows "index-CaVuXQDB.js:42 
+ POST http://localhost:8000/api/agents/deploy 422 (Unprocessable Entity)
+(anonymous)	@	index-CaVuXQDB.js:42
+xhr	@	index-CaVuXQDB.js:42
+nm	@	index-CaVuXQDB.js:44
+Promise.then		
+_request	@	index-CaVuXQDB.js:45
+request	@	index-CaVuXQDB.js:44
+(anonymous)	@	index-CaVuXQDB.js:45
+(anonymous)	@	index-CaVuXQDB.js:40
+u2	@	index-CaVuXQDB.js:45
+(anonymous)	@	index-CaVuXQDB.js:45
+(anonymous)	@	index-CaVuXQDB.js:45
+w1	@	index-CaVuXQDB.js:37
+j1	@	index-CaVuXQDB.js:37
+S1	@	index-CaVuXQDB.js:37
+rp	@	index-CaVuXQDB.js:37
+J0	@	index-CaVuXQDB.js:37
+(anonymous)	@	index-CaVuXQDB.js:37
+Pf	@	index-CaVuXQDB.js:40
+j0	@	index-CaVuXQDB.js:37
+Uc	@	index-CaVuXQDB.js:37
+af	@	index-CaVuXQDB.js:37
+O1	@	index-CaVuXQDB.js:37 " and going to the Consciousness tab shows "index-CaVuXQDB.js:40 ErrorBoundary caught an error: TypeError: Cannot read properties of undefined (reading 'toFixed')
+    at E2 (index-CaVuXQDB.js:45:42747)
+    at kf (index-CaVuXQDB.js:38:16998)
+    at od (index-CaVuXQDB.js:40:3139)
+    at Jx (index-CaVuXQDB.js:40:44804)
+    at Gx (index-CaVuXQDB.js:40:39766)
+    at ej (index-CaVuXQDB.js:40:39694)
+    at Qa (index-CaVuXQDB.js:40:39547)
+    at gd (index-CaVuXQDB.js:40:35914)
+    at Xx (index-CaVuXQDB.js:40:34865)
+    at j (index-CaVuXQDB.js:25:1535) Object " And going to Terminal / Logs shows "index-CaVuXQDB.js:45 WebSocket error: Event {isTrusted: true, type: 'error', target: WebSocket, currentTarget: WebSocket, eventPhase: 2, …}
+h.current.onerror @ index-CaVuXQDB.js:45
+index-CaVuXQDB.js:45 WebSocket connection to 'ws://localhost:3000/ws/logs' failed: " finally the observability is limited Total Agents lists 0, but "10:07:25 PM
+✕
+[gateway]
+Memory consolidation completed
+10:07:27 PM
+ℹ
+[redis]
+Agent handoff initiated
+10:07:29 PM
+ℹ
+[agent-nexus-1]
+Workflow execution started
+10:07:31 PM
+ℹ
+[qdrant]
+Agent handoff initiated
+10:07:33 PM
+✕
+[qdrant]
+Workflow execution started
+10:07:35 PM
+✕
+[qdrant]
+Cache miss for key
+10:07:37 PM
+🔍
+[postgres]
+Memory consolidation completed
+10:07:39 PM
+ℹ
+[consensus]
+Memory consolidation completed
+10:07:41 PM
+ℹ
+[consensus]
+Workflow execution started "

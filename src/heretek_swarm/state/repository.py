@@ -10,7 +10,9 @@ Provides PostgreSQL-backed persistence for agent states with:
 """
 
 import asyncio
+import importlib.util
 import json
+import os
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
@@ -19,11 +21,19 @@ from uuid import UUID, uuid4
 
 import structlog
 
+ASYNCPG_AVAILABLE = importlib.util.find_spec("asyncpg") is not None
+if ASYNCPG_AVAILABLE:
+    from asyncpg import Pool, create_pool
+else:
+    Pool = None
+    create_pool = None
+
 logger = structlog.get_logger("state.repository")
 
 # Import event sourcing types
 try:
     from heretek_swarm.state.event_store import DomainEvent
+
     EVENT_SOURCING_AVAILABLE = True
 except ImportError:
     EVENT_SOURCING_AVAILABLE = False
@@ -45,6 +55,7 @@ class AgentStateRecord:
         updated_at: Last update timestamp
         is_active: Whether this state is active
     """
+
     agent_id: str
     agent_type: str
     state: dict[str, Any]
@@ -105,6 +116,7 @@ class StateCheckpoint:
         created_at: Creation timestamp
         metadata: Optional metadata about the checkpoint
     """
+
     checkpoint_id: UUID
     agent_id: str
     state: dict[str, Any]
@@ -252,6 +264,145 @@ class StateRepository:
 
         self._initialized = False
 
+    # Pool configuration constants
+    DEFAULT_MIN_SIZE = 10
+    DEFAULT_MAX_SIZE = 100
+    POOL_UTILIZATION_WARNING_THRESHOLD = 0.8  # 80%
+
+    # Class-level pool for singleton pattern
+    _pool: Any = None
+    _pool_config: tuple[tuple[str, Any], ...] = (
+        ("min_size", DEFAULT_MIN_SIZE),
+        ("max_size", DEFAULT_MAX_SIZE),
+        ("command_timeout", 60),
+        ("max_queries", 50000),
+        ("max_inactive_connection_lifetime", 300),
+    )
+
+    @classmethod
+    async def create_pool(cls, database_url: str | None = None, **kwargs) -> Pool | None:
+        """
+        Create an asyncpg connection pool.
+
+        Args:
+            database_url: PostgreSQL connection URL
+            **kwargs: Override pool configuration (min_size, max_size, etc.)
+
+        Returns:
+            asyncpg Pool instance or None if asyncpg not available
+        """
+        if not ASYNCPG_AVAILABLE:
+            logger.warning("asyncpg not available, cannot create pool")
+            return None
+
+        url = database_url or os.environ.get("DATABASE_URL")
+        if not url:
+            logger.warning("DATABASE_URL not set, cannot create pool")
+            return None
+
+        # Merge configuration
+        config = dict(cls._pool_config)
+        config.update(kwargs)
+
+        try:
+            cls._pool = await create_pool(dsn=url, **config)
+            logger.info(
+                "Database connection pool created",
+                min_size=config["min_size"],
+                max_size=config["max_size"],
+            )
+            return cls._pool
+        except Exception as e:
+            logger.error(f"Failed to create database pool: {e}")
+            return None
+
+    @classmethod
+    async def close_pool(cls) -> None:
+        """Close the connection pool."""
+        if cls._pool:
+            await cls._pool.close()
+            cls._pool = None
+            logger.info("Database connection pool closed")
+
+    @classmethod
+    async def get_pool(cls) -> Pool | None:
+        """
+        Get the connection pool, creating it if necessary.
+
+        Returns:
+            asyncpg Pool instance or None
+        """
+        if cls._pool is None:
+            await cls.create_pool()
+        return cls._pool
+
+    @classmethod
+    def get_pool_stats(cls) -> dict[str, Any]:
+        """
+        Get connection pool statistics.
+
+        Returns:
+            Dict with pool size, idle count, and utilization metrics
+        """
+        if cls._pool is None:
+            return {
+                "available": False,
+                "size": 0,
+                "idle_size": 0,
+                "utilization": 0.0,
+            }
+
+        try:
+            size = cls._pool.get_size()
+            idle = cls._pool.get_idle_size()
+            utilized = size - idle
+            utilization = utilized / size if size > 0 else 0.0
+
+            stats = {
+                "available": True,
+                "size": size,
+                "idle_size": idle,
+                "utilized": utilized,
+                "utilization": utilization,
+                "utilization_percent": round(utilization * 100, 2),
+                "is_healthy": utilization < cls.POOL_UTILIZATION_WARNING_THRESHOLD,
+            }
+
+            # Log warning if utilization is high
+            if utilization >= cls.POOL_UTILIZATION_WARNING_THRESHOLD:
+                logger.warning(
+                    "Database pool utilization high",
+                    utilization=stats["utilization_percent"],
+                    threshold=cls.POOL_UTILIZATION_WARNING_THRESHOLD * 100,
+                )
+
+            return stats
+        except Exception as e:
+            logger.error(f"Failed to get pool stats: {e}")
+            return {
+                "available": True,
+                "error": str(e),
+            }
+
+    @classmethod
+    async def initialize(cls, database_url: str | None = None, **kwargs) -> "StateRepository":
+        """
+        Factory method to create and initialize a repository with pool.
+
+        Args:
+            database_url: Optional database URL
+            **kwargs: Pool configuration overrides
+
+        Returns:
+            Initialized StateRepository instance
+        """
+        # Create pool if not exists
+        pool = await cls.create_pool(database_url, **kwargs)
+
+        repo = cls(db_pool=pool)
+        await repo.initialize()
+        return repo
+
     async def initialize(self, db_pool: Any | None = None) -> None:
         """
         Initialize the repository.
@@ -386,9 +537,7 @@ class StateRepository:
                     break
 
         # All retries failed, fall back to memory
-        logger.warning(
-            f"Database save failed after {attempt} attempts, using memory: {last_error}"
-        )
+        logger.warning(f"Database save failed after {attempt} attempts, using memory: {last_error}")
         return self._save_to_memory(record)
 
     def _save_to_memory(self, record: AgentStateRecord) -> AgentStateRecord:
@@ -710,6 +859,7 @@ class ConcurrencyError(Exception):
 # Event Sourcing Integration
 # =============================================================================
 
+
 class EventSourcedRepository(StateRepository):
     """
     Event-sourced state repository extending StateRepository.
@@ -810,7 +960,9 @@ class EventSourcedRepository(StateRepository):
             Saved state record
         """
         # Get current version
-        current_version = await self._event_store.get_last_version(agent_id) if self._event_store else 0
+        current_version = (
+            await self._event_store.get_last_version(agent_id) if self._event_store else 0
+        )
         new_version = current_version + 1
 
         # Create event

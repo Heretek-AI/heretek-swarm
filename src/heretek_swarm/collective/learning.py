@@ -62,6 +62,61 @@ class PatternSource(StrEnum):
 
 
 @dataclass
+class TemporalPatternData:
+    """Temporal features for pattern lifecycle tracking."""
+
+    first_observed: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
+    last_observed: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
+    observation_count: int = 0
+    avg_interval_seconds: float = 0.0
+    total_duration_seconds: float = 0.0
+    frequency_hz: float = 0.0
+    is_recurring: bool = False
+    seasonality_detected: bool = False
+
+    def update_timing(self, timestamp: str) -> None:
+        """Update temporal data with new observation."""
+        now = datetime.fromisoformat(timestamp)
+        last = datetime.fromisoformat(self.last_observed)
+
+        self.observation_count += 1
+        interval = (now - last).total_seconds()
+        self.total_duration_seconds += interval
+        self.avg_interval_seconds = self.total_duration_seconds / max(1, self.observation_count - 1)
+        self.frequency_hz = (
+            1.0 / self.avg_interval_seconds if self.avg_interval_seconds > 0 else 0.0
+        )
+        self.is_recurring = self.observation_count > 2
+        self.last_observed = timestamp
+
+
+@dataclass
+class CrossAgentCorrelation:
+    """Cross-agent pattern correlation data."""
+
+    agent_pair: tuple[str, str]
+    interaction_strength: float = 0.0
+    message_count: int = 0
+    success_rate: float = 0.0
+    avg_latency_ms: float = 0.0
+    coordinated_actions: int = 0
+
+
+@dataclass
+class PatternEvolution:
+    """Pattern evolution tracking over time."""
+
+    evolution_id: str = field(default_factory=lambda: str(uuid.uuid4()))
+    stability_score: float = 0.0
+    adaptation_rate: float = 0.0
+    convergence_trend: str = "stable"
+    previous_confidence: float = 0.0
+    confidence_delta: float = 0.0
+    trend_direction: str = "unchanged"
+    mutation_count: int = 0
+
+
+@dataclass
 class PatternMetadata:
     """Metadata for extracted patterns."""
 
@@ -76,6 +131,39 @@ class PatternMetadata:
     topics: list[str] = field(default_factory=list)
     tags: list[str] = field(default_factory=list)
     version: int = 1
+    temporal: TemporalPatternData = field(default_factory=TemporalPatternData)
+    evolution: PatternEvolution = field(default_factory=PatternEvolution)
+
+    def to_dict(self) -> dict[str, Any]:
+        """Convert pattern metadata to dictionary for serialization."""
+        base = {
+            "pattern_id": self.pattern_id,
+            "pattern_type": self.pattern_type.value,
+            "source": self.source.value,
+            "confidence": self.confidence,
+            "support_count": self.support_count,
+            "first_observed": self.first_observed,
+            "last_observed": self.last_observed,
+            "agents_involved": self.agents_involved,
+            "topics": self.topics,
+            "tags": self.tags,
+            "version": self.version,
+            "temporal": {
+                "observation_count": self.temporal.observation_count,
+                "avg_interval_seconds": self.temporal.avg_interval_seconds,
+                "total_duration_seconds": self.temporal.total_duration_seconds,
+                "frequency_hz": self.temporal.frequency_hz,
+                "is_recurring": self.temporal.is_recurring,
+            },
+            "evolution": {
+                "stability_score": self.evolution.stability_score,
+                "adaptation_rate": self.evolution.adaptation_rate,
+                "convergence_trend": self.evolution.convergence_trend,
+                "confidence_delta": self.evolution.confidence_delta,
+                "trend_direction": self.evolution.trend_direction,
+            },
+        }
+        return base
 
 
 @dataclass
@@ -305,11 +393,11 @@ class PatternExtractor:
         # Filter messages within time window
         cutoff = datetime.now(UTC)
         from datetime import timedelta
+
         cutoff = cutoff - timedelta(hours=time_window_hours)
 
         recent_messages = [
-            m for m in self._message_cache
-            if datetime.fromisoformat(m.timestamp) >= cutoff
+            m for m in self._message_cache if datetime.fromisoformat(m.timestamp) >= cutoff
         ]
 
         logger.info(
@@ -374,11 +462,13 @@ class PatternExtractor:
         """
         if pattern_id in self._validated_patterns:
             pattern = self._validated_patterns[pattern_id]
-            pattern.outcomes.append({
-                "outcome": outcome,
-                "data": outcome_data,
-                "timestamp": datetime.now(UTC).isoformat(),
-            })
+            pattern.outcomes.append(
+                {
+                    "outcome": outcome,
+                    "data": outcome_data,
+                    "timestamp": datetime.now(UTC).isoformat(),
+                }
+            )
 
             # Update confidence based on outcome
             self._update_pattern_confidence(pattern, outcome)
@@ -552,8 +642,13 @@ class PatternExtractor:
                                 description=f"High latency detected in {interaction_type} interactions",
                             ),
                             content=f"Average latency: {avg_latency:.2f}ms across {len(group)} interactions",
-                            agents_involved=list(set([m.sender for m in group] + [m.recipient for m in group])),
-                            context={"avg_latency_ms": avg_latency, "interaction_count": len(group)},
+                            agents_involved=list(
+                                set([m.sender for m in group] + [m.recipient for m in group])
+                            ),
+                            context={
+                                "avg_latency_ms": avg_latency,
+                                "interaction_count": len(group),
+                            },
                         )
                         patterns.append(pattern)
 
@@ -653,8 +748,7 @@ class PatternExtractor:
 
         # Find collective task messages
         collaborative = [
-            m for m in messages
-            if m.message_type in ["collective_task", "collective_task_response"]
+            m for m in messages if m.message_type in ["collective_task", "collective_task_response"]
         ]
 
         if len(collaborative) >= self.min_support:
@@ -697,8 +791,7 @@ class PatternExtractor:
 
         # Find decision-related messages
         decisions = [
-            m for m in messages
-            if "decision" in m.intent or "consensus" in (m.topic or "")
+            m for m in messages if "decision" in m.intent or "consensus" in (m.topic or "")
         ]
 
         if len(decisions) >= self.min_support:
@@ -849,11 +942,13 @@ class PatternExtractor:
             else:
                 # Sequence ended
                 if len(current_agents) >= 3:
-                    sequences.append({
-                        "agents": list(current_agents),
-                        "occurrences": [current_sequence.copy()],
-                        "avg_length": len(current_sequence),
-                    })
+                    sequences.append(
+                        {
+                            "agents": list(current_agents),
+                            "occurrences": [current_sequence.copy()],
+                            "avg_length": len(current_sequence),
+                        }
+                    )
                 current_sequence = [msg]
                 current_agents = {msg.sender, msg.recipient}
 
@@ -1055,7 +1150,9 @@ class PatternExtractor:
         signal = LearningSignal(
             signal_type="pattern_outcome",
             magnitude=magnitude,
-            source_agent=pattern.metadata.agents_involved[0] if pattern.metadata.agents_involved else None,
+            source_agent=pattern.metadata.agents_involved[0]
+            if pattern.metadata.agents_involved
+            else None,
             target_agents=pattern.metadata.agents_involved,
             context={
                 "pattern_id": pattern.metadata.pattern_id,
@@ -1226,8 +1323,7 @@ class CollectiveLearning:
                 for pt in PatternType
             },
             "avg_confidence": (
-                sum(p.metadata.confidence for p in patterns) / len(patterns)
-                if patterns else 0.0
+                sum(p.metadata.confidence for p in patterns) / len(patterns) if patterns else 0.0
             ),
             "total_learning_signals": len(self._learning_signals),
             "message_cache_size": len(self.extractor._message_cache),

@@ -15,6 +15,7 @@ Reference: MiniMax Audit Lines 585-725
 
 import os
 from contextlib import asynccontextmanager
+from datetime import UTC, datetime
 from typing import Any
 
 import structlog
@@ -136,9 +137,15 @@ async def lifespan(app: FastAPI):
     # Initialize mem0 backend if available
     if MEM0_AVAILABLE:
         try:
-            qdrant_host = await get_config("qdrant.url", default=os.environ.get("QDRANT_HOST", "localhost"))
-            qdrant_port = await get_config("qdrant.port", default=int(os.environ.get("QDRANT_PORT", "6333")))
-            openai_api_key = await get_config("llm.api_key", default=os.environ.get("OPENAI_API_KEY"))
+            qdrant_host = await get_config(
+                "qdrant.url", default=os.environ.get("QDRANT_HOST", "localhost")
+            )
+            qdrant_port = await get_config(
+                "qdrant.port", default=int(os.environ.get("QDRANT_PORT", "6333"))
+            )
+            openai_api_key = await get_config(
+                "llm.api_key", default=os.environ.get("OPENAI_API_KEY")
+            )
 
             mem0_config = Mem0Config(
                 qdrant_host=qdrant_host,
@@ -160,7 +167,6 @@ async def lifespan(app: FastAPI):
         config_source=config_source,
         rate_limit_enabled=await get_config("rate_limit.enabled", default=True),
     )
-
 
     yield
 
@@ -254,6 +260,7 @@ logger.info("Rate limiting configured", enabled=rate_limit_enabled)
 # Health Check Functions
 # =============================================================================
 
+
 async def check_gateway() -> dict[str, Any]:
     """Check the EventMesh gateway status."""
     try:
@@ -275,6 +282,7 @@ async def check_redis() -> dict[str, Any]:
     """Check Redis connection status."""
     try:
         import redis.asyncio as redis
+
         # Try to connect to Redis
         redis_url = os.environ.get("REDIS_URL", "redis://localhost:6379")
         client = redis.from_url(redis_url)
@@ -302,6 +310,7 @@ async def check_postgres() -> dict[str, Any]:
                 raise ValueError("DATABASE_URL environment variable is required")
             from sqlalchemy import text
             from sqlalchemy.ext.asyncio import create_async_engine
+
             engine = create_async_engine(db_url)
             async with engine.connect() as conn:
                 await conn.execute(text("SELECT 1"))
@@ -312,6 +321,7 @@ async def check_postgres() -> dict[str, Any]:
             }
         if memory_store and memory_store._engine:
             from sqlalchemy import text
+
             async with memory_store._engine.connect() as conn:
                 await conn.execute(text("SELECT 1"))
             return {
@@ -333,12 +343,17 @@ async def check_qdrant() -> dict[str, Any]:
     """Check Qdrant vector database status."""
     try:
         import httpx
+
         # Check multiple environment variables for compatibility
         qdrant_url = os.environ.get("QDRANT_URL")
         if not qdrant_url:
             qdrant_host = os.environ.get("QDRANT_HOST", "localhost")
             qdrant_port = os.environ.get("QDRANT_PORT", "6333")
-            qdrant_url = f"https://{qdrant_host}:{qdrant_port}" if os.environ.get("ENVIRONMENT") == "production" else f"http://{qdrant_host}:{qdrant_port}"
+            qdrant_url = (
+                f"https://{qdrant_host}:{qdrant_port}"
+                if os.environ.get("ENVIRONMENT") == "production"
+                else f"http://{qdrant_host}:{qdrant_port}"
+            )
         async with httpx.AsyncClient() as client:
             response = await client.get(f"{qdrant_url}/collections")
             if response.status_code == 200:
@@ -361,6 +376,7 @@ async def check_qdrant() -> dict[str, Any]:
 # Health Check Endpoints
 # =============================================================================
 
+
 @app.get("/api/health")
 async def health_check():
     """
@@ -371,7 +387,10 @@ async def health_check():
         - redis: Redis connection status
         - postgres: PostgreSQL connection status
         - qdrant: Qdrant vector DB status
+        - pool: Database connection pool stats
     """
+    from heretek_swarm.state.repository import StateRepository
+
     return {
         "status": "healthy",
         "services": {
@@ -380,6 +399,8 @@ async def health_check():
             "postgres": await check_postgres(),
             "qdrant": await check_qdrant(),
         },
+        "pool": StateRepository.get_pool_stats(),
+        "timestamp": datetime.utcnow().isoformat(),
     }
 
 
@@ -403,6 +424,7 @@ async def readiness_check():
 # Agent Management Endpoints
 # =============================================================================
 
+
 @app.get("/api/agents")
 async def get_agents(authenticated: str = Depends(verify_auth)):
     """
@@ -416,14 +438,18 @@ async def get_agents(authenticated: str = Depends(verify_auth)):
     agents = []
     for agent_id, actor in supervisor.actors.items():
         status = actor.get_status()
-        agents.append({
-            "id": agent_id,
-            "type": actor.__class__.__name__,
-            "status": status.state.value if status else "unknown",
-            "message_count": status.message_count if status else 0,
-            "error_count": status.error_count if status else 0,
-            "last_activity": status.last_activity.isoformat() if status and status.last_activity else None,
-        })
+        agents.append(
+            {
+                "id": agent_id,
+                "type": actor.__class__.__name__,
+                "status": status.state.value if status else "unknown",
+                "message_count": status.message_count if status else 0,
+                "error_count": status.error_count if status else 0,
+                "last_activity": status.last_activity.isoformat()
+                if status and status.last_activity
+                else None,
+            }
+        )
 
     return {"agents": agents, "total": len(agents)}
 
@@ -454,7 +480,9 @@ async def get_agent(agent_id: str, authenticated: str = Depends(verify_auth)):
         "status": status.state.value if status else "unknown",
         "message_count": status.message_count if status else 0,
         "error_count": status.error_count if status else 0,
-        "last_activity": status.last_activity.isoformat() if status and status.last_activity else None,
+        "last_activity": status.last_activity.isoformat()
+        if status and status.last_activity
+        else None,
         "topics": list(actor.topics),
         "capabilities": list(actor.capabilities),
     }
@@ -517,6 +545,7 @@ async def terminate_agent(agent_id: str, authenticated: str = Depends(verify_aut
 # Supervisor Endpoints
 # =============================================================================
 
+
 @app.get("/api/supervisor/status")
 async def get_supervisor_status(authenticated: str = Depends(verify_auth)):
     """
@@ -534,6 +563,7 @@ async def get_supervisor_status(authenticated: str = Depends(verify_auth)):
 # =============================================================================
 # Memory Endpoints
 # =============================================================================
+
 
 @app.get("/api/memory")
 async def get_memory_stats(authenticated: str = Depends(verify_auth)):
@@ -566,18 +596,16 @@ async def get_memory_stats(authenticated: str = Depends(verify_auth)):
             total = result.scalar() or 0
 
             # By agent
-            agent_stmt = select(
-                MemoryEntryModel.agent_id,
-                func.count()
-            ).group_by(MemoryEntryModel.agent_id)
+            agent_stmt = select(MemoryEntryModel.agent_id, func.count()).group_by(
+                MemoryEntryModel.agent_id
+            )
             agent_result = await session.execute(agent_stmt)
             by_agent = {row[0]: row[1] for row in agent_result.all()}
 
             # By type
-            type_stmt = select(
-                MemoryEntryModel.memory_type,
-                func.count()
-            ).group_by(MemoryEntryModel.memory_type)
+            type_stmt = select(MemoryEntryModel.memory_type, func.count()).group_by(
+                MemoryEntryModel.memory_type
+            )
             type_result = await session.execute(type_stmt)
             by_type = {row[0]: row[1] for row in type_result.all()}
 
@@ -601,6 +629,7 @@ async def get_memory_stats(authenticated: str = Depends(verify_auth)):
 # =============================================================================
 # LiteLLM Metrics Endpoint
 # =============================================================================
+
 
 @app.get("/api/litellm/metrics")
 async def get_litellm_metrics(authenticated: str = Depends(verify_auth)):
@@ -646,6 +675,7 @@ async def get_litellm_metrics(authenticated: str = Depends(verify_auth)):
 # mem0 Memory Endpoints
 # =============================================================================
 
+
 @app.get("/api/memory/mem0")
 async def get_mem0_stats(authenticated: str = Depends(verify_auth)):
     """
@@ -668,7 +698,9 @@ async def get_mem0_stats(authenticated: str = Depends(verify_auth)):
 
 
 @app.post("/api/memory/mem0/search")
-async def search_mem0_memory(query: str, agent_id: str, limit: int = 10, authenticated: str = Depends(verify_auth)):
+async def search_mem0_memory(
+    query: str, agent_id: str, limit: int = 10, authenticated: str = Depends(verify_auth)
+):
     """
     Search mem0 memory for an agent.
 
@@ -711,7 +743,9 @@ async def search_mem0_memory(query: str, agent_id: str, limit: int = 10, authent
 
 
 @app.get("/api/memory/mem0/agents/{agent_id}")
-async def get_agent_memories(agent_id: str, limit: int = 100, authenticated: str = Depends(verify_auth)):
+async def get_agent_memories(
+    agent_id: str, limit: int = 100, authenticated: str = Depends(verify_auth)
+):
     """
     Get all memories for an agent from mem0.
 
@@ -746,6 +780,7 @@ async def get_agent_memories(agent_id: str, limit: int = 100, authenticated: str
 # =============================================================================
 # A2A Message History Endpoints
 # =============================================================================
+
 
 @app.get("/api/a2a/messages")
 async def get_a2a_messages(limit: int = 100, authenticated: str = Depends(verify_auth)):
@@ -785,11 +820,7 @@ async def get_a2a_messages(limit: int = 100, authenticated: str = Depends(verify
 
 
 @app.get("/api/a2a/messages/{from_agent}/{to_agent}")
-async def get_a2a_conversation(
-    from_agent: str,
-    to_agent: str,
-    limit: int = 50
-):
+async def get_a2a_conversation(from_agent: str, to_agent: str, limit: int = 50):
     """
     Get A2A messages between two agents.
 
@@ -817,8 +848,9 @@ async def get_a2a_conversation(
         conversation = []
         for msg_bytes in all_messages:
             msg = json.loads(msg_bytes)
-            if (msg.get("from") == from_agent and msg.get("to") == to_agent) or \
-               (msg.get("from") == to_agent and msg.get("to") == from_agent):
+            if (msg.get("from") == from_agent and msg.get("to") == to_agent) or (
+                msg.get("from") == to_agent and msg.get("to") == from_agent
+            ):
                 conversation.append(msg)
                 if len(conversation) >= limit:
                     break
@@ -844,6 +876,7 @@ async def get_a2a_conversation(
 # =============================================================================
 # OpenAPI Documentation
 # =============================================================================
+
 
 @app.get("/")
 async def root():

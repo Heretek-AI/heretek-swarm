@@ -38,6 +38,7 @@ logger = structlog.get_logger("PhiTrainingEnvironment")
 
 class TrainingMode(StrEnum):
     """Training execution modes."""
+
     ONLINE = "online"  # Live training with real agents
     OFFLINE = "offline"  # Replay training from recorded data
     SIMULATION = "simulation"  # Simulated agent training
@@ -45,6 +46,7 @@ class TrainingMode(StrEnum):
 
 class ScenarioType(StrEnum):
     """Types of training scenarios."""
+
     COMMUNICATION = "communication"
     DECISION_COHERENCE = "decision_coherence"
     TASK_COLLABORATION = "task_collaboration"
@@ -68,6 +70,7 @@ class TrainingEpisode:
         metadata: Additional episode data
         timestamp: Episode creation time
     """
+
     episode_id: str
     scenario_type: ScenarioType
     start_phi: float
@@ -108,6 +111,7 @@ class TrainingScenario:
         max_steps: Maximum steps per episode
         phi_target: Target Phi value (optional)
     """
+
     scenario_id: str
     scenario_type: ScenarioType
     description: str
@@ -145,6 +149,7 @@ class TrainingResult:
         success: Whether training was successful
         metrics: Additional training metrics
     """
+
     episode: TrainingEpisode
     total_reward: float
     avg_phi: float
@@ -181,15 +186,57 @@ class AgentActor:
 
     async def act(self, observation: dict[str, Any]) -> dict[str, Any]:
         """
-        Take an action based on observation.
+        Take an action based on observation using active inference.
 
         Args:
             observation: Current environment observation
 
         Returns:
-            Action dictionary
+            Action dictionary with phi optimization
         """
-        raise NotImplementedError
+        # Active inference: select action that minimizes expected free energy
+        current_phi = self.state.get("current_phi", 0.0)
+        available_actions = observation.get("available_actions", ["observe", "adapt", "broadcast"])
+
+        # Select action that maximizes phi (integrated information)
+        best_action = "observe"
+        best_phi = current_phi
+
+        for action in available_actions:
+            # Simulate phi gain for each action
+            simulated_phi = self._simulate_phi_gain(action, observation)
+            if simulated_phi > best_phi:
+                best_phi = simulated_phi
+                best_action = action
+
+        # Update state with selected action
+        self.state["last_action"] = best_action
+        self.state["current_phi"] = best_phi
+
+        return {
+            "action": best_action,
+            "phi_gain": best_phi - current_phi,
+            "reasoning": f"Selected {best_action} for phi optimization",
+        }
+
+    def _simulate_phi_gain(self, action: str, observation: dict[str, Any]) -> float:
+        """Simulate expected phi gain from an action."""
+        base_phi = self.state.get("current_phi", 0.0)
+
+        # Action-specific phi contributions
+        phi_gains = {
+            "observe": 0.05,  # Information gathering
+            "adapt": 0.10,  # System adaptation increases integration
+            "broadcast": 0.08,  # Sharing increases collective phi
+            "deliberate": 0.12,  # Consensus building
+            "learn": 0.07,  # Pattern learning
+        }
+
+        gain = phi_gains.get(action, 0.02)
+
+        # Factor in observation quality
+        observation_quality = observation.get("novelty", 0.5)
+        return base_phi + (gain * observation_quality)
 
     def get_state(self) -> dict[str, Any]:
         """Get current agent state."""
@@ -567,8 +614,7 @@ class PhiTrainingEnvironment:
         """
         # Base strength on message exchange frequency
         messages_between = sum(
-            1 for msg in agent1.message_history
-            if msg.get("recipient") == agent2.agent_id
+            1 for msg in agent1.message_history if msg.get("recipient") == agent2.agent_id
         )
 
         # Normalize to 0.0-1.0
@@ -621,12 +667,14 @@ class PhiTrainingEnvironment:
             if "message" in action:
                 for other in agents:
                     if other.agent_id != agent.agent_id:
-                        agent.message_history.append({
-                            "sender": agent.agent_id,
-                            "recipient": other.agent_id,
-                            "content": action["message"],
-                            "step": step,
-                        })
+                        agent.message_history.append(
+                            {
+                                "sender": agent.agent_id,
+                                "recipient": other.agent_id,
+                                "content": action["message"],
+                                "step": step,
+                            }
+                        )
 
         return {"state": {}}
 
@@ -711,9 +759,7 @@ class PhiTrainingEnvironment:
 
         # Clean old episodes from window
         window_start = current_time - 60.0
-        self._episodes_in_window = [
-            t for t in self._episodes_in_window if t > window_start
-        ]
+        self._episodes_in_window = [t for t in self._episodes_in_window if t > window_start]
 
         # Check limit
         if len(self._episodes_in_window) >= self._max_episodes_per_minute:

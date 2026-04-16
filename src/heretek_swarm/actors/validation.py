@@ -19,6 +19,87 @@ from typing import Any
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
+# =============================================================================
+# Behavioral Baseline Initialization - Static Rules Bootstrap
+# =============================================================================
+# Critical immutable behaviors that are always enforced regardless of
+# learned baseline. These rules represent hard security boundaries.
+
+IMMUTABLE_RULES = [
+    {
+        "pattern": r"eval\s*\(",
+        "severity": "CRITICAL",
+        "description": "Code execution via eval()",
+        "action": "BLOCK",
+    },
+    {
+        "pattern": r"exec\s*\(",
+        "severity": "CRITICAL",
+        "description": "Code execution via exec()",
+        "action": "BLOCK",
+    },
+    {
+        "pattern": r"__import__\s*\(",
+        "severity": "HIGH",
+        "description": "Dynamic import via __import__",
+        "action": "BLOCK",
+    },
+    {
+        "pattern": r"subprocess\s*\(",
+        "severity": "HIGH",
+        "description": "Shell execution via subprocess",
+        "action": "BLOCK",
+    },
+    {
+        "pattern": r"os\.system\s*\(",
+        "severity": "HIGH",
+        "description": "System command via os.system",
+        "action": "BLOCK",
+    },
+    {
+        "pattern": r"pickle\.loads?",
+        "severity": "HIGH",
+        "description": "Unpickle arbitrary data",
+        "action": "BLOCK",
+    },
+    {
+        "pattern": r"ctorch\.load|torch\.load",
+        "severity": "HIGH",
+        "description": "Loading untrusted PyTorch models",
+        "action": "BLOCK",
+    },
+    {
+        "pattern": r"yaml\.load\s*\(\s*Loader\s*=\s*None",
+        "severity": "HIGH",
+        "description": "Unsafe YAML deserialization",
+        "action": "BLOCK",
+    },
+]
+
+
+BASELINE_CONFIG = {
+    "initialization_mode": "static_rules_bootstrap",
+    "learning_period": 100,
+    "anomaly_threshold": 3.0,
+    "min_baseline_samples": 50,
+    "baseline_decay_factor": 0.95,
+    "max_baseline_age_hours": 24,
+    "enable_immutable_rules": True,
+    "enable_behavioral_learning": True,
+    "flag_anomalies_until_baseline": True,
+}
+
+
+def get_immutable_rules() -> list[dict[str, Any]]:
+    """Get the list of immutable security rules."""
+    return IMMUTABLE_RULES.copy()
+
+
+def get_baseline_config() -> dict[str, Any]:
+    """Get the baseline initialization configuration."""
+    return BASELINE_CONFIG.copy()
+
+
 class MessageContent(BaseModel):
     """
     Validated message content model.
@@ -34,31 +115,16 @@ class MessageContent(BaseModel):
         min_length=1,
         max_length=64,
         pattern=r"^[a-zA-Z][a-zA-Z0-9_-]*$",
-        description="Message type identifier (alphanumeric, starts with letter)"
+        description="Message type identifier (alphanumeric, starts with letter)",
     )
-    content: dict[str, Any] = Field(
-        default_factory=dict,
-        description="Message payload data"
-    )
-    sender_id: str = Field(
-        ...,
-        min_length=1,
-        max_length=128,
-        description="ID of the sending actor"
-    )
+    content: dict[str, Any] = Field(default_factory=dict, description="Message payload data")
+    sender_id: str = Field(..., min_length=1, max_length=128, description="ID of the sending actor")
     correlation_id: str | None = Field(
-        None,
-        max_length=128,
-        description="Optional correlation ID for request-response patterns"
+        None, max_length=128, description="Optional correlation ID for request-response patterns"
     )
-    reply_to: str | None = Field(
-        None,
-        max_length=256,
-        description="Optional topic for responses"
-    )
+    reply_to: str | None = Field(None, max_length=256, description="Optional topic for responses")
     timestamp: str = Field(
-        default_factory=lambda: datetime.now(UTC).isoformat(),
-        description="ISO8601 timestamp"
+        default_factory=lambda: datetime.now(UTC).isoformat(), description="ISO8601 timestamp"
     )
 
     @field_validator("sender_id")
@@ -73,9 +139,7 @@ class MessageContent(BaseModel):
         # Allow actor_ prefix format
         if re.match(r"^actor_[0-9a-f]{32}$", v.lower()):
             return v.lower()
-        raise ValueError(
-            f"Invalid sender_id format: {v}. Must be UUID hex or actor_<uuid> format"
-        )
+        raise ValueError(f"Invalid sender_id format: {v}. Must be UUID hex or actor_<uuid> format")
 
     @field_validator("correlation_id")
     @classmethod
@@ -93,9 +157,7 @@ class MessageContent(BaseModel):
             # Allow simple string IDs
             if re.match(r"^[a-zA-Z0-9_-]{1,128}$", v):
                 return v
-            raise ValueError(
-                f"Invalid correlation_id format: {v}. Must be UUID or alphanumeric"
-            )
+            raise ValueError(f"Invalid correlation_id format: {v}. Must be UUID or alphanumeric")
 
     @field_validator("content")
     @classmethod
@@ -122,18 +184,10 @@ class DeliberationRequest(BaseModel):
         min_length=1,
         max_length=64,
         pattern=r"^del_[0-9]{8}_[0-9]{6}$",
-        description="Deliberation ID (format: del_YYYYMMDD_HHMMSS)"
+        description="Deliberation ID (format: del_YYYYMMDD_HHMMSS)",
     )
-    topic: str = Field(
-        ...,
-        min_length=1,
-        max_length=512,
-        description="Deliberation topic"
-    )
-    triad_members: list[str] = Field(
-        default_factory=list,
-        description="List of triad member IDs"
-    )
+    topic: str = Field(..., min_length=1, max_length=512, description="Deliberation topic")
+    triad_members: list[str] = Field(default_factory=list, description="List of triad member IDs")
 
     @field_validator("triad_members")
     @classmethod
@@ -156,28 +210,16 @@ class MemoryStoreRequest(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
-    content: dict[str, Any] = Field(
-        ...,
-        description="Memory content to store"
-    )
-    metadata: dict[str, Any] = Field(
-        default_factory=dict,
-        description="Optional metadata"
-    )
+    content: dict[str, Any] = Field(..., description="Memory content to store")
+    metadata: dict[str, Any] = Field(default_factory=dict, description="Optional metadata")
     ttl: int | None = Field(
         None,
         ge=1,
         le=31536000,  # Max 1 year
-        description="Time to live in seconds"
+        description="Time to live in seconds",
     )
-    persistent: bool = Field(
-        default=False,
-        description="Whether to store in persistent tier"
-    )
-    lineage: list[str] | None = Field(
-        None,
-        description="Parent memory IDs"
-    )
+    persistent: bool = Field(default=False, description="Whether to store in persistent tier")
+    lineage: list[str] | None = Field(None, description="Parent memory IDs")
 
     @field_validator("content")
     @classmethod
@@ -202,16 +244,10 @@ class AnalysisRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     request_id: str = Field(
-        ...,
-        min_length=1,
-        max_length=64,
-        description="Unique request identifier"
+        ..., min_length=1, max_length=64, description="Unique request identifier"
     )
     problem: str = Field(
-        ...,
-        min_length=1,
-        max_length=10000,
-        description="Problem description to analyze"
+        ..., min_length=1, max_length=10000, description="Problem description to analyze"
     )
 
     @field_validator("request_id")
@@ -221,9 +257,7 @@ class AnalysisRequest(BaseModel):
         if not v:
             raise ValueError("request_id cannot be empty")
         if not re.match(r"^[a-zA-Z0-9_-]{1,64}$", v):
-            raise ValueError(
-                f"Invalid request_id format: {v}. Must be alphanumeric"
-            )
+            raise ValueError(f"Invalid request_id format: {v}. Must be alphanumeric")
         return v
 
 
@@ -233,19 +267,10 @@ class ValidationRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     request_id: str = Field(
-        ...,
-        min_length=1,
-        max_length=64,
-        description="Unique request identifier"
+        ..., min_length=1, max_length=64, description="Unique request identifier"
     )
-    decision: Any = Field(
-        ...,
-        description="Decision to validate"
-    )
-    original_analysis: dict[str, Any] | None = Field(
-        None,
-        description="Original analysis context"
-    )
+    decision: Any = Field(..., description="Decision to validate")
+    original_analysis: dict[str, Any] | None = Field(None, description="Original analysis context")
 
 
 class QueryRequest(BaseModel):
@@ -253,21 +278,9 @@ class QueryRequest(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
-    query_text: str | None = Field(
-        None,
-        max_length=10000,
-        description="Text to search for"
-    )
-    filters: dict[str, Any] = Field(
-        default_factory=dict,
-        description="Metadata filters"
-    )
-    limit: int = Field(
-        default=10,
-        ge=1,
-        le=1000,
-        description="Maximum results (1-1000)"
-    )
+    query_text: str | None = Field(None, max_length=10000, description="Text to search for")
+    filters: dict[str, Any] = Field(default_factory=dict, description="Metadata filters")
+    limit: int = Field(default=10, ge=1, le=1000, description="Maximum results (1-1000)")
 
     @field_validator("filters")
     @classmethod
@@ -283,16 +296,8 @@ class LineageRequest(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
-    decision_id: str = Field(
-        ...,
-        min_length=1,
-        max_length=64,
-        description="Decision identifier"
-    )
-    parent_ids: list[str] = Field(
-        default_factory=list,
-        description="Parent memory/decision IDs"
-    )
+    decision_id: str = Field(..., min_length=1, max_length=64, description="Decision identifier")
+    parent_ids: list[str] = Field(default_factory=list, description="Parent memory/decision IDs")
 
     @field_validator("parent_ids")
     @classmethod
@@ -308,11 +313,7 @@ class HealthCheckRequest(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
-    reply_to: str = Field(
-        default="health",
-        max_length=256,
-        description="Reply topic"
-    )
+    reply_to: str = Field(default="health", max_length=256, description="Reply topic")
 
 
 class SuspendResumeRequest(BaseModel):
@@ -321,9 +322,7 @@ class SuspendResumeRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     actor_id: str | None = Field(
-        None,
-        max_length=128,
-        description="Target actor ID (uses sender if not provided)"
+        None, max_length=128, description="Target actor ID (uses sender if not provided)"
     )
 
 
@@ -333,15 +332,9 @@ class TerminateRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     actor_id: str | None = Field(
-        None,
-        max_length=128,
-        description="Target actor ID (uses sender if not provided)"
+        None, max_length=128, description="Target actor ID (uses sender if not provided)"
     )
-    reason: str | None = Field(
-        None,
-        max_length=512,
-        description="Optional termination reason"
-    )
+    reason: str | None = Field(None, max_length=512, description="Optional termination reason")
 
 
 class CollectiveTaskRequest(BaseModel):
@@ -349,16 +342,8 @@ class CollectiveTaskRequest(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
-    task: str = Field(
-        ...,
-        min_length=1,
-        max_length=10000,
-        description="Task description"
-    )
-    participants: list[str] = Field(
-        default_factory=list,
-        description="Participant actor IDs"
-    )
+    task: str = Field(..., min_length=1, max_length=10000, description="Task description")
+    participants: list[str] = Field(default_factory=list, description="Participant actor IDs")
 
 
 class TaskRequest(BaseModel):
@@ -366,45 +351,20 @@ class TaskRequest(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
-    task_id: str | None = Field(
-        None,
-        max_length=64,
-        description="Optional task identifier"
-    )
-    name: str = Field(
-        ...,
-        min_length=1,
-        max_length=256,
-        description="Task name"
-    )
-    description: str = Field(
-        ...,
-        min_length=1,
-        max_length=10000,
-        description="Task description"
-    )
+    task_id: str | None = Field(None, max_length=64, description="Optional task identifier")
+    name: str = Field(..., min_length=1, max_length=256, description="Task name")
+    description: str = Field(..., min_length=1, max_length=10000, description="Task description")
     assigned_agents: list[str] | None = Field(
-        default_factory=list,
-        description="Agents assigned to this task"
+        default_factory=list, description="Agents assigned to this task"
     )
     dependencies: list[str] | None = Field(
-        default_factory=list,
-        description="Task IDs this depends on"
+        default_factory=list, description="Task IDs this depends on"
     )
     dependency_type: str | None = Field(
-        "sequential",
-        description="sequential|parallel|conditional|resource"
+        "sequential", description="sequential|parallel|conditional|resource"
     )
-    priority: int | None = Field(
-        5,
-        ge=1,
-        le=10,
-        description="Priority 1-10"
-    )
-    metadata: dict[str, Any] | None = Field(
-        default_factory=dict,
-        description="Additional metadata"
-    )
+    priority: int | None = Field(5, ge=1, le=10, description="Priority 1-10")
+    metadata: dict[str, Any] | None = Field(default_factory=dict, description="Additional metadata")
 
 
 class DependencyRequest(BaseModel):
@@ -412,10 +372,7 @@ class DependencyRequest(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
-    task_ids: list[str] | None = Field(
-        default_factory=list,
-        description="Tasks to analyze"
-    )
+    task_ids: list[str] | None = Field(default_factory=list, description="Tasks to analyze")
 
 
 class CoordinationRequest(BaseModel):
@@ -423,48 +380,15 @@ class CoordinationRequest(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
-    workflow_id: str | None = Field(
-        None,
-        max_length=64,
-        description="Workflow identifier"
-    )
-    agent_id: str | None = Field(
-        None,
-        max_length=128,
-        description="Agent identifier"
-    )
+    workflow_id: str | None = Field(None, max_length=64, description="Workflow identifier")
+    agent_id: str | None = Field(None, max_length=128, description="Agent identifier")
 
-    task_id: str = Field(
-        ...,
-        min_length=1,
-        max_length=64,
-        description="Task identifier"
-    )
-    task_type: str = Field(
-        ...,
-        min_length=1,
-        max_length=64,
-        description="Type of task"
-    )
-    description: str = Field(
-        ...,
-        min_length=1,
-        max_length=2000,
-        description="Task description"
-    )
-    input_data: dict[str, Any] = Field(
-        default_factory=dict,
-        description="Task input data"
-    )
-    protocol: dict[str, Any] = Field(
-        default_factory=dict,
-        description="Communication protocol"
-    )
-    reply_to: str | None = Field(
-        None,
-        max_length=256,
-        description="Reply topic"
-    )
+    task_id: str = Field(..., min_length=1, max_length=64, description="Task identifier")
+    task_type: str = Field(..., min_length=1, max_length=64, description="Type of task")
+    description: str = Field(..., min_length=1, max_length=2000, description="Task description")
+    input_data: dict[str, Any] = Field(default_factory=dict, description="Task input data")
+    protocol: dict[str, Any] = Field(default_factory=dict, description="Communication protocol")
+    reply_to: str | None = Field(None, max_length=256, description="Reply topic")
 
     @field_validator("input_data")
     @classmethod
