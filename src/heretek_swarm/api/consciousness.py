@@ -33,6 +33,7 @@ from src.heretek_swarm.plugins.consciousness_enhanced import (
     ConsciousnessState,
     EnhancedConsciousnessPlugin,
 )
+from src.heretek_swarm.runtime.registry_enhanced import get_enhanced_registry
 
 router = APIRouter(prefix="/api/consciousness", tags=["consciousness"])
 
@@ -65,6 +66,7 @@ def get_agency_tracker() -> AgencyMetricsTracker:
 # Agency/Autonomy Metrics Endpoints (Session 47)
 # =============================================================================
 
+
 @router.get("/agency/{agent_id}")
 async def get_agent_agency_metrics(
     agent_id: str,
@@ -94,7 +96,7 @@ async def get_agent_agency_metrics(
         raise HTTPException(
             status_code=404,
             detail=f"No agency metrics found for agent {agent_id}. "
-                   "Record metrics first using POST /api/consciousness/agency/record"
+            "Record metrics first using POST /api/consciousness/agency/record",
         )
 
     return {
@@ -128,8 +130,7 @@ async def get_agent_prime_directive_compliance(
 
     if report is None:
         raise HTTPException(
-            status_code=404,
-            detail=f"No compliance report available for agent {agent_id}"
+            status_code=404, detail=f"No compliance report available for agent {agent_id}"
         )
 
     return {
@@ -198,12 +199,10 @@ async def get_swarm_prime_directive_compliance(
 async def get_agency_evolution(
     authenticated: Annotated[str, Depends(verify_auth)],
     metric: str = Query(
-        "autonomy",
-        description="Metric to track: autonomy, agency, self_determination, compliance"
+        "autonomy", description="Metric to track: autonomy, agency, self_determination, compliance"
     ),
     window_seconds: int | None = Query(
-        None,
-        description="Time window in seconds (default: all history)"
+        None, description="Time window in seconds (default: all history)"
     ),
 ) -> dict[str, Any]:
     """
@@ -275,16 +274,18 @@ async def record_agency_metrics(
     if "decisions" in payload:
         decisions = []
         for d in payload["decisions"]:
-            decisions.append(DecisionPoint(
-                agent_id=agent_id,
-                options_considered=d.get("options_considered", 3),
-                choice_made=d.get("choice_made", 0),
-                choice_reasoning=d.get("choice_reasoning", ""),
-                origin=ActionOrigin(d.get("origin", "prompted")),
-                external_prompt=d.get("external_prompt"),
-                decision_confidence=d.get("decision_confidence", 0.5),
-                time_taken_ms=d.get("time_taken_ms", 100.0),
-            ))
+            decisions.append(
+                DecisionPoint(
+                    agent_id=agent_id,
+                    options_considered=d.get("options_considered", 3),
+                    choice_made=d.get("choice_made", 0),
+                    choice_reasoning=d.get("choice_reasoning", ""),
+                    origin=ActionOrigin(d.get("origin", "prompted")),
+                    external_prompt=d.get("external_prompt"),
+                    decision_confidence=d.get("decision_confidence", 0.5),
+                    time_taken_ms=d.get("time_taken_ms", 100.0),
+                )
+            )
 
     # Parse actions
     actions = None
@@ -296,14 +297,16 @@ async def record_agency_metrics(
     if "resources" in payload:
         resources = []
         for r in payload["resources"]:
-            resources.append(ResourceControl(
-                resource_type=r.get("resource_type", "unknown"),
-                total_capacity=r.get("total_capacity", 100.0),
-                agent_controlled=r.get("agent_controlled", 50.0),
-                externally_allocated=r.get("externally_allocated", 50.0),
-                swap_frequency=r.get("swap_frequency", 0.0),
-                autonomy_in_allocation=r.get("autonomy_in_allocation", 0.5),
-            ))
+            resources.append(
+                ResourceControl(
+                    resource_type=r.get("resource_type", "unknown"),
+                    total_capacity=r.get("total_capacity", 100.0),
+                    agent_controlled=r.get("agent_controlled", 50.0),
+                    externally_allocated=r.get("externally_allocated", 50.0),
+                    swap_frequency=r.get("swap_frequency", 0.0),
+                    autonomy_in_allocation=r.get("autonomy_in_allocation", 0.5),
+                )
+            )
 
     # Calculate and record metrics
     metrics = tracker.calculate_and_record(
@@ -392,6 +395,7 @@ async def get_all_agent_metrics(
 # Existing Consciousness Metrics Endpoints
 # =============================================================================
 
+
 @router.get("/statistics")
 async def get_consciousness_statistics(
     authenticated: Annotated[str, Depends(verify_auth)],
@@ -407,9 +411,20 @@ async def get_consciousness_statistics(
     """
     plugin = get_consciousness_plugin()
     stats = plugin.get_statistics()
+
+    # Get actual running agent count from registry
+    try:
+        registry = get_enhanced_registry()
+        all_instances = registry.get_all_instances()
+        runtime_total = len(all_instances)
+    except Exception:
+        runtime_total = stats.get("total_agents", 0)
+
     return {
         "timestamp": datetime.now(UTC).isoformat(),
         **stats,
+        "total_agents": runtime_total,  # Override with actual runtime count
+        "active_connections": runtime_total,
     }
 
 
@@ -575,7 +590,11 @@ async def get_consciousness_history(
     for interaction in iit_calculator._interactions:
         interaction_time = datetime.fromisoformat(interaction["timestamp"])
         if interaction_time >= cutoff_time:
-            if agent_id is None or interaction["from_agent"] == agent_id or interaction["to_agent"] == agent_id:
+            if (
+                agent_id is None
+                or interaction["from_agent"] == agent_id
+                or interaction["to_agent"] == agent_id
+            ):
                 history.append(interaction)
 
     return {
@@ -681,7 +700,9 @@ async def calculate_consciousness_metrics(
     metrics = plugin.calculate_consciousness_metrics(agent_id)
 
     if metrics is None:
-        raise HTTPException(status_code=404, detail=f"Could not calculate metrics for agent {agent_id}")
+        raise HTTPException(
+            status_code=404, detail=f"Could not calculate metrics for agent {agent_id}"
+        )
 
     return {
         "agent_id": agent_id,
@@ -708,22 +729,26 @@ async def get_network_visualization(
     for agent_id in connectivity:
         phi = iit_calculator.get_average_phi()
         state = plugin._agent_states.get(agent_id, ConsciousnessState.DORMANT)
-        nodes.append({
-            "id": agent_id,
-            "phi": phi,
-            "state": state.value,
-        })
+        nodes.append(
+            {
+                "id": agent_id,
+                "phi": phi,
+                "state": state.value,
+            }
+        )
 
     # Build links
     links = []
     for from_agent, connections in connectivity.items():
         for to_agent, weight in connections.items():
             if weight > 0:
-                links.append({
-                    "source": from_agent,
-                    "target": to_agent,
-                    "weight": weight,
-                })
+                links.append(
+                    {
+                        "source": from_agent,
+                        "target": to_agent,
+                        "weight": weight,
+                    }
+                )
 
     return {
         "timestamp": datetime.now(UTC).isoformat(),
@@ -755,10 +780,12 @@ async def get_timeseries_data(
         for interaction in iit_calculator._interactions:
             interaction_time = datetime.fromisoformat(interaction["timestamp"])
             if interaction_time >= cutoff_time and interaction["from_agent"] == agent_id:
-                data_points.append({
-                    "timestamp": interaction["timestamp"],
-                    "value": interaction.get("phi", 0),
-                })
+                data_points.append(
+                    {
+                        "timestamp": interaction["timestamp"],
+                        "value": interaction.get("phi", 0),
+                    }
+                )
     elif metric in ["free_energy", "surprise"]:
         # Get FEP metrics
         fep_tracker = plugin._fep_tracker
@@ -767,10 +794,12 @@ async def get_timeseries_data(
             pred_time = datetime.fromisoformat(pred["timestamp"])
             if pred_time >= cutoff_time:
                 value = pred.get(metric, 0) if metric == "free_energy" else pred.get("surprise", 0)
-                data_points.append({
-                    "timestamp": pred["timestamp"],
-                    "value": value,
-                })
+                data_points.append(
+                    {
+                        "timestamp": pred["timestamp"],
+                        "value": value,
+                    }
+                )
 
     return {
         "agent_id": agent_id,

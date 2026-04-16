@@ -155,24 +155,24 @@ export function ConsciousnessPage() {
         <MetricCardGrid columns={4}>
           <MetricCard
             title="Total Agents"
-            value={statistics.total_agents}
+            value={statistics.total_agents || 0}
             color="blue"
           />
           <MetricCard
             title="Average Phi Score"
-            value={statistics.average_phi.toFixed(4)}
+            value={(statistics.average_phi ?? 0).toFixed(4)}
             color="purple"
             tooltip="Integrated Information Theory measure"
           />
           <MetricCard
             title="Avg Free Energy"
-            value={statistics.average_free_energy.toFixed(4)}
+            value={(statistics.average_free_energy ?? 0).toFixed(4)}
             color="green"
             tooltip="Free Energy Principle metric"
           />
           <MetricCard
             title="Active Connections"
-            value={statistics.active_connections}
+            value={statistics.active_connections || 0}
             color="yellow"
           />
         </MetricCardGrid>

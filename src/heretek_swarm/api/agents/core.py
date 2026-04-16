@@ -5,12 +5,21 @@ from typing import Annotated, Any
 
 import structlog
 from fastapi import APIRouter, Depends, HTTPException
+from pydantic import BaseModel
 
 from heretek_swarm.gateway.auth import verify_auth
 from heretek_swarm.runtime.registry_enhanced import EnhancedAgentRegistry, get_enhanced_registry
 
 logger = structlog.get_logger()
 router = APIRouter()
+
+
+class DeployAgentRequest(BaseModel):
+    """Request body for agent deployment."""
+
+    agent_type: str
+    config: dict[str, Any] | None = None
+    instance_id: str | None = None
 
 
 def get_registry() -> EnhancedAgentRegistry:
@@ -90,34 +99,32 @@ async def get_agent_type_metadata(
 
 @router.post("/deploy")
 async def deploy_agent(
-    agent_type: str,
+    request: DeployAgentRequest,
     registry: Annotated[EnhancedAgentRegistry, Depends(get_registry)],
     authenticated: Annotated[str, Depends(verify_auth)],
-    config: dict[str, Any] | None = None,
-    instance_id: str | None = None,
 ):
     """
     Deploy a new agent instance.
 
     Args:
-        agent_type: Type of agent to deploy
-        config: Optional configuration dictionary
-        instance_id: Optional custom instance ID
+        request: Deployment request containing agent_type and optional config
+        registry: Agent registry dependency
+        authenticated: Authentication dependency
 
     Returns:
         Deployed agent instance information
     """
     # Validate agent type exists
-    metadata = registry.get_agent_metadata(agent_type)
+    metadata = registry.get_agent_metadata(request.agent_type)
     if not metadata:
-        raise HTTPException(400, f"Unknown agent type: {agent_type}")
+        raise HTTPException(400, f"Unknown agent type: {request.agent_type}")
 
     try:
         # Deploy the agent
         instance = await registry.deploy_agent(
-            agent_type=agent_type,
-            config=config,
-            instance_id=instance_id,
+            agent_type=request.agent_type,
+            config=request.config,
+            instance_id=request.instance_id,
         )
 
         if not instance:

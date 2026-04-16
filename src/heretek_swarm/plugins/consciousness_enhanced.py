@@ -386,11 +386,13 @@ class FEPTracker:
             prediction: Prediction content
             confidence: Confidence in prediction (0.0-1.0)
         """
-        self.prediction_history[agent_id].append({
-            "prediction": prediction,
-            "confidence": confidence,
-            "timestamp": time.time(),
-        })
+        self.prediction_history[agent_id].append(
+            {
+                "prediction": prediction,
+                "confidence": confidence,
+                "timestamp": time.time(),
+            }
+        )
 
         if len(self.prediction_history[agent_id]) > 100:
             self.prediction_history[agent_id].pop(0)
@@ -438,9 +440,7 @@ class FEPTracker:
 
         # Update prediction accuracy
         accuracy = 1.0 - surprise
-        metrics.prediction_accuracy = (
-            metrics.prediction_accuracy * 0.9 + accuracy * 0.1
-        )
+        metrics.prediction_accuracy = metrics.prediction_accuracy * 0.9 + accuracy * 0.1
 
         self.agent_metrics[agent_id] = metrics
 
@@ -739,12 +739,7 @@ class EnhancedConsciousnessPlugin:
             fep_score = 0.5
 
         # Calculate composite score
-        composite = (
-            gwt_score * 0.3 +
-            iit_phi * 0.3 +
-            ast_competence * 0.2 +
-            fep_score * 0.2
-        )
+        composite = gwt_score * 0.3 + iit_phi * 0.3 + ast_competence * 0.2 + fep_score * 0.2
 
         # Determine consciousness state
         state = self._determine_state(
@@ -765,10 +760,12 @@ class EnhancedConsciousnessPlugin:
         )
 
         self.agent_metrics[agent_id] = metrics
-        self.metrics_history.append({
-            "agent_id": agent_id,
-            **metrics.__dict__,
-        })
+        self.metrics_history.append(
+            {
+                "agent_id": agent_id,
+                **metrics.__dict__,
+            }
+        )
 
         return metrics
 
@@ -838,6 +835,14 @@ class EnhancedConsciousnessPlugin:
 
     def get_statistics(self) -> dict[str, Any]:
         """Get plugin statistics."""
+        # Get average free energy if available
+        avg_fe = 0.0
+        if self.fep_tracker and hasattr(self.fep_tracker, "get_average_free_energy"):
+            try:
+                avg_fe = self.fep_tracker.get_average_free_energy()
+            except Exception:
+                avg_fe = 0.0
+
         return {
             "total_agents": len(self.agent_metrics),
             "total_metrics_entries": len(self.metrics_history),
@@ -847,13 +852,19 @@ class EnhancedConsciousnessPlugin:
                 if self.agent_metrics
                 else 0.0
             ),
-            "iit_average_phi": self.iit_calculator.get_average_phi(),
+            "average_phi": self.iit_calculator.get_average_phi(),  # Frontend expects this
+            "average_free_energy": avg_fe,  # Frontend expects this
+            "active_connections": len(self.agent_metrics),  # Frontend may expect
+            "iit_average_phi": self.iit_calculator.get_average_phi(),  # Keep for compat
             "conscious_agents": sum(
-                1 for m in self.agent_metrics.values()
-                if m.state in [
+                1
+                for m in self.agent_metrics.values()
+                if m.state
+                in [
                     ConsciousnessState.CONSCIOUS,
                     ConsciousnessState.HYPER_CONSCIOUS,
                     ConsciousnessState.TRANSCENDENT,
                 ]
             ),
+            "timestamp": datetime.now(UTC).isoformat(),
         }

@@ -25,11 +25,14 @@ logger = structlog.get_logger("api.websockets")
 # Authentication Configuration
 # =============================================================================
 
+
 class WebSocketAuthManager:
     """Manages authentication for WebSocket connections."""
 
     def __init__(self, secret_key: str | None = None):
-        self.secret_key = secret_key or os.environ.get("WEBSOCKET_SECRET_KEY", secrets.token_hex(32))
+        self.secret_key = secret_key or os.environ.get(
+            "WEBSOCKET_SECRET_KEY", secrets.token_hex(32)
+        )
         self._valid_tokens: dict[str, dict[str, Any]] = {}
         self._token_expiry = timedelta(hours=24)
         self._rate_limits: dict[str, list] = {}  # Track requests per user
@@ -88,8 +91,7 @@ class WebSocketAuthManager:
 
         # Remove old entries outside window
         self._rate_limits[user_id] = [
-            ts for ts in self._rate_limits[user_id]
-            if now - ts < self._rate_limit_window
+            ts for ts in self._rate_limits[user_id] if now - ts < self._rate_limit_window
         ]
 
         # Check limit
@@ -113,7 +115,9 @@ class WebSocketAuthManager:
 ws_auth_manager = WebSocketAuthManager()
 
 
-async def authenticate_websocket(websocket: WebSocket, token: str | None) -> tuple[bool, str | None, str | None]:
+async def authenticate_websocket(
+    websocket: WebSocket, token: str | None
+) -> tuple[bool, str | None, str | None]:
     """
     Authenticate a WebSocket connection.
 
@@ -130,12 +134,14 @@ async def authenticate_websocket(websocket: WebSocket, token: str | None) -> tup
 
     return True, user_id, None
 
+
 # Create WebSocket router
 router = APIRouter()
 
 # =============================================================================
 # Connection Manager
 # =============================================================================
+
 
 class ConnectionManager:
     """Manages WebSocket connections for broadcasting."""
@@ -147,8 +153,11 @@ class ConnectionManager:
         self.dashboard_listeners: set[WebSocket] = set()
         self.observability_listeners: set[WebSocket] = set()
         self.agent_status_listeners: dict[str, WebSocket] = {}  # agent_id -> websocket
-        self.workflow_progress_listeners: dict[str, set[WebSocket]] = {}  # workflow_id -> websockets
+        self.workflow_progress_listeners: dict[
+            str, set[WebSocket]
+        ] = {}  # workflow_id -> websockets
         self.metrics_listeners: dict[str, set[WebSocket]] = {}  # agent_id -> websockets
+        self.log_listeners: set[WebSocket] = set()
 
     async def connect_execution(self, websocket: WebSocket, execution_id: str):
         """Connect to execution updates channel."""
@@ -203,7 +212,9 @@ class ConnectionManager:
                 try:
                     await websocket.send_json(data)
                 except Exception as e:
-                    logger.debug("execution_broadcast_disconnect", execution_id=execution_id, error=str(e))
+                    logger.debug(
+                        "execution_broadcast_disconnect", execution_id=execution_id, error=str(e)
+                    )
                     disconnected.add(websocket)
             # Clean up disconnected
             for ws in disconnected:
@@ -216,7 +227,9 @@ class ConnectionManager:
             try:
                 await websocket.send_json(data)
             except Exception as e:
-                logger.debug("websocket_broadcast_disconnect", websocket_id=id(websocket), error=str(e))
+                logger.debug(
+                    "websocket_broadcast_disconnect", websocket_id=id(websocket), error=str(e)
+                )
                 disconnected.add(websocket)
         for ws in disconnected:
             self.a2a_listeners.discard(ws)
@@ -228,7 +241,9 @@ class ConnectionManager:
             try:
                 await websocket.send_json(data)
             except Exception as e:
-                logger.debug("websocket_broadcast_disconnect", websocket_id=id(websocket), error=str(e))
+                logger.debug(
+                    "websocket_broadcast_disconnect", websocket_id=id(websocket), error=str(e)
+                )
                 disconnected.add(websocket)
         for ws in disconnected:
             self.dashboard_listeners.discard(ws)
@@ -240,7 +255,9 @@ class ConnectionManager:
             try:
                 await websocket.send_json(data)
             except Exception as e:
-                logger.debug("websocket_broadcast_disconnect", websocket_id=id(websocket), error=str(e))
+                logger.debug(
+                    "websocket_broadcast_disconnect", websocket_id=id(websocket), error=str(e)
+                )
                 disconnected.add(websocket)
         for ws in disconnected:
             self.observability_listeners.discard(ws)
@@ -250,11 +267,13 @@ class ConnectionManager:
         if agent_id in self.agent_status_listeners:
             websocket = self.agent_status_listeners[agent_id]
             try:
-                await websocket.send_json({
-                    "type": "agent_status",
-                    "agentId": agent_id,
-                    **data,
-                })
+                await websocket.send_json(
+                    {
+                        "type": "agent_status",
+                        "agentId": agent_id,
+                        **data,
+                    }
+                )
             except Exception as e:
                 logger.debug("agent_status_broadcast_disconnect", agent_id=agent_id, error=str(e))
                 del self.agent_status_listeners[agent_id]
@@ -265,13 +284,17 @@ class ConnectionManager:
             disconnected = set()
             for websocket in self.workflow_progress_listeners[workflow_id]:
                 try:
-                    await websocket.send_json({
-                        "type": "workflow_progress",
-                        "workflowId": workflow_id,
-                        **data,
-                    })
+                    await websocket.send_json(
+                        {
+                            "type": "workflow_progress",
+                            "workflowId": workflow_id,
+                            **data,
+                        }
+                    )
                 except Exception as e:
-                    logger.debug("workflow_broadcast_disconnect", workflow_id=workflow_id, error=str(e))
+                    logger.debug(
+                        "workflow_broadcast_disconnect", workflow_id=workflow_id, error=str(e)
+                    )
                     disconnected.add(websocket)
             for ws in disconnected:
                 self.workflow_progress_listeners[workflow_id].discard(ws)
@@ -282,13 +305,17 @@ class ConnectionManager:
             disconnected = set()
             for websocket in self.metrics_listeners[agent_id]:
                 try:
-                    await websocket.send_json({
-                        "type": "metrics",
-                        "agentId": agent_id,
-                        "metrics": data,
-                    })
+                    await websocket.send_json(
+                        {
+                            "type": "metrics",
+                            "agentId": agent_id,
+                            "metrics": data,
+                        }
+                    )
                 except Exception as e:
-                    logger.debug("agent_metrics_broadcast_disconnect", agent_id=agent_id, error=str(e))
+                    logger.debug(
+                        "agent_metrics_broadcast_disconnect", agent_id=agent_id, error=str(e)
+                    )
                     disconnected.add(websocket)
             for ws in disconnected:
                 self.metrics_listeners[agent_id].discard(ws)
@@ -328,6 +355,34 @@ class ConnectionManager:
             if not self.metrics_listeners[agent_id]:
                 del self.metrics_listeners[agent_id]
 
+    async def connect_logs(self, websocket: WebSocket) -> None:
+        """Connect to logs stream."""
+        await websocket.accept()
+        self.log_listeners.add(websocket)
+        logger.info("websocket_logs_connected")
+
+    def disconnect_logs(self, websocket: WebSocket) -> None:
+        """Disconnect from logs stream."""
+        self.log_listeners.discard(websocket)
+        logger.info("websocket_logs_disconnected")
+
+    async def broadcast_log(self, data: dict[str, Any]) -> None:
+        """Broadcast log entry to all listeners."""
+        disconnected = set()
+        for websocket in self.log_listeners:
+            try:
+                await websocket.send_json(
+                    {
+                        "type": "log_entry",
+                        **data,
+                    }
+                )
+            except Exception as e:
+                logger.debug("log_broadcast_failed", error=str(e))
+                disconnected.add(websocket)
+        for ws in disconnected:
+            self.log_listeners.discard(ws)
+
 
 # Global connection manager
 manager = ConnectionManager()
@@ -340,11 +395,12 @@ _agent_states: dict[str, dict[str, Any]] = {}
 # Execution Updates WebSocket
 # =============================================================================
 
+
 @router.websocket("/ws/executions/{execution_id}")
 async def execution_websocket(
     websocket: WebSocket,
     execution_id: str,
-    token: str | None = Query(None, description="Authentication token")
+    token: str | None = Query(None, description="Authentication token"),
 ):
     """
     WebSocket endpoint for real-time execution updates.
@@ -379,10 +435,7 @@ async def execution_websocket(
     if not is_authenticated:
         try:
             await websocket.accept()
-            await websocket.send_json({
-                "type": "error",
-                "error": f"Authentication failed: {error}"
-            })
+            await websocket.send_json({"type": "error", "error": f"Authentication failed: {error}"})
             await websocket.close()
         except Exception:
             pass
@@ -393,11 +446,13 @@ async def execution_websocket(
 
     try:
         # Send initial connection confirmation
-        await websocket.send_json({
-            "type": "connected",
-            "execution_id": execution_id,
-            "timestamp": datetime.now(UTC).isoformat(),
-        })
+        await websocket.send_json(
+            {
+                "type": "connected",
+                "execution_id": execution_id,
+                "timestamp": datetime.now(UTC).isoformat(),
+            }
+        )
 
         # Track execution state in memory (simplified - in production use Redis)
         execution_state = {
@@ -428,10 +483,12 @@ async def execution_websocket(
 
             except TimeoutError:
                 # Send heartbeat/update
-                await websocket.send_json({
-                    "type": "heartbeat",
-                    "timestamp": datetime.now(UTC).isoformat(),
-                })
+                await websocket.send_json(
+                    {
+                        "type": "heartbeat",
+                        "timestamp": datetime.now(UTC).isoformat(),
+                    }
+                )
 
     except WebSocketDisconnect:
         logger.info("WebSocket disconnected", execution_id=execution_id)
@@ -455,21 +512,24 @@ async def get_execution_update(execution_id: str) -> dict[str, Any]:
     Returns:
         Current execution state or default
     """
-    return _execution_store.get(execution_id, {
-        "execution_id": execution_id,
-        "status": "unknown",
-        "message": "Execution not found",
-    })
+    return _execution_store.get(
+        execution_id,
+        {
+            "execution_id": execution_id,
+            "status": "unknown",
+            "message": "Execution not found",
+        },
+    )
 
 
 # =============================================================================
 # A2A Protocol WebSocket
 # =============================================================================
 
+
 @router.websocket("/ws/a2a")
 async def a2a_websocket(
-    websocket: WebSocket,
-    token: str | None = Query(None, description="Authentication token")
+    websocket: WebSocket, token: str | None = Query(None, description="Authentication token")
 ):
     """
     WebSocket endpoint for A2A protocol message stream.
@@ -502,10 +562,7 @@ async def a2a_websocket(
     if not is_authenticated:
         try:
             await websocket.accept()
-            await websocket.send_json({
-                "type": "error",
-                "error": f"Authentication failed: {error}"
-            })
+            await websocket.send_json({"type": "error", "error": f"Authentication failed: {error}"})
             await websocket.close()
         except Exception:
             pass
@@ -545,10 +602,12 @@ async def a2a_websocket(
         try:
             while True:
                 # Send periodic heartbeat to keep connection alive
-                await websocket.send_json({
-                    "type": "heartbeat",
-                    "timestamp": datetime.now(UTC).isoformat(),
-                })
+                await websocket.send_json(
+                    {
+                        "type": "heartbeat",
+                        "timestamp": datetime.now(UTC).isoformat(),
+                    }
+                )
                 await asyncio.sleep(30)
 
         except WebSocketDisconnect:
@@ -561,11 +620,12 @@ async def a2a_websocket(
 # Agent Events WebSocket
 # =============================================================================
 
+
 @router.websocket("/ws/agents/{agent_id}/events")
 async def agent_events_websocket(
     websocket: WebSocket,
     agent_id: str,
-    token: str | None = Query(None, description="Authentication token")
+    token: str | None = Query(None, description="Authentication token"),
 ):
     """
     WebSocket endpoint for agent-specific event stream.
@@ -595,10 +655,7 @@ async def agent_events_websocket(
     if not is_authenticated:
         try:
             await websocket.accept()
-            await websocket.send_json({
-                "type": "error",
-                "error": f"Authentication failed: {error}"
-            })
+            await websocket.send_json({"type": "error", "error": f"Authentication failed: {error}"})
             await websocket.close()
         except Exception:
             pass
@@ -624,10 +681,12 @@ async def agent_events_websocket(
 
             except TimeoutError:
                 # Send heartbeat
-                await websocket.send_json({
-                    "type": "heartbeat",
-                    "timestamp": datetime.now(UTC).isoformat(),
-                })
+                await websocket.send_json(
+                    {
+                        "type": "heartbeat",
+                        "timestamp": datetime.now(UTC).isoformat(),
+                    }
+                )
 
     except WebSocketDisconnect:
         logger.info("Agent events WebSocket disconnected", agent_id=agent_id)
@@ -639,11 +698,12 @@ async def agent_events_websocket(
 # Agent Status Stream WebSocket
 # =============================================================================
 
+
 @router.websocket("/ws/agents/status")
 async def agent_status_websocket(
     websocket: WebSocket,
     agent_id: str | None = Query(None, description="Specific agent ID to monitor"),
-    token: str | None = Query(None, description="Authentication token")
+    token: str | None = Query(None, description="Authentication token"),
 ):
     """
     WebSocket endpoint for real-time agent status updates.
@@ -673,10 +733,7 @@ async def agent_status_websocket(
     if not is_authenticated:
         try:
             await websocket.accept()
-            await websocket.send_json({
-                "type": "error",
-                "error": f"Authentication failed: {error}"
-            })
+            await websocket.send_json({"type": "error", "error": f"Authentication failed: {error}"})
             await websocket.close()
         except Exception:
             pass
@@ -705,11 +762,13 @@ async def agent_status_websocket(
 
                         # Send current state if available
                         if sub_agent_id in _agent_states:
-                            await websocket.send_json({
-                                "type": "agent_status",
-                                "agentId": sub_agent_id,
-                                **_agent_states[sub_agent_id],
-                            })
+                            await websocket.send_json(
+                                {
+                                    "type": "agent_status",
+                                    "agentId": sub_agent_id,
+                                    **_agent_states[sub_agent_id],
+                                }
+                            )
 
                 elif action == "unsubscribe":
                     sub_agent_id = message.get("agentId") or agent_id
@@ -720,10 +779,12 @@ async def agent_status_websocket(
 
             except TimeoutError:
                 # Send heartbeat
-                await websocket.send_json({
-                    "type": "heartbeat",
-                    "timestamp": datetime.now(UTC).isoformat(),
-                })
+                await websocket.send_json(
+                    {
+                        "type": "heartbeat",
+                        "timestamp": datetime.now(UTC).isoformat(),
+                    }
+                )
 
     except WebSocketDisconnect:
         logger.info("Agent status WebSocket disconnected")
@@ -739,11 +800,12 @@ async def agent_status_websocket(
 # Workflow Progress WebSocket
 # =============================================================================
 
+
 @router.websocket("/ws/workflows/progress")
 async def workflow_progress_websocket(
     websocket: WebSocket,
     workflow_id: str | None = Query(None, description="Specific workflow ID to monitor"),
-    token: str | None = Query(None, description="Authentication token")
+    token: str | None = Query(None, description="Authentication token"),
 ):
     """
     WebSocket endpoint for real-time workflow progress updates.
@@ -773,10 +835,7 @@ async def workflow_progress_websocket(
     if not is_authenticated:
         try:
             await websocket.accept()
-            await websocket.send_json({
-                "type": "error",
-                "error": f"Authentication failed: {error}"
-            })
+            await websocket.send_json({"type": "error", "error": f"Authentication failed: {error}"})
             await websocket.close()
         except Exception:
             pass
@@ -808,14 +867,18 @@ async def workflow_progress_websocket(
                     if sub_workflow_id in subscribed_workflows:
                         manager.unsubscribe_workflow_progress(sub_workflow_id, websocket)
                         subscribed_workflows.discard(sub_workflow_id)
-                        logger.info("Unsubscribed from workflow progress", workflow_id=sub_workflow_id)
+                        logger.info(
+                            "Unsubscribed from workflow progress", workflow_id=sub_workflow_id
+                        )
 
             except TimeoutError:
                 # Send heartbeat
-                await websocket.send_json({
-                    "type": "heartbeat",
-                    "timestamp": datetime.now(UTC).isoformat(),
-                })
+                await websocket.send_json(
+                    {
+                        "type": "heartbeat",
+                        "timestamp": datetime.now(UTC).isoformat(),
+                    }
+                )
 
     except WebSocketDisconnect:
         logger.info("Workflow progress WebSocket disconnected")
@@ -831,11 +894,12 @@ async def workflow_progress_websocket(
 # Agent Metrics WebSocket
 # =============================================================================
 
+
 @router.websocket("/ws/agents/metrics")
 async def agent_metrics_websocket(
     websocket: WebSocket,
     agent_id: str | None = Query(None, description="Specific agent ID to monitor"),
-    token: str | None = Query(None, description="Authentication token")
+    token: str | None = Query(None, description="Authentication token"),
 ):
     """
     WebSocket endpoint for real-time agent metrics updates.
@@ -869,10 +933,7 @@ async def agent_metrics_websocket(
     if not is_authenticated:
         try:
             await websocket.accept()
-            await websocket.send_json({
-                "type": "error",
-                "error": f"Authentication failed: {error}"
-            })
+            await websocket.send_json({"type": "error", "error": f"Authentication failed: {error}"})
             await websocket.close()
         except Exception:
             pass
@@ -908,10 +969,12 @@ async def agent_metrics_websocket(
 
             except TimeoutError:
                 # Send heartbeat
-                await websocket.send_json({
-                    "type": "heartbeat",
-                    "timestamp": datetime.now(UTC).isoformat(),
-                })
+                await websocket.send_json(
+                    {
+                        "type": "heartbeat",
+                        "timestamp": datetime.now(UTC).isoformat(),
+                    }
+                )
 
     except WebSocketDisconnect:
         logger.info("Agent metrics WebSocket disconnected")
@@ -927,10 +990,10 @@ async def agent_metrics_websocket(
 # Dashboard WebSocket
 # =============================================================================
 
+
 @router.websocket("/ws/dashboard")
 async def dashboard_websocket(
-    websocket: WebSocket,
-    token: str | None = Query(None, description="Authentication token")
+    websocket: WebSocket, token: str | None = Query(None, description="Authentication token")
 ):
     """
     WebSocket endpoint for real-time dashboard updates.
@@ -956,10 +1019,7 @@ async def dashboard_websocket(
     if not is_authenticated:
         try:
             await websocket.accept()
-            await websocket.send_json({
-                "type": "error",
-                "error": f"Authentication failed: {error}"
-            })
+            await websocket.send_json({"type": "error", "error": f"Authentication failed: {error}"})
             await websocket.close()
         except Exception:
             pass
@@ -987,10 +1047,12 @@ async def dashboard_websocket(
 
                 # Handle client requests
                 if message.get("action") == "ping":
-                    await websocket.send_json({
-                        "type": "pong",
-                        "timestamp": datetime.now(UTC).isoformat(),
-                    })
+                    await websocket.send_json(
+                        {
+                            "type": "pong",
+                            "timestamp": datetime.now(UTC).isoformat(),
+                        }
+                    )
 
                 # Handle channel subscriptions
                 elif message.get("action") == "subscribe":
@@ -1007,10 +1069,12 @@ async def dashboard_websocket(
 
             except TimeoutError:
                 # Send heartbeat
-                await websocket.send_json({
-                    "type": "heartbeat",
-                    "timestamp": datetime.now(UTC).isoformat(),
-                })
+                await websocket.send_json(
+                    {
+                        "type": "heartbeat",
+                        "timestamp": datetime.now(UTC).isoformat(),
+                    }
+                )
                 await asyncio.sleep(30)
 
     except WebSocketDisconnect:
@@ -1025,10 +1089,10 @@ async def dashboard_websocket(
 # Observability WebSocket
 # =============================================================================
 
+
 @router.websocket("/ws/observability")
 async def observability_websocket(
-    websocket: WebSocket,
-    token: str | None = Query(None, description="Authentication token")
+    websocket: WebSocket, token: str | None = Query(None, description="Authentication token")
 ):
     """
     WebSocket endpoint for real-time observability updates.
@@ -1053,10 +1117,7 @@ async def observability_websocket(
     if not is_authenticated:
         try:
             await websocket.accept()
-            await websocket.send_json({
-                "type": "error",
-                "error": f"Authentication failed: {error}"
-            })
+            await websocket.send_json({"type": "error", "error": f"Authentication failed: {error}"})
             await websocket.close()
         except Exception:
             pass
@@ -1077,17 +1138,21 @@ async def observability_websocket(
 
                 # Handle client requests
                 if message.get("action") == "ping":
-                    await websocket.send_json({
-                        "type": "pong",
-                        "timestamp": datetime.now(UTC).isoformat(),
-                    })
+                    await websocket.send_json(
+                        {
+                            "type": "pong",
+                            "timestamp": datetime.now(UTC).isoformat(),
+                        }
+                    )
 
             except TimeoutError:
                 # Send heartbeat
-                await websocket.send_json({
-                    "type": "heartbeat",
-                    "timestamp": datetime.now(UTC).isoformat(),
-                })
+                await websocket.send_json(
+                    {
+                        "type": "heartbeat",
+                        "timestamp": datetime.now(UTC).isoformat(),
+                    }
+                )
                 await asyncio.sleep(30)
 
     except WebSocketDisconnect:
@@ -1098,14 +1163,37 @@ async def observability_websocket(
         manager.disconnect_observability(websocket)
 
 
+@router.websocket("/ws/logs")
+async def logs_websocket(
+    websocket: WebSocket,
+) -> None:
+    """WebSocket endpoint for real-time log streaming (public - no auth required)."""
+    await manager.connect_logs(websocket)
+
+    try:
+        # Send heartbeat and keep connection alive
+        while True:
+            await websocket.send_json(
+                {
+                    "type": "heartbeat",
+                    "timestamp": datetime.now(UTC).isoformat(),
+                }
+            )
+            await asyncio.sleep(30)
+    except WebSocketDisconnect:
+        pass
+    finally:
+        manager.disconnect_logs(websocket)
+
+
 # =============================================================================
 # Agent State Stream WebSocket
 # =============================================================================
 
+
 @router.websocket("/ws/agents")
 async def all_agents_websocket(
-    websocket: WebSocket,
-    token: str | None = Query(None, description="Authentication token")
+    websocket: WebSocket, token: str | None = Query(None, description="Authentication token")
 ):
     """
     WebSocket endpoint for all agent state updates.
@@ -1128,10 +1216,7 @@ async def all_agents_websocket(
     if not is_authenticated:
         try:
             await websocket.accept()
-            await websocket.send_json({
-                "type": "error",
-                "error": f"Authentication failed: {error}"
-            })
+            await websocket.send_json({"type": "error", "error": f"Authentication failed: {error}"})
             await websocket.close()
         except Exception:
             pass
@@ -1151,10 +1236,12 @@ async def all_agents_websocket(
                 data = await asyncio.wait_for(websocket.receive_text(), timeout=60.0)
                 _ = json.loads(data)  # Consume but don't use client messages in this handler
             except TimeoutError:
-                await websocket.send_json({
-                    "type": "heartbeat",
-                    "timestamp": datetime.now(UTC).isoformat(),
-                })
+                await websocket.send_json(
+                    {
+                        "type": "heartbeat",
+                        "timestamp": datetime.now(UTC).isoformat(),
+                    }
+                )
 
     except WebSocketDisconnect:
         logger.info("All agents WebSocket disconnected")
@@ -1165,6 +1252,7 @@ async def all_agents_websocket(
 # =============================================================================
 # Helper Functions for Broadcasting Updates
 # =============================================================================
+
 
 async def send_agent_status_update(agent_id: str, status: str, current_task: str | None = None):
     """
@@ -1185,10 +1273,7 @@ async def send_agent_status_update(agent_id: str, status: str, current_task: str
 
 
 async def send_workflow_progress_update(
-    workflow_id: str,
-    current_node: str,
-    phase: str,
-    progress: int
+    workflow_id: str, current_node: str, phase: str, progress: int
 ):
     """
     Send a workflow progress update to all subscribers.
@@ -1212,7 +1297,7 @@ async def send_agent_metrics_update(
     phi: float | None = None,
     coherence: float | None = None,
     load: float | None = None,
-    queue_size: int | None = None
+    queue_size: int | None = None,
 ):
     """
     Send agent metrics update to all subscribers.
@@ -1238,4 +1323,10 @@ async def send_agent_metrics_update(
 
 
 # Export router
-__all__ = ["manager", "router", "send_agent_metrics_update", "send_agent_status_update", "send_workflow_progress_update"]
+__all__ = [
+    "manager",
+    "router",
+    "send_agent_metrics_update",
+    "send_agent_status_update",
+    "send_workflow_progress_update",
+]

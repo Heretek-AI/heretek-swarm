@@ -35,32 +35,6 @@ const logLevelIcons: Record<string, string> = {
   critical: '🔥',
 };
 
-// Mock log generator for demonstration
-const generateMockLog = (): LogEntry => {
-  const levels: LogEntry['level'][] = ['debug', 'info', 'info', 'info', 'warning', 'error'];
-  const sources = ['gateway', 'redis', 'postgres', 'qdrant', 'agent-nexus-1', 'agent-coordinator-2', 'consensus', 'memory'];
-  const messages = [
-    'Processing incoming request',
-    'Agent state updated successfully',
-    'Memory consolidation completed',
-    'Consensus vote collected',
-    'Cache miss for key',
-    'Connection pool exhausted',
-    'Rate limit threshold approaching',
-    'Agent handoff initiated',
-    'Workflow execution started',
-    'Embedding generated',
-  ];
-
-  return {
-    id: Math.random().toString(36).substr(2, 9),
-    timestamp: new Date().toISOString(),
-    level: levels[Math.floor(Math.random() * levels.length)],
-    source: sources[Math.floor(Math.random() * sources.length)],
-    message: messages[Math.floor(Math.random() * messages.length)],
-  };
-};
-
 export function LogsPage() {
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [filterLevel, setFilterLevel] = useState<string>('all');
@@ -88,14 +62,6 @@ export function LogsPage() {
       setIsConnected(false);
     }, []),
   });
-
-  // Generate mock logs for demonstration (remove when WebSocket is working)
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setLogs((prev) => [...prev.slice(-999), generateMockLog()]);
-    }, 2000);
-    return () => clearInterval(interval);
-  }, []);
 
   // Auto-scroll to bottom
   useEffect(() => {
