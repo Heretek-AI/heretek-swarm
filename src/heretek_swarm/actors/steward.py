@@ -100,8 +100,8 @@ class StewardAgent(
         self._heartbeat_timeout: float = 15.0  # seconds before declaring failure
         self._monitor_task: asyncio.Task | None = None
         self._failed_agents: set[str] = set()
-        self._restart_cooldowns: dict[str, float] = {}  # agent_id -> next allowed restart timestamp
-        self._restart_base_delay: float = 10.0  # base delay for exponential backoff in seconds
+        self._restart_cooldowns: dict[str, float] = {}
+        self._restart_base_delay: float = 10.0
 
         # GOV-01-F: Steward availability tracking
         self._consecutive_missed_heartbeats: int = 0
@@ -404,7 +404,7 @@ class StewardAgent(
             for agent_id in failed:
                 await self._handle_agent_failure(agent_id)
 
-async def _handle_agent_failure(
+    async def _handle_agent_failure(
         self, agent_id: str, supervisor: "ActorSupervisor" | None = None
     ) -> None:
         """Record and log an agent heartbeat failure, attempt restart with backoff."""
@@ -459,7 +459,7 @@ async def _handle_agent_failure(
                         },
                     )
                 else:
-                    backoff_seconds = min(300, self._restart_base_delay * (2 ** restart_count_after))
+                    backoff_seconds = min(300, self._restart_base_delay * (2**restart_count_after))
                     self._restart_cooldowns[agent_id] = now + backoff_seconds
                     await self._emit_recovery_failed(agent_id, restart_count_after)
 

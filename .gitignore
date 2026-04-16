@@ -129,3 +129,17 @@ plans/OVERNIGHT_LOOP.md
 node_modules/*
 node_modules/.bin/*
 .playwright-mcp/*
+
+# ── GSD baseline (auto-generated) ──
+.gsd
+.gsd-id
+.bg-shell/
+*.code-workspace
+.env.*
+node_modules/
+.next/
+*.pyc
+target/
+vendor/
+.cache/
+tmp/
