@@ -43,14 +43,14 @@ import random
 import uuid
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
-from enum import Enum
 from typing import Any
 
 import structlog
 
-from heretek_swarm.collective.algorithms.abc import ABC, BeeAgent, SwarmDecision as ABCSwarmDecision, SwarmPattern as ABCSwarmPattern
+from heretek_swarm.collective.algorithms.abc import ABC, BeeAgent, SwarmDecision as ABCSwarmDecision
 from heretek_swarm.collective.algorithms.aco import ACO, PheromoneTrail, SwarmDecision as ACOSwarmDecision
-from heretek_swarm.collective.algorithms.pso import PSO, Particle, SwarmDecision as PSOSwarmDecision, SwarmPattern as PSOSwarmPattern
+from heretek_swarm.collective.algorithms.pso import PSO, Particle, SwarmDecision as PSOSwarmDecision
+from heretek_swarm.collective.swarm_patterns import FlockingRule, SwarmPattern
 
 logger = structlog.get_logger("SwarmIntelligenceEngine")
 
@@ -69,22 +69,6 @@ STIGMERGY_SEARCH_RADIUS = 5
 STIGMERGY_TRACE_MIN_THRESHOLD = 0.1
 STIGMERGY_TRACE_ACCUMULATION_THRESHOLD = 0.1
 STIGMERGY_COLLECTIVE_THRESHOLD = 0.3
-
-
-class SwarmPattern(Enum):
-    """Swarm intelligence pattern types."""
-    PSO = "particle_swarm_optimization"
-    ANT_COLONY = "ant_colony_optimization"
-    BEE_ALGORITHM = "bee_algorithm"
-    FLOCKING = "flocking_behavior"
-    STIGMERGY = "stigmergy_indirect_coordination"
-
-
-class FlockingRule(Enum):
-    """Flocking behavior rules."""
-    SEPARATION = "separation"
-    ALIGNMENT = "alignment"
-    COHESION = "cohesion"
 
 
 @dataclass
@@ -767,5 +751,12 @@ class SwarmIntelligenceEngine:
         self.flocking_agents.clear()
         self.traces.clear()
         self.decision_history.clear()
+
+        # Clear internal algorithm state
+        self._pso.particles.clear()
+        self._pso.global_best_position = {}
+        self._pso.global_best_value = float("-inf")
+        self._aco.pheromone_trails.clear()
+        self._abc.bee_colony.clear()
 
         logger.info("Swarm intelligence state cleared")

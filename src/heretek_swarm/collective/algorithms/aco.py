@@ -10,10 +10,11 @@ import uuid
 from collections import defaultdict
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
-from enum import Enum
 from typing import Any
 
 import structlog
+
+from heretek_swarm.collective.swarm_patterns import SwarmPattern
 
 logger = structlog.get_logger("ACO")
 
@@ -29,15 +30,6 @@ ACO_STRONG_PHEROMONE_TRAIL_THRESHOLD = 2.0
 ACO_CONVERGENCE_THRESHOLD = 0.95
 ACO_LENGTH_FACTOR_WEIGHT = 0.7
 ACO_VALIDITY_FACTOR_WEIGHT = 0.3
-
-
-class SwarmPattern(Enum):
-    """Swarm intelligence pattern types."""
-    PSO = "particle_swarm_optimization"
-    ANT_COLONY = "ant_colony_optimization"
-    BEE_ALGORITHM = "bee_algorithm"
-    FLOCKING = "flocking_behavior"
-    STIGMERGY = "stigmergy_indirect_coordination"
 
 
 @dataclass

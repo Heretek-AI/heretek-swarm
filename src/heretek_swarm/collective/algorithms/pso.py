@@ -8,10 +8,11 @@ Not used for security-critical operations (IDs use uuid, not random).
 import random
 import uuid
 from dataclasses import dataclass, field
-from enum import Enum
 from typing import Any, Callable
 
 import structlog
+
+from heretek_swarm.collective.swarm_patterns import SwarmPattern
 
 logger = structlog.get_logger("PSO")
 
@@ -29,15 +30,6 @@ PSO_HIGH_CLUSTERING_THRESHOLD = 0.2
 PSO_EXPLORATORY_BEHAVIOR_THRESHOLD = 0.8
 PSO_MIN_CONVERGENCE_ITERATIONS = 5
 PSO_CONVERGENCE_HISTORY_LENGTH = 5
-
-
-class SwarmPattern(Enum):
-    """Swarm intelligence pattern types."""
-    PSO = "particle_swarm_optimization"
-    ANT_COLONY = "ant_colony_optimization"
-    BEE_ALGORITHM = "bee_algorithm"
-    FLOCKING = "flocking_behavior"
-    STIGMERGY = "stigmergy_indirect_coordination"
 
 
 @dataclass

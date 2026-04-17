@@ -266,6 +266,9 @@ class EmergentPattern:
     provenance: PatternProvenance = PatternProvenance.UNPROVEN  # PROVEN or UNPROVEN
     validation_rate: float = 0.0  # Fraction of validations that passed
 
+    solution_novelty: float = 0.0  # Novelty of the solution/outcome (vs pattern novelty)
+    solution_provenance: PatternProvenance = PatternProvenance.UNPROVEN  # Provenance of solution
+
     statistical_significance: float = 0.0  # Calculated during validation
     emergence_ratio: float = 0.0  # Used by calculate_confidence
     frequency: int = 1  # How many times this pattern has been observed
@@ -293,6 +296,8 @@ class EmergentPattern:
             "novelty_score": self.novelty_score,
             "provenance": self.provenance.value,
             "validation_rate": self.validation_rate,
+            "solution_novelty": self.solution_novelty,
+            "solution_provenance": self.solution_provenance.value,
             "statistical_significance": self.statistical_significance,
             "emergence_ratio": self.emergence_ratio,
             "frequency": self.frequency,

@@ -1,7 +1,7 @@
 {
   "repository_name": "heretek-swarm",
-  "timestamp": "2026-04-17T01:34:31.505508+00:00",
-  "overall_score": 0.9914634854290028,
+  "timestamp": "2026-04-17T02:17:41.864910+00:00",
+  "overall_score": 0.9909043447995823,
   "check_summaries": [
     {
       "check_name": "function_size",
@@ -790,10 +790,10 @@
       "description": "Detects unused imports, variables, functions, and dead code via LSP diagnostics",
       "language": "Python",
       "check_type": "standard",
-      "total_entities_checked": 1,
-      "findings_count": 1,
-      "warning_count": 0,
-      "score": 0.95,
+      "total_entities_checked": 14,
+      "findings_count": 14,
+      "warning_count": 4,
+      "score": 0.29999999999999993,
       "finding_groups": [
         {
           "severity": "info",
@@ -805,6 +805,104 @@
               "file_path": "src/heretek_swarm/runtime/autonomous_runtime.py",
               "line_start": 975,
               "line_end": 975,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"BeeAgent\" is not accessed",
+              "file_path": "src/heretek_swarm/collective/swarm_intelligence.py",
+              "line_start": 50,
+              "line_end": 50,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"PheromoneTrail\" is not accessed",
+              "file_path": "src/heretek_swarm/collective/swarm_intelligence.py",
+              "line_start": 51,
+              "line_end": 51,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"Particle\" is not accessed",
+              "file_path": "src/heretek_swarm/collective/swarm_intelligence.py",
+              "line_start": 52,
+              "line_end": 52,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"FlockingRule\" is not accessed",
+              "file_path": "src/heretek_swarm/collective/swarm_intelligence.py",
+              "line_start": 53,
+              "line_end": 53,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_iteration\" is not accessed",
+              "file_path": "src/heretek_swarm/collective/swarm_intelligence.py",
+              "line_start": 311,
+              "line_end": 311,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_iteration\" is not accessed",
+              "file_path": "src/heretek_swarm/collective/swarm_intelligence.py",
+              "line_start": 597,
+              "line_end": 597,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"agent_id\" is not accessed",
+              "file_path": "src/heretek_swarm/collective/swarm_intelligence.py",
+              "line_start": 645,
+              "line_end": 645,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"nodes\" is not accessed",
+              "file_path": "src/heretek_swarm/collective/algorithms/aco.py",
+              "line_start": 179,
+              "line_end": 179,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_scout\" is not accessed",
+              "file_path": "src/heretek_swarm/collective/algorithms/abc.py",
+              "line_start": 181,
+              "line_end": 181,
+              "metric_value": 0.0
+            }
+          ]
+        },
+        {
+          "severity": "warning",
+          "threshold": 0,
+          "description": "Unused import statements that should be removed",
+          "entities": [
+            {
+              "entity_name": "[unused_import] Import \"BeeAgent\" is not accessed",
+              "file_path": "src/heretek_swarm/collective/swarm_intelligence.py",
+              "line_start": 50,
+              "line_end": 50,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"PheromoneTrail\" is not accessed",
+              "file_path": "src/heretek_swarm/collective/swarm_intelligence.py",
+              "line_start": 51,
+              "line_end": 51,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"Particle\" is not accessed",
+              "file_path": "src/heretek_swarm/collective/swarm_intelligence.py",
+              "line_start": 52,
+              "line_end": 52,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"FlockingRule\" is not accessed",
+              "file_path": "src/heretek_swarm/collective/swarm_intelligence.py",
+              "line_start": 53,
+              "line_end": 53,
               "metric_value": 0.0
             }
           ]
@@ -1147,6 +1245,12 @@
   ],
   "file_summaries": [
     {
+      "file_path": "src/heretek_swarm/collective/swarm_intelligence.py",
+      "total_findings": 13,
+      "warning_findings": 6,
+      "composite_risk_score": 80.0
+    },
+    {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
       "total_findings": 3,
       "warning_findings": 3,
@@ -1220,12 +1324,6 @@
     },
     {
       "file_path": "src/heretek_swarm/collective/agent_adaptation.py",
-      "total_findings": 2,
-      "warning_findings": 2,
-      "composite_risk_score": 30.0
-    },
-    {
-      "file_path": "src/heretek_swarm/collective/swarm_intelligence.py",
       "total_findings": 2,
       "warning_findings": 2,
       "composite_risk_score": 30.0

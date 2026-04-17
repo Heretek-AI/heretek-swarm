@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from heretek_swarm.collective.emergent_detection_types import (
     EmergenceLevel,
@@ -296,5 +296,194 @@ def classify_pattern_provenance(
         PatternProvenance.PROVEN if both thresholds are met, else UNPROVEN
     """
     if novelty_score >= novelty_threshold and validation_rate >= validation_threshold:
+        return PatternProvenance.PROVEN
+    return PatternProvenance.UNPROVEN
+
+
+def calculate_solution_novelty(
+    pattern: EmergentPattern,
+    historical_patterns: list[EmergentPattern],
+    problem_signature: dict[str, Any] | None = None,
+    approach_used: str | None = None,
+    expected_performance: float | None = None,
+) -> float:
+    """
+    Calculate solution novelty score measuring outcome novelty.
+
+    Solution novelty distinguishes outcome novelty from pattern novelty.
+    While pattern novelty measures whether a method emerged (pattern formation),
+    solution novelty measures whether the solution itself is unique.
+
+    Three factors determine solution novelty:
+    - problem_novelty: Is the problem signature different from prior solutions?
+    - approach_novelty: Is the solution method different from programmed baselines?
+    - result_novelty: Does the outcome exceed expected performance?
+
+    Returns a float in [0.0, 1.0] where 1.0 = maximally novel solution.
+
+    Args:
+        pattern: The emergent pattern with solution data
+        historical_patterns: Prior solutions for comparison
+        problem_signature: Dict representing the problem characteristics
+        approach_used: String identifier of the solution approach/method
+        expected_performance: Baseline performance to compare against
+
+    Returns:
+        Float in [0.0, 1.0] representing solution novelty
+    """
+    if not historical_patterns:
+        # No history = maximally novel
+        return 1.0
+
+    novelty_factors: list[float] = []
+
+    # Factor 1: Problem novelty - is the problem signature different?
+    # Use pattern evidence as problem signature if not provided
+    if problem_signature is None:
+        problem_signature = pattern.evidence.get("problem_signature", {})
+
+    # Compare against historical problem signatures
+    historical_signatures = [
+        p.evidence.get("problem_signature", {}) for p in historical_patterns
+    ]
+
+    if historical_signatures:
+        # Calculate how different this signature is from historical ones
+        signature_diffs = []
+        for hist_sig in historical_signatures:
+            diff = _calculate_signature_difference(problem_signature, hist_sig)
+            signature_diffs.append(diff)
+        # Higher average difference = more novel
+        problem_novelty = sum(signature_diffs) / len(signature_diffs)
+    else:
+        problem_novelty = 1.0
+    novelty_factors.append(problem_novelty)
+
+    # Factor 2: Approach novelty - is the solution method novel?
+    if approach_used is None:
+        approach_used = pattern.evidence.get("approach_used", "")
+
+    if approach_used:
+        # Check if this approach was used in recent history
+        historical_approaches = [
+            p.evidence.get("approach_used", "") for p in historical_patterns
+        ]
+        approach_seen_count = sum(
+            1 for a in historical_approaches if a == approach_used
+        )
+        total_historical = len(historical_approaches)
+        if total_historical > 0:
+            # Fewer times seen = more novel
+            approach_frequency = approach_seen_count / total_historical
+            approach_novelty = 1.0 - approach_frequency
+        else:
+            approach_novelty = 1.0
+    else:
+        # No approach info = use pattern novelty as proxy
+        approach_novelty = 0.5
+    novelty_factors.append(approach_novelty)
+
+    # Factor 3: Result novelty - does outcome exceed expected performance?
+    if expected_performance is None:
+        expected_performance = pattern.evidence.get("expected_performance", None)
+
+    # Use impact score as actual performance indicator
+    actual_performance = pattern.impact_score
+
+    if expected_performance is not None and expected_performance > 0:
+        # Improvement over expected = higher novelty
+        performance_ratio = actual_performance / expected_performance
+        # Clamp to avoid extreme values
+        performance_ratio = max(0.0, min(performance_ratio, 3.0))
+        # Ratio > 1 means exceeded expectation, which is novel
+        result_novelty = min(performance_ratio - 1.0, 1.0) if performance_ratio > 1.0 else 0.0
+        # Also factor in absolute performance if no baseline
+    else:
+        # No baseline - use impact relative to historical average
+        hist_avg_impact = sum(p.impact_score for p in historical_patterns) / len(
+            historical_patterns
+        )
+        if hist_avg_impact > 0:
+            # Higher impact than historical average = novel results
+            impact_ratio = actual_performance / hist_avg_impact
+            result_novelty = min(max(impact_ratio - 1.0, 0.0), 1.0)
+        else:
+            result_novelty = 0.5
+    novelty_factors.append(result_novelty)
+
+    return sum(novelty_factors) / len(novelty_factors)
+
+
+def _calculate_signature_difference(
+    sig1: dict[str, Any],
+    sig2: dict[str, Any],
+) -> float:
+    """Calculate difference between two problem signatures [0.0, 1.0]."""
+    if not sig1 and not sig2:
+        return 0.0
+    if not sig1 or not sig2:
+        return 1.0
+
+    # Get all keys from both signatures
+    all_keys = set(sig1.keys()) | set(sig2.keys())
+    if not all_keys:
+        return 0.0
+
+    differences = []
+    for key in all_keys:
+        v1 = sig1.get(key)
+        v2 = sig2.get(key)
+
+        if v1 == v2:
+            diff = 0.0
+        elif v1 is None or v2 is None:
+            diff = 1.0
+        elif isinstance(v1, (int, float)) and isinstance(v2, (int, float)):
+            # Normalize numeric difference
+            max_val = max(abs(v1), abs(v2), 1.0)
+            diff = min(abs(v1 - v2) / max_val, 1.0)
+        elif isinstance(v1, (list, tuple)) and isinstance(v2, (list, tuple)):
+            # Compare sequences
+            max_len = max(len(v1), len(v2), 1)
+            common = sum(1 for a, b in zip(v1, v2, strict=True) if a == b)
+            diff = 1.0 - (common / max_len)
+        elif not isinstance(v1, type(v2)) and not isinstance(v2, type(v1)):
+            diff = 1.0
+        else:
+            diff = 1.0
+        differences.append(diff)
+
+    return sum(differences) / len(differences)
+
+
+def classify_solution_provenance(
+    solution_novelty: float,
+    validation_rate: float,
+    solution_threshold: float = 0.5,
+    validation_threshold: float = 0.6,
+) -> PatternProvenance:
+    """
+    Classify a solution as PROVEN or UNPROVEN based on novelty.
+
+    This mirrors classify_pattern_provenance but uses a distinct threshold
+    parameter (solution_threshold) for configuration flexibility.
+    Threshold alignment is a stakeholder decision - the appropriate threshold
+    depends on how conservative vs permissive the validation should be.
+
+    A solution is PROVEN when it has sufficient novelty AND sufficient
+    validation rate. Both conditions must be met.
+
+    Args:
+        solution_novelty: Score from 0.0 (identical to history) to 1.0 (completely novel)
+        validation_rate: Fraction of validations that passed [0.0, 1.0]
+        solution_threshold: Minimum novelty to be considered proven (default 0.5)
+            Note: This threshold is a stakeholder decision - higher values
+            require more novel solutions, lower values are more permissive
+        validation_threshold: Minimum validation rate to be considered proven (default 0.6)
+
+    Returns:
+        PatternProvenance.PROVEN if both thresholds are met, else UNPROVEN
+    """
+    if solution_novelty >= solution_threshold and validation_rate >= validation_threshold:
         return PatternProvenance.PROVEN
     return PatternProvenance.UNPROVEN

@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-17T01:34:30.194063+00:00",
+    "generated_at": "2026-04-17T02:17:40.517810+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -13221,7 +13221,7 @@
           "start_line": 26,
           "end_line": 32,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.collective.algorithms.abc.BeeAgent",
@@ -13317,7 +13317,7 @@
           "start_line": 29,
           "end_line": 35,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.collective.algorithms.aco.PheromoneTrail",
@@ -13413,7 +13413,7 @@
           "start_line": 29,
           "end_line": 35,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.collective.algorithms.pso.Particle",
@@ -13806,21 +13806,21 @@
       ]
     },
     "src/heretek_swarm/collective/emergent_detection.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector",
-          "start_line": 55,
-          "end_line": 406,
+          "start_line": 57,
+          "end_line": 477,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.__init__",
-          "start_line": 60,
-          "end_line": 81,
+          "start_line": 62,
+          "end_line": 86,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.evolution_engine",
@@ -13884,6 +13884,13 @@
           "end_line": 170,
           "node_type": "METHOD",
           "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.record_solution_outcome",
+          "start_line": 148,
+          "end_line": 211,
+          "node_type": "METHOD",
+          "status": "added"
         },
         {
           "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_evolution_metrics",
@@ -13991,18 +13998,18 @@
           "status": "unchanged"
         },
         {
-          "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._validate_and_store_pattern",
-          "start_line": 265,
-          "end_line": 331,
-          "node_type": "METHOD",
-          "status": "unchanged"
-        },
-        {
           "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._find_similar_pattern",
           "start_line": 333,
           "end_line": 338,
           "node_type": "METHOD",
           "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._validate_and_store_pattern",
+          "start_line": 333,
+          "end_line": 402,
+          "node_type": "METHOD",
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._call_detection_callbacks",
@@ -14180,7 +14187,7 @@
         {
           "qualified_name": "src.heretek_swarm.collective.emergent_detection_types.EmergentPattern",
           "start_line": 253,
-          "end_line": 324,
+          "end_line": 329,
           "node_type": "CLASS",
           "status": "modified"
         },
@@ -14193,8 +14200,8 @@
         },
         {
           "qualified_name": "src.heretek_swarm.collective.emergent_detection_types.EmergentPattern.to_dict",
-          "start_line": 284,
-          "end_line": 307,
+          "start_line": 287,
+          "end_line": 312,
           "node_type": "METHOD",
           "status": "modified"
         },
@@ -14305,6 +14312,27 @@
           "qualified_name": "src.heretek_swarm.collective.emergent_detection_utils.classify_pattern_provenance",
           "start_line": 275,
           "end_line": 298,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.collective.emergent_detection_utils.calculate_solution_novelty",
+          "start_line": 303,
+          "end_line": 412,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.collective.emergent_detection_utils._calculate_signature_difference",
+          "start_line": 415,
+          "end_line": 454,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.collective.emergent_detection_utils.classify_solution_provenance",
+          "start_line": 457,
+          "end_line": 487,
           "node_type": "FUNCTION",
           "status": "added"
         }
@@ -16035,21 +16063,21 @@
       ]
     },
     "src/heretek_swarm/collective/swarm_intelligence.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.collective.swarm_intelligence.SwarmPattern",
           "start_line": 74,
           "end_line": 80,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.collective.swarm_intelligence.FlockingRule",
           "start_line": 83,
           "end_line": 87,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.collective.swarm_intelligence.FlockingAgent",
@@ -16081,10 +16109,10 @@
         },
         {
           "qualified_name": "src.heretek_swarm.collective.swarm_intelligence.SwarmIntelligenceEngine",
-          "start_line": 145,
-          "end_line": 771,
+          "start_line": 129,
+          "end_line": 762,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.collective.swarm_intelligence.SwarmIntelligenceEngine.__init__",
@@ -16262,6 +16290,13 @@
           "status": "unchanged"
         },
         {
+          "qualified_name": "src.heretek_swarm.collective.swarm_intelligence.SwarmIntelligenceEngine.clear_state",
+          "start_line": 749,
+          "end_line": 762,
+          "node_type": "METHOD",
+          "status": "modified"
+        },
+        {
           "qualified_name": "src.heretek_swarm.collective.swarm_intelligence.SwarmIntelligenceEngine.get_decision_history",
           "start_line": 750,
           "end_line": 752,
@@ -16272,13 +16307,6 @@
           "qualified_name": "src.heretek_swarm.collective.swarm_intelligence.SwarmIntelligenceEngine.get_statistics",
           "start_line": 754,
           "end_line": 763,
-          "node_type": "METHOD",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.collective.swarm_intelligence.SwarmIntelligenceEngine.clear_state",
-          "start_line": 765,
-          "end_line": 771,
           "node_type": "METHOD",
           "status": "unchanged"
         }
@@ -70134,7 +70162,7 @@
       "start_line": 26,
       "end_line": 32,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/collective/algorithms/abc.py|src.heretek_swarm.collective.algorithms.abc.BeeAgent": {
       "file_path": "src/heretek_swarm/collective/algorithms/abc.py",
@@ -70238,7 +70266,7 @@
       "start_line": 29,
       "end_line": 35,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/collective/algorithms/aco.py|src.heretek_swarm.collective.algorithms.aco.PheromoneTrail": {
       "file_path": "src/heretek_swarm/collective/algorithms/aco.py",
@@ -70342,7 +70370,7 @@
       "start_line": 29,
       "end_line": 35,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/collective/algorithms/pso.py|src.heretek_swarm.collective.algorithms.pso.Particle": {
       "file_path": "src/heretek_swarm/collective/algorithms/pso.py",
@@ -70779,18 +70807,18 @@
     "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector": {
       "file_path": "src/heretek_swarm/collective/emergent_detection.py",
       "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector",
-      "start_line": 55,
-      "end_line": 406,
+      "start_line": 57,
+      "end_line": 477,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.__init__": {
       "file_path": "src/heretek_swarm/collective/emergent_detection.py",
       "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.__init__",
-      "start_line": 60,
-      "end_line": 81,
+      "start_line": 62,
+      "end_line": 86,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.evolution_engine": {
       "file_path": "src/heretek_swarm/collective/emergent_detection.py",
@@ -70863,6 +70891,14 @@
       "end_line": 170,
       "type": "METHOD",
       "status": "unchanged"
+    },
+    "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.record_solution_outcome": {
+      "file_path": "src/heretek_swarm/collective/emergent_detection.py",
+      "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.record_solution_outcome",
+      "start_line": 148,
+      "end_line": 211,
+      "type": "METHOD",
+      "status": "added"
     },
     "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_evolution_metrics": {
       "file_path": "src/heretek_swarm/collective/emergent_detection.py",
@@ -70984,14 +71020,6 @@
       "type": "METHOD",
       "status": "unchanged"
     },
-    "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._validate_and_store_pattern": {
-      "file_path": "src/heretek_swarm/collective/emergent_detection.py",
-      "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._validate_and_store_pattern",
-      "start_line": 265,
-      "end_line": 331,
-      "type": "METHOD",
-      "status": "unchanged"
-    },
     "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._find_similar_pattern": {
       "file_path": "src/heretek_swarm/collective/emergent_detection.py",
       "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._find_similar_pattern",
@@ -70999,6 +71027,14 @@
       "end_line": 338,
       "type": "METHOD",
       "status": "unchanged"
+    },
+    "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._validate_and_store_pattern": {
+      "file_path": "src/heretek_swarm/collective/emergent_detection.py",
+      "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._validate_and_store_pattern",
+      "start_line": 333,
+      "end_line": 402,
+      "type": "METHOD",
+      "status": "modified"
     },
     "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._call_detection_callbacks": {
       "file_path": "src/heretek_swarm/collective/emergent_detection.py",
@@ -71196,7 +71232,7 @@
       "file_path": "src/heretek_swarm/collective/emergent_detection_types.py",
       "qualified_name": "src.heretek_swarm.collective.emergent_detection_types.EmergentPattern",
       "start_line": 253,
-      "end_line": 324,
+      "end_line": 329,
       "type": "CLASS",
       "status": "modified"
     },
@@ -71211,8 +71247,8 @@
     "src/heretek_swarm/collective/emergent_detection_types.py|src.heretek_swarm.collective.emergent_detection_types.EmergentPattern.to_dict": {
       "file_path": "src/heretek_swarm/collective/emergent_detection_types.py",
       "qualified_name": "src.heretek_swarm.collective.emergent_detection_types.EmergentPattern.to_dict",
-      "start_line": 284,
-      "end_line": 307,
+      "start_line": 287,
+      "end_line": 312,
       "type": "METHOD",
       "status": "modified"
     },
@@ -71333,6 +71369,30 @@
       "qualified_name": "src.heretek_swarm.collective.emergent_detection_utils.classify_pattern_provenance",
       "start_line": 275,
       "end_line": 298,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/collective/emergent_detection_utils.py|src.heretek_swarm.collective.emergent_detection_utils.calculate_solution_novelty": {
+      "file_path": "src/heretek_swarm/collective/emergent_detection_utils.py",
+      "qualified_name": "src.heretek_swarm.collective.emergent_detection_utils.calculate_solution_novelty",
+      "start_line": 303,
+      "end_line": 412,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/collective/emergent_detection_utils.py|src.heretek_swarm.collective.emergent_detection_utils._calculate_signature_difference": {
+      "file_path": "src/heretek_swarm/collective/emergent_detection_utils.py",
+      "qualified_name": "src.heretek_swarm.collective.emergent_detection_utils._calculate_signature_difference",
+      "start_line": 415,
+      "end_line": 454,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/collective/emergent_detection_utils.py|src.heretek_swarm.collective.emergent_detection_utils.classify_solution_provenance": {
+      "file_path": "src/heretek_swarm/collective/emergent_detection_utils.py",
+      "qualified_name": "src.heretek_swarm.collective.emergent_detection_utils.classify_solution_provenance",
+      "start_line": 457,
+      "end_line": 487,
       "type": "FUNCTION",
       "status": "added"
     },
@@ -73278,7 +73338,7 @@
       "start_line": 74,
       "end_line": 80,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/collective/swarm_intelligence.py|src.heretek_swarm.collective.swarm_intelligence.FlockingRule": {
       "file_path": "src/heretek_swarm/collective/swarm_intelligence.py",
@@ -73286,7 +73346,7 @@
       "start_line": 83,
       "end_line": 87,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/collective/swarm_intelligence.py|src.heretek_swarm.collective.swarm_intelligence.FlockingAgent": {
       "file_path": "src/heretek_swarm/collective/swarm_intelligence.py",
@@ -73323,10 +73383,10 @@
     "src/heretek_swarm/collective/swarm_intelligence.py|src.heretek_swarm.collective.swarm_intelligence.SwarmIntelligenceEngine": {
       "file_path": "src/heretek_swarm/collective/swarm_intelligence.py",
       "qualified_name": "src.heretek_swarm.collective.swarm_intelligence.SwarmIntelligenceEngine",
-      "start_line": 145,
-      "end_line": 771,
+      "start_line": 129,
+      "end_line": 762,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/collective/swarm_intelligence.py|src.heretek_swarm.collective.swarm_intelligence.SwarmIntelligenceEngine.__init__": {
       "file_path": "src/heretek_swarm/collective/swarm_intelligence.py",
@@ -73528,6 +73588,14 @@
       "type": "METHOD",
       "status": "unchanged"
     },
+    "src/heretek_swarm/collective/swarm_intelligence.py|src.heretek_swarm.collective.swarm_intelligence.SwarmIntelligenceEngine.clear_state": {
+      "file_path": "src/heretek_swarm/collective/swarm_intelligence.py",
+      "qualified_name": "src.heretek_swarm.collective.swarm_intelligence.SwarmIntelligenceEngine.clear_state",
+      "start_line": 749,
+      "end_line": 762,
+      "type": "METHOD",
+      "status": "modified"
+    },
     "src/heretek_swarm/collective/swarm_intelligence.py|src.heretek_swarm.collective.swarm_intelligence.SwarmIntelligenceEngine.get_decision_history": {
       "file_path": "src/heretek_swarm/collective/swarm_intelligence.py",
       "qualified_name": "src.heretek_swarm.collective.swarm_intelligence.SwarmIntelligenceEngine.get_decision_history",
@@ -73541,14 +73609,6 @@
       "qualified_name": "src.heretek_swarm.collective.swarm_intelligence.SwarmIntelligenceEngine.get_statistics",
       "start_line": 754,
       "end_line": 763,
-      "type": "METHOD",
-      "status": "unchanged"
-    },
-    "src/heretek_swarm/collective/swarm_intelligence.py|src.heretek_swarm.collective.swarm_intelligence.SwarmIntelligenceEngine.clear_state": {
-      "file_path": "src/heretek_swarm/collective/swarm_intelligence.py",
-      "qualified_name": "src.heretek_swarm.collective.swarm_intelligence.SwarmIntelligenceEngine.clear_state",
-      "start_line": 765,
-      "end_line": 771,
       "type": "METHOD",
       "status": "unchanged"
     },
@@ -119373,7 +119433,6 @@
           "file_path": "src/heretek_swarm/collective/algorithms/abc.py",
           "file_status": "modified",
           "methods": [
-            "src.heretek_swarm.collective.algorithms.abc.SwarmPattern",
             "src.heretek_swarm.collective.algorithms.abc.BeeAgent",
             "src.heretek_swarm.collective.algorithms.abc.SwarmDecision",
             "src.heretek_swarm.collective.algorithms.abc.ABC",
@@ -119392,7 +119451,6 @@
           "file_path": "src/heretek_swarm/collective/algorithms/aco.py",
           "file_status": "modified",
           "methods": [
-            "src.heretek_swarm.collective.algorithms.aco.SwarmPattern",
             "src.heretek_swarm.collective.algorithms.aco.PheromoneTrail",
             "src.heretek_swarm.collective.algorithms.aco.SwarmDecision",
             "src.heretek_swarm.collective.algorithms.aco.ACO",
@@ -119411,7 +119469,6 @@
           "file_path": "src/heretek_swarm/collective/algorithms/pso.py",
           "file_status": "modified",
           "methods": [
-            "src.heretek_swarm.collective.algorithms.pso.SwarmPattern",
             "src.heretek_swarm.collective.algorithms.pso.Particle",
             "src.heretek_swarm.collective.algorithms.pso.SwarmDecision",
             "src.heretek_swarm.collective.algorithms.pso.PSO",
@@ -119482,7 +119539,7 @@
         },
         {
           "file_path": "src/heretek_swarm/collective/emergent_detection.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector",
             "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.__init__",
@@ -119495,6 +119552,7 @@
             "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.record_collective_behavior",
             "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.analyze_for_emergence",
             "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_emergent_patterns",
+            "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.record_solution_outcome",
             "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_evolution_metrics",
             "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_patterns_by_impact",
             "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_harmful_patterns",
@@ -119510,8 +119568,8 @@
             "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._get_individual_baseline",
             "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._measure_collective_capability",
             "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._calculate_temporal_span",
-            "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._validate_and_store_pattern",
             "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._find_similar_pattern",
+            "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._validate_and_store_pattern",
             "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._call_detection_callbacks",
             "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_status",
             "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_emergence_statistics",
@@ -119565,7 +119623,10 @@
             "src.heretek_swarm.collective.emergent_detection_utils.calculate_impact_score",
             "src.heretek_swarm.collective.emergent_detection_utils.generate_recommended_action",
             "src.heretek_swarm.collective.emergent_detection_utils.calculate_novelty_score",
-            "src.heretek_swarm.collective.emergent_detection_utils.classify_pattern_provenance"
+            "src.heretek_swarm.collective.emergent_detection_utils.classify_pattern_provenance",
+            "src.heretek_swarm.collective.emergent_detection_utils.calculate_solution_novelty",
+            "src.heretek_swarm.collective.emergent_detection_utils._calculate_signature_difference",
+            "src.heretek_swarm.collective.emergent_detection_utils.classify_solution_provenance"
           ]
         },
         {
@@ -119848,10 +119909,8 @@
         },
         {
           "file_path": "src/heretek_swarm/collective/swarm_intelligence.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
-            "src.heretek_swarm.collective.swarm_intelligence.SwarmPattern",
-            "src.heretek_swarm.collective.swarm_intelligence.FlockingRule",
             "src.heretek_swarm.collective.swarm_intelligence.FlockingAgent",
             "src.heretek_swarm.collective.swarm_intelligence.StigmergicTrace",
             "src.heretek_swarm.collective.swarm_intelligence.SwarmDecision",
@@ -119882,9 +119941,9 @@
             "src.heretek_swarm.collective.swarm_intelligence.SwarmIntelligenceEngine._calculate_trace_density",
             "src.heretek_swarm.collective.swarm_intelligence.SwarmIntelligenceEngine._calculate_stigmergy_coordination",
             "src.heretek_swarm.collective.swarm_intelligence.SwarmIntelligenceEngine._detect_emergence_stigmergy",
+            "src.heretek_swarm.collective.swarm_intelligence.SwarmIntelligenceEngine.clear_state",
             "src.heretek_swarm.collective.swarm_intelligence.SwarmIntelligenceEngine.get_decision_history",
-            "src.heretek_swarm.collective.swarm_intelligence.SwarmIntelligenceEngine.get_statistics",
-            "src.heretek_swarm.collective.swarm_intelligence.SwarmIntelligenceEngine.clear_state"
+            "src.heretek_swarm.collective.swarm_intelligence.SwarmIntelligenceEngine.get_statistics"
           ]
         },
         {
@@ -125837,7 +125896,6 @@
               "file_path": "src/heretek_swarm/collective/algorithms/abc.py",
               "file_status": "modified",
               "methods": [
-                "src.heretek_swarm.collective.algorithms.abc.SwarmPattern",
                 "src.heretek_swarm.collective.algorithms.abc.BeeAgent",
                 "src.heretek_swarm.collective.algorithms.abc.SwarmDecision",
                 "src.heretek_swarm.collective.algorithms.abc.ABC",
@@ -125856,7 +125914,6 @@
               "file_path": "src/heretek_swarm/collective/algorithms/aco.py",
               "file_status": "modified",
               "methods": [
-                "src.heretek_swarm.collective.algorithms.aco.SwarmPattern",
                 "src.heretek_swarm.collective.algorithms.aco.PheromoneTrail",
                 "src.heretek_swarm.collective.algorithms.aco.SwarmDecision",
                 "src.heretek_swarm.collective.algorithms.aco.ACO",
@@ -125875,7 +125932,6 @@
               "file_path": "src/heretek_swarm/collective/algorithms/pso.py",
               "file_status": "modified",
               "methods": [
-                "src.heretek_swarm.collective.algorithms.pso.SwarmPattern",
                 "src.heretek_swarm.collective.algorithms.pso.Particle",
                 "src.heretek_swarm.collective.algorithms.pso.SwarmDecision",
                 "src.heretek_swarm.collective.algorithms.pso.PSO",
@@ -125953,10 +126009,8 @@
             },
             {
               "file_path": "src/heretek_swarm/collective/swarm_intelligence.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
-                "src.heretek_swarm.collective.swarm_intelligence.SwarmPattern",
-                "src.heretek_swarm.collective.swarm_intelligence.FlockingRule",
                 "src.heretek_swarm.collective.swarm_intelligence.FlockingAgent",
                 "src.heretek_swarm.collective.swarm_intelligence.StigmergicTrace",
                 "src.heretek_swarm.collective.swarm_intelligence.SwarmDecision",
@@ -125987,9 +126041,9 @@
                 "src.heretek_swarm.collective.swarm_intelligence.SwarmIntelligenceEngine._calculate_trace_density",
                 "src.heretek_swarm.collective.swarm_intelligence.SwarmIntelligenceEngine._calculate_stigmergy_coordination",
                 "src.heretek_swarm.collective.swarm_intelligence.SwarmIntelligenceEngine._detect_emergence_stigmergy",
+                "src.heretek_swarm.collective.swarm_intelligence.SwarmIntelligenceEngine.clear_state",
                 "src.heretek_swarm.collective.swarm_intelligence.SwarmIntelligenceEngine.get_decision_history",
-                "src.heretek_swarm.collective.swarm_intelligence.SwarmIntelligenceEngine.get_statistics",
-                "src.heretek_swarm.collective.swarm_intelligence.SwarmIntelligenceEngine.clear_state"
+                "src.heretek_swarm.collective.swarm_intelligence.SwarmIntelligenceEngine.get_statistics"
               ]
             },
             {
@@ -141644,7 +141698,6 @@
                   "file_path": "src/heretek_swarm/collective/algorithms/abc.py",
                   "file_status": "modified",
                   "methods": [
-                    "src.heretek_swarm.collective.algorithms.abc.SwarmPattern",
                     "src.heretek_swarm.collective.algorithms.abc.BeeAgent",
                     "src.heretek_swarm.collective.algorithms.abc.SwarmDecision",
                     "src.heretek_swarm.collective.algorithms.abc.ABC",
@@ -141663,7 +141716,6 @@
                   "file_path": "src/heretek_swarm/collective/algorithms/aco.py",
                   "file_status": "modified",
                   "methods": [
-                    "src.heretek_swarm.collective.algorithms.aco.SwarmPattern",
                     "src.heretek_swarm.collective.algorithms.aco.PheromoneTrail",
                     "src.heretek_swarm.collective.algorithms.aco.SwarmDecision",
                     "src.heretek_swarm.collective.algorithms.aco.ACO",
@@ -141682,7 +141734,6 @@
                   "file_path": "src/heretek_swarm/collective/algorithms/pso.py",
                   "file_status": "modified",
                   "methods": [
-                    "src.heretek_swarm.collective.algorithms.pso.SwarmPattern",
                     "src.heretek_swarm.collective.algorithms.pso.Particle",
                     "src.heretek_swarm.collective.algorithms.pso.SwarmDecision",
                     "src.heretek_swarm.collective.algorithms.pso.PSO",
@@ -141748,10 +141799,8 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/collective/swarm_intelligence.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
-                    "src.heretek_swarm.collective.swarm_intelligence.SwarmPattern",
-                    "src.heretek_swarm.collective.swarm_intelligence.FlockingRule",
                     "src.heretek_swarm.collective.swarm_intelligence.FlockingAgent",
                     "src.heretek_swarm.collective.swarm_intelligence.StigmergicTrace",
                     "src.heretek_swarm.collective.swarm_intelligence.SwarmDecision",
@@ -141782,9 +141831,9 @@
                     "src.heretek_swarm.collective.swarm_intelligence.SwarmIntelligenceEngine._calculate_trace_density",
                     "src.heretek_swarm.collective.swarm_intelligence.SwarmIntelligenceEngine._calculate_stigmergy_coordination",
                     "src.heretek_swarm.collective.swarm_intelligence.SwarmIntelligenceEngine._detect_emergence_stigmergy",
+                    "src.heretek_swarm.collective.swarm_intelligence.SwarmIntelligenceEngine.clear_state",
                     "src.heretek_swarm.collective.swarm_intelligence.SwarmIntelligenceEngine.get_decision_history",
-                    "src.heretek_swarm.collective.swarm_intelligence.SwarmIntelligenceEngine.get_statistics",
-                    "src.heretek_swarm.collective.swarm_intelligence.SwarmIntelligenceEngine.clear_state"
+                    "src.heretek_swarm.collective.swarm_intelligence.SwarmIntelligenceEngine.get_statistics"
                   ]
                 },
                 {
@@ -144533,7 +144582,6 @@
                       "file_path": "src/heretek_swarm/collective/algorithms/abc.py",
                       "file_status": "modified",
                       "methods": [
-                        "src.heretek_swarm.collective.algorithms.abc.SwarmPattern",
                         "src.heretek_swarm.collective.algorithms.abc.BeeAgent",
                         "src.heretek_swarm.collective.algorithms.abc.SwarmDecision",
                         "src.heretek_swarm.collective.algorithms.abc.ABC",
@@ -144552,7 +144600,6 @@
                       "file_path": "src/heretek_swarm/collective/algorithms/aco.py",
                       "file_status": "modified",
                       "methods": [
-                        "src.heretek_swarm.collective.algorithms.aco.SwarmPattern",
                         "src.heretek_swarm.collective.algorithms.aco.PheromoneTrail",
                         "src.heretek_swarm.collective.algorithms.aco.SwarmDecision",
                         "src.heretek_swarm.collective.algorithms.aco.ACO",
@@ -144571,7 +144618,6 @@
                       "file_path": "src/heretek_swarm/collective/algorithms/pso.py",
                       "file_status": "modified",
                       "methods": [
-                        "src.heretek_swarm.collective.algorithms.pso.SwarmPattern",
                         "src.heretek_swarm.collective.algorithms.pso.Particle",
                         "src.heretek_swarm.collective.algorithms.pso.SwarmDecision",
                         "src.heretek_swarm.collective.algorithms.pso.PSO",
@@ -144637,10 +144683,8 @@
                     },
                     {
                       "file_path": "src/heretek_swarm/collective/swarm_intelligence.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
-                        "src.heretek_swarm.collective.swarm_intelligence.SwarmPattern",
-                        "src.heretek_swarm.collective.swarm_intelligence.FlockingRule",
                         "src.heretek_swarm.collective.swarm_intelligence.FlockingAgent",
                         "src.heretek_swarm.collective.swarm_intelligence.StigmergicTrace",
                         "src.heretek_swarm.collective.swarm_intelligence.SwarmDecision",
@@ -144671,9 +144715,9 @@
                         "src.heretek_swarm.collective.swarm_intelligence.SwarmIntelligenceEngine._calculate_trace_density",
                         "src.heretek_swarm.collective.swarm_intelligence.SwarmIntelligenceEngine._calculate_stigmergy_coordination",
                         "src.heretek_swarm.collective.swarm_intelligence.SwarmIntelligenceEngine._detect_emergence_stigmergy",
+                        "src.heretek_swarm.collective.swarm_intelligence.SwarmIntelligenceEngine.clear_state",
                         "src.heretek_swarm.collective.swarm_intelligence.SwarmIntelligenceEngine.get_decision_history",
-                        "src.heretek_swarm.collective.swarm_intelligence.SwarmIntelligenceEngine.get_statistics",
-                        "src.heretek_swarm.collective.swarm_intelligence.SwarmIntelligenceEngine.clear_state"
+                        "src.heretek_swarm.collective.swarm_intelligence.SwarmIntelligenceEngine.get_statistics"
                       ]
                     }
                   ],
@@ -144762,19 +144806,17 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/collective/swarm_intelligence.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
-                            "src.heretek_swarm.collective.swarm_intelligence.SwarmPattern",
-                            "src.heretek_swarm.collective.swarm_intelligence.FlockingRule",
                             "src.heretek_swarm.collective.swarm_intelligence.FlockingAgent",
                             "src.heretek_swarm.collective.swarm_intelligence.SwarmIntelligenceEngine",
                             "src.heretek_swarm.collective.swarm_intelligence.SwarmIntelligenceEngine.run_pso",
                             "src.heretek_swarm.collective.swarm_intelligence.SwarmIntelligenceEngine.run_ant_colony",
                             "src.heretek_swarm.collective.swarm_intelligence.SwarmIntelligenceEngine.run_bee_algorithm",
                             "src.heretek_swarm.collective.swarm_intelligence.SwarmIntelligenceEngine._initialize_flocking_agents",
+                            "src.heretek_swarm.collective.swarm_intelligence.SwarmIntelligenceEngine.clear_state",
                             "src.heretek_swarm.collective.swarm_intelligence.SwarmIntelligenceEngine.get_decision_history",
-                            "src.heretek_swarm.collective.swarm_intelligence.SwarmIntelligenceEngine.get_statistics",
-                            "src.heretek_swarm.collective.swarm_intelligence.SwarmIntelligenceEngine.clear_state"
+                            "src.heretek_swarm.collective.swarm_intelligence.SwarmIntelligenceEngine.get_statistics"
                           ]
                         }
                       ],
@@ -144814,7 +144856,6 @@
                           "file_path": "src/heretek_swarm/collective/algorithms/abc.py",
                           "file_status": "modified",
                           "methods": [
-                            "src.heretek_swarm.collective.algorithms.abc.SwarmPattern",
                             "src.heretek_swarm.collective.algorithms.abc.ABC",
                             "src.heretek_swarm.collective.algorithms.abc.ABC.__init__"
                           ]
@@ -144823,7 +144864,6 @@
                           "file_path": "src/heretek_swarm/collective/algorithms/aco.py",
                           "file_status": "modified",
                           "methods": [
-                            "src.heretek_swarm.collective.algorithms.aco.SwarmPattern",
                             "src.heretek_swarm.collective.algorithms.aco.ACO",
                             "src.heretek_swarm.collective.algorithms.aco.ACO.__init__"
                           ]
@@ -144832,14 +144872,13 @@
                           "file_path": "src/heretek_swarm/collective/algorithms/pso.py",
                           "file_status": "modified",
                           "methods": [
-                            "src.heretek_swarm.collective.algorithms.pso.SwarmPattern",
                             "src.heretek_swarm.collective.algorithms.pso.PSO",
                             "src.heretek_swarm.collective.algorithms.pso.PSO.__init__"
                           ]
                         },
                         {
                           "file_path": "src/heretek_swarm/collective/swarm_intelligence.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.collective.swarm_intelligence.StigmergicTrace",
                             "src.heretek_swarm.collective.swarm_intelligence.SwarmDecision",
@@ -160415,7 +160454,7 @@
             },
             {
               "file_path": "src/heretek_swarm/collective/emergent_detection.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector",
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.__init__",
@@ -160428,6 +160467,7 @@
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.record_collective_behavior",
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.analyze_for_emergence",
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_emergent_patterns",
+                "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.record_solution_outcome",
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_evolution_metrics",
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_patterns_by_impact",
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_harmful_patterns",
@@ -160443,8 +160483,8 @@
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._get_individual_baseline",
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._measure_collective_capability",
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._calculate_temporal_span",
-                "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._validate_and_store_pattern",
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._find_similar_pattern",
+                "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._validate_and_store_pattern",
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._call_detection_callbacks",
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_status",
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_emergence_statistics",
@@ -160498,7 +160538,10 @@
                 "src.heretek_swarm.collective.emergent_detection_utils.calculate_impact_score",
                 "src.heretek_swarm.collective.emergent_detection_utils.generate_recommended_action",
                 "src.heretek_swarm.collective.emergent_detection_utils.calculate_novelty_score",
-                "src.heretek_swarm.collective.emergent_detection_utils.classify_pattern_provenance"
+                "src.heretek_swarm.collective.emergent_detection_utils.classify_pattern_provenance",
+                "src.heretek_swarm.collective.emergent_detection_utils.calculate_solution_novelty",
+                "src.heretek_swarm.collective.emergent_detection_utils._calculate_signature_difference",
+                "src.heretek_swarm.collective.emergent_detection_utils.classify_solution_provenance"
               ]
             },
             {
@@ -162782,7 +162825,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/collective/emergent_detection.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.__init__",
@@ -162795,6 +162838,7 @@
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.record_collective_behavior",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.analyze_for_emergence",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_emergent_patterns",
+                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.record_solution_outcome",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_evolution_metrics",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_patterns_by_impact",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_harmful_patterns",
@@ -162810,8 +162854,8 @@
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._get_individual_baseline",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._measure_collective_capability",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._calculate_temporal_span",
-                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._validate_and_store_pattern",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._find_similar_pattern",
+                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._validate_and_store_pattern",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._call_detection_callbacks",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_status",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_emergence_statistics",
@@ -162865,7 +162909,10 @@
                     "src.heretek_swarm.collective.emergent_detection_utils.calculate_impact_score",
                     "src.heretek_swarm.collective.emergent_detection_utils.generate_recommended_action",
                     "src.heretek_swarm.collective.emergent_detection_utils.calculate_novelty_score",
-                    "src.heretek_swarm.collective.emergent_detection_utils.classify_pattern_provenance"
+                    "src.heretek_swarm.collective.emergent_detection_utils.classify_pattern_provenance",
+                    "src.heretek_swarm.collective.emergent_detection_utils.calculate_solution_novelty",
+                    "src.heretek_swarm.collective.emergent_detection_utils._calculate_signature_difference",
+                    "src.heretek_swarm.collective.emergent_detection_utils.classify_solution_provenance"
                   ]
                 },
                 {
@@ -163028,7 +163075,7 @@
                     },
                     {
                       "file_path": "src/heretek_swarm/collective/emergent_detection.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector",
                         "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.set_evolution_engine",
@@ -163038,6 +163085,7 @@
                         "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.record_collective_behavior",
                         "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.analyze_for_emergence",
                         "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_emergent_patterns",
+                        "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.record_solution_outcome",
                         "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_patterns_by_impact",
                         "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_harmful_patterns",
                         "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_beneficial_patterns",
@@ -163156,7 +163204,7 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/collective/emergent_detection.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector",
                             "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.__init__",
@@ -163169,6 +163217,7 @@
                             "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.record_collective_behavior",
                             "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.analyze_for_emergence",
                             "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_emergent_patterns",
+                            "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.record_solution_outcome",
                             "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_evolution_metrics",
                             "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_patterns_by_impact",
                             "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_harmful_patterns",
@@ -163184,8 +163233,8 @@
                             "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._get_individual_baseline",
                             "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._measure_collective_capability",
                             "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._calculate_temporal_span",
-                            "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._validate_and_store_pattern",
                             "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._find_similar_pattern",
+                            "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._validate_and_store_pattern",
                             "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._call_detection_callbacks",
                             "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_status",
                             "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_emergence_statistics",
@@ -163521,11 +163570,12 @@
                   "file_methods": [
                     {
                       "file_path": "src/heretek_swarm/collective/emergent_detection.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.__init__",
                         "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.evolution_engine",
                         "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.record_agent_snapshot",
+                        "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.record_solution_outcome",
                         "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_evolution_metrics",
                         "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._calculate_window_metrics",
                         "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._calculate_shift_score",
@@ -163533,8 +163583,8 @@
                         "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._update_individual_baseline",
                         "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._measure_collective_capability",
                         "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._calculate_temporal_span",
-                        "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._validate_and_store_pattern",
-                        "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._find_similar_pattern"
+                        "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._find_similar_pattern",
+                        "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._validate_and_store_pattern"
                       ]
                     },
                     {
@@ -163578,7 +163628,10 @@
                         "src.heretek_swarm.collective.emergent_detection_utils.calculate_impact_score",
                         "src.heretek_swarm.collective.emergent_detection_utils.generate_recommended_action",
                         "src.heretek_swarm.collective.emergent_detection_utils.calculate_novelty_score",
-                        "src.heretek_swarm.collective.emergent_detection_utils.classify_pattern_provenance"
+                        "src.heretek_swarm.collective.emergent_detection_utils.classify_pattern_provenance",
+                        "src.heretek_swarm.collective.emergent_detection_utils.calculate_solution_novelty",
+                        "src.heretek_swarm.collective.emergent_detection_utils._calculate_signature_difference",
+                        "src.heretek_swarm.collective.emergent_detection_utils.classify_solution_provenance"
                       ]
                     },
                     {
@@ -163645,7 +163698,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/collective/emergent_detection.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector",
                             "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.__init__",
@@ -163673,8 +163726,8 @@
                             "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._get_individual_baseline",
                             "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._measure_collective_capability",
                             "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._calculate_temporal_span",
-                            "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._validate_and_store_pattern",
                             "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._find_similar_pattern",
+                            "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._validate_and_store_pattern",
                             "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._call_detection_callbacks",
                             "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_status",
                             "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_emergence_statistics",
@@ -163711,7 +163764,10 @@
                             "src.heretek_swarm.collective.emergent_detection_utils.calculate_impact_score",
                             "src.heretek_swarm.collective.emergent_detection_utils.generate_recommended_action",
                             "src.heretek_swarm.collective.emergent_detection_utils.calculate_novelty_score",
-                            "src.heretek_swarm.collective.emergent_detection_utils.classify_pattern_provenance"
+                            "src.heretek_swarm.collective.emergent_detection_utils.classify_pattern_provenance",
+                            "src.heretek_swarm.collective.emergent_detection_utils.calculate_solution_novelty",
+                            "src.heretek_swarm.collective.emergent_detection_utils._calculate_signature_difference",
+                            "src.heretek_swarm.collective.emergent_detection_utils.classify_solution_provenance"
                           ]
                         },
                         {
@@ -163830,7 +163886,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/collective/emergent_detection.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.collective.emergent_detection.EmergenceAnalyzer.__init__",
                             "src.heretek_swarm.collective.emergent_detection.EmergenceAnalyzer.analyze_emergence_trends",

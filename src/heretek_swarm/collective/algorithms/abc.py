@@ -9,10 +9,11 @@ import random
 import uuid
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
-from enum import Enum
 from typing import Any
 
 import structlog
+
+from heretek_swarm.collective.swarm_patterns import SwarmPattern
 
 logger = structlog.get_logger("ABC")
 
@@ -26,15 +27,6 @@ ABC_SPECIALIST_FRACTION = 0.5
 ABC_COVERAGE_WEIGHT = 0.6
 ABC_BALANCE_WEIGHT = 0.4
 ABC_CONVERGENCE_THRESHOLD = 0.95
-
-
-class SwarmPattern(Enum):
-    """Swarm intelligence pattern types."""
-    PSO = "particle_swarm_optimization"
-    ANT_COLONY = "ant_colony_optimization"
-    BEE_ALGORITHM = "bee_algorithm"
-    FLOCKING = "flocking_behavior"
-    STIGMERGY = "stigmergy_indirect_coordination"
 
 
 @dataclass

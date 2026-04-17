@@ -213,9 +213,10 @@ class TestSwarmIntelligenceEngine:
     def test_engine_initialization(self, engine):
         """Test engine initialization."""
         assert engine.config.max_iterations == 10
-        assert engine.particles == {}
-        assert engine.pheromone_trails == {}
-        assert engine.bee_colony == []
+        # Internal algorithm state is on algorithm instances
+        assert engine._pso.particles == {}
+        assert engine._aco.pheromone_trails == {}
+        assert engine._abc.bee_colony == []
         assert engine.flocking_agents == {}
         assert engine.traces == {}
 
@@ -353,12 +354,14 @@ class TestSwarmIntelligenceEngine:
 
         engine.clear_state()
 
-        assert engine.particles == {}
-        assert engine.pheromone_trails == {}
-        assert engine.bee_colony == []
+        # Verify state is cleared (flocking_agents, traces, decision_history are cleared)
         assert engine.flocking_agents == {}
         assert engine.traces == {}
         assert engine.decision_history == []
+        # Internal algorithm state (particles, pheromone_trails, bee_colony) is on the algorithm instances
+        assert engine._pso.particles == {}
+        assert engine._aco.pheromone_trails == {}
+        assert engine._abc.bee_colony == []
 
 
 class TestSwarmDecision:

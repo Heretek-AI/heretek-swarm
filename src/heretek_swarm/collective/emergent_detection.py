@@ -41,10 +41,12 @@ from .emergent_detection_utils import (
     calculate_confidence,
     calculate_impact_score,
     calculate_shift_score,
+    calculate_solution_novelty,
     calculate_statistical_significance,
     calculate_temporal_span,
     calculate_window_metrics,
     classify_emergence_level,
+    classify_solution_provenance,
     measure_collective_capability,
 )
 from .evolution_engine import EvolutionEngine
@@ -67,6 +69,9 @@ class EmergentPatternDetector:
 
         self._individual_baselines: dict[str, dict[str, float]] = {}
         self._collective_baselines: dict[str, float] = {}
+
+        # Solution novelty history: stores validated patterns for novelty comparison
+        self._solution_history: list[EmergentPattern] = []
 
         self._evolution_engine: EvolutionEngine | None = None
 
@@ -139,6 +144,69 @@ class EmergentPatternDetector:
             b for b in self._collective_behaviors
             if datetime.fromisoformat(b.start_time) > cutoff
         ]
+
+    def record_solution_outcome(
+        self,
+        pattern: EmergentPattern,
+        problem_signature: dict[str, Any] | None = None,
+        approach_used: str | None = None,
+        expected_performance: float | None = None,
+        solution_threshold: float = 0.5,
+    ) -> None:
+        """
+        Compute and store solution novelty for a validated pattern.
+
+        Calculates how novel the solution/outcome is compared to historical
+        solutions, then classifies provenance based on novelty and validation rate.
+
+        Args:
+            pattern: The emergent pattern to record solution outcome for.
+            problem_signature: Dict describing the problem characteristics.
+            approach_used: Name/identifier of the approach used.
+            expected_performance: Baseline performance to compare against.
+            solution_threshold: Stakeholder-configurable threshold for provenance
+                classification (default 0.5). Higher = stricter PROVEN criteria.
+        """
+        # Build problem signature from pattern evidence if not provided
+        if problem_signature is None:
+            problem_signature = pattern.evidence.get("problem_signature", {})
+
+        # Extract approach from evidence if not provided
+        if approach_used is None:
+            approach_used = pattern.evidence.get("approach_used", "unknown")
+
+        # Extract expected performance from pattern metadata if available
+        if expected_performance is None:
+            expected_performance = pattern.evidence.get("expected_performance")
+
+        # Get historical patterns for novelty comparison
+        historical = self._solution_history
+
+        # Calculate solution novelty using three-factor model
+        pattern.solution_novelty = calculate_solution_novelty(
+            pattern=pattern,
+            historical_patterns=historical,
+            problem_signature=problem_signature,
+            approach_used=approach_used,
+            expected_performance=expected_performance,
+        )
+
+        # Classify provenance based on novelty and validation
+        pattern.solution_provenance = classify_solution_provenance(
+            solution_novelty=pattern.solution_novelty,
+            validation_rate=pattern.validation_rate,
+            solution_threshold=solution_threshold,
+        )
+
+        # Store in history for future novelty comparisons
+        self._solution_history.append(pattern)
+
+        logger.debug(
+            "solution_outcome_recorded",
+            pattern_id=pattern.pattern_id,
+            solution_novelty=pattern.solution_novelty,
+            solution_provenance=pattern.solution_provenance.value,
+        )
 
     async def analyze_for_emergence(self) -> list[EmergentPattern]:
         return []
@@ -317,6 +385,9 @@ class EmergentPatternDetector:
         if existing_pattern:
             pattern.frequency = existing_pattern.frequency + 1
             pattern.first_detected = existing_pattern.first_detected
+
+        # Compute and store solution novelty for validated patterns
+        self.record_solution_outcome(pattern)
 
         self._emergent_patterns.append(pattern)
 
