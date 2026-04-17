@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-17T17:36:03.226689+00:00",
+    "generated_at": "2026-04-17T17:50:31.530932+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -3212,56 +3212,56 @@
           "start_line": 50,
           "end_line": 59,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.examiner.TestStatus",
           "start_line": 62,
           "end_line": 70,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.examiner.QualityMetric",
           "start_line": 73,
           "end_line": 82,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.examiner.SeverityLevel",
           "start_line": 85,
           "end_line": 92,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.examiner.TestCase",
           "start_line": 96,
           "end_line": 109,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.examiner.TestSuite",
           "start_line": 113,
           "end_line": 125,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.examiner.Bug",
           "start_line": 129,
           "end_line": 143,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.examiner.QualityReport",
           "start_line": 147,
           "end_line": 160,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.examiner.ExaminerAgent",
@@ -3282,7 +3282,7 @@
           "start_line": 227,
           "end_line": 264,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.examiner.ExaminerAgent.get_handlers",
@@ -3296,210 +3296,210 @@
           "start_line": 266,
           "end_line": 328,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.examiner.ExaminerAgent._handle_validate_decision",
           "start_line": 330,
           "end_line": 370,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.examiner.ExaminerAgent._handle_analyze_quality",
           "start_line": 372,
           "end_line": 413,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.examiner.ExaminerAgent._handle_report_bug",
           "start_line": 415,
           "end_line": 469,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.examiner.ExaminerAgent._handle_get_quality_report",
           "start_line": 471,
           "end_line": 547,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.examiner.ExaminerAgent._handle_get_bug_status",
           "start_line": 549,
           "end_line": 608,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.examiner.ExaminerAgent._generate_test_plan",
           "start_line": 612,
           "end_line": 655,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.examiner.ExaminerAgent._execute_test_case",
           "start_line": 657,
           "end_line": 702,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.examiner.ExaminerAgent._run_test_logic",
           "start_line": 704,
           "end_line": 724,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.examiner.ExaminerAgent._validate_decision_content",
           "start_line": 726,
           "end_line": 769,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.examiner.ExaminerAgent._analyze_quality_metrics",
           "start_line": 771,
           "end_line": 794,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.examiner.ExaminerAgent._measure_coverage",
           "start_line": 796,
           "end_line": 799,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.examiner.ExaminerAgent._measure_complexity",
           "start_line": 801,
           "end_line": 804,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.examiner.ExaminerAgent._measure_security",
           "start_line": 806,
           "end_line": 809,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.examiner.ExaminerAgent._measure_performance",
           "start_line": 811,
           "end_line": 814,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.examiner.ExaminerAgent._estimate_metric",
           "start_line": 816,
           "end_line": 833,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.examiner.ExaminerAgent._calculate_overall_score",
           "start_line": 835,
           "end_line": 857,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.examiner.ExaminerAgent._calculate_system_score",
           "start_line": 859,
           "end_line": 892,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.examiner.ExaminerAgent._generate_recommendations",
           "start_line": 894,
           "end_line": 922,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.examiner.ExaminerAgent._emit_pattern",
           "start_line": 928,
           "end_line": 951,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.examiner.ExaminerAgent._consume_patterns",
           "start_line": 953,
           "end_line": 968,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.examiner.ExaminerAgent._initiate_deliberation",
           "start_line": 974,
           "end_line": 999,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.examiner.ExaminerAgent._submit_deliberation_position",
           "start_line": 1001,
           "end_line": 1036,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.examiner.ExaminerAgent._finalize_deliberation",
           "start_line": 1038,
           "end_line": 1058,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.examiner.ExaminerAgent._generate_quality_summary",
           "start_line": 1060,
           "end_line": 1082,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.examiner.ExaminerAgent._handle_execute_stress_test",
           "start_line": 1126,
           "end_line": 1198,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.examiner.ExaminerAgent._handle_get_stress_test_results",
           "start_line": 1200,
           "end_line": 1242,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.examiner.ExaminerAgent._handle_report_capability_gap",
           "start_line": 1244,
           "end_line": 1273,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.examiner.ExaminerAgent._handle_get_safety_bounds",
           "start_line": 1275,
           "end_line": 1302,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.examiner.ExaminerAgent._handle_get_incident_reports",
           "start_line": 1304,
           "end_line": 1350,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "modified"
         }
       ]
     },
@@ -59066,7 +59066,7 @@
       "start_line": 50,
       "end_line": 59,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/examiner.py|src.heretek_swarm.actors.examiner.TestStatus": {
       "file_path": "src/heretek_swarm/actors/examiner.py",
@@ -59074,7 +59074,7 @@
       "start_line": 62,
       "end_line": 70,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/examiner.py|src.heretek_swarm.actors.examiner.QualityMetric": {
       "file_path": "src/heretek_swarm/actors/examiner.py",
@@ -59082,7 +59082,7 @@
       "start_line": 73,
       "end_line": 82,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/examiner.py|src.heretek_swarm.actors.examiner.SeverityLevel": {
       "file_path": "src/heretek_swarm/actors/examiner.py",
@@ -59090,7 +59090,7 @@
       "start_line": 85,
       "end_line": 92,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/examiner.py|src.heretek_swarm.actors.examiner.TestCase": {
       "file_path": "src/heretek_swarm/actors/examiner.py",
@@ -59098,7 +59098,7 @@
       "start_line": 96,
       "end_line": 109,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/examiner.py|src.heretek_swarm.actors.examiner.TestSuite": {
       "file_path": "src/heretek_swarm/actors/examiner.py",
@@ -59106,7 +59106,7 @@
       "start_line": 113,
       "end_line": 125,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/examiner.py|src.heretek_swarm.actors.examiner.Bug": {
       "file_path": "src/heretek_swarm/actors/examiner.py",
@@ -59114,7 +59114,7 @@
       "start_line": 129,
       "end_line": 143,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/examiner.py|src.heretek_swarm.actors.examiner.QualityReport": {
       "file_path": "src/heretek_swarm/actors/examiner.py",
@@ -59122,7 +59122,7 @@
       "start_line": 147,
       "end_line": 160,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/examiner.py|src.heretek_swarm.actors.examiner.ExaminerAgent": {
       "file_path": "src/heretek_swarm/actors/examiner.py",
@@ -59146,7 +59146,7 @@
       "start_line": 227,
       "end_line": 264,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/examiner.py|src.heretek_swarm.actors.examiner.ExaminerAgent.get_handlers": {
       "file_path": "src/heretek_swarm/actors/examiner.py",
@@ -59162,7 +59162,7 @@
       "start_line": 266,
       "end_line": 328,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/examiner.py|src.heretek_swarm.actors.examiner.ExaminerAgent._handle_validate_decision": {
       "file_path": "src/heretek_swarm/actors/examiner.py",
@@ -59170,7 +59170,7 @@
       "start_line": 330,
       "end_line": 370,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/examiner.py|src.heretek_swarm.actors.examiner.ExaminerAgent._handle_analyze_quality": {
       "file_path": "src/heretek_swarm/actors/examiner.py",
@@ -59178,7 +59178,7 @@
       "start_line": 372,
       "end_line": 413,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/examiner.py|src.heretek_swarm.actors.examiner.ExaminerAgent._handle_report_bug": {
       "file_path": "src/heretek_swarm/actors/examiner.py",
@@ -59186,7 +59186,7 @@
       "start_line": 415,
       "end_line": 469,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/examiner.py|src.heretek_swarm.actors.examiner.ExaminerAgent._handle_get_quality_report": {
       "file_path": "src/heretek_swarm/actors/examiner.py",
@@ -59194,7 +59194,7 @@
       "start_line": 471,
       "end_line": 547,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/examiner.py|src.heretek_swarm.actors.examiner.ExaminerAgent._handle_get_bug_status": {
       "file_path": "src/heretek_swarm/actors/examiner.py",
@@ -59202,7 +59202,7 @@
       "start_line": 549,
       "end_line": 608,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/examiner.py|src.heretek_swarm.actors.examiner.ExaminerAgent._generate_test_plan": {
       "file_path": "src/heretek_swarm/actors/examiner.py",
@@ -59210,7 +59210,7 @@
       "start_line": 612,
       "end_line": 655,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/examiner.py|src.heretek_swarm.actors.examiner.ExaminerAgent._execute_test_case": {
       "file_path": "src/heretek_swarm/actors/examiner.py",
@@ -59218,7 +59218,7 @@
       "start_line": 657,
       "end_line": 702,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/examiner.py|src.heretek_swarm.actors.examiner.ExaminerAgent._run_test_logic": {
       "file_path": "src/heretek_swarm/actors/examiner.py",
@@ -59226,7 +59226,7 @@
       "start_line": 704,
       "end_line": 724,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/examiner.py|src.heretek_swarm.actors.examiner.ExaminerAgent._validate_decision_content": {
       "file_path": "src/heretek_swarm/actors/examiner.py",
@@ -59234,7 +59234,7 @@
       "start_line": 726,
       "end_line": 769,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/examiner.py|src.heretek_swarm.actors.examiner.ExaminerAgent._analyze_quality_metrics": {
       "file_path": "src/heretek_swarm/actors/examiner.py",
@@ -59242,7 +59242,7 @@
       "start_line": 771,
       "end_line": 794,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/examiner.py|src.heretek_swarm.actors.examiner.ExaminerAgent._measure_coverage": {
       "file_path": "src/heretek_swarm/actors/examiner.py",
@@ -59250,7 +59250,7 @@
       "start_line": 796,
       "end_line": 799,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/examiner.py|src.heretek_swarm.actors.examiner.ExaminerAgent._measure_complexity": {
       "file_path": "src/heretek_swarm/actors/examiner.py",
@@ -59258,7 +59258,7 @@
       "start_line": 801,
       "end_line": 804,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/examiner.py|src.heretek_swarm.actors.examiner.ExaminerAgent._measure_security": {
       "file_path": "src/heretek_swarm/actors/examiner.py",
@@ -59266,7 +59266,7 @@
       "start_line": 806,
       "end_line": 809,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/examiner.py|src.heretek_swarm.actors.examiner.ExaminerAgent._measure_performance": {
       "file_path": "src/heretek_swarm/actors/examiner.py",
@@ -59274,7 +59274,7 @@
       "start_line": 811,
       "end_line": 814,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/examiner.py|src.heretek_swarm.actors.examiner.ExaminerAgent._estimate_metric": {
       "file_path": "src/heretek_swarm/actors/examiner.py",
@@ -59282,7 +59282,7 @@
       "start_line": 816,
       "end_line": 833,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/examiner.py|src.heretek_swarm.actors.examiner.ExaminerAgent._calculate_overall_score": {
       "file_path": "src/heretek_swarm/actors/examiner.py",
@@ -59290,7 +59290,7 @@
       "start_line": 835,
       "end_line": 857,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/examiner.py|src.heretek_swarm.actors.examiner.ExaminerAgent._calculate_system_score": {
       "file_path": "src/heretek_swarm/actors/examiner.py",
@@ -59298,7 +59298,7 @@
       "start_line": 859,
       "end_line": 892,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/examiner.py|src.heretek_swarm.actors.examiner.ExaminerAgent._generate_recommendations": {
       "file_path": "src/heretek_swarm/actors/examiner.py",
@@ -59306,7 +59306,7 @@
       "start_line": 894,
       "end_line": 922,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/examiner.py|src.heretek_swarm.actors.examiner.ExaminerAgent._emit_pattern": {
       "file_path": "src/heretek_swarm/actors/examiner.py",
@@ -59314,7 +59314,7 @@
       "start_line": 928,
       "end_line": 951,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/examiner.py|src.heretek_swarm.actors.examiner.ExaminerAgent._consume_patterns": {
       "file_path": "src/heretek_swarm/actors/examiner.py",
@@ -59322,7 +59322,7 @@
       "start_line": 953,
       "end_line": 968,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/examiner.py|src.heretek_swarm.actors.examiner.ExaminerAgent._initiate_deliberation": {
       "file_path": "src/heretek_swarm/actors/examiner.py",
@@ -59330,7 +59330,7 @@
       "start_line": 974,
       "end_line": 999,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/examiner.py|src.heretek_swarm.actors.examiner.ExaminerAgent._submit_deliberation_position": {
       "file_path": "src/heretek_swarm/actors/examiner.py",
@@ -59338,7 +59338,7 @@
       "start_line": 1001,
       "end_line": 1036,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/examiner.py|src.heretek_swarm.actors.examiner.ExaminerAgent._finalize_deliberation": {
       "file_path": "src/heretek_swarm/actors/examiner.py",
@@ -59346,7 +59346,7 @@
       "start_line": 1038,
       "end_line": 1058,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/examiner.py|src.heretek_swarm.actors.examiner.ExaminerAgent._generate_quality_summary": {
       "file_path": "src/heretek_swarm/actors/examiner.py",
@@ -59354,7 +59354,7 @@
       "start_line": 1060,
       "end_line": 1082,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/examiner.py|src.heretek_swarm.actors.examiner.ExaminerAgent._handle_execute_stress_test": {
       "file_path": "src/heretek_swarm/actors/examiner.py",
@@ -59362,7 +59362,7 @@
       "start_line": 1126,
       "end_line": 1198,
       "type": "METHOD",
-      "status": "added"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/examiner.py|src.heretek_swarm.actors.examiner.ExaminerAgent._handle_get_stress_test_results": {
       "file_path": "src/heretek_swarm/actors/examiner.py",
@@ -59370,7 +59370,7 @@
       "start_line": 1200,
       "end_line": 1242,
       "type": "METHOD",
-      "status": "added"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/examiner.py|src.heretek_swarm.actors.examiner.ExaminerAgent._handle_report_capability_gap": {
       "file_path": "src/heretek_swarm/actors/examiner.py",
@@ -59378,7 +59378,7 @@
       "start_line": 1244,
       "end_line": 1273,
       "type": "METHOD",
-      "status": "added"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/examiner.py|src.heretek_swarm.actors.examiner.ExaminerAgent._handle_get_safety_bounds": {
       "file_path": "src/heretek_swarm/actors/examiner.py",
@@ -59386,7 +59386,7 @@
       "start_line": 1275,
       "end_line": 1302,
       "type": "METHOD",
-      "status": "added"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/examiner.py|src.heretek_swarm.actors.examiner.ExaminerAgent._handle_get_incident_reports": {
       "file_path": "src/heretek_swarm/actors/examiner.py",
@@ -59394,7 +59394,7 @@
       "start_line": 1304,
       "end_line": 1350,
       "type": "METHOD",
-      "status": "added"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/explorer.py|src.heretek_swarm.actors.explorer.OpportunityType": {
       "file_path": "src/heretek_swarm/actors/explorer.py",
