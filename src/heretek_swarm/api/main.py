@@ -143,8 +143,6 @@ async def _init_config_service() -> None:
         logger.warning("ConfigurationService not available", error=str(e))
         logger.info("Using environment variables for configuration")
 
-    return config_source
-
 
 async def _init_supervisor() -> None:
     """Initialize ActorSupervisor."""

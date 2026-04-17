@@ -258,6 +258,9 @@ async def _ws_handle_dashboard_message(
 # Create WebSocket router
 router = APIRouter()
 
+# Authentication token description constant
+_AUTH_TOKEN_DESC = "Authentication token"
+
 # =============================================================================
 # Connection Manager
 # =============================================================================
@@ -520,7 +523,7 @@ _agent_states: dict[str, dict[str, Any]] = {}
 async def execution_websocket(
     websocket: WebSocket,
     execution_id: str,
-    token: str | None = Query(None, description="Authentication token"),
+    token: str | None = Query(None, description=_AUTH_TOKEN_DESC),
 ):
     """
     WebSocket endpoint for real-time execution updates.
@@ -649,7 +652,7 @@ async def get_execution_update(execution_id: str) -> dict[str, Any]:
 
 @router.websocket("/ws/a2a")
 async def a2a_websocket(
-    websocket: WebSocket, token: str | None = Query(None, description="Authentication token")
+    websocket: WebSocket, token: str | None = Query(None, description=_AUTH_TOKEN_DESC)
 ):
     """
     WebSocket endpoint for A2A protocol message stream.
@@ -745,7 +748,7 @@ async def a2a_websocket(
 async def agent_events_websocket(
     websocket: WebSocket,
     agent_id: str,
-    token: str | None = Query(None, description="Authentication token"),
+    token: str | None = Query(None, description=_AUTH_TOKEN_DESC),
 ):
     """
     WebSocket endpoint for agent-specific event stream.
@@ -823,7 +826,7 @@ async def agent_events_websocket(
 async def agent_status_websocket(
     websocket: WebSocket,
     agent_id: str | None = Query(None, description="Specific agent ID to monitor"),
-    token: str | None = Query(None, description="Authentication token"),
+    token: str | None = Query(None, description=_AUTH_TOKEN_DESC),
 ):
     """
     WebSocket endpoint for real-time agent status updates.
@@ -896,7 +899,7 @@ async def agent_status_websocket(
 async def workflow_progress_websocket(
     websocket: WebSocket,
     workflow_id: str | None = Query(None, description="Specific workflow ID to monitor"),
-    token: str | None = Query(None, description="Authentication token"),
+    token: str | None = Query(None, description=_AUTH_TOKEN_DESC),
 ):
     """
     WebSocket endpoint for real-time workflow progress updates.
@@ -969,7 +972,7 @@ async def workflow_progress_websocket(
 async def agent_metrics_websocket(
     websocket: WebSocket,
     agent_id: str | None = Query(None, description="Specific agent ID to monitor"),
-    token: str | None = Query(None, description="Authentication token"),
+    token: str | None = Query(None, description=_AUTH_TOKEN_DESC),
 ):
     """
     WebSocket endpoint for real-time agent metrics updates.
@@ -1044,7 +1047,7 @@ async def agent_metrics_websocket(
 
 @router.websocket("/ws/dashboard")
 async def dashboard_websocket(
-    websocket: WebSocket, token: str | None = Query(None, description="Authentication token")
+    websocket: WebSocket, token: str | None = Query(None, description=_AUTH_TOKEN_DESC)
 ):
     """
     WebSocket endpoint for real-time dashboard updates.
@@ -1111,7 +1114,7 @@ async def dashboard_websocket(
 
 @router.websocket("/ws/observability")
 async def observability_websocket(
-    websocket: WebSocket, token: str | None = Query(None, description="Authentication token")
+    websocket: WebSocket, token: str | None = Query(None, description=_AUTH_TOKEN_DESC)
 ):
     """
     WebSocket endpoint for real-time observability updates.
@@ -1211,8 +1214,9 @@ async def logs_websocket(
 
 
 @router.websocket("/ws/agents")
+
 async def all_agents_websocket(
-    websocket: WebSocket, token: str | None = Query(None, description="Authentication token")
+    websocket: WebSocket, token: str | None = Query(None, description=_AUTH_TOKEN_DESC)
 ):
     """
     WebSocket endpoint for all agent state updates.

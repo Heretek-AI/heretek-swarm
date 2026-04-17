@@ -19,6 +19,9 @@ Version: 1.0.0
 
 from __future__ import annotations
 
+# Sentinel values for test case defaults
+_UNNAMED_TEST = "Unnamed Test"
+
 import asyncio
 import json
 import re
@@ -520,7 +523,7 @@ Format as JSON with keys: objectives, test_cases, success_criteria, risks"""
 
         try:
             tc_id = test_case.get("id", f"tc_{start_time.timestamp()}")
-            tc_name = test_case.get("name", "Unnamed Test")
+            tc_name = test_case.get("name", _UNNAMED_TEST)
             tc_type = TestType(test_case.get("test_type", "unit"))
 
             result = await asyncio.wait_for(self._run_test_logic(test_case), timeout=timeout)
@@ -541,7 +544,7 @@ Format as JSON with keys: objectives, test_cases, success_criteria, risks"""
         except TimeoutError:
             return TestCase(
                 id=test_case.get("id", "unknown"),
-                name=test_case.get("name", "Unnamed Test"),
+                name=test_case.get("name", _UNNAMED_TEST),
                 test_type=TestType(test_case.get("test_type", "unit")),
                 description=test_case.get("description", ""),
                 status=TestStatus.ERROR,
@@ -551,7 +554,7 @@ Format as JSON with keys: objectives, test_cases, success_criteria, risks"""
         except Exception as e:
             return TestCase(
                 id=test_case.get("id", "unknown"),
-                name=test_case.get("name", "Unnamed Test"),
+                name=test_case.get("name", _UNNAMED_TEST),
                 test_type=TestType(test_case.get("test_type", "unit")),
                 description=test_case.get("description", ""),
                 status=TestStatus.ERROR,

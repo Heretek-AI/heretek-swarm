@@ -32,8 +32,6 @@ from heretek_swarm.actors.mixins import (
     ValidationMixin,
 )
 from heretek_swarm.actors.validation import validate_message
-
-# INTG-03: Paradigm Shift Detection
 from heretek_swarm.coordination.paradigm_detection import (
     ChangeRequest as PDChangeRequest,
     ParadigmDetector,
@@ -47,6 +45,9 @@ from heretek_swarm.coordination.paradigm_detection import (
 )
 
 logger = structlog.get_logger(__name__)
+
+# Error message constant
+_PARADIGM_NOT_INITIALIZED = "ParadigmDetector not initialized"
 
 
 class ChangeStatus(Enum):
@@ -972,7 +973,7 @@ class CatalystAgent(
         """Detect paradigm shift from change patterns."""
         if not self._paradigm_detector:
             await self._send_error(
-                message.sender_id, "ParadigmDetector not initialized", message.message_type
+                message.sender_id, _PARADIGM_NOT_INITIALIZED, message.message_type
             )
             return
         try:
@@ -1014,7 +1015,7 @@ class CatalystAgent(
         """Get status of paradigm shifts."""
         if not self._paradigm_detector:
             await self._send_error(
-                message.sender_id, "ParadigmDetector not initialized", message.message_type
+                message.sender_id, _PARADIGM_NOT_INITIALIZED, message.message_type
             )
             return
         try:
@@ -1046,7 +1047,7 @@ class CatalystAgent(
         """Handle Beta validation result for false positive check."""
         if not self._paradigm_detector:
             await self._send_error(
-                message.sender_id, "ParadigmDetector not initialized", message.message_type
+                message.sender_id, _PARADIGM_NOT_INITIALIZED, message.message_type
             )
             return
         try:
@@ -1079,7 +1080,7 @@ class CatalystAgent(
         """Get current change velocity metrics."""
         if not self._paradigm_detector:
             await self._send_error(
-                message.sender_id, "ParadigmDetector not initialized", message.message_type
+                message.sender_id, _PARADIGM_NOT_INITIALIZED, message.message_type
             )
             return
         try:
@@ -1100,7 +1101,7 @@ class CatalystAgent(
         """Get cumulative impact for a shift."""
         if not self._paradigm_detector:
             await self._send_error(
-                message.sender_id, "ParadigmDetector not initialized", message.message_type
+                message.sender_id, _PARADIGM_NOT_INITIALIZED, message.message_type
             )
             return
         try:

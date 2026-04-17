@@ -15,6 +15,11 @@ from heretek_swarm.security.threat_detection import AlertPriority
 
 logger = structlog.get_logger("SentinelPrimeAgent")
 
+# Sentinel values for repeated error message literals
+_ERR_MISSING_SOURCE = "Missing source"
+_ERR_MISSING_INCIDENT_ID = "Missing incident_id"
+_ERR_INCIDENT_NOT_FOUND = "Incident not found"
+
 
 class SentinelPrimeHandlers:
     """
@@ -179,9 +184,12 @@ class SentinelPrimeHandlers:
             content = message.content
             source = content.get("source")
             priority_str = content.get("priority", "critical")
+            if not source:
+                await self._send_error(message, _ERR_MISSING_SOURCE)
+                return
 
             if not source:
-                await self._send_error(message, "Missing source")
+                await self._send_error(message, _ERR_MISSING_SOURCE)
                 return
 
             try:
@@ -212,7 +220,7 @@ class SentinelPrimeHandlers:
             duration_seconds = content.get("duration_seconds", 300)
 
             if not source:
-                await self._send_error(message, "Missing source")
+                await self._send_error(message, _ERR_MISSING_SOURCE)
                 return
 
             import time
@@ -368,12 +376,12 @@ class SentinelPrimeHandlers:
             deep_analysis = content.get("deep_analysis", False)
 
             if not incident_id:
-                await self._send_error(message, "Missing incident_id")
+                await self._send_error(message, _ERR_MISSING_INCIDENT_ID)
                 return
 
             incident = self._incidents.get(incident_id)
             if not incident:
-                await self._send_error(message, "Incident not found", incident_id)
+                await self._send_error(message, _ERR_INCIDENT_NOT_FOUND, incident_id)
                 return
 
             # Perform analysis
@@ -418,12 +426,12 @@ class SentinelPrimeHandlers:
             incident_id = content.get("incident_id")
 
             if not incident_id:
-                await self._send_error(message, "Missing incident_id")
+                await self._send_error(message, _ERR_MISSING_INCIDENT_ID)
                 return
 
             incident = self._incidents.get(incident_id)
             if not incident:
-                await self._send_error(message, "Incident not found", incident_id)
+                await self._send_error(message, _ERR_INCIDENT_NOT_FOUND, incident_id)
                 return
 
             response_content = {
@@ -534,12 +542,12 @@ class SentinelPrimeHandlers:
             manual = content.get("manual", False)
 
             if not incident_id:
-                await self._send_error(message, "Missing incident_id")
+                await self._send_error(message, _ERR_MISSING_INCIDENT_ID)
                 return
 
             incident = self._incidents.get(incident_id)
             if not incident:
-                await self._send_error(message, "Incident not found", incident_id)
+                await self._send_error(message, _ERR_INCIDENT_NOT_FOUND, incident_id)
                 return
 
             executed_actions = []
@@ -743,7 +751,7 @@ class SentinelPrimeHandlers:
             reason = content.get("reason", "manual_block")
 
             if not source:
-                await self._send_error(message, "Missing source")
+                await self._send_error(message, _ERR_MISSING_SOURCE)
                 return
 
             self._blocked_sources.add(source)

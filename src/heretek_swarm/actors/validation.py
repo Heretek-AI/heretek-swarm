@@ -18,6 +18,10 @@ from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
+# Field description constant
+_TASK_DESCRIPTION = "Task description"
+
+
 
 # =============================================================================
 # Behavioral Baseline Initialization - Static Rules Bootstrap
@@ -342,7 +346,7 @@ class CollectiveTaskRequest(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
-    task: str = Field(..., min_length=1, max_length=10000, description="Task description")
+    task: str = Field(..., min_length=1, max_length=10000, description=_TASK_DESCRIPTION)
     participants: list[str] = Field(default_factory=list, description="Participant actor IDs")
 
 
@@ -353,7 +357,7 @@ class TaskRequest(BaseModel):
 
     task_id: str | None = Field(None, max_length=64, description="Optional task identifier")
     name: str = Field(..., min_length=1, max_length=256, description="Task name")
-    description: str = Field(..., min_length=1, max_length=10000, description="Task description")
+    description: str = Field(..., min_length=1, max_length=10000, description=_TASK_DESCRIPTION)
     assigned_agents: list[str] | None = Field(
         default_factory=list, description="Agents assigned to this task"
     )
@@ -385,7 +389,7 @@ class CoordinationRequest(BaseModel):
 
     task_id: str = Field(..., min_length=1, max_length=64, description="Task identifier")
     task_type: str = Field(..., min_length=1, max_length=64, description="Type of task")
-    description: str = Field(..., min_length=1, max_length=2000, description="Task description")
+    description: str = Field(..., min_length=1, max_length=2000, description=_TASK_DESCRIPTION)
     input_data: dict[str, Any] = Field(default_factory=dict, description="Task input data")
     protocol: dict[str, Any] = Field(default_factory=dict, description="Communication protocol")
     reply_to: str | None = Field(None, max_length=256, description="Reply topic")

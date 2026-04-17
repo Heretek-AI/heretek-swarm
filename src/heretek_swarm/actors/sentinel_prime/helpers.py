@@ -172,7 +172,7 @@ class SentinelPrimeHelpers:
     async def _check_core_triad_escalation(
         self,
         source: str,
-        threat_result: Any,
+        _threat_result: Any,
     ) -> None:
         """Check if threat warrants escalation to Core Triad."""
         from heretek_swarm.actors.sentinel_prime.types import IncidentStatus
@@ -328,6 +328,19 @@ class SentinelPrimeHelpers:
 
         return min(score, 10.0)
 
+    def _correlation_score(self, incident: SecurityIncident, other: SecurityIncident) -> float:
+        """Compute correlation score between two incidents."""
+        score = 0.0
+        if incident.source_actor and incident.source_actor == other.source_actor:
+            score += 0.4
+        if incident.target_actor and incident.target_actor == other.target_actor:
+            score += 0.3
+        if incident.threat_type == other.threat_type:
+            score += 0.2
+        shared = {i.value for i in incident.indicators} & {i.value for i in other.indicators}
+        score += len(shared) * 0.1
+        return score
+
     # =====================================================================
     # Correlation Analysis
     # =====================================================================
@@ -343,28 +356,7 @@ class SentinelPrimeHelpers:
         for other in self._incidents.values():
             if other.incident_id == incident.incident_id:
                 continue
-
-            correlation_score = 0.0
-
-            # Same source actor
-            if incident.source_actor and incident.source_actor == other.source_actor:
-                correlation_score += 0.4
-
-            # Same target
-            if incident.target_actor and incident.target_actor == other.target_actor:
-                correlation_score += 0.3
-
-            # Same threat type
-            if incident.threat_type == other.threat_type:
-                correlation_score += 0.2
-
-            # Shared indicators
-            shared_indicators = {i.value for i in incident.indicators} & {
-                i.value for i in other.indicators
-            }
-            correlation_score += len(shared_indicators) * 0.1
-
-            if correlation_score > 0.3:
+            if self._correlation_score(incident, other) > 0.3:
                 correlated.append(other)
 
         correlated.sort(key=self._calculate_severity_score, reverse=True)

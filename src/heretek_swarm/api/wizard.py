@@ -402,12 +402,12 @@ async def get_config_status() -> dict[str, Any]:
 # Validation Error Messages (Constants)
 # =============================================================================
 
-API_KEY_REQUIRED = "API key is required"
-CONNECTION_TIMED_OUT = "Connection timed out"
+API_KEY_REQUIRED = API_KEY_REQUIRED
+CONNECTION_TIMED_OUT = CONNECTION_TIMED_OUT
 CONNECTION_FAILED = "Connection failed: {error}"
-INVALID_API_KEY = "Invalid API key"
+INVALID_API_KEY = INVALID_API_KEY
 LITE_LLM_NOT_HEALTHY = "LiteLLM proxy not healthy"
-OLLAMA_NOT_RUNNING = "Connection timed out - is Ollama running?"
+OLLAMA_NOT_RUNNING = OLLAMA_NOT_RUNNING
 UNKNOWN_PROVIDER_TYPE = "Unknown provider type"
 VALIDATION_FAILED = "Validation failed: {error}"
 
@@ -503,7 +503,7 @@ async def _validate_anthropic(api_key: str | None, base_url: str) -> dict[str, A
     import httpx
 
     if not api_key:
-        return {"valid": False, "error": "API key is required"}
+        return {"valid": False, "error": API_KEY_REQUIRED}
 
     try:
         async with httpx.AsyncClient() as client:
@@ -530,11 +530,11 @@ async def _validate_anthropic(api_key: str | None, base_url: str) -> dict[str, A
                 }
             error_data = response.json() if response.text else {}
             error_msg = (
-                error_data.get("error", {}).get("message", response.text) or "Invalid API key"
+                error_data.get("error", {}).get("message", response.text) or INVALID_API_KEY
             )
             return {"valid": False, "error": error_msg}
     except httpx.TimeoutException:
-        return {"valid": False, "error": "Connection timed out"}
+        return {"valid": False, "error": CONNECTION_TIMED_OUT}
     except Exception as e:
         return {"valid": False, "error": f"Connection failed: {e!s}"}
 
@@ -544,7 +544,7 @@ async def _validate_openai(api_key: str | None, base_url: str) -> dict[str, Any]
     import httpx
 
     if not api_key:
-        return {"valid": False, "error": "API key is required"}
+        return {"valid": False, "error": API_KEY_REQUIRED}
 
     try:
         async with httpx.AsyncClient() as client:
@@ -560,9 +560,9 @@ async def _validate_openai(api_key: str | None, base_url: str) -> dict[str, Any]
                     "provider_id": "openai",
                     "message": "API key is valid",
                 }
-            return {"valid": False, "error": "Invalid API key"}
+            return {"valid": False, "error": INVALID_API_KEY}
     except httpx.TimeoutException:
-        return {"valid": False, "error": "Connection timed out"}
+        return {"valid": False, "error": CONNECTION_TIMED_OUT}
     except Exception as e:
         return {"valid": False, "error": f"Connection failed: {e!s}"}
 
@@ -586,7 +586,7 @@ async def _validate_ollama(api_key: str | None, base_url: str) -> dict[str, Any]
                 }
             return {"valid": False, "error": "Failed to connect to Ollama"}
     except httpx.TimeoutException:
-        return {"valid": False, "error": "Connection timed out - is Ollama running?"}
+        return {"valid": False, "error": OLLAMA_NOT_RUNNING}
     except Exception as e:
         return {"valid": False, "error": f"Connection failed: {e!s}"}
 
@@ -596,7 +596,7 @@ async def _validate_groq(api_key: str | None, base_url: str) -> dict[str, Any]:
     import httpx
 
     if not api_key:
-        return {"valid": False, "error": "API key is required"}
+        return {"valid": False, "error": API_KEY_REQUIRED}
 
     try:
         async with httpx.AsyncClient() as client:
@@ -620,9 +620,9 @@ async def _validate_groq(api_key: str | None, base_url: str) -> dict[str, Any]:
                     "provider_id": "groq",
                     "message": "API key is valid",
                 }
-            return {"valid": False, "error": "Invalid API key"}
+            return {"valid": False, "error": INVALID_API_KEY}
     except httpx.TimeoutException:
-        return {"valid": False, "error": "Connection timed out"}
+        return {"valid": False, "error": CONNECTION_TIMED_OUT}
     except Exception as e:
         return {"valid": False, "error": f"Connection failed: {e!s}"}
 
@@ -632,7 +632,7 @@ async def _validate_mistral(api_key: str | None, base_url: str) -> dict[str, Any
     import httpx
 
     if not api_key:
-        return {"valid": False, "error": "API key is required"}
+        return {"valid": False, "error": API_KEY_REQUIRED}
 
     try:
         async with httpx.AsyncClient() as client:
@@ -656,9 +656,9 @@ async def _validate_mistral(api_key: str | None, base_url: str) -> dict[str, Any
                     "provider_id": "mistral",
                     "message": "API key is valid",
                 }
-            return {"valid": False, "error": "Invalid API key"}
+            return {"valid": False, "error": INVALID_API_KEY}
     except httpx.TimeoutException:
-        return {"valid": False, "error": "Connection timed out"}
+        return {"valid": False, "error": CONNECTION_TIMED_OUT}
     except Exception as e:
         return {"valid": False, "error": f"Connection failed: {e!s}"}
 
@@ -668,7 +668,7 @@ async def _validate_deepseek(api_key: str | None, base_url: str) -> dict[str, An
     import httpx
 
     if not api_key:
-        return {"valid": False, "error": "API key is required"}
+        return {"valid": False, "error": API_KEY_REQUIRED}
 
     try:
         async with httpx.AsyncClient() as client:
@@ -692,9 +692,9 @@ async def _validate_deepseek(api_key: str | None, base_url: str) -> dict[str, An
                     "provider_id": "deepseek",
                     "message": "API key is valid",
                 }
-            return {"valid": False, "error": "Invalid API key"}
+            return {"valid": False, "error": INVALID_API_KEY}
     except httpx.TimeoutException:
-        return {"valid": False, "error": "Connection timed out"}
+        return {"valid": False, "error": CONNECTION_TIMED_OUT}
     except Exception as e:
         return {"valid": False, "error": f"Connection failed: {e!s}"}
 

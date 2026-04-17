@@ -46,8 +46,8 @@ WORKDIR /app
 COPY --from=builder /tmp/build /app/build
 COPY --from=builder /usr/local/lib/python3.13/site-packages /usr/local/lib/python3.13/site-packages
 
-# Copy source code (for development mode)
-COPY --chown=heretek:heretek src/ ./src
+# Copy source code (for development mode) — owned by root so runtime user cannot modify
+COPY --chown=root:root src/ ./src
 
 # Create necessary directories
 RUN mkdir -p /app/logs /app/data /app/workflows /app/documents

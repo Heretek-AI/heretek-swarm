@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-17T18:16:12.894136+00:00",
+    "generated_at": "2026-04-17T19:10:29.266401+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -8154,7 +8154,7 @@
       ]
     },
     "src/heretek_swarm/actors/supervisor.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.actors.supervisor.get_supervisor",
@@ -8168,7 +8168,7 @@
           "start_line": 43,
           "end_line": 556,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.supervisor.ActorSupervisor.__init__",
@@ -8196,7 +8196,7 @@
           "start_line": 208,
           "end_line": 238,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.supervisor.ActorSupervisor.terminate_all",
@@ -11872,94 +11872,122 @@
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.api.workflows.create_workflow",
-          "start_line": 29,
-          "end_line": 58,
+          "start_line": 34,
+          "end_line": 63,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.workflows.list_workflows",
-          "start_line": 62,
-          "end_line": 86,
+          "start_line": 67,
+          "end_line": 91,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.workflows.get_workflow",
-          "start_line": 90,
-          "end_line": 119,
+          "start_line": 95,
+          "end_line": 124,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.workflows.execute_workflow",
-          "start_line": 123,
-          "end_line": 160,
+          "start_line": 128,
+          "end_line": 165,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.workflows.delete_workflow",
-          "start_line": 164,
-          "end_line": 188,
+          "start_line": 169,
+          "end_line": 193,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.workflows.get_workflow_status",
-          "start_line": 192,
-          "end_line": 228,
+          "start_line": 197,
+          "end_line": 233,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.workflows.cancel_workflow",
-          "start_line": 232,
-          "end_line": 258,
+          "start_line": 237,
+          "end_line": 263,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.workflows.validate_workflow_endpoint",
-          "start_line": 262,
-          "end_line": 326,
+          "start_line": 267,
+          "end_line": 331,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.workflows.validate_workflow_draft",
-          "start_line": 330,
-          "end_line": 356,
+          "start_line": 335,
+          "end_line": 361,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.workflows._build_sse_cancelled_payload",
+          "start_line": 369,
+          "end_line": 371,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.workflows._build_sse_error_payload",
+          "start_line": 374,
+          "end_line": 376,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.workflows._build_workflow_sse_cancelled_payload",
+          "start_line": 379,
+          "end_line": 381,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.workflows._build_workflow_sse_error_payload",
+          "start_line": 384,
+          "end_line": 386,
+          "node_type": "FUNCTION",
+          "status": "added"
         },
         {
           "qualified_name": "src.heretek_swarm.api.workflows.workflow_events_stream",
-          "start_line": 370,
-          "end_line": 475,
+          "start_line": 395,
+          "end_line": 490,
           "node_type": "FUNCTION",
-          "status": "added"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.workflows.workflow_events_stream.event_generator",
-          "start_line": 393,
-          "end_line": 465,
+          "start_line": 418,
+          "end_line": 480,
           "node_type": "FUNCTION",
-          "status": "added"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.workflows.workflow_specific_events_stream",
-          "start_line": 479,
-          "end_line": 583,
+          "start_line": 494,
+          "end_line": 586,
           "node_type": "FUNCTION",
-          "status": "added"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.workflows.workflow_specific_events_stream.event_generator",
-          "start_line": 499,
-          "end_line": 573,
+          "start_line": 514,
+          "end_line": 576,
           "node_type": "FUNCTION",
-          "status": "added"
+          "status": "modified"
         }
       ]
     },
@@ -14316,18 +14344,46 @@
           "status": "added"
         },
         {
-          "qualified_name": "src.heretek_swarm.collective.emergent_detection_utils.calculate_solution_novelty",
+          "qualified_name": "src.heretek_swarm.collective.emergent_detection_utils._compute_problem_novelty",
           "start_line": 303,
-          "end_line": 412,
+          "end_line": 317,
           "node_type": "FUNCTION",
           "status": "added"
         },
         {
-          "qualified_name": "src.heretek_swarm.collective.emergent_detection_utils._calculate_signature_difference",
-          "start_line": 415,
-          "end_line": 454,
+          "qualified_name": "src.heretek_swarm.collective.emergent_detection_utils._compute_approach_novelty",
+          "start_line": 320,
+          "end_line": 335,
           "node_type": "FUNCTION",
           "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.collective.emergent_detection_utils._compute_result_novelty",
+          "start_line": 338,
+          "end_line": 355,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.collective.emergent_detection_utils.calculate_solution_novelty",
+          "start_line": 358,
+          "end_line": 402,
+          "node_type": "FUNCTION",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.collective.emergent_detection_utils._diff_value_pair",
+          "start_line": 405,
+          "end_line": 418,
+          "node_type": "FUNCTION",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.collective.emergent_detection_utils._calculate_signature_difference",
+          "start_line": 421,
+          "end_line": 442,
+          "node_type": "FUNCTION",
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.collective.emergent_detection_utils.classify_solution_provenance",
@@ -43482,16 +43538,9 @@
         {
           "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas",
           "start_line": 85,
-          "end_line": 253,
+          "end_line": 255,
           "node_type": "FUNCTION",
           "status": "modified"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback",
-          "start_line": 107,
-          "end_line": 110,
-          "node_type": "FUNCTION",
-          "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.onConnect",
@@ -43550,32 +43599,39 @@
           "status": "added"
         },
         {
-          "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setNodes() callback",
-          "start_line": 197,
-          "end_line": 197,
+          "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback",
+          "start_line": 193,
+          "end_line": 207,
           "node_type": "FUNCTION",
-          "status": "added"
+          "status": "modified"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setNodes() callback",
+          "start_line": 200,
+          "end_line": 200,
+          "node_type": "FUNCTION",
+          "status": "modified"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setNodes() callback.nds.filter() callback",
-          "start_line": 197,
-          "end_line": 197,
+          "start_line": 200,
+          "end_line": 200,
           "node_type": "FUNCTION",
-          "status": "added"
+          "status": "modified"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setEdges() callback",
-          "start_line": 198,
-          "end_line": 198,
+          "start_line": 201,
+          "end_line": 201,
           "node_type": "FUNCTION",
-          "status": "added"
+          "status": "modified"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setEdges() callback.eds.filter() callback",
-          "start_line": 198,
-          "end_line": 198,
+          "start_line": 201,
+          "end_line": 201,
           "node_type": "FUNCTION",
-          "status": "added"
+          "status": "modified"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.NODE_PALETTE.map() callback",
@@ -50439,10 +50495,10 @@
       "methods": [
         {
           "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder",
-          "start_line": 56,
-          "end_line": 615,
+          "start_line": 61,
+          "end_line": 714,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.nodePalette",
@@ -50879,11 +50935,46 @@
           "status": "deleted"
         },
         {
+          "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback",
+          "start_line": 583,
+          "end_line": 638,
+          "node_type": "FUNCTION",
+          "status": "modified"
+        },
+        {
           "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.useEffect() callback",
           "start_line": 588,
           "end_line": 590,
           "node_type": "FUNCTION",
           "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onopen",
+          "start_line": 599,
+          "end_line": 603,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onopen.setExecutionState() callback",
+          "start_line": 602,
+          "end_line": 602,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onmessage",
+          "start_line": 605,
+          "end_line": 628,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onmessage.setTimeout() callback",
+          "start_line": 620,
+          "end_line": 623,
+          "node_type": "FUNCTION",
+          "status": "added"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.savedWorkflows.map() callback",
@@ -50893,11 +50984,32 @@
           "status": "unchanged"
         },
         {
+          "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onerror",
+          "start_line": 630,
+          "end_line": 635,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onerror.setExecutionState() callback",
+          "start_line": 632,
+          "end_line": 632,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
           "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.validation.errors.map() callback",
           "start_line": 646,
           "end_line": 647,
           "node_type": "FUNCTION",
           "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback.saveResponse.body.nodes.nodes.map() callback",
+          "start_line": 655,
+          "end_line": 655,
+          "node_type": "FUNCTION",
+          "status": "added"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.<unknown>.map() callback",
@@ -50919,6 +51031,13 @@
           "end_line": 665,
           "node_type": "FUNCTION",
           "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback.setExecutionState() callback",
+          "start_line": 672,
+          "end_line": 672,
+          "node_type": "FUNCTION",
+          "status": "added"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.map() callback",
@@ -53471,7 +53590,7 @@
         {
           "qualified_name": "dashboard.frontend.src.utils.setupValidation.normalizeUrl",
           "start_line": 39,
-          "end_line": 52,
+          "end_line": 51,
           "node_type": "FUNCTION",
           "status": "modified"
         },
@@ -55551,6 +55670,81 @@
           "end_line": 287,
           "node_type": "METHOD",
           "status": "added"
+        }
+      ]
+    },
+    "src/heretek_swarm/actors/sentinel/helpers.py": {
+      "file_status": "modified",
+      "methods": [
+        {
+          "qualified_name": "src.heretek_swarm.actors.sentinel.helpers.SentinelHelpers",
+          "start_line": 21,
+          "end_line": 230,
+          "node_type": "CLASS",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.actors.sentinel.helpers.SentinelHelpers.__init__",
+          "start_line": 57,
+          "end_line": 68,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.actors.sentinel.helpers.SentinelHelpers._compile_patterns",
+          "start_line": 70,
+          "end_line": 77,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.actors.sentinel.helpers.SentinelHelpers._check_injection_patterns",
+          "start_line": 79,
+          "end_line": 105,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.actors.sentinel.helpers.SentinelHelpers._check_pii_patterns",
+          "start_line": 107,
+          "end_line": 133,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.actors.sentinel.helpers.SentinelHelpers._record_violation",
+          "start_line": 135,
+          "end_line": 176,
+          "node_type": "METHOD",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.actors.sentinel.helpers.SentinelHelpers._generate_safety_report",
+          "start_line": 178,
+          "end_line": 230,
+          "node_type": "METHOD",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.actors.sentinel.helpers.check_injection_patterns",
+          "start_line": 234,
+          "end_line": 261,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.actors.sentinel.helpers.check_pii_patterns",
+          "start_line": 264,
+          "end_line": 291,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.actors.sentinel.helpers.generate_safety_report",
+          "start_line": 294,
+          "end_line": 342,
+          "node_type": "FUNCTION",
+          "status": "modified"
         }
       ]
     }
@@ -64570,7 +64764,7 @@
       "start_line": 43,
       "end_line": 556,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/supervisor.py|src.heretek_swarm.actors.supervisor.ActorSupervisor.__init__": {
       "file_path": "src/heretek_swarm/actors/supervisor.py",
@@ -64602,7 +64796,7 @@
       "start_line": 208,
       "end_line": 238,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/supervisor.py|src.heretek_swarm.actors.supervisor.ActorSupervisor.terminate_all": {
       "file_path": "src/heretek_swarm/actors/supervisor.py",
@@ -68655,106 +68849,138 @@
     "src/heretek_swarm/api/workflows.py|src.heretek_swarm.api.workflows.create_workflow": {
       "file_path": "src/heretek_swarm/api/workflows.py",
       "qualified_name": "src.heretek_swarm.api.workflows.create_workflow",
-      "start_line": 29,
-      "end_line": 58,
+      "start_line": 34,
+      "end_line": 63,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/workflows.py|src.heretek_swarm.api.workflows.list_workflows": {
       "file_path": "src/heretek_swarm/api/workflows.py",
       "qualified_name": "src.heretek_swarm.api.workflows.list_workflows",
-      "start_line": 62,
-      "end_line": 86,
+      "start_line": 67,
+      "end_line": 91,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/workflows.py|src.heretek_swarm.api.workflows.get_workflow": {
       "file_path": "src/heretek_swarm/api/workflows.py",
       "qualified_name": "src.heretek_swarm.api.workflows.get_workflow",
-      "start_line": 90,
-      "end_line": 119,
+      "start_line": 95,
+      "end_line": 124,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/workflows.py|src.heretek_swarm.api.workflows.execute_workflow": {
       "file_path": "src/heretek_swarm/api/workflows.py",
       "qualified_name": "src.heretek_swarm.api.workflows.execute_workflow",
-      "start_line": 123,
-      "end_line": 160,
+      "start_line": 128,
+      "end_line": 165,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/workflows.py|src.heretek_swarm.api.workflows.delete_workflow": {
       "file_path": "src/heretek_swarm/api/workflows.py",
       "qualified_name": "src.heretek_swarm.api.workflows.delete_workflow",
-      "start_line": 164,
-      "end_line": 188,
+      "start_line": 169,
+      "end_line": 193,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/workflows.py|src.heretek_swarm.api.workflows.get_workflow_status": {
       "file_path": "src/heretek_swarm/api/workflows.py",
       "qualified_name": "src.heretek_swarm.api.workflows.get_workflow_status",
-      "start_line": 192,
-      "end_line": 228,
+      "start_line": 197,
+      "end_line": 233,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/workflows.py|src.heretek_swarm.api.workflows.cancel_workflow": {
       "file_path": "src/heretek_swarm/api/workflows.py",
       "qualified_name": "src.heretek_swarm.api.workflows.cancel_workflow",
-      "start_line": 232,
-      "end_line": 258,
+      "start_line": 237,
+      "end_line": 263,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/workflows.py|src.heretek_swarm.api.workflows.validate_workflow_endpoint": {
       "file_path": "src/heretek_swarm/api/workflows.py",
       "qualified_name": "src.heretek_swarm.api.workflows.validate_workflow_endpoint",
-      "start_line": 262,
-      "end_line": 326,
+      "start_line": 267,
+      "end_line": 331,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/workflows.py|src.heretek_swarm.api.workflows.validate_workflow_draft": {
       "file_path": "src/heretek_swarm/api/workflows.py",
       "qualified_name": "src.heretek_swarm.api.workflows.validate_workflow_draft",
-      "start_line": 330,
-      "end_line": 356,
+      "start_line": 335,
+      "end_line": 361,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
+    },
+    "src/heretek_swarm/api/workflows.py|src.heretek_swarm.api.workflows._build_sse_cancelled_payload": {
+      "file_path": "src/heretek_swarm/api/workflows.py",
+      "qualified_name": "src.heretek_swarm.api.workflows._build_sse_cancelled_payload",
+      "start_line": 369,
+      "end_line": 371,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/api/workflows.py|src.heretek_swarm.api.workflows._build_sse_error_payload": {
+      "file_path": "src/heretek_swarm/api/workflows.py",
+      "qualified_name": "src.heretek_swarm.api.workflows._build_sse_error_payload",
+      "start_line": 374,
+      "end_line": 376,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/api/workflows.py|src.heretek_swarm.api.workflows._build_workflow_sse_cancelled_payload": {
+      "file_path": "src/heretek_swarm/api/workflows.py",
+      "qualified_name": "src.heretek_swarm.api.workflows._build_workflow_sse_cancelled_payload",
+      "start_line": 379,
+      "end_line": 381,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/api/workflows.py|src.heretek_swarm.api.workflows._build_workflow_sse_error_payload": {
+      "file_path": "src/heretek_swarm/api/workflows.py",
+      "qualified_name": "src.heretek_swarm.api.workflows._build_workflow_sse_error_payload",
+      "start_line": 384,
+      "end_line": 386,
+      "type": "FUNCTION",
+      "status": "added"
     },
     "src/heretek_swarm/api/workflows.py|src.heretek_swarm.api.workflows.workflow_events_stream": {
       "file_path": "src/heretek_swarm/api/workflows.py",
       "qualified_name": "src.heretek_swarm.api.workflows.workflow_events_stream",
-      "start_line": 370,
-      "end_line": 475,
+      "start_line": 395,
+      "end_line": 490,
       "type": "FUNCTION",
-      "status": "added"
+      "status": "modified"
     },
     "src/heretek_swarm/api/workflows.py|src.heretek_swarm.api.workflows.workflow_events_stream.event_generator": {
       "file_path": "src/heretek_swarm/api/workflows.py",
       "qualified_name": "src.heretek_swarm.api.workflows.workflow_events_stream.event_generator",
-      "start_line": 393,
-      "end_line": 465,
+      "start_line": 418,
+      "end_line": 480,
       "type": "FUNCTION",
-      "status": "added"
+      "status": "modified"
     },
     "src/heretek_swarm/api/workflows.py|src.heretek_swarm.api.workflows.workflow_specific_events_stream": {
       "file_path": "src/heretek_swarm/api/workflows.py",
       "qualified_name": "src.heretek_swarm.api.workflows.workflow_specific_events_stream",
-      "start_line": 479,
-      "end_line": 583,
+      "start_line": 494,
+      "end_line": 586,
       "type": "FUNCTION",
-      "status": "added"
+      "status": "modified"
     },
     "src/heretek_swarm/api/workflows.py|src.heretek_swarm.api.workflows.workflow_specific_events_stream.event_generator": {
       "file_path": "src/heretek_swarm/api/workflows.py",
       "qualified_name": "src.heretek_swarm.api.workflows.workflow_specific_events_stream.event_generator",
-      "start_line": 499,
-      "end_line": 573,
+      "start_line": 514,
+      "end_line": 576,
       "type": "FUNCTION",
-      "status": "added"
+      "status": "modified"
     },
     "src/heretek_swarm/channels/defaults.py|src.heretek_swarm.channels.defaults.get_internal_channels": {
       "file_path": "src/heretek_swarm/channels/defaults.py",
@@ -71372,21 +71598,53 @@
       "type": "FUNCTION",
       "status": "added"
     },
+    "src/heretek_swarm/collective/emergent_detection_utils.py|src.heretek_swarm.collective.emergent_detection_utils._compute_problem_novelty": {
+      "file_path": "src/heretek_swarm/collective/emergent_detection_utils.py",
+      "qualified_name": "src.heretek_swarm.collective.emergent_detection_utils._compute_problem_novelty",
+      "start_line": 303,
+      "end_line": 317,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/collective/emergent_detection_utils.py|src.heretek_swarm.collective.emergent_detection_utils._compute_approach_novelty": {
+      "file_path": "src/heretek_swarm/collective/emergent_detection_utils.py",
+      "qualified_name": "src.heretek_swarm.collective.emergent_detection_utils._compute_approach_novelty",
+      "start_line": 320,
+      "end_line": 335,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/collective/emergent_detection_utils.py|src.heretek_swarm.collective.emergent_detection_utils._compute_result_novelty": {
+      "file_path": "src/heretek_swarm/collective/emergent_detection_utils.py",
+      "qualified_name": "src.heretek_swarm.collective.emergent_detection_utils._compute_result_novelty",
+      "start_line": 338,
+      "end_line": 355,
+      "type": "FUNCTION",
+      "status": "added"
+    },
     "src/heretek_swarm/collective/emergent_detection_utils.py|src.heretek_swarm.collective.emergent_detection_utils.calculate_solution_novelty": {
       "file_path": "src/heretek_swarm/collective/emergent_detection_utils.py",
       "qualified_name": "src.heretek_swarm.collective.emergent_detection_utils.calculate_solution_novelty",
-      "start_line": 303,
-      "end_line": 412,
+      "start_line": 358,
+      "end_line": 402,
       "type": "FUNCTION",
-      "status": "added"
+      "status": "modified"
+    },
+    "src/heretek_swarm/collective/emergent_detection_utils.py|src.heretek_swarm.collective.emergent_detection_utils._diff_value_pair": {
+      "file_path": "src/heretek_swarm/collective/emergent_detection_utils.py",
+      "qualified_name": "src.heretek_swarm.collective.emergent_detection_utils._diff_value_pair",
+      "start_line": 405,
+      "end_line": 418,
+      "type": "FUNCTION",
+      "status": "modified"
     },
     "src/heretek_swarm/collective/emergent_detection_utils.py|src.heretek_swarm.collective.emergent_detection_utils._calculate_signature_difference": {
       "file_path": "src/heretek_swarm/collective/emergent_detection_utils.py",
       "qualified_name": "src.heretek_swarm.collective.emergent_detection_utils._calculate_signature_difference",
-      "start_line": 415,
-      "end_line": 454,
+      "start_line": 421,
+      "end_line": 442,
       "type": "FUNCTION",
-      "status": "added"
+      "status": "modified"
     },
     "src/heretek_swarm/collective/emergent_detection_utils.py|src.heretek_swarm.collective.emergent_detection_utils.classify_solution_provenance": {
       "file_path": "src/heretek_swarm/collective/emergent_detection_utils.py",
@@ -103792,17 +104050,9 @@
       "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
       "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas",
       "start_line": 85,
-      "end_line": 253,
+      "end_line": 255,
       "type": "FUNCTION",
       "status": "modified"
-    },
-    "dashboard/frontend/src/components/Canvas/Canvas.tsx|dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback": {
-      "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
-      "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback",
-      "start_line": 107,
-      "end_line": 110,
-      "type": "FUNCTION",
-      "status": "unchanged"
     },
     "dashboard/frontend/src/components/Canvas/Canvas.tsx|dashboard.frontend.src.components.Canvas.Canvas.onConnect": {
       "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
@@ -103868,37 +104118,45 @@
       "type": "FUNCTION",
       "status": "added"
     },
+    "dashboard/frontend/src/components/Canvas/Canvas.tsx|dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback": {
+      "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback",
+      "start_line": 193,
+      "end_line": 207,
+      "type": "FUNCTION",
+      "status": "modified"
+    },
     "dashboard/frontend/src/components/Canvas/Canvas.tsx|dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setNodes() callback": {
       "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
       "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setNodes() callback",
-      "start_line": 197,
-      "end_line": 197,
+      "start_line": 200,
+      "end_line": 200,
       "type": "FUNCTION",
-      "status": "added"
+      "status": "modified"
     },
     "dashboard/frontend/src/components/Canvas/Canvas.tsx|dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setNodes() callback.nds.filter() callback": {
       "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
       "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setNodes() callback.nds.filter() callback",
-      "start_line": 197,
-      "end_line": 197,
+      "start_line": 200,
+      "end_line": 200,
       "type": "FUNCTION",
-      "status": "added"
+      "status": "modified"
     },
     "dashboard/frontend/src/components/Canvas/Canvas.tsx|dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setEdges() callback": {
       "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
       "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setEdges() callback",
-      "start_line": 198,
-      "end_line": 198,
+      "start_line": 201,
+      "end_line": 201,
       "type": "FUNCTION",
-      "status": "added"
+      "status": "modified"
     },
     "dashboard/frontend/src/components/Canvas/Canvas.tsx|dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setEdges() callback.eds.filter() callback": {
       "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
       "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setEdges() callback.eds.filter() callback",
-      "start_line": 198,
-      "end_line": 198,
+      "start_line": 201,
+      "end_line": 201,
       "type": "FUNCTION",
-      "status": "added"
+      "status": "modified"
     },
     "dashboard/frontend/src/components/Canvas/Canvas.tsx|dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.NODE_PALETTE.map() callback": {
       "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
@@ -111423,10 +111681,10 @@
     "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder": {
       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
       "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder",
-      "start_line": 56,
-      "end_line": 615,
+      "start_line": 61,
+      "end_line": 714,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.nodePalette": {
       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
@@ -111924,6 +112182,14 @@
       "type": "FUNCTION",
       "status": "deleted"
     },
+    "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback": {
+      "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
+      "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback",
+      "start_line": 583,
+      "end_line": 638,
+      "type": "FUNCTION",
+      "status": "modified"
+    },
     "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.useEffect() callback": {
       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
       "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.useEffect() callback",
@@ -111931,6 +112197,38 @@
       "end_line": 590,
       "type": "FUNCTION",
       "status": "unchanged"
+    },
+    "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onopen": {
+      "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
+      "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onopen",
+      "start_line": 599,
+      "end_line": 603,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onopen.setExecutionState() callback": {
+      "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
+      "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onopen.setExecutionState() callback",
+      "start_line": 602,
+      "end_line": 602,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onmessage": {
+      "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
+      "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onmessage",
+      "start_line": 605,
+      "end_line": 628,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onmessage.setTimeout() callback": {
+      "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
+      "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onmessage.setTimeout() callback",
+      "start_line": 620,
+      "end_line": 623,
+      "type": "FUNCTION",
+      "status": "added"
     },
     "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.savedWorkflows.map() callback": {
       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
@@ -111940,6 +112238,22 @@
       "type": "FUNCTION",
       "status": "unchanged"
     },
+    "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onerror": {
+      "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
+      "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onerror",
+      "start_line": 630,
+      "end_line": 635,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onerror.setExecutionState() callback": {
+      "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
+      "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onerror.setExecutionState() callback",
+      "start_line": 632,
+      "end_line": 632,
+      "type": "FUNCTION",
+      "status": "added"
+    },
     "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.validation.errors.map() callback": {
       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
       "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.validation.errors.map() callback",
@@ -111947,6 +112261,14 @@
       "end_line": 647,
       "type": "FUNCTION",
       "status": "unchanged"
+    },
+    "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback.saveResponse.body.nodes.nodes.map() callback": {
+      "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
+      "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback.saveResponse.body.nodes.nodes.map() callback",
+      "start_line": 655,
+      "end_line": 655,
+      "type": "FUNCTION",
+      "status": "added"
     },
     "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.<unknown>.map() callback": {
       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
@@ -111971,6 +112293,14 @@
       "end_line": 665,
       "type": "FUNCTION",
       "status": "unchanged"
+    },
+    "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback.setExecutionState() callback": {
+      "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
+      "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback.setExecutionState() callback",
+      "start_line": 672,
+      "end_line": 672,
+      "type": "FUNCTION",
+      "status": "added"
     },
     "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.map() callback": {
       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
@@ -114808,7 +115138,7 @@
       "file_path": "dashboard/frontend/src/utils/setupValidation.ts",
       "qualified_name": "dashboard.frontend.src.utils.setupValidation.normalizeUrl",
       "start_line": 39,
-      "end_line": 52,
+      "end_line": 51,
       "type": "FUNCTION",
       "status": "modified"
     },
@@ -117075,6 +117405,86 @@
       "end_line": 287,
       "type": "METHOD",
       "status": "added"
+    },
+    "src/heretek_swarm/actors/sentinel/helpers.py|src.heretek_swarm.actors.sentinel.helpers.SentinelHelpers": {
+      "file_path": "src/heretek_swarm/actors/sentinel/helpers.py",
+      "qualified_name": "src.heretek_swarm.actors.sentinel.helpers.SentinelHelpers",
+      "start_line": 21,
+      "end_line": 230,
+      "type": "CLASS",
+      "status": "modified"
+    },
+    "src/heretek_swarm/actors/sentinel/helpers.py|src.heretek_swarm.actors.sentinel.helpers.SentinelHelpers.__init__": {
+      "file_path": "src/heretek_swarm/actors/sentinel/helpers.py",
+      "qualified_name": "src.heretek_swarm.actors.sentinel.helpers.SentinelHelpers.__init__",
+      "start_line": 57,
+      "end_line": 68,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/actors/sentinel/helpers.py|src.heretek_swarm.actors.sentinel.helpers.SentinelHelpers._compile_patterns": {
+      "file_path": "src/heretek_swarm/actors/sentinel/helpers.py",
+      "qualified_name": "src.heretek_swarm.actors.sentinel.helpers.SentinelHelpers._compile_patterns",
+      "start_line": 70,
+      "end_line": 77,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/actors/sentinel/helpers.py|src.heretek_swarm.actors.sentinel.helpers.SentinelHelpers._check_injection_patterns": {
+      "file_path": "src/heretek_swarm/actors/sentinel/helpers.py",
+      "qualified_name": "src.heretek_swarm.actors.sentinel.helpers.SentinelHelpers._check_injection_patterns",
+      "start_line": 79,
+      "end_line": 105,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/actors/sentinel/helpers.py|src.heretek_swarm.actors.sentinel.helpers.SentinelHelpers._check_pii_patterns": {
+      "file_path": "src/heretek_swarm/actors/sentinel/helpers.py",
+      "qualified_name": "src.heretek_swarm.actors.sentinel.helpers.SentinelHelpers._check_pii_patterns",
+      "start_line": 107,
+      "end_line": 133,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/actors/sentinel/helpers.py|src.heretek_swarm.actors.sentinel.helpers.SentinelHelpers._record_violation": {
+      "file_path": "src/heretek_swarm/actors/sentinel/helpers.py",
+      "qualified_name": "src.heretek_swarm.actors.sentinel.helpers.SentinelHelpers._record_violation",
+      "start_line": 135,
+      "end_line": 176,
+      "type": "METHOD",
+      "status": "modified"
+    },
+    "src/heretek_swarm/actors/sentinel/helpers.py|src.heretek_swarm.actors.sentinel.helpers.SentinelHelpers._generate_safety_report": {
+      "file_path": "src/heretek_swarm/actors/sentinel/helpers.py",
+      "qualified_name": "src.heretek_swarm.actors.sentinel.helpers.SentinelHelpers._generate_safety_report",
+      "start_line": 178,
+      "end_line": 230,
+      "type": "METHOD",
+      "status": "modified"
+    },
+    "src/heretek_swarm/actors/sentinel/helpers.py|src.heretek_swarm.actors.sentinel.helpers.check_injection_patterns": {
+      "file_path": "src/heretek_swarm/actors/sentinel/helpers.py",
+      "qualified_name": "src.heretek_swarm.actors.sentinel.helpers.check_injection_patterns",
+      "start_line": 234,
+      "end_line": 261,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/actors/sentinel/helpers.py|src.heretek_swarm.actors.sentinel.helpers.check_pii_patterns": {
+      "file_path": "src/heretek_swarm/actors/sentinel/helpers.py",
+      "qualified_name": "src.heretek_swarm.actors.sentinel.helpers.check_pii_patterns",
+      "start_line": 264,
+      "end_line": 291,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/actors/sentinel/helpers.py|src.heretek_swarm.actors.sentinel.helpers.generate_safety_report": {
+      "file_path": "src/heretek_swarm/actors/sentinel/helpers.py",
+      "qualified_name": "src.heretek_swarm.actors.sentinel.helpers.generate_safety_report",
+      "start_line": 294,
+      "end_line": 342,
+      "type": "FUNCTION",
+      "status": "modified"
     }
   },
   "components": [
@@ -118400,7 +118810,7 @@
         },
         {
           "file_path": "src/heretek_swarm/actors/supervisor.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "src.heretek_swarm.actors.supervisor.get_supervisor",
             "src.heretek_swarm.actors.supervisor.ActorSupervisor",
@@ -119068,6 +119478,10 @@
             "src.heretek_swarm.api.workflows.cancel_workflow",
             "src.heretek_swarm.api.workflows.validate_workflow_endpoint",
             "src.heretek_swarm.api.workflows.validate_workflow_draft",
+            "src.heretek_swarm.api.workflows._build_sse_cancelled_payload",
+            "src.heretek_swarm.api.workflows._build_sse_error_payload",
+            "src.heretek_swarm.api.workflows._build_workflow_sse_cancelled_payload",
+            "src.heretek_swarm.api.workflows._build_workflow_sse_error_payload",
             "src.heretek_swarm.api.workflows.workflow_events_stream",
             "src.heretek_swarm.api.workflows.workflow_events_stream.event_generator",
             "src.heretek_swarm.api.workflows.workflow_specific_events_stream",
@@ -119474,7 +119888,11 @@
             "src.heretek_swarm.collective.emergent_detection_utils.generate_recommended_action",
             "src.heretek_swarm.collective.emergent_detection_utils.calculate_novelty_score",
             "src.heretek_swarm.collective.emergent_detection_utils.classify_pattern_provenance",
+            "src.heretek_swarm.collective.emergent_detection_utils._compute_problem_novelty",
+            "src.heretek_swarm.collective.emergent_detection_utils._compute_approach_novelty",
+            "src.heretek_swarm.collective.emergent_detection_utils._compute_result_novelty",
             "src.heretek_swarm.collective.emergent_detection_utils.calculate_solution_novelty",
+            "src.heretek_swarm.collective.emergent_detection_utils._diff_value_pair",
             "src.heretek_swarm.collective.emergent_detection_utils._calculate_signature_difference",
             "src.heretek_swarm.collective.emergent_detection_utils.classify_solution_provenance"
           ]
@@ -124958,7 +125376,7 @@
             },
             {
               "file_path": "src/heretek_swarm/actors/supervisor.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.heretek_swarm.actors.supervisor.get_supervisor",
                 "src.heretek_swarm.actors.supervisor.ActorSupervisor",
@@ -125537,6 +125955,10 @@
                 "src.heretek_swarm.api.workflows.cancel_workflow",
                 "src.heretek_swarm.api.workflows.validate_workflow_endpoint",
                 "src.heretek_swarm.api.workflows.validate_workflow_draft",
+                "src.heretek_swarm.api.workflows._build_sse_cancelled_payload",
+                "src.heretek_swarm.api.workflows._build_sse_error_payload",
+                "src.heretek_swarm.api.workflows._build_workflow_sse_cancelled_payload",
+                "src.heretek_swarm.api.workflows._build_workflow_sse_error_payload",
                 "src.heretek_swarm.api.workflows.workflow_events_stream",
                 "src.heretek_swarm.api.workflows.workflow_events_stream.event_generator",
                 "src.heretek_swarm.api.workflows.workflow_specific_events_stream",
@@ -128938,6 +129360,10 @@
                     "src.heretek_swarm.api.workflows.cancel_workflow",
                     "src.heretek_swarm.api.workflows.validate_workflow_endpoint",
                     "src.heretek_swarm.api.workflows.validate_workflow_draft",
+                    "src.heretek_swarm.api.workflows._build_sse_cancelled_payload",
+                    "src.heretek_swarm.api.workflows._build_sse_error_payload",
+                    "src.heretek_swarm.api.workflows._build_workflow_sse_cancelled_payload",
+                    "src.heretek_swarm.api.workflows._build_workflow_sse_error_payload",
                     "src.heretek_swarm.api.workflows.workflow_events_stream",
                     "src.heretek_swarm.api.workflows.workflow_events_stream.event_generator",
                     "src.heretek_swarm.api.workflows.workflow_specific_events_stream",
@@ -132038,6 +132464,10 @@
                         "src.heretek_swarm.api.workflows.cancel_workflow",
                         "src.heretek_swarm.api.workflows.validate_workflow_endpoint",
                         "src.heretek_swarm.api.workflows.validate_workflow_draft",
+                        "src.heretek_swarm.api.workflows._build_sse_cancelled_payload",
+                        "src.heretek_swarm.api.workflows._build_sse_error_payload",
+                        "src.heretek_swarm.api.workflows._build_workflow_sse_cancelled_payload",
+                        "src.heretek_swarm.api.workflows._build_workflow_sse_error_payload",
                         "src.heretek_swarm.api.workflows.workflow_events_stream",
                         "src.heretek_swarm.api.workflows.workflow_events_stream.event_generator",
                         "src.heretek_swarm.api.workflows.workflow_specific_events_stream",
@@ -132185,6 +132615,10 @@
                             "src.heretek_swarm.api.workflows.cancel_workflow",
                             "src.heretek_swarm.api.workflows.validate_workflow_endpoint",
                             "src.heretek_swarm.api.workflows.validate_workflow_draft",
+                            "src.heretek_swarm.api.workflows._build_sse_cancelled_payload",
+                            "src.heretek_swarm.api.workflows._build_sse_error_payload",
+                            "src.heretek_swarm.api.workflows._build_workflow_sse_cancelled_payload",
+                            "src.heretek_swarm.api.workflows._build_workflow_sse_error_payload",
                             "src.heretek_swarm.api.workflows.workflow_events_stream",
                             "src.heretek_swarm.api.workflows.workflow_events_stream.event_generator",
                             "src.heretek_swarm.api.workflows.workflow_specific_events_stream",
@@ -133127,7 +133561,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/actors/supervisor.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.actors.supervisor.get_supervisor",
                     "src.heretek_swarm.actors.supervisor.ActorSupervisor",
@@ -134520,7 +134954,7 @@
                     },
                     {
                       "file_path": "src/heretek_swarm/actors/supervisor.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.actors.supervisor.get_supervisor",
                         "src.heretek_swarm.actors.supervisor.ActorSupervisor",
@@ -134747,7 +135181,7 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/actors/supervisor.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.actors.supervisor.get_supervisor",
                             "src.heretek_swarm.actors.supervisor.ActorSupervisor",
@@ -159786,7 +160220,11 @@
                 "src.heretek_swarm.collective.emergent_detection_utils.generate_recommended_action",
                 "src.heretek_swarm.collective.emergent_detection_utils.calculate_novelty_score",
                 "src.heretek_swarm.collective.emergent_detection_utils.classify_pattern_provenance",
+                "src.heretek_swarm.collective.emergent_detection_utils._compute_problem_novelty",
+                "src.heretek_swarm.collective.emergent_detection_utils._compute_approach_novelty",
+                "src.heretek_swarm.collective.emergent_detection_utils._compute_result_novelty",
                 "src.heretek_swarm.collective.emergent_detection_utils.calculate_solution_novelty",
+                "src.heretek_swarm.collective.emergent_detection_utils._diff_value_pair",
                 "src.heretek_swarm.collective.emergent_detection_utils._calculate_signature_difference",
                 "src.heretek_swarm.collective.emergent_detection_utils.classify_solution_provenance"
               ]
@@ -162157,7 +162595,11 @@
                     "src.heretek_swarm.collective.emergent_detection_utils.generate_recommended_action",
                     "src.heretek_swarm.collective.emergent_detection_utils.calculate_novelty_score",
                     "src.heretek_swarm.collective.emergent_detection_utils.classify_pattern_provenance",
+                    "src.heretek_swarm.collective.emergent_detection_utils._compute_problem_novelty",
+                    "src.heretek_swarm.collective.emergent_detection_utils._compute_approach_novelty",
+                    "src.heretek_swarm.collective.emergent_detection_utils._compute_result_novelty",
                     "src.heretek_swarm.collective.emergent_detection_utils.calculate_solution_novelty",
+                    "src.heretek_swarm.collective.emergent_detection_utils._diff_value_pair",
                     "src.heretek_swarm.collective.emergent_detection_utils._calculate_signature_difference",
                     "src.heretek_swarm.collective.emergent_detection_utils.classify_solution_provenance"
                   ]
@@ -162876,7 +163318,11 @@
                         "src.heretek_swarm.collective.emergent_detection_utils.generate_recommended_action",
                         "src.heretek_swarm.collective.emergent_detection_utils.calculate_novelty_score",
                         "src.heretek_swarm.collective.emergent_detection_utils.classify_pattern_provenance",
+                        "src.heretek_swarm.collective.emergent_detection_utils._compute_problem_novelty",
+                        "src.heretek_swarm.collective.emergent_detection_utils._compute_approach_novelty",
+                        "src.heretek_swarm.collective.emergent_detection_utils._compute_result_novelty",
                         "src.heretek_swarm.collective.emergent_detection_utils.calculate_solution_novelty",
+                        "src.heretek_swarm.collective.emergent_detection_utils._diff_value_pair",
                         "src.heretek_swarm.collective.emergent_detection_utils._calculate_signature_difference",
                         "src.heretek_swarm.collective.emergent_detection_utils.classify_solution_provenance"
                       ]
@@ -163012,7 +163458,11 @@
                             "src.heretek_swarm.collective.emergent_detection_utils.generate_recommended_action",
                             "src.heretek_swarm.collective.emergent_detection_utils.calculate_novelty_score",
                             "src.heretek_swarm.collective.emergent_detection_utils.classify_pattern_provenance",
+                            "src.heretek_swarm.collective.emergent_detection_utils._compute_problem_novelty",
+                            "src.heretek_swarm.collective.emergent_detection_utils._compute_approach_novelty",
+                            "src.heretek_swarm.collective.emergent_detection_utils._compute_result_novelty",
                             "src.heretek_swarm.collective.emergent_detection_utils.calculate_solution_novelty",
+                            "src.heretek_swarm.collective.emergent_detection_utils._diff_value_pair",
                             "src.heretek_swarm.collective.emergent_detection_utils._calculate_signature_difference",
                             "src.heretek_swarm.collective.emergent_detection_utils.classify_solution_provenance"
                           ]
@@ -248398,13 +248848,13 @@
             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.fetchAgents.useCallback() callback",
             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.fetchAgents.useCallback() callback.agentNodes.data.agents.map() callback",
             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas",
-            "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback",
             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onConnect.useCallback() callback",
             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onConnect.useCallback() callback.setEdges() callback",
             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.addNodeFromPalette.useCallback() callback",
             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.addNodeFromPalette.useCallback() callback.setNodes() callback",
             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onNodeClick.useCallback() callback",
             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onPaneClick.useCallback() callback",
+            "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback",
             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setNodes() callback",
             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setNodes() callback.nds.filter() callback",
             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setEdges() callback",
@@ -249631,12 +250081,21 @@
             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.loadWorkflow.useCallback() callback",
             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.loadWorkflow.useCallback() callback.data.nodes.map() callback",
             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback",
+            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback",
             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.useEffect() callback",
+            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onopen",
+            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onopen.setExecutionState() callback",
+            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onmessage",
+            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onmessage.setTimeout() callback",
             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.savedWorkflows.map() callback",
+            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onerror",
+            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onerror.setExecutionState() callback",
             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.validation.errors.map() callback",
+            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback.saveResponse.body.nodes.nodes.map() callback",
             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.<unknown>.map() callback",
             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.<unknown>.<unknown>..filter() callback",
             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.<unknown>.<unknown>.map() callback",
+            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback.setExecutionState() callback",
             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.map() callback",
             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.try.setNodeConfig",
             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.setNodeConfig() callback"
@@ -250159,13 +250618,13 @@
                 "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.fetchAgents.useCallback() callback",
                 "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.fetchAgents.useCallback() callback.agentNodes.data.agents.map() callback",
                 "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas",
-                "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback",
                 "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onConnect.useCallback() callback",
                 "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onConnect.useCallback() callback.setEdges() callback",
                 "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.addNodeFromPalette.useCallback() callback",
                 "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.addNodeFromPalette.useCallback() callback.setNodes() callback",
                 "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onNodeClick.useCallback() callback",
                 "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onPaneClick.useCallback() callback",
+                "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback",
                 "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setNodes() callback",
                 "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setNodes() callback.nds.filter() callback",
                 "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setEdges() callback",
@@ -250439,7 +250898,16 @@
                 "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.deleteNode.useCallback() callback.setNodeConfig() callback",
                 "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.validateWorkflow.useCallback() callback.nodes.forEach() callback",
                 "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.exportWorkflow.useCallback() callback.nodes.forEach() callback",
-                "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.exportWorkflow.useCallback() callback.edges.forEach() callback"
+                "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.exportWorkflow.useCallback() callback.edges.forEach() callback",
+                "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback",
+                "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onopen",
+                "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onopen.setExecutionState() callback",
+                "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onmessage",
+                "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onmessage.setTimeout() callback",
+                "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onerror",
+                "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onerror.setExecutionState() callback",
+                "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback.saveResponse.body.nodes.nodes.map() callback",
+                "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback.setExecutionState() callback"
               ]
             },
             {
@@ -250546,13 +251014,13 @@
                     "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.fetchAgents.useCallback() callback",
                     "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.fetchAgents.useCallback() callback.agentNodes.data.agents.map() callback",
                     "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas",
-                    "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback",
                     "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onConnect.useCallback() callback",
                     "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onConnect.useCallback() callback.setEdges() callback",
                     "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.addNodeFromPalette.useCallback() callback",
                     "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.addNodeFromPalette.useCallback() callback.setNodes() callback",
                     "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onNodeClick.useCallback() callback",
                     "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onPaneClick.useCallback() callback",
+                    "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback",
                     "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setNodes() callback",
                     "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setNodes() callback.nds.filter() callback",
                     "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setEdges() callback",
@@ -250809,12 +251277,21 @@
                     "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.loadWorkflow.useCallback() callback",
                     "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.loadWorkflow.useCallback() callback.data.nodes.map() callback",
                     "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback",
+                    "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback",
                     "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.useEffect() callback",
+                    "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onopen",
+                    "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onopen.setExecutionState() callback",
+                    "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onmessage",
+                    "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onmessage.setTimeout() callback",
                     "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.savedWorkflows.map() callback",
+                    "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onerror",
+                    "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onerror.setExecutionState() callback",
                     "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.validation.errors.map() callback",
+                    "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback.saveResponse.body.nodes.nodes.map() callback",
                     "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.<unknown>.map() callback",
                     "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.<unknown>.<unknown>..filter() callback",
                     "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.<unknown>.<unknown>.map() callback",
+                    "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback.setExecutionState() callback",
                     "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.map() callback",
                     "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.try.setNodeConfig",
                     "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.setNodeConfig() callback"
@@ -250957,13 +251434,13 @@
                         "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.fetchAgents.useCallback() callback",
                         "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.fetchAgents.useCallback() callback.agentNodes.data.agents.map() callback",
                         "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas",
-                        "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback",
                         "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onConnect.useCallback() callback",
                         "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onConnect.useCallback() callback.setEdges() callback",
                         "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.addNodeFromPalette.useCallback() callback",
                         "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.addNodeFromPalette.useCallback() callback.setNodes() callback",
                         "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onNodeClick.useCallback() callback",
                         "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onPaneClick.useCallback() callback",
+                        "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback",
                         "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setNodes() callback",
                         "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setNodes() callback.nds.filter() callback",
                         "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setEdges() callback",
@@ -251287,13 +251764,13 @@
                             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.fetchAgents.useCallback() callback",
                             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.fetchAgents.useCallback() callback.agentNodes.data.agents.map() callback",
                             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas",
-                            "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback",
                             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onConnect.useCallback() callback",
                             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onConnect.useCallback() callback.setEdges() callback",
                             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.addNodeFromPalette.useCallback() callback",
                             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.addNodeFromPalette.useCallback() callback.setNodes() callback",
                             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onNodeClick.useCallback() callback",
                             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onPaneClick.useCallback() callback",
+                            "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback",
                             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setNodes() callback",
                             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setNodes() callback.nds.filter() callback",
                             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setEdges() callback",
@@ -251604,9 +252081,9 @@
                                 "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.fetchAgents.useCallback() callback",
                                 "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.fetchAgents.useCallback() callback.agentNodes.data.agents.map() callback",
                                 "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas",
-                                "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback",
                                 "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onConnect.useCallback() callback",
-                                "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onConnect.useCallback() callback.setEdges() callback"
+                                "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onConnect.useCallback() callback.setEdges() callback",
+                                "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback"
                               ]
                             },
                             {
@@ -252846,12 +253323,21 @@
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.loadWorkflow.useCallback() callback",
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.loadWorkflow.useCallback() callback.data.nodes.map() callback",
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback",
+                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback",
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.useEffect() callback",
+                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onopen",
+                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onopen.setExecutionState() callback",
+                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onmessage",
+                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onmessage.setTimeout() callback",
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.savedWorkflows.map() callback",
+                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onerror",
+                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onerror.setExecutionState() callback",
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.validation.errors.map() callback",
+                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback.saveResponse.body.nodes.nodes.map() callback",
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.<unknown>.map() callback",
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.<unknown>.<unknown>..filter() callback",
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.<unknown>.<unknown>.map() callback",
+                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback.setExecutionState() callback",
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.map() callback",
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.try.setNodeConfig",
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.setNodeConfig() callback"
@@ -252989,12 +253475,21 @@
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.loadWorkflow.useCallback() callback",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.loadWorkflow.useCallback() callback.data.nodes.map() callback",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.useEffect() callback",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onopen",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onopen.setExecutionState() callback",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onmessage",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onmessage.setTimeout() callback",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.savedWorkflows.map() callback",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onerror",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onerror.setExecutionState() callback",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.validation.errors.map() callback",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback.saveResponse.body.nodes.nodes.map() callback",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.<unknown>.map() callback",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.<unknown>.<unknown>..filter() callback",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.<unknown>.<unknown>.map() callback",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback.setExecutionState() callback",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.map() callback",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.try.setNodeConfig",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.setNodeConfig() callback"
@@ -253321,7 +253816,16 @@
                           "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
                           "file_status": "modified",
                           "methods": [
-                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.validateWorkflow.useCallback() callback.nodes.forEach() callback"
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.validateWorkflow.useCallback() callback.nodes.forEach() callback",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onopen",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onopen.setExecutionState() callback",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onmessage",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onmessage.setTimeout() callback",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onerror",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onerror.setExecutionState() callback",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback.saveResponse.body.nodes.nodes.map() callback",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback.setExecutionState() callback"
                           ]
                         }
                       ],
@@ -258402,7 +258906,16 @@
                   "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
                   "file_status": "modified",
                   "methods": [
-                    "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.validateWorkflow.useCallback() callback.nodes.forEach() callback"
+                    "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.validateWorkflow.useCallback() callback.nodes.forEach() callback",
+                    "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback",
+                    "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onopen",
+                    "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onopen.setExecutionState() callback",
+                    "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onmessage",
+                    "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onmessage.setTimeout() callback",
+                    "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onerror",
+                    "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onerror.setExecutionState() callback",
+                    "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback.saveResponse.body.nodes.nodes.map() callback",
+                    "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback.setExecutionState() callback"
                   ]
                 }
               ],
@@ -258431,7 +258944,16 @@
                       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
                       "file_status": "modified",
                       "methods": [
-                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.validateWorkflow.useCallback() callback.nodes.forEach() callback"
+                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.validateWorkflow.useCallback() callback.nodes.forEach() callback",
+                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback",
+                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onopen",
+                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onopen.setExecutionState() callback",
+                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onmessage",
+                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onmessage.setTimeout() callback",
+                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onerror",
+                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onerror.setExecutionState() callback",
+                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback.saveResponse.body.nodes.nodes.map() callback",
+                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback.setExecutionState() callback"
                       ]
                     }
                   ],
@@ -258500,12 +259022,21 @@
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.loadWorkflow.useCallback() callback",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.loadWorkflow.useCallback() callback.data.nodes.map() callback",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.useEffect() callback",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onopen",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onopen.setExecutionState() callback",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onmessage",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onmessage.setTimeout() callback",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.savedWorkflows.map() callback",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onerror",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onerror.setExecutionState() callback",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.validation.errors.map() callback",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback.saveResponse.body.nodes.nodes.map() callback",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.<unknown>.map() callback",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.<unknown>.<unknown>..filter() callback",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.<unknown>.<unknown>.map() callback",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback.setExecutionState() callback",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.map() callback",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.try.setNodeConfig",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.setNodeConfig() callback"
@@ -258701,7 +259232,16 @@
                           "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
                           "file_status": "modified",
                           "methods": [
-                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.validateWorkflow.useCallback() callback.nodes.forEach() callback"
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.validateWorkflow.useCallback() callback.nodes.forEach() callback",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onopen",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onopen.setExecutionState() callback",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onmessage",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onmessage.setTimeout() callback",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onerror",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onerror.setExecutionState() callback",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback.saveResponse.body.nodes.nodes.map() callback",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback.setExecutionState() callback"
                           ]
                         }
                       ],
@@ -258914,7 +259454,16 @@
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.deleteNode.useCallback() callback.setEdges() callback",
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.deleteNode.useCallback() callback.setNodeConfig() callback",
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.exportWorkflow.useCallback() callback.nodes.forEach() callback",
-                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.exportWorkflow.useCallback() callback.edges.forEach() callback"
+                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.exportWorkflow.useCallback() callback.edges.forEach() callback",
+                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback",
+                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onopen",
+                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onopen.setExecutionState() callback",
+                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onmessage",
+                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onmessage.setTimeout() callback",
+                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onerror",
+                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onerror.setExecutionState() callback",
+                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback.saveResponse.body.nodes.nodes.map() callback",
+                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback.setExecutionState() callback"
                       ]
                     }
                   ],
@@ -258998,12 +259547,21 @@
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.loadWorkflow.useCallback() callback",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.loadWorkflow.useCallback() callback.data.nodes.map() callback",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.useEffect() callback",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onopen",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onopen.setExecutionState() callback",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onmessage",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onmessage.setTimeout() callback",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.savedWorkflows.map() callback",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onerror",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onerror.setExecutionState() callback",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.validation.errors.map() callback",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback.saveResponse.body.nodes.nodes.map() callback",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.<unknown>.map() callback",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.<unknown>.<unknown>..filter() callback",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.<unknown>.<unknown>.map() callback",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback.setExecutionState() callback",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.map() callback",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.try.setNodeConfig",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.setNodeConfig() callback"
@@ -259199,7 +259757,16 @@
                           "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
                           "file_status": "modified",
                           "methods": [
-                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.validateWorkflow.useCallback() callback.nodes.forEach() callback"
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.validateWorkflow.useCallback() callback.nodes.forEach() callback",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onopen",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onopen.setExecutionState() callback",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onmessage",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onmessage.setTimeout() callback",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onerror",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onerror.setExecutionState() callback",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback.saveResponse.body.nodes.nodes.map() callback",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback.setExecutionState() callback"
                           ]
                         }
                       ],
@@ -259393,7 +259960,16 @@
                           "file_status": "modified",
                           "methods": [
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.exportWorkflow.useCallback() callback.nodes.forEach() callback",
-                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.exportWorkflow.useCallback() callback.edges.forEach() callback"
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.exportWorkflow.useCallback() callback.edges.forEach() callback",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onopen",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onopen.setExecutionState() callback",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onmessage",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onmessage.setTimeout() callback",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onerror",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onerror.setExecutionState() callback",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback.saveResponse.body.nodes.nodes.map() callback",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback.setExecutionState() callback"
                           ]
                         }
                       ],
@@ -259684,12 +260260,21 @@
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.loadWorkflow.useCallback() callback",
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.loadWorkflow.useCallback() callback.data.nodes.map() callback",
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback",
+                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback",
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.useEffect() callback",
+                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onopen",
+                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onopen.setExecutionState() callback",
+                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onmessage",
+                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onmessage.setTimeout() callback",
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.savedWorkflows.map() callback",
+                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onerror",
+                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onerror.setExecutionState() callback",
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.validation.errors.map() callback",
+                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback.saveResponse.body.nodes.nodes.map() callback",
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.<unknown>.map() callback",
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.<unknown>.<unknown>..filter() callback",
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.<unknown>.<unknown>.map() callback",
+                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback.setExecutionState() callback",
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.map() callback",
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.try.setNodeConfig",
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.setNodeConfig() callback"
@@ -259782,12 +260367,21 @@
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.loadWorkflow.useCallback() callback",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.loadWorkflow.useCallback() callback.data.nodes.map() callback",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.useEffect() callback",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onopen",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onopen.setExecutionState() callback",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onmessage",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onmessage.setTimeout() callback",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.savedWorkflows.map() callback",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onerror",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onerror.setExecutionState() callback",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.validation.errors.map() callback",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback.saveResponse.body.nodes.nodes.map() callback",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.<unknown>.map() callback",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.<unknown>.<unknown>..filter() callback",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.<unknown>.<unknown>.map() callback",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback.setExecutionState() callback",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.map() callback",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.try.setNodeConfig",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.setNodeConfig() callback"
@@ -260032,7 +260626,16 @@
                           "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
                           "file_status": "modified",
                           "methods": [
-                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.validateWorkflow.useCallback() callback.nodes.forEach() callback"
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.validateWorkflow.useCallback() callback.nodes.forEach() callback",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onopen",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onopen.setExecutionState() callback",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onmessage",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onmessage.setTimeout() callback",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onerror",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onerror.setExecutionState() callback",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback.saveResponse.body.nodes.nodes.map() callback",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback.setExecutionState() callback"
                           ]
                         }
                       ],
@@ -260281,7 +260884,16 @@
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.deleteNode.useCallback() callback.setEdges() callback",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.deleteNode.useCallback() callback.setNodeConfig() callback",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.exportWorkflow.useCallback() callback.nodes.forEach() callback",
-                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.exportWorkflow.useCallback() callback.edges.forEach() callback"
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.exportWorkflow.useCallback() callback.edges.forEach() callback",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onopen",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onopen.setExecutionState() callback",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onmessage",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onmessage.setTimeout() callback",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onerror",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onerror.setExecutionState() callback",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback.saveResponse.body.nodes.nodes.map() callback",
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback.setExecutionState() callback"
                           ]
                         }
                       ],
@@ -268616,12 +269228,21 @@
                 "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.loadWorkflow.useCallback() callback",
                 "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.loadWorkflow.useCallback() callback.data.nodes.map() callback",
                 "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback",
+                "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback",
                 "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.useEffect() callback",
+                "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onopen",
+                "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onopen.setExecutionState() callback",
+                "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onmessage",
+                "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onmessage.setTimeout() callback",
                 "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.savedWorkflows.map() callback",
+                "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onerror",
+                "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onerror.setExecutionState() callback",
                 "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.validation.errors.map() callback",
+                "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback.saveResponse.body.nodes.nodes.map() callback",
                 "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.<unknown>.map() callback",
                 "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.<unknown>.<unknown>..filter() callback",
                 "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.<unknown>.<unknown>.map() callback",
+                "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback.setExecutionState() callback",
                 "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.map() callback",
                 "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.try.setNodeConfig",
                 "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.setNodeConfig() callback"
@@ -270173,12 +270794,21 @@
                     "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.loadWorkflow.useCallback() callback",
                     "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.loadWorkflow.useCallback() callback.data.nodes.map() callback",
                     "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback",
+                    "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback",
                     "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.useEffect() callback",
+                    "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onopen",
+                    "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onopen.setExecutionState() callback",
+                    "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onmessage",
+                    "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onmessage.setTimeout() callback",
                     "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.savedWorkflows.map() callback",
+                    "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onerror",
+                    "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onerror.setExecutionState() callback",
                     "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.validation.errors.map() callback",
+                    "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback.saveResponse.body.nodes.nodes.map() callback",
                     "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.<unknown>.map() callback",
                     "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.<unknown>.<unknown>..filter() callback",
                     "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.<unknown>.<unknown>.map() callback",
+                    "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback.setExecutionState() callback",
                     "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.map() callback",
                     "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.try.setNodeConfig",
                     "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.setNodeConfig() callback"
@@ -271682,12 +272312,21 @@
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.loadWorkflow.useCallback() callback",
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.loadWorkflow.useCallback() callback.data.nodes.map() callback",
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback",
+                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback",
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.useEffect() callback",
+                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onopen",
+                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onopen.setExecutionState() callback",
+                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onmessage",
+                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onmessage.setTimeout() callback",
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.savedWorkflows.map() callback",
+                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onerror",
+                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onerror.setExecutionState() callback",
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.validation.errors.map() callback",
+                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback.saveResponse.body.nodes.nodes.map() callback",
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.<unknown>.map() callback",
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.<unknown>.<unknown>..filter() callback",
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.<unknown>.<unknown>.map() callback",
+                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback.setExecutionState() callback",
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.map() callback",
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.try.setNodeConfig",
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.setNodeConfig() callback"
@@ -275472,7 +276111,16 @@
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.deleteNode.useCallback() callback.setNodeConfig() callback",
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.validateWorkflow.useCallback() callback.nodes.forEach() callback",
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.exportWorkflow.useCallback() callback.nodes.forEach() callback",
-                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.exportWorkflow.useCallback() callback.edges.forEach() callback"
+                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.exportWorkflow.useCallback() callback.edges.forEach() callback",
+                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback",
+                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onopen",
+                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onopen.setExecutionState() callback",
+                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onmessage",
+                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onmessage.setTimeout() callback",
+                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onerror",
+                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onerror.setExecutionState() callback",
+                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback.saveResponse.body.nodes.nodes.map() callback",
+                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback.setExecutionState() callback"
                       ]
                     },
                     {
@@ -277220,7 +277868,16 @@
                     "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.deleteNode.useCallback() callback.setNodeConfig() callback",
                     "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.validateWorkflow.useCallback() callback.nodes.forEach() callback",
                     "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.exportWorkflow.useCallback() callback.nodes.forEach() callback",
-                    "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.exportWorkflow.useCallback() callback.edges.forEach() callback"
+                    "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.exportWorkflow.useCallback() callback.edges.forEach() callback",
+                    "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback",
+                    "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onopen",
+                    "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onopen.setExecutionState() callback",
+                    "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onmessage",
+                    "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onmessage.setTimeout() callback",
+                    "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onerror",
+                    "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onerror.setExecutionState() callback",
+                    "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback.saveResponse.body.nodes.nodes.map() callback",
+                    "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback.setExecutionState() callback"
                   ]
                 },
                 {
@@ -277405,12 +278062,21 @@
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.loadWorkflow.useCallback() callback",
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.loadWorkflow.useCallback() callback.data.nodes.map() callback",
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback",
+                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback",
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.useEffect() callback",
+                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onopen",
+                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onopen.setExecutionState() callback",
+                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onmessage",
+                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onmessage.setTimeout() callback",
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.savedWorkflows.map() callback",
+                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onerror",
+                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onerror.setExecutionState() callback",
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.validation.errors.map() callback",
+                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback.saveResponse.body.nodes.nodes.map() callback",
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.<unknown>.map() callback",
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.<unknown>.<unknown>..filter() callback",
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.<unknown>.<unknown>.map() callback",
+                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback.setExecutionState() callback",
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.map() callback",
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.try.setNodeConfig",
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.setNodeConfig() callback"

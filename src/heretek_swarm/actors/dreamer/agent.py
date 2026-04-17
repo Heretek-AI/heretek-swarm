@@ -213,18 +213,20 @@ class DreamerAgent(
                     oldest_id = next(iter(self._ideas))
                     del self._ideas[oldest_id]
 
+            top_idea = None
+            if ideas:
+                top_idea = {
+                    "id": stored_ids[0],
+                    "title": ideas[0].title,
+                    "novelty": ideas[0].novelty.value,
+                }
+
             return {
                 "status": "success",
                 "ideas_generated": len(ideas),
                 "idea_ids": stored_ids,
                 "technique_used": technique.value,
-                "top_idea": {
-                    "id": stored_ids[0] if stored_ids else None,
-                    "title": ideas[0].title if ideas else None,
-                    "novelty": ideas[0].novelty.value if ideas else None,
-                }
-                if ideas
-                else None,
+                "top_idea": top_idea,
             }
 
         except Exception as e:

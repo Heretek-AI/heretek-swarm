@@ -49,6 +49,11 @@ from heretek_swarm.coordination.sync import (
 # Session 44: Zero-Trust Validation
 # INTG-01: Task Synchronization Integration
 from heretek_swarm.coordination.task_graph import (
+
+# Error message constants
+_TASKGRAPH_NOT_INIT = _TASKGRAPH_NOT_INIT
+_TASKSYNC_NOT_INIT = _TASKSYNC_NOT_INIT
+
     TaskGraph,
 )
 
@@ -910,7 +915,7 @@ class CoordinatorAgent(
         """Detect cycles in task dependency graph."""
         if not self._task_graph:
             await self._send_error(
-                message.sender_id, "TaskGraph not initialized", message.message_type
+                message.sender_id, _TASKGRAPH_NOT_INIT, message.message_type
             )
             return
         try:
@@ -940,7 +945,7 @@ class CoordinatorAgent(
         """Get task graph metrics."""
         if not self._task_graph:
             await self._send_error(
-                message.sender_id, "TaskGraph not initialized", message.message_type
+                message.sender_id, _TASKGRAPH_NOT_INIT, message.message_type
             )
             return
         try:
@@ -979,7 +984,7 @@ class CoordinatorAgent(
         """Get topological order of tasks."""
         if not self._task_graph:
             await self._send_error(
-                message.sender_id, "TaskGraph not initialized", message.message_type
+                message.sender_id, _TASKGRAPH_NOT_INIT, message.message_type
             )
             return
         try:
@@ -1006,7 +1011,7 @@ class CoordinatorAgent(
         """Register an agent dependency for tracking."""
         if not self._synchronizer:
             await self._send_error(
-                message.sender_id, "TaskSynchronizer not initialized", message.message_type
+                message.sender_id, _TASKSYNC_NOT_INIT, message.message_type
             )
             return
         try:
@@ -1034,7 +1039,7 @@ class CoordinatorAgent(
         """Release an agent dependency."""
         if not self._synchronizer:
             await self._send_error(
-                message.sender_id, "TaskSynchronizer not initialized", message.message_type
+                message.sender_id, _TASKSYNC_NOT_INIT, message.message_type
             )
             return
         try:
@@ -1058,7 +1063,7 @@ class CoordinatorAgent(
         """Detect deadlocks in agent dependencies."""
         if not self._synchronizer:
             await self._send_error(
-                message.sender_id, "TaskSynchronizer not initialized", message.message_type
+                message.sender_id, _TASKSYNC_NOT_INIT, message.message_type
             )
             return
         try:
@@ -1084,7 +1089,7 @@ class CoordinatorAgent(
         """Get current coordination ratio."""
         if not self._synchronizer:
             await self._send_error(
-                message.sender_id, "TaskSynchronizer not initialized", message.message_type
+                message.sender_id, _TASKSYNC_NOT_INIT, message.message_type
             )
             return
         try:
@@ -1113,7 +1118,7 @@ class CoordinatorAgent(
         """Get synchronization health report."""
         if not self._synchronizer:
             await self._send_error(
-                message.sender_id, "TaskSynchronizer not initialized", message.message_type
+                message.sender_id, _TASKSYNC_NOT_INIT, message.message_type
             )
             return
         try:

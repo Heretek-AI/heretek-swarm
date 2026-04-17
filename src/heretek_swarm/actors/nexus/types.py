@@ -16,6 +16,7 @@ from enum import Enum
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
+    # Type-only imports used to avoid circular dependencies at runtime
     pass
 
 

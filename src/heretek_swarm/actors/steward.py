@@ -19,7 +19,8 @@ from swarms import Agent
 
 from heretek_swarm.actors.base import ActorMessage, AgentActor
 from heretek_swarm.actors.mixins import (
-    DeliberationMixin,
+
+DeliberationMixin,
     HealthReportingMixin,
     LearningMixin,
     MemoryMixin,
@@ -29,6 +30,9 @@ from heretek_swarm.actors.mixins import (
 )
 
 logger = structlog.get_logger("StewardAgent")
+
+# Topic constant for recovery events
+_SYSTEM_RECOVERY_TOPIC = "system.recovery"
 
 
 class StewardAgent(
@@ -423,7 +427,7 @@ class StewardAgent(
         logger.warning(f"[{self.agent_id}] Heartbeat failure detected for agent: {agent_id}")
 
         await self.send(
-            topic="system.recovery",
+            topic=_SYSTEM_RECOVERY_TOPIC,
             content={
                 "message_type": "recovery_event",
                 "agent_id": agent_id,
@@ -449,7 +453,7 @@ class StewardAgent(
                     )
 
                     await self.send(
-                        topic="system.recovery",
+                        topic=_SYSTEM_RECOVERY_TOPIC,
                         content={
                             "message_type": "recovery_event",
                             "agent_id": agent_id,
@@ -469,7 +473,7 @@ class StewardAgent(
 
     async def _emit_recovery_failed(self, agent_id: str, restart_count: int) -> None:
         await self.send(
-            topic="system.recovery",
+            topic=_SYSTEM_RECOVERY_TOPIC,
             content={
                 "message_type": "recovery_event",
                 "agent_id": agent_id,
@@ -529,7 +533,7 @@ class StewardAgent(
         """Publish recovery event when Steward resumes after failover."""
         logger.info(f"[{self.agent_id}] Publishing STEWARD_RECOVERY event")
         await self.send(
-            topic="system.recovery",
+            topic=_SYSTEM_RECOVERY_TOPIC,
             content={
                 "message_type": "steward_recovery",
                 "agent_id": self.agent_id,

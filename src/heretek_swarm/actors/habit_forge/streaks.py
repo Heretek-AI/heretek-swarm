@@ -21,6 +21,9 @@ if TYPE_CHECKING:
 # Streak break threshold in days
 STREAK_BREAK_THRESHOLD_DAYS = 2
 
+# Sentinel value for repeated UTC suffix literal
+_UTC_SUFFIX = "+00:00"
+
 
 class HabitForgeStreaksMixin:
     """
@@ -110,7 +113,7 @@ class HabitForgeStreaksMixin:
 
     def calculate_streak_probability(
         self,
-        habit: Habit,
+        _habit: Habit,
         completion_history: list[datetime],
     ) -> float:
         """
@@ -236,7 +239,7 @@ def calculate_longest_streak(completions: list[dict[str, Any]]) -> int:
     # Sort completions by timestamp
     sorted_completions = sorted(
         completions,
-        key=lambda x: datetime.fromisoformat(x["timestamp"].replace("Z", "+00:00")),
+        key=lambda x: datetime.fromisoformat(x["timestamp"].replace("Z", _UTC_SUFFIX)),
     )
 
     longest = 1
@@ -244,10 +247,10 @@ def calculate_longest_streak(completions: list[dict[str, Any]]) -> int:
 
     for i in range(1, len(sorted_completions)):
         prev_time = datetime.fromisoformat(
-            sorted_completions[i - 1]["timestamp"].replace("Z", "+00:00")
+            sorted_completions[i - 1]["timestamp"].replace("Z", _UTC_SUFFIX)
         )
         curr_time = datetime.fromisoformat(
-            sorted_completions[i]["timestamp"].replace("Z", "+00:00")
+            sorted_completions[i]["timestamp"].replace("Z", _UTC_SUFFIX)
         )
 
         days_diff = (curr_time - prev_time).days

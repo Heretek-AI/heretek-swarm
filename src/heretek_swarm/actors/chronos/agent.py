@@ -32,6 +32,10 @@ from heretek_swarm.actors.mixins import (
 )
 from heretek_swarm.actors.validation import validate_message
 
+# Sentinel values for repeated error message literals
+_MSG_TIME_PERCEPTION_NOT_ENABLED = "Time perception not enabled"
+_MSG_INVALID_CONTEXT_ID = "Invalid context_id"
+
 # INTG-04: Time Perception & Dilation
 from heretek_swarm.coordination.time_dilation import (
     AnchorSource,
@@ -249,7 +253,7 @@ class ChronosAgent(
             if not self._time_manager:
                 await self._send_error(
                     message.sender_id,
-                    "Time perception not enabled",
+                    _MSG_TIME_PERCEPTION_NOT_ENABLED,
                     message.message_type,
                 )
                 return
@@ -326,7 +330,7 @@ class ChronosAgent(
             if not context_id or not self._time_manager:
                 await self._send_error(
                     message.sender_id,
-                    "Invalid context_id",
+                    _MSG_INVALID_CONTEXT_ID,
                     message.message_type,
                 )
                 return
@@ -382,7 +386,7 @@ class ChronosAgent(
             if not context_id or not self._time_manager:
                 await self._send_error(
                     message.sender_id,
-                    "Invalid context_id",
+                    _MSG_INVALID_CONTEXT_ID,
                     message.message_type,
                 )
                 return
@@ -434,7 +438,7 @@ class ChronosAgent(
             if not context_id or not self._time_manager:
                 await self._send_error(
                     message.sender_id,
-                    "Invalid context_id",
+                    _MSG_INVALID_CONTEXT_ID,
                     message.message_type,
                 )
                 return
@@ -483,7 +487,7 @@ class ChronosAgent(
             if not self._time_manager:
                 await self._send_error(
                     message.sender_id,
-                    "Time perception not enabled",
+                    _MSG_TIME_PERCEPTION_NOT_ENABLED,
                     message.message_type,
                 )
                 return
@@ -527,7 +531,7 @@ class ChronosAgent(
             if not self._time_manager:
                 await self._send_error(
                     message.sender_id,
-                    "Time perception not enabled",
+                    _MSG_TIME_PERCEPTION_NOT_ENABLED,
                     message.message_type,
                 )
                 return
@@ -575,7 +579,7 @@ class ChronosAgent(
             if not self._time_manager:
                 await self._send_error(
                     message.sender_id,
-                    "Time perception not enabled",
+                    _MSG_TIME_PERCEPTION_NOT_ENABLED,
                     message.message_type,
                 )
                 return
@@ -626,7 +630,7 @@ class ChronosAgent(
             if not self._time_manager:
                 await self._send_error(
                     message.sender_id,
-                    "Time perception not enabled",
+                    _MSG_TIME_PERCEPTION_NOT_ENABLED,
                     message.message_type,
                 )
                 return

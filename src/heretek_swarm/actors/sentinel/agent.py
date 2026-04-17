@@ -70,6 +70,11 @@ from heretek_swarm.security.anomaly_detection import (
     create_anomaly_detector,
 )
 from heretek_swarm.security.behavioral_baseline import (
+
+# Error message constants
+_STAT_RETRIEVAL_FAILED = _STAT_RETRIEVAL_FAILED
+_MISSING_AGENT_ID = _MISSING_AGENT_ID
+
     BaselineChangeType,
     create_behavioral_baseline,
 )
@@ -1315,7 +1320,7 @@ class SentinelAgent(
 
         except Exception as e:
             logger.error("Error getting immune statistics", error=str(e), exc_info=True)
-            await self._send_error(message, "Statistics retrieval failed", str(e))
+            await self._send_error(message, _STAT_RETRIEVAL_FAILED, str(e))
 
     async def _handle_get_baseline_status(self, message: ActorMessage) -> None:
         """
@@ -1390,7 +1395,7 @@ class SentinelAgent(
             context = content.get("context", {})
 
             if not agent_id:
-                await self._send_error(message, "Missing agent_id")
+                await self._send_error(message, _MISSING_AGENT_ID)
                 return
 
             alerts = await self.monitor_agent_behavior(agent_id, metrics, context)
@@ -1434,7 +1439,7 @@ class SentinelAgent(
             time_window = content.get("time_window", 1.0)
 
             if not agent_id:
-                await self._send_error(message, "Missing agent_id")
+                await self._send_error(message, _MISSING_AGENT_ID)
                 return
 
             alert = await self.check_agent_rate(agent_id, current_rate, time_window)
@@ -1474,7 +1479,7 @@ class SentinelAgent(
             response_time_ms = content.get("response_time_ms", 0.0)
 
             if not agent_id:
-                await self._send_error(message, "Missing agent_id")
+                await self._send_error(message, _MISSING_AGENT_ID)
                 return
 
             alert = await self.check_agent_response_time(agent_id, response_time_ms)
@@ -1516,7 +1521,7 @@ class SentinelAgent(
             failure_reason = content.get("failure_reason")
 
             if not agent_id:
-                await self._send_error(message, "Missing agent_id")
+                await self._send_error(message, _MISSING_AGENT_ID)
                 return
 
             alert = await self.check_agent_validation(agent_id, validation_success, failure_reason)
@@ -1587,7 +1592,7 @@ class SentinelAgent(
 
         except Exception as e:
             logger.error("Error getting anomaly statistics", error=str(e), exc_info=True)
-            await self._send_error(message, "Statistics retrieval failed", str(e))
+            await self._send_error(message, _STAT_RETRIEVAL_FAILED, str(e))
 
     async def _handle_configure_sentinel_prime(self, message: ActorMessage) -> None:
         """
@@ -2059,7 +2064,7 @@ class SentinelAgent(
             await self._send_error(message, "Invalid statistics request", str(ve))
         except Exception as e:
             logger.error("Error getting statistics", error=str(e), exc_info=True)
-            await self._send_error(message, "Statistics retrieval failed", str(e))
+            await self._send_error(message, _STAT_RETRIEVAL_FAILED, str(e))
 
     async def _scan_content(
         self,
