@@ -532,43 +532,84 @@ class AutonomousSwarm:
         report_interval = 30  # seconds
 
         while self._running:
-            try:
-                agents = []
-                for agent_id, actor in self.supervisor.actors.items():
-                    try:
-                        status = actor.get_status()
-                        agents.append({
-                            "agent_id": agent_id,
-                            "agent_type": getattr(actor, "actor_type", "unknown"),
-                            "state": status.state.value if status else "unknown",
-                            "message_count": status.message_count if status else 0,
-                            "error_count": status.error_count if status else 0,
-                            "mailbox_size": status.mailbox_size if status else 0,
-                            "last_activity": status.last_activity if status else None,
-                            "uptime_seconds": status.uptime_seconds if status else 0.0,
-                        })
-                    except Exception:
-                        pass
-
-                payload = {
-                    "runtime_id": "autonomous",
-                    "agents": agents,
-                    "total_agents": len(agents),
-                    "uptime_seconds": 0.0,
-                }
-
-                async with httpx.AsyncClient(timeout=10.0) as client:
-                    await client.post(
-                        f"http://{api_host}:{api_port}/autonomous/agents",
-                        json=payload,
-                    )
-                logger.debug("reported_agents_to_api", count=len(agents))
-            except httpx.ConnectError:
-                logger.debug("api_not_available")
-            except Exception as e:
-                logger.warning("agent_report_failed", error=str(e))
-
+            await self._report_agents_batch(api_host, api_port)
             await asyncio.sleep(report_interval)
+
+    async def _report_agents_batch(
+        self,
+        api_host: str,
+        api_port: int
+    ) -> None:
+        """Collect and report agent statuses to the API server.
+        
+        Extracts the agent collection and reporting logic to reduce
+        cognitive complexity of the parent loop.
+        """
+        import httpx
+
+        try:
+            agents = self._collect_agent_statuses()
+            await self._post_agent_report(api_host, api_port, agents)
+        except httpx.ConnectError:
+            logger.debug("api_not_available")
+        except Exception as e:
+            logger.warning("agent_report_failed", error=str(e))
+
+    def _collect_agent_statuses(self) -> list[dict[str, Any]]:
+        """Collect status information from all active agents."""
+        agents = []
+        for agent_id, actor in self.supervisor.actors.items():
+            status_dict = self._extract_agent_status(agent_id, actor)
+            if status_dict:
+                agents.append(status_dict)
+        return agents
+
+    def _extract_agent_status(
+        self,
+        agent_id: str,
+        actor: Any
+    ) -> dict[str, Any] | None:
+        """Extract status dictionary for a single agent.
+        
+        Returns None if status cannot be extracted (agent not ready).
+        """
+        try:
+            status = actor.get_status()
+            return {
+                "agent_id": agent_id,
+                "agent_type": getattr(actor, "actor_type", "unknown"),
+                "state": status.state.value if status else "unknown",
+                "message_count": status.message_count if status else 0,
+                "error_count": status.error_count if status else 0,
+                "mailbox_size": status.mailbox_size if status else 0,
+                "last_activity": status.last_activity if status else None,
+                "uptime_seconds": status.uptime_seconds if status else 0.0,
+            }
+        except Exception:
+            return None
+
+    async def _post_agent_report(
+        self,
+        api_host: str,
+        api_port: int,
+        agents: list[dict[str, Any]]
+    ) -> None:
+        """Post agent status report to the API server."""
+        import httpx
+
+        payload = {
+            "runtime_id": "autonomous",
+            "agents": agents,
+            "total_agents": len(agents),
+            "uptime_seconds": 0.0,
+        }
+
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            await client.post(
+                f"http://{api_host}:{api_port}/autonomous/agents",
+                json=payload,
+            )
+        logger.debug("reported_agents_to_api", count=len(agents))
 
     async def shutdown(self) -> None:
         """Graceful shutdown of the autonomous swarm."""
