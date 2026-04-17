@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-17T15:36:27.293522+00:00",
+    "generated_at": "2026-04-17T15:50:32.637342+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -2345,280 +2345,280 @@
       ]
     },
     "src/heretek_swarm/actors/coordinator.py": {
-      "file_status": "modified",
+      "file_status": "deleted",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.actors.coordinator.TaskStatus",
           "start_line": 45,
           "end_line": 54,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.coordinator.DependencyType",
           "start_line": 57,
           "end_line": 63,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.coordinator.CoordinatedTask",
           "start_line": 67,
           "end_line": 102,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.coordinator.CoordinatedTask.to_dict",
           "start_line": 85,
           "end_line": 102,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.coordinator.AgentState",
           "start_line": 106,
           "end_line": 127,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.coordinator.AgentState.to_dict",
           "start_line": 117,
           "end_line": 127,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.coordinator.CoordinatorAgent",
           "start_line": 134,
           "end_line": 1273,
           "node_type": "CLASS",
-          "status": "modified"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.coordinator.CoordinatorAgent.__init__",
           "start_line": 160,
           "end_line": 202,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.coordinator.CoordinatorAgent._validate_message",
           "start_line": 192,
           "end_line": 201,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_create_task",
           "start_line": 203,
           "end_line": 309,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.coordinator.CoordinatorAgent.initialize",
           "start_line": 216,
           "end_line": 229,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.coordinator.CoordinatorAgent._register_handlers",
           "start_line": 220,
           "end_line": 242,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_update_task",
           "start_line": 311,
           "end_line": 391,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_get_task_status",
           "start_line": 393,
           "end_line": 434,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_get_workflow_status",
           "start_line": 436,
           "end_line": 484,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_assign_agent",
           "start_line": 486,
           "end_line": 548,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_update_agent_state",
           "start_line": 550,
           "end_line": 597,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_resolve_dependencies",
           "start_line": 599,
           "end_line": 640,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_start_workflow",
           "start_line": 642,
           "end_line": 701,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_cancel_workflow",
           "start_line": 703,
           "end_line": 764,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_get_coordination_report",
           "start_line": 766,
           "end_line": 824,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.coordinator.CoordinatorAgent._unblock_dependents",
           "start_line": 826,
           "end_line": 846,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.coordinator.CoordinatorAgent._topological_sort",
           "start_line": 848,
           "end_line": 866,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.coordinator.CoordinatorAgent._identify_parallel_groups",
           "start_line": 868,
           "end_line": 894,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.coordinator.CoordinatorAgent._find_critical_path",
           "start_line": 896,
           "end_line": 915,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.coordinator.CoordinatorAgent._send_error",
           "start_line": 917,
           "end_line": 931,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.coordinator.CoordinatorAgent.get_capabilities",
           "start_line": 933,
           "end_line": 943,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_graph_detect_cycles",
           "start_line": 984,
           "end_line": 1012,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_graph_get_metrics",
           "start_line": 1014,
           "end_line": 1051,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_graph_get_topological_order",
           "start_line": 1053,
           "end_line": 1078,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_sync_register_dependency",
           "start_line": 1080,
           "end_line": 1106,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_sync_release_dependency",
           "start_line": 1108,
           "end_line": 1130,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_sync_detect_deadlock",
           "start_line": 1132,
           "end_line": 1156,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_get_coordination_ratio",
           "start_line": 1158,
           "end_line": 1185,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_get_sync_health",
           "start_line": 1187,
           "end_line": 1206,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.coordinator.CoordinatorAgent._notify_steward_of_cycle",
           "start_line": 1208,
           "end_line": 1223,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.coordinator.CoordinatorAgent._escalate_deadlock_to_arbiter",
           "start_line": 1225,
           "end_line": 1242,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.coordinator.CoordinatorAgent._update_coordination_ratio",
           "start_line": 1244,
           "end_line": 1256,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.coordinator.CoordinatorAgent._is_coordination_healthy",
           "start_line": 1258,
           "end_line": 1260,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "deleted"
         }
       ]
     },
@@ -58106,7 +58106,7 @@
       "start_line": 45,
       "end_line": 54,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/coordinator.py|src.heretek_swarm.actors.coordinator.DependencyType": {
       "file_path": "src/heretek_swarm/actors/coordinator.py",
@@ -58114,7 +58114,7 @@
       "start_line": 57,
       "end_line": 63,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/coordinator.py|src.heretek_swarm.actors.coordinator.CoordinatedTask": {
       "file_path": "src/heretek_swarm/actors/coordinator.py",
@@ -58122,7 +58122,7 @@
       "start_line": 67,
       "end_line": 102,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/coordinator.py|src.heretek_swarm.actors.coordinator.CoordinatedTask.to_dict": {
       "file_path": "src/heretek_swarm/actors/coordinator.py",
@@ -58130,7 +58130,7 @@
       "start_line": 85,
       "end_line": 102,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/coordinator.py|src.heretek_swarm.actors.coordinator.AgentState": {
       "file_path": "src/heretek_swarm/actors/coordinator.py",
@@ -58138,7 +58138,7 @@
       "start_line": 106,
       "end_line": 127,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/coordinator.py|src.heretek_swarm.actors.coordinator.AgentState.to_dict": {
       "file_path": "src/heretek_swarm/actors/coordinator.py",
@@ -58146,7 +58146,7 @@
       "start_line": 117,
       "end_line": 127,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/coordinator.py|src.heretek_swarm.actors.coordinator.CoordinatorAgent": {
       "file_path": "src/heretek_swarm/actors/coordinator.py",
@@ -58154,7 +58154,7 @@
       "start_line": 134,
       "end_line": 1273,
       "type": "CLASS",
-      "status": "modified"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/coordinator.py|src.heretek_swarm.actors.coordinator.CoordinatorAgent.__init__": {
       "file_path": "src/heretek_swarm/actors/coordinator.py",
@@ -58162,7 +58162,7 @@
       "start_line": 160,
       "end_line": 202,
       "type": "METHOD",
-      "status": "modified"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/coordinator.py|src.heretek_swarm.actors.coordinator.CoordinatorAgent._validate_message": {
       "file_path": "src/heretek_swarm/actors/coordinator.py",
@@ -58170,7 +58170,7 @@
       "start_line": 192,
       "end_line": 201,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/coordinator.py|src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_create_task": {
       "file_path": "src/heretek_swarm/actors/coordinator.py",
@@ -58178,7 +58178,7 @@
       "start_line": 203,
       "end_line": 309,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/coordinator.py|src.heretek_swarm.actors.coordinator.CoordinatorAgent.initialize": {
       "file_path": "src/heretek_swarm/actors/coordinator.py",
@@ -58186,7 +58186,7 @@
       "start_line": 216,
       "end_line": 229,
       "type": "METHOD",
-      "status": "added"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/coordinator.py|src.heretek_swarm.actors.coordinator.CoordinatorAgent._register_handlers": {
       "file_path": "src/heretek_swarm/actors/coordinator.py",
@@ -58194,7 +58194,7 @@
       "start_line": 220,
       "end_line": 242,
       "type": "METHOD",
-      "status": "modified"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/coordinator.py|src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_update_task": {
       "file_path": "src/heretek_swarm/actors/coordinator.py",
@@ -58202,7 +58202,7 @@
       "start_line": 311,
       "end_line": 391,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/coordinator.py|src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_get_task_status": {
       "file_path": "src/heretek_swarm/actors/coordinator.py",
@@ -58210,7 +58210,7 @@
       "start_line": 393,
       "end_line": 434,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/coordinator.py|src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_get_workflow_status": {
       "file_path": "src/heretek_swarm/actors/coordinator.py",
@@ -58218,7 +58218,7 @@
       "start_line": 436,
       "end_line": 484,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/coordinator.py|src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_assign_agent": {
       "file_path": "src/heretek_swarm/actors/coordinator.py",
@@ -58226,7 +58226,7 @@
       "start_line": 486,
       "end_line": 548,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/coordinator.py|src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_update_agent_state": {
       "file_path": "src/heretek_swarm/actors/coordinator.py",
@@ -58234,7 +58234,7 @@
       "start_line": 550,
       "end_line": 597,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/coordinator.py|src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_resolve_dependencies": {
       "file_path": "src/heretek_swarm/actors/coordinator.py",
@@ -58242,7 +58242,7 @@
       "start_line": 599,
       "end_line": 640,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/coordinator.py|src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_start_workflow": {
       "file_path": "src/heretek_swarm/actors/coordinator.py",
@@ -58250,7 +58250,7 @@
       "start_line": 642,
       "end_line": 701,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/coordinator.py|src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_cancel_workflow": {
       "file_path": "src/heretek_swarm/actors/coordinator.py",
@@ -58258,7 +58258,7 @@
       "start_line": 703,
       "end_line": 764,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/coordinator.py|src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_get_coordination_report": {
       "file_path": "src/heretek_swarm/actors/coordinator.py",
@@ -58266,7 +58266,7 @@
       "start_line": 766,
       "end_line": 824,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/coordinator.py|src.heretek_swarm.actors.coordinator.CoordinatorAgent._unblock_dependents": {
       "file_path": "src/heretek_swarm/actors/coordinator.py",
@@ -58274,7 +58274,7 @@
       "start_line": 826,
       "end_line": 846,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/coordinator.py|src.heretek_swarm.actors.coordinator.CoordinatorAgent._topological_sort": {
       "file_path": "src/heretek_swarm/actors/coordinator.py",
@@ -58282,7 +58282,7 @@
       "start_line": 848,
       "end_line": 866,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/coordinator.py|src.heretek_swarm.actors.coordinator.CoordinatorAgent._identify_parallel_groups": {
       "file_path": "src/heretek_swarm/actors/coordinator.py",
@@ -58290,7 +58290,7 @@
       "start_line": 868,
       "end_line": 894,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/coordinator.py|src.heretek_swarm.actors.coordinator.CoordinatorAgent._find_critical_path": {
       "file_path": "src/heretek_swarm/actors/coordinator.py",
@@ -58298,7 +58298,7 @@
       "start_line": 896,
       "end_line": 915,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/coordinator.py|src.heretek_swarm.actors.coordinator.CoordinatorAgent._send_error": {
       "file_path": "src/heretek_swarm/actors/coordinator.py",
@@ -58306,7 +58306,7 @@
       "start_line": 917,
       "end_line": 931,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/coordinator.py|src.heretek_swarm.actors.coordinator.CoordinatorAgent.get_capabilities": {
       "file_path": "src/heretek_swarm/actors/coordinator.py",
@@ -58314,7 +58314,7 @@
       "start_line": 933,
       "end_line": 943,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/coordinator.py|src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_graph_detect_cycles": {
       "file_path": "src/heretek_swarm/actors/coordinator.py",
@@ -58322,7 +58322,7 @@
       "start_line": 984,
       "end_line": 1012,
       "type": "METHOD",
-      "status": "added"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/coordinator.py|src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_graph_get_metrics": {
       "file_path": "src/heretek_swarm/actors/coordinator.py",
@@ -58330,7 +58330,7 @@
       "start_line": 1014,
       "end_line": 1051,
       "type": "METHOD",
-      "status": "added"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/coordinator.py|src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_graph_get_topological_order": {
       "file_path": "src/heretek_swarm/actors/coordinator.py",
@@ -58338,7 +58338,7 @@
       "start_line": 1053,
       "end_line": 1078,
       "type": "METHOD",
-      "status": "added"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/coordinator.py|src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_sync_register_dependency": {
       "file_path": "src/heretek_swarm/actors/coordinator.py",
@@ -58346,7 +58346,7 @@
       "start_line": 1080,
       "end_line": 1106,
       "type": "METHOD",
-      "status": "added"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/coordinator.py|src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_sync_release_dependency": {
       "file_path": "src/heretek_swarm/actors/coordinator.py",
@@ -58354,7 +58354,7 @@
       "start_line": 1108,
       "end_line": 1130,
       "type": "METHOD",
-      "status": "added"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/coordinator.py|src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_sync_detect_deadlock": {
       "file_path": "src/heretek_swarm/actors/coordinator.py",
@@ -58362,7 +58362,7 @@
       "start_line": 1132,
       "end_line": 1156,
       "type": "METHOD",
-      "status": "added"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/coordinator.py|src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_get_coordination_ratio": {
       "file_path": "src/heretek_swarm/actors/coordinator.py",
@@ -58370,7 +58370,7 @@
       "start_line": 1158,
       "end_line": 1185,
       "type": "METHOD",
-      "status": "added"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/coordinator.py|src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_get_sync_health": {
       "file_path": "src/heretek_swarm/actors/coordinator.py",
@@ -58378,7 +58378,7 @@
       "start_line": 1187,
       "end_line": 1206,
       "type": "METHOD",
-      "status": "added"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/coordinator.py|src.heretek_swarm.actors.coordinator.CoordinatorAgent._notify_steward_of_cycle": {
       "file_path": "src/heretek_swarm/actors/coordinator.py",
@@ -58386,7 +58386,7 @@
       "start_line": 1208,
       "end_line": 1223,
       "type": "METHOD",
-      "status": "added"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/coordinator.py|src.heretek_swarm.actors.coordinator.CoordinatorAgent._escalate_deadlock_to_arbiter": {
       "file_path": "src/heretek_swarm/actors/coordinator.py",
@@ -58394,7 +58394,7 @@
       "start_line": 1225,
       "end_line": 1242,
       "type": "METHOD",
-      "status": "added"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/coordinator.py|src.heretek_swarm.actors.coordinator.CoordinatorAgent._update_coordination_ratio": {
       "file_path": "src/heretek_swarm/actors/coordinator.py",
@@ -58402,7 +58402,7 @@
       "start_line": 1244,
       "end_line": 1256,
       "type": "METHOD",
-      "status": "added"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/coordinator.py|src.heretek_swarm.actors.coordinator.CoordinatorAgent._is_coordination_healthy": {
       "file_path": "src/heretek_swarm/actors/coordinator.py",
@@ -58410,7 +58410,7 @@
       "start_line": 1258,
       "end_line": 1260,
       "type": "METHOD",
-      "status": "added"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/dreamer.py|src.heretek_swarm.actors.dreamer.CreativityTechnique": {
       "file_path": "src/heretek_swarm/actors/dreamer.py",
@@ -117564,48 +117564,8 @@
         },
         {
           "file_path": "src/heretek_swarm/actors/coordinator.py",
-          "file_status": "modified",
-          "methods": [
-            "src.heretek_swarm.actors.coordinator.TaskStatus",
-            "src.heretek_swarm.actors.coordinator.DependencyType",
-            "src.heretek_swarm.actors.coordinator.CoordinatedTask",
-            "src.heretek_swarm.actors.coordinator.CoordinatedTask.to_dict",
-            "src.heretek_swarm.actors.coordinator.AgentState",
-            "src.heretek_swarm.actors.coordinator.AgentState.to_dict",
-            "src.heretek_swarm.actors.coordinator.CoordinatorAgent",
-            "src.heretek_swarm.actors.coordinator.CoordinatorAgent.__init__",
-            "src.heretek_swarm.actors.coordinator.CoordinatorAgent._validate_message",
-            "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_create_task",
-            "src.heretek_swarm.actors.coordinator.CoordinatorAgent.initialize",
-            "src.heretek_swarm.actors.coordinator.CoordinatorAgent._register_handlers",
-            "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_update_task",
-            "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_get_task_status",
-            "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_get_workflow_status",
-            "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_assign_agent",
-            "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_update_agent_state",
-            "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_resolve_dependencies",
-            "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_start_workflow",
-            "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_cancel_workflow",
-            "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_get_coordination_report",
-            "src.heretek_swarm.actors.coordinator.CoordinatorAgent._unblock_dependents",
-            "src.heretek_swarm.actors.coordinator.CoordinatorAgent._topological_sort",
-            "src.heretek_swarm.actors.coordinator.CoordinatorAgent._identify_parallel_groups",
-            "src.heretek_swarm.actors.coordinator.CoordinatorAgent._find_critical_path",
-            "src.heretek_swarm.actors.coordinator.CoordinatorAgent._send_error",
-            "src.heretek_swarm.actors.coordinator.CoordinatorAgent.get_capabilities",
-            "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_graph_detect_cycles",
-            "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_graph_get_metrics",
-            "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_graph_get_topological_order",
-            "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_sync_register_dependency",
-            "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_sync_release_dependency",
-            "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_sync_detect_deadlock",
-            "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_get_coordination_ratio",
-            "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_get_sync_health",
-            "src.heretek_swarm.actors.coordinator.CoordinatorAgent._notify_steward_of_cycle",
-            "src.heretek_swarm.actors.coordinator.CoordinatorAgent._escalate_deadlock_to_arbiter",
-            "src.heretek_swarm.actors.coordinator.CoordinatorAgent._update_coordination_ratio",
-            "src.heretek_swarm.actors.coordinator.CoordinatorAgent._is_coordination_healthy"
-          ]
+          "file_status": "deleted",
+          "methods": []
         },
         {
           "file_path": "src/heretek_swarm/actors/dreamer.py",
@@ -124368,48 +124328,8 @@
             },
             {
               "file_path": "src/heretek_swarm/actors/coordinator.py",
-              "file_status": "modified",
-              "methods": [
-                "src.heretek_swarm.actors.coordinator.TaskStatus",
-                "src.heretek_swarm.actors.coordinator.DependencyType",
-                "src.heretek_swarm.actors.coordinator.CoordinatedTask",
-                "src.heretek_swarm.actors.coordinator.CoordinatedTask.to_dict",
-                "src.heretek_swarm.actors.coordinator.AgentState",
-                "src.heretek_swarm.actors.coordinator.AgentState.to_dict",
-                "src.heretek_swarm.actors.coordinator.CoordinatorAgent",
-                "src.heretek_swarm.actors.coordinator.CoordinatorAgent.__init__",
-                "src.heretek_swarm.actors.coordinator.CoordinatorAgent._validate_message",
-                "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_create_task",
-                "src.heretek_swarm.actors.coordinator.CoordinatorAgent.initialize",
-                "src.heretek_swarm.actors.coordinator.CoordinatorAgent._register_handlers",
-                "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_update_task",
-                "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_get_task_status",
-                "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_get_workflow_status",
-                "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_assign_agent",
-                "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_update_agent_state",
-                "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_resolve_dependencies",
-                "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_start_workflow",
-                "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_cancel_workflow",
-                "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_get_coordination_report",
-                "src.heretek_swarm.actors.coordinator.CoordinatorAgent._unblock_dependents",
-                "src.heretek_swarm.actors.coordinator.CoordinatorAgent._topological_sort",
-                "src.heretek_swarm.actors.coordinator.CoordinatorAgent._identify_parallel_groups",
-                "src.heretek_swarm.actors.coordinator.CoordinatorAgent._find_critical_path",
-                "src.heretek_swarm.actors.coordinator.CoordinatorAgent._send_error",
-                "src.heretek_swarm.actors.coordinator.CoordinatorAgent.get_capabilities",
-                "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_graph_detect_cycles",
-                "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_graph_get_metrics",
-                "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_graph_get_topological_order",
-                "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_sync_register_dependency",
-                "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_sync_release_dependency",
-                "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_sync_detect_deadlock",
-                "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_get_coordination_ratio",
-                "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_get_sync_health",
-                "src.heretek_swarm.actors.coordinator.CoordinatorAgent._notify_steward_of_cycle",
-                "src.heretek_swarm.actors.coordinator.CoordinatorAgent._escalate_deadlock_to_arbiter",
-                "src.heretek_swarm.actors.coordinator.CoordinatorAgent._update_coordination_ratio",
-                "src.heretek_swarm.actors.coordinator.CoordinatorAgent._is_coordination_healthy"
-              ]
+              "file_status": "deleted",
+              "methods": []
             },
             {
               "file_path": "src/heretek_swarm/actors/dreamer.py",
@@ -128753,48 +128673,8 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/actors/coordinator.py",
-                  "file_status": "modified",
-                  "methods": [
-                    "src.heretek_swarm.actors.coordinator.TaskStatus",
-                    "src.heretek_swarm.actors.coordinator.DependencyType",
-                    "src.heretek_swarm.actors.coordinator.CoordinatedTask",
-                    "src.heretek_swarm.actors.coordinator.CoordinatedTask.to_dict",
-                    "src.heretek_swarm.actors.coordinator.AgentState",
-                    "src.heretek_swarm.actors.coordinator.AgentState.to_dict",
-                    "src.heretek_swarm.actors.coordinator.CoordinatorAgent",
-                    "src.heretek_swarm.actors.coordinator.CoordinatorAgent.__init__",
-                    "src.heretek_swarm.actors.coordinator.CoordinatorAgent._validate_message",
-                    "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_create_task",
-                    "src.heretek_swarm.actors.coordinator.CoordinatorAgent.initialize",
-                    "src.heretek_swarm.actors.coordinator.CoordinatorAgent._register_handlers",
-                    "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_update_task",
-                    "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_get_task_status",
-                    "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_get_workflow_status",
-                    "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_assign_agent",
-                    "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_update_agent_state",
-                    "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_resolve_dependencies",
-                    "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_start_workflow",
-                    "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_cancel_workflow",
-                    "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_get_coordination_report",
-                    "src.heretek_swarm.actors.coordinator.CoordinatorAgent._unblock_dependents",
-                    "src.heretek_swarm.actors.coordinator.CoordinatorAgent._topological_sort",
-                    "src.heretek_swarm.actors.coordinator.CoordinatorAgent._identify_parallel_groups",
-                    "src.heretek_swarm.actors.coordinator.CoordinatorAgent._find_critical_path",
-                    "src.heretek_swarm.actors.coordinator.CoordinatorAgent._send_error",
-                    "src.heretek_swarm.actors.coordinator.CoordinatorAgent.get_capabilities",
-                    "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_graph_detect_cycles",
-                    "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_graph_get_metrics",
-                    "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_graph_get_topological_order",
-                    "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_sync_register_dependency",
-                    "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_sync_release_dependency",
-                    "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_sync_detect_deadlock",
-                    "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_get_coordination_ratio",
-                    "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_get_sync_health",
-                    "src.heretek_swarm.actors.coordinator.CoordinatorAgent._notify_steward_of_cycle",
-                    "src.heretek_swarm.actors.coordinator.CoordinatorAgent._escalate_deadlock_to_arbiter",
-                    "src.heretek_swarm.actors.coordinator.CoordinatorAgent._update_coordination_ratio",
-                    "src.heretek_swarm.actors.coordinator.CoordinatorAgent._is_coordination_healthy"
-                  ]
+                  "file_status": "deleted",
+                  "methods": []
                 },
                 {
                   "file_path": "src/heretek_swarm/actors/examiner.py",
@@ -130335,48 +130215,8 @@
                     },
                     {
                       "file_path": "src/heretek_swarm/actors/coordinator.py",
-                      "file_status": "modified",
-                      "methods": [
-                        "src.heretek_swarm.actors.coordinator.TaskStatus",
-                        "src.heretek_swarm.actors.coordinator.DependencyType",
-                        "src.heretek_swarm.actors.coordinator.CoordinatedTask",
-                        "src.heretek_swarm.actors.coordinator.CoordinatedTask.to_dict",
-                        "src.heretek_swarm.actors.coordinator.AgentState",
-                        "src.heretek_swarm.actors.coordinator.AgentState.to_dict",
-                        "src.heretek_swarm.actors.coordinator.CoordinatorAgent",
-                        "src.heretek_swarm.actors.coordinator.CoordinatorAgent.__init__",
-                        "src.heretek_swarm.actors.coordinator.CoordinatorAgent._validate_message",
-                        "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_create_task",
-                        "src.heretek_swarm.actors.coordinator.CoordinatorAgent.initialize",
-                        "src.heretek_swarm.actors.coordinator.CoordinatorAgent._register_handlers",
-                        "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_update_task",
-                        "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_get_task_status",
-                        "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_get_workflow_status",
-                        "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_assign_agent",
-                        "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_update_agent_state",
-                        "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_resolve_dependencies",
-                        "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_start_workflow",
-                        "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_cancel_workflow",
-                        "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_get_coordination_report",
-                        "src.heretek_swarm.actors.coordinator.CoordinatorAgent._unblock_dependents",
-                        "src.heretek_swarm.actors.coordinator.CoordinatorAgent._topological_sort",
-                        "src.heretek_swarm.actors.coordinator.CoordinatorAgent._identify_parallel_groups",
-                        "src.heretek_swarm.actors.coordinator.CoordinatorAgent._find_critical_path",
-                        "src.heretek_swarm.actors.coordinator.CoordinatorAgent._send_error",
-                        "src.heretek_swarm.actors.coordinator.CoordinatorAgent.get_capabilities",
-                        "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_graph_detect_cycles",
-                        "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_graph_get_metrics",
-                        "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_graph_get_topological_order",
-                        "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_sync_register_dependency",
-                        "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_sync_release_dependency",
-                        "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_sync_detect_deadlock",
-                        "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_get_coordination_ratio",
-                        "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_get_sync_health",
-                        "src.heretek_swarm.actors.coordinator.CoordinatorAgent._notify_steward_of_cycle",
-                        "src.heretek_swarm.actors.coordinator.CoordinatorAgent._escalate_deadlock_to_arbiter",
-                        "src.heretek_swarm.actors.coordinator.CoordinatorAgent._update_coordination_ratio",
-                        "src.heretek_swarm.actors.coordinator.CoordinatorAgent._is_coordination_healthy"
-                      ]
+                      "file_status": "deleted",
+                      "methods": []
                     },
                     {
                       "file_path": "src/heretek_swarm/actors/handoff.py",
@@ -130479,48 +130319,8 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/actors/coordinator.py",
-                          "file_status": "modified",
-                          "methods": [
-                            "src.heretek_swarm.actors.coordinator.TaskStatus",
-                            "src.heretek_swarm.actors.coordinator.DependencyType",
-                            "src.heretek_swarm.actors.coordinator.CoordinatedTask",
-                            "src.heretek_swarm.actors.coordinator.CoordinatedTask.to_dict",
-                            "src.heretek_swarm.actors.coordinator.AgentState",
-                            "src.heretek_swarm.actors.coordinator.AgentState.to_dict",
-                            "src.heretek_swarm.actors.coordinator.CoordinatorAgent",
-                            "src.heretek_swarm.actors.coordinator.CoordinatorAgent.__init__",
-                            "src.heretek_swarm.actors.coordinator.CoordinatorAgent._validate_message",
-                            "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_create_task",
-                            "src.heretek_swarm.actors.coordinator.CoordinatorAgent.initialize",
-                            "src.heretek_swarm.actors.coordinator.CoordinatorAgent._register_handlers",
-                            "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_update_task",
-                            "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_get_task_status",
-                            "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_get_workflow_status",
-                            "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_assign_agent",
-                            "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_update_agent_state",
-                            "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_resolve_dependencies",
-                            "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_start_workflow",
-                            "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_cancel_workflow",
-                            "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_get_coordination_report",
-                            "src.heretek_swarm.actors.coordinator.CoordinatorAgent._unblock_dependents",
-                            "src.heretek_swarm.actors.coordinator.CoordinatorAgent._topological_sort",
-                            "src.heretek_swarm.actors.coordinator.CoordinatorAgent._identify_parallel_groups",
-                            "src.heretek_swarm.actors.coordinator.CoordinatorAgent._find_critical_path",
-                            "src.heretek_swarm.actors.coordinator.CoordinatorAgent._send_error",
-                            "src.heretek_swarm.actors.coordinator.CoordinatorAgent.get_capabilities",
-                            "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_graph_detect_cycles",
-                            "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_graph_get_metrics",
-                            "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_graph_get_topological_order",
-                            "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_sync_register_dependency",
-                            "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_sync_release_dependency",
-                            "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_sync_detect_deadlock",
-                            "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_get_coordination_ratio",
-                            "src.heretek_swarm.actors.coordinator.CoordinatorAgent._handle_get_sync_health",
-                            "src.heretek_swarm.actors.coordinator.CoordinatorAgent._notify_steward_of_cycle",
-                            "src.heretek_swarm.actors.coordinator.CoordinatorAgent._escalate_deadlock_to_arbiter",
-                            "src.heretek_swarm.actors.coordinator.CoordinatorAgent._update_coordination_ratio",
-                            "src.heretek_swarm.actors.coordinator.CoordinatorAgent._is_coordination_healthy"
-                          ]
+                          "file_status": "deleted",
+                          "methods": []
                         },
                         {
                           "file_path": "src/heretek_swarm/actors/mixins/validation.py",
