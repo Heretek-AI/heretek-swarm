@@ -45,6 +45,12 @@ from heretek_swarm.consensus.tribunal import (
 logger = structlog.get_logger("api.consensus")
 
 # =============================================================================
+# Error Messages (Constants)
+# =============================================================================
+
+TRIBUNAL_NOT_AVAILABLE = "Tribunal not available"
+
+# =============================================================================
 # Authentication Configuration
 # =============================================================================
 
@@ -1115,7 +1121,7 @@ async def create_tribunal_case(
     """
     tribunal = get_tribunal()
     if not tribunal:
-        raise HTTPException(status_code=503, detail="Tribunal not available")
+        raise HTTPException(status_code=503, detail=TRIBUNAL_NOT_AVAILABLE)
 
     try:
         case = tribunal.create_case(
@@ -1147,7 +1153,7 @@ async def get_tribunal_case(
     """
     tribunal = get_tribunal()
     if not tribunal:
-        raise HTTPException(status_code=503, detail="Tribunal not available")
+        raise HTTPException(status_code=503, detail=TRIBUNAL_NOT_AVAILABLE)
 
     case = tribunal.get_case(case_id)
     if not case:
@@ -1179,7 +1185,7 @@ async def submit_tribunal_evidence(
     """
     tribunal = get_tribunal()
     if not tribunal:
-        raise HTTPException(status_code=503, detail="Tribunal not available")
+        raise HTTPException(status_code=503, detail=TRIBUNAL_NOT_AVAILABLE)
 
     try:
         evidence = tribunal.submit_evidence(
@@ -1218,7 +1224,7 @@ async def issue_tribunal_ruling(
     """
     tribunal = get_tribunal()
     if not tribunal:
-        raise HTTPException(status_code=503, detail="Tribunal not available")
+        raise HTTPException(status_code=503, detail=TRIBUNAL_NOT_AVAILABLE)
 
     try:
         ruling = tribunal.issue_ruling(
@@ -1250,7 +1256,7 @@ async def get_tribunal_precedents(
     """
     tribunal = get_tribunal()
     if not tribunal:
-        raise HTTPException(status_code=503, detail="Tribunal not available")
+        raise HTTPException(status_code=503, detail=TRIBUNAL_NOT_AVAILABLE)
 
     precedents = tribunal.get_precedents(limit=limit)
     return {"precedents": precedents}
@@ -1274,7 +1280,7 @@ async def find_similar_precedents(
     """
     tribunal = get_tribunal()
     if not tribunal:
-        raise HTTPException(status_code=503, detail="Tribunal not available")
+        raise HTTPException(status_code=503, detail=TRIBUNAL_NOT_AVAILABLE)
 
     precedents = tribunal.find_similar_precedents(case_id, limit=limit)
     return {"precedents": precedents}

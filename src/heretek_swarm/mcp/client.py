@@ -24,6 +24,12 @@ from heretek_swarm.mcp.registry import (
 
 logger = structlog.get_logger("mcp.client")
 
+# =============================================================================
+# Error Messages (Constants)
+# =============================================================================
+
+CLIENT_NOT_CONNECTED = "Client not connected"
+
 
 class MCPClient:
     """
@@ -119,7 +125,7 @@ class MCPClient:
             List of tool definitions
         """
         if not self._http_client:
-            raise RuntimeError("Client not connected")
+            raise RuntimeError(CLIENT_NOT_CONNECTED)
 
         try:
             response = await self._http_client.get("/mcp/tools")
@@ -153,7 +159,7 @@ class MCPClient:
             Tool invocation result
         """
         if not self._http_client:
-            raise RuntimeError("Client not connected")
+            raise RuntimeError(CLIENT_NOT_CONNECTED)
 
         try:
             response = await self._http_client.post(
@@ -187,7 +193,7 @@ class MCPClient:
             Tool details
         """
         if not self._http_client:
-            raise RuntimeError("Client not connected")
+            raise RuntimeError(CLIENT_NOT_CONNECTED)
 
         try:
             response = await self._http_client.get(f"/mcp/tools/{tool_name}")
@@ -211,7 +217,7 @@ class MCPClient:
             Health status
         """
         if not self._http_client:
-            raise RuntimeError("Client not connected")
+            raise RuntimeError(CLIENT_NOT_CONNECTED)
 
         try:
             response = await self._http_client.get("/mcp/health")

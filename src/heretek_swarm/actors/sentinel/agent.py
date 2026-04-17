@@ -70,14 +70,13 @@ from heretek_swarm.security.anomaly_detection import (
     create_anomaly_detector,
 )
 from heretek_swarm.security.behavioral_baseline import (
-
-# Error message constants
-_STAT_RETRIEVAL_FAILED = _STAT_RETRIEVAL_FAILED
-_MISSING_AGENT_ID = _MISSING_AGENT_ID
-
     BaselineChangeType,
     create_behavioral_baseline,
 )
+
+# Error message constants
+_STAT_RETRIEVAL_FAILED = "Failed to retrieve agent statistics"
+_MISSING_AGENT_ID = "Missing agent ID in request"
 
 logger = structlog.get_logger("SentinelAgent")
 

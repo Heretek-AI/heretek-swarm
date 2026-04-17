@@ -42,20 +42,13 @@ from heretek_swarm.actors.validation import validate_message
 from heretek_swarm.coordination.sync import (
     TaskSynchronizer,
 )
-
-# Session 44: Collective Learning Integration
-# Session 44: Consensus Integration
-# Session 44: Memory Optimization Integration
-# Session 44: Zero-Trust Validation
-# INTG-01: Task Synchronization Integration
 from heretek_swarm.coordination.task_graph import (
-
-# Error message constants
-_TASKGRAPH_NOT_INIT = _TASKGRAPH_NOT_INIT
-_TASKSYNC_NOT_INIT = _TASKSYNC_NOT_INIT
-
     TaskGraph,
 )
+
+# Error message constants
+_TASKGRAPH_NOT_INIT = "TaskGraph not initialized"
+_TASKSYNC_NOT_INIT = "TaskSynchronizer not initialized"
 
 logger = structlog.get_logger(__name__)
 

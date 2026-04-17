@@ -402,12 +402,14 @@ async def get_config_status() -> dict[str, Any]:
 # Validation Error Messages (Constants)
 # =============================================================================
 
-API_KEY_REQUIRED = API_KEY_REQUIRED
-CONNECTION_TIMED_OUT = CONNECTION_TIMED_OUT
+API_KEY_REQUIRED = "API key is required"
+APPLICATION_JSON = "application/json"
+API_KEY_VALID = "API key is valid"
+CONNECTION_TIMED_OUT = "Connection timed out"
 CONNECTION_FAILED = "Connection failed: {error}"
-INVALID_API_KEY = INVALID_API_KEY
+INVALID_API_KEY = "Invalid API key"
 LITE_LLM_NOT_HEALTHY = "LiteLLM proxy not healthy"
-OLLAMA_NOT_RUNNING = OLLAMA_NOT_RUNNING
+OLLAMA_NOT_RUNNING = "Ollama not running"
 UNKNOWN_PROVIDER_TYPE = "Unknown provider type"
 VALIDATION_FAILED = "Validation failed: {error}"
 
@@ -512,7 +514,7 @@ async def _validate_anthropic(api_key: str | None, base_url: str) -> dict[str, A
                 headers={
                     "x-api-key": api_key,
                     "anthropic-version": "2023-06-01",
-                    "content-type": "application/json",
+                    "content-type": APPLICATION_JSON,
                 },
                 json={
                     "model": "claude-sonnet-4-20250514",
@@ -526,7 +528,7 @@ async def _validate_anthropic(api_key: str | None, base_url: str) -> dict[str, A
                 return {
                     "valid": True,
                     "provider_id": "anthropic",
-                    "message": "API key is valid",
+                    "message": API_KEY_VALID,
                 }
             error_data = response.json() if response.text else {}
             error_msg = (
@@ -558,7 +560,7 @@ async def _validate_openai(api_key: str | None, base_url: str) -> dict[str, Any]
                 return {
                     "valid": True,
                     "provider_id": "openai",
-                    "message": "API key is valid",
+                    "message": API_KEY_VALID,
                 }
             return {"valid": False, "error": INVALID_API_KEY}
     except httpx.TimeoutException:
@@ -604,7 +606,7 @@ async def _validate_groq(api_key: str | None, base_url: str) -> dict[str, Any]:
                 f"{base_url}/chat/completions",
                 headers={
                     "Authorization": f"Bearer {api_key}",
-                    "content-type": "application/json",
+                    "content-type": APPLICATION_JSON,
                 },
                 json={
                     "model": "llama-3.3-70b-versatile",
@@ -618,7 +620,7 @@ async def _validate_groq(api_key: str | None, base_url: str) -> dict[str, Any]:
                 return {
                     "valid": True,
                     "provider_id": "groq",
-                    "message": "API key is valid",
+                    "message": API_KEY_VALID,
                 }
             return {"valid": False, "error": INVALID_API_KEY}
     except httpx.TimeoutException:
@@ -640,7 +642,7 @@ async def _validate_mistral(api_key: str | None, base_url: str) -> dict[str, Any
                 f"{base_url}/chat/completions",
                 headers={
                     "Authorization": f"Bearer {api_key}",
-                    "content-type": "application/json",
+                    "content-type": APPLICATION_JSON,
                 },
                 json={
                     "model": "mistral-small-latest",
@@ -654,7 +656,7 @@ async def _validate_mistral(api_key: str | None, base_url: str) -> dict[str, Any
                 return {
                     "valid": True,
                     "provider_id": "mistral",
-                    "message": "API key is valid",
+                    "message": API_KEY_VALID,
                 }
             return {"valid": False, "error": INVALID_API_KEY}
     except httpx.TimeoutException:
@@ -676,7 +678,7 @@ async def _validate_deepseek(api_key: str | None, base_url: str) -> dict[str, An
                 f"{base_url}/chat/completions",
                 headers={
                     "Authorization": f"Bearer {api_key}",
-                    "content-type": "application/json",
+                    "content-type": APPLICATION_JSON,
                 },
                 json={
                     "model": "deepseek-chat",
@@ -690,7 +692,7 @@ async def _validate_deepseek(api_key: str | None, base_url: str) -> dict[str, An
                 return {
                     "valid": True,
                     "provider_id": "deepseek",
-                    "message": "API key is valid",
+                    "message": API_KEY_VALID,
                 }
             return {"valid": False, "error": INVALID_API_KEY}
     except httpx.TimeoutException:

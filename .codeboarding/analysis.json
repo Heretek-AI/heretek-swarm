@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-17T19:10:29.266401+00:00",
+    "generated_at": "2026-04-17T20:18:32.159495+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -11804,17 +11804,10 @@
         },
         {
           "qualified_name": "src.heretek_swarm.api.wizard._validate_anthropic",
-          "start_line": 461,
-          "end_line": 499,
+          "start_line": 503,
+          "end_line": 541,
           "node_type": "FUNCTION",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.api.wizard._validate_openai",
-          "start_line": 502,
-          "end_line": 527,
-          "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.wizard._validate_ollama",
@@ -11824,25 +11817,25 @@
           "status": "unchanged"
         },
         {
-          "qualified_name": "src.heretek_swarm.api.wizard._validate_groq",
-          "start_line": 554,
-          "end_line": 587,
+          "qualified_name": "src.heretek_swarm.api.wizard._validate_openai",
+          "start_line": 544,
+          "end_line": 569,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.wizard._validate_groq",
+          "start_line": 596,
+          "end_line": 629,
+          "node_type": "FUNCTION",
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.wizard._validate_mistral",
-          "start_line": 590,
-          "end_line": 623,
+          "start_line": 632,
+          "end_line": 665,
           "node_type": "FUNCTION",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.api.wizard._validate_deepseek",
-          "start_line": 626,
-          "end_line": 659,
-          "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.wizard._validate_local",
@@ -11850,6 +11843,13 @@
           "end_line": 684,
           "node_type": "FUNCTION",
           "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.wizard._validate_deepseek",
+          "start_line": 668,
+          "end_line": 701,
+          "node_type": "FUNCTION",
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.wizard.submit_config",
@@ -28500,14 +28500,14 @@
       ]
     },
     "src/heretek_swarm/mcp/client.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.mcp.client.MCPClient",
-          "start_line": 28,
-          "end_line": 237,
+          "start_line": 34,
+          "end_line": 243,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.mcp.client.MCPClient.__init__",
@@ -28553,31 +28553,31 @@
         },
         {
           "qualified_name": "src.heretek_swarm.mcp.client.MCPClient.list_tools",
-          "start_line": 114,
-          "end_line": 136,
+          "start_line": 120,
+          "end_line": 142,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.mcp.client.MCPClient.call_tool",
-          "start_line": 138,
-          "end_line": 177,
+          "start_line": 144,
+          "end_line": 183,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.mcp.client.MCPClient.get_tool_details",
-          "start_line": 179,
-          "end_line": 204,
+          "start_line": 185,
+          "end_line": 210,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.mcp.client.MCPClient.health_check",
-          "start_line": 206,
-          "end_line": 230,
+          "start_line": 212,
+          "end_line": 236,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.mcp.client.MCPClient._get_headers",
@@ -68777,18 +68777,10 @@
     "src/heretek_swarm/api/wizard.py|src.heretek_swarm.api.wizard._validate_anthropic": {
       "file_path": "src/heretek_swarm/api/wizard.py",
       "qualified_name": "src.heretek_swarm.api.wizard._validate_anthropic",
-      "start_line": 461,
-      "end_line": 499,
+      "start_line": 503,
+      "end_line": 541,
       "type": "FUNCTION",
-      "status": "unchanged"
-    },
-    "src/heretek_swarm/api/wizard.py|src.heretek_swarm.api.wizard._validate_openai": {
-      "file_path": "src/heretek_swarm/api/wizard.py",
-      "qualified_name": "src.heretek_swarm.api.wizard._validate_openai",
-      "start_line": 502,
-      "end_line": 527,
-      "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/wizard.py|src.heretek_swarm.api.wizard._validate_ollama": {
       "file_path": "src/heretek_swarm/api/wizard.py",
@@ -68798,29 +68790,29 @@
       "type": "FUNCTION",
       "status": "unchanged"
     },
+    "src/heretek_swarm/api/wizard.py|src.heretek_swarm.api.wizard._validate_openai": {
+      "file_path": "src/heretek_swarm/api/wizard.py",
+      "qualified_name": "src.heretek_swarm.api.wizard._validate_openai",
+      "start_line": 544,
+      "end_line": 569,
+      "type": "FUNCTION",
+      "status": "modified"
+    },
     "src/heretek_swarm/api/wizard.py|src.heretek_swarm.api.wizard._validate_groq": {
       "file_path": "src/heretek_swarm/api/wizard.py",
       "qualified_name": "src.heretek_swarm.api.wizard._validate_groq",
-      "start_line": 554,
-      "end_line": 587,
+      "start_line": 596,
+      "end_line": 629,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/wizard.py|src.heretek_swarm.api.wizard._validate_mistral": {
       "file_path": "src/heretek_swarm/api/wizard.py",
       "qualified_name": "src.heretek_swarm.api.wizard._validate_mistral",
-      "start_line": 590,
-      "end_line": 623,
+      "start_line": 632,
+      "end_line": 665,
       "type": "FUNCTION",
-      "status": "unchanged"
-    },
-    "src/heretek_swarm/api/wizard.py|src.heretek_swarm.api.wizard._validate_deepseek": {
-      "file_path": "src/heretek_swarm/api/wizard.py",
-      "qualified_name": "src.heretek_swarm.api.wizard._validate_deepseek",
-      "start_line": 626,
-      "end_line": 659,
-      "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/wizard.py|src.heretek_swarm.api.wizard._validate_local": {
       "file_path": "src/heretek_swarm/api/wizard.py",
@@ -68829,6 +68821,14 @@
       "end_line": 684,
       "type": "FUNCTION",
       "status": "unchanged"
+    },
+    "src/heretek_swarm/api/wizard.py|src.heretek_swarm.api.wizard._validate_deepseek": {
+      "file_path": "src/heretek_swarm/api/wizard.py",
+      "qualified_name": "src.heretek_swarm.api.wizard._validate_deepseek",
+      "start_line": 668,
+      "end_line": 701,
+      "type": "FUNCTION",
+      "status": "modified"
     },
     "src/heretek_swarm/api/wizard.py|src.heretek_swarm.api.wizard.submit_config": {
       "file_path": "src/heretek_swarm/api/wizard.py",
@@ -87337,10 +87337,10 @@
     "src/heretek_swarm/mcp/client.py|src.heretek_swarm.mcp.client.MCPClient": {
       "file_path": "src/heretek_swarm/mcp/client.py",
       "qualified_name": "src.heretek_swarm.mcp.client.MCPClient",
-      "start_line": 28,
-      "end_line": 237,
+      "start_line": 34,
+      "end_line": 243,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/mcp/client.py|src.heretek_swarm.mcp.client.MCPClient.__init__": {
       "file_path": "src/heretek_swarm/mcp/client.py",
@@ -87393,34 +87393,34 @@
     "src/heretek_swarm/mcp/client.py|src.heretek_swarm.mcp.client.MCPClient.list_tools": {
       "file_path": "src/heretek_swarm/mcp/client.py",
       "qualified_name": "src.heretek_swarm.mcp.client.MCPClient.list_tools",
-      "start_line": 114,
-      "end_line": 136,
+      "start_line": 120,
+      "end_line": 142,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/mcp/client.py|src.heretek_swarm.mcp.client.MCPClient.call_tool": {
       "file_path": "src/heretek_swarm/mcp/client.py",
       "qualified_name": "src.heretek_swarm.mcp.client.MCPClient.call_tool",
-      "start_line": 138,
-      "end_line": 177,
+      "start_line": 144,
+      "end_line": 183,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/mcp/client.py|src.heretek_swarm.mcp.client.MCPClient.get_tool_details": {
       "file_path": "src/heretek_swarm/mcp/client.py",
       "qualified_name": "src.heretek_swarm.mcp.client.MCPClient.get_tool_details",
-      "start_line": 179,
-      "end_line": 204,
+      "start_line": 185,
+      "end_line": 210,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/mcp/client.py|src.heretek_swarm.mcp.client.MCPClient.health_check": {
       "file_path": "src/heretek_swarm/mcp/client.py",
       "qualified_name": "src.heretek_swarm.mcp.client.MCPClient.health_check",
-      "start_line": 206,
-      "end_line": 230,
+      "start_line": 212,
+      "end_line": 236,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/mcp/client.py|src.heretek_swarm.mcp.client.MCPClient._get_headers": {
       "file_path": "src/heretek_swarm/mcp/client.py",
@@ -119455,12 +119455,12 @@
             "src.heretek_swarm.api.wizard._dispatch_validation",
             "src.heretek_swarm.api.wizard.validate_credentials",
             "src.heretek_swarm.api.wizard._validate_anthropic",
-            "src.heretek_swarm.api.wizard._validate_openai",
             "src.heretek_swarm.api.wizard._validate_ollama",
+            "src.heretek_swarm.api.wizard._validate_openai",
             "src.heretek_swarm.api.wizard._validate_groq",
             "src.heretek_swarm.api.wizard._validate_mistral",
-            "src.heretek_swarm.api.wizard._validate_deepseek",
             "src.heretek_swarm.api.wizard._validate_local",
+            "src.heretek_swarm.api.wizard._validate_deepseek",
             "src.heretek_swarm.api.wizard.submit_config",
             "src.heretek_swarm.api.wizard.reset_wizard"
           ]
@@ -122319,7 +122319,7 @@
         },
         {
           "file_path": "src/heretek_swarm/mcp/client.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "src.heretek_swarm.mcp.client.MCPClient",
             "src.heretek_swarm.mcp.client.MCPClient.__init__",
@@ -125932,12 +125932,12 @@
                 "src.heretek_swarm.api.wizard._dispatch_validation",
                 "src.heretek_swarm.api.wizard.validate_credentials",
                 "src.heretek_swarm.api.wizard._validate_anthropic",
-                "src.heretek_swarm.api.wizard._validate_openai",
                 "src.heretek_swarm.api.wizard._validate_ollama",
+                "src.heretek_swarm.api.wizard._validate_openai",
                 "src.heretek_swarm.api.wizard._validate_groq",
                 "src.heretek_swarm.api.wizard._validate_mistral",
-                "src.heretek_swarm.api.wizard._validate_deepseek",
                 "src.heretek_swarm.api.wizard._validate_local",
+                "src.heretek_swarm.api.wizard._validate_deepseek",
                 "src.heretek_swarm.api.wizard.submit_config",
                 "src.heretek_swarm.api.wizard.reset_wizard"
               ]
@@ -127314,7 +127314,7 @@
             },
             {
               "file_path": "src/heretek_swarm/mcp/client.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.heretek_swarm.mcp.client.MCPClient",
                 "src.heretek_swarm.mcp.client.MCPClient.__init__",
@@ -133878,12 +133878,12 @@
                     "src.heretek_swarm.api.wizard._dispatch_validation",
                     "src.heretek_swarm.api.wizard.validate_credentials",
                     "src.heretek_swarm.api.wizard._validate_anthropic",
-                    "src.heretek_swarm.api.wizard._validate_openai",
                     "src.heretek_swarm.api.wizard._validate_ollama",
+                    "src.heretek_swarm.api.wizard._validate_openai",
                     "src.heretek_swarm.api.wizard._validate_groq",
                     "src.heretek_swarm.api.wizard._validate_mistral",
-                    "src.heretek_swarm.api.wizard._validate_deepseek",
                     "src.heretek_swarm.api.wizard._validate_local",
+                    "src.heretek_swarm.api.wizard._validate_deepseek",
                     "src.heretek_swarm.api.wizard.submit_config",
                     "src.heretek_swarm.api.wizard.reset_wizard"
                   ]
@@ -135908,12 +135908,12 @@
                         "src.heretek_swarm.api.wizard._dispatch_validation",
                         "src.heretek_swarm.api.wizard.validate_credentials",
                         "src.heretek_swarm.api.wizard._validate_anthropic",
-                        "src.heretek_swarm.api.wizard._validate_openai",
                         "src.heretek_swarm.api.wizard._validate_ollama",
+                        "src.heretek_swarm.api.wizard._validate_openai",
                         "src.heretek_swarm.api.wizard._validate_groq",
                         "src.heretek_swarm.api.wizard._validate_mistral",
-                        "src.heretek_swarm.api.wizard._validate_deepseek",
                         "src.heretek_swarm.api.wizard._validate_local",
+                        "src.heretek_swarm.api.wizard._validate_deepseek",
                         "src.heretek_swarm.api.wizard.submit_config",
                         "src.heretek_swarm.api.wizard.reset_wizard"
                       ]
@@ -137748,12 +137748,12 @@
                             "src.heretek_swarm.api.wizard._dispatch_validation",
                             "src.heretek_swarm.api.wizard.validate_credentials",
                             "src.heretek_swarm.api.wizard._validate_anthropic",
-                            "src.heretek_swarm.api.wizard._validate_openai",
                             "src.heretek_swarm.api.wizard._validate_ollama",
+                            "src.heretek_swarm.api.wizard._validate_openai",
                             "src.heretek_swarm.api.wizard._validate_groq",
                             "src.heretek_swarm.api.wizard._validate_mistral",
-                            "src.heretek_swarm.api.wizard._validate_deepseek",
                             "src.heretek_swarm.api.wizard._validate_local",
+                            "src.heretek_swarm.api.wizard._validate_deepseek",
                             "src.heretek_swarm.api.wizard.submit_config",
                             "src.heretek_swarm.api.wizard.reset_wizard"
                           ]
@@ -146387,7 +146387,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/mcp/client.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.mcp.client.MCPClient",
                     "src.heretek_swarm.mcp.client.MCPClient.__init__",
@@ -147961,7 +147961,7 @@
                     },
                     {
                       "file_path": "src/heretek_swarm/mcp/client.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.mcp.client.MCPClient",
                         "src.heretek_swarm.mcp.client.MCPClient.__init__",
@@ -148146,7 +148146,7 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/mcp/client.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.mcp.client.MCPClient",
                             "src.heretek_swarm.mcp.client.MCPClient.__init__",
