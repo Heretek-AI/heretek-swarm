@@ -107,7 +107,7 @@ class PSO:
         self.global_best_value: float = float("-inf")
         self.decision_history: list[SwarmDecision] = []
 
-    async def run(
+    def run(
         self,
         participants: list[str],
         decision_space: dict[str, float],

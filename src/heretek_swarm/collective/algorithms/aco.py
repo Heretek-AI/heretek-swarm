@@ -94,7 +94,7 @@ class ACO:
         self.pheromone_trails: dict[str, dict[str, PheromoneTrail]] = {}
         self.decision_history: list[SwarmDecision] = []
 
-    async def run(
+    def run(
         self,
         nodes: list[str],
         edges: list[tuple[str, str]],

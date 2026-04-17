@@ -193,7 +193,7 @@ class SwarmIntelligenceEngine:
         """
         iterations = iterations or self.config.max_iterations
 
-        decision = await self._pso.run(
+        decision = self._pso.run(
             participants=participants,
             decision_space=decision_space,
             fitness_function=fitness_function,
@@ -237,7 +237,7 @@ class SwarmIntelligenceEngine:
         """
         iterations = iterations or self.config.max_iterations
 
-        decision = await self._aco.run(
+        decision = self._aco.run(
             nodes=nodes,
             edges=edges,
             start_node=start_node,
@@ -278,7 +278,7 @@ class SwarmIntelligenceEngine:
         """
         iterations = iterations or self.config.max_iterations
 
-        decision = await self._abc.run(
+        decision = self._abc.run(
             tasks=tasks,
             foragers=foragers,
             task_qualities=task_qualities,

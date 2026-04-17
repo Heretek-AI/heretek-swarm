@@ -362,10 +362,10 @@ async def register_mcp_tool(
 
     # Create a placeholder handler that returns an error
     # Actual handler should be set separately
-    async def placeholder_handler(
+    def placeholder_handler(
         arguments: dict[str, Any],
         context: dict[str, Any] | None = None,
-    ):
+    ) -> dict[str, Any]:
         return {"error": "Handler not implemented"}
 
     server.register_tool(

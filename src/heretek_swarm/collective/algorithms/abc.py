@@ -88,7 +88,7 @@ class ABC:
         self.task_pool: dict[str, dict[str, Any]] = {}
         self.decision_history: list[SwarmDecision] = []
 
-    async def run(
+    def run(
         self,
         tasks: list[str],
         foragers: list[str],

@@ -384,7 +384,7 @@ class NATSClient:
 _client: NATSClient | None = None
 
 
-async def get_nats_client(config: NATSConfig | None = None) -> NATSClient:
+def get_nats_client(config: NATSConfig | None = None) -> NATSClient:
     """Get or create global NATS client."""
     global _client
     if _client is None:

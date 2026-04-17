@@ -510,7 +510,7 @@ class Mem0Backend:
             logger.error("mem0_store_failed", error=str(e))
             return ""
 
-    async def search(self, query: MemoryQuery) -> MemoryResult:
+    def search(self, query: MemoryQuery) -> MemoryResult:
         """
         Search memories.
 
@@ -521,7 +521,7 @@ class Mem0Backend:
             MemoryResult with entries and total_count
         """
         if not self._initialized:
-            await self.initialize()
+            self.initialize()
 
         start = time.perf_counter()
         try:
@@ -560,7 +560,7 @@ class Mem0Backend:
             logger.error("mem0_search_failed", error=str(e))
             return MemoryResult()
 
-    async def get_all(self, agent_id: str) -> list[MemoryEntry]:
+    def get_all(self, agent_id: str) -> list[MemoryEntry]:
         """
         Get all memories for an agent.
 
@@ -571,7 +571,7 @@ class Mem0Backend:
             List of MemoryEntry objects
         """
         if not self._initialized:
-            await self.initialize()
+            self.initialize()
 
         try:
             results = self._memory.get_all(user_id=self._user_id)
@@ -595,7 +595,7 @@ class Mem0Backend:
             logger.error("mem0_get_all_failed", error=str(e))
             return []
 
-    async def delete(self, memory_id: str) -> bool:
+    def delete(self, memory_id: str) -> bool:
         """
         Delete a memory entry.
 
@@ -606,7 +606,7 @@ class Mem0Backend:
             True if deleted
         """
         if not self._initialized:
-            await self.initialize()
+            self.initialize()
 
         try:
             self._memory.delete(memory_id)
@@ -615,7 +615,7 @@ class Mem0Backend:
             logger.error("mem0_delete_failed", error=str(e))
             return False
 
-    async def store_batch(self, entries: list[MemoryEntry]) -> list[str]:
+    def store_batch(self, entries: list[MemoryEntry]) -> list[str]:
         """
         Store multiple memory entries.
 
@@ -626,11 +626,11 @@ class Mem0Backend:
             List of memory IDs
         """
         if not self._initialized:
-            await self.initialize()
+            self.initialize()
 
         memory_ids = []
         for entry in entries:
-            memory_id = await self.store(entry)
+            memory_id = self.store(entry)
             memory_ids.append(memory_id)
         return memory_ids
 

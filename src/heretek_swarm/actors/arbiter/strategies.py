@@ -111,7 +111,7 @@ async def _resolve_round_robin(agent: ArbiterAgent, conflict: Conflict) -> dict[
     return {"status": "round_robin_proposed", "strategy": "round_robin"}
 
 
-async def _resolve_resource_pooling(agent: ArbiterAgent, conflict: Conflict) -> dict[str, Any]:
+def _resolve_resource_pooling(agent: ArbiterAgent, conflict: Conflict) -> dict[str, Any]:
     """Resource pooling resolution."""
     proposal = {
         "strategy": "resource_pooling",

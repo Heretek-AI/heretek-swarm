@@ -611,7 +611,7 @@ class MemorySync:
 
         return results
 
-    async def get_local_cached_update(
+    def get_local_cached_update(
         self, memory_id: str
     ) -> MemoryUpdate | None:
         """
@@ -625,7 +625,7 @@ class MemorySync:
         """
         return self._local_memory_cache.get(memory_id)
 
-    async def update_local_cache(
+    def update_local_cache(
         self, memory_id: str, update: MemoryUpdate
     ) -> None:
         """
@@ -635,8 +635,7 @@ class MemorySync:
             memory_id: ID of the memory
             update: Memory update to cache
         """
-        async with self._lock:
-            self._local_memory_cache[memory_id] = update
+        self._local_memory_cache[memory_id] = update
 
     async def handle_sync_request(
         self, _subject: str, data: bytes

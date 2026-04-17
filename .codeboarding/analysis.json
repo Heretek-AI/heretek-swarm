@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-17T20:20:21.120688+00:00",
+    "generated_at": "2026-04-17T20:39:27.603563+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -928,7 +928,7 @@
       ]
     },
     "src/heretek_swarm/actors/arbiter/strategies.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.actors.arbiter.strategies.register_strategies",
@@ -977,7 +977,7 @@
           "start_line": 114,
           "end_line": 122,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.arbiter.strategies._resolve_task_reassignment",
@@ -10533,7 +10533,7 @@
       ]
     },
     "src/heretek_swarm/api/mcp.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.api.mcp.get_mcp_server",
@@ -10631,14 +10631,14 @@
           "start_line": 337,
           "end_line": 386,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.mcp.register_mcp_tool.placeholder_handler",
           "start_line": 365,
           "end_line": 369,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         }
       ]
     },
@@ -13267,10 +13267,10 @@
         },
         {
           "qualified_name": "src.heretek_swarm.collective.algorithms.abc.ABC",
-          "start_line": 69,
-          "end_line": 292,
+          "start_line": 66,
+          "end_line": 289,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.collective.algorithms.abc.ABC.__init__",
@@ -13281,10 +13281,10 @@
         },
         {
           "qualified_name": "src.heretek_swarm.collective.algorithms.abc.ABC.run",
-          "start_line": 94,
-          "end_line": 151,
+          "start_line": 91,
+          "end_line": 148,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.collective.algorithms.abc.ABC._initialize_colony",
@@ -13363,10 +13363,10 @@
         },
         {
           "qualified_name": "src.heretek_swarm.collective.algorithms.aco.ACO",
-          "start_line": 73,
-          "end_line": 295,
+          "start_line": 70,
+          "end_line": 292,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.collective.algorithms.aco.ACO.__init__",
@@ -13377,10 +13377,10 @@
         },
         {
           "qualified_name": "src.heretek_swarm.collective.algorithms.aco.ACO.run",
-          "start_line": 100,
-          "end_line": 162,
+          "start_line": 97,
+          "end_line": 159,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.collective.algorithms.aco.ACO._initialize_pheromone_trails",
@@ -13459,10 +13459,10 @@
         },
         {
           "qualified_name": "src.heretek_swarm.collective.algorithms.pso.PSO",
-          "start_line": 84,
-          "end_line": 285,
+          "start_line": 81,
+          "end_line": 282,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.collective.algorithms.pso.PSO.__init__",
@@ -13473,10 +13473,10 @@
         },
         {
           "qualified_name": "src.heretek_swarm.collective.algorithms.pso.PSO.run",
-          "start_line": 113,
-          "end_line": 167,
+          "start_line": 110,
+          "end_line": 164,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.collective.algorithms.pso.PSO._initialize_particles",
@@ -16179,24 +16179,24 @@
         },
         {
           "qualified_name": "src.heretek_swarm.collective.swarm_intelligence.SwarmIntelligenceEngine.run_pso",
-          "start_line": 191,
-          "end_line": 225,
+          "start_line": 175,
+          "end_line": 209,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.collective.swarm_intelligence.SwarmIntelligenceEngine.run_ant_colony",
-          "start_line": 231,
-          "end_line": 270,
+          "start_line": 215,
+          "end_line": 254,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.collective.swarm_intelligence.SwarmIntelligenceEngine.run_bee_algorithm",
-          "start_line": 276,
-          "end_line": 309,
+          "start_line": 260,
+          "end_line": 293,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.collective.swarm_intelligence.SwarmIntelligenceEngine.run_flocking",
@@ -23475,7 +23475,7 @@
       ]
     },
     "src/heretek_swarm/infrastructure/nats/client.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.infrastructure.nats.client.ConnectionState",
@@ -23580,7 +23580,7 @@
           "start_line": 387,
           "end_line": 392,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.infrastructure.nats.client.shutdown_nats_client",
@@ -23938,7 +23938,7 @@
       ]
     },
     "src/heretek_swarm/infrastructure/nats/memory_sync.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.infrastructure.nats.memory_sync.MemoryOperation",
@@ -24034,9 +24034,9 @@
         {
           "qualified_name": "src.heretek_swarm.infrastructure.nats.memory_sync.MemorySync",
           "start_line": 228,
-          "end_line": 708,
+          "end_line": 707,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.infrastructure.nats.memory_sync.MemorySync.__init__",
@@ -24134,14 +24134,14 @@
           "start_line": 614,
           "end_line": 626,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.infrastructure.nats.memory_sync.MemorySync.update_local_cache",
           "start_line": 628,
-          "end_line": 639,
+          "end_line": 638,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.infrastructure.nats.memory_sync.MemorySync.handle_sync_request",
@@ -30171,7 +30171,7 @@
       ]
     },
     "src/heretek_swarm/memory/persistent.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.memory.persistent.Mem0Config",
@@ -30297,7 +30297,7 @@
           "start_line": 432,
           "end_line": 655,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.memory.persistent.Mem0Backend.__init__",
@@ -30332,28 +30332,28 @@
           "start_line": 513,
           "end_line": 561,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.memory.persistent.Mem0Backend.get_all",
           "start_line": 563,
           "end_line": 596,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.memory.persistent.Mem0Backend.delete",
           "start_line": 598,
           "end_line": 616,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.memory.persistent.Mem0Backend.store_batch",
           "start_line": 618,
           "end_line": 635,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.memory.persistent.Mem0Backend.get_latency_stats",
@@ -38050,7 +38050,7 @@
       ]
     },
     "src/heretek_swarm/state/models.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.state.models.StateStatus",
@@ -38190,7 +38190,7 @@
           "start_line": 270,
           "end_line": 414,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.state.models.LineageTracker.__init__",
@@ -38225,7 +38225,7 @@
           "start_line": 372,
           "end_line": 380,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.state.models.LineageTracker.verify_integrity",
@@ -38246,7 +38246,7 @@
           "start_line": 417,
           "end_line": 540,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.state.models.SnapshotManager.__init__",
@@ -38260,56 +38260,56 @@
           "start_line": 425,
           "end_line": 438,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.state.models.SnapshotManager.shutdown",
           "start_line": 440,
           "end_line": 453,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.state.models.SnapshotManager.create_snapshot",
           "start_line": 455,
           "end_line": 489,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.state.models.SnapshotManager.get_snapshot",
           "start_line": 491,
           "end_line": 496,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.state.models.SnapshotManager.list_snapshots",
           "start_line": 498,
           "end_line": 500,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.state.models.SnapshotManager.delete_snapshot",
           "start_line": 502,
           "end_line": 508,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.state.models.SnapshotManager.compute_diff",
           "start_line": 510,
           "end_line": 540,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.state.models.StateManager",
           "start_line": 543,
           "end_line": 703,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.state.models.StateManager.__init__",
@@ -38365,14 +38365,14 @@
           "start_line": 626,
           "end_line": 634,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.state.models.StateManager.rollback_to_snapshot",
           "start_line": 636,
           "end_line": 653,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.state.models.StateManager.get_stats",
@@ -56780,7 +56780,7 @@
       "start_line": 114,
       "end_line": 122,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/arbiter/strategies.py|src.heretek_swarm.actors.arbiter.strategies._resolve_task_reassignment": {
       "file_path": "src/heretek_swarm/actors/arbiter/strategies.py",
@@ -67476,7 +67476,7 @@
       "start_line": 337,
       "end_line": 386,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/mcp.py|src.heretek_swarm.api.mcp.register_mcp_tool.placeholder_handler": {
       "file_path": "src/heretek_swarm/api/mcp.py",
@@ -67484,7 +67484,7 @@
       "start_line": 365,
       "end_line": 369,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/metrics.py|src.heretek_swarm.api.metrics.get_prometheus_metrics": {
       "file_path": "src/heretek_swarm/api/metrics.py",
@@ -70409,10 +70409,10 @@
     "src/heretek_swarm/collective/algorithms/abc.py|src.heretek_swarm.collective.algorithms.abc.ABC": {
       "file_path": "src/heretek_swarm/collective/algorithms/abc.py",
       "qualified_name": "src.heretek_swarm.collective.algorithms.abc.ABC",
-      "start_line": 69,
-      "end_line": 292,
+      "start_line": 66,
+      "end_line": 289,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/collective/algorithms/abc.py|src.heretek_swarm.collective.algorithms.abc.ABC.__init__": {
       "file_path": "src/heretek_swarm/collective/algorithms/abc.py",
@@ -70425,10 +70425,10 @@
     "src/heretek_swarm/collective/algorithms/abc.py|src.heretek_swarm.collective.algorithms.abc.ABC.run": {
       "file_path": "src/heretek_swarm/collective/algorithms/abc.py",
       "qualified_name": "src.heretek_swarm.collective.algorithms.abc.ABC.run",
-      "start_line": 94,
-      "end_line": 151,
+      "start_line": 91,
+      "end_line": 148,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/collective/algorithms/abc.py|src.heretek_swarm.collective.algorithms.abc.ABC._initialize_colony": {
       "file_path": "src/heretek_swarm/collective/algorithms/abc.py",
@@ -70513,10 +70513,10 @@
     "src/heretek_swarm/collective/algorithms/aco.py|src.heretek_swarm.collective.algorithms.aco.ACO": {
       "file_path": "src/heretek_swarm/collective/algorithms/aco.py",
       "qualified_name": "src.heretek_swarm.collective.algorithms.aco.ACO",
-      "start_line": 73,
-      "end_line": 295,
+      "start_line": 70,
+      "end_line": 292,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/collective/algorithms/aco.py|src.heretek_swarm.collective.algorithms.aco.ACO.__init__": {
       "file_path": "src/heretek_swarm/collective/algorithms/aco.py",
@@ -70529,10 +70529,10 @@
     "src/heretek_swarm/collective/algorithms/aco.py|src.heretek_swarm.collective.algorithms.aco.ACO.run": {
       "file_path": "src/heretek_swarm/collective/algorithms/aco.py",
       "qualified_name": "src.heretek_swarm.collective.algorithms.aco.ACO.run",
-      "start_line": 100,
-      "end_line": 162,
+      "start_line": 97,
+      "end_line": 159,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/collective/algorithms/aco.py|src.heretek_swarm.collective.algorithms.aco.ACO._initialize_pheromone_trails": {
       "file_path": "src/heretek_swarm/collective/algorithms/aco.py",
@@ -70617,10 +70617,10 @@
     "src/heretek_swarm/collective/algorithms/pso.py|src.heretek_swarm.collective.algorithms.pso.PSO": {
       "file_path": "src/heretek_swarm/collective/algorithms/pso.py",
       "qualified_name": "src.heretek_swarm.collective.algorithms.pso.PSO",
-      "start_line": 84,
-      "end_line": 285,
+      "start_line": 81,
+      "end_line": 282,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/collective/algorithms/pso.py|src.heretek_swarm.collective.algorithms.pso.PSO.__init__": {
       "file_path": "src/heretek_swarm/collective/algorithms/pso.py",
@@ -70633,10 +70633,10 @@
     "src/heretek_swarm/collective/algorithms/pso.py|src.heretek_swarm.collective.algorithms.pso.PSO.run": {
       "file_path": "src/heretek_swarm/collective/algorithms/pso.py",
       "qualified_name": "src.heretek_swarm.collective.algorithms.pso.PSO.run",
-      "start_line": 113,
-      "end_line": 167,
+      "start_line": 110,
+      "end_line": 164,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/collective/algorithms/pso.py|src.heretek_swarm.collective.algorithms.pso.PSO._initialize_particles": {
       "file_path": "src/heretek_swarm/collective/algorithms/pso.py",
@@ -73657,26 +73657,26 @@
     "src/heretek_swarm/collective/swarm_intelligence.py|src.heretek_swarm.collective.swarm_intelligence.SwarmIntelligenceEngine.run_pso": {
       "file_path": "src/heretek_swarm/collective/swarm_intelligence.py",
       "qualified_name": "src.heretek_swarm.collective.swarm_intelligence.SwarmIntelligenceEngine.run_pso",
-      "start_line": 191,
-      "end_line": 225,
+      "start_line": 175,
+      "end_line": 209,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/collective/swarm_intelligence.py|src.heretek_swarm.collective.swarm_intelligence.SwarmIntelligenceEngine.run_ant_colony": {
       "file_path": "src/heretek_swarm/collective/swarm_intelligence.py",
       "qualified_name": "src.heretek_swarm.collective.swarm_intelligence.SwarmIntelligenceEngine.run_ant_colony",
-      "start_line": 231,
-      "end_line": 270,
+      "start_line": 215,
+      "end_line": 254,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/collective/swarm_intelligence.py|src.heretek_swarm.collective.swarm_intelligence.SwarmIntelligenceEngine.run_bee_algorithm": {
       "file_path": "src/heretek_swarm/collective/swarm_intelligence.py",
       "qualified_name": "src.heretek_swarm.collective.swarm_intelligence.SwarmIntelligenceEngine.run_bee_algorithm",
-      "start_line": 276,
-      "end_line": 309,
+      "start_line": 260,
+      "end_line": 293,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/collective/swarm_intelligence.py|src.heretek_swarm.collective.swarm_intelligence.SwarmIntelligenceEngine.run_flocking": {
       "file_path": "src/heretek_swarm/collective/swarm_intelligence.py",
@@ -81892,7 +81892,7 @@
       "start_line": 387,
       "end_line": 392,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/infrastructure/nats/client.py|src.heretek_swarm.infrastructure.nats.client.shutdown_nats_client": {
       "file_path": "src/heretek_swarm/infrastructure/nats/client.py",
@@ -82394,9 +82394,9 @@
       "file_path": "src/heretek_swarm/infrastructure/nats/memory_sync.py",
       "qualified_name": "src.heretek_swarm.infrastructure.nats.memory_sync.MemorySync",
       "start_line": 228,
-      "end_line": 708,
+      "end_line": 707,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/infrastructure/nats/memory_sync.py|src.heretek_swarm.infrastructure.nats.memory_sync.MemorySync.__init__": {
       "file_path": "src/heretek_swarm/infrastructure/nats/memory_sync.py",
@@ -82508,15 +82508,15 @@
       "start_line": 614,
       "end_line": 626,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/infrastructure/nats/memory_sync.py|src.heretek_swarm.infrastructure.nats.memory_sync.MemorySync.update_local_cache": {
       "file_path": "src/heretek_swarm/infrastructure/nats/memory_sync.py",
       "qualified_name": "src.heretek_swarm.infrastructure.nats.memory_sync.MemorySync.update_local_cache",
       "start_line": 628,
-      "end_line": 639,
+      "end_line": 638,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/infrastructure/nats/memory_sync.py|src.heretek_swarm.infrastructure.nats.memory_sync.MemorySync.handle_sync_request": {
       "file_path": "src/heretek_swarm/infrastructure/nats/memory_sync.py",
@@ -89340,7 +89340,7 @@
       "start_line": 432,
       "end_line": 655,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/memory/persistent.py|src.heretek_swarm.memory.persistent.Mem0Backend.__init__": {
       "file_path": "src/heretek_swarm/memory/persistent.py",
@@ -89380,7 +89380,7 @@
       "start_line": 513,
       "end_line": 561,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/memory/persistent.py|src.heretek_swarm.memory.persistent.Mem0Backend.get_all": {
       "file_path": "src/heretek_swarm/memory/persistent.py",
@@ -89388,7 +89388,7 @@
       "start_line": 563,
       "end_line": 596,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/memory/persistent.py|src.heretek_swarm.memory.persistent.Mem0Backend.delete": {
       "file_path": "src/heretek_swarm/memory/persistent.py",
@@ -89396,7 +89396,7 @@
       "start_line": 598,
       "end_line": 616,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/memory/persistent.py|src.heretek_swarm.memory.persistent.Mem0Backend.store_batch": {
       "file_path": "src/heretek_swarm/memory/persistent.py",
@@ -89404,7 +89404,7 @@
       "start_line": 618,
       "end_line": 635,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/memory/persistent.py|src.heretek_swarm.memory.persistent.Mem0Backend.get_latency_stats": {
       "file_path": "src/heretek_swarm/memory/persistent.py",
@@ -98132,7 +98132,7 @@
       "start_line": 270,
       "end_line": 414,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/state/models.py|src.heretek_swarm.state.models.LineageTracker.__init__": {
       "file_path": "src/heretek_swarm/state/models.py",
@@ -98172,7 +98172,7 @@
       "start_line": 372,
       "end_line": 380,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/state/models.py|src.heretek_swarm.state.models.LineageTracker.verify_integrity": {
       "file_path": "src/heretek_swarm/state/models.py",
@@ -98196,7 +98196,7 @@
       "start_line": 417,
       "end_line": 540,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/state/models.py|src.heretek_swarm.state.models.SnapshotManager.__init__": {
       "file_path": "src/heretek_swarm/state/models.py",
@@ -98212,7 +98212,7 @@
       "start_line": 425,
       "end_line": 438,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/state/models.py|src.heretek_swarm.state.models.SnapshotManager.shutdown": {
       "file_path": "src/heretek_swarm/state/models.py",
@@ -98220,7 +98220,7 @@
       "start_line": 440,
       "end_line": 453,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/state/models.py|src.heretek_swarm.state.models.SnapshotManager.create_snapshot": {
       "file_path": "src/heretek_swarm/state/models.py",
@@ -98228,7 +98228,7 @@
       "start_line": 455,
       "end_line": 489,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/state/models.py|src.heretek_swarm.state.models.SnapshotManager.get_snapshot": {
       "file_path": "src/heretek_swarm/state/models.py",
@@ -98236,7 +98236,7 @@
       "start_line": 491,
       "end_line": 496,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/state/models.py|src.heretek_swarm.state.models.SnapshotManager.list_snapshots": {
       "file_path": "src/heretek_swarm/state/models.py",
@@ -98244,7 +98244,7 @@
       "start_line": 498,
       "end_line": 500,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/state/models.py|src.heretek_swarm.state.models.SnapshotManager.delete_snapshot": {
       "file_path": "src/heretek_swarm/state/models.py",
@@ -98252,7 +98252,7 @@
       "start_line": 502,
       "end_line": 508,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/state/models.py|src.heretek_swarm.state.models.SnapshotManager.compute_diff": {
       "file_path": "src/heretek_swarm/state/models.py",
@@ -98260,7 +98260,7 @@
       "start_line": 510,
       "end_line": 540,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/state/models.py|src.heretek_swarm.state.models.StateManager": {
       "file_path": "src/heretek_swarm/state/models.py",
@@ -98268,7 +98268,7 @@
       "start_line": 543,
       "end_line": 703,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/state/models.py|src.heretek_swarm.state.models.StateManager.__init__": {
       "file_path": "src/heretek_swarm/state/models.py",
@@ -98332,7 +98332,7 @@
       "start_line": 626,
       "end_line": 634,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/state/models.py|src.heretek_swarm.state.models.StateManager.rollback_to_snapshot": {
       "file_path": "src/heretek_swarm/state/models.py",
@@ -98340,7 +98340,7 @@
       "start_line": 636,
       "end_line": 653,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/state/models.py|src.heretek_swarm.state.models.StateManager.get_stats": {
       "file_path": "src/heretek_swarm/state/models.py",
@@ -117724,7 +117724,7 @@
         },
         {
           "file_path": "src/heretek_swarm/actors/arbiter/strategies.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "src.heretek_swarm.actors.arbiter.strategies.register_strategies",
             "src.heretek_swarm.actors.arbiter.strategies._resolve_negotiation",
@@ -119234,7 +119234,7 @@
         },
         {
           "file_path": "src/heretek_swarm/api/mcp.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "src.heretek_swarm.api.mcp.get_mcp_server",
             "src.heretek_swarm.api.mcp.get_client_manager",
@@ -121432,7 +121432,7 @@
         },
         {
           "file_path": "src/heretek_swarm/infrastructure/nats/client.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "src.heretek_swarm.infrastructure.nats.client.ConnectionState",
             "src.heretek_swarm.infrastructure.nats.client.NATSConfig",
@@ -121514,7 +121514,7 @@
         },
         {
           "file_path": "src/heretek_swarm/infrastructure/nats/memory_sync.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "src.heretek_swarm.infrastructure.nats.memory_sync.MemoryOperation",
             "src.heretek_swarm.infrastructure.nats.memory_sync.VectorClock",
@@ -122600,7 +122600,7 @@
         },
         {
           "file_path": "src/heretek_swarm/memory/persistent.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "src.heretek_swarm.memory.persistent.Mem0Config",
             "src.heretek_swarm.memory.persistent.Mem0Config.to_dict",
@@ -123937,7 +123937,7 @@
         },
         {
           "file_path": "src/heretek_swarm/state/models.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "src.heretek_swarm.state.models.StateStatus",
             "src.heretek_swarm.state.models.TransitionType",
@@ -124496,7 +124496,7 @@
             },
             {
               "file_path": "src/heretek_swarm/actors/arbiter/strategies.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.heretek_swarm.actors.arbiter.strategies.register_strategies",
                 "src.heretek_swarm.actors.arbiter.strategies._resolve_negotiation",
@@ -125711,7 +125711,7 @@
             },
             {
               "file_path": "src/heretek_swarm/api/mcp.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.heretek_swarm.api.mcp.get_mcp_server",
                 "src.heretek_swarm.api.mcp.get_client_manager",
@@ -126947,7 +126947,7 @@
             },
             {
               "file_path": "src/heretek_swarm/infrastructure/nats/client.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.heretek_swarm.infrastructure.nats.client.ConnectionState",
                 "src.heretek_swarm.infrastructure.nats.client.NATSConfig",
@@ -127029,7 +127029,7 @@
             },
             {
               "file_path": "src/heretek_swarm/infrastructure/nats/memory_sync.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.heretek_swarm.infrastructure.nats.memory_sync.MemoryOperation",
                 "src.heretek_swarm.infrastructure.nats.memory_sync.VectorClock",
@@ -127553,7 +127553,7 @@
             },
             {
               "file_path": "src/heretek_swarm/memory/persistent.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.heretek_swarm.memory.persistent.Mem0Config",
                 "src.heretek_swarm.memory.persistent.Mem0Config.to_dict",
@@ -128923,7 +128923,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/actors/arbiter/strategies.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.actors.arbiter.strategies.register_strategies",
                     "src.heretek_swarm.actors.arbiter.strategies._resolve_negotiation",
@@ -131684,7 +131684,7 @@
                     },
                     {
                       "file_path": "src/heretek_swarm/actors/arbiter/strategies.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.actors.arbiter.strategies.register_strategies",
                         "src.heretek_swarm.actors.arbiter.strategies._resolve_negotiation",
@@ -132213,7 +132213,7 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/actors/arbiter/strategies.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.actors.arbiter.strategies.register_strategies",
                             "src.heretek_swarm.actors.arbiter.strategies._resolve_negotiation",
@@ -133988,7 +133988,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/infrastructure/nats/client.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.infrastructure.nats.client.ConnectionState",
                     "src.heretek_swarm.infrastructure.nats.client.NATSConfig",
@@ -134315,7 +134315,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/memory/persistent.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.memory.persistent.Mem0Config",
                     "src.heretek_swarm.memory.persistent.Mem0Config.to_dict",
@@ -136159,7 +136159,7 @@
                     },
                     {
                       "file_path": "src/heretek_swarm/memory/persistent.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.memory.persistent.Mem0Config",
                         "src.heretek_swarm.memory.persistent.Mem0Config.to_dict",
@@ -137355,7 +137355,7 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/memory/persistent.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.memory.persistent.Mem0Config",
                             "src.heretek_swarm.memory.persistent.Mem0Config.to_dict",
@@ -138144,7 +138144,7 @@
                     },
                     {
                       "file_path": "src/heretek_swarm/infrastructure/nats/client.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.infrastructure.nats.client.ConnectionState",
                         "src.heretek_swarm.infrastructure.nats.client.NATSConfig",
@@ -138291,7 +138291,7 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/infrastructure/nats/client.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.infrastructure.nats.client.ConnectionState",
                             "src.heretek_swarm.infrastructure.nats.client.NATSConfig",
@@ -144807,7 +144807,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/infrastructure/nats/memory_sync.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.infrastructure.nats.memory_sync.MemoryOperation",
                     "src.heretek_swarm.infrastructure.nats.memory_sync.VectorClock",
@@ -145796,7 +145796,7 @@
                   "file_methods": [
                     {
                       "file_path": "src/heretek_swarm/infrastructure/nats/memory_sync.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.infrastructure.nats.memory_sync.MemoryOperation",
                         "src.heretek_swarm.infrastructure.nats.memory_sync.VectorClock",
@@ -145870,7 +145870,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/infrastructure/nats/memory_sync.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.infrastructure.nats.memory_sync.MemoryOperation",
                             "src.heretek_swarm.infrastructure.nats.memory_sync.VectorClock",
@@ -145900,7 +145900,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/infrastructure/nats/memory_sync.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.infrastructure.nats.memory_sync.MemorySync._broadcast_conflict_resolution",
                             "src.heretek_swarm.infrastructure.nats.memory_sync.MemorySync.broadcast_memory_update",
@@ -145928,7 +145928,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/infrastructure/nats/memory_sync.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.infrastructure.nats.memory_sync.VectorClock.from_dict",
                             "src.heretek_swarm.infrastructure.nats.memory_sync.MemoryUpdate.to_dict",
@@ -145965,7 +145965,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/infrastructure/nats/memory_sync.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.infrastructure.nats.memory_sync.VectorClock.increment",
                             "src.heretek_swarm.infrastructure.nats.memory_sync.VectorClock.get",
@@ -146186,7 +146186,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/api/mcp.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.api.mcp.get_mcp_server",
                     "src.heretek_swarm.api.mcp.get_client_manager",
@@ -147940,7 +147940,7 @@
                   "file_methods": [
                     {
                       "file_path": "src/heretek_swarm/api/mcp.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.api.mcp.get_mcp_server",
                         "src.heretek_swarm.api.mcp.get_client_manager",
@@ -148125,7 +148125,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/api/mcp.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.api.mcp.get_mcp_server",
                             "src.heretek_swarm.api.mcp.get_client_manager",
@@ -176003,7 +176003,7 @@
             },
             {
               "file_path": "src/heretek_swarm/state/models.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.heretek_swarm.state.models.StateStatus",
                 "src.heretek_swarm.state.models.TransitionType",
@@ -176196,7 +176196,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/state/models.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.state.models.StateStatus",
                     "src.heretek_swarm.state.models.TransitionType",
@@ -176333,7 +176333,7 @@
                   "file_methods": [
                     {
                       "file_path": "src/heretek_swarm/state/models.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.state.models.StateStatus",
                         "src.heretek_swarm.state.models.TransitionType",
@@ -176428,7 +176428,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/state/models.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.state.models.StateStatus",
                             "src.heretek_swarm.state.models.TransitionType",
@@ -176474,7 +176474,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/state/models.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.state.models.AgentState.touch",
                             "src.heretek_swarm.state.models.ConversationState.remove_participant",
@@ -176507,7 +176507,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/state/models.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.state.models.AgentState.transition_to",
                             "src.heretek_swarm.state.models.LineageTracker.find_branch_points",
@@ -176546,7 +176546,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/state/models.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.state.models.MessageLineage.__post_init__",
                             "src.heretek_swarm.state.models.LineageTracker.get_ancestry",
@@ -176578,7 +176578,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/state/models.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.state.models.LineageTracker.record_message",
                             "src.heretek_swarm.state.models.SnapshotManager.create_snapshot"
