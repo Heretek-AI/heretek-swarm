@@ -192,16 +192,18 @@ export function CollectiveCanvas() {
   // Handle delete key
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Delete' || e.key === 'Backspace') {
-        if (selectedNode && !['INPUT', 'TEXTAREA'].includes((e.target as HTMLElement).tagName)) {
-          setNodes((nds) => nds.filter((n) => n.id !== selectedNode.id));
-          setEdges((eds) => eds.filter((ed) => ed.source !== selectedNode.id && ed.target !== selectedNode.id));
-          setSelectedNode(null);
-        }
+      const isDeleteKey = e.key === 'Delete' || e.key === 'Backspace';
+      const isNotInput = !['INPUT', 'TEXTAREA'].includes((e.target as HTMLElement).tagName);
+      const canDelete = isDeleteKey && selectedNode && isNotInput;
+      if (canDelete) {
+        const nodeId = selectedNode.id;
+        setNodes((nds) => nds.filter((n) => n.id !== nodeId));
+        setEdges((eds) => eds.filter((ed) => ed.source !== nodeId && ed.target !== nodeId));
+        setSelectedNode(null);
       }
     };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    globalThis.addEventListener('keydown', handleKeyDown);
+    return () => globalThis.removeEventListener('keydown', handleKeyDown);
   }, [selectedNode, setNodes, setEdges]);
 
   if (loading) {

@@ -300,6 +300,61 @@ def classify_pattern_provenance(
     return PatternProvenance.UNPROVEN
 
 
+def _compute_problem_novelty(
+    problem_signature: dict[str, Any],
+    historical_patterns: list[EmergentPattern],
+) -> float:
+    """Compute problem novelty factor for solution novelty."""
+    historical_signatures = [
+        p.evidence.get("problem_signature", {}) for p in historical_patterns
+    ]
+    if not historical_signatures:
+        return 1.0
+    signature_diffs = [
+        _calculate_signature_difference(problem_signature, hs)
+        for hs in historical_signatures
+    ]
+    return sum(signature_diffs) / len(signature_diffs)
+
+
+def _compute_approach_novelty(
+    approach_used: str,
+    historical_patterns: list[EmergentPattern],
+) -> float:
+    """Compute approach novelty factor for solution novelty."""
+    if not approach_used:
+        return 0.5
+    historical_approaches = [
+        p.evidence.get("approach_used", "") for p in historical_patterns
+    ]
+    total = len(historical_approaches)
+    if total == 0:
+        return 1.0
+    seen_count = sum(1 for a in historical_approaches if a == approach_used)
+    approach_frequency = seen_count / total
+    return 1.0 - approach_frequency
+
+
+def _compute_result_novelty(
+    actual_performance: float,
+    expected_performance: float | None,
+    historical_patterns: list[EmergentPattern],
+) -> float:
+    """Compute result novelty factor for solution novelty."""
+    if expected_performance is not None and expected_performance > 0:
+        performance_ratio = actual_performance / expected_performance
+        performance_ratio = max(0.0, min(performance_ratio, 3.0))
+        if performance_ratio > 1.0:
+            return min(performance_ratio - 1.0, 1.0)
+        return 0.0
+    # No baseline — compare against historical average impact
+    hist_avg = sum(p.impact_score for p in historical_patterns) / len(historical_patterns)
+    if hist_avg > 0:
+        impact_ratio = actual_performance / hist_avg
+        return min(max(impact_ratio - 1.0, 0.0), 1.0)
+    return 0.5
+
+
 def calculate_solution_novelty(
     pattern: EmergentPattern,
     historical_patterns: list[EmergentPattern],
@@ -335,83 +390,32 @@ def calculate_solution_novelty(
         # No history = maximally novel
         return 1.0
 
+    problem_sig = problem_signature if problem_signature is not None else pattern.evidence.get("problem_signature", {})
+    approach = approach_used if approach_used is not None else pattern.evidence.get("approach_used", "")
+    expected_perf = expected_performance if expected_performance is not None else pattern.evidence.get("expected_performance", None)
+
     novelty_factors: list[float] = []
-
-    # Factor 1: Problem novelty - is the problem signature different?
-    # Use pattern evidence as problem signature if not provided
-    if problem_signature is None:
-        problem_signature = pattern.evidence.get("problem_signature", {})
-
-    # Compare against historical problem signatures
-    historical_signatures = [
-        p.evidence.get("problem_signature", {}) for p in historical_patterns
-    ]
-
-    if historical_signatures:
-        # Calculate how different this signature is from historical ones
-        signature_diffs = []
-        for hist_sig in historical_signatures:
-            diff = _calculate_signature_difference(problem_signature, hist_sig)
-            signature_diffs.append(diff)
-        # Higher average difference = more novel
-        problem_novelty = sum(signature_diffs) / len(signature_diffs)
-    else:
-        problem_novelty = 1.0
-    novelty_factors.append(problem_novelty)
-
-    # Factor 2: Approach novelty - is the solution method novel?
-    if approach_used is None:
-        approach_used = pattern.evidence.get("approach_used", "")
-
-    if approach_used:
-        # Check if this approach was used in recent history
-        historical_approaches = [
-            p.evidence.get("approach_used", "") for p in historical_patterns
-        ]
-        approach_seen_count = sum(
-            1 for a in historical_approaches if a == approach_used
-        )
-        total_historical = len(historical_approaches)
-        if total_historical > 0:
-            # Fewer times seen = more novel
-            approach_frequency = approach_seen_count / total_historical
-            approach_novelty = 1.0 - approach_frequency
-        else:
-            approach_novelty = 1.0
-    else:
-        # No approach info = use pattern novelty as proxy
-        approach_novelty = 0.5
-    novelty_factors.append(approach_novelty)
-
-    # Factor 3: Result novelty - does outcome exceed expected performance?
-    if expected_performance is None:
-        expected_performance = pattern.evidence.get("expected_performance", None)
-
-    # Use impact score as actual performance indicator
-    actual_performance = pattern.impact_score
-
-    if expected_performance is not None and expected_performance > 0:
-        # Improvement over expected = higher novelty
-        performance_ratio = actual_performance / expected_performance
-        # Clamp to avoid extreme values
-        performance_ratio = max(0.0, min(performance_ratio, 3.0))
-        # Ratio > 1 means exceeded expectation, which is novel
-        result_novelty = min(performance_ratio - 1.0, 1.0) if performance_ratio > 1.0 else 0.0
-        # Also factor in absolute performance if no baseline
-    else:
-        # No baseline - use impact relative to historical average
-        hist_avg_impact = sum(p.impact_score for p in historical_patterns) / len(
-            historical_patterns
-        )
-        if hist_avg_impact > 0:
-            # Higher impact than historical average = novel results
-            impact_ratio = actual_performance / hist_avg_impact
-            result_novelty = min(max(impact_ratio - 1.0, 0.0), 1.0)
-        else:
-            result_novelty = 0.5
-    novelty_factors.append(result_novelty)
+    novelty_factors.append(_compute_problem_novelty(problem_sig, historical_patterns))
+    novelty_factors.append(_compute_approach_novelty(approach, historical_patterns))
+    novelty_factors.append(_compute_result_novelty(pattern.impact_score, expected_perf, historical_patterns))
 
     return sum(novelty_factors) / len(novelty_factors)
+
+
+def _diff_value_pair(v1: Any, v2: Any) -> float:
+    """Compute diff for a single key-value pair in signature comparison."""
+    if v1 == v2:
+        return 0.0
+    if v1 is None or v2 is None:
+        return 1.0
+    if isinstance(v1, (int, float)) and isinstance(v2, (int, float)):
+        max_val = max(abs(v1), abs(v2), 1.0)
+        return min(abs(v1 - v2) / max_val, 1.0)
+    if isinstance(v1, (list, tuple)) and isinstance(v2, (list, tuple)):
+        max_len = max(len(v1), len(v2), 1)
+        common = sum(1 for a, b in zip(v1, v2, strict=True) if a == b)
+        return 1.0 - (common / max_len)
+    return 1.0
 
 
 def _calculate_signature_difference(
@@ -433,25 +437,7 @@ def _calculate_signature_difference(
     for key in all_keys:
         v1 = sig1.get(key)
         v2 = sig2.get(key)
-
-        if v1 == v2:
-            diff = 0.0
-        elif v1 is None or v2 is None:
-            diff = 1.0
-        elif isinstance(v1, (int, float)) and isinstance(v2, (int, float)):
-            # Normalize numeric difference
-            max_val = max(abs(v1), abs(v2), 1.0)
-            diff = min(abs(v1 - v2) / max_val, 1.0)
-        elif isinstance(v1, (list, tuple)) and isinstance(v2, (list, tuple)):
-            # Compare sequences
-            max_len = max(len(v1), len(v2), 1)
-            common = sum(1 for a, b in zip(v1, v2, strict=True) if a == b)
-            diff = 1.0 - (common / max_len)
-        elif not isinstance(v1, type(v2)) and not isinstance(v2, type(v1)):
-            diff = 1.0
-        else:
-            diff = 1.0
-        differences.append(diff)
+        differences.append(_diff_value_pair(v1, v2))
 
     return sum(differences) / len(differences)
 
