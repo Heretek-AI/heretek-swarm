@@ -15,7 +15,8 @@ import structlog
 
 from heretek_swarm.actors.base import ActorState, ActorStatus, AgentActor
 from heretek_swarm.actors.factory import ActorConfig
-from heretek_swarm.actors.mixins import AuditMixin, HealthReportingMixin
+from heretek_swarm.actors.mixins import AuditMixin, HealthReportingMixin, ValidationMixin, PatternMixin
+from heretek_swarm.collective.learning import PatternExtractor
 
 logger = structlog.get_logger("ActorSupervisor")
 
@@ -39,7 +40,7 @@ def get_supervisor() -> "ActorSupervisor":
     return _global_supervisor
 
 
-class ActorSupervisor(AuditMixin, HealthReportingMixin, AgentActor):
+class ActorSupervisor(AuditMixin, ValidationMixin, HealthReportingMixin, PatternMixin, AgentActor):
     """
     Supervisor for managing multiple actors.
 
@@ -72,6 +73,7 @@ class ActorSupervisor(AuditMixin, HealthReportingMixin, AgentActor):
         auto_restart: bool = True,
         max_restarts: int = 3,
         db_pool: Any | None = None,
+        pattern_extractor: PatternExtractor | None = None,
     ) -> None:
         """
         Initialize the supervisor.
@@ -94,6 +96,8 @@ class ActorSupervisor(AuditMixin, HealthReportingMixin, AgentActor):
         self.auto_restart = auto_restart
         self.max_restarts = max_restarts
         self.db_pool = db_pool
+        self.pattern_extractor = pattern_extractor or PatternExtractor()
+        self._pattern_emitted: set[str] = set()
 
         # Call super().__init__ to initialize mixins and AgentActor base
         super().__init__(
