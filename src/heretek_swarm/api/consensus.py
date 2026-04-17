@@ -1099,13 +1099,13 @@ def get_tribunal() -> Tribunal | None:
     return tribunal_instance
 
 
-@router.post("/tribunal/cases")
+@router.post("/tribunal/cases", responses={503: {"description": "Tribunal not available"}})
 async def create_tribunal_case(
-    original_decision_id: str,
-    grounds: str,
-    description: str,
+    auth: Annotated[dict, Depends(get_authenticated_agent)],
+    original_decision_id: str = "",
+    grounds: str = "",
+    description: str = "",
     original_consensus_id: str = "",
-    auth: dict = Depends(get_authenticated_agent),
 ):
     """
     Submit an appeal case to the Tribunal.
@@ -1137,10 +1137,10 @@ async def create_tribunal_case(
         raise HTTPException(status_code=400, detail=str(e))
 
 
-@router.get("/tribunal/cases/{case_id}")
+@router.get("/tribunal/cases/{case_id}", responses={503: {"description": "Tribunal not available"}})
 async def get_tribunal_case(
-    case_id: str,
-    auth: dict = Depends(get_authenticated_agent),
+    auth: Annotated[dict, Depends(get_authenticated_agent)],
+    case_id: str = "",
 ):
     """
     Get a Tribunal case by ID.
