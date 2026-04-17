@@ -26,6 +26,12 @@ from .agent_runtime import AgentRuntime
 from .autonomous_runtime_config import (
     AutonomousRuntimeConfig,
 )
+from .scaling import (
+    AgentPoolManager,
+    ScalingAction,
+    ScalingConfig,
+    ScalingResult,
+)
 from .self_maintenance import (
     SelfMaintenanceConfig,
     SelfMaintenanceScheduler,
@@ -88,6 +94,21 @@ class AutonomousRuntime:
         self._maintenance_scheduler: SelfMaintenanceScheduler | None = None
         self._maintenance_config = SelfMaintenanceConfig()
 
+        # NATS publisher for event emission
+        self._nats_publisher = None
+
+        # Tracing context
+        self._trace_id: str | None = None
+
+        # Agent pool manager for scaling
+        self.pool_manager: AgentPoolManager | None = None
+        self._scaling_config = ScalingConfig(
+            min_replicas=config.min_agents,
+            max_replicas=config.max_agents,
+            scale_up_cooldown_seconds=config.scale_up_cooldown_minutes * 60,
+            scale_down_cooldown_seconds=config.scale_down_cooldown_minutes * 60,
+        )
+
     async def initialize(self) -> None:
         """Initialize runtime components."""
         logger.info("Initializing autonomous runtime...")
@@ -112,6 +133,9 @@ class AutonomousRuntime:
             self._maintenance_config,
             runtime_ref=self,
         )
+
+        # Initialize agent pool manager for scaling
+        self.pool_manager = AgentPoolManager(self._scaling_config)
 
         logger.info("Autonomous runtime initialized")
 
@@ -232,6 +256,12 @@ class AutonomousRuntime:
 
                 if attempts >= self.config.max_restart_attempts:
                     logger.error(f"Max restart attempts reached for {agent_id}")
+                    # Publish failure event to NATS
+                    await self._publish_recovery_event(
+                        agent_id,
+                        "max_restart_attempts",
+                        alert_type="agent.failure",
+                    )
                     await self._send_alert(
                         "agent_failure",
                         {"agent_id": agent_id, "reason": "max_restart_attempts"},
@@ -250,6 +280,9 @@ class AutonomousRuntime:
                     # Track restart attempt
                     self._restart_attempts[agent_id] = attempts + 1
                     logger.info(f"Restarted agent: {agent_id} (attempt {attempts + 1})")
+
+                    # Publish recovery event to NATS
+                    await self._publish_recovery_event(agent_id, "health_check_failure")
 
                 # Wait before next attempt
                 await asyncio.sleep(self.config.restart_delay_seconds)
@@ -316,23 +349,27 @@ class AutonomousRuntime:
                 await asyncio.sleep(5)
 
     async def _check_scaling_conditions(self) -> None:
-        """Check if scaling is needed."""
-        if not self.supervisor:
+        """Check if scaling is needed using AgentPoolManager."""
+        if not self.supervisor or not self.pool_manager:
             return
 
+        # Get current system metrics
+        load = await self._calculate_system_load()
         current_agents = len(self.supervisor.actors)
 
-        # Check scale up conditions
-        if current_agents < self.config.max_agents:
-            load = await self._calculate_system_load()
-            if load > self.config.scale_up_threshold:
-                await self._scale_up()
+        # Build metrics for pool manager
+        metrics = {
+            "cpu_usage": load * 100,
+            "memory_usage": load * 100,
+            "agent_pool_utilization": (current_agents / self.config.max_agents) * 100 if self.config.max_agents > 0 else 0,
+        }
 
-        # Check scale down conditions
-        elif current_agents > self.config.min_agents:
-            load = await self._calculate_system_load()
-            if load < self.config.scale_down_threshold:
-                await self._scale_down()
+        # Evaluate scaling using pool manager
+        result = await self.pool_manager.evaluate_scaling(metrics)
+
+        if result:
+            # Translate ScalingResult into actual agent operations
+            await self._execute_scaling_result(result)
 
     async def _calculate_system_load(self) -> float:
         """Calculate current system load (CPU + memory)."""
@@ -406,6 +443,114 @@ class AutonomousRuntime:
                 logger.info(f"Scaled down: Terminated agent {idle_agent}")
             except Exception as e:
                 logger.error(f"Failed to scale down: {e}")
+
+    async def _execute_scaling_result(self, result: ScalingResult) -> None:
+        """
+        Execute scaling result from AgentPoolManager.
+
+        Translates ScalingResult into actual agent_runtime.spawn_agent
+        or supervisor.terminate_actor calls.
+        """
+        if result.action == ScalingAction.SCALE_UP:
+            await self._execute_scale_up(result)
+        elif result.action == ScalingAction.SCALE_DOWN:
+            await self._execute_scale_down(result)
+        # NO_OP: Do nothing
+
+    async def _execute_scale_up(self, result: ScalingResult) -> None:
+        """Execute scale up from pool manager result."""
+        # Check cooldown (pool manager already checked, but we add runtime-level protection)
+        if self._last_scale_up_time:
+            time_since = datetime.now(UTC) - self._last_scale_up_time
+            if time_since.total_seconds() < self.config.scale_up_cooldown_minutes * 60:
+                logger.debug("scale_up_cooldown_active", time_since_seconds=time_since.total_seconds())
+                return
+
+        current_agents = len(self.supervisor.actors) if self.supervisor else 0
+        agents_to_add = result.agents_added
+
+        for i in range(agents_to_add):
+            if current_agents >= self.config.max_agents:
+                break
+
+            # Find available agent config
+            available_agents = [
+                name for name in self.config.agent_configs
+                if name not in (self.supervisor.actors if self.supervisor else {})
+            ]
+
+            if not available_agents:
+                logger.warning("no_available_agent_configs_for_scale_up")
+                break
+
+            agent_name = available_agents[0]
+            config_path = self.config.agent_configs[agent_name]
+
+            try:
+                # Register instance in pool manager
+                instance_id = f"{agent_name}-{current_agents + i + 1}"
+                self.pool_manager.register_instance(instance_id)
+
+                # Spawn agent
+                await self.agent_runtime.spawn_agent(agent_name, str(config_path))
+                self.state.last_scale_event = datetime.now(UTC)
+                self._last_scale_up_time = datetime.now(UTC)
+
+                logger.info(
+                    "pool_manager_scale_up_executed",
+                    agent_name=agent_name,
+                    instance_id=instance_id,
+                )
+            except Exception as e:
+                logger.error(f"Failed to spawn agent during scale up: {e}")
+
+    async def _execute_scale_down(self, result: ScalingResult) -> None:
+        """Execute scale down from pool manager result."""
+        # Check cooldown (pool manager already checked, but we add runtime-level protection)
+        if self._last_scale_down_time:
+            time_since = datetime.now(UTC) - self._last_scale_down_time
+            if time_since.total_seconds() < self.config.scale_down_cooldown_minutes * 60:
+                logger.debug("scale_down_cooldown_active", time_since_seconds=time_since.total_seconds())
+                return
+
+        current_agents = len(self.supervisor.actors) if self.supervisor else 0
+        agents_to_remove = result.agents_removed
+
+        # Find idle agents to remove
+        for _ in range(agents_to_remove):
+            if current_agents <= self.config.min_agents:
+                break
+
+            idle_agent = await self._find_idle_agent()
+            if not idle_agent:
+                # If no idle agent found, find any non-critical agent
+                idle_agent = self._find_any_removable_agent()
+
+            if idle_agent:
+                try:
+                    # Terminate agent
+                    await self.supervisor.terminate_actor(idle_agent)
+                    self.state.last_scale_event = datetime.now(UTC)
+                    self._last_scale_down_time = datetime.now(UTC)
+
+                    logger.info(
+                        "pool_manager_scale_down_executed",
+                        agent_id=idle_agent,
+                    )
+                except Exception as e:
+                    logger.error(f"Failed to terminate agent during scale down: {e}")
+
+    def _find_any_removable_agent(self) -> str | None:
+        """Find any agent that can be removed (fallback when no idle agents)."""
+        if not self.supervisor:
+            return None
+
+        # Find an agent that isn't critical (any agent other than coordinator)
+        for agent_id in self.supervisor.actors:
+            if agent_id != "coordinator":
+                return agent_id
+
+        return None
 
     async def _find_idle_agent(self) -> str | None:
         """Find an idle agent to scale down."""
@@ -643,6 +788,48 @@ class AutonomousRuntime:
 
         except Exception as e:
             logger.error(f"Consciousness metrics collection error: {e}")
+
+    async def _publish_recovery_event(
+        self,
+        agent_id: str,
+        reason: str,
+        alert_type: str | None = None,
+    ) -> None:
+        """Publish recovery event to NATS swarm.events topic.
+
+        Args:
+            agent_id: The agent that was restarted
+            reason: The reason for the restart
+            alert_type: Optional alert type for failure events (e.g., "agent.failure")
+        """
+        from heretek_swarm.infrastructure.nats.publisher import (
+            EventPriority,
+            SwarmEvent,
+        )
+
+        # Generate or use existing correlation_id for tracing
+        import uuid
+        correlation_id = str(uuid.uuid4())
+
+        # Determine event type based on context
+        event_type = alert_type if alert_type else "agent.recovery"
+
+        event = SwarmEvent(
+            event_type=event_type,
+            source_agent=agent_id,
+            payload={
+                "agent_id": agent_id,
+                "reason": reason,
+                "timestamp": datetime.now(UTC).isoformat(),
+            },
+            priority=EventPriority.HIGH,
+            correlation_id=correlation_id,
+            trace_id=self._trace_id,
+        )
+
+        # Publish event
+        if self._nats_publisher:
+            await self._nats_publisher.publish_event(event)
 
     async def _send_alert(self, alert_type: str, data: dict[str, Any]) -> None:
         """Send alert notification."""

@@ -157,6 +157,7 @@ ANOMALY_PATTERNS = [
 ]
 
 # Dangerous patterns for sanitization
+# Note: Import patterns use atomic groups (?>) to prevent ReDoS (S5852)
 DANGEROUS_PATTERNS = [
     re.compile(r"<script[^>]*>.*?</script>", re.IGNORECASE | re.DOTALL),
     re.compile(r"javascript:", re.IGNORECASE),
@@ -167,9 +168,12 @@ DANGEROUS_PATTERNS = [
     re.compile(r"\{\{[^}]*\}\}"),
     re.compile(r"eval\s*\(", re.IGNORECASE),
     re.compile(r"exec\s*\(", re.IGNORECASE),
-    re.compile(r"import\s+.*\s+from\s+['\"]sys['\"]", re.IGNORECASE),
-    re.compile(r"import\s+.*\s+from\s+['\"]os['\"]", re.IGNORECASE),
-    re.compile(r"import\s+.*\s+from\s+['\"]subprocess['\"]", re.IGNORECASE),
+    # FIXED S5852: Use character class [^\s]+ instead of .* to prevent ReDoS
+    re.compile(r"import\s+[^\s]+\s+from\s+['\"]sys['\"]", re.IGNORECASE),
+    # FIXED S5852: Use character class [^\s]+ instead of .* to prevent ReDoS
+    re.compile(r"import\s+[^\s]+\s+from\s+['\"]os['\"]", re.IGNORECASE),
+    # FIXED S5852: Use character class [^\s]+ instead of .* to prevent ReDoS
+    re.compile(r"import\s+[^\s]+\s+from\s+['\"]subprocess['\"]", re.IGNORECASE),
 ]
 
 

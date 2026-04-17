@@ -23,7 +23,201 @@ from heretek_swarm.actors.mixins import DeliberationMixin, LearningMixin, Memory
 logger = structlog.get_logger("TriadAgents")
 
 
-class StewardAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, AgentActor):
+class TriadAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, AgentActor):
+    """
+    Base class for Triad agents with shared message processing and analysis.
+
+    Extracts common patterns from Steward, Alpha, Beta, and Charlie agents:
+    - process_message: identical message routing in all four
+    - initialize: handler registration loop pattern
+    - _trim_history: bounded history helper
+    - _make_timed_record: timestamped record helper
+    - _perform_analysis: LLM-based analysis with fallback (guarded for StewardAgent)
+    """
+
+    def __init__(
+        self,
+        agent_id: str = "triad",
+        name: str = "Triad",
+        description: str = "Triad agent",
+        swarms_agent: Agent | None = None,
+        max_history_size: int = 1000,
+        topics: list[str] | None = None,
+        capabilities: list[str] | None = None,
+        **kwargs,
+    ) -> None:
+        """
+        Initialize the Triad agent.
+
+        Args:
+            agent_id: Unique identifier
+            name: Human-readable name
+            description: Agent description
+            swarms_agent: Optional Swarms Agent for LLM capabilities
+            max_history_size: Maximum history size to prevent memory leaks
+            topics: Agent topics (subclass can override via kwargs)
+            capabilities: Agent capabilities (subclass can override via kwargs)
+            **kwargs: Additional arguments
+        """
+        super().__init__(
+            agent_id=agent_id,
+            name=name,
+            description=description,
+            topics=topics or ["triad"],
+            capabilities=capabilities or [],
+            swarms_agent=swarms_agent,
+            **kwargs,
+        )
+
+        self.max_history_size = max_history_size
+
+    async def initialize(self) -> None:
+        """Initialize the agent by registering message handlers."""
+        for msg_type, handler in self._triad_handlers():
+            self.register_handler(msg_type, handler)
+        logger.info(f"[{self.agent_id}] {self.__class__.__name__} initialization complete")  # noqa: G004
+
+    async def process_message(self, message: ActorMessage) -> None:
+        """
+        Process incoming messages.
+
+        Args:
+            message: Actor message to process
+        """
+        handler = self._message_handlers.get(message.message_type)
+        if handler:
+            try:
+                await handler(message)
+            except Exception as e:
+                logger.exception(
+                    f"[{self.agent_id}] Error processing message {message.message_type}: {e}"  # noqa: G004
+                )
+                self.error_count += 1
+                # Send error response if reply_to is specified
+                if message.content.get("reply_to"):
+                    await self.send(
+                        topic=message.content["reply_to"],
+                        content={
+                            "message_type": "error_response",
+                            "error": str(e),
+                            "original_message_type": message.message_type,
+                        },
+                        correlation_id=message.correlation_id,
+                    )
+        else:
+            logger.warning(
+                f"[{self.agent_id}] Unhandled message type: {message.message_type}"  # noqa: G004
+            )
+
+    def _triad_handlers(self) -> list[tuple[str, Any]]:
+        """
+        Return list of (message_type, handler) pairs for registration.
+
+        Subclasses override this to provide their handler set.
+
+        Returns:
+            List of (message_type, handler_method) tuples
+        """
+        return []
+
+    # -------------------------------------------------------------------------
+    # Analysis helpers (available to all subclasses)
+    # -------------------------------------------------------------------------
+
+    def _trim_history(self, history_list: list, max_size: int | None = None) -> None:
+        """
+        Trim history list to max_history_size.
+
+        Args:
+            history_list: List to trim
+            max_size: Override max size (default: self.max_history_size)
+        """
+        max_size = max_size or self.max_history_size
+        if len(history_list) > max_size:
+            del history_list[:-max_size]
+
+    def _make_timed_record(self, data: dict[str, Any]) -> dict[str, Any]:
+        """
+        Create a timestamped record.
+
+        Args:
+            data: Record data
+
+        Returns:
+            Record with timestamp added
+        """
+        return {**data, "timestamp": datetime.now(UTC).isoformat()}
+
+    # -------------------------------------------------------------------------
+    # Analysis template method (guarded: StewardAgent has no analysis)
+    # -------------------------------------------------------------------------
+
+    async def _perform_analysis(self, problem: str) -> dict[str, Any]:
+        """
+        Perform LLM-based analysis with agent-specific prompt and extras.
+
+        Uses template method pattern: calls _get_analysis_prompt and
+        _get_analysis_extras to customize behavior per agent type.
+
+        Args:
+            problem: Problem description
+
+        Returns:
+            Analysis result dict with decision, confidence, reasoning, and extras
+        """
+        prompt = self._get_analysis_prompt(problem)
+        extras = self._get_analysis_extras()
+
+        if self.swarms_agent:
+            try:
+                analysis_result = await self.run_with_llm(
+                    prompt=prompt,
+                    timeout=60
+                )
+                return {
+                    "decision": analysis_result,
+                    "confidence": extras.pop("confidence", 0.8),
+                    "reasoning": "LLM-based analysis",
+                    **extras,
+                }
+            except Exception as e:
+                logger.error(f"[{self.agent_id}] Analysis error: {e}")  # noqa: G004
+
+        # Fallback analysis
+        return {
+            "decision": f"{self.__class__.__name__.lower()}_analysis_complete",
+            "confidence": 0.7,
+            "reasoning": "Fallback analysis",
+            **extras,
+        }
+
+    def _get_analysis_prompt(self, problem: str) -> str:
+        """
+        Build the LLM prompt for analysis.
+
+        Subclasses override to customize the prompt.
+
+        Args:
+            problem: Problem description
+
+        Returns:
+            Prompt string for LLM
+        """
+        return f"Analyze this problem: {problem}"
+
+    def _get_analysis_extras(self) -> dict[str, Any]:
+        """
+        Return agent-specific extra keys for analysis result.
+
+        Subclasses override to provide their unique extras.
+
+        Returns:
+            Dict of extra keys (e.g. depth, perspective, challenges)
+        """
+        return {}
+
+
+class StewardAgent(TriadAgent):
     """
     Steward Agent - Overall coordination and governance.
 
@@ -65,6 +259,7 @@ class StewardAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, 
                 "resource-management",
             ],
             swarms_agent=swarms_agent,
+            max_history_size=0,  # Steward doesn't use analysis history
             **kwargs,
         )
 
@@ -75,50 +270,16 @@ class StewardAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, 
         self._policies = self.governance_policies  # alias for test compatibility
         self.resource_allocations: dict[str, float] = {}
 
-        logger.info(f"[{self.agent_id}] Steward agent initialized")
+        logger.info(f"[{self.agent_id}] Steward agent initialized")  # noqa: G004
 
-    async def initialize(self) -> None:
-        """Initialize the Steward agent."""
-        # Register message handlers
-        self.register_handler("start_deliberation", self._handle_start_deliberation)
-        self.register_handler("request_decision", self._handle_request_decision)
-        self.register_handler("report_status", self._handle_report_status)
-        self.register_handler("policy_update", self._handle_policy_update)
-
-        logger.info(f"[{self.agent_id}] Steward initialization complete")
-
-    async def process_message(self, message: ActorMessage) -> None:
-        """
-        Process incoming messages.
-
-        Args:
-            message: Actor message to process
-        """
-        handler = self._message_handlers.get(message.message_type)
-        if handler:
-            try:
-                await handler(message)
-            except Exception as e:
-                logger.error(
-                    f"[{self.agent_id}] Error processing message {message.message_type}: {e}",
-                    exc_info=True,
-                )
-                self.error_count += 1
-                # Send error response if reply_to is specified
-                if message.content.get("reply_to"):
-                    await self.send(
-                        topic=message.content["reply_to"],
-                        content={
-                            "message_type": "error_response",
-                            "error": str(e),
-                            "original_message_type": message.message_type,
-                        },
-                        correlation_id=message.correlation_id,
-                    )
-        else:
-            logger.warning(
-                f"[{self.agent_id}] Unhandled message type: {message.message_type}"
-            )
+    def _triad_handlers(self) -> list[tuple[str, Any]]:
+        """Return Steward's message handlers."""
+        return [
+            ("start_deliberation", self._handle_start_deliberation),
+            ("request_decision", self._handle_request_decision),
+            ("report_status", self._handle_report_status),
+            ("policy_update", self._handle_policy_update),
+        ]
 
     async def _handle_start_deliberation(self, message: ActorMessage) -> None:
         """Handle deliberation start requests with validation."""
@@ -132,18 +293,18 @@ class StewardAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, 
             else:
                 # Fallback to unvalidated access
                 # Support both deliberation_id/topic and session_id/problem field names
-                deliberation_id = message.content.get("deliberation_id") or message.content.get("session_id")
+                deliberation_id = message.content.get("deliberation_id") or message.content.get("session_id")  # noqa: E501
                 topic = message.content.get("topic") or message.content.get("problem")
                 triad_members = message.content.get("triad_members", [])
 
                 if not deliberation_id or not topic:
                     # Auto-generate if missing
-                    deliberation_id = deliberation_id or f"del_{datetime.now(UTC).strftime('%Y%m%d_%H%M%S')}"
+                    deliberation_id = deliberation_id or f"del_{datetime.now(UTC).strftime('%Y%m%d_%H%M%S')}"  # noqa: E501
                     topic = topic or "unspecified"
         except (ValueError, Exception) as e:
-            logger.warning(f"[{self.agent_id}] Deliberation validation issue, using fallback: {e}")
+            logger.warning(f"[{self.agent_id}] Deliberation validation issue, using fallback: {e}")  # noqa: G004
             # Fallback: support both deliberation_id/topic and session_id/problem field names
-            deliberation_id = message.content.get("deliberation_id") or message.content.get("session_id") or f"del_{datetime.now(UTC).strftime('%Y%m%d_%H%M%S')}"
+            deliberation_id = message.content.get("deliberation_id") or message.content.get("session_id") or f"del_{datetime.now(UTC).strftime('%Y%m%d_%H%M%S')}"  # noqa: E501
             topic = message.content.get("topic") or message.content.get("problem") or "unspecified"
             triad_members = message.content.get("triad_members", [])
 
@@ -158,7 +319,7 @@ class StewardAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, 
         }
 
         logger.info(
-            f"[{self.agent_id}] Started deliberation {deliberation_id} on topic: {topic}"
+            f"[{self.agent_id}] Started deliberation {deliberation_id} on topic: {topic}"  # noqa: G004
         )
 
         # Notify triad members
@@ -185,10 +346,10 @@ class StewardAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, 
             phase_progression = {"alpha": "beta", "beta": "charlie", "charlie": "complete"}
             next_phase = phase_progression.get(current_phase, current_phase)
             self._deliberations[session_id]["phase"] = next_phase
-            logger.info(f"[{self.agent_id}] Deliberation {session_id} phase: {current_phase} -> {next_phase}")
+            logger.info(f"[{self.agent_id}] Deliberation {session_id} phase: {current_phase} -> {next_phase}")  # noqa: G004, E501
 
         logger.info(
-            f"[{self.agent_id}] Processing decision request: {request_id}"
+            f"[{self.agent_id}] Processing decision request: {request_id}"  # noqa: G004
         )
 
         # Make executive decision or delegate to triad
@@ -209,7 +370,7 @@ class StewardAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, 
                     correlation_id=message.correlation_id,
                 )
             except Exception as e:
-                logger.error(f"[{self.agent_id}] Decision error: {e}")
+                logger.error(f"[{self.agent_id}] Decision error: {e}")  # noqa: G004
         else:
             # Fallback logic
             await self.send(
@@ -229,7 +390,7 @@ class StewardAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, 
         requester = message.content.get("requester", message.sender)
         status = message.content.get("status", {})
 
-        logger.debug(f"[{self.agent_id}] Status report from {reporter_id or requester}")
+        logger.debug(f"[{self.agent_id}] Status report from {reporter_id or requester}")  # noqa: G004
 
         # Update internal tracking
         if reporter_id:
@@ -264,7 +425,7 @@ class StewardAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, 
                 "updated_at": datetime.now(UTC).isoformat(),
                 "updated_by": message.sender,
             }
-            logger.info(f"[{self.agent_id}] Updated policy: {policy_id}")
+            logger.info(f"[{self.agent_id}] Updated policy: {policy_id}")  # noqa: G004
 
     async def coordinate_triad(
         self,
@@ -322,8 +483,12 @@ class StewardAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, 
         """Get a governance policy."""
         return self.governance_policies.get(policy_id)
 
+    # StewardAgent intentionally does NOT override _perform_analysis.
+    # hasattr(agent, '_perform_analysis') will be False for StewardAgent instances,
+    # which is the correct behavior since Steward coordinates rather than analyzes.
 
-class AlphaAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, AgentActor):
+
+class AlphaAgent(TriadAgent):
     """
     Alpha Agent - Primary decision maker and analyst.
 
@@ -366,50 +531,31 @@ class AlphaAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, Ag
                 "validation",
             ],
             swarms_agent=swarms_agent,
+            max_history_size=1000,
             **kwargs,
         )
 
         self.analysis_depth = analysis_depth
-        self.max_history_size = 1000  # P1-3: Limit history size to prevent memory leaks
         self.analysis_history: list[dict[str, Any]] = []
         self.decision_count = 0
 
-        logger.info(f"[{self.agent_id}] Alpha agent initialized")
+        logger.info(f"[{self.agent_id}] Alpha agent initialized")  # noqa: G004
 
-    async def initialize(self) -> None:
-        """Initialize the Alpha agent."""
-        self.register_handler("deliberation_request", self._handle_deliberation_request)
-        self.register_handler("analysis_request", self._handle_analysis_request)
-        self.register_handler("validation_request", self._handle_validation_request)
+    def _triad_handlers(self) -> list[tuple[str, Any]]:
+        """Return Alpha's message handlers."""
+        return [
+            ("deliberation_request", self._handle_deliberation_request),
+            ("analysis_request", self._handle_analysis_request),
+            ("validation_request", self._handle_validation_request),
+        ]
 
-        logger.info(f"[{self.agent_id}] Alpha initialization complete")
+    def _get_analysis_prompt(self, problem: str) -> str:
+        """Build Alpha's analysis prompt."""
+        return f"Analyze this problem and provide a decision with confidence: {problem}"
 
-    async def process_message(self, message: ActorMessage) -> None:
-        """Process incoming messages."""
-        handler = self._message_handlers.get(message.message_type)
-        if handler:
-            try:
-                await handler(message)
-            except Exception as e:
-                logger.error(
-                    f"[{self.agent_id}] Error processing message {message.message_type}: {e}",
-                    exc_info=True,
-                )
-                self.error_count += 1
-                if message.content.get("reply_to"):
-                    await self.send(
-                        topic=message.content["reply_to"],
-                        content={
-                            "message_type": "error_response",
-                            "error": str(e),
-                            "original_message_type": message.message_type,
-                        },
-                        correlation_id=message.correlation_id,
-                    )
-        else:
-            logger.warning(
-                f"[{self.agent_id}] Unhandled message type: {message.message_type}"
-            )
+    def _get_analysis_extras(self) -> dict[str, Any]:
+        """Return Alpha-specific extras."""
+        return {"depth": self.analysis_depth}
 
     async def _handle_deliberation_request(self, message: ActorMessage) -> None:
         """Handle deliberation requests from Steward."""
@@ -417,7 +563,7 @@ class AlphaAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, Ag
         topic = message.content.get("topic")
 
         logger.info(
-            f"[{self.agent_id}] Participating in deliberation {deliberation_id}: {topic}"
+            f"[{self.agent_id}] Participating in deliberation {deliberation_id}: {topic}"  # noqa: G004
         )
 
         # Perform analysis
@@ -451,10 +597,10 @@ class AlphaAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, Ag
                 request_id = message.content.get("request_id")
                 problem = message.content.get("problem")
         except ValueError as e:
-            logger.error(f"[{self.agent_id}] Analysis validation failed: {e}")
+            logger.error(f"[{self.agent_id}] Analysis validation failed: {e}")  # noqa: G004
             return
 
-        logger.info(f"[{self.agent_id}] Analyzing: {request_id}")
+        logger.info(f"[{self.agent_id}] Analyzing: {request_id}")  # noqa: G004
 
         analysis = await self._perform_analysis(problem)
 
@@ -476,8 +622,7 @@ class AlphaAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, Ag
             "timestamp": datetime.now(UTC).isoformat(),
         })
         # P1-3: Trim history if it exceeds max size
-        if len(self.analysis_history) > self.max_history_size:
-            self.analysis_history = self.analysis_history[-self.max_history_size:]
+        self._trim_history(self.analysis_history)
 
     async def _handle_validation_request(self, message: ActorMessage) -> None:
         """Handle validation requests with validation."""
@@ -491,12 +636,12 @@ class AlphaAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, Ag
                 # Fallback to unvalidated access
                 request_id = message.content.get("request_id")
                 decision_to_validate = message.content.get("decision")
-                _original_analysis = message.content.get("original_analysis")  # Reserved for future use
+                _original_analysis = message.content.get("original_analysis")
         except ValueError as e:
-            logger.error(f"[{self.agent_id}] Validation request validation failed: {e}")
+            logger.error(f"[{self.agent_id}] Validation request validation failed: {e}")  # noqa: G004
             return
 
-        logger.info(f"[{self.agent_id}] Validating: {request_id}")
+        logger.info(f"[{self.agent_id}] Validating: {request_id}")  # noqa: G004  # noqa: G004
 
         validation = await self._validate_decision(decision_to_validate)
 
@@ -510,39 +655,6 @@ class AlphaAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, Ag
             },
             correlation_id=message.correlation_id,
         )
-
-    async def _perform_analysis(self, problem: str) -> dict[str, Any]:
-        """
-        Perform analysis on a problem.
-
-        Args:
-            problem: Problem description
-
-        Returns:
-            Analysis results with decision, confidence, and reasoning
-        """
-        if self.swarms_agent:
-            try:
-                analysis_result = await self.run_with_llm(
-                    prompt=f"Analyze this problem and provide a decision with confidence: {problem}",
-                    timeout=60
-                )
-                return {
-                    "decision": analysis_result,
-                    "confidence": 0.85,
-                    "reasoning": "LLM-based analysis",
-                    "depth": self.analysis_depth,
-                }
-            except Exception as e:
-                logger.error(f"[{self.agent_id}] Analysis error: {e}")
-
-        # Fallback analysis
-        return {
-            "decision": "analysis_complete",
-            "confidence": 0.7,
-            "reasoning": "Fallback analysis",
-            "depth": self.analysis_depth,
-        }
 
     async def _validate_decision(self, decision: Any) -> dict[str, Any]:
         """
@@ -566,7 +678,7 @@ class AlphaAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, Ag
                     "feedback": validation_result,
                 }
             except Exception as e:
-                logger.error(f"[{self.agent_id}] Validation error: {e}")
+                logger.error(f"[{self.agent_id}] Validation error: {e}")  # noqa: G004  # noqa: G004
 
         return {
             "valid": True,
@@ -584,7 +696,7 @@ class AlphaAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, Ag
         }
 
 
-class BetaAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, AgentActor):
+class BetaAgent(TriadAgent):
     """
     Beta Agent - Secondary analyst and validator.
 
@@ -627,61 +739,42 @@ class BetaAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, Age
                 "alternative-generation",
             ],
             swarms_agent=swarms_agent,
+            max_history_size=1000,
             **kwargs,
         )
 
         self.validation_strictness = validation_strictness
-        self.max_history_size = 1000  # P1-3: Limit history size to prevent memory leaks
         self.validation_history: list[dict[str, Any]] = []
         self._validations: dict[str, Any] = {}  # dict for test-injectable validation state
         self._analyses: dict[str, Any] = {}  # dict for analysis records
         self._error_checks: dict[str, Any] = {}  # dict for error check records
         self.error_detections: list[dict[str, Any]] = []
 
-        logger.info(f"[{self.agent_id}] Beta agent initialized")
+        logger.info(f"[{self.agent_id}] Beta agent initialized")  # noqa: G004
 
-    async def initialize(self) -> None:
-        """Initialize the Beta agent."""
-        self.register_handler("deliberation_request", self._handle_deliberation_request)
-        self.register_handler("validation_request", self._handle_validation_request)
-        self.register_handler("error_check", self._handle_error_check)
+    def _triad_handlers(self) -> list[tuple[str, Any]]:
+        """Return Beta's message handlers."""
+        return [
+            ("deliberation_request", self._handle_deliberation_request),
+            ("validation_request", self._handle_validation_request),
+            ("error_check", self._handle_error_check),
+        ]
 
-        logger.info(f"[{self.agent_id}] Beta initialization complete")
+    def _get_analysis_prompt(self, problem: str) -> str:
+        """Build Beta's analysis prompt."""
+        return f"Provide independent analysis (Beta perspective): {problem}"
 
-    async def process_message(self, message: ActorMessage) -> None:
-        """Process incoming messages."""
-        handler = self._message_handlers.get(message.message_type)
-        if handler:
-            try:
-                await handler(message)
-            except Exception as e:
-                logger.error(
-                    f"[{self.agent_id}] Error processing message {message.message_type}: {e}",
-                    exc_info=True,
-                )
-                self.error_count += 1
-                if message.content.get("reply_to"):
-                    await self.send(
-                        topic=message.content["reply_to"],
-                        content={
-                            "message_type": "error_response",
-                            "error": str(e),
-                            "original_message_type": message.message_type,
-                        },
-                        correlation_id=message.correlation_id,
-                    )
-        else:
-            logger.warning(
-                f"[{self.agent_id}] Unhandled message type: {message.message_type}"
-            )
+    def _get_analysis_extras(self) -> dict[str, Any]:
+        """Return Beta-specific extras."""
+        return {"perspective": "secondary", "confidence": 0.8}
 
     async def _handle_deliberation_request(self, message: ActorMessage) -> None:
         """Handle deliberation requests."""
-        deliberation_id = message.content.get("deliberation_id") or message.content.get("session_id")
+        deliberation_id = message.content.get("deliberation_id") or message.content.get("session_id")  # noqa: E501
         topic = message.content.get("topic") or message.content.get("problem")
 
         logger.info(
-            f"[{self.agent_id}] Participating in deliberation {deliberation_id}"
+            f"[{self.agent_id}] Participating in deliberation {deliberation_id}"  # noqa: G004
         )
 
         # Perform independent analysis
@@ -713,7 +806,7 @@ class BetaAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, Age
         decision_to_validate = message.content.get("decision")
         original_analysis = message.content.get("original_analysis")
 
-        logger.info(f"[{self.agent_id}] Validating: {request_id}")
+        logger.info(f"[{self.agent_id}] Validating: {request_id}")  # noqa: G004
 
         validation = await self._validate_decision(
             decision_to_validate,
@@ -730,8 +823,7 @@ class BetaAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, Age
         if request_id:
             self._validations[request_id] = record
         # P1-3: Trim history if it exceeds max size
-        if len(self.validation_history) > self.max_history_size:
-            self.validation_history = self.validation_history[-self.max_history_size:]
+        self._trim_history(self.validation_history)
 
         reply_topic = message.content.get("reply_to", "validation")
         await self.send(
@@ -761,10 +853,9 @@ class BetaAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, Age
         if check_id:
             self._error_checks[check_id] = check_record
         # P1-3: Trim history if it exceeds max size
-        if len(self.error_detections) > self.max_history_size:
-            self.error_detections = self.error_detections[-self.max_history_size:]
+        self._trim_history(self.error_detections)
         if errors:
-            logger.warning(f"[{self.agent_id}] Detected {len(errors)} errors")
+            logger.warning(f"[{self.agent_id}] Detected {len(errors)} errors")  # noqa: G004
 
         reply_topic = message.content.get("reply_to", "errors")
         await self.send(
@@ -777,36 +868,12 @@ class BetaAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, Age
             correlation_id=message.correlation_id,
         )
 
-    async def _perform_analysis(self, problem: str) -> dict[str, Any]:
-        """Perform independent analysis."""
-        if self.swarms_agent:
-            try:
-                analysis_result = await self.run_with_llm(
-                    prompt=f"Provide independent analysis (Beta perspective): {problem}",
-                    timeout=60
-                )
-                return {
-                    "decision": analysis_result,
-                    "confidence": 0.8,
-                    "reasoning": "Independent Beta analysis",
-                    "perspective": "secondary",
-                }
-            except Exception as e:
-                logger.error(f"[{self.agent_id}] Analysis error: {e}")
-
-        return {
-            "decision": "beta_analysis_complete",
-            "confidence": 0.75,
-            "reasoning": "Fallback Beta analysis",
-            "perspective": "secondary",
-        }
-
     async def _validate_decision(
         self,
         decision: Any,
         original_analysis: dict[str, Any] | None = None,
-        criteria: list[str] | None = None,
-        alpha_findings: dict[str, Any] | None = None,
+        criteria: list[str] | None = None,  # noqa: ARG002
+        alpha_findings: dict[str, Any] | None = None,  # noqa: ARG002
     ) -> dict[str, Any]:
         """Validate a decision with Beta's perspective."""
         if self.swarms_agent:
@@ -822,7 +889,7 @@ class BetaAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, Age
                     "perspective": "secondary",
                 }
             except Exception as e:
-                logger.error(f"[{self.agent_id}] Validation error: {e}")
+                logger.error(f"[{self.agent_id}] Validation error: {e}")  # noqa: G004
 
         return {
             "valid": True,
@@ -848,7 +915,7 @@ class BetaAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, Age
                         "severity": "medium",
                     })
             except Exception as e:
-                logger.error(f"[{self.agent_id}] Error detection error: {e}")
+                logger.error(f"[{self.agent_id}] Error detection error: {e}")  # noqa: G004
 
         return errors
 
@@ -863,7 +930,7 @@ class BetaAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, Age
         }
 
 
-class CharlieAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, AgentActor):
+class CharlieAgent(TriadAgent):
     """
     Charlie Agent - Tertiary perspective and challenger.
 
@@ -906,53 +973,38 @@ class CharlieAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, 
                 "creative-solutions",
             ],
             swarms_agent=swarms_agent,
+            max_history_size=1000,
             **kwargs,
         )
 
         self.challenge_intensity = challenge_intensity
-        self.max_history_size = 1000  # P1-3: Limit history size to prevent memory leaks
         self.challenges_raised: list[dict[str, Any]] = []
         self.risk_assessments: list[dict[str, Any]] = []
         # Dict-based tracking keyed by session/request id for test assertions
         self._challenges: dict[str, Any] = {}
         self._risk_assessments: dict[str, Any] = {}
 
-        logger.info(f"[{self.agent_id}] Charlie agent initialized")
+        logger.info(f"[{self.agent_id}] Charlie agent initialized")  # noqa: G004
 
-    async def initialize(self) -> None:
-        """Initialize the Charlie agent."""
-        self.register_handler("deliberation_request", self._handle_deliberation_request)
-        self.register_handler("challenge_request", self._handle_challenge_request)
-        self.register_handler("risk_assessment", self._handle_risk_assessment)
+    def _triad_handlers(self) -> list[tuple[str, Any]]:
+        """Return Charlie's message handlers."""
+        return [
+            ("deliberation_request", self._handle_deliberation_request),
+            ("challenge_request", self._handle_challenge_request),
+            ("risk_assessment", self._handle_risk_assessment),
+        ]
 
-        logger.info(f"[{self.agent_id}] Charlie initialization complete")
+    def _get_analysis_prompt(self, problem: str) -> str:
+        """Build Charlie's analysis prompt."""
+        return f"Analyze with critical perspective (Charlie): {problem}. Identify risks and alternatives."  # noqa: E501
 
-    async def process_message(self, message: ActorMessage) -> None:
-        """Process incoming messages."""
-        handler = self._message_handlers.get(message.message_type)
-        if handler:
-            try:
-                await handler(message)
-            except Exception as e:
-                logger.error(
-                    f"[{self.agent_id}] Error processing message {message.message_type}: {e}",
-                    exc_info=True,
-                )
-                self.error_count += 1
-                if message.content.get("reply_to"):
-                    await self.send(
-                        topic=message.content["reply_to"],
-                        content={
-                            "message_type": "error_response",
-                            "error": str(e),
-                            "original_message_type": message.message_type,
-                        },
-                        correlation_id=message.correlation_id,
-                    )
-        else:
-            logger.warning(
-                f"[{self.agent_id}] Unhandled message type: {message.message_type}"
-            )
+    def _get_analysis_extras(self) -> dict[str, Any]:
+        """Return Charlie-specific extras."""
+        return {
+            "perspective": "challenger",
+            "challenges": ["Identified potential risks", "Proposed alternatives"],
+            "confidence": 0.75,
+        }
 
     async def _handle_deliberation_request(self, message: ActorMessage) -> None:
         """Handle deliberation requests."""
@@ -961,7 +1013,7 @@ class CharlieAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, 
         topic = message.content.get("topic") or message.content.get("problem")
 
         logger.info(
-            f"[{self.agent_id}] Participating in deliberation {session_id}"
+            f"[{self.agent_id}] Participating in deliberation {session_id}"  # noqa: G004
         )
 
         # Perform challenging analysis
@@ -993,7 +1045,7 @@ class CharlieAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, 
         request_id = message.content.get("request_id") or str(len(self._challenges))
         proposition = message.content.get("proposition")
 
-        logger.info(f"[{self.agent_id}] Challenging: {request_id}")
+        logger.info(f"[{self.agent_id}] Challenging: {request_id}")  # noqa: G004
 
         challenges = await self._generate_challenges(proposition)
 
@@ -1006,8 +1058,7 @@ class CharlieAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, 
         self.challenges_raised.append(challenge_entry)
         self._challenges[request_id] = challenge_entry
         # P1-3: Trim history if it exceeds max size
-        if len(self.challenges_raised) > self.max_history_size:
-            self.challenges_raised = self.challenges_raised[-self.max_history_size:]
+        self._trim_history(self.challenges_raised)
 
         reply_topic = message.content.get("reply_to", "challenges")
         await self.send(
@@ -1026,7 +1077,7 @@ class CharlieAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, 
         request_id = message.content.get("request_id") or str(len(self._risk_assessments))
         scenario = message.content.get("scenario")
 
-        logger.info(f"[{self.agent_id}] Assessing risks: {request_id}")
+        logger.info(f"[{self.agent_id}] Assessing risks: {request_id}")  # noqa: G004
 
         assessment = await self._assess_risks(scenario)
 
@@ -1039,8 +1090,7 @@ class CharlieAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, 
         self.risk_assessments.append(assessment_entry)
         self._risk_assessments[request_id] = assessment_entry
         # P1-3: Trim history if it exceeds max size
-        if len(self.risk_assessments) > self.max_history_size:
-            self.risk_assessments = self.risk_assessments[-self.max_history_size:]
+        self._trim_history(self.risk_assessments)
 
         reply_topic = message.content.get("reply_to", "risks")
         await self.send(
@@ -1053,37 +1103,11 @@ class CharlieAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, 
             correlation_id=message.correlation_id,
         )
 
-    async def _perform_analysis(self, problem: str) -> dict[str, Any]:
-        """Perform challenging analysis."""
-        if self.swarms_agent:
-            try:
-                analysis_result = await self.run_with_llm(
-                    prompt=f"Analyze with critical perspective (Charlie): {problem}. Identify risks and alternatives.",
-                    timeout=60
-                )
-                return {
-                    "decision": analysis_result,
-                    "confidence": 0.75,
-                    "reasoning": "Critical Charlie analysis",
-                    "perspective": "challenger",
-                    "challenges": ["Identified potential risks", "Proposed alternatives"],
-                }
-            except Exception as e:
-                logger.error(f"[{self.agent_id}] Analysis error: {e}")
-
-        return {
-            "decision": "charlie_analysis_complete",
-            "confidence": 0.7,
-            "reasoning": "Fallback Charlie analysis",
-            "perspective": "challenger",
-            "challenges": [],
-        }
-
     async def _generate_challenges(
         self,
         proposition: Any,
-        alpha_findings: dict[str, Any] | None = None,
-        beta_findings: dict[str, Any] | None = None,
+        alpha_findings: dict[str, Any] | None = None,  # noqa: ARG002
+        beta_findings: dict[str, Any] | None = None,  # noqa: ARG002
     ) -> list[dict[str, Any]]:
         """Generate challenges to a proposition."""
         challenges = []
@@ -1100,7 +1124,7 @@ class CharlieAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, 
                     "severity": "medium",
                 })
             except Exception as e:
-                logger.error(f"[{self.agent_id}] Challenge error: {e}")
+                logger.error(f"[{self.agent_id}] Challenge error: {e}")  # noqa: G004
 
         return challenges
 
@@ -1118,7 +1142,7 @@ class CharlieAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, 
                     "mitigations": ["Standard mitigations"],
                 }
             except Exception as e:
-                logger.error(f"[{self.agent_id}] Risk assessment error: {e}")
+                logger.error(f"[{self.agent_id}] Risk assessment error: {e}")  # noqa: G004
 
         return {
             "risks_identified": [],

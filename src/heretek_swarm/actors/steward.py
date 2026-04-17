@@ -12,7 +12,7 @@ The Steward is the primary coordinator for the Triad, responsible for:
 
 import asyncio
 from datetime import UTC, datetime, timedelta
-from typing import Any
+from typing import Any, Optional
 
 import structlog
 from swarms import Agent
@@ -405,7 +405,7 @@ class StewardAgent(
                 await self._handle_agent_failure(agent_id)
 
     async def _handle_agent_failure(
-        self, agent_id: str, supervisor: "ActorSupervisor" | None = None
+        self, agent_id: str, supervisor: Optional["ActorSupervisor"] = None
     ) -> None:
         """Record and log an agent heartbeat failure, attempt restart with backoff."""
         if agent_id in self._failed_agents:

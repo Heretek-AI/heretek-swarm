@@ -9,6 +9,11 @@
  * - Embedding service configuration (OpenAI, Cohere, HuggingFace)
  * - Model selection and routing
  * - Connection health monitoring
+ * 
+ * NOTE: Math.random() is used in this component for UI mock/demo data generation only.
+ * Statistics updates, simulated health checks, and random test delays are for UI
+ * demonstration purposes and are NOT security-critical. See
+ * docs/security/S05_TYPESCRIPT_PRNG_REVIEW.md for details.
  */
 
 import React, { useState, useCallback, useEffect } from 'react';

@@ -19,23 +19,41 @@ const API_URL = import.meta.env.VITE_API_HOST || localStorage.getItem('swarm_api
 
 const POLL_INTERVAL = 10000; // 10 seconds
 
+// Try observability endpoint first (no auth), then consciousness (may require auth)
+const CONSCIOUSNESS_ENDPOINTS = [
+  '/api/v1/observability/consciousness',
+  '/api/consciousness/statistics',
+];
+
 export function useConsciousnessMetrics() {
   const [metrics, setMetrics] = useState<ConsciousnessMetrics | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const fetchMetrics = useCallback(async () => {
-    try {
-      const response = await fetch(`${API_URL}/api/consciousness`);
-      if (!response.ok) throw new Error('Failed to fetch consciousness metrics');
-      const data = await response.json();
-      setMetrics(data);
-      setError(null);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error');
-    } finally {
-      setLoading(false);
+    for (const endpoint of CONSCIOUSNESS_ENDPOINTS) {
+      try {
+        const response = await fetch(`${API_URL}${endpoint}`);
+        if (response.ok) {
+          const data = await response.json();
+          // Map response to expected shape
+          setMetrics({
+            phi_score: data.phi_score ?? data.average_phi ?? 0,
+            phi_avg: data.phi_avg ?? data.average_phi ?? 0,
+            phi_max: data.phi_max ?? data.average_phi ?? 0,
+            free_energy_avg: data.free_energy_avg ?? data.average_free_energy ?? 0,
+            integration_level: data.integration_level ?? 0,
+          });
+          setError(null);
+          return; // Success - stop trying endpoints
+        }
+      } catch {
+        // Try next endpoint
+      }
     }
+    // All endpoints failed
+    setError('Consciousness metrics unavailable');
+    setLoading(false);
   }, []);
 
   useEffect(() => {

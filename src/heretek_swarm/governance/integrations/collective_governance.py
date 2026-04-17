@@ -8,7 +8,7 @@ Key principle: Validation runs BEFORE the action. On validation failure,
 a GovernanceSecurityError is raised and the action is not executed.
 """
 
-from typing import Any, Optional
+from typing import Any
 
 import structlog
 
@@ -141,17 +141,29 @@ class GovernanceAgentSociety(AgentSociety):
 
         if not result.passed:
             # Log security event
+            failed_layers = [
+                lr.layer
+                for lr in [
+                    result.layer1,
+                    result.layer2,
+                    result.layer3,
+                    result.layer4,
+                ]
+                if not lr.passed
+            ]
             logger.error(
                 "governance_validation_failed",
                 event_type="collective_task",
                 agent_id=agent_identity.agent_id,
                 protocol_id=protocol.protocol_id,
                 request_id=result.request_id,
-                failed_layers=[lr.layer for lr in [result.layer1, result.layer2, result.layer3, result.layer4] if not lr.passed],
+                failed_layers=failed_layers,
             )
             raise GovernanceSecurityError(
-                message=f"Governance validation failed for collective task {task.id}: "
-                        f" {[r.layer for r in [result.layer1, result.layer2, result.layer3, result.layer4] if not r.passed]}",
+                message=(
+                    f"Governance validation failed for collective task {task.id}: "
+                    f" {failed_layers}"
+                ),
                 result=result,
             )
 
@@ -224,7 +236,16 @@ class GovernanceAgentSociety(AgentSociety):
                 event_type="contribution_submission",
                 agent_id=agent_identity.agent_id,
                 request_id=result.request_id,
-                failed_layers=[lr.layer for lr in [result.layer1, result.layer2, result.layer3, result.layer4] if not lr.passed],
+                failed_layers=[
+                    lr.layer
+                    for lr in [
+                        result.layer1,
+                        result.layer2,
+                        result.layer3,
+                        result.layer4,
+                    ]
+                    if not lr.passed
+                ],
             )
             raise GovernanceSecurityError(
                 message=f"Governance validation failed for contribution to task {task.id}",

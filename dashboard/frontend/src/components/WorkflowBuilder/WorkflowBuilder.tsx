@@ -3,6 +3,11 @@
  * 
  * Flowise-like visual workflow builder for Heretek Swarm.
  * Based on ReactFlow for drag-and-drop node-based workflow design.
+ * 
+ * NOTE: Math.random() is used for random node positioning in the UI canvas.
+ * This is non-security-critical - random positions are for UI aesthetics only,
+ * not for any cryptographic or authentication purposes. See
+ * docs/security/S05_TYPESCRIPT_PRNG_REVIEW.md for details.
  */
 
 import React, { useCallback, useState, useMemo, useRef, useEffect } from 'react';
@@ -62,6 +67,13 @@ export function WorkflowBuilder() {
   const [isExecuting, setIsExecuting] = useState(false);
   const [savedWorkflows, setSavedWorkflows] = useState<Workflow[]>([]);
   const [currentWorkflowId, setCurrentWorkflowId] = useState<string | null>(null);
+  const [executionState, setExecutionState] = useState({
+    status: 'idle' as 'idle' | 'running' | 'completed' | 'failed' | 'connected',
+    progress: 0,
+    currentNode: null as string | null,
+    message: '',
+    executionId: '',
+  });
   
   // NodeConfigPanel state
   const [configPanelOpen, setConfigPanelOpen] = useState(false);
@@ -75,6 +87,7 @@ export function WorkflowBuilder() {
     };
   } | null>(null);
 
+  const eventSourceRef = useRef<EventSource | null>(null);
   const reactFlowWrapperRef = useRef<HTMLDivElement>(null);
 
   /**
@@ -547,8 +560,64 @@ export function WorkflowBuilder() {
   }, []);
 
   /**
-   * Execute workflow
+   * Execute workflow with SSE event streaming
    */
+  const connectToWorkflowEvents = useCallback((workflowId?: string) => {
+    // Close existing connection
+    if (eventSourceRef.current) {
+      eventSourceRef.current.close();
+    }
+
+    const url = workflowId
+      ? `${API_URL}/api/workflows/${workflowId}/events`
+      : `${API_URL}/api/workflows/events`;
+
+    console.log('Connecting to SSE:', url);
+
+    const eventSource = new EventSource(url);
+    eventSourceRef.current = eventSource;
+
+    eventSource.onopen = () => {
+      console.log('SSE connection opened');
+      setIsExecuting(true);
+      setExecutionState(prev => ({ ...prev, status: 'connected', message: 'Connected to workflow stream...' }));
+    };
+
+    eventSource.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        console.log('SSE event received:', data);
+
+        setExecutionState({
+          status: data.status as typeof executionState.status,
+          progress: data.progress || 0,
+          currentNode: data.currentNode || null,
+          message: data.message || '',
+          executionId: data.execution_id || '',
+        });
+
+        // Auto-stop on completed/failed
+        if (data.status === 'completed' || data.status === 'failed') {
+          setTimeout(() => {
+            eventSource.close();
+            setIsExecuting(false);
+          }, 2000);
+        }
+      } catch (e) {
+        console.error('Failed to parse SSE event:', e);
+      }
+    };
+
+    eventSource.onerror = (error) => {
+      console.error('SSE error:', error);
+      setExecutionState(prev => ({ ...prev, status: 'failed', message: 'Connection error' }));
+      setIsExecuting(false);
+      eventSource.close();
+    };
+
+    return eventSource;
+  }, []);
+
   const executeWorkflow = useCallback(async () => {
     if (!validation.valid || nodes.length === 0) {
       alert('Please fix validation errors before executing');
@@ -556,24 +625,35 @@ export function WorkflowBuilder() {
     }
     
     try {
-      const response = await fetch(`${API_URL}/api/workflows/${currentWorkflowId}/execute`, {
+      // First, save the workflow
+      const saveResponse = await fetch(`${API_URL}/api/workflows`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          nodes: nodes,
+          id: currentWorkflowId || `workflow-${Date.now()}`,
+          name: 'Custom Workflow',
+          description: 'Workflow created in Workflow Builder',
+          nodes: nodes.map(n => ({ id: n.id, type: n.type, position: n.position, data: n.data })),
           edges: edges,
+          version: 1,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
         }),
       });
-      
-      if (!response.ok) throw new Error('Failed to execute workflow');
-      
-      const result = await response.json();
-      alert(`Workflow executed! Execution ID: ${result.execution_id}`);
+
+      if (!saveResponse.ok) throw new Error('Failed to save workflow');
+      const saved = await saveResponse.json();
+      setCurrentWorkflowId(saved.id);
+
+      // Connect to SSE events for this workflow
+      connectToWorkflowEvents(saved.id);
+
     } catch (error) {
       console.error('Failed to execute workflow:', error);
-      alert('Failed to execute workflow');
+      setExecutionState(prev => ({ ...prev, status: 'failed', message: 'Failed to execute workflow' }));
+      setIsExecuting(false);
     }
-  }, [nodes, edges, currentWorkflowId, validation.valid]);
+  }, [nodes, edges, currentWorkflowId, validation.valid, connectToWorkflowEvents]);
 
   /**
    * Load workflows on mount
@@ -738,6 +818,61 @@ export function WorkflowBuilder() {
               onClose={handleCloseConfig}
               onSave={handleSaveConfig}
             />
+
+            {/* Execution Progress Panel */}
+            {isExecuting && (
+              <div className="absolute top-4 right-4 w-80 bg-white border border-gray-300 rounded-lg shadow-lg p-4 z-50">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="font-semibold text-gray-800">Workflow Execution</h3>
+                  <span className={`text-xs px-2 py-1 rounded ${
+                    executionState.status === 'connected' ? 'bg-blue-100 text-blue-800' :
+                    executionState.status === 'running' ? 'bg-yellow-100 text-yellow-800' :
+                    executionState.status === 'completed' ? 'bg-green-100 text-green-800' :
+                    'bg-red-100 text-red-800'
+                  }`}>
+                    {executionState.status}
+                  </span>
+                </div>
+
+                {/* Progress Bar */}
+                <div className="mb-3">
+                  <div className="flex justify-between text-sm mb-1">
+                    <span className="text-gray-600">Progress</span>
+                    <span className="text-gray-800 font-medium">{executionState.progress}%</span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div
+                      className={`h-2 rounded-full transition-all duration-300 ${
+                        executionState.status === 'completed' ? 'bg-green-500' :
+                        executionState.status === 'failed' ? 'bg-red-500' :
+                        'bg-blue-500'
+                      }`}
+                      style={{ width: `${executionState.progress}%` }}
+                    />
+                  </div>
+                </div>
+
+                {/* Current Node */}
+                {executionState.currentNode && (
+                  <div className="mb-2 text-sm">
+                    <span className="text-gray-600">Current Node:</span>
+                    <span className="ml-2 text-gray-800 font-medium">{executionState.currentNode}</span>
+                  </div>
+                )}
+
+                {/* Message */}
+                {executionState.message && (
+                  <div className="text-sm text-gray-600">{executionState.message}</div>
+                )}
+
+                {/* Execution ID */}
+                {executionState.executionId && (
+                  <div className="mt-2 text-xs text-gray-400">
+                    Execution: {executionState.executionId}
+                  </div>
+                )}
+              </div>
+            )}
           </ReactFlowProvider>
         </div>
       </div>
@@ -930,6 +1065,11 @@ export function WorkflowBuilder() {
 
         .react-flow-wrapper {
           height: 100%;
+        }
+
+        /* Execution Panel positioning */
+        .canvas-container .react-flow {
+          position: relative;
         }
 
         .node-properties {

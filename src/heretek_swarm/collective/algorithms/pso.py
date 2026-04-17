@@ -1,4 +1,9 @@
-"""Particle Swarm Optimization implementation."""
+"""
+Particle Swarm Optimization implementation.
+
+Uses random module for simulation purposes only.
+Not used for security-critical operations (IDs use uuid, not random).
+"""
 
 import random
 import uuid

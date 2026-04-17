@@ -315,6 +315,10 @@ def wire_agent_file(filepath: Path) -> bool:
     # 3. Add __init__ body
     if "Session 44: Collective Learning Integration" in content and "self.pattern_extractor = pattern_extractor" not in content:
         # Find logger.info call after __init__ body starts and add before it
+        # SECURITY NOTE (S5852/ReDoS): This regex is used only in CI code generation
+        # for agent configuration and is not user-facing. The pattern matches simple
+        # logger.info calls in generated code. Reviewed for safety since it's only
+        # used on controlled input from the code generation pipeline.
         init_body_pattern = r"(logger\.info\([^)]*initialized[^)]*\))"
         match = re.search(init_body_pattern, content, re.IGNORECASE)
         if match:

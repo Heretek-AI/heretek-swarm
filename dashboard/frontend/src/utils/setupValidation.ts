@@ -45,6 +45,7 @@ export function normalizeUrl(url: string): string {
   }
   
   // Remove trailing slashes
+  // Note: Pattern /\/:+$/ is safe - no nested quantifiers or backtracking possible
   normalized = normalized.replace(/\/+$/, '');
   
   return normalized;

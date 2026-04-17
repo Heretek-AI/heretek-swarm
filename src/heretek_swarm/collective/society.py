@@ -13,22 +13,22 @@ Features:
 """
 
 import asyncio
-import random
 import uuid
 from dataclasses import dataclass, field
 from datetime import UTC, datetime, timedelta
 from enum import StrEnum
-from typing import Any, Optional
+from typing import TYPE_CHECKING, Any, Optional, cast
 
 import structlog
+
+if TYPE_CHECKING:
+    from collections.abc import Awaitable, Callable
 
 logger = structlog.get_logger(__name__)
 
 # Import swarm intelligence patterns for integration
 try:
     from .swarm_intelligence import (
-        BeeAgent,
-        FlockingAgent,
         SwarmDecision,
         SwarmIntelligenceEngine,
         SwarmPattern,
@@ -75,7 +75,7 @@ class ContributionCache:
         if key in self._cache:
             entry = self._cache[key]
             if datetime.fromisoformat(entry["expires_at"]) > datetime.now(UTC):
-                return entry["contribution"]
+                return cast("AgentContribution", entry["contribution"])
             # Expired, remove from cache
             del self._cache[key]
         return None
@@ -196,7 +196,7 @@ class CollectiveMemory:
     Stores collective knowledge, patterns, and learnings.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._memory: dict[str, Any] = {}
         self._patterns: list[dict[str, Any]] = []
         self._learnings: list[dict[str, Any]] = []
@@ -223,7 +223,7 @@ class CollectiveMemory:
         if key in self._memory:
             self._memory[key]["access_count"] += 1
             self._memory[key]["last_accessed"] = datetime.now(UTC).isoformat()
-            return self._memory[key]
+            return cast("dict[str, Any]", self._memory[key])
         return None
 
     async def add_pattern(
@@ -279,7 +279,7 @@ class CollectiveMemory:
         """Get learnings from collective memory."""
         learnings = self._learnings
         if learning_type:
-            learnings = [l for l in learnings if l["type"] == learning_type]
+            learnings = [learning for learning in learnings if learning["type"] == learning_type]
         return learnings[-limit:]
 
 
@@ -293,11 +293,11 @@ class AgentSociety:
 
     def __init__(
         self,
-        supervisor=None,
+        supervisor: Any = None,
         contribution_cache_ttl: int = 300,
         enable_swarm_intelligence: bool = True,
         exploration_mode: bool = False,
-    ):
+    ) -> None:
         """
         Initialize agent society.
 
@@ -316,6 +316,12 @@ class AgentSociety:
         self._emergent_behaviors: list[EmergentBehavior] = []
         self._contribution_cache = ContributionCache(ttl_seconds=contribution_cache_ttl)
         self.exploration_mode = exploration_mode
+
+        # Task types routed to swarm exploration layer when exploration_mode=True
+        self._exploration_task_types = {
+            CollectiveTaskType.EXPLORATION,
+            CollectiveTaskType.OPTIMIZATION,
+        }
 
         # Initialize swarm intelligence engine if available
         self.swarm_engine: SwarmIntelligenceEngine | None = None
@@ -386,8 +392,8 @@ class AgentSociety:
         start_time = datetime.now(UTC)
 
         try:
-            # Route to swarm exploration if exploration_mode enabled and EXPLORATION task
-            if self.exploration_mode and task.type == CollectiveTaskType.EXPLORATION:
+            # Route to swarm exploration if exploration_mode enabled and task type matches
+            if self.exploration_mode and task.type in self._exploration_task_types:
                 return await self._execute_swarm_exploration(task)
 
             # Select participants based on task type
@@ -491,14 +497,15 @@ class AgentSociety:
         }
 
         roles = task_role_map.get(task.type, [SocietyRole.LEADERSHIP])
-        participants = []
+        participants: list[str] = []
 
         # Get agents for each role
         for role in roles:
             agent_types = self.hierarchy.get(role, [])
-            for agent_type in agent_types:
-                if self.supervisor and agent_type in self.supervisor.actors:
-                    participants.append(agent_type)
+            participants.extend(
+                at for at in agent_types
+                if self.supervisor and at in self.supervisor.actors
+            )
 
         # Limit participants
         max_participants = self.interaction_rules.get("max_participants", 10)
@@ -546,103 +553,134 @@ class AgentSociety:
         task: CollectiveTask,
     ) -> CollectiveResult:
         """
-        Execute swarm exploration using BeeAgent and FlockingAgent patterns.
+        Execute task via swarm exploration layer.
 
-        This method uses the SwarmIntelligenceEngine to coordinate exploration
-        tasks using bio-inspired swarm algorithms.
+        Routes to either bee_algorithm (EXPLORATION) or pso (OPTIMIZATION) via
+        apply_swarm_pattern. Falls back to TRIAD hierarchy if the swarm engine is
+        unavailable or apply_swarm_pattern returns None.
 
         Args:
-            task: Collective task with EXPLORATION type
+            task: Collective task with EXPLORATION or OPTIMIZATION type
 
         Returns:
             CollectiveResult with swarm exploration outcome
         """
+        pattern_map = {
+            CollectiveTaskType.EXPLORATION: "bee_algorithm",
+            CollectiveTaskType.OPTIMIZATION: "pso",
+        }
+        pattern = pattern_map.get(task.type, "bee_algorithm")
+
         logger.info(
             "swarm_exploration_started",
             task_id=task.id,
-            exploration_mode=self.exploration_mode
+            task_type=task.type.value,
+            pattern=pattern,
+            exploration_mode=self.exploration_mode,
         )
 
         if not self.swarm_engine:
             logger.error("swarm_engine_not_available")
-            return CollectiveResult(
-                task_id=task.id,
-                success=False,
-                error="Swarm engine not available"
-            )
+            return await self._execute_coordination_fallback(task, task.participants)
 
         try:
-            # Initialize bee agents for exploration
-            bee_agents = [
-                BeeAgent(
-                    bee_id=f"bee-{i}",
-                    role="scout" if i % 3 == 0 else "forager",
-                    agent_id=f"explorer-{i}"
-                )
-                for i in range(min(5, len(task.participants) or 5))
-            ]
+            # Build decision space from task input_data
+            decision_space = {
+                str(k): float(v) if isinstance(v, (int, float)) else 0.0
+                for k, v in task.input_data.items()
+            }
+            # Seed with task description as a dimension
+            if task.description:
+                decision_space["_task"] = 1.0
 
-            # Initialize flocking agents
-            flocking_agents = [
-                FlockingAgent(
-                    agent_id=participant,
-                    position=(
-                        random.uniform(0, 100),
-                        random.uniform(0, 100),
-                        random.uniform(0, 100)
-                    ),
-                    velocity=(0.0, 0.0, 0.0),
-                    heading=(0.0, 0.0, 1.0)
-                )
-                for participant in (task.participants or ["agent-0"])
-            ]
-
-            # Run bee algorithm for task allocation
-            bee_result = await self.swarm_engine.run_bee_algorithm(
-                tasks=[task.description] + task.input_data.get("sub_tasks", []),
-                foragers=[b.agent_id for b in bee_agents]
+            # Delegate to apply_swarm_pattern for consistent pattern execution
+            swarm_result = await self.apply_swarm_pattern(
+                pattern=pattern,
+                participants=task.participants or [],
+                decision_space=decision_space,
+                max_iterations=50,
             )
 
-            # Run flocking for spatial coordination
-            flock_result = await self.swarm_engine.run_flocking(
-                agents=[f.agent_id for f in flocking_agents],
-                iterations=10
-            )
+            # Fall back to TRIAD if swarm returned None (engine unavailable)
+            if swarm_result is None:
+                return await self._execute_coordination_fallback(task, task.participants)
+
+            # Extract bee/flock counts from participants for backwards-compatible result
+            bee_count = min(5, len(task.participants) or 5)
+            flock_count = len(task.participants) or 1
 
             result = {
-                "bee_allocation": bee_result,
-                "flocking_coordination": flock_result,
-                "swarm_pattern": "exploration",
-                "bee_agents": len(bee_agents),
-                "flocking_agents": len(flocking_agents),
+                "swarm_decision": swarm_result,
+                "swarm_pattern": pattern,
+                "bee_agents": bee_count,
+                "flocking_agents": flock_count,
+                "confidence": swarm_result["confidence"],
+                "emergence_indicators": swarm_result["emergence_indicators"],
             }
-
-            execution_time = 0.1  # Placeholder - could measure actual time
 
             # Store in collective memory
             await self.collective_memory.add_learning(
                 learning_type="exploration",
                 learning_data=result,
-                participants=task.participants
+                participants=task.participants,
             )
 
             return CollectiveResult(
                 task_id=task.id,
                 success=True,
                 result=result,
-                participants=task.participants or [b.agent_id for b in bee_agents],
-                execution_time=execution_time,
-                consensus_score=bee_result.get("convergence", 0.5),
-                emergent_behavior=None
+                participants=task.participants or [],
+                execution_time=0.0,
+                consensus_score=swarm_result["confidence"],
+                emergent_behavior=(
+                    swarm_result["emergence_indicators"][0]
+                    if swarm_result["emergence_indicators"]
+                    else None
+                ),
             )
 
         except Exception as e:
             logger.error("swarm_exploration_failed", task_id=task.id, error=str(e))
-            return CollectiveResult(
-                task_id=task.id,
-                success=False,
-                error=str(e)
-            )
+            return await self._execute_coordination_fallback(task, task.participants)
+
+    async def _execute_coordination_fallback(
+        self,
+        task: CollectiveTask,
+        participants: list[str],
+    ) -> CollectiveResult:
+        """
+        Fall back to standard TRIAD hierarchy when swarm layer is unavailable.
+
+        Called when exploration_mode=True but the swarm engine raised an exception
+        or returned None. Preserves hierarchy authority by routing through the
+        established TRIAD coordination protocol.
+
+        Args:
+            task: Collective task to execute
+            participants: List of participant agent IDs
+
+        Returns:
+            CollectiveResult from TRIAD coordination
+        """
+        logger.info(
+            "swarm_exploration_fell_back_to_hierarchy",
+            task_id=task.id,
+            task_type=task.type.value,
+            participants=len(participants),
+        )
+        protocol = self._establish_protocol(participants, task)
+        result = await self._execute_coordination(participants, protocol, task)
+
+        execution_time = 0.0  # Already logged above
+        return CollectiveResult(
+            task_id=task.id,
+            success=True,
+            result=result,
+            participants=participants,
+            execution_time=execution_time,
+            consensus_score=result.get("consensus_score", 0.0),
+            emergent_behavior=None,
+        )
 
     async def _execute_coordination(
         self,
@@ -692,10 +730,9 @@ class AgentSociety:
 
     async def _get_agent_contribution(
         self,
-        actor,
+        actor: Any,
         task: CollectiveTask,
         protocol: dict[str, Any],
-        timeout: float = 30.0
     ) -> AgentContribution:
         """
         Get contribution from an agent by invoking its process method.
@@ -732,7 +769,7 @@ class AgentSociety:
         try:
             # Try to get contribution via direct method call
             contribution_data = await self._request_contribution_from_actor(
-                actor, task, protocol, timeout
+                actor, task, protocol
             )
 
             # Create AgentContribution
@@ -750,7 +787,7 @@ class AgentSociety:
                 "contribution_received",
                 agent_id=agent_id,
                 task_id=task.id,
-                confidence=contribution.get("confidence", 0.8)
+                confidence=contribution.confidence
             )
 
             return contribution
@@ -760,7 +797,7 @@ class AgentSociety:
                 "contribution_timeout",
                 agent_id=agent_id,
                 task_id=task.id,
-                timeout=timeout
+                timeout=30.0
             )
             raise
         except Exception as e:
@@ -784,10 +821,9 @@ class AgentSociety:
 
     async def _request_contribution_from_actor(
         self,
-        actor,
+        actor: Any,
         task: CollectiveTask,
         protocol: dict[str, Any],
-        timeout: float = 30.0
     ) -> dict[str, Any]:
         """
         Request contribution from an actor using available methods.
@@ -801,7 +837,6 @@ class AgentSociety:
             actor: Agent actor instance
             task: Collective task
             protocol: Communication protocol
-            timeout: Timeout in seconds
 
         Returns:
             Dict with contribution data and confidence
@@ -818,18 +853,14 @@ class AgentSociety:
 
         # Try direct method call if actor has process_contribution
         if hasattr(actor, "process_contribution") and callable(actor.process_contribution):
-            return await asyncio.wait_for(
-                actor.process_contribution(task, protocol),
-                timeout=timeout
-            )
+            async with asyncio.timeout(30.0):
+                return await actor.process_contribution(task, protocol)  # type: ignore[no-any-return]
 
         # Try using LLM if available
         if hasattr(actor, "run_with_llm") and actor.swarms_agent is not None:
             prompt = self._build_contribution_prompt(task, protocol)
-            response = await asyncio.wait_for(
-                actor.run_with_llm(prompt),
-                timeout=timeout
-            )
+            async with asyncio.timeout(30.0):
+                response = await actor.run_with_llm(prompt)
             return {
                 "contribution": {
                     "analysis": response,
@@ -888,8 +919,8 @@ Format your response as:
     async def _aggregate_contributions(
         self,
         contributions: list[AgentContribution],
-        task: CollectiveTask,
-        protocol: dict[str, Any]
+        _task: CollectiveTask,
+        protocol: dict[str, Any],
     ) -> dict[str, Any]:
         """
         Aggregate contributions from multiple agents.
@@ -1051,7 +1082,9 @@ Format your response as:
         )
 
         # Execute the swarm pattern
-        swarm_decision: SwarmDecision = await pattern_map[pattern.lower()](
+        swarm_decision: SwarmDecision = await cast(
+            "Callable[..., Awaitable[SwarmDecision]]", pattern_map[pattern.lower()]
+        )(
             participants=participants,
             decision_space=decision_space,
             **kwargs,
@@ -1061,33 +1094,37 @@ Format your response as:
         await self.collective_memory.add_pattern(
             pattern_type=f"swarm_{pattern}",
             pattern_data={
-                "decision": swarm_decision.decision,
+                "decision": swarm_decision.final_position,
                 "confidence": swarm_decision.confidence,
                 "participants": participants,
-                "iterations": swarm_decision.iterations,
-                "emergence_detected": swarm_decision.emergence_detected,
+                "iterations": swarm_decision.convergence_iterations,
+                "emergence_detected": bool(swarm_decision.emergence_indicators),
                 "quality_metrics": swarm_decision.quality_metrics,
             },
             confidence=swarm_decision.confidence,
         )
 
         # Check for emergent behavior
-        if swarm_decision.emergence_detected:
+        if swarm_decision.emergence_indicators:
             emergent = EmergentBehavior(
                 id=str(uuid.uuid4()),
                 behavior_type=f"swarm_{pattern}_emergence",
                 description=f"Emergent behavior detected in {pattern} pattern",
                 participants=participants,
                 confidence=swarm_decision.confidence,
-                impact="positive" if swarm_decision.quality_metrics.get("convergence_rate", 0) > 0.7 else "neutral",
+                impact=(
+                    "positive"
+                    if swarm_decision.quality_metrics.get("convergence_rate", 0) > 0.7
+                    else "neutral"
+                ),
             )
             self._emergent_behaviors.append(emergent)
 
         return {
-            "decision": swarm_decision.decision,
+            "decision": swarm_decision.final_position,
             "confidence": swarm_decision.confidence,
-            "iterations": swarm_decision.iterations,
-            "emergence_detected": swarm_decision.emergence_detected,
+            "iterations": swarm_decision.convergence_iterations,
+            "emergence_detected": bool(swarm_decision.emergence_indicators),
             "quality_metrics": swarm_decision.quality_metrics,
             "pattern_type": pattern,
         }
@@ -1173,6 +1210,19 @@ Format your response as:
                 participants=participants,
             )
 
+    def set_exploration_mode(self, enabled: bool) -> None:
+        """
+        Toggle exploration mode at runtime without re-initializing.
+
+        When enabled, EXPLORATION and OPTIMIZATION collective tasks are routed
+        through the swarm exploration layer instead of standard coordination.
+
+        Args:
+            enabled: True to enable exploration mode, False to disable
+        """
+        self.exploration_mode = enabled
+        logger.info("exploration_mode_updated", enabled=enabled)
+
     def get_swarm_status(self) -> dict[str, Any]:
         """
         Get status of swarm intelligence engine.
@@ -1187,11 +1237,10 @@ Format your response as:
             "available": True,
             "enabled": True,
             "patterns_available": [p.value for p in SwarmPattern],
-            "active_particles": len(self.swarm_engine.particles),
-            "active_pheromones": len(self.swarm_engine.pheromone_trails),
-            "active_bees": len(self.swarm_engine.bee_agents),
             "active_flocking_agents": len(self.swarm_engine.flocking_agents),
-            "stigmergic_traces": len(self.swarm_engine.stigmergic_traces),
+            "stigmergic_traces": len(self.swarm_engine.traces),
+            "exploration_mode_active": self.exploration_mode,
+            "exploration_engine_available": self.swarm_engine is not None,
         }
 
     async def optimize_swarm(
@@ -1296,10 +1345,11 @@ Format your response as:
             "hierarchy": self.hierarchy,
             "active_tasks": len(self._active_tasks),
             "emergent_behaviors": len(self._emergent_behaviors),
-            "collective_memory_size": len(self.collective_memory._memory),
-            "patterns_discovered": len(self.collective_memory._patterns),
-            "collective_learnings": len(self.collective_memory._learnings),
+            "collective_memory_size": len(self.collective_memory._memory),  # noqa: SLF001
+            "patterns_discovered": len(self.collective_memory._patterns),  # noqa: SLF001
+            "collective_learnings": len(self.collective_memory._learnings),  # noqa: SLF001
             "interaction_rules": self.interaction_rules,
+            "exploration_mode": self.exploration_mode,
         }
 
         # Add swarm intelligence status if available

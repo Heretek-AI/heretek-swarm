@@ -17,7 +17,9 @@ Features:
 
 import asyncio
 
-# NOTE: random used for genetic algorithm mutations - not security-critical
+# NOTE: random module used for genetic algorithm mutations and evolutionary operations.
+# All random usage is for simulation purposes only (mutation rates, crossover selection,
+# population initialization). Security-sensitive operations (IDs, tokens) use uuid module.
 import random
 import uuid
 from collections.abc import Callable

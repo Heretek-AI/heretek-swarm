@@ -157,9 +157,14 @@ export interface UseNodeGroupingReturn {
 
 /**
  * Generate a unique group ID
+ * 
+ * Uses crypto.getRandomValues for better randomness than Math.random().
+ * This is NOT security-critical - group IDs are for UI organization only.
  */
 function generateGroupId(): string {
-  return `group-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  const array = new Uint8Array(9);
+  crypto.getRandomValues(array);
+  return `group-${Date.now()}-${Array.from(array, (b) => b.toString(36).padStart(2, '0')).join('').slice(0, 9)}`;
 }
 
 /**

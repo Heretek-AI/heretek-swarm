@@ -56,6 +56,8 @@ class AutonomousRuntimeConfig:
     max_agents: int = 20
     scale_up_threshold: float = 0.8  # CPU/memory usage
     scale_down_threshold: float = 0.3
+    scale_up_cooldown_minutes: int = 10
+    scale_down_cooldown_minutes: int = 30
 
     # Consciousness Plugin Configuration
     consciousness_plugin_enabled: bool = True

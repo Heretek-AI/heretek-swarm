@@ -8,13 +8,18 @@ Provides REST API for:
 - Getting workflow status
 - Deleting workflows
 - Validating workflows
+- Workflow execution events (SSE)
 """
 
+import asyncio
+import json
 import uuid
-from typing import Any
+from datetime import UTC, datetime
+from typing import Any, AsyncGenerator
 
 import structlog
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi.responses import StreamingResponse
 
 from heretek_swarm.gateway.auth import verify_auth
 from heretek_swarm.workflow.engine import WorkflowState, get_workflow_engine
@@ -354,3 +359,225 @@ async def validate_workflow_draft(
     )
 
     return result.to_dict()
+
+
+# =============================================================================
+# SSE Endpoint for Workflow Events
+# =============================================================================
+
+
+@router.get("/events", response_class=StreamingResponse)
+async def workflow_events_stream(
+    workflow_id: str | None = Query(None, description="Filter events by workflow ID"),
+    authenticated: str = Depends(verify_auth)
+) -> StreamingResponse:
+    """
+    SSE endpoint for streaming workflow execution events.
+
+    Events are sent as Server-Sent Events with JSON payloads:
+    - status: "started" | "running" | "completed" | "failed"
+    - currentNode: Node ID currently executing (or null)
+    - progress: 0-100 percentage
+    - message: Human-readable status message
+    - timestamp: ISO format timestamp
+    - workflow_id: Workflow ID (if filtered)
+    - execution_id: Execution ID for this run
+
+    Args:
+        workflow_id: Optional workflow ID to filter events
+        authenticated: Authentication token
+
+    Returns:
+        StreamingResponse with text/event-stream content type
+    """
+    async def event_generator() -> AsyncGenerator[str, None]:
+        """Generator that yields SSE events."""
+        # Track execution state
+        execution_id = f"exec_{uuid.uuid4().hex[:8]}"
+        event_count = 0
+
+        logger.info(
+            "sse_connection_opened",
+            execution_id=execution_id,
+            workflow_id=workflow_id,
+        )
+
+        # Send initial connection event
+        yield f"data: {json.dumps({
+            'status': 'connected',
+            'execution_id': execution_id,
+            'workflow_id': workflow_id,
+            'message': 'SSE connection established',
+            'timestamp': datetime.now(UTC).isoformat(),
+        })}\n\n"
+
+        try:
+            # Simulate workflow execution events for demo purposes
+            # In production, this would integrate with actual workflow engine
+            for i in range(10):
+                await asyncio.sleep(0.5)  # Simulate work
+                event_count += 1
+
+                progress = min(100, (event_count * 10))
+                status = "running" if progress < 100 else "completed"
+                message = f"Executing step {event_count}/10" if progress < 100 else "Workflow completed"
+
+                event_data = {
+                    'status': status,
+                    'currentNode': f'node-{event_count}' if event_count <= 5 else None,
+                    'progress': progress,
+                    'message': message,
+                    'timestamp': datetime.now(UTC).isoformat(),
+                    'workflow_id': workflow_id,
+                    'execution_id': execution_id,
+                    'node_results': {
+                        f'node-{j}': {'status': 'completed', 'duration_ms': 100 * j}
+                        for j in range(1, event_count)
+                    } if event_count > 1 else {},
+                }
+
+                yield f"data: {json.dumps(event_data)}\n\n"
+
+                if status == "completed":
+                    break
+
+        except asyncio.CancelledError:
+            logger.info("sse_connection_cancelled", execution_id=execution_id)
+            yield f"data: {json.dumps({
+                'status': 'cancelled',
+                'execution_id': execution_id,
+                'message': 'SSE connection closed by client',
+                'timestamp': datetime.now(UTC).isoformat(),
+            })}\n\n"
+        except Exception as e:
+            logger.error("sse_connection_error", execution_id=execution_id, error=str(e))
+            yield f"data: {json.dumps({
+                'status': 'failed',
+                'execution_id': execution_id,
+                'message': f'Stream error: {str(e)}',
+                'timestamp': datetime.now(UTC).isoformat(),
+            })}\n\n"
+        finally:
+            logger.info(
+                "sse_connection_closed",
+                execution_id=execution_id,
+                event_count=event_count,
+            )
+
+    return StreamingResponse(
+        event_generator(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+            "X-Accel-Buffering": "no",  # Disable nginx buffering
+        },
+    )
+
+
+@router.get("/{workflow_id}/events", response_class=StreamingResponse)
+async def workflow_specific_events_stream(
+    workflow_id: str,
+    authenticated: str = Depends(verify_auth)
+) -> StreamingResponse:
+    """
+    SSE endpoint for streaming events from a specific workflow execution.
+
+    Args:
+        workflow_id: Workflow ID to stream events for
+        authenticated: Authentication token
+
+    Returns:
+        StreamingResponse with text/event-stream content type
+    """
+    engine = get_workflow_engine()
+
+    # Check if workflow exists
+    if workflow_id not in engine.workflows:
+        raise HTTPException(status_code=404, detail="Workflow not found")
+
+    async def event_generator() -> AsyncGenerator[str, None]:
+        """Generator that yields SSE events for specific workflow."""
+        execution_id = f"exec_{workflow_id}_{uuid.uuid4().hex[:8]}"
+        event_count = 0
+
+        logger.info(
+            "workflow_sse_connection_opened",
+            execution_id=execution_id,
+            workflow_id=workflow_id,
+        )
+
+        # Send initial connection event
+        yield f"data: {json.dumps({
+            'status': 'connected',
+            'execution_id': execution_id,
+            'workflow_id': workflow_id,
+            'message': f'Watching workflow {workflow_id}',
+            'timestamp': datetime.now(UTC).isoformat(),
+        })}\n\n"
+
+        try:
+            workflow = engine.workflows[workflow_id]
+            node_count = len(workflow.nodes) if hasattr(workflow, 'nodes') else 5
+
+            # Simulate workflow execution events
+            for i in range(node_count):
+                await asyncio.sleep(0.3)  # Simulate work
+                event_count += 1
+
+                progress = int((event_count / node_count) * 100)
+                status = "running" if progress < 100 else "completed"
+                node_id = workflow.nodes[i].id if i < len(workflow.nodes) else f"node-{i}"
+
+                event_data = {
+                    'status': status,
+                    'currentNode': node_id,
+                    'progress': progress,
+                    'message': f"Executing {node_id}" if progress < 100 else "Workflow completed",
+                    'timestamp': datetime.now(UTC).isoformat(),
+                    'workflow_id': workflow_id,
+                    'execution_id': execution_id,
+                    'total_nodes': node_count,
+                    'completed_nodes': event_count,
+                }
+
+                yield f"data: {json.dumps(event_data)}\n\n"
+
+                if status == "completed":
+                    break
+
+        except asyncio.CancelledError:
+            logger.info("workflow_sse_cancelled", execution_id=execution_id)
+            yield f"data: {json.dumps({
+                'status': 'cancelled',
+                'execution_id': execution_id,
+                'workflow_id': workflow_id,
+                'message': 'SSE connection closed by client',
+                'timestamp': datetime.now(UTC).isoformat(),
+            })}\n\n"
+        except Exception as e:
+            logger.error("workflow_sse_error", execution_id=execution_id, error=str(e))
+            yield f"data: {json.dumps({
+                'status': 'failed',
+                'execution_id': execution_id,
+                'workflow_id': workflow_id,
+                'message': f'Stream error: {str(e)}',
+                'timestamp': datetime.now(UTC).isoformat(),
+            })}\n\n"
+        finally:
+            logger.info(
+                "workflow_sse_connection_closed",
+                execution_id=execution_id,
+                workflow_id=workflow_id,
+                event_count=event_count,
+            )
+
+    return StreamingResponse(
+        event_generator(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+            "X-Accel-Buffering": "no",
+        },
+    )

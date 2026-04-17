@@ -61,6 +61,9 @@ ENV PYTHONUNBUFFERED=1 \
     LOG_LEVEL=INFO \
     LOG_FORMAT=json
 
+# Switch to non-root user before running (S6471 fix)
+USER heretek
+
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:8000/api/health/live || exit 1

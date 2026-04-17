@@ -60,6 +60,11 @@ interface A2ATrackerProps {
 }
 
 // Demo data generators
+// NOTE: Math.random() is used here for demo/mock data generation only.
+// This is NOT security-critical - these functions generate fake observable data
+// for the dashboard demo mode. Real agent-to-agent communication uses proper
+// UUIDs and authentication. See docs/security/S05_TYPESCRIPT_PRNG_REVIEW.md
+
 const AGENT_IDS = [
   'steward', 'alpha', 'beta', 'charlie', 'historian',
   'maker', 'taker', 'executor', 'validator', 'researcher',

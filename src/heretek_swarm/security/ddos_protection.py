@@ -895,6 +895,7 @@ class DDoSProtection:
                 )
 
         # Apply throttle factor if active
+        # NOTE: random for emergency throttle decision - not security-critical (rate limit, not crypto)
         if self.mitigator._emergency_throttle_active:
             import random
             if random.random() > self.mitigator.get_throttle_factor():

@@ -108,8 +108,11 @@ function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: (id: string)
 export function ToastProvider({ children }: { children: React.ReactNode }) {
   const [toasts, setToasts] = useState<Toast[]>([]);
 
+  // Generate unique ID using crypto for better randomness
   const addToast = useCallback((toast: Omit<Toast, 'id'>): string => {
-    const id = Math.random().toString(36).substr(2, 9);
+    const array = new Uint8Array(9);
+    crypto.getRandomValues(array);
+    const id = Array.from(array, (b) => b.toString(36).padStart(2, '0')).join('').slice(0, 9);
     const newToast: Toast = {
       ...toast,
       id,
