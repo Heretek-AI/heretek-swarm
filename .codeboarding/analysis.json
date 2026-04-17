@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-17T15:57:27.302180+00:00",
+    "generated_at": "2026-04-17T17:25:34.908406+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -3885,301 +3885,301 @@
       ]
     },
     "src/heretek_swarm/actors/habit_forge.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.actors.habit_forge.HabitStage",
           "start_line": 51,
           "end_line": 59,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.habit_forge.ReinforcementType",
           "start_line": 62,
           "end_line": 69,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.habit_forge.Habit",
           "start_line": 72,
           "end_line": 165,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.habit_forge.Habit.__init__",
           "start_line": 75,
           "end_line": 101,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.habit_forge.Habit.record_completion",
           "start_line": 103,
           "end_line": 126,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.habit_forge.Habit._calculate_adherence",
           "start_line": 128,
           "end_line": 146,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.habit_forge.Habit.to_dict",
           "start_line": 148,
           "end_line": 165,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.habit_forge.BehavioralPattern",
           "start_line": 168,
           "end_line": 204,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.habit_forge.BehavioralPattern.__init__",
           "start_line": 171,
           "end_line": 190,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.habit_forge.BehavioralPattern.to_dict",
           "start_line": 192,
           "end_line": 204,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.habit_forge.HabitForgeAgent",
           "start_line": 207,
           "end_line": 1317,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.habit_forge.HabitForgeAgent.__init__",
           "start_line": 229,
           "end_line": 298,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.habit_forge.HabitForgeAgent.initialize",
           "start_line": 300,
           "end_line": 311,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.habit_forge.HabitForgeAgent.process_message",
           "start_line": 313,
           "end_line": 341,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.habit_forge.HabitForgeAgent._validate_habit_request",
           "start_line": 343,
           "end_line": 361,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.habit_forge.HabitForgeAgent._handle_create_habit",
           "start_line": 363,
           "end_line": 417,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.habit_forge.HabitForgeAgent._handle_track_habit",
           "start_line": 419,
           "end_line": 471,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.habit_forge.HabitForgeAgent._check_stage_progression",
           "start_line": 473,
           "end_line": 507,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.habit_forge.HabitForgeAgent._handle_analyze_patterns",
           "start_line": 509,
           "end_line": 555,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.habit_forge.HabitForgeAgent._analyze_behavior_patterns",
           "start_line": 557,
           "end_line": 648,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.habit_forge.HabitForgeAgent._heuristic_pattern_detection",
           "start_line": 650,
           "end_line": 692,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.habit_forge.HabitForgeAgent._generate_pattern_recommendations",
           "start_line": 694,
           "end_line": 732,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.habit_forge.HabitForgeAgent._handle_get_habit_progress",
           "start_line": 734,
           "end_line": 788,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.habit_forge.HabitForgeAgent._calculate_collective_adherence",
           "start_line": 790,
           "end_line": 796,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.habit_forge.HabitForgeAgent._handle_modify_pattern",
           "start_line": 798,
           "end_line": 841,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.habit_forge.HabitForgeAgent._generate_modification_plan",
           "start_line": 843,
           "end_line": 919,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.habit_forge.HabitForgeAgent._handle_get_behavior_report",
           "start_line": 921,
           "end_line": 965,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.habit_forge.HabitForgeAgent._handle_design_reinforcement",
           "start_line": 967,
           "end_line": 1005,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.habit_forge.HabitForgeAgent._emit_pattern",
           "start_line": 1011,
           "end_line": 1034,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.habit_forge.HabitForgeAgent._consume_patterns",
           "start_line": 1036,
           "end_line": 1051,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.habit_forge.HabitForgeAgent._initiate_deliberation",
           "start_line": 1057,
           "end_line": 1082,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.habit_forge.HabitForgeAgent._submit_deliberation_position",
           "start_line": 1084,
           "end_line": 1119,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.habit_forge.HabitForgeAgent._finalize_deliberation",
           "start_line": 1121,
           "end_line": 1141,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.habit_forge.HabitForgeAgent.get_learning_status",
           "start_line": 1147,
           "end_line": 1151,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.habit_forge.HabitForgeAgent._habit_forge_agent_actor",
           "start_line": 1157,
           "end_line": 1194,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.habit_forge.HabitForgeAgent._habit_forge_agent_actor.HabitForgeAgentActor",
           "start_line": 1160,
           "end_line": 1192,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.habit_forge.HabitForgeAgent._habit_forge_agent_actor.HabitForgeAgentActor.__init__",
           "start_line": 1161,
           "end_line": 1166,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.habit_forge.HabitForgeAgent._habit_forge_agent_actor.HabitForgeAgentActor.act",
           "start_line": 1168,
           "end_line": 1183,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.habit_forge.HabitForgeAgent._habit_forge_agent_actor.HabitForgeAgentActor.get_state",
           "start_line": 1185,
           "end_line": 1192,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.habit_forge.HabitForgeAgent.run_phi_training_episode",
           "start_line": 1196,
           "end_line": 1231,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.habit_forge.HabitForgeAgent.get_phi_training_status",
           "start_line": 1233,
           "end_line": 1240,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.habit_forge.HabitForgeAgent._design_reinforcement_strategy",
           "start_line": 1242,
           "end_line": 1317,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         }
       ]
     },
@@ -59826,7 +59826,7 @@
       "start_line": 51,
       "end_line": 59,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/habit_forge.py|src.heretek_swarm.actors.habit_forge.ReinforcementType": {
       "file_path": "src/heretek_swarm/actors/habit_forge.py",
@@ -59834,7 +59834,7 @@
       "start_line": 62,
       "end_line": 69,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/habit_forge.py|src.heretek_swarm.actors.habit_forge.Habit": {
       "file_path": "src/heretek_swarm/actors/habit_forge.py",
@@ -59842,7 +59842,7 @@
       "start_line": 72,
       "end_line": 165,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/habit_forge.py|src.heretek_swarm.actors.habit_forge.Habit.__init__": {
       "file_path": "src/heretek_swarm/actors/habit_forge.py",
@@ -59850,7 +59850,7 @@
       "start_line": 75,
       "end_line": 101,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/habit_forge.py|src.heretek_swarm.actors.habit_forge.Habit.record_completion": {
       "file_path": "src/heretek_swarm/actors/habit_forge.py",
@@ -59858,7 +59858,7 @@
       "start_line": 103,
       "end_line": 126,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/habit_forge.py|src.heretek_swarm.actors.habit_forge.Habit._calculate_adherence": {
       "file_path": "src/heretek_swarm/actors/habit_forge.py",
@@ -59866,7 +59866,7 @@
       "start_line": 128,
       "end_line": 146,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/habit_forge.py|src.heretek_swarm.actors.habit_forge.Habit.to_dict": {
       "file_path": "src/heretek_swarm/actors/habit_forge.py",
@@ -59874,7 +59874,7 @@
       "start_line": 148,
       "end_line": 165,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/habit_forge.py|src.heretek_swarm.actors.habit_forge.BehavioralPattern": {
       "file_path": "src/heretek_swarm/actors/habit_forge.py",
@@ -59882,7 +59882,7 @@
       "start_line": 168,
       "end_line": 204,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/habit_forge.py|src.heretek_swarm.actors.habit_forge.BehavioralPattern.__init__": {
       "file_path": "src/heretek_swarm/actors/habit_forge.py",
@@ -59890,7 +59890,7 @@
       "start_line": 171,
       "end_line": 190,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/habit_forge.py|src.heretek_swarm.actors.habit_forge.BehavioralPattern.to_dict": {
       "file_path": "src/heretek_swarm/actors/habit_forge.py",
@@ -59898,7 +59898,7 @@
       "start_line": 192,
       "end_line": 204,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/habit_forge.py|src.heretek_swarm.actors.habit_forge.HabitForgeAgent": {
       "file_path": "src/heretek_swarm/actors/habit_forge.py",
@@ -59906,7 +59906,7 @@
       "start_line": 207,
       "end_line": 1317,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/habit_forge.py|src.heretek_swarm.actors.habit_forge.HabitForgeAgent.__init__": {
       "file_path": "src/heretek_swarm/actors/habit_forge.py",
@@ -59914,7 +59914,7 @@
       "start_line": 229,
       "end_line": 298,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/habit_forge.py|src.heretek_swarm.actors.habit_forge.HabitForgeAgent.initialize": {
       "file_path": "src/heretek_swarm/actors/habit_forge.py",
@@ -59922,7 +59922,7 @@
       "start_line": 300,
       "end_line": 311,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/habit_forge.py|src.heretek_swarm.actors.habit_forge.HabitForgeAgent.process_message": {
       "file_path": "src/heretek_swarm/actors/habit_forge.py",
@@ -59930,7 +59930,7 @@
       "start_line": 313,
       "end_line": 341,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/habit_forge.py|src.heretek_swarm.actors.habit_forge.HabitForgeAgent._validate_habit_request": {
       "file_path": "src/heretek_swarm/actors/habit_forge.py",
@@ -59938,7 +59938,7 @@
       "start_line": 343,
       "end_line": 361,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/habit_forge.py|src.heretek_swarm.actors.habit_forge.HabitForgeAgent._handle_create_habit": {
       "file_path": "src/heretek_swarm/actors/habit_forge.py",
@@ -59946,7 +59946,7 @@
       "start_line": 363,
       "end_line": 417,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/habit_forge.py|src.heretek_swarm.actors.habit_forge.HabitForgeAgent._handle_track_habit": {
       "file_path": "src/heretek_swarm/actors/habit_forge.py",
@@ -59954,7 +59954,7 @@
       "start_line": 419,
       "end_line": 471,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/habit_forge.py|src.heretek_swarm.actors.habit_forge.HabitForgeAgent._check_stage_progression": {
       "file_path": "src/heretek_swarm/actors/habit_forge.py",
@@ -59962,7 +59962,7 @@
       "start_line": 473,
       "end_line": 507,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/habit_forge.py|src.heretek_swarm.actors.habit_forge.HabitForgeAgent._handle_analyze_patterns": {
       "file_path": "src/heretek_swarm/actors/habit_forge.py",
@@ -59970,7 +59970,7 @@
       "start_line": 509,
       "end_line": 555,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/habit_forge.py|src.heretek_swarm.actors.habit_forge.HabitForgeAgent._analyze_behavior_patterns": {
       "file_path": "src/heretek_swarm/actors/habit_forge.py",
@@ -59978,7 +59978,7 @@
       "start_line": 557,
       "end_line": 648,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/habit_forge.py|src.heretek_swarm.actors.habit_forge.HabitForgeAgent._heuristic_pattern_detection": {
       "file_path": "src/heretek_swarm/actors/habit_forge.py",
@@ -59986,7 +59986,7 @@
       "start_line": 650,
       "end_line": 692,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/habit_forge.py|src.heretek_swarm.actors.habit_forge.HabitForgeAgent._generate_pattern_recommendations": {
       "file_path": "src/heretek_swarm/actors/habit_forge.py",
@@ -59994,7 +59994,7 @@
       "start_line": 694,
       "end_line": 732,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/habit_forge.py|src.heretek_swarm.actors.habit_forge.HabitForgeAgent._handle_get_habit_progress": {
       "file_path": "src/heretek_swarm/actors/habit_forge.py",
@@ -60002,7 +60002,7 @@
       "start_line": 734,
       "end_line": 788,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/habit_forge.py|src.heretek_swarm.actors.habit_forge.HabitForgeAgent._calculate_collective_adherence": {
       "file_path": "src/heretek_swarm/actors/habit_forge.py",
@@ -60010,7 +60010,7 @@
       "start_line": 790,
       "end_line": 796,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/habit_forge.py|src.heretek_swarm.actors.habit_forge.HabitForgeAgent._handle_modify_pattern": {
       "file_path": "src/heretek_swarm/actors/habit_forge.py",
@@ -60018,7 +60018,7 @@
       "start_line": 798,
       "end_line": 841,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/habit_forge.py|src.heretek_swarm.actors.habit_forge.HabitForgeAgent._generate_modification_plan": {
       "file_path": "src/heretek_swarm/actors/habit_forge.py",
@@ -60026,7 +60026,7 @@
       "start_line": 843,
       "end_line": 919,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/habit_forge.py|src.heretek_swarm.actors.habit_forge.HabitForgeAgent._handle_get_behavior_report": {
       "file_path": "src/heretek_swarm/actors/habit_forge.py",
@@ -60034,7 +60034,7 @@
       "start_line": 921,
       "end_line": 965,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/habit_forge.py|src.heretek_swarm.actors.habit_forge.HabitForgeAgent._handle_design_reinforcement": {
       "file_path": "src/heretek_swarm/actors/habit_forge.py",
@@ -60042,7 +60042,7 @@
       "start_line": 967,
       "end_line": 1005,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/habit_forge.py|src.heretek_swarm.actors.habit_forge.HabitForgeAgent._emit_pattern": {
       "file_path": "src/heretek_swarm/actors/habit_forge.py",
@@ -60050,7 +60050,7 @@
       "start_line": 1011,
       "end_line": 1034,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/habit_forge.py|src.heretek_swarm.actors.habit_forge.HabitForgeAgent._consume_patterns": {
       "file_path": "src/heretek_swarm/actors/habit_forge.py",
@@ -60058,7 +60058,7 @@
       "start_line": 1036,
       "end_line": 1051,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/habit_forge.py|src.heretek_swarm.actors.habit_forge.HabitForgeAgent._initiate_deliberation": {
       "file_path": "src/heretek_swarm/actors/habit_forge.py",
@@ -60066,7 +60066,7 @@
       "start_line": 1057,
       "end_line": 1082,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/habit_forge.py|src.heretek_swarm.actors.habit_forge.HabitForgeAgent._submit_deliberation_position": {
       "file_path": "src/heretek_swarm/actors/habit_forge.py",
@@ -60074,7 +60074,7 @@
       "start_line": 1084,
       "end_line": 1119,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/habit_forge.py|src.heretek_swarm.actors.habit_forge.HabitForgeAgent._finalize_deliberation": {
       "file_path": "src/heretek_swarm/actors/habit_forge.py",
@@ -60082,7 +60082,7 @@
       "start_line": 1121,
       "end_line": 1141,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/habit_forge.py|src.heretek_swarm.actors.habit_forge.HabitForgeAgent.get_learning_status": {
       "file_path": "src/heretek_swarm/actors/habit_forge.py",
@@ -60090,7 +60090,7 @@
       "start_line": 1147,
       "end_line": 1151,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/habit_forge.py|src.heretek_swarm.actors.habit_forge.HabitForgeAgent._habit_forge_agent_actor": {
       "file_path": "src/heretek_swarm/actors/habit_forge.py",
@@ -60098,7 +60098,7 @@
       "start_line": 1157,
       "end_line": 1194,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/habit_forge.py|src.heretek_swarm.actors.habit_forge.HabitForgeAgent._habit_forge_agent_actor.HabitForgeAgentActor": {
       "file_path": "src/heretek_swarm/actors/habit_forge.py",
@@ -60106,7 +60106,7 @@
       "start_line": 1160,
       "end_line": 1192,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/habit_forge.py|src.heretek_swarm.actors.habit_forge.HabitForgeAgent._habit_forge_agent_actor.HabitForgeAgentActor.__init__": {
       "file_path": "src/heretek_swarm/actors/habit_forge.py",
@@ -60114,7 +60114,7 @@
       "start_line": 1161,
       "end_line": 1166,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/habit_forge.py|src.heretek_swarm.actors.habit_forge.HabitForgeAgent._habit_forge_agent_actor.HabitForgeAgentActor.act": {
       "file_path": "src/heretek_swarm/actors/habit_forge.py",
@@ -60122,7 +60122,7 @@
       "start_line": 1168,
       "end_line": 1183,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/habit_forge.py|src.heretek_swarm.actors.habit_forge.HabitForgeAgent._habit_forge_agent_actor.HabitForgeAgentActor.get_state": {
       "file_path": "src/heretek_swarm/actors/habit_forge.py",
@@ -60130,7 +60130,7 @@
       "start_line": 1185,
       "end_line": 1192,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/habit_forge.py|src.heretek_swarm.actors.habit_forge.HabitForgeAgent.run_phi_training_episode": {
       "file_path": "src/heretek_swarm/actors/habit_forge.py",
@@ -60138,7 +60138,7 @@
       "start_line": 1196,
       "end_line": 1231,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/habit_forge.py|src.heretek_swarm.actors.habit_forge.HabitForgeAgent.get_phi_training_status": {
       "file_path": "src/heretek_swarm/actors/habit_forge.py",
@@ -60146,7 +60146,7 @@
       "start_line": 1233,
       "end_line": 1240,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/habit_forge.py|src.heretek_swarm.actors.habit_forge.HabitForgeAgent._design_reinforcement_strategy": {
       "file_path": "src/heretek_swarm/actors/habit_forge.py",
@@ -60154,7 +60154,7 @@
       "start_line": 1242,
       "end_line": 1317,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/handoff.py|src.heretek_swarm.actors.handoff.HandoffContext": {
       "file_path": "src/heretek_swarm/actors/handoff.py",
@@ -117781,7 +117781,7 @@
         },
         {
           "file_path": "src/heretek_swarm/actors/habit_forge.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "src.heretek_swarm.actors.habit_forge.HabitStage",
             "src.heretek_swarm.actors.habit_forge.ReinforcementType",
@@ -124545,7 +124545,7 @@
             },
             {
               "file_path": "src/heretek_swarm/actors/habit_forge.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.heretek_swarm.actors.habit_forge.HabitStage",
                 "src.heretek_swarm.actors.habit_forge.ReinforcementType",
@@ -128726,7 +128726,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/actors/habit_forge.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.actors.habit_forge.HabitStage",
                     "src.heretek_swarm.actors.habit_forge.ReinforcementType",
@@ -130711,7 +130711,7 @@
                     },
                     {
                       "file_path": "src/heretek_swarm/actors/habit_forge.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.actors.habit_forge.HabitStage",
                         "src.heretek_swarm.actors.habit_forge.ReinforcementType",
@@ -131058,7 +131058,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/actors/habit_forge.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.actors.habit_forge.HabitStage",
                             "src.heretek_swarm.actors.habit_forge.ReinforcementType",
