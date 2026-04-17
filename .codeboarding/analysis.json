@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-17T17:25:34.908406+00:00",
+    "generated_at": "2026-04-17T17:30:13.591424+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -2630,42 +2630,42 @@
           "start_line": 40,
           "end_line": 50,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.dreamer.IdeaCategory",
           "start_line": 53,
           "end_line": 63,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.dreamer.NoveltyLevel",
           "start_line": 66,
           "end_line": 71,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.dreamer.CreativeIdea",
           "start_line": 75,
           "end_line": 90,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.dreamer.CreativeSession",
           "start_line": 94,
           "end_line": 105,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.dreamer.InnovationReport",
           "start_line": 109,
           "end_line": 121,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.dreamer.DreamerAgent",
@@ -2686,7 +2686,7 @@
           "start_line": 211,
           "end_line": 273,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.dreamer.DreamerAgent.get_handlers",
@@ -2700,154 +2700,154 @@
           "start_line": 275,
           "end_line": 328,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.dreamer.DreamerAgent._handle_explore_alternatives",
           "start_line": 330,
           "end_line": 368,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.dreamer.DreamerAgent._handle_apply_creativity_technique",
           "start_line": 370,
           "end_line": 407,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.dreamer.DreamerAgent._handle_get_innovation_report",
           "start_line": 409,
           "end_line": 463,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.dreamer.DreamerAgent._handle_get_idea_details",
           "start_line": 465,
           "end_line": 503,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.dreamer.DreamerAgent._handle_combine_ideas",
           "start_line": 505,
           "end_line": 560,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.dreamer.DreamerAgent._generate_creative_ideas",
           "start_line": 564,
           "end_line": 632,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.dreamer.DreamerAgent._build_technique_prompt",
           "start_line": 634,
           "end_line": 646,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.dreamer.DreamerAgent._generate_alternatives",
           "start_line": 648,
           "end_line": 686,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.dreamer.DreamerAgent._apply_technique",
           "start_line": 688,
           "end_line": 703,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.dreamer.DreamerAgent._apply_six_hats",
           "start_line": 705,
           "end_line": 734,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.dreamer.DreamerAgent._apply_scamper",
           "start_line": 736,
           "end_line": 766,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.dreamer.DreamerAgent._apply_first_principles",
           "start_line": 768,
           "end_line": 787,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.dreamer.DreamerAgent._apply_generic_technique",
           "start_line": 789,
           "end_line": 806,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.dreamer.DreamerAgent._calculate_innovation_score",
           "start_line": 808,
           "end_line": 833,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.dreamer.DreamerAgent._generate_innovation_report",
           "start_line": 835,
           "end_line": 885,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.dreamer.DreamerAgent._combine_ideas_llm",
           "start_line": 887,
           "end_line": 926,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.dreamer.DreamerAgent._handle_generate_novel_connections",
           "start_line": 959,
           "end_line": 1031,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.dreamer.DreamerAgent._handle_get_lateral_thinking_metrics",
           "start_line": 1033,
           "end_line": 1085,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.dreamer.DreamerAgent._handle_track_deliberation_contribution",
           "start_line": 1087,
           "end_line": 1127,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.dreamer.DreamerAgent._calculate_session_metrics",
           "start_line": 1129,
           "end_line": 1172,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.dreamer.DreamerAgent._notify_steward_overreliance",
           "start_line": 1174,
           "end_line": 1188,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "modified"
         }
       ]
     },
@@ -58418,7 +58418,7 @@
       "start_line": 40,
       "end_line": 50,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/dreamer.py|src.heretek_swarm.actors.dreamer.IdeaCategory": {
       "file_path": "src/heretek_swarm/actors/dreamer.py",
@@ -58426,7 +58426,7 @@
       "start_line": 53,
       "end_line": 63,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/dreamer.py|src.heretek_swarm.actors.dreamer.NoveltyLevel": {
       "file_path": "src/heretek_swarm/actors/dreamer.py",
@@ -58434,7 +58434,7 @@
       "start_line": 66,
       "end_line": 71,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/dreamer.py|src.heretek_swarm.actors.dreamer.CreativeIdea": {
       "file_path": "src/heretek_swarm/actors/dreamer.py",
@@ -58442,7 +58442,7 @@
       "start_line": 75,
       "end_line": 90,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/dreamer.py|src.heretek_swarm.actors.dreamer.CreativeSession": {
       "file_path": "src/heretek_swarm/actors/dreamer.py",
@@ -58450,7 +58450,7 @@
       "start_line": 94,
       "end_line": 105,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/dreamer.py|src.heretek_swarm.actors.dreamer.InnovationReport": {
       "file_path": "src/heretek_swarm/actors/dreamer.py",
@@ -58458,7 +58458,7 @@
       "start_line": 109,
       "end_line": 121,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/dreamer.py|src.heretek_swarm.actors.dreamer.DreamerAgent": {
       "file_path": "src/heretek_swarm/actors/dreamer.py",
@@ -58482,7 +58482,7 @@
       "start_line": 211,
       "end_line": 273,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/dreamer.py|src.heretek_swarm.actors.dreamer.DreamerAgent.get_handlers": {
       "file_path": "src/heretek_swarm/actors/dreamer.py",
@@ -58498,7 +58498,7 @@
       "start_line": 275,
       "end_line": 328,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/dreamer.py|src.heretek_swarm.actors.dreamer.DreamerAgent._handle_explore_alternatives": {
       "file_path": "src/heretek_swarm/actors/dreamer.py",
@@ -58506,7 +58506,7 @@
       "start_line": 330,
       "end_line": 368,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/dreamer.py|src.heretek_swarm.actors.dreamer.DreamerAgent._handle_apply_creativity_technique": {
       "file_path": "src/heretek_swarm/actors/dreamer.py",
@@ -58514,7 +58514,7 @@
       "start_line": 370,
       "end_line": 407,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/dreamer.py|src.heretek_swarm.actors.dreamer.DreamerAgent._handle_get_innovation_report": {
       "file_path": "src/heretek_swarm/actors/dreamer.py",
@@ -58522,7 +58522,7 @@
       "start_line": 409,
       "end_line": 463,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/dreamer.py|src.heretek_swarm.actors.dreamer.DreamerAgent._handle_get_idea_details": {
       "file_path": "src/heretek_swarm/actors/dreamer.py",
@@ -58530,7 +58530,7 @@
       "start_line": 465,
       "end_line": 503,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/dreamer.py|src.heretek_swarm.actors.dreamer.DreamerAgent._handle_combine_ideas": {
       "file_path": "src/heretek_swarm/actors/dreamer.py",
@@ -58538,7 +58538,7 @@
       "start_line": 505,
       "end_line": 560,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/dreamer.py|src.heretek_swarm.actors.dreamer.DreamerAgent._generate_creative_ideas": {
       "file_path": "src/heretek_swarm/actors/dreamer.py",
@@ -58546,7 +58546,7 @@
       "start_line": 564,
       "end_line": 632,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/dreamer.py|src.heretek_swarm.actors.dreamer.DreamerAgent._build_technique_prompt": {
       "file_path": "src/heretek_swarm/actors/dreamer.py",
@@ -58554,7 +58554,7 @@
       "start_line": 634,
       "end_line": 646,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/dreamer.py|src.heretek_swarm.actors.dreamer.DreamerAgent._generate_alternatives": {
       "file_path": "src/heretek_swarm/actors/dreamer.py",
@@ -58562,7 +58562,7 @@
       "start_line": 648,
       "end_line": 686,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/dreamer.py|src.heretek_swarm.actors.dreamer.DreamerAgent._apply_technique": {
       "file_path": "src/heretek_swarm/actors/dreamer.py",
@@ -58570,7 +58570,7 @@
       "start_line": 688,
       "end_line": 703,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/dreamer.py|src.heretek_swarm.actors.dreamer.DreamerAgent._apply_six_hats": {
       "file_path": "src/heretek_swarm/actors/dreamer.py",
@@ -58578,7 +58578,7 @@
       "start_line": 705,
       "end_line": 734,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/dreamer.py|src.heretek_swarm.actors.dreamer.DreamerAgent._apply_scamper": {
       "file_path": "src/heretek_swarm/actors/dreamer.py",
@@ -58586,7 +58586,7 @@
       "start_line": 736,
       "end_line": 766,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/dreamer.py|src.heretek_swarm.actors.dreamer.DreamerAgent._apply_first_principles": {
       "file_path": "src/heretek_swarm/actors/dreamer.py",
@@ -58594,7 +58594,7 @@
       "start_line": 768,
       "end_line": 787,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/dreamer.py|src.heretek_swarm.actors.dreamer.DreamerAgent._apply_generic_technique": {
       "file_path": "src/heretek_swarm/actors/dreamer.py",
@@ -58602,7 +58602,7 @@
       "start_line": 789,
       "end_line": 806,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/dreamer.py|src.heretek_swarm.actors.dreamer.DreamerAgent._calculate_innovation_score": {
       "file_path": "src/heretek_swarm/actors/dreamer.py",
@@ -58610,7 +58610,7 @@
       "start_line": 808,
       "end_line": 833,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/dreamer.py|src.heretek_swarm.actors.dreamer.DreamerAgent._generate_innovation_report": {
       "file_path": "src/heretek_swarm/actors/dreamer.py",
@@ -58618,7 +58618,7 @@
       "start_line": 835,
       "end_line": 885,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/dreamer.py|src.heretek_swarm.actors.dreamer.DreamerAgent._combine_ideas_llm": {
       "file_path": "src/heretek_swarm/actors/dreamer.py",
@@ -58626,7 +58626,7 @@
       "start_line": 887,
       "end_line": 926,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/dreamer.py|src.heretek_swarm.actors.dreamer.DreamerAgent._handle_generate_novel_connections": {
       "file_path": "src/heretek_swarm/actors/dreamer.py",
@@ -58634,7 +58634,7 @@
       "start_line": 959,
       "end_line": 1031,
       "type": "METHOD",
-      "status": "added"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/dreamer.py|src.heretek_swarm.actors.dreamer.DreamerAgent._handle_get_lateral_thinking_metrics": {
       "file_path": "src/heretek_swarm/actors/dreamer.py",
@@ -58642,7 +58642,7 @@
       "start_line": 1033,
       "end_line": 1085,
       "type": "METHOD",
-      "status": "added"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/dreamer.py|src.heretek_swarm.actors.dreamer.DreamerAgent._handle_track_deliberation_contribution": {
       "file_path": "src/heretek_swarm/actors/dreamer.py",
@@ -58650,7 +58650,7 @@
       "start_line": 1087,
       "end_line": 1127,
       "type": "METHOD",
-      "status": "added"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/dreamer.py|src.heretek_swarm.actors.dreamer.DreamerAgent._calculate_session_metrics": {
       "file_path": "src/heretek_swarm/actors/dreamer.py",
@@ -58658,7 +58658,7 @@
       "start_line": 1129,
       "end_line": 1172,
       "type": "METHOD",
-      "status": "added"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/dreamer.py|src.heretek_swarm.actors.dreamer.DreamerAgent._notify_steward_overreliance": {
       "file_path": "src/heretek_swarm/actors/dreamer.py",
@@ -58666,7 +58666,7 @@
       "start_line": 1174,
       "end_line": 1188,
       "type": "METHOD",
-      "status": "added"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/echo.py|src.heretek_swarm.actors.echo.CommunicationChannel": {
       "file_path": "src/heretek_swarm/actors/echo.py",
