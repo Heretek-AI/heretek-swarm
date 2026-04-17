@@ -1,7 +1,7 @@
 {
   "repository_name": "heretek-swarm",
-  "timestamp": "2026-04-17T21:02:17.423339+00:00",
-  "overall_score": 0.988252994618367,
+  "timestamp": "2026-04-17T21:11:53.054421+00:00",
+  "overall_score": 0.9879671410389911,
   "check_summaries": [
     {
       "check_name": "function_size",
@@ -790,8 +790,8 @@
       "description": "Detects unused imports, variables, functions, and dead code via LSP diagnostics",
       "language": "Python",
       "check_type": "standard",
-      "total_entities_checked": 56,
-      "findings_count": 56,
+      "total_entities_checked": 61,
+      "findings_count": 61,
       "warning_count": 18,
       "score": 0.0,
       "finding_groups": [
@@ -1065,6 +1065,34 @@
               "line_start": 645,
               "line_end": 645,
               "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"error_type\" is not accessed",
+              "file_path": "src/heretek_swarm/observability/metrics.py",
+              "line_start": 192,
+              "line_end": 192,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"round_id\" is not accessed",
+              "file_path": "src/heretek_swarm/observability/metrics.py",
+              "line_start": 706,
+              "line_end": 706,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"message_id\" is not accessed",
+              "file_path": "src/heretek_swarm/observability/metrics.py",
+              "line_start": 711,
+              "line_end": 711,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"task_id\" is not accessed",
+              "file_path": "src/heretek_swarm/observability/metrics.py",
+              "line_start": 716,
+              "line_end": 716,
+              "metric_value": 0.0
             }
           ]
         },
@@ -1204,6 +1232,20 @@
               "file_path": "src/heretek_swarm/collective/swarm_intelligence.py",
               "line_start": 53,
               "line_end": 53,
+              "metric_value": 0.0
+            }
+          ]
+        },
+        {
+          "severity": "info",
+          "threshold": 0,
+          "description": "Code that cannot be reached during execution",
+          "entities": [
+            {
+              "entity_name": "[unreachable_code] Code is unreachable",
+              "file_path": "src/heretek_swarm/evaluation/evaluator.py",
+              "line_start": 185,
+              "line_end": 187,
               "metric_value": 0.0
             }
           ]
@@ -1600,6 +1642,12 @@
       "composite_risk_score": 40.0
     },
     {
+      "file_path": "src/heretek_swarm/observability/metrics.py",
+      "total_findings": 4,
+      "warning_findings": 0,
+      "composite_risk_score": 40.0
+    },
+    {
       "file_path": "src/heretek_swarm/security/threat_detection.py",
       "total_findings": 2,
       "warning_findings": 2,
@@ -1655,12 +1703,6 @@
     },
     {
       "file_path": "src/heretek_swarm/consciousness/phi_training.py",
-      "total_findings": 2,
-      "warning_findings": 2,
-      "composite_risk_score": 30.0
-    },
-    {
-      "file_path": "src/heretek_swarm/collective/adaptive_learning.py",
       "total_findings": 2,
       "warning_findings": 2,
       "composite_risk_score": 30.0

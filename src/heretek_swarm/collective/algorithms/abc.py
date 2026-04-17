@@ -223,21 +223,28 @@ class ABC:
                         forager.agent_id
                     )
 
+    def _should_keep_dance(self, bee: BeeAgent) -> bool:
+        """Check if bee should keep dancing based on task quality."""
+        return bee.current_task and bee.task_quality >= self.dance_threshold
+
+    def _remove_bee_from_task(self, bee: BeeAgent) -> None:
+        """Remove bee from its current task and reset role."""
+        if bee.current_task in self.task_pool:
+            task = self.task_pool[bee.current_task]
+            if bee.agent_id in task["assigned_foragers"]:
+                task["assigned_foragers"].remove(bee.agent_id)
+        bee.current_task = None
+        bee.dance_strength = 0.0
+        bee.role = "scout"
+
     def _dance_phase(self) -> None:
         """Bees perform waggle dance to share task information."""
         for bee in self.bee_colony:
             if bee.current_task:
-                if bee.task_quality >= self.dance_threshold:
+                if self._should_keep_dance(bee):
                     bee.dance_strength = bee.task_quality
                 else:
-                    if bee.current_task in self.task_pool:
-                        if bee.agent_id in self.task_pool[bee.current_task]["assigned_foragers"]:
-                            self.task_pool[bee.current_task]["assigned_foragers"].remove(
-                                bee.agent_id
-                            )
-                    bee.current_task = None
-                    bee.dance_strength = 0.0
-                    bee.role = "scout"
+                    self._remove_bee_from_task(bee)
 
     def _get_allocation(self) -> dict[str, list[str]]:
         """Get current task allocation."""

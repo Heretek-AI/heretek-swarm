@@ -400,57 +400,59 @@ class AgentActorMessageHandling(AgentActor):
                     exc_info=True,
                 )
 
-    async def process_message(self, message: ActorMessage) -> None:
-        """
-        Process an incoming message.
+    async def _validate_and_prepare_message(self, message: ActorMessage) -> ActorMessage | None:
+        """Validate message input and return sanitized message or None if invalid."""
+        if not hasattr(self, "validate_input"):
+            return message
 
-        Default implementation routes via registered _message_handlers.
-        Subclasses can override for custom routing logic.
-
-        ZERO-02: Pre-execution validation is performed before handler execution.
-
-        Args:
-            message: Actor message to process
-        """
-        # ZERO-02: Pre-execution validation if ValidationMixin is available
-        if hasattr(self, "validate_input"):
-            is_valid, sanitized_content = await self.validate_input(
-                input_data=message.content,
-                operation=f"handle_{message.message_type}",
-                source_id=message.sender,
+        is_valid, sanitized_content = await self.validate_input(
+            input_data=message.content,
+            operation=f"handle_{message.message_type}",
+            source_id=message.sender,
+        )
+        if not is_valid:
+            logger.warning(
+                f"[{self.agent_id}] ZERO-02 validation rejected message",
+                extra={
+                    "message_type": message.message_type,
+                    "sender": message.sender,
+                },
             )
-            if not is_valid:
-                logger.warning(
-                    f"[{self.agent_id}] ZERO-02 validation rejected message",
-                    extra={
-                        "message_type": message.message_type,
-                        "sender": message.sender,
-                    },
+            self.error_count += 1
+            return None
+        message.content = sanitized_content
+        return message
+
+    async def _execute_handler_and_publish(
+        self, message: ActorMessage, handler: callable
+    ) -> None:
+        """Execute handler and publish result if successful."""
+        try:
+            result = await handler(message)
+            if result and isinstance(result, dict) and result.get("status") != "error":
+                reply_to = message.content.get("reply_to") if message.content else None
+                await self.send(
+                    topic=reply_to or f"results.{message.message_type}",
+                    content=result,
+                    message_type=f"{message.message_type}_response",
+                    correlation_id=message.correlation_id,
                 )
-                self.error_count += 1
-                return
-            # Update message content with sanitized version
-            message.content = sanitized_content
+        except Exception as e:
+            logger.error(
+                f"[{self.agent_id}] Error in handler for {message.message_type}: {e}",
+                exc_info=True,
+            )
+            self.error_count += 1
+
+    async def process_message(self, message: ActorMessage) -> None:
+        """Process an incoming message."""
+        message = await self._validate_and_prepare_message(message)
+        if message is None:
+            return
 
         handler = self._message_handlers.get(message.message_type)
         if handler:
-            try:
-                result = await handler(message)
-                # Publish result if handler returns a dict and event mesh is available
-                if result and isinstance(result, dict) and result.get("status") != "error":
-                    reply_to = message.content.get("reply_to") if message.content else None
-                    await self.send(
-                        topic=reply_to or f"results.{message.message_type}",
-                        content=result,
-                        message_type=f"{message.message_type}_response",
-                        correlation_id=message.correlation_id,
-                    )
-            except Exception as e:
-                logger.error(
-                    f"[{self.agent_id}] Error in handler for {message.message_type}: {e}",
-                    exc_info=True,
-                )
-                self.error_count += 1
+            await self._execute_handler_and_publish(message, handler)
         else:
             logger.warning(f"[{self.agent_id}] No handler for message type: {message.message_type}")
 

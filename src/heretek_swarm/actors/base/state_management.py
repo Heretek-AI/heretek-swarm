@@ -98,16 +98,51 @@ class AgentActorStateManagement(AgentActor):
             )
             return False
 
+    async def _persist_to_mock_db(
+        self, db_pool: Any, state_data: dict[str, Any]
+    ) -> bool:
+        """Persist to mock database with in-memory tables."""
+        if "agent_states" not in db_pool._tables:
+            db_pool._tables["agent_states"] = []
+        db_pool._tables["agent_states"].append({
+            "id": len(db_pool._tables["agent_states"]) + 1,
+            "agent_id": self.agent_id,
+            "agent_type": self.actor_type,
+            "state": json.dumps(state_data),
+            "created_at": datetime.now(UTC).isoformat(),
+        })
+        return True
+
+    async def _persist_to_generic_db(
+        self, db_pool: Any, state_data: dict[str, Any]
+    ) -> bool:
+        """Persist to generic async database interface."""
+        await db_pool.execute(
+            "INSERT INTO agent_states (agent_id, agent_type, state) VALUES (%s, %s, %s)",
+            (self.agent_id, self.actor_type, json.dumps(state_data)),
+        )
+        return True
+
+    async def _persist_to_connection_pool_db(
+        self, db_pool: Any, state_data: dict[str, Any]
+    ) -> bool:
+        """Persist using connection pool acquire pattern."""
+        async with db_pool.acquire() as conn:
+            await conn.execute(
+                """
+                INSERT INTO agent_states (id, agent_id, agent_type, state, version, updated_at, is_active)
+                VALUES (gen_random_uuid(), $1, $2, $3, 1, NOW(), true)
+                ON CONFLICT (agent_id) DO UPDATE
+                SET state = $3, version = agent_states.version + 1, updated_at = NOW()
+                """,
+                self.agent_id,
+                self.actor_type,
+                json.dumps(state_data),
+            )
+        return True
+
     async def _persist_via_db_pool(self, state_data: dict[str, Any]) -> bool:
-        """
-        Attempt to persist state via database pool (legacy fallback).
-
-        Args:
-            state_data: State dictionary to persist
-
-        Returns:
-            True if persisted successfully, False if no pool available or failed
-        """
+        """Attempt to persist state via database pool (legacy fallback)."""
         from heretek_swarm.actors import stubs as _actor_stubs
 
         db_pool = _actor_stubs.get_db_pool()
@@ -118,40 +153,11 @@ class AgentActorStateManagement(AgentActor):
 
         try:
             if hasattr(db_pool, "execute") and hasattr(db_pool, "_tables"):
-                # Support mock database (has execute method with SQL parsing)
-                if "agent_states" not in db_pool._tables:
-                    db_pool._tables["agent_states"] = []
-                db_pool._tables["agent_states"].append({
-                    "id": len(db_pool._tables["agent_states"]) + 1,
-                    "agent_id": self.agent_id,
-                    "agent_type": self.actor_type,
-                    "state": json.dumps(state_data),
-                    "created_at": datetime.now(UTC).isoformat(),
-                })
+                return await self._persist_to_mock_db(db_pool, state_data)
             elif not hasattr(db_pool, "acquire"):
-                # Generic async execute interface
-                await db_pool.execute(
-                    "INSERT INTO agent_states (agent_id, agent_type, state) VALUES (%s, %s, %s)",
-                    (self.agent_id, self.actor_type, json.dumps(state_data)),
-                )
+                return await self._persist_to_generic_db(db_pool, state_data)
             else:
-                async with db_pool.acquire() as conn:
-                    await conn.execute(
-                        """
-                        INSERT INTO agent_states (id, agent_id, agent_type, state, version, updated_at, is_active)
-                        VALUES (gen_random_uuid(), $1, $2, $3, 1, NOW(), true)
-                        ON CONFLICT (agent_id) DO UPDATE
-                        SET state = $3, version = agent_states.version + 1, updated_at = NOW()
-                        """,
-                        self.agent_id,
-                        self.actor_type,
-                        json.dumps(state_data),
-                    )
-            logger.info(
-                f"[{self.agent_id}] State persisted to database (legacy)",
-                extra={"state": self.state.value},
-            )
-            return True
+                return await self._persist_to_connection_pool_db(db_pool, state_data)
         except Exception as e:
             logger.error(
                 f"[{self.agent_id}] Database persistence failed: {e}",

@@ -339,6 +339,61 @@ class MemorySync:
             subscriptions=len(self._subscriptions),
         )
 
+    async def _check_and_track_message(self, message_id: str) -> bool:
+        """Check if message was already seen and track it. Returns False if duplicate."""
+        async with self._lock:
+            if message_id in self._seen_message_ids:
+                return False
+            self._seen_message_ids.add(message_id)
+            if len(self._seen_message_ids) > 10000:
+                self._seen_message_ids = set(list(self._seen_message_ids)[-5000:])
+            return True
+
+    async def _check_and_resolve_conflict(
+        self, update: MemoryUpdate, local_update: MemoryUpdate | None
+    ) -> MemoryUpdate | None:
+        """Check for conflict and resolve if needed. Returns resolved update or original."""
+        if not local_update or update.operation not in (MemoryOperation.UPDATE, MemoryOperation.CREATE):
+            return update
+
+        local_clock = VectorClock.from_dict(local_update.vector_clock)
+        remote_clock = VectorClock.from_dict(update.vector_clock)
+
+        if not local_clock.is_concurrent_with(remote_clock):
+            return update
+
+        conflict = MemoryConflict(
+            memory_id=update.memory_id,
+            local_update=local_update,
+            remote_update=update,
+            resolution_strategy=self._conflict_strategy,
+        )
+        resolved_content = conflict.resolve()
+        update.content = resolved_content
+        logger.warning(
+            "memory_conflict_resolved",
+            memory_id=update.memory_id,
+            strategy=self._conflict_strategy,
+            resolved_at=conflict.resolved_at,
+        )
+        await self._broadcast_conflict_resolution(conflict)
+        return update
+
+    async def _notify_callbacks(self, update: MemoryUpdate) -> None:
+        """Notify all registered callbacks of an update."""
+        for callback in self._update_callbacks:
+            try:
+                if asyncio.iscoroutinefunction(callback):
+                    await callback(update)
+                else:
+                    callback(update)
+            except Exception as e:
+                logger.error(
+                    "memory_update_callback_failed",
+                    memory_id=update.memory_id,
+                    error=str(e),
+                )
+
     async def _handle_memory_update(
         self, _subject: str, data: bytes
     ) -> None:
@@ -349,68 +404,22 @@ class MemorySync:
             message = json.loads(data.decode())
             update = MemoryUpdate.from_dict(message)
 
-            # Skip if we've already processed this message
-            if update.message_id in self._seen_message_ids:
+            if not await self._check_and_track_message(update.message_id):
                 return
 
-            async with self._lock:
-                self._seen_message_ids.add(update.message_id)
-                # Keep seen set bounded
-                if len(self._seen_message_ids) > 10000:
-                    self._seen_message_ids = set(list(self._seen_message_ids)[-5000:])
-
-            # Skip updates from self
             if update.agent_id == self._agent_id:
                 return
 
-            # Merge vector clock
             remote_clock = VectorClock.from_dict(update.vector_clock)
             self._vector_clock.merge(remote_clock)
 
-            # Check for conflicts with local state
             local_update = self._local_memory_cache.get(update.memory_id)
-            conflict: MemoryConflict | None = None
+            update = await self._check_and_resolve_conflict(update, local_update)
 
-            if local_update and update.operation in (
-                MemoryOperation.UPDATE,
-                MemoryOperation.CREATE,
-            ):
-                local_clock = VectorClock.from_dict(local_update.vector_clock)
-                if local_clock.is_concurrent_with(remote_clock):
-                    conflict = MemoryConflict(
-                        memory_id=update.memory_id,
-                        local_update=local_update,
-                        remote_update=update,
-                        resolution_strategy=self._conflict_strategy,
-                    )
-                    resolved_content = conflict.resolve()
-                    update.content = resolved_content
-                    logger.warning(
-                        "memory_conflict_resolved",
-                        memory_id=update.memory_id,
-                        strategy=self._conflict_strategy,
-                        resolved_at=conflict.resolved_at,
-                    )
-                    # Broadcast conflict resolution
-                    await self._broadcast_conflict_resolution(conflict)
-
-            # Update local cache if we have a newer version
             if local_update is None or update.timestamp > local_update.timestamp:
                 self._local_memory_cache[update.memory_id] = update
 
-            # Notify callbacks
-            for callback in self._update_callbacks:
-                try:
-                    if asyncio.iscoroutinefunction(callback):
-                        await callback(update)
-                    else:
-                        callback(update)
-                except Exception as e:
-                    logger.error(
-                        "memory_update_callback_failed",
-                        memory_id=update.memory_id,
-                        error=str(e),
-                    )
+            await self._notify_callbacks(update)
 
         except Exception as e:
             logger.error("memory_update_handler_failed", error=str(e))
@@ -545,6 +554,38 @@ class MemorySync:
         if callback in self._update_callbacks:
             self._update_callbacks.remove(callback)
 
+    def _setup_pending_syncs(
+        self, memory_ids: list[str]
+    ) -> dict[str, asyncio.Future[MemoryUpdate | None]]:
+        """Set up futures for pending sync requests."""
+        pending_futures: dict[str, asyncio.Future[MemoryUpdate | None]] = {}
+        for memory_id in memory_ids:
+            future: asyncio.Future[MemoryUpdate | None] = asyncio.Future()
+            self._pending_syncs[memory_id] = future
+            pending_futures[memory_id] = future
+        return pending_futures
+
+    async def _collect_sync_results(
+        self,
+        memory_ids: list[str],
+        done: set[asyncio.Future],
+        pending: set[asyncio.Future],
+    ) -> dict[str, MemoryUpdate | None]:
+        """Collect results from completed futures."""
+        results: dict[str, MemoryUpdate | None] = {}
+        for memory_id in memory_ids:
+            future = self._pending_syncs.pop(memory_id, None)
+            if future and future in done and not future.cancelled():
+                try:
+                    results[memory_id] = future.result()
+                except Exception:
+                    results[memory_id] = None
+            else:
+                results[memory_id] = None
+        for future in pending:
+            future.cancel()
+        return results
+
     async def sync_state(
         self, memory_ids: list[str], timeout_sec: float = 5.0
     ) -> dict[str, MemoryUpdate | None]:
@@ -553,26 +594,12 @@ class MemorySync:
 
         Sends a sync request to the swarm and waits for responses.
         Returns the most recent update for each requested memory.
-
-        Args:
-            memory_ids: List of memory IDs to sync
-            timeout_sec: Timeout for sync responses
-
-        Returns:
-            Dict mapping memory_id to MemoryUpdate (or None if not found)
         """
         if not self._client.is_connected:
             logger.warning("sync_state_not_connected")
             return dict.fromkeys(memory_ids)
 
-        # Track pending futures
-        pending_futures: dict[str, asyncio.Future[MemoryUpdate | None]] = {}
-        for memory_id in memory_ids:
-            future: asyncio.Future[MemoryUpdate | None] = asyncio.Future()
-            self._pending_syncs[memory_id] = future
-            pending_futures[memory_id] = future
-
-        # Send sync request
+        pending_futures = self._setup_pending_syncs(memory_ids)
         request = {
             "requester_id": self._agent_id,
             "memory_ids": memory_ids,
@@ -580,36 +607,15 @@ class MemorySync:
         }
         await self._client.publish(TOPIC_SYNC_REQUEST, request)
 
-        # Wait for responses with timeout
-        results: dict[str, MemoryUpdate | None] = {}
         try:
             done, pending = await asyncio.wait(
                 list(pending_futures.values()),
                 timeout=timeout_sec,
             )
-
-            # Collect results
-            for memory_id in memory_ids:
-                if memory_id in self._pending_syncs:
-                    future = self._pending_syncs.pop(memory_id)
-                    if future in done and not future.cancelled():
-                        try:
-                            results[memory_id] = future.result()
-                        except Exception:
-                            results[memory_id] = None
-                    else:
-                        results[memory_id] = None
-
-            # Cancel any pending
-            for future in pending:
-                future.cancel()
-
+            return await self._collect_sync_results(memory_ids, done, pending)
         except Exception as e:
             logger.error("sync_state_failed", error=str(e))
-            for memory_id in memory_ids:
-                results[memory_id] = None
-
-        return results
+            return dict.fromkeys(memory_ids)
 
     def get_local_cached_update(
         self, memory_id: str

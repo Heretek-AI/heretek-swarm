@@ -71,39 +71,61 @@ class AgentModelRouter:
             return TaskComplexity.STANDARD
         return TaskComplexity.COMPLEX
 
-    def route(
-        self,
-        task: str,
-        preferred_provider: Optional[str] = None,
-        tokens_estimate: Optional[int] = None,
-        requires_reasoning: bool = False
-    ) -> RoutingDecision:
-        complexity = self.classify_complexity(task, tokens_estimate, requires_reasoning)
+    def _get_preferred_models(self, complexity: TaskComplexity) -> list[str]:
+        """Get preferred models for the given complexity level."""
         model_map = {
             TaskComplexity.SIMPLE: ["haiku", "llama3.1", "gemini-flash"],
             TaskComplexity.STANDARD: ["sonnet", "claude-sonnet", "gemini-pro"],
             TaskComplexity.COMPLEX: ["opus", "claude-opus", "o1-preview"],
         }
-        preferred_models = model_map[complexity]
-        fallback_chain = []
+        return model_map[complexity]
+
+    def _find_matching_model(
+        self, provider: ProviderConfig, preferred_models: list[str]
+    ) -> str | None:
+        """Find a matching model from preferred list in provider's models."""
+        for model in preferred_models:
+            for provider_model in provider.models:
+                if model in provider_model.lower():
+                    return provider_model
+        return None
+
+    def _find_preferred_provider(
+        self, complexity: TaskComplexity, preferred_provider: str | None
+    ) -> tuple[RoutingDecision | None, list[str]]:
+        """Find a provider matching preferred criteria. Returns (decision, fallback_chain)."""
+        preferred_models = self._get_preferred_models(complexity)
+        fallback_chain: list[str] = []
+        use_preferred = preferred_provider is not None
+
         for pid, provider in sorted(self.providers.items(), key=lambda x: x[1].priority):
             if not provider.health_status:
                 fallback_chain.append(pid)
                 continue
-            if preferred_provider and pid != preferred_provider:
+            if use_preferred and pid != preferred_provider:
                 continue
-            for model in preferred_models:
-                if any(model in m.lower() for m in provider.models):
-                    return RoutingDecision(
-                        provider_id=pid,
-                        model=next(m for m in provider.models if model in m.lower()),
-                        complexity=complexity,
-                        fallback_chain=fallback_chain,
-                        confidence=0.9 if not preferred_provider else 1.0
-                    )
+
+            matched_model = self._find_matching_model(provider, preferred_models)
+            if matched_model:
+                confidence = 0.9 if not use_preferred else 1.0
+                return RoutingDecision(
+                    provider_id=pid,
+                    model=matched_model,
+                    complexity=complexity,
+                    fallback_chain=fallback_chain,
+                    confidence=confidence
+                ), fallback_chain
+
             fallback_chain.append(pid)
+
+        return None, fallback_chain
+
+    def _find_fallback_provider(
+        self, complexity: TaskComplexity, fallback_chain: list[str]
+    ) -> RoutingDecision | None:
+        """Find any healthy provider as fallback."""
         for pid, provider in sorted(self.providers.items(), key=lambda x: x[1].priority):
-            if provider.health_status:
+            if provider.health_status and provider.models:
                 return RoutingDecision(
                     provider_id=pid,
                     model=provider.models[0],
@@ -111,6 +133,26 @@ class AgentModelRouter:
                     fallback_chain=fallback_chain,
                     confidence=0.5
                 )
+        return None
+
+    def route(
+        self,
+        task: str,
+        preferred_provider: str | None = None,
+        tokens_estimate: int | None = None,
+        requires_reasoning: bool = False
+    ) -> RoutingDecision:
+        """Route a task to the appropriate model provider."""
+        complexity = self.classify_complexity(task, tokens_estimate, requires_reasoning)
+
+        decision, fallback_chain = self._find_preferred_provider(complexity, preferred_provider)
+        if decision:
+            return decision
+
+        fallback_decision = self._find_fallback_provider(complexity, fallback_chain)
+        if fallback_decision:
+            return fallback_decision
+
         raise RuntimeError("No healthy model providers available")
 
     def get_stats(self) -> Dict[str, Any]:

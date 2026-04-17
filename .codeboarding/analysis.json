@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-17T20:57:17.187135+00:00",
+    "generated_at": "2026-04-17T21:11:51.719358+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -21675,7 +21675,7 @@
       ]
     },
     "src/heretek_swarm/evaluation/evaluator.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.evaluation.evaluator.EvaluationStatus",
@@ -21743,9 +21743,9 @@
         {
           "qualified_name": "src.heretek_swarm.evaluation.evaluator.AgentEvaluator",
           "start_line": 96,
-          "end_line": 275,
+          "end_line": 262,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.evaluation.evaluator.AgentEvaluator.__init__",
@@ -21755,11 +21755,18 @@
           "status": "unchanged"
         },
         {
-          "qualified_name": "src.heretek_swarm.evaluation.evaluator.AgentEvaluator.evaluate_agent",
+          "qualified_name": "src.heretek_swarm.evaluation.evaluator.AgentEvaluator._run_single_test_case",
           "start_line": 105,
-          "end_line": 200,
+          "end_line": 142,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.evaluation.evaluator.AgentEvaluator.evaluate_agent",
+          "start_line": 144,
+          "end_line": 187,
+          "node_type": "METHOD",
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.evaluation.evaluator.AgentEvaluator._validate_expected_output",
@@ -31435,7 +31442,7 @@
       ]
     },
     "src/heretek_swarm/observability/metrics.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.observability.metrics.AgentMetrics",
@@ -31482,9 +31489,9 @@
         {
           "qualified_name": "src.heretek_swarm.observability.metrics.SwarmMetricsCollector",
           "start_line": 125,
-          "end_line": 466,
+          "end_line": 483,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.observability.metrics.SwarmMetricsCollector.__init__",
@@ -31543,11 +31550,32 @@
           "status": "unchanged"
         },
         {
-          "qualified_name": "src.heretek_swarm.observability.metrics.SwarmMetricsCollector.collect_swarm_metrics",
+          "qualified_name": "src.heretek_swarm.observability.metrics.SwarmMetricsCollector._update_states_from_callback",
           "start_line": 265,
-          "end_line": 316,
+          "end_line": 270,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.observability.metrics.SwarmMetricsCollector._count_active_idle_agents",
+          "start_line": 272,
+          "end_line": 293,
+          "node_type": "METHOD",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.observability.metrics.SwarmMetricsCollector._calculate_task_metrics",
+          "start_line": 295,
+          "end_line": 308,
+          "node_type": "METHOD",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.observability.metrics.SwarmMetricsCollector.collect_swarm_metrics",
+          "start_line": 310,
+          "end_line": 333,
+          "node_type": "METHOD",
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.observability.metrics.SwarmMetricsCollector.get_agent_metrics_history",
@@ -31634,13 +31662,6 @@
           "status": "unchanged"
         },
         {
-          "qualified_name": "src.heretek_swarm.observability.metrics.RealTimeMetricsStream",
-          "start_line": 469,
-          "end_line": 644,
-          "node_type": "CLASS",
-          "status": "unchanged"
-        },
-        {
           "qualified_name": "src.heretek_swarm.observability.metrics.RealTimeMetricsStream.__init__",
           "start_line": 479,
           "end_line": 484,
@@ -31653,6 +31674,13 @@
           "end_line": 488,
           "node_type": "METHOD",
           "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.observability.metrics.RealTimeMetricsStream",
+          "start_line": 486,
+          "end_line": 671,
+          "node_type": "CLASS",
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.observability.metrics.RealTimeMetricsStream.get_metrics_snapshot",
@@ -31669,11 +31697,39 @@
           "status": "unchanged"
         },
         {
-          "qualified_name": "src.heretek_swarm.observability.metrics.RealTimeMetricsStream.export_prometheus_format",
-          "start_line": 532,
-          "end_line": 644,
+          "qualified_name": "src.heretek_swarm.observability.metrics.RealTimeMetricsStream._export_swarm_metrics",
+          "start_line": 549,
+          "end_line": 568,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.observability.metrics.RealTimeMetricsStream._export_consciousness_metrics",
+          "start_line": 570,
+          "end_line": 585,
+          "node_type": "METHOD",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.observability.metrics.RealTimeMetricsStream._export_cycle_metrics",
+          "start_line": 587,
+          "end_line": 618,
+          "node_type": "METHOD",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.observability.metrics.RealTimeMetricsStream._export_phi_training_metrics",
+          "start_line": 620,
+          "end_line": 645,
+          "node_type": "METHOD",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.observability.metrics.RealTimeMetricsStream._export_agent_phi_scores",
+          "start_line": 647,
+          "end_line": 657,
+          "node_type": "METHOD",
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.observability.metrics.get_metrics_collector",
@@ -31681,6 +31737,13 @@
           "end_line": 655,
           "node_type": "FUNCTION",
           "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.observability.metrics.RealTimeMetricsStream.export_prometheus_format",
+          "start_line": 659,
+          "end_line": 671,
+          "node_type": "METHOD",
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.observability.metrics.MetricsSnapshot",
@@ -34609,7 +34672,7 @@
       ]
     },
     "src/heretek_swarm/routing/model_router.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.routing.model_router.TaskComplexity",
@@ -34635,9 +34698,9 @@
         {
           "qualified_name": "src.heretek_swarm.routing.model_router.AgentModelRouter",
           "start_line": 33,
-          "end_line": 123,
+          "end_line": 165,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.routing.model_router.AgentModelRouter.__init__",
@@ -34661,11 +34724,25 @@
           "status": "unchanged"
         },
         {
-          "qualified_name": "src.heretek_swarm.routing.model_router.AgentModelRouter.route",
+          "qualified_name": "src.heretek_swarm.routing.model_router.AgentModelRouter._get_preferred_models",
           "start_line": 74,
-          "end_line": 114,
+          "end_line": 81,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.routing.model_router.AgentModelRouter._find_matching_model",
+          "start_line": 83,
+          "end_line": 91,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.routing.model_router.AgentModelRouter._find_preferred_provider",
+          "start_line": 93,
+          "end_line": 121,
+          "node_type": "METHOD",
+          "status": "added"
         },
         {
           "qualified_name": "src.heretek_swarm.routing.model_router.AgentModelRouter.get_stats",
@@ -34675,11 +34752,25 @@
           "status": "unchanged"
         },
         {
+          "qualified_name": "src.heretek_swarm.routing.model_router.AgentModelRouter._find_fallback_provider",
+          "start_line": 123,
+          "end_line": 136,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
           "qualified_name": "src.heretek_swarm.routing.model_router.get_router",
           "start_line": 129,
           "end_line": 132,
           "node_type": "FUNCTION",
           "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.routing.model_router.AgentModelRouter.route",
+          "start_line": 138,
+          "end_line": 156,
+          "node_type": "METHOD",
+          "status": "modified"
         }
       ]
     },
@@ -79850,9 +79941,9 @@
       "file_path": "src/heretek_swarm/evaluation/evaluator.py",
       "qualified_name": "src.heretek_swarm.evaluation.evaluator.AgentEvaluator",
       "start_line": 96,
-      "end_line": 275,
+      "end_line": 262,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/evaluation/evaluator.py|src.heretek_swarm.evaluation.evaluator.AgentEvaluator.__init__": {
       "file_path": "src/heretek_swarm/evaluation/evaluator.py",
@@ -79862,13 +79953,21 @@
       "type": "METHOD",
       "status": "unchanged"
     },
+    "src/heretek_swarm/evaluation/evaluator.py|src.heretek_swarm.evaluation.evaluator.AgentEvaluator._run_single_test_case": {
+      "file_path": "src/heretek_swarm/evaluation/evaluator.py",
+      "qualified_name": "src.heretek_swarm.evaluation.evaluator.AgentEvaluator._run_single_test_case",
+      "start_line": 105,
+      "end_line": 142,
+      "type": "METHOD",
+      "status": "added"
+    },
     "src/heretek_swarm/evaluation/evaluator.py|src.heretek_swarm.evaluation.evaluator.AgentEvaluator.evaluate_agent": {
       "file_path": "src/heretek_swarm/evaluation/evaluator.py",
       "qualified_name": "src.heretek_swarm.evaluation.evaluator.AgentEvaluator.evaluate_agent",
-      "start_line": 105,
-      "end_line": 200,
+      "start_line": 144,
+      "end_line": 187,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/evaluation/evaluator.py|src.heretek_swarm.evaluation.evaluator.AgentEvaluator._validate_expected_output": {
       "file_path": "src/heretek_swarm/evaluation/evaluator.py",
@@ -90666,9 +90765,9 @@
       "file_path": "src/heretek_swarm/observability/metrics.py",
       "qualified_name": "src.heretek_swarm.observability.metrics.SwarmMetricsCollector",
       "start_line": 125,
-      "end_line": 466,
+      "end_line": 483,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/observability/metrics.py|src.heretek_swarm.observability.metrics.SwarmMetricsCollector.__init__": {
       "file_path": "src/heretek_swarm/observability/metrics.py",
@@ -90734,13 +90833,37 @@
       "type": "METHOD",
       "status": "unchanged"
     },
+    "src/heretek_swarm/observability/metrics.py|src.heretek_swarm.observability.metrics.SwarmMetricsCollector._update_states_from_callback": {
+      "file_path": "src/heretek_swarm/observability/metrics.py",
+      "qualified_name": "src.heretek_swarm.observability.metrics.SwarmMetricsCollector._update_states_from_callback",
+      "start_line": 265,
+      "end_line": 270,
+      "type": "METHOD",
+      "status": "modified"
+    },
+    "src/heretek_swarm/observability/metrics.py|src.heretek_swarm.observability.metrics.SwarmMetricsCollector._count_active_idle_agents": {
+      "file_path": "src/heretek_swarm/observability/metrics.py",
+      "qualified_name": "src.heretek_swarm.observability.metrics.SwarmMetricsCollector._count_active_idle_agents",
+      "start_line": 272,
+      "end_line": 293,
+      "type": "METHOD",
+      "status": "modified"
+    },
+    "src/heretek_swarm/observability/metrics.py|src.heretek_swarm.observability.metrics.SwarmMetricsCollector._calculate_task_metrics": {
+      "file_path": "src/heretek_swarm/observability/metrics.py",
+      "qualified_name": "src.heretek_swarm.observability.metrics.SwarmMetricsCollector._calculate_task_metrics",
+      "start_line": 295,
+      "end_line": 308,
+      "type": "METHOD",
+      "status": "modified"
+    },
     "src/heretek_swarm/observability/metrics.py|src.heretek_swarm.observability.metrics.SwarmMetricsCollector.collect_swarm_metrics": {
       "file_path": "src/heretek_swarm/observability/metrics.py",
       "qualified_name": "src.heretek_swarm.observability.metrics.SwarmMetricsCollector.collect_swarm_metrics",
-      "start_line": 265,
-      "end_line": 316,
+      "start_line": 310,
+      "end_line": 333,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/observability/metrics.py|src.heretek_swarm.observability.metrics.SwarmMetricsCollector.get_agent_metrics_history": {
       "file_path": "src/heretek_swarm/observability/metrics.py",
@@ -90838,14 +90961,6 @@
       "type": "METHOD",
       "status": "unchanged"
     },
-    "src/heretek_swarm/observability/metrics.py|src.heretek_swarm.observability.metrics.RealTimeMetricsStream": {
-      "file_path": "src/heretek_swarm/observability/metrics.py",
-      "qualified_name": "src.heretek_swarm.observability.metrics.RealTimeMetricsStream",
-      "start_line": 469,
-      "end_line": 644,
-      "type": "CLASS",
-      "status": "unchanged"
-    },
     "src/heretek_swarm/observability/metrics.py|src.heretek_swarm.observability.metrics.RealTimeMetricsStream.__init__": {
       "file_path": "src/heretek_swarm/observability/metrics.py",
       "qualified_name": "src.heretek_swarm.observability.metrics.RealTimeMetricsStream.__init__",
@@ -90861,6 +90976,14 @@
       "end_line": 488,
       "type": "METHOD",
       "status": "unchanged"
+    },
+    "src/heretek_swarm/observability/metrics.py|src.heretek_swarm.observability.metrics.RealTimeMetricsStream": {
+      "file_path": "src/heretek_swarm/observability/metrics.py",
+      "qualified_name": "src.heretek_swarm.observability.metrics.RealTimeMetricsStream",
+      "start_line": 486,
+      "end_line": 671,
+      "type": "CLASS",
+      "status": "modified"
     },
     "src/heretek_swarm/observability/metrics.py|src.heretek_swarm.observability.metrics.RealTimeMetricsStream.get_metrics_snapshot": {
       "file_path": "src/heretek_swarm/observability/metrics.py",
@@ -90878,13 +91001,45 @@
       "type": "METHOD",
       "status": "unchanged"
     },
-    "src/heretek_swarm/observability/metrics.py|src.heretek_swarm.observability.metrics.RealTimeMetricsStream.export_prometheus_format": {
+    "src/heretek_swarm/observability/metrics.py|src.heretek_swarm.observability.metrics.RealTimeMetricsStream._export_swarm_metrics": {
       "file_path": "src/heretek_swarm/observability/metrics.py",
-      "qualified_name": "src.heretek_swarm.observability.metrics.RealTimeMetricsStream.export_prometheus_format",
-      "start_line": 532,
-      "end_line": 644,
+      "qualified_name": "src.heretek_swarm.observability.metrics.RealTimeMetricsStream._export_swarm_metrics",
+      "start_line": 549,
+      "end_line": 568,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
+    },
+    "src/heretek_swarm/observability/metrics.py|src.heretek_swarm.observability.metrics.RealTimeMetricsStream._export_consciousness_metrics": {
+      "file_path": "src/heretek_swarm/observability/metrics.py",
+      "qualified_name": "src.heretek_swarm.observability.metrics.RealTimeMetricsStream._export_consciousness_metrics",
+      "start_line": 570,
+      "end_line": 585,
+      "type": "METHOD",
+      "status": "modified"
+    },
+    "src/heretek_swarm/observability/metrics.py|src.heretek_swarm.observability.metrics.RealTimeMetricsStream._export_cycle_metrics": {
+      "file_path": "src/heretek_swarm/observability/metrics.py",
+      "qualified_name": "src.heretek_swarm.observability.metrics.RealTimeMetricsStream._export_cycle_metrics",
+      "start_line": 587,
+      "end_line": 618,
+      "type": "METHOD",
+      "status": "modified"
+    },
+    "src/heretek_swarm/observability/metrics.py|src.heretek_swarm.observability.metrics.RealTimeMetricsStream._export_phi_training_metrics": {
+      "file_path": "src/heretek_swarm/observability/metrics.py",
+      "qualified_name": "src.heretek_swarm.observability.metrics.RealTimeMetricsStream._export_phi_training_metrics",
+      "start_line": 620,
+      "end_line": 645,
+      "type": "METHOD",
+      "status": "modified"
+    },
+    "src/heretek_swarm/observability/metrics.py|src.heretek_swarm.observability.metrics.RealTimeMetricsStream._export_agent_phi_scores": {
+      "file_path": "src/heretek_swarm/observability/metrics.py",
+      "qualified_name": "src.heretek_swarm.observability.metrics.RealTimeMetricsStream._export_agent_phi_scores",
+      "start_line": 647,
+      "end_line": 657,
+      "type": "METHOD",
+      "status": "modified"
     },
     "src/heretek_swarm/observability/metrics.py|src.heretek_swarm.observability.metrics.get_metrics_collector": {
       "file_path": "src/heretek_swarm/observability/metrics.py",
@@ -90893,6 +91048,14 @@
       "end_line": 655,
       "type": "FUNCTION",
       "status": "unchanged"
+    },
+    "src/heretek_swarm/observability/metrics.py|src.heretek_swarm.observability.metrics.RealTimeMetricsStream.export_prometheus_format": {
+      "file_path": "src/heretek_swarm/observability/metrics.py",
+      "qualified_name": "src.heretek_swarm.observability.metrics.RealTimeMetricsStream.export_prometheus_format",
+      "start_line": 659,
+      "end_line": 671,
+      "type": "METHOD",
+      "status": "modified"
     },
     "src/heretek_swarm/observability/metrics.py|src.heretek_swarm.observability.metrics.MetricsSnapshot": {
       "file_path": "src/heretek_swarm/observability/metrics.py",
@@ -94178,9 +94341,9 @@
       "file_path": "src/heretek_swarm/routing/model_router.py",
       "qualified_name": "src.heretek_swarm.routing.model_router.AgentModelRouter",
       "start_line": 33,
-      "end_line": 123,
+      "end_line": 165,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/routing/model_router.py|src.heretek_swarm.routing.model_router.AgentModelRouter.__init__": {
       "file_path": "src/heretek_swarm/routing/model_router.py",
@@ -94206,13 +94369,29 @@
       "type": "METHOD",
       "status": "unchanged"
     },
-    "src/heretek_swarm/routing/model_router.py|src.heretek_swarm.routing.model_router.AgentModelRouter.route": {
+    "src/heretek_swarm/routing/model_router.py|src.heretek_swarm.routing.model_router.AgentModelRouter._get_preferred_models": {
       "file_path": "src/heretek_swarm/routing/model_router.py",
-      "qualified_name": "src.heretek_swarm.routing.model_router.AgentModelRouter.route",
+      "qualified_name": "src.heretek_swarm.routing.model_router.AgentModelRouter._get_preferred_models",
       "start_line": 74,
-      "end_line": 114,
+      "end_line": 81,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "added"
+    },
+    "src/heretek_swarm/routing/model_router.py|src.heretek_swarm.routing.model_router.AgentModelRouter._find_matching_model": {
+      "file_path": "src/heretek_swarm/routing/model_router.py",
+      "qualified_name": "src.heretek_swarm.routing.model_router.AgentModelRouter._find_matching_model",
+      "start_line": 83,
+      "end_line": 91,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/routing/model_router.py|src.heretek_swarm.routing.model_router.AgentModelRouter._find_preferred_provider": {
+      "file_path": "src/heretek_swarm/routing/model_router.py",
+      "qualified_name": "src.heretek_swarm.routing.model_router.AgentModelRouter._find_preferred_provider",
+      "start_line": 93,
+      "end_line": 121,
+      "type": "METHOD",
+      "status": "added"
     },
     "src/heretek_swarm/routing/model_router.py|src.heretek_swarm.routing.model_router.AgentModelRouter.get_stats": {
       "file_path": "src/heretek_swarm/routing/model_router.py",
@@ -94222,6 +94401,14 @@
       "type": "METHOD",
       "status": "unchanged"
     },
+    "src/heretek_swarm/routing/model_router.py|src.heretek_swarm.routing.model_router.AgentModelRouter._find_fallback_provider": {
+      "file_path": "src/heretek_swarm/routing/model_router.py",
+      "qualified_name": "src.heretek_swarm.routing.model_router.AgentModelRouter._find_fallback_provider",
+      "start_line": 123,
+      "end_line": 136,
+      "type": "METHOD",
+      "status": "added"
+    },
     "src/heretek_swarm/routing/model_router.py|src.heretek_swarm.routing.model_router.get_router": {
       "file_path": "src/heretek_swarm/routing/model_router.py",
       "qualified_name": "src.heretek_swarm.routing.model_router.get_router",
@@ -94229,6 +94416,14 @@
       "end_line": 132,
       "type": "FUNCTION",
       "status": "unchanged"
+    },
+    "src/heretek_swarm/routing/model_router.py|src.heretek_swarm.routing.model_router.AgentModelRouter.route": {
+      "file_path": "src/heretek_swarm/routing/model_router.py",
+      "qualified_name": "src.heretek_swarm.routing.model_router.AgentModelRouter.route",
+      "start_line": 138,
+      "end_line": 156,
+      "type": "METHOD",
+      "status": "modified"
     },
     "src/heretek_swarm/runtime/__init__.py|src.heretek_swarm.runtime.__init__.CharacterStyle": {
       "file_path": "src/heretek_swarm/runtime/__init__.py",
@@ -121122,7 +121317,7 @@
         },
         {
           "file_path": "src/heretek_swarm/evaluation/evaluator.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "src.heretek_swarm.evaluation.evaluator.EvaluationStatus",
             "src.heretek_swarm.evaluation.evaluator.OutputConstraints",
@@ -121135,6 +121330,7 @@
             "src.heretek_swarm.evaluation.evaluator.TestResult.to_dict",
             "src.heretek_swarm.evaluation.evaluator.AgentEvaluator",
             "src.heretek_swarm.evaluation.evaluator.AgentEvaluator.__init__",
+            "src.heretek_swarm.evaluation.evaluator.AgentEvaluator._run_single_test_case",
             "src.heretek_swarm.evaluation.evaluator.AgentEvaluator.evaluate_agent",
             "src.heretek_swarm.evaluation.evaluator.AgentEvaluator._validate_expected_output",
             "src.heretek_swarm.evaluation.evaluator.AgentEvaluator._validate_constraints",
@@ -122807,7 +123003,7 @@
         },
         {
           "file_path": "src/heretek_swarm/observability/metrics.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "src.heretek_swarm.observability.metrics.AgentMetrics",
             "src.heretek_swarm.observability.metrics.AgentMetrics.to_dict",
@@ -122824,6 +123020,9 @@
             "src.heretek_swarm.observability.metrics.SwarmMetricsCollector.record_agent_message",
             "src.heretek_swarm.observability.metrics.SwarmMetricsCollector._update_health_score",
             "src.heretek_swarm.observability.metrics.SwarmMetricsCollector.record_message_latency",
+            "src.heretek_swarm.observability.metrics.SwarmMetricsCollector._update_states_from_callback",
+            "src.heretek_swarm.observability.metrics.SwarmMetricsCollector._count_active_idle_agents",
+            "src.heretek_swarm.observability.metrics.SwarmMetricsCollector._calculate_task_metrics",
             "src.heretek_swarm.observability.metrics.SwarmMetricsCollector.collect_swarm_metrics",
             "src.heretek_swarm.observability.metrics.SwarmMetricsCollector.get_agent_metrics_history",
             "src.heretek_swarm.observability.metrics.SwarmMetricsCollector.get_consciousness_metrics_history",
@@ -122837,13 +123036,18 @@
             "src.heretek_swarm.observability.metrics.SwarmMetricsCollector.get_agent_states",
             "src.heretek_swarm.observability.metrics.SwarmMetricsCollector.calculate_health_score",
             "src.heretek_swarm.observability.metrics.SwarmMetricsCollector.collect_consciousness_metrics",
-            "src.heretek_swarm.observability.metrics.RealTimeMetricsStream",
             "src.heretek_swarm.observability.metrics.RealTimeMetricsStream.__init__",
             "src.heretek_swarm.observability.metrics.RealTimeMetricsStream.stop_streaming",
+            "src.heretek_swarm.observability.metrics.RealTimeMetricsStream",
             "src.heretek_swarm.observability.metrics.RealTimeMetricsStream.get_metrics_snapshot",
             "src.heretek_swarm.observability.metrics.RealTimeMetricsStream.stream_metrics",
-            "src.heretek_swarm.observability.metrics.RealTimeMetricsStream.export_prometheus_format",
+            "src.heretek_swarm.observability.metrics.RealTimeMetricsStream._export_swarm_metrics",
+            "src.heretek_swarm.observability.metrics.RealTimeMetricsStream._export_consciousness_metrics",
+            "src.heretek_swarm.observability.metrics.RealTimeMetricsStream._export_cycle_metrics",
+            "src.heretek_swarm.observability.metrics.RealTimeMetricsStream._export_phi_training_metrics",
+            "src.heretek_swarm.observability.metrics.RealTimeMetricsStream._export_agent_phi_scores",
             "src.heretek_swarm.observability.metrics.get_metrics_collector",
+            "src.heretek_swarm.observability.metrics.RealTimeMetricsStream.export_prometheus_format",
             "src.heretek_swarm.observability.metrics.MetricsSnapshot",
             "src.heretek_swarm.observability.metrics.MetricsSnapshot.to_dict",
             "src.heretek_swarm.observability.metrics.record_consensus_round",
@@ -123345,7 +123549,7 @@
         },
         {
           "file_path": "src/heretek_swarm/routing/model_router.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "src.heretek_swarm.routing.model_router.TaskComplexity",
             "src.heretek_swarm.routing.model_router.ProviderConfig",
@@ -123354,9 +123558,13 @@
             "src.heretek_swarm.routing.model_router.AgentModelRouter.__init__",
             "src.heretek_swarm.routing.model_router.AgentModelRouter.register_provider",
             "src.heretek_swarm.routing.model_router.AgentModelRouter.classify_complexity",
-            "src.heretek_swarm.routing.model_router.AgentModelRouter.route",
+            "src.heretek_swarm.routing.model_router.AgentModelRouter._get_preferred_models",
+            "src.heretek_swarm.routing.model_router.AgentModelRouter._find_matching_model",
+            "src.heretek_swarm.routing.model_router.AgentModelRouter._find_preferred_provider",
             "src.heretek_swarm.routing.model_router.AgentModelRouter.get_stats",
-            "src.heretek_swarm.routing.model_router.get_router"
+            "src.heretek_swarm.routing.model_router.AgentModelRouter._find_fallback_provider",
+            "src.heretek_swarm.routing.model_router.get_router",
+            "src.heretek_swarm.routing.model_router.AgentModelRouter.route"
           ]
         },
         {
@@ -127760,7 +127968,7 @@
             },
             {
               "file_path": "src/heretek_swarm/observability/metrics.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.heretek_swarm.observability.metrics.AgentMetrics",
                 "src.heretek_swarm.observability.metrics.AgentMetrics.to_dict",
@@ -127777,6 +127985,9 @@
                 "src.heretek_swarm.observability.metrics.SwarmMetricsCollector.record_agent_message",
                 "src.heretek_swarm.observability.metrics.SwarmMetricsCollector._update_health_score",
                 "src.heretek_swarm.observability.metrics.SwarmMetricsCollector.record_message_latency",
+                "src.heretek_swarm.observability.metrics.SwarmMetricsCollector._update_states_from_callback",
+                "src.heretek_swarm.observability.metrics.SwarmMetricsCollector._count_active_idle_agents",
+                "src.heretek_swarm.observability.metrics.SwarmMetricsCollector._calculate_task_metrics",
                 "src.heretek_swarm.observability.metrics.SwarmMetricsCollector.collect_swarm_metrics",
                 "src.heretek_swarm.observability.metrics.SwarmMetricsCollector.get_agent_metrics_history",
                 "src.heretek_swarm.observability.metrics.SwarmMetricsCollector.get_consciousness_metrics_history",
@@ -127790,13 +128001,18 @@
                 "src.heretek_swarm.observability.metrics.SwarmMetricsCollector.get_agent_states",
                 "src.heretek_swarm.observability.metrics.SwarmMetricsCollector.calculate_health_score",
                 "src.heretek_swarm.observability.metrics.SwarmMetricsCollector.collect_consciousness_metrics",
-                "src.heretek_swarm.observability.metrics.RealTimeMetricsStream",
                 "src.heretek_swarm.observability.metrics.RealTimeMetricsStream.__init__",
                 "src.heretek_swarm.observability.metrics.RealTimeMetricsStream.stop_streaming",
+                "src.heretek_swarm.observability.metrics.RealTimeMetricsStream",
                 "src.heretek_swarm.observability.metrics.RealTimeMetricsStream.get_metrics_snapshot",
                 "src.heretek_swarm.observability.metrics.RealTimeMetricsStream.stream_metrics",
-                "src.heretek_swarm.observability.metrics.RealTimeMetricsStream.export_prometheus_format",
+                "src.heretek_swarm.observability.metrics.RealTimeMetricsStream._export_swarm_metrics",
+                "src.heretek_swarm.observability.metrics.RealTimeMetricsStream._export_consciousness_metrics",
+                "src.heretek_swarm.observability.metrics.RealTimeMetricsStream._export_cycle_metrics",
+                "src.heretek_swarm.observability.metrics.RealTimeMetricsStream._export_phi_training_metrics",
+                "src.heretek_swarm.observability.metrics.RealTimeMetricsStream._export_agent_phi_scores",
                 "src.heretek_swarm.observability.metrics.get_metrics_collector",
+                "src.heretek_swarm.observability.metrics.RealTimeMetricsStream.export_prometheus_format",
                 "src.heretek_swarm.observability.metrics.MetricsSnapshot",
                 "src.heretek_swarm.observability.metrics.MetricsSnapshot.to_dict",
                 "src.heretek_swarm.observability.metrics.record_consensus_round",
@@ -128192,7 +128408,7 @@
             },
             {
               "file_path": "src/heretek_swarm/routing/model_router.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.heretek_swarm.routing.model_router.TaskComplexity",
                 "src.heretek_swarm.routing.model_router.ProviderConfig",
@@ -128201,9 +128417,13 @@
                 "src.heretek_swarm.routing.model_router.AgentModelRouter.__init__",
                 "src.heretek_swarm.routing.model_router.AgentModelRouter.register_provider",
                 "src.heretek_swarm.routing.model_router.AgentModelRouter.classify_complexity",
-                "src.heretek_swarm.routing.model_router.AgentModelRouter.route",
+                "src.heretek_swarm.routing.model_router.AgentModelRouter._get_preferred_models",
+                "src.heretek_swarm.routing.model_router.AgentModelRouter._find_matching_model",
+                "src.heretek_swarm.routing.model_router.AgentModelRouter._find_preferred_provider",
                 "src.heretek_swarm.routing.model_router.AgentModelRouter.get_stats",
-                "src.heretek_swarm.routing.model_router.get_router"
+                "src.heretek_swarm.routing.model_router.AgentModelRouter._find_fallback_provider",
+                "src.heretek_swarm.routing.model_router.get_router",
+                "src.heretek_swarm.routing.model_router.AgentModelRouter.route"
               ]
             },
             {
@@ -134529,7 +134749,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/routing/model_router.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.routing.model_router.TaskComplexity",
                     "src.heretek_swarm.routing.model_router.ProviderConfig",
@@ -134538,9 +134758,13 @@
                     "src.heretek_swarm.routing.model_router.AgentModelRouter.__init__",
                     "src.heretek_swarm.routing.model_router.AgentModelRouter.register_provider",
                     "src.heretek_swarm.routing.model_router.AgentModelRouter.classify_complexity",
-                    "src.heretek_swarm.routing.model_router.AgentModelRouter.route",
+                    "src.heretek_swarm.routing.model_router.AgentModelRouter._get_preferred_models",
+                    "src.heretek_swarm.routing.model_router.AgentModelRouter._find_matching_model",
+                    "src.heretek_swarm.routing.model_router.AgentModelRouter._find_preferred_provider",
                     "src.heretek_swarm.routing.model_router.AgentModelRouter.get_stats",
-                    "src.heretek_swarm.routing.model_router.get_router"
+                    "src.heretek_swarm.routing.model_router.AgentModelRouter._find_fallback_provider",
+                    "src.heretek_swarm.routing.model_router.get_router",
+                    "src.heretek_swarm.routing.model_router.AgentModelRouter.route"
                   ]
                 },
                 {
@@ -138232,7 +138456,7 @@
                     },
                     {
                       "file_path": "src/heretek_swarm/routing/model_router.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.routing.model_router.TaskComplexity",
                         "src.heretek_swarm.routing.model_router.ProviderConfig",
@@ -138241,9 +138465,13 @@
                         "src.heretek_swarm.routing.model_router.AgentModelRouter.__init__",
                         "src.heretek_swarm.routing.model_router.AgentModelRouter.register_provider",
                         "src.heretek_swarm.routing.model_router.AgentModelRouter.classify_complexity",
-                        "src.heretek_swarm.routing.model_router.AgentModelRouter.route",
+                        "src.heretek_swarm.routing.model_router.AgentModelRouter._get_preferred_models",
+                        "src.heretek_swarm.routing.model_router.AgentModelRouter._find_matching_model",
+                        "src.heretek_swarm.routing.model_router.AgentModelRouter._find_preferred_provider",
                         "src.heretek_swarm.routing.model_router.AgentModelRouter.get_stats",
-                        "src.heretek_swarm.routing.model_router.get_router"
+                        "src.heretek_swarm.routing.model_router.AgentModelRouter._find_fallback_provider",
+                        "src.heretek_swarm.routing.model_router.get_router",
+                        "src.heretek_swarm.routing.model_router.AgentModelRouter.route"
                       ]
                     }
                   ],
@@ -138465,7 +138693,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/routing/model_router.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.routing.model_router.TaskComplexity",
                             "src.heretek_swarm.routing.model_router.ProviderConfig",
@@ -138474,9 +138702,13 @@
                             "src.heretek_swarm.routing.model_router.AgentModelRouter.__init__",
                             "src.heretek_swarm.routing.model_router.AgentModelRouter.register_provider",
                             "src.heretek_swarm.routing.model_router.AgentModelRouter.classify_complexity",
-                            "src.heretek_swarm.routing.model_router.AgentModelRouter.route",
+                            "src.heretek_swarm.routing.model_router.AgentModelRouter._get_preferred_models",
+                            "src.heretek_swarm.routing.model_router.AgentModelRouter._find_matching_model",
+                            "src.heretek_swarm.routing.model_router.AgentModelRouter._find_preferred_provider",
                             "src.heretek_swarm.routing.model_router.AgentModelRouter.get_stats",
-                            "src.heretek_swarm.routing.model_router.get_router"
+                            "src.heretek_swarm.routing.model_router.AgentModelRouter._find_fallback_provider",
+                            "src.heretek_swarm.routing.model_router.get_router",
+                            "src.heretek_swarm.routing.model_router.AgentModelRouter.route"
                           ]
                         }
                       ],
@@ -141931,7 +142163,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/observability/metrics.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.observability.metrics.AgentMetrics",
                     "src.heretek_swarm.observability.metrics.AgentMetrics.to_dict",
@@ -141948,6 +142180,9 @@
                     "src.heretek_swarm.observability.metrics.SwarmMetricsCollector.record_agent_message",
                     "src.heretek_swarm.observability.metrics.SwarmMetricsCollector._update_health_score",
                     "src.heretek_swarm.observability.metrics.SwarmMetricsCollector.record_message_latency",
+                    "src.heretek_swarm.observability.metrics.SwarmMetricsCollector._update_states_from_callback",
+                    "src.heretek_swarm.observability.metrics.SwarmMetricsCollector._count_active_idle_agents",
+                    "src.heretek_swarm.observability.metrics.SwarmMetricsCollector._calculate_task_metrics",
                     "src.heretek_swarm.observability.metrics.SwarmMetricsCollector.collect_swarm_metrics",
                     "src.heretek_swarm.observability.metrics.SwarmMetricsCollector.get_agent_metrics_history",
                     "src.heretek_swarm.observability.metrics.SwarmMetricsCollector.get_consciousness_metrics_history",
@@ -141961,13 +142196,18 @@
                     "src.heretek_swarm.observability.metrics.SwarmMetricsCollector.get_agent_states",
                     "src.heretek_swarm.observability.metrics.SwarmMetricsCollector.calculate_health_score",
                     "src.heretek_swarm.observability.metrics.SwarmMetricsCollector.collect_consciousness_metrics",
-                    "src.heretek_swarm.observability.metrics.RealTimeMetricsStream",
                     "src.heretek_swarm.observability.metrics.RealTimeMetricsStream.__init__",
                     "src.heretek_swarm.observability.metrics.RealTimeMetricsStream.stop_streaming",
+                    "src.heretek_swarm.observability.metrics.RealTimeMetricsStream",
                     "src.heretek_swarm.observability.metrics.RealTimeMetricsStream.get_metrics_snapshot",
                     "src.heretek_swarm.observability.metrics.RealTimeMetricsStream.stream_metrics",
-                    "src.heretek_swarm.observability.metrics.RealTimeMetricsStream.export_prometheus_format",
+                    "src.heretek_swarm.observability.metrics.RealTimeMetricsStream._export_swarm_metrics",
+                    "src.heretek_swarm.observability.metrics.RealTimeMetricsStream._export_consciousness_metrics",
+                    "src.heretek_swarm.observability.metrics.RealTimeMetricsStream._export_cycle_metrics",
+                    "src.heretek_swarm.observability.metrics.RealTimeMetricsStream._export_phi_training_metrics",
+                    "src.heretek_swarm.observability.metrics.RealTimeMetricsStream._export_agent_phi_scores",
                     "src.heretek_swarm.observability.metrics.get_metrics_collector",
+                    "src.heretek_swarm.observability.metrics.RealTimeMetricsStream.export_prometheus_format",
                     "src.heretek_swarm.observability.metrics.MetricsSnapshot",
                     "src.heretek_swarm.observability.metrics.MetricsSnapshot.to_dict",
                     "src.heretek_swarm.observability.metrics.record_consensus_round",
@@ -143325,7 +143565,7 @@
                     },
                     {
                       "file_path": "src/heretek_swarm/observability/metrics.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.observability.metrics.AgentMetrics",
                         "src.heretek_swarm.observability.metrics.AgentMetrics.to_dict",
@@ -143342,6 +143582,9 @@
                         "src.heretek_swarm.observability.metrics.SwarmMetricsCollector.record_agent_message",
                         "src.heretek_swarm.observability.metrics.SwarmMetricsCollector._update_health_score",
                         "src.heretek_swarm.observability.metrics.SwarmMetricsCollector.record_message_latency",
+                        "src.heretek_swarm.observability.metrics.SwarmMetricsCollector._update_states_from_callback",
+                        "src.heretek_swarm.observability.metrics.SwarmMetricsCollector._count_active_idle_agents",
+                        "src.heretek_swarm.observability.metrics.SwarmMetricsCollector._calculate_task_metrics",
                         "src.heretek_swarm.observability.metrics.SwarmMetricsCollector.collect_swarm_metrics",
                         "src.heretek_swarm.observability.metrics.SwarmMetricsCollector.get_agent_metrics_history",
                         "src.heretek_swarm.observability.metrics.SwarmMetricsCollector.get_consciousness_metrics_history",
@@ -143355,13 +143598,18 @@
                         "src.heretek_swarm.observability.metrics.SwarmMetricsCollector.get_agent_states",
                         "src.heretek_swarm.observability.metrics.SwarmMetricsCollector.calculate_health_score",
                         "src.heretek_swarm.observability.metrics.SwarmMetricsCollector.collect_consciousness_metrics",
-                        "src.heretek_swarm.observability.metrics.RealTimeMetricsStream",
                         "src.heretek_swarm.observability.metrics.RealTimeMetricsStream.__init__",
                         "src.heretek_swarm.observability.metrics.RealTimeMetricsStream.stop_streaming",
+                        "src.heretek_swarm.observability.metrics.RealTimeMetricsStream",
                         "src.heretek_swarm.observability.metrics.RealTimeMetricsStream.get_metrics_snapshot",
                         "src.heretek_swarm.observability.metrics.RealTimeMetricsStream.stream_metrics",
-                        "src.heretek_swarm.observability.metrics.RealTimeMetricsStream.export_prometheus_format",
+                        "src.heretek_swarm.observability.metrics.RealTimeMetricsStream._export_swarm_metrics",
+                        "src.heretek_swarm.observability.metrics.RealTimeMetricsStream._export_consciousness_metrics",
+                        "src.heretek_swarm.observability.metrics.RealTimeMetricsStream._export_cycle_metrics",
+                        "src.heretek_swarm.observability.metrics.RealTimeMetricsStream._export_phi_training_metrics",
+                        "src.heretek_swarm.observability.metrics.RealTimeMetricsStream._export_agent_phi_scores",
                         "src.heretek_swarm.observability.metrics.get_metrics_collector",
+                        "src.heretek_swarm.observability.metrics.RealTimeMetricsStream.export_prometheus_format",
                         "src.heretek_swarm.observability.metrics.MetricsSnapshot",
                         "src.heretek_swarm.observability.metrics.MetricsSnapshot.to_dict",
                         "src.heretek_swarm.observability.metrics.record_consensus_round",
@@ -143478,7 +143726,7 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/observability/metrics.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.observability.metrics.AgentMetrics",
                             "src.heretek_swarm.observability.metrics.AgentMetrics.to_dict",
@@ -143557,7 +143805,7 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/observability/metrics.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.observability.metrics.SwarmMetricsCollector.__init__",
                             "src.heretek_swarm.observability.metrics.SwarmMetricsCollector.record_agent_activity",
@@ -143628,7 +143876,7 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/observability/metrics.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.observability.metrics.SwarmMetricsCollector.record_agent_message",
                             "src.heretek_swarm.observability.metrics.SwarmMetricsCollector._calculate_agent_health",
@@ -143701,7 +143949,7 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/observability/metrics.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.observability.metrics.SwarmMetricsData.to_dict",
                             "src.heretek_swarm.observability.metrics.SwarmMetricsCollector.update_agent_state",
@@ -143711,8 +143959,8 @@
                             "src.heretek_swarm.observability.metrics.SwarmMetricsCollector.get_all_agent_metrics",
                             "src.heretek_swarm.observability.metrics.SwarmMetricsCollector.collect_consciousness_metrics",
                             "src.heretek_swarm.observability.metrics.RealTimeMetricsStream.__init__",
-                            "src.heretek_swarm.observability.metrics.RealTimeMetricsStream.export_prometheus_format",
                             "src.heretek_swarm.observability.metrics.get_metrics_collector",
+                            "src.heretek_swarm.observability.metrics.RealTimeMetricsStream.export_prometheus_format",
                             "src.heretek_swarm.observability.metrics.MetricsSnapshot.to_dict",
                             "src.heretek_swarm.observability.metrics.record_task_completion"
                           ]
@@ -168178,7 +168426,7 @@
             },
             {
               "file_path": "src/heretek_swarm/evaluation/evaluator.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.heretek_swarm.evaluation.evaluator.EvaluationStatus",
                 "src.heretek_swarm.evaluation.evaluator.OutputConstraints",
@@ -168191,6 +168439,7 @@
                 "src.heretek_swarm.evaluation.evaluator.TestResult.to_dict",
                 "src.heretek_swarm.evaluation.evaluator.AgentEvaluator",
                 "src.heretek_swarm.evaluation.evaluator.AgentEvaluator.__init__",
+                "src.heretek_swarm.evaluation.evaluator.AgentEvaluator._run_single_test_case",
                 "src.heretek_swarm.evaluation.evaluator.AgentEvaluator.evaluate_agent",
                 "src.heretek_swarm.evaluation.evaluator.AgentEvaluator._validate_expected_output",
                 "src.heretek_swarm.evaluation.evaluator.AgentEvaluator._validate_constraints",
@@ -174814,7 +175063,7 @@
               "file_methods": [
                 {
                   "file_path": "src/heretek_swarm/evaluation/evaluator.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.evaluation.evaluator.EvaluationStatus",
                     "src.heretek_swarm.evaluation.evaluator.OutputConstraints",
@@ -174827,6 +175076,7 @@
                     "src.heretek_swarm.evaluation.evaluator.TestResult.to_dict",
                     "src.heretek_swarm.evaluation.evaluator.AgentEvaluator",
                     "src.heretek_swarm.evaluation.evaluator.AgentEvaluator.__init__",
+                    "src.heretek_swarm.evaluation.evaluator.AgentEvaluator._run_single_test_case",
                     "src.heretek_swarm.evaluation.evaluator.AgentEvaluator.evaluate_agent",
                     "src.heretek_swarm.evaluation.evaluator.AgentEvaluator._validate_expected_output",
                     "src.heretek_swarm.evaluation.evaluator.AgentEvaluator._validate_constraints",
@@ -174864,7 +175114,7 @@
                   "file_methods": [
                     {
                       "file_path": "src/heretek_swarm/evaluation/evaluator.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.evaluation.evaluator.EvaluationStatus",
                         "src.heretek_swarm.evaluation.evaluator.OutputConstraints",
@@ -174873,7 +175123,8 @@
                         "src.heretek_swarm.evaluation.evaluator.EvaluationMetrics",
                         "src.heretek_swarm.evaluation.evaluator.TestResult",
                         "src.heretek_swarm.evaluation.evaluator.AgentEvaluator",
-                        "src.heretek_swarm.evaluation.evaluator.AgentEvaluator.__init__"
+                        "src.heretek_swarm.evaluation.evaluator.AgentEvaluator.__init__",
+                        "src.heretek_swarm.evaluation.evaluator.AgentEvaluator._run_single_test_case"
                       ]
                     }
                   ],
@@ -174906,7 +175157,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/evaluation/evaluator.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.evaluation.evaluator.EvaluationStatus",
                             "src.heretek_swarm.evaluation.evaluator.OutputConstraints",
@@ -174938,7 +175189,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/evaluation/evaluator.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.evaluation.evaluator.EvaluationResult.to_dict",
                             "src.heretek_swarm.evaluation.evaluator.TestResult.to_dict",
@@ -174963,7 +175214,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/evaluation/evaluator.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.evaluation.evaluator.AgentEvaluator._validate_expected_output",
                             "src.heretek_swarm.evaluation.evaluator.AgentEvaluator._validate_constraints",
@@ -175028,9 +175279,10 @@
                   "file_methods": [
                     {
                       "file_path": "src/heretek_swarm/evaluation/evaluator.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.evaluation.evaluator.TestResult.to_dict",
+                        "src.heretek_swarm.evaluation.evaluator.AgentEvaluator._run_single_test_case",
                         "src.heretek_swarm.evaluation.evaluator.AgentEvaluator._validate_constraints",
                         "src.heretek_swarm.evaluation.evaluator.AgentEvaluator.get_evaluation",
                         "src.heretek_swarm.evaluation.evaluator.AgentEvaluator.compare_agents"
@@ -175075,7 +175327,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/evaluation/evaluator.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.evaluation.evaluator.EvaluationResult.to_dict",
                             "src.heretek_swarm.evaluation.evaluator.TestResult.to_dict",
@@ -175108,7 +175360,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/evaluation/evaluator.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.evaluation.evaluator.AgentEvaluator.list_evaluations"
                           ]
@@ -175176,7 +175428,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/evaluation/evaluator.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.evaluation.evaluator.AgentEvaluator.evaluate_agent",
                             "src.heretek_swarm.evaluation.evaluator.AgentEvaluator._validate_expected_output",
@@ -175229,7 +175481,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/evaluation/evaluator.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.evaluation.evaluator.EvaluationStatus",
                             "src.heretek_swarm.evaluation.evaluator.OutputConstraints",
@@ -175335,9 +175587,10 @@
                   "file_methods": [
                     {
                       "file_path": "src/heretek_swarm/evaluation/evaluator.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.evaluation.evaluator.EvaluationResult.to_dict",
+                        "src.heretek_swarm.evaluation.evaluator.AgentEvaluator._run_single_test_case",
                         "src.heretek_swarm.evaluation.evaluator.AgentEvaluator.list_evaluations"
                       ]
                     }
@@ -175355,7 +175608,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/evaluation/evaluator.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.evaluation.evaluator.AgentEvaluator.list_evaluations"
                           ]
@@ -175375,7 +175628,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/evaluation/evaluator.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.evaluation.evaluator.TestResult.to_dict"
                           ]
@@ -175395,7 +175648,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/evaluation/evaluator.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.evaluation.evaluator.AgentEvaluator._validate_expected_output",
                             "src.heretek_swarm.evaluation.evaluator.AgentEvaluator.get_evaluation"
@@ -175416,7 +175669,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/evaluation/evaluator.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.evaluation.evaluator.EvaluationResult.to_dict",
                             "src.heretek_swarm.evaluation.evaluator.AgentEvaluator._validate_constraints"
@@ -175441,7 +175694,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/evaluation/evaluator.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.evaluation.evaluator.EvaluationStatus",
                             "src.heretek_swarm.evaluation.evaluator.OutputConstraints",
@@ -175552,9 +175805,10 @@
                   "file_methods": [
                     {
                       "file_path": "src/heretek_swarm/evaluation/evaluator.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.evaluation.evaluator.EvaluationMetrics.to_dict",
+                        "src.heretek_swarm.evaluation.evaluator.AgentEvaluator._run_single_test_case",
                         "src.heretek_swarm.evaluation.evaluator.AgentEvaluator.evaluate_agent",
                         "src.heretek_swarm.evaluation.evaluator.AgentEvaluator._validate_expected_output",
                         "src.heretek_swarm.evaluation.evaluator.AgentEvaluator._validate_output",
@@ -175577,7 +175831,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/evaluation/evaluator.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.evaluation.evaluator.EvaluationMetrics.to_dict",
                             "src.heretek_swarm.evaluation.evaluator.AgentEvaluator._validate_expected_output",
@@ -175601,7 +175855,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/evaluation/evaluator.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.evaluation.evaluator.EvaluationStatus",
                             "src.heretek_swarm.evaluation.evaluator.OutputConstraints",
@@ -175630,7 +175884,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/evaluation/evaluator.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.evaluation.evaluator.AgentEvaluator.compare_agents"
                           ]
@@ -175652,7 +175906,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/evaluation/evaluator.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.evaluation.evaluator.EvaluationResult.to_dict",
                             "src.heretek_swarm.evaluation.evaluator.TestResult.to_dict",

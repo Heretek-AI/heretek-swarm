@@ -262,18 +262,19 @@ class SwarmMetricsCollector:
         if len(self._message_latencies) > 1000:
             self._message_latencies = self._message_latencies[-1000:]
 
-    def collect_swarm_metrics(self) -> SwarmMetricsData:
-        """Collect aggregate swarm metrics."""
-        # Use state callback to override activity detection if available
+    def _update_states_from_callback(self) -> None:
+        """Update agent states from registered callback."""
         if self._agent_state_callback:
             states = self._agent_state_callback()
             for agent_id, state in states.items():
                 self._agent_states[agent_id] = state
 
-        total_agents = len(self._agent_metrics)
-        # Use explicit state if available, otherwise fall back to activity-based
+    def _count_active_idle_agents(self) -> tuple[int, int]:
+        """Count active and idle agents based on state or activity."""
         active_agents = 0
         idle_agents = 0
+        now = datetime.now(UTC)
+
         for agent_id in self._agent_metrics:
             if agent_id in self._agent_states:
                 state = self._agent_states[agent_id]
@@ -283,23 +284,39 @@ class SwarmMetricsCollector:
                     idle_agents += 1
             else:
                 metrics = self._agent_metrics[agent_id]
-                if metrics.last_activity and (datetime.now(UTC) - metrics.last_activity).total_seconds() < 60:
+                inactive_seconds = (now - metrics.last_activity).total_seconds() if metrics.last_activity else float('inf')
+                if inactive_seconds < 60:
                     active_agents += 1
                 else:
                     idle_agents += 1
 
-        total_tasks = sum(m.tasks_completed + m.tasks_failed for m in self._agent_metrics.values())
-        completed_tasks = sum(m.tasks_completed for m in self._agent_metrics.values())
-        failed_tasks = sum(m.tasks_failed for m in self._agent_metrics.values())
-        total_messages = sum(m.messages_sent + m.messages_received for m in self._agent_metrics.values())
+        return active_agents, idle_agents
+
+    def _calculate_task_metrics(self) -> tuple[int, int, int, int]:
+        """Calculate task-related metrics."""
+        total_tasks = 0
+        completed_tasks = 0
+        failed_tasks = 0
+        total_messages = 0
+
+        for m in self._agent_metrics.values():
+            total_tasks += m.tasks_completed + m.tasks_failed
+            completed_tasks += m.tasks_completed
+            failed_tasks += m.tasks_failed
+            total_messages += m.messages_sent + m.messages_received
+
+        return total_tasks, completed_tasks, failed_tasks, total_messages
+
+    def collect_swarm_metrics(self) -> SwarmMetricsData:
+        """Collect aggregate swarm metrics."""
+        self._update_states_from_callback()
+
+        total_agents = len(self._agent_metrics)
+        active_agents, idle_agents = self._count_active_idle_agents()
+        total_tasks, completed_tasks, failed_tasks, total_messages = self._calculate_task_metrics()
 
         avg_latency = sum(self._message_latencies) / len(self._message_latencies) if self._message_latencies else 0
-
-        # Calculate overall health score
-        if self._agent_metrics:
-            health_score = sum(m.health_score for m in self._agent_metrics.values()) / len(self._agent_metrics)
-        else:
-            health_score = 100.0
+        health_score = sum(m.health_score for m in self._agent_metrics.values()) / len(self._agent_metrics) if self._agent_metrics else 100.0
 
         result = SwarmMetricsData(
             total_agents=total_agents,
@@ -529,20 +546,9 @@ class RealTimeMetricsStream:
             }
             await asyncio.sleep(interval_seconds)
 
-    def export_prometheus_format(self) -> str:
-        """
-        Export metrics in Prometheus text format.
-
-        Includes:
-        - Standard swarm metrics
-        - Consciousness metrics (Phi, FEP)
-        - Cycle detection metrics (if available)
-        - Phi training metrics (if available)
-        """
-        metrics = self._collector.collect_swarm_metrics()
-        consciousness = self._collector.collect_consciousness_metrics()
-
-        lines = [
+    def _export_swarm_metrics(self, metrics: SwarmMetricsData) -> list[str]:
+        """Export swarm metrics as Prometheus format lines."""
+        return [
             "# HELP heretek_swarm_total_agents Total number of agents",
             "# TYPE heretek_swarm_total_agents gauge",
             f"heretek_swarm_total_agents {metrics.total_agents}",
@@ -559,6 +565,11 @@ class RealTimeMetricsStream:
             "# TYPE heretek_swarm_total_tasks counter",
             f"heretek_swarm_total_tasks {metrics.total_tasks}",
             "",
+        ]
+
+    def _export_consciousness_metrics(self, consciousness: ConsciousnessMetricsData) -> list[str]:
+        """Export consciousness metrics as Prometheus format lines."""
+        return [
             "# HELP heretek_swarm_consciousness_phi_avg Average consciousness phi score",
             "# TYPE heretek_swarm_consciousness_phi_avg gauge",
             f"heretek_swarm_consciousness_phi_avg {consciousness.phi_avg}",
@@ -573,7 +584,9 @@ class RealTimeMetricsStream:
             "",
         ]
 
-        # Add cycle detection metrics if available
+    def _export_cycle_metrics(self) -> list[str]:
+        """Export cycle detection metrics if available."""
+        lines = []
         if CYCLE_DETECTOR_AVAILABLE:
             try:
                 cycle_metrics = get_cycle_detector_metrics()
@@ -592,8 +605,6 @@ class RealTimeMetricsStream:
                         f"heretek_workflow_avg_iterations_before_cycle {cycle_metrics.get('avg_iterations_before_cycle', 0)}",
                         "",
                     ])
-
-                    # Add per-strategy metrics
                     for strategy, count in cycle_metrics.get("cycles_by_strategy", {}).items():
                         lines.extend([
                             "# HELP heretek_workflow_cycles_by_strategy Cycles broken by strategy",
@@ -604,12 +615,13 @@ class RealTimeMetricsStream:
             except Exception as e:
                 lines.append(f"# Cycle detection metrics unavailable: {e}")
                 lines.append("")
+        return lines
 
-        # Add Phi training metrics if available
+    def _export_phi_training_metrics(self) -> list[str]:
+        """Export Phi training metrics if available."""
+        lines = []
         if CYCLE_DETECTOR_AVAILABLE and PhiTrainingEnvironment:
             try:
-                # Note: In production, you would get a reference to the actual training environment
-                # This is a placeholder showing the metric format
                 lines.extend([
                     "# HELP heretek_phi_training_episodes_total Total Phi training episodes",
                     "# TYPE heretek_phi_training_episodes_total counter",
@@ -630,9 +642,11 @@ class RealTimeMetricsStream:
                 ])
             except Exception as e:
                 lines.append(f"# Phi training metrics unavailable: {e}")
-                lines.append("")
+        return lines
 
-        # Add per-agent phi scores
+    def _export_agent_phi_scores(self, consciousness: ConsciousnessMetricsData) -> list[str]:
+        """Export per-agent Phi scores."""
+        lines = []
         for agent_id, phi_score in consciousness.agent_phi_scores.items():
             lines.extend([
                 "# HELP heretek_agent_phi Agent Phi score",
@@ -640,7 +654,20 @@ class RealTimeMetricsStream:
                 f'heretek_agent_phi{{agent_id="{agent_id}"}} {phi_score}',
                 "",
             ])
+        return lines
 
+    def export_prometheus_format(self) -> str:
+        """Export metrics in Prometheus text format."""
+        metrics = self._collector.collect_swarm_metrics()
+        consciousness = self._collector.collect_consciousness_metrics()
+
+        lines = (
+            self._export_swarm_metrics(metrics) +
+            self._export_consciousness_metrics(consciousness) +
+            self._export_cycle_metrics() +
+            self._export_phi_training_metrics() +
+            self._export_agent_phi_scores(consciousness)
+        )
         return "\n".join(lines)
 
 

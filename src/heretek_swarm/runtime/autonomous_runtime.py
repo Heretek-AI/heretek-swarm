@@ -552,6 +552,26 @@ class AutonomousRuntime:
 
         return None
 
+    def _parse_last_activity(self, status: Any) -> datetime | None:
+        """Parse last_activity timestamp from status object."""
+        if not status or not status.last_activity:
+            return None
+        try:
+            last_activity_str = status.last_activity
+            if isinstance(last_activity_str, str):
+                return datetime.fromisoformat(last_activity_str.replace("Z", "+00:00"))
+            return last_activity_str
+        except (ValueError, TypeError):
+            return None
+
+    def _is_agent_idle(self, status: Any) -> bool:
+        """Check if agent has been idle long enough to be removed."""
+        last_activity_dt = self._parse_last_activity(status)
+        if last_activity_dt is None:
+            return False
+        idle_time = datetime.now(UTC) - last_activity_dt
+        return idle_time.total_seconds() > self.config.min_uptime_before_scale_down * 60
+
     async def _find_idle_agent(self) -> str | None:
         """Find an idle agent to scale down."""
         if not self.supervisor:
@@ -559,27 +579,8 @@ class AutonomousRuntime:
 
         for agent_id, actor in self.supervisor.actors.items():
             status = actor.get_status()
-            if status:
-                # Check if agent has been idle for a while
-                if status.last_activity:
-                    # Fix: Parse ISO format timestamp string to datetime
-                    try:
-                        last_activity_str = status.last_activity
-                        # Handle both string and datetime types
-                        if isinstance(last_activity_str, str):
-                            # Parse ISO format timestamp
-                            last_activity_dt = datetime.fromisoformat(last_activity_str.replace("Z", "+00:00"))
-                        else:
-                            last_activity_dt = last_activity_str
-
-                        # P2-1 fix: Use timezone-aware datetime
-                        idle_time = datetime.now(UTC) - last_activity_dt
-                        if idle_time.total_seconds() > self.config.min_uptime_before_scale_down * 60:
-                            return agent_id
-                    except (ValueError, TypeError) as e:
-                        logger.warning(f"Failed to parse last_activity timestamp: {e}")
-                        continue
-
+            if status and self._is_agent_idle(status):
+                return agent_id
         return None
 
     async def _state_persistence_loop(self) -> None:

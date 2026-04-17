@@ -102,6 +102,45 @@ class AgentEvaluator:
         self.results: List[EvaluationResult] = []
         self._evaluations: Dict[str, EvaluationResult] = {}
 
+    async def _run_single_test_case(
+        self,
+        agent: Any,
+        tc: TestCase,
+    ) -> tuple[TestResult, bool]:
+        """Run a single test case and return result plus success flag."""
+        start = datetime.now()
+        error = None
+        validation_errors: List[str] = []
+
+        try:
+            input_data = tc.input_data if isinstance(tc.input_data, dict) else {"query": tc.input_data}
+            output = await asyncio.wait_for(agent.execute(input_data), timeout=self.timeout)
+
+            if tc.expected_output is not None:
+                validation_errors.extend(self._validate_expected_output(output, tc.expected_output))
+            if tc.constraints:
+                validation_errors.extend(self._validate_constraints(output, tc.constraints))
+
+            success = len(validation_errors) == 0
+        except asyncio.TimeoutError as e:
+            error = e
+            validation_errors = [f"Execution timeout after {self.timeout}s"]
+            success = False
+        except Exception as e:
+            error = e
+            validation_errors = [str(e)]
+            success = False
+
+        end = datetime.now()
+        execution_time = (end - start).total_seconds() * 1000
+        return TestResult(
+            test_id=tc.id,
+            success=success,
+            error=error,
+            validation_errors=validation_errors if validation_errors else None,
+            execution_time_ms=execution_time,
+        ), success
+
     async def evaluate_agent(
         self,
         agent_id: str,
@@ -109,82 +148,30 @@ class AgentEvaluator:
         test_cases: List[TestCase],
         evaluation_id: Optional[str] = None,
     ) -> EvaluationResult:
-        """Evaluate an agent against test cases.
-        
-        Args:
-            agent_id: The agent identifier
-            agent: The agent instance to evaluate
-            test_cases: List of test cases to run
-            evaluation_id: Optional evaluation ID
-            
-        Returns:
-            EvaluationResult with test results and metrics
-        """
+        """Evaluate an agent against test cases."""
         eval_id = evaluation_id or f"eval_{agent_id}_{datetime.now().timestamp()}"
         started = datetime.now().isoformat()
-        
+
         test_results = []
         passed_count = 0
-        
+
         for tc in test_cases:
-            start = datetime.now()
-            error = None
-            validation_errors = []
-            
-            try:
-                # Execute agent with timeout
-                input_data = tc.input_data if isinstance(tc.input_data, dict) else {"query": tc.input_data}
-                output = await asyncio.wait_for(
-                    agent.execute(input_data),
-                    timeout=self.timeout
-                )
-                
-                # Validate output against expected output first
-                if tc.expected_output is not None:
-                    validation_errors.extend(self._validate_expected_output(output, tc.expected_output))
-                
-                # Validate output against constraints
-                if tc.constraints:
-                    validation_errors.extend(self._validate_constraints(output, tc.constraints))
-                
-                success = len(validation_errors) == 0
-                
-                if success:
-                    passed_count += 1
-                    
-            except asyncio.TimeoutError as e:
-                error = e
-                validation_errors = [f"Execution timeout after {self.timeout}s"]
-                success = False
-            except Exception as e:
-                error = e
-                validation_errors = [str(e)]
-                success = False
-            
-            end = datetime.now()
-            execution_time = (end - start).total_seconds() * 1000
-            
-            test_results.append(TestResult(
-                test_id=tc.id,
-                success=success,
-                error=error,
-                validation_errors=validation_errors if validation_errors else None,
-                execution_time_ms=execution_time,
-            ))
-        
-        # Calculate metrics
+            result, success = await self._run_single_test_case(agent, tc)
+            test_results.append(result)
+            if success:
+                passed_count += 1
+
         total = len(test_cases)
         success_rate = (passed_count / total * 100) if total > 0 else 0.0
-        
+
         metrics = EvaluationMetrics(
             success_rate=success_rate,
             constraint_compliance=success_rate,
             output_quality=success_rate,
         )
-        
+
         completed = datetime.now().isoformat()
-        
-        result = EvaluationResult(
+        return EvaluationResult(
             evaluation_id=eval_id,
             agent_id=agent_id,
             status=EvaluationStatus.COMPLETED,
@@ -194,7 +181,7 @@ class AgentEvaluator:
             metrics=metrics,
             test_results=test_results,
         )
-        
+
         self.results.append(result)
         self._evaluations[eval_id] = result
         return result
