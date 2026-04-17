@@ -257,13 +257,22 @@ class EmergentPattern:
     pattern_class: EmergentPatternClass = EmergentPatternClass.COORDINATION
     emergence_level: EmergenceLevel = EmergenceLevel.WEAK
 
+    emergence_score: float = 0.0  # Core emergence metric used by validation
+    participating_agents: list[str] = field(default_factory=list)  # Alias for involved_agents
+    involved_agents: list[str] = field(default_factory=list)
+
     impact_score: float = 0.0
     novelty_score: float = 0.0  # How novel this pattern is compared to history
     provenance: PatternProvenance = PatternProvenance.UNPROVEN  # PROVEN or UNPROVEN
     validation_rate: float = 0.0  # Fraction of validations that passed
 
-    involved_agents: list[str] = field(default_factory=list)
+    statistical_significance: float = 0.0  # Calculated during validation
+    emergence_ratio: float = 0.0  # Used by calculate_confidence
+    frequency: int = 1  # How many times this pattern has been observed
+    first_detected: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
+
     confidence: float = 0.0
+    is_validated: bool = False  # Set during _validate_and_store_pattern
 
     description: str = ""
     evidence: dict[str, Any] = field(default_factory=dict)
@@ -277,12 +286,19 @@ class EmergentPattern:
             "pattern_id": self.pattern_id,
             "pattern_class": self.pattern_class.value,
             "emergence_level": self.emergence_level.value,
+            "emergence_score": self.emergence_score,
+            "participating_agents": self.participating_agents,
+            "involved_agents": self.involved_agents,
             "impact_score": self.impact_score,
             "novelty_score": self.novelty_score,
             "provenance": self.provenance.value,
             "validation_rate": self.validation_rate,
-            "involved_agents": self.involved_agents,
+            "statistical_significance": self.statistical_significance,
+            "emergence_ratio": self.emergence_ratio,
+            "frequency": self.frequency,
+            "first_detected": self.first_detected,
             "confidence": self.confidence,
+            "is_validated": self.is_validated,
             "description": self.description,
             "evidence": self.evidence,
             "detected_at": self.detected_at,
@@ -314,6 +330,15 @@ class DetectionEvent:
 
     event_id: str = field(default_factory=lambda: str(uuid.uuid4()))
     pattern_id: str = ""
+
+    # Fields expected by _validate_and_store_pattern
+    pattern: EmergentPattern | None = None
+    detection_method: str = ""
+    raw_score: float = 0.0
+    threshold: float = 0.0
+    passed_validation: bool = False
+    validation_details: dict[str, Any] = field(default_factory=dict)
+
     event_type: str = ""
     agents_involved: list[str] = field(default_factory=list)
 
@@ -324,6 +349,11 @@ class DetectionEvent:
         return {
             "event_id": self.event_id,
             "pattern_id": self.pattern_id,
+            "detection_method": self.detection_method,
+            "raw_score": self.raw_score,
+            "threshold": self.threshold,
+            "passed_validation": self.passed_validation,
+            "validation_details": self.validation_details,
             "event_type": self.event_type,
             "agents_involved": self.agents_involved,
             "timestamp": self.timestamp,

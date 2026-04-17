@@ -3,15 +3,17 @@ from __future__ import annotations
 from datetime import datetime
 from typing import TYPE_CHECKING
 
-from heretek_swarm.collective.emergent_detection_types import PatternProvenance
+from heretek_swarm.collective.emergent_detection_types import (
+    EmergenceLevel,
+    EmergentPatternClass,
+    PatternProvenance,
+)
 
 if TYPE_CHECKING:
     from .emergent_detection import (
         AgentBehaviorSnapshot,
         CollectiveBehavior,
-        EmergenceLevel,
         EmergentPattern,
-        EmergentPatternClass,
     )
 
 
