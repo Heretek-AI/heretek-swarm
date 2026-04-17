@@ -1,7 +1,7 @@
 {
   "repository_name": "heretek-swarm",
-  "timestamp": "2026-04-17T14:02:36.357532+00:00",
-  "overall_score": 0.9913271819870009,
+  "timestamp": "2026-04-17T14:29:46.376350+00:00",
+  "overall_score": 0.991054127748448,
   "check_summaries": [
     {
       "check_name": "function_size",
@@ -790,10 +790,10 @@
       "description": "Detects unused imports, variables, functions, and dead code via LSP diagnostics",
       "language": "Python",
       "check_type": "standard",
-      "total_entities_checked": 7,
-      "findings_count": 7,
-      "warning_count": 3,
-      "score": 0.6499999999999999,
+      "total_entities_checked": 12,
+      "findings_count": 12,
+      "warning_count": 2,
+      "score": 0.3999999999999999,
       "finding_groups": [
         {
           "severity": "info",
@@ -801,31 +801,73 @@
           "description": "Variables declared but never used",
           "entities": [
             {
-              "entity_name": "[unused_variable] \"get_db_pool\" is not accessed",
-              "file_path": "src/heretek_swarm/actors/base/core.py",
-              "line_start": 24,
-              "line_end": 24,
+              "entity_name": "[unused_variable] \"dataclass\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/sentinel.py",
+              "line_start": 33,
+              "line_end": 33,
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_variable] \"AgentActorMessageHandling\" is not accessed",
-              "file_path": "src/heretek_swarm/actors/base/core.py",
-              "line_start": 443,
-              "line_end": 443,
+              "entity_name": "[unused_variable] \"ContentCategory\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/sentinel.py",
+              "line_start": 51,
+              "line_end": 51,
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_variable] \"AgentActorStateManagement\" is not accessed",
-              "file_path": "src/heretek_swarm/actors/base/core.py",
-              "line_start": 446,
-              "line_end": 446,
+              "entity_name": "[unused_variable] \"response_id\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/sentinel.py",
+              "line_start": 293,
+              "line_end": 293,
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_variable] \"kwargs\" is not accessed",
-              "file_path": "src/heretek_swarm/actors/base/core.py",
-              "line_start": 176,
-              "line_end": 176,
+              "entity_name": "[unused_variable] \"content_type\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/sentinel.py",
+              "line_start": 2066,
+              "line_end": 2066,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"strict_mode\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/sentinel.py",
+              "line_start": 2067,
+              "line_end": 2067,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"scan_id\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/sentinel.py",
+              "line_start": 2199,
+              "line_end": 2199,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"time_range\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/sentinel.py",
+              "line_start": 2231,
+              "line_end": 2231,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"content\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/sentinel.py",
+              "line_start": 2271,
+              "line_end": 2271,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"policy\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/sentinel.py",
+              "line_start": 2272,
+              "line_end": 2272,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"context\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/sentinel.py",
+              "line_start": 2273,
+              "line_end": 2273,
               "metric_value": 0.0
             }
           ]
@@ -836,24 +878,17 @@
           "description": "Unused import statements that should be removed",
           "entities": [
             {
-              "entity_name": "[unused_import] Import \"get_db_pool\" is not accessed",
-              "file_path": "src/heretek_swarm/actors/base/core.py",
-              "line_start": 24,
-              "line_end": 24,
+              "entity_name": "[unused_import] Import \"dataclass\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/sentinel.py",
+              "line_start": 33,
+              "line_end": 33,
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_import] Import \"AgentActorMessageHandling\" is not accessed",
-              "file_path": "src/heretek_swarm/actors/base/core.py",
-              "line_start": 443,
-              "line_end": 443,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_import] Import \"AgentActorStateManagement\" is not accessed",
-              "file_path": "src/heretek_swarm/actors/base/core.py",
-              "line_start": 446,
-              "line_end": 446,
+              "entity_name": "[unused_import] Import \"ContentCategory\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/sentinel.py",
+              "line_start": 51,
+              "line_end": 51,
               "metric_value": 0.0
             }
           ]
@@ -1122,23 +1157,23 @@
       "language": "TypeScript",
       "check_type": "circular_dependencies",
       "cycles": [
-        "src.utils -> src.components.Agents -> src.api -> src.components.UI -> src.utils",
-        "src.utils -> src.components.Agents -> src.components.Settings -> src.api -> src.components.UI -> src.utils",
-        "src.utils -> src.components.Agents -> src.components.Settings -> src.components.UI -> src.utils",
-        "src.utils -> src.components.Agents -> src.components.UI -> src.utils",
-        "src.utils -> src.components.UI -> src.utils",
-        "src.api -> src.components.Agents -> src.api",
-        "src.api -> src.components.Agents -> src.components.Settings -> src.api",
-        "src.api -> src.components.Agents -> src.components.UI -> src.components.Settings -> src.api",
-        "src.api -> src.components.UI -> src.components.Agents -> src.api",
-        "src.api -> src.components.UI -> src.components.Agents -> src.components.Settings -> src.api",
-        "src.api -> src.components.UI -> src.components.Settings -> src.api",
-        "src.api -> src.components.UI -> src.components.Settings -> src.components.Agents -> src.api",
-        "src.components.UI -> src.components.Agents -> src.components.Settings -> src.components.UI",
-        "src.components.UI -> src.components.Agents -> src.components.UI",
-        "src.components.UI -> src.components.Settings -> src.components.Agents -> src.components.UI",
-        "src.components.UI -> src.components.Settings -> src.components.UI",
+        "src.components.Agents -> src.api -> src.components.Agents",
+        "src.components.Agents -> src.api -> src.components.UI -> src.components.Agents",
+        "src.components.Agents -> src.api -> src.components.UI -> src.components.Settings -> src.components.Agents",
+        "src.components.Agents -> src.api -> src.components.UI -> src.utils -> src.components.Agents",
+        "src.components.Agents -> src.components.Settings -> src.api -> src.components.Agents",
+        "src.components.Agents -> src.components.Settings -> src.api -> src.components.UI -> src.components.Agents",
+        "src.components.Agents -> src.components.Settings -> src.api -> src.components.UI -> src.utils -> src.components.Agents",
         "src.components.Agents -> src.components.Settings -> src.components.Agents",
+        "src.components.Agents -> src.components.Settings -> src.components.UI -> src.components.Agents",
+        "src.components.Agents -> src.components.Settings -> src.components.UI -> src.utils -> src.components.Agents",
+        "src.components.Agents -> src.components.UI -> src.components.Agents",
+        "src.components.Agents -> src.components.UI -> src.components.Settings -> src.api -> src.components.Agents",
+        "src.components.Agents -> src.components.UI -> src.components.Settings -> src.components.Agents",
+        "src.components.Agents -> src.components.UI -> src.utils -> src.components.Agents",
+        "src.components.UI -> src.components.Settings -> src.api -> src.components.UI",
+        "src.components.UI -> src.components.Settings -> src.components.UI",
+        "src.components.UI -> src.utils -> src.components.UI",
         "dashboard.frontend.src.utils -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils",
         "dashboard.frontend.src.utils -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils",
         "dashboard.frontend.src.utils -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils",
@@ -1155,7 +1190,7 @@
         "dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings",
         "dashboard.frontend.src.api -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api",
         "dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api",
-        "dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.UI"
+        "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents"
       ],
       "packages_checked": 47,
       "packages_in_cycles": 10
@@ -1196,16 +1231,10 @@
   ],
   "file_summaries": [
     {
-      "file_path": "src/heretek_swarm/actors/base/core.py",
-      "total_findings": 7,
-      "warning_findings": 3,
-      "composite_risk_score": 65.0
-    },
-    {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
-      "total_findings": 3,
-      "warning_findings": 3,
-      "composite_risk_score": 45.0
+      "total_findings": 15,
+      "warning_findings": 5,
+      "composite_risk_score": 75.0
     },
     {
       "file_path": "src/heretek_swarm/consciousness/fep_active_inference.py",
@@ -1311,6 +1340,12 @@
     },
     {
       "file_path": "src/heretek_swarm/actors/coordinator.py",
+      "total_findings": 2,
+      "warning_findings": 2,
+      "composite_risk_score": 30.0
+    },
+    {
+      "file_path": "src/heretek_swarm/consensus/immune.py",
       "total_findings": 2,
       "warning_findings": 2,
       "composite_risk_score": 30.0

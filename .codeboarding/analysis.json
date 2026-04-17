@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-17T14:02:34.988355+00:00",
+    "generated_at": "2026-04-17T14:28:14.654895+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -7091,448 +7091,448 @@
       ]
     },
     "src/heretek_swarm/actors/sentinel.py": {
-      "file_status": "modified",
+      "file_status": "deleted",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SafetyLevel",
           "start_line": 71,
           "end_line": 78,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.ViolationType",
           "start_line": 81,
           "end_line": 100,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.ContentCategory",
           "start_line": 103,
           "end_line": 112,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SafetyViolation",
           "start_line": 116,
           "end_line": 128,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SafetyReport",
           "start_line": 132,
           "end_line": 142,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.AnomalyAlert",
           "start_line": 146,
           "end_line": 158,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent",
           "start_line": 160,
           "end_line": 2358,
           "node_type": "CLASS",
-          "status": "modified"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent.__init__",
           "start_line": 190,
           "end_line": 364,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent.record_anomaly_response_outcome",
           "start_line": 370,
           "end_line": 461,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent._request_baseline_update",
           "start_line": 463,
           "end_line": 507,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent.report_response_outcome",
           "start_line": 509,
           "end_line": 552,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent.check_pattern_immunity",
           "start_line": 554,
           "end_line": 569,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent.get_novel_patterns_for_review",
           "start_line": 571,
           "end_line": 597,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent.submit_human_review",
           "start_line": 599,
           "end_line": 638,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent.get_immune_system_statistics",
           "start_line": 640,
           "end_line": 647,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent.get_immune_memory_snapshot",
           "start_line": 649,
           "end_line": 656,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent.get_behavioral_baseline_status",
           "start_line": 658,
           "end_line": 671,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent.submit_baseline_vote",
           "start_line": 673,
           "end_line": 690,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent.monitor_agent_behavior",
           "start_line": 696,
           "end_line": 733,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent.check_agent_rate",
           "start_line": 735,
           "end_line": 762,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent.check_agent_response_time",
           "start_line": 764,
           "end_line": 788,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent.check_agent_validation",
           "start_line": 790,
           "end_line": 817,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent.report_false_positive",
           "start_line": 819,
           "end_line": 850,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent.set_sentinel_prime_client",
           "start_line": 852,
           "end_line": 866,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent.get_anomaly_statistics",
           "start_line": 853,
           "end_line": 872,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent._process_anomaly",
           "start_line": 889,
           "end_line": 1016,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent._is_response_rate_limited",
           "start_line": 1018,
           "end_line": 1039,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent._notify_human",
           "start_line": 1041,
           "end_line": 1067,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent._escalate_to_sentinel_prime",
           "start_line": 1072,
           "end_line": 1112,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent._update_agent_metrics",
           "start_line": 1082,
           "end_line": 1105,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent._sentinel_self_monitoring",
           "start_line": 1139,
           "end_line": 1183,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent._generate_alert_id",
           "start_line": 1151,
           "end_line": 1154,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent._generate_anomaly_id",
           "start_line": 1156,
           "end_line": 1159,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent.process_message",
           "start_line": 1165,
           "end_line": 1183,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent._register_handlers",
           "start_line": 1185,
           "end_line": 1212,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_report_response_outcome",
           "start_line": 1252,
           "end_line": 1284,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_check_pattern_immunity",
           "start_line": 1286,
           "end_line": 1313,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_get_novel_patterns",
           "start_line": 1315,
           "end_line": 1338,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_submit_human_review",
           "start_line": 1340,
           "end_line": 1378,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_get_immune_statistics",
           "start_line": 1380,
           "end_line": 1397,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_get_baseline_status",
           "start_line": 1399,
           "end_line": 1416,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_submit_baseline_vote",
           "start_line": 1418,
           "end_line": 1449,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_monitor_agent",
           "start_line": 1455,
           "end_line": 1497,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_check_agent_rate",
           "start_line": 1499,
           "end_line": 1539,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_check_agent_response_time",
           "start_line": 1541,
           "end_line": 1579,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_check_agent_validation",
           "start_line": 1581,
           "end_line": 1621,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_report_false_positive",
           "start_line": 1623,
           "end_line": 1650,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_get_anomaly_statistics",
           "start_line": 1652,
           "end_line": 1669,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_validate_input",
           "start_line": 1660,
           "end_line": 1720,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_configure_sentinel_prime",
           "start_line": 1671,
           "end_line": 1694,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_validate_output",
           "start_line": 1722,
           "end_line": 1780,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_scan_content",
           "start_line": 1782,
           "end_line": 1847,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_check_policy",
           "start_line": 1849,
           "end_line": 1899,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_get_safety_report",
           "start_line": 1901,
           "end_line": 1949,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_get_violation_details",
           "start_line": 1951,
           "end_line": 2002,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_update_guardrails",
           "start_line": 2004,
           "end_line": 2067,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_get_statistics",
           "start_line": 2069,
           "end_line": 2101,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent._scan_content",
           "start_line": 2103,
           "end_line": 2197,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent._check_injection_patterns",
           "start_line": 2199,
           "end_line": 2215,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent._check_pii_patterns",
           "start_line": 2217,
           "end_line": 2233,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent._record_violation",
           "start_line": 2235,
           "end_line": 2267,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent._generate_safety_report",
           "start_line": 2269,
           "end_line": 2307,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent._check_policy_rule",
           "start_line": 2309,
           "end_line": 2318,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         }
       ]
     },
@@ -63370,7 +63370,7 @@
       "start_line": 71,
       "end_line": 78,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.ViolationType": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
@@ -63378,7 +63378,7 @@
       "start_line": 81,
       "end_line": 100,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.ContentCategory": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
@@ -63386,7 +63386,7 @@
       "start_line": 103,
       "end_line": 112,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SafetyViolation": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
@@ -63394,7 +63394,7 @@
       "start_line": 116,
       "end_line": 128,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SafetyReport": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
@@ -63402,7 +63402,7 @@
       "start_line": 132,
       "end_line": 142,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.AnomalyAlert": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
@@ -63410,7 +63410,7 @@
       "start_line": 146,
       "end_line": 158,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
@@ -63418,7 +63418,7 @@
       "start_line": 160,
       "end_line": 2358,
       "type": "CLASS",
-      "status": "modified"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent.__init__": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
@@ -63426,7 +63426,7 @@
       "start_line": 190,
       "end_line": 364,
       "type": "METHOD",
-      "status": "modified"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent.record_anomaly_response_outcome": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
@@ -63434,7 +63434,7 @@
       "start_line": 370,
       "end_line": 461,
       "type": "METHOD",
-      "status": "modified"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent._request_baseline_update": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
@@ -63442,7 +63442,7 @@
       "start_line": 463,
       "end_line": 507,
       "type": "METHOD",
-      "status": "modified"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent.report_response_outcome": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
@@ -63450,7 +63450,7 @@
       "start_line": 509,
       "end_line": 552,
       "type": "METHOD",
-      "status": "modified"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent.check_pattern_immunity": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
@@ -63458,7 +63458,7 @@
       "start_line": 554,
       "end_line": 569,
       "type": "METHOD",
-      "status": "modified"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent.get_novel_patterns_for_review": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
@@ -63466,7 +63466,7 @@
       "start_line": 571,
       "end_line": 597,
       "type": "METHOD",
-      "status": "modified"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent.submit_human_review": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
@@ -63474,7 +63474,7 @@
       "start_line": 599,
       "end_line": 638,
       "type": "METHOD",
-      "status": "modified"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent.get_immune_system_statistics": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
@@ -63482,7 +63482,7 @@
       "start_line": 640,
       "end_line": 647,
       "type": "METHOD",
-      "status": "modified"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent.get_immune_memory_snapshot": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
@@ -63490,7 +63490,7 @@
       "start_line": 649,
       "end_line": 656,
       "type": "METHOD",
-      "status": "modified"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent.get_behavioral_baseline_status": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
@@ -63498,7 +63498,7 @@
       "start_line": 658,
       "end_line": 671,
       "type": "METHOD",
-      "status": "modified"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent.submit_baseline_vote": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
@@ -63506,7 +63506,7 @@
       "start_line": 673,
       "end_line": 690,
       "type": "METHOD",
-      "status": "modified"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent.monitor_agent_behavior": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
@@ -63514,7 +63514,7 @@
       "start_line": 696,
       "end_line": 733,
       "type": "METHOD",
-      "status": "modified"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent.check_agent_rate": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
@@ -63522,7 +63522,7 @@
       "start_line": 735,
       "end_line": 762,
       "type": "METHOD",
-      "status": "modified"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent.check_agent_response_time": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
@@ -63530,7 +63530,7 @@
       "start_line": 764,
       "end_line": 788,
       "type": "METHOD",
-      "status": "modified"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent.check_agent_validation": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
@@ -63538,7 +63538,7 @@
       "start_line": 790,
       "end_line": 817,
       "type": "METHOD",
-      "status": "modified"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent.report_false_positive": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
@@ -63546,7 +63546,7 @@
       "start_line": 819,
       "end_line": 850,
       "type": "METHOD",
-      "status": "modified"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent.set_sentinel_prime_client": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
@@ -63554,7 +63554,7 @@
       "start_line": 852,
       "end_line": 866,
       "type": "METHOD",
-      "status": "modified"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent.get_anomaly_statistics": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
@@ -63562,7 +63562,7 @@
       "start_line": 853,
       "end_line": 872,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent._process_anomaly": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
@@ -63570,7 +63570,7 @@
       "start_line": 889,
       "end_line": 1016,
       "type": "METHOD",
-      "status": "modified"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent._is_response_rate_limited": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
@@ -63578,7 +63578,7 @@
       "start_line": 1018,
       "end_line": 1039,
       "type": "METHOD",
-      "status": "modified"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent._notify_human": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
@@ -63586,7 +63586,7 @@
       "start_line": 1041,
       "end_line": 1067,
       "type": "METHOD",
-      "status": "modified"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent._escalate_to_sentinel_prime": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
@@ -63594,7 +63594,7 @@
       "start_line": 1072,
       "end_line": 1112,
       "type": "METHOD",
-      "status": "modified"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent._update_agent_metrics": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
@@ -63602,7 +63602,7 @@
       "start_line": 1082,
       "end_line": 1105,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent._sentinel_self_monitoring": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
@@ -63610,7 +63610,7 @@
       "start_line": 1139,
       "end_line": 1183,
       "type": "METHOD",
-      "status": "modified"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent._generate_alert_id": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
@@ -63618,7 +63618,7 @@
       "start_line": 1151,
       "end_line": 1154,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent._generate_anomaly_id": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
@@ -63626,7 +63626,7 @@
       "start_line": 1156,
       "end_line": 1159,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent.process_message": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
@@ -63634,7 +63634,7 @@
       "start_line": 1165,
       "end_line": 1183,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent._register_handlers": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
@@ -63642,7 +63642,7 @@
       "start_line": 1185,
       "end_line": 1212,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent._handle_report_response_outcome": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
@@ -63650,7 +63650,7 @@
       "start_line": 1252,
       "end_line": 1284,
       "type": "METHOD",
-      "status": "modified"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent._handle_check_pattern_immunity": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
@@ -63658,7 +63658,7 @@
       "start_line": 1286,
       "end_line": 1313,
       "type": "METHOD",
-      "status": "modified"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent._handle_get_novel_patterns": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
@@ -63666,7 +63666,7 @@
       "start_line": 1315,
       "end_line": 1338,
       "type": "METHOD",
-      "status": "modified"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent._handle_submit_human_review": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
@@ -63674,7 +63674,7 @@
       "start_line": 1340,
       "end_line": 1378,
       "type": "METHOD",
-      "status": "modified"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent._handle_get_immune_statistics": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
@@ -63682,7 +63682,7 @@
       "start_line": 1380,
       "end_line": 1397,
       "type": "METHOD",
-      "status": "modified"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent._handle_get_baseline_status": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
@@ -63690,7 +63690,7 @@
       "start_line": 1399,
       "end_line": 1416,
       "type": "METHOD",
-      "status": "modified"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent._handle_submit_baseline_vote": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
@@ -63698,7 +63698,7 @@
       "start_line": 1418,
       "end_line": 1449,
       "type": "METHOD",
-      "status": "modified"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent._handle_monitor_agent": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
@@ -63706,7 +63706,7 @@
       "start_line": 1455,
       "end_line": 1497,
       "type": "METHOD",
-      "status": "modified"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent._handle_check_agent_rate": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
@@ -63714,7 +63714,7 @@
       "start_line": 1499,
       "end_line": 1539,
       "type": "METHOD",
-      "status": "modified"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent._handle_check_agent_response_time": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
@@ -63722,7 +63722,7 @@
       "start_line": 1541,
       "end_line": 1579,
       "type": "METHOD",
-      "status": "modified"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent._handle_check_agent_validation": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
@@ -63730,7 +63730,7 @@
       "start_line": 1581,
       "end_line": 1621,
       "type": "METHOD",
-      "status": "modified"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent._handle_report_false_positive": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
@@ -63738,7 +63738,7 @@
       "start_line": 1623,
       "end_line": 1650,
       "type": "METHOD",
-      "status": "modified"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent._handle_get_anomaly_statistics": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
@@ -63746,7 +63746,7 @@
       "start_line": 1652,
       "end_line": 1669,
       "type": "METHOD",
-      "status": "modified"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent._handle_validate_input": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
@@ -63754,7 +63754,7 @@
       "start_line": 1660,
       "end_line": 1720,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent._handle_configure_sentinel_prime": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
@@ -63762,7 +63762,7 @@
       "start_line": 1671,
       "end_line": 1694,
       "type": "METHOD",
-      "status": "modified"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent._handle_validate_output": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
@@ -63770,7 +63770,7 @@
       "start_line": 1722,
       "end_line": 1780,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent._handle_scan_content": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
@@ -63778,7 +63778,7 @@
       "start_line": 1782,
       "end_line": 1847,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent._handle_check_policy": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
@@ -63786,7 +63786,7 @@
       "start_line": 1849,
       "end_line": 1899,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent._handle_get_safety_report": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
@@ -63794,7 +63794,7 @@
       "start_line": 1901,
       "end_line": 1949,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent._handle_get_violation_details": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
@@ -63802,7 +63802,7 @@
       "start_line": 1951,
       "end_line": 2002,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent._handle_update_guardrails": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
@@ -63810,7 +63810,7 @@
       "start_line": 2004,
       "end_line": 2067,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent._handle_get_statistics": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
@@ -63818,7 +63818,7 @@
       "start_line": 2069,
       "end_line": 2101,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent._scan_content": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
@@ -63826,7 +63826,7 @@
       "start_line": 2103,
       "end_line": 2197,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent._check_injection_patterns": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
@@ -63834,7 +63834,7 @@
       "start_line": 2199,
       "end_line": 2215,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent._check_pii_patterns": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
@@ -63842,7 +63842,7 @@
       "start_line": 2217,
       "end_line": 2233,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent._record_violation": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
@@ -63850,7 +63850,7 @@
       "start_line": 2235,
       "end_line": 2267,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent._generate_safety_report": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
@@ -63858,7 +63858,7 @@
       "start_line": 2269,
       "end_line": 2307,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent._check_policy_rule": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
@@ -63866,7 +63866,7 @@
       "start_line": 2309,
       "end_line": 2318,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/sentinel_prime.py|src.heretek_swarm.actors.sentinel_prime.ThreatLevel": {
       "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
@@ -118390,72 +118390,8 @@
         },
         {
           "file_path": "src/heretek_swarm/actors/sentinel.py",
-          "file_status": "modified",
-          "methods": [
-            "src.heretek_swarm.actors.sentinel.SafetyLevel",
-            "src.heretek_swarm.actors.sentinel.ViolationType",
-            "src.heretek_swarm.actors.sentinel.ContentCategory",
-            "src.heretek_swarm.actors.sentinel.SafetyViolation",
-            "src.heretek_swarm.actors.sentinel.SafetyReport",
-            "src.heretek_swarm.actors.sentinel.AnomalyAlert",
-            "src.heretek_swarm.actors.sentinel.SentinelAgent",
-            "src.heretek_swarm.actors.sentinel.SentinelAgent.__init__",
-            "src.heretek_swarm.actors.sentinel.SentinelAgent.record_anomaly_response_outcome",
-            "src.heretek_swarm.actors.sentinel.SentinelAgent._request_baseline_update",
-            "src.heretek_swarm.actors.sentinel.SentinelAgent.report_response_outcome",
-            "src.heretek_swarm.actors.sentinel.SentinelAgent.check_pattern_immunity",
-            "src.heretek_swarm.actors.sentinel.SentinelAgent.get_novel_patterns_for_review",
-            "src.heretek_swarm.actors.sentinel.SentinelAgent.submit_human_review",
-            "src.heretek_swarm.actors.sentinel.SentinelAgent.get_immune_system_statistics",
-            "src.heretek_swarm.actors.sentinel.SentinelAgent.get_immune_memory_snapshot",
-            "src.heretek_swarm.actors.sentinel.SentinelAgent.get_behavioral_baseline_status",
-            "src.heretek_swarm.actors.sentinel.SentinelAgent.submit_baseline_vote",
-            "src.heretek_swarm.actors.sentinel.SentinelAgent.monitor_agent_behavior",
-            "src.heretek_swarm.actors.sentinel.SentinelAgent.check_agent_rate",
-            "src.heretek_swarm.actors.sentinel.SentinelAgent.check_agent_response_time",
-            "src.heretek_swarm.actors.sentinel.SentinelAgent.check_agent_validation",
-            "src.heretek_swarm.actors.sentinel.SentinelAgent.report_false_positive",
-            "src.heretek_swarm.actors.sentinel.SentinelAgent.set_sentinel_prime_client",
-            "src.heretek_swarm.actors.sentinel.SentinelAgent.get_anomaly_statistics",
-            "src.heretek_swarm.actors.sentinel.SentinelAgent._process_anomaly",
-            "src.heretek_swarm.actors.sentinel.SentinelAgent._is_response_rate_limited",
-            "src.heretek_swarm.actors.sentinel.SentinelAgent._notify_human",
-            "src.heretek_swarm.actors.sentinel.SentinelAgent._escalate_to_sentinel_prime",
-            "src.heretek_swarm.actors.sentinel.SentinelAgent._update_agent_metrics",
-            "src.heretek_swarm.actors.sentinel.SentinelAgent._sentinel_self_monitoring",
-            "src.heretek_swarm.actors.sentinel.SentinelAgent._generate_alert_id",
-            "src.heretek_swarm.actors.sentinel.SentinelAgent._generate_anomaly_id",
-            "src.heretek_swarm.actors.sentinel.SentinelAgent.process_message",
-            "src.heretek_swarm.actors.sentinel.SentinelAgent._register_handlers",
-            "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_report_response_outcome",
-            "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_check_pattern_immunity",
-            "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_get_novel_patterns",
-            "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_submit_human_review",
-            "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_get_immune_statistics",
-            "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_get_baseline_status",
-            "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_submit_baseline_vote",
-            "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_monitor_agent",
-            "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_check_agent_rate",
-            "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_check_agent_response_time",
-            "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_check_agent_validation",
-            "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_report_false_positive",
-            "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_get_anomaly_statistics",
-            "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_validate_input",
-            "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_configure_sentinel_prime",
-            "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_validate_output",
-            "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_scan_content",
-            "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_check_policy",
-            "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_get_safety_report",
-            "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_get_violation_details",
-            "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_update_guardrails",
-            "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_get_statistics",
-            "src.heretek_swarm.actors.sentinel.SentinelAgent._scan_content",
-            "src.heretek_swarm.actors.sentinel.SentinelAgent._check_injection_patterns",
-            "src.heretek_swarm.actors.sentinel.SentinelAgent._check_pii_patterns",
-            "src.heretek_swarm.actors.sentinel.SentinelAgent._record_violation",
-            "src.heretek_swarm.actors.sentinel.SentinelAgent._generate_safety_report",
-            "src.heretek_swarm.actors.sentinel.SentinelAgent._check_policy_rule"
-          ]
+          "file_status": "deleted",
+          "methods": []
         },
         {
           "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
@@ -125098,72 +125034,8 @@
             },
             {
               "file_path": "src/heretek_swarm/actors/sentinel.py",
-              "file_status": "modified",
-              "methods": [
-                "src.heretek_swarm.actors.sentinel.SafetyLevel",
-                "src.heretek_swarm.actors.sentinel.ViolationType",
-                "src.heretek_swarm.actors.sentinel.ContentCategory",
-                "src.heretek_swarm.actors.sentinel.SafetyViolation",
-                "src.heretek_swarm.actors.sentinel.SafetyReport",
-                "src.heretek_swarm.actors.sentinel.AnomalyAlert",
-                "src.heretek_swarm.actors.sentinel.SentinelAgent",
-                "src.heretek_swarm.actors.sentinel.SentinelAgent.__init__",
-                "src.heretek_swarm.actors.sentinel.SentinelAgent.record_anomaly_response_outcome",
-                "src.heretek_swarm.actors.sentinel.SentinelAgent._request_baseline_update",
-                "src.heretek_swarm.actors.sentinel.SentinelAgent.report_response_outcome",
-                "src.heretek_swarm.actors.sentinel.SentinelAgent.check_pattern_immunity",
-                "src.heretek_swarm.actors.sentinel.SentinelAgent.get_novel_patterns_for_review",
-                "src.heretek_swarm.actors.sentinel.SentinelAgent.submit_human_review",
-                "src.heretek_swarm.actors.sentinel.SentinelAgent.get_immune_system_statistics",
-                "src.heretek_swarm.actors.sentinel.SentinelAgent.get_immune_memory_snapshot",
-                "src.heretek_swarm.actors.sentinel.SentinelAgent.get_behavioral_baseline_status",
-                "src.heretek_swarm.actors.sentinel.SentinelAgent.submit_baseline_vote",
-                "src.heretek_swarm.actors.sentinel.SentinelAgent.monitor_agent_behavior",
-                "src.heretek_swarm.actors.sentinel.SentinelAgent.check_agent_rate",
-                "src.heretek_swarm.actors.sentinel.SentinelAgent.check_agent_response_time",
-                "src.heretek_swarm.actors.sentinel.SentinelAgent.check_agent_validation",
-                "src.heretek_swarm.actors.sentinel.SentinelAgent.report_false_positive",
-                "src.heretek_swarm.actors.sentinel.SentinelAgent.set_sentinel_prime_client",
-                "src.heretek_swarm.actors.sentinel.SentinelAgent.get_anomaly_statistics",
-                "src.heretek_swarm.actors.sentinel.SentinelAgent._process_anomaly",
-                "src.heretek_swarm.actors.sentinel.SentinelAgent._is_response_rate_limited",
-                "src.heretek_swarm.actors.sentinel.SentinelAgent._notify_human",
-                "src.heretek_swarm.actors.sentinel.SentinelAgent._escalate_to_sentinel_prime",
-                "src.heretek_swarm.actors.sentinel.SentinelAgent._update_agent_metrics",
-                "src.heretek_swarm.actors.sentinel.SentinelAgent._sentinel_self_monitoring",
-                "src.heretek_swarm.actors.sentinel.SentinelAgent._generate_alert_id",
-                "src.heretek_swarm.actors.sentinel.SentinelAgent._generate_anomaly_id",
-                "src.heretek_swarm.actors.sentinel.SentinelAgent.process_message",
-                "src.heretek_swarm.actors.sentinel.SentinelAgent._register_handlers",
-                "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_report_response_outcome",
-                "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_check_pattern_immunity",
-                "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_get_novel_patterns",
-                "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_submit_human_review",
-                "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_get_immune_statistics",
-                "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_get_baseline_status",
-                "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_submit_baseline_vote",
-                "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_monitor_agent",
-                "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_check_agent_rate",
-                "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_check_agent_response_time",
-                "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_check_agent_validation",
-                "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_report_false_positive",
-                "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_get_anomaly_statistics",
-                "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_validate_input",
-                "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_configure_sentinel_prime",
-                "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_validate_output",
-                "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_scan_content",
-                "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_check_policy",
-                "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_get_safety_report",
-                "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_get_violation_details",
-                "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_update_guardrails",
-                "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_get_statistics",
-                "src.heretek_swarm.actors.sentinel.SentinelAgent._scan_content",
-                "src.heretek_swarm.actors.sentinel.SentinelAgent._check_injection_patterns",
-                "src.heretek_swarm.actors.sentinel.SentinelAgent._check_pii_patterns",
-                "src.heretek_swarm.actors.sentinel.SentinelAgent._record_violation",
-                "src.heretek_swarm.actors.sentinel.SentinelAgent._generate_safety_report",
-                "src.heretek_swarm.actors.sentinel.SentinelAgent._check_policy_rule"
-              ]
+              "file_status": "deleted",
+              "methods": []
             },
             {
               "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
@@ -129237,72 +129109,8 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/actors/sentinel.py",
-                  "file_status": "modified",
-                  "methods": [
-                    "src.heretek_swarm.actors.sentinel.SafetyLevel",
-                    "src.heretek_swarm.actors.sentinel.ViolationType",
-                    "src.heretek_swarm.actors.sentinel.ContentCategory",
-                    "src.heretek_swarm.actors.sentinel.SafetyViolation",
-                    "src.heretek_swarm.actors.sentinel.SafetyReport",
-                    "src.heretek_swarm.actors.sentinel.AnomalyAlert",
-                    "src.heretek_swarm.actors.sentinel.SentinelAgent",
-                    "src.heretek_swarm.actors.sentinel.SentinelAgent.__init__",
-                    "src.heretek_swarm.actors.sentinel.SentinelAgent.record_anomaly_response_outcome",
-                    "src.heretek_swarm.actors.sentinel.SentinelAgent._request_baseline_update",
-                    "src.heretek_swarm.actors.sentinel.SentinelAgent.report_response_outcome",
-                    "src.heretek_swarm.actors.sentinel.SentinelAgent.check_pattern_immunity",
-                    "src.heretek_swarm.actors.sentinel.SentinelAgent.get_novel_patterns_for_review",
-                    "src.heretek_swarm.actors.sentinel.SentinelAgent.submit_human_review",
-                    "src.heretek_swarm.actors.sentinel.SentinelAgent.get_immune_system_statistics",
-                    "src.heretek_swarm.actors.sentinel.SentinelAgent.get_immune_memory_snapshot",
-                    "src.heretek_swarm.actors.sentinel.SentinelAgent.get_behavioral_baseline_status",
-                    "src.heretek_swarm.actors.sentinel.SentinelAgent.submit_baseline_vote",
-                    "src.heretek_swarm.actors.sentinel.SentinelAgent.monitor_agent_behavior",
-                    "src.heretek_swarm.actors.sentinel.SentinelAgent.check_agent_rate",
-                    "src.heretek_swarm.actors.sentinel.SentinelAgent.check_agent_response_time",
-                    "src.heretek_swarm.actors.sentinel.SentinelAgent.check_agent_validation",
-                    "src.heretek_swarm.actors.sentinel.SentinelAgent.report_false_positive",
-                    "src.heretek_swarm.actors.sentinel.SentinelAgent.set_sentinel_prime_client",
-                    "src.heretek_swarm.actors.sentinel.SentinelAgent.get_anomaly_statistics",
-                    "src.heretek_swarm.actors.sentinel.SentinelAgent._process_anomaly",
-                    "src.heretek_swarm.actors.sentinel.SentinelAgent._is_response_rate_limited",
-                    "src.heretek_swarm.actors.sentinel.SentinelAgent._notify_human",
-                    "src.heretek_swarm.actors.sentinel.SentinelAgent._escalate_to_sentinel_prime",
-                    "src.heretek_swarm.actors.sentinel.SentinelAgent._update_agent_metrics",
-                    "src.heretek_swarm.actors.sentinel.SentinelAgent._sentinel_self_monitoring",
-                    "src.heretek_swarm.actors.sentinel.SentinelAgent._generate_alert_id",
-                    "src.heretek_swarm.actors.sentinel.SentinelAgent._generate_anomaly_id",
-                    "src.heretek_swarm.actors.sentinel.SentinelAgent.process_message",
-                    "src.heretek_swarm.actors.sentinel.SentinelAgent._register_handlers",
-                    "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_report_response_outcome",
-                    "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_check_pattern_immunity",
-                    "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_get_novel_patterns",
-                    "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_submit_human_review",
-                    "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_get_immune_statistics",
-                    "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_get_baseline_status",
-                    "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_submit_baseline_vote",
-                    "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_monitor_agent",
-                    "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_check_agent_rate",
-                    "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_check_agent_response_time",
-                    "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_check_agent_validation",
-                    "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_report_false_positive",
-                    "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_get_anomaly_statistics",
-                    "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_validate_input",
-                    "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_configure_sentinel_prime",
-                    "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_validate_output",
-                    "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_scan_content",
-                    "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_check_policy",
-                    "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_get_safety_report",
-                    "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_get_violation_details",
-                    "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_update_guardrails",
-                    "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_get_statistics",
-                    "src.heretek_swarm.actors.sentinel.SentinelAgent._scan_content",
-                    "src.heretek_swarm.actors.sentinel.SentinelAgent._check_injection_patterns",
-                    "src.heretek_swarm.actors.sentinel.SentinelAgent._check_pii_patterns",
-                    "src.heretek_swarm.actors.sentinel.SentinelAgent._record_violation",
-                    "src.heretek_swarm.actors.sentinel.SentinelAgent._generate_safety_report",
-                    "src.heretek_swarm.actors.sentinel.SentinelAgent._check_policy_rule"
-                  ]
+                  "file_status": "deleted",
+                  "methods": []
                 },
                 {
                   "file_path": "src/heretek_swarm/api/alerts.py",
@@ -131776,72 +131584,8 @@
                     },
                     {
                       "file_path": "src/heretek_swarm/actors/sentinel.py",
-                      "file_status": "modified",
-                      "methods": [
-                        "src.heretek_swarm.actors.sentinel.SafetyLevel",
-                        "src.heretek_swarm.actors.sentinel.ViolationType",
-                        "src.heretek_swarm.actors.sentinel.ContentCategory",
-                        "src.heretek_swarm.actors.sentinel.SafetyViolation",
-                        "src.heretek_swarm.actors.sentinel.SafetyReport",
-                        "src.heretek_swarm.actors.sentinel.AnomalyAlert",
-                        "src.heretek_swarm.actors.sentinel.SentinelAgent",
-                        "src.heretek_swarm.actors.sentinel.SentinelAgent.__init__",
-                        "src.heretek_swarm.actors.sentinel.SentinelAgent.record_anomaly_response_outcome",
-                        "src.heretek_swarm.actors.sentinel.SentinelAgent._request_baseline_update",
-                        "src.heretek_swarm.actors.sentinel.SentinelAgent.report_response_outcome",
-                        "src.heretek_swarm.actors.sentinel.SentinelAgent.check_pattern_immunity",
-                        "src.heretek_swarm.actors.sentinel.SentinelAgent.get_novel_patterns_for_review",
-                        "src.heretek_swarm.actors.sentinel.SentinelAgent.submit_human_review",
-                        "src.heretek_swarm.actors.sentinel.SentinelAgent.get_immune_system_statistics",
-                        "src.heretek_swarm.actors.sentinel.SentinelAgent.get_immune_memory_snapshot",
-                        "src.heretek_swarm.actors.sentinel.SentinelAgent.get_behavioral_baseline_status",
-                        "src.heretek_swarm.actors.sentinel.SentinelAgent.submit_baseline_vote",
-                        "src.heretek_swarm.actors.sentinel.SentinelAgent.monitor_agent_behavior",
-                        "src.heretek_swarm.actors.sentinel.SentinelAgent.check_agent_rate",
-                        "src.heretek_swarm.actors.sentinel.SentinelAgent.check_agent_response_time",
-                        "src.heretek_swarm.actors.sentinel.SentinelAgent.check_agent_validation",
-                        "src.heretek_swarm.actors.sentinel.SentinelAgent.report_false_positive",
-                        "src.heretek_swarm.actors.sentinel.SentinelAgent.set_sentinel_prime_client",
-                        "src.heretek_swarm.actors.sentinel.SentinelAgent.get_anomaly_statistics",
-                        "src.heretek_swarm.actors.sentinel.SentinelAgent._process_anomaly",
-                        "src.heretek_swarm.actors.sentinel.SentinelAgent._is_response_rate_limited",
-                        "src.heretek_swarm.actors.sentinel.SentinelAgent._notify_human",
-                        "src.heretek_swarm.actors.sentinel.SentinelAgent._escalate_to_sentinel_prime",
-                        "src.heretek_swarm.actors.sentinel.SentinelAgent._update_agent_metrics",
-                        "src.heretek_swarm.actors.sentinel.SentinelAgent._sentinel_self_monitoring",
-                        "src.heretek_swarm.actors.sentinel.SentinelAgent._generate_alert_id",
-                        "src.heretek_swarm.actors.sentinel.SentinelAgent._generate_anomaly_id",
-                        "src.heretek_swarm.actors.sentinel.SentinelAgent.process_message",
-                        "src.heretek_swarm.actors.sentinel.SentinelAgent._register_handlers",
-                        "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_report_response_outcome",
-                        "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_check_pattern_immunity",
-                        "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_get_novel_patterns",
-                        "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_submit_human_review",
-                        "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_get_immune_statistics",
-                        "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_get_baseline_status",
-                        "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_submit_baseline_vote",
-                        "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_monitor_agent",
-                        "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_check_agent_rate",
-                        "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_check_agent_response_time",
-                        "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_check_agent_validation",
-                        "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_report_false_positive",
-                        "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_get_anomaly_statistics",
-                        "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_validate_input",
-                        "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_configure_sentinel_prime",
-                        "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_validate_output",
-                        "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_scan_content",
-                        "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_check_policy",
-                        "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_get_safety_report",
-                        "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_get_violation_details",
-                        "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_update_guardrails",
-                        "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_get_statistics",
-                        "src.heretek_swarm.actors.sentinel.SentinelAgent._scan_content",
-                        "src.heretek_swarm.actors.sentinel.SentinelAgent._check_injection_patterns",
-                        "src.heretek_swarm.actors.sentinel.SentinelAgent._check_pii_patterns",
-                        "src.heretek_swarm.actors.sentinel.SentinelAgent._record_violation",
-                        "src.heretek_swarm.actors.sentinel.SentinelAgent._generate_safety_report",
-                        "src.heretek_swarm.actors.sentinel.SentinelAgent._check_policy_rule"
-                      ]
+                      "file_status": "deleted",
+                      "methods": []
                     },
                     {
                       "file_path": "src/heretek_swarm/consensus/immune.py",
@@ -132029,44 +131773,8 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/actors/sentinel.py",
-                          "file_status": "modified",
-                          "methods": [
-                            "src.heretek_swarm.actors.sentinel.SafetyLevel",
-                            "src.heretek_swarm.actors.sentinel.ViolationType",
-                            "src.heretek_swarm.actors.sentinel.ContentCategory",
-                            "src.heretek_swarm.actors.sentinel.SafetyViolation",
-                            "src.heretek_swarm.actors.sentinel.SafetyReport",
-                            "src.heretek_swarm.actors.sentinel.SentinelAgent",
-                            "src.heretek_swarm.actors.sentinel.SentinelAgent.get_novel_patterns_for_review",
-                            "src.heretek_swarm.actors.sentinel.SentinelAgent.submit_human_review",
-                            "src.heretek_swarm.actors.sentinel.SentinelAgent.get_immune_system_statistics",
-                            "src.heretek_swarm.actors.sentinel.SentinelAgent.set_sentinel_prime_client",
-                            "src.heretek_swarm.actors.sentinel.SentinelAgent.get_anomaly_statistics",
-                            "src.heretek_swarm.actors.sentinel.SentinelAgent._escalate_to_sentinel_prime",
-                            "src.heretek_swarm.actors.sentinel.SentinelAgent._sentinel_self_monitoring",
-                            "src.heretek_swarm.actors.sentinel.SentinelAgent._generate_anomaly_id",
-                            "src.heretek_swarm.actors.sentinel.SentinelAgent.process_message",
-                            "src.heretek_swarm.actors.sentinel.SentinelAgent._register_handlers",
-                            "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_get_novel_patterns",
-                            "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_submit_human_review",
-                            "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_get_immune_statistics",
-                            "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_get_anomaly_statistics",
-                            "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_validate_input",
-                            "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_configure_sentinel_prime",
-                            "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_validate_output",
-                            "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_scan_content",
-                            "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_check_policy",
-                            "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_get_safety_report",
-                            "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_get_violation_details",
-                            "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_update_guardrails",
-                            "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_get_statistics",
-                            "src.heretek_swarm.actors.sentinel.SentinelAgent._scan_content",
-                            "src.heretek_swarm.actors.sentinel.SentinelAgent._check_injection_patterns",
-                            "src.heretek_swarm.actors.sentinel.SentinelAgent._check_pii_patterns",
-                            "src.heretek_swarm.actors.sentinel.SentinelAgent._record_violation",
-                            "src.heretek_swarm.actors.sentinel.SentinelAgent._generate_safety_report",
-                            "src.heretek_swarm.actors.sentinel.SentinelAgent._check_policy_rule"
-                          ]
+                          "file_status": "deleted",
+                          "methods": []
                         },
                         {
                           "file_path": "src/heretek_swarm/consensus/immune.py",
@@ -132140,32 +131848,8 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/actors/sentinel.py",
-                          "file_status": "modified",
-                          "methods": [
-                            "src.heretek_swarm.actors.sentinel.AnomalyAlert",
-                            "src.heretek_swarm.actors.sentinel.SentinelAgent._request_baseline_update",
-                            "src.heretek_swarm.actors.sentinel.SentinelAgent.report_response_outcome",
-                            "src.heretek_swarm.actors.sentinel.SentinelAgent.get_behavioral_baseline_status",
-                            "src.heretek_swarm.actors.sentinel.SentinelAgent.submit_baseline_vote",
-                            "src.heretek_swarm.actors.sentinel.SentinelAgent.monitor_agent_behavior",
-                            "src.heretek_swarm.actors.sentinel.SentinelAgent.check_agent_rate",
-                            "src.heretek_swarm.actors.sentinel.SentinelAgent.check_agent_response_time",
-                            "src.heretek_swarm.actors.sentinel.SentinelAgent.check_agent_validation",
-                            "src.heretek_swarm.actors.sentinel.SentinelAgent.report_false_positive",
-                            "src.heretek_swarm.actors.sentinel.SentinelAgent._process_anomaly",
-                            "src.heretek_swarm.actors.sentinel.SentinelAgent._is_response_rate_limited",
-                            "src.heretek_swarm.actors.sentinel.SentinelAgent._notify_human",
-                            "src.heretek_swarm.actors.sentinel.SentinelAgent._update_agent_metrics",
-                            "src.heretek_swarm.actors.sentinel.SentinelAgent._generate_alert_id",
-                            "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_report_response_outcome",
-                            "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_get_baseline_status",
-                            "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_submit_baseline_vote",
-                            "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_monitor_agent",
-                            "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_check_agent_rate",
-                            "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_check_agent_response_time",
-                            "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_check_agent_validation",
-                            "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_report_false_positive"
-                          ]
+                          "file_status": "deleted",
+                          "methods": []
                         },
                         {
                           "file_path": "src/heretek_swarm/consensus/immune.py",
@@ -132268,13 +131952,8 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/actors/sentinel.py",
-                          "file_status": "modified",
-                          "methods": [
-                            "src.heretek_swarm.actors.sentinel.SentinelAgent.record_anomaly_response_outcome",
-                            "src.heretek_swarm.actors.sentinel.SentinelAgent.check_pattern_immunity",
-                            "src.heretek_swarm.actors.sentinel.SentinelAgent.get_immune_memory_snapshot",
-                            "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_check_pattern_immunity"
-                          ]
+                          "file_status": "deleted",
+                          "methods": []
                         },
                         {
                           "file_path": "src/heretek_swarm/consensus/immune.py",
@@ -132456,10 +132135,8 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/actors/sentinel.py",
-                          "file_status": "modified",
-                          "methods": [
-                            "src.heretek_swarm.actors.sentinel.SentinelAgent.__init__"
-                          ]
+                          "file_status": "deleted",
+                          "methods": []
                         },
                         {
                           "file_path": "src/heretek_swarm/consensus/immune.py",
