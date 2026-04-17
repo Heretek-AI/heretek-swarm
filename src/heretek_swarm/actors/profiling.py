@@ -51,6 +51,10 @@ from typing import Any
 
 import structlog
 
+from heretek_swarm.actors.base import AgentActor
+from heretek_swarm.actors.mixins import HealthReportingMixin, PatternMixin, ValidationMixin
+from heretek_swarm.collective.learning import PatternExtractor
+
 logger = structlog.get_logger(__name__)
 
 
@@ -563,9 +567,15 @@ class AnomalyDetector:
         return anomalies
 
 
-class BehaviorProfiler:
+class BehaviorProfiler(ValidationMixin, PatternMixin, HealthReportingMixin, AgentActor):
     """
     Main behavior profiling system for agents.
+
+    Inherits from:
+    - ValidationMixin: ZERO-02 Zero-Trust validation
+    - PatternMixin: Collective pattern emission and consumption
+    - HealthReportingMixin: Health status and error reporting
+    - AgentActor: Base actor with message passing and lifecycle
 
     Features:
     - Activity tracking and recording
@@ -576,8 +586,55 @@ class BehaviorProfiler:
     - Prometheus metrics export
     """
 
-    def __init__(self, config: ProfilingConfig | None = None):
-        self.config = config or ProfilingConfig()
+    actor_type: str = "BehaviorProfiler"
+
+    def __init__(
+        self,
+        config: ProfilingConfig | None = None,
+        *args: Any,
+        pattern_extractor: PatternExtractor | None = None,
+        agent_id: str | None = None,
+        name: str | None = None,
+        **kwargs: Any,
+    ) -> None:
+        """
+        Initialize the behavior profiler.
+
+        Args:
+            config: Profiling configuration (can be first positional arg)
+            *args: Additional positional arguments (passed to super)
+            pattern_extractor: Optional PatternExtractor for collective learning
+            agent_id: Agent identifier (default: auto-generated)
+            name: Human-readable name
+            **kwargs: Additional keyword arguments (passed to super)
+        """
+        # Extract config if passed as first positional (before *args)
+        # This handles BehaviorProfiler(config) where config is first arg
+        effective_config = config
+        remaining_args = args
+
+        # Check if first arg in remaining_args is a ProfilingConfig
+        if args and isinstance(args[0], ProfilingConfig):
+            effective_config = args[0]
+            remaining_args = args[1:]
+
+        effective_config = effective_config or ProfilingConfig()
+        effective_pattern_extractor = pattern_extractor or PatternExtractor()
+
+        # Initialize pattern emission tracking before super().__init__
+        self._pattern_emitted: set[str] = set()
+        self.pattern_extractor = effective_pattern_extractor
+
+        # Call super().__init__ with AgentActor identity parameters
+        super().__init__(
+            agent_id=agent_id or "BehaviorProfiler",
+            name=name or "BehaviorProfiler",
+            *remaining_args,
+            **kwargs,
+        )
+
+        # Store configuration
+        self.config = effective_config
 
         # Activity storage
         self._activities: dict[str, deque] = defaultdict(
