@@ -213,7 +213,7 @@ class ActorSupervisor(AuditMixin, ValidationMixin, HealthReportingMixin, Pattern
             actor_id: Actor identifier
         """
         if actor_id not in self.actors:
-            logger.warning(f"[{self.name}] Actor {actor_id} not found")
+            logger.warning("[%s] Actor not found: actor_id_hash=%s", self.name, hash(actor_id) % 10000)
             return
 
         actor = self.actors[actor_id]

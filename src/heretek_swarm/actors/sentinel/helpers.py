@@ -136,7 +136,7 @@ class SentinelHelpers:
         self,
         violation: dict[str, str],
         content: str,
-        scan_id: str,
+        _scan_id: str,
     ) -> None:
         """
         Record a safety violation for tracking.
@@ -147,7 +147,7 @@ class SentinelHelpers:
         Args:
             violation: Violation details dictionary
             content: The content that triggered the violation
-            scan_id: The scan ID that detected this violation
+            _scan_id: The scan ID that detected this violation (unused, kept for API compat)
         """
         from heretek_swarm.actors.sentinel.types import SafetyLevel, SafetyViolation, ViolationType
 
@@ -177,7 +177,7 @@ class SentinelHelpers:
 
     def _generate_safety_report(
         self,
-        time_range: str = "24h",
+        _time_range: str = "24h",
         include_recommendations: bool = True,
     ) -> "SafetyReport":
         """
@@ -186,7 +186,7 @@ class SentinelHelpers:
         Uses self._violations and self._stats collected during scanning.
 
         Args:
-            time_range: Time range for the report
+            _time_range: Time range for the report (unused, kept for API compat)
             include_recommendations: Whether to include recommendations
 
         Returns:
@@ -297,7 +297,7 @@ def generate_safety_report(
     violations_blocked: int,
     violations_by_type: dict[str, int],
     violations_by_severity: dict[str, int],
-    time_range: str = "24h",
+    _time_range: str = "24h",
     include_recommendations: bool = True,
 ) -> dict[str, Any]:
     """
@@ -309,7 +309,7 @@ def generate_safety_report(
         violations_blocked: Number of violations blocked
         violations_by_type: Dictionary of violation types and counts
         violations_by_severity: Dictionary of severity levels and counts
-        time_range: Time range for the report
+        _time_range: Time range for the report (unused, kept for API compat)
         include_recommendations: Whether to include recommendations
         
     Returns:
