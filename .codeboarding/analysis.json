@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-17T13:51:41.499354+00:00",
+    "generated_at": "2026-04-17T14:00:43.383800+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -8154,7 +8154,7 @@
       ]
     },
     "src/heretek_swarm/actors/supervisor.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.actors.supervisor.get_supervisor",
@@ -8165,17 +8165,17 @@
         },
         {
           "qualified_name": "src.heretek_swarm.actors.supervisor.ActorSupervisor",
-          "start_line": 41,
-          "end_line": 545,
+          "start_line": 42,
+          "end_line": 552,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.supervisor.ActorSupervisor.__init__",
-          "start_line": 67,
-          "end_line": 111,
+          "start_line": 68,
+          "end_line": 118,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.supervisor.ActorSupervisor.initialize",
@@ -64567,18 +64567,18 @@
     "src/heretek_swarm/actors/supervisor.py|src.heretek_swarm.actors.supervisor.ActorSupervisor": {
       "file_path": "src/heretek_swarm/actors/supervisor.py",
       "qualified_name": "src.heretek_swarm.actors.supervisor.ActorSupervisor",
-      "start_line": 41,
-      "end_line": 545,
+      "start_line": 42,
+      "end_line": 552,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/supervisor.py|src.heretek_swarm.actors.supervisor.ActorSupervisor.__init__": {
       "file_path": "src/heretek_swarm/actors/supervisor.py",
       "qualified_name": "src.heretek_swarm.actors.supervisor.ActorSupervisor.__init__",
-      "start_line": 67,
-      "end_line": 111,
+      "start_line": 68,
+      "end_line": 118,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/supervisor.py|src.heretek_swarm.actors.supervisor.ActorSupervisor.initialize": {
       "file_path": "src/heretek_swarm/actors/supervisor.py",
@@ -118550,7 +118550,7 @@
         },
         {
           "file_path": "src/heretek_swarm/actors/supervisor.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "src.heretek_swarm.actors.supervisor.get_supervisor",
             "src.heretek_swarm.actors.supervisor.ActorSupervisor",
@@ -125258,7 +125258,7 @@
             },
             {
               "file_path": "src/heretek_swarm/actors/supervisor.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.heretek_swarm.actors.supervisor.get_supervisor",
                 "src.heretek_swarm.actors.supervisor.ActorSupervisor",
@@ -133788,7 +133788,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/actors/supervisor.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.actors.supervisor.get_supervisor",
                     "src.heretek_swarm.actors.supervisor.ActorSupervisor",
@@ -135181,7 +135181,7 @@
                     },
                     {
                       "file_path": "src/heretek_swarm/actors/supervisor.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.actors.supervisor.get_supervisor",
                         "src.heretek_swarm.actors.supervisor.ActorSupervisor",
@@ -135408,7 +135408,7 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/actors/supervisor.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.actors.supervisor.get_supervisor",
                             "src.heretek_swarm.actors.supervisor.ActorSupervisor",

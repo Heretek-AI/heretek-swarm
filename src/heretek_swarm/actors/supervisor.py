@@ -15,6 +15,7 @@ import structlog
 
 from heretek_swarm.actors.base import ActorState, ActorStatus, AgentActor
 from heretek_swarm.actors.factory import ActorConfig
+from heretek_swarm.actors.mixins import AuditMixin, HealthReportingMixin
 
 logger = structlog.get_logger("ActorSupervisor")
 
@@ -38,7 +39,7 @@ def get_supervisor() -> "ActorSupervisor":
     return _global_supervisor
 
 
-class ActorSupervisor:
+class ActorSupervisor(AuditMixin, HealthReportingMixin, AgentActor):
     """
     Supervisor for managing multiple actors.
 
@@ -93,6 +94,12 @@ class ActorSupervisor:
         self.auto_restart = auto_restart
         self.max_restarts = max_restarts
         self.db_pool = db_pool
+
+        # Call super().__init__ to initialize mixins and AgentActor base
+        super().__init__(
+            agent_id=name or "ActorSupervisor",
+            name=self.name,
+        )
 
         self.actors: dict[str, AgentActor] = {}
         self.actor_configs: dict[str, ActorConfig] = {}
