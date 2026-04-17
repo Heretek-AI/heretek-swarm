@@ -730,7 +730,7 @@ class EventStore:
             from_version = 0
 
         # Get and apply events
-        events = self._get_events_from_memory(aggregate_id, from_version=from_version)
+        events = self._get_events_from_memory(aggregate_id, from_version, None)
         for event in events:
             state = applier(state, event)
 

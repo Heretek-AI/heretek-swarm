@@ -17,6 +17,7 @@ spec:
       labels:
         app: qdrant
     spec:
+      automountServiceAccountToken: false
       containers:
       - name: qdrant
         image: qdrant/qdrant:latest
@@ -39,6 +40,7 @@ spec:
           limits:
             cpu: "1000m"
             memory: "2Gi"
+            ephemeral-storage: "1Gi"
         volumeMounts:
           - name: qdrant-storage
             mountPath: /qdrant/storage

@@ -6,6 +6,18 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
+
+/**
+ * Validates that a URL is safe for use in client-side requests.
+ * Returns the URL if it starts with '/' (relative) or http(s):// (absolute),
+ * otherwise returns empty string to prevent javascript: or data: URLs.
+ */
+function _safeUrl(raw: string): string {
+  if (!raw || typeof raw !== 'string') return '';
+  const trimmed = raw.trim();
+  if (trimmed.startsWith('/') || /^https?:\/\//i.test(trimmed)) return trimmed;
+  return '';
+}
 import { DashboardLayout, NavItem } from './components/Dashboard/Layout';
 import { HomePage } from './components/Home/HomePage';
 import { AgentsPage } from './components/Agents/AgentsPage';
@@ -124,7 +136,7 @@ function DashboardContent() {
   const checkSystemHealth = useCallback(async () => {
     try {
       // Use stored API host or fall back to environment variable
-      const apiHost = localStorage.getItem('swarm_api_host') || import.meta.env.VITE_API_HOST || '';
+      const apiHost = _safeUrl(localStorage.getItem('swarm_api_host') || import.meta.env.VITE_API_HOST || '');
       if (!apiHost) {
         setSystemStatus('offline');
         return;

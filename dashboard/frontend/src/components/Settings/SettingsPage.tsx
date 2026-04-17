@@ -6,6 +6,18 @@
  */
 
 import React, { useState, useCallback } from 'react';
+
+/**
+ * Validates that a URL is safe for use in client-side requests.
+ * Returns the URL if it starts with '/' (relative) or http(s):// (absolute),
+ * otherwise returns empty string to prevent javascript: or data: URLs.
+ */
+function _safeUrl(raw: string): string {
+  if (!raw || typeof raw !== 'string') return '';
+  const trimmed = raw.trim();
+  if (trimmed.startsWith('/') || /^https?:\/\//i.test(trimmed)) return trimmed;
+  return '';
+}
 import { useToast } from '../UI/Toast';
 import { DeveloperModeToggle } from './DeveloperModeToggle';
 import {
@@ -47,9 +59,10 @@ export function SettingsPage({ onRerunSetup }: SettingsPageProps) {
   }, [apiKey, toast]);
 
   const handleSaveApiUrl = useCallback(() => {
-    localStorage.setItem('swarm_api_host', apiUrl);
+    const validatedUrl = _safeUrl(apiUrl);
+    localStorage.setItem('swarm_api_host', validatedUrl);
     // Also update WebSocket URL
-    const wsUrl = apiUrl.replace(/^http/, 'ws');
+    const wsUrl = validatedUrl.replace(/^http/, 'ws');
     localStorage.setItem('swarm_ws_host', wsUrl);
     toast.success('API URL Saved', 'The API URL will be used on next refresh');
   }, [apiUrl, toast]);

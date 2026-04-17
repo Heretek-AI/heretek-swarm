@@ -26,6 +26,7 @@ spec:
         app: heretek-swarm-dashboard
         version: "1.0.0"
     spec:
+      automountServiceAccountToken: false
       containers:
       - name: dashboard
         image: ghcr.io/heretek-ai/heretek-swarm-dashboard:1.0.0
@@ -46,6 +47,7 @@ spec:
           limits:
             cpu: "250m"
             memory: "512Mi"
+            ephemeral-storage: "256Mi"
         livenessProbe:
           httpGet:
             path: /

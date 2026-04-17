@@ -23,6 +23,7 @@ spec:
         app: heretek-swarm-autonomous
         version: "1.0.0"
     spec:
+      automountServiceAccountToken: false
       containers:
       - name: autonomous
         image: ghcr.io/heretek-ai/heretek-swarm-autonomous:1.0.0
@@ -80,6 +81,7 @@ spec:
           limits:
             cpu: "500m"
             memory: "1Gi"
+            ephemeral-storage: "512Mi"
         livenessProbe:
           httpGet:
             path: /health

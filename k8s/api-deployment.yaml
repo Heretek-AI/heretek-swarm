@@ -25,6 +25,7 @@ spec:
         app: heretek-swarm-api
         version: "1.0.0"
     spec:
+      automountServiceAccountToken: false
       containers:
       - name: api
         image: ghcr.io/heretek-ai/heretek-swarm-api:1.0.0
@@ -93,6 +94,7 @@ spec:
           limits:
             cpu: "1000m"
             memory: "2Gi"
+            ephemeral-storage: "1Gi"
         livenessProbe:
           httpGet:
             path: /api/health/live

@@ -38,6 +38,7 @@ spec:
           limits:
             cpu: "500m"
             memory: "1Gi"
+            ephemeral-storage: "1Gi"
       volumes:
         - name: prometheus-config
           configMap:

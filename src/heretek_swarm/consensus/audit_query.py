@@ -379,7 +379,8 @@ class AuditQueryMixin:
         trail = self._get_trail()
         audit = trail.decision_audits.get(decision_id)
         if not audit:
-            logger.warning(f"Decision audit not found: {decision_id}")
+            # Sanitize: do not log raw user-controlled decision_id
+            logger.warning("Decision audit not found (ID hidden for security)")
             raise ValueError(f"Decision audit not found: {decision_id}")
 
         if format == "json":

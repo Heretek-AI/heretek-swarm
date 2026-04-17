@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-17T21:17:42.162213+00:00",
+    "generated_at": "2026-04-17T21:38:44.380471+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -19139,14 +19139,14 @@
       ]
     },
     "src/heretek_swarm/consensus/audit_query.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.consensus.audit_query.AuditQueryMixin",
           "start_line": 29,
-          "end_line": 407,
+          "end_line": 408,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.consensus.audit_query.AuditQueryMixin._get_trail",
@@ -19186,9 +19186,9 @@
         {
           "qualified_name": "src.heretek_swarm.consensus.audit_query.AuditQueryMixin.export_decision_audit",
           "start_line": 365,
-          "end_line": 387,
+          "end_line": 388,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.consensus.audit_query.AuditQueryMixin.export_all_audits",
@@ -37940,7 +37940,7 @@
       ]
     },
     "src/heretek_swarm/state/event_store.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.state.event_store.EventType",
@@ -38003,7 +38003,7 @@
           "start_line": 212,
           "end_line": 865,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.state.event_store.EventStore.__init__",
@@ -38136,7 +38136,7 @@
           "start_line": 715,
           "end_line": 737,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.state.event_store.EventStore.create_snapshot",
@@ -42001,9 +42001,16 @@
       "file_status": "modified",
       "methods": [
         {
+          "qualified_name": "dashboard.frontend.src.App._safeUrl",
+          "start_line": 15,
+          "end_line": 20,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
           "qualified_name": "dashboard.frontend.src.App.DashboardContent",
-          "start_line": 51,
-          "end_line": 240,
+          "start_line": 63,
+          "end_line": 252,
           "node_type": "FUNCTION",
           "status": "modified"
         },
@@ -42030,8 +42037,8 @@
         },
         {
           "qualified_name": "dashboard.frontend.src.App.DashboardContent.checkSystemHealth.useCallback() callback",
-          "start_line": 124,
-          "end_line": 156,
+          "start_line": 136,
+          "end_line": 168,
           "node_type": "FUNCTION",
           "status": "modified"
         },
@@ -46053,6 +46060,13 @@
           "status": "unchanged"
         },
         {
+          "qualified_name": "dashboard.frontend.src.components.Dashboard.Dashboard._safeUrl",
+          "start_line": 19,
+          "end_line": 25,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
           "qualified_name": "dashboard.frontend.src.components.Dashboard.Dashboard.MemoryStats",
           "start_line": 26,
           "end_line": 33,
@@ -47851,6 +47865,13 @@
       "file_status": "modified",
       "methods": [
         {
+          "qualified_name": "dashboard.frontend.src.components.Settings.SettingsPage._safeUrl",
+          "start_line": 15,
+          "end_line": 20,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
           "qualified_name": "dashboard.frontend.src.components.Settings.SettingsPage.TabConfig",
           "start_line": 19,
           "end_line": 23,
@@ -47862,13 +47883,6 @@
           "start_line": 25,
           "end_line": 27,
           "node_type": "INTERFACE",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage",
-          "start_line": 37,
-          "end_line": 130,
-          "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
@@ -47893,11 +47907,11 @@
           "status": "deleted"
         },
         {
-          "qualified_name": "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleSaveApiUrl.useCallback() callback",
+          "qualified_name": "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage",
           "start_line": 49,
-          "end_line": 55,
+          "end_line": 143,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleClearApiKey",
@@ -47912,6 +47926,13 @@
           "end_line": 61,
           "node_type": "FUNCTION",
           "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleSaveApiUrl.useCallback() callback",
+          "start_line": 61,
+          "end_line": 68,
+          "node_type": "FUNCTION",
+          "status": "modified"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleResetConfiguration",
@@ -77122,9 +77143,9 @@
       "file_path": "src/heretek_swarm/consensus/audit_query.py",
       "qualified_name": "src.heretek_swarm.consensus.audit_query.AuditQueryMixin",
       "start_line": 29,
-      "end_line": 407,
+      "end_line": 408,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/consensus/audit_query.py|src.heretek_swarm.consensus.audit_query.AuditQueryMixin._get_trail": {
       "file_path": "src/heretek_swarm/consensus/audit_query.py",
@@ -77170,9 +77191,9 @@
       "file_path": "src/heretek_swarm/consensus/audit_query.py",
       "qualified_name": "src.heretek_swarm.consensus.audit_query.AuditQueryMixin.export_decision_audit",
       "start_line": 365,
-      "end_line": 387,
+      "end_line": 388,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/consensus/audit_query.py|src.heretek_swarm.consensus.audit_query.AuditQueryMixin.export_all_audits": {
       "file_path": "src/heretek_swarm/consensus/audit_query.py",
@@ -98092,7 +98113,7 @@
       "start_line": 212,
       "end_line": 865,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/state/event_store.py|src.heretek_swarm.state.event_store.EventStore.__init__": {
       "file_path": "src/heretek_swarm/state/event_store.py",
@@ -98244,7 +98265,7 @@
       "start_line": 715,
       "end_line": 737,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/state/event_store.py|src.heretek_swarm.state.event_store.EventStore.create_snapshot": {
       "file_path": "src/heretek_swarm/state/event_store.py",
@@ -102534,11 +102555,19 @@
       "type": "FUNCTION",
       "status": "unchanged"
     },
+    "dashboard/frontend/src/App.tsx|dashboard.frontend.src.App._safeUrl": {
+      "file_path": "dashboard/frontend/src/App.tsx",
+      "qualified_name": "dashboard.frontend.src.App._safeUrl",
+      "start_line": 15,
+      "end_line": 20,
+      "type": "FUNCTION",
+      "status": "added"
+    },
     "dashboard/frontend/src/App.tsx|dashboard.frontend.src.App.DashboardContent": {
       "file_path": "dashboard/frontend/src/App.tsx",
       "qualified_name": "dashboard.frontend.src.App.DashboardContent",
-      "start_line": 51,
-      "end_line": 240,
+      "start_line": 63,
+      "end_line": 252,
       "type": "FUNCTION",
       "status": "modified"
     },
@@ -102569,8 +102598,8 @@
     "dashboard/frontend/src/App.tsx|dashboard.frontend.src.App.DashboardContent.checkSystemHealth.useCallback() callback": {
       "file_path": "dashboard/frontend/src/App.tsx",
       "qualified_name": "dashboard.frontend.src.App.DashboardContent.checkSystemHealth.useCallback() callback",
-      "start_line": 124,
-      "end_line": 156,
+      "start_line": 136,
+      "end_line": 168,
       "type": "FUNCTION",
       "status": "modified"
     },
@@ -106982,6 +107011,14 @@
       "type": "INTERFACE",
       "status": "unchanged"
     },
+    "dashboard/frontend/src/components/Dashboard/Dashboard.tsx|dashboard.frontend.src.components.Dashboard.Dashboard._safeUrl": {
+      "file_path": "dashboard/frontend/src/components/Dashboard/Dashboard.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Dashboard.Dashboard._safeUrl",
+      "start_line": 19,
+      "end_line": 25,
+      "type": "FUNCTION",
+      "status": "added"
+    },
     "dashboard/frontend/src/components/Dashboard/Dashboard.tsx|dashboard.frontend.src.components.Dashboard.Dashboard.MemoryStats": {
       "file_path": "dashboard/frontend/src/components/Dashboard/Dashboard.tsx",
       "qualified_name": "dashboard.frontend.src.components.Dashboard.Dashboard.MemoryStats",
@@ -108974,6 +109011,14 @@
       "type": "METHOD",
       "status": "unchanged"
     },
+    "dashboard/frontend/src/components/Settings/SettingsPage.tsx|dashboard.frontend.src.components.Settings.SettingsPage._safeUrl": {
+      "file_path": "dashboard/frontend/src/components/Settings/SettingsPage.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Settings.SettingsPage._safeUrl",
+      "start_line": 15,
+      "end_line": 20,
+      "type": "FUNCTION",
+      "status": "added"
+    },
     "dashboard/frontend/src/components/Settings/SettingsPage.tsx|dashboard.frontend.src.components.Settings.SettingsPage.TabConfig": {
       "file_path": "dashboard/frontend/src/components/Settings/SettingsPage.tsx",
       "qualified_name": "dashboard.frontend.src.components.Settings.SettingsPage.TabConfig",
@@ -108988,14 +109033,6 @@
       "start_line": 25,
       "end_line": 27,
       "type": "INTERFACE",
-      "status": "unchanged"
-    },
-    "dashboard/frontend/src/components/Settings/SettingsPage.tsx|dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage": {
-      "file_path": "dashboard/frontend/src/components/Settings/SettingsPage.tsx",
-      "qualified_name": "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage",
-      "start_line": 37,
-      "end_line": 130,
-      "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/Settings/SettingsPage.tsx|dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleSaveApiKey": {
@@ -109022,13 +109059,13 @@
       "type": "CLASS",
       "status": "deleted"
     },
-    "dashboard/frontend/src/components/Settings/SettingsPage.tsx|dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleSaveApiUrl.useCallback() callback": {
+    "dashboard/frontend/src/components/Settings/SettingsPage.tsx|dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage": {
       "file_path": "dashboard/frontend/src/components/Settings/SettingsPage.tsx",
-      "qualified_name": "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleSaveApiUrl.useCallback() callback",
+      "qualified_name": "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage",
       "start_line": 49,
-      "end_line": 55,
+      "end_line": 143,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "dashboard/frontend/src/components/Settings/SettingsPage.tsx|dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleClearApiKey": {
       "file_path": "dashboard/frontend/src/components/Settings/SettingsPage.tsx",
@@ -109045,6 +109082,14 @@
       "end_line": 61,
       "type": "FUNCTION",
       "status": "unchanged"
+    },
+    "dashboard/frontend/src/components/Settings/SettingsPage.tsx|dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleSaveApiUrl.useCallback() callback": {
+      "file_path": "dashboard/frontend/src/components/Settings/SettingsPage.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleSaveApiUrl.useCallback() callback",
+      "start_line": 61,
+      "end_line": 68,
+      "type": "FUNCTION",
+      "status": "modified"
     },
     "dashboard/frontend/src/components/Settings/SettingsPage.tsx|dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleResetConfiguration": {
       "file_path": "dashboard/frontend/src/components/Settings/SettingsPage.tsx",
@@ -121047,7 +121092,7 @@
         },
         {
           "file_path": "src/heretek_swarm/consensus/audit_query.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "src.heretek_swarm.consensus.audit_query.AuditQueryMixin",
             "src.heretek_swarm.consensus.audit_query.AuditQueryMixin._get_trail",
@@ -124265,7 +124310,7 @@
         },
         {
           "file_path": "src/heretek_swarm/state/event_store.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "src.heretek_swarm.state.event_store.EventType",
             "src.heretek_swarm.state.event_store.DomainEvent",
@@ -126752,7 +126797,7 @@
             },
             {
               "file_path": "src/heretek_swarm/consensus/audit_query.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.heretek_swarm.consensus.audit_query.AuditQueryMixin",
                 "src.heretek_swarm.consensus.audit_query.AuditQueryMixin._get_trail",
@@ -142046,7 +142091,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/consensus/audit_query.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.consensus.audit_query.AuditQueryMixin",
                     "src.heretek_swarm.consensus.audit_query.AuditQueryMixin._get_trail",
@@ -143180,7 +143225,7 @@
                     },
                     {
                       "file_path": "src/heretek_swarm/consensus/audit_query.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.consensus.audit_query.AuditQueryMixin",
                         "src.heretek_swarm.consensus.audit_query.AuditQueryMixin._get_trail",
@@ -143506,7 +143551,7 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/consensus/audit_query.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.consensus.audit_query.AuditQueryMixin",
                             "src.heretek_swarm.consensus.audit_query.AuditQueryMixin._get_trail",
@@ -176377,7 +176422,7 @@
             },
             {
               "file_path": "src/heretek_swarm/state/event_store.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.heretek_swarm.state.event_store.EventType",
                 "src.heretek_swarm.state.event_store.DomainEvent",
@@ -176570,7 +176615,7 @@
               "file_methods": [
                 {
                   "file_path": "src/heretek_swarm/state/event_store.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.state.event_store.EventType",
                     "src.heretek_swarm.state.event_store.DomainEvent",
@@ -177385,7 +177430,7 @@
                   "file_methods": [
                     {
                       "file_path": "src/heretek_swarm/state/event_store.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.state.event_store.EventType",
                         "src.heretek_swarm.state.event_store.DomainEvent",
@@ -177453,7 +177498,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/state/event_store.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.state.event_store.EventType",
                             "src.heretek_swarm.state.event_store.DomainEvent",
@@ -177482,7 +177527,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/state/event_store.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.state.event_store.DomainEvent.to_dict",
                             "src.heretek_swarm.state.event_store.EventStore._append_to_db",
@@ -177514,7 +177559,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/state/event_store.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.state.event_store.Snapshot.from_dict",
                             "src.heretek_swarm.state.event_store.EventStore.__init__",
@@ -177559,7 +177604,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/state/event_store.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.state.event_store.DomainEvent.from_dict",
                             "src.heretek_swarm.state.event_store.EventStore._check_snapshot",
@@ -177591,7 +177636,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/state/event_store.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.state.event_store.Snapshot.to_dict",
                             "src.heretek_swarm.state.event_store.EventStore.initialize",
@@ -248973,6 +249018,7 @@
           "file_path": "dashboard/frontend/src/App.tsx",
           "file_status": "modified",
           "methods": [
+            "dashboard.frontend.src.App._safeUrl",
             "dashboard.frontend.src.App.DashboardContent",
             "dashboard.frontend.src.App.DashboardContent.useEffect() callback.error",
             "dashboard.frontend.src.App.DashboardContent.checkSystemHealth.useCallback() callback",
@@ -249658,6 +249704,7 @@
           "file_status": "modified",
           "methods": [
             "dashboard.frontend.src.components.Dashboard.Dashboard.Agent",
+            "dashboard.frontend.src.components.Dashboard.Dashboard._safeUrl",
             "dashboard.frontend.src.components.Dashboard.Dashboard.MemoryStats",
             "dashboard.frontend.src.components.Dashboard.Dashboard.A2AMessage",
             "dashboard.frontend.src.components.Dashboard.Dashboard.ConsensusState",
@@ -249940,12 +249987,13 @@
           "file_path": "dashboard/frontend/src/components/Settings/SettingsPage.tsx",
           "file_status": "modified",
           "methods": [
+            "dashboard.frontend.src.components.Settings.SettingsPage._safeUrl",
             "dashboard.frontend.src.components.Settings.SettingsPage.TabConfig",
             "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPageProps",
-            "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage",
             "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleSaveApiKey.useCallback() callback",
-            "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleSaveApiUrl.useCallback() callback",
+            "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage",
             "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleClearApiKey.useCallback() callback",
+            "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleSaveApiUrl.useCallback() callback",
             "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleResetConfiguration.useCallback() callback",
             "dashboard.frontend.src.components.Settings.SettingsPage.<unknown>..map() callback",
             "dashboard.frontend.src.components.Settings.SettingsPage.renderTabContent"
@@ -264862,6 +264910,7 @@
               "file_status": "modified",
               "methods": [
                 "dashboard.frontend.src.components.Dashboard.Dashboard.Agent",
+                "dashboard.frontend.src.components.Dashboard.Dashboard._safeUrl",
                 "dashboard.frontend.src.components.Dashboard.Dashboard.MemoryStats",
                 "dashboard.frontend.src.components.Dashboard.Dashboard.A2AMessage",
                 "dashboard.frontend.src.components.Dashboard.Dashboard.ConsensusState",
@@ -266059,6 +266108,7 @@
                   "file_status": "modified",
                   "methods": [
                     "dashboard.frontend.src.components.Dashboard.Dashboard.Agent",
+                    "dashboard.frontend.src.components.Dashboard.Dashboard._safeUrl",
                     "dashboard.frontend.src.components.Dashboard.Dashboard.MemoryStats",
                     "dashboard.frontend.src.components.Dashboard.Dashboard.A2AMessage",
                     "dashboard.frontend.src.components.Dashboard.Dashboard.ConsensusState",
@@ -266590,6 +266640,7 @@
                       "file_path": "dashboard/frontend/src/components/Dashboard/Dashboard.tsx",
                       "file_status": "modified",
                       "methods": [
+                        "dashboard.frontend.src.components.Dashboard.Dashboard._safeUrl",
                         "dashboard.frontend.src.components.Dashboard.Dashboard.Dashboard.useEffect() callback.onmessage.setData() callback.prev.agents.map() callback",
                         "dashboard.frontend.src.components.Dashboard.Dashboard.Dashboard.useEffect() callback.onmessage.setData() callback.prev.agents.filter() callback",
                         "dashboard.frontend.src.components.Dashboard.Dashboard.Dashboard.useEffect() callback.onmessage.setData() callback.prev.consensus.map() callback",
@@ -267237,6 +267288,7 @@
                   "file_path": "dashboard/frontend/src/components/Dashboard/Dashboard.tsx",
                   "file_status": "modified",
                   "methods": [
+                    "dashboard.frontend.src.components.Dashboard.Dashboard._safeUrl",
                     "dashboard.frontend.src.components.Dashboard.Dashboard.Dashboard.fetchInitialData.useCallback() callback.setData() callback",
                     "dashboard.frontend.src.components.Dashboard.Dashboard.Dashboard.useEffect() callback",
                     "dashboard.frontend.src.components.Dashboard.Dashboard.Dashboard.useEffect() callback.onmessage.setData() callback"
@@ -267324,6 +267376,7 @@
                       "file_path": "dashboard/frontend/src/components/Dashboard/Dashboard.tsx",
                       "file_status": "modified",
                       "methods": [
+                        "dashboard.frontend.src.components.Dashboard.Dashboard._safeUrl",
                         "dashboard.frontend.src.components.Dashboard.Dashboard.Dashboard.fetchInitialData.useCallback() callback.setData() callback",
                         "dashboard.frontend.src.components.Dashboard.Dashboard.Dashboard.useEffect() callback.onmessage.setData() callback",
                         "dashboard.frontend.src.components.Dashboard.Dashboard.Dashboard.useEffect() callback.onmessage.setData() callback.prev.agents.map() callback",
@@ -267811,6 +267864,7 @@
                       "file_status": "modified",
                       "methods": [
                         "dashboard.frontend.src.components.Dashboard.Dashboard.Agent",
+                        "dashboard.frontend.src.components.Dashboard.Dashboard._safeUrl",
                         "dashboard.frontend.src.components.Dashboard.Dashboard.MemoryStats",
                         "dashboard.frontend.src.components.Dashboard.Dashboard.A2AMessage",
                         "dashboard.frontend.src.components.Dashboard.Dashboard.ConsensusState",
@@ -268521,6 +268575,7 @@
               "file_path": "dashboard/frontend/src/App.tsx",
               "file_status": "modified",
               "methods": [
+                "dashboard.frontend.src.App._safeUrl",
                 "dashboard.frontend.src.App.DashboardContent",
                 "dashboard.frontend.src.App.DashboardContent.useEffect() callback.error",
                 "dashboard.frontend.src.App.DashboardContent.checkSystemHealth.useCallback() callback",
@@ -269173,12 +269228,13 @@
               "file_path": "dashboard/frontend/src/components/Settings/SettingsPage.tsx",
               "file_status": "modified",
               "methods": [
+                "dashboard.frontend.src.components.Settings.SettingsPage._safeUrl",
                 "dashboard.frontend.src.components.Settings.SettingsPage.TabConfig",
                 "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPageProps",
-                "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage",
                 "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleSaveApiKey.useCallback() callback",
-                "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleSaveApiUrl.useCallback() callback",
+                "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage",
                 "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleClearApiKey.useCallback() callback",
+                "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleSaveApiUrl.useCallback() callback",
                 "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleResetConfiguration.useCallback() callback",
                 "dashboard.frontend.src.components.Settings.SettingsPage.<unknown>..map() callback",
                 "dashboard.frontend.src.components.Settings.SettingsPage.renderTabContent"
@@ -270112,6 +270168,7 @@
                   "file_path": "dashboard/frontend/src/App.tsx",
                   "file_status": "modified",
                   "methods": [
+                    "dashboard.frontend.src.App._safeUrl",
                     "dashboard.frontend.src.App.DashboardContent",
                     "dashboard.frontend.src.App.DashboardContent.useEffect() callback.error",
                     "dashboard.frontend.src.App.DashboardContent.checkSystemHealth.useCallback() callback",
@@ -270734,6 +270791,7 @@
                   "file_path": "dashboard/frontend/src/components/Settings/SettingsPage.tsx",
                   "file_status": "modified",
                   "methods": [
+                    "dashboard.frontend.src.components.Settings.SettingsPage._safeUrl",
                     "dashboard.frontend.src.components.Settings.SettingsPage.TabConfig",
                     "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPageProps",
                     "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage",
@@ -271654,6 +271712,7 @@
                       "file_path": "dashboard/frontend/src/App.tsx",
                       "file_status": "modified",
                       "methods": [
+                        "dashboard.frontend.src.App._safeUrl",
                         "dashboard.frontend.src.App.DashboardContent",
                         "dashboard.frontend.src.App.DashboardContent.useEffect() callback.error",
                         "dashboard.frontend.src.App.DashboardContent.checkSystemHealth.useCallback() callback",
@@ -272276,6 +272335,7 @@
                       "file_path": "dashboard/frontend/src/components/Settings/SettingsPage.tsx",
                       "file_status": "modified",
                       "methods": [
+                        "dashboard.frontend.src.components.Settings.SettingsPage._safeUrl",
                         "dashboard.frontend.src.components.Settings.SettingsPage.TabConfig",
                         "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPageProps",
                         "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage",
@@ -273835,10 +273895,10 @@
                           "methods": [
                             "dashboard.frontend.src.components.Settings.SettingsPage.TabConfig",
                             "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPageProps",
-                            "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage",
                             "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleSaveApiKey.useCallback() callback",
-                            "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleSaveApiUrl.useCallback() callback",
+                            "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage",
                             "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleClearApiKey.useCallback() callback",
+                            "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleSaveApiUrl.useCallback() callback",
                             "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleResetConfiguration.useCallback() callback",
                             "dashboard.frontend.src.components.Settings.SettingsPage.<unknown>..map() callback",
                             "dashboard.frontend.src.components.Settings.SettingsPage.renderTabContent"
@@ -275848,9 +275908,10 @@
                       "file_path": "dashboard/frontend/src/components/Settings/SettingsPage.tsx",
                       "file_status": "modified",
                       "methods": [
+                        "dashboard.frontend.src.components.Settings.SettingsPage._safeUrl",
                         "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleSaveApiKey.useCallback() callback",
-                        "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleSaveApiUrl.useCallback() callback",
                         "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleClearApiKey.useCallback() callback",
+                        "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleSaveApiUrl.useCallback() callback",
                         "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleResetConfiguration.useCallback() callback"
                       ]
                     },
@@ -276032,10 +276093,10 @@
                           "methods": [
                             "dashboard.frontend.src.components.Settings.SettingsPage.TabConfig",
                             "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPageProps",
-                            "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage",
                             "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleSaveApiKey.useCallback() callback",
-                            "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleSaveApiUrl.useCallback() callback",
+                            "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage",
                             "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleClearApiKey.useCallback() callback",
+                            "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleSaveApiUrl.useCallback() callback",
                             "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleResetConfiguration.useCallback() callback",
                             "dashboard.frontend.src.components.Settings.SettingsPage.<unknown>..map() callback",
                             "dashboard.frontend.src.components.Settings.SettingsPage.renderTabContent"
@@ -277237,9 +277298,10 @@
                   "file_path": "dashboard/frontend/src/components/Settings/SettingsPage.tsx",
                   "file_status": "modified",
                   "methods": [
+                    "dashboard.frontend.src.components.Settings.SettingsPage._safeUrl",
                     "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleSaveApiKey.useCallback() callback",
-                    "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleSaveApiUrl.useCallback() callback",
                     "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleClearApiKey.useCallback() callback",
+                    "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleSaveApiUrl.useCallback() callback",
                     "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleResetConfiguration.useCallback() callback"
                   ]
                 },
@@ -277872,12 +277934,13 @@
                       "file_path": "dashboard/frontend/src/components/Settings/SettingsPage.tsx",
                       "file_status": "modified",
                       "methods": [
+                        "dashboard.frontend.src.components.Settings.SettingsPage._safeUrl",
                         "dashboard.frontend.src.components.Settings.SettingsPage.TabConfig",
                         "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPageProps",
-                        "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage",
                         "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleSaveApiKey.useCallback() callback",
-                        "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleSaveApiUrl.useCallback() callback",
+                        "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage",
                         "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleClearApiKey.useCallback() callback",
+                        "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleSaveApiUrl.useCallback() callback",
                         "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleResetConfiguration.useCallback() callback",
                         "dashboard.frontend.src.components.Settings.SettingsPage.<unknown>..map() callback",
                         "dashboard.frontend.src.components.Settings.SettingsPage.renderTabContent"
@@ -278062,10 +278125,10 @@
                           "methods": [
                             "dashboard.frontend.src.components.Settings.SettingsPage.TabConfig",
                             "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPageProps",
-                            "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage",
                             "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleSaveApiKey.useCallback() callback",
-                            "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleSaveApiUrl.useCallback() callback",
+                            "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage",
                             "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleClearApiKey.useCallback() callback",
+                            "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleSaveApiUrl.useCallback() callback",
                             "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleResetConfiguration.useCallback() callback",
                             "dashboard.frontend.src.components.Settings.SettingsPage.<unknown>..map() callback",
                             "dashboard.frontend.src.components.Settings.SettingsPage.renderTabContent"
