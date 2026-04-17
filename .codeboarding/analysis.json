@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-17T15:20:29.476366+00:00",
+    "generated_at": "2026-04-17T15:36:27.293522+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -5743,322 +5743,322 @@
       ]
     },
     "src/heretek_swarm/actors/nexus.py": {
-      "file_status": "modified",
+      "file_status": "deleted",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.actors.nexus.ConnectionStatus",
           "start_line": 56,
           "end_line": 63,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.nexus.ProtocolType",
           "start_line": 66,
           "end_line": 74,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.nexus.ExternalConnection",
           "start_line": 78,
           "end_line": 113,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.nexus.ExternalConnection.to_dict",
           "start_line": 98,
           "end_line": 113,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.nexus.WebhookConfig",
           "start_line": 117,
           "end_line": 143,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.nexus.WebhookConfig.to_dict",
           "start_line": 132,
           "end_line": 143,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.nexus.ApiResponse",
           "start_line": 147,
           "end_line": 168,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.nexus.ApiResponse.to_dict",
           "start_line": 158,
           "end_line": 168,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.nexus.NexusAgent",
           "start_line": 185,
           "end_line": 1546,
           "node_type": "CLASS",
-          "status": "modified"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.nexus.NexusAgent.__init__",
           "start_line": 218,
           "end_line": 298,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.nexus.NexusAgent.terminate",
           "start_line": 275,
           "end_line": 281,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.nexus.NexusAgent._validate_message",
           "start_line": 283,
           "end_line": 300,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.nexus.NexusAgent.initialize",
           "start_line": 300,
           "end_line": 321,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.nexus.NexusAgent._sanitize_input",
           "start_line": 306,
           "end_line": 381,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.nexus.NexusAgent._register_handlers",
           "start_line": 323,
           "end_line": 345,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.nexus.NexusAgent._check_payload_size",
           "start_line": 383,
           "end_line": 389,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.nexus.NexusAgent._check_rate_limit",
           "start_line": 391,
           "end_line": 410,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.nexus.NexusAgent._normalize_unicode",
           "start_line": 412,
           "end_line": 466,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.nexus.NexusAgent._validate_content_type",
           "start_line": 468,
           "end_line": 486,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.nexus.NexusAgent._detect_injection_patterns",
           "start_line": 488,
           "end_line": 520,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.nexus.NexusAgent._handle_create_connection",
           "start_line": 552,
           "end_line": 626,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.nexus.NexusAgent._get_pattern_severity",
           "start_line": 593,
           "end_line": 605,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.nexus.NexusAgent._recursive_sanitize",
           "start_line": 607,
           "end_line": 621,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.nexus.NexusAgent._handle_update_connection",
           "start_line": 628,
           "end_line": 676,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.nexus.NexusAgent._handle_delete_connection",
           "start_line": 678,
           "end_line": 719,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.nexus.NexusAgent._handle_get_connection_status",
           "start_line": 721,
           "end_line": 759,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.nexus.NexusAgent._handle_execute_request",
           "start_line": 761,
           "end_line": 881,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.nexus.NexusAgent._handle_register_webhook",
           "start_line": 883,
           "end_line": 942,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.nexus.NexusAgent._handle_unregister_webhook",
           "start_line": 944,
           "end_line": 985,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.nexus.NexusAgent._handle_validate_webhook",
           "start_line": 987,
           "end_line": 1059,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.nexus.NexusAgent._handle_get_webhook_status",
           "start_line": 1061,
           "end_line": 1099,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.nexus.NexusAgent._handle_translate_protocol",
           "start_line": 1101,
           "end_line": 1138,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.nexus.NexusAgent._handle_get_integration_report",
           "start_line": 1140,
           "end_line": 1191,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.nexus.NexusAgent._translate_data",
           "start_line": 1193,
           "end_line": 1210,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.nexus.NexusAgent._log_request",
           "start_line": 1212,
           "end_line": 1233,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.nexus.NexusAgent._send_error",
           "start_line": 1235,
           "end_line": 1249,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.nexus.NexusAgent.get_capabilities",
           "start_line": 1251,
           "end_line": 1260,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.nexus.NexusAgent._handle_get_api_metrics",
           "start_line": 1322,
           "end_line": 1341,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.nexus.NexusAgent._handle_configure_retry",
           "start_line": 1343,
           "end_line": 1368,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.nexus.NexusAgent._handle_configure_rate_limit",
           "start_line": 1370,
           "end_line": 1395,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.nexus.NexusAgent._handle_configure_circuit_breaker",
           "start_line": 1397,
           "end_line": 1423,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.nexus.NexusAgent._handle_add_fallback_endpoint",
           "start_line": 1425,
           "end_line": 1453,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.nexus.NexusAgent._handle_get_resilience_status",
           "start_line": 1455,
           "end_line": 1486,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.nexus.NexusAgent._handle_reset_circuit_breaker",
           "start_line": 1488,
           "end_line": 1513,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.nexus.NexusAgent._record_api_metrics",
           "start_line": 1515,
           "end_line": 1534,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "deleted"
         }
       ]
     },
@@ -61858,7 +61858,7 @@
       "start_line": 56,
       "end_line": 63,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/nexus.py|src.heretek_swarm.actors.nexus.ProtocolType": {
       "file_path": "src/heretek_swarm/actors/nexus.py",
@@ -61866,7 +61866,7 @@
       "start_line": 66,
       "end_line": 74,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/nexus.py|src.heretek_swarm.actors.nexus.ExternalConnection": {
       "file_path": "src/heretek_swarm/actors/nexus.py",
@@ -61874,7 +61874,7 @@
       "start_line": 78,
       "end_line": 113,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/nexus.py|src.heretek_swarm.actors.nexus.ExternalConnection.to_dict": {
       "file_path": "src/heretek_swarm/actors/nexus.py",
@@ -61882,7 +61882,7 @@
       "start_line": 98,
       "end_line": 113,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/nexus.py|src.heretek_swarm.actors.nexus.WebhookConfig": {
       "file_path": "src/heretek_swarm/actors/nexus.py",
@@ -61890,7 +61890,7 @@
       "start_line": 117,
       "end_line": 143,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/nexus.py|src.heretek_swarm.actors.nexus.WebhookConfig.to_dict": {
       "file_path": "src/heretek_swarm/actors/nexus.py",
@@ -61898,7 +61898,7 @@
       "start_line": 132,
       "end_line": 143,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/nexus.py|src.heretek_swarm.actors.nexus.ApiResponse": {
       "file_path": "src/heretek_swarm/actors/nexus.py",
@@ -61906,7 +61906,7 @@
       "start_line": 147,
       "end_line": 168,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/nexus.py|src.heretek_swarm.actors.nexus.ApiResponse.to_dict": {
       "file_path": "src/heretek_swarm/actors/nexus.py",
@@ -61914,7 +61914,7 @@
       "start_line": 158,
       "end_line": 168,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/nexus.py|src.heretek_swarm.actors.nexus.NexusAgent": {
       "file_path": "src/heretek_swarm/actors/nexus.py",
@@ -61922,7 +61922,7 @@
       "start_line": 185,
       "end_line": 1546,
       "type": "CLASS",
-      "status": "modified"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/nexus.py|src.heretek_swarm.actors.nexus.NexusAgent.__init__": {
       "file_path": "src/heretek_swarm/actors/nexus.py",
@@ -61930,7 +61930,7 @@
       "start_line": 218,
       "end_line": 298,
       "type": "METHOD",
-      "status": "modified"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/nexus.py|src.heretek_swarm.actors.nexus.NexusAgent.terminate": {
       "file_path": "src/heretek_swarm/actors/nexus.py",
@@ -61938,7 +61938,7 @@
       "start_line": 275,
       "end_line": 281,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/nexus.py|src.heretek_swarm.actors.nexus.NexusAgent._validate_message": {
       "file_path": "src/heretek_swarm/actors/nexus.py",
@@ -61946,7 +61946,7 @@
       "start_line": 283,
       "end_line": 300,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/nexus.py|src.heretek_swarm.actors.nexus.NexusAgent.initialize": {
       "file_path": "src/heretek_swarm/actors/nexus.py",
@@ -61954,7 +61954,7 @@
       "start_line": 300,
       "end_line": 321,
       "type": "METHOD",
-      "status": "modified"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/nexus.py|src.heretek_swarm.actors.nexus.NexusAgent._sanitize_input": {
       "file_path": "src/heretek_swarm/actors/nexus.py",
@@ -61962,7 +61962,7 @@
       "start_line": 306,
       "end_line": 381,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/nexus.py|src.heretek_swarm.actors.nexus.NexusAgent._register_handlers": {
       "file_path": "src/heretek_swarm/actors/nexus.py",
@@ -61970,7 +61970,7 @@
       "start_line": 323,
       "end_line": 345,
       "type": "METHOD",
-      "status": "modified"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/nexus.py|src.heretek_swarm.actors.nexus.NexusAgent._check_payload_size": {
       "file_path": "src/heretek_swarm/actors/nexus.py",
@@ -61978,7 +61978,7 @@
       "start_line": 383,
       "end_line": 389,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/nexus.py|src.heretek_swarm.actors.nexus.NexusAgent._check_rate_limit": {
       "file_path": "src/heretek_swarm/actors/nexus.py",
@@ -61986,7 +61986,7 @@
       "start_line": 391,
       "end_line": 410,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/nexus.py|src.heretek_swarm.actors.nexus.NexusAgent._normalize_unicode": {
       "file_path": "src/heretek_swarm/actors/nexus.py",
@@ -61994,7 +61994,7 @@
       "start_line": 412,
       "end_line": 466,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/nexus.py|src.heretek_swarm.actors.nexus.NexusAgent._validate_content_type": {
       "file_path": "src/heretek_swarm/actors/nexus.py",
@@ -62002,7 +62002,7 @@
       "start_line": 468,
       "end_line": 486,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/nexus.py|src.heretek_swarm.actors.nexus.NexusAgent._detect_injection_patterns": {
       "file_path": "src/heretek_swarm/actors/nexus.py",
@@ -62010,7 +62010,7 @@
       "start_line": 488,
       "end_line": 520,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/nexus.py|src.heretek_swarm.actors.nexus.NexusAgent._handle_create_connection": {
       "file_path": "src/heretek_swarm/actors/nexus.py",
@@ -62018,7 +62018,7 @@
       "start_line": 552,
       "end_line": 626,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/nexus.py|src.heretek_swarm.actors.nexus.NexusAgent._get_pattern_severity": {
       "file_path": "src/heretek_swarm/actors/nexus.py",
@@ -62026,7 +62026,7 @@
       "start_line": 593,
       "end_line": 605,
       "type": "METHOD",
-      "status": "modified"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/nexus.py|src.heretek_swarm.actors.nexus.NexusAgent._recursive_sanitize": {
       "file_path": "src/heretek_swarm/actors/nexus.py",
@@ -62034,7 +62034,7 @@
       "start_line": 607,
       "end_line": 621,
       "type": "METHOD",
-      "status": "modified"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/nexus.py|src.heretek_swarm.actors.nexus.NexusAgent._handle_update_connection": {
       "file_path": "src/heretek_swarm/actors/nexus.py",
@@ -62042,7 +62042,7 @@
       "start_line": 628,
       "end_line": 676,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/nexus.py|src.heretek_swarm.actors.nexus.NexusAgent._handle_delete_connection": {
       "file_path": "src/heretek_swarm/actors/nexus.py",
@@ -62050,7 +62050,7 @@
       "start_line": 678,
       "end_line": 719,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/nexus.py|src.heretek_swarm.actors.nexus.NexusAgent._handle_get_connection_status": {
       "file_path": "src/heretek_swarm/actors/nexus.py",
@@ -62058,7 +62058,7 @@
       "start_line": 721,
       "end_line": 759,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/nexus.py|src.heretek_swarm.actors.nexus.NexusAgent._handle_execute_request": {
       "file_path": "src/heretek_swarm/actors/nexus.py",
@@ -62066,7 +62066,7 @@
       "start_line": 761,
       "end_line": 881,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/nexus.py|src.heretek_swarm.actors.nexus.NexusAgent._handle_register_webhook": {
       "file_path": "src/heretek_swarm/actors/nexus.py",
@@ -62074,7 +62074,7 @@
       "start_line": 883,
       "end_line": 942,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/nexus.py|src.heretek_swarm.actors.nexus.NexusAgent._handle_unregister_webhook": {
       "file_path": "src/heretek_swarm/actors/nexus.py",
@@ -62082,7 +62082,7 @@
       "start_line": 944,
       "end_line": 985,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/nexus.py|src.heretek_swarm.actors.nexus.NexusAgent._handle_validate_webhook": {
       "file_path": "src/heretek_swarm/actors/nexus.py",
@@ -62090,7 +62090,7 @@
       "start_line": 987,
       "end_line": 1059,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/nexus.py|src.heretek_swarm.actors.nexus.NexusAgent._handle_get_webhook_status": {
       "file_path": "src/heretek_swarm/actors/nexus.py",
@@ -62098,7 +62098,7 @@
       "start_line": 1061,
       "end_line": 1099,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/nexus.py|src.heretek_swarm.actors.nexus.NexusAgent._handle_translate_protocol": {
       "file_path": "src/heretek_swarm/actors/nexus.py",
@@ -62106,7 +62106,7 @@
       "start_line": 1101,
       "end_line": 1138,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/nexus.py|src.heretek_swarm.actors.nexus.NexusAgent._handle_get_integration_report": {
       "file_path": "src/heretek_swarm/actors/nexus.py",
@@ -62114,7 +62114,7 @@
       "start_line": 1140,
       "end_line": 1191,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/nexus.py|src.heretek_swarm.actors.nexus.NexusAgent._translate_data": {
       "file_path": "src/heretek_swarm/actors/nexus.py",
@@ -62122,7 +62122,7 @@
       "start_line": 1193,
       "end_line": 1210,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/nexus.py|src.heretek_swarm.actors.nexus.NexusAgent._log_request": {
       "file_path": "src/heretek_swarm/actors/nexus.py",
@@ -62130,7 +62130,7 @@
       "start_line": 1212,
       "end_line": 1233,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/nexus.py|src.heretek_swarm.actors.nexus.NexusAgent._send_error": {
       "file_path": "src/heretek_swarm/actors/nexus.py",
@@ -62138,7 +62138,7 @@
       "start_line": 1235,
       "end_line": 1249,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/nexus.py|src.heretek_swarm.actors.nexus.NexusAgent.get_capabilities": {
       "file_path": "src/heretek_swarm/actors/nexus.py",
@@ -62146,7 +62146,7 @@
       "start_line": 1251,
       "end_line": 1260,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/nexus.py|src.heretek_swarm.actors.nexus.NexusAgent._handle_get_api_metrics": {
       "file_path": "src/heretek_swarm/actors/nexus.py",
@@ -62154,7 +62154,7 @@
       "start_line": 1322,
       "end_line": 1341,
       "type": "METHOD",
-      "status": "added"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/nexus.py|src.heretek_swarm.actors.nexus.NexusAgent._handle_configure_retry": {
       "file_path": "src/heretek_swarm/actors/nexus.py",
@@ -62162,7 +62162,7 @@
       "start_line": 1343,
       "end_line": 1368,
       "type": "METHOD",
-      "status": "added"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/nexus.py|src.heretek_swarm.actors.nexus.NexusAgent._handle_configure_rate_limit": {
       "file_path": "src/heretek_swarm/actors/nexus.py",
@@ -62170,7 +62170,7 @@
       "start_line": 1370,
       "end_line": 1395,
       "type": "METHOD",
-      "status": "added"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/nexus.py|src.heretek_swarm.actors.nexus.NexusAgent._handle_configure_circuit_breaker": {
       "file_path": "src/heretek_swarm/actors/nexus.py",
@@ -62178,7 +62178,7 @@
       "start_line": 1397,
       "end_line": 1423,
       "type": "METHOD",
-      "status": "added"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/nexus.py|src.heretek_swarm.actors.nexus.NexusAgent._handle_add_fallback_endpoint": {
       "file_path": "src/heretek_swarm/actors/nexus.py",
@@ -62186,7 +62186,7 @@
       "start_line": 1425,
       "end_line": 1453,
       "type": "METHOD",
-      "status": "added"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/nexus.py|src.heretek_swarm.actors.nexus.NexusAgent._handle_get_resilience_status": {
       "file_path": "src/heretek_swarm/actors/nexus.py",
@@ -62194,7 +62194,7 @@
       "start_line": 1455,
       "end_line": 1486,
       "type": "METHOD",
-      "status": "added"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/nexus.py|src.heretek_swarm.actors.nexus.NexusAgent._handle_reset_circuit_breaker": {
       "file_path": "src/heretek_swarm/actors/nexus.py",
@@ -62202,7 +62202,7 @@
       "start_line": 1488,
       "end_line": 1513,
       "type": "METHOD",
-      "status": "added"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/nexus.py|src.heretek_swarm.actors.nexus.NexusAgent._record_api_metrics": {
       "file_path": "src/heretek_swarm/actors/nexus.py",
@@ -62210,7 +62210,7 @@
       "start_line": 1515,
       "end_line": 1534,
       "type": "METHOD",
-      "status": "added"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/perceiver.py|src.heretek_swarm.actors.perceiver.ModalityType": {
       "file_path": "src/heretek_swarm/actors/perceiver.py",
@@ -118171,54 +118171,8 @@
         },
         {
           "file_path": "src/heretek_swarm/actors/nexus.py",
-          "file_status": "modified",
-          "methods": [
-            "src.heretek_swarm.actors.nexus.ConnectionStatus",
-            "src.heretek_swarm.actors.nexus.ProtocolType",
-            "src.heretek_swarm.actors.nexus.ExternalConnection",
-            "src.heretek_swarm.actors.nexus.ExternalConnection.to_dict",
-            "src.heretek_swarm.actors.nexus.WebhookConfig",
-            "src.heretek_swarm.actors.nexus.WebhookConfig.to_dict",
-            "src.heretek_swarm.actors.nexus.ApiResponse",
-            "src.heretek_swarm.actors.nexus.ApiResponse.to_dict",
-            "src.heretek_swarm.actors.nexus.NexusAgent",
-            "src.heretek_swarm.actors.nexus.NexusAgent.__init__",
-            "src.heretek_swarm.actors.nexus.NexusAgent.terminate",
-            "src.heretek_swarm.actors.nexus.NexusAgent._validate_message",
-            "src.heretek_swarm.actors.nexus.NexusAgent.initialize",
-            "src.heretek_swarm.actors.nexus.NexusAgent._sanitize_input",
-            "src.heretek_swarm.actors.nexus.NexusAgent._register_handlers",
-            "src.heretek_swarm.actors.nexus.NexusAgent._check_payload_size",
-            "src.heretek_swarm.actors.nexus.NexusAgent._check_rate_limit",
-            "src.heretek_swarm.actors.nexus.NexusAgent._normalize_unicode",
-            "src.heretek_swarm.actors.nexus.NexusAgent._validate_content_type",
-            "src.heretek_swarm.actors.nexus.NexusAgent._detect_injection_patterns",
-            "src.heretek_swarm.actors.nexus.NexusAgent._handle_create_connection",
-            "src.heretek_swarm.actors.nexus.NexusAgent._get_pattern_severity",
-            "src.heretek_swarm.actors.nexus.NexusAgent._recursive_sanitize",
-            "src.heretek_swarm.actors.nexus.NexusAgent._handle_update_connection",
-            "src.heretek_swarm.actors.nexus.NexusAgent._handle_delete_connection",
-            "src.heretek_swarm.actors.nexus.NexusAgent._handle_get_connection_status",
-            "src.heretek_swarm.actors.nexus.NexusAgent._handle_execute_request",
-            "src.heretek_swarm.actors.nexus.NexusAgent._handle_register_webhook",
-            "src.heretek_swarm.actors.nexus.NexusAgent._handle_unregister_webhook",
-            "src.heretek_swarm.actors.nexus.NexusAgent._handle_validate_webhook",
-            "src.heretek_swarm.actors.nexus.NexusAgent._handle_get_webhook_status",
-            "src.heretek_swarm.actors.nexus.NexusAgent._handle_translate_protocol",
-            "src.heretek_swarm.actors.nexus.NexusAgent._handle_get_integration_report",
-            "src.heretek_swarm.actors.nexus.NexusAgent._translate_data",
-            "src.heretek_swarm.actors.nexus.NexusAgent._log_request",
-            "src.heretek_swarm.actors.nexus.NexusAgent._send_error",
-            "src.heretek_swarm.actors.nexus.NexusAgent.get_capabilities",
-            "src.heretek_swarm.actors.nexus.NexusAgent._handle_get_api_metrics",
-            "src.heretek_swarm.actors.nexus.NexusAgent._handle_configure_retry",
-            "src.heretek_swarm.actors.nexus.NexusAgent._handle_configure_rate_limit",
-            "src.heretek_swarm.actors.nexus.NexusAgent._handle_configure_circuit_breaker",
-            "src.heretek_swarm.actors.nexus.NexusAgent._handle_add_fallback_endpoint",
-            "src.heretek_swarm.actors.nexus.NexusAgent._handle_get_resilience_status",
-            "src.heretek_swarm.actors.nexus.NexusAgent._handle_reset_circuit_breaker",
-            "src.heretek_swarm.actors.nexus.NexusAgent._record_api_metrics"
-          ]
+          "file_status": "deleted",
+          "methods": []
         },
         {
           "file_path": "src/heretek_swarm/actors/perceiver.py",
@@ -124983,54 +124937,8 @@
             },
             {
               "file_path": "src/heretek_swarm/actors/nexus.py",
-              "file_status": "modified",
-              "methods": [
-                "src.heretek_swarm.actors.nexus.ConnectionStatus",
-                "src.heretek_swarm.actors.nexus.ProtocolType",
-                "src.heretek_swarm.actors.nexus.ExternalConnection",
-                "src.heretek_swarm.actors.nexus.ExternalConnection.to_dict",
-                "src.heretek_swarm.actors.nexus.WebhookConfig",
-                "src.heretek_swarm.actors.nexus.WebhookConfig.to_dict",
-                "src.heretek_swarm.actors.nexus.ApiResponse",
-                "src.heretek_swarm.actors.nexus.ApiResponse.to_dict",
-                "src.heretek_swarm.actors.nexus.NexusAgent",
-                "src.heretek_swarm.actors.nexus.NexusAgent.__init__",
-                "src.heretek_swarm.actors.nexus.NexusAgent.terminate",
-                "src.heretek_swarm.actors.nexus.NexusAgent._validate_message",
-                "src.heretek_swarm.actors.nexus.NexusAgent.initialize",
-                "src.heretek_swarm.actors.nexus.NexusAgent._sanitize_input",
-                "src.heretek_swarm.actors.nexus.NexusAgent._register_handlers",
-                "src.heretek_swarm.actors.nexus.NexusAgent._check_payload_size",
-                "src.heretek_swarm.actors.nexus.NexusAgent._check_rate_limit",
-                "src.heretek_swarm.actors.nexus.NexusAgent._normalize_unicode",
-                "src.heretek_swarm.actors.nexus.NexusAgent._validate_content_type",
-                "src.heretek_swarm.actors.nexus.NexusAgent._detect_injection_patterns",
-                "src.heretek_swarm.actors.nexus.NexusAgent._handle_create_connection",
-                "src.heretek_swarm.actors.nexus.NexusAgent._get_pattern_severity",
-                "src.heretek_swarm.actors.nexus.NexusAgent._recursive_sanitize",
-                "src.heretek_swarm.actors.nexus.NexusAgent._handle_update_connection",
-                "src.heretek_swarm.actors.nexus.NexusAgent._handle_delete_connection",
-                "src.heretek_swarm.actors.nexus.NexusAgent._handle_get_connection_status",
-                "src.heretek_swarm.actors.nexus.NexusAgent._handle_execute_request",
-                "src.heretek_swarm.actors.nexus.NexusAgent._handle_register_webhook",
-                "src.heretek_swarm.actors.nexus.NexusAgent._handle_unregister_webhook",
-                "src.heretek_swarm.actors.nexus.NexusAgent._handle_validate_webhook",
-                "src.heretek_swarm.actors.nexus.NexusAgent._handle_get_webhook_status",
-                "src.heretek_swarm.actors.nexus.NexusAgent._handle_translate_protocol",
-                "src.heretek_swarm.actors.nexus.NexusAgent._handle_get_integration_report",
-                "src.heretek_swarm.actors.nexus.NexusAgent._translate_data",
-                "src.heretek_swarm.actors.nexus.NexusAgent._log_request",
-                "src.heretek_swarm.actors.nexus.NexusAgent._send_error",
-                "src.heretek_swarm.actors.nexus.NexusAgent.get_capabilities",
-                "src.heretek_swarm.actors.nexus.NexusAgent._handle_get_api_metrics",
-                "src.heretek_swarm.actors.nexus.NexusAgent._handle_configure_retry",
-                "src.heretek_swarm.actors.nexus.NexusAgent._handle_configure_rate_limit",
-                "src.heretek_swarm.actors.nexus.NexusAgent._handle_configure_circuit_breaker",
-                "src.heretek_swarm.actors.nexus.NexusAgent._handle_add_fallback_endpoint",
-                "src.heretek_swarm.actors.nexus.NexusAgent._handle_get_resilience_status",
-                "src.heretek_swarm.actors.nexus.NexusAgent._handle_reset_circuit_breaker",
-                "src.heretek_swarm.actors.nexus.NexusAgent._record_api_metrics"
-              ]
+              "file_status": "deleted",
+              "methods": []
             },
             {
               "file_path": "src/heretek_swarm/actors/sentinel.py",
@@ -133323,54 +133231,8 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/actors/nexus.py",
-                  "file_status": "modified",
-                  "methods": [
-                    "src.heretek_swarm.actors.nexus.ConnectionStatus",
-                    "src.heretek_swarm.actors.nexus.ProtocolType",
-                    "src.heretek_swarm.actors.nexus.ExternalConnection",
-                    "src.heretek_swarm.actors.nexus.ExternalConnection.to_dict",
-                    "src.heretek_swarm.actors.nexus.WebhookConfig",
-                    "src.heretek_swarm.actors.nexus.WebhookConfig.to_dict",
-                    "src.heretek_swarm.actors.nexus.ApiResponse",
-                    "src.heretek_swarm.actors.nexus.ApiResponse.to_dict",
-                    "src.heretek_swarm.actors.nexus.NexusAgent",
-                    "src.heretek_swarm.actors.nexus.NexusAgent.__init__",
-                    "src.heretek_swarm.actors.nexus.NexusAgent.terminate",
-                    "src.heretek_swarm.actors.nexus.NexusAgent._validate_message",
-                    "src.heretek_swarm.actors.nexus.NexusAgent.initialize",
-                    "src.heretek_swarm.actors.nexus.NexusAgent._sanitize_input",
-                    "src.heretek_swarm.actors.nexus.NexusAgent._register_handlers",
-                    "src.heretek_swarm.actors.nexus.NexusAgent._check_payload_size",
-                    "src.heretek_swarm.actors.nexus.NexusAgent._check_rate_limit",
-                    "src.heretek_swarm.actors.nexus.NexusAgent._normalize_unicode",
-                    "src.heretek_swarm.actors.nexus.NexusAgent._validate_content_type",
-                    "src.heretek_swarm.actors.nexus.NexusAgent._detect_injection_patterns",
-                    "src.heretek_swarm.actors.nexus.NexusAgent._handle_create_connection",
-                    "src.heretek_swarm.actors.nexus.NexusAgent._get_pattern_severity",
-                    "src.heretek_swarm.actors.nexus.NexusAgent._recursive_sanitize",
-                    "src.heretek_swarm.actors.nexus.NexusAgent._handle_update_connection",
-                    "src.heretek_swarm.actors.nexus.NexusAgent._handle_delete_connection",
-                    "src.heretek_swarm.actors.nexus.NexusAgent._handle_get_connection_status",
-                    "src.heretek_swarm.actors.nexus.NexusAgent._handle_execute_request",
-                    "src.heretek_swarm.actors.nexus.NexusAgent._handle_register_webhook",
-                    "src.heretek_swarm.actors.nexus.NexusAgent._handle_unregister_webhook",
-                    "src.heretek_swarm.actors.nexus.NexusAgent._handle_validate_webhook",
-                    "src.heretek_swarm.actors.nexus.NexusAgent._handle_get_webhook_status",
-                    "src.heretek_swarm.actors.nexus.NexusAgent._handle_translate_protocol",
-                    "src.heretek_swarm.actors.nexus.NexusAgent._handle_get_integration_report",
-                    "src.heretek_swarm.actors.nexus.NexusAgent._translate_data",
-                    "src.heretek_swarm.actors.nexus.NexusAgent._log_request",
-                    "src.heretek_swarm.actors.nexus.NexusAgent._send_error",
-                    "src.heretek_swarm.actors.nexus.NexusAgent.get_capabilities",
-                    "src.heretek_swarm.actors.nexus.NexusAgent._handle_get_api_metrics",
-                    "src.heretek_swarm.actors.nexus.NexusAgent._handle_configure_retry",
-                    "src.heretek_swarm.actors.nexus.NexusAgent._handle_configure_rate_limit",
-                    "src.heretek_swarm.actors.nexus.NexusAgent._handle_configure_circuit_breaker",
-                    "src.heretek_swarm.actors.nexus.NexusAgent._handle_add_fallback_endpoint",
-                    "src.heretek_swarm.actors.nexus.NexusAgent._handle_get_resilience_status",
-                    "src.heretek_swarm.actors.nexus.NexusAgent._handle_reset_circuit_breaker",
-                    "src.heretek_swarm.actors.nexus.NexusAgent._record_api_metrics"
-                  ]
+                  "file_status": "deleted",
+                  "methods": []
                 },
                 {
                   "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
@@ -135643,54 +135505,8 @@
                     },
                     {
                       "file_path": "src/heretek_swarm/actors/nexus.py",
-                      "file_status": "modified",
-                      "methods": [
-                        "src.heretek_swarm.actors.nexus.ConnectionStatus",
-                        "src.heretek_swarm.actors.nexus.ProtocolType",
-                        "src.heretek_swarm.actors.nexus.ExternalConnection",
-                        "src.heretek_swarm.actors.nexus.ExternalConnection.to_dict",
-                        "src.heretek_swarm.actors.nexus.WebhookConfig",
-                        "src.heretek_swarm.actors.nexus.WebhookConfig.to_dict",
-                        "src.heretek_swarm.actors.nexus.ApiResponse",
-                        "src.heretek_swarm.actors.nexus.ApiResponse.to_dict",
-                        "src.heretek_swarm.actors.nexus.NexusAgent",
-                        "src.heretek_swarm.actors.nexus.NexusAgent.__init__",
-                        "src.heretek_swarm.actors.nexus.NexusAgent.terminate",
-                        "src.heretek_swarm.actors.nexus.NexusAgent._validate_message",
-                        "src.heretek_swarm.actors.nexus.NexusAgent.initialize",
-                        "src.heretek_swarm.actors.nexus.NexusAgent._sanitize_input",
-                        "src.heretek_swarm.actors.nexus.NexusAgent._register_handlers",
-                        "src.heretek_swarm.actors.nexus.NexusAgent._check_payload_size",
-                        "src.heretek_swarm.actors.nexus.NexusAgent._check_rate_limit",
-                        "src.heretek_swarm.actors.nexus.NexusAgent._normalize_unicode",
-                        "src.heretek_swarm.actors.nexus.NexusAgent._validate_content_type",
-                        "src.heretek_swarm.actors.nexus.NexusAgent._detect_injection_patterns",
-                        "src.heretek_swarm.actors.nexus.NexusAgent._handle_create_connection",
-                        "src.heretek_swarm.actors.nexus.NexusAgent._get_pattern_severity",
-                        "src.heretek_swarm.actors.nexus.NexusAgent._recursive_sanitize",
-                        "src.heretek_swarm.actors.nexus.NexusAgent._handle_update_connection",
-                        "src.heretek_swarm.actors.nexus.NexusAgent._handle_delete_connection",
-                        "src.heretek_swarm.actors.nexus.NexusAgent._handle_get_connection_status",
-                        "src.heretek_swarm.actors.nexus.NexusAgent._handle_execute_request",
-                        "src.heretek_swarm.actors.nexus.NexusAgent._handle_register_webhook",
-                        "src.heretek_swarm.actors.nexus.NexusAgent._handle_unregister_webhook",
-                        "src.heretek_swarm.actors.nexus.NexusAgent._handle_validate_webhook",
-                        "src.heretek_swarm.actors.nexus.NexusAgent._handle_get_webhook_status",
-                        "src.heretek_swarm.actors.nexus.NexusAgent._handle_translate_protocol",
-                        "src.heretek_swarm.actors.nexus.NexusAgent._handle_get_integration_report",
-                        "src.heretek_swarm.actors.nexus.NexusAgent._translate_data",
-                        "src.heretek_swarm.actors.nexus.NexusAgent._log_request",
-                        "src.heretek_swarm.actors.nexus.NexusAgent._send_error",
-                        "src.heretek_swarm.actors.nexus.NexusAgent.get_capabilities",
-                        "src.heretek_swarm.actors.nexus.NexusAgent._handle_get_api_metrics",
-                        "src.heretek_swarm.actors.nexus.NexusAgent._handle_configure_retry",
-                        "src.heretek_swarm.actors.nexus.NexusAgent._handle_configure_rate_limit",
-                        "src.heretek_swarm.actors.nexus.NexusAgent._handle_configure_circuit_breaker",
-                        "src.heretek_swarm.actors.nexus.NexusAgent._handle_add_fallback_endpoint",
-                        "src.heretek_swarm.actors.nexus.NexusAgent._handle_get_resilience_status",
-                        "src.heretek_swarm.actors.nexus.NexusAgent._handle_reset_circuit_breaker",
-                        "src.heretek_swarm.actors.nexus.NexusAgent._record_api_metrics"
-                      ]
+                      "file_status": "deleted",
+                      "methods": []
                     },
                     {
                       "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
@@ -137137,54 +136953,8 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/actors/nexus.py",
-                          "file_status": "modified",
-                          "methods": [
-                            "src.heretek_swarm.actors.nexus.ConnectionStatus",
-                            "src.heretek_swarm.actors.nexus.ProtocolType",
-                            "src.heretek_swarm.actors.nexus.ExternalConnection",
-                            "src.heretek_swarm.actors.nexus.ExternalConnection.to_dict",
-                            "src.heretek_swarm.actors.nexus.WebhookConfig",
-                            "src.heretek_swarm.actors.nexus.WebhookConfig.to_dict",
-                            "src.heretek_swarm.actors.nexus.ApiResponse",
-                            "src.heretek_swarm.actors.nexus.ApiResponse.to_dict",
-                            "src.heretek_swarm.actors.nexus.NexusAgent",
-                            "src.heretek_swarm.actors.nexus.NexusAgent.__init__",
-                            "src.heretek_swarm.actors.nexus.NexusAgent.terminate",
-                            "src.heretek_swarm.actors.nexus.NexusAgent._validate_message",
-                            "src.heretek_swarm.actors.nexus.NexusAgent.initialize",
-                            "src.heretek_swarm.actors.nexus.NexusAgent._sanitize_input",
-                            "src.heretek_swarm.actors.nexus.NexusAgent._register_handlers",
-                            "src.heretek_swarm.actors.nexus.NexusAgent._check_payload_size",
-                            "src.heretek_swarm.actors.nexus.NexusAgent._check_rate_limit",
-                            "src.heretek_swarm.actors.nexus.NexusAgent._normalize_unicode",
-                            "src.heretek_swarm.actors.nexus.NexusAgent._validate_content_type",
-                            "src.heretek_swarm.actors.nexus.NexusAgent._detect_injection_patterns",
-                            "src.heretek_swarm.actors.nexus.NexusAgent._handle_create_connection",
-                            "src.heretek_swarm.actors.nexus.NexusAgent._get_pattern_severity",
-                            "src.heretek_swarm.actors.nexus.NexusAgent._recursive_sanitize",
-                            "src.heretek_swarm.actors.nexus.NexusAgent._handle_update_connection",
-                            "src.heretek_swarm.actors.nexus.NexusAgent._handle_delete_connection",
-                            "src.heretek_swarm.actors.nexus.NexusAgent._handle_get_connection_status",
-                            "src.heretek_swarm.actors.nexus.NexusAgent._handle_execute_request",
-                            "src.heretek_swarm.actors.nexus.NexusAgent._handle_register_webhook",
-                            "src.heretek_swarm.actors.nexus.NexusAgent._handle_unregister_webhook",
-                            "src.heretek_swarm.actors.nexus.NexusAgent._handle_validate_webhook",
-                            "src.heretek_swarm.actors.nexus.NexusAgent._handle_get_webhook_status",
-                            "src.heretek_swarm.actors.nexus.NexusAgent._handle_translate_protocol",
-                            "src.heretek_swarm.actors.nexus.NexusAgent._handle_get_integration_report",
-                            "src.heretek_swarm.actors.nexus.NexusAgent._translate_data",
-                            "src.heretek_swarm.actors.nexus.NexusAgent._log_request",
-                            "src.heretek_swarm.actors.nexus.NexusAgent._send_error",
-                            "src.heretek_swarm.actors.nexus.NexusAgent.get_capabilities",
-                            "src.heretek_swarm.actors.nexus.NexusAgent._handle_get_api_metrics",
-                            "src.heretek_swarm.actors.nexus.NexusAgent._handle_configure_retry",
-                            "src.heretek_swarm.actors.nexus.NexusAgent._handle_configure_rate_limit",
-                            "src.heretek_swarm.actors.nexus.NexusAgent._handle_configure_circuit_breaker",
-                            "src.heretek_swarm.actors.nexus.NexusAgent._handle_add_fallback_endpoint",
-                            "src.heretek_swarm.actors.nexus.NexusAgent._handle_get_resilience_status",
-                            "src.heretek_swarm.actors.nexus.NexusAgent._handle_reset_circuit_breaker",
-                            "src.heretek_swarm.actors.nexus.NexusAgent._record_api_metrics"
-                          ]
+                          "file_status": "deleted",
+                          "methods": []
                         },
                         {
                           "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
