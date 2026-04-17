@@ -650,7 +650,7 @@ class CoderAgent(
             # Generate docs
             if include_docs:
                 task.documentation = await self._generate_docs_llm(
-                    code=task.generated_code, doc_type="api"
+                    code=task.generated_code, doc_type="api", style="api"
                 )
 
             task.status = "completed"
