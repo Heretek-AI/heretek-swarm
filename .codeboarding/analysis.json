@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-17T15:50:32.637342+00:00",
+    "generated_at": "2026-04-17T15:57:27.302180+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -6577,252 +6577,252 @@
           "start_line": 47,
           "end_line": 59,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.prism.BiasType",
           "start_line": 62,
           "end_line": 74,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.prism.AnalyticalFramework",
           "start_line": 77,
           "end_line": 87,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.prism.Perspective",
           "start_line": 90,
           "end_line": 120,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.prism.Perspective.__init__",
           "start_line": 93,
           "end_line": 108,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.prism.Perspective.to_dict",
           "start_line": 110,
           "end_line": 120,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.prism.BiasDetection",
           "start_line": 123,
           "end_line": 150,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.prism.BiasDetection.__init__",
           "start_line": 126,
           "end_line": 139,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.prism.BiasDetection.to_dict",
           "start_line": 141,
           "end_line": 150,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.prism.PrismAgent",
           "start_line": 153,
           "end_line": 1268,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.prism.PrismAgent.__init__",
           "start_line": 175,
           "end_line": 254,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.prism.PrismAgent.initialize",
           "start_line": 256,
           "end_line": 266,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.prism.PrismAgent.process_message",
           "start_line": 268,
           "end_line": 296,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.prism.PrismAgent._validate_analysis_request",
           "start_line": 298,
           "end_line": 314,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.prism.PrismAgent._handle_generate_perspectives",
           "start_line": 316,
           "end_line": 375,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.prism.PrismAgent._generate_perspectives",
           "start_line": 377,
           "end_line": 418,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.prism.PrismAgent._generate_single_perspective",
           "start_line": 420,
           "end_line": 493,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.prism.PrismAgent._heuristic_perspective",
           "start_line": 495,
           "end_line": 535,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.prism.PrismAgent._handle_detect_biases",
           "start_line": 537,
           "end_line": 585,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.prism.PrismAgent._detect_biases_in_content",
           "start_line": 587,
           "end_line": 679,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.prism.PrismAgent._heuristic_bias_detection",
           "start_line": 681,
           "end_line": 733,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.prism.PrismAgent._handle_apply_framework",
           "start_line": 735,
           "end_line": 797,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.prism.PrismAgent._apply_framework_to_issue",
           "start_line": 799,
           "end_line": 921,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.prism.PrismAgent._handle_map_stakeholders",
           "start_line": 923,
           "end_line": 964,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.prism.PrismAgent._generate_stakeholder_map",
           "start_line": 966,
           "end_line": 1030,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.prism.PrismAgent._handle_get_analysis_summary",
           "start_line": 1032,
           "end_line": 1069,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.prism.PrismAgent._handle_reframe_issue",
           "start_line": 1071,
           "end_line": 1107,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.prism.PrismAgent.get_learning_status",
           "start_line": 1109,
           "end_line": 1113,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.prism.PrismAgent._prism_agent_actor",
           "start_line": 1120,
           "end_line": 1157,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.prism.PrismAgent._prism_agent_actor.PrismAgentActor",
           "start_line": 1123,
           "end_line": 1155,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.prism.PrismAgent._prism_agent_actor.PrismAgentActor.__init__",
           "start_line": 1124,
           "end_line": 1129,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.prism.PrismAgent._prism_agent_actor.PrismAgentActor.act",
           "start_line": 1131,
           "end_line": 1144,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.prism.PrismAgent._prism_agent_actor.PrismAgentActor.get_state",
           "start_line": 1146,
           "end_line": 1155,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.prism.PrismAgent.run_phi_training_episode",
           "start_line": 1159,
           "end_line": 1194,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.prism.PrismAgent.get_phi_training_status",
           "start_line": 1196,
           "end_line": 1203,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.prism.PrismAgent._generate_reframes",
           "start_line": 1205,
           "end_line": 1268,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         }
       ]
     },
@@ -62786,7 +62786,7 @@
       "start_line": 47,
       "end_line": 59,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/prism.py|src.heretek_swarm.actors.prism.BiasType": {
       "file_path": "src/heretek_swarm/actors/prism.py",
@@ -62794,7 +62794,7 @@
       "start_line": 62,
       "end_line": 74,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/prism.py|src.heretek_swarm.actors.prism.AnalyticalFramework": {
       "file_path": "src/heretek_swarm/actors/prism.py",
@@ -62802,7 +62802,7 @@
       "start_line": 77,
       "end_line": 87,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/prism.py|src.heretek_swarm.actors.prism.Perspective": {
       "file_path": "src/heretek_swarm/actors/prism.py",
@@ -62810,7 +62810,7 @@
       "start_line": 90,
       "end_line": 120,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/prism.py|src.heretek_swarm.actors.prism.Perspective.__init__": {
       "file_path": "src/heretek_swarm/actors/prism.py",
@@ -62818,7 +62818,7 @@
       "start_line": 93,
       "end_line": 108,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/prism.py|src.heretek_swarm.actors.prism.Perspective.to_dict": {
       "file_path": "src/heretek_swarm/actors/prism.py",
@@ -62826,7 +62826,7 @@
       "start_line": 110,
       "end_line": 120,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/prism.py|src.heretek_swarm.actors.prism.BiasDetection": {
       "file_path": "src/heretek_swarm/actors/prism.py",
@@ -62834,7 +62834,7 @@
       "start_line": 123,
       "end_line": 150,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/prism.py|src.heretek_swarm.actors.prism.BiasDetection.__init__": {
       "file_path": "src/heretek_swarm/actors/prism.py",
@@ -62842,7 +62842,7 @@
       "start_line": 126,
       "end_line": 139,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/prism.py|src.heretek_swarm.actors.prism.BiasDetection.to_dict": {
       "file_path": "src/heretek_swarm/actors/prism.py",
@@ -62850,7 +62850,7 @@
       "start_line": 141,
       "end_line": 150,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/prism.py|src.heretek_swarm.actors.prism.PrismAgent": {
       "file_path": "src/heretek_swarm/actors/prism.py",
@@ -62858,7 +62858,7 @@
       "start_line": 153,
       "end_line": 1268,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/prism.py|src.heretek_swarm.actors.prism.PrismAgent.__init__": {
       "file_path": "src/heretek_swarm/actors/prism.py",
@@ -62866,7 +62866,7 @@
       "start_line": 175,
       "end_line": 254,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/prism.py|src.heretek_swarm.actors.prism.PrismAgent.initialize": {
       "file_path": "src/heretek_swarm/actors/prism.py",
@@ -62874,7 +62874,7 @@
       "start_line": 256,
       "end_line": 266,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/prism.py|src.heretek_swarm.actors.prism.PrismAgent.process_message": {
       "file_path": "src/heretek_swarm/actors/prism.py",
@@ -62882,7 +62882,7 @@
       "start_line": 268,
       "end_line": 296,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/prism.py|src.heretek_swarm.actors.prism.PrismAgent._validate_analysis_request": {
       "file_path": "src/heretek_swarm/actors/prism.py",
@@ -62890,7 +62890,7 @@
       "start_line": 298,
       "end_line": 314,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/prism.py|src.heretek_swarm.actors.prism.PrismAgent._handle_generate_perspectives": {
       "file_path": "src/heretek_swarm/actors/prism.py",
@@ -62898,7 +62898,7 @@
       "start_line": 316,
       "end_line": 375,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/prism.py|src.heretek_swarm.actors.prism.PrismAgent._generate_perspectives": {
       "file_path": "src/heretek_swarm/actors/prism.py",
@@ -62906,7 +62906,7 @@
       "start_line": 377,
       "end_line": 418,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/prism.py|src.heretek_swarm.actors.prism.PrismAgent._generate_single_perspective": {
       "file_path": "src/heretek_swarm/actors/prism.py",
@@ -62914,7 +62914,7 @@
       "start_line": 420,
       "end_line": 493,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/prism.py|src.heretek_swarm.actors.prism.PrismAgent._heuristic_perspective": {
       "file_path": "src/heretek_swarm/actors/prism.py",
@@ -62922,7 +62922,7 @@
       "start_line": 495,
       "end_line": 535,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/prism.py|src.heretek_swarm.actors.prism.PrismAgent._handle_detect_biases": {
       "file_path": "src/heretek_swarm/actors/prism.py",
@@ -62930,7 +62930,7 @@
       "start_line": 537,
       "end_line": 585,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/prism.py|src.heretek_swarm.actors.prism.PrismAgent._detect_biases_in_content": {
       "file_path": "src/heretek_swarm/actors/prism.py",
@@ -62938,7 +62938,7 @@
       "start_line": 587,
       "end_line": 679,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/prism.py|src.heretek_swarm.actors.prism.PrismAgent._heuristic_bias_detection": {
       "file_path": "src/heretek_swarm/actors/prism.py",
@@ -62946,7 +62946,7 @@
       "start_line": 681,
       "end_line": 733,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/prism.py|src.heretek_swarm.actors.prism.PrismAgent._handle_apply_framework": {
       "file_path": "src/heretek_swarm/actors/prism.py",
@@ -62954,7 +62954,7 @@
       "start_line": 735,
       "end_line": 797,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/prism.py|src.heretek_swarm.actors.prism.PrismAgent._apply_framework_to_issue": {
       "file_path": "src/heretek_swarm/actors/prism.py",
@@ -62962,7 +62962,7 @@
       "start_line": 799,
       "end_line": 921,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/prism.py|src.heretek_swarm.actors.prism.PrismAgent._handle_map_stakeholders": {
       "file_path": "src/heretek_swarm/actors/prism.py",
@@ -62970,7 +62970,7 @@
       "start_line": 923,
       "end_line": 964,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/prism.py|src.heretek_swarm.actors.prism.PrismAgent._generate_stakeholder_map": {
       "file_path": "src/heretek_swarm/actors/prism.py",
@@ -62978,7 +62978,7 @@
       "start_line": 966,
       "end_line": 1030,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/prism.py|src.heretek_swarm.actors.prism.PrismAgent._handle_get_analysis_summary": {
       "file_path": "src/heretek_swarm/actors/prism.py",
@@ -62986,7 +62986,7 @@
       "start_line": 1032,
       "end_line": 1069,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/prism.py|src.heretek_swarm.actors.prism.PrismAgent._handle_reframe_issue": {
       "file_path": "src/heretek_swarm/actors/prism.py",
@@ -62994,7 +62994,7 @@
       "start_line": 1071,
       "end_line": 1107,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/prism.py|src.heretek_swarm.actors.prism.PrismAgent.get_learning_status": {
       "file_path": "src/heretek_swarm/actors/prism.py",
@@ -63002,7 +63002,7 @@
       "start_line": 1109,
       "end_line": 1113,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/prism.py|src.heretek_swarm.actors.prism.PrismAgent._prism_agent_actor": {
       "file_path": "src/heretek_swarm/actors/prism.py",
@@ -63010,7 +63010,7 @@
       "start_line": 1120,
       "end_line": 1157,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/prism.py|src.heretek_swarm.actors.prism.PrismAgent._prism_agent_actor.PrismAgentActor": {
       "file_path": "src/heretek_swarm/actors/prism.py",
@@ -63018,7 +63018,7 @@
       "start_line": 1123,
       "end_line": 1155,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/prism.py|src.heretek_swarm.actors.prism.PrismAgent._prism_agent_actor.PrismAgentActor.__init__": {
       "file_path": "src/heretek_swarm/actors/prism.py",
@@ -63026,7 +63026,7 @@
       "start_line": 1124,
       "end_line": 1129,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/prism.py|src.heretek_swarm.actors.prism.PrismAgent._prism_agent_actor.PrismAgentActor.act": {
       "file_path": "src/heretek_swarm/actors/prism.py",
@@ -63034,7 +63034,7 @@
       "start_line": 1131,
       "end_line": 1144,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/prism.py|src.heretek_swarm.actors.prism.PrismAgent._prism_agent_actor.PrismAgentActor.get_state": {
       "file_path": "src/heretek_swarm/actors/prism.py",
@@ -63042,7 +63042,7 @@
       "start_line": 1146,
       "end_line": 1155,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/prism.py|src.heretek_swarm.actors.prism.PrismAgent.run_phi_training_episode": {
       "file_path": "src/heretek_swarm/actors/prism.py",
@@ -63050,7 +63050,7 @@
       "start_line": 1159,
       "end_line": 1194,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/prism.py|src.heretek_swarm.actors.prism.PrismAgent.get_phi_training_status": {
       "file_path": "src/heretek_swarm/actors/prism.py",
@@ -63058,7 +63058,7 @@
       "start_line": 1196,
       "end_line": 1203,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/prism.py|src.heretek_swarm.actors.prism.PrismAgent._generate_reframes": {
       "file_path": "src/heretek_swarm/actors/prism.py",
@@ -63066,7 +63066,7 @@
       "start_line": 1205,
       "end_line": 1268,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/profiling.py|src.heretek_swarm.actors.profiling.ActionType": {
       "file_path": "src/heretek_swarm/actors/profiling.py",
