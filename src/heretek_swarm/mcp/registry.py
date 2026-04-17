@@ -254,7 +254,6 @@ class MCPToolRegistry:
         start_time = time.time()
         invocation_id = uuid4()
 
-        # Track invocation
         invocation = MCPToolInvocation(
             invocation_id=invocation_id,
             tool_name=name,
@@ -264,52 +263,86 @@ class MCPToolRegistry:
         )
         self._invocations[invocation_id] = invocation
 
-        if name not in self._tools:
-            logger.error("mcp_tool_not_found", name=name)
-            invocation.error = f"Tool {name} not found"
-            invocation.completed_at = datetime.now(UTC)
-            return {"success": False, "error": f"Tool {name} not found"}
+        # Resolve tool and validate preconditions
+        precheck = self._resolve_tool_for_invocation(name, invocation)
+        if precheck is not None:
+            return precheck
 
         tool = self._tools[name]
 
-        if not tool.enabled:
-            logger.warning("mcp_tool_disabled", name=name)
-            invocation.error = f"Tool {name} is disabled"
-            invocation.completed_at = datetime.now(UTC)
-            return {"success": False, "error": f"Tool {name} is disabled"}
-
         # Validate arguments
         if not self._validate_arguments(arguments, tool.input_schema):
-            logger.error("mcp_tool_validation_failed", name=name, arguments=arguments)
-            invocation.error = f"Invalid arguments for tool {name}"
-            invocation.completed_at = datetime.now(UTC)
+            self._record_invocation_error(
+                invocation, f"Invalid arguments for tool {name}"
+            )
+            logger.error(
+                "mcp_tool_validation_failed", name=name, arguments=arguments
+            )
             return {"success": False, "error": f"Invalid arguments for tool {name}"}
 
         # Update stats
         self._stats[name]["calls"] += 1
         self._stats[name]["last_called"] = datetime.now(UTC).isoformat()
 
+        # Execute handler and record outcome
+        return await self._execute_handler_and_record(
+            name, invocation, arguments, context or {}, start_time
+        )
+
+    def _resolve_tool_for_invocation(
+        self,
+        name: str,
+        invocation: MCPToolInvocation,
+    ) -> dict[str, Any] | None:
+        """
+        Resolve tool and check preconditions before invocation.
+
+        Returns:
+            Error dict if precondition fails, None if tool is ready to invoke.
+        """
+        if name not in self._tools:
+            logger.error("mcp_tool_not_found", name=name)
+            self._record_invocation_error(invocation, f"Tool {name} not found")
+            return {"success": False, "error": f"Tool {name} not found"}
+
+        tool = self._tools[name]
+
+        if not tool.enabled:
+            logger.warning("mcp_tool_disabled", name=name)
+            self._record_invocation_error(invocation, f"Tool {name} is disabled")
+            return {"success": False, "error": f"Tool {name} is disabled"}
+
+        return None
+
+    def _record_invocation_error(
+        self,
+        invocation: MCPToolInvocation,
+        error_message: str,
+    ) -> None:
+        """Record an error on an invocation record."""
+        invocation.error = error_message
+        invocation.completed_at = datetime.now(UTC)
+
+    async def _execute_handler_and_record(
+        self,
+        name: str,
+        invocation: MCPToolInvocation,
+        arguments: dict[str, Any],
+        context: dict[str, Any],
+        start_time: float,
+    ) -> dict[str, Any]:
+        """Execute the tool handler and record the invocation outcome."""
+        import time
+
         try:
             handler = self._handlers[name]
-
-            # Invoke handler
-            if callable(handler):
-                result = handler(arguments, context or {})
-                # Handle async handlers
-                if asyncio.iscoroutine(result):
-                    result = await result
+            result = handler(arguments, context)
+            if asyncio.iscoroutine(result):
+                result = await result
 
             latency_ms = (time.time() - start_time) * 1000
-            stats = self._stats[name]
-            calls = stats["calls"]
-            stats["avg_latency_ms"] = (
-                stats["avg_latency_ms"] * (calls - 1) + latency_ms
-            ) / calls
-
-            invocation.success = True
-            invocation.result = result
-            invocation.completed_at = datetime.now(UTC)
-
+            self._update_success_stats(name, latency_ms)
+            self._record_invocation_success(invocation, result)
             logger.debug("mcp_tool_invoked", name=name, latency_ms=latency_ms)
             return {"success": True, "result": result}
 
@@ -320,6 +353,24 @@ class MCPToolRegistry:
             invocation.completed_at = datetime.now(UTC)
             logger.error("mcp_tool_invocation_error", name=name, error=str(e))
             return {"success": False, "error": str(e)}
+
+    def _record_invocation_success(
+        self,
+        invocation: MCPToolInvocation,
+        result: Any,
+    ) -> None:
+        """Record a successful result on an invocation record."""
+        invocation.success = True
+        invocation.result = result
+        invocation.completed_at = datetime.now(UTC)
+
+    def _update_success_stats(self, name: str, latency_ms: float) -> None:
+        """Update latency statistics after a successful invocation."""
+        stats = self._stats[name]
+        calls = stats["calls"]
+        stats["avg_latency_ms"] = (
+            stats["avg_latency_ms"] * (calls - 1) + latency_ms
+        ) / calls
 
     def _validate_arguments(
         self,
@@ -339,50 +390,112 @@ class MCPToolRegistry:
         if not schema:
             return True
 
-        # Check required fields
+        if not self._validate_required_fields(arguments, schema):
+            return False
+
+        return self._validate_all_properties(arguments, schema)
+
+    def _validate_required_fields(
+        self,
+        arguments: dict[str, Any],
+        schema: dict[str, Any],
+    ) -> bool:
+        """Check that all required fields are present."""
         required = schema.get("required", [])
         for field_name in required:
             if field_name not in arguments:
                 return False
+        return True
 
-        # Check types
+    def _validate_all_properties(
+        self,
+        arguments: dict[str, Any],
+        schema: dict[str, Any],
+    ) -> bool:
+        """Validate all argument properties against their schemas."""
         properties = schema.get("properties", {})
         for key, value in arguments.items():
             if key in properties:
                 prop_schema = properties[key]
-                expected_type = prop_schema.get("type")
+                if not self._validate_single_property(value, prop_schema):
+                    return False
+        return True
 
-                if expected_type == "string" and not isinstance(value, str):
-                    return False
-                if expected_type == "integer" and not isinstance(value, int):
-                    return False
-                if expected_type == "number" and not isinstance(value, (int, float)):
-                    return False
-                if expected_type == "boolean" and not isinstance(value, bool):
-                    return False
-                if expected_type == "array" and not isinstance(value, list):
-                    return False
-                if expected_type == "object" and not isinstance(value, dict):
-                    return False
+    def _validate_single_property(
+        self,
+        value: Any,
+        prop_schema: dict[str, Any],
+    ) -> bool:
+        """Validate a single property against its schema."""
+        if not self._check_type_constraint(value, prop_schema):
+            return False
+        if not self._check_enum_constraint(value, prop_schema):
+            return False
+        if not self._check_numeric_bounds(value, prop_schema):
+            return False
+        if not self._check_string_length(value, prop_schema):
+            return False
+        return True
 
-                # Check enum values
-                if "enum" in prop_schema and value not in prop_schema["enum"]:
-                    return False
+    def _check_type_constraint(
+        self,
+        value: Any,
+        prop_schema: dict[str, Any],
+    ) -> bool:
+        """Validate value type matches the schema type."""
+        expected_type = prop_schema.get("type")
+        if expected_type is None:
+            return True
 
-                # Check min/max for numbers
-                if isinstance(value, (int, float)):
-                    if "minimum" in prop_schema and value < prop_schema["minimum"]:
-                        return False
-                    if "maximum" in prop_schema and value > prop_schema["maximum"]:
-                        return False
+        type_checks = (
+            (expected_type == "string", str),
+            (expected_type == "integer", int),
+            (expected_type == "number", (int, float)),
+            (expected_type == "boolean", bool),
+            (expected_type == "array", list),
+            (expected_type == "object", dict),
+        )
+        for matches, expected in type_checks:
+            if matches:
+                return isinstance(value, expected)
+        return True
 
-                # Check min/max length for strings
-                if isinstance(value, str):
-                    if "minLength" in prop_schema and len(value) < prop_schema["minLength"]:
-                        return False
-                    if "maxLength" in prop_schema and len(value) > prop_schema["maxLength"]:
-                        return False
+    def _check_enum_constraint(
+        self,
+        value: Any,
+        prop_schema: dict[str, Any],
+    ) -> bool:
+        """Validate value is one of the allowed enum values."""
+        if "enum" not in prop_schema:
+            return True
+        return value in prop_schema["enum"]
 
+    def _check_numeric_bounds(
+        self,
+        value: Any,
+        prop_schema: dict[str, Any],
+    ) -> bool:
+        """Validate numeric value is within min/max bounds."""
+        if not isinstance(value, (int, float)):
+            return True
+        if "minimum" in prop_schema and value < prop_schema["minimum"]:
+            return False
+        if "maximum" in prop_schema and value > prop_schema["maximum"]:
+            return False
+        return True
+
+    def _check_string_length(
+        self,
+        value: Any,
+        prop_schema: dict[str, Any],
+    ) -> bool:
+        """Validate string length is within min/max bounds."""
+        if not isinstance(value, str):
+            return True
+        if "minLength" in prop_schema and len(value) < prop_schema["minLength"]:
+            return False
+        if "maxLength" in prop_schema and len(value) > prop_schema["maxLength"]:
+            return False
         return True
 
 

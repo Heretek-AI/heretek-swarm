@@ -276,7 +276,7 @@ class LineageTracker:
         self._content_hashes: dict[str, UUID] = {}
         self._last_conversation_id: UUID | None = None
 
-    def record_message(
+    async def record_message(
         self,
         content: str,
         conversation_id: UUID,
@@ -331,7 +331,7 @@ class LineageTracker:
 
         return lineage
 
-    def get_ancestry(self, message_id: UUID) -> list[MessageLineage]:
+    async def get_ancestry(self, message_id: UUID) -> list[MessageLineage]:
         """Get the full ancestry chain for a message."""
         lineage = self._lineages.get(message_id)
         if not lineage:
@@ -350,7 +350,7 @@ class LineageTracker:
         ancestry.append(lineage)
         return ancestry
 
-    def get_descendants(self, message_id: UUID) -> list[MessageLineage]:
+    async def get_descendants(self, message_id: UUID) -> list[MessageLineage]:
         """Get all descendants of a message."""
         descendants = []
         to_visit = [message_id]
@@ -369,7 +369,7 @@ class LineageTracker:
 
         return descendants
 
-    def find_branch_points(self, conversation_id: UUID) -> list[MessageLineage]:
+    async def find_branch_points(self, conversation_id: UUID) -> list[MessageLineage]:
         """Find messages that have multiple children (branch points)."""
         branch_points = []
         for lineage in self._lineages.values():
@@ -379,7 +379,7 @@ class LineageTracker:
                 branch_points.append(lineage)
         return branch_points
 
-    def verify_integrity(self, conversation_id: UUID) -> dict[str, Any]:
+    async def verify_integrity(self, conversation_id: UUID) -> dict[str, Any]:
         """Verify the integrity of a conversation's lineage."""
         valid = True
         errors: list[str] = []
@@ -400,7 +400,7 @@ class LineageTracker:
 
         return {"valid": valid, "errors": errors}
 
-    def get_stats(self, conversation_id: UUID | None = None) -> dict[str, int]:
+    async def get_stats(self, conversation_id: UUID | None = None) -> dict[str, int]:
         """Get statistics about tracked messages."""
         cid = conversation_id or self._last_conversation_id
         if not cid:
@@ -422,7 +422,7 @@ class SnapshotManager:
         self._snapshots: dict[str, list[StateSnapshot]] = {}
         self._system_snapshots: list[StateSnapshot] = []
 
-    def initialize(self) -> None:
+    async def initialize(self) -> None:
         """Initialize the snapshot manager.
 
         This is a stub/placeholder method.
@@ -437,7 +437,7 @@ class SnapshotManager:
         """
         pass
 
-    def shutdown(self) -> None:
+    async def shutdown(self) -> None:
         """Shutdown the snapshot manager.
 
         This is a stub/placeholder method.
@@ -452,7 +452,7 @@ class SnapshotManager:
         """
         pass
 
-    def create_snapshot(
+    async def create_snapshot(
         self,
         agent_states: dict[str, AgentState] | None = None,
         system_state: SystemState | None = None,
@@ -488,18 +488,18 @@ class SnapshotManager:
         self._system_snapshots.append(snapshot)
         return snapshot
 
-    def get_snapshot(self, snapshot_id: UUID) -> StateSnapshot | None:
+    async def get_snapshot(self, snapshot_id: UUID) -> StateSnapshot | None:
         """Get a snapshot by ID."""
         for snap in self._system_snapshots:
             if snap.snapshot_id == snapshot_id:
                 return snap
         return None
 
-    def list_snapshots(self) -> list[StateSnapshot]:
+    async def list_snapshots(self) -> list[StateSnapshot]:
         """List all snapshots."""
         return sorted(self._system_snapshots, key=lambda s: s.created_at)
 
-    def delete_snapshot(self, snapshot_id: UUID) -> bool:
+    async def delete_snapshot(self, snapshot_id: UUID) -> bool:
         """Delete a snapshot by ID."""
         for i, snap in enumerate(self._system_snapshots):
             if snap.snapshot_id == snapshot_id:
@@ -507,10 +507,10 @@ class SnapshotManager:
                 return True
         return False
 
-    def compute_diff(self, snapshot1_id: UUID, snapshot2_id: UUID) -> dict[str, Any]:
+    async def compute_diff(self, snapshot1_id: UUID, snapshot2_id: UUID) -> dict[str, Any]:
         """Compute diff between two snapshots."""
-        snap1 = self.get_snapshot(snapshot1_id)
-        snap2 = self.get_snapshot(snapshot2_id)
+        snap1 = await self.get_snapshot(snapshot1_id)
+        snap2 = await self.get_snapshot(snapshot2_id)
 
         if not snap1 or not snap2:
             return {"error": "Snapshot not found"}
@@ -550,7 +550,7 @@ class StateManager:
         self._lineage_tracker = LineageTracker(self.config.lineage)
         self._snapshot_manager = SnapshotManager(self.config.snapshots)
 
-    def initialize(self) -> None:
+    async def initialize(self) -> None:
         """Initialize the state manager.
 
         This is a stub/placeholder method.
@@ -565,7 +565,7 @@ class StateManager:
         """
         pass
 
-    def shutdown(self) -> None:
+    async def shutdown(self) -> None:
         """Shutdown the state manager.
 
         This is a stub/placeholder method.
@@ -580,17 +580,17 @@ class StateManager:
         """
         pass
 
-    def register_agent(self, agent_id: str, agent_type: str = "worker") -> AgentState:
+    async def register_agent(self, agent_id: str, agent_type: str = "worker") -> AgentState:
         """Register a new agent."""
         state = AgentState(agent_id=agent_id, agent_type=agent_type)
         self._states[agent_id] = state
         return state
 
-    def update_agent_state(self, agent_id: str, **kwargs: Any) -> AgentState | None:
+    async def update_agent_state(self, agent_id: str, **kwargs: Any) -> AgentState | None:
         """Update an agent's state."""
-        return self.update_state(agent_id, **kwargs)
+        return await self.update_state(agent_id, **kwargs)
 
-    def start_conversation(
+    async def start_conversation(
         self,
         initiator_agent_id: str,
         participant_ids: list[str] | None = None,
@@ -605,7 +605,7 @@ class StateManager:
         self._conversations[conv.conversation_id] = conv
         return conv
 
-    def record_message(
+    async def record_message(
         self,
         conversation_id: UUID,
         sender_agent_id: str,
@@ -614,7 +614,7 @@ class StateManager:
         parent_message_id: UUID | None = None,
     ) -> MessageLineage:
         """Record a message in a conversation."""
-        lineage = self._lineage_tracker.record_message(
+        lineage = await self._lineage_tracker.record_message(
             content=content,
             conversation_id=conversation_id,
             sender_agent_id=sender_agent_id,
@@ -623,19 +623,19 @@ class StateManager:
         )
         return lineage
 
-    def create_snapshot(self, trigger: str = "manual", description: str = "") -> StateSnapshot:
+    async def create_snapshot(self, trigger: str = "manual", description: str = "") -> StateSnapshot:
         """Create a snapshot of current state."""
         system_state = SystemState(active_agents=len(self._states))
-        return self._snapshot_manager.create_snapshot(
+        return await self._snapshot_manager.create_snapshot(
             system_state=system_state,
             agent_states=self._states,
             trigger=trigger,
             description=description,
         )
 
-    def rollback_to_snapshot(self, snapshot_id: UUID) -> bool:
+    async def rollback_to_snapshot(self, snapshot_id: UUID) -> bool:
         """Rollback to a previous snapshot."""
-        snapshot = self._snapshot_manager.get_snapshot(snapshot_id)
+        snapshot = await self._snapshot_manager.get_snapshot(snapshot_id)
         if not snapshot:
             return False
 
@@ -652,7 +652,7 @@ class StateManager:
             self._states[agent_id] = state
         return True
 
-    def get_stats(self) -> dict[str, Any]:
+    async def get_stats(self) -> dict[str, Any]:
         """Get system-wide statistics."""
         return {
             "agents": {
@@ -674,7 +674,7 @@ class StateManager:
         """Get an agent's state."""
         return self._states.get(agent_id)
 
-    def update_state(self, agent_id: str, **kwargs: Any) -> AgentState | None:
+    async def update_state(self, agent_id: str, **kwargs: Any) -> AgentState | None:
         """Update an agent's state."""
         state = self._states.get(agent_id)
         if not state:
@@ -685,7 +685,7 @@ class StateManager:
         state.touch()
         return state
 
-    def get_active_agents(self) -> list[AgentState]:
+    async def get_active_agents(self) -> list[AgentState]:
         """Get all active agents."""
         return [s for s in self._states.values() if s.status == StateStatus.ACTIVE]
 
@@ -694,7 +694,7 @@ class StateManager:
         """Get the lineage tracker for message ancestry."""
         return self._lineage_tracker
 
-    def complete_conversation(self, conversation_id: UUID) -> ConversationState | None:
+    async def complete_conversation(self, conversation_id: UUID) -> ConversationState | None:
         """Complete a conversation."""
         conv = self._conversations.get(conversation_id)
         if not conv:

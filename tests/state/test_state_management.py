@@ -379,7 +379,7 @@ class TestLineageTracker:
                 sender_agent_id=f"agent-{i % 3}"
             )
 
-        stats = lineage_tracker.get_stats()
+        stats = await lineage_tracker.get_stats()
 
         assert stats["total_messages"] == 10
         assert stats["active_messages"] == 10
@@ -612,7 +612,7 @@ class TestStateManager:
             content="Test"
         )
 
-        stats = state_manager.get_stats()
+        stats = await state_manager.get_stats()
 
         assert stats["agents"]["total"] == 2
         assert stats["agents"]["active"] == 2
@@ -671,7 +671,7 @@ class TestIntegration:
         assert completed.status == StateStatus.COMPLETED
 
         # 7. Get final stats
-        stats = state_manager.get_stats()
+        stats = await state_manager.get_stats()
         assert stats["agents"]["total"] == 2
         assert stats["conversations"]["total"] >= 1
 

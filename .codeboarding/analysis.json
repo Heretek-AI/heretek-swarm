@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-17T20:39:27.603563+00:00",
+    "generated_at": "2026-04-17T20:55:27.121695+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -38204,21 +38204,21 @@
           "start_line": 279,
           "end_line": 332,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.state.models.LineageTracker.get_ancestry",
           "start_line": 334,
           "end_line": 351,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.state.models.LineageTracker.get_descendants",
           "start_line": 353,
           "end_line": 370,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.state.models.LineageTracker.find_branch_points",
@@ -38232,14 +38232,14 @@
           "start_line": 382,
           "end_line": 401,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.state.models.LineageTracker.get_stats",
           "start_line": 403,
           "end_line": 414,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.state.models.SnapshotManager",
@@ -38323,42 +38323,42 @@
           "start_line": 553,
           "end_line": 566,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.state.models.StateManager.shutdown",
           "start_line": 568,
           "end_line": 581,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.state.models.StateManager.register_agent",
           "start_line": 583,
           "end_line": 587,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.state.models.StateManager.update_agent_state",
           "start_line": 589,
           "end_line": 591,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.state.models.StateManager.start_conversation",
           "start_line": 593,
           "end_line": 606,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.state.models.StateManager.record_message",
           "start_line": 608,
           "end_line": 624,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.state.models.StateManager.create_snapshot",
@@ -38379,7 +38379,7 @@
           "start_line": 655,
           "end_line": 665,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.state.models.StateManager.create_state",
@@ -38400,14 +38400,14 @@
           "start_line": 677,
           "end_line": 686,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.state.models.StateManager.get_active_agents",
           "start_line": 688,
           "end_line": 690,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.state.models.StateManager.lineage",
@@ -38421,7 +38421,7 @@
           "start_line": 697,
           "end_line": 703,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         }
       ]
     },
@@ -98148,7 +98148,7 @@
       "start_line": 279,
       "end_line": 332,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/state/models.py|src.heretek_swarm.state.models.LineageTracker.get_ancestry": {
       "file_path": "src/heretek_swarm/state/models.py",
@@ -98156,7 +98156,7 @@
       "start_line": 334,
       "end_line": 351,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/state/models.py|src.heretek_swarm.state.models.LineageTracker.get_descendants": {
       "file_path": "src/heretek_swarm/state/models.py",
@@ -98164,7 +98164,7 @@
       "start_line": 353,
       "end_line": 370,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/state/models.py|src.heretek_swarm.state.models.LineageTracker.find_branch_points": {
       "file_path": "src/heretek_swarm/state/models.py",
@@ -98180,7 +98180,7 @@
       "start_line": 382,
       "end_line": 401,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/state/models.py|src.heretek_swarm.state.models.LineageTracker.get_stats": {
       "file_path": "src/heretek_swarm/state/models.py",
@@ -98188,7 +98188,7 @@
       "start_line": 403,
       "end_line": 414,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/state/models.py|src.heretek_swarm.state.models.SnapshotManager": {
       "file_path": "src/heretek_swarm/state/models.py",
@@ -98284,7 +98284,7 @@
       "start_line": 553,
       "end_line": 566,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/state/models.py|src.heretek_swarm.state.models.StateManager.shutdown": {
       "file_path": "src/heretek_swarm/state/models.py",
@@ -98292,7 +98292,7 @@
       "start_line": 568,
       "end_line": 581,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/state/models.py|src.heretek_swarm.state.models.StateManager.register_agent": {
       "file_path": "src/heretek_swarm/state/models.py",
@@ -98300,7 +98300,7 @@
       "start_line": 583,
       "end_line": 587,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/state/models.py|src.heretek_swarm.state.models.StateManager.update_agent_state": {
       "file_path": "src/heretek_swarm/state/models.py",
@@ -98308,7 +98308,7 @@
       "start_line": 589,
       "end_line": 591,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/state/models.py|src.heretek_swarm.state.models.StateManager.start_conversation": {
       "file_path": "src/heretek_swarm/state/models.py",
@@ -98316,7 +98316,7 @@
       "start_line": 593,
       "end_line": 606,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/state/models.py|src.heretek_swarm.state.models.StateManager.record_message": {
       "file_path": "src/heretek_swarm/state/models.py",
@@ -98324,7 +98324,7 @@
       "start_line": 608,
       "end_line": 624,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/state/models.py|src.heretek_swarm.state.models.StateManager.create_snapshot": {
       "file_path": "src/heretek_swarm/state/models.py",
@@ -98348,7 +98348,7 @@
       "start_line": 655,
       "end_line": 665,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/state/models.py|src.heretek_swarm.state.models.StateManager.create_state": {
       "file_path": "src/heretek_swarm/state/models.py",
@@ -98372,7 +98372,7 @@
       "start_line": 677,
       "end_line": 686,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/state/models.py|src.heretek_swarm.state.models.StateManager.get_active_agents": {
       "file_path": "src/heretek_swarm/state/models.py",
@@ -98380,7 +98380,7 @@
       "start_line": 688,
       "end_line": 690,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/state/models.py|src.heretek_swarm.state.models.StateManager.lineage": {
       "file_path": "src/heretek_swarm/state/models.py",
@@ -98396,7 +98396,7 @@
       "start_line": 697,
       "end_line": 703,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/state/repository.py|src.heretek_swarm.state.repository.AgentStateRecord": {
       "file_path": "src/heretek_swarm/state/repository.py",
