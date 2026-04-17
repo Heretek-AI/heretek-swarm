@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-17T02:17:40.517810+00:00",
+    "generated_at": "2026-04-17T13:51:41.499354+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -1064,9 +1064,9 @@
         {
           "qualified_name": "src.heretek_swarm.actors.base.core.AgentActor",
           "start_line": 117,
-          "end_line": 424,
+          "end_line": 438,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.base.core.AgentActor.get_actor_type",
@@ -1099,9 +1099,9 @@
         {
           "qualified_name": "src.heretek_swarm.actors.base.core.AgentActor.cleanup",
           "start_line": 260,
-          "end_line": 261,
+          "end_line": 275,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.base.core.AgentActor._register_default_handlers",
@@ -56680,9 +56680,9 @@
       "file_path": "src/heretek_swarm/actors/base/core.py",
       "qualified_name": "src.heretek_swarm.actors.base.core.AgentActor",
       "start_line": 117,
-      "end_line": 424,
+      "end_line": 438,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/base/core.py|src.heretek_swarm.actors.base.core.AgentActor.get_actor_type": {
       "file_path": "src/heretek_swarm/actors/base/core.py",
@@ -56720,9 +56720,9 @@
       "file_path": "src/heretek_swarm/actors/base/core.py",
       "qualified_name": "src.heretek_swarm.actors.base.core.AgentActor.cleanup",
       "start_line": 260,
-      "end_line": 261,
+      "end_line": 275,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/base/core.py|src.heretek_swarm.actors.base.core.AgentActor._register_default_handlers": {
       "file_path": "src/heretek_swarm/actors/base/core.py",

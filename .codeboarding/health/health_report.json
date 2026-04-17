@@ -1,7 +1,7 @@
 {
   "repository_name": "heretek-swarm",
-  "timestamp": "2026-04-17T02:17:41.864910+00:00",
-  "overall_score": 0.9909043447995823,
+  "timestamp": "2026-04-17T13:51:42.917938+00:00",
+  "overall_score": 0.9913271819870009,
   "check_summaries": [
     {
       "check_name": "function_size",
@@ -790,10 +790,10 @@
       "description": "Detects unused imports, variables, functions, and dead code via LSP diagnostics",
       "language": "Python",
       "check_type": "standard",
-      "total_entities_checked": 14,
-      "findings_count": 14,
-      "warning_count": 4,
-      "score": 0.29999999999999993,
+      "total_entities_checked": 7,
+      "findings_count": 7,
+      "warning_count": 3,
+      "score": 0.6499999999999999,
       "finding_groups": [
         {
           "severity": "info",
@@ -801,73 +801,31 @@
           "description": "Variables declared but never used",
           "entities": [
             {
-              "entity_name": "[unused_variable] \"frame\" is not accessed",
-              "file_path": "src/heretek_swarm/runtime/autonomous_runtime.py",
-              "line_start": 975,
-              "line_end": 975,
+              "entity_name": "[unused_variable] \"get_db_pool\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/base/core.py",
+              "line_start": 24,
+              "line_end": 24,
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_variable] \"BeeAgent\" is not accessed",
-              "file_path": "src/heretek_swarm/collective/swarm_intelligence.py",
-              "line_start": 50,
-              "line_end": 50,
+              "entity_name": "[unused_variable] \"AgentActorMessageHandling\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/base/core.py",
+              "line_start": 443,
+              "line_end": 443,
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_variable] \"PheromoneTrail\" is not accessed",
-              "file_path": "src/heretek_swarm/collective/swarm_intelligence.py",
-              "line_start": 51,
-              "line_end": 51,
+              "entity_name": "[unused_variable] \"AgentActorStateManagement\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/base/core.py",
+              "line_start": 446,
+              "line_end": 446,
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_variable] \"Particle\" is not accessed",
-              "file_path": "src/heretek_swarm/collective/swarm_intelligence.py",
-              "line_start": 52,
-              "line_end": 52,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"FlockingRule\" is not accessed",
-              "file_path": "src/heretek_swarm/collective/swarm_intelligence.py",
-              "line_start": 53,
-              "line_end": 53,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"_iteration\" is not accessed",
-              "file_path": "src/heretek_swarm/collective/swarm_intelligence.py",
-              "line_start": 311,
-              "line_end": 311,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"_iteration\" is not accessed",
-              "file_path": "src/heretek_swarm/collective/swarm_intelligence.py",
-              "line_start": 597,
-              "line_end": 597,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"agent_id\" is not accessed",
-              "file_path": "src/heretek_swarm/collective/swarm_intelligence.py",
-              "line_start": 645,
-              "line_end": 645,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"nodes\" is not accessed",
-              "file_path": "src/heretek_swarm/collective/algorithms/aco.py",
-              "line_start": 179,
-              "line_end": 179,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"_scout\" is not accessed",
-              "file_path": "src/heretek_swarm/collective/algorithms/abc.py",
-              "line_start": 181,
-              "line_end": 181,
+              "entity_name": "[unused_variable] \"kwargs\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/base/core.py",
+              "line_start": 176,
+              "line_end": 176,
               "metric_value": 0.0
             }
           ]
@@ -878,31 +836,24 @@
           "description": "Unused import statements that should be removed",
           "entities": [
             {
-              "entity_name": "[unused_import] Import \"BeeAgent\" is not accessed",
-              "file_path": "src/heretek_swarm/collective/swarm_intelligence.py",
-              "line_start": 50,
-              "line_end": 50,
+              "entity_name": "[unused_import] Import \"get_db_pool\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/base/core.py",
+              "line_start": 24,
+              "line_end": 24,
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_import] Import \"PheromoneTrail\" is not accessed",
-              "file_path": "src/heretek_swarm/collective/swarm_intelligence.py",
-              "line_start": 51,
-              "line_end": 51,
+              "entity_name": "[unused_import] Import \"AgentActorMessageHandling\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/base/core.py",
+              "line_start": 443,
+              "line_end": 443,
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_import] Import \"Particle\" is not accessed",
-              "file_path": "src/heretek_swarm/collective/swarm_intelligence.py",
-              "line_start": 52,
-              "line_end": 52,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_import] Import \"FlockingRule\" is not accessed",
-              "file_path": "src/heretek_swarm/collective/swarm_intelligence.py",
-              "line_start": 53,
-              "line_end": 53,
+              "entity_name": "[unused_import] Import \"AgentActorStateManagement\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/base/core.py",
+              "line_start": 446,
+              "line_end": 446,
               "metric_value": 0.0
             }
           ]
@@ -1171,40 +1122,40 @@
       "language": "TypeScript",
       "check_type": "circular_dependencies",
       "cycles": [
-        "src.components.Agents -> src.api -> src.components.Agents",
-        "src.components.Agents -> src.api -> src.components.UI -> src.components.Agents",
-        "src.components.Agents -> src.api -> src.components.UI -> src.components.Settings -> src.components.Agents",
-        "src.components.Agents -> src.api -> src.components.UI -> src.utils -> src.components.Agents",
-        "src.components.Agents -> src.components.Settings -> src.api -> src.components.Agents",
-        "src.components.Agents -> src.components.Settings -> src.api -> src.components.UI -> src.components.Agents",
-        "src.components.Agents -> src.components.Settings -> src.api -> src.components.UI -> src.utils -> src.components.Agents",
-        "src.components.Agents -> src.components.Settings -> src.components.Agents",
-        "src.components.Agents -> src.components.Settings -> src.components.UI -> src.components.Agents",
-        "src.components.Agents -> src.components.Settings -> src.components.UI -> src.utils -> src.components.Agents",
-        "src.components.Agents -> src.components.UI -> src.components.Agents",
-        "src.components.Agents -> src.components.UI -> src.components.Settings -> src.api -> src.components.Agents",
-        "src.components.Agents -> src.components.UI -> src.components.Settings -> src.components.Agents",
-        "src.components.Agents -> src.components.UI -> src.utils -> src.components.Agents",
+        "src.utils -> src.components.Agents -> src.api -> src.components.UI -> src.utils",
+        "src.utils -> src.components.Agents -> src.components.Settings -> src.api -> src.components.UI -> src.utils",
+        "src.utils -> src.components.Agents -> src.components.Settings -> src.components.UI -> src.utils",
+        "src.utils -> src.components.Agents -> src.components.UI -> src.utils",
         "src.utils -> src.components.UI -> src.utils",
+        "src.api -> src.components.Agents -> src.api",
+        "src.api -> src.components.Agents -> src.components.Settings -> src.api",
+        "src.api -> src.components.Agents -> src.components.UI -> src.components.Settings -> src.api",
+        "src.api -> src.components.UI -> src.components.Agents -> src.api",
+        "src.api -> src.components.UI -> src.components.Agents -> src.components.Settings -> src.api",
         "src.api -> src.components.UI -> src.components.Settings -> src.api",
-        "src.components.Settings -> src.components.UI -> src.components.Settings",
-        "dashboard.frontend.src.api -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api",
-        "dashboard.frontend.src.api -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api",
-        "dashboard.frontend.src.api -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api",
-        "dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api",
-        "dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api",
-        "dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api",
-        "dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api",
-        "dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api",
-        "dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api",
+        "src.api -> src.components.UI -> src.components.Settings -> src.components.Agents -> src.api",
+        "src.components.UI -> src.components.Agents -> src.components.Settings -> src.components.UI",
+        "src.components.UI -> src.components.Agents -> src.components.UI",
+        "src.components.UI -> src.components.Settings -> src.components.Agents -> src.components.UI",
+        "src.components.UI -> src.components.Settings -> src.components.UI",
+        "src.components.Agents -> src.components.Settings -> src.components.Agents",
+        "dashboard.frontend.src.utils -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils",
+        "dashboard.frontend.src.utils -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils",
+        "dashboard.frontend.src.utils -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils",
+        "dashboard.frontend.src.utils -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils",
+        "dashboard.frontend.src.utils -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils",
+        "dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings",
+        "dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings",
+        "dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings",
+        "dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings",
+        "dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings",
         "dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings",
         "dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings",
         "dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings",
         "dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings",
-        "dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings",
-        "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents",
-        "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils -> dashboard.frontend.src.components.Agents",
-        "dashboard.frontend.src.utils -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils"
+        "dashboard.frontend.src.api -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api",
+        "dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api",
+        "dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.UI"
       ],
       "packages_checked": 47,
       "packages_in_cycles": 10
@@ -1245,10 +1196,10 @@
   ],
   "file_summaries": [
     {
-      "file_path": "src/heretek_swarm/collective/swarm_intelligence.py",
-      "total_findings": 13,
-      "warning_findings": 6,
-      "composite_risk_score": 80.0
+      "file_path": "src/heretek_swarm/actors/base/core.py",
+      "total_findings": 7,
+      "warning_findings": 3,
+      "composite_risk_score": 65.0
     },
     {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
@@ -1329,6 +1280,12 @@
       "composite_risk_score": 30.0
     },
     {
+      "file_path": "src/heretek_swarm/collective/swarm_intelligence.py",
+      "total_findings": 2,
+      "warning_findings": 2,
+      "composite_risk_score": 30.0
+    },
+    {
       "file_path": "serverless/handler.py",
       "total_findings": 2,
       "warning_findings": 2,
@@ -1354,12 +1311,6 @@
     },
     {
       "file_path": "src/heretek_swarm/actors/coordinator.py",
-      "total_findings": 2,
-      "warning_findings": 2,
-      "composite_risk_score": 30.0
-    },
-    {
-      "file_path": "src/heretek_swarm/consensus/immune.py",
       "total_findings": 2,
       "warning_findings": 2,
       "composite_risk_score": 30.0

@@ -259,6 +259,20 @@ class AgentActor:
 
     async def cleanup(self) -> None:
         """Cleanup actor resources. Override in subclass for custom teardown."""
+        # Drain the mailbox
+        while not self.mailbox.empty():
+            try:
+                self.mailbox.get_nowait()
+            except asyncio.QueueEmpty:
+                break
+
+        # Clear internal state
+        self.internal_state.clear()
+
+        # Clear message handlers (no re-registration of defaults per test contract)
+        self._message_handlers.clear()
+
+        logger.info(f"[{self.agent_id}] Actor cleanup complete")
 
     def _register_default_handlers(self) -> None:
         """Register default message handlers."""
