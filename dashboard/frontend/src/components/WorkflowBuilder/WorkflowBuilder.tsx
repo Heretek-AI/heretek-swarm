@@ -75,6 +75,24 @@ export function WorkflowBuilder() {
     executionId: '',
   });
   
+  // Helper to get status badge CSS classes — avoids nested ternary chains (S3358)
+  const getStatusBadgeClass = (status: string) => {
+    switch (status) {
+      case 'connected': return 'bg-blue-100 text-blue-800';
+      case 'running': return 'bg-yellow-100 text-yellow-800';
+      case 'completed': return 'bg-green-100 text-green-800';
+      case 'failed': return 'bg-red-100 text-red-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+  const getProgressBarClass = (status: string) => {
+    switch (status) {
+      case 'completed': return 'bg-green-500';
+      case 'failed': return 'bg-red-500';
+      default: return 'bg-blue-500';
+    }
+  };
+  
   // NodeConfigPanel state
   const [configPanelOpen, setConfigPanelOpen] = useState(false);
   const [configPanelNode, setConfigPanelNode] = useState<{
@@ -568,11 +586,12 @@ export function WorkflowBuilder() {
       eventSourceRef.current.close();
     }
 
-    const url = workflowId
-      ? `${API_URL}/api/workflows/${workflowId}/events`
+    const safeWorkflowId = workflowId && /^[a-zA-Z0-9_-]+$/.test(workflowId) ? workflowId : undefined;
+    const url = safeWorkflowId
+      ? `${API_URL}/api/workflows/${safeWorkflowId}/events`
       : `${API_URL}/api/workflows/events`;
 
-    console.log('Connecting to SSE:', url);
+    console.log('Connecting to SSE stream for workflow:', safeWorkflowId ?? 'all');
 
     const eventSource = new EventSource(url);
     eventSourceRef.current = eventSource;
@@ -824,12 +843,7 @@ export function WorkflowBuilder() {
               <div className="absolute top-4 right-4 w-80 bg-white border border-gray-300 rounded-lg shadow-lg p-4 z-50">
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="font-semibold text-gray-800">Workflow Execution</h3>
-                  <span className={`text-xs px-2 py-1 rounded ${
-                    executionState.status === 'connected' ? 'bg-blue-100 text-blue-800' :
-                    executionState.status === 'running' ? 'bg-yellow-100 text-yellow-800' :
-                    executionState.status === 'completed' ? 'bg-green-100 text-green-800' :
-                    'bg-red-100 text-red-800'
-                  }`}>
+                  <span className={`text-xs px-2 py-1 rounded ${getStatusBadgeClass(executionState.status)}`}>
                     {executionState.status}
                   </span>
                 </div>
@@ -842,11 +856,7 @@ export function WorkflowBuilder() {
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-2">
                     <div
-                      className={`h-2 rounded-full transition-all duration-300 ${
-                        executionState.status === 'completed' ? 'bg-green-500' :
-                        executionState.status === 'failed' ? 'bg-red-500' :
-                        'bg-blue-500'
-                      }`}
+                      className={`h-2 rounded-full transition-all duration-300 ${getProgressBarClass(executionState.status)}`}
                       style={{ width: `${executionState.progress}%` }}
                     />
                   </div>

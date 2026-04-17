@@ -17,8 +17,8 @@ COPY package*.json ./
 # Install dependencies
 RUN npm install
 
-# Copy source code
-COPY . .
+# Copy source code — only src, public, and package files needed for build
+COPY src/ public/ package.json package-lock.json ./
 
 # Build application - skip strict type checking for deployment
 # VITE_API_HOST is passed as build argument and becomes available at build time

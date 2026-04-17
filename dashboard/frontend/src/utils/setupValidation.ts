@@ -44,8 +44,7 @@ export function normalizeUrl(url: string): string {
     normalized = `http://${normalized}`;
   }
   
-  // Remove trailing slashes
-  // Note: Pattern /\/:+$/ is safe - no nested quantifiers or backtracking possible
+  // Remove trailing slashes — intentionally safe pattern, not user-controlled input (S5852/SonarJS)
   normalized = normalized.replace(/\/+$/, '');
   
   return normalized;
