@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-17T17:30:13.591424+00:00",
+    "generated_at": "2026-04-17T17:36:03.226689+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -8320,7 +8320,7 @@
           "start_line": 38,
           "end_line": 78,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.triad.TriadAgent.initialize",
@@ -8355,42 +8355,42 @@
           "start_line": 109,
           "end_line": 118,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.triad.TriadAgent._trim_history",
           "start_line": 124,
           "end_line": 134,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.triad.TriadAgent._make_timed_record",
           "start_line": 136,
           "end_line": 146,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.triad.TriadAgent._perform_analysis",
           "start_line": 152,
           "end_line": 189,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.triad.TriadAgent._get_analysis_prompt",
           "start_line": 191,
           "end_line": 203,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.triad.TriadAgent._get_analysis_extras",
           "start_line": 205,
           "end_line": 214,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.triad.StewardAgent",
@@ -8404,14 +8404,14 @@
           "start_line": 269,
           "end_line": 311,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.triad.StewardAgent._triad_handlers",
           "start_line": 272,
           "end_line": 279,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.triad.StewardAgent._handle_start_deliberation",
@@ -8425,21 +8425,21 @@
           "start_line": 313,
           "end_line": 315,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.triad.StewardAgent.get_all_deliberation_statuses",
           "start_line": 317,
           "end_line": 319,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.triad.StewardAgent.get_governance_policy",
           "start_line": 321,
           "end_line": 323,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.triad.StewardAgent._handle_request_decision",
@@ -8530,7 +8530,7 @@
           "start_line": 577,
           "end_line": 584,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.triad.AlphaAgent._handle_analysis_request",
@@ -8635,7 +8635,7 @@
           "start_line": 855,
           "end_line": 863,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.triad.BetaAgent._validate_decision",
@@ -8740,7 +8740,7 @@
           "start_line": 1130,
           "end_line": 1137,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.triad.CharlieAgent._assess_risks",
@@ -64738,7 +64738,7 @@
       "start_line": 38,
       "end_line": 78,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/triad.py|src.heretek_swarm.actors.triad.TriadAgent.initialize": {
       "file_path": "src/heretek_swarm/actors/triad.py",
@@ -64778,7 +64778,7 @@
       "start_line": 109,
       "end_line": 118,
       "type": "METHOD",
-      "status": "added"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/triad.py|src.heretek_swarm.actors.triad.TriadAgent._trim_history": {
       "file_path": "src/heretek_swarm/actors/triad.py",
@@ -64786,7 +64786,7 @@
       "start_line": 124,
       "end_line": 134,
       "type": "METHOD",
-      "status": "added"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/triad.py|src.heretek_swarm.actors.triad.TriadAgent._make_timed_record": {
       "file_path": "src/heretek_swarm/actors/triad.py",
@@ -64794,7 +64794,7 @@
       "start_line": 136,
       "end_line": 146,
       "type": "METHOD",
-      "status": "added"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/triad.py|src.heretek_swarm.actors.triad.TriadAgent._perform_analysis": {
       "file_path": "src/heretek_swarm/actors/triad.py",
@@ -64802,7 +64802,7 @@
       "start_line": 152,
       "end_line": 189,
       "type": "METHOD",
-      "status": "added"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/triad.py|src.heretek_swarm.actors.triad.TriadAgent._get_analysis_prompt": {
       "file_path": "src/heretek_swarm/actors/triad.py",
@@ -64810,7 +64810,7 @@
       "start_line": 191,
       "end_line": 203,
       "type": "METHOD",
-      "status": "added"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/triad.py|src.heretek_swarm.actors.triad.TriadAgent._get_analysis_extras": {
       "file_path": "src/heretek_swarm/actors/triad.py",
@@ -64818,7 +64818,7 @@
       "start_line": 205,
       "end_line": 214,
       "type": "METHOD",
-      "status": "added"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/triad.py|src.heretek_swarm.actors.triad.StewardAgent": {
       "file_path": "src/heretek_swarm/actors/triad.py",
@@ -64834,7 +64834,7 @@
       "start_line": 269,
       "end_line": 311,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/triad.py|src.heretek_swarm.actors.triad.StewardAgent._triad_handlers": {
       "file_path": "src/heretek_swarm/actors/triad.py",
@@ -64842,7 +64842,7 @@
       "start_line": 272,
       "end_line": 279,
       "type": "METHOD",
-      "status": "added"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/triad.py|src.heretek_swarm.actors.triad.StewardAgent._handle_start_deliberation": {
       "file_path": "src/heretek_swarm/actors/triad.py",
@@ -64858,7 +64858,7 @@
       "start_line": 313,
       "end_line": 315,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/triad.py|src.heretek_swarm.actors.triad.StewardAgent.get_all_deliberation_statuses": {
       "file_path": "src/heretek_swarm/actors/triad.py",
@@ -64866,7 +64866,7 @@
       "start_line": 317,
       "end_line": 319,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/triad.py|src.heretek_swarm.actors.triad.StewardAgent.get_governance_policy": {
       "file_path": "src/heretek_swarm/actors/triad.py",
@@ -64874,7 +64874,7 @@
       "start_line": 321,
       "end_line": 323,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/triad.py|src.heretek_swarm.actors.triad.StewardAgent._handle_request_decision": {
       "file_path": "src/heretek_swarm/actors/triad.py",
@@ -64978,7 +64978,7 @@
       "start_line": 577,
       "end_line": 584,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/triad.py|src.heretek_swarm.actors.triad.AlphaAgent._handle_analysis_request": {
       "file_path": "src/heretek_swarm/actors/triad.py",
@@ -65098,7 +65098,7 @@
       "start_line": 855,
       "end_line": 863,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/triad.py|src.heretek_swarm.actors.triad.BetaAgent._validate_decision": {
       "file_path": "src/heretek_swarm/actors/triad.py",
@@ -65218,7 +65218,7 @@
       "start_line": 1130,
       "end_line": 1137,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/triad.py|src.heretek_swarm.actors.triad.CharlieAgent._assess_risks": {
       "file_path": "src/heretek_swarm/actors/triad.py",
