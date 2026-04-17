@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-17T17:50:31.530932+00:00",
+    "generated_at": "2026-04-17T17:54:34.006945+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -6264,84 +6264,84 @@
           "start_line": 46,
           "end_line": 56,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.perceiver_plus.DataModality",
           "start_line": 59,
           "end_line": 67,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.perceiver_plus.StatisticalTest",
           "start_line": 70,
           "end_line": 79,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.perceiver_plus.AnalyticsResult",
           "start_line": 82,
           "end_line": 118,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.perceiver_plus.AnalyticsResult.__init__",
           "start_line": 85,
           "end_line": 104,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.perceiver_plus.AnalyticsResult.to_dict",
           "start_line": 106,
           "end_line": 118,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.perceiver_plus.TrendAnalysis",
           "start_line": 121,
           "end_line": 154,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.perceiver_plus.TrendAnalysis.__init__",
           "start_line": 124,
           "end_line": 141,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.perceiver_plus.TrendAnalysis.to_dict",
           "start_line": 143,
           "end_line": 154,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.perceiver_plus.CorrelationMatrix",
           "start_line": 157,
           "end_line": 183,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.perceiver_plus.CorrelationMatrix.__init__",
           "start_line": 160,
           "end_line": 171,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.perceiver_plus.CorrelationMatrix.to_dict",
           "start_line": 173,
           "end_line": 183,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent",
@@ -6355,70 +6355,70 @@
           "start_line": 208,
           "end_line": 286,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent.initialize",
           "start_line": 288,
           "end_line": 313,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent.process_message",
           "start_line": 315,
           "end_line": 343,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent._validate_data_input",
           "start_line": 345,
           "end_line": 366,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent._handle_analyze_data",
           "start_line": 368,
           "end_line": 426,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent._perform_analysis",
           "start_line": 428,
           "end_line": 466,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent._descriptive_analysis",
           "start_line": 468,
           "end_line": 530,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent._diagnostic_analysis",
           "start_line": 532,
           "end_line": 590,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent._predictive_analysis",
           "start_line": 592,
           "end_line": 651,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent._statistical_analysis",
           "start_line": 653,
           "end_line": 707,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent._correlational_analysis",
@@ -6432,140 +6432,140 @@
           "start_line": 781,
           "end_line": 800,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent._trend_analysis",
           "start_line": 802,
           "end_line": 881,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent._anomaly_analysis",
           "start_line": 883,
           "end_line": 944,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent._handle_detect_trends",
           "start_line": 946,
           "end_line": 983,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent._handle_compute_correlations",
           "start_line": 985,
           "end_line": 1019,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent._handle_run_statistical_test",
           "start_line": 1021,
           "end_line": 1051,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent._handle_extract_features",
           "start_line": 1053,
           "end_line": 1093,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent._extract_features_from_data",
           "start_line": 1095,
           "end_line": 1120,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent._handle_forecast_values",
           "start_line": 1122,
           "end_line": 1153,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent._forecast_values",
           "start_line": 1155,
           "end_line": 1195,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent._handle_get_analytics_summary",
           "start_line": 1197,
           "end_line": 1226,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent._handle_knowledge_enhanced_analysis",
           "start_line": 1228,
           "end_line": 1297,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent.knowledge_enhanced_query",
           "start_line": 1299,
           "end_line": 1327,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent._handle_signal_processing",
           "start_line": 1329,
           "end_line": 1363,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent._emit_pattern",
           "start_line": 1369,
           "end_line": 1392,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent._consume_patterns",
           "start_line": 1394,
           "end_line": 1409,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent._initiate_deliberation",
           "start_line": 1415,
           "end_line": 1440,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent._submit_deliberation_position",
           "start_line": 1442,
           "end_line": 1477,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent._finalize_deliberation",
           "start_line": 1479,
           "end_line": 1499,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent._process_signal",
           "start_line": 1505,
           "end_line": 1518,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         }
       ]
     },
@@ -62434,7 +62434,7 @@
       "start_line": 46,
       "end_line": 56,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/perceiver_plus.py|src.heretek_swarm.actors.perceiver_plus.DataModality": {
       "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
@@ -62442,7 +62442,7 @@
       "start_line": 59,
       "end_line": 67,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/perceiver_plus.py|src.heretek_swarm.actors.perceiver_plus.StatisticalTest": {
       "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
@@ -62450,7 +62450,7 @@
       "start_line": 70,
       "end_line": 79,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/perceiver_plus.py|src.heretek_swarm.actors.perceiver_plus.AnalyticsResult": {
       "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
@@ -62458,7 +62458,7 @@
       "start_line": 82,
       "end_line": 118,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/perceiver_plus.py|src.heretek_swarm.actors.perceiver_plus.AnalyticsResult.__init__": {
       "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
@@ -62466,7 +62466,7 @@
       "start_line": 85,
       "end_line": 104,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/perceiver_plus.py|src.heretek_swarm.actors.perceiver_plus.AnalyticsResult.to_dict": {
       "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
@@ -62474,7 +62474,7 @@
       "start_line": 106,
       "end_line": 118,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/perceiver_plus.py|src.heretek_swarm.actors.perceiver_plus.TrendAnalysis": {
       "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
@@ -62482,7 +62482,7 @@
       "start_line": 121,
       "end_line": 154,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/perceiver_plus.py|src.heretek_swarm.actors.perceiver_plus.TrendAnalysis.__init__": {
       "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
@@ -62490,7 +62490,7 @@
       "start_line": 124,
       "end_line": 141,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/perceiver_plus.py|src.heretek_swarm.actors.perceiver_plus.TrendAnalysis.to_dict": {
       "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
@@ -62498,7 +62498,7 @@
       "start_line": 143,
       "end_line": 154,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/perceiver_plus.py|src.heretek_swarm.actors.perceiver_plus.CorrelationMatrix": {
       "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
@@ -62506,7 +62506,7 @@
       "start_line": 157,
       "end_line": 183,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/perceiver_plus.py|src.heretek_swarm.actors.perceiver_plus.CorrelationMatrix.__init__": {
       "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
@@ -62514,7 +62514,7 @@
       "start_line": 160,
       "end_line": 171,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/perceiver_plus.py|src.heretek_swarm.actors.perceiver_plus.CorrelationMatrix.to_dict": {
       "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
@@ -62522,7 +62522,7 @@
       "start_line": 173,
       "end_line": 183,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/perceiver_plus.py|src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent": {
       "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
@@ -62538,7 +62538,7 @@
       "start_line": 208,
       "end_line": 286,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/perceiver_plus.py|src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent.initialize": {
       "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
@@ -62546,7 +62546,7 @@
       "start_line": 288,
       "end_line": 313,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/perceiver_plus.py|src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent.process_message": {
       "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
@@ -62554,7 +62554,7 @@
       "start_line": 315,
       "end_line": 343,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/perceiver_plus.py|src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent._validate_data_input": {
       "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
@@ -62562,7 +62562,7 @@
       "start_line": 345,
       "end_line": 366,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/perceiver_plus.py|src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent._handle_analyze_data": {
       "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
@@ -62570,7 +62570,7 @@
       "start_line": 368,
       "end_line": 426,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/perceiver_plus.py|src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent._perform_analysis": {
       "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
@@ -62578,7 +62578,7 @@
       "start_line": 428,
       "end_line": 466,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/perceiver_plus.py|src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent._descriptive_analysis": {
       "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
@@ -62586,7 +62586,7 @@
       "start_line": 468,
       "end_line": 530,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/perceiver_plus.py|src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent._diagnostic_analysis": {
       "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
@@ -62594,7 +62594,7 @@
       "start_line": 532,
       "end_line": 590,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/perceiver_plus.py|src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent._predictive_analysis": {
       "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
@@ -62602,7 +62602,7 @@
       "start_line": 592,
       "end_line": 651,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/perceiver_plus.py|src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent._statistical_analysis": {
       "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
@@ -62610,7 +62610,7 @@
       "start_line": 653,
       "end_line": 707,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/perceiver_plus.py|src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent._correlational_analysis": {
       "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
@@ -62626,7 +62626,7 @@
       "start_line": 781,
       "end_line": 800,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/perceiver_plus.py|src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent._trend_analysis": {
       "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
@@ -62634,7 +62634,7 @@
       "start_line": 802,
       "end_line": 881,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/perceiver_plus.py|src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent._anomaly_analysis": {
       "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
@@ -62642,7 +62642,7 @@
       "start_line": 883,
       "end_line": 944,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/perceiver_plus.py|src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent._handle_detect_trends": {
       "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
@@ -62650,7 +62650,7 @@
       "start_line": 946,
       "end_line": 983,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/perceiver_plus.py|src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent._handle_compute_correlations": {
       "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
@@ -62658,7 +62658,7 @@
       "start_line": 985,
       "end_line": 1019,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/perceiver_plus.py|src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent._handle_run_statistical_test": {
       "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
@@ -62666,7 +62666,7 @@
       "start_line": 1021,
       "end_line": 1051,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/perceiver_plus.py|src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent._handle_extract_features": {
       "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
@@ -62674,7 +62674,7 @@
       "start_line": 1053,
       "end_line": 1093,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/perceiver_plus.py|src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent._extract_features_from_data": {
       "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
@@ -62682,7 +62682,7 @@
       "start_line": 1095,
       "end_line": 1120,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/perceiver_plus.py|src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent._handle_forecast_values": {
       "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
@@ -62690,7 +62690,7 @@
       "start_line": 1122,
       "end_line": 1153,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/perceiver_plus.py|src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent._forecast_values": {
       "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
@@ -62698,7 +62698,7 @@
       "start_line": 1155,
       "end_line": 1195,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/perceiver_plus.py|src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent._handle_get_analytics_summary": {
       "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
@@ -62706,7 +62706,7 @@
       "start_line": 1197,
       "end_line": 1226,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/perceiver_plus.py|src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent._handle_knowledge_enhanced_analysis": {
       "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
@@ -62714,7 +62714,7 @@
       "start_line": 1228,
       "end_line": 1297,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/perceiver_plus.py|src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent.knowledge_enhanced_query": {
       "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
@@ -62722,7 +62722,7 @@
       "start_line": 1299,
       "end_line": 1327,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/perceiver_plus.py|src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent._handle_signal_processing": {
       "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
@@ -62730,7 +62730,7 @@
       "start_line": 1329,
       "end_line": 1363,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/perceiver_plus.py|src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent._emit_pattern": {
       "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
@@ -62738,7 +62738,7 @@
       "start_line": 1369,
       "end_line": 1392,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/perceiver_plus.py|src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent._consume_patterns": {
       "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
@@ -62746,7 +62746,7 @@
       "start_line": 1394,
       "end_line": 1409,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/perceiver_plus.py|src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent._initiate_deliberation": {
       "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
@@ -62754,7 +62754,7 @@
       "start_line": 1415,
       "end_line": 1440,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/perceiver_plus.py|src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent._submit_deliberation_position": {
       "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
@@ -62762,7 +62762,7 @@
       "start_line": 1442,
       "end_line": 1477,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/perceiver_plus.py|src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent._finalize_deliberation": {
       "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
@@ -62770,7 +62770,7 @@
       "start_line": 1479,
       "end_line": 1499,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/perceiver_plus.py|src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent._process_signal": {
       "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
@@ -62778,7 +62778,7 @@
       "start_line": 1505,
       "end_line": 1518,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/prism.py|src.heretek_swarm.actors.prism.PerspectiveType": {
       "file_path": "src/heretek_swarm/actors/prism.py",
