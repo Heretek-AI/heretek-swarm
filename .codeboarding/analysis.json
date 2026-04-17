@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-17T17:54:34.006945+00:00",
+    "generated_at": "2026-04-17T18:08:47.731619+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -7544,308 +7544,308 @@
           "start_line": 68,
           "end_line": 75,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel_prime.ThreatType",
           "start_line": 78,
           "end_line": 99,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel_prime.IncidentStatus",
           "start_line": 102,
           "end_line": 110,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel_prime.ResponseAction",
           "start_line": 113,
           "end_line": 124,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel_prime.ThreatIndicator",
           "start_line": 128,
           "end_line": 138,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel_prime.SecurityIncident",
           "start_line": 142,
           "end_line": 158,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel_prime.ThreatReport",
           "start_line": 162,
           "end_line": 174,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent",
           "start_line": 177,
           "end_line": 1734,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent.__init__",
           "start_line": 200,
           "end_line": 308,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent.process_message",
           "start_line": 310,
           "end_line": 328,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._register_handlers",
           "start_line": 330,
           "end_line": 351,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._handle_detect_external_threat",
           "start_line": 357,
           "end_line": 468,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._handle_get_threat_intelligence",
           "start_line": 470,
           "end_line": 503,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._handle_configure_alert_priority",
           "start_line": 505,
           "end_line": 541,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._handle_suppress_alerts",
           "start_line": 543,
           "end_line": 580,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._handle_escalate_to_core_triad",
           "start_line": 582,
           "end_line": 633,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._is_alert_suppressed",
           "start_line": 639,
           "end_line": 649,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._create_incident_from_detection",
           "start_line": 651,
           "end_line": 718,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._check_core_triad_escalation",
           "start_line": 720,
           "end_line": 752,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._handle_report_threat",
           "start_line": 761,
           "end_line": 871,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._handle_analyze_threat",
           "start_line": 873,
           "end_line": 923,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._handle_get_incident_details",
           "start_line": 925,
           "end_line": 968,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._handle_get_active_incidents",
           "start_line": 970,
           "end_line": 1039,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._handle_respond_to_incident",
           "start_line": 1041,
           "end_line": 1097,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._handle_add_threat_indicator",
           "start_line": 1099,
           "end_line": 1137,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._handle_check_indicator",
           "start_line": 1139,
           "end_line": 1192,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._handle_get_threat_report",
           "start_line": 1194,
           "end_line": 1262,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._handle_block_source",
           "start_line": 1264,
           "end_line": 1300,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._handle_isolate_actor",
           "start_line": 1302,
           "end_line": 1338,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._handle_get_statistics",
           "start_line": 1340,
           "end_line": 1380,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._handle_update_config",
           "start_line": 1382,
           "end_line": 1410,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._create_incident_id",
           "start_line": 1416,
           "end_line": 1420,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._create_indicator",
           "start_line": 1422,
           "end_line": 1440,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._auto_respond",
           "start_line": 1442,
           "end_line": 1483,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._execute_response_action",
           "start_line": 1485,
           "end_line": 1553,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._calculate_severity_score",
           "start_line": 1555,
           "end_line": 1574,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._find_correlated_incidents",
           "start_line": 1576,
           "end_line": 1612,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._reconstruct_attack_chain",
           "start_line": 1614,
           "end_line": 1632,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._match_iocs",
           "start_line": 1634,
           "end_line": 1650,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._map_mitre_techniques",
           "start_line": 1652,
           "end_line": 1664,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._generate_recommendations",
           "start_line": 1666,
           "end_line": 1687,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._generate_strategic_recommendations",
           "start_line": 1689,
           "end_line": 1722,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._schedule_unblock",
           "start_line": 1724,
           "end_line": 1728,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._schedule_unisolate",
           "start_line": 1730,
           "end_line": 1734,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         }
       ]
     },
@@ -63874,7 +63874,7 @@
       "start_line": 68,
       "end_line": 75,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel_prime.py|src.heretek_swarm.actors.sentinel_prime.ThreatType": {
       "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
@@ -63882,7 +63882,7 @@
       "start_line": 78,
       "end_line": 99,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel_prime.py|src.heretek_swarm.actors.sentinel_prime.IncidentStatus": {
       "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
@@ -63890,7 +63890,7 @@
       "start_line": 102,
       "end_line": 110,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel_prime.py|src.heretek_swarm.actors.sentinel_prime.ResponseAction": {
       "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
@@ -63898,7 +63898,7 @@
       "start_line": 113,
       "end_line": 124,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel_prime.py|src.heretek_swarm.actors.sentinel_prime.ThreatIndicator": {
       "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
@@ -63906,7 +63906,7 @@
       "start_line": 128,
       "end_line": 138,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel_prime.py|src.heretek_swarm.actors.sentinel_prime.SecurityIncident": {
       "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
@@ -63914,7 +63914,7 @@
       "start_line": 142,
       "end_line": 158,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel_prime.py|src.heretek_swarm.actors.sentinel_prime.ThreatReport": {
       "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
@@ -63922,7 +63922,7 @@
       "start_line": 162,
       "end_line": 174,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel_prime.py|src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent": {
       "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
@@ -63930,7 +63930,7 @@
       "start_line": 177,
       "end_line": 1734,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel_prime.py|src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent.__init__": {
       "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
@@ -63938,7 +63938,7 @@
       "start_line": 200,
       "end_line": 308,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel_prime.py|src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent.process_message": {
       "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
@@ -63946,7 +63946,7 @@
       "start_line": 310,
       "end_line": 328,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel_prime.py|src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._register_handlers": {
       "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
@@ -63954,7 +63954,7 @@
       "start_line": 330,
       "end_line": 351,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel_prime.py|src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._handle_detect_external_threat": {
       "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
@@ -63962,7 +63962,7 @@
       "start_line": 357,
       "end_line": 468,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel_prime.py|src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._handle_get_threat_intelligence": {
       "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
@@ -63970,7 +63970,7 @@
       "start_line": 470,
       "end_line": 503,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel_prime.py|src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._handle_configure_alert_priority": {
       "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
@@ -63978,7 +63978,7 @@
       "start_line": 505,
       "end_line": 541,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel_prime.py|src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._handle_suppress_alerts": {
       "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
@@ -63986,7 +63986,7 @@
       "start_line": 543,
       "end_line": 580,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel_prime.py|src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._handle_escalate_to_core_triad": {
       "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
@@ -63994,7 +63994,7 @@
       "start_line": 582,
       "end_line": 633,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel_prime.py|src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._is_alert_suppressed": {
       "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
@@ -64002,7 +64002,7 @@
       "start_line": 639,
       "end_line": 649,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel_prime.py|src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._create_incident_from_detection": {
       "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
@@ -64010,7 +64010,7 @@
       "start_line": 651,
       "end_line": 718,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel_prime.py|src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._check_core_triad_escalation": {
       "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
@@ -64018,7 +64018,7 @@
       "start_line": 720,
       "end_line": 752,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel_prime.py|src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._handle_report_threat": {
       "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
@@ -64026,7 +64026,7 @@
       "start_line": 761,
       "end_line": 871,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel_prime.py|src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._handle_analyze_threat": {
       "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
@@ -64034,7 +64034,7 @@
       "start_line": 873,
       "end_line": 923,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel_prime.py|src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._handle_get_incident_details": {
       "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
@@ -64042,7 +64042,7 @@
       "start_line": 925,
       "end_line": 968,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel_prime.py|src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._handle_get_active_incidents": {
       "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
@@ -64050,7 +64050,7 @@
       "start_line": 970,
       "end_line": 1039,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel_prime.py|src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._handle_respond_to_incident": {
       "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
@@ -64058,7 +64058,7 @@
       "start_line": 1041,
       "end_line": 1097,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel_prime.py|src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._handle_add_threat_indicator": {
       "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
@@ -64066,7 +64066,7 @@
       "start_line": 1099,
       "end_line": 1137,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel_prime.py|src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._handle_check_indicator": {
       "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
@@ -64074,7 +64074,7 @@
       "start_line": 1139,
       "end_line": 1192,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel_prime.py|src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._handle_get_threat_report": {
       "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
@@ -64082,7 +64082,7 @@
       "start_line": 1194,
       "end_line": 1262,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel_prime.py|src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._handle_block_source": {
       "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
@@ -64090,7 +64090,7 @@
       "start_line": 1264,
       "end_line": 1300,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel_prime.py|src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._handle_isolate_actor": {
       "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
@@ -64098,7 +64098,7 @@
       "start_line": 1302,
       "end_line": 1338,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel_prime.py|src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._handle_get_statistics": {
       "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
@@ -64106,7 +64106,7 @@
       "start_line": 1340,
       "end_line": 1380,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel_prime.py|src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._handle_update_config": {
       "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
@@ -64114,7 +64114,7 @@
       "start_line": 1382,
       "end_line": 1410,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel_prime.py|src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._create_incident_id": {
       "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
@@ -64122,7 +64122,7 @@
       "start_line": 1416,
       "end_line": 1420,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel_prime.py|src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._create_indicator": {
       "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
@@ -64130,7 +64130,7 @@
       "start_line": 1422,
       "end_line": 1440,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel_prime.py|src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._auto_respond": {
       "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
@@ -64138,7 +64138,7 @@
       "start_line": 1442,
       "end_line": 1483,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel_prime.py|src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._execute_response_action": {
       "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
@@ -64146,7 +64146,7 @@
       "start_line": 1485,
       "end_line": 1553,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel_prime.py|src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._calculate_severity_score": {
       "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
@@ -64154,7 +64154,7 @@
       "start_line": 1555,
       "end_line": 1574,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel_prime.py|src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._find_correlated_incidents": {
       "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
@@ -64162,7 +64162,7 @@
       "start_line": 1576,
       "end_line": 1612,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel_prime.py|src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._reconstruct_attack_chain": {
       "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
@@ -64170,7 +64170,7 @@
       "start_line": 1614,
       "end_line": 1632,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel_prime.py|src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._match_iocs": {
       "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
@@ -64178,7 +64178,7 @@
       "start_line": 1634,
       "end_line": 1650,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel_prime.py|src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._map_mitre_techniques": {
       "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
@@ -64186,7 +64186,7 @@
       "start_line": 1652,
       "end_line": 1664,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel_prime.py|src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._generate_recommendations": {
       "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
@@ -64194,7 +64194,7 @@
       "start_line": 1666,
       "end_line": 1687,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel_prime.py|src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._generate_strategic_recommendations": {
       "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
@@ -64202,7 +64202,7 @@
       "start_line": 1689,
       "end_line": 1722,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel_prime.py|src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._schedule_unblock": {
       "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
@@ -64210,7 +64210,7 @@
       "start_line": 1724,
       "end_line": 1728,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel_prime.py|src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._schedule_unisolate": {
       "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
@@ -64218,7 +64218,7 @@
       "start_line": 1730,
       "end_line": 1734,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/steward.py|src.heretek_swarm.actors.steward.StewardAgent": {
       "file_path": "src/heretek_swarm/actors/steward.py",
