@@ -1,7 +1,7 @@
 {
   "repository_name": "heretek-swarm",
-  "timestamp": "2026-04-17T21:11:53.054421+00:00",
-  "overall_score": 0.9879671410389911,
+  "timestamp": "2026-04-17T21:22:55.326425+00:00",
+  "overall_score": 0.9879099901660207,
   "check_summaries": [
     {
       "check_name": "function_size",
@@ -790,8 +790,8 @@
       "description": "Detects unused imports, variables, functions, and dead code via LSP diagnostics",
       "language": "Python",
       "check_type": "standard",
-      "total_entities_checked": 61,
-      "findings_count": 61,
+      "total_entities_checked": 62,
+      "findings_count": 62,
       "warning_count": 18,
       "score": 0.0,
       "finding_groups": [
@@ -985,36 +985,36 @@
             {
               "entity_name": "[unused_variable] \"_subject\" is not accessed",
               "file_path": "src/heretek_swarm/infrastructure/nats/memory_sync.py",
-              "line_start": 343,
-              "line_end": 343,
+              "line_start": 398,
+              "line_end": 398,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"_subject\" is not accessed",
               "file_path": "src/heretek_swarm/infrastructure/nats/memory_sync.py",
-              "line_start": 418,
-              "line_end": 418,
+              "line_start": 427,
+              "line_end": 427,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"_subject\" is not accessed",
               "file_path": "src/heretek_swarm/infrastructure/nats/memory_sync.py",
-              "line_start": 439,
-              "line_end": 439,
+              "line_start": 448,
+              "line_end": 448,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"_subject\" is not accessed",
               "file_path": "src/heretek_swarm/infrastructure/nats/memory_sync.py",
-              "line_start": 641,
-              "line_end": 641,
+              "line_start": 647,
+              "line_end": 647,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"_name\" is not accessed",
               "file_path": "src/heretek_swarm/infrastructure/nats/memory_sync.py",
-              "line_start": 678,
-              "line_end": 678,
+              "line_start": 684,
+              "line_end": 684,
               "metric_value": 0.0
             },
             {
@@ -1092,6 +1092,13 @@
               "file_path": "src/heretek_swarm/observability/metrics.py",
               "line_start": 716,
               "line_end": 716,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"frame\" is not accessed",
+              "file_path": "src/heretek_swarm/runtime/autonomous_runtime.py",
+              "line_start": 976,
+              "line_end": 976,
               "metric_value": 0.0
             }
           ]
