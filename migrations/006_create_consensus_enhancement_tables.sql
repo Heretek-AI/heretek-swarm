@@ -414,7 +414,7 @@ CREATE OR REPLACE FUNCTION update_agent_expertise(
     agent_name_param VARCHAR,
     domain_param VARCHAR,
     subdomain_param VARCHAR DEFAULT NULL,
-    outcome_success BOOLEAN
+    outcome_success BOOLEAN DEFAULT NULL
 )
 RETURNS void AS $$
 DECLARE
@@ -492,7 +492,7 @@ $$ LANGUAGE plpgsql;
 
 -- Function to record any consensus event
 CREATE OR REPLACE FUNCTION record_consensus_event(
-    event_type_param VARCHAR,
+    event_type_param VARCHAR DEFAULT NULL,
     proposal_id_param UUID DEFAULT NULL,
     round_id_param UUID DEFAULT NULL,
     vote_id_param UUID DEFAULT NULL,
@@ -577,7 +577,7 @@ SELECT
     experience_count,
     success_count,
     CASE WHEN experience_count > 0 
-         THEN ROUND((success_count::FLOAT / experience_count::FLOAT) * 100, 2)
+         THEN ROUND((success_count::NUMERIC / NULLIF(experience_count, 0)) * 100, 2)::NUMERIC
          ELSE 0 
     END AS success_rate,
     voting_weight_modifier,
