@@ -1,7 +1,7 @@
 {
   "repository_name": "heretek-swarm",
-  "timestamp": "2026-04-17T21:52:21.038243+00:00",
-  "overall_score": 0.9876734505087881,
+  "timestamp": "2026-04-18T00:57:00.170260+00:00",
+  "overall_score": 0.9900863818192359,
   "check_summaries": [
     {
       "check_name": "function_size",
@@ -790,9 +790,9 @@
       "description": "Detects unused imports, variables, functions, and dead code via LSP diagnostics",
       "language": "Python",
       "check_type": "standard",
-      "total_entities_checked": 63,
-      "findings_count": 63,
-      "warning_count": 18,
+      "total_entities_checked": 24,
+      "findings_count": 24,
+      "warning_count": 3,
       "score": 0.0,
       "finding_groups": [
         {
@@ -801,416 +801,150 @@
           "description": "Variables declared but never used",
           "entities": [
             {
-              "entity_name": "[unused_variable] \"api_key\" is not accessed",
-              "file_path": "src/heretek_swarm/api/wizard.py",
-              "line_start": 572,
-              "line_end": 572,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"_resolve_negotiation\" is not accessed",
-              "file_path": "src/heretek_swarm/actors/arbiter/strategies.py",
-              "line_start": 41,
-              "line_end": 41,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"_resolve_mediation\" is not accessed",
-              "file_path": "src/heretek_swarm/actors/arbiter/strategies.py",
-              "line_start": 53,
-              "line_end": 53,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"_resolve_arbitration\" is not accessed",
-              "file_path": "src/heretek_swarm/actors/arbiter/strategies.py",
-              "line_start": 64,
-              "line_end": 64,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"_resolve_priority_based\" is not accessed",
-              "file_path": "src/heretek_swarm/actors/arbiter/strategies.py",
-              "line_start": 91,
-              "line_end": 91,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"_resolve_round_robin\" is not accessed",
-              "file_path": "src/heretek_swarm/actors/arbiter/strategies.py",
-              "line_start": 103,
-              "line_end": 103,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"_resolve_resource_pooling\" is not accessed",
-              "file_path": "src/heretek_swarm/actors/arbiter/strategies.py",
-              "line_start": 114,
-              "line_end": 114,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"_resolve_task_reassignment\" is not accessed",
-              "file_path": "src/heretek_swarm/actors/arbiter/strategies.py",
-              "line_start": 125,
-              "line_end": 125,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"_resolve_escalation\" is not accessed",
-              "file_path": "src/heretek_swarm/actors/arbiter/strategies.py",
-              "line_start": 136,
-              "line_end": 136,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"_resolve_compromise\" is not accessed",
-              "file_path": "src/heretek_swarm/actors/arbiter/strategies.py",
-              "line_start": 143,
-              "line_end": 143,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"_resolve_consensus_vote\" is not accessed",
-              "file_path": "src/heretek_swarm/actors/arbiter/strategies.py",
-              "line_start": 154,
-              "line_end": 154,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"_conduct_mediation\" is not accessed",
-              "file_path": "src/heretek_swarm/actors/arbiter/strategies.py",
-              "line_start": 165,
-              "line_end": 165,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"_resolve_resource_contention\" is not accessed",
-              "file_path": "src/heretek_swarm/actors/arbiter/strategies.py",
-              "line_start": 213,
-              "line_end": 213,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"_resolve_task_contention\" is not accessed",
-              "file_path": "src/heretek_swarm/actors/arbiter/strategies.py",
-              "line_start": 242,
-              "line_end": 242,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"_resolve_generic_contention\" is not accessed",
-              "file_path": "src/heretek_swarm/actors/arbiter/strategies.py",
-              "line_start": 263,
-              "line_end": 263,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"agent\" is not accessed",
-              "file_path": "src/heretek_swarm/actors/arbiter/strategies.py",
-              "line_start": 214,
-              "line_end": 214,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"resource\" is not accessed",
-              "file_path": "src/heretek_swarm/actors/arbiter/strategies.py",
-              "line_start": 215,
-              "line_end": 215,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"agent\" is not accessed",
-              "file_path": "src/heretek_swarm/actors/arbiter/strategies.py",
-              "line_start": 243,
-              "line_end": 243,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"_scout\" is not accessed",
-              "file_path": "src/heretek_swarm/collective/algorithms/abc.py",
-              "line_start": 181,
-              "line_end": 181,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"nodes\" is not accessed",
-              "file_path": "src/heretek_swarm/collective/algorithms/aco.py",
-              "line_start": 179,
-              "line_end": 179,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] Result of async function call is not used; use \"await\" or assign result to variable",
-              "file_path": "src/heretek_swarm/memory/persistent.py",
-              "line_start": 524,
-              "line_end": 524,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] Result of async function call is not used; use \"await\" or assign result to variable",
-              "file_path": "src/heretek_swarm/memory/persistent.py",
-              "line_start": 574,
-              "line_end": 574,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] Result of async function call is not used; use \"await\" or assign result to variable",
-              "file_path": "src/heretek_swarm/memory/persistent.py",
-              "line_start": 609,
-              "line_end": 609,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] Result of async function call is not used; use \"await\" or assign result to variable",
-              "file_path": "src/heretek_swarm/memory/persistent.py",
-              "line_start": 629,
-              "line_end": 629,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"arguments\" is not accessed",
-              "file_path": "src/heretek_swarm/api/mcp.py",
-              "line_start": 366,
-              "line_end": 366,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"context\" is not accessed",
-              "file_path": "src/heretek_swarm/api/mcp.py",
-              "line_start": 367,
-              "line_end": 367,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"_subject\" is not accessed",
-              "file_path": "src/heretek_swarm/infrastructure/nats/memory_sync.py",
-              "line_start": 398,
-              "line_end": 398,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"_subject\" is not accessed",
-              "file_path": "src/heretek_swarm/infrastructure/nats/memory_sync.py",
-              "line_start": 427,
-              "line_end": 427,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"_subject\" is not accessed",
-              "file_path": "src/heretek_swarm/infrastructure/nats/memory_sync.py",
-              "line_start": 448,
-              "line_end": 448,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"_subject\" is not accessed",
-              "file_path": "src/heretek_swarm/infrastructure/nats/memory_sync.py",
-              "line_start": 647,
-              "line_end": 647,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"_name\" is not accessed",
-              "file_path": "src/heretek_swarm/infrastructure/nats/memory_sync.py",
-              "line_start": 684,
-              "line_end": 684,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"BeeAgent\" is not accessed",
-              "file_path": "src/heretek_swarm/collective/swarm_intelligence.py",
-              "line_start": 50,
-              "line_end": 50,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"PheromoneTrail\" is not accessed",
-              "file_path": "src/heretek_swarm/collective/swarm_intelligence.py",
-              "line_start": 51,
-              "line_end": 51,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"Particle\" is not accessed",
-              "file_path": "src/heretek_swarm/collective/swarm_intelligence.py",
-              "line_start": 52,
-              "line_end": 52,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"FlockingRule\" is not accessed",
-              "file_path": "src/heretek_swarm/collective/swarm_intelligence.py",
-              "line_start": 53,
-              "line_end": 53,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"_iteration\" is not accessed",
-              "file_path": "src/heretek_swarm/collective/swarm_intelligence.py",
-              "line_start": 311,
-              "line_end": 311,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"_iteration\" is not accessed",
-              "file_path": "src/heretek_swarm/collective/swarm_intelligence.py",
-              "line_start": 597,
-              "line_end": 597,
+              "entity_name": "[unused_variable] \"agent_id\" is not accessed",
+              "file_path": "src/heretek_swarm/api/consensus.py",
+              "line_start": 161,
+              "line_end": 161,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"agent_id\" is not accessed",
-              "file_path": "src/heretek_swarm/collective/swarm_intelligence.py",
-              "line_start": 645,
-              "line_end": 645,
+              "file_path": "src/heretek_swarm/api/consensus.py",
+              "line_start": 189,
+              "line_end": 189,
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_variable] \"error_type\" is not accessed",
-              "file_path": "src/heretek_swarm/observability/metrics.py",
-              "line_start": 192,
-              "line_end": 192,
+              "entity_name": "[unused_variable] \"agent_id\" is not accessed",
+              "file_path": "src/heretek_swarm/api/consensus.py",
+              "line_start": 227,
+              "line_end": 227,
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_variable] \"round_id\" is not accessed",
-              "file_path": "src/heretek_swarm/observability/metrics.py",
-              "line_start": 706,
-              "line_end": 706,
+              "entity_name": "[unused_variable] \"agent_id\" is not accessed",
+              "file_path": "src/heretek_swarm/api/consensus.py",
+              "line_start": 544,
+              "line_end": 544,
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_variable] \"message_id\" is not accessed",
-              "file_path": "src/heretek_swarm/observability/metrics.py",
-              "line_start": 711,
-              "line_end": 711,
+              "entity_name": "[unused_variable] \"auth\" is not accessed",
+              "file_path": "src/heretek_swarm/api/consensus.py",
+              "line_start": 836,
+              "line_end": 836,
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_variable] \"task_id\" is not accessed",
-              "file_path": "src/heretek_swarm/observability/metrics.py",
-              "line_start": 716,
-              "line_end": 716,
+              "entity_name": "[unused_variable] \"auth\" is not accessed",
+              "file_path": "src/heretek_swarm/api/consensus.py",
+              "line_start": 868,
+              "line_end": 868,
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_variable] \"frame\" is not accessed",
-              "file_path": "src/heretek_swarm/runtime/autonomous_runtime.py",
-              "line_start": 976,
-              "line_end": 976,
+              "entity_name": "[unused_variable] \"auth\" is not accessed",
+              "file_path": "src/heretek_swarm/api/consensus.py",
+              "line_start": 931,
+              "line_end": 931,
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_variable] \"aggregate_type\" is not accessed",
-              "file_path": "src/heretek_swarm/state/event_store.py",
-              "line_start": 488,
-              "line_end": 488,
-              "metric_value": 0.0
-            }
-          ]
-        },
-        {
-          "severity": "warning",
-          "threshold": 0,
-          "description": "Functions/methods defined but never called",
-          "entities": [
-            {
-              "entity_name": "[unused_function] Function \"_resolve_negotiation\" is not accessed",
-              "file_path": "src/heretek_swarm/actors/arbiter/strategies.py",
-              "line_start": 41,
-              "line_end": 41,
+              "entity_name": "[unused_variable] \"auth\" is not accessed",
+              "file_path": "src/heretek_swarm/api/consensus.py",
+              "line_start": 958,
+              "line_end": 958,
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_function] Function \"_resolve_mediation\" is not accessed",
-              "file_path": "src/heretek_swarm/actors/arbiter/strategies.py",
-              "line_start": 53,
-              "line_end": 53,
+              "entity_name": "[unused_variable] \"auth\" is not accessed",
+              "file_path": "src/heretek_swarm/api/consensus.py",
+              "line_start": 977,
+              "line_end": 977,
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_function] Function \"_resolve_arbitration\" is not accessed",
-              "file_path": "src/heretek_swarm/actors/arbiter/strategies.py",
-              "line_start": 64,
-              "line_end": 64,
+              "entity_name": "[unused_variable] \"auth\" is not accessed",
+              "file_path": "src/heretek_swarm/api/consensus.py",
+              "line_start": 999,
+              "line_end": 999,
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_function] Function \"_resolve_priority_based\" is not accessed",
-              "file_path": "src/heretek_swarm/actors/arbiter/strategies.py",
-              "line_start": 91,
-              "line_end": 91,
+              "entity_name": "[unused_variable] \"auth\" is not accessed",
+              "file_path": "src/heretek_swarm/api/consensus.py",
+              "line_start": 1022,
+              "line_end": 1022,
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_function] Function \"_resolve_round_robin\" is not accessed",
-              "file_path": "src/heretek_swarm/actors/arbiter/strategies.py",
-              "line_start": 103,
-              "line_end": 103,
+              "entity_name": "[unused_variable] \"auth\" is not accessed",
+              "file_path": "src/heretek_swarm/api/consensus.py",
+              "line_start": 1033,
+              "line_end": 1033,
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_function] Function \"_resolve_resource_pooling\" is not accessed",
-              "file_path": "src/heretek_swarm/actors/arbiter/strategies.py",
-              "line_start": 114,
-              "line_end": 114,
+              "entity_name": "[unused_variable] \"auth\" is not accessed",
+              "file_path": "src/heretek_swarm/api/consensus.py",
+              "line_start": 1048,
+              "line_end": 1048,
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_function] Function \"_resolve_task_reassignment\" is not accessed",
-              "file_path": "src/heretek_swarm/actors/arbiter/strategies.py",
-              "line_start": 125,
-              "line_end": 125,
+              "entity_name": "[unused_variable] \"auth\" is not accessed",
+              "file_path": "src/heretek_swarm/api/consensus.py",
+              "line_start": 1063,
+              "line_end": 1063,
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_function] Function \"_resolve_escalation\" is not accessed",
-              "file_path": "src/heretek_swarm/actors/arbiter/strategies.py",
-              "line_start": 136,
-              "line_end": 136,
+              "entity_name": "[unused_variable] \"auth\" is not accessed",
+              "file_path": "src/heretek_swarm/api/consensus.py",
+              "line_start": 1142,
+              "line_end": 1142,
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_function] Function \"_resolve_compromise\" is not accessed",
-              "file_path": "src/heretek_swarm/actors/arbiter/strategies.py",
-              "line_start": 143,
-              "line_end": 143,
+              "entity_name": "[unused_variable] \"auth\" is not accessed",
+              "file_path": "src/heretek_swarm/api/consensus.py",
+              "line_start": 1246,
+              "line_end": 1246,
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_function] Function \"_resolve_consensus_vote\" is not accessed",
-              "file_path": "src/heretek_swarm/actors/arbiter/strategies.py",
-              "line_start": 154,
-              "line_end": 154,
+              "entity_name": "[unused_variable] \"auth\" is not accessed",
+              "file_path": "src/heretek_swarm/api/consensus.py",
+              "line_start": 1269,
+              "line_end": 1269,
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_function] Function \"_conduct_mediation\" is not accessed",
-              "file_path": "src/heretek_swarm/actors/arbiter/strategies.py",
-              "line_start": 165,
-              "line_end": 165,
+              "entity_name": "[unused_variable] \"get_db_pool\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/base/core.py",
+              "line_start": 24,
+              "line_end": 24,
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_function] Function \"_resolve_resource_contention\" is not accessed",
-              "file_path": "src/heretek_swarm/actors/arbiter/strategies.py",
-              "line_start": 213,
-              "line_end": 213,
+              "entity_name": "[unused_variable] \"AgentActorMessageHandling\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/base/core.py",
+              "line_start": 443,
+              "line_end": 443,
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_function] Function \"_resolve_task_contention\" is not accessed",
-              "file_path": "src/heretek_swarm/actors/arbiter/strategies.py",
-              "line_start": 242,
-              "line_end": 242,
+              "entity_name": "[unused_variable] \"AgentActorStateManagement\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/base/core.py",
+              "line_start": 446,
+              "line_end": 446,
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_function] Function \"_resolve_generic_contention\" is not accessed",
-              "file_path": "src/heretek_swarm/actors/arbiter/strategies.py",
-              "line_start": 263,
-              "line_end": 263,
+              "entity_name": "[unused_variable] \"kwargs\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/base/core.py",
+              "line_start": 176,
+              "line_end": 176,
               "metric_value": 0.0
             }
           ]
@@ -1221,45 +955,24 @@
           "description": "Unused import statements that should be removed",
           "entities": [
             {
-              "entity_name": "[unused_import] Import \"BeeAgent\" is not accessed",
-              "file_path": "src/heretek_swarm/collective/swarm_intelligence.py",
-              "line_start": 50,
-              "line_end": 50,
+              "entity_name": "[unused_import] Import \"get_db_pool\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/base/core.py",
+              "line_start": 24,
+              "line_end": 24,
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_import] Import \"PheromoneTrail\" is not accessed",
-              "file_path": "src/heretek_swarm/collective/swarm_intelligence.py",
-              "line_start": 51,
-              "line_end": 51,
+              "entity_name": "[unused_import] Import \"AgentActorMessageHandling\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/base/core.py",
+              "line_start": 443,
+              "line_end": 443,
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_import] Import \"Particle\" is not accessed",
-              "file_path": "src/heretek_swarm/collective/swarm_intelligence.py",
-              "line_start": 52,
-              "line_end": 52,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_import] Import \"FlockingRule\" is not accessed",
-              "file_path": "src/heretek_swarm/collective/swarm_intelligence.py",
-              "line_start": 53,
-              "line_end": 53,
-              "metric_value": 0.0
-            }
-          ]
-        },
-        {
-          "severity": "info",
-          "threshold": 0,
-          "description": "Code that cannot be reached during execution",
-          "entities": [
-            {
-              "entity_name": "[unreachable_code] Code is unreachable",
-              "file_path": "src/heretek_swarm/evaluation/evaluator.py",
-              "line_start": 185,
-              "line_end": 187,
+              "entity_name": "[unused_import] Import \"AgentActorStateManagement\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/base/core.py",
+              "line_start": 446,
+              "line_end": 446,
               "metric_value": 0.0
             }
           ]
@@ -1528,40 +1241,40 @@
       "language": "TypeScript",
       "check_type": "circular_dependencies",
       "cycles": [
-        "src.utils -> src.components.Agents -> src.api -> src.components.UI -> src.utils",
-        "src.utils -> src.components.Agents -> src.components.Settings -> src.api -> src.components.UI -> src.utils",
-        "src.utils -> src.components.Agents -> src.components.Settings -> src.components.UI -> src.utils",
-        "src.utils -> src.components.Agents -> src.components.UI -> src.utils",
-        "src.utils -> src.components.UI -> src.utils",
-        "src.api -> src.components.Agents -> src.api",
-        "src.api -> src.components.Agents -> src.components.Settings -> src.api",
-        "src.api -> src.components.Agents -> src.components.UI -> src.components.Settings -> src.api",
-        "src.api -> src.components.UI -> src.components.Agents -> src.api",
-        "src.api -> src.components.UI -> src.components.Agents -> src.components.Settings -> src.api",
-        "src.api -> src.components.UI -> src.components.Settings -> src.api",
-        "src.api -> src.components.UI -> src.components.Settings -> src.components.Agents -> src.api",
+        "src.components.UI -> src.components.Agents -> src.api -> src.components.UI",
+        "src.components.UI -> src.components.Agents -> src.components.Settings -> src.api -> src.components.UI",
         "src.components.UI -> src.components.Agents -> src.components.Settings -> src.components.UI",
         "src.components.UI -> src.components.Agents -> src.components.UI",
+        "src.components.UI -> src.components.Settings -> src.api -> src.components.Agents -> src.components.UI",
+        "src.components.UI -> src.components.Settings -> src.api -> src.components.UI",
+        "src.components.UI -> src.components.Settings -> src.components.Agents -> src.api -> src.components.UI",
         "src.components.UI -> src.components.Settings -> src.components.Agents -> src.components.UI",
         "src.components.UI -> src.components.Settings -> src.components.UI",
+        "src.components.UI -> src.utils -> src.components.Agents -> src.api -> src.components.UI",
+        "src.components.UI -> src.utils -> src.components.Agents -> src.components.Settings -> src.api -> src.components.UI",
+        "src.components.UI -> src.utils -> src.components.Agents -> src.components.Settings -> src.components.UI",
+        "src.components.UI -> src.utils -> src.components.Agents -> src.components.UI",
+        "src.components.UI -> src.utils -> src.components.UI",
+        "src.api -> src.components.Agents -> src.api",
+        "src.api -> src.components.Agents -> src.components.Settings -> src.api",
         "src.components.Agents -> src.components.Settings -> src.components.Agents",
-        "dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api -> dashboard.frontend.src.components.UI",
-        "dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api -> dashboard.frontend.src.components.UI",
-        "dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.UI",
-        "dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.UI",
-        "dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.UI",
-        "dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api -> dashboard.frontend.src.components.UI",
-        "dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api -> dashboard.frontend.src.components.UI",
-        "dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.UI",
-        "dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.UI",
-        "dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api -> dashboard.frontend.src.components.UI",
-        "dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api -> dashboard.frontend.src.components.UI",
-        "dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.UI",
-        "dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.UI",
-        "dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils -> dashboard.frontend.src.components.UI",
-        "dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings",
+        "dashboard.frontend.src.api -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api",
+        "dashboard.frontend.src.api -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api",
+        "dashboard.frontend.src.api -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api",
+        "dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api",
+        "dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api",
+        "dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api",
+        "dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api",
+        "dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api",
+        "dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api",
+        "dashboard.frontend.src.utils -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils",
+        "dashboard.frontend.src.utils -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils",
+        "dashboard.frontend.src.utils -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils",
         "dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings",
-        "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api -> dashboard.frontend.src.components.Agents"
+        "dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings",
+        "dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings",
+        "dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings",
+        "dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.UI"
       ],
       "packages_checked": 47,
       "packages_in_cycles": 10
@@ -1593,106 +1306,23 @@
       "description": "Detects unused imports, variables, functions, and dead code via LSP diagnostics",
       "language": "TypeScript",
       "check_type": "standard",
-      "total_entities_checked": 8,
-      "findings_count": 8,
+      "total_entities_checked": 0,
+      "findings_count": 0,
       "warning_count": 0,
-      "score": 0.6,
-      "finding_groups": [
-        {
-          "severity": "info",
-          "threshold": 0,
-          "description": "Variables declared but never used",
-          "entities": [
-            {
-              "entity_name": "[unused_variable] 'React' is declared but its value is never read.",
-              "file_path": "dashboard/frontend/src/components/Dashboard/Dashboard.tsx",
-              "line_start": 12,
-              "line_end": 12,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] 'formatUptime' is declared but its value is never read.",
-              "file_path": "dashboard/frontend/src/components/Dashboard/Dashboard.tsx",
-              "line_start": 230,
-              "line_end": 230,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] 'getStatusColor' is declared but its value is never read.",
-              "file_path": "dashboard/frontend/src/components/Dashboard/Dashboard.tsx",
-              "line_start": 237,
-              "line_end": 237,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] 'data' is declared but its value is never read.",
-              "file_path": "dashboard/frontend/src/components/Dashboard/Dashboard.tsx",
-              "line_start": 303,
-              "line_end": 303,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] 'isConfigured' is declared but its value is never read.",
-              "file_path": "dashboard/frontend/src/App.tsx",
-              "line_start": 70,
-              "line_end": 70,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] 'isRerunning' is declared but its value is never read.",
-              "file_path": "dashboard/frontend/src/App.tsx",
-              "line_start": 71,
-              "line_end": 71,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] 'React' is declared but its value is never read.",
-              "file_path": "dashboard/frontend/src/components/Settings/SettingsPage.tsx",
-              "line_start": 8,
-              "line_end": 8,
-              "metric_value": 0.0
-            }
-          ]
-        },
-        {
-          "severity": "info",
-          "threshold": 0,
-          "description": "Code that cannot be reached during execution",
-          "entities": [
-            {
-              "entity_name": "[unreachable_code] Unreachable code detected.",
-              "file_path": "dashboard/frontend/src/components/Dashboard/Dashboard.tsx",
-              "line_start": 254,
-              "line_end": 274,
-              "metric_value": 0.0
-            }
-          ]
-        }
-      ]
+      "score": 1.0,
+      "finding_groups": []
     }
   ],
   "file_summaries": [
     {
-      "file_path": "src/heretek_swarm/actors/arbiter/strategies.py",
-      "total_findings": 31,
-      "warning_findings": 14,
-      "composite_risk_score": 100.0
+      "file_path": "src/heretek_swarm/actors/base/core.py",
+      "total_findings": 7,
+      "warning_findings": 3,
+      "composite_risk_score": 65.0
     },
     {
-      "file_path": "src/heretek_swarm/collective/swarm_intelligence.py",
-      "total_findings": 13,
-      "warning_findings": 6,
-      "composite_risk_score": 80.0
-    },
-    {
-      "file_path": "src/heretek_swarm/infrastructure/nats/memory_sync.py",
-      "total_findings": 6,
-      "warning_findings": 1,
-      "composite_risk_score": 55.0
-    },
-    {
-      "file_path": "dashboard/frontend/src/components/Dashboard/Dashboard.tsx",
-      "total_findings": 6,
+      "file_path": "src/heretek_swarm/api/consensus.py",
+      "total_findings": 18,
       "warning_findings": 1,
       "composite_risk_score": 55.0
     },
@@ -1725,24 +1355,6 @@
       "total_findings": 3,
       "warning_findings": 3,
       "composite_risk_score": 45.0
-    },
-    {
-      "file_path": "src/heretek_swarm/memory/persistent.py",
-      "total_findings": 4,
-      "warning_findings": 0,
-      "composite_risk_score": 40.0
-    },
-    {
-      "file_path": "src/heretek_swarm/observability/metrics.py",
-      "total_findings": 4,
-      "warning_findings": 0,
-      "composite_risk_score": 40.0
-    },
-    {
-      "file_path": "dashboard/frontend/src/App.tsx",
-      "total_findings": 3,
-      "warning_findings": 1,
-      "composite_risk_score": 35.0
     },
     {
       "file_path": "src/heretek_swarm/security/threat_detection.py",
@@ -1788,6 +1400,36 @@
     },
     {
       "file_path": "src/heretek_swarm/collective/agent_adaptation.py",
+      "total_findings": 2,
+      "warning_findings": 2,
+      "composite_risk_score": 30.0
+    },
+    {
+      "file_path": "src/heretek_swarm/collective/swarm_intelligence.py",
+      "total_findings": 2,
+      "warning_findings": 2,
+      "composite_risk_score": 30.0
+    },
+    {
+      "file_path": "serverless/handler.py",
+      "total_findings": 2,
+      "warning_findings": 2,
+      "composite_risk_score": 30.0
+    },
+    {
+      "file_path": "src/heretek_swarm/consciousness/phi_training.py",
+      "total_findings": 2,
+      "warning_findings": 2,
+      "composite_risk_score": 30.0
+    },
+    {
+      "file_path": "src/heretek_swarm/collective/adaptive_learning.py",
+      "total_findings": 2,
+      "warning_findings": 2,
+      "composite_risk_score": 30.0
+    },
+    {
+      "file_path": "src/heretek_swarm/config/crud.py",
       "total_findings": 2,
       "warning_findings": 2,
       "composite_risk_score": 30.0

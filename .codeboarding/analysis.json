@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-17T21:38:44.380471+00:00",
+    "generated_at": "2026-04-18T00:56:58.747490+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -9918,7 +9918,7 @@
       ]
     },
     "src/heretek_swarm/api/consensus.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.api.consensus.ConsensusAuthManager",
@@ -119527,7 +119527,7 @@
         },
         {
           "file_path": "src/heretek_swarm/api/consensus.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "src.heretek_swarm.api.consensus.ConsensusAuthManager",
             "src.heretek_swarm.api.consensus.ConsensusAuthManager.__init__",
@@ -126017,7 +126017,7 @@
             },
             {
               "file_path": "src/heretek_swarm/api/consensus.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.heretek_swarm.api.consensus.ConsensusAuthManager",
                 "src.heretek_swarm.api.consensus.ConsensusAuthManager.__init__",
@@ -141772,7 +141772,7 @@
               "file_methods": [
                 {
                   "file_path": "src/heretek_swarm/api/consensus.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.api.consensus.ConsensusAuthManager",
                     "src.heretek_swarm.api.consensus.ConsensusAuthManager.__init__",
@@ -142519,7 +142519,7 @@
                   "file_methods": [
                     {
                       "file_path": "src/heretek_swarm/api/consensus.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.api.consensus.ConsensusAuthManager",
                         "src.heretek_swarm.api.consensus.ConsensusAuthManager.__init__",
@@ -143028,7 +143028,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/api/consensus.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.api.consensus.ConsensusAuthManager",
                             "src.heretek_swarm.api.consensus.ConsensusAuthManager.__init__",
@@ -143195,7 +143195,7 @@
                   "file_methods": [
                     {
                       "file_path": "src/heretek_swarm/api/consensus.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.api.consensus.get_audit_statistics"
                       ]
@@ -143521,7 +143521,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/api/consensus.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.api.consensus.get_audit_statistics"
                           ]
@@ -143619,7 +143619,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/api/consensus.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.api.consensus.ConsensusAuthManager",
                             "src.heretek_swarm.api.consensus.ConsensusAuthManager.__init__",

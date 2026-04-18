@@ -257,7 +257,7 @@ class AgentActor:
     async def initialize(self) -> None:
         """Initialize the actor. Override in subclass for custom setup."""
 
-    def cleanup(self) -> None:
+    async def cleanup(self) -> None:
         """Cleanup actor resources. Override in subclass for custom teardown."""
         # Drain the mailbox
         while not self.mailbox.empty():

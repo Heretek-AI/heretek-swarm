@@ -15,7 +15,7 @@ SECURITY: All endpoints require authentication. Agent identity verification requ
 import os
 import secrets
 from datetime import UTC, datetime, timedelta
-from typing import Any
+from typing import Annotated, Any
 from uuid import uuid4
 
 import structlog
