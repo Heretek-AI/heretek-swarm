@@ -55,8 +55,15 @@ from typing import Any
 
 import structlog
 
-from .expertise import AgentExpertiseProfiler
-from .maker import ConsensusResult, ConsensusState, MAKERConsensus, Vote
+from heretek_swarm.consensus.expertise import AgentExpertiseProfiler
+from heretek_swarm.consensus.maker import ConsensusResult, ConsensusState, MAKERConsensus, Vote
+from heretek_swarm.infrastructure.nats.publisher import (
+    NATSPublisher,
+    get_nats_publisher,
+)
+
+logger = structlog.get_logger("EnhancedMAKERConsensus")
+
 
 # Evidence quality thresholds
 EVIDENCE_QUALITY_WEIGHT = 0.35  # Weight for evidence quality
@@ -64,7 +71,48 @@ EXPERTISE_WEIGHT = 0.30  # Weight for agent expertise
 CONFIDENCE_WEIGHT = 0.20  # Weight for confidence level
 HISTORICAL_WEIGHT = 0.15  # Weight for historical accuracy
 
-logger = structlog.get_logger("EnhancedMAKERConsensus")
+
+# Cache for the publisher instance
+_maker_publisher: NATSPublisher | None = None
+
+
+async def _get_maker_publisher() -> NATSPublisher | None:
+    """Get or create the NATS publisher with caching."""
+    global _maker_publisher
+    if _maker_publisher is None:
+        try:
+            _maker_publisher = await get_nats_publisher()
+        except Exception as e:
+            logger.warning(f"Failed to get NATS publisher in MAKER: {e}")
+            return None
+    return _maker_publisher
+
+
+async def _emit_consensus_result(result: ConsensusResult, consensus_id: str) -> None:
+    """
+    Emit consensus result event to NATS (fire-and-forget).
+
+    Does not block the consensus process on NATS unavailability.
+    """
+    try:
+        publisher = await _get_maker_publisher()
+        if publisher:
+            # Use a fire-and-forget task
+            import asyncio
+            asyncio.create_task(
+                publisher.emit_agent_event(
+                    agent_id="maker",
+                    event_type="consensus.result",
+                    data={
+                        "consensus_id": consensus_id,
+                        "decision": result.decision,
+                        "confidence": result.confidence,
+                        "voter_counts": result.votes if isinstance(result.votes, dict) else {},
+                    },
+                )
+            )
+    except Exception as e:
+        logger.debug("Consensus result emission failed: %s", e)
 
 
 class ReasoningChainStatus(Enum):
@@ -922,6 +970,12 @@ class EnhancedMAKERConsensus(MAKERConsensus):
                     "decision": result.decision,
                     "confidence": result.confidence,
                 }
+
+            # Emit consensus result event (fire-and-forget)
+            import asyncio
+            asyncio.create_task(
+                _emit_consensus_result(result, consensus_id)
+            )
 
         return result
 

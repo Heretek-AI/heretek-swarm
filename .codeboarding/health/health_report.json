@@ -1,7 +1,7 @@
 {
   "repository_name": "heretek-swarm",
-  "timestamp": "2026-04-18T03:32:46.928432+00:00",
-  "overall_score": 0.9886534676392266,
+  "timestamp": "2026-04-18T03:38:12.729130+00:00",
+  "overall_score": 0.9874530211043654,
   "check_summaries": [
     {
       "check_name": "function_size",
@@ -1481,11 +1481,173 @@
       "description": "Detects unused imports, variables, functions, and dead code via LSP diagnostics",
       "language": "TypeScript",
       "check_type": "standard",
-      "total_entities_checked": 0,
-      "findings_count": 0,
+      "total_entities_checked": 21,
+      "findings_count": 21,
       "warning_count": 0,
-      "score": 1.0,
-      "finding_groups": []
+      "score": 0.0,
+      "finding_groups": [
+        {
+          "severity": "info",
+          "threshold": 0,
+          "description": "Variables declared but never used",
+          "entities": [
+            {
+              "entity_name": "[unused_variable] 'MESSAGE_SUBJECTS' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
+              "line_start": 81,
+              "line_end": 81,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'getTypeColor' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
+              "line_start": 125,
+              "line_end": 125,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'getStatusIcon' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
+              "line_start": 136,
+              "line_end": 136,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'msg' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
+              "line_start": 159,
+              "line_end": 159,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'selectedAgent' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
+              "line_start": 181,
+              "line_end": 181,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'getStatusColor' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
+              "line_start": 182,
+              "line_end": 182,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'count' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
+              "line_start": 261,
+              "line_end": 261,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'resources' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
+              "line_start": 282,
+              "line_end": 282,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'stats' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
+              "line_start": 311,
+              "line_end": 311,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'refreshInterval' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
+              "line_start": 335,
+              "line_end": 335,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'agentActivity' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
+              "line_start": 339,
+              "line_end": 339,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'setSelectedAgent' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
+              "line_start": 340,
+              "line_end": 340,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'activeTab' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
+              "line_start": 341,
+              "line_end": 341,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'stats' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
+              "line_start": 343,
+              "line_end": 343,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'workflowStats' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
+              "line_start": 349,
+              "line_end": 349,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'internalMonologue' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
+              "line_start": 448,
+              "line_end": 448,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] Unused label.",
+              "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
+              "line_start": 496,
+              "line_end": 496,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] Unused label.",
+              "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
+              "line_start": 565,
+              "line_end": 565,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] Unused label.",
+              "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
+              "line_start": 571,
+              "line_end": 571,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] Unused label.",
+              "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
+              "line_start": 580,
+              "line_end": 580,
+              "metric_value": 0.0
+            }
+          ]
+        },
+        {
+          "severity": "info",
+          "threshold": 0,
+          "description": "Code that cannot be reached during execution",
+          "entities": [
+            {
+              "entity_name": "[unreachable_code] Unreachable code detected.",
+              "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
+              "line_start": 455,
+              "line_end": 461,
+              "metric_value": 0.0
+            }
+          ]
+        }
+      ]
     }
   ],
   "file_summaries": [
@@ -1512,6 +1674,12 @@
       "total_findings": 17,
       "warning_findings": 1,
       "composite_risk_score": 55.0
+    },
+    {
+      "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
+      "total_findings": 21,
+      "warning_findings": 0,
+      "composite_risk_score": 50.0
     },
     {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
@@ -1599,12 +1767,6 @@
     },
     {
       "file_path": "src/heretek_swarm/collective/swarm_intelligence.py",
-      "total_findings": 2,
-      "warning_findings": 2,
-      "composite_risk_score": 30.0
-    },
-    {
-      "file_path": "serverless/handler.py",
       "total_findings": 2,
       "warning_findings": 2,
       "composite_risk_score": 30.0

@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-18T03:32:18.187058+00:00",
+    "generated_at": "2026-04-18T03:35:10.707718+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -54106,271 +54106,215 @@
       ]
     },
     "dashboard/frontend/src/components/Observability/A2ATracker.tsx": {
-      "file_status": "modified",
+      "file_status": "unchanged",
       "methods": [
         {
           "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.A2AMessage",
-          "start_line": 17,
-          "end_line": 27,
+          "start_line": 18,
+          "end_line": 28,
           "node_type": "INTERFACE",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.AgentActivity",
-          "start_line": 29,
-          "end_line": 40,
+          "start_line": 30,
+          "end_line": 41,
           "node_type": "INTERFACE",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.WorkflowStats",
-          "start_line": 42,
-          "end_line": 47,
+          "start_line": 43,
+          "end_line": 48,
           "node_type": "INTERFACE",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.ResourceStats",
-          "start_line": 49,
-          "end_line": 54,
+          "start_line": 50,
+          "end_line": 55,
           "node_type": "INTERFACE",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.A2ATrackerProps",
-          "start_line": 56,
-          "end_line": 60,
+          "start_line": 57,
+          "end_line": 61,
           "node_type": "INTERFACE",
           "status": "unchanged"
         },
         {
-          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.generateRandomMessage",
-          "start_line": 81,
-          "end_line": 101,
+          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.mapEventType",
+          "start_line": 87,
+          "end_line": 92,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
+          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.SwarmEvent",
+          "start_line": 95,
+          "end_line": 102,
+          "node_type": "INTERFACE",
+          "status": "unchanged"
+        },
+        {
           "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.generateAgentActivity",
-          "start_line": 103,
-          "end_line": 116,
+          "start_line": 104,
+          "end_line": 117,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.generateAgentActivity.AGENT_IDS.map() callback",
-          "start_line": 104,
-          "end_line": 115,
+          "start_line": 105,
+          "end_line": 116,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
-          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.MessageTimeline",
-          "start_line": 119,
-          "end_line": 147,
-          "node_type": "CLASS",
-          "status": "deleted"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.filteredMessages",
-          "start_line": 120,
-          "end_line": 122,
-          "node_type": "CLASS",
-          "status": "deleted"
-        },
-        {
           "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.MessageTimeline.filteredMessages.messages.filter() callback",
-          "start_line": 121,
-          "end_line": 121,
+          "start_line": 122,
+          "end_line": 122,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.MessageTimeline.yet",
-          "start_line": 147,
-          "end_line": 147,
+          "start_line": 148,
+          "end_line": 148,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.getStatusIcon",
-          "start_line": 158,
-          "end_line": 158,
+          "start_line": 159,
+          "end_line": 159,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.AgentActivityList.<unknown>..map() callback",
-          "start_line": 192,
-          "end_line": 194,
+          "start_line": 193,
+          "end_line": 195,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
-          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph",
-          "start_line": 239,
-          "end_line": 258,
-          "node_type": "CLASS",
-          "status": "deleted"
-        },
-        {
           "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.useEffect() callback",
-          "start_line": 242,
-          "end_line": 249,
+          "start_line": 243,
+          "end_line": 250,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.useEffect() callback.forEach() callback",
-          "start_line": 244,
-          "end_line": 247,
+          "start_line": 245,
+          "end_line": 248,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
-          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.topConnections",
-          "start_line": 251,
-          "end_line": 253,
-          "node_type": "CLASS",
-          "status": "deleted"
-        },
-        {
           "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.topConnections.sort() callback",
-          "start_line": 252,
-          "end_line": 252,
+          "start_line": 253,
+          "end_line": 253,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.yet",
-          "start_line": 258,
-          "end_line": 258,
+          "start_line": 259,
+          "end_line": 259,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.topConnections.map(\"h-full bg-purple-500 rounded-full\") callback",
-          "start_line": 260,
-          "end_line": 261,
+          "start_line": 261,
+          "end_line": 262,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker",
-          "start_line": 332,
-          "end_line": 420,
+          "start_line": 333,
+          "end_line": 461,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.handleWebSocketMessage.useCallback() callback",
+          "start_line": 363,
+          "end_line": 388,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.handleWebSocketMessage.useCallback() callback.setMessages() callback",
+          "start_line": 381,
+          "end_line": 384,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.statsInterval.setInterval() callback",
+          "start_line": 410,
+          "end_line": 423,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.activityInterval.setInterval() callback",
+          "start_line": 426,
+          "end_line": 428,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback",
-          "start_line": 357,
-          "end_line": 404,
+          "start_line": 437,
+          "end_line": 445,
           "node_type": "FUNCTION",
           "status": "unchanged"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.connectTimeout",
-          "start_line": 359,
-          "end_line": 361,
-          "node_type": "CLASS",
-          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.connectTimeout.setTimeout() callback",
-          "start_line": 359,
-          "end_line": 361,
+          "start_line": 439,
+          "end_line": 441,
           "node_type": "FUNCTION",
           "status": "unchanged"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.messageInterval",
-          "start_line": 369,
-          "end_line": 375,
-          "node_type": "CLASS",
-          "status": "deleted"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.messageInterval.setInterval() callback",
-          "start_line": 369,
-          "end_line": 375,
-          "node_type": "FUNCTION",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.messageInterval.setInterval() callback.setMessages() callback",
-          "start_line": 371,
-          "end_line": 374,
-          "node_type": "FUNCTION",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.activityInterval",
-          "start_line": 378,
-          "end_line": 380,
-          "node_type": "CLASS",
-          "status": "deleted"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.activityInterval.setInterval() callback",
-          "start_line": 378,
-          "end_line": 380,
-          "node_type": "FUNCTION",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.statsInterval",
-          "start_line": 383,
-          "end_line": 396,
-          "node_type": "CLASS",
-          "status": "deleted"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.statsInterval.setInterval() callback",
-          "start_line": 383,
-          "end_line": 396,
-          "node_type": "FUNCTION",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.internalMonologue",
-          "start_line": 407,
-          "end_line": 409,
-          "node_type": "CLASS",
-          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.internalMonologue.messages.filter() callback",
-          "start_line": 408,
-          "end_line": 408,
+          "start_line": 449,
+          "end_line": 449,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.<unknown>..filter() callback",
-          "start_line": 429,
-          "end_line": 429,
+          "start_line": 470,
+          "end_line": 470,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.map() callback",
-          "start_line": 436,
-          "end_line": 438,
+          "start_line": 477,
+          "end_line": 479,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.<unknown>..reduce() callback",
-          "start_line": 526,
-          "end_line": 526,
+          "start_line": 567,
+          "end_line": 567,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.<unknown>.messages.reduce() callback",
-          "start_line": 533,
-          "end_line": 533,
+          "start_line": 574,
+          "end_line": 574,
           "node_type": "FUNCTION",
           "status": "unchanged"
         }
@@ -115987,304 +115931,240 @@
     "dashboard/frontend/src/components/Observability/A2ATracker.tsx|dashboard.frontend.src.components.Observability.A2ATracker.A2AMessage": {
       "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
       "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.A2AMessage",
-      "start_line": 17,
-      "end_line": 27,
+      "start_line": 18,
+      "end_line": 28,
       "type": "INTERFACE",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/Observability/A2ATracker.tsx|dashboard.frontend.src.components.Observability.A2ATracker.AgentActivity": {
       "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
       "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.AgentActivity",
-      "start_line": 29,
-      "end_line": 40,
+      "start_line": 30,
+      "end_line": 41,
       "type": "INTERFACE",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/Observability/A2ATracker.tsx|dashboard.frontend.src.components.Observability.A2ATracker.WorkflowStats": {
       "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
       "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.WorkflowStats",
-      "start_line": 42,
-      "end_line": 47,
+      "start_line": 43,
+      "end_line": 48,
       "type": "INTERFACE",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/Observability/A2ATracker.tsx|dashboard.frontend.src.components.Observability.A2ATracker.ResourceStats": {
       "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
       "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.ResourceStats",
-      "start_line": 49,
-      "end_line": 54,
+      "start_line": 50,
+      "end_line": 55,
       "type": "INTERFACE",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/Observability/A2ATracker.tsx|dashboard.frontend.src.components.Observability.A2ATracker.A2ATrackerProps": {
       "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
       "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.A2ATrackerProps",
-      "start_line": 56,
-      "end_line": 60,
+      "start_line": 57,
+      "end_line": 61,
       "type": "INTERFACE",
       "status": "unchanged"
     },
-    "dashboard/frontend/src/components/Observability/A2ATracker.tsx|dashboard.frontend.src.components.Observability.A2ATracker.generateRandomMessage": {
+    "dashboard/frontend/src/components/Observability/A2ATracker.tsx|dashboard.frontend.src.components.Observability.A2ATracker.mapEventType": {
       "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
-      "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.generateRandomMessage",
-      "start_line": 81,
-      "end_line": 101,
+      "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.mapEventType",
+      "start_line": 87,
+      "end_line": 92,
       "type": "FUNCTION",
+      "status": "unchanged"
+    },
+    "dashboard/frontend/src/components/Observability/A2ATracker.tsx|dashboard.frontend.src.components.Observability.A2ATracker.SwarmEvent": {
+      "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.SwarmEvent",
+      "start_line": 95,
+      "end_line": 102,
+      "type": "INTERFACE",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/Observability/A2ATracker.tsx|dashboard.frontend.src.components.Observability.A2ATracker.generateAgentActivity": {
       "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
       "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.generateAgentActivity",
-      "start_line": 103,
-      "end_line": 116,
+      "start_line": 104,
+      "end_line": 117,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/Observability/A2ATracker.tsx|dashboard.frontend.src.components.Observability.A2ATracker.generateAgentActivity.AGENT_IDS.map() callback": {
       "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
       "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.generateAgentActivity.AGENT_IDS.map() callback",
-      "start_line": 104,
-      "end_line": 115,
+      "start_line": 105,
+      "end_line": 116,
       "type": "FUNCTION",
       "status": "unchanged"
-    },
-    "dashboard/frontend/src/components/Observability/A2ATracker.tsx|dashboard.frontend.src.components.Observability.A2ATracker.MessageTimeline": {
-      "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
-      "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.MessageTimeline",
-      "start_line": 119,
-      "end_line": 147,
-      "type": "CLASS",
-      "status": "deleted"
-    },
-    "dashboard/frontend/src/components/Observability/A2ATracker.tsx|dashboard.frontend.src.components.Observability.A2ATracker.filteredMessages": {
-      "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
-      "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.filteredMessages",
-      "start_line": 120,
-      "end_line": 122,
-      "type": "CLASS",
-      "status": "deleted"
     },
     "dashboard/frontend/src/components/Observability/A2ATracker.tsx|dashboard.frontend.src.components.Observability.A2ATracker.MessageTimeline.filteredMessages.messages.filter() callback": {
       "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
       "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.MessageTimeline.filteredMessages.messages.filter() callback",
-      "start_line": 121,
-      "end_line": 121,
+      "start_line": 122,
+      "end_line": 122,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/Observability/A2ATracker.tsx|dashboard.frontend.src.components.Observability.A2ATracker.MessageTimeline.yet": {
       "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
       "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.MessageTimeline.yet",
-      "start_line": 147,
-      "end_line": 147,
+      "start_line": 148,
+      "end_line": 148,
       "type": "METHOD",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/Observability/A2ATracker.tsx|dashboard.frontend.src.components.Observability.A2ATracker.getStatusIcon": {
       "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
       "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.getStatusIcon",
-      "start_line": 158,
-      "end_line": 158,
+      "start_line": 159,
+      "end_line": 159,
       "type": "METHOD",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/Observability/A2ATracker.tsx|dashboard.frontend.src.components.Observability.A2ATracker.AgentActivityList.<unknown>..map() callback": {
       "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
       "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.AgentActivityList.<unknown>..map() callback",
-      "start_line": 192,
-      "end_line": 194,
+      "start_line": 193,
+      "end_line": 195,
       "type": "FUNCTION",
       "status": "unchanged"
-    },
-    "dashboard/frontend/src/components/Observability/A2ATracker.tsx|dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph": {
-      "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
-      "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph",
-      "start_line": 239,
-      "end_line": 258,
-      "type": "CLASS",
-      "status": "deleted"
     },
     "dashboard/frontend/src/components/Observability/A2ATracker.tsx|dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.useEffect() callback": {
       "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
       "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.useEffect() callback",
-      "start_line": 242,
-      "end_line": 249,
+      "start_line": 243,
+      "end_line": 250,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/Observability/A2ATracker.tsx|dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.useEffect() callback.forEach() callback": {
       "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
       "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.useEffect() callback.forEach() callback",
-      "start_line": 244,
-      "end_line": 247,
+      "start_line": 245,
+      "end_line": 248,
       "type": "FUNCTION",
       "status": "unchanged"
-    },
-    "dashboard/frontend/src/components/Observability/A2ATracker.tsx|dashboard.frontend.src.components.Observability.A2ATracker.topConnections": {
-      "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
-      "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.topConnections",
-      "start_line": 251,
-      "end_line": 253,
-      "type": "CLASS",
-      "status": "deleted"
     },
     "dashboard/frontend/src/components/Observability/A2ATracker.tsx|dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.topConnections.sort() callback": {
       "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
       "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.topConnections.sort() callback",
-      "start_line": 252,
-      "end_line": 252,
+      "start_line": 253,
+      "end_line": 253,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/Observability/A2ATracker.tsx|dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.yet": {
       "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
       "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.yet",
-      "start_line": 258,
-      "end_line": 258,
+      "start_line": 259,
+      "end_line": 259,
       "type": "METHOD",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/Observability/A2ATracker.tsx|dashboard.frontend.src.components.Observability.A2ATracker.topConnections.map(\"h-full bg-purple-500 rounded-full\") callback": {
       "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
       "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.topConnections.map(\"h-full bg-purple-500 rounded-full\") callback",
-      "start_line": 260,
-      "end_line": 261,
+      "start_line": 261,
+      "end_line": 262,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/Observability/A2ATracker.tsx|dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker": {
       "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
       "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker",
-      "start_line": 332,
-      "end_line": 420,
+      "start_line": 333,
+      "end_line": 461,
+      "type": "FUNCTION",
+      "status": "unchanged"
+    },
+    "dashboard/frontend/src/components/Observability/A2ATracker.tsx|dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.handleWebSocketMessage.useCallback() callback": {
+      "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.handleWebSocketMessage.useCallback() callback",
+      "start_line": 363,
+      "end_line": 388,
+      "type": "FUNCTION",
+      "status": "unchanged"
+    },
+    "dashboard/frontend/src/components/Observability/A2ATracker.tsx|dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.handleWebSocketMessage.useCallback() callback.setMessages() callback": {
+      "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.handleWebSocketMessage.useCallback() callback.setMessages() callback",
+      "start_line": 381,
+      "end_line": 384,
+      "type": "FUNCTION",
+      "status": "unchanged"
+    },
+    "dashboard/frontend/src/components/Observability/A2ATracker.tsx|dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.statsInterval.setInterval() callback": {
+      "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.statsInterval.setInterval() callback",
+      "start_line": 410,
+      "end_line": 423,
+      "type": "FUNCTION",
+      "status": "unchanged"
+    },
+    "dashboard/frontend/src/components/Observability/A2ATracker.tsx|dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.activityInterval.setInterval() callback": {
+      "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.activityInterval.setInterval() callback",
+      "start_line": 426,
+      "end_line": 428,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/Observability/A2ATracker.tsx|dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback": {
       "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
       "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback",
-      "start_line": 357,
-      "end_line": 404,
+      "start_line": 437,
+      "end_line": 445,
       "type": "FUNCTION",
       "status": "unchanged"
-    },
-    "dashboard/frontend/src/components/Observability/A2ATracker.tsx|dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.connectTimeout": {
-      "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
-      "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.connectTimeout",
-      "start_line": 359,
-      "end_line": 361,
-      "type": "CLASS",
-      "status": "deleted"
     },
     "dashboard/frontend/src/components/Observability/A2ATracker.tsx|dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.connectTimeout.setTimeout() callback": {
       "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
       "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.connectTimeout.setTimeout() callback",
-      "start_line": 359,
-      "end_line": 361,
+      "start_line": 439,
+      "end_line": 441,
       "type": "FUNCTION",
       "status": "unchanged"
-    },
-    "dashboard/frontend/src/components/Observability/A2ATracker.tsx|dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.messageInterval": {
-      "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
-      "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.messageInterval",
-      "start_line": 369,
-      "end_line": 375,
-      "type": "CLASS",
-      "status": "deleted"
-    },
-    "dashboard/frontend/src/components/Observability/A2ATracker.tsx|dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.messageInterval.setInterval() callback": {
-      "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
-      "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.messageInterval.setInterval() callback",
-      "start_line": 369,
-      "end_line": 375,
-      "type": "FUNCTION",
-      "status": "unchanged"
-    },
-    "dashboard/frontend/src/components/Observability/A2ATracker.tsx|dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.messageInterval.setInterval() callback.setMessages() callback": {
-      "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
-      "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.messageInterval.setInterval() callback.setMessages() callback",
-      "start_line": 371,
-      "end_line": 374,
-      "type": "FUNCTION",
-      "status": "unchanged"
-    },
-    "dashboard/frontend/src/components/Observability/A2ATracker.tsx|dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.activityInterval": {
-      "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
-      "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.activityInterval",
-      "start_line": 378,
-      "end_line": 380,
-      "type": "CLASS",
-      "status": "deleted"
-    },
-    "dashboard/frontend/src/components/Observability/A2ATracker.tsx|dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.activityInterval.setInterval() callback": {
-      "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
-      "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.activityInterval.setInterval() callback",
-      "start_line": 378,
-      "end_line": 380,
-      "type": "FUNCTION",
-      "status": "unchanged"
-    },
-    "dashboard/frontend/src/components/Observability/A2ATracker.tsx|dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.statsInterval": {
-      "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
-      "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.statsInterval",
-      "start_line": 383,
-      "end_line": 396,
-      "type": "CLASS",
-      "status": "deleted"
-    },
-    "dashboard/frontend/src/components/Observability/A2ATracker.tsx|dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.statsInterval.setInterval() callback": {
-      "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
-      "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.statsInterval.setInterval() callback",
-      "start_line": 383,
-      "end_line": 396,
-      "type": "FUNCTION",
-      "status": "unchanged"
-    },
-    "dashboard/frontend/src/components/Observability/A2ATracker.tsx|dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.internalMonologue": {
-      "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
-      "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.internalMonologue",
-      "start_line": 407,
-      "end_line": 409,
-      "type": "CLASS",
-      "status": "deleted"
     },
     "dashboard/frontend/src/components/Observability/A2ATracker.tsx|dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.internalMonologue.messages.filter() callback": {
       "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
       "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.internalMonologue.messages.filter() callback",
-      "start_line": 408,
-      "end_line": 408,
+      "start_line": 449,
+      "end_line": 449,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/Observability/A2ATracker.tsx|dashboard.frontend.src.components.Observability.A2ATracker.<unknown>..filter() callback": {
       "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
       "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.<unknown>..filter() callback",
-      "start_line": 429,
-      "end_line": 429,
+      "start_line": 470,
+      "end_line": 470,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/Observability/A2ATracker.tsx|dashboard.frontend.src.components.Observability.A2ATracker.map() callback": {
       "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
       "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.map() callback",
-      "start_line": 436,
-      "end_line": 438,
+      "start_line": 477,
+      "end_line": 479,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/Observability/A2ATracker.tsx|dashboard.frontend.src.components.Observability.A2ATracker.<unknown>..reduce() callback": {
       "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
       "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.<unknown>..reduce() callback",
-      "start_line": 526,
-      "end_line": 526,
+      "start_line": 567,
+      "end_line": 567,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/Observability/A2ATracker.tsx|dashboard.frontend.src.components.Observability.A2ATracker.<unknown>.messages.reduce() callback": {
       "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
       "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.<unknown>.messages.reduce() callback",
-      "start_line": 533,
-      "end_line": 533,
+      "start_line": 574,
+      "end_line": 574,
       "type": "FUNCTION",
       "status": "unchanged"
     },
@@ -282404,14 +282284,13 @@
         },
         {
           "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
-          "file_status": "modified",
+          "file_status": "unchanged",
           "methods": [
             "dashboard.frontend.src.components.Observability.A2ATracker.A2AMessage",
             "dashboard.frontend.src.components.Observability.A2ATracker.AgentActivity",
             "dashboard.frontend.src.components.Observability.A2ATracker.WorkflowStats",
             "dashboard.frontend.src.components.Observability.A2ATracker.ResourceStats",
             "dashboard.frontend.src.components.Observability.A2ATracker.A2ATrackerProps",
-            "dashboard.frontend.src.components.Observability.A2ATracker.generateRandomMessage",
             "dashboard.frontend.src.components.Observability.A2ATracker.generateAgentActivity",
             "dashboard.frontend.src.components.Observability.A2ATracker.generateAgentActivity.AGENT_IDS.map() callback",
             "dashboard.frontend.src.components.Observability.A2ATracker.MessageTimeline.filteredMessages.messages.filter() callback",
@@ -282424,12 +282303,10 @@
             "dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.yet",
             "dashboard.frontend.src.components.Observability.A2ATracker.topConnections.map(\"h-full bg-purple-500 rounded-full\") callback",
             "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker",
+            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.statsInterval.setInterval() callback",
+            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.activityInterval.setInterval() callback",
             "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback",
             "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.connectTimeout.setTimeout() callback",
-            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.messageInterval.setInterval() callback",
-            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.messageInterval.setInterval() callback.setMessages() callback",
-            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.activityInterval.setInterval() callback",
-            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.statsInterval.setInterval() callback",
             "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.internalMonologue.messages.filter() callback",
             "dashboard.frontend.src.components.Observability.A2ATracker.<unknown>..filter() callback",
             "dashboard.frontend.src.components.Observability.A2ATracker.map() callback",
@@ -286450,14 +286327,13 @@
             },
             {
               "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
-              "file_status": "modified",
+              "file_status": "unchanged",
               "methods": [
                 "dashboard.frontend.src.components.Observability.A2ATracker.A2AMessage",
                 "dashboard.frontend.src.components.Observability.A2ATracker.AgentActivity",
                 "dashboard.frontend.src.components.Observability.A2ATracker.WorkflowStats",
                 "dashboard.frontend.src.components.Observability.A2ATracker.ResourceStats",
                 "dashboard.frontend.src.components.Observability.A2ATracker.A2ATrackerProps",
-                "dashboard.frontend.src.components.Observability.A2ATracker.generateRandomMessage",
                 "dashboard.frontend.src.components.Observability.A2ATracker.generateAgentActivity",
                 "dashboard.frontend.src.components.Observability.A2ATracker.generateAgentActivity.AGENT_IDS.map() callback",
                 "dashboard.frontend.src.components.Observability.A2ATracker.MessageTimeline.filteredMessages.messages.filter() callback",
@@ -286470,12 +286346,10 @@
                 "dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.yet",
                 "dashboard.frontend.src.components.Observability.A2ATracker.topConnections.map(\"h-full bg-purple-500 rounded-full\") callback",
                 "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker",
+                "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.statsInterval.setInterval() callback",
+                "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.activityInterval.setInterval() callback",
                 "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback",
                 "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.connectTimeout.setTimeout() callback",
-                "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.messageInterval.setInterval() callback",
-                "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.messageInterval.setInterval() callback.setMessages() callback",
-                "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.activityInterval.setInterval() callback",
-                "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.statsInterval.setInterval() callback",
                 "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.internalMonologue.messages.filter() callback",
                 "dashboard.frontend.src.components.Observability.A2ATracker.<unknown>..filter() callback",
                 "dashboard.frontend.src.components.Observability.A2ATracker.map() callback",
@@ -286524,21 +286398,19 @@
                 },
                 {
                   "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
-                  "file_status": "modified",
+                  "file_status": "unchanged",
                   "methods": [
                     "dashboard.frontend.src.components.Observability.A2ATracker.A2AMessage",
                     "dashboard.frontend.src.components.Observability.A2ATracker.AgentActivity",
                     "dashboard.frontend.src.components.Observability.A2ATracker.WorkflowStats",
                     "dashboard.frontend.src.components.Observability.A2ATracker.ResourceStats",
                     "dashboard.frontend.src.components.Observability.A2ATracker.A2ATrackerProps",
-                    "dashboard.frontend.src.components.Observability.A2ATracker.generateRandomMessage",
                     "dashboard.frontend.src.components.Observability.A2ATracker.generateAgentActivity",
                     "dashboard.frontend.src.components.Observability.A2ATracker.generateAgentActivity.AGENT_IDS.map() callback",
                     "dashboard.frontend.src.components.Observability.A2ATracker.MessageTimeline.filteredMessages.messages.filter() callback",
                     "dashboard.frontend.src.components.Observability.A2ATracker.getStatusIcon",
                     "dashboard.frontend.src.components.Observability.A2ATracker.AgentActivityList.<unknown>..map() callback",
                     "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker",
-                    "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.messageInterval.setInterval() callback.setMessages() callback",
                     "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.internalMonologue.messages.filter() callback",
                     "dashboard.frontend.src.components.Observability.A2ATracker.map() callback"
                   ]
@@ -286582,21 +286454,19 @@
                     },
                     {
                       "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
-                      "file_status": "modified",
+                      "file_status": "unchanged",
                       "methods": [
                         "dashboard.frontend.src.components.Observability.A2ATracker.A2AMessage",
                         "dashboard.frontend.src.components.Observability.A2ATracker.AgentActivity",
                         "dashboard.frontend.src.components.Observability.A2ATracker.WorkflowStats",
                         "dashboard.frontend.src.components.Observability.A2ATracker.ResourceStats",
                         "dashboard.frontend.src.components.Observability.A2ATracker.A2ATrackerProps",
-                        "dashboard.frontend.src.components.Observability.A2ATracker.generateRandomMessage",
                         "dashboard.frontend.src.components.Observability.A2ATracker.generateAgentActivity",
                         "dashboard.frontend.src.components.Observability.A2ATracker.generateAgentActivity.AGENT_IDS.map() callback",
                         "dashboard.frontend.src.components.Observability.A2ATracker.MessageTimeline.filteredMessages.messages.filter() callback",
                         "dashboard.frontend.src.components.Observability.A2ATracker.getStatusIcon",
                         "dashboard.frontend.src.components.Observability.A2ATracker.AgentActivityList.<unknown>..map() callback",
                         "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker",
-                        "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.messageInterval.setInterval() callback.setMessages() callback",
                         "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.internalMonologue.messages.filter() callback",
                         "dashboard.frontend.src.components.Observability.A2ATracker.<unknown>..filter() callback",
                         "dashboard.frontend.src.components.Observability.A2ATracker.map() callback",
@@ -286654,21 +286524,19 @@
                         },
                         {
                           "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "dashboard.frontend.src.components.Observability.A2ATracker.A2AMessage",
                             "dashboard.frontend.src.components.Observability.A2ATracker.AgentActivity",
                             "dashboard.frontend.src.components.Observability.A2ATracker.WorkflowStats",
                             "dashboard.frontend.src.components.Observability.A2ATracker.ResourceStats",
                             "dashboard.frontend.src.components.Observability.A2ATracker.A2ATrackerProps",
-                            "dashboard.frontend.src.components.Observability.A2ATracker.generateRandomMessage",
                             "dashboard.frontend.src.components.Observability.A2ATracker.generateAgentActivity",
                             "dashboard.frontend.src.components.Observability.A2ATracker.generateAgentActivity.AGENT_IDS.map() callback",
                             "dashboard.frontend.src.components.Observability.A2ATracker.MessageTimeline.filteredMessages.messages.filter() callback",
                             "dashboard.frontend.src.components.Observability.A2ATracker.getStatusIcon",
                             "dashboard.frontend.src.components.Observability.A2ATracker.AgentActivityList.<unknown>..map() callback",
                             "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker",
-                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.messageInterval.setInterval() callback.setMessages() callback",
                             "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.internalMonologue.messages.filter() callback",
                             "dashboard.frontend.src.components.Observability.A2ATracker.map() callback"
                           ]
@@ -286708,7 +286576,7 @@
                       "file_methods": [
                         {
                           "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "dashboard.frontend.src.components.Observability.A2ATracker.MessageTimeline.yet",
                             "dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.useEffect() callback",
@@ -286759,12 +286627,11 @@
                         },
                         {
                           "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
-                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.connectTimeout.setTimeout() callback",
-                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.messageInterval.setInterval() callback",
+                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.statsInterval.setInterval() callback",
                             "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.activityInterval.setInterval() callback",
-                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.statsInterval.setInterval() callback"
+                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.connectTimeout.setTimeout() callback"
                           ]
                         }
                       ],
@@ -286821,17 +286688,16 @@
                   "file_methods": [
                     {
                       "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
-                      "file_status": "modified",
+                      "file_status": "unchanged",
                       "methods": [
                         "dashboard.frontend.src.components.Observability.A2ATracker.MessageTimeline.yet",
                         "dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.useEffect() callback",
                         "dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.yet",
                         "dashboard.frontend.src.components.Observability.A2ATracker.topConnections.map(\"h-full bg-purple-500 rounded-full\") callback",
-                        "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback",
-                        "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.connectTimeout.setTimeout() callback",
-                        "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.messageInterval.setInterval() callback",
+                        "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.statsInterval.setInterval() callback",
                         "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.activityInterval.setInterval() callback",
-                        "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.statsInterval.setInterval() callback"
+                        "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback",
+                        "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.connectTimeout.setTimeout() callback"
                       ]
                     }
                   ],
@@ -286861,21 +286727,19 @@
                       "file_methods": [
                         {
                           "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "dashboard.frontend.src.components.Observability.A2ATracker.A2AMessage",
                             "dashboard.frontend.src.components.Observability.A2ATracker.AgentActivity",
                             "dashboard.frontend.src.components.Observability.A2ATracker.WorkflowStats",
                             "dashboard.frontend.src.components.Observability.A2ATracker.ResourceStats",
                             "dashboard.frontend.src.components.Observability.A2ATracker.A2ATrackerProps",
-                            "dashboard.frontend.src.components.Observability.A2ATracker.generateRandomMessage",
                             "dashboard.frontend.src.components.Observability.A2ATracker.generateAgentActivity",
                             "dashboard.frontend.src.components.Observability.A2ATracker.generateAgentActivity.AGENT_IDS.map() callback",
                             "dashboard.frontend.src.components.Observability.A2ATracker.MessageTimeline.filteredMessages.messages.filter() callback",
                             "dashboard.frontend.src.components.Observability.A2ATracker.getStatusIcon",
                             "dashboard.frontend.src.components.Observability.A2ATracker.AgentActivityList.<unknown>..map() callback",
                             "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker",
-                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.messageInterval.setInterval() callback.setMessages() callback",
                             "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.internalMonologue.messages.filter() callback",
                             "dashboard.frontend.src.components.Observability.A2ATracker.map() callback"
                           ]
@@ -286909,17 +286773,16 @@
                       "file_methods": [
                         {
                           "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "dashboard.frontend.src.components.Observability.A2ATracker.MessageTimeline.yet",
                             "dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.useEffect() callback",
                             "dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.yet",
                             "dashboard.frontend.src.components.Observability.A2ATracker.topConnections.map(\"h-full bg-purple-500 rounded-full\") callback",
-                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback",
-                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.connectTimeout.setTimeout() callback",
-                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.messageInterval.setInterval() callback",
+                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.statsInterval.setInterval() callback",
                             "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.activityInterval.setInterval() callback",
-                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.statsInterval.setInterval() callback"
+                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback",
+                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.connectTimeout.setTimeout() callback"
                           ]
                         }
                       ],
@@ -286944,7 +286807,7 @@
                       "file_methods": [
                         {
                           "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.useEffect() callback.forEach() callback",
                             "dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.topConnections.sort() callback",
@@ -286998,7 +286861,7 @@
                     },
                     {
                       "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
-                      "file_status": "modified",
+                      "file_status": "unchanged",
                       "methods": [
                         "dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.useEffect() callback.forEach() callback",
                         "dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.topConnections.sort() callback"
@@ -287045,21 +286908,19 @@
                         },
                         {
                           "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "dashboard.frontend.src.components.Observability.A2ATracker.A2AMessage",
                             "dashboard.frontend.src.components.Observability.A2ATracker.AgentActivity",
                             "dashboard.frontend.src.components.Observability.A2ATracker.WorkflowStats",
                             "dashboard.frontend.src.components.Observability.A2ATracker.ResourceStats",
                             "dashboard.frontend.src.components.Observability.A2ATracker.A2ATrackerProps",
-                            "dashboard.frontend.src.components.Observability.A2ATracker.generateRandomMessage",
                             "dashboard.frontend.src.components.Observability.A2ATracker.generateAgentActivity",
                             "dashboard.frontend.src.components.Observability.A2ATracker.generateAgentActivity.AGENT_IDS.map() callback",
                             "dashboard.frontend.src.components.Observability.A2ATracker.MessageTimeline.filteredMessages.messages.filter() callback",
                             "dashboard.frontend.src.components.Observability.A2ATracker.getStatusIcon",
                             "dashboard.frontend.src.components.Observability.A2ATracker.AgentActivityList.<unknown>..map() callback",
                             "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker",
-                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.messageInterval.setInterval() callback.setMessages() callback",
                             "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.internalMonologue.messages.filter() callback",
                             "dashboard.frontend.src.components.Observability.A2ATracker.map() callback"
                           ]
@@ -287087,17 +286948,16 @@
                       "file_methods": [
                         {
                           "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "dashboard.frontend.src.components.Observability.A2ATracker.MessageTimeline.yet",
                             "dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.useEffect() callback",
                             "dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.yet",
                             "dashboard.frontend.src.components.Observability.A2ATracker.topConnections.map(\"h-full bg-purple-500 rounded-full\") callback",
-                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback",
-                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.connectTimeout.setTimeout() callback",
-                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.messageInterval.setInterval() callback",
+                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.statsInterval.setInterval() callback",
                             "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.activityInterval.setInterval() callback",
-                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.statsInterval.setInterval() callback"
+                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback",
+                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.connectTimeout.setTimeout() callback"
                           ]
                         }
                       ],
@@ -287134,7 +286994,7 @@
                       "file_methods": [
                         {
                           "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.useEffect() callback.forEach() callback",
                             "dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.topConnections.sort() callback",
@@ -287242,7 +287102,7 @@
               "file_methods": [
                 {
                   "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
-                  "file_status": "modified",
+                  "file_status": "unchanged",
                   "methods": [
                     "dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.useEffect() callback.forEach() callback",
                     "dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.topConnections.sort() callback",
@@ -287285,14 +287145,13 @@
                   "file_methods": [
                     {
                       "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
-                      "file_status": "modified",
+                      "file_status": "unchanged",
                       "methods": [
                         "dashboard.frontend.src.components.Observability.A2ATracker.A2AMessage",
                         "dashboard.frontend.src.components.Observability.A2ATracker.AgentActivity",
                         "dashboard.frontend.src.components.Observability.A2ATracker.WorkflowStats",
                         "dashboard.frontend.src.components.Observability.A2ATracker.ResourceStats",
                         "dashboard.frontend.src.components.Observability.A2ATracker.A2ATrackerProps",
-                        "dashboard.frontend.src.components.Observability.A2ATracker.generateRandomMessage",
                         "dashboard.frontend.src.components.Observability.A2ATracker.generateAgentActivity",
                         "dashboard.frontend.src.components.Observability.A2ATracker.generateAgentActivity.AGENT_IDS.map() callback",
                         "dashboard.frontend.src.components.Observability.A2ATracker.MessageTimeline.filteredMessages.messages.filter() callback",
@@ -287301,7 +287160,6 @@
                         "dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.useEffect() callback.forEach() callback",
                         "dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.topConnections.sort() callback",
                         "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker",
-                        "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.messageInterval.setInterval() callback.setMessages() callback",
                         "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.internalMonologue.messages.filter() callback",
                         "dashboard.frontend.src.components.Observability.A2ATracker.map() callback"
                       ]
@@ -287339,21 +287197,19 @@
                       "file_methods": [
                         {
                           "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "dashboard.frontend.src.components.Observability.A2ATracker.A2AMessage",
                             "dashboard.frontend.src.components.Observability.A2ATracker.AgentActivity",
                             "dashboard.frontend.src.components.Observability.A2ATracker.WorkflowStats",
                             "dashboard.frontend.src.components.Observability.A2ATracker.ResourceStats",
                             "dashboard.frontend.src.components.Observability.A2ATracker.A2ATrackerProps",
-                            "dashboard.frontend.src.components.Observability.A2ATracker.generateRandomMessage",
                             "dashboard.frontend.src.components.Observability.A2ATracker.generateAgentActivity",
                             "dashboard.frontend.src.components.Observability.A2ATracker.generateAgentActivity.AGENT_IDS.map() callback",
                             "dashboard.frontend.src.components.Observability.A2ATracker.MessageTimeline.filteredMessages.messages.filter() callback",
                             "dashboard.frontend.src.components.Observability.A2ATracker.getStatusIcon",
                             "dashboard.frontend.src.components.Observability.A2ATracker.AgentActivityList.<unknown>..map() callback",
                             "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker",
-                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.messageInterval.setInterval() callback.setMessages() callback",
                             "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.internalMonologue.messages.filter() callback",
                             "dashboard.frontend.src.components.Observability.A2ATracker.map() callback"
                           ]
@@ -287381,17 +287237,16 @@
                       "file_methods": [
                         {
                           "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "dashboard.frontend.src.components.Observability.A2ATracker.MessageTimeline.yet",
                             "dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.useEffect() callback",
                             "dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.yet",
                             "dashboard.frontend.src.components.Observability.A2ATracker.topConnections.map(\"h-full bg-purple-500 rounded-full\") callback",
-                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback",
-                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.connectTimeout.setTimeout() callback",
-                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.messageInterval.setInterval() callback",
+                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.statsInterval.setInterval() callback",
                             "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.activityInterval.setInterval() callback",
-                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.statsInterval.setInterval() callback"
+                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback",
+                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.connectTimeout.setTimeout() callback"
                           ]
                         }
                       ],
@@ -287416,7 +287271,7 @@
                       "file_methods": [
                         {
                           "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.useEffect() callback.forEach() callback",
                             "dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.topConnections.sort() callback",
@@ -287484,7 +287339,7 @@
                   "file_methods": [
                     {
                       "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
-                      "file_status": "modified",
+                      "file_status": "unchanged",
                       "methods": [
                         "dashboard.frontend.src.components.Observability.A2ATracker.MessageTimeline.yet",
                         "dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.useEffect() callback",
@@ -287524,14 +287379,13 @@
                       "file_methods": [
                         {
                           "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "dashboard.frontend.src.components.Observability.A2ATracker.A2AMessage",
                             "dashboard.frontend.src.components.Observability.A2ATracker.AgentActivity",
                             "dashboard.frontend.src.components.Observability.A2ATracker.WorkflowStats",
                             "dashboard.frontend.src.components.Observability.A2ATracker.ResourceStats",
                             "dashboard.frontend.src.components.Observability.A2ATracker.A2ATrackerProps",
-                            "dashboard.frontend.src.components.Observability.A2ATracker.generateRandomMessage",
                             "dashboard.frontend.src.components.Observability.A2ATracker.generateAgentActivity",
                             "dashboard.frontend.src.components.Observability.A2ATracker.generateAgentActivity.AGENT_IDS.map() callback",
                             "dashboard.frontend.src.components.Observability.A2ATracker.MessageTimeline.filteredMessages.messages.filter() callback",
@@ -287543,7 +287397,6 @@
                             "dashboard.frontend.src.components.Observability.A2ATracker.topConnections.map(\"h-full bg-purple-500 rounded-full\") callback",
                             "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker",
                             "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback",
-                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.messageInterval.setInterval() callback.setMessages() callback",
                             "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.internalMonologue.messages.filter() callback",
                             "dashboard.frontend.src.components.Observability.A2ATracker.map() callback"
                           ]
@@ -287576,7 +287429,7 @@
                       "file_methods": [
                         {
                           "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.useEffect() callback.forEach() callback",
                             "dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.topConnections.sort() callback",
@@ -287613,12 +287466,11 @@
                       "file_methods": [
                         {
                           "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
-                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.connectTimeout.setTimeout() callback",
-                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.messageInterval.setInterval() callback",
+                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.statsInterval.setInterval() callback",
                             "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.activityInterval.setInterval() callback",
-                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.statsInterval.setInterval() callback"
+                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.connectTimeout.setTimeout() callback"
                           ]
                         }
                       ],
@@ -287680,12 +287532,11 @@
                   "file_methods": [
                     {
                       "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
-                      "file_status": "modified",
+                      "file_status": "unchanged",
                       "methods": [
-                        "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.connectTimeout.setTimeout() callback",
-                        "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.messageInterval.setInterval() callback",
+                        "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.statsInterval.setInterval() callback",
                         "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.activityInterval.setInterval() callback",
-                        "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.statsInterval.setInterval() callback"
+                        "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.connectTimeout.setTimeout() callback"
                       ]
                     }
                   ],
@@ -287716,25 +287567,22 @@
                       "file_methods": [
                         {
                           "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "dashboard.frontend.src.components.Observability.A2ATracker.A2AMessage",
                             "dashboard.frontend.src.components.Observability.A2ATracker.AgentActivity",
                             "dashboard.frontend.src.components.Observability.A2ATracker.WorkflowStats",
                             "dashboard.frontend.src.components.Observability.A2ATracker.ResourceStats",
                             "dashboard.frontend.src.components.Observability.A2ATracker.A2ATrackerProps",
-                            "dashboard.frontend.src.components.Observability.A2ATracker.generateRandomMessage",
                             "dashboard.frontend.src.components.Observability.A2ATracker.generateAgentActivity",
                             "dashboard.frontend.src.components.Observability.A2ATracker.generateAgentActivity.AGENT_IDS.map() callback",
                             "dashboard.frontend.src.components.Observability.A2ATracker.MessageTimeline.filteredMessages.messages.filter() callback",
                             "dashboard.frontend.src.components.Observability.A2ATracker.getStatusIcon",
                             "dashboard.frontend.src.components.Observability.A2ATracker.AgentActivityList.<unknown>..map() callback",
                             "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker",
-                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.connectTimeout.setTimeout() callback",
-                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.messageInterval.setInterval() callback",
-                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.messageInterval.setInterval() callback.setMessages() callback",
-                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.activityInterval.setInterval() callback",
                             "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.statsInterval.setInterval() callback",
+                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.activityInterval.setInterval() callback",
+                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.connectTimeout.setTimeout() callback",
                             "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.internalMonologue.messages.filter() callback",
                             "dashboard.frontend.src.components.Observability.A2ATracker.map() callback"
                           ]
@@ -287767,7 +287615,7 @@
                       "file_methods": [
                         {
                           "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "dashboard.frontend.src.components.Observability.A2ATracker.MessageTimeline.yet",
                             "dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.useEffect() callback",
@@ -287804,7 +287652,7 @@
                       "file_methods": [
                         {
                           "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.useEffect() callback.forEach() callback",
                             "dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.topConnections.sort() callback",
@@ -287910,17 +287758,16 @@
               "file_methods": [
                 {
                   "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
-                  "file_status": "modified",
+                  "file_status": "unchanged",
                   "methods": [
                     "dashboard.frontend.src.components.Observability.A2ATracker.MessageTimeline.yet",
                     "dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.useEffect() callback",
                     "dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.yet",
                     "dashboard.frontend.src.components.Observability.A2ATracker.topConnections.map(\"h-full bg-purple-500 rounded-full\") callback",
-                    "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback",
-                    "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.connectTimeout.setTimeout() callback",
-                    "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.messageInterval.setInterval() callback",
+                    "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.statsInterval.setInterval() callback",
                     "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.activityInterval.setInterval() callback",
-                    "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.statsInterval.setInterval() callback"
+                    "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback",
+                    "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.connectTimeout.setTimeout() callback"
                   ]
                 }
               ],
@@ -287951,12 +287798,11 @@
                   "file_methods": [
                     {
                       "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
-                      "file_status": "modified",
+                      "file_status": "unchanged",
                       "methods": [
-                        "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.connectTimeout.setTimeout() callback",
-                        "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.messageInterval.setInterval() callback",
+                        "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.statsInterval.setInterval() callback",
                         "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.activityInterval.setInterval() callback",
-                        "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.statsInterval.setInterval() callback"
+                        "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.connectTimeout.setTimeout() callback"
                       ]
                     }
                   ],
@@ -287988,17 +287834,16 @@
                       "file_methods": [
                         {
                           "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "dashboard.frontend.src.components.Observability.A2ATracker.MessageTimeline.yet",
                             "dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.useEffect() callback",
                             "dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.yet",
                             "dashboard.frontend.src.components.Observability.A2ATracker.topConnections.map(\"h-full bg-purple-500 rounded-full\") callback",
-                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback",
-                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.connectTimeout.setTimeout() callback",
-                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.messageInterval.setInterval() callback",
+                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.statsInterval.setInterval() callback",
                             "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.activityInterval.setInterval() callback",
-                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.statsInterval.setInterval() callback"
+                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback",
+                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.connectTimeout.setTimeout() callback"
                           ]
                         }
                       ],
@@ -288028,21 +287873,19 @@
                       "file_methods": [
                         {
                           "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "dashboard.frontend.src.components.Observability.A2ATracker.A2AMessage",
                             "dashboard.frontend.src.components.Observability.A2ATracker.AgentActivity",
                             "dashboard.frontend.src.components.Observability.A2ATracker.WorkflowStats",
                             "dashboard.frontend.src.components.Observability.A2ATracker.ResourceStats",
                             "dashboard.frontend.src.components.Observability.A2ATracker.A2ATrackerProps",
-                            "dashboard.frontend.src.components.Observability.A2ATracker.generateRandomMessage",
                             "dashboard.frontend.src.components.Observability.A2ATracker.generateAgentActivity",
                             "dashboard.frontend.src.components.Observability.A2ATracker.generateAgentActivity.AGENT_IDS.map() callback",
                             "dashboard.frontend.src.components.Observability.A2ATracker.MessageTimeline.filteredMessages.messages.filter() callback",
                             "dashboard.frontend.src.components.Observability.A2ATracker.getStatusIcon",
                             "dashboard.frontend.src.components.Observability.A2ATracker.AgentActivityList.<unknown>..map() callback",
                             "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker",
-                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.messageInterval.setInterval() callback.setMessages() callback",
                             "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.internalMonologue.messages.filter() callback",
                             "dashboard.frontend.src.components.Observability.A2ATracker.map() callback"
                           ]
@@ -288069,7 +287912,7 @@
                       "file_methods": [
                         {
                           "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.useEffect() callback.forEach() callback",
                             "dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.topConnections.sort() callback",
@@ -288143,14 +287986,13 @@
                   "file_methods": [
                     {
                       "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
-                      "file_status": "modified",
+                      "file_status": "unchanged",
                       "methods": [
                         "dashboard.frontend.src.components.Observability.A2ATracker.A2AMessage",
                         "dashboard.frontend.src.components.Observability.A2ATracker.AgentActivity",
                         "dashboard.frontend.src.components.Observability.A2ATracker.WorkflowStats",
                         "dashboard.frontend.src.components.Observability.A2ATracker.ResourceStats",
                         "dashboard.frontend.src.components.Observability.A2ATracker.A2ATrackerProps",
-                        "dashboard.frontend.src.components.Observability.A2ATracker.generateRandomMessage",
                         "dashboard.frontend.src.components.Observability.A2ATracker.generateAgentActivity",
                         "dashboard.frontend.src.components.Observability.A2ATracker.generateAgentActivity.AGENT_IDS.map() callback",
                         "dashboard.frontend.src.components.Observability.A2ATracker.MessageTimeline.filteredMessages.messages.filter() callback",
@@ -288162,7 +288004,6 @@
                         "dashboard.frontend.src.components.Observability.A2ATracker.topConnections.map(\"h-full bg-purple-500 rounded-full\") callback",
                         "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker",
                         "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback",
-                        "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.messageInterval.setInterval() callback.setMessages() callback",
                         "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.internalMonologue.messages.filter() callback",
                         "dashboard.frontend.src.components.Observability.A2ATracker.map() callback"
                       ]
@@ -288200,21 +288041,19 @@
                       "file_methods": [
                         {
                           "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "dashboard.frontend.src.components.Observability.A2ATracker.A2AMessage",
                             "dashboard.frontend.src.components.Observability.A2ATracker.AgentActivity",
                             "dashboard.frontend.src.components.Observability.A2ATracker.WorkflowStats",
                             "dashboard.frontend.src.components.Observability.A2ATracker.ResourceStats",
                             "dashboard.frontend.src.components.Observability.A2ATracker.A2ATrackerProps",
-                            "dashboard.frontend.src.components.Observability.A2ATracker.generateRandomMessage",
                             "dashboard.frontend.src.components.Observability.A2ATracker.generateAgentActivity",
                             "dashboard.frontend.src.components.Observability.A2ATracker.generateAgentActivity.AGENT_IDS.map() callback",
                             "dashboard.frontend.src.components.Observability.A2ATracker.MessageTimeline.filteredMessages.messages.filter() callback",
                             "dashboard.frontend.src.components.Observability.A2ATracker.getStatusIcon",
                             "dashboard.frontend.src.components.Observability.A2ATracker.AgentActivityList.<unknown>..map() callback",
                             "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker",
-                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.messageInterval.setInterval() callback.setMessages() callback",
                             "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.internalMonologue.messages.filter() callback",
                             "dashboard.frontend.src.components.Observability.A2ATracker.map() callback"
                           ]
@@ -288254,17 +288093,16 @@
                       "file_methods": [
                         {
                           "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "dashboard.frontend.src.components.Observability.A2ATracker.MessageTimeline.yet",
                             "dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.useEffect() callback",
                             "dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.yet",
                             "dashboard.frontend.src.components.Observability.A2ATracker.topConnections.map(\"h-full bg-purple-500 rounded-full\") callback",
-                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback",
-                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.connectTimeout.setTimeout() callback",
-                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.messageInterval.setInterval() callback",
+                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.statsInterval.setInterval() callback",
                             "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.activityInterval.setInterval() callback",
-                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.statsInterval.setInterval() callback"
+                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback",
+                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.connectTimeout.setTimeout() callback"
                           ]
                         }
                       ],
@@ -288301,7 +288139,7 @@
                       "file_methods": [
                         {
                           "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.useEffect() callback.forEach() callback",
                             "dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.topConnections.sort() callback",
@@ -288360,7 +288198,7 @@
                   "file_methods": [
                     {
                       "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
-                      "file_status": "modified",
+                      "file_status": "unchanged",
                       "methods": [
                         "dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.useEffect() callback.forEach() callback",
                         "dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.topConnections.sort() callback",
@@ -288396,7 +288234,7 @@
                       "file_methods": [
                         {
                           "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "dashboard.frontend.src.components.Observability.A2ATracker.<unknown>..filter() callback",
                             "dashboard.frontend.src.components.Observability.A2ATracker.<unknown>..reduce() callback",
@@ -288431,14 +288269,13 @@
                       "file_methods": [
                         {
                           "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "dashboard.frontend.src.components.Observability.A2ATracker.A2AMessage",
                             "dashboard.frontend.src.components.Observability.A2ATracker.AgentActivity",
                             "dashboard.frontend.src.components.Observability.A2ATracker.WorkflowStats",
                             "dashboard.frontend.src.components.Observability.A2ATracker.ResourceStats",
                             "dashboard.frontend.src.components.Observability.A2ATracker.A2ATrackerProps",
-                            "dashboard.frontend.src.components.Observability.A2ATracker.generateRandomMessage",
                             "dashboard.frontend.src.components.Observability.A2ATracker.generateAgentActivity",
                             "dashboard.frontend.src.components.Observability.A2ATracker.generateAgentActivity.AGENT_IDS.map() callback",
                             "dashboard.frontend.src.components.Observability.A2ATracker.MessageTimeline.filteredMessages.messages.filter() callback",
@@ -288447,7 +288284,6 @@
                             "dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.useEffect() callback.forEach() callback",
                             "dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.topConnections.sort() callback",
                             "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker",
-                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.messageInterval.setInterval() callback.setMessages() callback",
                             "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.internalMonologue.messages.filter() callback",
                             "dashboard.frontend.src.components.Observability.A2ATracker.map() callback"
                           ]
@@ -288481,17 +288317,16 @@
                       "file_methods": [
                         {
                           "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "dashboard.frontend.src.components.Observability.A2ATracker.MessageTimeline.yet",
                             "dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.useEffect() callback",
                             "dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.yet",
                             "dashboard.frontend.src.components.Observability.A2ATracker.topConnections.map(\"h-full bg-purple-500 rounded-full\") callback",
-                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback",
-                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.connectTimeout.setTimeout() callback",
-                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.messageInterval.setInterval() callback",
+                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.statsInterval.setInterval() callback",
                             "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.activityInterval.setInterval() callback",
-                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.statsInterval.setInterval() callback"
+                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback",
+                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.connectTimeout.setTimeout() callback"
                           ]
                         }
                       ],
