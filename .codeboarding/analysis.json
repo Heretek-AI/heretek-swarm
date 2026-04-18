@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-18T03:55:04.506769+00:00",
+    "generated_at": "2026-04-18T04:07:14.320343+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -43750,7 +43750,7 @@
       ]
     },
     "dashboard/frontend/src/components/Canvas/Canvas.tsx": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.AgentApiResponse",
@@ -249407,7 +249407,7 @@
         },
         {
           "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "dashboard.frontend.src.components.Canvas.Canvas.AgentApiResponse",
             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas",
@@ -251179,7 +251179,7 @@
             },
             {
               "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "dashboard.frontend.src.components.Canvas.Canvas.AgentApiResponse",
                 "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas",
@@ -251575,7 +251575,7 @@
                 },
                 {
                   "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "dashboard.frontend.src.components.Canvas.Canvas.AgentApiResponse",
                     "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas",
@@ -251995,7 +251995,7 @@
                     },
                     {
                       "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "dashboard.frontend.src.components.Canvas.Canvas.AgentApiResponse",
                         "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas",
@@ -252325,7 +252325,7 @@
                         },
                         {
                           "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "dashboard.frontend.src.components.Canvas.Canvas.AgentApiResponse",
                             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas",
@@ -252642,7 +252642,7 @@
                             },
                             {
                               "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "dashboard.frontend.src.components.Canvas.Canvas.AgentApiResponse",
                                 "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas",

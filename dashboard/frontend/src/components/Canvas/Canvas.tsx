@@ -27,6 +27,7 @@ import ConnectionEdge from './ConnectionEdge';
 import { useConsciousnessMetrics, useSwarmHealth } from './useMetrics';
 import { useA2AMessages } from '../../hooks/useA2AMessages';
 import MetricsOverlay from './MetricsOverlay';
+import { AgentDetailDrawer } from './AgentDetailDrawer';
 
 // Import WorkflowBuilder node types
 import { ToolNode, MemoryNode, DecisionNode, ConnectorNode, LLMNode } from '../WorkflowBuilder';
@@ -342,21 +343,12 @@ export function CollectiveCanvas() {
         </button>
       </div>
 
-      {/* Selected Node Info */}
+      {/* Agent Detail Drawer — renders only when a node is selected */}
       {selectedNode && (
-        <div className="absolute bottom-4 left-4 z-20 bg-gray-800 border border-gray-700 rounded-lg shadow-xl p-3">
-          <div className="flex items-center gap-2">
-            <span className="text-gray-400 text-sm">Selected:</span>
-            <span className="text-white font-medium">{selectedNode.type}</span>
-            <span className="text-gray-500 text-xs">({selectedNode.id})</span>
-            <button
-              onClick={() => setSelectedNode(null)}
-              className="text-gray-400 hover:text-white ml-2"
-            >
-              ✕
-            </button>
-          </div>
-        </div>
+        <AgentDetailDrawer
+          agentId={selectedNode.id}
+          onClose={() => setSelectedNode(null)}
+        />
       )}
 
       <ReactFlow
