@@ -550,6 +550,26 @@ async def migrate_from_env(
     return await service.migrate_from_env(user=authenticated)
 
 
+@router.post("/seed-from-env")
+async def seed_from_env(
+    authenticated: str = Depends(verify_auth),
+    service: ConfigurationService = Depends(get_service),
+) -> dict[str, Any]:
+    """
+    Re-trigger idempotent seeding of LLM providers, embedding providers,
+    and system configs from docker-compose environment variables.
+
+    This gives operators a manual way to re-seed without restarting the API.
+    Idempotent: already-existing records are skipped with reasons logged.
+    Startup errors during seeding are caught and logged as warnings.
+
+    Returns:
+        SeedResult dict with providers_created, embedding_providers_created,
+        configs_created, and skipped_reasons.
+    """
+    return await service.seed_from_env()
+
+
 # =============================================================================
 # Configuration Reload Endpoint
 # =============================================================================
