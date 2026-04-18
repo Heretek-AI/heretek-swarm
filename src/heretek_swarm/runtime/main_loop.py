@@ -120,11 +120,13 @@ class AutonomousSwarm:
         logger.info("memory_system_initialized")
 
         # 3. Initialize RAG pipeline
-        from heretek_swarm.rag.rag_pipeline import RAGConfig
+        from heretek_swarm.rag.rag_pipeline import RAGPipelineConfig
         rag_config_dict = self.config.get("rag", {})
-        rag_cfg = RAGConfig(
-            chunk_size=rag_config_dict.get("chunk_size", 512),
-            chunk_overlap=rag_config_dict.get("chunk_overlap", 50),
+        rag_cfg = RAGPipelineConfig(
+            embedding_provider=rag_config_dict.get("embedding_provider", "openai"),
+            embedding_model=rag_config_dict.get("embedding_model", "text-embedding-3-small"),
+            llm_provider=rag_config_dict.get("llm_provider", "openai"),
+            llm_model=rag_config_dict.get("llm_model", "gpt-4o-mini"),
             top_k=rag_config_dict.get("top_k", 5),
         )
         self.rag = RAGPipeline(config=rag_cfg)
@@ -176,9 +178,9 @@ class AutonomousSwarm:
         )
         logger.info("actor_supervisor_initialized")
 
-        # 8. Spawn all 26 agents
+        # 8. Spawn all agents
         await self._spawn_all_actors()
-        logger.info("all_actors_spawned", count=26)
+        logger.info("all_actors_spawned", count=23)
 
         # 9. Set up channel subscriptions
         await self._setup_channel_subscriptions()

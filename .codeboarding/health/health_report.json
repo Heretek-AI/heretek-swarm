@@ -1,6 +1,6 @@
 {
   "repository_name": "heretek-swarm",
-  "timestamp": "2026-04-18T01:25:50.883713+00:00",
+  "timestamp": "2026-04-18T01:33:15.333120+00:00",
   "overall_score": 0.9898568364922042,
   "check_summaries": [
     {
@@ -950,22 +950,22 @@
             {
               "entity_name": "[unused_variable] \"topics\" is not accessed",
               "file_path": "src/heretek_swarm/runtime/main_loop.py",
-              "line_start": 249,
-              "line_end": 249,
+              "line_start": 263,
+              "line_end": 263,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"mesh\" is not accessed",
               "file_path": "src/heretek_swarm/runtime/main_loop.py",
-              "line_start": 304,
-              "line_end": 304,
+              "line_start": 319,
+              "line_end": 319,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"httpx\" is not accessed",
               "file_path": "src/heretek_swarm/runtime/main_loop.py",
-              "line_start": 527,
-              "line_end": 527,
+              "line_start": 542,
+              "line_end": 542,
               "metric_value": 0.0
             }
           ]
@@ -999,8 +999,8 @@
             {
               "entity_name": "[unused_import] Import \"httpx\" is not accessed",
               "file_path": "src/heretek_swarm/runtime/main_loop.py",
-              "line_start": 527,
-              "line_end": 527,
+              "line_start": 542,
+              "line_end": 542,
               "metric_value": 0.0
             }
           ]
