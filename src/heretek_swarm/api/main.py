@@ -140,11 +140,13 @@ async def _init_config_service() -> None:
             logger.info("Configuration falling back to environment variables")
 
         try:
-            migration_result = await config_service.migrate_from_env()
-            if migration_result["migrated"]:
-                logger.info("provider_migration_complete", migrated=migration_result["migrated"])
+            seed_result = await config_service.seed_from_env()
+            if seed_result.get("providers_created") or seed_result.get("embedding_providers_created") or seed_result.get("configs_created"):
+                logger.info("env_seeding_complete", **seed_result)
+            else:
+                logger.info("env_seeding_skipped", reason="no_env_vars_set")
         except Exception as e:
-            logger.warning("provider_migration_skipped", reason=str(e))
+            logger.warning("env_seeding_skipped", reason=str(e))
     except Exception as e:
         logger.warning("ConfigurationService not available", error=str(e))
         logger.info("Using environment variables for configuration")
