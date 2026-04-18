@@ -1,7 +1,7 @@
 {
   "repository_name": "heretek-swarm",
-  "timestamp": "2026-04-18T02:09:41.241371+00:00",
-  "overall_score": 0.9896847473342606,
+  "timestamp": "2026-04-18T02:27:08.708987+00:00",
+  "overall_score": 0.9896273975777945,
   "check_summaries": [
     {
       "check_name": "function_size",
@@ -790,8 +790,8 @@
       "description": "Detects unused imports, variables, functions, and dead code via LSP diagnostics",
       "language": "Python",
       "check_type": "standard",
-      "total_entities_checked": 31,
-      "findings_count": 31,
+      "total_entities_checked": 32,
+      "findings_count": 32,
       "warning_count": 5,
       "score": 0.0,
       "finding_groups": [
@@ -980,6 +980,13 @@
               "file_path": "src/heretek_swarm/api/wizard.py",
               "line_start": 712,
               "line_end": 712,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"kwargs\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/mixins/learning.py",
+              "line_start": 42,
+              "line_end": 42,
               "metric_value": 0.0
             }
           ]

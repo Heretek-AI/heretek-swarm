@@ -16,6 +16,7 @@ from typing import Any
 
 import structlog
 
+from heretek_swarm.actors.base.core import AgentActor
 from heretek_swarm.actors.mixins import (
     DeliberationMixin,
     LearningMixin,
@@ -134,7 +135,7 @@ class ArbitrationReport:
     recommendations: list[str]
 
 
-class ArbiterAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin):
+class ArbiterAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, AgentActor):
     """
     Arbiter Agent - Conflict Resolution Specialist for the Heretek Swarm Collective.
 
@@ -160,6 +161,13 @@ class ArbiterAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin):
             agent_id=agent_id,
             name=name,
             description=description,
+            topics=["arbiter", "conflict-resolution", "mediation"],
+            capabilities=[
+                "conflict-resolution",
+                "mediation",
+                "arbitration",
+                "relationship-management",
+            ],
             config=config,
             db_pool=db_pool,
             redis_client=redis_client,

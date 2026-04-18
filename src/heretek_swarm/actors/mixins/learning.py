@@ -39,6 +39,11 @@ class LearningMixin:
     _active_deliberations: dict[str, str] = None
     access_analyzer: Any = None
 
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        """Override __init__ to continue the MRO chain while stopping object.__init__ from receiving kwargs."""
+        # Pass only positional args to super() - object.__init__() only accepts self
+        super().__init__(*args)
+
     def get_learning_status(self) -> dict[str, Any]:
         """
         Get collective learning and memory optimization status.
