@@ -1,5 +1,8 @@
 """Agent Management API - submodule imports."""
 from heretek_swarm.api.agents import (
+    chat as chat,
+)
+from heretek_swarm.api.agents import (
     core as core,
 )
 from heretek_swarm.api.agents import (
@@ -16,6 +19,7 @@ from heretek_swarm.api.agents import (
 )
 
 __all__ = [
+    "chat",
     "core",
     "instances",
     "jetstream",

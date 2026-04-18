@@ -5,6 +5,7 @@ This module provides REST API endpoints for agent lifecycle management,
 delegating to submodules for each functional area.
 
 Submodules:
+- chat: Chat messaging via triad deliberation
 - core: Agent type discovery and deployment
 - lifecycle: Agent start/stop/suspend/resume
 - instances: Agent instance management
@@ -18,6 +19,7 @@ import structlog
 from fastapi import APIRouter
 
 from heretek_swarm.api.agents import (
+    chat,
     core,
     instances,
     jetstream,
@@ -32,6 +34,7 @@ logger = structlog.get_logger()
 router = APIRouter(prefix="/api/agents")
 
 # Include routers from submodules
+router.include_router(chat.router, tags=["chat"])
 router.include_router(core.router, tags=["core"])
 router.include_router(lifecycle.router, tags=["lifecycle"])
 router.include_router(instances.router, tags=["instances"])

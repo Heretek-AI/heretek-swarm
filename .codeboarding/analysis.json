@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-18T04:10:26.121800+00:00",
+    "generated_at": "2026-04-18T04:26:03.982568+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -52139,7 +52139,7 @@
       ]
     },
     "src/heretek_swarm/api/agents_management.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": []
     },
     "src/heretek_swarm/collective/__init__.py": {
@@ -52260,6 +52260,10 @@
           "status": "unchanged"
         }
       ]
+    },
+    "src/heretek_swarm/api/agents/__init__.py": {
+      "file_status": "modified",
+      "methods": []
     }
   },
   "methods_index": {
