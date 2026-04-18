@@ -106,12 +106,14 @@ export function CollectiveCanvas() {
   const swarmHealth = useSwarmHealth(agentsData);
 
   // A2A message tracking via WebSocket
-  const { activeEdges, connected } = useA2AMessages();
+  const { activeEdges, connected, error: wsError } = useA2AMessages();
 
   // Log WebSocket connection status
   useEffect(() => {
-    console.log(`Canvas: A2A WebSocket ${connected ? 'connected' : 'disconnected'}`);
-  }, [connected]);
+    if (wsError) {
+      console.warn('Canvas A2A WebSocket error (will auto-retry):', wsError);
+    }
+  }, [wsError]);
 
   // Derive ReactFlow Edge[] from activeEdges Map
   useEffect(() => {
@@ -341,6 +343,14 @@ export function CollectiveCanvas() {
         >
           🗑️
         </button>
+
+        {/* WebSocket Status */}
+        <div
+          className={`w-3 h-3 rounded-full ${
+            connected ? 'bg-green-500 animate-pulse' : wsError ? 'bg-red-500' : 'bg-yellow-500'
+          }`}
+          title={connected ? 'A2A WebSocket connected' : wsError ? `WS error (retrying): ${String(wsError)}` : 'A2A WebSocket connecting...'}
+        />
       </div>
 
       {/* Agent Detail Drawer — renders only when a node is selected */}

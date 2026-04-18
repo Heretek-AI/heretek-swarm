@@ -1067,6 +1067,16 @@ async def dashboard_websocket(
     }
 
     try:
+        # Immediately try to receive — if browser already closed, we catch it here
+        try:
+            data = await asyncio.wait_for(websocket.receive_text(), timeout=5.0)
+            message = json.loads(data)
+            await _ws_handle_dashboard_message(websocket, message, subscriptions)
+        except asyncio.TimeoutError:
+            # Normal: client didn't send anything immediately — that's fine
+            logger.debug("Dashboard WS: client sent no initial message (heartbeat mode)")
+
+        # Now enter the normal receive loop
         while True:
             try:
                 data = await asyncio.wait_for(websocket.receive_text(), timeout=60.0)
