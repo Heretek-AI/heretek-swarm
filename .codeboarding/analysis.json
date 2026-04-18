@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-18T03:35:10.707718+00:00",
+    "generated_at": "2026-04-18T03:40:31.005102+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -20562,320 +20562,334 @@
       ]
     },
     "src/heretek_swarm/consensus/maker_enhanced.py": {
-      "file_status": "modified",
+      "file_status": "unchanged",
       "methods": [
         {
+          "qualified_name": "src.heretek_swarm.consensus.maker_enhanced._get_maker_publisher",
+          "start_line": 79,
+          "end_line": 88,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consensus.maker_enhanced._emit_consensus_result",
+          "start_line": 91,
+          "end_line": 115,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
           "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.ReasoningChainStatus",
-          "start_line": 70,
-          "end_line": 77,
+          "start_line": 118,
+          "end_line": 125,
           "node_type": "CLASS",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.ReasoningStep",
-          "start_line": 81,
-          "end_line": 99,
+          "start_line": 129,
+          "end_line": 147,
           "node_type": "CLASS",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.ReasoningChain",
-          "start_line": 103,
-          "end_line": 206,
+          "start_line": 151,
+          "end_line": 254,
           "node_type": "CLASS",
-          "status": "modified"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.ReasoningChain.add_step",
-          "start_line": 125,
-          "end_line": 141,
+          "start_line": 173,
+          "end_line": 189,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.ReasoningChain.validate_chain",
-          "start_line": 143,
-          "end_line": 179,
+          "start_line": 191,
+          "end_line": 227,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.ReasoningChain._check_circular_reasoning",
-          "start_line": 181,
-          "end_line": 195,
+          "start_line": 229,
+          "end_line": 243,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.ReasoningChain._check_confidence_consistency",
-          "start_line": 197,
-          "end_line": 206,
+          "start_line": 245,
+          "end_line": 254,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EvidenceQuality",
-          "start_line": 199,
-          "end_line": 245,
+          "start_line": 258,
+          "end_line": 304,
           "node_type": "CLASS",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EvidenceQuality.calculate_quality_score",
-          "start_line": 217,
-          "end_line": 245,
+          "start_line": 276,
+          "end_line": 304,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedVote",
-          "start_line": 249,
-          "end_line": 281,
+          "start_line": 308,
+          "end_line": 340,
           "node_type": "CLASS",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedVote.agent_id",
-          "start_line": 272,
-          "end_line": 273,
+          "start_line": 331,
+          "end_line": 332,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedVote.decision",
-          "start_line": 276,
-          "end_line": 277,
+          "start_line": 335,
+          "end_line": 336,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedVote.confidence",
-          "start_line": 280,
-          "end_line": 281,
+          "start_line": 339,
+          "end_line": 340,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.DecisionProvenance",
-          "start_line": 285,
-          "end_line": 313,
+          "start_line": 344,
+          "end_line": 372,
           "node_type": "CLASS",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.RollbackResult",
-          "start_line": 317,
-          "end_line": 331,
+          "start_line": 376,
+          "end_line": 390,
           "node_type": "CLASS",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus",
-          "start_line": 345,
-          "end_line": 1459,
+          "start_line": 393,
+          "end_line": 1513,
           "node_type": "CLASS",
-          "status": "modified"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.__init__",
-          "start_line": 354,
-          "end_line": 421,
+          "start_line": 413,
+          "end_line": 480,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.start_consensus",
-          "start_line": 423,
-          "end_line": 471,
+          "start_line": 482,
+          "end_line": 530,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.add_vote",
-          "start_line": 473,
-          "end_line": 499,
+          "start_line": 532,
+          "end_line": 558,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.add_vote_with_reasoning",
-          "start_line": 501,
-          "end_line": 584,
+          "start_line": 560,
+          "end_line": 643,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.calculate_vote_weight",
-          "start_line": 586,
-          "end_line": 653,
+          "start_line": 645,
+          "end_line": 712,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._apply_enhanced_vote_weights",
-          "start_line": 655,
-          "end_line": 705,
+          "start_line": 714,
+          "end_line": 764,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._calculate_evidence_quality_score",
-          "start_line": 707,
-          "end_line": 772,
+          "start_line": 766,
+          "end_line": 831,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._calculate_expertise_score",
-          "start_line": 774,
-          "end_line": 792,
+          "start_line": 833,
+          "end_line": 851,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._calculate_historical_accuracy_score",
-          "start_line": 794,
-          "end_line": 823,
+          "start_line": 853,
+          "end_line": 882,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.record_decision_outcome",
-          "start_line": 825,
-          "end_line": 868,
+          "start_line": 884,
+          "end_line": 927,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.compute_consensus",
-          "start_line": 870,
-          "end_line": 915,
+          "start_line": 929,
+          "end_line": 980,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.compute_consensus_with_validation",
-          "start_line": 917,
-          "end_line": 950,
+          "start_line": 982,
+          "end_line": 1015,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._cross_validate_reasoning",
-          "start_line": 963,
-          "end_line": 1027,
-          "node_type": "METHOD",
-          "status": "modified"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._check_chain_contradictions",
-          "start_line": 1029,
-          "end_line": 1075,
-          "node_type": "METHOD",
-          "status": "added"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._get_validation_results",
-          "start_line": 1058,
-          "end_line": 1073,
+          "start_line": 1017,
+          "end_line": 1081,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
-          "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.get_decision_provenance",
-          "start_line": 1075,
-          "end_line": 1088,
+          "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._check_chain_contradictions",
+          "start_line": 1083,
+          "end_line": 1129,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._calculate_validation_scores",
-          "start_line": 1077,
-          "end_line": 1100,
-          "node_type": "METHOD",
-          "status": "added"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.get_reasoning_chains",
-          "start_line": 1090,
-          "end_line": 1103,
+          "start_line": 1131,
+          "end_line": 1154,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._extract_domain",
-          "start_line": 1102,
-          "end_line": 1122,
+          "start_line": 1156,
+          "end_line": 1176,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._get_validation_results",
+          "start_line": 1178,
+          "end_line": 1193,
+          "node_type": "METHOD",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.get_decision_provenance",
+          "start_line": 1195,
+          "end_line": 1208,
+          "node_type": "METHOD",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.get_reasoning_chains",
+          "start_line": 1210,
+          "end_line": 1223,
+          "node_type": "METHOD",
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.rollback_decision",
-          "start_line": 1105,
-          "end_line": 1170,
+          "start_line": 1225,
+          "end_line": 1290,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.export_provenance",
-          "start_line": 1172,
-          "end_line": 1217,
+          "start_line": 1292,
+          "end_line": 1337,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.get_enhanced_statistics",
-          "start_line": 1219,
-          "end_line": 1248,
+          "start_line": 1339,
+          "end_line": 1368,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.register_pattern",
-          "start_line": 1250,
-          "end_line": 1263,
+          "start_line": 1370,
+          "end_line": 1383,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.get_pattern",
-          "start_line": 1265,
-          "end_line": 1278,
+          "start_line": 1385,
+          "end_line": 1398,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.generate_decision_hash",
-          "start_line": 1280,
-          "end_line": 1309,
+          "start_line": 1400,
+          "end_line": 1429,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.export_accuracy_history",
-          "start_line": 1311,
-          "end_line": 1330,
+          "start_line": 1431,
+          "end_line": 1450,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.import_accuracy_history",
-          "start_line": 1332,
-          "end_line": 1352,
+          "start_line": 1452,
+          "end_line": 1472,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.save_state",
-          "start_line": 1354,
-          "end_line": 1371,
+          "start_line": 1474,
+          "end_line": 1491,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.load_state",
-          "start_line": 1373,
-          "end_line": 1393,
+          "start_line": 1493,
+          "end_line": 1513,
           "node_type": "METHOD",
           "status": "unchanged"
         }
@@ -78752,363 +78766,379 @@
       "type": "METHOD",
       "status": "unchanged"
     },
+    "src/heretek_swarm/consensus/maker_enhanced.py|src.heretek_swarm.consensus.maker_enhanced._get_maker_publisher": {
+      "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
+      "qualified_name": "src.heretek_swarm.consensus.maker_enhanced._get_maker_publisher",
+      "start_line": 79,
+      "end_line": 88,
+      "type": "FUNCTION",
+      "status": "unchanged"
+    },
+    "src/heretek_swarm/consensus/maker_enhanced.py|src.heretek_swarm.consensus.maker_enhanced._emit_consensus_result": {
+      "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
+      "qualified_name": "src.heretek_swarm.consensus.maker_enhanced._emit_consensus_result",
+      "start_line": 91,
+      "end_line": 115,
+      "type": "FUNCTION",
+      "status": "unchanged"
+    },
     "src/heretek_swarm/consensus/maker_enhanced.py|src.heretek_swarm.consensus.maker_enhanced.ReasoningChainStatus": {
       "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
       "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.ReasoningChainStatus",
-      "start_line": 70,
-      "end_line": 77,
+      "start_line": 118,
+      "end_line": 125,
       "type": "CLASS",
       "status": "unchanged"
     },
     "src/heretek_swarm/consensus/maker_enhanced.py|src.heretek_swarm.consensus.maker_enhanced.ReasoningStep": {
       "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
       "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.ReasoningStep",
-      "start_line": 81,
-      "end_line": 99,
+      "start_line": 129,
+      "end_line": 147,
       "type": "CLASS",
       "status": "unchanged"
     },
     "src/heretek_swarm/consensus/maker_enhanced.py|src.heretek_swarm.consensus.maker_enhanced.ReasoningChain": {
       "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
       "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.ReasoningChain",
-      "start_line": 103,
-      "end_line": 206,
+      "start_line": 151,
+      "end_line": 254,
       "type": "CLASS",
-      "status": "modified"
+      "status": "unchanged"
     },
     "src/heretek_swarm/consensus/maker_enhanced.py|src.heretek_swarm.consensus.maker_enhanced.ReasoningChain.add_step": {
       "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
       "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.ReasoningChain.add_step",
-      "start_line": 125,
-      "end_line": 141,
+      "start_line": 173,
+      "end_line": 189,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/consensus/maker_enhanced.py|src.heretek_swarm.consensus.maker_enhanced.ReasoningChain.validate_chain": {
       "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
       "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.ReasoningChain.validate_chain",
-      "start_line": 143,
-      "end_line": 179,
+      "start_line": 191,
+      "end_line": 227,
       "type": "METHOD",
-      "status": "modified"
+      "status": "unchanged"
     },
     "src/heretek_swarm/consensus/maker_enhanced.py|src.heretek_swarm.consensus.maker_enhanced.ReasoningChain._check_circular_reasoning": {
       "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
       "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.ReasoningChain._check_circular_reasoning",
-      "start_line": 181,
-      "end_line": 195,
+      "start_line": 229,
+      "end_line": 243,
       "type": "METHOD",
-      "status": "modified"
+      "status": "unchanged"
     },
     "src/heretek_swarm/consensus/maker_enhanced.py|src.heretek_swarm.consensus.maker_enhanced.ReasoningChain._check_confidence_consistency": {
       "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
       "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.ReasoningChain._check_confidence_consistency",
-      "start_line": 197,
-      "end_line": 206,
+      "start_line": 245,
+      "end_line": 254,
       "type": "METHOD",
-      "status": "modified"
+      "status": "unchanged"
     },
     "src/heretek_swarm/consensus/maker_enhanced.py|src.heretek_swarm.consensus.maker_enhanced.EvidenceQuality": {
       "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
       "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EvidenceQuality",
-      "start_line": 199,
-      "end_line": 245,
+      "start_line": 258,
+      "end_line": 304,
       "type": "CLASS",
       "status": "unchanged"
     },
     "src/heretek_swarm/consensus/maker_enhanced.py|src.heretek_swarm.consensus.maker_enhanced.EvidenceQuality.calculate_quality_score": {
       "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
       "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EvidenceQuality.calculate_quality_score",
-      "start_line": 217,
-      "end_line": 245,
+      "start_line": 276,
+      "end_line": 304,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/consensus/maker_enhanced.py|src.heretek_swarm.consensus.maker_enhanced.EnhancedVote": {
       "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
       "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedVote",
-      "start_line": 249,
-      "end_line": 281,
+      "start_line": 308,
+      "end_line": 340,
       "type": "CLASS",
       "status": "unchanged"
     },
     "src/heretek_swarm/consensus/maker_enhanced.py|src.heretek_swarm.consensus.maker_enhanced.EnhancedVote.agent_id": {
       "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
       "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedVote.agent_id",
-      "start_line": 272,
-      "end_line": 273,
+      "start_line": 331,
+      "end_line": 332,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/consensus/maker_enhanced.py|src.heretek_swarm.consensus.maker_enhanced.EnhancedVote.decision": {
       "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
       "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedVote.decision",
-      "start_line": 276,
-      "end_line": 277,
+      "start_line": 335,
+      "end_line": 336,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/consensus/maker_enhanced.py|src.heretek_swarm.consensus.maker_enhanced.EnhancedVote.confidence": {
       "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
       "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedVote.confidence",
-      "start_line": 280,
-      "end_line": 281,
+      "start_line": 339,
+      "end_line": 340,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/consensus/maker_enhanced.py|src.heretek_swarm.consensus.maker_enhanced.DecisionProvenance": {
       "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
       "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.DecisionProvenance",
-      "start_line": 285,
-      "end_line": 313,
+      "start_line": 344,
+      "end_line": 372,
       "type": "CLASS",
       "status": "unchanged"
     },
     "src/heretek_swarm/consensus/maker_enhanced.py|src.heretek_swarm.consensus.maker_enhanced.RollbackResult": {
       "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
       "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.RollbackResult",
-      "start_line": 317,
-      "end_line": 331,
+      "start_line": 376,
+      "end_line": 390,
       "type": "CLASS",
       "status": "unchanged"
     },
     "src/heretek_swarm/consensus/maker_enhanced.py|src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus": {
       "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
       "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus",
-      "start_line": 345,
-      "end_line": 1459,
+      "start_line": 393,
+      "end_line": 1513,
       "type": "CLASS",
-      "status": "modified"
+      "status": "unchanged"
     },
     "src/heretek_swarm/consensus/maker_enhanced.py|src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.__init__": {
       "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
       "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.__init__",
-      "start_line": 354,
-      "end_line": 421,
+      "start_line": 413,
+      "end_line": 480,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/consensus/maker_enhanced.py|src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.start_consensus": {
       "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
       "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.start_consensus",
-      "start_line": 423,
-      "end_line": 471,
+      "start_line": 482,
+      "end_line": 530,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/consensus/maker_enhanced.py|src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.add_vote": {
       "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
       "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.add_vote",
-      "start_line": 473,
-      "end_line": 499,
+      "start_line": 532,
+      "end_line": 558,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/consensus/maker_enhanced.py|src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.add_vote_with_reasoning": {
       "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
       "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.add_vote_with_reasoning",
-      "start_line": 501,
-      "end_line": 584,
+      "start_line": 560,
+      "end_line": 643,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/consensus/maker_enhanced.py|src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.calculate_vote_weight": {
       "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
       "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.calculate_vote_weight",
-      "start_line": 586,
-      "end_line": 653,
+      "start_line": 645,
+      "end_line": 712,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/consensus/maker_enhanced.py|src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._apply_enhanced_vote_weights": {
       "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
       "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._apply_enhanced_vote_weights",
-      "start_line": 655,
-      "end_line": 705,
+      "start_line": 714,
+      "end_line": 764,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/consensus/maker_enhanced.py|src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._calculate_evidence_quality_score": {
       "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
       "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._calculate_evidence_quality_score",
-      "start_line": 707,
-      "end_line": 772,
+      "start_line": 766,
+      "end_line": 831,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/consensus/maker_enhanced.py|src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._calculate_expertise_score": {
       "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
       "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._calculate_expertise_score",
-      "start_line": 774,
-      "end_line": 792,
+      "start_line": 833,
+      "end_line": 851,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/consensus/maker_enhanced.py|src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._calculate_historical_accuracy_score": {
       "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
       "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._calculate_historical_accuracy_score",
-      "start_line": 794,
-      "end_line": 823,
+      "start_line": 853,
+      "end_line": 882,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/consensus/maker_enhanced.py|src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.record_decision_outcome": {
       "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
       "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.record_decision_outcome",
-      "start_line": 825,
-      "end_line": 868,
+      "start_line": 884,
+      "end_line": 927,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/consensus/maker_enhanced.py|src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.compute_consensus": {
       "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
       "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.compute_consensus",
-      "start_line": 870,
-      "end_line": 915,
+      "start_line": 929,
+      "end_line": 980,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/consensus/maker_enhanced.py|src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.compute_consensus_with_validation": {
       "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
       "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.compute_consensus_with_validation",
-      "start_line": 917,
-      "end_line": 950,
+      "start_line": 982,
+      "end_line": 1015,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/consensus/maker_enhanced.py|src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._cross_validate_reasoning": {
       "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
       "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._cross_validate_reasoning",
-      "start_line": 963,
-      "end_line": 1027,
+      "start_line": 1017,
+      "end_line": 1081,
       "type": "METHOD",
-      "status": "modified"
+      "status": "unchanged"
     },
     "src/heretek_swarm/consensus/maker_enhanced.py|src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._check_chain_contradictions": {
       "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
       "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._check_chain_contradictions",
-      "start_line": 1029,
-      "end_line": 1075,
-      "type": "METHOD",
-      "status": "added"
-    },
-    "src/heretek_swarm/consensus/maker_enhanced.py|src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._get_validation_results": {
-      "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
-      "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._get_validation_results",
-      "start_line": 1058,
-      "end_line": 1073,
-      "type": "METHOD",
-      "status": "unchanged"
-    },
-    "src/heretek_swarm/consensus/maker_enhanced.py|src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.get_decision_provenance": {
-      "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
-      "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.get_decision_provenance",
-      "start_line": 1075,
-      "end_line": 1088,
+      "start_line": 1083,
+      "end_line": 1129,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/consensus/maker_enhanced.py|src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._calculate_validation_scores": {
       "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
       "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._calculate_validation_scores",
-      "start_line": 1077,
-      "end_line": 1100,
-      "type": "METHOD",
-      "status": "added"
-    },
-    "src/heretek_swarm/consensus/maker_enhanced.py|src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.get_reasoning_chains": {
-      "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
-      "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.get_reasoning_chains",
-      "start_line": 1090,
-      "end_line": 1103,
+      "start_line": 1131,
+      "end_line": 1154,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/consensus/maker_enhanced.py|src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._extract_domain": {
       "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
       "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._extract_domain",
-      "start_line": 1102,
-      "end_line": 1122,
+      "start_line": 1156,
+      "end_line": 1176,
       "type": "METHOD",
-      "status": "added"
+      "status": "unchanged"
+    },
+    "src/heretek_swarm/consensus/maker_enhanced.py|src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._get_validation_results": {
+      "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
+      "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._get_validation_results",
+      "start_line": 1178,
+      "end_line": 1193,
+      "type": "METHOD",
+      "status": "unchanged"
+    },
+    "src/heretek_swarm/consensus/maker_enhanced.py|src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.get_decision_provenance": {
+      "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
+      "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.get_decision_provenance",
+      "start_line": 1195,
+      "end_line": 1208,
+      "type": "METHOD",
+      "status": "unchanged"
+    },
+    "src/heretek_swarm/consensus/maker_enhanced.py|src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.get_reasoning_chains": {
+      "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
+      "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.get_reasoning_chains",
+      "start_line": 1210,
+      "end_line": 1223,
+      "type": "METHOD",
+      "status": "unchanged"
     },
     "src/heretek_swarm/consensus/maker_enhanced.py|src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.rollback_decision": {
       "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
       "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.rollback_decision",
-      "start_line": 1105,
-      "end_line": 1170,
+      "start_line": 1225,
+      "end_line": 1290,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/consensus/maker_enhanced.py|src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.export_provenance": {
       "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
       "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.export_provenance",
-      "start_line": 1172,
-      "end_line": 1217,
+      "start_line": 1292,
+      "end_line": 1337,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/consensus/maker_enhanced.py|src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.get_enhanced_statistics": {
       "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
       "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.get_enhanced_statistics",
-      "start_line": 1219,
-      "end_line": 1248,
+      "start_line": 1339,
+      "end_line": 1368,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/consensus/maker_enhanced.py|src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.register_pattern": {
       "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
       "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.register_pattern",
-      "start_line": 1250,
-      "end_line": 1263,
+      "start_line": 1370,
+      "end_line": 1383,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/consensus/maker_enhanced.py|src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.get_pattern": {
       "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
       "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.get_pattern",
-      "start_line": 1265,
-      "end_line": 1278,
+      "start_line": 1385,
+      "end_line": 1398,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/consensus/maker_enhanced.py|src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.generate_decision_hash": {
       "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
       "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.generate_decision_hash",
-      "start_line": 1280,
-      "end_line": 1309,
+      "start_line": 1400,
+      "end_line": 1429,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/consensus/maker_enhanced.py|src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.export_accuracy_history": {
       "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
       "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.export_accuracy_history",
-      "start_line": 1311,
-      "end_line": 1330,
+      "start_line": 1431,
+      "end_line": 1450,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/consensus/maker_enhanced.py|src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.import_accuracy_history": {
       "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
       "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.import_accuracy_history",
-      "start_line": 1332,
-      "end_line": 1352,
+      "start_line": 1452,
+      "end_line": 1472,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/consensus/maker_enhanced.py|src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.save_state": {
       "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
       "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.save_state",
-      "start_line": 1354,
-      "end_line": 1371,
+      "start_line": 1474,
+      "end_line": 1491,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/consensus/maker_enhanced.py|src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.load_state": {
       "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
       "qualified_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.load_state",
-      "start_line": 1373,
-      "end_line": 1393,
+      "start_line": 1493,
+      "end_line": 1513,
       "type": "METHOD",
       "status": "unchanged"
     },
@@ -121372,7 +121402,7 @@
         },
         {
           "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
-          "file_status": "modified",
+          "file_status": "unchanged",
           "methods": [
             "src.heretek_swarm.consensus.maker_enhanced.ReasoningChainStatus",
             "src.heretek_swarm.consensus.maker_enhanced.ReasoningStep",
@@ -121404,11 +121434,11 @@
             "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.compute_consensus_with_validation",
             "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._cross_validate_reasoning",
             "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._check_chain_contradictions",
+            "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._calculate_validation_scores",
+            "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._extract_domain",
             "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._get_validation_results",
             "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.get_decision_provenance",
-            "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._calculate_validation_scores",
             "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.get_reasoning_chains",
-            "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._extract_domain",
             "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.rollback_decision",
             "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.export_provenance",
             "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.get_enhanced_statistics",
@@ -127038,7 +127068,7 @@
             },
             {
               "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
-              "file_status": "modified",
+              "file_status": "unchanged",
               "methods": [
                 "src.heretek_swarm.consensus.maker_enhanced.ReasoningChainStatus",
                 "src.heretek_swarm.consensus.maker_enhanced.ReasoningStep",
@@ -127070,11 +127100,11 @@
                 "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.compute_consensus_with_validation",
                 "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._cross_validate_reasoning",
                 "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._check_chain_contradictions",
+                "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._calculate_validation_scores",
+                "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._extract_domain",
                 "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._get_validation_results",
                 "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.get_decision_provenance",
-                "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._calculate_validation_scores",
                 "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.get_reasoning_chains",
-                "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._extract_domain",
                 "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.rollback_decision",
                 "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.export_provenance",
                 "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.get_enhanced_statistics",
@@ -142307,7 +142337,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
-                  "file_status": "modified",
+                  "file_status": "unchanged",
                   "methods": [
                     "src.heretek_swarm.consensus.maker_enhanced.ReasoningChainStatus",
                     "src.heretek_swarm.consensus.maker_enhanced.ReasoningStep",
@@ -142339,11 +142369,11 @@
                     "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.compute_consensus_with_validation",
                     "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._cross_validate_reasoning",
                     "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._check_chain_contradictions",
+                    "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._calculate_validation_scores",
+                    "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._extract_domain",
                     "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._get_validation_results",
                     "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.get_decision_provenance",
-                    "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._calculate_validation_scores",
                     "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.get_reasoning_chains",
-                    "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._extract_domain",
                     "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.rollback_decision",
                     "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.export_provenance",
                     "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.get_enhanced_statistics",
@@ -142734,7 +142764,7 @@
                     },
                     {
                       "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
-                      "file_status": "modified",
+                      "file_status": "unchanged",
                       "methods": [
                         "src.heretek_swarm.consensus.maker_enhanced.ReasoningChainStatus",
                         "src.heretek_swarm.consensus.maker_enhanced.ReasoningStep",
@@ -142766,11 +142796,11 @@
                         "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.compute_consensus_with_validation",
                         "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._cross_validate_reasoning",
                         "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._check_chain_contradictions",
+                        "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._calculate_validation_scores",
+                        "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._extract_domain",
                         "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._get_validation_results",
                         "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.get_decision_provenance",
-                        "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._calculate_validation_scores",
                         "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.get_reasoning_chains",
-                        "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._extract_domain",
                         "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.rollback_decision",
                         "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.export_provenance",
                         "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus.get_enhanced_statistics",
@@ -142882,7 +142912,7 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "src.heretek_swarm.consensus.maker_enhanced.ReasoningStep",
                             "src.heretek_swarm.consensus.maker_enhanced.ReasoningChain",
@@ -142981,7 +143011,7 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "src.heretek_swarm.consensus.maker_enhanced.ReasoningChainStatus",
                             "src.heretek_swarm.consensus.maker_enhanced.EvidenceQuality",
@@ -143053,7 +143083,7 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus._calculate_expertise_score"
                           ]

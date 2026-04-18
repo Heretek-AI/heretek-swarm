@@ -1,7 +1,7 @@
 {
   "repository_name": "heretek-swarm",
-  "timestamp": "2026-04-18T03:38:12.729130+00:00",
-  "overall_score": 0.9874530211043654,
+  "timestamp": "2026-04-18T03:43:22.375935+00:00",
+  "overall_score": 0.9873959296947271,
   "check_summaries": [
     {
       "check_name": "function_size",
@@ -790,8 +790,8 @@
       "description": "Detects unused imports, variables, functions, and dead code via LSP diagnostics",
       "language": "Python",
       "check_type": "standard",
-      "total_entities_checked": 49,
-      "findings_count": 49,
+      "total_entities_checked": 50,
+      "findings_count": 50,
       "warning_count": 6,
       "score": 0.0,
       "finding_groups": [
@@ -1099,6 +1099,13 @@
               "file_path": "src/heretek_swarm/api/main.py",
               "line_start": 857,
               "line_end": 857,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_validates_id\" is not accessed",
+              "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
+              "line_start": 235,
+              "line_end": 235,
               "metric_value": 0.0
             }
           ]
