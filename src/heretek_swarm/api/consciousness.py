@@ -473,8 +473,16 @@ async def get_agent_iit_metrics(
     phi = plugin.calculate_iit_phi(agent_id)
 
     # Get connectivity details
-    iit_calculator = plugin._iit_calculator
-    connectivity = iit_calculator._build_connectivity_matrix()
+    iit_calculator = plugin.iit_calculator
+    # Build adjacency dict from interaction matrix
+    all_agents: set[str] = set()
+    for (from_a, to_a) in iit_calculator.interaction_matrix:
+        all_agents.add(from_a)
+        all_agents.add(to_a)
+    connectivity: dict[str, dict[str, float]] = {a: {} for a in all_agents}
+    for (from_a, to_a), strength in iit_calculator.interaction_matrix.items():
+        if from_a in connectivity and to_a in connectivity:
+            connectivity[from_a][to_a] = strength
 
     return {
         "agent_id": agent_id,
@@ -502,7 +510,7 @@ async def get_agent_fep_metrics(
     - Historical averages
     """
     plugin = get_consciousness_plugin()
-    fep_tracker = plugin._fep_tracker
+    fep_tracker = plugin.fep_tracker
 
     metrics = fep_tracker.get_metrics(agent_id)
     if metrics is None:
@@ -530,8 +538,16 @@ async def get_connectivity_matrix(
     between all agents in the swarm.
     """
     plugin = get_consciousness_plugin()
-    iit_calculator = plugin._iit_calculator
-    connectivity = iit_calculator._build_connectivity_matrix()
+    iit_calculator = plugin.iit_calculator
+    # Build adjacency dict from interaction matrix
+    all_agents: set[str] = set()
+    for (from_a, to_a) in iit_calculator.interaction_matrix:
+        all_agents.add(from_a)
+        all_agents.add(to_a)
+    connectivity: dict[str, dict[str, float]] = {a: {} for a in all_agents}
+    for (from_a, to_a), strength in iit_calculator.interaction_matrix.items():
+        if from_a in connectivity and to_a in connectivity:
+            connectivity[from_a][to_a] = strength
 
     return {
         "timestamp": datetime.now(UTC).isoformat(),
@@ -554,18 +570,18 @@ async def get_consciousness_states(
     - TRANSCENDENT: Highly integrated, emergent properties
     """
     plugin = get_consciousness_plugin()
-    states = plugin._agent_states
+    agent_metrics = plugin.agent_metrics
 
     # Count states
     state_counts = {state.value: 0 for state in ConsciousnessState}
-    for state in states.values():
-        state_counts[state.value] += 1
+    for metrics in agent_metrics.values():
+        state_counts[metrics.state.value] += 1
 
     return {
         "timestamp": datetime.now(UTC).isoformat(),
-        "states": {agent_id: state.value for agent_id, state in states.items()},
+        "states": {agent_id: metrics.state.value for agent_id, metrics in agent_metrics.items()},
         "counts": state_counts,
-        "total_agents": len(states),
+        "total_agents": len(agent_metrics),
     }
 
 
@@ -581,21 +597,17 @@ async def get_consciousness_history(
     Returns time-series data for tracking consciousness evolution.
     """
     plugin = get_consciousness_plugin()
-    iit_calculator = plugin._iit_calculator
+    metrics_history = plugin.metrics_history
 
-    # Get interaction history
+    # Get metrics history within time window
     cutoff_time = datetime.now(UTC) - timedelta(hours=hours)
     history = []
 
-    for interaction in iit_calculator._interactions:
-        interaction_time = datetime.fromisoformat(interaction["timestamp"])
-        if interaction_time >= cutoff_time:
-            if (
-                agent_id is None
-                or interaction["from_agent"] == agent_id
-                or interaction["to_agent"] == agent_id
-            ):
-                history.append(interaction)
+    for entry in metrics_history:
+        entry_time = datetime.fromisoformat(entry.get("timestamp", "1970-01-01T00:00:00Z"))
+        if entry_time >= cutoff_time:
+            if agent_id is None or agent_id in entry.get("agents", {}):
+                history.append(entry)
 
     return {
         "timestamp": datetime.now(UTC).isoformat(),
@@ -721,14 +733,24 @@ async def get_network_visualization(
     Returns node-link data suitable for D3.js or similar visualization libraries.
     """
     plugin = get_consciousness_plugin()
-    iit_calculator = plugin._iit_calculator
-    connectivity = iit_calculator._build_connectivity_matrix()
+    iit_calculator = plugin.iit_calculator
+
+    # Build adjacency dict from interaction matrix
+    all_agents: set[str] = set()
+    for (from_a, to_a) in iit_calculator.interaction_matrix:
+        all_agents.add(from_a)
+        all_agents.add(to_a)
+    connectivity: dict[str, dict[str, float]] = {a: {} for a in all_agents}
+    for (from_a, to_a), strength in iit_calculator.interaction_matrix.items():
+        if from_a in connectivity and to_a in connectivity:
+            connectivity[from_a][to_a] = strength
 
     # Build nodes
     nodes = []
     for agent_id in connectivity:
         phi = iit_calculator.get_average_phi()
-        state = plugin._agent_states.get(agent_id, ConsciousnessState.DORMANT)
+        metrics = plugin.agent_metrics.get(agent_id)
+        state = metrics.state if metrics else ConsciousnessState.DORMANT
         nodes.append(
             {
                 "id": agent_id,
@@ -770,33 +792,33 @@ async def get_timeseries_data(
     Returns data points suitable for line charts.
     """
     plugin = get_consciousness_plugin()
-    iit_calculator = plugin._iit_calculator
+    iit_calculator = plugin.iit_calculator
+    fep_tracker = plugin.fep_tracker
 
     cutoff_time = datetime.now(UTC) - timedelta(hours=hours)
     data_points = []
 
     if metric == "phi":
-        # Get phi over time from interactions
-        for interaction in iit_calculator._interactions:
-            interaction_time = datetime.fromisoformat(interaction["timestamp"])
-            if interaction_time >= cutoff_time and interaction["from_agent"] == agent_id:
+        # Get phi over time from connectivity history
+        for entry in iit_calculator.connectivity_history:
+            entry_time = datetime.fromisoformat(entry.timestamp)
+            if entry_time >= cutoff_time:
                 data_points.append(
                     {
-                        "timestamp": interaction["timestamp"],
-                        "value": interaction.get("phi", 0),
+                        "timestamp": entry.timestamp,
+                        "value": entry.phi,
                     }
                 )
     elif metric in ["free_energy", "surprise"]:
-        # Get FEP metrics
-        fep_tracker = plugin._fep_tracker
-        agent_predictions = fep_tracker._predictions.get(agent_id, [])
+        # Get FEP metrics from prediction history
+        agent_predictions = fep_tracker.prediction_history.get(agent_id, [])
         for pred in agent_predictions:
-            pred_time = datetime.fromisoformat(pred["timestamp"])
+            pred_time = datetime.fromtimestamp(pred["timestamp"], tz=UTC)
             if pred_time >= cutoff_time:
-                value = pred.get(metric, 0) if metric == "free_energy" else pred.get("surprise", 0)
+                value = pred.get("prediction", {}).get(metric, 0) if isinstance(pred.get("prediction"), dict) else 0
                 data_points.append(
                     {
-                        "timestamp": pred["timestamp"],
+                        "timestamp": pred_time.isoformat(),
                         "value": value,
                     }
                 )
