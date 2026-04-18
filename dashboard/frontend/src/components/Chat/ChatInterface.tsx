@@ -10,6 +10,18 @@ interface Message {
   role: 'user' | 'assistant' | 'system';
   content: string;
   timestamp: string;
+  contributions?: Contribution[];
+}
+
+interface Contribution {
+  agent_id: string;
+  role: string;
+  content: string;
+  timestamp: string;
+}
+
+interface ExpandedMessages {
+  [index: number]: boolean;
 }
 
 interface Agent {
@@ -32,6 +44,7 @@ const agentIcons: Record<string, string> = {
 
 export function ChatInterface() {
   const [messages, setMessages] = useState<Message[]>([]);
+  const [expandedMessages, setExpandedMessages] = useState<ExpandedMessages>({});
   const [input, setInput] = useState('');
   const [selectedAgent, setSelectedAgent] = useState('steward');
   const [agents, setAgents] = useState<Agent[]>([]);
@@ -77,6 +90,7 @@ export function ChatInterface() {
         role: 'assistant',
         content: data.response || data.message || 'No response',
         timestamp: new Date().toISOString(),
+        contributions: data.contributions || [],
       };
 
       setMessages(prev => [...prev, assistantMessage]);
@@ -101,6 +115,11 @@ export function ChatInterface() {
 
   const clearChat = () => {
     setMessages([]);
+    setExpandedMessages({});
+  };
+
+  const toggleExpanded = (index: number) => {
+    setExpandedMessages(prev => ({ ...prev, [index]: !prev[index] }));
   };
 
   return (
@@ -205,6 +224,36 @@ export function ChatInterface() {
                   <div className="text-xs mt-2 opacity-50">
                     {new Date(msg.timestamp).toLocaleTimeString()}
                   </div>
+                  {msg.contributions && msg.contributions.length > 0 && (
+                    <div className="mt-3 pt-3 border-t border-gray-600">
+                      <button
+                        onClick={() => toggleExpanded(idx)}
+                        className="text-sm text-blue-400 hover:text-blue-300 flex items-center gap-1"
+                      >
+                        <span>{expandedMessages[idx] ? '▼' : '▶'}</span>
+                        View {msg.contributions.length} contribution{msg.contributions.length !== 1 ? 's' : ''}
+                      </button>
+                      {expandedMessages[idx] && (
+                        <div className="mt-2 space-y-2">
+                          {msg.contributions.map((contrib, cIdx) => (
+                            <div key={cIdx} className="bg-gray-800 rounded p-2 text-sm">
+                              <div className="flex items-center gap-2 mb-1">
+                                <span className="text-blue-400 font-medium">
+                                  {contrib.agent_id}
+                                </span>
+                                <span className="text-gray-500 text-xs">
+                                  ({contrib.role})
+                                </span>
+                              </div>
+                              <div className="text-gray-300 text-xs">
+                                {contrib.content}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
             ))
