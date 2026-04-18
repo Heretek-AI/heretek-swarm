@@ -18,11 +18,14 @@ import {
   Connection,
   addEdge,
   XYPosition,
+  type EdgeTypes,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 
 import AgentNode, { AgentData } from './AgentNode';
+import ConnectionEdge from './ConnectionEdge';
 import { useConsciousnessMetrics, useSwarmHealth } from './useMetrics';
+import { useA2AMessages } from '../../hooks/useA2AMessages';
 import MetricsOverlay from './MetricsOverlay';
 
 // Import WorkflowBuilder node types
@@ -48,6 +51,11 @@ const nodeTypes: Record<string, any> = {
   decision: DecisionNode,
   connector: ConnectorNode,
   llm: LLMNode,
+};
+
+// Edge type registry - maps type string to ReactFlow edge components
+const edgeTypes: EdgeTypes = {
+  connectionEdge: ConnectionEdge,
 };
 
 // Node palette configuration
@@ -95,6 +103,39 @@ export function CollectiveCanvas() {
   // Metrics hooks
   const { metrics: consciousness, loading: consciousnessLoading } = useConsciousnessMetrics();
   const swarmHealth = useSwarmHealth(agentsData);
+
+  // A2A message tracking via WebSocket
+  const { activeEdges, connected } = useA2AMessages();
+
+  // Log WebSocket connection status
+  useEffect(() => {
+    console.log(`Canvas: A2A WebSocket ${connected ? 'connected' : 'disconnected'}`);
+  }, [connected]);
+
+  // Derive ReactFlow Edge[] from activeEdges Map
+  useEffect(() => {
+    const a2aEdges: Edge[] = [];
+    activeEdges.forEach((state, key) => {
+      const [from, to] = key.split('→');
+      a2aEdges.push({
+        id: key,
+        source: from,
+        target: to,
+        type: 'connectionEdge',
+        data: {
+          messageType: state.messageType,
+          messageCount: state.count,
+          animated: true,
+        },
+      });
+    });
+
+    // Union with user-created edges (identified by non-A2A edge types)
+    setEdges((prevEdges) => {
+      const userEdges = prevEdges.filter((e) => e.type !== 'connectionEdge');
+      return [...userEdges, ...a2aEdges];
+    });
+  }, [activeEdges, setEdges]);
 
   // Toggle metrics overlay with 'm' key
   useEffect(() => {
@@ -147,11 +188,12 @@ export function CollectiveCanvas() {
     fetchAgents();
   }, [fetchAgents]);
 
-  // Poll for updates every 5 seconds
+  // Fetch agents when WebSocket reconnects (refresh state on reconnect)
   useEffect(() => {
-    const interval = setInterval(fetchAgents, 5000);
-    return () => clearInterval(interval);
-  }, [fetchAgents]);
+    if (connected) {
+      fetchAgents();
+    }
+  }, [connected, fetchAgents]);
 
   // Handle node connections
   const onConnect = useCallback(
@@ -321,6 +363,7 @@ export function CollectiveCanvas() {
         nodes={nodes}
         edges={edges}
         nodeTypes={nodeTypes}
+        edgeTypes={edgeTypes}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
