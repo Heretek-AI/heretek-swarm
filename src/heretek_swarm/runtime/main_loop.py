@@ -40,7 +40,7 @@ class AutonomousSwarm:
     Main entry point for autonomous 24/7 swarm operation.
 
     Coordinates all components into a unified autonomous loop:
-    - Initializes all 26 agents
+    - Initializes all 23 agents
     - Sets up communication channels
     - Starts health monitoring
     - Runs continuous task processing
