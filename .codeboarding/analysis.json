@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-18T04:46:48.335010+00:00",
+    "generated_at": "2026-04-18T04:49:52.105046+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -9403,7 +9403,7 @@
       ]
     },
     "src/heretek_swarm/api/workflows.py": {
-      "file_status": "modified",
+      "file_status": "unchanged",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.api.workflows.create_workflow",
@@ -9473,28 +9473,28 @@
           "start_line": 370,
           "end_line": 478,
           "node_type": "FUNCTION",
-          "status": "modified"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.workflows.workflow_events_stream.event_generator",
           "start_line": 393,
           "end_line": 468,
           "node_type": "FUNCTION",
-          "status": "modified"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.workflows.workflow_specific_events_stream",
           "start_line": 482,
           "end_line": 589,
           "node_type": "FUNCTION",
-          "status": "modified"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.workflows.workflow_specific_events_stream.event_generator",
           "start_line": 502,
           "end_line": 579,
           "node_type": "FUNCTION",
-          "status": "modified"
+          "status": "unchanged"
         }
       ]
     },
@@ -39505,7 +39505,7 @@
       ]
     },
     "dashboard/frontend/src/App.tsx": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "dashboard.frontend.src.App._safeUrl",
@@ -62661,7 +62661,7 @@
       "start_line": 370,
       "end_line": 478,
       "type": "FUNCTION",
-      "status": "modified"
+      "status": "unchanged"
     },
     "src/heretek_swarm/api/workflows.py|src.heretek_swarm.api.workflows.workflow_events_stream.event_generator": {
       "file_path": "src/heretek_swarm/api/workflows.py",
@@ -62669,7 +62669,7 @@
       "start_line": 393,
       "end_line": 468,
       "type": "FUNCTION",
-      "status": "modified"
+      "status": "unchanged"
     },
     "src/heretek_swarm/api/workflows.py|src.heretek_swarm.api.workflows.workflow_specific_events_stream": {
       "file_path": "src/heretek_swarm/api/workflows.py",
@@ -62677,7 +62677,7 @@
       "start_line": 482,
       "end_line": 589,
       "type": "FUNCTION",
-      "status": "modified"
+      "status": "unchanged"
     },
     "src/heretek_swarm/api/workflows.py|src.heretek_swarm.api.workflows.workflow_specific_events_stream.event_generator": {
       "file_path": "src/heretek_swarm/api/workflows.py",
@@ -62685,7 +62685,7 @@
       "start_line": 502,
       "end_line": 579,
       "type": "FUNCTION",
-      "status": "modified"
+      "status": "unchanged"
     },
     "src/heretek_swarm/channels/defaults.py|src.heretek_swarm.channels.defaults.get_internal_channels": {
       "file_path": "src/heretek_swarm/channels/defaults.py",
@@ -111730,7 +111730,7 @@
         },
         {
           "file_path": "src/heretek_swarm/api/workflows.py",
-          "file_status": "modified",
+          "file_status": "unchanged",
           "methods": [
             "src.heretek_swarm.api.workflows.create_workflow",
             "src.heretek_swarm.api.workflows.list_workflows",
@@ -118018,7 +118018,7 @@
             },
             {
               "file_path": "src/heretek_swarm/api/workflows.py",
-              "file_status": "modified",
+              "file_status": "unchanged",
               "methods": [
                 "src.heretek_swarm.api.workflows.create_workflow",
                 "src.heretek_swarm.api.workflows.list_workflows",
@@ -121306,7 +121306,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/api/workflows.py",
-                  "file_status": "modified",
+                  "file_status": "unchanged",
                   "methods": [
                     "src.heretek_swarm.api.workflows.create_workflow",
                     "src.heretek_swarm.api.workflows.list_workflows",
@@ -124172,7 +124172,7 @@
                     },
                     {
                       "file_path": "src/heretek_swarm/api/workflows.py",
-                      "file_status": "modified",
+                      "file_status": "unchanged",
                       "methods": [
                         "src.heretek_swarm.api.workflows.create_workflow",
                         "src.heretek_swarm.api.workflows.list_workflows",
@@ -124319,7 +124319,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/api/workflows.py",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "src.heretek_swarm.api.workflows.create_workflow",
                             "src.heretek_swarm.api.workflows.list_workflows",
@@ -238616,7 +238616,7 @@
       "file_methods": [
         {
           "file_path": "dashboard/frontend/src/App.tsx",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "dashboard.frontend.src.App._safeUrl",
             "dashboard.frontend.src.App.DashboardContent",
@@ -258194,7 +258194,7 @@
           "file_methods": [
             {
               "file_path": "dashboard/frontend/src/App.tsx",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "dashboard.frontend.src.App._safeUrl",
                 "dashboard.frontend.src.App.DashboardContent",
@@ -259792,7 +259792,7 @@
               "file_methods": [
                 {
                   "file_path": "dashboard/frontend/src/App.tsx",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "dashboard.frontend.src.App._safeUrl",
                     "dashboard.frontend.src.App.DashboardContent",
@@ -261341,7 +261341,7 @@
                   "file_methods": [
                     {
                       "file_path": "dashboard/frontend/src/App.tsx",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "dashboard.frontend.src.App._safeUrl",
                         "dashboard.frontend.src.App.DashboardContent",
@@ -262894,7 +262894,7 @@
                       "file_methods": [
                         {
                           "file_path": "dashboard/frontend/src/App.tsx",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "dashboard.frontend.src.App.DashboardContent",
                             "dashboard.frontend.src.App.DashboardContent.useEffect() callback.error",
