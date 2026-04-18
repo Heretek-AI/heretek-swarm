@@ -172,3 +172,24 @@ class NATSPublisher:
             },
         )
         return await self.publish_event(event)
+
+
+# Global publisher instance
+_publisher: NATSPublisher | None = None
+
+
+async def get_nats_publisher() -> NATSPublisher:
+    """Get or create global NATS publisher."""
+    global _publisher
+    if _publisher is None:
+        _publisher = NATSPublisher()
+        await _publisher.initialize()
+    return _publisher
+
+
+__all__ = [
+    "EventPriority",
+    "NATSPublisher",
+    "SwarmEvent",
+    "get_nats_publisher",
+]

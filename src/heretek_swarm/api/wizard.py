@@ -9,6 +9,7 @@ Tenet #1: "Zero-Touch Configuration (Wizard-First)"
 
 from __future__ import annotations
 
+import asyncio
 from typing import Any
 
 import structlog
@@ -18,6 +19,12 @@ from uuid import UUID
 
 from fastapi import APIRouter, HTTPException, Response
 from structlog import get_logger
+
+from heretek_swarm.infrastructure.nats.publisher import (
+    NATSPublisher,
+    SwarmEvent,
+    get_nats_publisher,
+)
 
 from heretek_swarm.config.models import (
     LLMProviderCreate,
@@ -860,6 +867,56 @@ async def _validate_local(base_url: str, api_key: str | None) -> dict[str, Any]:
 
 
 # =============================================================================
+# Wizard Event Emission
+# =============================================================================
+
+async def _emit_wizard_completed_event(tier_config: dict[str, Any]) -> None:
+    """
+    Emit a wizard.completed SwarmEvent to trigger autonomous runtime startup.
+
+    Args:
+        tier_config: The tier configuration including tier_id, agents, etc.
+    """
+    try:
+        publisher = get_nats_publisher()
+
+        event = SwarmEvent(
+            event_type="wizard.completed",
+            source_agent="wizard",
+            target_agent=None,
+            payload={
+                "tier_id": tier_config.get("tier", "standard"),
+                "agent_count": tier_config.get("agent_count", 0),
+                "agents": tier_config.get("agents", []),
+                "memory_enabled": tier_config.get("memory_enabled", False),
+                "consciousness_enabled": tier_config.get("consciousness_enabled", False),
+            },
+        )
+
+        success = await publisher.publish_event(event)
+
+        if success:
+            logger.info(
+                "wizard_completed_event_emitted",
+                tier_id=tier_config.get("tier"),
+                agent_count=tier_config.get("agent_count", 0),
+            )
+        else:
+            logger.warning(
+                "wizard_completed_event_publish_failed",
+                tier_id=tier_config.get("tier"),
+            )
+
+    except Exception as e:
+        # Gracefully handle NATS unavailable - log warning but don't fail wizard
+        logger.warning(
+            "wizard_completed_event_error",
+            error=str(e),
+            tier_id=tier_config.get("tier"),
+        )
+
+
+# =============================================================================
 # Configuration Submission Endpoint
 # =============================================================================
 
@@ -961,6 +1018,7 @@ async def submit_config(config: dict[str, Any]) -> dict[str, Any]:
 
     # Store tier configuration
     tier_id = config.get("tier", "standard")
+    tier_config = {}
     if tier_id in AGENT_TIERS:
         tier_config = AGENT_TIERS[tier_id]
         wizard_state.set_wizard_config({
@@ -980,6 +1038,10 @@ async def submit_config(config: dict[str, Any]) -> dict[str, Any]:
 
     # Mark wizard as completed
     wizard_state.set_completed(True)
+
+    # Emit wizard.completed event for autonomous runtime startup (fire-and-forget)
+    # This triggers the runtime to begin agent spawning without requiring user action
+    asyncio.create_task(_emit_wizard_completed_event(tier_config))
 
     result["success"] = len(result["errors"]) == 0
 

@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-18T01:44:49.114452+00:00",
+    "generated_at": "2026-04-18T02:01:37.173906+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -11688,7 +11688,7 @@
       ]
     },
     "src/heretek_swarm/api/wizard.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.api.wizard.WizardState",
@@ -11887,11 +11887,18 @@
           "status": "unchanged"
         },
         {
-          "qualified_name": "src.heretek_swarm.api.wizard.submit_config",
-          "start_line": 867,
-          "end_line": 988,
+          "qualified_name": "src.heretek_swarm.api.wizard._emit_wizard_completed_event",
+          "start_line": 873,
+          "end_line": 916,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.wizard.submit_config",
+          "start_line": 924,
+          "end_line": 1050,
+          "node_type": "FUNCTION",
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.wizard.reset_wizard",
@@ -24258,7 +24265,7 @@
       ]
     },
     "src/heretek_swarm/infrastructure/nats/publisher.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.infrastructure.nats.publisher.EventPriority",
@@ -24343,6 +24350,13 @@
           "end_line": 174,
           "node_type": "METHOD",
           "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.infrastructure.nats.publisher.get_nats_publisher",
+          "start_line": 181,
+          "end_line": 187,
+          "node_type": "FUNCTION",
+          "status": "added"
         }
       ]
     },
@@ -69101,13 +69115,21 @@
       "type": "FUNCTION",
       "status": "unchanged"
     },
+    "src/heretek_swarm/api/wizard.py|src.heretek_swarm.api.wizard._emit_wizard_completed_event": {
+      "file_path": "src/heretek_swarm/api/wizard.py",
+      "qualified_name": "src.heretek_swarm.api.wizard._emit_wizard_completed_event",
+      "start_line": 873,
+      "end_line": 916,
+      "type": "FUNCTION",
+      "status": "added"
+    },
     "src/heretek_swarm/api/wizard.py|src.heretek_swarm.api.wizard.submit_config": {
       "file_path": "src/heretek_swarm/api/wizard.py",
       "qualified_name": "src.heretek_swarm.api.wizard.submit_config",
-      "start_line": 867,
-      "end_line": 988,
+      "start_line": 924,
+      "end_line": 1050,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/wizard.py|src.heretek_swarm.api.wizard.reset_wizard": {
       "file_path": "src/heretek_swarm/api/wizard.py",
@@ -82972,6 +82994,14 @@
       "end_line": 174,
       "type": "METHOD",
       "status": "unchanged"
+    },
+    "src/heretek_swarm/infrastructure/nats/publisher.py|src.heretek_swarm.infrastructure.nats.publisher.get_nats_publisher": {
+      "file_path": "src/heretek_swarm/infrastructure/nats/publisher.py",
+      "qualified_name": "src.heretek_swarm.infrastructure.nats.publisher.get_nats_publisher",
+      "start_line": 181,
+      "end_line": 187,
+      "type": "FUNCTION",
+      "status": "added"
     },
     "src/heretek_swarm/infrastructure/nats/subscriber.py|src.heretek_swarm.infrastructure.nats.subscriber.SubscriptionState": {
       "file_path": "src/heretek_swarm/infrastructure/nats/subscriber.py",
@@ -119928,7 +119958,7 @@
         },
         {
           "file_path": "src/heretek_swarm/api/wizard.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "src.heretek_swarm.api.wizard.WizardState",
             "src.heretek_swarm.api.wizard.WizardState.__init__",
@@ -119958,6 +119988,7 @@
             "src.heretek_swarm.api.wizard._validate_mistral",
             "src.heretek_swarm.api.wizard._validate_deepseek",
             "src.heretek_swarm.api.wizard._validate_local",
+            "src.heretek_swarm.api.wizard._emit_wizard_completed_event",
             "src.heretek_swarm.api.wizard.submit_config",
             "src.heretek_swarm.api.wizard.reset_wizard"
           ]
@@ -122051,7 +122082,7 @@
         },
         {
           "file_path": "src/heretek_swarm/infrastructure/nats/publisher.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "src.heretek_swarm.infrastructure.nats.publisher.EventPriority",
             "src.heretek_swarm.infrastructure.nats.publisher.SwarmEvent",
@@ -122064,7 +122095,8 @@
             "src.heretek_swarm.infrastructure.nats.publisher.NATSPublisher.send_message",
             "src.heretek_swarm.infrastructure.nats.publisher.NATSPublisher.emit_agent_event",
             "src.heretek_swarm.infrastructure.nats.publisher.NATSPublisher.emit_consensus_event",
-            "src.heretek_swarm.infrastructure.nats.publisher.NATSPublisher.emit_consciousness_metric"
+            "src.heretek_swarm.infrastructure.nats.publisher.NATSPublisher.emit_consciousness_metric",
+            "src.heretek_swarm.infrastructure.nats.publisher.get_nats_publisher"
           ]
         },
         {
@@ -126424,7 +126456,7 @@
             },
             {
               "file_path": "src/heretek_swarm/api/wizard.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.heretek_swarm.api.wizard.WizardState",
                 "src.heretek_swarm.api.wizard.WizardState.__init__",
@@ -126454,6 +126486,7 @@
                 "src.heretek_swarm.api.wizard._validate_mistral",
                 "src.heretek_swarm.api.wizard._validate_deepseek",
                 "src.heretek_swarm.api.wizard._validate_local",
+                "src.heretek_swarm.api.wizard._emit_wizard_completed_event",
                 "src.heretek_swarm.api.wizard.submit_config",
                 "src.heretek_swarm.api.wizard.reset_wizard"
               ]
@@ -127584,7 +127617,7 @@
             },
             {
               "file_path": "src/heretek_swarm/infrastructure/nats/publisher.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.heretek_swarm.infrastructure.nats.publisher.EventPriority",
                 "src.heretek_swarm.infrastructure.nats.publisher.SwarmEvent",
@@ -127597,7 +127630,8 @@
                 "src.heretek_swarm.infrastructure.nats.publisher.NATSPublisher.send_message",
                 "src.heretek_swarm.infrastructure.nats.publisher.NATSPublisher.emit_agent_event",
                 "src.heretek_swarm.infrastructure.nats.publisher.NATSPublisher.emit_consensus_event",
-                "src.heretek_swarm.infrastructure.nats.publisher.NATSPublisher.emit_consciousness_metric"
+                "src.heretek_swarm.infrastructure.nats.publisher.NATSPublisher.emit_consciousness_metric",
+                "src.heretek_swarm.infrastructure.nats.publisher.get_nats_publisher"
               ]
             },
             {
@@ -134388,7 +134422,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/api/wizard.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.api.wizard.WizardState",
                     "src.heretek_swarm.api.wizard.WizardState.__init__",
@@ -134418,6 +134452,7 @@
                     "src.heretek_swarm.api.wizard._validate_mistral",
                     "src.heretek_swarm.api.wizard._validate_deepseek",
                     "src.heretek_swarm.api.wizard._validate_local",
+                    "src.heretek_swarm.api.wizard._emit_wizard_completed_event",
                     "src.heretek_swarm.api.wizard.submit_config",
                     "src.heretek_swarm.api.wizard.reset_wizard"
                   ]
@@ -134578,7 +134613,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/infrastructure/nats/publisher.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.infrastructure.nats.publisher.EventPriority",
                     "src.heretek_swarm.infrastructure.nats.publisher.SwarmEvent",
@@ -134591,7 +134626,8 @@
                     "src.heretek_swarm.infrastructure.nats.publisher.NATSPublisher.send_message",
                     "src.heretek_swarm.infrastructure.nats.publisher.NATSPublisher.emit_agent_event",
                     "src.heretek_swarm.infrastructure.nats.publisher.NATSPublisher.emit_consensus_event",
-                    "src.heretek_swarm.infrastructure.nats.publisher.NATSPublisher.emit_consciousness_metric"
+                    "src.heretek_swarm.infrastructure.nats.publisher.NATSPublisher.emit_consciousness_metric",
+                    "src.heretek_swarm.infrastructure.nats.publisher.get_nats_publisher"
                   ]
                 },
                 {
@@ -136436,7 +136472,7 @@
                     },
                     {
                       "file_path": "src/heretek_swarm/api/wizard.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.api.wizard.WizardState",
                         "src.heretek_swarm.api.wizard.WizardState.__init__",
@@ -136466,6 +136502,7 @@
                         "src.heretek_swarm.api.wizard._validate_mistral",
                         "src.heretek_swarm.api.wizard._validate_deepseek",
                         "src.heretek_swarm.api.wizard._validate_local",
+                        "src.heretek_swarm.api.wizard._emit_wizard_completed_event",
                         "src.heretek_swarm.api.wizard.submit_config",
                         "src.heretek_swarm.api.wizard.reset_wizard"
                       ]
@@ -138278,7 +138315,7 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/api/wizard.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.api.wizard.WizardState",
                             "src.heretek_swarm.api.wizard.WizardState.__init__",
@@ -138308,6 +138345,7 @@
                             "src.heretek_swarm.api.wizard._validate_mistral",
                             "src.heretek_swarm.api.wizard._validate_deepseek",
                             "src.heretek_swarm.api.wizard._validate_local",
+                            "src.heretek_swarm.api.wizard._emit_wizard_completed_event",
                             "src.heretek_swarm.api.wizard.submit_config",
                             "src.heretek_swarm.api.wizard.reset_wizard"
                           ]
@@ -138720,7 +138758,7 @@
                     },
                     {
                       "file_path": "src/heretek_swarm/infrastructure/nats/publisher.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.infrastructure.nats.publisher.EventPriority",
                         "src.heretek_swarm.infrastructure.nats.publisher.SwarmEvent",
@@ -138733,7 +138771,8 @@
                         "src.heretek_swarm.infrastructure.nats.publisher.NATSPublisher.send_message",
                         "src.heretek_swarm.infrastructure.nats.publisher.NATSPublisher.emit_agent_event",
                         "src.heretek_swarm.infrastructure.nats.publisher.NATSPublisher.emit_consensus_event",
-                        "src.heretek_swarm.infrastructure.nats.publisher.NATSPublisher.emit_consciousness_metric"
+                        "src.heretek_swarm.infrastructure.nats.publisher.NATSPublisher.emit_consciousness_metric",
+                        "src.heretek_swarm.infrastructure.nats.publisher.get_nats_publisher"
                       ]
                     },
                     {
@@ -138871,7 +138910,7 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/infrastructure/nats/publisher.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.infrastructure.nats.publisher.EventPriority",
                             "src.heretek_swarm.infrastructure.nats.publisher.SwarmEvent",
@@ -138884,7 +138923,8 @@
                             "src.heretek_swarm.infrastructure.nats.publisher.NATSPublisher.send_message",
                             "src.heretek_swarm.infrastructure.nats.publisher.NATSPublisher.emit_agent_event",
                             "src.heretek_swarm.infrastructure.nats.publisher.NATSPublisher.emit_consensus_event",
-                            "src.heretek_swarm.infrastructure.nats.publisher.NATSPublisher.emit_consciousness_metric"
+                            "src.heretek_swarm.infrastructure.nats.publisher.NATSPublisher.emit_consciousness_metric",
+                            "src.heretek_swarm.infrastructure.nats.publisher.get_nats_publisher"
                           ]
                         },
                         {

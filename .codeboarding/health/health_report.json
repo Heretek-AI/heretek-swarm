@@ -1,7 +1,7 @@
 {
   "repository_name": "heretek-swarm",
-  "timestamp": "2026-04-18T01:44:50.502999+00:00",
-  "overall_score": 0.9897994667903095,
+  "timestamp": "2026-04-18T02:01:38.574032+00:00",
+  "overall_score": 0.9896847473342606,
   "check_summaries": [
     {
       "check_name": "function_size",
@@ -790,9 +790,9 @@
       "description": "Detects unused imports, variables, functions, and dead code via LSP diagnostics",
       "language": "Python",
       "check_type": "standard",
-      "total_entities_checked": 29,
-      "findings_count": 29,
-      "warning_count": 4,
+      "total_entities_checked": 31,
+      "findings_count": 31,
+      "warning_count": 5,
       "score": 0.0,
       "finding_groups": [
         {
@@ -969,10 +969,17 @@
               "metric_value": 0.0
             },
             {
+              "entity_name": "[unused_variable] \"NATSPublisher\" is not accessed",
+              "file_path": "src/heretek_swarm/api/wizard.py",
+              "line_start": 24,
+              "line_end": 24,
+              "metric_value": 0.0
+            },
+            {
               "entity_name": "[unused_variable] \"api_key\" is not accessed",
               "file_path": "src/heretek_swarm/api/wizard.py",
-              "line_start": 705,
-              "line_end": 705,
+              "line_start": 712,
+              "line_end": 712,
               "metric_value": 0.0
             }
           ]
@@ -1008,6 +1015,13 @@
               "file_path": "src/heretek_swarm/runtime/main_loop.py",
               "line_start": 542,
               "line_end": 542,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"NATSPublisher\" is not accessed",
+              "file_path": "src/heretek_swarm/api/wizard.py",
+              "line_start": 24,
+              "line_end": 24,
               "metric_value": 0.0
             }
           ]
@@ -1398,6 +1412,12 @@
       "composite_risk_score": 45.0
     },
     {
+      "file_path": "src/heretek_swarm/api/wizard.py",
+      "total_findings": 3,
+      "warning_findings": 1,
+      "composite_risk_score": 35.0
+    },
+    {
       "file_path": "src/heretek_swarm/security/threat_detection.py",
       "total_findings": 2,
       "warning_findings": 2,
@@ -1459,12 +1479,6 @@
     },
     {
       "file_path": "src/heretek_swarm/consciousness/phi_training.py",
-      "total_findings": 2,
-      "warning_findings": 2,
-      "composite_risk_score": 30.0
-    },
-    {
-      "file_path": "src/heretek_swarm/collective/adaptive_learning.py",
       "total_findings": 2,
       "warning_findings": 2,
       "composite_risk_score": 30.0
