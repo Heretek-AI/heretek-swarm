@@ -115,7 +115,7 @@ async def update_config(
     service: ConfigurationService = Depends(get_service),
 ) -> dict[str, Any]:
     """Update a configuration."""
-    config = await service.update_config(key, update, changed_by=authenticated)
+    config = await service.update_config(key, update, user=authenticated)
     if not config:
         raise HTTPException(404, f"Configuration '{key}' not found")
     return config.model_dump()
@@ -129,7 +129,7 @@ async def create_config(
 ) -> dict[str, Any]:
     """Create a new configuration."""
     try:
-        new_config = await service.create_config(config, changed_by=authenticated)
+        new_config = await service.create_config(config, user=authenticated)
         return new_config.model_dump()
     except ValueError as e:
         raise HTTPException(400, str(e))
@@ -142,7 +142,7 @@ async def delete_config(
     service: ConfigurationService = Depends(get_service),
 ) -> dict[str, Any]:
     """Delete a configuration."""
-    success = await service.delete_config(key, changed_by=authenticated)
+    success = await service.delete_config(key, user=authenticated)
     if not success:
         raise HTTPException(404, f"Configuration '{key}' not found")
     return {"status": "deleted", "key": key}
@@ -199,7 +199,7 @@ async def create_llm_provider(
     """Create a new LLM provider."""
     try:
         # Note: API key should be encrypted before storage in production
-        new_provider = await service.create_llm_provider(provider, changed_by=authenticated)
+        new_provider = await service.create_llm_provider(provider, user=authenticated)
         return new_provider.model_dump()
     except ValueError as e:
         raise HTTPException(400, str(e))
@@ -213,7 +213,7 @@ async def update_llm_provider(
     service: ConfigurationService = Depends(get_service),
 ) -> dict[str, Any]:
     """Update an LLM provider."""
-    provider = await service.update_llm_provider(provider_id, update, changed_by=authenticated)
+    provider = await service.update_llm_provider(provider_id, update, user=authenticated)
     if not provider:
         raise HTTPException(404, f"LLM provider '{provider_id}' not found")
     return provider.model_dump()
@@ -226,7 +226,7 @@ async def delete_llm_provider(
     service: ConfigurationService = Depends(get_service),
 ) -> dict[str, Any]:
     """Delete an LLM provider."""
-    success = await service.delete_llm_provider(provider_id, changed_by=authenticated)
+    success = await service.delete_llm_provider(provider_id, user=authenticated)
     if not success:
         raise HTTPException(404, f"LLM provider '{provider_id}' not found")
     return {"status": "deleted", "id": str(provider_id)}
@@ -328,7 +328,7 @@ async def create_embedding_provider(
 ) -> dict[str, Any]:
     """Create a new embedding provider."""
     try:
-        new_provider = await service.create_embedding_provider(provider, changed_by=authenticated)
+        new_provider = await service.create_embedding_provider(provider, user=authenticated)
         return new_provider.model_dump()
     except ValueError as e:
         raise HTTPException(400, str(e))
@@ -343,7 +343,7 @@ async def update_embedding_provider(
 ) -> dict[str, Any]:
     """Update an embedding provider."""
     provider = await service.update_embedding_provider(
-        provider_id, update, changed_by=authenticated
+        provider_id, update, user=authenticated
     )
     if not provider:
         raise HTTPException(404, f"Embedding provider '{provider_id}' not found")
@@ -357,7 +357,7 @@ async def delete_embedding_provider(
     service: ConfigurationService = Depends(get_service),
 ) -> dict[str, Any]:
     """Delete an embedding provider."""
-    success = await service.delete_embedding_provider(provider_id, changed_by=authenticated)
+    success = await service.delete_embedding_provider(provider_id, user=authenticated)
     if not success:
         raise HTTPException(404, f"Embedding provider '{provider_id}' not found")
     return {"status": "deleted", "id": str(provider_id)}
@@ -456,7 +456,7 @@ async def create_agent_config(
 ) -> dict[str, Any]:
     """Create a new agent configuration."""
     try:
-        new_config = await service.create_agent_config(config, changed_by=authenticated)
+        new_config = await service.create_agent_config(config, user=authenticated)
         return new_config.model_dump()
     except ValueError as e:
         raise HTTPException(400, str(e))
@@ -470,7 +470,7 @@ async def update_agent_config(
     service: ConfigurationService = Depends(get_service),
 ) -> dict[str, Any]:
     """Update an agent configuration."""
-    config = await service.update_agent_config(config_id, update, changed_by=authenticated)
+    config = await service.update_agent_config(config_id, update, user=authenticated)
     if not config:
         raise HTTPException(404, f"Agent config '{config_id}' not found")
     return config.model_dump()
@@ -483,7 +483,7 @@ async def delete_agent_config(
     service: ConfigurationService = Depends(get_service),
 ) -> dict[str, Any]:
     """Delete an agent configuration."""
-    success = await service.delete_agent_config(config_id, changed_by=authenticated)
+    success = await service.delete_agent_config(config_id, user=authenticated)
     if not success:
         raise HTTPException(404, f"Agent config '{config_id}' not found")
     return {"status": "deleted", "id": str(config_id)}
@@ -532,7 +532,7 @@ async def import_configurations(
     service: ConfigurationService = Depends(get_service),
 ) -> dict[str, Any]:
     """Import configurations from a bundle."""
-    result = await service.import_configurations(import_data, options, changed_by=authenticated)
+    result = await service.import_configurations(import_data, options, user=authenticated)
     return result.model_dump()
 
 
@@ -547,7 +547,7 @@ async def migrate_from_env(
     service: ConfigurationService = Depends(get_service),
 ) -> dict[str, Any]:
     """Migrate configurations from environment variables to database."""
-    return await service.migrate_from_env(changed_by=authenticated)
+    return await service.migrate_from_env(user=authenticated)
 
 
 # =============================================================================
@@ -693,7 +693,7 @@ async def import_configuration_bundle(
     Returns:
         Import result summary
     """
-    result = await service.import_configurations(import_data, options, changed_by=authenticated)
+    result = await service.import_configurations(import_data, options, user=authenticated)
 
     return {
         "success": result.success,
