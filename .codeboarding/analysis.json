@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-18T21:33:32.722222+00:00",
+    "generated_at": "2026-04-18T22:20:35.564585+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -14781,14 +14781,14 @@
       ]
     },
     "src/heretek_swarm/config/service.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
-          "qualified_name": "src.heretek_swarm.config.service.ConfigurationService",
-          "start_line": 47,
-          "end_line": 288,
+          "qualified_name": "src.heretek_swarm.config.service.SeedResult",
+          "start_line": 50,
+          "end_line": 56,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "added"
         },
         {
           "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.__init__",
@@ -14796,6 +14796,13 @@
           "end_line": 96,
           "node_type": "METHOD",
           "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.config.service.ConfigurationService",
+          "start_line": 62,
+          "end_line": 459,
+          "node_type": "CLASS",
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.encrypt_api_key",
@@ -14866,6 +14873,13 @@
           "end_line": 288,
           "node_type": "METHOD",
           "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.seed_from_env",
+          "start_line": 297,
+          "end_line": 443,
+          "node_type": "METHOD",
+          "status": "added"
         },
         {
           "qualified_name": "src.heretek_swarm.config.service.get_config_service",
@@ -68589,13 +68603,13 @@
       "type": "CLASS",
       "status": "unchanged"
     },
-    "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService": {
+    "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.SeedResult": {
       "file_path": "src/heretek_swarm/config/service.py",
-      "qualified_name": "src.heretek_swarm.config.service.ConfigurationService",
-      "start_line": 47,
-      "end_line": 288,
+      "qualified_name": "src.heretek_swarm.config.service.SeedResult",
+      "start_line": 50,
+      "end_line": 56,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "added"
     },
     "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService.__init__": {
       "file_path": "src/heretek_swarm/config/service.py",
@@ -68604,6 +68618,14 @@
       "end_line": 96,
       "type": "METHOD",
       "status": "unchanged"
+    },
+    "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService": {
+      "file_path": "src/heretek_swarm/config/service.py",
+      "qualified_name": "src.heretek_swarm.config.service.ConfigurationService",
+      "start_line": 62,
+      "end_line": 459,
+      "type": "CLASS",
+      "status": "modified"
     },
     "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService.encrypt_api_key": {
       "file_path": "src/heretek_swarm/config/service.py",
@@ -68684,6 +68706,14 @@
       "end_line": 288,
       "type": "METHOD",
       "status": "unchanged"
+    },
+    "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService.seed_from_env": {
+      "file_path": "src/heretek_swarm/config/service.py",
+      "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.seed_from_env",
+      "start_line": 297,
+      "end_line": 443,
+      "type": "METHOD",
+      "status": "added"
     },
     "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.get_config_service": {
       "file_path": "src/heretek_swarm/config/service.py",
@@ -112669,10 +112699,11 @@
         },
         {
           "file_path": "src/heretek_swarm/config/service.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
-            "src.heretek_swarm.config.service.ConfigurationService",
+            "src.heretek_swarm.config.service.SeedResult",
             "src.heretek_swarm.config.service.ConfigurationService.__init__",
+            "src.heretek_swarm.config.service.ConfigurationService",
             "src.heretek_swarm.config.service.ConfigurationService.encrypt_api_key",
             "src.heretek_swarm.config.service.ConfigurationService.decrypt_api_key",
             "src.heretek_swarm.config.service.ConfigurationService.initialize",
@@ -112683,6 +112714,7 @@
             "src.heretek_swarm.config.service.ConfigurationService._set_cache",
             "src.heretek_swarm.config.service.ConfigurationService._get_cache",
             "src.heretek_swarm.config.service.ConfigurationService._orm_to_pydantic",
+            "src.heretek_swarm.config.service.ConfigurationService.seed_from_env",
             "src.heretek_swarm.config.service.get_config_service",
             "src.heretek_swarm.config.service.initialize_config_service",
             "src.heretek_swarm.config.service.shutdown_config_service"
@@ -170176,10 +170208,11 @@
             },
             {
               "file_path": "src/heretek_swarm/config/service.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
-                "src.heretek_swarm.config.service.ConfigurationService",
+                "src.heretek_swarm.config.service.SeedResult",
                 "src.heretek_swarm.config.service.ConfigurationService.__init__",
+                "src.heretek_swarm.config.service.ConfigurationService",
                 "src.heretek_swarm.config.service.ConfigurationService.encrypt_api_key",
                 "src.heretek_swarm.config.service.ConfigurationService.decrypt_api_key",
                 "src.heretek_swarm.config.service.ConfigurationService.initialize",
@@ -170190,6 +170223,7 @@
                 "src.heretek_swarm.config.service.ConfigurationService._set_cache",
                 "src.heretek_swarm.config.service.ConfigurationService._get_cache",
                 "src.heretek_swarm.config.service.ConfigurationService._orm_to_pydantic",
+                "src.heretek_swarm.config.service.ConfigurationService.seed_from_env",
                 "src.heretek_swarm.config.service.get_config_service",
                 "src.heretek_swarm.config.service.initialize_config_service",
                 "src.heretek_swarm.config.service.shutdown_config_service"
@@ -172243,10 +172277,11 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/config/service.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
-                    "src.heretek_swarm.config.service.ConfigurationService",
+                    "src.heretek_swarm.config.service.SeedResult",
                     "src.heretek_swarm.config.service.ConfigurationService.__init__",
+                    "src.heretek_swarm.config.service.ConfigurationService",
                     "src.heretek_swarm.config.service.ConfigurationService.encrypt_api_key",
                     "src.heretek_swarm.config.service.ConfigurationService.decrypt_api_key",
                     "src.heretek_swarm.config.service.ConfigurationService.initialize",
@@ -172257,6 +172292,7 @@
                     "src.heretek_swarm.config.service.ConfigurationService._set_cache",
                     "src.heretek_swarm.config.service.ConfigurationService._get_cache",
                     "src.heretek_swarm.config.service.ConfigurationService._orm_to_pydantic",
+                    "src.heretek_swarm.config.service.ConfigurationService.seed_from_env",
                     "src.heretek_swarm.config.service.get_config_service",
                     "src.heretek_swarm.config.service.initialize_config_service",
                     "src.heretek_swarm.config.service.shutdown_config_service"
@@ -172307,9 +172343,11 @@
                     },
                     {
                       "file_path": "src/heretek_swarm/config/service.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
-                        "src.heretek_swarm.config.service.ConfigurationService.__init__"
+                        "src.heretek_swarm.config.service.SeedResult",
+                        "src.heretek_swarm.config.service.ConfigurationService.__init__",
+                        "src.heretek_swarm.config.service.ConfigurationService.seed_from_env"
                       ]
                     }
                   ],
@@ -172390,10 +172428,11 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/config/service.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
-                            "src.heretek_swarm.config.service.ConfigurationService",
+                            "src.heretek_swarm.config.service.SeedResult",
                             "src.heretek_swarm.config.service.ConfigurationService.__init__",
+                            "src.heretek_swarm.config.service.ConfigurationService",
                             "src.heretek_swarm.config.service.ConfigurationService.encrypt_api_key",
                             "src.heretek_swarm.config.service.ConfigurationService.decrypt_api_key",
                             "src.heretek_swarm.config.service.ConfigurationService.initialize",
@@ -172404,6 +172443,7 @@
                             "src.heretek_swarm.config.service.ConfigurationService._set_cache",
                             "src.heretek_swarm.config.service.ConfigurationService._get_cache",
                             "src.heretek_swarm.config.service.ConfigurationService._orm_to_pydantic",
+                            "src.heretek_swarm.config.service.ConfigurationService.seed_from_env",
                             "src.heretek_swarm.config.service.get_config_service",
                             "src.heretek_swarm.config.service.initialize_config_service",
                             "src.heretek_swarm.config.service.shutdown_config_service"
@@ -172545,8 +172585,9 @@
                     },
                     {
                       "file_path": "src/heretek_swarm/config/service.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
+                        "src.heretek_swarm.config.service.SeedResult",
                         "src.heretek_swarm.config.service.ConfigurationService",
                         "src.heretek_swarm.config.service.ConfigurationService.encrypt_api_key",
                         "src.heretek_swarm.config.service.ConfigurationService.decrypt_api_key",
@@ -172557,6 +172598,7 @@
                         "src.heretek_swarm.config.service.ConfigurationService._set_cache",
                         "src.heretek_swarm.config.service.ConfigurationService._get_cache",
                         "src.heretek_swarm.config.service.ConfigurationService._orm_to_pydantic",
+                        "src.heretek_swarm.config.service.ConfigurationService.seed_from_env",
                         "src.heretek_swarm.config.service.get_config_service",
                         "src.heretek_swarm.config.service.initialize_config_service",
                         "src.heretek_swarm.config.service.shutdown_config_service"
@@ -172684,7 +172726,7 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/config/service.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.config.service.ConfigurationService.decrypt_api_key",
                             "src.heretek_swarm.config.service.ConfigurationService._orm_to_pydantic"
@@ -172734,7 +172776,7 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/config/service.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.config.service.ConfigurationService._warm_cache"
                           ]
@@ -172806,10 +172848,10 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/config/service.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
-                            "src.heretek_swarm.config.service.ConfigurationService",
                             "src.heretek_swarm.config.service.ConfigurationService.__init__",
+                            "src.heretek_swarm.config.service.ConfigurationService",
                             "src.heretek_swarm.config.service.ConfigurationService.encrypt_api_key",
                             "src.heretek_swarm.config.service.ConfigurationService.initialize",
                             "src.heretek_swarm.config.service.ConfigurationService.shutdown",
@@ -173208,9 +173250,11 @@
                     },
                     {
                       "file_path": "src/heretek_swarm/config/service.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
-                        "src.heretek_swarm.config.service.ConfigurationService._invalidate_cache"
+                        "src.heretek_swarm.config.service.SeedResult",
+                        "src.heretek_swarm.config.service.ConfigurationService._invalidate_cache",
+                        "src.heretek_swarm.config.service.ConfigurationService.seed_from_env"
                       ]
                     }
                   ],
@@ -173250,7 +173294,7 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/config/service.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.config.service.ConfigurationService._get_cache_key",
                             "src.heretek_swarm.config.service.ConfigurationService._invalidate_cache",
@@ -173332,7 +173376,7 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/config/service.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.config.service.ConfigurationService.__init__",
                             "src.heretek_swarm.config.service.ConfigurationService.encrypt_api_key",
@@ -173390,7 +173434,7 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/config/service.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.config.service.ConfigurationService",
                             "src.heretek_swarm.config.service.ConfigurationService.initialize",
