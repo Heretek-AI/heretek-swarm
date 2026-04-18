@@ -38,7 +38,8 @@ async def list_agent_instances(
         if agent_type:
             instances = registry.get_instances_by_type(agent_type)
         else:
-            instances = registry.get_all_instances()
+            # get_all_instances returns dict[str, AgentInstance] — use .values()
+            instances = list(registry.get_all_instances().values())
 
         return {
             "instances": [
