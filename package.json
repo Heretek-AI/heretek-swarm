@@ -39,14 +39,18 @@
     "wait-on": "^7.2.0"
   },
   "dependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
     "clsx": "^2.1.0",
     "electron-log": "^5.0.3",
     "electron-store": "^8.1.0",
+    "jsdom": "^29.0.2",
     "lucide-react": "^0.303.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.21.1",
     "tailwind-merge": "^2.2.0",
+    "vitest": "^4.1.4",
     "zustand": "^4.4.7"
   },
   "build": {
