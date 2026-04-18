@@ -41,12 +41,22 @@ export function useWebSocket(
   const reconnectTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Use environment variable or current hostname (nginx proxies /ws to api:8000)
-  const API_URL = import.meta.env.VITE_API_HOST || window.location.hostname;
+  const API_URL = import.meta.env.VITE_API_HOST || `http://${window.location.host}`;
+  const apiHost = (() => {
+    try {
+      const stored = localStorage.getItem('swarm_api_host');
+      return stored || API_URL;
+    } catch {
+      return API_URL;
+    }
+  })();
 
   const connect = useCallback(() => {
-    // Use relative WebSocket path - works with nginx proxy
+    // Use API host for WebSocket URL (backend runs on port 8000)
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const wsUrl = `${protocol}//${window.location.host}/ws/${channel}`;
+    // Extract hostname and port from apiHost (e.g. "http://localhost:8000" -> "localhost:8000")
+    const url = new URL(apiHost.startsWith('http') ? apiHost : `http://${apiHost}`);
+    const wsUrl = `${protocol}//${url.host}/ws/${channel}`;
     
     try {
       wsRef.current = new WebSocket(wsUrl);

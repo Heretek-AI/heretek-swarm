@@ -27,6 +27,7 @@ import ReactFlow, {
   Connection,
   NodeTypes,
 } from 'reactflow';
+import { api } from '../../api/client';
 
 import {
   BaseNodeData,
@@ -54,6 +55,17 @@ import type { AgentConfig } from '../Workflow/NodeConfigPanel';
 
 // Use environment variable or relative path (nginx proxies /api to api:8000)
 const API_URL = import.meta.env.VITE_API_HOST || localStorage.getItem('swarm_api_host') || '';
+
+/** Fetch wrapper that attaches Authorization header from localStorage */
+async function authFetch(url: string, init?: RequestInit): Promise<Response> {
+  const apiKey = localStorage.getItem('api_key');
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+    ...(init?.headers as Record<string, string> || {}),
+  };
+  if (apiKey) headers['Authorization'] = `Bearer ${apiKey}`;
+  return fetch(url, { ...init, headers });
+}
 
 /**
  * Workflow Builder Component
@@ -300,7 +312,7 @@ export function WorkflowBuilder() {
    */
   const handleSaveConfig = useCallback(async (config: AgentConfig) => {
     try {
-      const response = await fetch(`${API_URL}/api/agent-config`, {
+      const response = await authFetch(`${API_URL}/api/agent-config`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -513,7 +525,7 @@ export function WorkflowBuilder() {
    */
   const saveWorkflow = useCallback(async () => {
     try {
-      const response = await fetch(`${API_URL}/api/workflows`, {
+      const response = await authFetch(`${API_URL}/api/workflows`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -545,7 +557,7 @@ export function WorkflowBuilder() {
    */
   const loadWorkflows = useCallback(async () => {
     try {
-      const response = await fetch(`${API_URL}/api/workflows`);
+      const response = await authFetch(`${API_URL}/api/workflows`);
       if (!response.ok) throw new Error('Failed to load workflows');
       
       const data = await response.json();
@@ -560,7 +572,7 @@ export function WorkflowBuilder() {
    */
   const loadWorkflow = useCallback(async (workflowId: string) => {
     try {
-      const response = await fetch(`${API_URL}/api/workflows/${workflowId}`);
+      const response = await authFetch(`${API_URL}/api/workflows/${workflowId}`);
       if (!response.ok) throw new Error('Failed to load workflow');
       
       const data = await response.json();
@@ -645,7 +657,7 @@ export function WorkflowBuilder() {
     
     try {
       // First, save the workflow
-      const saveResponse = await fetch(`${API_URL}/api/workflows`, {
+      const saveResponse = await authFetch(`${API_URL}/api/workflows`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

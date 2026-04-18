@@ -231,8 +231,8 @@ test.describe('Canvas View E2E', () => {
      */
     
     // --- Navigate to Canvas ---
-    // Click on Canvas nav button (it has 🎨 icon in the nav)
-    await page.locator('nav button:has-text("🎨")').click();
+    // Click on Canvas nav button (has 🎨 icon) - match by aria-label or icon span text
+    await page.locator('nav button span:text-is("🎨")').click();
     
     // --- Verify Canvas is rendering ---
     // Give time for API calls to complete/fail
@@ -286,7 +286,7 @@ test.describe('Canvas View E2E', () => {
      */
     
     // Navigate to Canvas
-    await page.locator('nav button:has-text("🎨")').click();
+    await page.locator('nav button span:text-is("🎨")').click();
     
     // Wait for canvas to stabilize
     await page.waitForTimeout(3000);
@@ -380,7 +380,7 @@ test.describe('Chat View E2E', () => {
      */
     
     // --- Navigate to Chat ---
-    await page.locator('nav button:has-text("💬")').click();
+    await page.locator('nav button span:text-is("💬")').click();
     
     // --- Verify Chat Interface is loaded ---
     // Wait for the chat interface elements to appear
@@ -552,7 +552,7 @@ test.describe('Full Pipeline E2E', () => {
     console.log('✓ Wizard completed successfully');
     
     // --- Step 2: Navigate to Canvas view ---
-    await page.locator('nav button:has-text("🎨")').click();
+    await page.locator('nav button span:text-is("🎨")').click();
     
     // Wait for Canvas to render (either ReactFlow or error state)
     await page.waitForTimeout(3000);
@@ -565,7 +565,7 @@ test.describe('Full Pipeline E2E', () => {
     console.log('✓ Canvas view rendered');
     
     // --- Step 3: Navigate to Chat view ---
-    await page.locator('nav button:has-text("💬")').click();
+    await page.locator('nav button span:text-is("💬")').click();
     
     // Wait for chat interface
     await expect(page.locator('textarea').first()).toBeVisible({ timeout: 10000 });
