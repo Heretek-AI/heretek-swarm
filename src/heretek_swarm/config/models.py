@@ -91,6 +91,7 @@ class UserConfigurationCreate(BaseModel):
     is_sensitive: bool = Field(default=False)
     is_editable: bool = Field(default=True)
     validation_schema: dict[str, Any] | None = None
+    created_by: str | None = None
 
 
 class UserConfigurationUpdate(BaseModel):

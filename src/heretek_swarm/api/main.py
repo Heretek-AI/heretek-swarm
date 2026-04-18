@@ -13,6 +13,7 @@ Provides HTTP endpoints for:
 Reference: MiniMax Audit Lines 585-725
 """
 
+import asyncio
 import os
 from contextlib import asynccontextmanager
 from datetime import UTC, datetime
@@ -158,6 +159,96 @@ async def _init_supervisor() -> None:
 
     supervisor = ActorSupervisor()
     logger.info("ActorSupervisor initialized")
+
+    # Fire-and-forget: spawn all 23 agents without blocking API startup
+    asyncio.create_task(_spawn_all_agents())
+
+
+async def _spawn_all_agents() -> None:
+    """
+    Spawn all 23 agents into the global supervisor.
+
+    Mirrors the agent list from runtime/main_loop.py:_spawn_all_actors().
+    Uses local imports inside the function to avoid import-cycle issues.
+    Each spawn is wrapped in try/except so a single failure does not
+    prevent others from spawning.
+    """
+    logger.info("agents_auto_spawn_started")
+
+    # Tier 1: Core Triad (Governance)
+    from heretek_swarm.actors.arbiter import ArbiterAgent
+    from heretek_swarm.actors.catalyst import CatalystAgent
+    from heretek_swarm.actors.chronos import ChronosAgent
+    from heretek_swarm.actors.coder import CoderAgent
+
+    # Tier 5: Coordination Agents (Integration)
+    from heretek_swarm.actors.coordinator import CoordinatorAgent
+    from heretek_swarm.actors.dreamer import DreamerAgent
+    from heretek_swarm.actors.echo import EchoActor
+    from heretek_swarm.actors.empath import EmpathAgent
+    from heretek_swarm.actors.examiner import ExaminerAgent
+
+    # Tier 3: Exploration Agents (Discovery & Creation)
+    from heretek_swarm.actors.explorer import ExplorerAgent
+    from heretek_swarm.actors.habit_forge import HabitForgeAgent
+
+    # Tier 2: Support Agents (Knowledge & Memory)
+    from heretek_swarm.actors.historian import HistorianAgent
+    from heretek_swarm.actors.metis import MetisAgent
+    from heretek_swarm.actors.nexus import NexusAgent
+    from heretek_swarm.actors.perceiver import PerceiverAgent
+    from heretek_swarm.actors.perceiver_plus import PerceiverPlusAgent
+
+    # Tier 6: Enhancement Agents (Optimization)
+    from heretek_swarm.actors.prism import PrismAgent
+
+    # Tier 4: Safety & Security (Protection)
+    from heretek_swarm.actors.sentinel import SentinelAgent
+    from heretek_swarm.actors.sentinel_prime import SentinelPrimeAgent
+    from heretek_swarm.actors.triad import AlphaAgent, BetaAgent, CharlieAgent, StewardAgent
+
+    actors = [
+        # Tier 1: Core Triad
+        (StewardAgent, "steward"),
+        (AlphaAgent, "alpha"),
+        (BetaAgent, "beta"),
+        (CharlieAgent, "charlie"),
+        # Tier 2: Support
+        (HistorianAgent, "historian"),
+        (MetisAgent, "metis"),
+        (EmpathAgent, "empath"),
+        (PerceiverAgent, "perceiver"),
+        (EchoActor, "echo"),
+        # Tier 3: Exploration
+        (ExplorerAgent, "explorer"),
+        (ExaminerAgent, "examiner"),
+        (DreamerAgent, "dreamer"),
+        (CoderAgent, "coder"),
+        # Tier 4: Safety
+        (SentinelAgent, "sentinel"),
+        (SentinelPrimeAgent, "sentinel-prime"),
+        (ArbiterAgent, "arbiter"),
+        # Tier 5: Coordination
+        (CoordinatorAgent, "coordinator"),
+        (NexusAgent, "nexus"),
+        (CatalystAgent, "catalyst"),
+        (ChronosAgent, "chronos"),
+        # Tier 6: Enhancement
+        (PrismAgent, "prism"),
+        (HabitForgeAgent, "habit-forge"),
+        (PerceiverPlusAgent, "perceiver-plus"),
+    ]
+
+    spawned_count = 0
+    for agent_class, agent_id in actors:
+        try:
+            await supervisor.spawn_actor(agent_class, agent_id)
+            logger.info("actor_spawned", agent_id=agent_id)
+            spawned_count += 1
+        except Exception as e:
+            logger.error("actor_spawn_failed", agent_id=agent_id, error=str(e))
+
+    logger.info("all_actors_spawned", count=spawned_count)
 
 
 async def _init_memory_store() -> None:
