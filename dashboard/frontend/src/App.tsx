@@ -57,6 +57,7 @@ const navItems: NavItem[] = [
   { id: 'consciousness', label: 'Consciousness', icon: '🧠' },
   { id: 'workflows', label: 'Workflows', icon: '🔀' },
   { id: 'legacy-canvas', label: 'Canvas', icon: '🎨' },
+  { id: 'legacy-chat', label: 'Chat', icon: '💬' },
   { id: 'logs', label: 'Terminal/Logs', icon: '📟' },
   { id: 'settings', label: 'Settings', icon: '⚙️' },
 ];
