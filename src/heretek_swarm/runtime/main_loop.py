@@ -27,7 +27,7 @@ import structlog
 from heretek_swarm.actors.supervisor import ActorSupervisor
 from heretek_swarm.channels.registry import ChannelRegistry, GroupRegistry
 from heretek_swarm.consensus.maker import MAKERConsensus
-from heretek_swarm.gateway.nats_event_mesh import NATSEventMesh
+from heretek_swarm.gateway.nats_event_mesh import NATSEventMeshWithJetStream
 from heretek_swarm.memory.base import DualTierMemory
 from heretek_swarm.rag.rag_pipeline import RAGPipeline
 from heretek_swarm.tools.mcp_tools import CoreMCPTools
@@ -61,7 +61,7 @@ class AutonomousSwarm:
 
         # Core components (initialized in initialize())
         self.supervisor: ActorSupervisor | None = None
-        self.event_mesh: NATSEventMesh | None = None
+        self.event_mesh: NATSEventMeshWithJetStream | None = None
         self.memory: DualTierMemory | None = None
         self.rag: RAGPipeline | None = None
         self.consensus: MAKERConsensus | None = None
@@ -140,12 +140,24 @@ class AutonomousSwarm:
         logger.info("maker_consensus_initialized")
 
         # 5. Initialize event mesh (NATS)
-        self.event_mesh = NATSEventMesh(
+        self.event_mesh = NATSEventMeshWithJetStream(
             servers=self.config.get("nats_servers", ["nats://localhost:4222"]),
             fallback=True,
         )
         await self.event_mesh.connect()
         logger.info("event_mesh_connected")
+
+        # 5a. Initialize JetStream streams (durable message delivery)
+        jetstream_initialized = await self.event_mesh.initialize_jetstream(
+            create_default_streams=True
+        )
+        if jetstream_initialized:
+            logger.info("jetstream_streams_initialized")
+        else:
+            logger.warning(
+                "jetstream_initialization_failed",
+                message="Continuing without durable streams",
+            )
 
         # 6. Initialize MCP tools
         self.mcp_tools = CoreMCPTools(
