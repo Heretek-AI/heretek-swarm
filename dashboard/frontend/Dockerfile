@@ -15,11 +15,15 @@ FROM nginx:alpine as production
 # Create non-root user for security (S6471 fix)
 RUN addgroup -g 1001 -S appgroup && adduser -u 1001 -S appuser -G appgroup
 
-# Copy custom nginx config
+# Copy custom nginx config (remove user directive)
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
+# Create nginx directories for non-root user
+RUN mkdir -p /var/cache/nginx/client_temp /run && \
+    chown -R appuser:appgroup /var/cache/nginx /run
+
 # Copy pre-built assets from local dist directory
-COPY dist/ /usr/share/nginx/html/
+COPY --chown=appuser:appgroup dist/ /usr/share/nginx/html/
 
 # Expose port
 EXPOSE 80
@@ -28,8 +32,8 @@ EXPOSE 80
 HEALTHCHECK --interval=30s --timeout=5s --retries=3 \
     CMD wget --spider http://127.0.0.1/ || exit 1
 
-# Switch to non-root user before running (S6471 fix)
+# Start nginx as non-root user
 USER appuser
 
-# Start nginx
+# Start nginx in foreground
 CMD ["nginx", "-g", "daemon off;"]
