@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-18T03:40:31.005102+00:00",
+    "generated_at": "2026-04-18T03:45:44.528859+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -43743,196 +43743,175 @@
       ]
     },
     "dashboard/frontend/src/components/Canvas/Canvas.tsx": {
-      "file_status": "modified",
+      "file_status": "unchanged",
       "methods": [
         {
           "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.AgentApiResponse",
-          "start_line": 30,
-          "end_line": 35,
+          "start_line": 37,
+          "end_line": 42,
           "node_type": "INTERFACE",
           "status": "unchanged"
         },
         {
-          "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.useEffect() callback",
-          "start_line": 56,
-          "end_line": 64,
+          "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas",
+          "start_line": 93,
+          "end_line": 297,
           "node_type": "FUNCTION",
-          "status": "deleted"
+          "status": "unchanged"
         },
         {
-          "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown",
-          "start_line": 57,
-          "end_line": 61,
-          "node_type": "CLASS",
-          "status": "deleted"
+          "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.activeEdges.forEach() callback",
+          "start_line": 118,
+          "end_line": 131,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.setEdges() callback",
+          "start_line": 134,
+          "end_line": 137,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.setEdges() callback.userEdges.prevEdges.filter() callback",
+          "start_line": 135,
+          "end_line": 135,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setShowMetrics() callback",
-          "start_line": 59,
-          "end_line": 59,
+          "start_line": 144,
+          "end_line": 144,
           "node_type": "FUNCTION",
           "status": "unchanged"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.fetchAgents",
-          "start_line": 67,
-          "end_line": 99,
-          "node_type": "CLASS",
-          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.fetchAgents.useCallback() callback",
-          "start_line": 67,
-          "end_line": 99,
+          "start_line": 152,
+          "end_line": 184,
           "node_type": "FUNCTION",
           "status": "unchanged"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.fetchAgents.useCallback() callback.agentNodes",
-          "start_line": 74,
-          "end_line": 89,
-          "node_type": "CLASS",
-          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.fetchAgents.useCallback() callback.agentNodes.data.agents.map() callback",
-          "start_line": 75,
-          "end_line": 88,
+          "start_line": 160,
+          "end_line": 173,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
-          "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas",
-          "start_line": 85,
-          "end_line": 255,
-          "node_type": "FUNCTION",
-          "status": "modified"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.onConnect",
-          "start_line": 113,
-          "end_line": 118,
-          "node_type": "CLASS",
-          "status": "deleted"
-        },
-        {
           "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onConnect.useCallback() callback",
-          "start_line": 114,
-          "end_line": 116,
+          "start_line": 200,
+          "end_line": 202,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onConnect.useCallback() callback.setEdges() callback",
-          "start_line": 115,
-          "end_line": 115,
+          "start_line": 201,
+          "end_line": 201,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
-          "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.<function>",
-          "start_line": 151,
-          "end_line": 161,
-          "node_type": "FUNCTION",
-          "status": "deleted"
-        },
-        {
           "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.addNodeFromPalette.useCallback() callback",
-          "start_line": 166,
-          "end_line": 180,
+          "start_line": 207,
+          "end_line": 222,
           "node_type": "FUNCTION",
-          "status": "added"
+          "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.addNodeFromPalette.useCallback() callback.setNodes() callback",
-          "start_line": 179,
-          "end_line": 179,
+          "start_line": 221,
+          "end_line": 221,
           "node_type": "FUNCTION",
-          "status": "added"
+          "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onNodeClick.useCallback() callback",
-          "start_line": 183,
-          "end_line": 185,
+          "start_line": 225,
+          "end_line": 227,
           "node_type": "FUNCTION",
-          "status": "added"
+          "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onPaneClick.useCallback() callback",
-          "start_line": 188,
-          "end_line": 190,
+          "start_line": 230,
+          "end_line": 232,
           "node_type": "FUNCTION",
-          "status": "added"
+          "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback",
-          "start_line": 193,
-          "end_line": 207,
+          "start_line": 235,
+          "end_line": 249,
           "node_type": "FUNCTION",
-          "status": "modified"
+          "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setNodes() callback",
-          "start_line": 200,
-          "end_line": 200,
+          "start_line": 242,
+          "end_line": 242,
           "node_type": "FUNCTION",
-          "status": "modified"
+          "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setNodes() callback.nds.filter() callback",
-          "start_line": 200,
-          "end_line": 200,
+          "start_line": 242,
+          "end_line": 242,
           "node_type": "FUNCTION",
-          "status": "modified"
+          "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setEdges() callback",
-          "start_line": 201,
-          "end_line": 201,
+          "start_line": 243,
+          "end_line": 243,
           "node_type": "FUNCTION",
-          "status": "modified"
+          "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setEdges() callback.eds.filter() callback",
-          "start_line": 201,
-          "end_line": 201,
+          "start_line": 243,
+          "end_line": 243,
           "node_type": "FUNCTION",
-          "status": "modified"
+          "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.NODE_PALETTE.map() callback",
-          "start_line": 237,
-          "end_line": 238,
+          "start_line": 281,
+          "end_line": 282,
           "node_type": "FUNCTION",
-          "status": "added"
+          "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.<unknown>..nodes.map() callback",
-          "start_line": 243,
-          "end_line": 245,
+          "start_line": 287,
+          "end_line": 289,
           "node_type": "FUNCTION",
-          "status": "added"
+          "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.setShowPalette() callback",
-          "start_line": 264,
-          "end_line": 264,
+          "start_line": 308,
+          "end_line": 308,
           "node_type": "FUNCTION",
-          "status": "added"
+          "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.<function>.setShowMetrics() callback",
-          "start_line": 277,
-          "end_line": 277,
+          "start_line": 321,
+          "end_line": 321,
           "node_type": "FUNCTION",
-          "status": "added"
+          "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.<function>",
-          "start_line": 334,
-          "end_line": 344,
+          "start_line": 379,
+          "end_line": 389,
           "node_type": "FUNCTION",
-          "status": "added"
+          "status": "unchanged"
         }
       ]
     },
@@ -104513,218 +104492,194 @@
     "dashboard/frontend/src/components/Canvas/Canvas.tsx|dashboard.frontend.src.components.Canvas.Canvas.AgentApiResponse": {
       "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
       "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.AgentApiResponse",
-      "start_line": 30,
-      "end_line": 35,
+      "start_line": 37,
+      "end_line": 42,
       "type": "INTERFACE",
-      "status": "unchanged"
-    },
-    "dashboard/frontend/src/components/Canvas/Canvas.tsx|dashboard.frontend.src.components.Canvas.Canvas.useEffect() callback": {
-      "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
-      "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.useEffect() callback",
-      "start_line": 56,
-      "end_line": 64,
-      "type": "FUNCTION",
-      "status": "deleted"
-    },
-    "dashboard/frontend/src/components/Canvas/Canvas.tsx|dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown": {
-      "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
-      "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown",
-      "start_line": 57,
-      "end_line": 61,
-      "type": "CLASS",
-      "status": "deleted"
-    },
-    "dashboard/frontend/src/components/Canvas/Canvas.tsx|dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setShowMetrics() callback": {
-      "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
-      "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setShowMetrics() callback",
-      "start_line": 59,
-      "end_line": 59,
-      "type": "FUNCTION",
-      "status": "unchanged"
-    },
-    "dashboard/frontend/src/components/Canvas/Canvas.tsx|dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.fetchAgents": {
-      "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
-      "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.fetchAgents",
-      "start_line": 67,
-      "end_line": 99,
-      "type": "CLASS",
-      "status": "deleted"
-    },
-    "dashboard/frontend/src/components/Canvas/Canvas.tsx|dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.fetchAgents.useCallback() callback": {
-      "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
-      "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.fetchAgents.useCallback() callback",
-      "start_line": 67,
-      "end_line": 99,
-      "type": "FUNCTION",
-      "status": "unchanged"
-    },
-    "dashboard/frontend/src/components/Canvas/Canvas.tsx|dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.fetchAgents.useCallback() callback.agentNodes": {
-      "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
-      "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.fetchAgents.useCallback() callback.agentNodes",
-      "start_line": 74,
-      "end_line": 89,
-      "type": "CLASS",
-      "status": "deleted"
-    },
-    "dashboard/frontend/src/components/Canvas/Canvas.tsx|dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.fetchAgents.useCallback() callback.agentNodes.data.agents.map() callback": {
-      "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
-      "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.fetchAgents.useCallback() callback.agentNodes.data.agents.map() callback",
-      "start_line": 75,
-      "end_line": 88,
-      "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/Canvas/Canvas.tsx|dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas": {
       "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
       "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas",
-      "start_line": 85,
-      "end_line": 255,
+      "start_line": 93,
+      "end_line": 297,
       "type": "FUNCTION",
-      "status": "modified"
+      "status": "unchanged"
     },
-    "dashboard/frontend/src/components/Canvas/Canvas.tsx|dashboard.frontend.src.components.Canvas.Canvas.onConnect": {
+    "dashboard/frontend/src/components/Canvas/Canvas.tsx|dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.activeEdges.forEach() callback": {
       "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
-      "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.onConnect",
-      "start_line": 113,
-      "end_line": 118,
-      "type": "CLASS",
-      "status": "deleted"
+      "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.activeEdges.forEach() callback",
+      "start_line": 118,
+      "end_line": 131,
+      "type": "FUNCTION",
+      "status": "unchanged"
+    },
+    "dashboard/frontend/src/components/Canvas/Canvas.tsx|dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.setEdges() callback": {
+      "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.setEdges() callback",
+      "start_line": 134,
+      "end_line": 137,
+      "type": "FUNCTION",
+      "status": "unchanged"
+    },
+    "dashboard/frontend/src/components/Canvas/Canvas.tsx|dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.setEdges() callback.userEdges.prevEdges.filter() callback": {
+      "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.setEdges() callback.userEdges.prevEdges.filter() callback",
+      "start_line": 135,
+      "end_line": 135,
+      "type": "FUNCTION",
+      "status": "unchanged"
+    },
+    "dashboard/frontend/src/components/Canvas/Canvas.tsx|dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setShowMetrics() callback": {
+      "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setShowMetrics() callback",
+      "start_line": 144,
+      "end_line": 144,
+      "type": "FUNCTION",
+      "status": "unchanged"
+    },
+    "dashboard/frontend/src/components/Canvas/Canvas.tsx|dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.fetchAgents.useCallback() callback": {
+      "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.fetchAgents.useCallback() callback",
+      "start_line": 152,
+      "end_line": 184,
+      "type": "FUNCTION",
+      "status": "unchanged"
+    },
+    "dashboard/frontend/src/components/Canvas/Canvas.tsx|dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.fetchAgents.useCallback() callback.agentNodes.data.agents.map() callback": {
+      "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.fetchAgents.useCallback() callback.agentNodes.data.agents.map() callback",
+      "start_line": 160,
+      "end_line": 173,
+      "type": "FUNCTION",
+      "status": "unchanged"
     },
     "dashboard/frontend/src/components/Canvas/Canvas.tsx|dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onConnect.useCallback() callback": {
       "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
       "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onConnect.useCallback() callback",
-      "start_line": 114,
-      "end_line": 116,
+      "start_line": 200,
+      "end_line": 202,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/Canvas/Canvas.tsx|dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onConnect.useCallback() callback.setEdges() callback": {
       "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
       "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onConnect.useCallback() callback.setEdges() callback",
-      "start_line": 115,
-      "end_line": 115,
+      "start_line": 201,
+      "end_line": 201,
       "type": "FUNCTION",
       "status": "unchanged"
-    },
-    "dashboard/frontend/src/components/Canvas/Canvas.tsx|dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.<function>": {
-      "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
-      "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.<function>",
-      "start_line": 151,
-      "end_line": 161,
-      "type": "FUNCTION",
-      "status": "deleted"
     },
     "dashboard/frontend/src/components/Canvas/Canvas.tsx|dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.addNodeFromPalette.useCallback() callback": {
       "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
       "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.addNodeFromPalette.useCallback() callback",
-      "start_line": 166,
-      "end_line": 180,
+      "start_line": 207,
+      "end_line": 222,
       "type": "FUNCTION",
-      "status": "added"
+      "status": "unchanged"
     },
     "dashboard/frontend/src/components/Canvas/Canvas.tsx|dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.addNodeFromPalette.useCallback() callback.setNodes() callback": {
       "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
       "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.addNodeFromPalette.useCallback() callback.setNodes() callback",
-      "start_line": 179,
-      "end_line": 179,
+      "start_line": 221,
+      "end_line": 221,
       "type": "FUNCTION",
-      "status": "added"
+      "status": "unchanged"
     },
     "dashboard/frontend/src/components/Canvas/Canvas.tsx|dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onNodeClick.useCallback() callback": {
       "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
       "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onNodeClick.useCallback() callback",
-      "start_line": 183,
-      "end_line": 185,
+      "start_line": 225,
+      "end_line": 227,
       "type": "FUNCTION",
-      "status": "added"
+      "status": "unchanged"
     },
     "dashboard/frontend/src/components/Canvas/Canvas.tsx|dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onPaneClick.useCallback() callback": {
       "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
       "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onPaneClick.useCallback() callback",
-      "start_line": 188,
-      "end_line": 190,
+      "start_line": 230,
+      "end_line": 232,
       "type": "FUNCTION",
-      "status": "added"
+      "status": "unchanged"
     },
     "dashboard/frontend/src/components/Canvas/Canvas.tsx|dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback": {
       "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
       "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback",
-      "start_line": 193,
-      "end_line": 207,
+      "start_line": 235,
+      "end_line": 249,
       "type": "FUNCTION",
-      "status": "modified"
+      "status": "unchanged"
     },
     "dashboard/frontend/src/components/Canvas/Canvas.tsx|dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setNodes() callback": {
       "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
       "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setNodes() callback",
-      "start_line": 200,
-      "end_line": 200,
+      "start_line": 242,
+      "end_line": 242,
       "type": "FUNCTION",
-      "status": "modified"
+      "status": "unchanged"
     },
     "dashboard/frontend/src/components/Canvas/Canvas.tsx|dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setNodes() callback.nds.filter() callback": {
       "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
       "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setNodes() callback.nds.filter() callback",
-      "start_line": 200,
-      "end_line": 200,
+      "start_line": 242,
+      "end_line": 242,
       "type": "FUNCTION",
-      "status": "modified"
+      "status": "unchanged"
     },
     "dashboard/frontend/src/components/Canvas/Canvas.tsx|dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setEdges() callback": {
       "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
       "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setEdges() callback",
-      "start_line": 201,
-      "end_line": 201,
+      "start_line": 243,
+      "end_line": 243,
       "type": "FUNCTION",
-      "status": "modified"
+      "status": "unchanged"
     },
     "dashboard/frontend/src/components/Canvas/Canvas.tsx|dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setEdges() callback.eds.filter() callback": {
       "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
       "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setEdges() callback.eds.filter() callback",
-      "start_line": 201,
-      "end_line": 201,
+      "start_line": 243,
+      "end_line": 243,
       "type": "FUNCTION",
-      "status": "modified"
+      "status": "unchanged"
     },
     "dashboard/frontend/src/components/Canvas/Canvas.tsx|dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.NODE_PALETTE.map() callback": {
       "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
       "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.NODE_PALETTE.map() callback",
-      "start_line": 237,
-      "end_line": 238,
+      "start_line": 281,
+      "end_line": 282,
       "type": "FUNCTION",
-      "status": "added"
+      "status": "unchanged"
     },
     "dashboard/frontend/src/components/Canvas/Canvas.tsx|dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.<unknown>..nodes.map() callback": {
       "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
       "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.<unknown>..nodes.map() callback",
-      "start_line": 243,
-      "end_line": 245,
+      "start_line": 287,
+      "end_line": 289,
       "type": "FUNCTION",
-      "status": "added"
+      "status": "unchanged"
     },
     "dashboard/frontend/src/components/Canvas/Canvas.tsx|dashboard.frontend.src.components.Canvas.Canvas.setShowPalette() callback": {
       "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
       "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.setShowPalette() callback",
-      "start_line": 264,
-      "end_line": 264,
+      "start_line": 308,
+      "end_line": 308,
       "type": "FUNCTION",
-      "status": "added"
+      "status": "unchanged"
     },
     "dashboard/frontend/src/components/Canvas/Canvas.tsx|dashboard.frontend.src.components.Canvas.Canvas.<function>.setShowMetrics() callback": {
       "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
       "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.<function>.setShowMetrics() callback",
-      "start_line": 277,
-      "end_line": 277,
+      "start_line": 321,
+      "end_line": 321,
       "type": "FUNCTION",
-      "status": "added"
+      "status": "unchanged"
     },
     "dashboard/frontend/src/components/Canvas/Canvas.tsx|dashboard.frontend.src.components.Canvas.Canvas.<function>": {
       "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
       "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.<function>",
-      "start_line": 334,
-      "end_line": 344,
+      "start_line": 379,
+      "end_line": 389,
       "type": "FUNCTION",
-      "status": "added"
+      "status": "unchanged"
     },
     "dashboard/frontend/src/components/Canvas/CanvasToolbar.tsx|dashboard.frontend.src.components.Canvas.CanvasToolbar.CanvasToolbarProps": {
       "file_path": "dashboard/frontend/src/components/Canvas/CanvasToolbar.tsx",
@@ -249436,13 +249391,13 @@
         },
         {
           "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
-          "file_status": "modified",
+          "file_status": "unchanged",
           "methods": [
             "dashboard.frontend.src.components.Canvas.Canvas.AgentApiResponse",
+            "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas",
             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setShowMetrics() callback",
             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.fetchAgents.useCallback() callback",
             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.fetchAgents.useCallback() callback.agentNodes.data.agents.map() callback",
-            "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas",
             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onConnect.useCallback() callback",
             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onConnect.useCallback() callback.setEdges() callback",
             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.addNodeFromPalette.useCallback() callback",
@@ -251208,13 +251163,13 @@
             },
             {
               "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
-              "file_status": "modified",
+              "file_status": "unchanged",
               "methods": [
                 "dashboard.frontend.src.components.Canvas.Canvas.AgentApiResponse",
+                "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas",
                 "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setShowMetrics() callback",
                 "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.fetchAgents.useCallback() callback",
                 "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.fetchAgents.useCallback() callback.agentNodes.data.agents.map() callback",
-                "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas",
                 "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onConnect.useCallback() callback",
                 "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onConnect.useCallback() callback.setEdges() callback",
                 "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.addNodeFromPalette.useCallback() callback",
@@ -251604,13 +251559,13 @@
                 },
                 {
                   "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
-                  "file_status": "modified",
+                  "file_status": "unchanged",
                   "methods": [
                     "dashboard.frontend.src.components.Canvas.Canvas.AgentApiResponse",
+                    "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas",
                     "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setShowMetrics() callback",
                     "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.fetchAgents.useCallback() callback",
                     "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.fetchAgents.useCallback() callback.agentNodes.data.agents.map() callback",
-                    "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas",
                     "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onConnect.useCallback() callback",
                     "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onConnect.useCallback() callback.setEdges() callback",
                     "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.addNodeFromPalette.useCallback() callback",
@@ -252024,13 +251979,13 @@
                     },
                     {
                       "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
-                      "file_status": "modified",
+                      "file_status": "unchanged",
                       "methods": [
                         "dashboard.frontend.src.components.Canvas.Canvas.AgentApiResponse",
+                        "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas",
                         "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setShowMetrics() callback",
                         "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.fetchAgents.useCallback() callback",
                         "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.fetchAgents.useCallback() callback.agentNodes.data.agents.map() callback",
-                        "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas",
                         "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onConnect.useCallback() callback",
                         "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onConnect.useCallback() callback.setEdges() callback",
                         "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.addNodeFromPalette.useCallback() callback",
@@ -252354,13 +252309,13 @@
                         },
                         {
                           "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "dashboard.frontend.src.components.Canvas.Canvas.AgentApiResponse",
+                            "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas",
                             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setShowMetrics() callback",
                             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.fetchAgents.useCallback() callback",
                             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.fetchAgents.useCallback() callback.agentNodes.data.agents.map() callback",
-                            "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas",
                             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onConnect.useCallback() callback",
                             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onConnect.useCallback() callback.setEdges() callback",
                             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.addNodeFromPalette.useCallback() callback",
@@ -252671,13 +252626,13 @@
                             },
                             {
                               "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
-                              "file_status": "modified",
+                              "file_status": "unchanged",
                               "methods": [
                                 "dashboard.frontend.src.components.Canvas.Canvas.AgentApiResponse",
+                                "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas",
                                 "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setShowMetrics() callback",
                                 "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.fetchAgents.useCallback() callback",
                                 "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.fetchAgents.useCallback() callback.agentNodes.data.agents.map() callback",
-                                "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas",
                                 "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onConnect.useCallback() callback",
                                 "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onConnect.useCallback() callback.setEdges() callback",
                                 "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback"

@@ -11,8 +11,8 @@
  * - Message flow graph
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
-import { useWebSocket, type WebSocketMessage } from '../../hooks/useWebSocket';
+import React, { useState, useEffect, useMemo } from 'react';
+import { useA2AMessages } from '../../hooks/useA2AMessages';
 
 // Types
 interface A2AMessage {
@@ -335,7 +335,6 @@ export function A2ATracker({
   refreshInterval = 2000,
   maxMessages = 200,
 }: A2ATrackerProps) {
-  const [messages, setMessages] = useState<A2AMessage[]>([]);
   const [agentActivity, setAgentActivity] = useState<AgentActivity[]>([]);
   const [selectedAgent, setSelectedAgent] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'messages' | 'agents' | 'flows' | 'resources'>('messages');
@@ -353,54 +352,38 @@ export function A2ATracker({
     avgDuration: 0,
   });
 
-  // WebSocket connection for real A2A events
-  // NOTE: natsUrl prop is accepted but no longer used for WebSocket connection.
-  // The WebSocket connects to the FastAPI /ws/a2a endpoint via nginx proxy.
+  // WebSocket connection for real A2A events via useA2AMessages hook
+  // NOTE: natsUrl prop is accepted but no longer used — hook connects to dashboard channel.
   if (natsUrl) {
-    console.warn('A2ATracker: natsUrl prop is deprecated for WebSocket — connect to FastAPI /ws/a2a instead');
+    console.warn('A2ATracker: natsUrl prop is deprecated — useA2AMessages connects via dashboard channel');
   }
 
-  const handleWebSocketMessage = useCallback((wsMessage: WebSocketMessage) => {
-    try {
-      const data = wsMessage as unknown as SwarmEvent;
-      if (!data.event_type || !data.source_agent) {
-        console.warn('A2ATracker: Received message without event_type or source_agent', data);
-        return;
-      }
-      const msg: A2AMessage = {
-        id: data.correlation_id ?? `msg-${Date.now()}`,
-        timestamp: data.timestamp ?? new Date().toISOString(),
-        from: data.source_agent,
-        to: data.target_agent ?? '',
-        subject: data.event_type,
-        type: mapEventType(data.event_type),
-        payload: data.payload ?? {},
-        latencyMs: 0,
-        status: 'delivered',
-      };
-      setMessages((prev) => {
-        const updated = [...prev, msg];
-        return updated.slice(-maxMessages);
-      });
-    } catch (error) {
-      console.error('A2ATracker: Failed to parse WebSocket message:', error);
-    }
-  }, [maxMessages]);
-
-  const { connected } = useWebSocket('a2a', {
-    onMessage: handleWebSocketMessage,
-    onOpen: () => {
-      console.info('A2ATracker: WebSocket connected to /ws/a2a');
-      setIsConnected(true);
-    },
-    onClose: () => {
-      console.info('A2ATracker: WebSocket disconnected');
-      setIsConnected(false);
-    },
-    onError: (error) => {
-      console.error('A2ATracker: WebSocket error', error);
-    },
+  const { messages: hookMessages, connected: hookConnected, error: hookError } = useA2AMessages({
+    throttleInterval: 100,
   });
+
+  // Convert hook messages to A2AMessage format for internal use
+  const messages = useMemo(() => {
+    return hookMessages.map((msg, idx) => ({
+      id: `hook-${idx}-${msg.timestamp ?? Date.now()}`,
+      timestamp: msg.timestamp ?? new Date().toISOString(),
+      from: msg.from,
+      to: msg.to ?? '',
+      subject: msg.type ?? msg.message_type ?? 'unknown',
+      type: mapEventType(msg.type ?? msg.message_type ?? ''),
+      payload: (msg.payload as Record<string, unknown>) ?? {},
+      latencyMs: 0,
+      status: 'delivered' as const,
+    }));
+  }, [hookMessages]);
+
+  // Update connection state from hook
+  useEffect(() => {
+    setIsConnected(hookConnected);
+    if (hookError) {
+      console.error('A2ATracker: useA2AMessages error', hookError);
+    }
+  }, [hookConnected, hookError]);
 
   // Populate agent activity and stats with realistic demo data (no real source yet)
   useEffect(() => {
@@ -432,17 +415,6 @@ export function A2ATracker({
       clearInterval(activityInterval);
     };
   }, []);
-
-  // Simulate connection state for visual feedback when WebSocket isn't available
-  useEffect(() => {
-    if (!connected) {
-      const connectTimeout = setTimeout(() => {
-        setIsConnected(true);
-      }, 1000);
-      return () => clearTimeout(connectTimeout);
-    }
-    setIsConnected(true);
-  }, [connected]);
 
   // Filter messages for selected agent's "internal monologue"
   const internalMonologue = selectedAgent
