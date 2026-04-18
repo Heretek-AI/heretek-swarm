@@ -56,7 +56,10 @@ export function useWebSocket(
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     // Extract hostname and port from apiHost (e.g. "http://localhost:8000" -> "localhost:8000")
     const url = new URL(apiHost.startsWith('http') ? apiHost : `http://${apiHost}`);
-    const wsUrl = `${protocol}//${url.host}/ws/${channel}`;
+    const apiKey = localStorage.getItem('api_key');
+    const wsUrl = apiKey
+      ? `${protocol}//${url.host}/ws/${channel}?token=${encodeURIComponent(apiKey)}`
+      : `${protocol}//${url.host}/ws/${channel}`;
     
     try {
       wsRef.current = new WebSocket(wsUrl);

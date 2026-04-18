@@ -57,11 +57,19 @@ class WebSocketAuthManager:
         """
         Validate an authentication token.
 
+        Also accepts the HERETEK_API_KEY environment variable as a valid token,
+        so the same API key works for both HTTP and WebSocket auth.
+
         Returns:
             Tuple of (is_valid, user_id, error_message)
         """
         if not token:
             return False, None, "Token required"
+
+        # Accept HERETEK_API_KEY env var as a valid token
+        expected_key = os.getenv("HERETEK_API_KEY", "")
+        if token == expected_key and expected_key:
+            return True, "api_key_user", None
 
         if token not in self._valid_tokens:
             return False, None, "Invalid token"
