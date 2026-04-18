@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-18T03:45:44.528859+00:00",
+    "generated_at": "2026-04-18T03:55:04.506769+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -42719,6 +42719,13 @@
           "end_line": 45,
           "node_type": "INTERFACE",
           "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.api.consciousness.AgencyMetrics",
+          "start_line": 47,
+          "end_line": 52,
+          "node_type": "INTERFACE",
+          "status": "added"
         },
         {
           "qualified_name": "dashboard.frontend.src.api.consciousness.TimeSeriesData",
@@ -103368,6 +103375,14 @@
       "end_line": 45,
       "type": "INTERFACE",
       "status": "unchanged"
+    },
+    "dashboard/frontend/src/api/consciousness.ts|dashboard.frontend.src.api.consciousness.AgencyMetrics": {
+      "file_path": "dashboard/frontend/src/api/consciousness.ts",
+      "qualified_name": "dashboard.frontend.src.api.consciousness.AgencyMetrics",
+      "start_line": 47,
+      "end_line": 52,
+      "type": "INTERFACE",
+      "status": "added"
     },
     "dashboard/frontend/src/api/consciousness.ts|dashboard.frontend.src.api.consciousness.TimeSeriesData": {
       "file_path": "dashboard/frontend/src/api/consciousness.ts",
@@ -249207,6 +249222,7 @@
             "dashboard.frontend.src.api.consciousness.api.interceptors.request.use() callback",
             "dashboard.frontend.src.api.consciousness.ConsciousnessStatistics",
             "dashboard.frontend.src.api.consciousness.AgentMetrics",
+            "dashboard.frontend.src.api.consciousness.AgencyMetrics",
             "dashboard.frontend.src.api.consciousness.TimeSeriesData",
             "dashboard.frontend.src.api.consciousness.NetworkVisualization"
           ]
@@ -268764,6 +268780,7 @@
                 "dashboard.frontend.src.api.consciousness.api.interceptors.request.use() callback",
                 "dashboard.frontend.src.api.consciousness.ConsciousnessStatistics",
                 "dashboard.frontend.src.api.consciousness.AgentMetrics",
+                "dashboard.frontend.src.api.consciousness.AgencyMetrics",
                 "dashboard.frontend.src.api.consciousness.TimeSeriesData",
                 "dashboard.frontend.src.api.consciousness.NetworkVisualization"
               ]
@@ -270357,6 +270374,7 @@
                     "dashboard.frontend.src.api.consciousness.api.interceptors.request.use() callback",
                     "dashboard.frontend.src.api.consciousness.ConsciousnessStatistics",
                     "dashboard.frontend.src.api.consciousness.AgentMetrics",
+                    "dashboard.frontend.src.api.consciousness.AgencyMetrics",
                     "dashboard.frontend.src.api.consciousness.TimeSeriesData",
                     "dashboard.frontend.src.api.consciousness.NetworkVisualization"
                   ]
@@ -271901,6 +271919,7 @@
                         "dashboard.frontend.src.api.consciousness.api.interceptors.request.use() callback",
                         "dashboard.frontend.src.api.consciousness.ConsciousnessStatistics",
                         "dashboard.frontend.src.api.consciousness.AgentMetrics",
+                        "dashboard.frontend.src.api.consciousness.AgencyMetrics",
                         "dashboard.frontend.src.api.consciousness.TimeSeriesData",
                         "dashboard.frontend.src.api.consciousness.NetworkVisualization"
                       ]
@@ -273447,6 +273466,7 @@
                             "dashboard.frontend.src.api.consciousness.api.interceptors.request.use() callback",
                             "dashboard.frontend.src.api.consciousness.ConsciousnessStatistics",
                             "dashboard.frontend.src.api.consciousness.AgentMetrics",
+                            "dashboard.frontend.src.api.consciousness.AgencyMetrics",
                             "dashboard.frontend.src.api.consciousness.TimeSeriesData",
                             "dashboard.frontend.src.api.consciousness.NetworkVisualization"
                           ]

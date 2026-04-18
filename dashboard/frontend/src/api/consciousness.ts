@@ -44,6 +44,13 @@ export interface AgentMetrics {
   timestamp: string;
 }
 
+export interface AgencyMetrics {
+  agency_score: number;
+  autonomy_score: number;
+  decision_count: number;
+  last_decision: string | null;
+}
+
 export interface TimeSeriesData {
   agent_id: string;
   metric: string;
@@ -81,6 +88,14 @@ export const getConsciousnessStatistics = async (): Promise<ConsciousnessStatist
  */
 export const getAgentMetrics = async (agentId: string): Promise<AgentMetrics> => {
   const response = await api.get(`/api/consciousness/agents/${agentId}`);
+  return response.data;
+};
+
+/**
+ * Get agency metrics for specific agent
+ */
+export const getAgencyMetrics = async (agentId: string): Promise<AgencyMetrics> => {
+  const response = await api.get(`/api/consciousness/agency/${agentId}`);
   return response.data;
 };
 
