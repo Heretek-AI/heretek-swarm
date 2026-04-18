@@ -1,6 +1,6 @@
 {
   "repository_name": "heretek-swarm",
-  "timestamp": "2026-04-18T04:28:54.178387+00:00",
+  "timestamp": "2026-04-18T04:46:49.910995+00:00",
   "overall_score": 0.9750499571795603,
   "check_summaries": [
     {
@@ -1755,8 +1755,8 @@
             {
               "entity_name": "[unused_variable] \"i\" is not accessed",
               "file_path": "src/heretek_swarm/api/workflows.py",
-              "line_start": 417,
-              "line_end": 417,
+              "line_start": 418,
+              "line_end": 418,
               "metric_value": 0.0
             },
             {
@@ -1769,8 +1769,8 @@
             {
               "entity_name": "[unused_variable] \"authenticated\" is not accessed",
               "file_path": "src/heretek_swarm/api/workflows.py",
-              "line_start": 481,
-              "line_end": 481,
+              "line_start": 484,
+              "line_end": 484,
               "metric_value": 0.0
             },
             {

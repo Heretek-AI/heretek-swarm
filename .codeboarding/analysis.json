@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-18T04:26:03.982568+00:00",
+    "generated_at": "2026-04-18T04:46:48.335010+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -9403,7 +9403,7 @@
       ]
     },
     "src/heretek_swarm/api/workflows.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.api.workflows.create_workflow",
@@ -9471,30 +9471,30 @@
         {
           "qualified_name": "src.heretek_swarm.api.workflows.workflow_events_stream",
           "start_line": 370,
-          "end_line": 475,
+          "end_line": 478,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.workflows.workflow_events_stream.event_generator",
           "start_line": 393,
-          "end_line": 465,
+          "end_line": 468,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.workflows.workflow_specific_events_stream",
-          "start_line": 479,
-          "end_line": 583,
+          "start_line": 482,
+          "end_line": 589,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.workflows.workflow_specific_events_stream.event_generator",
-          "start_line": 499,
-          "end_line": 573,
+          "start_line": 502,
+          "end_line": 579,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         }
       ]
     },
@@ -42021,63 +42021,91 @@
         {
           "qualified_name": "dashboard.frontend.src.components.Chat.ChatInterface.Message",
           "start_line": 9,
-          "end_line": 13,
+          "end_line": 14,
+          "node_type": "INTERFACE",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Chat.ChatInterface.Contribution",
+          "start_line": 16,
+          "end_line": 21,
+          "node_type": "INTERFACE",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Chat.ChatInterface.ExpandedMessages",
+          "start_line": 23,
+          "end_line": 25,
           "node_type": "INTERFACE",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Chat.ChatInterface.Agent",
-          "start_line": 15,
-          "end_line": 19,
+          "start_line": 27,
+          "end_line": 31,
           "node_type": "INTERFACE",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface",
-          "start_line": 33,
-          "end_line": 124,
+          "start_line": 45,
+          "end_line": 143,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface.useEffect() callback.then() callback",
-          "start_line": 45,
-          "end_line": 45,
+          "start_line": 58,
+          "end_line": 58,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface.useEffect() callback",
-          "start_line": 50,
-          "end_line": 52,
+          "start_line": 63,
+          "end_line": 65,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface.sendMessage.setMessages() callback",
-          "start_line": 89,
-          "end_line": 89,
+          "start_line": 103,
+          "end_line": 103,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface.toggleExpanded.setExpandedMessages() callback",
+          "start_line": 122,
+          "end_line": 122,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface.<unknown>..map() callback",
-          "start_line": 115,
-          "end_line": 117,
+          "start_line": 134,
+          "end_line": 136,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Chat.ChatInterface.<unknown>..find() callback",
-          "start_line": 163,
-          "end_line": 163,
+          "start_line": 182,
+          "end_line": 182,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Chat.ChatInterface.messages.map() callback",
-          "start_line": 186,
-          "end_line": 188,
+          "start_line": 205,
+          "end_line": 207,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Chat.ChatInterface.\"mt-2 space-y-2\".<unknown>..contributions.map() callback",
+          "start_line": 238,
+          "end_line": 239,
           "node_type": "FUNCTION",
           "status": "unchanged"
         }
@@ -62631,33 +62659,33 @@
       "file_path": "src/heretek_swarm/api/workflows.py",
       "qualified_name": "src.heretek_swarm.api.workflows.workflow_events_stream",
       "start_line": 370,
-      "end_line": 475,
+      "end_line": 478,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/workflows.py|src.heretek_swarm.api.workflows.workflow_events_stream.event_generator": {
       "file_path": "src/heretek_swarm/api/workflows.py",
       "qualified_name": "src.heretek_swarm.api.workflows.workflow_events_stream.event_generator",
       "start_line": 393,
-      "end_line": 465,
+      "end_line": 468,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/workflows.py|src.heretek_swarm.api.workflows.workflow_specific_events_stream": {
       "file_path": "src/heretek_swarm/api/workflows.py",
       "qualified_name": "src.heretek_swarm.api.workflows.workflow_specific_events_stream",
-      "start_line": 479,
-      "end_line": 583,
+      "start_line": 482,
+      "end_line": 589,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/workflows.py|src.heretek_swarm.api.workflows.workflow_specific_events_stream.event_generator": {
       "file_path": "src/heretek_swarm/api/workflows.py",
       "qualified_name": "src.heretek_swarm.api.workflows.workflow_specific_events_stream.event_generator",
-      "start_line": 499,
-      "end_line": 573,
+      "start_line": 502,
+      "end_line": 579,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/channels/defaults.py|src.heretek_swarm.channels.defaults.get_internal_channels": {
       "file_path": "src/heretek_swarm/channels/defaults.py",
@@ -98791,71 +98819,103 @@
       "file_path": "dashboard/frontend/src/components/Chat/ChatInterface.tsx",
       "qualified_name": "dashboard.frontend.src.components.Chat.ChatInterface.Message",
       "start_line": 9,
-      "end_line": 13,
+      "end_line": 14,
+      "type": "INTERFACE",
+      "status": "unchanged"
+    },
+    "dashboard/frontend/src/components/Chat/ChatInterface.tsx|dashboard.frontend.src.components.Chat.ChatInterface.Contribution": {
+      "file_path": "dashboard/frontend/src/components/Chat/ChatInterface.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Chat.ChatInterface.Contribution",
+      "start_line": 16,
+      "end_line": 21,
+      "type": "INTERFACE",
+      "status": "unchanged"
+    },
+    "dashboard/frontend/src/components/Chat/ChatInterface.tsx|dashboard.frontend.src.components.Chat.ChatInterface.ExpandedMessages": {
+      "file_path": "dashboard/frontend/src/components/Chat/ChatInterface.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Chat.ChatInterface.ExpandedMessages",
+      "start_line": 23,
+      "end_line": 25,
       "type": "INTERFACE",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/Chat/ChatInterface.tsx|dashboard.frontend.src.components.Chat.ChatInterface.Agent": {
       "file_path": "dashboard/frontend/src/components/Chat/ChatInterface.tsx",
       "qualified_name": "dashboard.frontend.src.components.Chat.ChatInterface.Agent",
-      "start_line": 15,
-      "end_line": 19,
+      "start_line": 27,
+      "end_line": 31,
       "type": "INTERFACE",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/Chat/ChatInterface.tsx|dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface": {
       "file_path": "dashboard/frontend/src/components/Chat/ChatInterface.tsx",
       "qualified_name": "dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface",
-      "start_line": 33,
-      "end_line": 124,
+      "start_line": 45,
+      "end_line": 143,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/Chat/ChatInterface.tsx|dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface.useEffect() callback.then() callback": {
       "file_path": "dashboard/frontend/src/components/Chat/ChatInterface.tsx",
       "qualified_name": "dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface.useEffect() callback.then() callback",
-      "start_line": 45,
-      "end_line": 45,
+      "start_line": 58,
+      "end_line": 58,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/Chat/ChatInterface.tsx|dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface.useEffect() callback": {
       "file_path": "dashboard/frontend/src/components/Chat/ChatInterface.tsx",
       "qualified_name": "dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface.useEffect() callback",
-      "start_line": 50,
-      "end_line": 52,
+      "start_line": 63,
+      "end_line": 65,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/Chat/ChatInterface.tsx|dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface.sendMessage.setMessages() callback": {
       "file_path": "dashboard/frontend/src/components/Chat/ChatInterface.tsx",
       "qualified_name": "dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface.sendMessage.setMessages() callback",
-      "start_line": 89,
-      "end_line": 89,
+      "start_line": 103,
+      "end_line": 103,
+      "type": "FUNCTION",
+      "status": "unchanged"
+    },
+    "dashboard/frontend/src/components/Chat/ChatInterface.tsx|dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface.toggleExpanded.setExpandedMessages() callback": {
+      "file_path": "dashboard/frontend/src/components/Chat/ChatInterface.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface.toggleExpanded.setExpandedMessages() callback",
+      "start_line": 122,
+      "end_line": 122,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/Chat/ChatInterface.tsx|dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface.<unknown>..map() callback": {
       "file_path": "dashboard/frontend/src/components/Chat/ChatInterface.tsx",
       "qualified_name": "dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface.<unknown>..map() callback",
-      "start_line": 115,
-      "end_line": 117,
+      "start_line": 134,
+      "end_line": 136,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/Chat/ChatInterface.tsx|dashboard.frontend.src.components.Chat.ChatInterface.<unknown>..find() callback": {
       "file_path": "dashboard/frontend/src/components/Chat/ChatInterface.tsx",
       "qualified_name": "dashboard.frontend.src.components.Chat.ChatInterface.<unknown>..find() callback",
-      "start_line": 163,
-      "end_line": 163,
+      "start_line": 182,
+      "end_line": 182,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/Chat/ChatInterface.tsx|dashboard.frontend.src.components.Chat.ChatInterface.messages.map() callback": {
       "file_path": "dashboard/frontend/src/components/Chat/ChatInterface.tsx",
       "qualified_name": "dashboard.frontend.src.components.Chat.ChatInterface.messages.map() callback",
-      "start_line": 186,
-      "end_line": 188,
+      "start_line": 205,
+      "end_line": 207,
+      "type": "FUNCTION",
+      "status": "unchanged"
+    },
+    "dashboard/frontend/src/components/Chat/ChatInterface.tsx|dashboard.frontend.src.components.Chat.ChatInterface.\"mt-2 space-y-2\".<unknown>..contributions.map() callback": {
+      "file_path": "dashboard/frontend/src/components/Chat/ChatInterface.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Chat.ChatInterface.\"mt-2 space-y-2\".<unknown>..contributions.map() callback",
+      "start_line": 238,
+      "end_line": 239,
       "type": "FUNCTION",
       "status": "unchanged"
     },
@@ -111670,7 +111730,7 @@
         },
         {
           "file_path": "src/heretek_swarm/api/workflows.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "src.heretek_swarm.api.workflows.create_workflow",
             "src.heretek_swarm.api.workflows.list_workflows",
@@ -117958,7 +118018,7 @@
             },
             {
               "file_path": "src/heretek_swarm/api/workflows.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.heretek_swarm.api.workflows.create_workflow",
                 "src.heretek_swarm.api.workflows.list_workflows",
@@ -121246,7 +121306,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/api/workflows.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.api.workflows.create_workflow",
                     "src.heretek_swarm.api.workflows.list_workflows",
@@ -124112,7 +124172,7 @@
                     },
                     {
                       "file_path": "src/heretek_swarm/api/workflows.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.api.workflows.create_workflow",
                         "src.heretek_swarm.api.workflows.list_workflows",
@@ -124259,7 +124319,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/api/workflows.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.api.workflows.create_workflow",
                             "src.heretek_swarm.api.workflows.list_workflows",
@@ -239031,14 +239091,18 @@
           "file_status": "unchanged",
           "methods": [
             "dashboard.frontend.src.components.Chat.ChatInterface.Message",
+            "dashboard.frontend.src.components.Chat.ChatInterface.Contribution",
+            "dashboard.frontend.src.components.Chat.ChatInterface.ExpandedMessages",
             "dashboard.frontend.src.components.Chat.ChatInterface.Agent",
             "dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface",
             "dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface.useEffect() callback.then() callback",
             "dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface.useEffect() callback",
             "dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface.sendMessage.setMessages() callback",
+            "dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface.toggleExpanded.setExpandedMessages() callback",
             "dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface.<unknown>..map() callback",
             "dashboard.frontend.src.components.Chat.ChatInterface.<unknown>..find() callback",
-            "dashboard.frontend.src.components.Chat.ChatInterface.messages.map() callback"
+            "dashboard.frontend.src.components.Chat.ChatInterface.messages.map() callback",
+            "dashboard.frontend.src.components.Chat.ChatInterface.\"mt-2 space-y-2\".<unknown>..contributions.map() callback"
           ]
         },
         {
@@ -254397,8 +254461,12 @@
               "file_path": "dashboard/frontend/src/components/Chat/ChatInterface.tsx",
               "file_status": "unchanged",
               "methods": [
+                "dashboard.frontend.src.components.Chat.ChatInterface.Contribution",
+                "dashboard.frontend.src.components.Chat.ChatInterface.ExpandedMessages",
                 "dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface.useEffect() callback.then() callback",
-                "dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface.sendMessage.setMessages() callback"
+                "dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface.sendMessage.setMessages() callback",
+                "dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface.toggleExpanded.setExpandedMessages() callback",
+                "dashboard.frontend.src.components.Chat.ChatInterface.\"mt-2 space-y-2\".<unknown>..contributions.map() callback"
               ]
             },
             {
@@ -255590,14 +255658,18 @@
                   "file_status": "unchanged",
                   "methods": [
                     "dashboard.frontend.src.components.Chat.ChatInterface.Message",
+                    "dashboard.frontend.src.components.Chat.ChatInterface.Contribution",
+                    "dashboard.frontend.src.components.Chat.ChatInterface.ExpandedMessages",
                     "dashboard.frontend.src.components.Chat.ChatInterface.Agent",
                     "dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface",
                     "dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface.useEffect() callback.then() callback",
                     "dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface.useEffect() callback",
                     "dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface.sendMessage.setMessages() callback",
+                    "dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface.toggleExpanded.setExpandedMessages() callback",
                     "dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface.<unknown>..map() callback",
                     "dashboard.frontend.src.components.Chat.ChatInterface.<unknown>..find() callback",
-                    "dashboard.frontend.src.components.Chat.ChatInterface.messages.map() callback"
+                    "dashboard.frontend.src.components.Chat.ChatInterface.messages.map() callback",
+                    "dashboard.frontend.src.components.Chat.ChatInterface.\"mt-2 space-y-2\".<unknown>..contributions.map() callback"
                   ]
                 },
                 {
@@ -256534,14 +256606,18 @@
                       "file_status": "unchanged",
                       "methods": [
                         "dashboard.frontend.src.components.Chat.ChatInterface.Message",
+                        "dashboard.frontend.src.components.Chat.ChatInterface.Contribution",
+                        "dashboard.frontend.src.components.Chat.ChatInterface.ExpandedMessages",
                         "dashboard.frontend.src.components.Chat.ChatInterface.Agent",
                         "dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface",
                         "dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface.useEffect() callback.then() callback",
                         "dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface.useEffect() callback",
                         "dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface.sendMessage.setMessages() callback",
+                        "dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface.toggleExpanded.setExpandedMessages() callback",
                         "dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface.<unknown>..map() callback",
                         "dashboard.frontend.src.components.Chat.ChatInterface.<unknown>..find() callback",
-                        "dashboard.frontend.src.components.Chat.ChatInterface.messages.map() callback"
+                        "dashboard.frontend.src.components.Chat.ChatInterface.messages.map() callback",
+                        "dashboard.frontend.src.components.Chat.ChatInterface.\"mt-2 space-y-2\".<unknown>..contributions.map() callback"
                       ]
                     },
                     {
@@ -256589,14 +256665,18 @@
                           "file_status": "unchanged",
                           "methods": [
                             "dashboard.frontend.src.components.Chat.ChatInterface.Message",
+                            "dashboard.frontend.src.components.Chat.ChatInterface.Contribution",
+                            "dashboard.frontend.src.components.Chat.ChatInterface.ExpandedMessages",
                             "dashboard.frontend.src.components.Chat.ChatInterface.Agent",
                             "dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface",
                             "dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface.useEffect() callback.then() callback",
                             "dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface.useEffect() callback",
                             "dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface.sendMessage.setMessages() callback",
+                            "dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface.toggleExpanded.setExpandedMessages() callback",
                             "dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface.<unknown>..map() callback",
                             "dashboard.frontend.src.components.Chat.ChatInterface.<unknown>..find() callback",
-                            "dashboard.frontend.src.components.Chat.ChatInterface.messages.map() callback"
+                            "dashboard.frontend.src.components.Chat.ChatInterface.messages.map() callback",
+                            "dashboard.frontend.src.components.Chat.ChatInterface.\"mt-2 space-y-2\".<unknown>..contributions.map() callback"
                           ]
                         }
                       ],
@@ -258376,12 +258456,16 @@
               "file_status": "unchanged",
               "methods": [
                 "dashboard.frontend.src.components.Chat.ChatInterface.Message",
+                "dashboard.frontend.src.components.Chat.ChatInterface.Contribution",
+                "dashboard.frontend.src.components.Chat.ChatInterface.ExpandedMessages",
                 "dashboard.frontend.src.components.Chat.ChatInterface.Agent",
                 "dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface",
                 "dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface.useEffect() callback",
+                "dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface.toggleExpanded.setExpandedMessages() callback",
                 "dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface.<unknown>..map() callback",
                 "dashboard.frontend.src.components.Chat.ChatInterface.<unknown>..find() callback",
-                "dashboard.frontend.src.components.Chat.ChatInterface.messages.map() callback"
+                "dashboard.frontend.src.components.Chat.ChatInterface.messages.map() callback",
+                "dashboard.frontend.src.components.Chat.ChatInterface.\"mt-2 space-y-2\".<unknown>..contributions.map() callback"
               ]
             },
             {
@@ -259959,12 +260043,16 @@
                   "file_status": "unchanged",
                   "methods": [
                     "dashboard.frontend.src.components.Chat.ChatInterface.Message",
+                    "dashboard.frontend.src.components.Chat.ChatInterface.Contribution",
+                    "dashboard.frontend.src.components.Chat.ChatInterface.ExpandedMessages",
                     "dashboard.frontend.src.components.Chat.ChatInterface.Agent",
                     "dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface",
                     "dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface.useEffect() callback",
+                    "dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface.toggleExpanded.setExpandedMessages() callback",
                     "dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface.<unknown>..map() callback",
                     "dashboard.frontend.src.components.Chat.ChatInterface.<unknown>..find() callback",
-                    "dashboard.frontend.src.components.Chat.ChatInterface.messages.map() callback"
+                    "dashboard.frontend.src.components.Chat.ChatInterface.messages.map() callback",
+                    "dashboard.frontend.src.components.Chat.ChatInterface.\"mt-2 space-y-2\".<unknown>..contributions.map() callback"
                   ]
                 },
                 {
@@ -261504,12 +261592,16 @@
                       "file_status": "unchanged",
                       "methods": [
                         "dashboard.frontend.src.components.Chat.ChatInterface.Message",
+                        "dashboard.frontend.src.components.Chat.ChatInterface.Contribution",
+                        "dashboard.frontend.src.components.Chat.ChatInterface.ExpandedMessages",
                         "dashboard.frontend.src.components.Chat.ChatInterface.Agent",
                         "dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface",
                         "dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface.useEffect() callback",
+                        "dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface.toggleExpanded.setExpandedMessages() callback",
                         "dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface.<unknown>..map() callback",
                         "dashboard.frontend.src.components.Chat.ChatInterface.<unknown>..find() callback",
-                        "dashboard.frontend.src.components.Chat.ChatInterface.messages.map() callback"
+                        "dashboard.frontend.src.components.Chat.ChatInterface.messages.map() callback",
+                        "dashboard.frontend.src.components.Chat.ChatInterface.\"mt-2 space-y-2\".<unknown>..contributions.map() callback"
                       ]
                     },
                     {
@@ -265405,8 +265497,12 @@
                       "file_path": "dashboard/frontend/src/components/Chat/ChatInterface.tsx",
                       "file_status": "unchanged",
                       "methods": [
+                        "dashboard.frontend.src.components.Chat.ChatInterface.Contribution",
+                        "dashboard.frontend.src.components.Chat.ChatInterface.ExpandedMessages",
                         "dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface.useEffect() callback.then() callback",
-                        "dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface.sendMessage.setMessages() callback"
+                        "dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface.sendMessage.setMessages() callback",
+                        "dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface.toggleExpanded.setExpandedMessages() callback",
+                        "dashboard.frontend.src.components.Chat.ChatInterface.\"mt-2 space-y-2\".<unknown>..contributions.map() callback"
                       ]
                     },
                     {
@@ -265884,14 +265980,18 @@
                           "file_status": "unchanged",
                           "methods": [
                             "dashboard.frontend.src.components.Chat.ChatInterface.Message",
+                            "dashboard.frontend.src.components.Chat.ChatInterface.Contribution",
+                            "dashboard.frontend.src.components.Chat.ChatInterface.ExpandedMessages",
                             "dashboard.frontend.src.components.Chat.ChatInterface.Agent",
                             "dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface",
                             "dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface.useEffect() callback.then() callback",
                             "dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface.useEffect() callback",
                             "dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface.sendMessage.setMessages() callback",
+                            "dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface.toggleExpanded.setExpandedMessages() callback",
                             "dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface.<unknown>..map() callback",
                             "dashboard.frontend.src.components.Chat.ChatInterface.<unknown>..find() callback",
-                            "dashboard.frontend.src.components.Chat.ChatInterface.messages.map() callback"
+                            "dashboard.frontend.src.components.Chat.ChatInterface.messages.map() callback",
+                            "dashboard.frontend.src.components.Chat.ChatInterface.\"mt-2 space-y-2\".<unknown>..contributions.map() callback"
                           ]
                         },
                         {
@@ -270194,8 +270294,12 @@
                   "file_path": "dashboard/frontend/src/components/Chat/ChatInterface.tsx",
                   "file_status": "unchanged",
                   "methods": [
+                    "dashboard.frontend.src.components.Chat.ChatInterface.Contribution",
+                    "dashboard.frontend.src.components.Chat.ChatInterface.ExpandedMessages",
                     "dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface.useEffect() callback.then() callback",
-                    "dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface.sendMessage.setMessages() callback"
+                    "dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface.sendMessage.setMessages() callback",
+                    "dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface.toggleExpanded.setExpandedMessages() callback",
+                    "dashboard.frontend.src.components.Chat.ChatInterface.\"mt-2 space-y-2\".<unknown>..contributions.map() callback"
                   ]
                 },
                 {
@@ -271154,14 +271258,18 @@
                       "file_status": "unchanged",
                       "methods": [
                         "dashboard.frontend.src.components.Chat.ChatInterface.Message",
+                        "dashboard.frontend.src.components.Chat.ChatInterface.Contribution",
+                        "dashboard.frontend.src.components.Chat.ChatInterface.ExpandedMessages",
                         "dashboard.frontend.src.components.Chat.ChatInterface.Agent",
                         "dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface",
                         "dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface.useEffect() callback.then() callback",
                         "dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface.useEffect() callback",
                         "dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface.sendMessage.setMessages() callback",
+                        "dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface.toggleExpanded.setExpandedMessages() callback",
                         "dashboard.frontend.src.components.Chat.ChatInterface.ChatInterface.<unknown>..map() callback",
                         "dashboard.frontend.src.components.Chat.ChatInterface.<unknown>..find() callback",
-                        "dashboard.frontend.src.components.Chat.ChatInterface.messages.map() callback"
+                        "dashboard.frontend.src.components.Chat.ChatInterface.messages.map() callback",
+                        "dashboard.frontend.src.components.Chat.ChatInterface.\"mt-2 space-y-2\".<unknown>..contributions.map() callback"
                       ]
                     },
                     {

@@ -403,13 +403,14 @@ async def workflow_events_stream(
         )
 
         # Send initial connection event
-        yield f"data: {json.dumps({
+        initial_event = {
             'status': 'connected',
             'execution_id': execution_id,
             'workflow_id': workflow_id,
             'message': 'SSE connection established',
             'timestamp': datetime.now(UTC).isoformat(),
-        })}\n\n"
+        }
+        yield f"data: {json.dumps(initial_event)}\n\n"
 
         try:
             # Simulate workflow execution events for demo purposes
@@ -443,20 +444,22 @@ async def workflow_events_stream(
 
         except asyncio.CancelledError:
             logger.info("sse_connection_cancelled", execution_id=execution_id)
-            yield f"data: {json.dumps({
+            cancelled_event = {
                 'status': 'cancelled',
                 'execution_id': execution_id,
                 'message': 'SSE connection closed by client',
                 'timestamp': datetime.now(UTC).isoformat(),
-            })}\n\n"
+            }
+            yield f"data: {json.dumps(cancelled_event)}\n\n"
         except Exception as e:
             logger.error("sse_connection_error", execution_id=execution_id, error=str(e))
-            yield f"data: {json.dumps({
+            error_event = {
                 'status': 'failed',
                 'execution_id': execution_id,
                 'message': f'Stream error: {str(e)}',
                 'timestamp': datetime.now(UTC).isoformat(),
-            })}\n\n"
+            }
+            yield f"data: {json.dumps(error_event)}\n\n"
         finally:
             logger.info(
                 "sse_connection_closed",
@@ -508,13 +511,14 @@ async def workflow_specific_events_stream(
         )
 
         # Send initial connection event
-        yield f"data: {json.dumps({
+        connected_event = {
             'status': 'connected',
             'execution_id': execution_id,
             'workflow_id': workflow_id,
             'message': f'Watching workflow {workflow_id}',
             'timestamp': datetime.now(UTC).isoformat(),
-        })}\n\n"
+        }
+        yield f"data: {json.dumps(connected_event)}\n\n"
 
         try:
             workflow = engine.workflows[workflow_id]
@@ -548,22 +552,24 @@ async def workflow_specific_events_stream(
 
         except asyncio.CancelledError:
             logger.info("workflow_sse_cancelled", execution_id=execution_id)
-            yield f"data: {json.dumps({
+            cancelled_event = {
                 'status': 'cancelled',
                 'execution_id': execution_id,
                 'workflow_id': workflow_id,
                 'message': 'SSE connection closed by client',
                 'timestamp': datetime.now(UTC).isoformat(),
-            })}\n\n"
+            }
+            yield f"data: {json.dumps(cancelled_event)}\n\n"
         except Exception as e:
             logger.error("workflow_sse_error", execution_id=execution_id, error=str(e))
-            yield f"data: {json.dumps({
+            error_event = {
                 'status': 'failed',
                 'execution_id': execution_id,
                 'workflow_id': workflow_id,
                 'message': f'Stream error: {str(e)}',
                 'timestamp': datetime.now(UTC).isoformat(),
-            })}\n\n"
+            }
+            yield f"data: {json.dumps(error_event)}\n\n"
         finally:
             logger.info(
                 "workflow_sse_connection_closed",
