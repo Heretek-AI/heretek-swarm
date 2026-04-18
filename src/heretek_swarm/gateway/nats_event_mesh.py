@@ -254,6 +254,7 @@ class NATSEventMesh:
                         reconnect_time_wait=self.reconnect_time_wait,
                         ping_interval=self.ping_interval,
                         max_outstanding_pings=self.max_outstanding_pings,
+                        max_reconnect_attempts=1,  # Fail fast, we handle retries
                     )
 
                     logger.info(f"Connected to {server}")

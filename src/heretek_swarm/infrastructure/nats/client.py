@@ -38,7 +38,7 @@ class NATSConfig:
     url: str = "nats://localhost:4222"
     name: str = "heretek-swarm"
     max_reconnect_attempts: int = 60
-    reconnect_time_step: float = 2.0
+    reconnect_time_wait: float = 2.0
     timeout: float = 30.0
     user_credentials: str | None = None
     nkey_seed: str | None = None
@@ -98,7 +98,7 @@ class NATSClient:
                     self.config.url,
                     name=self.config.name,
                     max_reconnect_attempts=self.config.max_reconnect_attempts,
-                    reconnect_time_step=self.config.reconnect_time_step,
+                    reconnect_time_wait=self.config.reconnect_time_wait,
                 )
 
                 self._state = ConnectionState.CONNECTED

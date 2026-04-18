@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-18T05:05:57.969867+00:00",
+    "generated_at": "2026-04-18T16:43:39.301299+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -6311,91 +6311,91 @@
         {
           "qualified_name": "src.heretek_swarm.api.agents.instances.list_agent_instances",
           "start_line": 26,
-          "end_line": 58,
+          "end_line": 59,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents.instances.get_agent_instance",
-          "start_line": 62,
-          "end_line": 104,
+          "start_line": 63,
+          "end_line": 105,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents.instances.get_agent_logs",
-          "start_line": 108,
-          "end_line": 160,
+          "start_line": 109,
+          "end_line": 161,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents.instances.get_registry_stats",
-          "start_line": 169,
-          "end_line": 182,
+          "start_line": 170,
+          "end_line": 183,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents.instances.ChannelType",
-          "start_line": 189,
-          "end_line": 194,
+          "start_line": 190,
+          "end_line": 195,
           "node_type": "CLASS",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents.instances.ChannelDirection",
-          "start_line": 197,
-          "end_line": 201,
+          "start_line": 198,
+          "end_line": 202,
           "node_type": "CLASS",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents.instances.ChannelSubscriptionCreate",
-          "start_line": 204,
-          "end_line": 210,
+          "start_line": 205,
+          "end_line": 211,
           "node_type": "CLASS",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents.instances.ChannelSubscriptionResponse",
-          "start_line": 213,
-          "end_line": 220,
+          "start_line": 214,
+          "end_line": 221,
           "node_type": "CLASS",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents.instances.ChannelSubscriptionsListResponse",
-          "start_line": 223,
-          "end_line": 227,
+          "start_line": 224,
+          "end_line": 228,
           "node_type": "CLASS",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents.instances.get_channel_registry_instance",
-          "start_line": 234,
-          "end_line": 236,
+          "start_line": 235,
+          "end_line": 237,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents.instances.get_agent_channels",
-          "start_line": 240,
-          "end_line": 288,
+          "start_line": 241,
+          "end_line": 289,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents.instances.add_agent_channel_subscription",
-          "start_line": 292,
-          "end_line": 340,
+          "start_line": 293,
+          "end_line": 341,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents.instances.remove_agent_channel_subscription",
-          "start_line": 344,
-          "end_line": 384,
+          "start_line": 345,
+          "end_line": 385,
           "node_type": "FUNCTION",
           "status": "unchanged"
         }
@@ -6974,7 +6974,7 @@
       ]
     },
     "src/heretek_swarm/api/configuration.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.api.configuration._get_llm_provider_factory",
@@ -7016,21 +7016,21 @@
           "start_line": 111,
           "end_line": 121,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.configuration.create_config",
           "start_line": 125,
           "end_line": 135,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.configuration.delete_config",
           "start_line": 139,
           "end_line": 148,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.configuration.list_llm_provider_types",
@@ -7058,21 +7058,21 @@
           "start_line": 194,
           "end_line": 205,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.configuration.update_llm_provider",
           "start_line": 209,
           "end_line": 219,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.configuration.delete_llm_provider",
           "start_line": 223,
           "end_line": 232,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.configuration.test_llm_provider",
@@ -7107,21 +7107,21 @@
           "start_line": 324,
           "end_line": 334,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.configuration.update_embedding_provider",
           "start_line": 338,
           "end_line": 350,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.configuration.delete_embedding_provider",
           "start_line": 354,
           "end_line": 363,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.configuration.test_embedding_provider",
@@ -7149,21 +7149,21 @@
           "start_line": 452,
           "end_line": 462,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.configuration.update_agent_config",
           "start_line": 466,
           "end_line": 476,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.configuration.delete_agent_config",
           "start_line": 480,
           "end_line": 489,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.configuration.get_audit_log",
@@ -7184,14 +7184,14 @@
           "start_line": 528,
           "end_line": 536,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.configuration.migrate_from_env",
           "start_line": 545,
           "end_line": 550,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.configuration.reload_configurations",
@@ -7219,7 +7219,7 @@
           "start_line": 679,
           "end_line": 706,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         }
       ]
     },
@@ -7320,77 +7320,77 @@
         {
           "qualified_name": "src.heretek_swarm.api.consciousness.get_agent_iit_metrics",
           "start_line": 459,
-          "end_line": 485,
+          "end_line": 493,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.consciousness.get_agent_fep_metrics",
-          "start_line": 489,
-          "end_line": 519,
+          "start_line": 497,
+          "end_line": 527,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.consciousness.get_connectivity_matrix",
-          "start_line": 523,
-          "end_line": 540,
+          "start_line": 531,
+          "end_line": 556,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.consciousness.get_consciousness_states",
-          "start_line": 544,
-          "end_line": 569,
+          "start_line": 560,
+          "end_line": 585,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.consciousness.get_consciousness_history",
-          "start_line": 573,
-          "end_line": 606,
+          "start_line": 589,
+          "end_line": 618,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.consciousness.record_interaction",
-          "start_line": 610,
-          "end_line": 633,
+          "start_line": 622,
+          "end_line": 645,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.consciousness.record_prediction",
-          "start_line": 637,
-          "end_line": 660,
+          "start_line": 649,
+          "end_line": 672,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.consciousness.record_outcome",
-          "start_line": 664,
-          "end_line": 686,
+          "start_line": 676,
+          "end_line": 698,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.consciousness.calculate_consciousness_metrics",
-          "start_line": 690,
-          "end_line": 711,
+          "start_line": 702,
+          "end_line": 723,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.consciousness.get_network_visualization",
-          "start_line": 715,
-          "end_line": 757,
+          "start_line": 727,
+          "end_line": 779,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.consciousness.get_timeseries_data",
-          "start_line": 761,
-          "end_line": 810,
+          "start_line": 783,
+          "end_line": 832,
           "node_type": "FUNCTION",
           "status": "unchanged"
         }
@@ -8789,7 +8789,7 @@
         {
           "qualified_name": "src.heretek_swarm.api.websockets.WebSocketAuthManager",
           "start_line": 32,
-          "end_line": 114,
+          "end_line": 122,
           "node_type": "CLASS",
           "status": "unchanged"
         },
@@ -8810,371 +8810,371 @@
         {
           "qualified_name": "src.heretek_swarm.api.websockets.WebSocketAuthManager.validate_token",
           "start_line": 56,
-          "end_line": 74,
+          "end_line": 82,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets.WebSocketAuthManager.revoke_token",
-          "start_line": 76,
-          "end_line": 81,
+          "start_line": 84,
+          "end_line": 89,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets.WebSocketAuthManager.check_rate_limit",
-          "start_line": 83,
-          "end_line": 106,
-          "node_type": "METHOD",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.api.websockets.WebSocketAuthManager.cleanup_expired",
-          "start_line": 108,
+          "start_line": 91,
           "end_line": 114,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
+          "qualified_name": "src.heretek_swarm.api.websockets.WebSocketAuthManager.cleanup_expired",
+          "start_line": 116,
+          "end_line": 122,
+          "node_type": "METHOD",
+          "status": "unchanged"
+        },
+        {
           "qualified_name": "src.heretek_swarm.api.websockets.authenticate_websocket",
-          "start_line": 121,
-          "end_line": 138,
+          "start_line": 129,
+          "end_line": 146,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets._ws_authenticate_and_accept",
-          "start_line": 141,
-          "end_line": 160,
+          "start_line": 149,
+          "end_line": 168,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets._ws_handle_agent_subscribe",
-          "start_line": 163,
-          "end_line": 175,
+          "start_line": 171,
+          "end_line": 183,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets._ws_handle_agent_unsubscribe",
-          "start_line": 178,
-          "end_line": 186,
+          "start_line": 186,
+          "end_line": 194,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets._ws_handle_workflow_subscribe",
-          "start_line": 189,
-          "end_line": 197,
+          "start_line": 197,
+          "end_line": 205,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets._ws_handle_workflow_unsubscribe",
-          "start_line": 200,
-          "end_line": 208,
+          "start_line": 208,
+          "end_line": 216,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets._ws_handle_metrics_subscribe",
-          "start_line": 211,
-          "end_line": 219,
+          "start_line": 219,
+          "end_line": 227,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets._ws_handle_metrics_unsubscribe",
-          "start_line": 222,
-          "end_line": 230,
+          "start_line": 230,
+          "end_line": 238,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets._ws_handle_dashboard_message",
-          "start_line": 233,
-          "end_line": 255,
+          "start_line": 241,
+          "end_line": 263,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager",
-          "start_line": 266,
-          "end_line": 504,
+          "start_line": 277,
+          "end_line": 515,
           "node_type": "CLASS",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.__init__",
-          "start_line": 269,
-          "end_line": 280,
+          "start_line": 280,
+          "end_line": 291,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.connect_execution",
-          "start_line": 282,
-          "end_line": 288,
+          "start_line": 293,
+          "end_line": 299,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.disconnect_execution",
-          "start_line": 290,
-          "end_line": 295,
+          "start_line": 301,
+          "end_line": 306,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.connect_a2a",
-          "start_line": 297,
-          "end_line": 301,
+          "start_line": 308,
+          "end_line": 312,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.disconnect_a2a",
-          "start_line": 303,
-          "end_line": 305,
+          "start_line": 314,
+          "end_line": 316,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.connect_dashboard",
-          "start_line": 307,
-          "end_line": 311,
+          "start_line": 318,
+          "end_line": 322,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.disconnect_dashboard",
-          "start_line": 313,
-          "end_line": 315,
+          "start_line": 324,
+          "end_line": 326,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.connect_observability",
-          "start_line": 317,
-          "end_line": 321,
+          "start_line": 328,
+          "end_line": 332,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.disconnect_observability",
-          "start_line": 323,
-          "end_line": 325,
+          "start_line": 334,
+          "end_line": 336,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_execution",
-          "start_line": 327,
-          "end_line": 341,
+          "start_line": 338,
+          "end_line": 352,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_a2a",
-          "start_line": 343,
-          "end_line": 355,
+          "start_line": 354,
+          "end_line": 366,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_dashboard",
-          "start_line": 357,
-          "end_line": 369,
+          "start_line": 368,
+          "end_line": 380,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_observability",
-          "start_line": 371,
-          "end_line": 383,
+          "start_line": 382,
+          "end_line": 394,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_agent_status",
-          "start_line": 385,
-          "end_line": 399,
+          "start_line": 396,
+          "end_line": 410,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_workflow_progress",
-          "start_line": 401,
-          "end_line": 420,
+          "start_line": 412,
+          "end_line": 431,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_metrics",
-          "start_line": 422,
-          "end_line": 441,
+          "start_line": 433,
+          "end_line": 452,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.subscribe_agent_status",
-          "start_line": 443,
-          "end_line": 445,
-          "node_type": "METHOD",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.unsubscribe_agent_status",
-          "start_line": 447,
-          "end_line": 450,
-          "node_type": "METHOD",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.subscribe_workflow_progress",
-          "start_line": 452,
+          "start_line": 454,
           "end_line": 456,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
-          "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.unsubscribe_workflow_progress",
+          "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.unsubscribe_agent_status",
           "start_line": 458,
-          "end_line": 463,
+          "end_line": 461,
+          "node_type": "METHOD",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.subscribe_workflow_progress",
+          "start_line": 463,
+          "end_line": 467,
+          "node_type": "METHOD",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.unsubscribe_workflow_progress",
+          "start_line": 469,
+          "end_line": 474,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.subscribe_metrics",
-          "start_line": 465,
-          "end_line": 469,
+          "start_line": 476,
+          "end_line": 480,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.unsubscribe_metrics",
-          "start_line": 471,
-          "end_line": 476,
-          "node_type": "METHOD",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.connect_logs",
-          "start_line": 478,
-          "end_line": 482,
-          "node_type": "METHOD",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.disconnect_logs",
-          "start_line": 484,
+          "start_line": 482,
           "end_line": 487,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
-          "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_log",
+          "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.connect_logs",
           "start_line": 489,
-          "end_line": 504,
+          "end_line": 493,
+          "node_type": "METHOD",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.disconnect_logs",
+          "start_line": 495,
+          "end_line": 498,
+          "node_type": "METHOD",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_log",
+          "start_line": 500,
+          "end_line": 515,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets.execution_websocket",
-          "start_line": 520,
-          "end_line": 618,
+          "start_line": 531,
+          "end_line": 629,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets.get_execution_update",
-          "start_line": 625,
-          "end_line": 642,
+          "start_line": 636,
+          "end_line": 653,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets.a2a_websocket",
-          "start_line": 651,
-          "end_line": 736,
+          "start_line": 662,
+          "end_line": 722,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets.agent_events_websocket",
-          "start_line": 745,
-          "end_line": 814,
+          "start_line": 731,
+          "end_line": 800,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets.agent_status_websocket",
-          "start_line": 823,
-          "end_line": 887,
+          "start_line": 809,
+          "end_line": 873,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets.workflow_progress_websocket",
-          "start_line": 896,
-          "end_line": 960,
+          "start_line": 882,
+          "end_line": 946,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets.agent_metrics_websocket",
-          "start_line": 969,
-          "end_line": 1037,
+          "start_line": 955,
+          "end_line": 1023,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets.dashboard_websocket",
-          "start_line": 1046,
-          "end_line": 1104,
+          "start_line": 1032,
+          "end_line": 1100,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets.observability_websocket",
-          "start_line": 1113,
-          "end_line": 1182,
+          "start_line": 1109,
+          "end_line": 1178,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets.logs_websocket",
-          "start_line": 1186,
-          "end_line": 1205,
+          "start_line": 1182,
+          "end_line": 1201,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets.all_agents_websocket",
-          "start_line": 1214,
-          "end_line": 1268,
+          "start_line": 1211,
+          "end_line": 1265,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets.send_agent_status_update",
-          "start_line": 1276,
-          "end_line": 1291,
+          "start_line": 1273,
+          "end_line": 1288,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets.send_workflow_progress_update",
-          "start_line": 1294,
-          "end_line": 1311,
+          "start_line": 1291,
+          "end_line": 1308,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets.send_agent_metrics_update",
-          "start_line": 1314,
-          "end_line": 1341,
+          "start_line": 1311,
+          "end_line": 1338,
           "node_type": "FUNCTION",
           "status": "unchanged"
         }
@@ -41061,7 +41061,7 @@
       ]
     },
     "dashboard/frontend/src/components/Canvas/Canvas.tsx": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.AgentApiResponse",
@@ -41073,9 +41073,16 @@
         {
           "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas",
           "start_line": 94,
-          "end_line": 298,
+          "end_line": 300,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback",
+          "start_line": 112,
+          "end_line": 116,
+          "node_type": "FUNCTION",
+          "status": "modified"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.activeEdges.forEach() callback",
@@ -41158,13 +41165,6 @@
           "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onPaneClick.useCallback() callback",
           "start_line": 231,
           "end_line": 233,
-          "node_type": "FUNCTION",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback",
-          "start_line": 236,
-          "end_line": 250,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
@@ -47455,408 +47455,415 @@
       "file_status": "unchanged",
       "methods": [
         {
+          "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.authFetch",
+          "start_line": 60,
+          "end_line": 68,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
           "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder",
-          "start_line": 61,
-          "end_line": 714,
+          "start_line": 73,
+          "end_line": 726,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.nodePalette.useMemo() callback",
-          "start_line": 114,
-          "end_line": 228,
-          "node_type": "FUNCTION",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.nodeTypes.useMemo() callback",
-          "start_line": 233,
+          "start_line": 126,
           "end_line": 240,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
-          "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.addNode.useCallback() callback",
+          "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.nodeTypes.useMemo() callback",
           "start_line": 245,
-          "end_line": 269,
+          "end_line": 252,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.addNode.useCallback() callback",
+          "start_line": 257,
+          "end_line": 281,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.addNode.useCallback() callback.paletteItem.nodePalette.find() callback",
-          "start_line": 246,
-          "end_line": 246,
+          "start_line": 258,
+          "end_line": 258,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.addNode.useCallback() callback.setNodes() callback",
-          "start_line": 264,
-          "end_line": 264,
+          "start_line": 276,
+          "end_line": 276,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.addNode.useCallback() callback.setNodeConfig() callback",
-          "start_line": 265,
-          "end_line": 268,
+          "start_line": 277,
+          "end_line": 280,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.handleOpenConfig.useCallback() callback",
-          "start_line": 274,
-          "end_line": 288,
+          "start_line": 286,
+          "end_line": 300,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.handleOpenConfig.useCallback() callback.node.nodes.find() callback",
-          "start_line": 275,
-          "end_line": 275,
+          "start_line": 287,
+          "end_line": 287,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.handleCloseConfig.useCallback() callback",
-          "start_line": 293,
-          "end_line": 296,
+          "start_line": 305,
+          "end_line": 308,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.handleSaveConfig.useCallback() callback",
-          "start_line": 301,
-          "end_line": 372,
-          "node_type": "FUNCTION",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.handleSaveConfig.useCallback() callback.setNodeConfig() callback",
-          "start_line": 334,
-          "end_line": 344,
-          "node_type": "FUNCTION",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.handleSaveConfig.useCallback() callback.setNodes() callback",
-          "start_line": 347,
-          "end_line": 365,
-          "node_type": "FUNCTION",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.handleSaveConfig.useCallback() callback.setNodes() callback.nds.map() callback",
-          "start_line": 348,
-          "end_line": 364,
-          "node_type": "FUNCTION",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.deleteNode.useCallback() callback",
-          "start_line": 377,
-          "end_line": 388,
-          "node_type": "FUNCTION",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.deleteNode.useCallback() callback.setNodes() callback",
-          "start_line": 378,
-          "end_line": 378,
-          "node_type": "FUNCTION",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.deleteNode.useCallback() callback.setNodes() callback.nds.filter() callback",
-          "start_line": 378,
-          "end_line": 378,
-          "node_type": "FUNCTION",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.deleteNode.useCallback() callback.setEdges() callback",
-          "start_line": 379,
-          "end_line": 379,
-          "node_type": "FUNCTION",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.deleteNode.useCallback() callback.setEdges() callback.eds.filter() callback",
-          "start_line": 379,
-          "end_line": 379,
-          "node_type": "FUNCTION",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.deleteNode.useCallback() callback.setNodeConfig() callback",
-          "start_line": 380,
+          "start_line": 313,
           "end_line": 384,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
+          "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.handleSaveConfig.useCallback() callback.setNodeConfig() callback",
+          "start_line": 346,
+          "end_line": 356,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.handleSaveConfig.useCallback() callback.setNodes() callback",
+          "start_line": 359,
+          "end_line": 377,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.handleSaveConfig.useCallback() callback.setNodes() callback.nds.map() callback",
+          "start_line": 360,
+          "end_line": 376,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.deleteNode.useCallback() callback",
+          "start_line": 389,
+          "end_line": 400,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.deleteNode.useCallback() callback.setNodes() callback",
+          "start_line": 390,
+          "end_line": 390,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.deleteNode.useCallback() callback.setNodes() callback.nds.filter() callback",
+          "start_line": 390,
+          "end_line": 390,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.deleteNode.useCallback() callback.setEdges() callback",
+          "start_line": 391,
+          "end_line": 391,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.deleteNode.useCallback() callback.setEdges() callback.eds.filter() callback",
+          "start_line": 391,
+          "end_line": 391,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.deleteNode.useCallback() callback.setNodeConfig() callback",
+          "start_line": 392,
+          "end_line": 396,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
           "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.onConnect.useCallback() callback",
-          "start_line": 393,
-          "end_line": 395,
+          "start_line": 405,
+          "end_line": 407,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.onConnect.useCallback() callback.setEdges() callback",
-          "start_line": 394,
-          "end_line": 394,
-          "node_type": "FUNCTION",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.onNodeClick.useCallback() callback",
-          "start_line": 400,
+          "start_line": 406,
           "end_line": 406,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
+          "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.onNodeClick.useCallback() callback",
+          "start_line": 412,
+          "end_line": 418,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
           "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.onPaneClick.useCallback() callback",
-          "start_line": 411,
-          "end_line": 413,
-          "node_type": "FUNCTION",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.validateWorkflow.useCallback() callback",
-          "start_line": 418,
-          "end_line": 465,
-          "node_type": "FUNCTION",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.validateWorkflow.useCallback() callback.nodes.forEach() callback.hasConnections.edges.some() callback",
-          "start_line": 425,
+          "start_line": 423,
           "end_line": 425,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
+          "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.validateWorkflow.useCallback() callback",
+          "start_line": 430,
+          "end_line": 477,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.validateWorkflow.useCallback() callback.nodes.forEach() callback.hasConnections.edges.some() callback",
+          "start_line": 437,
+          "end_line": 437,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
           "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.validateWorkflow.useCallback() callback.hasCycle.outgoingEdges.edges.filter() callback",
-          "start_line": 445,
-          "end_line": 445,
+          "start_line": 457,
+          "end_line": 457,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.validateWorkflow.useCallback() callback.hasCycle.outgoingEdges.some() callback",
-          "start_line": 446,
-          "end_line": 446,
-          "node_type": "FUNCTION",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.validateWorkflow.useCallback() callback.nodes.forEach() callback",
-          "start_line": 449,
+          "start_line": 458,
           "end_line": 458,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
+          "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.validateWorkflow.useCallback() callback.nodes.forEach() callback",
+          "start_line": 461,
+          "end_line": 470,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
           "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.exportWorkflow.useCallback() callback",
-          "start_line": 470,
-          "end_line": 509,
+          "start_line": 482,
+          "end_line": 521,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.exportWorkflow.useCallback() callback.workflow.nodes.nodes.map() callback",
-          "start_line": 475,
-          "end_line": 475,
+          "start_line": 487,
+          "end_line": 487,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.exportWorkflow.useCallback() callback.nodes.forEach() callback",
-          "start_line": 489,
-          "end_line": 492,
+          "start_line": 501,
+          "end_line": 504,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.exportWorkflow.useCallback() callback.edges.forEach() callback",
-          "start_line": 494,
-          "end_line": 497,
+          "start_line": 506,
+          "end_line": 509,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.saveWorkflow.useCallback() callback",
-          "start_line": 514,
-          "end_line": 541,
+          "start_line": 526,
+          "end_line": 553,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.saveWorkflow.useCallback() callback.response.body.nodes.nodes.map() callback",
-          "start_line": 523,
-          "end_line": 523,
-          "node_type": "FUNCTION",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.saveWorkflow.useCallback() callback.setSavedWorkflows() callback",
           "start_line": 535,
           "end_line": 535,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
+          "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.saveWorkflow.useCallback() callback.setSavedWorkflows() callback",
+          "start_line": 547,
+          "end_line": 547,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
           "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.loadWorkflows.useCallback() callback",
-          "start_line": 546,
-          "end_line": 556,
+          "start_line": 558,
+          "end_line": 568,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.loadWorkflow.useCallback() callback",
-          "start_line": 561,
-          "end_line": 578,
+          "start_line": 573,
+          "end_line": 590,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.loadWorkflow.useCallback() callback.data.nodes.map() callback",
-          "start_line": 567,
-          "end_line": 572,
+          "start_line": 579,
+          "end_line": 584,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback",
-          "start_line": 583,
-          "end_line": 638,
+          "start_line": 595,
+          "end_line": 650,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onopen",
-          "start_line": 599,
-          "end_line": 603,
+          "start_line": 611,
+          "end_line": 615,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onopen.setExecutionState() callback",
-          "start_line": 602,
-          "end_line": 602,
+          "start_line": 614,
+          "end_line": 614,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onmessage",
-          "start_line": 605,
-          "end_line": 628,
+          "start_line": 617,
+          "end_line": 640,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onmessage.setTimeout() callback",
-          "start_line": 620,
-          "end_line": 623,
-          "node_type": "FUNCTION",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onerror",
-          "start_line": 630,
+          "start_line": 632,
           "end_line": 635,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
+          "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onerror",
+          "start_line": 642,
+          "end_line": 647,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
           "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onerror.setExecutionState() callback",
-          "start_line": 632,
-          "end_line": 632,
+          "start_line": 644,
+          "end_line": 644,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback",
-          "start_line": 640,
-          "end_line": 675,
+          "start_line": 652,
+          "end_line": 687,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback.saveResponse.body.nodes.nodes.map() callback",
-          "start_line": 655,
-          "end_line": 655,
+          "start_line": 667,
+          "end_line": 667,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback.setExecutionState() callback",
-          "start_line": 672,
-          "end_line": 672,
+          "start_line": 684,
+          "end_line": 684,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.useEffect() callback",
-          "start_line": 687,
-          "end_line": 689,
+          "start_line": 699,
+          "end_line": 701,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.savedWorkflows.map() callback",
-          "start_line": 726,
-          "end_line": 727,
+          "start_line": 738,
+          "end_line": 739,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.validation.errors.map() callback",
-          "start_line": 745,
-          "end_line": 746,
-          "node_type": "FUNCTION",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.<unknown>.map() callback",
           "start_line": 757,
           "end_line": 758,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
+          "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.<unknown>.map() callback",
+          "start_line": 769,
+          "end_line": 770,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
           "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.<unknown>.<unknown>..filter() callback",
-          "start_line": 761,
-          "end_line": 761,
+          "start_line": 773,
+          "end_line": 773,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.<unknown>.<unknown>.map() callback",
-          "start_line": 762,
-          "end_line": 764,
+          "start_line": 774,
+          "end_line": 776,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.map() callback",
-          "start_line": 911,
-          "end_line": 912,
+          "start_line": 923,
+          "end_line": 924,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.try.setNodeConfig",
-          "start_line": 921,
-          "end_line": 921,
+          "start_line": 933,
+          "end_line": 933,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.setNodeConfig() callback",
-          "start_line": 929,
-          "end_line": 935,
+          "start_line": 941,
+          "end_line": 947,
           "node_type": "FUNCTION",
           "status": "unchanged"
         }
@@ -48854,7 +48861,7 @@
       ]
     },
     "dashboard/frontend/src/hooks/useWebSocket.ts": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "dashboard.frontend.src.hooks.useWebSocket.WebSocketMessage",
@@ -48873,23 +48880,23 @@
         {
           "qualified_name": "dashboard.frontend.src.hooks.useWebSocket.useWebSocket",
           "start_line": 24,
-          "end_line": 129,
+          "end_line": 142,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.apiHost.<function>",
+          "start_line": 45,
+          "end_line": 52,
+          "node_type": "FUNCTION",
+          "status": "added"
         },
         {
           "qualified_name": "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect",
           "start_line": 46,
           "end_line": 89,
           "node_type": "CLASS",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback",
-          "start_line": 46,
-          "end_line": 89,
-          "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onopen",
@@ -48897,6 +48904,13 @@
           "end_line": 58,
           "node_type": "FUNCTION",
           "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback",
+          "start_line": 54,
+          "end_line": 102,
+          "node_type": "FUNCTION",
+          "status": "modified"
         },
         {
           "qualified_name": "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onclose",
@@ -48924,7 +48938,7 @@
           "start_line": 91,
           "end_line": 98,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.sendMessage.useCallback() callback",
@@ -48938,7 +48952,7 @@
           "start_line": 100,
           "end_line": 110,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.disconnect.useCallback() callback",
@@ -59179,103 +59193,103 @@
       "file_path": "src/heretek_swarm/api/agents/instances.py",
       "qualified_name": "src.heretek_swarm.api.agents.instances.list_agent_instances",
       "start_line": 26,
-      "end_line": 58,
+      "end_line": 59,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/agents/instances.py|src.heretek_swarm.api.agents.instances.get_agent_instance": {
       "file_path": "src/heretek_swarm/api/agents/instances.py",
       "qualified_name": "src.heretek_swarm.api.agents.instances.get_agent_instance",
-      "start_line": 62,
-      "end_line": 104,
+      "start_line": 63,
+      "end_line": 105,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/agents/instances.py|src.heretek_swarm.api.agents.instances.get_agent_logs": {
       "file_path": "src/heretek_swarm/api/agents/instances.py",
       "qualified_name": "src.heretek_swarm.api.agents.instances.get_agent_logs",
-      "start_line": 108,
-      "end_line": 160,
+      "start_line": 109,
+      "end_line": 161,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/agents/instances.py|src.heretek_swarm.api.agents.instances.get_registry_stats": {
       "file_path": "src/heretek_swarm/api/agents/instances.py",
       "qualified_name": "src.heretek_swarm.api.agents.instances.get_registry_stats",
-      "start_line": 169,
-      "end_line": 182,
+      "start_line": 170,
+      "end_line": 183,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/agents/instances.py|src.heretek_swarm.api.agents.instances.ChannelType": {
       "file_path": "src/heretek_swarm/api/agents/instances.py",
       "qualified_name": "src.heretek_swarm.api.agents.instances.ChannelType",
-      "start_line": 189,
-      "end_line": 194,
+      "start_line": 190,
+      "end_line": 195,
       "type": "CLASS",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/agents/instances.py|src.heretek_swarm.api.agents.instances.ChannelDirection": {
       "file_path": "src/heretek_swarm/api/agents/instances.py",
       "qualified_name": "src.heretek_swarm.api.agents.instances.ChannelDirection",
-      "start_line": 197,
-      "end_line": 201,
+      "start_line": 198,
+      "end_line": 202,
       "type": "CLASS",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/agents/instances.py|src.heretek_swarm.api.agents.instances.ChannelSubscriptionCreate": {
       "file_path": "src/heretek_swarm/api/agents/instances.py",
       "qualified_name": "src.heretek_swarm.api.agents.instances.ChannelSubscriptionCreate",
-      "start_line": 204,
-      "end_line": 210,
+      "start_line": 205,
+      "end_line": 211,
       "type": "CLASS",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/agents/instances.py|src.heretek_swarm.api.agents.instances.ChannelSubscriptionResponse": {
       "file_path": "src/heretek_swarm/api/agents/instances.py",
       "qualified_name": "src.heretek_swarm.api.agents.instances.ChannelSubscriptionResponse",
-      "start_line": 213,
-      "end_line": 220,
+      "start_line": 214,
+      "end_line": 221,
       "type": "CLASS",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/agents/instances.py|src.heretek_swarm.api.agents.instances.ChannelSubscriptionsListResponse": {
       "file_path": "src/heretek_swarm/api/agents/instances.py",
       "qualified_name": "src.heretek_swarm.api.agents.instances.ChannelSubscriptionsListResponse",
-      "start_line": 223,
-      "end_line": 227,
+      "start_line": 224,
+      "end_line": 228,
       "type": "CLASS",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/agents/instances.py|src.heretek_swarm.api.agents.instances.get_channel_registry_instance": {
       "file_path": "src/heretek_swarm/api/agents/instances.py",
       "qualified_name": "src.heretek_swarm.api.agents.instances.get_channel_registry_instance",
-      "start_line": 234,
-      "end_line": 236,
+      "start_line": 235,
+      "end_line": 237,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/agents/instances.py|src.heretek_swarm.api.agents.instances.get_agent_channels": {
       "file_path": "src/heretek_swarm/api/agents/instances.py",
       "qualified_name": "src.heretek_swarm.api.agents.instances.get_agent_channels",
-      "start_line": 240,
-      "end_line": 288,
+      "start_line": 241,
+      "end_line": 289,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/agents/instances.py|src.heretek_swarm.api.agents.instances.add_agent_channel_subscription": {
       "file_path": "src/heretek_swarm/api/agents/instances.py",
       "qualified_name": "src.heretek_swarm.api.agents.instances.add_agent_channel_subscription",
-      "start_line": 292,
-      "end_line": 340,
+      "start_line": 293,
+      "end_line": 341,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/agents/instances.py|src.heretek_swarm.api.agents.instances.remove_agent_channel_subscription": {
       "file_path": "src/heretek_swarm/api/agents/instances.py",
       "qualified_name": "src.heretek_swarm.api.agents.instances.remove_agent_channel_subscription",
-      "start_line": 344,
-      "end_line": 384,
+      "start_line": 345,
+      "end_line": 385,
       "type": "FUNCTION",
       "status": "unchanged"
     },
@@ -59933,7 +59947,7 @@
       "start_line": 111,
       "end_line": 121,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/configuration.py|src.heretek_swarm.api.configuration.create_config": {
       "file_path": "src/heretek_swarm/api/configuration.py",
@@ -59941,7 +59955,7 @@
       "start_line": 125,
       "end_line": 135,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/configuration.py|src.heretek_swarm.api.configuration.delete_config": {
       "file_path": "src/heretek_swarm/api/configuration.py",
@@ -59949,7 +59963,7 @@
       "start_line": 139,
       "end_line": 148,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/configuration.py|src.heretek_swarm.api.configuration.list_llm_provider_types": {
       "file_path": "src/heretek_swarm/api/configuration.py",
@@ -59981,7 +59995,7 @@
       "start_line": 194,
       "end_line": 205,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/configuration.py|src.heretek_swarm.api.configuration.update_llm_provider": {
       "file_path": "src/heretek_swarm/api/configuration.py",
@@ -59989,7 +60003,7 @@
       "start_line": 209,
       "end_line": 219,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/configuration.py|src.heretek_swarm.api.configuration.delete_llm_provider": {
       "file_path": "src/heretek_swarm/api/configuration.py",
@@ -59997,7 +60011,7 @@
       "start_line": 223,
       "end_line": 232,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/configuration.py|src.heretek_swarm.api.configuration.test_llm_provider": {
       "file_path": "src/heretek_swarm/api/configuration.py",
@@ -60037,7 +60051,7 @@
       "start_line": 324,
       "end_line": 334,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/configuration.py|src.heretek_swarm.api.configuration.update_embedding_provider": {
       "file_path": "src/heretek_swarm/api/configuration.py",
@@ -60045,7 +60059,7 @@
       "start_line": 338,
       "end_line": 350,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/configuration.py|src.heretek_swarm.api.configuration.delete_embedding_provider": {
       "file_path": "src/heretek_swarm/api/configuration.py",
@@ -60053,7 +60067,7 @@
       "start_line": 354,
       "end_line": 363,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/configuration.py|src.heretek_swarm.api.configuration.test_embedding_provider": {
       "file_path": "src/heretek_swarm/api/configuration.py",
@@ -60085,7 +60099,7 @@
       "start_line": 452,
       "end_line": 462,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/configuration.py|src.heretek_swarm.api.configuration.update_agent_config": {
       "file_path": "src/heretek_swarm/api/configuration.py",
@@ -60093,7 +60107,7 @@
       "start_line": 466,
       "end_line": 476,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/configuration.py|src.heretek_swarm.api.configuration.delete_agent_config": {
       "file_path": "src/heretek_swarm/api/configuration.py",
@@ -60101,7 +60115,7 @@
       "start_line": 480,
       "end_line": 489,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/configuration.py|src.heretek_swarm.api.configuration.get_audit_log": {
       "file_path": "src/heretek_swarm/api/configuration.py",
@@ -60125,7 +60139,7 @@
       "start_line": 528,
       "end_line": 536,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/configuration.py|src.heretek_swarm.api.configuration.migrate_from_env": {
       "file_path": "src/heretek_swarm/api/configuration.py",
@@ -60133,7 +60147,7 @@
       "start_line": 545,
       "end_line": 550,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/configuration.py|src.heretek_swarm.api.configuration.reload_configurations": {
       "file_path": "src/heretek_swarm/api/configuration.py",
@@ -60165,7 +60179,7 @@
       "start_line": 679,
       "end_line": 706,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/consciousness.py|src.heretek_swarm.api.consciousness.get_consciousness_plugin": {
       "file_path": "src/heretek_swarm/api/consciousness.py",
@@ -60275,87 +60289,87 @@
       "file_path": "src/heretek_swarm/api/consciousness.py",
       "qualified_name": "src.heretek_swarm.api.consciousness.get_agent_iit_metrics",
       "start_line": 459,
-      "end_line": 485,
+      "end_line": 493,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/consciousness.py|src.heretek_swarm.api.consciousness.get_agent_fep_metrics": {
       "file_path": "src/heretek_swarm/api/consciousness.py",
       "qualified_name": "src.heretek_swarm.api.consciousness.get_agent_fep_metrics",
-      "start_line": 489,
-      "end_line": 519,
+      "start_line": 497,
+      "end_line": 527,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/consciousness.py|src.heretek_swarm.api.consciousness.get_connectivity_matrix": {
       "file_path": "src/heretek_swarm/api/consciousness.py",
       "qualified_name": "src.heretek_swarm.api.consciousness.get_connectivity_matrix",
-      "start_line": 523,
-      "end_line": 540,
+      "start_line": 531,
+      "end_line": 556,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/consciousness.py|src.heretek_swarm.api.consciousness.get_consciousness_states": {
       "file_path": "src/heretek_swarm/api/consciousness.py",
       "qualified_name": "src.heretek_swarm.api.consciousness.get_consciousness_states",
-      "start_line": 544,
-      "end_line": 569,
+      "start_line": 560,
+      "end_line": 585,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/consciousness.py|src.heretek_swarm.api.consciousness.get_consciousness_history": {
       "file_path": "src/heretek_swarm/api/consciousness.py",
       "qualified_name": "src.heretek_swarm.api.consciousness.get_consciousness_history",
-      "start_line": 573,
-      "end_line": 606,
+      "start_line": 589,
+      "end_line": 618,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/consciousness.py|src.heretek_swarm.api.consciousness.record_interaction": {
       "file_path": "src/heretek_swarm/api/consciousness.py",
       "qualified_name": "src.heretek_swarm.api.consciousness.record_interaction",
-      "start_line": 610,
-      "end_line": 633,
+      "start_line": 622,
+      "end_line": 645,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/consciousness.py|src.heretek_swarm.api.consciousness.record_prediction": {
       "file_path": "src/heretek_swarm/api/consciousness.py",
       "qualified_name": "src.heretek_swarm.api.consciousness.record_prediction",
-      "start_line": 637,
-      "end_line": 660,
+      "start_line": 649,
+      "end_line": 672,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/consciousness.py|src.heretek_swarm.api.consciousness.record_outcome": {
       "file_path": "src/heretek_swarm/api/consciousness.py",
       "qualified_name": "src.heretek_swarm.api.consciousness.record_outcome",
-      "start_line": 664,
-      "end_line": 686,
+      "start_line": 676,
+      "end_line": 698,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/consciousness.py|src.heretek_swarm.api.consciousness.calculate_consciousness_metrics": {
       "file_path": "src/heretek_swarm/api/consciousness.py",
       "qualified_name": "src.heretek_swarm.api.consciousness.calculate_consciousness_metrics",
-      "start_line": 690,
-      "end_line": 711,
+      "start_line": 702,
+      "end_line": 723,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/consciousness.py|src.heretek_swarm.api.consciousness.get_network_visualization": {
       "file_path": "src/heretek_swarm/api/consciousness.py",
       "qualified_name": "src.heretek_swarm.api.consciousness.get_network_visualization",
-      "start_line": 715,
-      "end_line": 757,
+      "start_line": 727,
+      "end_line": 779,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/consciousness.py|src.heretek_swarm.api.consciousness.get_timeseries_data": {
       "file_path": "src/heretek_swarm/api/consciousness.py",
       "qualified_name": "src.heretek_swarm.api.consciousness.get_timeseries_data",
-      "start_line": 761,
-      "end_line": 810,
+      "start_line": 783,
+      "end_line": 832,
       "type": "FUNCTION",
       "status": "unchanged"
     },
@@ -61891,7 +61905,7 @@
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.WebSocketAuthManager",
       "start_line": 32,
-      "end_line": 114,
+      "end_line": 122,
       "type": "CLASS",
       "status": "unchanged"
     },
@@ -61915,423 +61929,423 @@
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.WebSocketAuthManager.validate_token",
       "start_line": 56,
-      "end_line": 74,
+      "end_line": 82,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.WebSocketAuthManager.revoke_token": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.WebSocketAuthManager.revoke_token",
-      "start_line": 76,
-      "end_line": 81,
+      "start_line": 84,
+      "end_line": 89,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.WebSocketAuthManager.check_rate_limit": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.WebSocketAuthManager.check_rate_limit",
-      "start_line": 83,
-      "end_line": 106,
+      "start_line": 91,
+      "end_line": 114,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.WebSocketAuthManager.cleanup_expired": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.WebSocketAuthManager.cleanup_expired",
-      "start_line": 108,
-      "end_line": 114,
+      "start_line": 116,
+      "end_line": 122,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.authenticate_websocket": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.authenticate_websocket",
-      "start_line": 121,
-      "end_line": 138,
+      "start_line": 129,
+      "end_line": 146,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets._ws_authenticate_and_accept": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets._ws_authenticate_and_accept",
-      "start_line": 141,
-      "end_line": 160,
+      "start_line": 149,
+      "end_line": 168,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets._ws_handle_agent_subscribe": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets._ws_handle_agent_subscribe",
-      "start_line": 163,
-      "end_line": 175,
+      "start_line": 171,
+      "end_line": 183,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets._ws_handle_agent_unsubscribe": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets._ws_handle_agent_unsubscribe",
-      "start_line": 178,
-      "end_line": 186,
+      "start_line": 186,
+      "end_line": 194,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets._ws_handle_workflow_subscribe": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets._ws_handle_workflow_subscribe",
-      "start_line": 189,
-      "end_line": 197,
+      "start_line": 197,
+      "end_line": 205,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets._ws_handle_workflow_unsubscribe": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets._ws_handle_workflow_unsubscribe",
-      "start_line": 200,
-      "end_line": 208,
+      "start_line": 208,
+      "end_line": 216,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets._ws_handle_metrics_subscribe": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets._ws_handle_metrics_subscribe",
-      "start_line": 211,
-      "end_line": 219,
+      "start_line": 219,
+      "end_line": 227,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets._ws_handle_metrics_unsubscribe": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets._ws_handle_metrics_unsubscribe",
-      "start_line": 222,
-      "end_line": 230,
+      "start_line": 230,
+      "end_line": 238,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets._ws_handle_dashboard_message": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets._ws_handle_dashboard_message",
-      "start_line": 233,
-      "end_line": 255,
+      "start_line": 241,
+      "end_line": 263,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.ConnectionManager": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager",
-      "start_line": 266,
-      "end_line": 504,
+      "start_line": 277,
+      "end_line": 515,
       "type": "CLASS",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.ConnectionManager.__init__": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.__init__",
-      "start_line": 269,
-      "end_line": 280,
+      "start_line": 280,
+      "end_line": 291,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.ConnectionManager.connect_execution": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.connect_execution",
-      "start_line": 282,
-      "end_line": 288,
+      "start_line": 293,
+      "end_line": 299,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.ConnectionManager.disconnect_execution": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.disconnect_execution",
-      "start_line": 290,
-      "end_line": 295,
+      "start_line": 301,
+      "end_line": 306,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.ConnectionManager.connect_a2a": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.connect_a2a",
-      "start_line": 297,
-      "end_line": 301,
+      "start_line": 308,
+      "end_line": 312,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.ConnectionManager.disconnect_a2a": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.disconnect_a2a",
-      "start_line": 303,
-      "end_line": 305,
+      "start_line": 314,
+      "end_line": 316,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.ConnectionManager.connect_dashboard": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.connect_dashboard",
-      "start_line": 307,
-      "end_line": 311,
+      "start_line": 318,
+      "end_line": 322,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.ConnectionManager.disconnect_dashboard": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.disconnect_dashboard",
-      "start_line": 313,
-      "end_line": 315,
+      "start_line": 324,
+      "end_line": 326,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.ConnectionManager.connect_observability": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.connect_observability",
-      "start_line": 317,
-      "end_line": 321,
+      "start_line": 328,
+      "end_line": 332,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.ConnectionManager.disconnect_observability": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.disconnect_observability",
-      "start_line": 323,
-      "end_line": 325,
+      "start_line": 334,
+      "end_line": 336,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.ConnectionManager.broadcast_execution": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_execution",
-      "start_line": 327,
-      "end_line": 341,
+      "start_line": 338,
+      "end_line": 352,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.ConnectionManager.broadcast_a2a": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_a2a",
-      "start_line": 343,
-      "end_line": 355,
+      "start_line": 354,
+      "end_line": 366,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.ConnectionManager.broadcast_dashboard": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_dashboard",
-      "start_line": 357,
-      "end_line": 369,
+      "start_line": 368,
+      "end_line": 380,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.ConnectionManager.broadcast_observability": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_observability",
-      "start_line": 371,
-      "end_line": 383,
+      "start_line": 382,
+      "end_line": 394,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.ConnectionManager.broadcast_agent_status": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_agent_status",
-      "start_line": 385,
-      "end_line": 399,
+      "start_line": 396,
+      "end_line": 410,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.ConnectionManager.broadcast_workflow_progress": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_workflow_progress",
-      "start_line": 401,
-      "end_line": 420,
+      "start_line": 412,
+      "end_line": 431,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.ConnectionManager.broadcast_metrics": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_metrics",
-      "start_line": 422,
-      "end_line": 441,
+      "start_line": 433,
+      "end_line": 452,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.ConnectionManager.subscribe_agent_status": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.subscribe_agent_status",
-      "start_line": 443,
-      "end_line": 445,
+      "start_line": 454,
+      "end_line": 456,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.ConnectionManager.unsubscribe_agent_status": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.unsubscribe_agent_status",
-      "start_line": 447,
-      "end_line": 450,
+      "start_line": 458,
+      "end_line": 461,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.ConnectionManager.subscribe_workflow_progress": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.subscribe_workflow_progress",
-      "start_line": 452,
-      "end_line": 456,
+      "start_line": 463,
+      "end_line": 467,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.ConnectionManager.unsubscribe_workflow_progress": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.unsubscribe_workflow_progress",
-      "start_line": 458,
-      "end_line": 463,
+      "start_line": 469,
+      "end_line": 474,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.ConnectionManager.subscribe_metrics": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.subscribe_metrics",
-      "start_line": 465,
-      "end_line": 469,
+      "start_line": 476,
+      "end_line": 480,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.ConnectionManager.unsubscribe_metrics": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.unsubscribe_metrics",
-      "start_line": 471,
-      "end_line": 476,
+      "start_line": 482,
+      "end_line": 487,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.ConnectionManager.connect_logs": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.connect_logs",
-      "start_line": 478,
-      "end_line": 482,
+      "start_line": 489,
+      "end_line": 493,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.ConnectionManager.disconnect_logs": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.disconnect_logs",
-      "start_line": 484,
-      "end_line": 487,
+      "start_line": 495,
+      "end_line": 498,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.ConnectionManager.broadcast_log": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_log",
-      "start_line": 489,
-      "end_line": 504,
+      "start_line": 500,
+      "end_line": 515,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.execution_websocket": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.execution_websocket",
-      "start_line": 520,
-      "end_line": 618,
+      "start_line": 531,
+      "end_line": 629,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.get_execution_update": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.get_execution_update",
-      "start_line": 625,
-      "end_line": 642,
+      "start_line": 636,
+      "end_line": 653,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.a2a_websocket": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.a2a_websocket",
-      "start_line": 651,
-      "end_line": 736,
+      "start_line": 662,
+      "end_line": 722,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.agent_events_websocket": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.agent_events_websocket",
-      "start_line": 745,
-      "end_line": 814,
+      "start_line": 731,
+      "end_line": 800,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.agent_status_websocket": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.agent_status_websocket",
-      "start_line": 823,
-      "end_line": 887,
+      "start_line": 809,
+      "end_line": 873,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.workflow_progress_websocket": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.workflow_progress_websocket",
-      "start_line": 896,
-      "end_line": 960,
+      "start_line": 882,
+      "end_line": 946,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.agent_metrics_websocket": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.agent_metrics_websocket",
-      "start_line": 969,
-      "end_line": 1037,
+      "start_line": 955,
+      "end_line": 1023,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.dashboard_websocket": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.dashboard_websocket",
-      "start_line": 1046,
-      "end_line": 1104,
+      "start_line": 1032,
+      "end_line": 1100,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.observability_websocket": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.observability_websocket",
-      "start_line": 1113,
-      "end_line": 1182,
+      "start_line": 1109,
+      "end_line": 1178,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.logs_websocket": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.logs_websocket",
-      "start_line": 1186,
-      "end_line": 1205,
+      "start_line": 1182,
+      "end_line": 1201,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.all_agents_websocket": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.all_agents_websocket",
-      "start_line": 1214,
-      "end_line": 1268,
+      "start_line": 1211,
+      "end_line": 1265,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.send_agent_status_update": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.send_agent_status_update",
-      "start_line": 1276,
-      "end_line": 1291,
+      "start_line": 1273,
+      "end_line": 1288,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.send_workflow_progress_update": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.send_workflow_progress_update",
-      "start_line": 1294,
-      "end_line": 1311,
+      "start_line": 1291,
+      "end_line": 1308,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.send_agent_metrics_update": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.send_agent_metrics_update",
-      "start_line": 1314,
-      "end_line": 1341,
+      "start_line": 1311,
+      "end_line": 1338,
       "type": "FUNCTION",
       "status": "unchanged"
     },
@@ -97787,9 +97801,17 @@
       "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
       "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas",
       "start_line": 94,
-      "end_line": 298,
+      "end_line": 300,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
+    },
+    "dashboard/frontend/src/components/Canvas/Canvas.tsx|dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback": {
+      "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback",
+      "start_line": 112,
+      "end_line": 116,
+      "type": "FUNCTION",
+      "status": "modified"
     },
     "dashboard/frontend/src/components/Canvas/Canvas.tsx|dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.activeEdges.forEach() callback": {
       "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
@@ -97884,14 +97906,6 @@
       "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onPaneClick.useCallback() callback",
       "start_line": 231,
       "end_line": 233,
-      "type": "FUNCTION",
-      "status": "unchanged"
-    },
-    "dashboard/frontend/src/components/Canvas/Canvas.tsx|dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback": {
-      "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
-      "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback",
-      "start_line": 236,
-      "end_line": 250,
       "type": "FUNCTION",
       "status": "unchanged"
     },
@@ -104759,467 +104773,475 @@
       "type": "FUNCTION",
       "status": "unchanged"
     },
+    "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.authFetch": {
+      "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
+      "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.authFetch",
+      "start_line": 60,
+      "end_line": 68,
+      "type": "FUNCTION",
+      "status": "unchanged"
+    },
     "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder": {
       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
       "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder",
-      "start_line": 61,
-      "end_line": 714,
+      "start_line": 73,
+      "end_line": 726,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.nodePalette.useMemo() callback": {
       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
       "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.nodePalette.useMemo() callback",
-      "start_line": 114,
-      "end_line": 228,
+      "start_line": 126,
+      "end_line": 240,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.nodeTypes.useMemo() callback": {
       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
       "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.nodeTypes.useMemo() callback",
-      "start_line": 233,
-      "end_line": 240,
+      "start_line": 245,
+      "end_line": 252,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.addNode.useCallback() callback": {
       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
       "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.addNode.useCallback() callback",
-      "start_line": 245,
-      "end_line": 269,
+      "start_line": 257,
+      "end_line": 281,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.addNode.useCallback() callback.paletteItem.nodePalette.find() callback": {
       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
       "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.addNode.useCallback() callback.paletteItem.nodePalette.find() callback",
-      "start_line": 246,
-      "end_line": 246,
+      "start_line": 258,
+      "end_line": 258,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.addNode.useCallback() callback.setNodes() callback": {
       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
       "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.addNode.useCallback() callback.setNodes() callback",
-      "start_line": 264,
-      "end_line": 264,
+      "start_line": 276,
+      "end_line": 276,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.addNode.useCallback() callback.setNodeConfig() callback": {
       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
       "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.addNode.useCallback() callback.setNodeConfig() callback",
-      "start_line": 265,
-      "end_line": 268,
+      "start_line": 277,
+      "end_line": 280,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.handleOpenConfig.useCallback() callback": {
       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
       "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.handleOpenConfig.useCallback() callback",
-      "start_line": 274,
-      "end_line": 288,
+      "start_line": 286,
+      "end_line": 300,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.handleOpenConfig.useCallback() callback.node.nodes.find() callback": {
       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
       "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.handleOpenConfig.useCallback() callback.node.nodes.find() callback",
-      "start_line": 275,
-      "end_line": 275,
+      "start_line": 287,
+      "end_line": 287,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.handleCloseConfig.useCallback() callback": {
       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
       "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.handleCloseConfig.useCallback() callback",
-      "start_line": 293,
-      "end_line": 296,
+      "start_line": 305,
+      "end_line": 308,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.handleSaveConfig.useCallback() callback": {
       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
       "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.handleSaveConfig.useCallback() callback",
-      "start_line": 301,
-      "end_line": 372,
+      "start_line": 313,
+      "end_line": 384,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.handleSaveConfig.useCallback() callback.setNodeConfig() callback": {
       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
       "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.handleSaveConfig.useCallback() callback.setNodeConfig() callback",
-      "start_line": 334,
-      "end_line": 344,
+      "start_line": 346,
+      "end_line": 356,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.handleSaveConfig.useCallback() callback.setNodes() callback": {
       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
       "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.handleSaveConfig.useCallback() callback.setNodes() callback",
-      "start_line": 347,
-      "end_line": 365,
+      "start_line": 359,
+      "end_line": 377,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.handleSaveConfig.useCallback() callback.setNodes() callback.nds.map() callback": {
       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
       "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.handleSaveConfig.useCallback() callback.setNodes() callback.nds.map() callback",
-      "start_line": 348,
-      "end_line": 364,
+      "start_line": 360,
+      "end_line": 376,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.deleteNode.useCallback() callback": {
       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
       "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.deleteNode.useCallback() callback",
-      "start_line": 377,
-      "end_line": 388,
+      "start_line": 389,
+      "end_line": 400,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.deleteNode.useCallback() callback.setNodes() callback": {
       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
       "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.deleteNode.useCallback() callback.setNodes() callback",
-      "start_line": 378,
-      "end_line": 378,
+      "start_line": 390,
+      "end_line": 390,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.deleteNode.useCallback() callback.setNodes() callback.nds.filter() callback": {
       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
       "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.deleteNode.useCallback() callback.setNodes() callback.nds.filter() callback",
-      "start_line": 378,
-      "end_line": 378,
+      "start_line": 390,
+      "end_line": 390,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.deleteNode.useCallback() callback.setEdges() callback": {
       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
       "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.deleteNode.useCallback() callback.setEdges() callback",
-      "start_line": 379,
-      "end_line": 379,
+      "start_line": 391,
+      "end_line": 391,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.deleteNode.useCallback() callback.setEdges() callback.eds.filter() callback": {
       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
       "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.deleteNode.useCallback() callback.setEdges() callback.eds.filter() callback",
-      "start_line": 379,
-      "end_line": 379,
+      "start_line": 391,
+      "end_line": 391,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.deleteNode.useCallback() callback.setNodeConfig() callback": {
       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
       "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.deleteNode.useCallback() callback.setNodeConfig() callback",
-      "start_line": 380,
-      "end_line": 384,
+      "start_line": 392,
+      "end_line": 396,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.onConnect.useCallback() callback": {
       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
       "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.onConnect.useCallback() callback",
-      "start_line": 393,
-      "end_line": 395,
+      "start_line": 405,
+      "end_line": 407,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.onConnect.useCallback() callback.setEdges() callback": {
       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
       "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.onConnect.useCallback() callback.setEdges() callback",
-      "start_line": 394,
-      "end_line": 394,
+      "start_line": 406,
+      "end_line": 406,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.onNodeClick.useCallback() callback": {
       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
       "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.onNodeClick.useCallback() callback",
-      "start_line": 400,
-      "end_line": 406,
+      "start_line": 412,
+      "end_line": 418,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.onPaneClick.useCallback() callback": {
       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
       "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.onPaneClick.useCallback() callback",
-      "start_line": 411,
-      "end_line": 413,
+      "start_line": 423,
+      "end_line": 425,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.validateWorkflow.useCallback() callback": {
       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
       "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.validateWorkflow.useCallback() callback",
-      "start_line": 418,
-      "end_line": 465,
+      "start_line": 430,
+      "end_line": 477,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.validateWorkflow.useCallback() callback.nodes.forEach() callback.hasConnections.edges.some() callback": {
       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
       "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.validateWorkflow.useCallback() callback.nodes.forEach() callback.hasConnections.edges.some() callback",
-      "start_line": 425,
-      "end_line": 425,
+      "start_line": 437,
+      "end_line": 437,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.validateWorkflow.useCallback() callback.hasCycle.outgoingEdges.edges.filter() callback": {
       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
       "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.validateWorkflow.useCallback() callback.hasCycle.outgoingEdges.edges.filter() callback",
-      "start_line": 445,
-      "end_line": 445,
+      "start_line": 457,
+      "end_line": 457,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.validateWorkflow.useCallback() callback.hasCycle.outgoingEdges.some() callback": {
       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
       "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.validateWorkflow.useCallback() callback.hasCycle.outgoingEdges.some() callback",
-      "start_line": 446,
-      "end_line": 446,
+      "start_line": 458,
+      "end_line": 458,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.validateWorkflow.useCallback() callback.nodes.forEach() callback": {
       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
       "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.validateWorkflow.useCallback() callback.nodes.forEach() callback",
-      "start_line": 449,
-      "end_line": 458,
+      "start_line": 461,
+      "end_line": 470,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.exportWorkflow.useCallback() callback": {
       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
       "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.exportWorkflow.useCallback() callback",
-      "start_line": 470,
-      "end_line": 509,
+      "start_line": 482,
+      "end_line": 521,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.exportWorkflow.useCallback() callback.workflow.nodes.nodes.map() callback": {
       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
       "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.exportWorkflow.useCallback() callback.workflow.nodes.nodes.map() callback",
-      "start_line": 475,
-      "end_line": 475,
+      "start_line": 487,
+      "end_line": 487,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.exportWorkflow.useCallback() callback.nodes.forEach() callback": {
       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
       "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.exportWorkflow.useCallback() callback.nodes.forEach() callback",
-      "start_line": 489,
-      "end_line": 492,
+      "start_line": 501,
+      "end_line": 504,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.exportWorkflow.useCallback() callback.edges.forEach() callback": {
       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
       "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.exportWorkflow.useCallback() callback.edges.forEach() callback",
-      "start_line": 494,
-      "end_line": 497,
+      "start_line": 506,
+      "end_line": 509,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.saveWorkflow.useCallback() callback": {
       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
       "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.saveWorkflow.useCallback() callback",
-      "start_line": 514,
-      "end_line": 541,
+      "start_line": 526,
+      "end_line": 553,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.saveWorkflow.useCallback() callback.response.body.nodes.nodes.map() callback": {
       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
       "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.saveWorkflow.useCallback() callback.response.body.nodes.nodes.map() callback",
-      "start_line": 523,
-      "end_line": 523,
+      "start_line": 535,
+      "end_line": 535,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.saveWorkflow.useCallback() callback.setSavedWorkflows() callback": {
       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
       "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.saveWorkflow.useCallback() callback.setSavedWorkflows() callback",
-      "start_line": 535,
-      "end_line": 535,
+      "start_line": 547,
+      "end_line": 547,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.loadWorkflows.useCallback() callback": {
       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
       "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.loadWorkflows.useCallback() callback",
-      "start_line": 546,
-      "end_line": 556,
+      "start_line": 558,
+      "end_line": 568,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.loadWorkflow.useCallback() callback": {
       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
       "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.loadWorkflow.useCallback() callback",
-      "start_line": 561,
-      "end_line": 578,
+      "start_line": 573,
+      "end_line": 590,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.loadWorkflow.useCallback() callback.data.nodes.map() callback": {
       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
       "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.loadWorkflow.useCallback() callback.data.nodes.map() callback",
-      "start_line": 567,
-      "end_line": 572,
+      "start_line": 579,
+      "end_line": 584,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback": {
       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
       "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback",
-      "start_line": 583,
-      "end_line": 638,
+      "start_line": 595,
+      "end_line": 650,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onopen": {
       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
       "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onopen",
-      "start_line": 599,
-      "end_line": 603,
+      "start_line": 611,
+      "end_line": 615,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onopen.setExecutionState() callback": {
       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
       "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onopen.setExecutionState() callback",
-      "start_line": 602,
-      "end_line": 602,
+      "start_line": 614,
+      "end_line": 614,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onmessage": {
       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
       "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onmessage",
-      "start_line": 605,
-      "end_line": 628,
+      "start_line": 617,
+      "end_line": 640,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onmessage.setTimeout() callback": {
       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
       "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onmessage.setTimeout() callback",
-      "start_line": 620,
-      "end_line": 623,
+      "start_line": 632,
+      "end_line": 635,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onerror": {
       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
       "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onerror",
-      "start_line": 630,
-      "end_line": 635,
+      "start_line": 642,
+      "end_line": 647,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onerror.setExecutionState() callback": {
       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
       "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onerror.setExecutionState() callback",
-      "start_line": 632,
-      "end_line": 632,
+      "start_line": 644,
+      "end_line": 644,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback": {
       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
       "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback",
-      "start_line": 640,
-      "end_line": 675,
+      "start_line": 652,
+      "end_line": 687,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback.saveResponse.body.nodes.nodes.map() callback": {
       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
       "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback.saveResponse.body.nodes.nodes.map() callback",
-      "start_line": 655,
-      "end_line": 655,
+      "start_line": 667,
+      "end_line": 667,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback.setExecutionState() callback": {
       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
       "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.executeWorkflow.useCallback() callback.setExecutionState() callback",
-      "start_line": 672,
-      "end_line": 672,
+      "start_line": 684,
+      "end_line": 684,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.useEffect() callback": {
       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
       "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.useEffect() callback",
-      "start_line": 687,
-      "end_line": 689,
+      "start_line": 699,
+      "end_line": 701,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.savedWorkflows.map() callback": {
       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
       "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.savedWorkflows.map() callback",
-      "start_line": 726,
-      "end_line": 727,
+      "start_line": 738,
+      "end_line": 739,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.validation.errors.map() callback": {
       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
       "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.validation.errors.map() callback",
-      "start_line": 745,
-      "end_line": 746,
+      "start_line": 757,
+      "end_line": 758,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.<unknown>.map() callback": {
       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
       "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.<unknown>.map() callback",
-      "start_line": 757,
-      "end_line": 758,
+      "start_line": 769,
+      "end_line": 770,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.<unknown>.<unknown>..filter() callback": {
       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
       "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.<unknown>.<unknown>..filter() callback",
-      "start_line": 761,
-      "end_line": 761,
+      "start_line": 773,
+      "end_line": 773,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.<unknown>.<unknown>.map() callback": {
       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
       "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.<unknown>.<unknown>.map() callback",
-      "start_line": 762,
-      "end_line": 764,
+      "start_line": 774,
+      "end_line": 776,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.map() callback": {
       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
       "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.map() callback",
-      "start_line": 911,
-      "end_line": 912,
+      "start_line": 923,
+      "end_line": 924,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.try.setNodeConfig": {
       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
       "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.try.setNodeConfig",
-      "start_line": 921,
-      "end_line": 921,
+      "start_line": 933,
+      "end_line": 933,
       "type": "METHOD",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx|dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.setNodeConfig() callback": {
       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
       "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.setNodeConfig() callback",
-      "start_line": 929,
-      "end_line": 935,
+      "start_line": 941,
+      "end_line": 947,
       "type": "FUNCTION",
       "status": "unchanged"
     },
@@ -106347,9 +106369,17 @@
       "file_path": "dashboard/frontend/src/hooks/useWebSocket.ts",
       "qualified_name": "dashboard.frontend.src.hooks.useWebSocket.useWebSocket",
       "start_line": 24,
-      "end_line": 129,
+      "end_line": 142,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
+    },
+    "dashboard/frontend/src/hooks/useWebSocket.ts|dashboard.frontend.src.hooks.useWebSocket.useWebSocket.apiHost.<function>": {
+      "file_path": "dashboard/frontend/src/hooks/useWebSocket.ts",
+      "qualified_name": "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.apiHost.<function>",
+      "start_line": 45,
+      "end_line": 52,
+      "type": "FUNCTION",
+      "status": "added"
     },
     "dashboard/frontend/src/hooks/useWebSocket.ts|dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect": {
       "file_path": "dashboard/frontend/src/hooks/useWebSocket.ts",
@@ -106357,15 +106387,7 @@
       "start_line": 46,
       "end_line": 89,
       "type": "CLASS",
-      "status": "unchanged"
-    },
-    "dashboard/frontend/src/hooks/useWebSocket.ts|dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback": {
-      "file_path": "dashboard/frontend/src/hooks/useWebSocket.ts",
-      "qualified_name": "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback",
-      "start_line": 46,
-      "end_line": 89,
-      "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "dashboard/frontend/src/hooks/useWebSocket.ts|dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onopen": {
       "file_path": "dashboard/frontend/src/hooks/useWebSocket.ts",
@@ -106374,6 +106396,14 @@
       "end_line": 58,
       "type": "FUNCTION",
       "status": "unchanged"
+    },
+    "dashboard/frontend/src/hooks/useWebSocket.ts|dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback": {
+      "file_path": "dashboard/frontend/src/hooks/useWebSocket.ts",
+      "qualified_name": "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback",
+      "start_line": 54,
+      "end_line": 102,
+      "type": "FUNCTION",
+      "status": "modified"
     },
     "dashboard/frontend/src/hooks/useWebSocket.ts|dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onclose": {
       "file_path": "dashboard/frontend/src/hooks/useWebSocket.ts",
@@ -106405,7 +106435,7 @@
       "start_line": 91,
       "end_line": 98,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "dashboard/frontend/src/hooks/useWebSocket.ts|dashboard.frontend.src.hooks.useWebSocket.useWebSocket.sendMessage.useCallback() callback": {
       "file_path": "dashboard/frontend/src/hooks/useWebSocket.ts",
@@ -106421,7 +106451,7 @@
       "start_line": 100,
       "end_line": 110,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "dashboard/frontend/src/hooks/useWebSocket.ts|dashboard.frontend.src.hooks.useWebSocket.useWebSocket.disconnect.useCallback() callback": {
       "file_path": "dashboard/frontend/src/hooks/useWebSocket.ts",
@@ -111309,7 +111339,7 @@
         },
         {
           "file_path": "src/heretek_swarm/api/configuration.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "src.heretek_swarm.api.configuration._get_llm_provider_factory",
             "src.heretek_swarm.api.configuration._get_embedding_provider_factory",
@@ -117627,7 +117657,7 @@
             },
             {
               "file_path": "src/heretek_swarm/api/configuration.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.heretek_swarm.api.configuration._get_llm_provider_factory",
                 "src.heretek_swarm.api.configuration._get_embedding_provider_factory",
@@ -125351,7 +125381,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/api/configuration.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.api.configuration._get_llm_provider_factory",
                     "src.heretek_swarm.api.configuration._get_embedding_provider_factory",
@@ -127403,7 +127433,7 @@
                     },
                     {
                       "file_path": "src/heretek_swarm/api/configuration.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.api.configuration._get_llm_provider_factory",
                         "src.heretek_swarm.api.configuration._get_embedding_provider_factory",
@@ -128766,7 +128796,7 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/api/configuration.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.api.configuration._get_llm_provider_factory",
                             "src.heretek_swarm.api.configuration._get_embedding_provider_factory",
@@ -238907,10 +238937,11 @@
         },
         {
           "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "dashboard.frontend.src.components.Canvas.Canvas.AgentApiResponse",
             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas",
+            "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback",
             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setShowMetrics() callback",
             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.fetchAgents.useCallback() callback",
             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.fetchAgents.useCallback() callback.agentNodes.data.agents.map() callback",
@@ -238920,7 +238951,6 @@
             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.addNodeFromPalette.useCallback() callback.setNodes() callback",
             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onNodeClick.useCallback() callback",
             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onPaneClick.useCallback() callback",
-            "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback",
             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setNodes() callback",
             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setNodes() callback.nds.filter() callback",
             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setEdges() callback",
@@ -240113,6 +240143,7 @@
           "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
           "file_status": "unchanged",
           "methods": [
+            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.authFetch",
             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder",
             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.nodePalette.useMemo() callback",
             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.nodeTypes.useMemo() callback",
@@ -240343,20 +240374,18 @@
         },
         {
           "file_path": "dashboard/frontend/src/hooks/useWebSocket.ts",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "dashboard.frontend.src.hooks.useWebSocket.WebSocketMessage",
             "dashboard.frontend.src.hooks.useWebSocket.UseWebSocketOptions",
             "dashboard.frontend.src.hooks.useWebSocket.useWebSocket",
-            "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect",
-            "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback",
+            "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.apiHost.<function>",
             "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onopen",
+            "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback",
             "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onclose",
             "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onmessage",
             "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onerror",
-            "dashboard.frontend.src.hooks.useWebSocket.sendMessage",
             "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.sendMessage.useCallback() callback",
-            "dashboard.frontend.src.hooks.useWebSocket.disconnect",
             "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.disconnect.useCallback() callback",
             "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.useEffect() callback",
             "dashboard.frontend.src.hooks.useWebSocket.useAgentEvents",
@@ -240683,10 +240712,11 @@
             },
             {
               "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "dashboard.frontend.src.components.Canvas.Canvas.AgentApiResponse",
                 "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas",
+                "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback",
                 "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setShowMetrics() callback",
                 "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.fetchAgents.useCallback() callback",
                 "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.fetchAgents.useCallback() callback.agentNodes.data.agents.map() callback",
@@ -240696,7 +240726,6 @@
                 "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.addNodeFromPalette.useCallback() callback.setNodes() callback",
                 "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onNodeClick.useCallback() callback",
                 "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onPaneClick.useCallback() callback",
-                "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback",
                 "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setNodes() callback",
                 "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setNodes() callback.nds.filter() callback",
                 "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setEdges() callback",
@@ -240961,6 +240990,7 @@
               "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
               "file_status": "unchanged",
               "methods": [
+                "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.authFetch",
                 "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.addNode.useCallback() callback.setNodes() callback",
                 "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.addNode.useCallback() callback.setNodeConfig() callback",
                 "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.handleSaveConfig.useCallback() callback.setNodeConfig() callback",
@@ -241079,10 +241109,11 @@
                 },
                 {
                   "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "dashboard.frontend.src.components.Canvas.Canvas.AgentApiResponse",
                     "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas",
+                    "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback",
                     "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setShowMetrics() callback",
                     "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.fetchAgents.useCallback() callback",
                     "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.fetchAgents.useCallback() callback.agentNodes.data.agents.map() callback",
@@ -241092,7 +241123,6 @@
                     "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.addNodeFromPalette.useCallback() callback.setNodes() callback",
                     "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onNodeClick.useCallback() callback",
                     "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onPaneClick.useCallback() callback",
-                    "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback",
                     "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setNodes() callback",
                     "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setNodes() callback.nds.filter() callback",
                     "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setEdges() callback",
@@ -241310,6 +241340,7 @@
                   "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
                   "file_status": "unchanged",
                   "methods": [
+                    "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.authFetch",
                     "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder",
                     "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.nodePalette.useMemo() callback",
                     "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.nodeTypes.useMemo() callback",
@@ -241499,10 +241530,11 @@
                     },
                     {
                       "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "dashboard.frontend.src.components.Canvas.Canvas.AgentApiResponse",
                         "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas",
+                        "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback",
                         "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setShowMetrics() callback",
                         "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.fetchAgents.useCallback() callback",
                         "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.fetchAgents.useCallback() callback.agentNodes.data.agents.map() callback",
@@ -241512,7 +241544,6 @@
                         "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.addNodeFromPalette.useCallback() callback.setNodes() callback",
                         "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onNodeClick.useCallback() callback",
                         "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onPaneClick.useCallback() callback",
-                        "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback",
                         "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setNodes() callback",
                         "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setNodes() callback.nds.filter() callback",
                         "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setEdges() callback",
@@ -241829,10 +241860,11 @@
                         },
                         {
                           "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "dashboard.frontend.src.components.Canvas.Canvas.AgentApiResponse",
                             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas",
+                            "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback",
                             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setShowMetrics() callback",
                             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.fetchAgents.useCallback() callback",
                             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.fetchAgents.useCallback() callback.agentNodes.data.agents.map() callback",
@@ -241842,7 +241874,6 @@
                             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.addNodeFromPalette.useCallback() callback.setNodes() callback",
                             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onNodeClick.useCallback() callback",
                             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onPaneClick.useCallback() callback",
-                            "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback",
                             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setNodes() callback",
                             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setNodes() callback.nds.filter() callback",
                             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setEdges() callback",
@@ -242146,16 +242177,16 @@
                             },
                             {
                               "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "dashboard.frontend.src.components.Canvas.Canvas.AgentApiResponse",
                                 "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas",
+                                "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback",
                                 "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setShowMetrics() callback",
                                 "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.fetchAgents.useCallback() callback",
                                 "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.fetchAgents.useCallback() callback.agentNodes.data.agents.map() callback",
                                 "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onConnect.useCallback() callback",
-                                "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onConnect.useCallback() callback.setEdges() callback",
-                                "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback"
+                                "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onConnect.useCallback() callback.setEdges() callback"
                               ]
                             },
                             {
@@ -243355,6 +243386,7 @@
                       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
                       "file_status": "unchanged",
                       "methods": [
+                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.authFetch",
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder",
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.nodePalette.useMemo() callback",
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.nodeTypes.useMemo() callback",
@@ -243508,6 +243540,7 @@
                           "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
                           "file_status": "unchanged",
                           "methods": [
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.authFetch",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.nodePalette.useMemo() callback",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.nodeTypes.useMemo() callback",
@@ -243888,6 +243921,7 @@
                           "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
                           "file_status": "unchanged",
                           "methods": [
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.authFetch",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.validateWorkflow.useCallback() callback.nodes.forEach() callback",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onopen",
@@ -248978,6 +249012,7 @@
                   "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
                   "file_status": "unchanged",
                   "methods": [
+                    "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.authFetch",
                     "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.validateWorkflow.useCallback() callback.nodes.forEach() callback",
                     "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback",
                     "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onopen",
@@ -249016,6 +249051,7 @@
                       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
                       "file_status": "unchanged",
                       "methods": [
+                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.authFetch",
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.validateWorkflow.useCallback() callback.nodes.forEach() callback",
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback",
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onopen",
@@ -249055,6 +249091,7 @@
                           "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
                           "file_status": "unchanged",
                           "methods": [
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.authFetch",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.nodePalette.useMemo() callback",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.nodeTypes.useMemo() callback",
@@ -249304,6 +249341,7 @@
                           "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
                           "file_status": "unchanged",
                           "methods": [
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.authFetch",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.validateWorkflow.useCallback() callback.nodes.forEach() callback",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onopen",
@@ -249518,6 +249556,7 @@
                       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
                       "file_status": "unchanged",
                       "methods": [
+                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.authFetch",
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.addNode.useCallback() callback.setNodes() callback",
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.addNode.useCallback() callback.setNodeConfig() callback",
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.handleSaveConfig.useCallback() callback.setNodeConfig() callback",
@@ -249582,6 +249621,7 @@
                           "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
                           "file_status": "unchanged",
                           "methods": [
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.authFetch",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.nodePalette.useMemo() callback",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.nodeTypes.useMemo() callback",
@@ -249829,6 +249869,7 @@
                           "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
                           "file_status": "unchanged",
                           "methods": [
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.authFetch",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.validateWorkflow.useCallback() callback.nodes.forEach() callback",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onopen",
@@ -250031,6 +250072,7 @@
                           "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
                           "file_status": "unchanged",
                           "methods": [
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.authFetch",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.exportWorkflow.useCallback() callback.nodes.forEach() callback",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.exportWorkflow.useCallback() callback.edges.forEach() callback",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback",
@@ -250302,6 +250344,7 @@
                       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
                       "file_status": "unchanged",
                       "methods": [
+                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.authFetch",
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder",
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.nodePalette.useMemo() callback",
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.nodeTypes.useMemo() callback",
@@ -250409,6 +250452,7 @@
                           "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
                           "file_status": "unchanged",
                           "methods": [
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.authFetch",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.nodePalette.useMemo() callback",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.nodeTypes.useMemo() callback",
@@ -250698,6 +250742,7 @@
                           "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
                           "file_status": "unchanged",
                           "methods": [
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.authFetch",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.validateWorkflow.useCallback() callback.nodes.forEach() callback",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.connectToWorkflowEvents.useCallback() callback.onopen",
@@ -250948,6 +250993,7 @@
                           "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
                           "file_status": "unchanged",
                           "methods": [
+                            "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.authFetch",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.addNode.useCallback() callback.setNodes() callback",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.addNode.useCallback() callback.setNodeConfig() callback",
                             "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.handleSaveConfig.useCallback() callback.setNodeConfig() callback",
@@ -254623,8 +254669,9 @@
             },
             {
               "file_path": "dashboard/frontend/src/hooks/useWebSocket.ts",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
+                "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.apiHost.<function>",
                 "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback",
                 "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.sendMessage.useCallback() callback",
                 "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.disconnect.useCallback() callback"
@@ -255820,10 +255867,11 @@
                 },
                 {
                   "file_path": "dashboard/frontend/src/hooks/useWebSocket.ts",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
-                    "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback",
+                    "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.apiHost.<function>",
                     "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onopen",
+                    "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback",
                     "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onclose",
                     "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onmessage",
                     "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onerror",
@@ -255954,7 +256002,7 @@
                     },
                     {
                       "file_path": "dashboard/frontend/src/hooks/useWebSocket.ts",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback",
                         "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.sendMessage.useCallback() callback",
@@ -256145,18 +256193,15 @@
                     },
                     {
                       "file_path": "dashboard/frontend/src/hooks/useWebSocket.ts",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "dashboard.frontend.src.hooks.useWebSocket.WebSocketMessage",
                         "dashboard.frontend.src.hooks.useWebSocket.UseWebSocketOptions",
                         "dashboard.frontend.src.hooks.useWebSocket.useWebSocket",
-                        "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect",
                         "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onopen",
                         "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onclose",
                         "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onmessage",
                         "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onerror",
-                        "dashboard.frontend.src.hooks.useWebSocket.sendMessage",
-                        "dashboard.frontend.src.hooks.useWebSocket.disconnect",
                         "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.useEffect() callback",
                         "dashboard.frontend.src.hooks.useWebSocket.useAgentEvents",
                         "dashboard.frontend.src.hooks.useWebSocket.useMetricsStream",
@@ -256947,14 +256992,12 @@
                 },
                 {
                   "file_path": "dashboard/frontend/src/hooks/useWebSocket.ts",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "dashboard.frontend.src.hooks.useWebSocket.WebSocketMessage",
                     "dashboard.frontend.src.hooks.useWebSocket.UseWebSocketOptions",
                     "dashboard.frontend.src.hooks.useWebSocket.useWebSocket",
-                    "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect",
-                    "dashboard.frontend.src.hooks.useWebSocket.sendMessage",
-                    "dashboard.frontend.src.hooks.useWebSocket.disconnect",
+                    "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.apiHost.<function>",
                     "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.useEffect() callback",
                     "dashboard.frontend.src.hooks.useWebSocket.useAgentEvents",
                     "dashboard.frontend.src.hooks.useWebSocket.useMetricsStream",
@@ -257309,20 +257352,17 @@
                     },
                     {
                       "file_path": "dashboard/frontend/src/hooks/useWebSocket.ts",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "dashboard.frontend.src.hooks.useWebSocket.WebSocketMessage",
                         "dashboard.frontend.src.hooks.useWebSocket.UseWebSocketOptions",
                         "dashboard.frontend.src.hooks.useWebSocket.useWebSocket",
-                        "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect",
-                        "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback",
                         "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onopen",
+                        "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback",
                         "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onclose",
                         "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onmessage",
                         "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onerror",
-                        "dashboard.frontend.src.hooks.useWebSocket.sendMessage",
                         "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.sendMessage.useCallback() callback",
-                        "dashboard.frontend.src.hooks.useWebSocket.disconnect",
                         "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.disconnect.useCallback() callback",
                         "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.useEffect() callback",
                         "dashboard.frontend.src.hooks.useWebSocket.useAgentEvents",
@@ -259299,6 +259339,7 @@
               "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
               "file_status": "unchanged",
               "methods": [
+                "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.authFetch",
                 "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder",
                 "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.nodePalette.useMemo() callback",
                 "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.nodeTypes.useMemo() callback",
@@ -259495,18 +259536,16 @@
             },
             {
               "file_path": "dashboard/frontend/src/hooks/useWebSocket.ts",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "dashboard.frontend.src.hooks.useWebSocket.WebSocketMessage",
                 "dashboard.frontend.src.hooks.useWebSocket.UseWebSocketOptions",
                 "dashboard.frontend.src.hooks.useWebSocket.useWebSocket",
-                "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect",
+                "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.apiHost.<function>",
                 "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onopen",
                 "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onclose",
                 "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onmessage",
                 "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onerror",
-                "dashboard.frontend.src.hooks.useWebSocket.sendMessage",
-                "dashboard.frontend.src.hooks.useWebSocket.disconnect",
                 "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.useEffect() callback",
                 "dashboard.frontend.src.hooks.useWebSocket.useAgentEvents",
                 "dashboard.frontend.src.hooks.useWebSocket.useMetricsStream",
@@ -260872,6 +260911,7 @@
                   "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
                   "file_status": "unchanged",
                   "methods": [
+                    "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.authFetch",
                     "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder",
                     "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.nodePalette.useMemo() callback",
                     "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.nodeTypes.useMemo() callback",
@@ -261064,14 +261104,12 @@
                 },
                 {
                   "file_path": "dashboard/frontend/src/hooks/useWebSocket.ts",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "dashboard.frontend.src.hooks.useWebSocket.WebSocketMessage",
                     "dashboard.frontend.src.hooks.useWebSocket.UseWebSocketOptions",
                     "dashboard.frontend.src.hooks.useWebSocket.useWebSocket",
-                    "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect",
-                    "dashboard.frontend.src.hooks.useWebSocket.sendMessage",
-                    "dashboard.frontend.src.hooks.useWebSocket.disconnect",
+                    "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.apiHost.<function>",
                     "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.useEffect() callback",
                     "dashboard.frontend.src.hooks.useWebSocket.useAgentEvents",
                     "dashboard.frontend.src.hooks.useWebSocket.useMetricsStream",
@@ -262397,6 +262435,7 @@
                       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
                       "file_status": "unchanged",
                       "methods": [
+                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.authFetch",
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder",
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.nodePalette.useMemo() callback",
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.nodeTypes.useMemo() callback",
@@ -262589,20 +262628,18 @@
                     },
                     {
                       "file_path": "dashboard/frontend/src/hooks/useWebSocket.ts",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "dashboard.frontend.src.hooks.useWebSocket.WebSocketMessage",
                         "dashboard.frontend.src.hooks.useWebSocket.UseWebSocketOptions",
                         "dashboard.frontend.src.hooks.useWebSocket.useWebSocket",
-                        "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect",
-                        "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback",
+                        "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.apiHost.<function>",
                         "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onopen",
+                        "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback",
                         "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onclose",
                         "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onmessage",
                         "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onerror",
-                        "dashboard.frontend.src.hooks.useWebSocket.sendMessage",
                         "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.sendMessage.useCallback() callback",
-                        "dashboard.frontend.src.hooks.useWebSocket.disconnect",
                         "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.disconnect.useCallback() callback",
                         "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.useEffect() callback",
                         "dashboard.frontend.src.hooks.useWebSocket.useAgentEvents",
@@ -264145,14 +264182,11 @@
                         },
                         {
                           "file_path": "dashboard/frontend/src/hooks/useWebSocket.ts",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "dashboard.frontend.src.hooks.useWebSocket.WebSocketMessage",
                             "dashboard.frontend.src.hooks.useWebSocket.UseWebSocketOptions",
                             "dashboard.frontend.src.hooks.useWebSocket.useWebSocket",
-                            "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect",
-                            "dashboard.frontend.src.hooks.useWebSocket.sendMessage",
-                            "dashboard.frontend.src.hooks.useWebSocket.disconnect",
                             "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.useEffect() callback",
                             "dashboard.frontend.src.hooks.useWebSocket.useAgentEvents",
                             "dashboard.frontend.src.hooks.useWebSocket.useMetricsStream",
@@ -264447,10 +264481,10 @@
                         },
                         {
                           "file_path": "dashboard/frontend/src/hooks/useWebSocket.ts",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
-                            "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback",
                             "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onopen",
+                            "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback",
                             "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onclose",
                             "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onmessage",
                             "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onerror",
@@ -266227,6 +266261,7 @@
                       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
                       "file_status": "unchanged",
                       "methods": [
+                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.authFetch",
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.addNode.useCallback() callback.setNodes() callback",
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.addNode.useCallback() callback.setNodeConfig() callback",
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.handleSaveConfig.useCallback() callback.setNodeConfig() callback",
@@ -267986,6 +268021,7 @@
                   "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
                   "file_status": "unchanged",
                   "methods": [
+                    "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.authFetch",
                     "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.addNode.useCallback() callback.setNodes() callback",
                     "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.addNode.useCallback() callback.setNodeConfig() callback",
                     "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.handleSaveConfig.useCallback() callback.setNodeConfig() callback",
@@ -268149,6 +268185,7 @@
                       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
                       "file_status": "unchanged",
                       "methods": [
+                        "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.authFetch",
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder",
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.nodePalette.useMemo() callback",
                         "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder.nodeTypes.useMemo() callback",
@@ -270369,10 +270406,11 @@
                 },
                 {
                   "file_path": "dashboard/frontend/src/hooks/useWebSocket.ts",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
-                    "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback",
+                    "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.apiHost.<function>",
                     "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onopen",
+                    "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback",
                     "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onclose",
                     "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onmessage",
                     "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onerror",
@@ -270442,10 +270480,11 @@
                     },
                     {
                       "file_path": "dashboard/frontend/src/hooks/useWebSocket.ts",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
-                        "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback",
+                        "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.apiHost.<function>",
                         "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onopen",
+                        "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback",
                         "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onclose",
                         "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onmessage",
                         "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onerror",
@@ -270595,20 +270634,17 @@
                         },
                         {
                           "file_path": "dashboard/frontend/src/hooks/useWebSocket.ts",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "dashboard.frontend.src.hooks.useWebSocket.WebSocketMessage",
                             "dashboard.frontend.src.hooks.useWebSocket.UseWebSocketOptions",
                             "dashboard.frontend.src.hooks.useWebSocket.useWebSocket",
-                            "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect",
-                            "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback",
                             "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onopen",
+                            "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback",
                             "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onclose",
                             "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onmessage",
                             "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onerror",
-                            "dashboard.frontend.src.hooks.useWebSocket.sendMessage",
                             "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.sendMessage.useCallback() callback",
-                            "dashboard.frontend.src.hooks.useWebSocket.disconnect",
                             "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.disconnect.useCallback() callback",
                             "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.useEffect() callback",
                             "dashboard.frontend.src.hooks.useWebSocket.useAgentEvents",
@@ -270853,14 +270889,12 @@
                     },
                     {
                       "file_path": "dashboard/frontend/src/hooks/useWebSocket.ts",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "dashboard.frontend.src.hooks.useWebSocket.WebSocketMessage",
                         "dashboard.frontend.src.hooks.useWebSocket.UseWebSocketOptions",
                         "dashboard.frontend.src.hooks.useWebSocket.useWebSocket",
-                        "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect",
-                        "dashboard.frontend.src.hooks.useWebSocket.sendMessage",
-                        "dashboard.frontend.src.hooks.useWebSocket.disconnect",
+                        "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.apiHost.<function>",
                         "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.useEffect() callback",
                         "dashboard.frontend.src.hooks.useWebSocket.useAgentEvents",
                         "dashboard.frontend.src.hooks.useWebSocket.useMetricsStream",
@@ -270953,14 +270987,11 @@
                         },
                         {
                           "file_path": "dashboard/frontend/src/hooks/useWebSocket.ts",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "dashboard.frontend.src.hooks.useWebSocket.WebSocketMessage",
                             "dashboard.frontend.src.hooks.useWebSocket.UseWebSocketOptions",
                             "dashboard.frontend.src.hooks.useWebSocket.useWebSocket",
-                            "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect",
-                            "dashboard.frontend.src.hooks.useWebSocket.sendMessage",
-                            "dashboard.frontend.src.hooks.useWebSocket.disconnect",
                             "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.useEffect() callback",
                             "dashboard.frontend.src.hooks.useWebSocket.useAgentEvents",
                             "dashboard.frontend.src.hooks.useWebSocket.useMetricsStream",
@@ -270988,7 +271019,7 @@
                       "file_methods": [
                         {
                           "file_path": "dashboard/frontend/src/hooks/useWebSocket.ts",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback",
                             "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.sendMessage.useCallback() callback",
@@ -271034,7 +271065,7 @@
                         },
                         {
                           "file_path": "dashboard/frontend/src/hooks/useWebSocket.ts",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onopen",
                             "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onclose",
