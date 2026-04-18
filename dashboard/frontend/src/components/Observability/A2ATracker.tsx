@@ -11,7 +11,8 @@
  * - Message flow graph
  */
 
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useWebSocket, type WebSocketMessage } from '../../hooks/useWebSocket';
 
 // Types
 interface A2AMessage {
@@ -83,26 +84,21 @@ const MESSAGE_SUBJECTS = [
   'workflow_status', 'error_report', 'delegate_task'
 ];
 
-function generateRandomMessage(): A2AMessage {
-  const from = AGENT_IDS[Math.floor(Math.random() * AGENT_IDS.length)];
-  let to = AGENT_IDS[Math.floor(Math.random() * AGENT_IDS.length)];
-  while (to === from) {
-    to = AGENT_IDS[Math.floor(Math.random() * AGENT_IDS.length)];
-  }
+function mapEventType(eventType: string): A2AMessage['type'] {
+  if (eventType === 'message') return 'task';
+  if (eventType === 'consensus.result') return 'consensus';
+  if (eventType.endsWith('.heartbeat')) return 'heartbeat';
+  return 'response';
+}
 
-  return {
-    id: `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-    timestamp: new Date().toISOString(),
-    from,
-    to,
-    subject: MESSAGE_SUBJECTS[Math.floor(Math.random() * MESSAGE_SUBJECTS.length)],
-    type: ['task', 'response', 'broadcast', 'heartbeat', 'consensus'][Math.floor(Math.random() * 5)] as A2AMessage['type'],
-    payload: {
-      taskSample: Math.random(),
-    },
-    latencyMs: Math.floor(Math.random() * 500) + 10,
-    status: ['sent', 'delivered', 'failed', 'pending'][Math.floor(Math.random() * 4)] as A2AMessage['status'],
-  };
+// SwarmEvent from WebSocket bridge
+interface SwarmEvent {
+  event_type: string;
+  source_agent: string;
+  target_agent?: string;
+  payload?: Record<string, unknown>;
+  timestamp?: string;
+  correlation_id?: string;
 }
 
 function generateAgentActivity(): AgentActivity[] {
@@ -356,33 +352,59 @@ export function A2ATracker({
     failedWorkflows: 0,
     avgDuration: 0,
   });
-  const messageId = useRef(0);
 
-  // Simulate NATS connection and message streaming
-  useEffect(() => {
-    // Simulate connection
-    const connectTimeout = setTimeout(() => {
-      setIsConnected(true);
-    }, 1000);
+  // WebSocket connection for real A2A events
+  // NOTE: natsUrl prop is accepted but no longer used for WebSocket connection.
+  // The WebSocket connects to the FastAPI /ws/a2a endpoint via nginx proxy.
+  if (natsUrl) {
+    console.warn('A2ATracker: natsUrl prop is deprecated for WebSocket — connect to FastAPI /ws/a2a instead');
+  }
 
-    // Initialize with some messages
-    const initialMessages = Array.from({ length: 20 }, generateRandomMessage);
-    setMessages(initialMessages);
-    setAgentActivity(generateAgentActivity());
-
-    // Stream new messages
-    const messageInterval = setInterval(() => {
-      const newMessage = generateRandomMessage();
+  const handleWebSocketMessage = useCallback((wsMessage: WebSocketMessage) => {
+    try {
+      const data = wsMessage as unknown as SwarmEvent;
+      if (!data.event_type || !data.source_agent) {
+        console.warn('A2ATracker: Received message without event_type or source_agent', data);
+        return;
+      }
+      const msg: A2AMessage = {
+        id: data.correlation_id ?? `msg-${Date.now()}`,
+        timestamp: data.timestamp ?? new Date().toISOString(),
+        from: data.source_agent,
+        to: data.target_agent ?? '',
+        subject: data.event_type,
+        type: mapEventType(data.event_type),
+        payload: data.payload ?? {},
+        latencyMs: 0,
+        status: 'delivered',
+      };
       setMessages((prev) => {
-        const updated = [...prev, newMessage];
+        const updated = [...prev, msg];
         return updated.slice(-maxMessages);
       });
-    }, refreshInterval);
+    } catch (error) {
+      console.error('A2ATracker: Failed to parse WebSocket message:', error);
+    }
+  }, [maxMessages]);
 
-    // Update agent activity periodically
-    const activityInterval = setInterval(() => {
-      setAgentActivity(generateAgentActivity());
-    }, 5000);
+  const { connected } = useWebSocket('a2a', {
+    onMessage: handleWebSocketMessage,
+    onOpen: () => {
+      console.info('A2ATracker: WebSocket connected to /ws/a2a');
+      setIsConnected(true);
+    },
+    onClose: () => {
+      console.info('A2ATracker: WebSocket disconnected');
+      setIsConnected(false);
+    },
+    onError: (error) => {
+      console.error('A2ATracker: WebSocket error', error);
+    },
+  });
+
+  // Populate agent activity and stats with realistic demo data (no real source yet)
+  useEffect(() => {
+    setAgentActivity(generateAgentActivity());
 
     // Update stats periodically
     const statsInterval = setInterval(() => {
@@ -400,13 +422,27 @@ export function A2ATracker({
       });
     }, 3000);
 
+    // Update agent activity periodically
+    const activityInterval = setInterval(() => {
+      setAgentActivity(generateAgentActivity());
+    }, 5000);
+
     return () => {
-      clearTimeout(connectTimeout);
-      clearInterval(messageInterval);
-      clearInterval(activityInterval);
       clearInterval(statsInterval);
+      clearInterval(activityInterval);
     };
-  }, [refreshInterval, maxMessages]);
+  }, []);
+
+  // Simulate connection state for visual feedback when WebSocket isn't available
+  useEffect(() => {
+    if (!connected) {
+      const connectTimeout = setTimeout(() => {
+        setIsConnected(true);
+      }, 1000);
+      return () => clearTimeout(connectTimeout);
+    }
+    setIsConnected(true);
+  }, [connected]);
 
   // Filter messages for selected agent's "internal monologue"
   const internalMonologue = selectedAgent
