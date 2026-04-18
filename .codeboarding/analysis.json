@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-18T02:27:07.313644+00:00",
+    "generated_at": "2026-04-18T03:31:20.589952+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -10378,8 +10378,8 @@
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.api.main.lifespan",
-          "start_line": 87,
-          "end_line": 116,
+          "start_line": 89,
+          "end_line": 122,
           "node_type": "FUNCTION",
           "status": "modified"
         },
@@ -10415,6 +10415,20 @@
           "qualified_name": "src.heretek_swarm.api.main._log_startup_complete",
           "start_line": 204,
           "end_line": 209,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.main._init_nats_bridge",
+          "start_line": 208,
+          "end_line": 250,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.main._init_nats_bridge.a2a_event_handler",
+          "start_line": 221,
+          "end_line": 238,
           "node_type": "FUNCTION",
           "status": "added"
         },
@@ -67445,8 +67459,8 @@
     "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main.lifespan": {
       "file_path": "src/heretek_swarm/api/main.py",
       "qualified_name": "src.heretek_swarm.api.main.lifespan",
-      "start_line": 87,
-      "end_line": 116,
+      "start_line": 89,
+      "end_line": 122,
       "type": "FUNCTION",
       "status": "modified"
     },
@@ -67487,6 +67501,22 @@
       "qualified_name": "src.heretek_swarm.api.main._log_startup_complete",
       "start_line": 204,
       "end_line": 209,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main._init_nats_bridge": {
+      "file_path": "src/heretek_swarm/api/main.py",
+      "qualified_name": "src.heretek_swarm.api.main._init_nats_bridge",
+      "start_line": 208,
+      "end_line": 250,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main._init_nats_bridge.a2a_event_handler": {
+      "file_path": "src/heretek_swarm/api/main.py",
+      "qualified_name": "src.heretek_swarm.api.main._init_nats_bridge.a2a_event_handler",
+      "start_line": 221,
+      "end_line": 238,
       "type": "FUNCTION",
       "status": "added"
     },
@@ -119751,6 +119781,8 @@
             "src.heretek_swarm.api.main._init_memory_store",
             "src.heretek_swarm.api.main._init_mem0",
             "src.heretek_swarm.api.main._log_startup_complete",
+            "src.heretek_swarm.api.main._init_nats_bridge",
+            "src.heretek_swarm.api.main._init_nats_bridge.a2a_event_handler",
             "src.heretek_swarm.api.main.check_gateway",
             "src.heretek_swarm.api.main.check_redis",
             "src.heretek_swarm.api.main.check_postgres",
@@ -126249,6 +126281,8 @@
                 "src.heretek_swarm.api.main._init_memory_store",
                 "src.heretek_swarm.api.main._init_mem0",
                 "src.heretek_swarm.api.main._log_startup_complete",
+                "src.heretek_swarm.api.main._init_nats_bridge",
+                "src.heretek_swarm.api.main._init_nats_bridge.a2a_event_handler",
                 "src.heretek_swarm.api.main.check_gateway",
                 "src.heretek_swarm.api.main.check_redis",
                 "src.heretek_swarm.api.main.check_postgres",
@@ -134369,6 +134403,8 @@
                     "src.heretek_swarm.api.main._init_memory_store",
                     "src.heretek_swarm.api.main._init_mem0",
                     "src.heretek_swarm.api.main._log_startup_complete",
+                    "src.heretek_swarm.api.main._init_nats_bridge",
+                    "src.heretek_swarm.api.main._init_nats_bridge.a2a_event_handler",
                     "src.heretek_swarm.api.main.check_gateway",
                     "src.heretek_swarm.api.main.check_redis",
                     "src.heretek_swarm.api.main.check_postgres",
@@ -139702,6 +139738,8 @@
                         "src.heretek_swarm.api.main._init_memory_store",
                         "src.heretek_swarm.api.main._init_mem0",
                         "src.heretek_swarm.api.main._log_startup_complete",
+                        "src.heretek_swarm.api.main._init_nats_bridge",
+                        "src.heretek_swarm.api.main._init_nats_bridge.a2a_event_handler",
                         "src.heretek_swarm.api.main.check_gateway",
                         "src.heretek_swarm.api.main.check_redis",
                         "src.heretek_swarm.api.main.check_postgres",
@@ -140107,6 +140145,8 @@
                             "src.heretek_swarm.api.main._init_memory_store",
                             "src.heretek_swarm.api.main._init_mem0",
                             "src.heretek_swarm.api.main._log_startup_complete",
+                            "src.heretek_swarm.api.main._init_nats_bridge",
+                            "src.heretek_swarm.api.main._init_nats_bridge.a2a_event_handler",
                             "src.heretek_swarm.api.main.check_gateway",
                             "src.heretek_swarm.api.main.check_redis",
                             "src.heretek_swarm.api.main.check_postgres",

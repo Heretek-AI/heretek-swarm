@@ -694,47 +694,22 @@ async def a2a_websocket(
 
     await manager.connect_a2a(websocket)
 
-    # Try to use Redis pub/sub if available, fallback to simulation
+    # NATS bridge handles event routing via main.py startup subscription
+    # Fallback: send periodic heartbeat to keep connection alive
     try:
-        import redis.asyncio as redis
+        logger.warning("websocket_a2a_fallback_activated", user_id=_user_id)
+        while True:
+            # Send heartbeat every 5 seconds (reduced from 30)
+            await websocket.send_json(
+                {
+                    "type": "heartbeat",
+                    "timestamp": datetime.now(UTC).isoformat(),
+                }
+            )
+            await asyncio.sleep(5)
 
-        redis_url = os.environ.get("REDIS_URL", "redis://localhost:6379")
-        r = redis.from_url(redis_url)
-
-        # Create pub/sub for A2A messages
-        pubsub = r.pubsub()
-        await pubsub.subscribe("a2a:messages")
-
-        try:
-            # Listen for messages
-            async for message in pubsub.listen():
-                if message["type"] == "message":
-                    data = json.loads(message["data"])
-                    await websocket.send_json(data)
-
-        except WebSocketDisconnect:
-            pass
-        finally:
-            await pubsub.unsubscribe("a2a:messages")
-            await r.close()
-
-    except Exception as e:
-        logger.warning("Redis not available for A2A, using fallback", error=str(e))
-
-        # Fallback: simulate A2A messages (for development)
-        try:
-            while True:
-                # Send periodic heartbeat to keep connection alive
-                await websocket.send_json(
-                    {
-                        "type": "heartbeat",
-                        "timestamp": datetime.now(UTC).isoformat(),
-                    }
-                )
-                await asyncio.sleep(30)
-
-        except WebSocketDisconnect:
-            pass
+    except WebSocketDisconnect:
+        pass
     finally:
         manager.disconnect_a2a(websocket)
 

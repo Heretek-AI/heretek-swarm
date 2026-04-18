@@ -61,6 +61,7 @@ from heretek_swarm.config.service import (
     shutdown_config_service,
 )
 from heretek_swarm.gateway.auth import verify_auth
+from heretek_swarm.gateway.nats_event_mesh import NATSEventMesh
 from heretek_swarm.memory.persistent import PersistentMemory as PersistentMemoryStore
 from heretek_swarm.observability.tracing import setup_telemetry_middleware
 
@@ -81,6 +82,7 @@ logger = structlog.get_logger("api.main")
 supervisor: ActorSupervisor | None = None
 memory_store: PersistentMemoryStore | None = None
 mem0_backend: Any | None = None  # Mem0Backend when available
+_nats_mesh: NATSEventMesh | None = None  # NATS event mesh for WebSocket bridge
 
 
 @asynccontextmanager
@@ -95,6 +97,7 @@ async def lifespan(app: FastAPI):
     await _init_supervisor()
     await _init_memory_store()
     await _init_mem0()
+    await _init_nats_bridge()
     await _log_startup_complete()
 
     yield
@@ -110,6 +113,9 @@ async def lifespan(app: FastAPI):
 
     if memory_store:
         await memory_store.disconnect()
+
+    if _nats_mesh:
+        await _nats_mesh.disconnect()
 
     # Shutdown ConfigurationService
     await shutdown_config_service()
@@ -197,6 +203,51 @@ async def _init_mem0() -> None:
             mem0_backend = None
     else:
         logger.info("mem0 not installed - using PostgreSQL memory only")
+
+
+async def _init_nats_bridge() -> None:
+    """Initialize NATS EventMesh for WebSocket bridge."""
+    global _nats_mesh
+
+    try:
+        _nats_mesh = NATSEventMesh(fallback=True)
+        connected = await _nats_mesh.connect()
+        if connected:
+            logger.info("NATS EventMesh connected for WebSocket bridge")
+
+            # Subscribe to A2A events from NATS and broadcast to WebSocket clients
+            from heretek_swarm.api import websockets
+
+            async def a2a_event_handler(
+                mesh: NATSEventMesh, subject: str, data: dict[str, Any]
+            ) -> None:
+                """Handle A2A event from NATS and broadcast to WebSocket clients."""
+                try:
+                    await websockets.manager.broadcast_a2a(data)
+                    logger.debug(
+                        "broadcast_a2a_from_nats",
+                        subject=subject,
+                        has_from=bool(data.get("from")),
+                        has_to=bool(data.get("to")),
+                    )
+                except Exception as e:
+                    logger.error(
+                        "broadcast_a2a_failed",
+                        subject=subject,
+                        error=str(e),
+                    )
+
+            # Subscribe to swarm events (A2A messages)
+            await _nats_mesh.subscribe("swarm.events", a2a_event_handler)
+            # Also support wildcard pattern for agent messages
+            await _nats_mesh.subscribe("agent.>.messages", a2a_event_handler)
+
+            logger.info("NATS subscription registered for A2A events")
+        else:
+            logger.warning("NATS EventMesh not available, WebSocket bridge using fallback")
+    except Exception as e:
+        logger.warning("NATS bridge initialization failed", error=str(e))
+        _nats_mesh = None
 
 
 async def _log_startup_complete() -> None:
