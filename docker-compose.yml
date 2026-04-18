@@ -72,8 +72,6 @@ services:
     build:
       context: ./dashboard/frontend
       dockerfile: Dockerfile
-      args:
-        - VITE_API_HOST=${VITE_API_HOST}
     container_name: heretek-frontend
     ports:
       - "3000:80"

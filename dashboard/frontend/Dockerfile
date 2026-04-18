@@ -1,16 +1,29 @@
 # Heretek Swarm Frontend
-# Multi-stage build for React application
+# Multi-stage build: compile TypeScript + Vite inside Docker, serve with nginx
 
 # =============================================================================
-# Stage 1: Build (skip - we pre-build locally)
+# Stage 1: Builder — compile TypeScript and Vite assets inside Docker
 # =============================================================================
-FROM alpine AS build-placeholder
-RUN echo "Build happens locally"
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
+# Copy package files first for layer caching
+COPY package*.json ./
+
+# Deterministic install using package-lock.json
+RUN npm ci
+
+# Copy all source
+COPY . .
+
+# Compile TypeScript and build Vite assets
+RUN npm run build
 
 # =============================================================================
-# Stage 2: Production
+# Stage 2: Production — serve built assets with nginx
 # =============================================================================
-FROM nginx:alpine as production
+FROM nginx:alpine AS production
 
 # Create non-root user for security (S6471 fix)
 RUN addgroup -g 1001 -S appgroup && adduser -u 1001 -S appuser -G appgroup
@@ -22,8 +35,8 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf
 RUN mkdir -p /var/cache/nginx/client_temp /run && \
     chown -R appuser:appgroup /var/cache/nginx /run
 
-# Copy pre-built assets from local dist directory
-COPY --chown=appuser:appgroup dist/ /usr/share/nginx/html/
+# Copy built assets from builder stage, not local filesystem
+COPY --from=builder --chown=appuser:appgroup /app/dist/ /usr/share/nginx/html/
 
 # Expose port
 EXPOSE 80
