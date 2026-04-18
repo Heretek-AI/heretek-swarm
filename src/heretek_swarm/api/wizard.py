@@ -14,14 +14,22 @@ from typing import Any
 import structlog
 from fastapi import APIRouter, HTTPException
 
+from uuid import UUID
+
+from fastapi import APIRouter, HTTPException, Response
+from structlog import get_logger
+
 from heretek_swarm.config.models import (
     LLMProviderCreate,
     LLMProviderType,
+    LLMProviderUpdate,
 )
 from heretek_swarm.config.service import (
     ConfigurationService,
     get_config_service,
 )
+
+logger = get_logger("api.wizard")
 
 logger = structlog.get_logger("api.wizard")
 
@@ -295,6 +303,131 @@ async def get_provider(provider_id: str) -> dict[str, Any]:
         raise HTTPException(404, f"Provider '{provider_id}' not found")
 
     return AVAILABLE_PROVIDERS[provider_id]
+
+
+@router.put("/providers/{provider_id}")
+async def update_provider(
+    provider_id: str,
+    updates: dict[str, Any],
+) -> dict[str, Any]:
+    """
+    Update a configured LLM provider.
+
+    Updates provider settings in the database. If a new API key is provided,
+    it will be re-encrypted using Fernet encryption before storage.
+
+    Args:
+        provider_id: UUID of the provider to update
+        updates: Provider update data including optional new api_key
+
+    Returns:
+        Updated provider details
+
+    Raises:
+        HTTPException: If provider not found or update fails
+    """
+    service = get_service()
+
+    try:
+        provider_uuid = UUID(provider_id)
+    except ValueError:
+        raise HTTPException(400, f"Invalid provider ID format: '{provider_id}'")
+
+    # Get existing provider
+    existing = await service.get_llm_provider(provider_uuid)
+    if not existing:
+        raise HTTPException(404, f"Provider '{provider_id}' not found")
+
+    # Build update model - handle API key re-encryption
+    update_data = LLMProviderUpdate(
+        base_url=updates.get("base_url"),
+        api_key=updates.get("api_key"),
+        api_key_hint=updates.get("api_key_hint"),
+        default_model=updates.get("default_model"),
+        available_models=updates.get("available_models"),
+        model_aliases=updates.get("model_aliases"),
+        supports_streaming=updates.get("supports_streaming"),
+        supports_function_calling=updates.get("supports_function_calling"),
+        supports_vision=updates.get("supports_vision"),
+        max_tokens=updates.get("max_tokens"),
+        max_context_length=updates.get("max_context_length"),
+        rate_limit_requests_per_minute=updates.get("rate_limit_requests_per_minute"),
+        rate_limit_tokens_per_minute=updates.get("rate_limit_tokens_per_minute"),
+        is_enabled=updates.get("is_enabled"),
+        is_default=updates.get("is_default"),
+        priority=updates.get("priority"),
+        extra_config=updates.get("extra_config"),
+    )
+
+    # Perform update (service handles API key encryption)
+    updated = await service.update_llm_provider(
+        provider_uuid,
+        update_data,
+        user="wizard",
+    )
+
+    if not updated:
+        raise HTTPException(500, "Failed to update provider")
+
+    logger.info(
+        "provider_updated",
+        provider_id=str(provider_uuid),
+        user="wizard",
+    )
+
+    return {
+        "id": str(updated.id),
+        "name": updated.provider_name,
+        "type": updated.provider_type,
+        "base_url": updated.base_url,
+        "default_model": updated.default_model,
+        "is_enabled": updated.is_enabled,
+        "is_default": updated.is_default,
+    }
+
+
+@router.delete("/providers/{provider_id}")
+async def delete_provider(provider_id: str) -> Response:
+    """
+    Delete a configured LLM provider.
+
+    Removes the provider from the database. Returns 204 on success.
+
+    Args:
+        provider_id: UUID of the provider to delete
+
+    Raises:
+        HTTPException: If provider not found or deletion fails
+    """
+    service = get_service()
+
+    try:
+        provider_uuid = UUID(provider_id)
+    except ValueError:
+        raise HTTPException(400, f"Invalid provider ID format: '{provider_id}'")
+
+    # Check if provider exists
+    existing = await service.get_llm_provider(provider_uuid)
+    if not existing:
+        raise HTTPException(404, f"Provider '{provider_id}' not found")
+
+    # Delete provider
+    deleted = await service.delete_llm_provider(
+        provider_uuid,
+        user="wizard",
+    )
+
+    if not deleted:
+        raise HTTPException(500, "Failed to delete provider")
+
+    logger.info(
+        "provider_deleted",
+        provider_id=str(provider_uuid),
+        user="wizard",
+    )
+
+    # Return 204 No Content
+    return Response(status_code=204)
 
 
 # =============================================================================

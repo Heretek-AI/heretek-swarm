@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-18T01:32:45.121553+00:00",
+    "generated_at": "2026-04-18T01:43:53.277310+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -11789,6 +11789,13 @@
           "status": "unchanged"
         },
         {
+          "qualified_name": "src.heretek_swarm.api.wizard.update_provider",
+          "start_line": 304,
+          "end_line": 381,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
           "qualified_name": "src.heretek_swarm.api.wizard.list_tiers",
           "start_line": 305,
           "end_line": 315,
@@ -11808,6 +11815,13 @@
           "end_line": 398,
           "node_type": "FUNCTION",
           "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.wizard.delete_provider",
+          "start_line": 385,
+          "end_line": 425,
+          "node_type": "FUNCTION",
+          "status": "added"
         },
         {
           "qualified_name": "src.heretek_swarm.api.wizard._dispatch_validation",
@@ -68975,6 +68989,14 @@
       "type": "FUNCTION",
       "status": "unchanged"
     },
+    "src/heretek_swarm/api/wizard.py|src.heretek_swarm.api.wizard.update_provider": {
+      "file_path": "src/heretek_swarm/api/wizard.py",
+      "qualified_name": "src.heretek_swarm.api.wizard.update_provider",
+      "start_line": 304,
+      "end_line": 381,
+      "type": "FUNCTION",
+      "status": "added"
+    },
     "src/heretek_swarm/api/wizard.py|src.heretek_swarm.api.wizard.list_tiers": {
       "file_path": "src/heretek_swarm/api/wizard.py",
       "qualified_name": "src.heretek_swarm.api.wizard.list_tiers",
@@ -68998,6 +69020,14 @@
       "end_line": 398,
       "type": "FUNCTION",
       "status": "unchanged"
+    },
+    "src/heretek_swarm/api/wizard.py|src.heretek_swarm.api.wizard.delete_provider": {
+      "file_path": "src/heretek_swarm/api/wizard.py",
+      "qualified_name": "src.heretek_swarm.api.wizard.delete_provider",
+      "start_line": 385,
+      "end_line": 425,
+      "type": "FUNCTION",
+      "status": "added"
     },
     "src/heretek_swarm/api/wizard.py|src.heretek_swarm.api.wizard._dispatch_validation": {
       "file_path": "src/heretek_swarm/api/wizard.py",
@@ -119914,9 +119944,11 @@
             "src.heretek_swarm.api.wizard.get_wizard_state",
             "src.heretek_swarm.api.wizard.list_providers",
             "src.heretek_swarm.api.wizard.get_provider",
+            "src.heretek_swarm.api.wizard.update_provider",
             "src.heretek_swarm.api.wizard.list_tiers",
             "src.heretek_swarm.api.wizard.get_tier",
             "src.heretek_swarm.api.wizard.get_config_status",
+            "src.heretek_swarm.api.wizard.delete_provider",
             "src.heretek_swarm.api.wizard._dispatch_validation",
             "src.heretek_swarm.api.wizard.validate_credentials",
             "src.heretek_swarm.api.wizard._validate_anthropic",
@@ -126408,9 +126440,11 @@
                 "src.heretek_swarm.api.wizard.get_wizard_state",
                 "src.heretek_swarm.api.wizard.list_providers",
                 "src.heretek_swarm.api.wizard.get_provider",
+                "src.heretek_swarm.api.wizard.update_provider",
                 "src.heretek_swarm.api.wizard.list_tiers",
                 "src.heretek_swarm.api.wizard.get_tier",
                 "src.heretek_swarm.api.wizard.get_config_status",
+                "src.heretek_swarm.api.wizard.delete_provider",
                 "src.heretek_swarm.api.wizard._dispatch_validation",
                 "src.heretek_swarm.api.wizard.validate_credentials",
                 "src.heretek_swarm.api.wizard._validate_anthropic",
@@ -134370,9 +134404,11 @@
                     "src.heretek_swarm.api.wizard.get_wizard_state",
                     "src.heretek_swarm.api.wizard.list_providers",
                     "src.heretek_swarm.api.wizard.get_provider",
+                    "src.heretek_swarm.api.wizard.update_provider",
                     "src.heretek_swarm.api.wizard.list_tiers",
                     "src.heretek_swarm.api.wizard.get_tier",
                     "src.heretek_swarm.api.wizard.get_config_status",
+                    "src.heretek_swarm.api.wizard.delete_provider",
                     "src.heretek_swarm.api.wizard._dispatch_validation",
                     "src.heretek_swarm.api.wizard.validate_credentials",
                     "src.heretek_swarm.api.wizard._validate_anthropic",
@@ -136416,9 +136452,11 @@
                         "src.heretek_swarm.api.wizard.get_wizard_state",
                         "src.heretek_swarm.api.wizard.list_providers",
                         "src.heretek_swarm.api.wizard.get_provider",
+                        "src.heretek_swarm.api.wizard.update_provider",
                         "src.heretek_swarm.api.wizard.list_tiers",
                         "src.heretek_swarm.api.wizard.get_tier",
                         "src.heretek_swarm.api.wizard.get_config_status",
+                        "src.heretek_swarm.api.wizard.delete_provider",
                         "src.heretek_swarm.api.wizard._dispatch_validation",
                         "src.heretek_swarm.api.wizard.validate_credentials",
                         "src.heretek_swarm.api.wizard._validate_anthropic",
@@ -138256,9 +138294,11 @@
                             "src.heretek_swarm.api.wizard.get_wizard_state",
                             "src.heretek_swarm.api.wizard.list_providers",
                             "src.heretek_swarm.api.wizard.get_provider",
+                            "src.heretek_swarm.api.wizard.update_provider",
                             "src.heretek_swarm.api.wizard.list_tiers",
                             "src.heretek_swarm.api.wizard.get_tier",
                             "src.heretek_swarm.api.wizard.get_config_status",
+                            "src.heretek_swarm.api.wizard.delete_provider",
                             "src.heretek_swarm.api.wizard._dispatch_validation",
                             "src.heretek_swarm.api.wizard.validate_credentials",
                             "src.heretek_swarm.api.wizard._validate_anthropic",
