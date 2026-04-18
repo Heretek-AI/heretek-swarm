@@ -164,10 +164,63 @@ jobs:
         working-directory: dashboard/frontend
         run: npm test -- --coverage --watchAll=false
 
+  e2e-tests:
+    name: E2E Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: [test-python, test-frontend]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Create .env file for CI
+        run: |
+          cat > .env << 'EOF'
+          # Mock env vars for CI - real keys not needed for E2E smoke tests
+          POSTGRES_PASSWORD=ci-test-password
+          OPENAI_API_KEY=sk-test-ci-key
+          OPENAI_BASE_URL=https://api.test.example/v1
+          LLM_MODEL=test-model
+          EMBEDDING_PROVIDER=openai_compatible
+          EMBEDDING_BASE_URL=http://localhost:13305/api/v1
+          EMBEDDING_API_KEY=test-embed-key
+          EMBEDDING_DIMENSIONS=768
+          HERETEK_API_KEY=htsk-ci-test-key
+          JWT_SECRET=ci-jwt-secret
+          API_KEY=ci-api-key
+          QDRANT_HOST=localhost
+          QDRANT_PORT=6333
+          QDRANT_URL=http://localhost:6333
+          NATS_URL=nats://localhost:4222
+          ENVIRONMENT=ci
+          EOF
+
+      - name: Run E2E compose validation tests
+        run: |
+          docker compose -f docker-compose.yml config --quiet
+          python -m pytest tests/e2e/test_compose_validation.py -v
+
+      - name: Run E2E stack smoke tests
+        run: |
+          # Unique project name to avoid conflicts when same workflow runs multiple times
+          PROJECT_NAME=heretek-e2e-${{ github.run_id }}-${{ github.run_attempt }}
+          docker compose -p $PROJECT_NAME --profile autonomous up -d --wait
+          docker compose -p $PROJECT_NAME ps
+          python -m pytest tests/e2e/test_stack_smoke.py -v --timeout=300
+        continue-on-error: false
+
+      - name: Cleanup
+        if: always()
+        run: |
+          PROJECT_NAME=heretek-e2e-${{ github.run_id }}-${{ github.run_attempt }}
+          docker compose -p $PROJECT_NAME down -v --remove-orphans || true
+
   build-docker:
     name: Build Docker Images
     runs-on: ubuntu-latest
-    needs: [security-scan, lint-python, lint-frontend, test-python, test-frontend]
+    needs: [security-scan, lint-python, lint-frontend, test-python, test-frontend, e2e-tests]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@v4
