@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-18T16:43:39.301299+00:00",
+    "generated_at": "2026-04-18T21:33:32.722222+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -25430,7 +25430,7 @@
       ]
     },
     "src/heretek_swarm/llm/providers/factory.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.llm.providers.factory.register_provider",
@@ -25463,9 +25463,9 @@
         {
           "qualified_name": "src.heretek_swarm.llm.providers.factory.create_llm_provider",
           "start_line": 92,
-          "end_line": 222,
+          "end_line": 223,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.llm.providers.factory.create_llm_provider_from_db_config",
@@ -39807,7 +39807,7 @@
       ]
     },
     "dashboard/frontend/src/api/configuration.ts": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "dashboard.frontend.src.api.configuration.UserConfiguration",
@@ -39819,9 +39819,9 @@
         {
           "qualified_name": "dashboard.frontend.src.api.configuration.LLMProvider",
           "start_line": 28,
-          "end_line": 42,
+          "end_line": 43,
           "node_type": "INTERFACE",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "dashboard.frontend.src.api.configuration.EmbeddingProvider",
@@ -39870,7 +39870,7 @@
           "start_line": 124,
           "end_line": 281,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.api.configuration.configurationApi.getConfigs",
@@ -44281,7 +44281,7 @@
       ]
     },
     "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSectionProps",
@@ -44293,23 +44293,23 @@
         {
           "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.ProviderFormData",
           "start_line": 16,
-          "end_line": 26,
+          "end_line": 27,
           "node_type": "INTERFACE",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection",
-          "start_line": 48,
-          "end_line": 224,
+          "start_line": 49,
+          "end_line": 233,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.loadProviders",
           "start_line": 68,
           "end_line": 78,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.loadProviders.useCallback() callback",
@@ -44330,21 +44330,21 @@
           "start_line": 84,
           "end_line": 113,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleOpenForm.useCallback() callback",
-          "start_line": 84,
-          "end_line": 113,
+          "start_line": 86,
+          "end_line": 117,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleCloseForm",
           "start_line": 115,
           "end_line": 118,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleCloseForm.useCallback() callback",
@@ -44358,21 +44358,21 @@
           "start_line": 120,
           "end_line": 155,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleSubmit.useCallback() callback",
-          "start_line": 120,
-          "end_line": 155,
+          "start_line": 124,
+          "end_line": 164,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleDelete",
           "start_line": 157,
           "end_line": 168,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleDelete.useCallback() callback",
@@ -44386,7 +44386,7 @@
           "start_line": 170,
           "end_line": 188,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleTest.useCallback() callback",
@@ -44400,7 +44400,7 @@
           "start_line": 190,
           "end_line": 198,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleProviderTypeChange.useCallback() callback",
@@ -44414,7 +44414,7 @@
           "start_line": 191,
           "end_line": 191,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleProviderTypeChange.useCallback() callback.providerType.PROVIDER_TYPES.find() callback",
@@ -44435,7 +44435,7 @@
           "start_line": 200,
           "end_line": 202,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.getProviderTypeLabel.useCallback() callback",
@@ -44456,7 +44456,7 @@
           "start_line": 204,
           "end_line": 211,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.getHealthStatusColor.useCallback() callback",
@@ -44470,7 +44470,7 @@
           "start_line": 240,
           "end_line": 242,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.<unknown>.getProviderTypeLabel",
@@ -80481,9 +80481,9 @@
       "file_path": "src/heretek_swarm/llm/providers/factory.py",
       "qualified_name": "src.heretek_swarm.llm.providers.factory.create_llm_provider",
       "start_line": 92,
-      "end_line": 222,
+      "end_line": 223,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/llm/providers/factory.py|src.heretek_swarm.llm.providers.factory.create_llm_provider_from_db_config": {
       "file_path": "src/heretek_swarm/llm/providers/factory.py",
@@ -96425,9 +96425,9 @@
       "file_path": "dashboard/frontend/src/api/configuration.ts",
       "qualified_name": "dashboard.frontend.src.api.configuration.LLMProvider",
       "start_line": 28,
-      "end_line": 42,
+      "end_line": 43,
       "type": "INTERFACE",
-      "status": "unchanged"
+      "status": "modified"
     },
     "dashboard/frontend/src/api/configuration.ts|dashboard.frontend.src.api.configuration.EmbeddingProvider": {
       "file_path": "dashboard/frontend/src/api/configuration.ts",
@@ -96483,7 +96483,7 @@
       "start_line": 124,
       "end_line": 281,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "dashboard/frontend/src/api/configuration.ts|dashboard.frontend.src.api.configuration.configurationApi.getConfigs": {
       "file_path": "dashboard/frontend/src/api/configuration.ts",
@@ -101321,17 +101321,17 @@
       "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
       "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.ProviderFormData",
       "start_line": 16,
-      "end_line": 26,
+      "end_line": 27,
       "type": "INTERFACE",
-      "status": "unchanged"
+      "status": "modified"
     },
     "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx|dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection": {
       "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
       "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection",
-      "start_line": 48,
-      "end_line": 224,
+      "start_line": 49,
+      "end_line": 233,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx|dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.loadProviders": {
       "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
@@ -101339,7 +101339,7 @@
       "start_line": 68,
       "end_line": 78,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx|dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.loadProviders.useCallback() callback": {
       "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
@@ -101363,15 +101363,15 @@
       "start_line": 84,
       "end_line": 113,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx|dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleOpenForm.useCallback() callback": {
       "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
       "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleOpenForm.useCallback() callback",
-      "start_line": 84,
-      "end_line": 113,
+      "start_line": 86,
+      "end_line": 117,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx|dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleCloseForm": {
       "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
@@ -101379,7 +101379,7 @@
       "start_line": 115,
       "end_line": 118,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx|dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleCloseForm.useCallback() callback": {
       "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
@@ -101395,15 +101395,15 @@
       "start_line": 120,
       "end_line": 155,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx|dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleSubmit.useCallback() callback": {
       "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
       "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleSubmit.useCallback() callback",
-      "start_line": 120,
-      "end_line": 155,
+      "start_line": 124,
+      "end_line": 164,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx|dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleDelete": {
       "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
@@ -101411,7 +101411,7 @@
       "start_line": 157,
       "end_line": 168,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx|dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleDelete.useCallback() callback": {
       "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
@@ -101427,7 +101427,7 @@
       "start_line": 170,
       "end_line": 188,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx|dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleTest.useCallback() callback": {
       "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
@@ -101443,7 +101443,7 @@
       "start_line": 190,
       "end_line": 198,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx|dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleProviderTypeChange.useCallback() callback": {
       "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
@@ -101459,7 +101459,7 @@
       "start_line": 191,
       "end_line": 191,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx|dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleProviderTypeChange.useCallback() callback.providerType.PROVIDER_TYPES.find() callback": {
       "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
@@ -101483,7 +101483,7 @@
       "start_line": 200,
       "end_line": 202,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx|dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.getProviderTypeLabel.useCallback() callback": {
       "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
@@ -101507,7 +101507,7 @@
       "start_line": 204,
       "end_line": 211,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx|dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.getHealthStatusColor.useCallback() callback": {
       "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
@@ -101523,7 +101523,7 @@
       "start_line": 240,
       "end_line": 242,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx|dashboard.frontend.src.components.Settings.LLMProvidersSection.<unknown>.getProviderTypeLabel": {
       "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
@@ -114474,7 +114474,7 @@
         },
         {
           "file_path": "src/heretek_swarm/llm/providers/factory.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "src.heretek_swarm.llm.providers.factory.register_provider",
             "src.heretek_swarm.llm.providers.factory.unregister_provider",
@@ -158910,7 +158910,7 @@
             },
             {
               "file_path": "src/heretek_swarm/llm/providers/factory.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.heretek_swarm.llm.providers.factory.register_provider",
                 "src.heretek_swarm.llm.providers.factory.unregister_provider",
@@ -159315,7 +159315,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/llm/providers/factory.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.llm.providers.factory.register_provider",
                     "src.heretek_swarm.llm.providers.factory.unregister_provider",
@@ -160333,7 +160333,7 @@
                     },
                     {
                       "file_path": "src/heretek_swarm/llm/providers/factory.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.llm.providers.factory.register_provider",
                         "src.heretek_swarm.llm.providers.factory.unregister_provider",
@@ -160694,7 +160694,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/llm/providers/factory.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.llm.providers.factory.register_provider",
                             "src.heretek_swarm.llm.providers.factory.unregister_provider",
@@ -238705,7 +238705,7 @@
         },
         {
           "file_path": "dashboard/frontend/src/api/configuration.ts",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "dashboard.frontend.src.api.configuration.UserConfiguration",
             "dashboard.frontend.src.api.configuration.LLMProvider",
@@ -238715,7 +238715,6 @@
             "dashboard.frontend.src.api.configuration.EmbeddingProviderCreate",
             "dashboard.frontend.src.api.configuration.ProviderTestResult",
             "dashboard.frontend.src.api.configuration.EmbeddingProviderTestResult",
-            "dashboard.frontend.src.api.configuration.configurationApi",
             "dashboard.frontend.src.api.configuration.configurationApi.getConfigs",
             "dashboard.frontend.src.api.configuration.configurationApi.getConfig",
             "dashboard.frontend.src.api.configuration.configurationApi.updateConfig",
@@ -239542,35 +239541,24 @@
         },
         {
           "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSectionProps",
             "dashboard.frontend.src.components.Settings.LLMProvidersSection.ProviderFormData",
             "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection",
-            "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.loadProviders",
             "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.loadProviders.useCallback() callback",
             "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.useEffect() callback",
-            "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleOpenForm",
             "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleOpenForm.useCallback() callback",
-            "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleCloseForm",
             "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleCloseForm.useCallback() callback",
-            "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleSubmit",
             "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleSubmit.useCallback() callback",
-            "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleDelete",
             "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleDelete.useCallback() callback",
-            "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleTest",
             "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleTest.useCallback() callback",
-            "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleProviderTypeChange",
             "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleProviderTypeChange.useCallback() callback",
-            "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleProviderTypeChange.useCallback() callback.providerType",
             "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleProviderTypeChange.useCallback() callback.providerType.PROVIDER_TYPES.find() callback",
             "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleProviderTypeChange.useCallback() callback.setFormData() callback",
-            "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.getProviderTypeLabel",
             "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.getProviderTypeLabel.useCallback() callback",
             "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.getProviderTypeLabel.useCallback() callback.PROVIDER_TYPES.find() callback",
-            "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.getHealthStatusColor",
             "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.getHealthStatusColor.useCallback() callback",
-            "dashboard.frontend.src.components.Settings.LLMProvidersSection..map() callback",
             "dashboard.frontend.src.components.Settings.LLMProvidersSection.<unknown>.getProviderTypeLabel",
             "dashboard.frontend.src.components.Settings.LLMProvidersSection.<unknown>..map() callback",
             "dashboard.frontend.src.components.Settings.LLMProvidersSection.setFormData() callback"
@@ -258293,7 +258281,7 @@
             },
             {
               "file_path": "dashboard/frontend/src/api/configuration.ts",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "dashboard.frontend.src.api.configuration.UserConfiguration",
                 "dashboard.frontend.src.api.configuration.LLMProvider",
@@ -258303,7 +258291,6 @@
                 "dashboard.frontend.src.api.configuration.EmbeddingProviderCreate",
                 "dashboard.frontend.src.api.configuration.ProviderTestResult",
                 "dashboard.frontend.src.api.configuration.EmbeddingProviderTestResult",
-                "dashboard.frontend.src.api.configuration.configurationApi",
                 "dashboard.frontend.src.api.configuration.configurationApi.getConfigs",
                 "dashboard.frontend.src.api.configuration.configurationApi.getConfig",
                 "dashboard.frontend.src.api.configuration.configurationApi.updateConfig",
@@ -258814,35 +258801,24 @@
             },
             {
               "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSectionProps",
                 "dashboard.frontend.src.components.Settings.LLMProvidersSection.ProviderFormData",
                 "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection",
-                "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.loadProviders",
                 "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.loadProviders.useCallback() callback",
                 "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.useEffect() callback",
-                "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleOpenForm",
                 "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleOpenForm.useCallback() callback",
-                "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleCloseForm",
                 "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleCloseForm.useCallback() callback",
-                "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleSubmit",
                 "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleSubmit.useCallback() callback",
-                "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleDelete",
                 "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleDelete.useCallback() callback",
-                "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleTest",
                 "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleTest.useCallback() callback",
-                "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleProviderTypeChange",
                 "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleProviderTypeChange.useCallback() callback",
-                "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleProviderTypeChange.useCallback() callback.providerType",
                 "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleProviderTypeChange.useCallback() callback.providerType.PROVIDER_TYPES.find() callback",
                 "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleProviderTypeChange.useCallback() callback.setFormData() callback",
-                "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.getProviderTypeLabel",
                 "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.getProviderTypeLabel.useCallback() callback",
                 "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.getProviderTypeLabel.useCallback() callback.PROVIDER_TYPES.find() callback",
-                "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.getHealthStatusColor",
                 "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.getHealthStatusColor.useCallback() callback",
-                "dashboard.frontend.src.components.Settings.LLMProvidersSection..map() callback",
                 "dashboard.frontend.src.components.Settings.LLMProvidersSection.<unknown>.getProviderTypeLabel",
                 "dashboard.frontend.src.components.Settings.LLMProvidersSection.<unknown>..map() callback",
                 "dashboard.frontend.src.components.Settings.LLMProvidersSection.setFormData() callback"
@@ -259890,7 +259866,7 @@
                 },
                 {
                   "file_path": "dashboard/frontend/src/api/configuration.ts",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "dashboard.frontend.src.api.configuration.UserConfiguration",
                     "dashboard.frontend.src.api.configuration.LLMProvider",
@@ -259900,7 +259876,6 @@
                     "dashboard.frontend.src.api.configuration.EmbeddingProviderCreate",
                     "dashboard.frontend.src.api.configuration.ProviderTestResult",
                     "dashboard.frontend.src.api.configuration.EmbeddingProviderTestResult",
-                    "dashboard.frontend.src.api.configuration.configurationApi",
                     "dashboard.frontend.src.api.configuration.configurationApi.getConfigs",
                     "dashboard.frontend.src.api.configuration.configurationApi.getConfig",
                     "dashboard.frontend.src.api.configuration.configurationApi.updateConfig",
@@ -260383,33 +260358,23 @@
                 },
                 {
                   "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSectionProps",
                     "dashboard.frontend.src.components.Settings.LLMProvidersSection.ProviderFormData",
                     "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection",
-                    "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.loadProviders",
                     "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.loadProviders.useCallback() callback",
                     "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.useEffect() callback",
-                    "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleOpenForm",
                     "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleOpenForm.useCallback() callback",
-                    "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleCloseForm",
                     "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleCloseForm.useCallback() callback",
-                    "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleSubmit",
                     "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleSubmit.useCallback() callback",
-                    "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleDelete",
                     "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleDelete.useCallback() callback",
-                    "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleTest",
                     "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleTest.useCallback() callback",
-                    "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleProviderTypeChange",
                     "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleProviderTypeChange.useCallback() callback",
                     "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleProviderTypeChange.useCallback() callback.providerType.PROVIDER_TYPES.find() callback",
-                    "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.getProviderTypeLabel",
                     "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.getProviderTypeLabel.useCallback() callback",
                     "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.getProviderTypeLabel.useCallback() callback.PROVIDER_TYPES.find() callback",
-                    "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.getHealthStatusColor",
                     "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.getHealthStatusColor.useCallback() callback",
-                    "dashboard.frontend.src.components.Settings.LLMProvidersSection..map() callback",
                     "dashboard.frontend.src.components.Settings.LLMProvidersSection.<unknown>.getProviderTypeLabel",
                     "dashboard.frontend.src.components.Settings.LLMProvidersSection.<unknown>..map() callback",
                     "dashboard.frontend.src.components.Settings.LLMProvidersSection.setFormData() callback"
@@ -261438,7 +261403,7 @@
                     },
                     {
                       "file_path": "dashboard/frontend/src/api/configuration.ts",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "dashboard.frontend.src.api.configuration.UserConfiguration",
                         "dashboard.frontend.src.api.configuration.LLMProvider",
@@ -261448,7 +261413,6 @@
                         "dashboard.frontend.src.api.configuration.EmbeddingProviderCreate",
                         "dashboard.frontend.src.api.configuration.ProviderTestResult",
                         "dashboard.frontend.src.api.configuration.EmbeddingProviderTestResult",
-                        "dashboard.frontend.src.api.configuration.configurationApi",
                         "dashboard.frontend.src.api.configuration.configurationApi.getConfigs",
                         "dashboard.frontend.src.api.configuration.configurationApi.getConfig",
                         "dashboard.frontend.src.api.configuration.configurationApi.updateConfig",
@@ -261931,33 +261895,23 @@
                     },
                     {
                       "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSectionProps",
                         "dashboard.frontend.src.components.Settings.LLMProvidersSection.ProviderFormData",
                         "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection",
-                        "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.loadProviders",
                         "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.loadProviders.useCallback() callback",
                         "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.useEffect() callback",
-                        "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleOpenForm",
                         "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleOpenForm.useCallback() callback",
-                        "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleCloseForm",
                         "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleCloseForm.useCallback() callback",
-                        "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleSubmit",
                         "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleSubmit.useCallback() callback",
-                        "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleDelete",
                         "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleDelete.useCallback() callback",
-                        "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleTest",
                         "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleTest.useCallback() callback",
-                        "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleProviderTypeChange",
                         "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleProviderTypeChange.useCallback() callback",
                         "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleProviderTypeChange.useCallback() callback.providerType.PROVIDER_TYPES.find() callback",
-                        "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.getProviderTypeLabel",
                         "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.getProviderTypeLabel.useCallback() callback",
                         "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.getProviderTypeLabel.useCallback() callback.PROVIDER_TYPES.find() callback",
-                        "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.getHealthStatusColor",
                         "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.getHealthStatusColor.useCallback() callback",
-                        "dashboard.frontend.src.components.Settings.LLMProvidersSection..map() callback",
                         "dashboard.frontend.src.components.Settings.LLMProvidersSection.<unknown>.getProviderTypeLabel",
                         "dashboard.frontend.src.components.Settings.LLMProvidersSection.<unknown>..map() callback",
                         "dashboard.frontend.src.components.Settings.LLMProvidersSection.setFormData() callback"
@@ -262988,7 +262942,7 @@
                         },
                         {
                           "file_path": "dashboard/frontend/src/api/configuration.ts",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "dashboard.frontend.src.api.configuration.UserConfiguration",
                             "dashboard.frontend.src.api.configuration.LLMProvider",
@@ -262998,7 +262952,6 @@
                             "dashboard.frontend.src.api.configuration.EmbeddingProviderCreate",
                             "dashboard.frontend.src.api.configuration.ProviderTestResult",
                             "dashboard.frontend.src.api.configuration.EmbeddingProviderTestResult",
-                            "dashboard.frontend.src.api.configuration.configurationApi",
                             "dashboard.frontend.src.api.configuration.configurationApi.getConfigs",
                             "dashboard.frontend.src.api.configuration.configurationApi.getConfig",
                             "dashboard.frontend.src.api.configuration.configurationApi.updateConfig",
@@ -263487,35 +263440,24 @@
                         },
                         {
                           "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSectionProps",
                             "dashboard.frontend.src.components.Settings.LLMProvidersSection.ProviderFormData",
                             "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection",
-                            "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.loadProviders",
                             "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.loadProviders.useCallback() callback",
                             "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.useEffect() callback",
-                            "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleOpenForm",
                             "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleOpenForm.useCallback() callback",
-                            "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleCloseForm",
                             "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleCloseForm.useCallback() callback",
-                            "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleSubmit",
                             "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleSubmit.useCallback() callback",
-                            "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleDelete",
                             "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleDelete.useCallback() callback",
-                            "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleTest",
                             "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleTest.useCallback() callback",
-                            "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleProviderTypeChange",
                             "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleProviderTypeChange.useCallback() callback",
-                            "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleProviderTypeChange.useCallback() callback.providerType",
                             "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleProviderTypeChange.useCallback() callback.providerType.PROVIDER_TYPES.find() callback",
                             "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleProviderTypeChange.useCallback() callback.setFormData() callback",
-                            "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.getProviderTypeLabel",
                             "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.getProviderTypeLabel.useCallback() callback",
                             "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.getProviderTypeLabel.useCallback() callback.PROVIDER_TYPES.find() callback",
-                            "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.getHealthStatusColor",
                             "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.getHealthStatusColor.useCallback() callback",
-                            "dashboard.frontend.src.components.Settings.LLMProvidersSection..map() callback",
                             "dashboard.frontend.src.components.Settings.LLMProvidersSection.<unknown>.getProviderTypeLabel",
                             "dashboard.frontend.src.components.Settings.LLMProvidersSection.<unknown>..map() callback",
                             "dashboard.frontend.src.components.Settings.LLMProvidersSection.setFormData() callback"
@@ -265573,9 +265515,8 @@
                     },
                     {
                       "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
-                        "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleProviderTypeChange.useCallback() callback.providerType",
                         "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleProviderTypeChange.useCallback() callback.setFormData() callback"
                       ]
                     },
@@ -265728,35 +265669,24 @@
                         },
                         {
                           "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSectionProps",
                             "dashboard.frontend.src.components.Settings.LLMProvidersSection.ProviderFormData",
                             "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection",
-                            "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.loadProviders",
                             "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.loadProviders.useCallback() callback",
                             "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.useEffect() callback",
-                            "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleOpenForm",
                             "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleOpenForm.useCallback() callback",
-                            "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleCloseForm",
                             "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleCloseForm.useCallback() callback",
-                            "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleSubmit",
                             "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleSubmit.useCallback() callback",
-                            "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleDelete",
                             "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleDelete.useCallback() callback",
-                            "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleTest",
                             "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleTest.useCallback() callback",
-                            "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleProviderTypeChange",
                             "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleProviderTypeChange.useCallback() callback",
-                            "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleProviderTypeChange.useCallback() callback.providerType",
                             "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleProviderTypeChange.useCallback() callback.providerType.PROVIDER_TYPES.find() callback",
                             "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleProviderTypeChange.useCallback() callback.setFormData() callback",
-                            "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.getProviderTypeLabel",
                             "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.getProviderTypeLabel.useCallback() callback",
                             "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.getProviderTypeLabel.useCallback() callback.PROVIDER_TYPES.find() callback",
-                            "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.getHealthStatusColor",
                             "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.getHealthStatusColor.useCallback() callback",
-                            "dashboard.frontend.src.components.Settings.LLMProvidersSection..map() callback",
                             "dashboard.frontend.src.components.Settings.LLMProvidersSection.<unknown>.getProviderTypeLabel",
                             "dashboard.frontend.src.components.Settings.LLMProvidersSection.<unknown>..map() callback",
                             "dashboard.frontend.src.components.Settings.LLMProvidersSection.setFormData() callback"
@@ -266968,9 +266898,8 @@
                 },
                 {
                   "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
-                    "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleProviderTypeChange.useCallback() callback.providerType",
                     "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleProviderTypeChange.useCallback() callback.setFormData() callback"
                   ]
                 },
@@ -267576,35 +267505,24 @@
                     },
                     {
                       "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSectionProps",
                         "dashboard.frontend.src.components.Settings.LLMProvidersSection.ProviderFormData",
                         "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection",
-                        "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.loadProviders",
                         "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.loadProviders.useCallback() callback",
                         "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.useEffect() callback",
-                        "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleOpenForm",
                         "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleOpenForm.useCallback() callback",
-                        "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleCloseForm",
                         "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleCloseForm.useCallback() callback",
-                        "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleSubmit",
                         "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleSubmit.useCallback() callback",
-                        "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleDelete",
                         "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleDelete.useCallback() callback",
-                        "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleTest",
                         "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleTest.useCallback() callback",
-                        "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleProviderTypeChange",
                         "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleProviderTypeChange.useCallback() callback",
-                        "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleProviderTypeChange.useCallback() callback.providerType",
                         "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleProviderTypeChange.useCallback() callback.providerType.PROVIDER_TYPES.find() callback",
                         "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleProviderTypeChange.useCallback() callback.setFormData() callback",
-                        "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.getProviderTypeLabel",
                         "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.getProviderTypeLabel.useCallback() callback",
                         "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.getProviderTypeLabel.useCallback() callback.PROVIDER_TYPES.find() callback",
-                        "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.getHealthStatusColor",
                         "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.getHealthStatusColor.useCallback() callback",
-                        "dashboard.frontend.src.components.Settings.LLMProvidersSection..map() callback",
                         "dashboard.frontend.src.components.Settings.LLMProvidersSection.<unknown>.getProviderTypeLabel",
                         "dashboard.frontend.src.components.Settings.LLMProvidersSection.<unknown>..map() callback",
                         "dashboard.frontend.src.components.Settings.LLMProvidersSection.setFormData() callback"
@@ -267765,35 +267683,24 @@
                         },
                         {
                           "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSectionProps",
                             "dashboard.frontend.src.components.Settings.LLMProvidersSection.ProviderFormData",
                             "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection",
-                            "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.loadProviders",
                             "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.loadProviders.useCallback() callback",
                             "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.useEffect() callback",
-                            "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleOpenForm",
                             "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleOpenForm.useCallback() callback",
-                            "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleCloseForm",
                             "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleCloseForm.useCallback() callback",
-                            "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleSubmit",
                             "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleSubmit.useCallback() callback",
-                            "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleDelete",
                             "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleDelete.useCallback() callback",
-                            "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleTest",
                             "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleTest.useCallback() callback",
-                            "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleProviderTypeChange",
                             "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleProviderTypeChange.useCallback() callback",
-                            "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleProviderTypeChange.useCallback() callback.providerType",
                             "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleProviderTypeChange.useCallback() callback.providerType.PROVIDER_TYPES.find() callback",
                             "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleProviderTypeChange.useCallback() callback.setFormData() callback",
-                            "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.getProviderTypeLabel",
                             "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.getProviderTypeLabel.useCallback() callback",
                             "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.getProviderTypeLabel.useCallback() callback.PROVIDER_TYPES.find() callback",
-                            "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.getHealthStatusColor",
                             "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.getHealthStatusColor.useCallback() callback",
-                            "dashboard.frontend.src.components.Settings.LLMProvidersSection..map() callback",
                             "dashboard.frontend.src.components.Settings.LLMProvidersSection.<unknown>.getProviderTypeLabel",
                             "dashboard.frontend.src.components.Settings.LLMProvidersSection.<unknown>..map() callback",
                             "dashboard.frontend.src.components.Settings.LLMProvidersSection.setFormData() callback"

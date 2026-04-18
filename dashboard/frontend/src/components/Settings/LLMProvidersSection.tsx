@@ -20,6 +20,7 @@ interface ProviderFormData {
   api_key: string;
   api_key_hint: string;
   default_model: string;
+  group_id: string;
   is_enabled: boolean;
   is_default: boolean;
   priority: number;
@@ -60,6 +61,7 @@ export function LLMProvidersSection({ onProviderChange }: LLMProvidersSectionPro
     api_key: '',
     api_key_hint: '',
     default_model: '',
+    group_id: '',
     is_enabled: true,
     is_default: false,
     priority: 100,
@@ -91,6 +93,7 @@ export function LLMProvidersSection({ onProviderChange }: LLMProvidersSectionPro
         api_key: '', // Don't populate API key for security
         api_key_hint: provider.api_key_hint || '',
         default_model: provider.default_model || '',
+        group_id: provider.extra_config?.group_id || '',
         is_enabled: provider.is_enabled,
         is_default: provider.is_default,
         priority: provider.priority,
@@ -104,6 +107,7 @@ export function LLMProvidersSection({ onProviderChange }: LLMProvidersSectionPro
         api_key: '',
         api_key_hint: '',
         default_model: '',
+        group_id: '',
         is_enabled: true,
         is_default: false,
         priority: 100,
@@ -136,6 +140,11 @@ export function LLMProvidersSection({ onProviderChange }: LLMProvidersSectionPro
       }
       if (formData.api_key_hint) {
         providerData.api_key_hint = formData.api_key_hint;
+      }
+
+      // MiniMax requires group_id in extra_config
+      if (formData.provider_type === 'minimax' && formData.group_id) {
+        providerData.extra_config = { group_id: formData.group_id };
       }
 
       if (editingId) {
@@ -391,6 +400,25 @@ export function LLMProvidersSection({ onProviderChange }: LLMProvidersSectionPro
                   className="w-full px-4 py-2 bg-gray-900 border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                 />
               </div>
+
+              {formData.provider_type === 'minimax' && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-400 mb-2">
+                    Group ID <span className="text-red-400">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.group_id}
+                    onChange={(e) => setFormData(prev => ({ ...prev, group_id: e.target.value }))}
+                    placeholder="MiniMax Group ID"
+                    className="w-full px-4 py-2 bg-gray-900 border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                    required
+                  />
+                  <p className="mt-1 text-xs text-gray-500">
+                    MiniMax requires a Group ID for API authentication
+                  </p>
+                </div>
+              )}
 
               <div>
                 <label className="block text-sm font-medium text-gray-400 mb-2">

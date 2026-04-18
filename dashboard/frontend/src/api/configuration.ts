@@ -33,6 +33,7 @@ export interface LLMProvider {
   api_key_hint?: string;
   default_model?: string;
   available_models: string[];
+  extra_config?: Record<string, any>;
   is_enabled: boolean;
   is_default: boolean;
   priority: number;

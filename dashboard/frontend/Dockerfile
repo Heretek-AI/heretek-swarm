@@ -2,27 +2,10 @@
 # Multi-stage build for React application
 
 # =============================================================================
-# Stage 1: Build
+# Stage 1: Build (skip - we pre-build locally)
 # =============================================================================
-FROM node:20-alpine as build
-
-# VITE_API_HOST is a non-sensitive build argument
-ARG VITE_API_HOST
-
-WORKDIR /app
-
-# Copy package files
-COPY package*.json ./
-
-# Install dependencies
-RUN npm install
-
-# Copy source code — only src, public, and package files needed for build
-COPY src/ public/ package.json package-lock.json ./
-
-# Build application - skip strict type checking for deployment
-# VITE_API_HOST is passed as build argument and becomes available at build time
-RUN npm run build:skip-type-check
+FROM alpine AS build-placeholder
+RUN echo "Build happens locally"
 
 # =============================================================================
 # Stage 2: Production
@@ -35,8 +18,8 @@ RUN addgroup -g 1001 -S appgroup && adduser -u 1001 -S appuser -G appgroup
 # Copy custom nginx config
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Copy built assets
-COPY --from=build /app/dist /usr/share/nginx/html
+# Copy pre-built assets from local dist directory
+COPY dist/ /usr/share/nginx/html/
 
 # Expose port
 EXPOSE 80

@@ -189,7 +189,8 @@ def create_llm_provider(
         if provider_type == "minimax":
             if not api_key:
                 raise ProviderConfigurationError("MiniMax provider requires api_key")
-            group_id = config.get("group_id")
+            # group_id can be at top level or inside extra_config
+            group_id = config.get("group_id") or extra_config.get("group_id")
             if not group_id:
                 raise ProviderConfigurationError("MiniMax provider requires group_id")
             return MiniMaxProvider(
