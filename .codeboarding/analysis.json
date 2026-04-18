@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-18T00:56:58.747490+00:00",
+    "generated_at": "2026-04-18T01:25:49.477735+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -35360,14 +35360,14 @@
       ]
     },
     "src/heretek_swarm/runtime/main_loop.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.runtime.main_loop.AutonomousSwarm",
           "start_line": 38,
-          "end_line": 600,
+          "end_line": 641,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.runtime.main_loop.AutonomousSwarm.__init__",
@@ -35388,7 +35388,7 @@
           "start_line": 105,
           "end_line": 175,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._spawn_all_actors",
@@ -35517,11 +35517,39 @@
           "status": "unchanged"
         },
         {
+          "qualified_name": "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._report_agents_batch",
+          "start_line": 538,
+          "end_line": 556,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._collect_agent_statuses",
+          "start_line": 558,
+          "end_line": 565,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._extract_agent_status",
+          "start_line": 567,
+          "end_line": 589,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
           "qualified_name": "src.heretek_swarm.runtime.main_loop.AutonomousSwarm.shutdown",
           "start_line": 573,
           "end_line": 600,
           "node_type": "METHOD",
           "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._post_agent_report",
+          "start_line": 591,
+          "end_line": 612,
+          "node_type": "METHOD",
+          "status": "added"
         },
         {
           "qualified_name": "src.heretek_swarm.runtime.main_loop.main",
@@ -95167,9 +95195,9 @@
       "file_path": "src/heretek_swarm/runtime/main_loop.py",
       "qualified_name": "src.heretek_swarm.runtime.main_loop.AutonomousSwarm",
       "start_line": 38,
-      "end_line": 600,
+      "end_line": 641,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/runtime/main_loop.py|src.heretek_swarm.runtime.main_loop.AutonomousSwarm.__init__": {
       "file_path": "src/heretek_swarm/runtime/main_loop.py",
@@ -95193,7 +95221,7 @@
       "start_line": 105,
       "end_line": 175,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/runtime/main_loop.py|src.heretek_swarm.runtime.main_loop.AutonomousSwarm._spawn_all_actors": {
       "file_path": "src/heretek_swarm/runtime/main_loop.py",
@@ -95339,6 +95367,30 @@
       "type": "METHOD",
       "status": "unchanged"
     },
+    "src/heretek_swarm/runtime/main_loop.py|src.heretek_swarm.runtime.main_loop.AutonomousSwarm._report_agents_batch": {
+      "file_path": "src/heretek_swarm/runtime/main_loop.py",
+      "qualified_name": "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._report_agents_batch",
+      "start_line": 538,
+      "end_line": 556,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/runtime/main_loop.py|src.heretek_swarm.runtime.main_loop.AutonomousSwarm._collect_agent_statuses": {
+      "file_path": "src/heretek_swarm/runtime/main_loop.py",
+      "qualified_name": "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._collect_agent_statuses",
+      "start_line": 558,
+      "end_line": 565,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/runtime/main_loop.py|src.heretek_swarm.runtime.main_loop.AutonomousSwarm._extract_agent_status": {
+      "file_path": "src/heretek_swarm/runtime/main_loop.py",
+      "qualified_name": "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._extract_agent_status",
+      "start_line": 567,
+      "end_line": 589,
+      "type": "METHOD",
+      "status": "added"
+    },
     "src/heretek_swarm/runtime/main_loop.py|src.heretek_swarm.runtime.main_loop.AutonomousSwarm.shutdown": {
       "file_path": "src/heretek_swarm/runtime/main_loop.py",
       "qualified_name": "src.heretek_swarm.runtime.main_loop.AutonomousSwarm.shutdown",
@@ -95346,6 +95398,14 @@
       "end_line": 600,
       "type": "METHOD",
       "status": "unchanged"
+    },
+    "src/heretek_swarm/runtime/main_loop.py|src.heretek_swarm.runtime.main_loop.AutonomousSwarm._post_agent_report": {
+      "file_path": "src/heretek_swarm/runtime/main_loop.py",
+      "qualified_name": "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._post_agent_report",
+      "start_line": 591,
+      "end_line": 612,
+      "type": "METHOD",
+      "status": "added"
     },
     "src/heretek_swarm/runtime/main_loop.py|src.heretek_swarm.runtime.main_loop.main": {
       "file_path": "src/heretek_swarm/runtime/main_loop.py",
@@ -123878,7 +123938,7 @@
         },
         {
           "file_path": "src/heretek_swarm/runtime/main_loop.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "src.heretek_swarm.runtime.main_loop.AutonomousSwarm",
             "src.heretek_swarm.runtime.main_loop.AutonomousSwarm.__init__",
@@ -123902,7 +123962,11 @@
             "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._memory_maintenance_loop",
             "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._scaling_loop",
             "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._report_agents_loop",
+            "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._report_agents_batch",
+            "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._collect_agent_statuses",
+            "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._extract_agent_status",
             "src.heretek_swarm.runtime.main_loop.AutonomousSwarm.shutdown",
+            "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._post_agent_report",
             "src.heretek_swarm.runtime.main_loop.main"
           ]
         },
@@ -128737,7 +128801,7 @@
             },
             {
               "file_path": "src/heretek_swarm/runtime/main_loop.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.heretek_swarm.runtime.main_loop.AutonomousSwarm",
                 "src.heretek_swarm.runtime.main_loop.AutonomousSwarm.__init__",
@@ -128761,7 +128825,11 @@
                 "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._memory_maintenance_loop",
                 "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._scaling_loop",
                 "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._report_agents_loop",
+                "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._report_agents_batch",
+                "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._collect_agent_statuses",
+                "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._extract_agent_status",
                 "src.heretek_swarm.runtime.main_loop.AutonomousSwarm.shutdown",
+                "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._post_agent_report",
                 "src.heretek_swarm.runtime.main_loop.main"
               ]
             },
@@ -135069,7 +135137,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/runtime/main_loop.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.runtime.main_loop.AutonomousSwarm",
                     "src.heretek_swarm.runtime.main_loop.AutonomousSwarm.__init__",
@@ -135093,7 +135161,11 @@
                     "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._memory_maintenance_loop",
                     "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._scaling_loop",
                     "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._report_agents_loop",
+                    "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._report_agents_batch",
+                    "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._collect_agent_statuses",
+                    "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._extract_agent_status",
                     "src.heretek_swarm.runtime.main_loop.AutonomousSwarm.shutdown",
+                    "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._post_agent_report",
                     "src.heretek_swarm.runtime.main_loop.main"
                   ]
                 },
@@ -135426,7 +135498,7 @@
                     },
                     {
                       "file_path": "src/heretek_swarm/runtime/main_loop.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.runtime.main_loop.AutonomousSwarm",
                         "src.heretek_swarm.runtime.main_loop.AutonomousSwarm.__init__",
@@ -135450,7 +135522,11 @@
                         "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._memory_maintenance_loop",
                         "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._scaling_loop",
                         "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._report_agents_loop",
+                        "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._report_agents_batch",
+                        "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._collect_agent_statuses",
+                        "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._extract_agent_status",
                         "src.heretek_swarm.runtime.main_loop.AutonomousSwarm.shutdown",
+                        "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._post_agent_report",
                         "src.heretek_swarm.runtime.main_loop.main"
                       ]
                     },
@@ -135529,7 +135605,7 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/runtime/main_loop.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.runtime.main_loop.AutonomousSwarm",
                             "src.heretek_swarm.runtime.main_loop.AutonomousSwarm.__init__",
@@ -135553,7 +135629,11 @@
                             "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._memory_maintenance_loop",
                             "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._scaling_loop",
                             "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._report_agents_loop",
+                            "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._report_agents_batch",
+                            "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._collect_agent_statuses",
+                            "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._extract_agent_status",
                             "src.heretek_swarm.runtime.main_loop.AutonomousSwarm.shutdown",
+                            "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._post_agent_report",
                             "src.heretek_swarm.runtime.main_loop.main"
                           ]
                         }

@@ -40,7 +40,7 @@ class AutonomousSwarm:
     Main entry point for autonomous 24/7 swarm operation.
 
     Coordinates all components into a unified autonomous loop:
-    - Initializes all 23 agents
+    - Initializes all 26 agents
     - Sets up communication channels
     - Starts health monitoring
     - Runs continuous task processing
@@ -164,9 +164,9 @@ class AutonomousSwarm:
         )
         logger.info("actor_supervisor_initialized")
 
-        # 8. Spawn all 23 agents
+        # 8. Spawn all 26 agents
         await self._spawn_all_actors()
-        logger.info("all_actors_spawned", count=23)
+        logger.info("all_actors_spawned", count=26)
 
         # 9. Set up channel subscriptions
         await self._setup_channel_subscriptions()
@@ -252,7 +252,8 @@ class AutonomousSwarm:
                 logger.info("actor_spawned", agent_id=agent_id, tier=self._get_tier(agent_id))
             except Exception as e:
                 logger.error("actor_spawn_failed", agent_id=agent_id, error=str(e))
-                raise
+                # Continue spawning remaining agents even if one fails
+                continue
 
     def _get_tier(self, agent_id: str) -> str:
         """Get the tier name for an agent."""

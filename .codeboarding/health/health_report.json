@@ -1,7 +1,7 @@
 {
   "repository_name": "heretek-swarm",
-  "timestamp": "2026-04-18T00:57:00.170260+00:00",
-  "overall_score": 0.9900863818192359,
+  "timestamp": "2026-04-18T01:25:50.883713+00:00",
+  "overall_score": 0.9898568364922042,
   "check_summaries": [
     {
       "check_name": "function_size",
@@ -790,9 +790,9 @@
       "description": "Detects unused imports, variables, functions, and dead code via LSP diagnostics",
       "language": "Python",
       "check_type": "standard",
-      "total_entities_checked": 24,
-      "findings_count": 24,
-      "warning_count": 3,
+      "total_entities_checked": 28,
+      "findings_count": 28,
+      "warning_count": 4,
       "score": 0.0,
       "finding_groups": [
         {
@@ -946,6 +946,27 @@
               "line_start": 176,
               "line_end": 176,
               "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"topics\" is not accessed",
+              "file_path": "src/heretek_swarm/runtime/main_loop.py",
+              "line_start": 249,
+              "line_end": 249,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"mesh\" is not accessed",
+              "file_path": "src/heretek_swarm/runtime/main_loop.py",
+              "line_start": 304,
+              "line_end": 304,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"httpx\" is not accessed",
+              "file_path": "src/heretek_swarm/runtime/main_loop.py",
+              "line_start": 527,
+              "line_end": 527,
+              "metric_value": 0.0
             }
           ]
         },
@@ -973,6 +994,13 @@
               "file_path": "src/heretek_swarm/actors/base/core.py",
               "line_start": 446,
               "line_end": 446,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"httpx\" is not accessed",
+              "file_path": "src/heretek_swarm/runtime/main_loop.py",
+              "line_start": 527,
+              "line_end": 527,
               "metric_value": 0.0
             }
           ]
@@ -1321,6 +1349,12 @@
       "composite_risk_score": 65.0
     },
     {
+      "file_path": "src/heretek_swarm/runtime/main_loop.py",
+      "total_findings": 5,
+      "warning_findings": 2,
+      "composite_risk_score": 60.0
+    },
+    {
       "file_path": "src/heretek_swarm/api/consensus.py",
       "total_findings": 18,
       "warning_findings": 1,
@@ -1424,12 +1458,6 @@
     },
     {
       "file_path": "src/heretek_swarm/collective/adaptive_learning.py",
-      "total_findings": 2,
-      "warning_findings": 2,
-      "composite_risk_score": 30.0
-    },
-    {
-      "file_path": "src/heretek_swarm/config/crud.py",
       "total_findings": 2,
       "warning_findings": 2,
       "composite_risk_score": 30.0
