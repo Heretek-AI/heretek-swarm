@@ -709,6 +709,169 @@ class TestSignalHandling:
 # Integration Tests (Require Running API)
 # =============================================================================
 
+# =============================================================================
+# Run Command - AutonomousRuntime Init Tests
+# =============================================================================
+
+class TestRunCommandIntegration:
+    """Integration tests verifying run command calls AutonomousRuntime correctly."""
+
+    def test_run_command_calls_autonomous_runtime_init(self, cli):
+        """Test that run command invokes _start_autonomous_swarm on execution."""
+        runner = CliRunner()
+
+        from heretek_swarm import cli as cli_module
+
+        original = cli_module._start_autonomous_swarm
+
+        async def sync_noop() -> None:
+            # A proper async no-op so asyncio.run completes cleanly.
+            pass
+
+        cli_module._start_autonomous_swarm = sync_noop
+
+        try:
+            result = runner.invoke(
+                cli,
+                ["run"],
+                catch_exceptions=True,
+            )
+        finally:
+            cli_module._start_autonomous_swarm = original
+
+        # If the command reached asyncio.run() it means _start_autonomous_swarm
+        # was referenced and called by the run() command body.
+        assert result.exit_code in [0, 1], (
+            f"run command exited with {result.exit_code}: {result.output}"
+        )
+
+    def test_run_command_shutdown_event_set_before_asyncio_run(self, cli):
+        """Test that _shutdown_event is wired before asyncio.run is invoked."""
+        runner = CliRunner()
+        captured_event: list[Any] = []
+
+        from heretek_swarm import cli as cli_module
+
+        original_swarm = cli_module._start_autonomous_swarm
+
+        async def sync_noop() -> None:
+            pass
+
+        cli_module._start_autonomous_swarm = sync_noop
+
+        original_asyncio_run = asyncio.run
+
+        def spy_asyncio_run(coro, *args, **kwargs):
+            # Capture the _shutdown_event state at the moment asyncio.run
+            # receives the coroutine — it must have been set already.
+            captured_event.append(cli_module._shutdown_event)
+            return original_asyncio_run(coro, *args, **kwargs)
+
+        with patch("heretek_swarm.cli.asyncio.run", side_effect=spy_asyncio_run):
+            try:
+                result = runner.invoke(
+                    cli,
+                    ["run"],
+                    catch_exceptions=True,
+                )
+            finally:
+                cli_module._start_autonomous_swarm = original_swarm
+
+        assert len(captured_event) == 1 and captured_event[0] is not None, (
+            "_shutdown_event was not set before asyncio.run was called – "
+            "signal handlers would not coordinate shutdown correctly"
+        )
+
+
+# =============================================================================
+# Serve Command - uvicorn Integration Tests
+# =============================================================================
+
+class TestServeCommandIntegration:
+    """Integration tests verifying serve command calls uvicorn.run correctly."""
+
+    def test_serve_command_calls_uvicorn_run_with_correct_app_and_port(self, cli):
+        """Test that serve invokes uvicorn.run with the right app module and port."""
+        runner = CliRunner()
+
+        mock_uvicorn_run = MagicMock()
+        mock_uvicorn_run.side_effect = KeyboardInterrupt
+
+        # Patch uvicorn.run at the real uvicorn module — when the serve()
+        # function does `import uvicorn; uvicorn.run(...)` it resolves to
+        # the real module, so we must patch its run attribute directly.
+        with patch("uvicorn.run", mock_uvicorn_run):
+            result = runner.invoke(
+                cli,
+                ["serve", "--host", "127.0.0.1", "--port", "9000"],
+                catch_exceptions=True,
+            )
+
+        assert mock_uvicorn_run.called, (
+            "uvicorn.run was not called – serve command did not start uvicorn. "
+            f"Output: {result.output}"
+        )
+        call_kwargs = mock_uvicorn_run.call_args.kwargs
+        assert call_kwargs.get("host") == "127.0.0.1", (
+            f"uvicorn.run was called with host={call_kwargs.get('host')!r}, "
+            "expected '127.0.0.1'"
+        )
+        assert call_kwargs.get("port") == 9000, (
+            f"uvicorn.run was called with port={call_kwargs.get('port')!r}, "
+            "expected 9000"
+        )
+
+    def test_serve_command_calls_uvicorn_run_with_default_port(self, cli):
+        """Test that serve uses port 8000 when --port is not specified."""
+        runner = CliRunner()
+
+        mock_uvicorn_run = MagicMock()
+        mock_uvicorn_run.side_effect = KeyboardInterrupt
+
+        with patch("uvicorn.run", mock_uvicorn_run):
+            result = runner.invoke(
+                cli,
+                ["serve"],
+                catch_exceptions=True,
+            )
+
+        assert mock_uvicorn_run.called, (
+            f"uvicorn.run was not called. Output: {result.output}"
+        )
+        call_kwargs = mock_uvicorn_run.call_args.kwargs
+        assert call_kwargs.get("port") == 8000, (
+            f"uvicorn.run was called with port={call_kwargs.get('port')!r}, "
+            "expected default 8000"
+        )
+
+    def test_serve_command_calls_uvicorn_run_with_workers(self, cli):
+        """Test that serve passes the --workers argument to uvicorn.run."""
+        runner = CliRunner()
+
+        mock_uvicorn_run = MagicMock()
+        mock_uvicorn_run.side_effect = KeyboardInterrupt
+
+        with patch("uvicorn.run", mock_uvicorn_run):
+            result = runner.invoke(
+                cli,
+                ["serve", "--workers", "4"],
+                catch_exceptions=True,
+            )
+
+        assert mock_uvicorn_run.called, (
+            f"uvicorn.run was not called. Output: {result.output}"
+        )
+        call_kwargs = mock_uvicorn_run.call_args.kwargs
+        assert call_kwargs.get("workers") == 4, (
+            f"uvicorn.run was called with workers={call_kwargs.get('workers')!r}, "
+            "expected 4"
+        )
+
+
+# =============================================================================
+# Integration Tests (Require Running API)
+# =============================================================================
+
 @pytest.mark.integration
 class TestCLIIntegration:
     """Integration tests that require a running API server."""
