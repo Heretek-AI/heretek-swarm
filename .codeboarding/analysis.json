@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-19T04:32:37.555286+00:00",
+    "generated_at": "2026-04-19T04:33:31.355507+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -22550,54 +22550,54 @@
       ]
     },
     "src/heretek_swarm/infrastructure/otel/tracing.py": {
-      "file_status": "modified",
+      "file_status": "unchanged",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.TraceState",
-          "start_line": 33,
-          "end_line": 37,
+          "start_line": 41,
+          "end_line": 45,
           "node_type": "CLASS",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.SpanStatus",
-          "start_line": 40,
-          "end_line": 44,
+          "start_line": 48,
+          "end_line": 52,
           "node_type": "CLASS",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.TracingConfig",
-          "start_line": 53,
-          "end_line": 62,
+          "start_line": 61,
+          "end_line": 70,
           "node_type": "CLASS",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.init_tracing",
-          "start_line": 79,
-          "end_line": 135,
+          "start_line": 87,
+          "end_line": 143,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.get_tracer",
-          "start_line": 138,
-          "end_line": 156,
+          "start_line": 146,
+          "end_line": 164,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.create_tracing_config",
-          "start_line": 159,
-          "end_line": 171,
+          "start_line": 167,
+          "end_line": 179,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing._span_kind_from_str",
-          "start_line": 179,
-          "end_line": 188,
+          "start_line": 187,
+          "end_line": 196,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
@@ -22606,231 +22606,231 @@
           "start_line": 199,
           "end_line": 226,
           "node_type": "FUNCTION",
-          "status": "modified"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.with_span",
-          "start_line": 223,
-          "end_line": 266,
+          "start_line": 229,
+          "end_line": 272,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.with_span.decorator",
-          "start_line": 234,
-          "end_line": 264,
+          "start_line": 240,
+          "end_line": 270,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.with_span.decorator.async_wrapper",
-          "start_line": 236,
-          "end_line": 246,
+          "start_line": 242,
+          "end_line": 252,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.with_span.decorator.sync_wrapper",
-          "start_line": 249,
-          "end_line": 259,
+          "start_line": 255,
+          "end_line": 265,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.span_context",
-          "start_line": 270,
-          "end_line": 301,
+          "start_line": 276,
+          "end_line": 307,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.get_current_span",
-          "start_line": 304,
-          "end_line": 306,
+          "start_line": 310,
+          "end_line": 312,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.get_trace_context",
-          "start_line": 309,
-          "end_line": 313,
+          "start_line": 315,
+          "end_line": 319,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.set_span_attribute",
-          "start_line": 316,
-          "end_line": 320,
+          "start_line": 322,
+          "end_line": 326,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.set_span_attributes",
-          "start_line": 323,
-          "end_line": 328,
+          "start_line": 329,
+          "end_line": 334,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.SpanNames",
-          "start_line": 336,
-          "end_line": 366,
+          "start_line": 342,
+          "end_line": 372,
           "node_type": "CLASS",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.SpanAttributes",
-          "start_line": 369,
-          "end_line": 397,
+          "start_line": 375,
+          "end_line": 403,
           "node_type": "CLASS",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing._get_external_call_log_session_factory",
-          "start_line": 422,
-          "end_line": 452,
+          "start_line": 416,
+          "end_line": 445,
           "node_type": "FUNCTION",
-          "status": "added"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing._get_agent_context",
-          "start_line": 455,
-          "end_line": 468,
+          "start_line": 448,
+          "end_line": 464,
           "node_type": "FUNCTION",
-          "status": "added"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing._write_call_log",
-          "start_line": 471,
-          "end_line": 539,
+          "start_line": 467,
+          "end_line": 536,
           "node_type": "FUNCTION",
-          "status": "added"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing._write_call_log._write",
-          "start_line": 511,
-          "end_line": 529,
+          "start_line": 508,
+          "end_line": 526,
           "node_type": "FUNCTION",
-          "status": "added"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient",
           "start_line": 539,
-          "end_line": 995,
+          "end_line": 1004,
           "node_type": "CLASS",
-          "status": "modified"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.__init__",
-          "start_line": 563,
-          "end_line": 584,
+          "start_line": 560,
+          "end_line": 581,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.get",
-          "start_line": 590,
-          "end_line": 597,
+          "start_line": 587,
+          "end_line": 594,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.post",
-          "start_line": 599,
-          "end_line": 606,
+          "start_line": 596,
+          "end_line": 603,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.put",
-          "start_line": 608,
-          "end_line": 615,
+          "start_line": 605,
+          "end_line": 612,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.patch",
-          "start_line": 617,
-          "end_line": 624,
+          "start_line": 614,
+          "end_line": 621,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.delete",
-          "start_line": 626,
-          "end_line": 633,
+          "start_line": 623,
+          "end_line": 630,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.head",
-          "start_line": 635,
-          "end_line": 642,
+          "start_line": 632,
+          "end_line": 639,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.options",
-          "start_line": 644,
-          "end_line": 651,
+          "start_line": 641,
+          "end_line": 648,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.request",
           "start_line": 650,
           "end_line": 809,
           "node_type": "METHOD",
-          "status": "modified"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.aclose",
-          "start_line": 808,
-          "end_line": 811,
-          "node_type": "METHOD",
-          "status": "added"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.stream",
           "start_line": 811,
           "end_line": 970,
           "node_type": "METHOD",
-          "status": "modified"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.__aenter__",
-          "start_line": 813,
-          "end_line": 814,
-          "node_type": "METHOD",
-          "status": "added"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.__aexit__",
-          "start_line": 816,
-          "end_line": 817,
-          "node_type": "METHOD",
-          "status": "added"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient._get_client",
-          "start_line": 823,
-          "end_line": 826,
-          "node_type": "METHOD",
-          "status": "added"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.instrumented_httpx_client",
-          "start_line": 829,
-          "end_line": 867,
-          "node_type": "FUNCTION",
-          "status": "added"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.is_closed",
           "start_line": 973,
-          "end_line": 975,
+          "end_line": 984,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.aclose",
+          "start_line": 986,
+          "end_line": 989,
+          "node_type": "METHOD",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.__aenter__",
+          "start_line": 991,
+          "end_line": 992,
+          "node_type": "METHOD",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.__aexit__",
+          "start_line": 994,
+          "end_line": 995,
+          "node_type": "METHOD",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient._get_client",
+          "start_line": 1001,
+          "end_line": 1004,
+          "node_type": "METHOD",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.instrumented_httpx_client",
+          "start_line": 1007,
+          "end_line": 1045,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
         }
       ]
     },
@@ -77718,56 +77718,56 @@
     "src/heretek_swarm/infrastructure/otel/tracing.py|src.heretek_swarm.infrastructure.otel.tracing.TraceState": {
       "file_path": "src/heretek_swarm/infrastructure/otel/tracing.py",
       "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.TraceState",
-      "start_line": 33,
-      "end_line": 37,
+      "start_line": 41,
+      "end_line": 45,
       "type": "CLASS",
       "status": "unchanged"
     },
     "src/heretek_swarm/infrastructure/otel/tracing.py|src.heretek_swarm.infrastructure.otel.tracing.SpanStatus": {
       "file_path": "src/heretek_swarm/infrastructure/otel/tracing.py",
       "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.SpanStatus",
-      "start_line": 40,
-      "end_line": 44,
+      "start_line": 48,
+      "end_line": 52,
       "type": "CLASS",
       "status": "unchanged"
     },
     "src/heretek_swarm/infrastructure/otel/tracing.py|src.heretek_swarm.infrastructure.otel.tracing.TracingConfig": {
       "file_path": "src/heretek_swarm/infrastructure/otel/tracing.py",
       "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.TracingConfig",
-      "start_line": 53,
-      "end_line": 62,
+      "start_line": 61,
+      "end_line": 70,
       "type": "CLASS",
       "status": "unchanged"
     },
     "src/heretek_swarm/infrastructure/otel/tracing.py|src.heretek_swarm.infrastructure.otel.tracing.init_tracing": {
       "file_path": "src/heretek_swarm/infrastructure/otel/tracing.py",
       "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.init_tracing",
-      "start_line": 79,
-      "end_line": 135,
+      "start_line": 87,
+      "end_line": 143,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/infrastructure/otel/tracing.py|src.heretek_swarm.infrastructure.otel.tracing.get_tracer": {
       "file_path": "src/heretek_swarm/infrastructure/otel/tracing.py",
       "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.get_tracer",
-      "start_line": 138,
-      "end_line": 156,
+      "start_line": 146,
+      "end_line": 164,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/infrastructure/otel/tracing.py|src.heretek_swarm.infrastructure.otel.tracing.create_tracing_config": {
       "file_path": "src/heretek_swarm/infrastructure/otel/tracing.py",
       "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.create_tracing_config",
-      "start_line": 159,
-      "end_line": 171,
+      "start_line": 167,
+      "end_line": 179,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/infrastructure/otel/tracing.py|src.heretek_swarm.infrastructure.otel.tracing._span_kind_from_str": {
       "file_path": "src/heretek_swarm/infrastructure/otel/tracing.py",
       "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing._span_kind_from_str",
-      "start_line": 179,
-      "end_line": 188,
+      "start_line": 187,
+      "end_line": 196,
       "type": "FUNCTION",
       "status": "unchanged"
     },
@@ -77777,199 +77777,199 @@
       "start_line": 199,
       "end_line": 226,
       "type": "FUNCTION",
-      "status": "modified"
+      "status": "unchanged"
     },
     "src/heretek_swarm/infrastructure/otel/tracing.py|src.heretek_swarm.infrastructure.otel.tracing.with_span": {
       "file_path": "src/heretek_swarm/infrastructure/otel/tracing.py",
       "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.with_span",
-      "start_line": 223,
-      "end_line": 266,
+      "start_line": 229,
+      "end_line": 272,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/infrastructure/otel/tracing.py|src.heretek_swarm.infrastructure.otel.tracing.with_span.decorator": {
       "file_path": "src/heretek_swarm/infrastructure/otel/tracing.py",
       "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.with_span.decorator",
-      "start_line": 234,
-      "end_line": 264,
+      "start_line": 240,
+      "end_line": 270,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/infrastructure/otel/tracing.py|src.heretek_swarm.infrastructure.otel.tracing.with_span.decorator.async_wrapper": {
       "file_path": "src/heretek_swarm/infrastructure/otel/tracing.py",
       "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.with_span.decorator.async_wrapper",
-      "start_line": 236,
-      "end_line": 246,
+      "start_line": 242,
+      "end_line": 252,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/infrastructure/otel/tracing.py|src.heretek_swarm.infrastructure.otel.tracing.with_span.decorator.sync_wrapper": {
       "file_path": "src/heretek_swarm/infrastructure/otel/tracing.py",
       "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.with_span.decorator.sync_wrapper",
-      "start_line": 249,
-      "end_line": 259,
+      "start_line": 255,
+      "end_line": 265,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/infrastructure/otel/tracing.py|src.heretek_swarm.infrastructure.otel.tracing.span_context": {
       "file_path": "src/heretek_swarm/infrastructure/otel/tracing.py",
       "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.span_context",
-      "start_line": 270,
-      "end_line": 301,
+      "start_line": 276,
+      "end_line": 307,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/infrastructure/otel/tracing.py|src.heretek_swarm.infrastructure.otel.tracing.get_current_span": {
       "file_path": "src/heretek_swarm/infrastructure/otel/tracing.py",
       "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.get_current_span",
-      "start_line": 304,
-      "end_line": 306,
+      "start_line": 310,
+      "end_line": 312,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/infrastructure/otel/tracing.py|src.heretek_swarm.infrastructure.otel.tracing.get_trace_context": {
       "file_path": "src/heretek_swarm/infrastructure/otel/tracing.py",
       "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.get_trace_context",
-      "start_line": 309,
-      "end_line": 313,
+      "start_line": 315,
+      "end_line": 319,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/infrastructure/otel/tracing.py|src.heretek_swarm.infrastructure.otel.tracing.set_span_attribute": {
       "file_path": "src/heretek_swarm/infrastructure/otel/tracing.py",
       "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.set_span_attribute",
-      "start_line": 316,
-      "end_line": 320,
+      "start_line": 322,
+      "end_line": 326,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/infrastructure/otel/tracing.py|src.heretek_swarm.infrastructure.otel.tracing.set_span_attributes": {
       "file_path": "src/heretek_swarm/infrastructure/otel/tracing.py",
       "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.set_span_attributes",
-      "start_line": 323,
-      "end_line": 328,
+      "start_line": 329,
+      "end_line": 334,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/infrastructure/otel/tracing.py|src.heretek_swarm.infrastructure.otel.tracing.SpanNames": {
       "file_path": "src/heretek_swarm/infrastructure/otel/tracing.py",
       "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.SpanNames",
-      "start_line": 336,
-      "end_line": 366,
+      "start_line": 342,
+      "end_line": 372,
       "type": "CLASS",
       "status": "unchanged"
     },
     "src/heretek_swarm/infrastructure/otel/tracing.py|src.heretek_swarm.infrastructure.otel.tracing.SpanAttributes": {
       "file_path": "src/heretek_swarm/infrastructure/otel/tracing.py",
       "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.SpanAttributes",
-      "start_line": 369,
-      "end_line": 397,
+      "start_line": 375,
+      "end_line": 403,
       "type": "CLASS",
       "status": "unchanged"
     },
     "src/heretek_swarm/infrastructure/otel/tracing.py|src.heretek_swarm.infrastructure.otel.tracing._get_external_call_log_session_factory": {
       "file_path": "src/heretek_swarm/infrastructure/otel/tracing.py",
       "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing._get_external_call_log_session_factory",
-      "start_line": 422,
-      "end_line": 452,
+      "start_line": 416,
+      "end_line": 445,
       "type": "FUNCTION",
-      "status": "added"
+      "status": "unchanged"
     },
     "src/heretek_swarm/infrastructure/otel/tracing.py|src.heretek_swarm.infrastructure.otel.tracing._get_agent_context": {
       "file_path": "src/heretek_swarm/infrastructure/otel/tracing.py",
       "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing._get_agent_context",
-      "start_line": 455,
-      "end_line": 468,
+      "start_line": 448,
+      "end_line": 464,
       "type": "FUNCTION",
-      "status": "added"
+      "status": "unchanged"
     },
     "src/heretek_swarm/infrastructure/otel/tracing.py|src.heretek_swarm.infrastructure.otel.tracing._write_call_log": {
       "file_path": "src/heretek_swarm/infrastructure/otel/tracing.py",
       "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing._write_call_log",
-      "start_line": 471,
-      "end_line": 539,
+      "start_line": 467,
+      "end_line": 536,
       "type": "FUNCTION",
-      "status": "added"
+      "status": "unchanged"
     },
     "src/heretek_swarm/infrastructure/otel/tracing.py|src.heretek_swarm.infrastructure.otel.tracing._write_call_log._write": {
       "file_path": "src/heretek_swarm/infrastructure/otel/tracing.py",
       "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing._write_call_log._write",
-      "start_line": 511,
-      "end_line": 529,
+      "start_line": 508,
+      "end_line": 526,
       "type": "FUNCTION",
-      "status": "added"
+      "status": "unchanged"
     },
     "src/heretek_swarm/infrastructure/otel/tracing.py|src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient": {
       "file_path": "src/heretek_swarm/infrastructure/otel/tracing.py",
       "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient",
       "start_line": 539,
-      "end_line": 995,
+      "end_line": 1004,
       "type": "CLASS",
-      "status": "modified"
+      "status": "unchanged"
     },
     "src/heretek_swarm/infrastructure/otel/tracing.py|src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.__init__": {
       "file_path": "src/heretek_swarm/infrastructure/otel/tracing.py",
       "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.__init__",
-      "start_line": 563,
-      "end_line": 584,
+      "start_line": 560,
+      "end_line": 581,
       "type": "METHOD",
-      "status": "added"
+      "status": "unchanged"
     },
     "src/heretek_swarm/infrastructure/otel/tracing.py|src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.get": {
       "file_path": "src/heretek_swarm/infrastructure/otel/tracing.py",
       "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.get",
-      "start_line": 590,
-      "end_line": 597,
+      "start_line": 587,
+      "end_line": 594,
       "type": "METHOD",
-      "status": "added"
+      "status": "unchanged"
     },
     "src/heretek_swarm/infrastructure/otel/tracing.py|src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.post": {
       "file_path": "src/heretek_swarm/infrastructure/otel/tracing.py",
       "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.post",
-      "start_line": 599,
-      "end_line": 606,
+      "start_line": 596,
+      "end_line": 603,
       "type": "METHOD",
-      "status": "added"
+      "status": "unchanged"
     },
     "src/heretek_swarm/infrastructure/otel/tracing.py|src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.put": {
       "file_path": "src/heretek_swarm/infrastructure/otel/tracing.py",
       "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.put",
-      "start_line": 608,
-      "end_line": 615,
+      "start_line": 605,
+      "end_line": 612,
       "type": "METHOD",
-      "status": "added"
+      "status": "unchanged"
     },
     "src/heretek_swarm/infrastructure/otel/tracing.py|src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.patch": {
       "file_path": "src/heretek_swarm/infrastructure/otel/tracing.py",
       "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.patch",
-      "start_line": 617,
-      "end_line": 624,
+      "start_line": 614,
+      "end_line": 621,
       "type": "METHOD",
-      "status": "added"
+      "status": "unchanged"
     },
     "src/heretek_swarm/infrastructure/otel/tracing.py|src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.delete": {
       "file_path": "src/heretek_swarm/infrastructure/otel/tracing.py",
       "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.delete",
-      "start_line": 626,
-      "end_line": 633,
+      "start_line": 623,
+      "end_line": 630,
       "type": "METHOD",
-      "status": "added"
+      "status": "unchanged"
     },
     "src/heretek_swarm/infrastructure/otel/tracing.py|src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.head": {
       "file_path": "src/heretek_swarm/infrastructure/otel/tracing.py",
       "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.head",
-      "start_line": 635,
-      "end_line": 642,
+      "start_line": 632,
+      "end_line": 639,
       "type": "METHOD",
-      "status": "added"
+      "status": "unchanged"
     },
     "src/heretek_swarm/infrastructure/otel/tracing.py|src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.options": {
       "file_path": "src/heretek_swarm/infrastructure/otel/tracing.py",
       "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.options",
-      "start_line": 644,
-      "end_line": 651,
+      "start_line": 641,
+      "end_line": 648,
       "type": "METHOD",
-      "status": "added"
+      "status": "unchanged"
     },
     "src/heretek_swarm/infrastructure/otel/tracing.py|src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.request": {
       "file_path": "src/heretek_swarm/infrastructure/otel/tracing.py",
@@ -77977,15 +77977,7 @@
       "start_line": 650,
       "end_line": 809,
       "type": "METHOD",
-      "status": "modified"
-    },
-    "src/heretek_swarm/infrastructure/otel/tracing.py|src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.aclose": {
-      "file_path": "src/heretek_swarm/infrastructure/otel/tracing.py",
-      "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.aclose",
-      "start_line": 808,
-      "end_line": 811,
-      "type": "METHOD",
-      "status": "added"
+      "status": "unchanged"
     },
     "src/heretek_swarm/infrastructure/otel/tracing.py|src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.stream": {
       "file_path": "src/heretek_swarm/infrastructure/otel/tracing.py",
@@ -77993,47 +77985,55 @@
       "start_line": 811,
       "end_line": 970,
       "type": "METHOD",
-      "status": "modified"
-    },
-    "src/heretek_swarm/infrastructure/otel/tracing.py|src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.__aenter__": {
-      "file_path": "src/heretek_swarm/infrastructure/otel/tracing.py",
-      "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.__aenter__",
-      "start_line": 813,
-      "end_line": 814,
-      "type": "METHOD",
-      "status": "added"
-    },
-    "src/heretek_swarm/infrastructure/otel/tracing.py|src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.__aexit__": {
-      "file_path": "src/heretek_swarm/infrastructure/otel/tracing.py",
-      "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.__aexit__",
-      "start_line": 816,
-      "end_line": 817,
-      "type": "METHOD",
-      "status": "added"
-    },
-    "src/heretek_swarm/infrastructure/otel/tracing.py|src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient._get_client": {
-      "file_path": "src/heretek_swarm/infrastructure/otel/tracing.py",
-      "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient._get_client",
-      "start_line": 823,
-      "end_line": 826,
-      "type": "METHOD",
-      "status": "added"
-    },
-    "src/heretek_swarm/infrastructure/otel/tracing.py|src.heretek_swarm.infrastructure.otel.tracing.instrumented_httpx_client": {
-      "file_path": "src/heretek_swarm/infrastructure/otel/tracing.py",
-      "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.instrumented_httpx_client",
-      "start_line": 829,
-      "end_line": 867,
-      "type": "FUNCTION",
-      "status": "added"
+      "status": "unchanged"
     },
     "src/heretek_swarm/infrastructure/otel/tracing.py|src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.is_closed": {
       "file_path": "src/heretek_swarm/infrastructure/otel/tracing.py",
       "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.is_closed",
       "start_line": 973,
-      "end_line": 975,
+      "end_line": 984,
       "type": "METHOD",
-      "status": "added"
+      "status": "unchanged"
+    },
+    "src/heretek_swarm/infrastructure/otel/tracing.py|src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.aclose": {
+      "file_path": "src/heretek_swarm/infrastructure/otel/tracing.py",
+      "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.aclose",
+      "start_line": 986,
+      "end_line": 989,
+      "type": "METHOD",
+      "status": "unchanged"
+    },
+    "src/heretek_swarm/infrastructure/otel/tracing.py|src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.__aenter__": {
+      "file_path": "src/heretek_swarm/infrastructure/otel/tracing.py",
+      "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.__aenter__",
+      "start_line": 991,
+      "end_line": 992,
+      "type": "METHOD",
+      "status": "unchanged"
+    },
+    "src/heretek_swarm/infrastructure/otel/tracing.py|src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.__aexit__": {
+      "file_path": "src/heretek_swarm/infrastructure/otel/tracing.py",
+      "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.__aexit__",
+      "start_line": 994,
+      "end_line": 995,
+      "type": "METHOD",
+      "status": "unchanged"
+    },
+    "src/heretek_swarm/infrastructure/otel/tracing.py|src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient._get_client": {
+      "file_path": "src/heretek_swarm/infrastructure/otel/tracing.py",
+      "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient._get_client",
+      "start_line": 1001,
+      "end_line": 1004,
+      "type": "METHOD",
+      "status": "unchanged"
+    },
+    "src/heretek_swarm/infrastructure/otel/tracing.py|src.heretek_swarm.infrastructure.otel.tracing.instrumented_httpx_client": {
+      "file_path": "src/heretek_swarm/infrastructure/otel/tracing.py",
+      "qualified_name": "src.heretek_swarm.infrastructure.otel.tracing.instrumented_httpx_client",
+      "start_line": 1007,
+      "end_line": 1045,
+      "type": "FUNCTION",
+      "status": "unchanged"
     },
     "src/heretek_swarm/integrations/anthropic.py|src.heretek_swarm.integrations.anthropic.AnthropicMessageRole": {
       "file_path": "src/heretek_swarm/integrations/anthropic.py",
@@ -114975,7 +114975,7 @@
         },
         {
           "file_path": "src/heretek_swarm/infrastructure/otel/tracing.py",
-          "file_status": "modified",
+          "file_status": "unchanged",
           "methods": [
             "src.heretek_swarm.infrastructure.otel.tracing.TraceState",
             "src.heretek_swarm.infrastructure.otel.tracing.SpanStatus",
@@ -115010,13 +115010,13 @@
             "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.head",
             "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.options",
             "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.request",
-            "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.aclose",
             "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.stream",
+            "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.is_closed",
+            "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.aclose",
             "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.__aenter__",
             "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.__aexit__",
             "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient._get_client",
-            "src.heretek_swarm.infrastructure.otel.tracing.instrumented_httpx_client",
-            "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.is_closed"
+            "src.heretek_swarm.infrastructure.otel.tracing.instrumented_httpx_client"
           ]
         },
         {
@@ -120350,7 +120350,7 @@
             },
             {
               "file_path": "src/heretek_swarm/infrastructure/otel/tracing.py",
-              "file_status": "modified",
+              "file_status": "unchanged",
               "methods": [
                 "src.heretek_swarm.infrastructure.otel.tracing.TraceState",
                 "src.heretek_swarm.infrastructure.otel.tracing.SpanStatus",
@@ -120385,13 +120385,13 @@
                 "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.head",
                 "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.options",
                 "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.request",
-                "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.aclose",
                 "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.stream",
+                "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.is_closed",
+                "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.aclose",
                 "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.__aenter__",
                 "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.__aexit__",
                 "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient._get_client",
-                "src.heretek_swarm.infrastructure.otel.tracing.instrumented_httpx_client",
-                "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.is_closed"
+                "src.heretek_swarm.infrastructure.otel.tracing.instrumented_httpx_client"
               ]
             },
             {
@@ -126941,7 +126941,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/infrastructure/otel/tracing.py",
-                  "file_status": "modified",
+                  "file_status": "unchanged",
                   "methods": [
                     "src.heretek_swarm.infrastructure.otel.tracing.TraceState",
                     "src.heretek_swarm.infrastructure.otel.tracing.SpanStatus",
@@ -126976,13 +126976,13 @@
                     "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.head",
                     "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.options",
                     "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.request",
-                    "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.aclose",
                     "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.stream",
+                    "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.is_closed",
+                    "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.aclose",
                     "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.__aenter__",
                     "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.__aexit__",
                     "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient._get_client",
-                    "src.heretek_swarm.infrastructure.otel.tracing.instrumented_httpx_client",
-                    "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.is_closed"
+                    "src.heretek_swarm.infrastructure.otel.tracing.instrumented_httpx_client"
                   ]
                 },
                 {
@@ -131862,7 +131862,7 @@
                     },
                     {
                       "file_path": "src/heretek_swarm/infrastructure/otel/tracing.py",
-                      "file_status": "modified",
+                      "file_status": "unchanged",
                       "methods": [
                         "src.heretek_swarm.infrastructure.otel.tracing.TraceState",
                         "src.heretek_swarm.infrastructure.otel.tracing.SpanStatus",
@@ -131897,13 +131897,13 @@
                         "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.head",
                         "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.options",
                         "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.request",
-                        "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.aclose",
                         "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.stream",
+                        "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.is_closed",
+                        "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.aclose",
                         "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.__aenter__",
                         "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.__aexit__",
                         "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient._get_client",
-                        "src.heretek_swarm.infrastructure.otel.tracing.instrumented_httpx_client",
-                        "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.is_closed"
+                        "src.heretek_swarm.infrastructure.otel.tracing.instrumented_httpx_client"
                       ]
                     },
                     {
@@ -132353,7 +132353,7 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/infrastructure/otel/tracing.py",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "src.heretek_swarm.infrastructure.otel.tracing.TraceState",
                             "src.heretek_swarm.infrastructure.otel.tracing.SpanStatus",
@@ -132388,13 +132388,13 @@
                             "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.head",
                             "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.options",
                             "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.request",
-                            "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.aclose",
                             "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.stream",
+                            "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.is_closed",
+                            "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.aclose",
                             "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.__aenter__",
                             "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.__aexit__",
                             "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient._get_client",
-                            "src.heretek_swarm.infrastructure.otel.tracing.instrumented_httpx_client",
-                            "src.heretek_swarm.infrastructure.otel.tracing.InstrumentedAsyncClient.is_closed"
+                            "src.heretek_swarm.infrastructure.otel.tracing.instrumented_httpx_client"
                           ]
                         },
                         {
