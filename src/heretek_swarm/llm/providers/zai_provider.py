@@ -16,6 +16,8 @@ from typing import TYPE_CHECKING, Any
 import httpx
 import structlog
 
+from heretek_swarm.infrastructure.otel import instrumented_httpx_client
+
 from .base import (
     LLMProviderBase,
     LLMRequest,
@@ -78,7 +80,7 @@ class ZAIProvider(LLMProviderBase):
             extra_config=extra_config,
         )
 
-        self._client: httpx.AsyncClient | None = None
+        self._client: InstrumentedAsyncClient | None = None
 
     def _init_capabilities(self) -> ProviderCapabilities:
         """Initialize provider capabilities."""
@@ -93,19 +95,20 @@ class ZAIProvider(LLMProviderBase):
             temperature_range=(0.0, 1.0),  # Z.AI uses 0-1 range
         )
 
-    async def _get_client(self) -> httpx.AsyncClient:
-        """Get or create the HTTP client."""
+    async def _get_client(self) -> InstrumentedAsyncClient:
+        """Get or create the instrumented HTTP client."""
         if self._client is None or self._client.is_closed:
             headers = {
                 "Authorization": f"Bearer {self.api_key}",
                 "Content-Type": "application/json",
             }
 
-            self._client = httpx.AsyncClient(
+            base_client = httpx.AsyncClient(
                 base_url=self.base_url,
                 headers=headers,
                 timeout=httpx.Timeout(60.0, connect=10.0),
             )
+            self._client = instrumented_httpx_client(client=base_client, call_type="llm_zai")
         return self._client
 
     async def complete(self, request: LLMRequest) -> LLMResponse:
@@ -284,3 +287,6 @@ class ZAIProvider(LLMProviderBase):
         """Cleanup HTTP client."""
         if self._client and not self._client.is_closed:
             await self._client.aclose()
+
+# Import at module level for type annotation
+from heretek_swarm.infrastructure.otel import InstrumentedAsyncClient

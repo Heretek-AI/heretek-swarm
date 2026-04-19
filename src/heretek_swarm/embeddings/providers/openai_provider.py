@@ -13,6 +13,8 @@ from typing import Any
 import httpx
 import structlog
 
+from heretek_swarm.infrastructure.otel import instrumented_httpx_client
+
 from .base import (
     EmbeddingAuthenticationError,
     EmbeddingProviderBase,
@@ -73,7 +75,7 @@ class OpenAIEmbeddingProvider(EmbeddingProviderBase):
         )
 
         self.organization = organization
-        self._client: httpx.AsyncClient | None = None
+        self._client: InstrumentedAsyncClient | None = None
 
     def _init_capabilities(self) -> EmbeddingProviderCapabilities:
         """Initialize provider capabilities."""
@@ -85,8 +87,8 @@ class OpenAIEmbeddingProvider(EmbeddingProviderBase):
             default_dimensions=1536,
         )
 
-    async def _get_client(self) -> httpx.AsyncClient:
-        """Get or create the HTTP client."""
+    async def _get_client(self) -> InstrumentedAsyncClient:
+        """Get or create the instrumented HTTP client."""
         if self._client is None or self._client.is_closed:
             headers = {
                 "Authorization": f"Bearer {self.api_key}",
@@ -95,11 +97,12 @@ class OpenAIEmbeddingProvider(EmbeddingProviderBase):
             if self.organization:
                 headers["OpenAI-Organization"] = self.organization
 
-            self._client = httpx.AsyncClient(
+            base_client = httpx.AsyncClient(
                 base_url=self.base_url,
                 headers=headers,
                 timeout=httpx.Timeout(60.0, connect=10.0),
             )
+            self._client = instrumented_httpx_client(client=base_client, call_type="embeddings_openai")
         return self._client
 
     async def embed(
@@ -195,3 +198,6 @@ class OpenAIEmbeddingProvider(EmbeddingProviderBase):
         """Cleanup HTTP client."""
         if self._client and not self._client.is_closed:
             await self._client.aclose()
+
+# Import at module level for type annotation
+from heretek_swarm.infrastructure.otel import InstrumentedAsyncClient

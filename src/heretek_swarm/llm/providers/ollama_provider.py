@@ -16,6 +16,8 @@ from typing import TYPE_CHECKING, Any
 import httpx
 import structlog
 
+from heretek_swarm.infrastructure.otel import instrumented_httpx_client
+
 from .base import (
     LLMProviderBase,
     LLMRequest,
@@ -70,7 +72,7 @@ class OllamaProvider(LLMProviderBase):
             extra_config=extra_config,
         )
 
-        self._client: httpx.AsyncClient | None = None
+        self._client: InstrumentedAsyncClient | None = None
 
     def _init_capabilities(self) -> ProviderCapabilities:
         """Initialize provider capabilities."""
@@ -85,14 +87,15 @@ class OllamaProvider(LLMProviderBase):
             temperature_range=(0.0, 2.0),
         )
 
-    async def _get_client(self) -> httpx.AsyncClient:
-        """Get or create the HTTP client."""
+    async def _get_client(self) -> InstrumentedAsyncClient:
+        """Get or create the instrumented HTTP client."""
         if self._client is None or self._client.is_closed:
-            self._client = httpx.AsyncClient(
+            base_client = httpx.AsyncClient(
                 base_url=self.base_url,
                 headers={"Content-Type": "application/json"},
-                timeout=httpx.Timeout(120.0, connect=10.0),  # Longer timeout for local inference
+                timeout=httpx.Timeout(120.0, connect=10.0),
             )
+            self._client = instrumented_httpx_client(client=base_client, call_type="llm_ollama")
         return self._client
 
     async def complete(self, request: LLMRequest) -> LLMResponse:
@@ -297,3 +300,6 @@ class OllamaProvider(LLMProviderBase):
         """Cleanup HTTP client."""
         if self._client and not self._client.is_closed:
             await self._client.aclose()
+
+# Import at module level for type annotation
+from heretek_swarm.infrastructure.otel import InstrumentedAsyncClient

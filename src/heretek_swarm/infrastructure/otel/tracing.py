@@ -808,6 +808,181 @@ class InstrumentedAsyncClient:
                     )
                 raise
 
+    async def stream(
+        self,
+        method: str,
+        url: str,
+        *,
+        headers: dict[str, str] | None = None,
+        content: bytes | str | None = None,
+        **kwargs: Any,
+    ) -> httpx.Response:
+        """
+        Execute a streaming HTTP request with OTel instrumentation and call logging.
+
+        Creates a CLIENT span and intercepts the streaming response. On completion
+        writes an ExternalCallLog entry. Unlike request(), the caller receives the
+        raw httpx.Response so they can call response.aiter_lines().
+
+        Usage::
+
+            async with client.stream("POST", "/chat/completions", json=payload) as response:
+                async for line in response.aiter_lines():
+                    ...
+        """
+        client = self._get_client()
+        session_factory = self._session_factory or _get_external_call_log_session_factory()
+
+        agent_id, agent_type = _get_agent_context()
+
+        domain = url
+        if "://" in url:
+            domain = url.split("://", 1)[1].split("/", 1)[0]
+
+        span_name = f"http {method} {domain}"
+        tracer = get_tracer()
+
+        with tracer.start_as_current_span(
+            span_name,
+            kind=SpanKind.CLIENT,
+            attributes={
+                SpanAttributes.HTTP_METHOD: method,
+                SpanAttributes.HTTP_URL: url,
+                SpanAttributes.AGENT_ID: agent_id,
+                SpanAttributes.AGENT_TYPE: agent_type,
+            },
+        ) as span:
+            start = time.perf_counter()
+            request_body_str: str | None = None
+            if content is not None:
+                if isinstance(content, bytes):
+                    request_body_str = content.decode("utf-8", errors="replace")
+                else:
+                    request_body_str = content
+
+            try:
+                response = await client.stream(
+                    method,
+                    url,
+                    headers=headers,
+                    content=content,
+                    **kwargs,
+                )
+
+                duration_ms = (time.perf_counter() - start) * 1000
+
+                span.set_attribute(
+                    SpanAttributes.HTTP_STATUS_CODE, response.status_code
+                )
+                span.set_status(
+                    Status(StatusCode.OK)
+                    if 200 <= response.status_code < 400
+                    else Status(StatusCode.ERROR)
+                )
+
+                # Write log entry on stream exit
+                if session_factory is not None:
+                    await _write_call_log(
+                        session_factory=session_factory,
+                        agent_id=agent_id,
+                        agent_type=agent_type,
+                        url=url,
+                        method=method,
+                        status_code=response.status_code,
+                        duration_ms=duration_ms,
+                        request_headers=headers,
+                        request_body=request_body_str,
+                        response_body=None,  # Streaming body not captured per-chunk
+                        tool_name=None,
+                        error_message=None,
+                        call_type=self._call_type,
+                    )
+
+                return response
+
+            except httpx.TimeoutException as e:
+                duration_ms = (time.perf_counter() - start) * 1000
+                span.set_status(Status(StatusCode.ERROR, str(e)))
+                span.record_exception(e)
+
+                if session_factory is not None:
+                    await _write_call_log(
+                        session_factory=session_factory,
+                        agent_id=agent_id,
+                        agent_type=agent_type,
+                        url=url,
+                        method=method,
+                        status_code=None,
+                        duration_ms=duration_ms,
+                        request_headers=headers,
+                        request_body=request_body_str,
+                        response_body=None,
+                        tool_name=None,
+                        error_message=f"TimeoutException: {e}",
+                        call_type=self._call_type,
+                    )
+                raise
+
+            except httpx.ConnectError as e:
+                duration_ms = (time.perf_counter() - start) * 1000
+                span.set_status(Status(StatusCode.ERROR, str(e)))
+                span.record_exception(e)
+
+                if session_factory is not None:
+                    await _write_call_log(
+                        session_factory=session_factory,
+                        agent_id=agent_id,
+                        agent_type=agent_type,
+                        url=url,
+                        method=method,
+                        status_code=None,
+                        duration_ms=duration_ms,
+                        request_headers=headers,
+                        request_body=request_body_str,
+                        response_body=None,
+                        tool_name=None,
+                        error_message=f"ConnectError: {e}",
+                        call_type=self._call_type,
+                    )
+                raise
+
+            except Exception as e:
+                duration_ms = (time.perf_counter() - start) * 1000
+                span.set_status(Status(StatusCode.ERROR, str(e)))
+                span.record_exception(e)
+
+                if session_factory is not None:
+                    await _write_call_log(
+                        session_factory=session_factory,
+                        agent_id=agent_id,
+                        agent_type=agent_type,
+                        url=url,
+                        method=method,
+                        status_code=None,
+                        duration_ms=duration_ms,
+                        request_headers=headers,
+                        request_body=request_body_str,
+                        response_body=None,
+                        tool_name=None,
+                        error_message=f"{type(e).__name__}: {e}",
+                        call_type=self._call_type,
+                    )
+                raise
+
+    @property
+    def is_closed(self) -> bool:
+        """
+        Return True if the underlying httpx.AsyncClient has been closed.
+
+        Also returns True if the client hasn't been created yet (lazy creation),
+        since we consider an uninitialized wrapper as "closed" from the caller's
+        perspective.
+        """
+        if self._client is None:
+            # Lazy client not created yet — treat as closed to allow re-init
+            return True
+        return self._client.is_closed
+
     async def aclose(self) -> None:
         """Close the underlying httpx.AsyncClient if we own it."""
         if self._client is not None and self._owns_client:

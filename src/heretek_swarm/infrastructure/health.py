@@ -21,6 +21,7 @@ from heretek_swarm.config.models import (
     HealthStatus,
     InfrastructureService,
 )
+from heretek_swarm.infrastructure.otel import instrumented_httpx_client
 
 logger = structlog.get_logger("infrastructure.health")
 
@@ -176,13 +177,11 @@ async def check_qdrant_health(host: str, port: int, timeout: float = 5.0) -> Hea
     Returns:
         HealthCheckResult with status and latency
     """
-    import httpx
-
     start = time.perf_counter()
     try:
         # Qdrant health check is on port 6333 (REST) or 6334 (gRPC)
         # Try REST endpoint first
-        async with httpx.AsyncClient() as client:
+        async with instrumented_httpx_client(call_type="health_qdrant") as client:
             response = await client.get(
                 f"http://{host}:{port}/healthz",
                 timeout=timeout,
@@ -367,11 +366,9 @@ async def check_mem0_health(host: str, port: int, timeout: float = 5.0) -> Healt
     Returns:
         HealthCheckResult with status and latency
     """
-    import httpx
-
     start = time.perf_counter()
     try:
-        async with httpx.AsyncClient() as client:
+        async with instrumented_httpx_client(call_type="health_mem0") as client:
             # Mem0 FastAPI health check
             response = await client.get(
                 f"http://{host}:{port}/health",

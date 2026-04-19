@@ -32,6 +32,8 @@ from typing import TYPE_CHECKING, Any
 import httpx
 import structlog
 
+from heretek_swarm.infrastructure.otel import InstrumentedAsyncClient, instrumented_httpx_client
+
 if TYPE_CHECKING:
     from collections.abc import AsyncIterator
 
@@ -222,7 +224,7 @@ class LLMProvider(ABC):
 
     def __init__(self, config: ProviderConfig):
         self.config = config
-        self._client: httpx.AsyncClient | None = None
+        self._client: InstrumentedAsyncClient | None = None
         self._rate_limiter = asyncio.Semaphore(10)
         self._last_request_time: float = 0
 
@@ -250,17 +252,21 @@ class LLMProvider(ABC):
             await self._client.aclose()
             self._client = None
 
-    async def _get_client(self) -> httpx.AsyncClient:
-        """Get or create HTTP client."""
+    async def _get_client(self) -> InstrumentedAsyncClient:
+        """Get or create the instrumented HTTP client."""
         if self._client is None or self._client.is_closed:
             headers: dict[str, str] = {"Content-Type": "application/json"}
             if self.config.api_key:
                 headers["Authorization"] = f"Bearer {self.config.api_key}"
 
-            self._client = httpx.AsyncClient(
+            base_client = httpx.AsyncClient(
                 base_url=self.config.base_url.rstrip("/"),
                 headers=headers,
                 timeout=httpx.Timeout(self.config.timeout, connect=10.0),
+            )
+            self._client = instrumented_httpx_client(
+                client=base_client,
+                call_type=f"llm_{self.config.provider_type.value}",
             )
         return self._client
 
