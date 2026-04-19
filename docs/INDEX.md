@@ -16,14 +16,13 @@ Welcome to the Heretek Swarm documentation. This index provides navigation to al
 |----------|-------------|
 | [Core Actors System](./CORE_ACTORS.md) | AgentActor base class, validation models, actor lifecycle |
 | [Agent Reference](./AGENT_REFERENCE.md) | Complete reference for all 23 agents by tier |
-| [Gateway & Communication](./GATEWAY_COMMUNICATION.md) | A2A protocol, event mesh, authentication |
 | [Memory System](./MEMORY_SYSTEM.md) | Dual-tier memory with mem0, Qdrant, PostgreSQL |
-| [Consciousness Plugins](./CONSCIOUSNESS_PLUGINS.md) | GWT, IIT, AST, FEP implementations |
+| [Emergent Intelligence](./architecture/emergent-intelligence.md) | GWT, IIT, AST, FEP implementations |
 | [API Endpoints](./API_ENDPOINTS.md) | REST API reference |
 | [Deployment Guide](./DEPLOYMENT.md) | Setup and deployment instructions |
-| [Expansion Roadmap](./EXPANSION_ROADMAP.md) | Development priorities and roadmap |
-| [Development Plan](./DEVELOPMENT_PLAN.md) | Phase-based execution roadmap |
-| [Remediation Backlog](./REMEDIATION_BACKLOG.md) | Technical debt and remediation tracking |
+| [Autonomous Workflow](./AUTONOMOUS_WORKFLOW.md) | 24/7 autonomous operation guide |
+
+> **Note:** Some legacy documents (Gateway Communication, Development Plan, Expansion Roadmap, Remediation Backlog) have been archived or migrated. Gateway communication is documented in `src/heretek_swarm/gateway/`. Development tracking is handled via GSD milestones.
 
 ---
 
@@ -34,17 +33,14 @@ docs/
 ├── INDEX.md                    # This file - documentation index
 ├── CORE_ACTORS.md              # Core actors system documentation
 ├── AGENT_REFERENCE.md          # All 23 agents reference
-├── GATEWAY_COMMUNICATION.md    # Gateway and communication
 ├── MEMORY_SYSTEM.md            # Memory system documentation
-├── CONSCIOUSNESS_PLUGINS.md    # Consciousness plugins
 ├── API_ENDPOINTS.md            # API endpoints reference
 ├── DEPLOYMENT.md               # Deployment guide
-├── EXPANSION_ROADMAP.md        # Development roadmap
-├── DEVELOPMENT_PLAN.md         # Phase-based plan
-├── REMEDIATION_BACKLOG.md      # Technical debt backlog
+├── AUTONOMOUS_WORKFLOW.md      # 24/7 autonomous operation
 └── architecture/               # Architecture documentation
     ├── actors-system.md
     ├── consensus-mechanism.md
+    ├── emergent-intelligence.md
     ├── memory-system.md
     ├── observability.md
     ├── orchestration-system.md
@@ -107,7 +103,8 @@ docs/
 | P2 | WebUI (ReactFlow) | ⏳ Pending |
 | P2 | Integration Testing | 🔄 Active |
 | P3 | Load Testing | ⏳ Pending |
-See [EXPANSION_ROADMAP.md](./EXPANSION_ROADMAP.md) for details.
+
+> Development priorities are tracked via GSD milestones in `.gsd/milestones/`.
 
 ---
 

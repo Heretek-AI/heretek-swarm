@@ -521,4 +521,5 @@ python3 -c "from heretek_swarm.collective import *; print('OK')"
 - [`src/heretek_swarm/collective/distributed_learning.py`](../../src/heretek_swarm/collective/distributed_learning.py) - Distributed learning
 - [`src/heretek_swarm/collective/pattern_library.py`](../../src/heretek_swarm/collective/pattern_library.py) - Pattern library
 - [`tests/collective/test_collective_learning.py`](../../tests/collective/test_collective_learning.py) - Test suite
-- [`docs/EXPANSION_ROADMAP.md`](../EXPANSION_ROADMAP.md) - Session 41 completion
+
+> **Note:** Session completion tracking has been migrated to GSD milestone summaries.

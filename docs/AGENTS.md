@@ -692,7 +692,7 @@ received = await handler.receive_handoff("alpha")
 
 - [ARCHITECTURE.md](ARCHITECTURE.md) - System architecture
 - [PRIME_DIRECTIVE.md](../PRIME_DIRECTIVE.md) - 23-agent vision and philosophy
-- [CONSCIOUSNESS_PLUGINS.md](CONSCIOUSNESS_PLUGINS.md) - Consciousness framework
+- [Emergent Intelligence](architecture/emergent-intelligence.md) - Consciousness framework
 
 ---
 

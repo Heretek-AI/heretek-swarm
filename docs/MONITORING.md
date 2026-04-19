@@ -580,7 +580,7 @@ sum(rate(heretek_swarm_tasks_completed_total[5m])) by (agent_id, task_type)
 ## See Also
 
 - [ARCHITECTURE.md](ARCHITECTURE.md) - System architecture
-- [CONSCIOUSNESS_PLUGINS.md](CONSCIOUSNESS_PLUGINS.md) - Consciousness framework
+- [Emergent Intelligence](../architecture/emergent-intelligence.md) - Consciousness framework
 - [Prometheus Getting Started](https://prometheus.io/docs/prometheus/latest/getting_started/)
 - [Grafana Documentation](https://grafana.com/docs/grafana/latest/)
 - [AlertManager Documentation](https://prometheus.io/docs/alerting/latest/alertmanager/)

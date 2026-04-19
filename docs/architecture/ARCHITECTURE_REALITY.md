@@ -528,6 +528,7 @@ The system is suitable for development and testing. Production deployment requir
 
 ## References
 
-- [`docs/REMEDIATION_BACKLOG.md`](../REMEDIATION_BACKLOG.md) - Zero-Trust Audit Phase 5 Master Report
 - [`README.md`](../README.md) - Updated README with honest status
 - [`PRIME_DIRECTIVE.md`](../PRIME_DIRECTIVE.md) - Original vision and architecture
+
+> **Note:** The Zero-Trust Audit Phase 5 Master Report (REMEDIATION_BACKLOG.md) has been archived. Zero-trust implementation details are in `src/heretek_swarm/security/zero_trust.py`.

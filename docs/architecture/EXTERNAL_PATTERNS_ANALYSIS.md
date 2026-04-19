@@ -1,8 +1,10 @@
 # External Architecture Patterns Analysis
 
 **Report Date:** 2026-04-07  
-**Analysis Scope:** Priority 1 External Integrations from [`GITHUB_SUGGESTIONS_EVALUATION.md`](GITHUB_SUGGESTIONS_EVALUATION.md)  
+**Analysis Scope:** Priority 1 External Integrations
 **Security Framework:** Zero-Trust Validation (4-Layer)
+
+> **Note:** The original evaluation source document has been archived. This analysis document is retained for historical reference on external framework patterns.
 
 ---
 
@@ -45,7 +47,7 @@ All 4 frameworks have been analyzed for architecture patterns relevant to Herete
 **License:** MIT License  
 **Stars:** 9,034  
 **Language:** Python  
-**Reference:** [`GITHUB_SUGGESTIONS_EVALUATION.md`](GITHUB_SUGGESTIONS_EVALUATION.md:36)
+**Reference:** (Archived source)
 
 #### 1.1 Agent Model
 
@@ -245,7 +247,7 @@ Overall: LOW RISK - Safe to reference for patterns
 **License:** MIT License  
 **Stars:** 58,770  
 **Language:** Python  
-**Reference:** [`GITHUB_SUGGESTIONS_EVALUATION.md`](GITHUB_SUGGESTIONS_EVALUATION.md:40)
+**Reference:** (Archived source)
 
 #### 2.1 Agent Model
 
@@ -435,7 +437,7 @@ Overall: LOW RISK - Safe to reference for patterns
 **License:** MIT License  
 **Stars:** 66,740  
 **Language:** Python  
-**Reference:** [`GITHUB_SUGGESTIONS_EVALUATION.md`](GITHUB_SUGGESTIONS_EVALUATION.md:41)
+**Reference:** (Archived source)
 
 #### 3.1 Agent Model
 
@@ -472,7 +474,7 @@ class Role:
 | Profile | Job description | Character JSON |
 | Goals | Explicit goal | Implicit via message handlers |
 | Actions | Action list | [`process_message()`](actors-system.md:52) |
-| Reference | - | [`CORE_ACTORS.md`](CORE_ACTORS.md) |
+| Reference | - | [`Core Actors`](../CORE_ACTORS.md) |
 
 #### 3.2 Communication Pattern
 
@@ -504,7 +506,7 @@ roles:
 | Configuration | YAML files | JSON character files |
 | Routing | Subscription-based | Topic-based |
 | Discovery | Config-driven | Runtime registration |
-| Reference | - | [`GATEWAY_COMMUNICATION.md`](GATEWAY_COMMUNICATION.md) |
+| Reference | - | Gateway implementation in `src/heretek_swarm/gateway/` |
 
 #### 3.3 State Management
 
@@ -623,7 +625,7 @@ Overall: LOW RISK - Safe to reference for patterns
 **License:** MIT License  
 **Stars:** 5,812  
 **Language:** TypeScript/JavaScript  
-**Reference:** [`GITHUB_SUGGESTIONS_EVALUATION.md`](GITHUB_SUGGESTIONS_EVALUATION.md:34)
+**Reference:** (Archived source)
 
 #### 4.1 Agent Model
 
@@ -693,9 +695,9 @@ class EventMesh {
 | Aspect | ComposioHQ | Heretek Swarm |
 |--------|------------|---------------|
 | Transport | WebSocket | WebSocket + NATS |
-| Event Mesh | Custom implementation | [`EventMesh`](GATEWAY_COMMUNICATION.md) |
+| Event Mesh | Custom implementation | EventMesh in gateway module |
 | Subscriptions | Topic-based | Channel subscriptions |
-| Reference | - | [`gateway/event_mesh.py`](../src/heretek_swarm/gateway/event_mesh.py) |
+| Reference | - | [`gateway/event_mesh.py`](https://github.com/HeretekAI/heretek-swarm/blob/main/src/heretek_swarm/gateway/event_mesh.py) |
 
 #### 4.3 State Management
 
@@ -1227,7 +1229,7 @@ class VersionedAgentState:
 
 ## References
 
-- [`GITHUB_SUGGESTIONS_EVALUATION.md`](GITHUB_SUGGESTIONS_EVALUATION.md) - Original evaluation report
+- External framework documentation (see archived evaluation source)
 - [`zero_trust.py`](../src/heretek_swarm/security/zero_trust.py) - Zero-trust security module
 - [`actors-system.md`](actors-system.md) - Heretek actors documentation
 - [`orchestration-system.md`](orchestration-system.md) - Heretek orchestration documentation

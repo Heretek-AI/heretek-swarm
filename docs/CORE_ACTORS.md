@@ -201,5 +201,5 @@ class MessageContent(BaseModel):
 ## See Also
 
 - [Agent Reference](./AGENT_REFERENCE.md) - All 23 agent implementations
-- [Gateway & Communication](./GATEWAY_COMMUNICATION.md) - A2A protocol and event mesh
+- Gateway implementation in `src/heretek_swarm/gateway/` - A2A protocol and event mesh
 - [Memory System](./MEMORY_SYSTEM.md) - Memory storage and retrieval

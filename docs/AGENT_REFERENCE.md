@@ -620,5 +620,5 @@ class PerceiverPlusAgent(AgentActor):
 ## See Also
 
 - [Core Actors System](./CORE_ACTORS.md) - Base classes and validation
-- [Gateway & Communication](./GATEWAY_COMMUNICATION.md) - A2A protocol
+- Gateway implementation in `src/heretek_swarm/gateway/` - A2A protocol
 - [API Endpoints](./API_ENDPOINTS.md) - REST API reference

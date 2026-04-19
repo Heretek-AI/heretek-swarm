@@ -659,10 +659,11 @@ Import the Heretek Swarm dashboard (ID: 1860) or create custom panels:
 - [`PRIME_DIRECTIVE.md`](../PRIME_DIRECTIVE.md) - 23-agent vision and architecture
 - [`docs/API_ENDPOINTS.md`](API_ENDPOINTS.md) - API reference
 - [`docs/DEPLOYMENT.md`](DEPLOYMENT.md) - Deployment guide
-- [`docs/REMEDIATION_BACKLOG.md`](REMEDIATION_BACKLOG.md) - Zero-Trust Audit findings
 - [`docs/MONITORING.md`](MONITORING.md) - Prometheus, Loki, alerting setup
 - [`docs/AGENTS.md`](AGENTS.md) - Complete agent documentation
-- [`docs/CONSCIOUSNESS_PLUGINS.md`](CONSCIOUSNESS_PLUGINS.md) - Consciousness framework
+- [`docs/architecture/emergent-intelligence.md`](architecture/emergent-intelligence.md) - Consciousness framework
+
+> **Note:** Remediation backlog and zero-trust audit documents have been archived. Zero-trust implementation details are covered in [architecture/security-considerations.md](architecture/security-considerations.md) if available.
 
 ---
 

@@ -566,18 +566,14 @@ print(tools.get_registry().list_tools())
 
 ## 11. References
 
-### 11.1 Proposal Documents
-
-- [`AUTONOMOUS_WORKFLOW_DESIGN-QWEN.md`](docs/proposal/AUTONOMOUS_WORKFLOW_DESIGN-QWEN.md) - Comprehensive architecture audit
-- [`AUTONOMOUS_WORKFLOW_DESIGN-GLM5.md`](docs/proposal/AUTONOMOUS_WORKFLOW_DESIGN-GLM5.md) - 6-stage autonomous loop design
-- [`AUTONOMOUS_WORKFLOW_DESIGN-MINIMAX.md`](docs/proposal/AUTONOMOUS_WORKFLOW_DESIGN-MINIMAX.md) - High-level system architecture
-
-### 11.2 Related Documentation
+### 11.1 Related Documentation
 
 - [`API_ENDPOINTS.md`](docs/API_ENDPOINTS.md) - API reference
-- [`CONSCIOUSNESS_PLUGINS.md`](docs/CONSCIOUSNESS_PLUGINS.md) - Consciousness metrics
 - [`DEPLOYMENT.md`](docs/DEPLOYMENT.md) - Deployment guide
-- [`EXPANSION_ROADMAP.md`](docs/EXPANSION_ROADMAP.md) - Future development
+
+> **Note:** Legacy proposal documents from `docs/proposal/` directory were removed during consolidation.
+> Consciousness metrics are documented in [`docs/architecture/emergent-intelligence.md`](docs/architecture/emergent-intelligence.md).
+> Future development planning has been migrated to the GSD milestone system.
 
 ---
 

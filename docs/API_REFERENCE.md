@@ -19,9 +19,9 @@ For the main documentation index with quick navigation, see [INDEX.md](./INDEX.m
 |----------|-------------|
 | [Core Actors System](./CORE_ACTORS.md) | AgentActor base class, ActorMessage, ActorFactory, ActorSupervisor, validation models |
 | [Agent Reference](./AGENT_REFERENCE.md) | Complete reference for all 23 agents organized by tier |
-| [Gateway & Communication](./GATEWAY_COMMUNICATION.md) | EventMesh, A2A protocol server, authentication, NATS event mesh |
+| Gateway Implementation | EventMesh, A2A protocol server, authentication in `src/heretek_swarm/gateway/` |
 | [Memory System](./MEMORY_SYSTEM.md) | Mem0Backend, memory models, dual-tier architecture, usage examples |
-| [Consciousness Plugins](./CONSCIOUSNESS_PLUGINS.md) | GWT, IIT, AST, FEP implementations and metrics |
+| [Emergent Intelligence](./architecture/emergent-intelligence.md) | GWT, IIT, AST, FEP implementations and metrics |
 | [API Endpoints](./API_ENDPOINTS.md) | REST API endpoints, WebSocket, rate limiting, error responses |
 
 ---
@@ -62,7 +62,7 @@ curl http://localhost:8000/live
 | Route | Method | Description | Full Docs |
 |-------|--------|-------------|-----------|
 | `/api/workflows/execute` | POST | Execute workflow | [API Endpoints](./API_ENDPOINTS.md#workflow-endpoints) |
-| `/api/consciousness/metrics` | GET | Global consciousness metrics | [Consciousness Plugins](./CONSCIOUSNESS_PLUGINS.md) |
+| `/api/consciousness/metrics` | GET | Global consciousness metrics | [Emergent Intelligence](architecture/emergent-intelligence.md) |
 | `/api/observability/traces` | GET | Execution traces | [API Endpoints](./API_ENDPOINTS.md#observability-endpoints) |
 | `/api/agents/status` | GET | All agents status | [API Endpoints](./API_ENDPOINTS.md) |
 
@@ -72,7 +72,6 @@ curl http://localhost:8000/live
 
 - [Documentation Index](./INDEX.md) - Main documentation navigation
 - [Deployment Guide](./DEPLOYMENT.md) - Setup and deployment instructions
-- [Expansion Roadmap](./EXPANSION_ROADMAP.md) - Development priorities
 
 ---
 
