@@ -394,7 +394,7 @@ class TestZeroTrustValidation:
 
     def test_validator_initialization(self):
         """Test zero-trust validator initialization."""
-        from src.heretek_swarm.security.zero_trust import ZeroTrustValidator
+        from heretek_swarm.security.zero_trust import ZeroTrustValidator
 
         validator = ZeroTrustValidator()
         assert validator is not None

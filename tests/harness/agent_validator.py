@@ -14,7 +14,7 @@ from typing import Any, Generic, Self, TypeVar
 import pytest
 
 # Import observability for tracing
-from src.observability import LATENCY_BASELINE_MS
+from heretek_swarm.observability import LATENCY_BASELINE_MS
 
 # ============== CONFIGURATION ==============
 

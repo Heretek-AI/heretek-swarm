@@ -22,7 +22,7 @@ from typing import Any
 
 import pytest
 
-from src.heretek_swarm.consciousness.fep_active_inference import (
+from heretek_swarm.consciousness.fep_active_inference import (
     Action,
     ActiveInferenceAgent,
     BeliefState,
@@ -30,7 +30,7 @@ from src.heretek_swarm.consciousness.fep_active_inference import (
     FreeEnergyCalculator,
     Policy,
 )
-from src.heretek_swarm.plugins.consciousness_metrics import (
+from heretek_swarm.plugins.consciousness_metrics import (
     AgentConsciousnessData,
     ConsciousnessMetricsCalculator,
 )

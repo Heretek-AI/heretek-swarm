@@ -15,7 +15,7 @@ import sys
 
 _spec = importlib.util.spec_from_file_location(
     "heretek_swarm._cli_module",
-    "src/heretek_swarm/cli.py"
+    "heretek-swarm/heretek_swarm/cli.py"
 )
 _cli_module = importlib.util.module_from_spec(_spec)
 sys.modules["heretek_swarm._cli_module"] = _cli_module

@@ -1,7 +1,7 @@
 {
   "repository_name": "heretek-swarm",
-  "timestamp": "2026-04-19T19:42:48.084563+00:00",
-  "overall_score": 0.9850608525119686,
+  "timestamp": "2026-04-19T19:57:46.529976+00:00",
+  "overall_score": 0.986005772005772,
   "check_summaries": [
     {
       "check_name": "function_size",
@@ -1747,10 +1747,10 @@
       "description": "Detects unused imports, variables, functions, and dead code via LSP diagnostics",
       "language": "TypeScript",
       "check_type": "standard",
-      "total_entities_checked": 25,
-      "findings_count": 25,
+      "total_entities_checked": 13,
+      "findings_count": 13,
       "warning_count": 0,
-      "score": 0.0,
+      "score": 0.35,
       "finding_groups": [
         {
           "severity": "info",
@@ -1765,48 +1765,6 @@
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_variable] 'HomePage' is declared but its value is never read.",
-              "file_path": "dashboard/frontend/src/App.tsx",
-              "line_start": 22,
-              "line_end": 22,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] 'AgentsPage' is declared but its value is never read.",
-              "file_path": "dashboard/frontend/src/App.tsx",
-              "line_start": 23,
-              "line_end": 23,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] 'ConsciousnessPage' is declared but its value is never read.",
-              "file_path": "dashboard/frontend/src/App.tsx",
-              "line_start": 24,
-              "line_end": 24,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] 'SettingsPage' is declared but its value is never read.",
-              "file_path": "dashboard/frontend/src/App.tsx",
-              "line_start": 25,
-              "line_end": 25,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] 'LogsPage' is declared but its value is never read.",
-              "file_path": "dashboard/frontend/src/App.tsx",
-              "line_start": 26,
-              "line_end": 26,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] 'ToastProvider' is declared but its value is never read.",
-              "file_path": "dashboard/frontend/src/App.tsx",
-              "line_start": 27,
-              "line_end": 27,
-              "metric_value": 0.0
-            },
-            {
               "entity_name": "[unused_variable] 'ErrorBoundary' is declared but its value is never read.",
               "file_path": "dashboard/frontend/src/App.tsx",
               "line_start": 28,
@@ -1814,52 +1772,10 @@
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_variable] 'DebugPanel' is declared but its value is never read.",
-              "file_path": "dashboard/frontend/src/App.tsx",
-              "line_start": 29,
-              "line_end": 29,
-              "metric_value": 0.0
-            },
-            {
               "entity_name": "[unused_variable] 'SetupWizard' is declared but its value is never read.",
               "file_path": "dashboard/frontend/src/App.tsx",
               "line_start": 31,
               "line_end": 31,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] 'Dashboard' is declared but its value is never read.",
-              "file_path": "dashboard/frontend/src/App.tsx",
-              "line_start": 36,
-              "line_end": 36,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] 'CollectiveCanvas' is declared but its value is never read.",
-              "file_path": "dashboard/frontend/src/App.tsx",
-              "line_start": 37,
-              "line_end": 37,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] 'WorkflowBuilder' is declared but its value is never read.",
-              "file_path": "dashboard/frontend/src/App.tsx",
-              "line_start": 38,
-              "line_end": 38,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] 'Observability' is declared but its value is never read.",
-              "file_path": "dashboard/frontend/src/App.tsx",
-              "line_start": 39,
-              "line_end": 39,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] 'ChatInterface' is declared but its value is never read.",
-              "file_path": "dashboard/frontend/src/App.tsx",
-              "line_start": 40,
-              "line_end": 40,
               "metric_value": 0.0
             },
             {
@@ -1984,7 +1900,7 @@
     },
     {
       "file_path": "dashboard/frontend/src/App.tsx",
-      "total_findings": 25,
+      "total_findings": 13,
       "warning_findings": 1,
       "composite_risk_score": 55.0
     },

@@ -19,21 +19,21 @@ from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 
-from src.heretek_swarm.collective.agency_tracking import AgencyMetricsTracker, create_sample_metrics
+from heretek_swarm.collective.agency_tracking import AgencyMetricsTracker, create_sample_metrics
 
 # Import agency metrics
-from src.heretek_swarm.consciousness.agency_metrics import (
+from heretek_swarm.consciousness.agency_metrics import (
     ActionOrigin,
     AgencyMetricsCalculator,
     DecisionPoint,
     ResourceControl,
 )
-from src.heretek_swarm.gateway.auth import verify_auth
-from src.heretek_swarm.plugins.consciousness_enhanced import (
+from heretek_swarm.gateway.auth import verify_auth
+from heretek_swarm.plugins.consciousness_enhanced import (
     ConsciousnessState,
     EnhancedConsciousnessPlugin,
 )
-from src.heretek_swarm.runtime.registry_enhanced import get_enhanced_registry
+from heretek_swarm.runtime.registry_enhanced import get_enhanced_registry
 
 router = APIRouter(prefix="/api/consciousness", tags=["consciousness"])
 

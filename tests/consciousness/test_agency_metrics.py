@@ -20,13 +20,13 @@ Date: 2026-04-10
 
 import pytest
 
-from src.heretek_swarm.collective.agency_tracking import (
+from heretek_swarm.collective.agency_tracking import (
     AgencyHealthStatus,
     AgencyMetricsTracker,
     AgencyThresholds,
     create_sample_metrics,
 )
-from src.heretek_swarm.consciousness.agency_metrics import (
+from heretek_swarm.consciousness.agency_metrics import (
     ActionOrigin,
     AgencyLevel,
     AgencyMetricsCalculator,

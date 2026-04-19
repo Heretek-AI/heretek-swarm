@@ -10,7 +10,7 @@ End-to-end tests for the tier migration system:
 import asyncio
 from datetime import UTC, datetime, timedelta
 
-from src.heretek_swarm.memory.tiering import (
+from heretek_swarm.memory.tiering import (
     MemoryTier,
     MemoryTieringSystem,
     MigrationTrigger,

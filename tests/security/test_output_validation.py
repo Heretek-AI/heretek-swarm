@@ -8,7 +8,7 @@ was computed but not returned/passed through.
 
 import pytest
 
-from src.heretek_swarm.security.zero_trust import (
+from heretek_swarm.security.zero_trust import (
     OutputValidationConfig,
     OutputValidator,
     ZeroTrustValidator,

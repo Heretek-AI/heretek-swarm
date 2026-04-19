@@ -10,7 +10,7 @@ This module tests the fixed tier migration functionality:
 
 import asyncio
 
-from src.heretek_swarm.memory.tiering import (
+from heretek_swarm.memory.tiering import (
     MemoryTier,
     MemoryTieringSystem,
     MigrationTrigger,

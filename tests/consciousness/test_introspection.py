@@ -18,7 +18,7 @@ Date: 2026-04-10
 
 import pytest
 
-from src.heretek_swarm.consciousness.introspection import (
+from heretek_swarm.consciousness.introspection import (
     BeliefEvolutionRecord,
     ConflictPair,
     ConflictResolutionStrategy,
@@ -26,7 +26,7 @@ from src.heretek_swarm.consciousness.introspection import (
     IntrospectionModule,
     IntrospectionReport,
 )
-from src.heretek_swarm.consciousness.self_model import (
+from heretek_swarm.consciousness.self_model import (
     GoalStatus,
     SelfModel,
 )

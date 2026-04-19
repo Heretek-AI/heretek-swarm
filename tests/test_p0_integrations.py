@@ -9,17 +9,17 @@ Tests:
 
 import pytest
 
-from src.heretek_swarm.actors.langroid_adapter import (
+from heretek_swarm.actors.langroid_adapter import (
     AgentConversation,
     ConversationState,
     LangroidAgent,
 )
-from src.heretek_swarm.consensus.raft_election import (
+from heretek_swarm.consensus.raft_election import (
     AppendEntriesRequest,
     RaftElection,
     RequestVoteRequest,
 )
-from src.heretek_swarm.gateway.nats_event_mesh import (
+from heretek_swarm.gateway.nats_event_mesh import (
     ConnectionState,
     NATSEventMesh,
 )
