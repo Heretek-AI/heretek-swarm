@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-19T10:46:22.811679+00:00",
+    "generated_at": "2026-04-19T10:51:30.718782+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -315,189 +315,189 @@
       ]
     },
     "serverless/handler.py": {
-      "file_status": "unchanged",
+      "file_status": "deleted",
       "methods": [
         {
           "qualified_name": "serverless.handler.initialize_dependencies",
           "start_line": 62,
           "end_line": 89,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "serverless.handler.APIResponse",
           "start_line": 101,
           "end_line": 117,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "serverless.handler.APIResponse.to_dict",
           "start_line": 107,
           "end_line": 117,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "serverless.handler.api_handler",
           "start_line": 120,
           "end_line": 190,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "serverless.handler.health_check",
           "start_line": 193,
           "end_line": 208,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "serverless.handler.readiness_check",
           "start_line": 211,
           "end_line": 243,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "serverless.handler.handle_agents_api",
           "start_line": 250,
           "end_line": 272,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "serverless.handler.handle_profiling_api",
           "start_line": 275,
           "end_line": 345,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "serverless.handler.handle_rag_api",
           "start_line": 348,
           "end_line": 356,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "serverless.handler.handle_workflows_api",
           "start_line": 359,
           "end_line": 367,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "serverless.handler.handle_consensus_api",
           "start_line": 370,
           "end_line": 378,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "serverless.handler.handle_observability_api",
           "start_line": 381,
           "end_line": 389,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "serverless.handler.handle_config_api",
           "start_line": 392,
           "end_line": 400,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "serverless.handler.async_processor",
           "start_line": 407,
           "end_line": 461,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "serverless.handler.process_agent_deploy",
           "start_line": 464,
           "end_line": 469,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "serverless.handler.process_rag_ingest",
           "start_line": 473,
           "end_line": 478,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "serverless.handler.process_workflow_execute",
           "start_line": 482,
           "end_line": 487,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "serverless.handler.process_consensus_vote",
           "start_line": 491,
           "end_line": 496,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "serverless.handler.swarm_health_check",
           "start_line": 504,
           "end_line": 528,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "serverless.handler.agent_state_cleanup",
           "start_line": 531,
           "end_line": 553,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "serverless.handler.rag_index_optimize",
           "start_line": 556,
           "end_line": 581,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "serverless.handler.behavior_profile_analyzer",
           "start_line": 584,
           "end_line": 620,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "serverless.handler.get_profiler",
           "start_line": 627,
           "end_line": 640,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "serverless.handler.verify_auth",
           "start_line": 643,
           "end_line": 659,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "serverless.handler.parse_body",
           "start_line": 662,
           "end_line": 677,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "serverless.handler.main",
           "start_line": 684,
           "end_line": 718,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "deleted"
         }
       ]
     },
@@ -53101,7 +53101,7 @@
       "start_line": 62,
       "end_line": 89,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "serverless/handler.py|serverless.handler.APIResponse": {
       "file_path": "serverless/handler.py",
@@ -53109,7 +53109,7 @@
       "start_line": 101,
       "end_line": 117,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "serverless/handler.py|serverless.handler.APIResponse.to_dict": {
       "file_path": "serverless/handler.py",
@@ -53117,7 +53117,7 @@
       "start_line": 107,
       "end_line": 117,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "serverless/handler.py|serverless.handler.api_handler": {
       "file_path": "serverless/handler.py",
@@ -53125,7 +53125,7 @@
       "start_line": 120,
       "end_line": 190,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "serverless/handler.py|serverless.handler.health_check": {
       "file_path": "serverless/handler.py",
@@ -53133,7 +53133,7 @@
       "start_line": 193,
       "end_line": 208,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "serverless/handler.py|serverless.handler.readiness_check": {
       "file_path": "serverless/handler.py",
@@ -53141,7 +53141,7 @@
       "start_line": 211,
       "end_line": 243,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "serverless/handler.py|serverless.handler.handle_agents_api": {
       "file_path": "serverless/handler.py",
@@ -53149,7 +53149,7 @@
       "start_line": 250,
       "end_line": 272,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "serverless/handler.py|serverless.handler.handle_profiling_api": {
       "file_path": "serverless/handler.py",
@@ -53157,7 +53157,7 @@
       "start_line": 275,
       "end_line": 345,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "serverless/handler.py|serverless.handler.handle_rag_api": {
       "file_path": "serverless/handler.py",
@@ -53165,7 +53165,7 @@
       "start_line": 348,
       "end_line": 356,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "serverless/handler.py|serverless.handler.handle_workflows_api": {
       "file_path": "serverless/handler.py",
@@ -53173,7 +53173,7 @@
       "start_line": 359,
       "end_line": 367,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "serverless/handler.py|serverless.handler.handle_consensus_api": {
       "file_path": "serverless/handler.py",
@@ -53181,7 +53181,7 @@
       "start_line": 370,
       "end_line": 378,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "serverless/handler.py|serverless.handler.handle_observability_api": {
       "file_path": "serverless/handler.py",
@@ -53189,7 +53189,7 @@
       "start_line": 381,
       "end_line": 389,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "serverless/handler.py|serverless.handler.handle_config_api": {
       "file_path": "serverless/handler.py",
@@ -53197,7 +53197,7 @@
       "start_line": 392,
       "end_line": 400,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "serverless/handler.py|serverless.handler.async_processor": {
       "file_path": "serverless/handler.py",
@@ -53205,7 +53205,7 @@
       "start_line": 407,
       "end_line": 461,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "serverless/handler.py|serverless.handler.process_agent_deploy": {
       "file_path": "serverless/handler.py",
@@ -53213,7 +53213,7 @@
       "start_line": 464,
       "end_line": 469,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "serverless/handler.py|serverless.handler.process_rag_ingest": {
       "file_path": "serverless/handler.py",
@@ -53221,7 +53221,7 @@
       "start_line": 473,
       "end_line": 478,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "serverless/handler.py|serverless.handler.process_workflow_execute": {
       "file_path": "serverless/handler.py",
@@ -53229,7 +53229,7 @@
       "start_line": 482,
       "end_line": 487,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "serverless/handler.py|serverless.handler.process_consensus_vote": {
       "file_path": "serverless/handler.py",
@@ -53237,7 +53237,7 @@
       "start_line": 491,
       "end_line": 496,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "serverless/handler.py|serverless.handler.swarm_health_check": {
       "file_path": "serverless/handler.py",
@@ -53245,7 +53245,7 @@
       "start_line": 504,
       "end_line": 528,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "serverless/handler.py|serverless.handler.agent_state_cleanup": {
       "file_path": "serverless/handler.py",
@@ -53253,7 +53253,7 @@
       "start_line": 531,
       "end_line": 553,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "serverless/handler.py|serverless.handler.rag_index_optimize": {
       "file_path": "serverless/handler.py",
@@ -53261,7 +53261,7 @@
       "start_line": 556,
       "end_line": 581,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "serverless/handler.py|serverless.handler.behavior_profile_analyzer": {
       "file_path": "serverless/handler.py",
@@ -53269,7 +53269,7 @@
       "start_line": 584,
       "end_line": 620,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "serverless/handler.py|serverless.handler.get_profiler": {
       "file_path": "serverless/handler.py",
@@ -53277,7 +53277,7 @@
       "start_line": 627,
       "end_line": 640,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "serverless/handler.py|serverless.handler.verify_auth": {
       "file_path": "serverless/handler.py",
@@ -53285,7 +53285,7 @@
       "start_line": 643,
       "end_line": 659,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "serverless/handler.py|serverless.handler.parse_body": {
       "file_path": "serverless/handler.py",
@@ -53293,7 +53293,7 @@
       "start_line": 662,
       "end_line": 677,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "serverless/handler.py|serverless.handler.main": {
       "file_path": "serverless/handler.py",
@@ -53301,7 +53301,7 @@
       "start_line": 684,
       "end_line": 718,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/cli.py|src.cli._check_service_health": {
       "file_path": "src/cli.py",
@@ -111251,35 +111251,8 @@
         },
         {
           "file_path": "serverless/handler.py",
-          "file_status": "unchanged",
-          "methods": [
-            "serverless.handler.initialize_dependencies",
-            "serverless.handler.APIResponse",
-            "serverless.handler.APIResponse.to_dict",
-            "serverless.handler.api_handler",
-            "serverless.handler.health_check",
-            "serverless.handler.readiness_check",
-            "serverless.handler.handle_agents_api",
-            "serverless.handler.handle_profiling_api",
-            "serverless.handler.handle_rag_api",
-            "serverless.handler.handle_workflows_api",
-            "serverless.handler.handle_consensus_api",
-            "serverless.handler.handle_observability_api",
-            "serverless.handler.handle_config_api",
-            "serverless.handler.async_processor",
-            "serverless.handler.process_agent_deploy",
-            "serverless.handler.process_rag_ingest",
-            "serverless.handler.process_workflow_execute",
-            "serverless.handler.process_consensus_vote",
-            "serverless.handler.swarm_health_check",
-            "serverless.handler.agent_state_cleanup",
-            "serverless.handler.rag_index_optimize",
-            "serverless.handler.behavior_profile_analyzer",
-            "serverless.handler.get_profiler",
-            "serverless.handler.verify_auth",
-            "serverless.handler.parse_body",
-            "serverless.handler.main"
-          ]
+          "file_status": "deleted",
+          "methods": []
         },
         {
           "file_path": "src/cli.py",
@@ -117764,35 +117737,8 @@
             },
             {
               "file_path": "serverless/handler.py",
-              "file_status": "unchanged",
-              "methods": [
-                "serverless.handler.initialize_dependencies",
-                "serverless.handler.APIResponse",
-                "serverless.handler.APIResponse.to_dict",
-                "serverless.handler.api_handler",
-                "serverless.handler.health_check",
-                "serverless.handler.readiness_check",
-                "serverless.handler.handle_agents_api",
-                "serverless.handler.handle_profiling_api",
-                "serverless.handler.handle_rag_api",
-                "serverless.handler.handle_workflows_api",
-                "serverless.handler.handle_consensus_api",
-                "serverless.handler.handle_observability_api",
-                "serverless.handler.handle_config_api",
-                "serverless.handler.async_processor",
-                "serverless.handler.process_agent_deploy",
-                "serverless.handler.process_rag_ingest",
-                "serverless.handler.process_workflow_execute",
-                "serverless.handler.process_consensus_vote",
-                "serverless.handler.swarm_health_check",
-                "serverless.handler.agent_state_cleanup",
-                "serverless.handler.rag_index_optimize",
-                "serverless.handler.behavior_profile_analyzer",
-                "serverless.handler.get_profiler",
-                "serverless.handler.verify_auth",
-                "serverless.handler.parse_body",
-                "serverless.handler.main"
-              ]
+              "file_status": "deleted",
+              "methods": []
             },
             {
               "file_path": "src/cli.py",
@@ -125892,35 +125838,8 @@
                 },
                 {
                   "file_path": "serverless/handler.py",
-                  "file_status": "unchanged",
-                  "methods": [
-                    "serverless.handler.initialize_dependencies",
-                    "serverless.handler.APIResponse",
-                    "serverless.handler.APIResponse.to_dict",
-                    "serverless.handler.api_handler",
-                    "serverless.handler.health_check",
-                    "serverless.handler.readiness_check",
-                    "serverless.handler.handle_agents_api",
-                    "serverless.handler.handle_profiling_api",
-                    "serverless.handler.handle_rag_api",
-                    "serverless.handler.handle_workflows_api",
-                    "serverless.handler.handle_consensus_api",
-                    "serverless.handler.handle_observability_api",
-                    "serverless.handler.handle_config_api",
-                    "serverless.handler.async_processor",
-                    "serverless.handler.process_agent_deploy",
-                    "serverless.handler.process_rag_ingest",
-                    "serverless.handler.process_workflow_execute",
-                    "serverless.handler.process_consensus_vote",
-                    "serverless.handler.swarm_health_check",
-                    "serverless.handler.agent_state_cleanup",
-                    "serverless.handler.rag_index_optimize",
-                    "serverless.handler.behavior_profile_analyzer",
-                    "serverless.handler.get_profiler",
-                    "serverless.handler.verify_auth",
-                    "serverless.handler.parse_body",
-                    "serverless.handler.main"
-                  ]
+                  "file_status": "deleted",
+                  "methods": []
                 },
                 {
                   "file_path": "src/cli.py",
@@ -128201,35 +128120,8 @@
                   "file_methods": [
                     {
                       "file_path": "serverless/handler.py",
-                      "file_status": "unchanged",
-                      "methods": [
-                        "serverless.handler.initialize_dependencies",
-                        "serverless.handler.APIResponse",
-                        "serverless.handler.APIResponse.to_dict",
-                        "serverless.handler.api_handler",
-                        "serverless.handler.health_check",
-                        "serverless.handler.readiness_check",
-                        "serverless.handler.handle_agents_api",
-                        "serverless.handler.handle_profiling_api",
-                        "serverless.handler.handle_rag_api",
-                        "serverless.handler.handle_workflows_api",
-                        "serverless.handler.handle_consensus_api",
-                        "serverless.handler.handle_observability_api",
-                        "serverless.handler.handle_config_api",
-                        "serverless.handler.async_processor",
-                        "serverless.handler.process_agent_deploy",
-                        "serverless.handler.process_rag_ingest",
-                        "serverless.handler.process_workflow_execute",
-                        "serverless.handler.process_consensus_vote",
-                        "serverless.handler.swarm_health_check",
-                        "serverless.handler.agent_state_cleanup",
-                        "serverless.handler.rag_index_optimize",
-                        "serverless.handler.behavior_profile_analyzer",
-                        "serverless.handler.get_profiler",
-                        "serverless.handler.verify_auth",
-                        "serverless.handler.parse_body",
-                        "serverless.handler.main"
-                      ]
+                      "file_status": "deleted",
+                      "methods": []
                     },
                     {
                       "file_path": "src/heretek_swarm/actors/alpha.py",
@@ -129635,35 +129527,8 @@
                       "file_methods": [
                         {
                           "file_path": "serverless/handler.py",
-                          "file_status": "unchanged",
-                          "methods": [
-                            "serverless.handler.initialize_dependencies",
-                            "serverless.handler.APIResponse",
-                            "serverless.handler.APIResponse.to_dict",
-                            "serverless.handler.api_handler",
-                            "serverless.handler.health_check",
-                            "serverless.handler.readiness_check",
-                            "serverless.handler.handle_agents_api",
-                            "serverless.handler.handle_profiling_api",
-                            "serverless.handler.handle_rag_api",
-                            "serverless.handler.handle_workflows_api",
-                            "serverless.handler.handle_consensus_api",
-                            "serverless.handler.handle_observability_api",
-                            "serverless.handler.handle_config_api",
-                            "serverless.handler.async_processor",
-                            "serverless.handler.process_agent_deploy",
-                            "serverless.handler.process_rag_ingest",
-                            "serverless.handler.process_workflow_execute",
-                            "serverless.handler.process_consensus_vote",
-                            "serverless.handler.swarm_health_check",
-                            "serverless.handler.agent_state_cleanup",
-                            "serverless.handler.rag_index_optimize",
-                            "serverless.handler.behavior_profile_analyzer",
-                            "serverless.handler.get_profiler",
-                            "serverless.handler.verify_auth",
-                            "serverless.handler.parse_body",
-                            "serverless.handler.main"
-                          ]
+                          "file_status": "deleted",
+                          "methods": []
                         },
                         {
                           "file_path": "src/heretek_swarm/actors/alpha.py",
