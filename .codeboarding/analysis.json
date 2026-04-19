@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-19T11:36:49.090545+00:00",
+    "generated_at": "2026-04-19T15:48:57.633651+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -502,7 +502,7 @@
       ]
     },
     "src/cli.py": {
-      "file_status": "modified",
+      "file_status": "unchanged",
       "methods": [
         {
           "qualified_name": "src.cli._check_service_health",
@@ -4360,7 +4360,7 @@
       ]
     },
     "src/heretek_swarm/actors/mixins/learning.py": {
-      "file_status": "modified",
+      "file_status": "unchanged",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.actors.mixins.learning.LearningState",
@@ -4374,19 +4374,19 @@
           "start_line": 23,
           "end_line": 84,
           "node_type": "CLASS",
-          "status": "modified"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.mixins.learning.LearningMixin.__init__",
           "start_line": 42,
           "end_line": 46,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.mixins.learning.LearningMixin.get_learning_status",
-          "start_line": 47,
-          "end_line": 83,
+          "start_line": 48,
+          "end_line": 84,
           "node_type": "METHOD",
           "status": "unchanged"
         }
@@ -7930,47 +7930,47 @@
       ]
     },
     "src/heretek_swarm/api/main.py": {
-      "file_status": "modified",
+      "file_status": "unchanged",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.api.main.lifespan",
-          "start_line": 90,
-          "end_line": 123,
+          "start_line": 91,
+          "end_line": 124,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.main._init_config_service",
-          "start_line": 126,
-          "end_line": 153,
+          "start_line": 127,
+          "end_line": 154,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.main._init_supervisor",
-          "start_line": 156,
-          "end_line": 164,
+          "start_line": 157,
+          "end_line": 165,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.main._spawn_all_agents",
-          "start_line": 167,
-          "end_line": 251,
+          "start_line": 168,
+          "end_line": 252,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.main._init_memory_store",
-          "start_line": 254,
-          "end_line": 267,
+          "start_line": 255,
+          "end_line": 268,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.main._init_mem0",
-          "start_line": 270,
-          "end_line": 298,
+          "start_line": 271,
+          "end_line": 299,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
@@ -7979,12 +7979,12 @@
           "start_line": 302,
           "end_line": 369,
           "node_type": "FUNCTION",
-          "status": "modified"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.main._init_nats_bridge.a2a_event_handler",
-          "start_line": 314,
-          "end_line": 332,
+          "start_line": 315,
+          "end_line": 333,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
@@ -7993,152 +7993,152 @@
           "start_line": 341,
           "end_line": 360,
           "node_type": "FUNCTION",
-          "status": "added"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.main._log_startup_complete",
-          "start_line": 347,
-          "end_line": 352,
+          "start_line": 372,
+          "end_line": 377,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.main.check_gateway",
-          "start_line": 430,
-          "end_line": 444,
+          "start_line": 456,
+          "end_line": 470,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.main.check_redis",
-          "start_line": 447,
-          "end_line": 466,
+          "start_line": 473,
+          "end_line": 492,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.main.check_postgres",
-          "start_line": 469,
-          "end_line": 505,
+          "start_line": 495,
+          "end_line": 531,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.main.check_qdrant",
-          "start_line": 508,
-          "end_line": 538,
+          "start_line": 534,
+          "end_line": 564,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.main.health_check",
-          "start_line": 547,
-          "end_line": 570,
+          "start_line": 573,
+          "end_line": 596,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.main.liveness_check",
-          "start_line": 574,
-          "end_line": 576,
+          "start_line": 600,
+          "end_line": 602,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.main.readiness_check",
-          "start_line": 580,
-          "end_line": 586,
+          "start_line": 606,
+          "end_line": 612,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.main.get_agents",
-          "start_line": 595,
-          "end_line": 620,
+          "start_line": 621,
+          "end_line": 646,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.main.get_agent",
-          "start_line": 624,
-          "end_line": 654,
+          "start_line": 650,
+          "end_line": 680,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.main.get_agent_metrics",
-          "start_line": 658,
-          "end_line": 682,
+          "start_line": 684,
+          "end_line": 708,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.main.terminate_agent",
-          "start_line": 686,
-          "end_line": 707,
+          "start_line": 712,
+          "end_line": 733,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.main.get_supervisor_status",
-          "start_line": 716,
-          "end_line": 726,
+          "start_line": 742,
+          "end_line": 752,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.main.get_memory_stats",
-          "start_line": 735,
-          "end_line": 792,
+          "start_line": 761,
+          "end_line": 818,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.main.get_litellm_metrics",
-          "start_line": 801,
-          "end_line": 837,
-          "node_type": "FUNCTION",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.api.main.get_mem0_stats",
-          "start_line": 846,
+          "start_line": 827,
           "end_line": 863,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
+          "qualified_name": "src.heretek_swarm.api.main.get_mem0_stats",
+          "start_line": 872,
+          "end_line": 889,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
           "qualified_name": "src.heretek_swarm.api.main.search_mem0_memory",
-          "start_line": 867,
-          "end_line": 908,
+          "start_line": 893,
+          "end_line": 934,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.main.get_agent_memories",
-          "start_line": 912,
-          "end_line": 943,
+          "start_line": 938,
+          "end_line": 969,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.main.get_a2a_messages",
-          "start_line": 952,
-          "end_line": 985,
+          "start_line": 978,
+          "end_line": 1011,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.main.get_a2a_conversation",
-          "start_line": 989,
-          "end_line": 1039,
+          "start_line": 1015,
+          "end_line": 1065,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.main.root",
-          "start_line": 1048,
-          "end_line": 1057,
+          "start_line": 1074,
+          "end_line": 1083,
           "node_type": "FUNCTION",
           "status": "unchanged"
         }
@@ -8288,251 +8288,167 @@
       ]
     },
     "src/heretek_swarm/api/observability.py": {
-      "file_status": "modified",
+      "file_status": "unchanged",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.api.observability._get_external_call_log_session_factory",
-          "start_line": 68,
-          "end_line": 89,
+          "start_line": 71,
+          "end_line": 92,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.observability.get_metrics_collector",
-          "start_line": 92,
-          "end_line": 97,
+          "start_line": 95,
+          "end_line": 100,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.observability.get_metrics_stream",
-          "start_line": 100,
-          "end_line": 105,
+          "start_line": 103,
+          "end_line": 108,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.observability.get_zero_trust",
-          "start_line": 108,
-          "end_line": 113,
+          "start_line": 111,
+          "end_line": 116,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.observability.check_rate_limit",
-          "start_line": 116,
-          "end_line": 135,
+          "start_line": 119,
+          "end_line": 138,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.observability.validate_input",
-          "start_line": 138,
-          "end_line": 148,
+          "start_line": 141,
+          "end_line": 151,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.observability.get_swarm_health",
-          "start_line": 155,
-          "end_line": 215,
+          "start_line": 158,
+          "end_line": 218,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.observability.get_agent_metrics",
-          "start_line": 219,
-          "end_line": 270,
+          "start_line": 222,
+          "end_line": 273,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.observability.get_all_agents",
-          "start_line": 274,
-          "end_line": 325,
+          "start_line": 277,
+          "end_line": 328,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.observability.get_consciousness_metrics",
-          "start_line": 332,
-          "end_line": 376,
+          "start_line": 335,
+          "end_line": 379,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.observability.get_agent_consciousness",
-          "start_line": 380,
-          "end_line": 411,
+          "start_line": 383,
+          "end_line": 414,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.observability.stream_metrics",
-          "start_line": 418,
-          "end_line": 465,
+          "start_line": 421,
+          "end_line": 468,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.observability.websocket_metrics",
-          "start_line": 469,
-          "end_line": 539,
+          "start_line": 472,
+          "end_line": 542,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.observability.get_alerts",
-          "start_line": 546,
-          "end_line": 649,
+          "start_line": 549,
+          "end_line": 652,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.observability.get_prometheus_metrics",
-          "start_line": 656,
-          "end_line": 674,
+          "start_line": 659,
+          "end_line": 677,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.observability.get_traces",
-          "start_line": 681,
-          "end_line": 735,
+          "start_line": 684,
+          "end_line": 738,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.observability.get_trace",
-          "start_line": 739,
-          "end_line": 755,
+          "start_line": 742,
+          "end_line": 758,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.observability.create_trace",
-          "start_line": 759,
-          "end_line": 804,
+          "start_line": 762,
+          "end_line": 807,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.observability.websocket_traces",
-          "start_line": 808,
-          "end_line": 839,
+          "start_line": 811,
+          "end_line": 842,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.observability.get_legacy_metrics",
-          "start_line": 843,
-          "end_line": 873,
+          "start_line": 846,
+          "end_line": 876,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.observability.clear_traces",
-          "start_line": 877,
-          "end_line": 898,
+          "start_line": 880,
+          "end_line": 901,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.observability.get_external_calls",
-          "start_line": 905,
-          "end_line": 1052,
+          "start_line": 908,
+          "end_line": 1055,
           "node_type": "FUNCTION",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.api.observability.TraceEvent",
-          "start_line": 1058,
-          "end_line": 1085,
-          "node_type": "CLASS",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.observability.create_external_call",
-          "start_line": 1058,
-          "end_line": 1179,
+          "start_line": 1059,
+          "end_line": 1180,
           "node_type": "FUNCTION",
-          "status": "added"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.api.observability.TraceEvent.__init__",
-          "start_line": 1061,
-          "end_line": 1074,
-          "node_type": "METHOD",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.api.observability.TraceEvent.to_dict",
-          "start_line": 1076,
-          "end_line": 1085,
-          "node_type": "METHOD",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.api.observability.ConnectionManager.__init__",
-          "start_line": 1091,
-          "end_line": 1092,
-          "node_type": "METHOD",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.api.observability.ConnectionManager.connect",
-          "start_line": 1094,
-          "end_line": 1097,
-          "node_type": "METHOD",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.api.observability.ConnectionManager.disconnect",
-          "start_line": 1099,
-          "end_line": 1103,
-          "node_type": "METHOD",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.api.observability.ConnectionManager.broadcast_trace",
-          "start_line": 1105,
-          "end_line": 1112,
-          "node_type": "METHOD",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.api.observability.ConnectionManager.broadcast_observability",
-          "start_line": 1116,
-          "end_line": 1135,
-          "node_type": "METHOD",
-          "status": "added"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.api.observability.get_replay_manager",
-          "start_line": 1127,
-          "end_line": 1146,
-          "node_type": "FUNCTION",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.api.observability.ReplayJobCreate",
-          "start_line": 1149,
-          "end_line": 1158,
-          "node_type": "CLASS",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.api.observability.ReplayJobResponse",
-          "start_line": 1161,
-          "end_line": 1176,
-          "node_type": "CLASS",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.api.observability.ReplayJobListResponse",
-          "start_line": 1179,
-          "end_line": 1183,
-          "node_type": "CLASS",
           "status": "unchanged"
         },
         {
@@ -8540,103 +8456,187 @@
           "start_line": 1184,
           "end_line": 1335,
           "node_type": "FUNCTION",
-          "status": "added"
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.observability.TraceEvent",
+          "start_line": 1341,
+          "end_line": 1368,
+          "node_type": "CLASS",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.observability.TraceEvent.__init__",
+          "start_line": 1344,
+          "end_line": 1357,
+          "node_type": "METHOD",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.observability.TraceEvent.to_dict",
+          "start_line": 1359,
+          "end_line": 1368,
+          "node_type": "METHOD",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.observability.ConnectionManager",
+          "start_line": 1371,
+          "end_line": 1416,
+          "node_type": "CLASS",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.observability.ConnectionManager.__init__",
+          "start_line": 1374,
+          "end_line": 1375,
+          "node_type": "METHOD",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.observability.ConnectionManager.connect",
+          "start_line": 1377,
+          "end_line": 1380,
+          "node_type": "METHOD",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.observability.ConnectionManager.disconnect",
+          "start_line": 1382,
+          "end_line": 1386,
+          "node_type": "METHOD",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.observability.ConnectionManager.broadcast_trace",
+          "start_line": 1388,
+          "end_line": 1395,
+          "node_type": "METHOD",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.observability.ConnectionManager.broadcast_observability",
+          "start_line": 1397,
+          "end_line": 1416,
+          "node_type": "METHOD",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.observability.get_replay_manager",
+          "start_line": 1431,
+          "end_line": 1450,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.observability.ReplayJobCreate",
+          "start_line": 1453,
+          "end_line": 1462,
+          "node_type": "CLASS",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.observability.ReplayJobResponse",
+          "start_line": 1465,
+          "end_line": 1480,
+          "node_type": "CLASS",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.observability.ReplayJobListResponse",
+          "start_line": 1483,
+          "end_line": 1487,
+          "node_type": "CLASS",
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.observability.TimeTravelRequestCreate",
-          "start_line": 1186,
-          "end_line": 1192,
+          "start_line": 1490,
+          "end_line": 1496,
           "node_type": "CLASS",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.observability.TimeTravelResponse",
-          "start_line": 1195,
-          "end_line": 1203,
+          "start_line": 1499,
+          "end_line": 1507,
           "node_type": "CLASS",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.observability.create_replay_job",
-          "start_line": 1207,
-          "end_line": 1270,
+          "start_line": 1511,
+          "end_line": 1574,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
-          "qualified_name": "src.heretek_swarm.api.observability.ConnectionManager",
-          "start_line": 1215,
-          "end_line": 1260,
-          "node_type": "CLASS",
-          "status": "modified"
-        },
-        {
           "qualified_name": "src.heretek_swarm.api.observability.execute_replay_job",
-          "start_line": 1274,
-          "end_line": 1303,
+          "start_line": 1578,
+          "end_line": 1607,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.observability.pause_replay_job",
-          "start_line": 1307,
-          "end_line": 1319,
+          "start_line": 1611,
+          "end_line": 1623,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.observability.resume_replay_job",
-          "start_line": 1323,
-          "end_line": 1335,
+          "start_line": 1627,
+          "end_line": 1639,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.observability.cancel_replay_job",
-          "start_line": 1339,
-          "end_line": 1351,
+          "start_line": 1643,
+          "end_line": 1655,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.observability.list_replay_jobs",
-          "start_line": 1355,
-          "end_line": 1402,
+          "start_line": 1659,
+          "end_line": 1706,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.observability.get_replay_job",
-          "start_line": 1406,
-          "end_line": 1434,
+          "start_line": 1710,
+          "end_line": 1738,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.observability.create_time_travel_request",
-          "start_line": 1438,
-          "end_line": 1475,
+          "start_line": 1742,
+          "end_line": 1779,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.observability.execute_time_travel",
-          "start_line": 1479,
-          "end_line": 1526,
+          "start_line": 1783,
+          "end_line": 1830,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.observability.execute_time_travel.state_applier",
-          "start_line": 1500,
-          "end_line": 1504,
+          "start_line": 1804,
+          "end_line": 1808,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.observability.get_event_stats",
-          "start_line": 1530,
-          "end_line": 1547,
+          "start_line": 1834,
+          "end_line": 1851,
           "node_type": "FUNCTION",
           "status": "unchanged"
         }
@@ -14418,7 +14418,7 @@
       ]
     },
     "src/heretek_swarm/config/db_models.py": {
-      "file_status": "modified",
+      "file_status": "unchanged",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.config.db_models.Base",
@@ -14467,14 +14467,14 @@
           "start_line": 180,
           "end_line": 193,
           "node_type": "CLASS",
-          "status": "modified"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.config.db_models.InfrastructureConfig",
           "start_line": 196,
           "end_line": 217,
           "node_type": "CLASS",
-          "status": "added"
+          "status": "unchanged"
         }
       ]
     },
@@ -14720,7 +14720,7 @@
       ]
     },
     "src/heretek_swarm/config/models.py": {
-      "file_status": "modified",
+      "file_status": "unchanged",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.config.models.ConfigType",
@@ -14982,23 +14982,9 @@
           "status": "unchanged"
         },
         {
-          "qualified_name": "src.heretek_swarm.config.models.MCPConfig",
-          "start_line": 503,
-          "end_line": 522,
-          "node_type": "CLASS",
-          "status": "unchanged"
-        },
-        {
           "qualified_name": "src.heretek_swarm.config.models.InfrastructureService",
           "start_line": 508,
           "end_line": 514,
-          "node_type": "CLASS",
-          "status": "added"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.config.models.MCPConfig.Config",
-          "start_line": 517,
-          "end_line": 522,
           "node_type": "CLASS",
           "status": "unchanged"
         },
@@ -15007,26 +14993,12 @@
           "start_line": 517,
           "end_line": 538,
           "node_type": "CLASS",
-          "status": "added"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.config.models.MCPConfigCreate",
-          "start_line": 525,
-          "end_line": 534,
-          "node_type": "CLASS",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.config.models.InfrastructureConfig.Config",
           "start_line": 533,
           "end_line": 538,
-          "node_type": "CLASS",
-          "status": "added"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.config.models.MCPConfigUpdate",
-          "start_line": 537,
-          "end_line": 545,
           "node_type": "CLASS",
           "status": "unchanged"
         },
@@ -15035,31 +15007,59 @@
           "start_line": 541,
           "end_line": 548,
           "node_type": "CLASS",
-          "status": "added"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.config.models.InfrastructureConfigUpdate",
           "start_line": 551,
           "end_line": 557,
           "node_type": "CLASS",
-          "status": "added"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.config.models.InfrastructureHealthCheck",
           "start_line": 560,
           "end_line": 566,
           "node_type": "CLASS",
-          "status": "added"
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.config.models.MCPConfig",
+          "start_line": 569,
+          "end_line": 588,
+          "node_type": "CLASS",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.config.models.MCPConfig.Config",
+          "start_line": 583,
+          "end_line": 588,
+          "node_type": "CLASS",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.config.models.MCPConfigCreate",
+          "start_line": 591,
+          "end_line": 600,
+          "node_type": "CLASS",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.config.models.MCPConfigUpdate",
+          "start_line": 603,
+          "end_line": 611,
+          "node_type": "CLASS",
+          "status": "unchanged"
         }
       ]
     },
     "src/heretek_swarm/config/service.py": {
-      "file_status": "modified",
+      "file_status": "unchanged",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.config.service.SeedResult",
-          "start_line": 53,
-          "end_line": 59,
+          "start_line": 58,
+          "end_line": 64,
           "node_type": "CLASS",
           "status": "unchanged"
         },
@@ -15068,75 +15068,75 @@
           "start_line": 67,
           "end_line": 480,
           "node_type": "CLASS",
-          "status": "modified"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.__init__",
-          "start_line": 77,
-          "end_line": 111,
+          "start_line": 82,
+          "end_line": 116,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.encrypt_api_key",
-          "start_line": 113,
-          "end_line": 126,
+          "start_line": 118,
+          "end_line": 131,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.decrypt_api_key",
-          "start_line": 128,
-          "end_line": 141,
-          "node_type": "METHOD",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.initialize",
-          "start_line": 143,
+          "start_line": 133,
           "end_line": 146,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
-          "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.shutdown",
+          "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.initialize",
           "start_line": 148,
           "end_line": 151,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
+          "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.shutdown",
+          "start_line": 153,
+          "end_line": 156,
+          "node_type": "METHOD",
+          "status": "unchanged"
+        },
+        {
           "qualified_name": "src.heretek_swarm.config.service.ConfigurationService._warm_cache",
-          "start_line": 157,
-          "end_line": 179,
+          "start_line": 162,
+          "end_line": 184,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.config.service.ConfigurationService._get_cache_key",
-          "start_line": 181,
-          "end_line": 183,
+          "start_line": 186,
+          "end_line": 188,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.config.service.ConfigurationService._invalidate_cache",
-          "start_line": 185,
-          "end_line": 189,
+          "start_line": 190,
+          "end_line": 194,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.config.service.ConfigurationService._set_cache",
-          "start_line": 191,
-          "end_line": 204,
+          "start_line": 196,
+          "end_line": 209,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.config.service.ConfigurationService._get_cache",
-          "start_line": 206,
-          "end_line": 220,
+          "start_line": 211,
+          "end_line": 225,
           "node_type": "METHOD",
           "status": "unchanged"
         },
@@ -15145,33 +15145,33 @@
           "start_line": 227,
           "end_line": 324,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.seed_from_env",
-          "start_line": 309,
-          "end_line": 459,
+          "start_line": 330,
+          "end_line": 480,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.config.service.get_config_service",
-          "start_line": 469,
-          "end_line": 479,
+          "start_line": 490,
+          "end_line": 500,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.config.service.initialize_config_service",
-          "start_line": 482,
-          "end_line": 485,
+          "start_line": 503,
+          "end_line": 506,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.config.service.shutdown_config_service",
-          "start_line": 488,
-          "end_line": 493,
+          "start_line": 509,
+          "end_line": 514,
           "node_type": "FUNCTION",
           "status": "unchanged"
         }
@@ -40566,7 +40566,7 @@
       ]
     },
     "dashboard/frontend/src/api/wizard.ts": {
-      "file_status": "modified",
+      "file_status": "unchanged",
       "methods": [
         {
           "qualified_name": "dashboard.frontend.src.api.wizard.Provider",
@@ -40622,13 +40622,6 @@
           "start_line": 110,
           "end_line": 121,
           "node_type": "INTERFACE",
-          "status": "added"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.api.wizard.fetchJson",
-          "start_line": 115,
-          "end_line": 140,
-          "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
@@ -40636,20 +40629,13 @@
           "start_line": 123,
           "end_line": 129,
           "node_type": "INTERFACE",
-          "status": "added"
+          "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.api.wizard.HealthCheckResult",
           "start_line": 131,
           "end_line": 136,
           "node_type": "INTERFACE",
-          "status": "added"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.api.wizard.fetchJson.errorData.catch() callback",
-          "start_line": 135,
-          "end_line": 135,
-          "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
@@ -40657,13 +40643,6 @@
           "start_line": 141,
           "end_line": 144,
           "node_type": "INTERFACE",
-          "status": "added"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.api.wizard.getProviders",
-          "start_line": 145,
-          "end_line": 147,
-          "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
@@ -40671,13 +40650,6 @@
           "start_line": 146,
           "end_line": 153,
           "node_type": "INTERFACE",
-          "status": "added"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.api.wizard.getProvider",
-          "start_line": 152,
-          "end_line": 154,
-          "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
@@ -40685,47 +40657,75 @@
           "start_line": 155,
           "end_line": 162,
           "node_type": "INTERFACE",
-          "status": "added"
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.api.wizard.fetchJson",
+          "start_line": 170,
+          "end_line": 195,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.api.wizard.fetchJson.errorData.catch() callback",
+          "start_line": 190,
+          "end_line": 190,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.api.wizard.getProviders",
+          "start_line": 200,
+          "end_line": 202,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.api.wizard.getProvider",
+          "start_line": 207,
+          "end_line": 209,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.api.wizard.getTiers",
-          "start_line": 159,
-          "end_line": 161,
+          "start_line": 214,
+          "end_line": 216,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.api.wizard.getTier",
-          "start_line": 166,
-          "end_line": 168,
+          "start_line": 221,
+          "end_line": 223,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.api.wizard.getConfigStatus",
-          "start_line": 173,
-          "end_line": 175,
+          "start_line": 228,
+          "end_line": 230,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.api.wizard.validateCredentials",
-          "start_line": 180,
-          "end_line": 193,
+          "start_line": 235,
+          "end_line": 248,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.api.wizard.submitConfig",
-          "start_line": 198,
-          "end_line": 203,
+          "start_line": 253,
+          "end_line": 258,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.api.wizard.resetWizard",
-          "start_line": 208,
-          "end_line": 212,
+          "start_line": 263,
+          "end_line": 267,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
@@ -40734,56 +40734,56 @@
           "start_line": 276,
           "end_line": 283,
           "node_type": "FUNCTION",
-          "status": "added"
+          "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.api.wizard.saveInfrastructureConfig",
           "start_line": 288,
           "end_line": 311,
           "node_type": "FUNCTION",
-          "status": "added"
+          "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.api.wizard.getInfrastructureConfig",
           "start_line": 316,
           "end_line": 320,
           "node_type": "FUNCTION",
-          "status": "added"
+          "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.api.wizard.checkInfrastructureHealth",
           "start_line": 325,
           "end_line": 332,
           "node_type": "FUNCTION",
-          "status": "added"
+          "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.api.wizard.checkAllInfrastructureHealth",
           "start_line": 337,
           "end_line": 357,
           "node_type": "FUNCTION",
-          "status": "added"
+          "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.api.wizard.deleteInfrastructureConfig",
           "start_line": 362,
           "end_line": 385,
           "node_type": "FUNCTION",
-          "status": "added"
+          "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.api.wizard.deleteInfrastructureConfig.errorData.catch() callback",
           "start_line": 380,
           "end_line": 380,
           "node_type": "FUNCTION",
-          "status": "added"
+          "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.api.wizard.provisionInfrastructure",
           "start_line": 392,
           "end_line": 400,
           "node_type": "FUNCTION",
-          "status": "added"
+          "status": "unchanged"
         }
       ]
     },
@@ -52770,7 +52770,7 @@
       "methods": []
     },
     "src/heretek_swarm/infrastructure/__init__.py": {
-      "file_status": "modified",
+      "file_status": "unchanged",
       "methods": []
     },
     "src/heretek_swarm/infrastructure/otel/__init__.py": {
@@ -57565,7 +57565,7 @@
       "start_line": 23,
       "end_line": 84,
       "type": "CLASS",
-      "status": "modified"
+      "status": "unchanged"
     },
     "src/heretek_swarm/actors/mixins/learning.py|src.heretek_swarm.actors.mixins.learning.LearningMixin.__init__": {
       "file_path": "src/heretek_swarm/actors/mixins/learning.py",
@@ -57573,13 +57573,13 @@
       "start_line": 42,
       "end_line": 46,
       "type": "METHOD",
-      "status": "modified"
+      "status": "unchanged"
     },
     "src/heretek_swarm/actors/mixins/learning.py|src.heretek_swarm.actors.mixins.learning.LearningMixin.get_learning_status": {
       "file_path": "src/heretek_swarm/actors/mixins/learning.py",
       "qualified_name": "src.heretek_swarm.actors.mixins.learning.LearningMixin.get_learning_status",
-      "start_line": 47,
-      "end_line": 83,
+      "start_line": 48,
+      "end_line": 84,
       "type": "METHOD",
       "status": "unchanged"
     },
@@ -61450,48 +61450,48 @@
     "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main.lifespan": {
       "file_path": "src/heretek_swarm/api/main.py",
       "qualified_name": "src.heretek_swarm.api.main.lifespan",
-      "start_line": 90,
-      "end_line": 123,
+      "start_line": 91,
+      "end_line": 124,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main._init_config_service": {
       "file_path": "src/heretek_swarm/api/main.py",
       "qualified_name": "src.heretek_swarm.api.main._init_config_service",
-      "start_line": 126,
-      "end_line": 153,
+      "start_line": 127,
+      "end_line": 154,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main._init_supervisor": {
       "file_path": "src/heretek_swarm/api/main.py",
       "qualified_name": "src.heretek_swarm.api.main._init_supervisor",
-      "start_line": 156,
-      "end_line": 164,
+      "start_line": 157,
+      "end_line": 165,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main._spawn_all_agents": {
       "file_path": "src/heretek_swarm/api/main.py",
       "qualified_name": "src.heretek_swarm.api.main._spawn_all_agents",
-      "start_line": 167,
-      "end_line": 251,
+      "start_line": 168,
+      "end_line": 252,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main._init_memory_store": {
       "file_path": "src/heretek_swarm/api/main.py",
       "qualified_name": "src.heretek_swarm.api.main._init_memory_store",
-      "start_line": 254,
-      "end_line": 267,
+      "start_line": 255,
+      "end_line": 268,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main._init_mem0": {
       "file_path": "src/heretek_swarm/api/main.py",
       "qualified_name": "src.heretek_swarm.api.main._init_mem0",
-      "start_line": 270,
-      "end_line": 298,
+      "start_line": 271,
+      "end_line": 299,
       "type": "FUNCTION",
       "status": "unchanged"
     },
@@ -61501,13 +61501,13 @@
       "start_line": 302,
       "end_line": 369,
       "type": "FUNCTION",
-      "status": "modified"
+      "status": "unchanged"
     },
     "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main._init_nats_bridge.a2a_event_handler": {
       "file_path": "src/heretek_swarm/api/main.py",
       "qualified_name": "src.heretek_swarm.api.main._init_nats_bridge.a2a_event_handler",
-      "start_line": 314,
-      "end_line": 332,
+      "start_line": 315,
+      "end_line": 333,
       "type": "FUNCTION",
       "status": "unchanged"
     },
@@ -61517,173 +61517,173 @@
       "start_line": 341,
       "end_line": 360,
       "type": "FUNCTION",
-      "status": "added"
+      "status": "unchanged"
     },
     "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main._log_startup_complete": {
       "file_path": "src/heretek_swarm/api/main.py",
       "qualified_name": "src.heretek_swarm.api.main._log_startup_complete",
-      "start_line": 347,
-      "end_line": 352,
+      "start_line": 372,
+      "end_line": 377,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main.check_gateway": {
       "file_path": "src/heretek_swarm/api/main.py",
       "qualified_name": "src.heretek_swarm.api.main.check_gateway",
-      "start_line": 430,
-      "end_line": 444,
+      "start_line": 456,
+      "end_line": 470,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main.check_redis": {
       "file_path": "src/heretek_swarm/api/main.py",
       "qualified_name": "src.heretek_swarm.api.main.check_redis",
-      "start_line": 447,
-      "end_line": 466,
+      "start_line": 473,
+      "end_line": 492,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main.check_postgres": {
       "file_path": "src/heretek_swarm/api/main.py",
       "qualified_name": "src.heretek_swarm.api.main.check_postgres",
-      "start_line": 469,
-      "end_line": 505,
+      "start_line": 495,
+      "end_line": 531,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main.check_qdrant": {
       "file_path": "src/heretek_swarm/api/main.py",
       "qualified_name": "src.heretek_swarm.api.main.check_qdrant",
-      "start_line": 508,
-      "end_line": 538,
+      "start_line": 534,
+      "end_line": 564,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main.health_check": {
       "file_path": "src/heretek_swarm/api/main.py",
       "qualified_name": "src.heretek_swarm.api.main.health_check",
-      "start_line": 547,
-      "end_line": 570,
+      "start_line": 573,
+      "end_line": 596,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main.liveness_check": {
       "file_path": "src/heretek_swarm/api/main.py",
       "qualified_name": "src.heretek_swarm.api.main.liveness_check",
-      "start_line": 574,
-      "end_line": 576,
+      "start_line": 600,
+      "end_line": 602,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main.readiness_check": {
       "file_path": "src/heretek_swarm/api/main.py",
       "qualified_name": "src.heretek_swarm.api.main.readiness_check",
-      "start_line": 580,
-      "end_line": 586,
+      "start_line": 606,
+      "end_line": 612,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main.get_agents": {
       "file_path": "src/heretek_swarm/api/main.py",
       "qualified_name": "src.heretek_swarm.api.main.get_agents",
-      "start_line": 595,
-      "end_line": 620,
+      "start_line": 621,
+      "end_line": 646,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main.get_agent": {
       "file_path": "src/heretek_swarm/api/main.py",
       "qualified_name": "src.heretek_swarm.api.main.get_agent",
-      "start_line": 624,
-      "end_line": 654,
+      "start_line": 650,
+      "end_line": 680,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main.get_agent_metrics": {
       "file_path": "src/heretek_swarm/api/main.py",
       "qualified_name": "src.heretek_swarm.api.main.get_agent_metrics",
-      "start_line": 658,
-      "end_line": 682,
+      "start_line": 684,
+      "end_line": 708,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main.terminate_agent": {
       "file_path": "src/heretek_swarm/api/main.py",
       "qualified_name": "src.heretek_swarm.api.main.terminate_agent",
-      "start_line": 686,
-      "end_line": 707,
+      "start_line": 712,
+      "end_line": 733,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main.get_supervisor_status": {
       "file_path": "src/heretek_swarm/api/main.py",
       "qualified_name": "src.heretek_swarm.api.main.get_supervisor_status",
-      "start_line": 716,
-      "end_line": 726,
+      "start_line": 742,
+      "end_line": 752,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main.get_memory_stats": {
       "file_path": "src/heretek_swarm/api/main.py",
       "qualified_name": "src.heretek_swarm.api.main.get_memory_stats",
-      "start_line": 735,
-      "end_line": 792,
+      "start_line": 761,
+      "end_line": 818,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main.get_litellm_metrics": {
       "file_path": "src/heretek_swarm/api/main.py",
       "qualified_name": "src.heretek_swarm.api.main.get_litellm_metrics",
-      "start_line": 801,
-      "end_line": 837,
+      "start_line": 827,
+      "end_line": 863,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main.get_mem0_stats": {
       "file_path": "src/heretek_swarm/api/main.py",
       "qualified_name": "src.heretek_swarm.api.main.get_mem0_stats",
-      "start_line": 846,
-      "end_line": 863,
+      "start_line": 872,
+      "end_line": 889,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main.search_mem0_memory": {
       "file_path": "src/heretek_swarm/api/main.py",
       "qualified_name": "src.heretek_swarm.api.main.search_mem0_memory",
-      "start_line": 867,
-      "end_line": 908,
+      "start_line": 893,
+      "end_line": 934,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main.get_agent_memories": {
       "file_path": "src/heretek_swarm/api/main.py",
       "qualified_name": "src.heretek_swarm.api.main.get_agent_memories",
-      "start_line": 912,
-      "end_line": 943,
+      "start_line": 938,
+      "end_line": 969,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main.get_a2a_messages": {
       "file_path": "src/heretek_swarm/api/main.py",
       "qualified_name": "src.heretek_swarm.api.main.get_a2a_messages",
-      "start_line": 952,
-      "end_line": 985,
+      "start_line": 978,
+      "end_line": 1011,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main.get_a2a_conversation": {
       "file_path": "src/heretek_swarm/api/main.py",
       "qualified_name": "src.heretek_swarm.api.main.get_a2a_conversation",
-      "start_line": 989,
-      "end_line": 1039,
+      "start_line": 1015,
+      "end_line": 1065,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main.root": {
       "file_path": "src/heretek_swarm/api/main.py",
       "qualified_name": "src.heretek_swarm.api.main.root",
-      "start_line": 1048,
-      "end_line": 1057,
+      "start_line": 1074,
+      "end_line": 1083,
       "type": "FUNCTION",
       "status": "unchanged"
     },
@@ -61842,281 +61842,185 @@
     "src/heretek_swarm/api/observability.py|src.heretek_swarm.api.observability._get_external_call_log_session_factory": {
       "file_path": "src/heretek_swarm/api/observability.py",
       "qualified_name": "src.heretek_swarm.api.observability._get_external_call_log_session_factory",
-      "start_line": 68,
-      "end_line": 89,
+      "start_line": 71,
+      "end_line": 92,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/observability.py|src.heretek_swarm.api.observability.get_metrics_collector": {
       "file_path": "src/heretek_swarm/api/observability.py",
       "qualified_name": "src.heretek_swarm.api.observability.get_metrics_collector",
-      "start_line": 92,
-      "end_line": 97,
+      "start_line": 95,
+      "end_line": 100,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/observability.py|src.heretek_swarm.api.observability.get_metrics_stream": {
       "file_path": "src/heretek_swarm/api/observability.py",
       "qualified_name": "src.heretek_swarm.api.observability.get_metrics_stream",
-      "start_line": 100,
-      "end_line": 105,
+      "start_line": 103,
+      "end_line": 108,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/observability.py|src.heretek_swarm.api.observability.get_zero_trust": {
       "file_path": "src/heretek_swarm/api/observability.py",
       "qualified_name": "src.heretek_swarm.api.observability.get_zero_trust",
-      "start_line": 108,
-      "end_line": 113,
+      "start_line": 111,
+      "end_line": 116,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/observability.py|src.heretek_swarm.api.observability.check_rate_limit": {
       "file_path": "src/heretek_swarm/api/observability.py",
       "qualified_name": "src.heretek_swarm.api.observability.check_rate_limit",
-      "start_line": 116,
-      "end_line": 135,
+      "start_line": 119,
+      "end_line": 138,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/observability.py|src.heretek_swarm.api.observability.validate_input": {
       "file_path": "src/heretek_swarm/api/observability.py",
       "qualified_name": "src.heretek_swarm.api.observability.validate_input",
-      "start_line": 138,
-      "end_line": 148,
+      "start_line": 141,
+      "end_line": 151,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/observability.py|src.heretek_swarm.api.observability.get_swarm_health": {
       "file_path": "src/heretek_swarm/api/observability.py",
       "qualified_name": "src.heretek_swarm.api.observability.get_swarm_health",
-      "start_line": 155,
-      "end_line": 215,
+      "start_line": 158,
+      "end_line": 218,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/observability.py|src.heretek_swarm.api.observability.get_agent_metrics": {
       "file_path": "src/heretek_swarm/api/observability.py",
       "qualified_name": "src.heretek_swarm.api.observability.get_agent_metrics",
-      "start_line": 219,
-      "end_line": 270,
+      "start_line": 222,
+      "end_line": 273,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/observability.py|src.heretek_swarm.api.observability.get_all_agents": {
       "file_path": "src/heretek_swarm/api/observability.py",
       "qualified_name": "src.heretek_swarm.api.observability.get_all_agents",
-      "start_line": 274,
-      "end_line": 325,
+      "start_line": 277,
+      "end_line": 328,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/observability.py|src.heretek_swarm.api.observability.get_consciousness_metrics": {
       "file_path": "src/heretek_swarm/api/observability.py",
       "qualified_name": "src.heretek_swarm.api.observability.get_consciousness_metrics",
-      "start_line": 332,
-      "end_line": 376,
+      "start_line": 335,
+      "end_line": 379,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/observability.py|src.heretek_swarm.api.observability.get_agent_consciousness": {
       "file_path": "src/heretek_swarm/api/observability.py",
       "qualified_name": "src.heretek_swarm.api.observability.get_agent_consciousness",
-      "start_line": 380,
-      "end_line": 411,
+      "start_line": 383,
+      "end_line": 414,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/observability.py|src.heretek_swarm.api.observability.stream_metrics": {
       "file_path": "src/heretek_swarm/api/observability.py",
       "qualified_name": "src.heretek_swarm.api.observability.stream_metrics",
-      "start_line": 418,
-      "end_line": 465,
+      "start_line": 421,
+      "end_line": 468,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/observability.py|src.heretek_swarm.api.observability.websocket_metrics": {
       "file_path": "src/heretek_swarm/api/observability.py",
       "qualified_name": "src.heretek_swarm.api.observability.websocket_metrics",
-      "start_line": 469,
-      "end_line": 539,
+      "start_line": 472,
+      "end_line": 542,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/observability.py|src.heretek_swarm.api.observability.get_alerts": {
       "file_path": "src/heretek_swarm/api/observability.py",
       "qualified_name": "src.heretek_swarm.api.observability.get_alerts",
-      "start_line": 546,
-      "end_line": 649,
+      "start_line": 549,
+      "end_line": 652,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/observability.py|src.heretek_swarm.api.observability.get_prometheus_metrics": {
       "file_path": "src/heretek_swarm/api/observability.py",
       "qualified_name": "src.heretek_swarm.api.observability.get_prometheus_metrics",
-      "start_line": 656,
-      "end_line": 674,
+      "start_line": 659,
+      "end_line": 677,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/observability.py|src.heretek_swarm.api.observability.get_traces": {
       "file_path": "src/heretek_swarm/api/observability.py",
       "qualified_name": "src.heretek_swarm.api.observability.get_traces",
-      "start_line": 681,
-      "end_line": 735,
+      "start_line": 684,
+      "end_line": 738,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/observability.py|src.heretek_swarm.api.observability.get_trace": {
       "file_path": "src/heretek_swarm/api/observability.py",
       "qualified_name": "src.heretek_swarm.api.observability.get_trace",
-      "start_line": 739,
-      "end_line": 755,
+      "start_line": 742,
+      "end_line": 758,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/observability.py|src.heretek_swarm.api.observability.create_trace": {
       "file_path": "src/heretek_swarm/api/observability.py",
       "qualified_name": "src.heretek_swarm.api.observability.create_trace",
-      "start_line": 759,
-      "end_line": 804,
+      "start_line": 762,
+      "end_line": 807,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/observability.py|src.heretek_swarm.api.observability.websocket_traces": {
       "file_path": "src/heretek_swarm/api/observability.py",
       "qualified_name": "src.heretek_swarm.api.observability.websocket_traces",
-      "start_line": 808,
-      "end_line": 839,
+      "start_line": 811,
+      "end_line": 842,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/observability.py|src.heretek_swarm.api.observability.get_legacy_metrics": {
       "file_path": "src/heretek_swarm/api/observability.py",
       "qualified_name": "src.heretek_swarm.api.observability.get_legacy_metrics",
-      "start_line": 843,
-      "end_line": 873,
+      "start_line": 846,
+      "end_line": 876,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/observability.py|src.heretek_swarm.api.observability.clear_traces": {
       "file_path": "src/heretek_swarm/api/observability.py",
       "qualified_name": "src.heretek_swarm.api.observability.clear_traces",
-      "start_line": 877,
-      "end_line": 898,
+      "start_line": 880,
+      "end_line": 901,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/observability.py|src.heretek_swarm.api.observability.get_external_calls": {
       "file_path": "src/heretek_swarm/api/observability.py",
       "qualified_name": "src.heretek_swarm.api.observability.get_external_calls",
-      "start_line": 905,
-      "end_line": 1052,
+      "start_line": 908,
+      "end_line": 1055,
       "type": "FUNCTION",
-      "status": "unchanged"
-    },
-    "src/heretek_swarm/api/observability.py|src.heretek_swarm.api.observability.TraceEvent": {
-      "file_path": "src/heretek_swarm/api/observability.py",
-      "qualified_name": "src.heretek_swarm.api.observability.TraceEvent",
-      "start_line": 1058,
-      "end_line": 1085,
-      "type": "CLASS",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/observability.py|src.heretek_swarm.api.observability.create_external_call": {
       "file_path": "src/heretek_swarm/api/observability.py",
       "qualified_name": "src.heretek_swarm.api.observability.create_external_call",
-      "start_line": 1058,
-      "end_line": 1179,
+      "start_line": 1059,
+      "end_line": 1180,
       "type": "FUNCTION",
-      "status": "added"
-    },
-    "src/heretek_swarm/api/observability.py|src.heretek_swarm.api.observability.TraceEvent.__init__": {
-      "file_path": "src/heretek_swarm/api/observability.py",
-      "qualified_name": "src.heretek_swarm.api.observability.TraceEvent.__init__",
-      "start_line": 1061,
-      "end_line": 1074,
-      "type": "METHOD",
-      "status": "unchanged"
-    },
-    "src/heretek_swarm/api/observability.py|src.heretek_swarm.api.observability.TraceEvent.to_dict": {
-      "file_path": "src/heretek_swarm/api/observability.py",
-      "qualified_name": "src.heretek_swarm.api.observability.TraceEvent.to_dict",
-      "start_line": 1076,
-      "end_line": 1085,
-      "type": "METHOD",
-      "status": "unchanged"
-    },
-    "src/heretek_swarm/api/observability.py|src.heretek_swarm.api.observability.ConnectionManager.__init__": {
-      "file_path": "src/heretek_swarm/api/observability.py",
-      "qualified_name": "src.heretek_swarm.api.observability.ConnectionManager.__init__",
-      "start_line": 1091,
-      "end_line": 1092,
-      "type": "METHOD",
-      "status": "unchanged"
-    },
-    "src/heretek_swarm/api/observability.py|src.heretek_swarm.api.observability.ConnectionManager.connect": {
-      "file_path": "src/heretek_swarm/api/observability.py",
-      "qualified_name": "src.heretek_swarm.api.observability.ConnectionManager.connect",
-      "start_line": 1094,
-      "end_line": 1097,
-      "type": "METHOD",
-      "status": "unchanged"
-    },
-    "src/heretek_swarm/api/observability.py|src.heretek_swarm.api.observability.ConnectionManager.disconnect": {
-      "file_path": "src/heretek_swarm/api/observability.py",
-      "qualified_name": "src.heretek_swarm.api.observability.ConnectionManager.disconnect",
-      "start_line": 1099,
-      "end_line": 1103,
-      "type": "METHOD",
-      "status": "unchanged"
-    },
-    "src/heretek_swarm/api/observability.py|src.heretek_swarm.api.observability.ConnectionManager.broadcast_trace": {
-      "file_path": "src/heretek_swarm/api/observability.py",
-      "qualified_name": "src.heretek_swarm.api.observability.ConnectionManager.broadcast_trace",
-      "start_line": 1105,
-      "end_line": 1112,
-      "type": "METHOD",
-      "status": "unchanged"
-    },
-    "src/heretek_swarm/api/observability.py|src.heretek_swarm.api.observability.ConnectionManager.broadcast_observability": {
-      "file_path": "src/heretek_swarm/api/observability.py",
-      "qualified_name": "src.heretek_swarm.api.observability.ConnectionManager.broadcast_observability",
-      "start_line": 1116,
-      "end_line": 1135,
-      "type": "METHOD",
-      "status": "added"
-    },
-    "src/heretek_swarm/api/observability.py|src.heretek_swarm.api.observability.get_replay_manager": {
-      "file_path": "src/heretek_swarm/api/observability.py",
-      "qualified_name": "src.heretek_swarm.api.observability.get_replay_manager",
-      "start_line": 1127,
-      "end_line": 1146,
-      "type": "FUNCTION",
-      "status": "unchanged"
-    },
-    "src/heretek_swarm/api/observability.py|src.heretek_swarm.api.observability.ReplayJobCreate": {
-      "file_path": "src/heretek_swarm/api/observability.py",
-      "qualified_name": "src.heretek_swarm.api.observability.ReplayJobCreate",
-      "start_line": 1149,
-      "end_line": 1158,
-      "type": "CLASS",
-      "status": "unchanged"
-    },
-    "src/heretek_swarm/api/observability.py|src.heretek_swarm.api.observability.ReplayJobResponse": {
-      "file_path": "src/heretek_swarm/api/observability.py",
-      "qualified_name": "src.heretek_swarm.api.observability.ReplayJobResponse",
-      "start_line": 1161,
-      "end_line": 1176,
-      "type": "CLASS",
-      "status": "unchanged"
-    },
-    "src/heretek_swarm/api/observability.py|src.heretek_swarm.api.observability.ReplayJobListResponse": {
-      "file_path": "src/heretek_swarm/api/observability.py",
-      "qualified_name": "src.heretek_swarm.api.observability.ReplayJobListResponse",
-      "start_line": 1179,
-      "end_line": 1183,
-      "type": "CLASS",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/observability.py|src.heretek_swarm.api.observability.get_external_call": {
@@ -62125,117 +62029,213 @@
       "start_line": 1184,
       "end_line": 1335,
       "type": "FUNCTION",
-      "status": "added"
+      "status": "unchanged"
+    },
+    "src/heretek_swarm/api/observability.py|src.heretek_swarm.api.observability.TraceEvent": {
+      "file_path": "src/heretek_swarm/api/observability.py",
+      "qualified_name": "src.heretek_swarm.api.observability.TraceEvent",
+      "start_line": 1341,
+      "end_line": 1368,
+      "type": "CLASS",
+      "status": "unchanged"
+    },
+    "src/heretek_swarm/api/observability.py|src.heretek_swarm.api.observability.TraceEvent.__init__": {
+      "file_path": "src/heretek_swarm/api/observability.py",
+      "qualified_name": "src.heretek_swarm.api.observability.TraceEvent.__init__",
+      "start_line": 1344,
+      "end_line": 1357,
+      "type": "METHOD",
+      "status": "unchanged"
+    },
+    "src/heretek_swarm/api/observability.py|src.heretek_swarm.api.observability.TraceEvent.to_dict": {
+      "file_path": "src/heretek_swarm/api/observability.py",
+      "qualified_name": "src.heretek_swarm.api.observability.TraceEvent.to_dict",
+      "start_line": 1359,
+      "end_line": 1368,
+      "type": "METHOD",
+      "status": "unchanged"
+    },
+    "src/heretek_swarm/api/observability.py|src.heretek_swarm.api.observability.ConnectionManager": {
+      "file_path": "src/heretek_swarm/api/observability.py",
+      "qualified_name": "src.heretek_swarm.api.observability.ConnectionManager",
+      "start_line": 1371,
+      "end_line": 1416,
+      "type": "CLASS",
+      "status": "unchanged"
+    },
+    "src/heretek_swarm/api/observability.py|src.heretek_swarm.api.observability.ConnectionManager.__init__": {
+      "file_path": "src/heretek_swarm/api/observability.py",
+      "qualified_name": "src.heretek_swarm.api.observability.ConnectionManager.__init__",
+      "start_line": 1374,
+      "end_line": 1375,
+      "type": "METHOD",
+      "status": "unchanged"
+    },
+    "src/heretek_swarm/api/observability.py|src.heretek_swarm.api.observability.ConnectionManager.connect": {
+      "file_path": "src/heretek_swarm/api/observability.py",
+      "qualified_name": "src.heretek_swarm.api.observability.ConnectionManager.connect",
+      "start_line": 1377,
+      "end_line": 1380,
+      "type": "METHOD",
+      "status": "unchanged"
+    },
+    "src/heretek_swarm/api/observability.py|src.heretek_swarm.api.observability.ConnectionManager.disconnect": {
+      "file_path": "src/heretek_swarm/api/observability.py",
+      "qualified_name": "src.heretek_swarm.api.observability.ConnectionManager.disconnect",
+      "start_line": 1382,
+      "end_line": 1386,
+      "type": "METHOD",
+      "status": "unchanged"
+    },
+    "src/heretek_swarm/api/observability.py|src.heretek_swarm.api.observability.ConnectionManager.broadcast_trace": {
+      "file_path": "src/heretek_swarm/api/observability.py",
+      "qualified_name": "src.heretek_swarm.api.observability.ConnectionManager.broadcast_trace",
+      "start_line": 1388,
+      "end_line": 1395,
+      "type": "METHOD",
+      "status": "unchanged"
+    },
+    "src/heretek_swarm/api/observability.py|src.heretek_swarm.api.observability.ConnectionManager.broadcast_observability": {
+      "file_path": "src/heretek_swarm/api/observability.py",
+      "qualified_name": "src.heretek_swarm.api.observability.ConnectionManager.broadcast_observability",
+      "start_line": 1397,
+      "end_line": 1416,
+      "type": "METHOD",
+      "status": "unchanged"
+    },
+    "src/heretek_swarm/api/observability.py|src.heretek_swarm.api.observability.get_replay_manager": {
+      "file_path": "src/heretek_swarm/api/observability.py",
+      "qualified_name": "src.heretek_swarm.api.observability.get_replay_manager",
+      "start_line": 1431,
+      "end_line": 1450,
+      "type": "FUNCTION",
+      "status": "unchanged"
+    },
+    "src/heretek_swarm/api/observability.py|src.heretek_swarm.api.observability.ReplayJobCreate": {
+      "file_path": "src/heretek_swarm/api/observability.py",
+      "qualified_name": "src.heretek_swarm.api.observability.ReplayJobCreate",
+      "start_line": 1453,
+      "end_line": 1462,
+      "type": "CLASS",
+      "status": "unchanged"
+    },
+    "src/heretek_swarm/api/observability.py|src.heretek_swarm.api.observability.ReplayJobResponse": {
+      "file_path": "src/heretek_swarm/api/observability.py",
+      "qualified_name": "src.heretek_swarm.api.observability.ReplayJobResponse",
+      "start_line": 1465,
+      "end_line": 1480,
+      "type": "CLASS",
+      "status": "unchanged"
+    },
+    "src/heretek_swarm/api/observability.py|src.heretek_swarm.api.observability.ReplayJobListResponse": {
+      "file_path": "src/heretek_swarm/api/observability.py",
+      "qualified_name": "src.heretek_swarm.api.observability.ReplayJobListResponse",
+      "start_line": 1483,
+      "end_line": 1487,
+      "type": "CLASS",
+      "status": "unchanged"
     },
     "src/heretek_swarm/api/observability.py|src.heretek_swarm.api.observability.TimeTravelRequestCreate": {
       "file_path": "src/heretek_swarm/api/observability.py",
       "qualified_name": "src.heretek_swarm.api.observability.TimeTravelRequestCreate",
-      "start_line": 1186,
-      "end_line": 1192,
+      "start_line": 1490,
+      "end_line": 1496,
       "type": "CLASS",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/observability.py|src.heretek_swarm.api.observability.TimeTravelResponse": {
       "file_path": "src/heretek_swarm/api/observability.py",
       "qualified_name": "src.heretek_swarm.api.observability.TimeTravelResponse",
-      "start_line": 1195,
-      "end_line": 1203,
+      "start_line": 1499,
+      "end_line": 1507,
       "type": "CLASS",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/observability.py|src.heretek_swarm.api.observability.create_replay_job": {
       "file_path": "src/heretek_swarm/api/observability.py",
       "qualified_name": "src.heretek_swarm.api.observability.create_replay_job",
-      "start_line": 1207,
-      "end_line": 1270,
+      "start_line": 1511,
+      "end_line": 1574,
       "type": "FUNCTION",
       "status": "unchanged"
-    },
-    "src/heretek_swarm/api/observability.py|src.heretek_swarm.api.observability.ConnectionManager": {
-      "file_path": "src/heretek_swarm/api/observability.py",
-      "qualified_name": "src.heretek_swarm.api.observability.ConnectionManager",
-      "start_line": 1215,
-      "end_line": 1260,
-      "type": "CLASS",
-      "status": "modified"
     },
     "src/heretek_swarm/api/observability.py|src.heretek_swarm.api.observability.execute_replay_job": {
       "file_path": "src/heretek_swarm/api/observability.py",
       "qualified_name": "src.heretek_swarm.api.observability.execute_replay_job",
-      "start_line": 1274,
-      "end_line": 1303,
+      "start_line": 1578,
+      "end_line": 1607,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/observability.py|src.heretek_swarm.api.observability.pause_replay_job": {
       "file_path": "src/heretek_swarm/api/observability.py",
       "qualified_name": "src.heretek_swarm.api.observability.pause_replay_job",
-      "start_line": 1307,
-      "end_line": 1319,
+      "start_line": 1611,
+      "end_line": 1623,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/observability.py|src.heretek_swarm.api.observability.resume_replay_job": {
       "file_path": "src/heretek_swarm/api/observability.py",
       "qualified_name": "src.heretek_swarm.api.observability.resume_replay_job",
-      "start_line": 1323,
-      "end_line": 1335,
+      "start_line": 1627,
+      "end_line": 1639,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/observability.py|src.heretek_swarm.api.observability.cancel_replay_job": {
       "file_path": "src/heretek_swarm/api/observability.py",
       "qualified_name": "src.heretek_swarm.api.observability.cancel_replay_job",
-      "start_line": 1339,
-      "end_line": 1351,
+      "start_line": 1643,
+      "end_line": 1655,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/observability.py|src.heretek_swarm.api.observability.list_replay_jobs": {
       "file_path": "src/heretek_swarm/api/observability.py",
       "qualified_name": "src.heretek_swarm.api.observability.list_replay_jobs",
-      "start_line": 1355,
-      "end_line": 1402,
+      "start_line": 1659,
+      "end_line": 1706,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/observability.py|src.heretek_swarm.api.observability.get_replay_job": {
       "file_path": "src/heretek_swarm/api/observability.py",
       "qualified_name": "src.heretek_swarm.api.observability.get_replay_job",
-      "start_line": 1406,
-      "end_line": 1434,
+      "start_line": 1710,
+      "end_line": 1738,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/observability.py|src.heretek_swarm.api.observability.create_time_travel_request": {
       "file_path": "src/heretek_swarm/api/observability.py",
       "qualified_name": "src.heretek_swarm.api.observability.create_time_travel_request",
-      "start_line": 1438,
-      "end_line": 1475,
+      "start_line": 1742,
+      "end_line": 1779,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/observability.py|src.heretek_swarm.api.observability.execute_time_travel": {
       "file_path": "src/heretek_swarm/api/observability.py",
       "qualified_name": "src.heretek_swarm.api.observability.execute_time_travel",
-      "start_line": 1479,
-      "end_line": 1526,
+      "start_line": 1783,
+      "end_line": 1830,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/observability.py|src.heretek_swarm.api.observability.execute_time_travel.state_applier": {
       "file_path": "src/heretek_swarm/api/observability.py",
       "qualified_name": "src.heretek_swarm.api.observability.execute_time_travel.state_applier",
-      "start_line": 1500,
-      "end_line": 1504,
+      "start_line": 1804,
+      "end_line": 1808,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/observability.py|src.heretek_swarm.api.observability.get_event_stats": {
       "file_path": "src/heretek_swarm/api/observability.py",
       "qualified_name": "src.heretek_swarm.api.observability.get_event_stats",
-      "start_line": 1530,
-      "end_line": 1547,
+      "start_line": 1834,
+      "end_line": 1851,
       "type": "FUNCTION",
       "status": "unchanged"
     },
@@ -68733,7 +68733,7 @@
       "start_line": 180,
       "end_line": 193,
       "type": "CLASS",
-      "status": "modified"
+      "status": "unchanged"
     },
     "src/heretek_swarm/config/db_models.py|src.heretek_swarm.config.db_models.InfrastructureConfig": {
       "file_path": "src/heretek_swarm/config/db_models.py",
@@ -68741,7 +68741,7 @@
       "start_line": 196,
       "end_line": 217,
       "type": "CLASS",
-      "status": "added"
+      "status": "unchanged"
     },
     "src/heretek_swarm/config/encryption.py|src.heretek_swarm.config.encryption.ApiKeyEncryptor": {
       "file_path": "src/heretek_swarm/config/encryption.py",
@@ -69303,27 +69303,11 @@
       "type": "CLASS",
       "status": "unchanged"
     },
-    "src/heretek_swarm/config/models.py|src.heretek_swarm.config.models.MCPConfig": {
-      "file_path": "src/heretek_swarm/config/models.py",
-      "qualified_name": "src.heretek_swarm.config.models.MCPConfig",
-      "start_line": 503,
-      "end_line": 522,
-      "type": "CLASS",
-      "status": "unchanged"
-    },
     "src/heretek_swarm/config/models.py|src.heretek_swarm.config.models.InfrastructureService": {
       "file_path": "src/heretek_swarm/config/models.py",
       "qualified_name": "src.heretek_swarm.config.models.InfrastructureService",
       "start_line": 508,
       "end_line": 514,
-      "type": "CLASS",
-      "status": "added"
-    },
-    "src/heretek_swarm/config/models.py|src.heretek_swarm.config.models.MCPConfig.Config": {
-      "file_path": "src/heretek_swarm/config/models.py",
-      "qualified_name": "src.heretek_swarm.config.models.MCPConfig.Config",
-      "start_line": 517,
-      "end_line": 522,
       "type": "CLASS",
       "status": "unchanged"
     },
@@ -69333,14 +69317,6 @@
       "start_line": 517,
       "end_line": 538,
       "type": "CLASS",
-      "status": "added"
-    },
-    "src/heretek_swarm/config/models.py|src.heretek_swarm.config.models.MCPConfigCreate": {
-      "file_path": "src/heretek_swarm/config/models.py",
-      "qualified_name": "src.heretek_swarm.config.models.MCPConfigCreate",
-      "start_line": 525,
-      "end_line": 534,
-      "type": "CLASS",
       "status": "unchanged"
     },
     "src/heretek_swarm/config/models.py|src.heretek_swarm.config.models.InfrastructureConfig.Config": {
@@ -69348,14 +69324,6 @@
       "qualified_name": "src.heretek_swarm.config.models.InfrastructureConfig.Config",
       "start_line": 533,
       "end_line": 538,
-      "type": "CLASS",
-      "status": "added"
-    },
-    "src/heretek_swarm/config/models.py|src.heretek_swarm.config.models.MCPConfigUpdate": {
-      "file_path": "src/heretek_swarm/config/models.py",
-      "qualified_name": "src.heretek_swarm.config.models.MCPConfigUpdate",
-      "start_line": 537,
-      "end_line": 545,
       "type": "CLASS",
       "status": "unchanged"
     },
@@ -69365,7 +69333,7 @@
       "start_line": 541,
       "end_line": 548,
       "type": "CLASS",
-      "status": "added"
+      "status": "unchanged"
     },
     "src/heretek_swarm/config/models.py|src.heretek_swarm.config.models.InfrastructureConfigUpdate": {
       "file_path": "src/heretek_swarm/config/models.py",
@@ -69373,7 +69341,7 @@
       "start_line": 551,
       "end_line": 557,
       "type": "CLASS",
-      "status": "added"
+      "status": "unchanged"
     },
     "src/heretek_swarm/config/models.py|src.heretek_swarm.config.models.InfrastructureHealthCheck": {
       "file_path": "src/heretek_swarm/config/models.py",
@@ -69381,13 +69349,45 @@
       "start_line": 560,
       "end_line": 566,
       "type": "CLASS",
-      "status": "added"
+      "status": "unchanged"
+    },
+    "src/heretek_swarm/config/models.py|src.heretek_swarm.config.models.MCPConfig": {
+      "file_path": "src/heretek_swarm/config/models.py",
+      "qualified_name": "src.heretek_swarm.config.models.MCPConfig",
+      "start_line": 569,
+      "end_line": 588,
+      "type": "CLASS",
+      "status": "unchanged"
+    },
+    "src/heretek_swarm/config/models.py|src.heretek_swarm.config.models.MCPConfig.Config": {
+      "file_path": "src/heretek_swarm/config/models.py",
+      "qualified_name": "src.heretek_swarm.config.models.MCPConfig.Config",
+      "start_line": 583,
+      "end_line": 588,
+      "type": "CLASS",
+      "status": "unchanged"
+    },
+    "src/heretek_swarm/config/models.py|src.heretek_swarm.config.models.MCPConfigCreate": {
+      "file_path": "src/heretek_swarm/config/models.py",
+      "qualified_name": "src.heretek_swarm.config.models.MCPConfigCreate",
+      "start_line": 591,
+      "end_line": 600,
+      "type": "CLASS",
+      "status": "unchanged"
+    },
+    "src/heretek_swarm/config/models.py|src.heretek_swarm.config.models.MCPConfigUpdate": {
+      "file_path": "src/heretek_swarm/config/models.py",
+      "qualified_name": "src.heretek_swarm.config.models.MCPConfigUpdate",
+      "start_line": 603,
+      "end_line": 611,
+      "type": "CLASS",
+      "status": "unchanged"
     },
     "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.SeedResult": {
       "file_path": "src/heretek_swarm/config/service.py",
       "qualified_name": "src.heretek_swarm.config.service.SeedResult",
-      "start_line": 53,
-      "end_line": 59,
+      "start_line": 58,
+      "end_line": 64,
       "type": "CLASS",
       "status": "unchanged"
     },
@@ -69397,85 +69397,85 @@
       "start_line": 67,
       "end_line": 480,
       "type": "CLASS",
-      "status": "modified"
+      "status": "unchanged"
     },
     "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService.__init__": {
       "file_path": "src/heretek_swarm/config/service.py",
       "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.__init__",
-      "start_line": 77,
-      "end_line": 111,
+      "start_line": 82,
+      "end_line": 116,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService.encrypt_api_key": {
       "file_path": "src/heretek_swarm/config/service.py",
       "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.encrypt_api_key",
-      "start_line": 113,
-      "end_line": 126,
+      "start_line": 118,
+      "end_line": 131,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService.decrypt_api_key": {
       "file_path": "src/heretek_swarm/config/service.py",
       "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.decrypt_api_key",
-      "start_line": 128,
-      "end_line": 141,
+      "start_line": 133,
+      "end_line": 146,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService.initialize": {
       "file_path": "src/heretek_swarm/config/service.py",
       "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.initialize",
-      "start_line": 143,
-      "end_line": 146,
+      "start_line": 148,
+      "end_line": 151,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService.shutdown": {
       "file_path": "src/heretek_swarm/config/service.py",
       "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.shutdown",
-      "start_line": 148,
-      "end_line": 151,
+      "start_line": 153,
+      "end_line": 156,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService._warm_cache": {
       "file_path": "src/heretek_swarm/config/service.py",
       "qualified_name": "src.heretek_swarm.config.service.ConfigurationService._warm_cache",
-      "start_line": 157,
-      "end_line": 179,
+      "start_line": 162,
+      "end_line": 184,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService._get_cache_key": {
       "file_path": "src/heretek_swarm/config/service.py",
       "qualified_name": "src.heretek_swarm.config.service.ConfigurationService._get_cache_key",
-      "start_line": 181,
-      "end_line": 183,
+      "start_line": 186,
+      "end_line": 188,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService._invalidate_cache": {
       "file_path": "src/heretek_swarm/config/service.py",
       "qualified_name": "src.heretek_swarm.config.service.ConfigurationService._invalidate_cache",
-      "start_line": 185,
-      "end_line": 189,
+      "start_line": 190,
+      "end_line": 194,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService._set_cache": {
       "file_path": "src/heretek_swarm/config/service.py",
       "qualified_name": "src.heretek_swarm.config.service.ConfigurationService._set_cache",
-      "start_line": 191,
-      "end_line": 204,
+      "start_line": 196,
+      "end_line": 209,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService._get_cache": {
       "file_path": "src/heretek_swarm/config/service.py",
       "qualified_name": "src.heretek_swarm.config.service.ConfigurationService._get_cache",
-      "start_line": 206,
-      "end_line": 220,
+      "start_line": 211,
+      "end_line": 225,
       "type": "METHOD",
       "status": "unchanged"
     },
@@ -69485,37 +69485,37 @@
       "start_line": 227,
       "end_line": 324,
       "type": "METHOD",
-      "status": "modified"
+      "status": "unchanged"
     },
     "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService.seed_from_env": {
       "file_path": "src/heretek_swarm/config/service.py",
       "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.seed_from_env",
-      "start_line": 309,
-      "end_line": 459,
+      "start_line": 330,
+      "end_line": 480,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.get_config_service": {
       "file_path": "src/heretek_swarm/config/service.py",
       "qualified_name": "src.heretek_swarm.config.service.get_config_service",
-      "start_line": 469,
-      "end_line": 479,
+      "start_line": 490,
+      "end_line": 500,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.initialize_config_service": {
       "file_path": "src/heretek_swarm/config/service.py",
       "qualified_name": "src.heretek_swarm.config.service.initialize_config_service",
-      "start_line": 482,
-      "end_line": 485,
+      "start_line": 503,
+      "end_line": 506,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.shutdown_config_service": {
       "file_path": "src/heretek_swarm/config/service.py",
       "qualified_name": "src.heretek_swarm.config.service.shutdown_config_service",
-      "start_line": 488,
-      "end_line": 493,
+      "start_line": 509,
+      "end_line": 514,
       "type": "FUNCTION",
       "status": "unchanged"
     },
@@ -97813,14 +97813,6 @@
       "start_line": 110,
       "end_line": 121,
       "type": "INTERFACE",
-      "status": "added"
-    },
-    "dashboard/frontend/src/api/wizard.ts|dashboard.frontend.src.api.wizard.fetchJson": {
-      "file_path": "dashboard/frontend/src/api/wizard.ts",
-      "qualified_name": "dashboard.frontend.src.api.wizard.fetchJson",
-      "start_line": 115,
-      "end_line": 140,
-      "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/api/wizard.ts|dashboard.frontend.src.api.wizard.InfrastructureCreate": {
@@ -97829,7 +97821,7 @@
       "start_line": 123,
       "end_line": 129,
       "type": "INTERFACE",
-      "status": "added"
+      "status": "unchanged"
     },
     "dashboard/frontend/src/api/wizard.ts|dashboard.frontend.src.api.wizard.HealthCheckResult": {
       "file_path": "dashboard/frontend/src/api/wizard.ts",
@@ -97837,14 +97829,6 @@
       "start_line": 131,
       "end_line": 136,
       "type": "INTERFACE",
-      "status": "added"
-    },
-    "dashboard/frontend/src/api/wizard.ts|dashboard.frontend.src.api.wizard.fetchJson.errorData.catch() callback": {
-      "file_path": "dashboard/frontend/src/api/wizard.ts",
-      "qualified_name": "dashboard.frontend.src.api.wizard.fetchJson.errorData.catch() callback",
-      "start_line": 135,
-      "end_line": 135,
-      "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/api/wizard.ts|dashboard.frontend.src.api.wizard.ProvisionRequest": {
@@ -97853,14 +97837,6 @@
       "start_line": 141,
       "end_line": 144,
       "type": "INTERFACE",
-      "status": "added"
-    },
-    "dashboard/frontend/src/api/wizard.ts|dashboard.frontend.src.api.wizard.getProviders": {
-      "file_path": "dashboard/frontend/src/api/wizard.ts",
-      "qualified_name": "dashboard.frontend.src.api.wizard.getProviders",
-      "start_line": 145,
-      "end_line": 147,
-      "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/api/wizard.ts|dashboard.frontend.src.api.wizard.ProvisionResult": {
@@ -97869,14 +97845,6 @@
       "start_line": 146,
       "end_line": 153,
       "type": "INTERFACE",
-      "status": "added"
-    },
-    "dashboard/frontend/src/api/wizard.ts|dashboard.frontend.src.api.wizard.getProvider": {
-      "file_path": "dashboard/frontend/src/api/wizard.ts",
-      "qualified_name": "dashboard.frontend.src.api.wizard.getProvider",
-      "start_line": 152,
-      "end_line": 154,
-      "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/api/wizard.ts|dashboard.frontend.src.api.wizard.ProvisionResponse": {
@@ -97885,53 +97853,85 @@
       "start_line": 155,
       "end_line": 162,
       "type": "INTERFACE",
-      "status": "added"
+      "status": "unchanged"
+    },
+    "dashboard/frontend/src/api/wizard.ts|dashboard.frontend.src.api.wizard.fetchJson": {
+      "file_path": "dashboard/frontend/src/api/wizard.ts",
+      "qualified_name": "dashboard.frontend.src.api.wizard.fetchJson",
+      "start_line": 170,
+      "end_line": 195,
+      "type": "FUNCTION",
+      "status": "unchanged"
+    },
+    "dashboard/frontend/src/api/wizard.ts|dashboard.frontend.src.api.wizard.fetchJson.errorData.catch() callback": {
+      "file_path": "dashboard/frontend/src/api/wizard.ts",
+      "qualified_name": "dashboard.frontend.src.api.wizard.fetchJson.errorData.catch() callback",
+      "start_line": 190,
+      "end_line": 190,
+      "type": "FUNCTION",
+      "status": "unchanged"
+    },
+    "dashboard/frontend/src/api/wizard.ts|dashboard.frontend.src.api.wizard.getProviders": {
+      "file_path": "dashboard/frontend/src/api/wizard.ts",
+      "qualified_name": "dashboard.frontend.src.api.wizard.getProviders",
+      "start_line": 200,
+      "end_line": 202,
+      "type": "FUNCTION",
+      "status": "unchanged"
+    },
+    "dashboard/frontend/src/api/wizard.ts|dashboard.frontend.src.api.wizard.getProvider": {
+      "file_path": "dashboard/frontend/src/api/wizard.ts",
+      "qualified_name": "dashboard.frontend.src.api.wizard.getProvider",
+      "start_line": 207,
+      "end_line": 209,
+      "type": "FUNCTION",
+      "status": "unchanged"
     },
     "dashboard/frontend/src/api/wizard.ts|dashboard.frontend.src.api.wizard.getTiers": {
       "file_path": "dashboard/frontend/src/api/wizard.ts",
       "qualified_name": "dashboard.frontend.src.api.wizard.getTiers",
-      "start_line": 159,
-      "end_line": 161,
+      "start_line": 214,
+      "end_line": 216,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/api/wizard.ts|dashboard.frontend.src.api.wizard.getTier": {
       "file_path": "dashboard/frontend/src/api/wizard.ts",
       "qualified_name": "dashboard.frontend.src.api.wizard.getTier",
-      "start_line": 166,
-      "end_line": 168,
+      "start_line": 221,
+      "end_line": 223,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/api/wizard.ts|dashboard.frontend.src.api.wizard.getConfigStatus": {
       "file_path": "dashboard/frontend/src/api/wizard.ts",
       "qualified_name": "dashboard.frontend.src.api.wizard.getConfigStatus",
-      "start_line": 173,
-      "end_line": 175,
+      "start_line": 228,
+      "end_line": 230,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/api/wizard.ts|dashboard.frontend.src.api.wizard.validateCredentials": {
       "file_path": "dashboard/frontend/src/api/wizard.ts",
       "qualified_name": "dashboard.frontend.src.api.wizard.validateCredentials",
-      "start_line": 180,
-      "end_line": 193,
+      "start_line": 235,
+      "end_line": 248,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/api/wizard.ts|dashboard.frontend.src.api.wizard.submitConfig": {
       "file_path": "dashboard/frontend/src/api/wizard.ts",
       "qualified_name": "dashboard.frontend.src.api.wizard.submitConfig",
-      "start_line": 198,
-      "end_line": 203,
+      "start_line": 253,
+      "end_line": 258,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/api/wizard.ts|dashboard.frontend.src.api.wizard.resetWizard": {
       "file_path": "dashboard/frontend/src/api/wizard.ts",
       "qualified_name": "dashboard.frontend.src.api.wizard.resetWizard",
-      "start_line": 208,
-      "end_line": 212,
+      "start_line": 263,
+      "end_line": 267,
       "type": "FUNCTION",
       "status": "unchanged"
     },
@@ -97941,7 +97941,7 @@
       "start_line": 276,
       "end_line": 283,
       "type": "FUNCTION",
-      "status": "added"
+      "status": "unchanged"
     },
     "dashboard/frontend/src/api/wizard.ts|dashboard.frontend.src.api.wizard.saveInfrastructureConfig": {
       "file_path": "dashboard/frontend/src/api/wizard.ts",
@@ -97949,7 +97949,7 @@
       "start_line": 288,
       "end_line": 311,
       "type": "FUNCTION",
-      "status": "added"
+      "status": "unchanged"
     },
     "dashboard/frontend/src/api/wizard.ts|dashboard.frontend.src.api.wizard.getInfrastructureConfig": {
       "file_path": "dashboard/frontend/src/api/wizard.ts",
@@ -97957,7 +97957,7 @@
       "start_line": 316,
       "end_line": 320,
       "type": "FUNCTION",
-      "status": "added"
+      "status": "unchanged"
     },
     "dashboard/frontend/src/api/wizard.ts|dashboard.frontend.src.api.wizard.checkInfrastructureHealth": {
       "file_path": "dashboard/frontend/src/api/wizard.ts",
@@ -97965,7 +97965,7 @@
       "start_line": 325,
       "end_line": 332,
       "type": "FUNCTION",
-      "status": "added"
+      "status": "unchanged"
     },
     "dashboard/frontend/src/api/wizard.ts|dashboard.frontend.src.api.wizard.checkAllInfrastructureHealth": {
       "file_path": "dashboard/frontend/src/api/wizard.ts",
@@ -97973,7 +97973,7 @@
       "start_line": 337,
       "end_line": 357,
       "type": "FUNCTION",
-      "status": "added"
+      "status": "unchanged"
     },
     "dashboard/frontend/src/api/wizard.ts|dashboard.frontend.src.api.wizard.deleteInfrastructureConfig": {
       "file_path": "dashboard/frontend/src/api/wizard.ts",
@@ -97981,7 +97981,7 @@
       "start_line": 362,
       "end_line": 385,
       "type": "FUNCTION",
-      "status": "added"
+      "status": "unchanged"
     },
     "dashboard/frontend/src/api/wizard.ts|dashboard.frontend.src.api.wizard.deleteInfrastructureConfig.errorData.catch() callback": {
       "file_path": "dashboard/frontend/src/api/wizard.ts",
@@ -97989,7 +97989,7 @@
       "start_line": 380,
       "end_line": 380,
       "type": "FUNCTION",
-      "status": "added"
+      "status": "unchanged"
     },
     "dashboard/frontend/src/api/wizard.ts|dashboard.frontend.src.api.wizard.provisionInfrastructure": {
       "file_path": "dashboard/frontend/src/api/wizard.ts",
@@ -97997,7 +97997,7 @@
       "start_line": 392,
       "end_line": 400,
       "type": "FUNCTION",
-      "status": "added"
+      "status": "unchanged"
     },
     "dashboard/frontend/src/components/AgentMetricsGrid.tsx|dashboard.frontend.src.components.AgentMetricsGrid.AgentMetrics": {
       "file_path": "dashboard/frontend/src/components/AgentMetricsGrid.tsx",
@@ -111253,7 +111253,7 @@
         },
         {
           "file_path": "src/cli.py",
-          "file_status": "modified",
+          "file_status": "unchanged",
           "methods": [
             "src.cli._check_service_health",
             "src.cli._make_result",
@@ -111911,7 +111911,7 @@
         },
         {
           "file_path": "src/heretek_swarm/actors/mixins/learning.py",
-          "file_status": "modified",
+          "file_status": "unchanged",
           "methods": [
             "src.heretek_swarm.actors.mixins.learning.LearningState",
             "src.heretek_swarm.actors.mixins.learning.LearningMixin",
@@ -112481,7 +112481,7 @@
         },
         {
           "file_path": "src/heretek_swarm/api/main.py",
-          "file_status": "modified",
+          "file_status": "unchanged",
           "methods": [
             "src.heretek_swarm.api.main.lifespan",
             "src.heretek_swarm.api.main._init_config_service",
@@ -112548,7 +112548,7 @@
         },
         {
           "file_path": "src/heretek_swarm/api/observability.py",
-          "file_status": "modified",
+          "file_status": "unchanged",
           "methods": [
             "src.heretek_swarm.api.observability._get_external_call_log_session_factory",
             "src.heretek_swarm.api.observability.get_metrics_collector",
@@ -112572,10 +112572,12 @@
             "src.heretek_swarm.api.observability.get_legacy_metrics",
             "src.heretek_swarm.api.observability.clear_traces",
             "src.heretek_swarm.api.observability.get_external_calls",
-            "src.heretek_swarm.api.observability.TraceEvent",
             "src.heretek_swarm.api.observability.create_external_call",
+            "src.heretek_swarm.api.observability.get_external_call",
+            "src.heretek_swarm.api.observability.TraceEvent",
             "src.heretek_swarm.api.observability.TraceEvent.__init__",
             "src.heretek_swarm.api.observability.TraceEvent.to_dict",
+            "src.heretek_swarm.api.observability.ConnectionManager",
             "src.heretek_swarm.api.observability.ConnectionManager.__init__",
             "src.heretek_swarm.api.observability.ConnectionManager.connect",
             "src.heretek_swarm.api.observability.ConnectionManager.disconnect",
@@ -112585,11 +112587,9 @@
             "src.heretek_swarm.api.observability.ReplayJobCreate",
             "src.heretek_swarm.api.observability.ReplayJobResponse",
             "src.heretek_swarm.api.observability.ReplayJobListResponse",
-            "src.heretek_swarm.api.observability.get_external_call",
             "src.heretek_swarm.api.observability.TimeTravelRequestCreate",
             "src.heretek_swarm.api.observability.TimeTravelResponse",
             "src.heretek_swarm.api.observability.create_replay_job",
-            "src.heretek_swarm.api.observability.ConnectionManager",
             "src.heretek_swarm.api.observability.execute_replay_job",
             "src.heretek_swarm.api.observability.pause_replay_job",
             "src.heretek_swarm.api.observability.resume_replay_job",
@@ -113575,7 +113575,7 @@
         },
         {
           "file_path": "src/heretek_swarm/config/db_models.py",
-          "file_status": "modified",
+          "file_status": "unchanged",
           "methods": [
             "src.heretek_swarm.config.db_models.Base",
             "src.heretek_swarm.config.db_models.UserConfiguration",
@@ -113634,7 +113634,7 @@
         },
         {
           "file_path": "src/heretek_swarm/config/models.py",
-          "file_status": "modified",
+          "file_status": "unchanged",
           "methods": [
             "src.heretek_swarm.config.models.ConfigType",
             "src.heretek_swarm.config.models.HealthStatus",
@@ -113673,21 +113673,21 @@
             "src.heretek_swarm.config.models.MCPProviderCreate",
             "src.heretek_swarm.config.models.MCPProviderUpdate",
             "src.heretek_swarm.config.models.MCPProviderTestResponse",
-            "src.heretek_swarm.config.models.MCPConfig",
             "src.heretek_swarm.config.models.InfrastructureService",
-            "src.heretek_swarm.config.models.MCPConfig.Config",
             "src.heretek_swarm.config.models.InfrastructureConfig",
-            "src.heretek_swarm.config.models.MCPConfigCreate",
             "src.heretek_swarm.config.models.InfrastructureConfig.Config",
-            "src.heretek_swarm.config.models.MCPConfigUpdate",
             "src.heretek_swarm.config.models.InfrastructureConfigCreate",
             "src.heretek_swarm.config.models.InfrastructureConfigUpdate",
-            "src.heretek_swarm.config.models.InfrastructureHealthCheck"
+            "src.heretek_swarm.config.models.InfrastructureHealthCheck",
+            "src.heretek_swarm.config.models.MCPConfig",
+            "src.heretek_swarm.config.models.MCPConfig.Config",
+            "src.heretek_swarm.config.models.MCPConfigCreate",
+            "src.heretek_swarm.config.models.MCPConfigUpdate"
           ]
         },
         {
           "file_path": "src/heretek_swarm/config/service.py",
-          "file_status": "modified",
+          "file_status": "unchanged",
           "methods": [
             "src.heretek_swarm.config.service.SeedResult",
             "src.heretek_swarm.config.service.ConfigurationService",
@@ -117736,7 +117736,7 @@
             },
             {
               "file_path": "src/cli.py",
-              "file_status": "modified",
+              "file_status": "unchanged",
               "methods": [
                 "src.cli._check_service_health",
                 "src.cli._make_result",
@@ -118804,7 +118804,7 @@
             },
             {
               "file_path": "src/heretek_swarm/api/main.py",
-              "file_status": "modified",
+              "file_status": "unchanged",
               "methods": [
                 "src.heretek_swarm.api.main.lifespan",
                 "src.heretek_swarm.api.main._init_config_service",
@@ -118871,7 +118871,7 @@
             },
             {
               "file_path": "src/heretek_swarm/api/observability.py",
-              "file_status": "modified",
+              "file_status": "unchanged",
               "methods": [
                 "src.heretek_swarm.api.observability._get_external_call_log_session_factory",
                 "src.heretek_swarm.api.observability.get_metrics_collector",
@@ -118895,10 +118895,12 @@
                 "src.heretek_swarm.api.observability.get_legacy_metrics",
                 "src.heretek_swarm.api.observability.clear_traces",
                 "src.heretek_swarm.api.observability.get_external_calls",
-                "src.heretek_swarm.api.observability.TraceEvent",
                 "src.heretek_swarm.api.observability.create_external_call",
+                "src.heretek_swarm.api.observability.get_external_call",
+                "src.heretek_swarm.api.observability.TraceEvent",
                 "src.heretek_swarm.api.observability.TraceEvent.__init__",
                 "src.heretek_swarm.api.observability.TraceEvent.to_dict",
+                "src.heretek_swarm.api.observability.ConnectionManager",
                 "src.heretek_swarm.api.observability.ConnectionManager.__init__",
                 "src.heretek_swarm.api.observability.ConnectionManager.connect",
                 "src.heretek_swarm.api.observability.ConnectionManager.disconnect",
@@ -118908,11 +118910,9 @@
                 "src.heretek_swarm.api.observability.ReplayJobCreate",
                 "src.heretek_swarm.api.observability.ReplayJobResponse",
                 "src.heretek_swarm.api.observability.ReplayJobListResponse",
-                "src.heretek_swarm.api.observability.get_external_call",
                 "src.heretek_swarm.api.observability.TimeTravelRequestCreate",
                 "src.heretek_swarm.api.observability.TimeTravelResponse",
                 "src.heretek_swarm.api.observability.create_replay_job",
-                "src.heretek_swarm.api.observability.ConnectionManager",
                 "src.heretek_swarm.api.observability.execute_replay_job",
                 "src.heretek_swarm.api.observability.pause_replay_job",
                 "src.heretek_swarm.api.observability.resume_replay_job",
@@ -119325,7 +119325,7 @@
             },
             {
               "file_path": "src/heretek_swarm/config/db_models.py",
-              "file_status": "modified",
+              "file_status": "unchanged",
               "methods": [
                 "src.heretek_swarm.config.db_models.Base",
                 "src.heretek_swarm.config.db_models.UserConfiguration",
@@ -122481,7 +122481,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/config/db_models.py",
-                  "file_status": "modified",
+                  "file_status": "unchanged",
                   "methods": [
                     "src.heretek_swarm.config.db_models.Base",
                     "src.heretek_swarm.config.db_models.UserConfiguration",
@@ -125299,7 +125299,7 @@
                     },
                     {
                       "file_path": "src/heretek_swarm/config/db_models.py",
-                      "file_status": "modified",
+                      "file_status": "unchanged",
                       "methods": [
                         "src.heretek_swarm.config.db_models.Base",
                         "src.heretek_swarm.config.db_models.UserConfiguration",
@@ -125435,7 +125435,7 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/config/db_models.py",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "src.heretek_swarm.config.db_models.Base",
                             "src.heretek_swarm.config.db_models.UserConfiguration",
@@ -125834,7 +125834,7 @@
                 },
                 {
                   "file_path": "src/cli.py",
-                  "file_status": "modified",
+                  "file_status": "unchanged",
                   "methods": [
                     "src.cli._check_service_health",
                     "src.cli._make_result",
@@ -126491,7 +126491,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/api/main.py",
-                  "file_status": "modified",
+                  "file_status": "unchanged",
                   "methods": [
                     "src.heretek_swarm.api.main.lifespan",
                     "src.heretek_swarm.api.main._init_config_service",
@@ -131492,7 +131492,7 @@
                     },
                     {
                       "file_path": "src/cli.py",
-                      "file_status": "modified",
+                      "file_status": "unchanged",
                       "methods": [
                         "src.cli._check_service_health",
                         "src.cli._make_result",
@@ -131665,7 +131665,7 @@
                     },
                     {
                       "file_path": "src/heretek_swarm/api/main.py",
-                      "file_status": "modified",
+                      "file_status": "unchanged",
                       "methods": [
                         "src.heretek_swarm.api.main.lifespan",
                         "src.heretek_swarm.api.main._init_config_service",
@@ -132095,7 +132095,7 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/api/main.py",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "src.heretek_swarm.api.main.lifespan",
                             "src.heretek_swarm.api.main._init_config_service",
@@ -132373,7 +132373,7 @@
                         },
                         {
                           "file_path": "src/cli.py",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "src.cli._check_service_health",
                             "src.cli._make_result",
@@ -138870,7 +138870,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/api/observability.py",
-                  "file_status": "modified",
+                  "file_status": "unchanged",
                   "methods": [
                     "src.heretek_swarm.api.observability._get_external_call_log_session_factory",
                     "src.heretek_swarm.api.observability.get_metrics_collector",
@@ -138894,10 +138894,12 @@
                     "src.heretek_swarm.api.observability.get_legacy_metrics",
                     "src.heretek_swarm.api.observability.clear_traces",
                     "src.heretek_swarm.api.observability.get_external_calls",
-                    "src.heretek_swarm.api.observability.TraceEvent",
                     "src.heretek_swarm.api.observability.create_external_call",
+                    "src.heretek_swarm.api.observability.get_external_call",
+                    "src.heretek_swarm.api.observability.TraceEvent",
                     "src.heretek_swarm.api.observability.TraceEvent.__init__",
                     "src.heretek_swarm.api.observability.TraceEvent.to_dict",
+                    "src.heretek_swarm.api.observability.ConnectionManager",
                     "src.heretek_swarm.api.observability.ConnectionManager.__init__",
                     "src.heretek_swarm.api.observability.ConnectionManager.connect",
                     "src.heretek_swarm.api.observability.ConnectionManager.disconnect",
@@ -138907,11 +138909,9 @@
                     "src.heretek_swarm.api.observability.ReplayJobCreate",
                     "src.heretek_swarm.api.observability.ReplayJobResponse",
                     "src.heretek_swarm.api.observability.ReplayJobListResponse",
-                    "src.heretek_swarm.api.observability.get_external_call",
                     "src.heretek_swarm.api.observability.TimeTravelRequestCreate",
                     "src.heretek_swarm.api.observability.TimeTravelResponse",
                     "src.heretek_swarm.api.observability.create_replay_job",
-                    "src.heretek_swarm.api.observability.ConnectionManager",
                     "src.heretek_swarm.api.observability.execute_replay_job",
                     "src.heretek_swarm.api.observability.pause_replay_job",
                     "src.heretek_swarm.api.observability.resume_replay_job",
@@ -140103,7 +140103,7 @@
                     },
                     {
                       "file_path": "src/heretek_swarm/api/observability.py",
-                      "file_status": "modified",
+                      "file_status": "unchanged",
                       "methods": [
                         "src.heretek_swarm.api.observability._get_external_call_log_session_factory",
                         "src.heretek_swarm.api.observability.get_metrics_collector",
@@ -140127,10 +140127,12 @@
                         "src.heretek_swarm.api.observability.get_legacy_metrics",
                         "src.heretek_swarm.api.observability.clear_traces",
                         "src.heretek_swarm.api.observability.get_external_calls",
-                        "src.heretek_swarm.api.observability.TraceEvent",
                         "src.heretek_swarm.api.observability.create_external_call",
+                        "src.heretek_swarm.api.observability.get_external_call",
+                        "src.heretek_swarm.api.observability.TraceEvent",
                         "src.heretek_swarm.api.observability.TraceEvent.__init__",
                         "src.heretek_swarm.api.observability.TraceEvent.to_dict",
+                        "src.heretek_swarm.api.observability.ConnectionManager",
                         "src.heretek_swarm.api.observability.ConnectionManager.__init__",
                         "src.heretek_swarm.api.observability.ConnectionManager.connect",
                         "src.heretek_swarm.api.observability.ConnectionManager.disconnect",
@@ -140140,11 +140142,9 @@
                         "src.heretek_swarm.api.observability.ReplayJobCreate",
                         "src.heretek_swarm.api.observability.ReplayJobResponse",
                         "src.heretek_swarm.api.observability.ReplayJobListResponse",
-                        "src.heretek_swarm.api.observability.get_external_call",
                         "src.heretek_swarm.api.observability.TimeTravelRequestCreate",
                         "src.heretek_swarm.api.observability.TimeTravelResponse",
                         "src.heretek_swarm.api.observability.create_replay_job",
-                        "src.heretek_swarm.api.observability.ConnectionManager",
                         "src.heretek_swarm.api.observability.execute_replay_job",
                         "src.heretek_swarm.api.observability.pause_replay_job",
                         "src.heretek_swarm.api.observability.resume_replay_job",
@@ -140299,7 +140299,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/api/observability.py",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "src.heretek_swarm.api.observability.websocket_traces",
                             "src.heretek_swarm.api.observability.ConnectionManager.connect",
@@ -140418,7 +140418,7 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/api/observability.py",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "src.heretek_swarm.api.observability.get_metrics_collector",
                             "src.heretek_swarm.api.observability.get_metrics_stream",
@@ -140442,6 +140442,7 @@
                             "src.heretek_swarm.api.observability.TraceEvent",
                             "src.heretek_swarm.api.observability.TraceEvent.__init__",
                             "src.heretek_swarm.api.observability.TraceEvent.to_dict",
+                            "src.heretek_swarm.api.observability.ConnectionManager",
                             "src.heretek_swarm.api.observability.ConnectionManager.__init__",
                             "src.heretek_swarm.api.observability.ConnectionManager.broadcast_trace",
                             "src.heretek_swarm.api.observability.get_replay_manager",
@@ -140451,7 +140452,6 @@
                             "src.heretek_swarm.api.observability.TimeTravelRequestCreate",
                             "src.heretek_swarm.api.observability.TimeTravelResponse",
                             "src.heretek_swarm.api.observability.create_replay_job",
-                            "src.heretek_swarm.api.observability.ConnectionManager",
                             "src.heretek_swarm.api.observability.execute_replay_job",
                             "src.heretek_swarm.api.observability.pause_replay_job",
                             "src.heretek_swarm.api.observability.resume_replay_job",
@@ -151425,7 +151425,7 @@
           "file_methods": [
             {
               "file_path": "src/heretek_swarm/actors/mixins/learning.py",
-              "file_status": "modified",
+              "file_status": "unchanged",
               "methods": [
                 "src.heretek_swarm.actors.mixins.learning.LearningState",
                 "src.heretek_swarm.actors.mixins.learning.LearningMixin",
@@ -152195,7 +152195,7 @@
               "file_methods": [
                 {
                   "file_path": "src/heretek_swarm/actors/mixins/learning.py",
-                  "file_status": "modified",
+                  "file_status": "unchanged",
                   "methods": [
                     "src.heretek_swarm.actors.mixins.learning.LearningState",
                     "src.heretek_swarm.actors.mixins.learning.LearningMixin",
@@ -152462,7 +152462,7 @@
                   "file_methods": [
                     {
                       "file_path": "src/heretek_swarm/actors/mixins/learning.py",
-                      "file_status": "modified",
+                      "file_status": "unchanged",
                       "methods": [
                         "src.heretek_swarm.actors.mixins.learning.LearningState",
                         "src.heretek_swarm.actors.mixins.learning.LearningMixin",
@@ -152585,7 +152585,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/actors/mixins/learning.py",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "src.heretek_swarm.actors.mixins.learning.LearningState",
                             "src.heretek_swarm.actors.mixins.learning.LearningMixin",
@@ -171256,7 +171256,7 @@
             },
             {
               "file_path": "src/heretek_swarm/config/models.py",
-              "file_status": "modified",
+              "file_status": "unchanged",
               "methods": [
                 "src.heretek_swarm.config.models.ConfigType",
                 "src.heretek_swarm.config.models.HealthStatus",
@@ -171295,21 +171295,21 @@
                 "src.heretek_swarm.config.models.MCPProviderCreate",
                 "src.heretek_swarm.config.models.MCPProviderUpdate",
                 "src.heretek_swarm.config.models.MCPProviderTestResponse",
-                "src.heretek_swarm.config.models.MCPConfig",
                 "src.heretek_swarm.config.models.InfrastructureService",
-                "src.heretek_swarm.config.models.MCPConfig.Config",
                 "src.heretek_swarm.config.models.InfrastructureConfig",
-                "src.heretek_swarm.config.models.MCPConfigCreate",
                 "src.heretek_swarm.config.models.InfrastructureConfig.Config",
-                "src.heretek_swarm.config.models.MCPConfigUpdate",
                 "src.heretek_swarm.config.models.InfrastructureConfigCreate",
                 "src.heretek_swarm.config.models.InfrastructureConfigUpdate",
-                "src.heretek_swarm.config.models.InfrastructureHealthCheck"
+                "src.heretek_swarm.config.models.InfrastructureHealthCheck",
+                "src.heretek_swarm.config.models.MCPConfig",
+                "src.heretek_swarm.config.models.MCPConfig.Config",
+                "src.heretek_swarm.config.models.MCPConfigCreate",
+                "src.heretek_swarm.config.models.MCPConfigUpdate"
               ]
             },
             {
               "file_path": "src/heretek_swarm/config/service.py",
-              "file_status": "modified",
+              "file_status": "unchanged",
               "methods": [
                 "src.heretek_swarm.config.service.SeedResult",
                 "src.heretek_swarm.config.service.ConfigurationService",
@@ -173338,7 +173338,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/config/models.py",
-                  "file_status": "modified",
+                  "file_status": "unchanged",
                   "methods": [
                     "src.heretek_swarm.config.models.ConfigType",
                     "src.heretek_swarm.config.models.HealthStatus",
@@ -173377,21 +173377,21 @@
                     "src.heretek_swarm.config.models.MCPProviderCreate",
                     "src.heretek_swarm.config.models.MCPProviderUpdate",
                     "src.heretek_swarm.config.models.MCPProviderTestResponse",
-                    "src.heretek_swarm.config.models.MCPConfig",
                     "src.heretek_swarm.config.models.InfrastructureService",
-                    "src.heretek_swarm.config.models.MCPConfig.Config",
                     "src.heretek_swarm.config.models.InfrastructureConfig",
-                    "src.heretek_swarm.config.models.MCPConfigCreate",
                     "src.heretek_swarm.config.models.InfrastructureConfig.Config",
-                    "src.heretek_swarm.config.models.MCPConfigUpdate",
                     "src.heretek_swarm.config.models.InfrastructureConfigCreate",
                     "src.heretek_swarm.config.models.InfrastructureConfigUpdate",
-                    "src.heretek_swarm.config.models.InfrastructureHealthCheck"
+                    "src.heretek_swarm.config.models.InfrastructureHealthCheck",
+                    "src.heretek_swarm.config.models.MCPConfig",
+                    "src.heretek_swarm.config.models.MCPConfig.Config",
+                    "src.heretek_swarm.config.models.MCPConfigCreate",
+                    "src.heretek_swarm.config.models.MCPConfigUpdate"
                   ]
                 },
                 {
                   "file_path": "src/heretek_swarm/config/service.py",
-                  "file_status": "modified",
+                  "file_status": "unchanged",
                   "methods": [
                     "src.heretek_swarm.config.service.SeedResult",
                     "src.heretek_swarm.config.service.ConfigurationService",
@@ -173457,7 +173457,7 @@
                     },
                     {
                       "file_path": "src/heretek_swarm/config/service.py",
-                      "file_status": "modified",
+                      "file_status": "unchanged",
                       "methods": [
                         "src.heretek_swarm.config.service.SeedResult",
                         "src.heretek_swarm.config.service.ConfigurationService.__init__",
@@ -173542,7 +173542,7 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/config/service.py",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "src.heretek_swarm.config.service.SeedResult",
                             "src.heretek_swarm.config.service.ConfigurationService",
@@ -173659,7 +173659,7 @@
                     },
                     {
                       "file_path": "src/heretek_swarm/config/models.py",
-                      "file_status": "modified",
+                      "file_status": "unchanged",
                       "methods": [
                         "src.heretek_swarm.config.models.ConfigType",
                         "src.heretek_swarm.config.models.HealthStatus",
@@ -173698,21 +173698,21 @@
                         "src.heretek_swarm.config.models.MCPProviderCreate",
                         "src.heretek_swarm.config.models.MCPProviderUpdate",
                         "src.heretek_swarm.config.models.MCPProviderTestResponse",
-                        "src.heretek_swarm.config.models.MCPConfig",
                         "src.heretek_swarm.config.models.InfrastructureService",
-                        "src.heretek_swarm.config.models.MCPConfig.Config",
                         "src.heretek_swarm.config.models.InfrastructureConfig",
-                        "src.heretek_swarm.config.models.MCPConfigCreate",
                         "src.heretek_swarm.config.models.InfrastructureConfig.Config",
-                        "src.heretek_swarm.config.models.MCPConfigUpdate",
                         "src.heretek_swarm.config.models.InfrastructureConfigCreate",
                         "src.heretek_swarm.config.models.InfrastructureConfigUpdate",
-                        "src.heretek_swarm.config.models.InfrastructureHealthCheck"
+                        "src.heretek_swarm.config.models.InfrastructureHealthCheck",
+                        "src.heretek_swarm.config.models.MCPConfig",
+                        "src.heretek_swarm.config.models.MCPConfig.Config",
+                        "src.heretek_swarm.config.models.MCPConfigCreate",
+                        "src.heretek_swarm.config.models.MCPConfigUpdate"
                       ]
                     },
                     {
                       "file_path": "src/heretek_swarm/config/service.py",
-                      "file_status": "modified",
+                      "file_status": "unchanged",
                       "methods": [
                         "src.heretek_swarm.config.service.SeedResult",
                         "src.heretek_swarm.config.service.ConfigurationService",
@@ -173769,7 +173769,7 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/config/models.py",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "src.heretek_swarm.config.models.ConfigType",
                             "src.heretek_swarm.config.models.HealthStatus",
@@ -173843,7 +173843,7 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/config/models.py",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "src.heretek_swarm.config.models.UserConfiguration",
                             "src.heretek_swarm.config.models.LLMProvider",
@@ -173853,7 +173853,7 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/config/service.py",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "src.heretek_swarm.config.service.ConfigurationService.decrypt_api_key",
                             "src.heretek_swarm.config.service.ConfigurationService._orm_to_pydantic"
@@ -173903,7 +173903,7 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/config/service.py",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "src.heretek_swarm.config.service.ConfigurationService._warm_cache"
                           ]
@@ -173967,7 +173967,7 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/config/models.py",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "src.heretek_swarm.config.models.UserConfigurationCreate",
                             "src.heretek_swarm.config.models.ConfigCacheEntry"
@@ -173975,7 +173975,7 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/config/service.py",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "src.heretek_swarm.config.service.ConfigurationService",
                             "src.heretek_swarm.config.service.ConfigurationService.__init__",
@@ -174384,7 +174384,7 @@
                     },
                     {
                       "file_path": "src/heretek_swarm/config/service.py",
-                      "file_status": "modified",
+                      "file_status": "unchanged",
                       "methods": [
                         "src.heretek_swarm.config.service.SeedResult",
                         "src.heretek_swarm.config.service.ConfigurationService._invalidate_cache",
@@ -174428,7 +174428,7 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/config/service.py",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "src.heretek_swarm.config.service.ConfigurationService._get_cache_key",
                             "src.heretek_swarm.config.service.ConfigurationService._invalidate_cache",
@@ -174510,7 +174510,7 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/config/service.py",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "src.heretek_swarm.config.service.ConfigurationService.__init__",
                             "src.heretek_swarm.config.service.ConfigurationService.encrypt_api_key",
@@ -174568,7 +174568,7 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/config/service.py",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "src.heretek_swarm.config.service.ConfigurationService",
                             "src.heretek_swarm.config.service.ConfigurationService.initialize",
@@ -239936,7 +239936,7 @@
         },
         {
           "file_path": "dashboard/frontend/src/api/wizard.ts",
-          "file_status": "modified",
+          "file_status": "unchanged",
           "methods": [
             "dashboard.frontend.src.api.wizard.Provider",
             "dashboard.frontend.src.api.wizard.AgentTier",
@@ -239946,15 +239946,15 @@
             "dashboard.frontend.src.api.wizard.WizardConfig",
             "dashboard.frontend.src.api.wizard.SubmitResult",
             "dashboard.frontend.src.api.wizard.InfrastructureConfig",
-            "dashboard.frontend.src.api.wizard.fetchJson",
             "dashboard.frontend.src.api.wizard.InfrastructureCreate",
             "dashboard.frontend.src.api.wizard.HealthCheckResult",
-            "dashboard.frontend.src.api.wizard.fetchJson.errorData.catch() callback",
             "dashboard.frontend.src.api.wizard.ProvisionRequest",
-            "dashboard.frontend.src.api.wizard.getProviders",
             "dashboard.frontend.src.api.wizard.ProvisionResult",
-            "dashboard.frontend.src.api.wizard.getProvider",
             "dashboard.frontend.src.api.wizard.ProvisionResponse",
+            "dashboard.frontend.src.api.wizard.fetchJson",
+            "dashboard.frontend.src.api.wizard.fetchJson.errorData.catch() callback",
+            "dashboard.frontend.src.api.wizard.getProviders",
+            "dashboard.frontend.src.api.wizard.getProvider",
             "dashboard.frontend.src.api.wizard.getTiers",
             "dashboard.frontend.src.api.wizard.getTier",
             "dashboard.frontend.src.api.wizard.getConfigStatus",
@@ -259518,7 +259518,7 @@
             },
             {
               "file_path": "dashboard/frontend/src/api/wizard.ts",
-              "file_status": "modified",
+              "file_status": "unchanged",
               "methods": [
                 "dashboard.frontend.src.api.wizard.Provider",
                 "dashboard.frontend.src.api.wizard.AgentTier",
@@ -259528,15 +259528,15 @@
                 "dashboard.frontend.src.api.wizard.WizardConfig",
                 "dashboard.frontend.src.api.wizard.SubmitResult",
                 "dashboard.frontend.src.api.wizard.InfrastructureConfig",
-                "dashboard.frontend.src.api.wizard.fetchJson",
                 "dashboard.frontend.src.api.wizard.InfrastructureCreate",
                 "dashboard.frontend.src.api.wizard.HealthCheckResult",
-                "dashboard.frontend.src.api.wizard.fetchJson.errorData.catch() callback",
                 "dashboard.frontend.src.api.wizard.ProvisionRequest",
-                "dashboard.frontend.src.api.wizard.getProviders",
                 "dashboard.frontend.src.api.wizard.ProvisionResult",
-                "dashboard.frontend.src.api.wizard.getProvider",
                 "dashboard.frontend.src.api.wizard.ProvisionResponse",
+                "dashboard.frontend.src.api.wizard.fetchJson",
+                "dashboard.frontend.src.api.wizard.fetchJson.errorData.catch() callback",
+                "dashboard.frontend.src.api.wizard.getProviders",
+                "dashboard.frontend.src.api.wizard.getProvider",
                 "dashboard.frontend.src.api.wizard.getTiers",
                 "dashboard.frontend.src.api.wizard.getTier",
                 "dashboard.frontend.src.api.wizard.getConfigStatus",
@@ -261107,7 +261107,7 @@
                 },
                 {
                   "file_path": "dashboard/frontend/src/api/wizard.ts",
-                  "file_status": "modified",
+                  "file_status": "unchanged",
                   "methods": [
                     "dashboard.frontend.src.api.wizard.Provider",
                     "dashboard.frontend.src.api.wizard.AgentTier",
@@ -261117,15 +261117,15 @@
                     "dashboard.frontend.src.api.wizard.WizardConfig",
                     "dashboard.frontend.src.api.wizard.SubmitResult",
                     "dashboard.frontend.src.api.wizard.InfrastructureConfig",
-                    "dashboard.frontend.src.api.wizard.fetchJson",
                     "dashboard.frontend.src.api.wizard.InfrastructureCreate",
                     "dashboard.frontend.src.api.wizard.HealthCheckResult",
-                    "dashboard.frontend.src.api.wizard.fetchJson.errorData.catch() callback",
                     "dashboard.frontend.src.api.wizard.ProvisionRequest",
-                    "dashboard.frontend.src.api.wizard.getProviders",
                     "dashboard.frontend.src.api.wizard.ProvisionResult",
-                    "dashboard.frontend.src.api.wizard.getProvider",
                     "dashboard.frontend.src.api.wizard.ProvisionResponse",
+                    "dashboard.frontend.src.api.wizard.fetchJson",
+                    "dashboard.frontend.src.api.wizard.fetchJson.errorData.catch() callback",
+                    "dashboard.frontend.src.api.wizard.getProviders",
+                    "dashboard.frontend.src.api.wizard.getProvider",
                     "dashboard.frontend.src.api.wizard.getTiers",
                     "dashboard.frontend.src.api.wizard.getTier",
                     "dashboard.frontend.src.api.wizard.getConfigStatus",
@@ -262650,7 +262650,7 @@
                     },
                     {
                       "file_path": "dashboard/frontend/src/api/wizard.ts",
-                      "file_status": "modified",
+                      "file_status": "unchanged",
                       "methods": [
                         "dashboard.frontend.src.api.wizard.Provider",
                         "dashboard.frontend.src.api.wizard.AgentTier",
@@ -262660,15 +262660,15 @@
                         "dashboard.frontend.src.api.wizard.WizardConfig",
                         "dashboard.frontend.src.api.wizard.SubmitResult",
                         "dashboard.frontend.src.api.wizard.InfrastructureConfig",
-                        "dashboard.frontend.src.api.wizard.fetchJson",
                         "dashboard.frontend.src.api.wizard.InfrastructureCreate",
                         "dashboard.frontend.src.api.wizard.HealthCheckResult",
-                        "dashboard.frontend.src.api.wizard.fetchJson.errorData.catch() callback",
                         "dashboard.frontend.src.api.wizard.ProvisionRequest",
-                        "dashboard.frontend.src.api.wizard.getProviders",
                         "dashboard.frontend.src.api.wizard.ProvisionResult",
-                        "dashboard.frontend.src.api.wizard.getProvider",
                         "dashboard.frontend.src.api.wizard.ProvisionResponse",
+                        "dashboard.frontend.src.api.wizard.fetchJson",
+                        "dashboard.frontend.src.api.wizard.fetchJson.errorData.catch() callback",
+                        "dashboard.frontend.src.api.wizard.getProviders",
+                        "dashboard.frontend.src.api.wizard.getProvider",
                         "dashboard.frontend.src.api.wizard.getTiers",
                         "dashboard.frontend.src.api.wizard.getTier",
                         "dashboard.frontend.src.api.wizard.getConfigStatus",
@@ -264195,7 +264195,7 @@
                         },
                         {
                           "file_path": "dashboard/frontend/src/api/wizard.ts",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "dashboard.frontend.src.api.wizard.Provider",
                             "dashboard.frontend.src.api.wizard.AgentTier",
@@ -264205,15 +264205,15 @@
                             "dashboard.frontend.src.api.wizard.WizardConfig",
                             "dashboard.frontend.src.api.wizard.SubmitResult",
                             "dashboard.frontend.src.api.wizard.InfrastructureConfig",
-                            "dashboard.frontend.src.api.wizard.fetchJson",
                             "dashboard.frontend.src.api.wizard.InfrastructureCreate",
                             "dashboard.frontend.src.api.wizard.HealthCheckResult",
-                            "dashboard.frontend.src.api.wizard.fetchJson.errorData.catch() callback",
                             "dashboard.frontend.src.api.wizard.ProvisionRequest",
-                            "dashboard.frontend.src.api.wizard.getProviders",
                             "dashboard.frontend.src.api.wizard.ProvisionResult",
-                            "dashboard.frontend.src.api.wizard.getProvider",
                             "dashboard.frontend.src.api.wizard.ProvisionResponse",
+                            "dashboard.frontend.src.api.wizard.fetchJson",
+                            "dashboard.frontend.src.api.wizard.fetchJson.errorData.catch() callback",
+                            "dashboard.frontend.src.api.wizard.getProviders",
+                            "dashboard.frontend.src.api.wizard.getProvider",
                             "dashboard.frontend.src.api.wizard.getTiers",
                             "dashboard.frontend.src.api.wizard.getTier",
                             "dashboard.frontend.src.api.wizard.getConfigStatus",
