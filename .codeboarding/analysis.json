@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-19T11:03:39.197459+00:00",
+    "generated_at": "2026-04-19T11:36:49.090545+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -296,21 +296,21 @@
       ]
     },
     "scripts/wire_agents_session44.py": {
-      "file_status": "unchanged",
+      "file_status": "deleted",
       "methods": [
         {
           "qualified_name": "scripts.wire_agents_session44.wire_agent_file",
           "start_line": 273,
           "end_line": 350,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "scripts.wire_agents_session44.main",
           "start_line": 353,
           "end_line": 382,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "deleted"
         }
       ]
     },
@@ -53085,7 +53085,7 @@
       "start_line": 273,
       "end_line": 350,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "scripts/wire_agents_session44.py|scripts.wire_agents_session44.main": {
       "file_path": "scripts/wire_agents_session44.py",
@@ -53093,7 +53093,7 @@
       "start_line": 353,
       "end_line": 382,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "serverless/handler.py|serverless.handler.initialize_dependencies": {
       "file_path": "serverless/handler.py",
@@ -111243,11 +111243,8 @@
         },
         {
           "file_path": "scripts/wire_agents_session44.py",
-          "file_status": "unchanged",
-          "methods": [
-            "scripts.wire_agents_session44.wire_agent_file",
-            "scripts.wire_agents_session44.main"
-          ]
+          "file_status": "deleted",
+          "methods": []
         },
         {
           "file_path": "serverless/handler.py",
@@ -117729,11 +117726,8 @@
             },
             {
               "file_path": "scripts/wire_agents_session44.py",
-              "file_status": "unchanged",
-              "methods": [
-                "scripts.wire_agents_session44.wire_agent_file",
-                "scripts.wire_agents_session44.main"
-              ]
+              "file_status": "deleted",
+              "methods": []
             },
             {
               "file_path": "serverless/handler.py",
@@ -125830,11 +125824,8 @@
                 },
                 {
                   "file_path": "scripts/wire_agents_session44.py",
-                  "file_status": "unchanged",
-                  "methods": [
-                    "scripts.wire_agents_session44.wire_agent_file",
-                    "scripts.wire_agents_session44.main"
-                  ]
+                  "file_status": "deleted",
+                  "methods": []
                 },
                 {
                   "file_path": "serverless/handler.py",
@@ -131496,11 +131487,8 @@
                     },
                     {
                       "file_path": "scripts/wire_agents_session44.py",
-                      "file_status": "unchanged",
-                      "methods": [
-                        "scripts.wire_agents_session44.wire_agent_file",
-                        "scripts.wire_agents_session44.main"
-                      ]
+                      "file_status": "deleted",
+                      "methods": []
                     },
                     {
                       "file_path": "src/cli.py",
@@ -132380,11 +132368,8 @@
                         },
                         {
                           "file_path": "scripts/wire_agents_session44.py",
-                          "file_status": "unchanged",
-                          "methods": [
-                            "scripts.wire_agents_session44.wire_agent_file",
-                            "scripts.wire_agents_session44.main"
-                          ]
+                          "file_status": "deleted",
+                          "methods": []
                         },
                         {
                           "file_path": "src/cli.py",
