@@ -1,8 +1,8 @@
 {
-  "name": "heretek-swarm-dashboard",
-  "private": true,
+  "name": "@heretek/swarm-dashboard",
   "version": "0.1.0",
   "type": "module",
+  "files": ["dist"],
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
