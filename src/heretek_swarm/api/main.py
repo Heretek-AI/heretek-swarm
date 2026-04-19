@@ -369,7 +369,8 @@ allowed_origins_env = os.getenv("CORS_ORIGINS", "")
 if allowed_origins_env:
     allowed_origins = allowed_origins_env.split(",")
 elif os.getenv("ENVIRONMENT", "development") == "production":
-    allowed_origins = ["https://your-domain.com"]
+    # Include localhost:3000 for local testing without CORS_ORIGINS env var
+    allowed_origins = ["https://your-domain.com", "http://localhost:3000"]
 else:
     allowed_origins = ["http://localhost:3000", "http://localhost:5173", "http://localhost:8000"]
 
