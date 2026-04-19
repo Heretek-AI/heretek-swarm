@@ -20,9 +20,12 @@ import {
   validateCredentials,
   submitConfig,
   resetWizard as apiResetWizard,
+  getInfrastructureConfigs,
+  saveInfrastructureConfig,
+  checkInfrastructureHealth,
 } from '../../api/wizard';
-import type { Provider } from '../../api/wizard';
-import { useConfigWizardStore, type SelectedProvider, type WizardStep } from '../../stores/configWizardStore';
+import type { Provider, InfrastructureConfig } from '../../api/wizard';
+import { useConfigWizardStore, type SelectedProvider, type WizardStep, INFRASTRUCTURE_SERVICES, type SelectedInfrastructure } from '../../stores/configWizardStore';
 import { useToast } from '../UI/Toast';
 
 // =============================================================================
@@ -691,6 +694,299 @@ function ModelPreferencesStep({
   );
 }
 
+// =============================================================================
+// Infrastructure Steps
+// =============================================================================
+
+function InfrastructureStep({
+  selectedInfrastructure,
+  deployMode,
+  onToggleService,
+  onUpdateService,
+  onSetDeployMode,
+  onNext,
+  onBack,
+}: {
+  selectedInfrastructure: SelectedInfrastructure[];
+  deployMode: 'external' | 'local' | null;
+  onToggleService: (serviceType: string) => void;
+  onUpdateService: (serviceType: string, updates: Partial<SelectedInfrastructure>) => void;
+  onSetDeployMode: (mode: 'external' | 'local') => void;
+  onNext: () => void;
+  onBack: () => void;
+}) {
+  const selectedTypes = selectedInfrastructure.map(s => s.service.service_type);
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <div className={styles.stepTitle}>
+          <div className={styles.stepIcon}>⚡</div>
+          Infrastructure Setup
+        </div>
+        <p className="text-gray-400">
+          Configure infrastructure services for your swarm.
+          Select which services to enable and choose your deployment mode.
+        </p>
+      </div>
+
+      {/* Deployment mode selection */}
+      <div className="space-y-3">
+        <h3 className="text-sm font-medium text-gray-300">Deployment Mode</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <button
+            onClick={() => onSetDeployMode('external')}
+            className={`p-4 rounded-xl border-2 transition-all text-left ${
+              deployMode === 'external'
+                ? 'border-[#00f0ff] bg-[#00f0ff]/10 shadow-lg shadow-[#00f0ff]/20'
+                : 'border-[#1a1a2e] bg-[#0d0d15] hover:border-gray-600'
+            }`}
+          >
+            <div className="flex items-center gap-3">
+              <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                deployMode === 'external' ? 'bg-[#00f0ff]/20' : 'bg-[#1a1a2e]'
+              }`}>
+                <span className="text-2xl">☁️</span>
+              </div>
+              <div>
+                <div className="font-semibold text-white">External Services</div>
+                <div className="text-xs text-gray-500">Connect to managed cloud services</div>
+              </div>
+            </div>
+          </button>
+
+          <button
+            onClick={() => onSetDeployMode('local')}
+            className={`p-4 rounded-xl border-2 transition-all text-left ${
+              deployMode === 'local'
+                ? 'border-[#ff00f0] bg-[#ff00f0]/10 shadow-lg shadow-[#ff00f0]/20'
+                : 'border-[#1a1a2e] bg-[#0d0d15] hover:border-gray-600'
+            }`}
+          >
+            <div className="flex items-center gap-3">
+              <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                deployMode === 'local' ? 'bg-[#ff00f0]/20' : 'bg-[#1a1a2e]'
+              }`}>
+                <span className="text-2xl">🖥️</span>
+              </div>
+              <div>
+                <div className="font-semibold text-white">Local Services</div>
+                <div className="text-xs text-gray-500">Self-hosted on your infrastructure</div>
+              </div>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      {/* Service selection */}
+      <div className="space-y-3">
+        <h3 className="text-sm font-medium text-gray-300">
+          Infrastructure Services ({selectedInfrastructure.length} selected)
+        </h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          {INFRASTRUCTURE_SERVICES.map((service) => {
+            const isSelected = selectedTypes.includes(service.service_type);
+            const selected = selectedInfrastructure.find(s => s.service.service_type === service.service_type);
+
+            return (
+              <div
+                key={service.service_type}
+                className={`p-4 rounded-xl border transition-all ${
+                  isSelected
+                    ? 'border-[#00f0ff] bg-[#00f0ff]/5'
+                    : 'border-[#1a1a2e] bg-[#0d0d15]'
+                }`}
+              >
+                <div className="flex items-start justify-between mb-3">
+                  <div className="flex items-center gap-3">
+                    <span className="text-2xl">{service.icon}</span>
+                    <div>
+                      <div className="font-medium text-white">{service.name}</div>
+                      <div className="text-xs text-gray-500">{service.description}</div>
+                    </div>
+                  </div>
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={isSelected}
+                      onChange={() => onToggleService(service.service_type)}
+                      className="sr-only peer"
+                    />
+                    <div className="w-11 h-6 bg-[#1a1a2e] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#00f0ff]"></div>
+                  </label>
+                </div>
+
+                {isSelected && selected && (
+                  <div className="space-y-3 pt-3 border-t border-[#1a1a2e]">
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className={styles.label}>Host</label>
+                        <input
+                          type="text"
+                          value={selected.host}
+                          onChange={(e) => onUpdateService(service.service_type, { host: e.target.value })}
+                          className={styles.input}
+                          placeholder={service.default_host}
+                        />
+                      </div>
+                      <div>
+                        <label className={styles.label}>Port</label>
+                        <input
+                          type="number"
+                          value={selected.port}
+                          onChange={(e) => onUpdateService(service.service_type, { port: parseInt(e.target.value) || service.default_port })}
+                          className={styles.input}
+                          placeholder={String(service.default_port)}
+                        />
+                      </div>
+                    </div>
+                    {service.requires_connection_url && (
+                      <div>
+                        <label className={styles.label}>Connection URL</label>
+                        <input
+                          type="text"
+                          value={selected.connectionUrl}
+                          onChange={(e) => onUpdateService(service.service_type, { connectionUrl: e.target.value })}
+                          className={`${styles.input} font-mono text-sm`}
+                          placeholder="postgresql://user:pass@host:5432/db"
+                        />
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      <div className={styles.nav}>
+        <button onClick={onBack} className={styles.buttonSecondary}>
+          Back
+        </button>
+        <button
+          onClick={onNext}
+          className={styles.buttonPrimary}
+          disabled={selectedInfrastructure.length === 0 || !deployMode}
+        >
+          Review Infrastructure
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function InfrastructureReviewStep({
+  selectedInfrastructure,
+  deployMode,
+  onNext,
+  onBack,
+}: {
+  selectedInfrastructure: SelectedInfrastructure[];
+  deployMode: 'external' | 'local' | null;
+  onNext: () => void;
+  onBack: () => void;
+}) {
+  const getHealthIcon = (status: string) => {
+    switch (status) {
+      case 'healthy': return '✓';
+      case 'unhealthy': return '✕';
+      case 'degraded': return '⚠';
+      default: return '?';
+    }
+  };
+
+  const getHealthColor = (status: string) => {
+    switch (status) {
+      case 'healthy': return 'text-green-400';
+      case 'unhealthy': return 'text-red-400';
+      case 'degraded': return 'text-yellow-400';
+      default: return 'text-gray-400';
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <div className={styles.stepTitle}>
+          <div className={styles.stepIcon}>📋</div>
+          Infrastructure Review
+        </div>
+        <p className="text-gray-400">
+          Review your infrastructure configuration before proceeding.
+        </p>
+      </div>
+
+      {/* Deployment mode badge */}
+      <div className="flex items-center gap-3 p-4 rounded-xl bg-[#0d0d15] border border-[#1a1a2e]">
+        <span className="text-2xl">{deployMode === 'external' ? '☁️' : '🖥️'}</span>
+        <div>
+          <div className="text-sm text-gray-400">Deployment Mode</div>
+          <div className="font-medium text-white capitalize">{deployMode} Services</div>
+        </div>
+      </div>
+
+      {/* Selected services */}
+      <div className="space-y-3">
+        <h3 className="text-sm font-medium text-gray-300">
+          Configured Services ({selectedInfrastructure.length})
+        </h3>
+        <div className="space-y-2">
+          {selectedInfrastructure.map((infra) => (
+            <div
+              key={infra.service.service_type}
+              className="flex items-center justify-between p-4 rounded-xl bg-[#0d0d15] border border-[#1a1a2e]"
+            >
+              <div className="flex items-center gap-4">
+                <span className="text-2xl">{infra.service.icon}</span>
+                <div>
+                  <div className="font-medium text-white">{infra.service.name}</div>
+                  <div className="text-xs text-gray-500 font-mono">
+                    {infra.host}:{infra.port}
+                  </div>
+                </div>
+              </div>
+              <div className={`flex items-center gap-2 ${getHealthColor(infra.healthStatus)}`}>
+                <span className="text-lg">{getHealthIcon(infra.healthStatus)}</span>
+                <span className="text-sm capitalize">{infra.healthStatus}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Summary stats */}
+      <div className="grid grid-cols-3 gap-4">
+        <div className="p-4 rounded-xl bg-[#0d0d15] border border-[#1a1a2e] text-center">
+          <div className="text-2xl font-bold text-[#00f0ff]">{selectedInfrastructure.length}</div>
+          <div className="text-xs text-gray-500">Services Enabled</div>
+        </div>
+        <div className="p-4 rounded-xl bg-[#0d0d15] border border-[#1a1a2e] text-center">
+          <div className="text-2xl font-bold text-[#ff00f0]">
+            {selectedInfrastructure.filter(s => s.service.service_type === 'nats').length}
+          </div>
+          <div className="text-xs text-gray-500">NATS Enabled</div>
+        </div>
+        <div className="p-4 rounded-xl bg-[#0d0d15] border border-[#1a1a2e] text-center">
+          <div className="text-2xl font-bold text-green-400">
+            {selectedInfrastructure.filter(s => s.service.service_type === 'postgres' || s.service.service_type === 'qdrant').length}
+          </div>
+          <div className="text-xs text-gray-500">Vector Stores</div>
+        </div>
+      </div>
+
+      <div className={styles.nav}>
+        <button onClick={onBack} className={styles.buttonSecondary}>
+          Back
+        </button>
+        <button onClick={onNext} className={styles.buttonPrimary}>
+          Continue to Model Preferences
+        </button>
+      </div>
+    </div>
+  );
+}
+
 function TierSelectionStep({
   tiers,
   selectedTierId,
@@ -977,6 +1273,8 @@ const STEP_ORDER: WizardStep[] = [
   'welcome',
   'providers',
   'api-keys',
+  'infrastructure',
+  'infrastructure-review',
   'models',
   'tier',
   'review',
@@ -997,6 +1295,8 @@ export function ConfigWizard({ onComplete }: { onComplete?: () => void }) {
     deploymentResult,
     isLoadingProviders,
     isLoadingTiers,
+    selectedInfrastructure,
+    deployMode,
     setStep,
     nextStep,
     goBack,
@@ -1010,8 +1310,13 @@ export function ConfigWizard({ onComplete }: { onComplete?: () => void }) {
     setIsDeploying,
     setDeploymentResult,
     setIsValidating,
+    setIsLoadingInfrastructure,
     setError,
     resetWizard,
+    addInfrastructure,
+    removeInfrastructure,
+    updateInfrastructure,
+    setDeployMode,
   } = useConfigWizardStore();
 
   // Load providers and tiers on mount
@@ -1034,6 +1339,24 @@ export function ConfigWizard({ onComplete }: { onComplete?: () => void }) {
       loadData();
     }
   }, [currentStep, availableProviders.length, setProviders, setTiers, setError, toast]);
+
+  // Infrastructure service toggle handler
+  const toggleInfrastructureService = useCallback((serviceType: string) => {
+    const isSelected = selectedInfrastructure.some(s => s.service.service_type === serviceType);
+    if (isSelected) {
+      removeInfrastructure(serviceType);
+    } else {
+      const service = INFRASTRUCTURE_SERVICES.find(s => s.service_type === serviceType);
+      if (service) {
+        addInfrastructure(service);
+      }
+    }
+  }, [selectedInfrastructure, addInfrastructure, removeInfrastructure]);
+
+  // Update infrastructure config (host, port, connectionUrl)
+  const updateInfrastructureConfig = useCallback((serviceType: string, updates: Partial<SelectedInfrastructure>) => {
+    updateInfrastructure(serviceType, updates);
+  }, [updateInfrastructure]);
 
   const handleValidate = useCallback(
     async (provider: SelectedProvider) => {
@@ -1176,6 +1499,29 @@ export function ConfigWizard({ onComplete }: { onComplete?: () => void }) {
             selectedProviders={selectedProviders}
             onUpdateProvider={updateProvider}
             onValidate={handleValidate}
+            onNext={nextStep}
+            onBack={goBack}
+          />
+        );
+
+      case 'infrastructure':
+        return (
+          <InfrastructureStep
+            selectedInfrastructure={selectedInfrastructure}
+            deployMode={deployMode}
+            onToggleService={toggleInfrastructureService}
+            onUpdateService={updateInfrastructureConfig}
+            onSetDeployMode={setDeployMode}
+            onNext={nextStep}
+            onBack={goBack}
+          />
+        );
+
+      case 'infrastructure-review':
+        return (
+          <InfrastructureReviewStep
+            selectedInfrastructure={selectedInfrastructure}
+            deployMode={deployMode}
             onNext={nextStep}
             onBack={goBack}
           />

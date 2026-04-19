@@ -22,6 +22,8 @@ export type WizardStep =
   | 'welcome'
   | 'providers'
   | 'api-keys'
+  | 'infrastructure'
+  | 'infrastructure-review'
   | 'models'
   | 'tier'
   | 'review'
@@ -37,6 +39,76 @@ export interface SelectedProvider {
   isValidated: boolean;
   validationError?: string;
 }
+
+// Infrastructure service types
+export interface InfrastructureServiceConfig {
+  service_type: 'postgres' | 'redis' | 'qdrant' | 'nats' | 'mem0';
+  name: string;
+  description: string;
+  icon: string;
+  default_host: string;
+  default_port: number;
+  requires_connection_url: boolean;
+}
+
+export interface SelectedInfrastructure {
+  service: InfrastructureServiceConfig;
+  host: string;
+  port: number;
+  connectionUrl: string;
+  isConfigured: boolean;
+  healthStatus: 'healthy' | 'unhealthy' | 'unknown' | 'degraded';
+  healthError?: string;
+}
+
+// Available infrastructure services
+export const INFRASTRUCTURE_SERVICES: InfrastructureServiceConfig[] = [
+  {
+    service_type: 'postgres',
+    name: 'PostgreSQL',
+    description: 'Vector store and persistent data',
+    icon: '🐘',
+    default_host: 'localhost',
+    default_port: 5432,
+    requires_connection_url: false,
+  },
+  {
+    service_type: 'redis',
+    name: 'Redis',
+    description: 'Cache and pub/sub messaging',
+    icon: '🔴',
+    default_host: 'localhost',
+    default_port: 6379,
+    requires_connection_url: false,
+  },
+  {
+    service_type: 'qdrant',
+    name: 'Qdrant',
+    description: 'Vector similarity search engine',
+    icon: '🔍',
+    default_host: 'localhost',
+    default_port: 6333,
+    requires_connection_url: false,
+  },
+  {
+    service_type: 'nats',
+    name: 'NATS',
+    description: 'Agent communication and events',
+    icon: '📨',
+    default_host: 'localhost',
+    default_port: 4222,
+    requires_connection_url: false,
+  },
+  {
+    service_type: 'mem0',
+    name: 'Mem0',
+    description: 'Agent memory and context',
+    icon: '🧠',
+    default_host: 'localhost',
+    default_port: 8000,
+    requires_connection_url: false,
+  },
+];
 
 export interface WizardState {
   // Current wizard step
@@ -70,9 +142,15 @@ export interface WizardState {
   // Configuration status
   configStatus: ConfigStatus | null;
 
+  // Infrastructure services
+  availableInfrastructure: InfrastructureServiceConfig[];
+  selectedInfrastructure: SelectedInfrastructure[];
+  deployMode: 'external' | 'local' | null;
+
   // Loading states
   isLoadingProviders: boolean;
   isLoadingTiers: boolean;
+  isLoadingInfrastructure: boolean;
   isValidating: boolean;
   isSubmitting: boolean;
 
@@ -88,6 +166,12 @@ export interface WizardState {
   setProviders: (providers: Provider[]) => void;
   setTiers: (tiers: AgentTier[]) => void;
   setConfigStatus: (status: ConfigStatus) => void;
+
+  setInfrastructure: (services: InfrastructureServiceConfig[]) => void;
+  addInfrastructure: (service: InfrastructureServiceConfig) => void;
+  removeInfrastructure: (serviceType: string) => void;
+  updateInfrastructure: (serviceType: string, updates: Partial<SelectedInfrastructure>) => void;
+  setDeployMode: (mode: 'external' | 'local' | null) => void;
 
   addProvider: (provider: Provider) => void;
   removeProvider: (providerId: string) => void;
@@ -107,6 +191,7 @@ export interface WizardState {
 
   setIsLoadingProviders: (isLoading: boolean) => void;
   setIsLoadingTiers: (isLoading: boolean) => void;
+  setIsLoadingInfrastructure: (isLoading: boolean) => void;
   setIsValidating: (isValidating: boolean) => void;
   setIsSubmitting: (isSubmitting: boolean) => void;
   setError: (error: string | null) => void;
@@ -119,6 +204,8 @@ const STEP_ORDER: WizardStep[] = [
   'welcome',
   'providers',
   'api-keys',
+  'infrastructure',
+  'infrastructure-review',
   'models',
   'tier',
   'review',
@@ -145,8 +232,12 @@ const initialState = {
   isDeploying: false,
   deploymentResult: null,
   configStatus: null,
+  availableInfrastructure: [] as InfrastructureServiceConfig[],
+  selectedInfrastructure: [] as SelectedInfrastructure[],
+  deployMode: null,
   isLoadingProviders: false,
   isLoadingTiers: false,
+  isLoadingInfrastructure: false,
   isValidating: false,
   isSubmitting: false,
   error: null,
@@ -213,6 +304,49 @@ export const useConfigWizardStore = create<WizardState>()(
 
       setConfigStatus: (status: ConfigStatus) => {
         set({ configStatus: status });
+      },
+
+      // Infrastructure management
+      setInfrastructure: (services: InfrastructureServiceConfig[]) => {
+        set({ availableInfrastructure: services });
+      },
+
+      addInfrastructure: (service: InfrastructureServiceConfig) => {
+        const { selectedInfrastructure } = get();
+        const exists = selectedInfrastructure.some((s) => s.service.service_type === service.service_type);
+        if (!exists) {
+          const selected: SelectedInfrastructure = {
+            service,
+            host: service.default_host,
+            port: service.default_port,
+            connectionUrl: '',
+            isConfigured: false,
+            healthStatus: 'unknown',
+          };
+          set({ selectedInfrastructure: [...selectedInfrastructure, selected] });
+        }
+      },
+
+      removeInfrastructure: (serviceType: string) => {
+        const { selectedInfrastructure } = get();
+        set({
+          selectedInfrastructure: selectedInfrastructure.filter(
+            (s) => s.service.service_type !== serviceType
+          ),
+        });
+      },
+
+      updateInfrastructure: (serviceType: string, updates: Partial<SelectedInfrastructure>) => {
+        const { selectedInfrastructure } = get();
+        set({
+          selectedInfrastructure: selectedInfrastructure.map((s) =>
+            s.service.service_type === serviceType ? { ...s, ...updates } : s
+          ),
+        });
+      },
+
+      setDeployMode: (mode: 'external' | 'local' | null) => {
+        set({ deployMode: mode });
       },
 
       // Provider management
@@ -292,6 +426,10 @@ export const useConfigWizardStore = create<WizardState>()(
 
       setIsLoadingTiers: (isLoading: boolean) => {
         set({ isLoadingTiers: isLoading });
+      },
+
+      setIsLoadingInfrastructure: (isLoading: boolean) => {
+        set({ isLoadingInfrastructure: isLoading });
       },
 
       setIsValidating: (isValidating: boolean) => {

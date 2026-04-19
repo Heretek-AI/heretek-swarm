@@ -106,6 +106,35 @@ export interface SubmitResult {
   errors: string[];
 }
 
+// Infrastructure types
+export interface InfrastructureConfig {
+  id: string;
+  service: string;
+  host: string;
+  port: number;
+  connection_url?: string;
+  is_enabled: boolean;
+  health_status: 'healthy' | 'unhealthy' | 'unknown' | 'degraded';
+  last_health_check?: string;
+  health_check_latency_ms?: number;
+  health_check_error?: string;
+}
+
+export interface InfrastructureCreate {
+  service: string;
+  host: string;
+  port: number;
+  connection_url?: string;
+  is_enabled?: boolean;
+}
+
+export interface HealthCheckResult {
+  service: string;
+  status: 'healthy' | 'unhealthy' | 'unknown' | 'degraded';
+  latency_ms: number;
+  error?: string;
+}
+
 // =============================================================================
 // API Functions
 // =============================================================================
@@ -209,4 +238,122 @@ export async function resetWizard(): Promise<{ success: boolean; message: string
   return fetchJson<{ success: boolean; message: string }>('/api/wizard/reset', {
     method: 'POST',
   });
+}
+
+// =============================================================================
+// Infrastructure API Functions
+// =============================================================================
+
+/**
+ * Get list of infrastructure service configurations
+ */
+export async function getInfrastructureConfigs(): Promise<{
+  infrastructure: InfrastructureConfig[];
+  total: number;
+}> {
+  return fetchJson<{ infrastructure: InfrastructureConfig[]; total: number }>(
+    '/api/wizard/infrastructure'
+  );
+}
+
+/**
+ * Create or update infrastructure service configuration
+ */
+export async function saveInfrastructureConfig(
+  config: InfrastructureCreate
+): Promise<{
+  id: string;
+  service: string;
+  host: string;
+  port: number;
+  connection_url?: string;
+  is_enabled: boolean;
+  message: string;
+}> {
+  return fetchJson<{
+    id: string;
+    service: string;
+    host: string;
+    port: number;
+    connection_url?: string;
+    is_enabled: boolean;
+    message: string;
+  }>('/api/wizard/infrastructure', {
+    method: 'POST',
+    body: JSON.stringify(config),
+  });
+}
+
+/**
+ * Get infrastructure configuration for a specific service
+ */
+export async function getInfrastructureConfig(
+  service: string
+): Promise<InfrastructureConfig> {
+  return fetchJson<InfrastructureConfig>(`/api/wizard/infrastructure/${service}`);
+}
+
+/**
+ * Run health check for a specific infrastructure service
+ */
+export async function checkInfrastructureHealth(
+  service: string
+): Promise<HealthCheckResult> {
+  return fetchJson<HealthCheckResult>(
+    `/api/wizard/infrastructure/${service}/health-check`,
+    { method: 'POST' }
+  );
+}
+
+/**
+ * Run health check for all configured infrastructure services
+ */
+export async function checkAllInfrastructureHealth(): Promise<{
+  results: HealthCheckResult[];
+  summary: {
+    total: number;
+    healthy: number;
+    unhealthy: number;
+    degraded: number;
+  } | string;
+}> {
+  return fetchJson<{
+    results: HealthCheckResult[];
+    summary: {
+      total: number;
+      healthy: number;
+      unhealthy: number;
+      degraded: number;
+    } | string;
+  }>('/api/wizard/infrastructure/health-check-all', {
+    method: 'POST',
+  });
+}
+
+/**
+ * Delete infrastructure configuration for a service
+ */
+export async function deleteInfrastructureConfig(
+  service: string
+): Promise<{ success: boolean }> {
+  const response = await fetch(
+    `${API_URL}/api/wizard/infrastructure/${service}`,
+    {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }
+  );
+
+  if (response.status === 204) {
+    return { success: true };
+  }
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.detail || `HTTP ${response.status}`);
+  }
+
+  return response.json();
 }

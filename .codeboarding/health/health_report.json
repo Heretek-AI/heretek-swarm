@@ -1,7 +1,7 @@
 {
   "repository_name": "heretek-swarm",
-  "timestamp": "2026-04-19T01:50:37.640216+00:00",
-  "overall_score": 0.9891585104534661,
+  "timestamp": "2026-04-19T01:53:42.921455+00:00",
+  "overall_score": 0.9891012277044243,
   "check_summaries": [
     {
       "check_name": "function_size",
@@ -1264,8 +1264,8 @@
       "description": "Detects unused imports, variables, functions, and dead code via LSP diagnostics",
       "language": "TypeScript",
       "check_type": "standard",
-      "total_entities_checked": 24,
-      "findings_count": 24,
+      "total_entities_checked": 25,
+      "findings_count": 25,
       "warning_count": 0,
       "score": 0.0,
       "finding_groups": [
@@ -1447,6 +1447,20 @@
               "file_path": "dashboard/frontend/src/App.tsx",
               "line_start": 264,
               "line_end": 267,
+              "metric_value": 0.0
+            }
+          ]
+        },
+        {
+          "severity": "info",
+          "threshold": 0,
+          "description": "Unused import statements that should be removed",
+          "entities": [
+            {
+              "entity_name": "[unused_import] 'ProviderConfig' is declared but never used.",
+              "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
+              "line_start": 13,
+              "line_end": 13,
               "metric_value": 0.0
             }
           ]
