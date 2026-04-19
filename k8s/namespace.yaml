@@ -1,7 +1,0 @@
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: heretek-swarm
-  labels:
-    name: heretek-swarm
-    environment: production
