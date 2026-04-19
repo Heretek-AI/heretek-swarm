@@ -22,6 +22,8 @@ from typing import Any
 import structlog
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 
 from heretek_swarm.logging.config import logger as logging_logger
 
@@ -100,6 +102,7 @@ async def lifespan(app: FastAPI):
     await _init_memory_store()
     await _init_mem0()
     await _init_nats_bridge()
+    await _init_spa_mount(app)
     await _log_startup_complete()
 
     yield
@@ -369,6 +372,24 @@ async def _init_nats_bridge() -> None:
         _nats_mesh = None
 
 
+async def _init_spa_mount(app: FastAPI) -> None:
+    """Mount React dashboard static files if dist directory exists."""
+    import os
+
+    # Calculate project root: src/heretek_swarm/api/main.py -> project root (4 levels up)
+    project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+    dist_path = os.environ.get(
+        "DASHBOARD_DIST_PATH",
+        os.path.join(project_root, "dashboard", "frontend", "dist")
+    )
+
+    if os.path.isdir(dist_path):
+        app.mount("/assets", StaticFiles(directory=dist_path, html=True), name="dashboard_assets")
+        logger.info("dashboard_spa_mounted", dist_path=dist_path)
+    else:
+        logger.warning("dashboard_dist_not_found", dist_path=dist_path)
+
+
 async def _log_startup_complete() -> None:
     """Log application startup completion."""
     logger.info(
@@ -446,6 +467,12 @@ logger.info("OpenTelemetry tracing middleware configured")
 rate_limit_enabled = os.environ.get("RATE_LIMIT_ENABLED", "true").lower() == "true"
 setup_rate_limiting(app, enabled=rate_limit_enabled)
 logger.info("Rate limiting configured", enabled=rate_limit_enabled)
+
+
+# =============================================================================
+# SPA Catch-all Route (must be last to not intercept API routes)
+# =============================================================================
+# NOTE: This route is defined at the end of the file to ensure API routes are registered first
 
 
 # =============================================================================
@@ -1070,14 +1097,54 @@ async def get_a2a_conversation(from_agent: str, to_agent: str, limit: int = 50):
 # =============================================================================
 
 
-@app.get("/")
+@app.get("/", include_in_schema=False)
 async def root():
-    """Root endpoint with API information."""
-    return {
-        "name": "Heretek Swarm API",
-        "version": "0.1.0",
-        "docs": "/docs",
-        "redoc": "/redoc",
-        "workflows": "/api/workflows",
-        "metrics": "/metrics",
-    }
+    """Root endpoint serving the React dashboard index.html."""
+    import os
+
+    # Calculate project root: src/heretek_swarm/api/main.py -> project root (4 levels up)
+    project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+    dist_path = os.environ.get(
+        "DASHBOARD_DIST_PATH",
+        os.path.join(project_root, "dashboard", "frontend", "dist")
+    )
+    index_path = os.path.join(dist_path, "index.html")
+
+    if os.path.isfile(index_path):
+        return FileResponse(index_path)
+    else:
+        logger.warning("dashboard_dist_not_found", dist_path=dist_path)
+        raise HTTPException(404, "Dashboard not available")
+
+
+# =============================================================================
+# SPA Catch-all Route (must be last to not intercept API routes)
+# =============================================================================
+
+
+@app.get("/{path:path}", include_in_schema=False)
+async def serve_spa(path: str):
+    """
+    SPA catch-all route - serves index.html for any non-API, non-metrics path.
+    Must be registered after all API routes.
+    """
+    import os
+
+    # Skip API routes and metrics endpoint
+    if path.startswith("api/") or path.startswith("metrics") or path.startswith("docs") or path.startswith("redoc") or path.startswith("openapi"):
+        raise HTTPException(404, "Not found")
+
+    # Calculate project root: src/heretek_swarm/api/main.py -> project root (4 levels up)
+    project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+    dist_path = os.environ.get(
+        "DASHBOARD_DIST_PATH",
+        os.path.join(project_root, "dashboard", "frontend", "dist")
+    )
+    index_path = os.path.join(dist_path, "index.html")
+
+    if os.path.isfile(index_path):
+        logger.debug("spa_fallback", path=path)
+        return FileResponse(index_path)
+    else:
+        logger.warning("dashboard_dist_not_found", dist_path=dist_path)
+        raise HTTPException(404, "Dashboard not available")

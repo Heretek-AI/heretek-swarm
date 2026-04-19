@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-19T15:55:36.040481+00:00",
+    "generated_at": "2026-04-19T16:28:25.949676+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -7930,14 +7930,14 @@
       ]
     },
     "src/heretek_swarm/api/main.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.api.main.lifespan",
-          "start_line": 91,
-          "end_line": 124,
+          "start_line": 93,
+          "end_line": 127,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.main._init_config_service",
@@ -8001,6 +8001,13 @@
           "end_line": 377,
           "node_type": "FUNCTION",
           "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.main._init_spa_mount",
+          "start_line": 375,
+          "end_line": 388,
+          "node_type": "FUNCTION",
+          "status": "added"
         },
         {
           "qualified_name": "src.heretek_swarm.api.main.check_gateway",
@@ -8137,10 +8144,17 @@
         },
         {
           "qualified_name": "src.heretek_swarm.api.main.root",
-          "start_line": 1074,
-          "end_line": 1083,
+          "start_line": 1101,
+          "end_line": 1117,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.main.serve_spa",
+          "start_line": 1126,
+          "end_line": 1150,
+          "node_type": "FUNCTION",
+          "status": "modified"
         }
       ]
     },
@@ -61595,10 +61609,10 @@
     "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main.lifespan": {
       "file_path": "src/heretek_swarm/api/main.py",
       "qualified_name": "src.heretek_swarm.api.main.lifespan",
-      "start_line": 91,
-      "end_line": 124,
+      "start_line": 93,
+      "end_line": 127,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main._init_config_service": {
       "file_path": "src/heretek_swarm/api/main.py",
@@ -61671,6 +61685,14 @@
       "end_line": 377,
       "type": "FUNCTION",
       "status": "unchanged"
+    },
+    "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main._init_spa_mount": {
+      "file_path": "src/heretek_swarm/api/main.py",
+      "qualified_name": "src.heretek_swarm.api.main._init_spa_mount",
+      "start_line": 375,
+      "end_line": 388,
+      "type": "FUNCTION",
+      "status": "added"
     },
     "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main.check_gateway": {
       "file_path": "src/heretek_swarm/api/main.py",
@@ -61827,10 +61849,18 @@
     "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main.root": {
       "file_path": "src/heretek_swarm/api/main.py",
       "qualified_name": "src.heretek_swarm.api.main.root",
-      "start_line": 1074,
-      "end_line": 1083,
+      "start_line": 1101,
+      "end_line": 1117,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
+    },
+    "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main.serve_spa": {
+      "file_path": "src/heretek_swarm/api/main.py",
+      "qualified_name": "src.heretek_swarm.api.main.serve_spa",
+      "start_line": 1126,
+      "end_line": 1150,
+      "type": "FUNCTION",
+      "status": "modified"
     },
     "src/heretek_swarm/api/mcp.py|src.heretek_swarm.api.mcp.get_mcp_server": {
       "file_path": "src/heretek_swarm/api/mcp.py",
@@ -112786,7 +112816,7 @@
         },
         {
           "file_path": "src/heretek_swarm/api/main.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "src.heretek_swarm.api.main.lifespan",
             "src.heretek_swarm.api.main._init_config_service",
@@ -112798,6 +112828,7 @@
             "src.heretek_swarm.api.main._init_nats_bridge.a2a_event_handler",
             "src.heretek_swarm.api.main._init_nats_bridge.external_call_handler",
             "src.heretek_swarm.api.main._log_startup_complete",
+            "src.heretek_swarm.api.main._init_spa_mount",
             "src.heretek_swarm.api.main.check_gateway",
             "src.heretek_swarm.api.main.check_redis",
             "src.heretek_swarm.api.main.check_postgres",
@@ -112817,7 +112848,8 @@
             "src.heretek_swarm.api.main.get_agent_memories",
             "src.heretek_swarm.api.main.get_a2a_messages",
             "src.heretek_swarm.api.main.get_a2a_conversation",
-            "src.heretek_swarm.api.main.root"
+            "src.heretek_swarm.api.main.root",
+            "src.heretek_swarm.api.main.serve_spa"
           ]
         },
         {
@@ -119109,7 +119141,7 @@
             },
             {
               "file_path": "src/heretek_swarm/api/main.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.heretek_swarm.api.main.lifespan",
                 "src.heretek_swarm.api.main._init_config_service",
@@ -119121,6 +119153,7 @@
                 "src.heretek_swarm.api.main._init_nats_bridge.a2a_event_handler",
                 "src.heretek_swarm.api.main._init_nats_bridge.external_call_handler",
                 "src.heretek_swarm.api.main._log_startup_complete",
+                "src.heretek_swarm.api.main._init_spa_mount",
                 "src.heretek_swarm.api.main.check_gateway",
                 "src.heretek_swarm.api.main.check_redis",
                 "src.heretek_swarm.api.main.check_postgres",
@@ -119140,7 +119173,8 @@
                 "src.heretek_swarm.api.main.get_agent_memories",
                 "src.heretek_swarm.api.main.get_a2a_messages",
                 "src.heretek_swarm.api.main.get_a2a_conversation",
-                "src.heretek_swarm.api.main.root"
+                "src.heretek_swarm.api.main.root",
+                "src.heretek_swarm.api.main.serve_spa"
               ]
             },
             {
@@ -126796,7 +126830,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/api/main.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.api.main.lifespan",
                     "src.heretek_swarm.api.main._init_config_service",
@@ -126808,6 +126842,7 @@
                     "src.heretek_swarm.api.main._init_nats_bridge.a2a_event_handler",
                     "src.heretek_swarm.api.main._init_nats_bridge.external_call_handler",
                     "src.heretek_swarm.api.main._log_startup_complete",
+                    "src.heretek_swarm.api.main._init_spa_mount",
                     "src.heretek_swarm.api.main.check_gateway",
                     "src.heretek_swarm.api.main.check_redis",
                     "src.heretek_swarm.api.main.check_postgres",
@@ -126827,7 +126862,8 @@
                     "src.heretek_swarm.api.main.get_agent_memories",
                     "src.heretek_swarm.api.main.get_a2a_messages",
                     "src.heretek_swarm.api.main.get_a2a_conversation",
-                    "src.heretek_swarm.api.main.root"
+                    "src.heretek_swarm.api.main.root",
+                    "src.heretek_swarm.api.main.serve_spa"
                   ]
                 },
                 {
@@ -131970,7 +132006,7 @@
                     },
                     {
                       "file_path": "src/heretek_swarm/api/main.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.api.main.lifespan",
                         "src.heretek_swarm.api.main._init_config_service",
@@ -131982,6 +132018,7 @@
                         "src.heretek_swarm.api.main._init_nats_bridge.a2a_event_handler",
                         "src.heretek_swarm.api.main._init_nats_bridge.external_call_handler",
                         "src.heretek_swarm.api.main._log_startup_complete",
+                        "src.heretek_swarm.api.main._init_spa_mount",
                         "src.heretek_swarm.api.main.check_gateway",
                         "src.heretek_swarm.api.main.check_redis",
                         "src.heretek_swarm.api.main.check_postgres",
@@ -132001,7 +132038,8 @@
                         "src.heretek_swarm.api.main.get_agent_memories",
                         "src.heretek_swarm.api.main.get_a2a_messages",
                         "src.heretek_swarm.api.main.get_a2a_conversation",
-                        "src.heretek_swarm.api.main.root"
+                        "src.heretek_swarm.api.main.root",
+                        "src.heretek_swarm.api.main.serve_spa"
                       ]
                     },
                     {
@@ -132400,7 +132438,7 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/api/main.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.api.main.lifespan",
                             "src.heretek_swarm.api.main._init_config_service",
@@ -132412,6 +132450,7 @@
                             "src.heretek_swarm.api.main._init_nats_bridge.a2a_event_handler",
                             "src.heretek_swarm.api.main._init_nats_bridge.external_call_handler",
                             "src.heretek_swarm.api.main._log_startup_complete",
+                            "src.heretek_swarm.api.main._init_spa_mount",
                             "src.heretek_swarm.api.main.check_gateway",
                             "src.heretek_swarm.api.main.check_redis",
                             "src.heretek_swarm.api.main.check_postgres",
@@ -132431,7 +132470,8 @@
                             "src.heretek_swarm.api.main.get_agent_memories",
                             "src.heretek_swarm.api.main.get_a2a_messages",
                             "src.heretek_swarm.api.main.get_a2a_conversation",
-                            "src.heretek_swarm.api.main.root"
+                            "src.heretek_swarm.api.main.root",
+                            "src.heretek_swarm.api.main.serve_spa"
                           ]
                         }
                       ],
