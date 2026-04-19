@@ -33,11 +33,13 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_asyn
 
 from heretek_swarm.gateway.auth import verify_auth
 from heretek_swarm.models.external_call_log import ExternalCallLog
+from heretek_swarm.models.external_call_log_encryption import get_encryptor
 from heretek_swarm.observability.metrics import (
     RealTimeMetricsStream,
     SwarmMetricsCollector,
 )
 from heretek_swarm.schemas.external_call_log import (
+    ExternalCallLogCreate,
     ExternalCallLogListItem,
     ExternalCallLogListResponse,
 )
@@ -1052,6 +1054,131 @@ async def get_external_calls(
             raise HTTPException(status_code=500, detail="Failed to query external call logs")
 
 
+@router.post("/external-calls", status_code=201)
+async def create_external_call(
+    request: Request,
+    log_data: ExternalCallLogCreate,
+) -> dict[str, Any]:
+    """
+    Create a new external call log entry.
+
+    Accepts external call log data, encrypts sensitive fields (request_headers,
+    request_body, response_body), stores in the database, and broadcasts to
+    WebSocket observers.
+
+    Args:
+        request: FastAPI request for rate limiting
+        log_data: External call log data to create
+
+    Returns:
+        Dict with created log ID and metadata
+    """
+    # Rate limiting
+    client_id = request.client.host if request.client else "unknown"
+    if not check_rate_limit(client_id):
+        raise HTTPException(status_code=429, detail="Rate limit exceeded")
+
+    # Zero-trust validation
+    validator = get_zero_trust()
+    validate_input(validator, {"agent_id": log_data.agent_id}, "external_call")
+    validate_input(validator, {"call_type": log_data.call_type}, "external_call")
+
+    try:
+        session_factory = _get_external_call_log_session_factory()
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error("external_calls_db_error", error=str(e))
+        raise HTTPException(status_code=503, detail="External call log database unavailable")
+
+    # Get encryptor
+    encryptor = get_encryptor()
+
+    # Encrypt sensitive fields
+    encrypted_headers = None
+    if log_data.request_headers is not None:
+        # Sanitize before encrypting
+        sanitized_headers = encryptor.sanitize(log_data.request_headers)
+        encrypted_headers = encryptor.encrypt(sanitized_headers).get("encrypted", "")
+
+    encrypted_request_body = None
+    if log_data.request_body is not None:
+        encrypted_request_body = encryptor.encrypt({"body": log_data.request_body}).get("encrypted", "")
+
+    encrypted_response_body = None
+    if log_data.response_body is not None:
+        encrypted_response_body = encryptor.encrypt({"body": log_data.response_body}).get("encrypted", "")
+
+    async with session_factory() as session:
+        try:
+            # Create ORM object
+            log = ExternalCallLog(
+                agent_id=log_data.agent_id,
+                agent_type=log_data.agent_type,
+                call_type=log_data.call_type,
+                url=log_data.url,
+                method=log_data.method,
+                status_code=log_data.status_code,
+                duration_ms=log_data.duration_ms,
+                request_headers_encrypted=encrypted_headers,
+                request_body_encrypted=encrypted_request_body,
+                response_body_encrypted=encrypted_response_body,
+                tool_name=log_data.tool_name,
+                error_message=log_data.error_message,
+            )
+
+            # Store in DB
+            session.add(log)
+            await session.commit()
+            await session.refresh(log)
+
+            logger.info(
+                "external_call_created",
+                log_id=str(log.id),
+                agent_id=log_data.agent_id,
+                call_type=log_data.call_type,
+            )
+
+            # Broadcast to WebSocket
+            await connection_manager.broadcast_observability({
+                "type": "external_call_created",
+                "data": {
+                    "id": str(log.id),
+                    "agent_id": log.agent_id,
+                    "agent_type": log.agent_type,
+                    "call_type": log.call_type,
+                    "url": log.url,
+                    "method": log.method,
+                    "status_code": log.status_code,
+                    "duration_ms": log.duration_ms,
+                    "tool_name": log.tool_name,
+                    "error_message": log.error_message,
+                    "created_at": log.created_at.isoformat() if log.created_at else None,
+                },
+                "timestamp": datetime.now(UTC).isoformat(),
+            })
+
+            return {
+                "id": str(log.id),
+                "agent_id": log.agent_id,
+                "agent_type": log.agent_type,
+                "call_type": log.call_type,
+                "url": log.url,
+                "method": log.method,
+                "status_code": log.status_code,
+                "duration_ms": log.duration_ms,
+                "tool_name": log.tool_name,
+                "error_message": log.error_message,
+                "created_at": log.created_at.isoformat() if log.created_at else None,
+                "message": "External call log created successfully",
+            }
+
+        except Exception as e:
+            logger.error("external_call_create_error", error=str(e), exc_info=True)
+            await session.rollback()
+            raise HTTPException(status_code=500, detail="Failed to create external call log")
+
+
 # ============== HELPER CLASSES ==============
 
 
@@ -1110,6 +1237,27 @@ class ConnectionManager:
                 await websocket.send_json(trace.to_dict())
             except Exception as e:
                 logger.error("websocket_send_failed", agent_id=agent_id, error=str(e))
+
+    async def broadcast_observability(self, data: dict[str, Any]):
+        """Broadcast observability update to all connections.
+
+        Broadcasts to all active WebSocket connections regardless of agent.
+        Used for external call logs, metrics, and other observability events.
+        """
+        disconnected = set()
+        for agent_id, websocket in self.active_connections.items():
+            try:
+                await websocket.send_json(data)
+            except Exception as e:
+                logger.debug(
+                    "websocket_broadcast_disconnect", agent_id=agent_id, error=str(e)
+                )
+                disconnected.add(websocket)
+        # Clean up disconnected
+        for ws in disconnected:
+            for aid, w in list(self.active_connections.items()):
+                if w == ws:
+                    del self.active_connections[aid]
 
 
 connection_manager = ConnectionManager()
