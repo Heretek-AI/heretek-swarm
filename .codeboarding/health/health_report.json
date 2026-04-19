@@ -1,7 +1,7 @@
 {
   "repository_name": "heretek-swarm",
-  "timestamp": "2026-04-19T15:48:59.010671+00:00",
-  "overall_score": 0.9867683596232738,
+  "timestamp": "2026-04-19T15:55:37.432068+00:00",
+  "overall_score": 0.9857431457431457,
   "check_summaries": [
     {
       "check_name": "function_size",
@@ -790,9 +790,9 @@
       "description": "Detects unused imports, variables, functions, and dead code via LSP diagnostics",
       "language": "Python",
       "check_type": "standard",
-      "total_entities_checked": 57,
-      "findings_count": 57,
-      "warning_count": 6,
+      "total_entities_checked": 75,
+      "findings_count": 75,
+      "warning_count": 13,
       "score": 0.0,
       "finding_groups": [
         {
@@ -1156,6 +1156,83 @@
               "line_start": 994,
               "line_end": 994,
               "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"shutil\" is not accessed",
+              "file_path": "src/heretek_swarm/cli.py",
+              "line_start": 12,
+              "line_end": 12,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"threading\" is not accessed",
+              "file_path": "src/heretek_swarm/cli.py",
+              "line_start": 15,
+              "line_end": 15,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"reader\" is not accessed",
+              "file_path": "src/heretek_swarm/cli.py",
+              "line_start": 97,
+              "line_end": 97,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"time\" is not accessed",
+              "file_path": "src/heretek_swarm/cli.py",
+              "line_start": 110,
+              "line_end": 110,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"time\" is not accessed",
+              "file_path": "src/heretek_swarm/cli.py",
+              "line_start": 124,
+              "line_end": 124,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"time\" is not accessed",
+              "file_path": "src/heretek_swarm/cli.py",
+              "line_start": 140,
+              "line_end": 140,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"time\" is not accessed",
+              "file_path": "src/heretek_swarm/cli.py",
+              "line_start": 177,
+              "line_end": 177,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"check_runtime\" is not accessed",
+              "file_path": "src/heretek_swarm/cli.py",
+              "line_start": 259,
+              "line_end": 259,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"frame\" is not accessed",
+              "file_path": "src/heretek_swarm/cli.py",
+              "line_start": 386,
+              "line_end": 386,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"os\" is not accessed",
+              "file_path": "src/heretek_swarm/cli.py",
+              "line_start": 497,
+              "line_end": 497,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"output_json\" is not accessed",
+              "file_path": "src/heretek_swarm/cli.py",
+              "line_start": 579,
+              "line_end": 579,
+              "metric_value": 0.0
             }
           ]
         },
@@ -1204,6 +1281,55 @@
               "file_path": "src/heretek_swarm/api/main.py",
               "line_start": 19,
               "line_end": 19,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"shutil\" is not accessed",
+              "file_path": "src/heretek_swarm/cli.py",
+              "line_start": 12,
+              "line_end": 12,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"threading\" is not accessed",
+              "file_path": "src/heretek_swarm/cli.py",
+              "line_start": 15,
+              "line_end": 15,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"time\" is not accessed",
+              "file_path": "src/heretek_swarm/cli.py",
+              "line_start": 110,
+              "line_end": 110,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"time\" is not accessed",
+              "file_path": "src/heretek_swarm/cli.py",
+              "line_start": 124,
+              "line_end": 124,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"time\" is not accessed",
+              "file_path": "src/heretek_swarm/cli.py",
+              "line_start": 140,
+              "line_end": 140,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"time\" is not accessed",
+              "file_path": "src/heretek_swarm/cli.py",
+              "line_start": 177,
+              "line_end": 177,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"os\" is not accessed",
+              "file_path": "src/heretek_swarm/cli.py",
+              "line_start": 497,
+              "line_end": 497,
               "metric_value": 0.0
             }
           ]
@@ -1743,6 +1869,12 @@
   ],
   "file_summaries": [
     {
+      "file_path": "src/heretek_swarm/cli.py",
+      "total_findings": 18,
+      "warning_findings": 7,
+      "composite_risk_score": 85.0
+    },
+    {
       "file_path": "src/cli.py",
       "total_findings": 13,
       "warning_findings": 5,
@@ -1852,12 +1984,6 @@
     },
     {
       "file_path": "src/heretek_swarm/collective/agent_adaptation.py",
-      "total_findings": 2,
-      "warning_findings": 2,
-      "composite_risk_score": 30.0
-    },
-    {
-      "file_path": "src/heretek_swarm/collective/swarm_intelligence.py",
       "total_findings": 2,
       "warning_findings": 2,
       "composite_risk_score": 30.0

@@ -7,9 +7,12 @@ Command-line interface for Heretek Swarm deployment and management.
 from __future__ import annotations
 
 import asyncio
+import os
+import signal
 import shutil
 import subprocess
 import sys
+import threading
 import time
 from pathlib import Path
 from typing import Any
@@ -24,6 +27,10 @@ logger = structlog.get_logger("cli")
 
 # Default API base URL for CLI commands
 DEFAULT_API_BASE = "http://localhost:8000"
+
+# Global shutdown flag for signal handlers
+_shutdown_event: asyncio.Event | None = None
+_swarm_instance: "AutonomousSwarm | None" = None
 
 
 # =============================================================================
@@ -321,6 +328,208 @@ def deploy(production: bool, scale: int, nats_url: str, api_base: str, check_run
 
     click.echo("\n" + "=" * 40)
     click.echo("Deployment ready. Run 'heretek-swarm status' to verify.")
+
+
+# =============================================================================
+# Run Command - Autonomous Swarm
+# =============================================================================
+
+async def _start_autonomous_swarm() -> None:
+    """Start the AutonomousSwarm with signal handlers for graceful shutdown."""
+    from heretek_swarm.logging.config import setup_logging
+    from heretek_swarm.runtime.main_loop import AutonomousSwarm
+
+    # Set up structured logging
+    setup_logging(json_output=False, include_caller_info=False)
+
+    # Get configuration from environment
+    nats_servers_str = os.getenv("HERETEK_NATS_URL", "nats://localhost:4222")
+    nats_servers = [s.strip() for s in nats_servers_str.split(",")]
+
+    config = {
+        "nats_servers": nats_servers,
+        "health_check_interval": 30,
+        "loop_interval": 1,
+        "consciousness_interval": 5,
+        "memory_maintenance_interval": 300,
+        "scaling_interval": 60,
+        "ephemeral": {"ttl_seconds": 3600},
+        "persistent": {
+            "connection_string": os.getenv(
+                "DATABASE_URL",
+                "postgresql://heretek:password@localhost/heretek_swarm"
+            ),
+        },
+        "rag": {
+            "embedding_provider": os.getenv("RAG_EMBEDDING_PROVIDER", "openai"),
+            "embedding_model": os.getenv("RAG_EMBEDDING_MODEL", "text-embedding-3-small"),
+            "llm_provider": os.getenv("RAG_LLM_PROVIDER", "openai"),
+            "llm_model": os.getenv("RAG_LLM_MODEL", "gpt-4o-mini"),
+            "collection_name": os.getenv("RAG_COLLECTION", "heretek_documents"),
+        },
+        "consensus": {
+            "ahead_by_k": 2,
+            "min_votes": 3,
+            "red_flag_threshold": 0.3,
+        },
+    }
+
+    swarm = AutonomousSwarm(config)
+    global _swarm_instance
+    _swarm_instance = swarm
+
+    # Initialize and run
+    await swarm.initialize()
+    await swarm.run()
+
+
+def _handle_signal(signum: int, frame) -> None:
+    """Handle SIGINT/SIGTERM for graceful shutdown."""
+    sig_name = signal.Signals(signum).name
+    logger.warning("shutdown_signal_received", signal=sig_name)
+
+    if _shutdown_event:
+        logger.info("initiating_graceful_shutdown", signal=sig_name)
+        _shutdown_event.set()
+    else:
+        logger.info("immediate_exit", signal=sig_name)
+        sys.exit(0)
+
+
+@cli.command()
+@click.option(
+    "--detach",
+    is_flag=True,
+    help="Run in background (daemon mode)",
+)
+@click.option(
+    "--nats-url",
+    envvar="HERETEK_NATS_URL",
+    default="nats://localhost:4222",
+    help="NATS server URL(s), comma-separated for multiple servers",
+)
+def run(detach: bool, nats_url: str) -> None:
+    """
+    Start the Heretek Swarm autonomous runtime.
+
+    Initializes and starts the AutonomousSwarm with 23 agents across 6 tiers.
+    Supports graceful shutdown via SIGINT (Ctrl+C) and SIGTERM signals.
+
+    Configuration is read from environment variables:
+    - HERETEK_NATS_URL: NATS server URLs (default: nats://localhost:4222)
+    - DATABASE_URL: PostgreSQL connection string
+    - RAG_* environment variables for RAG configuration
+
+    Examples:
+        heretek-swarm run
+        heretek-swarm run --detach
+        HERETEK_NATS_URL=nats://cluster1:4222,nats://cluster2:4222 heretek-swarm run
+    """
+    import os
+
+    logger.info("run_command", detach=detach, nats_url=nats_url)
+
+    click.echo("Heretek Swarm Autonomous Runtime")
+    click.echo("=" * 40)
+
+    if detach:
+        click.echo("\nStarting in detached mode...")
+        # Fork process for daemon mode
+        pid = os.fork()
+        if pid > 0:
+            click.echo(f"  ✓ Process started in background (PID: {pid})")
+            click.echo("  Use 'kill {pid}' to stop, or check logs for status.")
+            sys.exit(0)
+
+    # Set up signal handlers
+    shutdown_event = asyncio.Event()
+    global _shutdown_event
+    _shutdown_event = shutdown_event
+
+    signal.signal(signal.SIGINT, _handle_signal)
+    signal.signal(signal.SIGTERM, _handle_signal)
+
+    click.echo("\nInitializing autonomous swarm...")
+    click.echo(f"  NATS: {nats_url}")
+
+    try:
+        # Run the async main
+        asyncio.run(_start_autonomous_swarm())
+    except KeyboardInterrupt:
+        logger.info("shutdown_keyboard_interrupt")
+        click.echo("\nShutdown complete.")
+    except Exception as e:
+        logger.error("startup_failure", error=str(e))
+        click.echo(f"\n✗ Failed to start: {e}")
+        sys.exit(1)
+
+
+@cli.command()
+@click.option(
+    "--host",
+    default="0.0.0.0",
+    help="Host to bind to (default: 0.0.0.0)",
+)
+@click.option(
+    "--port",
+    default=8000,
+    type=int,
+    help="Port to bind to (default: 8000)",
+)
+@click.option(
+    "--workers",
+    default=1,
+    type=int,
+    help="Number of worker processes (default: 1)",
+)
+def serve(host: str, port: int, workers: int) -> None:
+    """
+    Start the Heretek Swarm API server.
+
+    Starts uvicorn with the FastAPI application on the specified host and port.
+    Uses structured logging via uvicorn's built-in configuration.
+
+    Examples:
+        heretek-swarm serve
+        heretek-swarm serve --host 127.0.0.1 --port 9000
+        heretek-swarm serve --workers 4
+    """
+    import os
+
+    logger.info("serve_command", host=host, port=port, workers=workers)
+
+    click.echo("Heretek Swarm API Server")
+    click.echo("=" * 40)
+
+    # Check if uvicorn is available
+    try:
+        import uvicorn
+    except ImportError:
+        click.echo("\n✗ uvicorn not installed. Install with: pip install uvicorn")
+        sys.exit(1)
+
+    click.echo(f"\nStarting API server on {host}:{port}...")
+    click.echo("  Press Ctrl+C to stop")
+
+    # Build uvicorn command
+    app_module = "heretek_swarm.api.app:app"
+
+    # Configure logging for uvicorn
+    log_config = uvicorn.config.LOGGING_CONFIG
+    log_config["formatters"]["default"]["fmt"] = (
+        "%(asctime)s | %(levelname)s | %(name)s | %(message)s"
+    )
+    log_config["formatters"]["access"]["fmt"] = (
+        '%(asctime)s | %(client_addr)s | "%(request_line)s" %(status_code)s'
+    )
+
+    uvicorn.run(
+        app_module,
+        host=host,
+        port=port,
+        workers=workers,
+        log_config=log_config,
+    )
 
 
 @cli.command()
