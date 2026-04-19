@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-19T03:42:13.828311+00:00",
+    "generated_at": "2026-04-19T03:52:44.380311+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -7976,10 +7976,10 @@
         },
         {
           "qualified_name": "src.heretek_swarm.api.main._init_nats_bridge",
-          "start_line": 301,
-          "end_line": 344,
+          "start_line": 302,
+          "end_line": 369,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.main._init_nats_bridge.a2a_event_handler",
@@ -7987,6 +7987,13 @@
           "end_line": 332,
           "node_type": "FUNCTION",
           "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.main._init_nats_bridge.external_call_handler",
+          "start_line": 341,
+          "end_line": 360,
+          "node_type": "FUNCTION",
+          "status": "added"
         },
         {
           "qualified_name": "src.heretek_swarm.api.main._log_startup_complete",
@@ -61328,10 +61335,10 @@
     "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main._init_nats_bridge": {
       "file_path": "src/heretek_swarm/api/main.py",
       "qualified_name": "src.heretek_swarm.api.main._init_nats_bridge",
-      "start_line": 301,
-      "end_line": 344,
+      "start_line": 302,
+      "end_line": 369,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main._init_nats_bridge.a2a_event_handler": {
       "file_path": "src/heretek_swarm/api/main.py",
@@ -61340,6 +61347,14 @@
       "end_line": 332,
       "type": "FUNCTION",
       "status": "unchanged"
+    },
+    "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main._init_nats_bridge.external_call_handler": {
+      "file_path": "src/heretek_swarm/api/main.py",
+      "qualified_name": "src.heretek_swarm.api.main._init_nats_bridge.external_call_handler",
+      "start_line": 341,
+      "end_line": 360,
+      "type": "FUNCTION",
+      "status": "added"
     },
     "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main._log_startup_complete": {
       "file_path": "src/heretek_swarm/api/main.py",
@@ -112175,6 +112190,7 @@
             "src.heretek_swarm.api.main._init_mem0",
             "src.heretek_swarm.api.main._init_nats_bridge",
             "src.heretek_swarm.api.main._init_nats_bridge.a2a_event_handler",
+            "src.heretek_swarm.api.main._init_nats_bridge.external_call_handler",
             "src.heretek_swarm.api.main._log_startup_complete",
             "src.heretek_swarm.api.main.check_gateway",
             "src.heretek_swarm.api.main.check_redis",
@@ -118506,6 +118522,7 @@
                 "src.heretek_swarm.api.main._init_mem0",
                 "src.heretek_swarm.api.main._init_nats_bridge",
                 "src.heretek_swarm.api.main._init_nats_bridge.a2a_event_handler",
+                "src.heretek_swarm.api.main._init_nats_bridge.external_call_handler",
                 "src.heretek_swarm.api.main._log_startup_complete",
                 "src.heretek_swarm.api.main.check_gateway",
                 "src.heretek_swarm.api.main.check_redis",
@@ -126201,6 +126218,7 @@
                     "src.heretek_swarm.api.main._init_mem0",
                     "src.heretek_swarm.api.main._init_nats_bridge",
                     "src.heretek_swarm.api.main._init_nats_bridge.a2a_event_handler",
+                    "src.heretek_swarm.api.main._init_nats_bridge.external_call_handler",
                     "src.heretek_swarm.api.main._log_startup_complete",
                     "src.heretek_swarm.api.main.check_gateway",
                     "src.heretek_swarm.api.main.check_redis",
@@ -131410,6 +131428,7 @@
                         "src.heretek_swarm.api.main._init_mem0",
                         "src.heretek_swarm.api.main._init_nats_bridge",
                         "src.heretek_swarm.api.main._init_nats_bridge.a2a_event_handler",
+                        "src.heretek_swarm.api.main._init_nats_bridge.external_call_handler",
                         "src.heretek_swarm.api.main._log_startup_complete",
                         "src.heretek_swarm.api.main.check_gateway",
                         "src.heretek_swarm.api.main.check_redis",
@@ -131818,6 +131837,7 @@
                             "src.heretek_swarm.api.main._init_mem0",
                             "src.heretek_swarm.api.main._init_nats_bridge",
                             "src.heretek_swarm.api.main._init_nats_bridge.a2a_event_handler",
+                            "src.heretek_swarm.api.main._init_nats_bridge.external_call_handler",
                             "src.heretek_swarm.api.main._log_startup_complete",
                             "src.heretek_swarm.api.main.check_gateway",
                             "src.heretek_swarm.api.main.check_redis",

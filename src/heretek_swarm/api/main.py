@@ -337,7 +337,31 @@ async def _init_nats_bridge() -> None:
             # Also support wildcard pattern for agent messages
             await _nats_mesh.subscribe("agent.>.messages", a2a_event_handler)
 
-            logger.info("NATS subscription registered for A2A events")
+            # Subscribe to external call events from NATS and broadcast to dashboard
+            async def external_call_handler(
+                mesh: NATSEventMesh, subject: str, data: dict[str, Any]
+            ) -> None:
+                """Handle external call event from NATS and broadcast to WebSocket clients."""
+                try:
+                    await websockets.manager.broadcast_dashboard({
+                        "type": "external_call",
+                        **data,
+                    })
+                    logger.debug(
+                        "broadcast_external_call_from_nats",
+                        subject=subject,
+                        has_call_id=bool(data.get("call_id") or data.get("id")),
+                    )
+                except Exception as e:
+                    logger.error(
+                        "broadcast_external_call_failed",
+                        subject=subject,
+                        error=str(e),
+                    )
+
+            await _nats_mesh.subscribe("swarm.external_call", external_call_handler)
+
+            logger.info("NATS subscriptions registered for A2A events and external calls")
         else:
             logger.warning("NATS EventMesh not available, WebSocket bridge using fallback")
     except Exception as e:
