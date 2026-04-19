@@ -8,8 +8,10 @@ Provides endpoints for:
 - Real-time streaming via WebSocket
 - Swarm health metrics
 - Consciousness metrics (IIT Phi, FEP)
+- External call logs
 """
 
+import os
 import uuid
 from datetime import UTC, datetime, timedelta
 from typing import Any
@@ -26,11 +28,18 @@ from fastapi import (
 )
 from fastapi.responses import PlainTextResponse
 from pydantic import BaseModel, Field
+from sqlalchemy import func, select
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
 from heretek_swarm.gateway.auth import verify_auth
+from heretek_swarm.models.external_call_log import ExternalCallLog
 from heretek_swarm.observability.metrics import (
     RealTimeMetricsStream,
     SwarmMetricsCollector,
+)
+from heretek_swarm.schemas.external_call_log import (
+    ExternalCallLogListItem,
+    ExternalCallLogListResponse,
 )
 from heretek_swarm.security.zero_trust import LayerResult, ZeroTrustResult, ZeroTrustValidator
 
@@ -50,6 +59,34 @@ _zero_trust: ZeroTrustValidator | None = None
 _rate_limit_state: dict[str, list[datetime]] = {}
 RATE_LIMIT_REQUESTS = 100  # requests per minute
 RATE_LIMIT_WINDOW = 60  # seconds
+
+# External call log database session factory
+_external_call_log_session_factory: async_sessionmaker[AsyncSession] | None = None
+_external_call_log_engine = None
+
+
+def _get_external_call_log_session_factory() -> async_sessionmaker[AsyncSession]:
+    """Get or create the external call log database session factory."""
+    global _external_call_log_session_factory, _external_call_log_engine
+    if _external_call_log_session_factory is None:
+        database_url = os.environ.get("DATABASE_URL")
+        if not database_url:
+            raise HTTPException(
+                status_code=503,
+                detail="External call log database not available: DATABASE_URL not set",
+            )
+        _external_call_log_engine = create_async_engine(
+            database_url,
+            echo=False,
+            pool_pre_ping=True,
+        )
+        _external_call_log_session_factory = async_sessionmaker(
+            _external_call_log_engine,
+            class_=AsyncSession,
+            expire_on_commit=False,
+        )
+        logger.info("ExternalCallLog database session factory initialized")
+    return _external_call_log_session_factory
 
 
 def get_metrics_collector() -> SwarmMetricsCollector:
@@ -859,6 +896,160 @@ async def clear_traces(agent_id: str) -> dict[str, Any]:
         "cleared": count,
         "message": f"Cleared {count} traces for agent {agent_id}",
     }
+
+
+# ============== EXTERNAL CALL LOGS ENDPOINT ==============
+
+
+@router.get("/external-calls", response_model=ExternalCallLogListResponse)
+async def get_external_calls(
+    request: Request,
+    agent_id: str | None = Query(None, description="Filter by agent ID"),
+    call_type: str | None = Query(None, description="Filter by call type (http/mcp)"),
+    status: str = Query("all", description="Filter by status: success, error, or all"),
+    start_time: datetime | None = Query(None, description="Filter by start time (ISO format)"),
+    end_time: datetime | None = Query(None, description="Filter by end time (ISO format)"),
+    limit: int = Query(default=100, ge=1, le=1000, description="Maximum records to return"),
+    offset: int = Query(default=0, ge=0, description="Number of records to skip"),
+) -> ExternalCallLogListResponse:
+    """
+    Get external call logs with optional filtering and pagination.
+
+    This endpoint queries the external_call_logs table and returns paginated
+    results. Encrypted request/response bodies are loaded but sanitized before
+    being returned (sensitive data redacted).
+
+    Args:
+        request: FastAPI request for rate limiting
+        agent_id: Optional agent ID filter
+        call_type: Optional call type filter (http/mcp)
+        status: Status filter (success/error/all). success = 2xx status codes
+        start_time: Optional start time filter
+        end_time: Optional end time filter
+        limit: Maximum records to return (default 100, max 1000)
+        offset: Number of records to skip for pagination
+
+    Returns:
+        Paginated list of external call logs
+    """
+    # Rate limiting
+    client_id = request.client.host if request.client else "unknown"
+    if not check_rate_limit(client_id):
+        raise HTTPException(status_code=429, detail="Rate limit exceeded")
+
+    try:
+        session_factory = _get_external_call_log_session_factory()
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error("external_calls_db_error", error=str(e))
+        raise HTTPException(status_code=503, detail="External call log database unavailable")
+
+    async with session_factory() as session:
+        try:
+            # Build base query
+            query = select(ExternalCallLog)
+            count_query = select(func.count()).select_from(ExternalCallLog)
+
+            # Apply filters as AND conditions
+            if agent_id:
+                query = query.where(ExternalCallLog.agent_id == agent_id)
+                count_query = count_query.where(ExternalCallLog.agent_id == agent_id)
+
+            if call_type:
+                query = query.where(ExternalCallLog.call_type == call_type)
+                count_query = count_query.where(ExternalCallLog.call_type == call_type)
+
+            # Status filter
+            if status == "success":
+                # 2xx status codes
+                query = query.where(ExternalCallLog.status_code >= 200)
+                query = query.where(ExternalCallLog.status_code < 300)
+                count_query = count_query.where(ExternalCallLog.status_code >= 200)
+                count_query = count_query.where(ExternalCallLog.status_code < 300)
+            elif status == "error":
+                # Non-2xx status codes or error_message present
+                query = query.where(
+                    (ExternalCallLog.status_code < 200) |
+                    (ExternalCallLog.status_code >= 300) |
+                    (ExternalCallLog.error_message.isnot(None))
+                )
+                count_query = count_query.where(
+                    (ExternalCallLog.status_code < 200) |
+                    (ExternalCallLog.status_code >= 300) |
+                    (ExternalCallLog.error_message.isnot(None))
+                )
+            # "all" returns everything - no filter applied
+
+            # Time range filters
+            if start_time:
+                query = query.where(ExternalCallLog.created_at >= start_time)
+                count_query = count_query.where(ExternalCallLog.created_at >= start_time)
+
+            if end_time:
+                query = query.where(ExternalCallLog.created_at <= end_time)
+                count_query = count_query.where(ExternalCallLog.created_at <= end_time)
+
+            # Get total count
+            total_result = await session.execute(count_query)
+            total = total_result.scalar() or 0
+
+            # Apply ordering and pagination
+            query = query.order_by(ExternalCallLog.created_at.desc())
+            query = query.limit(limit).offset(offset)
+
+            # Execute main query
+            result = await session.execute(query)
+            logs = result.scalars().all()
+
+            # Convert to list items (sanitized for list view)
+            items = []
+            for log in logs:
+                # Extract domain from URL for display
+                url_domain = log.url
+                if "://" in url_domain:
+                    url_domain = url_domain.split("://", 1)[1]
+                if "/" in url_domain:
+                    url_domain = url_domain.split("/", 1)[0]
+
+                item = ExternalCallLogListItem(
+                    id=log.id,
+                    agent_id=log.agent_id,
+                    agent_type=log.agent_type,
+                    call_type=log.call_type,
+                    url=log.url,
+                    url_domain=url_domain,
+                    url_full=log.url,
+                    method=log.method,
+                    status_code=log.status_code,
+                    duration_ms=log.duration_ms,
+                    tool_name=log.tool_name,
+                    error_message=log.error_message,
+                    created_at=log.created_at,
+                )
+                items.append(item)
+
+            # Calculate has_more
+            has_more = (offset + len(items)) < total
+
+            logger.info(
+                "external_calls_retrieved",
+                total=total,
+                returned=len(items),
+                filters={"agent_id": agent_id, "call_type": call_type, "status": status},
+            )
+
+            return ExternalCallLogListResponse(
+                items=items,
+                total=total,
+                offset=offset,
+                limit=limit,
+                has_more=has_more,
+            )
+
+        except Exception as e:
+            logger.error("external_calls_query_error", error=str(e), exc_info=True)
+            raise HTTPException(status_code=500, detail="Failed to query external call logs")
 
 
 # ============== HELPER CLASSES ==============

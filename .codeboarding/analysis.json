@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-19T03:12:33.567371+00:00",
+    "generated_at": "2026-04-19T03:33:43.315495+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -8281,7 +8281,7 @@
       ]
     },
     "src/heretek_swarm/api/observability.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.api.observability.get_metrics_collector",
@@ -8296,6 +8296,13 @@
           "end_line": 68,
           "node_type": "FUNCTION",
           "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.observability._get_external_call_log_session_factory",
+          "start_line": 68,
+          "end_line": 89,
+          "node_type": "FUNCTION",
+          "status": "added"
         },
         {
           "qualified_name": "src.heretek_swarm.api.observability.get_zero_trust",
@@ -8464,6 +8471,13 @@
           "end_line": 906,
           "node_type": "METHOD",
           "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.observability.get_external_calls",
+          "start_line": 905,
+          "end_line": 1052,
+          "node_type": "FUNCTION",
+          "status": "added"
         },
         {
           "qualified_name": "src.heretek_swarm.api.observability.ConnectionManager.disconnect",
@@ -61642,6 +61656,14 @@
       "type": "FUNCTION",
       "status": "unchanged"
     },
+    "src/heretek_swarm/api/observability.py|src.heretek_swarm.api.observability._get_external_call_log_session_factory": {
+      "file_path": "src/heretek_swarm/api/observability.py",
+      "qualified_name": "src.heretek_swarm.api.observability._get_external_call_log_session_factory",
+      "start_line": 68,
+      "end_line": 89,
+      "type": "FUNCTION",
+      "status": "added"
+    },
     "src/heretek_swarm/api/observability.py|src.heretek_swarm.api.observability.get_zero_trust": {
       "file_path": "src/heretek_swarm/api/observability.py",
       "qualified_name": "src.heretek_swarm.api.observability.get_zero_trust",
@@ -61833,6 +61855,14 @@
       "end_line": 906,
       "type": "METHOD",
       "status": "unchanged"
+    },
+    "src/heretek_swarm/api/observability.py|src.heretek_swarm.api.observability.get_external_calls": {
+      "file_path": "src/heretek_swarm/api/observability.py",
+      "qualified_name": "src.heretek_swarm.api.observability.get_external_calls",
+      "start_line": 905,
+      "end_line": 1052,
+      "type": "FUNCTION",
+      "status": "added"
     },
     "src/heretek_swarm/api/observability.py|src.heretek_swarm.api.observability.ConnectionManager.disconnect": {
       "file_path": "src/heretek_swarm/api/observability.py",
@@ -112156,10 +112186,11 @@
         },
         {
           "file_path": "src/heretek_swarm/api/observability.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "src.heretek_swarm.api.observability.get_metrics_collector",
             "src.heretek_swarm.api.observability.get_metrics_stream",
+            "src.heretek_swarm.api.observability._get_external_call_log_session_factory",
             "src.heretek_swarm.api.observability.get_zero_trust",
             "src.heretek_swarm.api.observability.check_rate_limit",
             "src.heretek_swarm.api.observability.validate_input",
@@ -112184,6 +112215,7 @@
             "src.heretek_swarm.api.observability.ConnectionManager",
             "src.heretek_swarm.api.observability.ConnectionManager.__init__",
             "src.heretek_swarm.api.observability.ConnectionManager.connect",
+            "src.heretek_swarm.api.observability.get_external_calls",
             "src.heretek_swarm.api.observability.ConnectionManager.disconnect",
             "src.heretek_swarm.api.observability.ConnectionManager.broadcast_trace",
             "src.heretek_swarm.api.observability.get_replay_manager",
@@ -118482,10 +118514,11 @@
             },
             {
               "file_path": "src/heretek_swarm/api/observability.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.heretek_swarm.api.observability.get_metrics_collector",
                 "src.heretek_swarm.api.observability.get_metrics_stream",
+                "src.heretek_swarm.api.observability._get_external_call_log_session_factory",
                 "src.heretek_swarm.api.observability.get_zero_trust",
                 "src.heretek_swarm.api.observability.check_rate_limit",
                 "src.heretek_swarm.api.observability.validate_input",
@@ -118510,6 +118543,7 @@
                 "src.heretek_swarm.api.observability.ConnectionManager",
                 "src.heretek_swarm.api.observability.ConnectionManager.__init__",
                 "src.heretek_swarm.api.observability.ConnectionManager.connect",
+                "src.heretek_swarm.api.observability.get_external_calls",
                 "src.heretek_swarm.api.observability.ConnectionManager.disconnect",
                 "src.heretek_swarm.api.observability.ConnectionManager.broadcast_trace",
                 "src.heretek_swarm.api.observability.get_replay_manager",
@@ -138479,10 +138513,11 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/api/observability.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.api.observability.get_metrics_collector",
                     "src.heretek_swarm.api.observability.get_metrics_stream",
+                    "src.heretek_swarm.api.observability._get_external_call_log_session_factory",
                     "src.heretek_swarm.api.observability.get_zero_trust",
                     "src.heretek_swarm.api.observability.check_rate_limit",
                     "src.heretek_swarm.api.observability.validate_input",
@@ -138507,6 +138542,7 @@
                     "src.heretek_swarm.api.observability.ConnectionManager",
                     "src.heretek_swarm.api.observability.ConnectionManager.__init__",
                     "src.heretek_swarm.api.observability.ConnectionManager.connect",
+                    "src.heretek_swarm.api.observability.get_external_calls",
                     "src.heretek_swarm.api.observability.ConnectionManager.disconnect",
                     "src.heretek_swarm.api.observability.ConnectionManager.broadcast_trace",
                     "src.heretek_swarm.api.observability.get_replay_manager",
@@ -139707,10 +139743,11 @@
                     },
                     {
                       "file_path": "src/heretek_swarm/api/observability.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.api.observability.get_metrics_collector",
                         "src.heretek_swarm.api.observability.get_metrics_stream",
+                        "src.heretek_swarm.api.observability._get_external_call_log_session_factory",
                         "src.heretek_swarm.api.observability.get_zero_trust",
                         "src.heretek_swarm.api.observability.check_rate_limit",
                         "src.heretek_swarm.api.observability.validate_input",
@@ -139735,6 +139772,7 @@
                         "src.heretek_swarm.api.observability.ConnectionManager",
                         "src.heretek_swarm.api.observability.ConnectionManager.__init__",
                         "src.heretek_swarm.api.observability.ConnectionManager.connect",
+                        "src.heretek_swarm.api.observability.get_external_calls",
                         "src.heretek_swarm.api.observability.ConnectionManager.disconnect",
                         "src.heretek_swarm.api.observability.ConnectionManager.broadcast_trace",
                         "src.heretek_swarm.api.observability.get_replay_manager",
@@ -139898,7 +139936,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/api/observability.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.api.observability.websocket_traces",
                             "src.heretek_swarm.api.observability.ConnectionManager.connect",
@@ -140017,7 +140055,7 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/api/observability.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.api.observability.get_metrics_collector",
                             "src.heretek_swarm.api.observability.get_metrics_stream",
