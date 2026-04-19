@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-19T16:44:48.384813+00:00",
+    "generated_at": "2026-04-19T17:16:31.837867+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -52870,6 +52870,20 @@
           "status": "added"
         },
         {
+          "qualified_name": "src.heretek_swarm.cli._load_infrastructure_config_and_echo",
+          "start_line": 41,
+          "end_line": 52,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.cli._print_infrastructure_config",
+          "start_line": 55,
+          "end_line": 77,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
           "qualified_name": "src.heretek_swarm.cli._make_result",
           "start_line": 78,
           "end_line": 91,
@@ -52955,17 +52969,17 @@
         },
         {
           "qualified_name": "src.heretek_swarm.cli.run",
-          "start_line": 411,
-          "end_line": 464,
+          "start_line": 455,
+          "end_line": 514,
           "node_type": "FUNCTION",
-          "status": "added"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.cli.serve",
-          "start_line": 485,
-          "end_line": 532,
+          "start_line": 535,
+          "end_line": 588,
           "node_type": "FUNCTION",
-          "status": "added"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.cli.update",
@@ -111430,6 +111444,22 @@
       "type": "FUNCTION",
       "status": "added"
     },
+    "src/heretek_swarm/cli.py|src.heretek_swarm.cli._load_infrastructure_config_and_echo": {
+      "file_path": "src/heretek_swarm/cli.py",
+      "qualified_name": "src.heretek_swarm.cli._load_infrastructure_config_and_echo",
+      "start_line": 41,
+      "end_line": 52,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/cli.py|src.heretek_swarm.cli._print_infrastructure_config": {
+      "file_path": "src/heretek_swarm/cli.py",
+      "qualified_name": "src.heretek_swarm.cli._print_infrastructure_config",
+      "start_line": 55,
+      "end_line": 77,
+      "type": "FUNCTION",
+      "status": "added"
+    },
     "src/heretek_swarm/cli.py|src.heretek_swarm.cli._make_result": {
       "file_path": "src/heretek_swarm/cli.py",
       "qualified_name": "src.heretek_swarm.cli._make_result",
@@ -111529,18 +111559,18 @@
     "src/heretek_swarm/cli.py|src.heretek_swarm.cli.run": {
       "file_path": "src/heretek_swarm/cli.py",
       "qualified_name": "src.heretek_swarm.cli.run",
-      "start_line": 411,
-      "end_line": 464,
+      "start_line": 455,
+      "end_line": 514,
       "type": "FUNCTION",
-      "status": "added"
+      "status": "modified"
     },
     "src/heretek_swarm/cli.py|src.heretek_swarm.cli.serve": {
       "file_path": "src/heretek_swarm/cli.py",
       "qualified_name": "src.heretek_swarm.cli.serve",
-      "start_line": 485,
-      "end_line": 532,
+      "start_line": 535,
+      "end_line": 588,
       "type": "FUNCTION",
-      "status": "added"
+      "status": "modified"
     },
     "src/heretek_swarm/cli.py|src.heretek_swarm.cli.update": {
       "file_path": "src/heretek_swarm/cli.py",

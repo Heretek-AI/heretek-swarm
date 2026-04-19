@@ -1,6 +1,6 @@
 {
   "repository_name": "heretek-swarm",
-  "timestamp": "2026-04-19T17:07:46.014996+00:00",
+  "timestamp": "2026-04-19T17:17:30.659605+00:00",
   "overall_score": 0.9850608525119686,
   "check_summaries": [
     {
@@ -1167,64 +1167,64 @@
             {
               "entity_name": "[unused_variable] \"reader\" is not accessed",
               "file_path": "src/heretek_swarm/cli.py",
-              "line_start": 97,
-              "line_end": 97,
+              "line_start": 141,
+              "line_end": 141,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"time\" is not accessed",
               "file_path": "src/heretek_swarm/cli.py",
-              "line_start": 110,
-              "line_end": 110,
+              "line_start": 154,
+              "line_end": 154,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"time\" is not accessed",
               "file_path": "src/heretek_swarm/cli.py",
-              "line_start": 124,
-              "line_end": 124,
+              "line_start": 168,
+              "line_end": 168,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"time\" is not accessed",
               "file_path": "src/heretek_swarm/cli.py",
-              "line_start": 140,
-              "line_end": 140,
+              "line_start": 184,
+              "line_end": 184,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"time\" is not accessed",
               "file_path": "src/heretek_swarm/cli.py",
-              "line_start": 177,
-              "line_end": 177,
+              "line_start": 221,
+              "line_end": 221,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"check_runtime\" is not accessed",
               "file_path": "src/heretek_swarm/cli.py",
-              "line_start": 259,
-              "line_end": 259,
+              "line_start": 303,
+              "line_end": 303,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"frame\" is not accessed",
               "file_path": "src/heretek_swarm/cli.py",
-              "line_start": 386,
-              "line_end": 386,
+              "line_start": 430,
+              "line_end": 430,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"os\" is not accessed",
               "file_path": "src/heretek_swarm/cli.py",
-              "line_start": 497,
-              "line_end": 497,
+              "line_start": 547,
+              "line_end": 547,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"output_json\" is not accessed",
               "file_path": "src/heretek_swarm/cli.py",
-              "line_start": 579,
-              "line_end": 579,
+              "line_start": 635,
+              "line_end": 635,
               "metric_value": 0.0
             },
             {
@@ -1384,36 +1384,36 @@
             {
               "entity_name": "[unused_import] Import \"time\" is not accessed",
               "file_path": "src/heretek_swarm/cli.py",
-              "line_start": 110,
-              "line_end": 110,
+              "line_start": 154,
+              "line_end": 154,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_import] Import \"time\" is not accessed",
               "file_path": "src/heretek_swarm/cli.py",
-              "line_start": 124,
-              "line_end": 124,
+              "line_start": 168,
+              "line_end": 168,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_import] Import \"time\" is not accessed",
               "file_path": "src/heretek_swarm/cli.py",
-              "line_start": 140,
-              "line_end": 140,
+              "line_start": 184,
+              "line_end": 184,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_import] Import \"time\" is not accessed",
               "file_path": "src/heretek_swarm/cli.py",
-              "line_start": 177,
-              "line_end": 177,
+              "line_start": 221,
+              "line_end": 221,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_import] Import \"os\" is not accessed",
               "file_path": "src/heretek_swarm/cli.py",
-              "line_start": 497,
-              "line_end": 497,
+              "line_start": 547,
+              "line_end": 547,
               "metric_value": 0.0
             }
           ]

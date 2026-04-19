@@ -21,6 +21,7 @@ import click
 import httpx
 import structlog
 
+from heretek_swarm.cli.config_loader import load_infrastructure_config
 from heretek_swarm.config.models import HealthStatus, InfrastructureService
 
 logger = structlog.get_logger("cli")
@@ -31,6 +32,49 @@ DEFAULT_API_BASE = "http://localhost:8000"
 # Global shutdown flag for signal handlers
 _shutdown_event: asyncio.Event | None = None
 _swarm_instance: "AutonomousSwarm | None" = None
+
+
+# =============================================================================
+# Infrastructure Configuration Helpers
+# =============================================================================
+
+def _load_infrastructure_config_and_echo() -> dict[str, Any] | None:
+    """
+    Load infrastructure configuration from database.
+
+    Returns:
+        The load result dict if config was loaded, None if DATABASE_URL wasn't set.
+    """
+    try:
+        return load_infrastructure_config()
+    except RuntimeError as e:
+        click.echo(f"\n  ⚠ {e}")
+        return None
+
+
+def _print_infrastructure_config(result: dict[str, Any] | None) -> None:
+    """
+    Print loaded infrastructure configuration values.
+
+    Args:
+        result: LoadResult dict with 'postgres', 'redis', 'qdrant', 'nats' keys.
+    """
+    if result is None:
+        return
+
+    # Check if any config was set from DB (vs. pre-existing env vars)
+    any_set = any(entry.get("set", False) for entry in result.values())
+
+    if not any_set:
+        # All values were pre-existing in environment
+        click.echo("  Infrastructure: loaded from environment variables")
+        return
+
+    # Print each service that was set from DB
+    for service_name, entry in result.items():
+        url = entry.get("url") if entry else None
+        if url:
+            click.echo(f"  {service_name.capitalize()}: {url}")
 
 
 # =============================================================================
@@ -432,6 +476,9 @@ def run(detach: bool, nats_url: str) -> None:
     click.echo("Heretek Swarm Autonomous Runtime")
     click.echo("=" * 40)
 
+    # Load infrastructure configuration from database (if DATABASE_URL is set)
+    infra_config = _load_infrastructure_config_and_echo()
+
     if detach:
         click.echo("\nStarting in detached mode...")
         # Fork process for daemon mode
@@ -451,6 +498,9 @@ def run(detach: bool, nats_url: str) -> None:
 
     click.echo("\nInitializing autonomous swarm...")
     click.echo(f"  NATS: {nats_url}")
+
+    # Print loaded infrastructure configuration
+    _print_infrastructure_config(infra_config)
 
     try:
         # Run the async main
@@ -501,6 +551,9 @@ def serve(host: str, port: int, workers: int) -> None:
     click.echo("Heretek Swarm API Server")
     click.echo("=" * 40)
 
+    # Load infrastructure configuration from database (if DATABASE_URL is set)
+    infra_config = _load_infrastructure_config_and_echo()
+
     # Check if uvicorn is available
     try:
         import uvicorn
@@ -510,6 +563,9 @@ def serve(host: str, port: int, workers: int) -> None:
 
     click.echo(f"\nStarting API server on {host}:{port}...")
     click.echo("  Press Ctrl+C to stop")
+
+    # Print loaded infrastructure configuration
+    _print_infrastructure_config(infra_config)
 
     # Build uvicorn command
     app_module = "heretek_swarm.api.app:app"
