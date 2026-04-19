@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-19T04:37:44.802128+00:00",
+    "generated_at": "2026-04-19T10:46:22.811679+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -52775,6 +52775,18 @@
     },
     "src/heretek_swarm/infrastructure/otel/__init__.py": {
       "file_status": "unchanged",
+      "methods": []
+    },
+    "accept_issues.py": {
+      "file_status": "deleted",
+      "methods": []
+    },
+    "accept_sonar_issues.py": {
+      "file_status": "deleted",
+      "methods": []
+    },
+    "extract_keys.py": {
+      "file_status": "deleted",
       "methods": []
     }
   },
