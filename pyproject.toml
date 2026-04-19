@@ -257,6 +257,7 @@ ignore = [
 "tests/*" = [
     "S101",   # assert used
     "ARG001", # unused argument
+    "ARG002", # unused argument (function)
     "PT019",  # pytest.fixture without value
     "S106",   # hardcoded password (test fixtures)
 ]

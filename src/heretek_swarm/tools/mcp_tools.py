@@ -293,7 +293,9 @@ class MCPToolRegistry:
 
         except Exception as e:
             latency_ms = (time.time() - start_time) * 1000
-            self._tool_stats[name]["errors"] += 1
+            # Only update stats if the tool was registered (has stats entry)
+            if name in self._tool_stats:
+                self._tool_stats[name]["errors"] += 1
             logger.error("tool_invocation_error", name=name, error=str(e))
 
             # Log failed call to ExternalCallLog.
