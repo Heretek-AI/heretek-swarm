@@ -23,9 +23,10 @@ import {
   getInfrastructureConfigs,
   saveInfrastructureConfig,
   checkInfrastructureHealth,
+  provisionInfrastructure,
 } from '../../api/wizard';
 import type { Provider, InfrastructureConfig } from '../../api/wizard';
-import { useConfigWizardStore, type SelectedProvider, type WizardStep, INFRASTRUCTURE_SERVICES, type SelectedInfrastructure } from '../../stores/configWizardStore';
+import { useConfigWizardStore, type SelectedProvider, type WizardStep, INFRASTRUCTURE_SERVICES, type SelectedInfrastructure, type ServiceProvisionStatus } from '../../stores/configWizardStore';
 import { useToast } from '../UI/Toast';
 
 // =============================================================================
@@ -879,14 +880,19 @@ function InfrastructureStep({
 function InfrastructureReviewStep({
   selectedInfrastructure,
   deployMode,
+  onDeploy,
   onNext,
   onBack,
 }: {
   selectedInfrastructure: SelectedInfrastructure[];
   deployMode: 'external' | 'local' | null;
+  onDeploy: () => void;
   onNext: () => void;
   onBack: () => void;
 }) {
+  const [isDeploying, setIsDeployingLocal] = useState(false);
+  const { provisioningProgress, setProvisioningProgress, resetProvisioningProgress } = useConfigWizardStore();
+
   const getHealthIcon = (status: string) => {
     switch (status) {
       case 'healthy': return '✓';
@@ -904,6 +910,97 @@ function InfrastructureReviewStep({
       default: return 'text-gray-400';
     }
   };
+
+  // Get service-specific provisioning status
+  const getServiceStatus = (serviceType: string): string => {
+    if (deployMode !== 'local') {
+      return selectedInfrastructure.find(s => s.service.service_type === serviceType)?.healthStatus || 'unknown';
+    }
+    const progress = provisioningProgress[serviceType];
+    return progress?.status || 'pending';
+  };
+
+  // Get service progress message
+  const getServiceMessage = (serviceType: string): string | undefined => {
+    return provisioningProgress[serviceType]?.message;
+  };
+
+  // Check if all services are healthy
+  const allServicesHealthy = selectedInfrastructure.every(
+    (s) => getServiceStatus(s.service.service_type) === 'healthy'
+  );
+
+  // Check if provisioning is in progress
+  const isProvisioning = Object.values(provisioningProgress).some(
+    (p) => p.status === 'pulling' || p.status === 'starting'
+  );
+
+  const handleDeployClick = useCallback(async () => {
+    if (deployMode !== 'local') {
+      onDeploy();
+      return;
+    }
+
+    setIsDeployingLocal(true);
+    resetProvisioningProgress();
+
+    // Initialize progress for each service
+    for (const infra of selectedInfrastructure) {
+      setProvisioningProgress(infra.service.service_type, {
+        service: infra.service.service_type,
+        status: 'pending',
+        message: 'Starting...',
+      });
+    }
+
+    try {
+      const services = selectedInfrastructure.map(s => s.service.service_type);
+      const result = await provisionInfrastructure(services);
+
+      // Update progress from results
+      for (const [serviceKey, serviceResult] of Object.entries(result.results)) {
+        setProvisioningProgress(serviceKey, {
+          service: serviceKey,
+          status: serviceResult.success ? 'healthy' : 'failed',
+          message: serviceResult.success
+            ? `${serviceKey} is healthy`
+            : serviceResult.error,
+          error: serviceResult.error,
+        });
+      }
+
+      if (result.status === 'completed') {
+        // Save infrastructure configs for each service
+        for (const [serviceKey, connectionString] of Object.entries(result.connection_strings)) {
+          const infra = selectedInfrastructure.find(s => s.service.service_type === serviceKey);
+          if (infra && connectionString) {
+            await saveInfrastructureConfig({
+              service: serviceKey,
+              host: 'localhost',
+              port: infra.port,
+              connection_url: connectionString,
+              is_enabled: true,
+            });
+          }
+        }
+      }
+    } catch (err) {
+      // Mark all services as failed
+      for (const infra of selectedInfrastructure) {
+        setProvisioningProgress(infra.service.service_type, {
+          service: infra.service.service_type,
+          status: 'failed',
+          error: err instanceof Error ? err.message : 'Deployment failed',
+        });
+      }
+    } finally {
+      setIsDeployingLocal(false);
+    }
+  }, [deployMode, selectedInfrastructure, onDeploy, setProvisioningProgress, resetProvisioningProgress]);
+
+  // Show deploy button only in local mode
+  const showDeployButton = deployMode === 'local';
+  const isReadyToContinue = deployMode === 'external' || allServicesHealthy || Object.values(provisioningProgress).some(p => p.status === 'failed');
 
   return (
     <div className="space-y-6">
@@ -926,32 +1023,44 @@ function InfrastructureReviewStep({
         </div>
       </div>
 
-      {/* Selected services */}
+      {/* Selected services with per-service status */}
       <div className="space-y-3">
         <h3 className="text-sm font-medium text-gray-300">
           Configured Services ({selectedInfrastructure.length})
         </h3>
         <div className="space-y-2">
-          {selectedInfrastructure.map((infra) => (
-            <div
-              key={infra.service.service_type}
-              className="flex items-center justify-between p-4 rounded-xl bg-[#0d0d15] border border-[#1a1a2e]"
-            >
-              <div className="flex items-center gap-4">
-                <span className="text-2xl">{infra.service.icon}</span>
-                <div>
-                  <div className="font-medium text-white">{infra.service.name}</div>
-                  <div className="text-xs text-gray-500 font-mono">
-                    {infra.host}:{infra.port}
+          {selectedInfrastructure.map((infra) => {
+            const serviceStatus = getServiceStatus(infra.service.service_type);
+            const serviceMessage = getServiceMessage(infra.service.service_type);
+            
+            return (
+              <div
+                key={infra.service.service_type}
+                className="flex items-center justify-between p-4 rounded-xl bg-[#0d0d15] border border-[#1a1a2e]"
+              >
+                <div className="flex items-center gap-4">
+                  <span className="text-2xl">{infra.service.icon}</span>
+                  <div>
+                    <div className="font-medium text-white">{infra.service.name}</div>
+                    <div className="text-xs text-gray-500 font-mono">
+                      {infra.host}:{infra.port}
+                    </div>
+                    {serviceMessage && (
+                      <div className={`text-xs mt-1 ${
+                        serviceStatus === 'failed' ? 'text-red-400' : 'text-gray-500'
+                      }`}>
+                        {serviceMessage}
+                      </div>
+                    )}
                   </div>
                 </div>
+                <div className={`flex items-center gap-2 ${getHealthColor(serviceStatus)}`}>
+                  <span className="text-lg">{getHealthIcon(serviceStatus)}</span>
+                  <span className="text-sm capitalize">{serviceStatus}</span>
+                </div>
               </div>
-              <div className={`flex items-center gap-2 ${getHealthColor(infra.healthStatus)}`}>
-                <span className="text-lg">{getHealthIcon(infra.healthStatus)}</span>
-                <span className="text-sm capitalize">{infra.healthStatus}</span>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 
@@ -979,9 +1088,32 @@ function InfrastructureReviewStep({
         <button onClick={onBack} className={styles.buttonSecondary}>
           Back
         </button>
-        <button onClick={onNext} className={styles.buttonPrimary}>
-          Continue to Model Preferences
-        </button>
+        <div className="flex gap-3">
+          {showDeployButton && !isDeploying && !allServicesHealthy && (
+            <button
+              onClick={handleDeployClick}
+              className={`${styles.buttonPrimary} bg-gradient-to-r from-[#ff00f0] to-[#00f0ff]`}
+            >
+              Deploy Locally
+            </button>
+          )}
+          {isDeploying && (
+            <button
+              disabled
+              className={`${styles.buttonPrimary} opacity-50`}
+            >
+              <LoadingSpinner size="sm" />
+              <span className="ml-2">Deploying...</span>
+            </button>
+          )}
+          <button
+            onClick={onNext}
+            className={styles.buttonPrimary}
+            disabled={!isReadyToContinue || isDeploying}
+          >
+            Continue to Model Preferences
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -1522,6 +1654,7 @@ export function ConfigWizard({ onComplete }: { onComplete?: () => void }) {
           <InfrastructureReviewStep
             selectedInfrastructure={selectedInfrastructure}
             deployMode={deployMode}
+            onDeploy={nextStep}
             onNext={nextStep}
             onBack={goBack}
           />

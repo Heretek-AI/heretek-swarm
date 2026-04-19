@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-19T02:11:50.567570+00:00",
+    "generated_at": "2026-04-19T02:20:38.137982+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -40349,7 +40349,7 @@
       ]
     },
     "dashboard/frontend/src/api/wizard.ts": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "dashboard.frontend.src.api.wizard.Provider",
@@ -40401,11 +40401,32 @@
           "status": "unchanged"
         },
         {
+          "qualified_name": "dashboard.frontend.src.api.wizard.InfrastructureConfig",
+          "start_line": 110,
+          "end_line": 121,
+          "node_type": "INTERFACE",
+          "status": "added"
+        },
+        {
           "qualified_name": "dashboard.frontend.src.api.wizard.fetchJson",
           "start_line": 115,
           "end_line": 140,
           "node_type": "FUNCTION",
           "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.api.wizard.InfrastructureCreate",
+          "start_line": 123,
+          "end_line": 129,
+          "node_type": "INTERFACE",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.api.wizard.HealthCheckResult",
+          "start_line": 131,
+          "end_line": 136,
+          "node_type": "INTERFACE",
+          "status": "added"
         },
         {
           "qualified_name": "dashboard.frontend.src.api.wizard.fetchJson.errorData.catch() callback",
@@ -40415,6 +40436,13 @@
           "status": "unchanged"
         },
         {
+          "qualified_name": "dashboard.frontend.src.api.wizard.ProvisionRequest",
+          "start_line": 141,
+          "end_line": 144,
+          "node_type": "INTERFACE",
+          "status": "added"
+        },
+        {
           "qualified_name": "dashboard.frontend.src.api.wizard.getProviders",
           "start_line": 145,
           "end_line": 147,
@@ -40422,11 +40450,25 @@
           "status": "unchanged"
         },
         {
+          "qualified_name": "dashboard.frontend.src.api.wizard.ProvisionResult",
+          "start_line": 146,
+          "end_line": 153,
+          "node_type": "INTERFACE",
+          "status": "added"
+        },
+        {
           "qualified_name": "dashboard.frontend.src.api.wizard.getProvider",
           "start_line": 152,
           "end_line": 154,
           "node_type": "FUNCTION",
           "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.api.wizard.ProvisionResponse",
+          "start_line": 155,
+          "end_line": 162,
+          "node_type": "INTERFACE",
+          "status": "added"
         },
         {
           "qualified_name": "dashboard.frontend.src.api.wizard.getTiers",
@@ -40469,6 +40511,62 @@
           "end_line": 212,
           "node_type": "FUNCTION",
           "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.api.wizard.getInfrastructureConfigs",
+          "start_line": 276,
+          "end_line": 283,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.api.wizard.saveInfrastructureConfig",
+          "start_line": 288,
+          "end_line": 311,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.api.wizard.getInfrastructureConfig",
+          "start_line": 316,
+          "end_line": 320,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.api.wizard.checkInfrastructureHealth",
+          "start_line": 325,
+          "end_line": 332,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.api.wizard.checkAllInfrastructureHealth",
+          "start_line": 337,
+          "end_line": 357,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.api.wizard.deleteInfrastructureConfig",
+          "start_line": 362,
+          "end_line": 385,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.api.wizard.deleteInfrastructureConfig.errorData.catch() callback",
+          "start_line": 380,
+          "end_line": 380,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.api.wizard.provisionInfrastructure",
+          "start_line": 392,
+          "end_line": 400,
+          "node_type": "FUNCTION",
+          "status": "added"
         }
       ]
     },
@@ -97228,6 +97326,14 @@
       "type": "INTERFACE",
       "status": "unchanged"
     },
+    "dashboard/frontend/src/api/wizard.ts|dashboard.frontend.src.api.wizard.InfrastructureConfig": {
+      "file_path": "dashboard/frontend/src/api/wizard.ts",
+      "qualified_name": "dashboard.frontend.src.api.wizard.InfrastructureConfig",
+      "start_line": 110,
+      "end_line": 121,
+      "type": "INTERFACE",
+      "status": "added"
+    },
     "dashboard/frontend/src/api/wizard.ts|dashboard.frontend.src.api.wizard.fetchJson": {
       "file_path": "dashboard/frontend/src/api/wizard.ts",
       "qualified_name": "dashboard.frontend.src.api.wizard.fetchJson",
@@ -97235,6 +97341,22 @@
       "end_line": 140,
       "type": "FUNCTION",
       "status": "unchanged"
+    },
+    "dashboard/frontend/src/api/wizard.ts|dashboard.frontend.src.api.wizard.InfrastructureCreate": {
+      "file_path": "dashboard/frontend/src/api/wizard.ts",
+      "qualified_name": "dashboard.frontend.src.api.wizard.InfrastructureCreate",
+      "start_line": 123,
+      "end_line": 129,
+      "type": "INTERFACE",
+      "status": "added"
+    },
+    "dashboard/frontend/src/api/wizard.ts|dashboard.frontend.src.api.wizard.HealthCheckResult": {
+      "file_path": "dashboard/frontend/src/api/wizard.ts",
+      "qualified_name": "dashboard.frontend.src.api.wizard.HealthCheckResult",
+      "start_line": 131,
+      "end_line": 136,
+      "type": "INTERFACE",
+      "status": "added"
     },
     "dashboard/frontend/src/api/wizard.ts|dashboard.frontend.src.api.wizard.fetchJson.errorData.catch() callback": {
       "file_path": "dashboard/frontend/src/api/wizard.ts",
@@ -97244,6 +97366,14 @@
       "type": "FUNCTION",
       "status": "unchanged"
     },
+    "dashboard/frontend/src/api/wizard.ts|dashboard.frontend.src.api.wizard.ProvisionRequest": {
+      "file_path": "dashboard/frontend/src/api/wizard.ts",
+      "qualified_name": "dashboard.frontend.src.api.wizard.ProvisionRequest",
+      "start_line": 141,
+      "end_line": 144,
+      "type": "INTERFACE",
+      "status": "added"
+    },
     "dashboard/frontend/src/api/wizard.ts|dashboard.frontend.src.api.wizard.getProviders": {
       "file_path": "dashboard/frontend/src/api/wizard.ts",
       "qualified_name": "dashboard.frontend.src.api.wizard.getProviders",
@@ -97252,6 +97382,14 @@
       "type": "FUNCTION",
       "status": "unchanged"
     },
+    "dashboard/frontend/src/api/wizard.ts|dashboard.frontend.src.api.wizard.ProvisionResult": {
+      "file_path": "dashboard/frontend/src/api/wizard.ts",
+      "qualified_name": "dashboard.frontend.src.api.wizard.ProvisionResult",
+      "start_line": 146,
+      "end_line": 153,
+      "type": "INTERFACE",
+      "status": "added"
+    },
     "dashboard/frontend/src/api/wizard.ts|dashboard.frontend.src.api.wizard.getProvider": {
       "file_path": "dashboard/frontend/src/api/wizard.ts",
       "qualified_name": "dashboard.frontend.src.api.wizard.getProvider",
@@ -97259,6 +97397,14 @@
       "end_line": 154,
       "type": "FUNCTION",
       "status": "unchanged"
+    },
+    "dashboard/frontend/src/api/wizard.ts|dashboard.frontend.src.api.wizard.ProvisionResponse": {
+      "file_path": "dashboard/frontend/src/api/wizard.ts",
+      "qualified_name": "dashboard.frontend.src.api.wizard.ProvisionResponse",
+      "start_line": 155,
+      "end_line": 162,
+      "type": "INTERFACE",
+      "status": "added"
     },
     "dashboard/frontend/src/api/wizard.ts|dashboard.frontend.src.api.wizard.getTiers": {
       "file_path": "dashboard/frontend/src/api/wizard.ts",
@@ -97307,6 +97453,70 @@
       "end_line": 212,
       "type": "FUNCTION",
       "status": "unchanged"
+    },
+    "dashboard/frontend/src/api/wizard.ts|dashboard.frontend.src.api.wizard.getInfrastructureConfigs": {
+      "file_path": "dashboard/frontend/src/api/wizard.ts",
+      "qualified_name": "dashboard.frontend.src.api.wizard.getInfrastructureConfigs",
+      "start_line": 276,
+      "end_line": 283,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/api/wizard.ts|dashboard.frontend.src.api.wizard.saveInfrastructureConfig": {
+      "file_path": "dashboard/frontend/src/api/wizard.ts",
+      "qualified_name": "dashboard.frontend.src.api.wizard.saveInfrastructureConfig",
+      "start_line": 288,
+      "end_line": 311,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/api/wizard.ts|dashboard.frontend.src.api.wizard.getInfrastructureConfig": {
+      "file_path": "dashboard/frontend/src/api/wizard.ts",
+      "qualified_name": "dashboard.frontend.src.api.wizard.getInfrastructureConfig",
+      "start_line": 316,
+      "end_line": 320,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/api/wizard.ts|dashboard.frontend.src.api.wizard.checkInfrastructureHealth": {
+      "file_path": "dashboard/frontend/src/api/wizard.ts",
+      "qualified_name": "dashboard.frontend.src.api.wizard.checkInfrastructureHealth",
+      "start_line": 325,
+      "end_line": 332,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/api/wizard.ts|dashboard.frontend.src.api.wizard.checkAllInfrastructureHealth": {
+      "file_path": "dashboard/frontend/src/api/wizard.ts",
+      "qualified_name": "dashboard.frontend.src.api.wizard.checkAllInfrastructureHealth",
+      "start_line": 337,
+      "end_line": 357,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/api/wizard.ts|dashboard.frontend.src.api.wizard.deleteInfrastructureConfig": {
+      "file_path": "dashboard/frontend/src/api/wizard.ts",
+      "qualified_name": "dashboard.frontend.src.api.wizard.deleteInfrastructureConfig",
+      "start_line": 362,
+      "end_line": 385,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/api/wizard.ts|dashboard.frontend.src.api.wizard.deleteInfrastructureConfig.errorData.catch() callback": {
+      "file_path": "dashboard/frontend/src/api/wizard.ts",
+      "qualified_name": "dashboard.frontend.src.api.wizard.deleteInfrastructureConfig.errorData.catch() callback",
+      "start_line": 380,
+      "end_line": 380,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/api/wizard.ts|dashboard.frontend.src.api.wizard.provisionInfrastructure": {
+      "file_path": "dashboard/frontend/src/api/wizard.ts",
+      "qualified_name": "dashboard.frontend.src.api.wizard.provisionInfrastructure",
+      "start_line": 392,
+      "end_line": 400,
+      "type": "FUNCTION",
+      "status": "added"
     },
     "dashboard/frontend/src/components/AgentMetricsGrid.tsx|dashboard.frontend.src.components.AgentMetricsGrid.AgentMetrics": {
       "file_path": "dashboard/frontend/src/components/AgentMetricsGrid.tsx",
@@ -239245,7 +239455,7 @@
         },
         {
           "file_path": "dashboard/frontend/src/api/wizard.ts",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "dashboard.frontend.src.api.wizard.Provider",
             "dashboard.frontend.src.api.wizard.AgentTier",
@@ -239254,16 +239464,30 @@
             "dashboard.frontend.src.api.wizard.ProviderConfig",
             "dashboard.frontend.src.api.wizard.WizardConfig",
             "dashboard.frontend.src.api.wizard.SubmitResult",
+            "dashboard.frontend.src.api.wizard.InfrastructureConfig",
             "dashboard.frontend.src.api.wizard.fetchJson",
+            "dashboard.frontend.src.api.wizard.InfrastructureCreate",
+            "dashboard.frontend.src.api.wizard.HealthCheckResult",
             "dashboard.frontend.src.api.wizard.fetchJson.errorData.catch() callback",
+            "dashboard.frontend.src.api.wizard.ProvisionRequest",
             "dashboard.frontend.src.api.wizard.getProviders",
+            "dashboard.frontend.src.api.wizard.ProvisionResult",
             "dashboard.frontend.src.api.wizard.getProvider",
+            "dashboard.frontend.src.api.wizard.ProvisionResponse",
             "dashboard.frontend.src.api.wizard.getTiers",
             "dashboard.frontend.src.api.wizard.getTier",
             "dashboard.frontend.src.api.wizard.getConfigStatus",
             "dashboard.frontend.src.api.wizard.validateCredentials",
             "dashboard.frontend.src.api.wizard.submitConfig",
-            "dashboard.frontend.src.api.wizard.resetWizard"
+            "dashboard.frontend.src.api.wizard.resetWizard",
+            "dashboard.frontend.src.api.wizard.getInfrastructureConfigs",
+            "dashboard.frontend.src.api.wizard.saveInfrastructureConfig",
+            "dashboard.frontend.src.api.wizard.getInfrastructureConfig",
+            "dashboard.frontend.src.api.wizard.checkInfrastructureHealth",
+            "dashboard.frontend.src.api.wizard.checkAllInfrastructureHealth",
+            "dashboard.frontend.src.api.wizard.deleteInfrastructureConfig",
+            "dashboard.frontend.src.api.wizard.deleteInfrastructureConfig.errorData.catch() callback",
+            "dashboard.frontend.src.api.wizard.provisionInfrastructure"
           ]
         },
         {
@@ -258813,7 +259037,7 @@
             },
             {
               "file_path": "dashboard/frontend/src/api/wizard.ts",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "dashboard.frontend.src.api.wizard.Provider",
                 "dashboard.frontend.src.api.wizard.AgentTier",
@@ -258822,16 +259046,30 @@
                 "dashboard.frontend.src.api.wizard.ProviderConfig",
                 "dashboard.frontend.src.api.wizard.WizardConfig",
                 "dashboard.frontend.src.api.wizard.SubmitResult",
+                "dashboard.frontend.src.api.wizard.InfrastructureConfig",
                 "dashboard.frontend.src.api.wizard.fetchJson",
+                "dashboard.frontend.src.api.wizard.InfrastructureCreate",
+                "dashboard.frontend.src.api.wizard.HealthCheckResult",
                 "dashboard.frontend.src.api.wizard.fetchJson.errorData.catch() callback",
+                "dashboard.frontend.src.api.wizard.ProvisionRequest",
                 "dashboard.frontend.src.api.wizard.getProviders",
+                "dashboard.frontend.src.api.wizard.ProvisionResult",
                 "dashboard.frontend.src.api.wizard.getProvider",
+                "dashboard.frontend.src.api.wizard.ProvisionResponse",
                 "dashboard.frontend.src.api.wizard.getTiers",
                 "dashboard.frontend.src.api.wizard.getTier",
                 "dashboard.frontend.src.api.wizard.getConfigStatus",
                 "dashboard.frontend.src.api.wizard.validateCredentials",
                 "dashboard.frontend.src.api.wizard.submitConfig",
-                "dashboard.frontend.src.api.wizard.resetWizard"
+                "dashboard.frontend.src.api.wizard.resetWizard",
+                "dashboard.frontend.src.api.wizard.getInfrastructureConfigs",
+                "dashboard.frontend.src.api.wizard.saveInfrastructureConfig",
+                "dashboard.frontend.src.api.wizard.getInfrastructureConfig",
+                "dashboard.frontend.src.api.wizard.checkInfrastructureHealth",
+                "dashboard.frontend.src.api.wizard.checkAllInfrastructureHealth",
+                "dashboard.frontend.src.api.wizard.deleteInfrastructureConfig",
+                "dashboard.frontend.src.api.wizard.deleteInfrastructureConfig.errorData.catch() callback",
+                "dashboard.frontend.src.api.wizard.provisionInfrastructure"
               ]
             },
             {
@@ -260388,7 +260626,7 @@
                 },
                 {
                   "file_path": "dashboard/frontend/src/api/wizard.ts",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "dashboard.frontend.src.api.wizard.Provider",
                     "dashboard.frontend.src.api.wizard.AgentTier",
@@ -260397,16 +260635,30 @@
                     "dashboard.frontend.src.api.wizard.ProviderConfig",
                     "dashboard.frontend.src.api.wizard.WizardConfig",
                     "dashboard.frontend.src.api.wizard.SubmitResult",
+                    "dashboard.frontend.src.api.wizard.InfrastructureConfig",
                     "dashboard.frontend.src.api.wizard.fetchJson",
+                    "dashboard.frontend.src.api.wizard.InfrastructureCreate",
+                    "dashboard.frontend.src.api.wizard.HealthCheckResult",
                     "dashboard.frontend.src.api.wizard.fetchJson.errorData.catch() callback",
+                    "dashboard.frontend.src.api.wizard.ProvisionRequest",
                     "dashboard.frontend.src.api.wizard.getProviders",
+                    "dashboard.frontend.src.api.wizard.ProvisionResult",
                     "dashboard.frontend.src.api.wizard.getProvider",
+                    "dashboard.frontend.src.api.wizard.ProvisionResponse",
                     "dashboard.frontend.src.api.wizard.getTiers",
                     "dashboard.frontend.src.api.wizard.getTier",
                     "dashboard.frontend.src.api.wizard.getConfigStatus",
                     "dashboard.frontend.src.api.wizard.validateCredentials",
                     "dashboard.frontend.src.api.wizard.submitConfig",
-                    "dashboard.frontend.src.api.wizard.resetWizard"
+                    "dashboard.frontend.src.api.wizard.resetWizard",
+                    "dashboard.frontend.src.api.wizard.getInfrastructureConfigs",
+                    "dashboard.frontend.src.api.wizard.saveInfrastructureConfig",
+                    "dashboard.frontend.src.api.wizard.getInfrastructureConfig",
+                    "dashboard.frontend.src.api.wizard.checkInfrastructureHealth",
+                    "dashboard.frontend.src.api.wizard.checkAllInfrastructureHealth",
+                    "dashboard.frontend.src.api.wizard.deleteInfrastructureConfig",
+                    "dashboard.frontend.src.api.wizard.deleteInfrastructureConfig.errorData.catch() callback",
+                    "dashboard.frontend.src.api.wizard.provisionInfrastructure"
                   ]
                 },
                 {
@@ -261917,7 +262169,7 @@
                     },
                     {
                       "file_path": "dashboard/frontend/src/api/wizard.ts",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "dashboard.frontend.src.api.wizard.Provider",
                         "dashboard.frontend.src.api.wizard.AgentTier",
@@ -261926,16 +262178,30 @@
                         "dashboard.frontend.src.api.wizard.ProviderConfig",
                         "dashboard.frontend.src.api.wizard.WizardConfig",
                         "dashboard.frontend.src.api.wizard.SubmitResult",
+                        "dashboard.frontend.src.api.wizard.InfrastructureConfig",
                         "dashboard.frontend.src.api.wizard.fetchJson",
+                        "dashboard.frontend.src.api.wizard.InfrastructureCreate",
+                        "dashboard.frontend.src.api.wizard.HealthCheckResult",
                         "dashboard.frontend.src.api.wizard.fetchJson.errorData.catch() callback",
+                        "dashboard.frontend.src.api.wizard.ProvisionRequest",
                         "dashboard.frontend.src.api.wizard.getProviders",
+                        "dashboard.frontend.src.api.wizard.ProvisionResult",
                         "dashboard.frontend.src.api.wizard.getProvider",
+                        "dashboard.frontend.src.api.wizard.ProvisionResponse",
                         "dashboard.frontend.src.api.wizard.getTiers",
                         "dashboard.frontend.src.api.wizard.getTier",
                         "dashboard.frontend.src.api.wizard.getConfigStatus",
                         "dashboard.frontend.src.api.wizard.validateCredentials",
                         "dashboard.frontend.src.api.wizard.submitConfig",
-                        "dashboard.frontend.src.api.wizard.resetWizard"
+                        "dashboard.frontend.src.api.wizard.resetWizard",
+                        "dashboard.frontend.src.api.wizard.getInfrastructureConfigs",
+                        "dashboard.frontend.src.api.wizard.saveInfrastructureConfig",
+                        "dashboard.frontend.src.api.wizard.getInfrastructureConfig",
+                        "dashboard.frontend.src.api.wizard.checkInfrastructureHealth",
+                        "dashboard.frontend.src.api.wizard.checkAllInfrastructureHealth",
+                        "dashboard.frontend.src.api.wizard.deleteInfrastructureConfig",
+                        "dashboard.frontend.src.api.wizard.deleteInfrastructureConfig.errorData.catch() callback",
+                        "dashboard.frontend.src.api.wizard.provisionInfrastructure"
                       ]
                     },
                     {
@@ -263448,7 +263714,7 @@
                         },
                         {
                           "file_path": "dashboard/frontend/src/api/wizard.ts",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "dashboard.frontend.src.api.wizard.Provider",
                             "dashboard.frontend.src.api.wizard.AgentTier",
@@ -263457,16 +263723,30 @@
                             "dashboard.frontend.src.api.wizard.ProviderConfig",
                             "dashboard.frontend.src.api.wizard.WizardConfig",
                             "dashboard.frontend.src.api.wizard.SubmitResult",
+                            "dashboard.frontend.src.api.wizard.InfrastructureConfig",
                             "dashboard.frontend.src.api.wizard.fetchJson",
+                            "dashboard.frontend.src.api.wizard.InfrastructureCreate",
+                            "dashboard.frontend.src.api.wizard.HealthCheckResult",
                             "dashboard.frontend.src.api.wizard.fetchJson.errorData.catch() callback",
+                            "dashboard.frontend.src.api.wizard.ProvisionRequest",
                             "dashboard.frontend.src.api.wizard.getProviders",
+                            "dashboard.frontend.src.api.wizard.ProvisionResult",
                             "dashboard.frontend.src.api.wizard.getProvider",
+                            "dashboard.frontend.src.api.wizard.ProvisionResponse",
                             "dashboard.frontend.src.api.wizard.getTiers",
                             "dashboard.frontend.src.api.wizard.getTier",
                             "dashboard.frontend.src.api.wizard.getConfigStatus",
                             "dashboard.frontend.src.api.wizard.validateCredentials",
                             "dashboard.frontend.src.api.wizard.submitConfig",
-                            "dashboard.frontend.src.api.wizard.resetWizard"
+                            "dashboard.frontend.src.api.wizard.resetWizard",
+                            "dashboard.frontend.src.api.wizard.getInfrastructureConfigs",
+                            "dashboard.frontend.src.api.wizard.saveInfrastructureConfig",
+                            "dashboard.frontend.src.api.wizard.getInfrastructureConfig",
+                            "dashboard.frontend.src.api.wizard.checkInfrastructureHealth",
+                            "dashboard.frontend.src.api.wizard.checkAllInfrastructureHealth",
+                            "dashboard.frontend.src.api.wizard.deleteInfrastructureConfig",
+                            "dashboard.frontend.src.api.wizard.deleteInfrastructureConfig.errorData.catch() callback",
+                            "dashboard.frontend.src.api.wizard.provisionInfrastructure"
                           ]
                         },
                         {

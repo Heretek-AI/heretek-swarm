@@ -61,6 +61,16 @@ export interface SelectedInfrastructure {
   healthError?: string;
 }
 
+// Provisioning service status
+export type ProvisionStatus = 'pending' | 'pulling' | 'starting' | 'healthy' | 'failed';
+
+export interface ServiceProvisionStatus {
+  service: string;
+  status: ProvisionStatus;
+  message?: string;
+  error?: string;
+}
+
 // Available infrastructure services
 export const INFRASTRUCTURE_SERVICES: InfrastructureServiceConfig[] = [
   {
@@ -147,6 +157,10 @@ export interface WizardState {
   selectedInfrastructure: SelectedInfrastructure[];
   deployMode: 'external' | 'local' | null;
 
+  // Provisioning state
+  provisioningProgress: Record<string, ServiceProvisionStatus>;
+  connectionStrings: Record<string, string>;
+
   // Loading states
   isLoadingProviders: boolean;
   isLoadingTiers: boolean;
@@ -172,6 +186,12 @@ export interface WizardState {
   removeInfrastructure: (serviceType: string) => void;
   updateInfrastructure: (serviceType: string, updates: Partial<SelectedInfrastructure>) => void;
   setDeployMode: (mode: 'external' | 'local' | null) => void;
+
+  // Provisioning actions
+  setProvisioningProgress: (service: string, status: ServiceProvisionStatus) => void;
+  resetProvisioningProgress: () => void;
+  setConnectionStrings: (strings: Record<string, string>) => void;
+  clearConnectionStrings: () => void;
 
   addProvider: (provider: Provider) => void;
   removeProvider: (providerId: string) => void;
@@ -235,6 +255,8 @@ const initialState = {
   availableInfrastructure: [] as InfrastructureServiceConfig[],
   selectedInfrastructure: [] as SelectedInfrastructure[],
   deployMode: null,
+  provisioningProgress: {} as Record<string, ServiceProvisionStatus>,
+  connectionStrings: {} as Record<string, string>,
   isLoadingProviders: false,
   isLoadingTiers: false,
   isLoadingInfrastructure: false,
@@ -347,6 +369,29 @@ export const useConfigWizardStore = create<WizardState>()(
 
       setDeployMode: (mode: 'external' | 'local' | null) => {
         set({ deployMode: mode });
+      },
+
+      // Provisioning actions
+      setProvisioningProgress: (service: string, status: ServiceProvisionStatus) => {
+        const { provisioningProgress } = get();
+        set({
+          provisioningProgress: {
+            ...provisioningProgress,
+            [service]: status,
+          },
+        });
+      },
+
+      resetProvisioningProgress: () => {
+        set({ provisioningProgress: {} });
+      },
+
+      setConnectionStrings: (strings: Record<string, string>) => {
+        set({ connectionStrings: strings });
+      },
+
+      clearConnectionStrings: () => {
+        set({ connectionStrings: {} });
       },
 
       // Provider management

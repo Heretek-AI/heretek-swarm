@@ -135,6 +135,32 @@ export interface HealthCheckResult {
   error?: string;
 }
 
+// Provisioning types
+export type RuntimeChoice = 'auto' | 'podman' | 'docker';
+
+export interface ProvisionRequest {
+  services: string[];
+  runtime?: RuntimeChoice;
+}
+
+export interface ProvisionResult {
+  success: boolean;
+  host: string;
+  port: number;
+  connection_string?: string;
+  latency_ms: number;
+  error?: string;
+}
+
+export interface ProvisionResponse {
+  status: 'provisioning' | 'completed' | 'failed';
+  results: Record<string, ProvisionResult>;
+  connection_strings: Record<string, string>;
+  errors: string[];
+  total_provisioned: number;
+  total_failed: number;
+}
+
 // =============================================================================
 // API Functions
 // =============================================================================
@@ -356,4 +382,19 @@ export async function deleteInfrastructureConfig(
   }
 
   return response.json();
+}
+
+/**
+ * Provision infrastructure services locally via Docker/Podman.
+ * Stops any existing heretek-* containers, starts new ones,
+ * and polls health checks until all services are healthy (up to 60s).
+ */
+export async function provisionInfrastructure(
+  services: string[],
+  runtime?: RuntimeChoice
+): Promise<ProvisionResponse> {
+  return fetchJson<ProvisionResponse>('/api/wizard/provision', {
+    method: 'POST',
+    body: JSON.stringify({ services, runtime: runtime || 'auto' }),
+  });
 }
