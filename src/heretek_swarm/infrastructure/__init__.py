@@ -6,6 +6,7 @@ Provides foundational infrastructure for the swarm:
 - NATS: Event mesh for pub/sub messaging
 - OTel: OpenTelemetry for distributed tracing, metrics, and logging
 - Health: Infrastructure service health checks
+- Provisioner: Docker/Podman container provisioning
 """
 
 from heretek_swarm.infrastructure.a2a import (
@@ -50,6 +51,18 @@ from heretek_swarm.infrastructure.otel import (
     record_metric,
     with_span,
 )
+from heretek_swarm.infrastructure.provisioner import (
+    ContainerConfig,
+    ContainerRuntime,
+    ConnectionStringResult,
+    detect_runtime,
+    provision_all,
+    provision_all_sync,
+    provision_infrastructure,
+    provision_infrastructure_sync,
+    provision_service,
+    provision_service_sync,
+)
 
 __all__ = [
     # A2A Protocol
@@ -90,4 +103,15 @@ __all__ = [
     "init_tracing",
     "record_metric",
     "with_span",
+    # Provisioner
+    "ContainerConfig",
+    "ContainerRuntime",
+    "ConnectionStringResult",
+    "detect_runtime",
+    "provision_all",
+    "provision_all_sync",
+    "provision_infrastructure",
+    "provision_infrastructure_sync",
+    "provision_service",
+    "provision_service_sync",
 ]

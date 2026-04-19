@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-19T01:53:41.561116+00:00",
+    "generated_at": "2026-04-19T02:04:27.258975+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -49387,12 +49387,12 @@
       ]
     },
     "dashboard/frontend/src/stores/configWizardStore.ts": {
-      "file_status": "modified",
+      "file_status": "unchanged",
       "methods": [
         {
           "qualified_name": "dashboard.frontend.src.stores.configWizardStore.SelectedProvider",
-          "start_line": 31,
-          "end_line": 39,
+          "start_line": 33,
+          "end_line": 41,
           "node_type": "INTERFACE",
           "status": "unchanged"
         },
@@ -49401,125 +49401,20 @@
           "start_line": 44,
           "end_line": 52,
           "node_type": "INTERFACE",
-          "status": "added"
+          "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.stores.configWizardStore.SelectedInfrastructure",
           "start_line": 54,
           "end_line": 62,
           "node_type": "INTERFACE",
-          "status": "added"
+          "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.stores.configWizardStore.WizardState",
           "start_line": 113,
           "end_line": 200,
           "node_type": "INTERFACE",
-          "status": "modified"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore",
-          "start_line": 155,
-          "end_line": 327,
-          "node_type": "CLASS",
-          "status": "deleted"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setStep",
-          "start_line": 161,
-          "end_line": 167,
-          "node_type": "METHOD",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.nextStep",
-          "start_line": 169,
-          "end_line": 178,
-          "node_type": "METHOD",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.prevStep",
-          "start_line": 180,
-          "end_line": 189,
-          "node_type": "METHOD",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.goBack",
-          "start_line": 191,
-          "end_line": 203,
-          "node_type": "METHOD",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setProviders",
-          "start_line": 206,
-          "end_line": 208,
-          "node_type": "METHOD",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setTiers",
-          "start_line": 210,
-          "end_line": 212,
-          "node_type": "METHOD",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setConfigStatus",
-          "start_line": 214,
-          "end_line": 216,
-          "node_type": "METHOD",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.addProvider",
-          "start_line": 219,
-          "end_line": 233,
-          "node_type": "METHOD",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.addProvider.exists",
-          "start_line": 221,
-          "end_line": 221,
-          "node_type": "CLASS",
-          "status": "deleted"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.addProvider.exists.selectedProviders.some() callback",
-          "start_line": 221,
-          "end_line": 221,
-          "node_type": "FUNCTION",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.removeProvider",
-          "start_line": 235,
-          "end_line": 247,
-          "node_type": "METHOD",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.removeProvider.filtered",
-          "start_line": 237,
-          "end_line": 239,
-          "node_type": "CLASS",
-          "status": "deleted"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.removeProvider.filtered.selectedProviders.filter() callback",
-          "start_line": 238,
-          "end_line": 238,
-          "node_type": "FUNCTION",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.removeProvider.filtered.some() callback",
-          "start_line": 242,
-          "end_line": 242,
-          "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
@@ -49527,94 +49422,52 @@
           "start_line": 248,
           "end_line": 455,
           "node_type": "FUNCTION",
-          "status": "modified"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.updateProvider",
-          "start_line": 249,
-          "end_line": 256,
-          "node_type": "METHOD",
           "status": "unchanged"
         },
         {
-          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.updateProvider.selectedProviders.selectedProviders.map() callback",
+          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setStep",
           "start_line": 252,
-          "end_line": 253,
-          "node_type": "FUNCTION",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setDefaultProvider",
-          "start_line": 258,
-          "end_line": 266,
+          "end_line": 258,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
-          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setDefaultProvider.selectedProviders.selectedProviders.map() callback",
-          "start_line": 261,
-          "end_line": 264,
-          "node_type": "FUNCTION",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setSelectedTier",
-          "start_line": 269,
-          "end_line": 271,
+          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.nextStep",
+          "start_line": 260,
+          "end_line": 269,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
-          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setPreference",
-          "start_line": 274,
-          "end_line": 277,
+          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.prevStep",
+          "start_line": 271,
+          "end_line": 280,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
-          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setIsDeploying",
-          "start_line": 280,
-          "end_line": 282,
+          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.goBack",
+          "start_line": 282,
+          "end_line": 294,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
-          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setDeploymentResult",
-          "start_line": 284,
-          "end_line": 286,
-          "node_type": "METHOD",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setIsLoadingProviders",
-          "start_line": 289,
-          "end_line": 291,
-          "node_type": "METHOD",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setIsLoadingTiers",
-          "start_line": 293,
-          "end_line": 295,
-          "node_type": "METHOD",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setIsValidating",
+          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setProviders",
           "start_line": 297,
           "end_line": 299,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
-          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setIsSubmitting",
+          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setTiers",
           "start_line": 301,
           "end_line": 303,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
-          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setError",
+          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setConfigStatus",
           "start_line": 305,
           "end_line": 307,
           "node_type": "METHOD",
@@ -49622,185 +49475,262 @@
         },
         {
           "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setInfrastructure",
-          "start_line": 309,
-          "end_line": 311,
-          "node_type": "METHOD",
-          "status": "added"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.resetWizard",
           "start_line": 310,
-          "end_line": 316,
+          "end_line": 312,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.addInfrastructure",
-          "start_line": 313,
-          "end_line": 327,
-          "node_type": "METHOD",
-          "status": "added"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.addInfrastructure.exists.selectedInfrastructure.some() callback",
-          "start_line": 315,
-          "end_line": 315,
-          "node_type": "FUNCTION",
-          "status": "added"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.partialize",
-          "start_line": 320,
-          "end_line": 324,
+          "start_line": 314,
+          "end_line": 328,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
+          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.addInfrastructure.exists.selectedInfrastructure.some() callback",
+          "start_line": 316,
+          "end_line": 316,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
           "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.removeInfrastructure",
-          "start_line": 329,
-          "end_line": 336,
+          "start_line": 330,
+          "end_line": 337,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.removeInfrastructure.selectedInfrastructure.selectedInfrastructure.filter() callback",
-          "start_line": 333,
-          "end_line": 333,
-          "node_type": "FUNCTION",
-          "status": "added"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useCurrentWizardStep",
-          "start_line": 333,
-          "end_line": 334,
-          "node_type": "CLASS",
-          "status": "deleted"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useCurrentWizardStep.useConfigWizardStore() callback",
           "start_line": 334,
           "end_line": 334,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
-          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useSelectedProviders",
-          "start_line": 335,
-          "end_line": 336,
-          "node_type": "CLASS",
-          "status": "deleted"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useSelectedProviders.useConfigWizardStore() callback",
-          "start_line": 336,
-          "end_line": 336,
-          "node_type": "FUNCTION",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useSelectedTier",
-          "start_line": 337,
-          "end_line": 340,
-          "node_type": "CLASS",
-          "status": "deleted"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useSelectedTier.useConfigWizardStore() callback",
-          "start_line": 338,
-          "end_line": 339,
-          "node_type": "FUNCTION",
-          "status": "unchanged"
-        },
-        {
           "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.updateInfrastructure",
-          "start_line": 338,
-          "end_line": 345,
-          "node_type": "METHOD",
-          "status": "added"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useSelectedTier.useConfigWizardStore() callback.state.availableTiers.find() callback",
           "start_line": 339,
-          "end_line": 339,
-          "node_type": "FUNCTION",
+          "end_line": 346,
+          "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.updateInfrastructure.selectedInfrastructure.selectedInfrastructure.map() callback",
-          "start_line": 341,
-          "end_line": 342,
-          "node_type": "FUNCTION",
-          "status": "added"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.usePreferences",
-          "start_line": 341,
-          "end_line": 342,
-          "node_type": "CLASS",
-          "status": "deleted"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.usePreferences.useConfigWizardStore() callback",
           "start_line": 342,
-          "end_line": 342,
+          "end_line": 343,
           "node_type": "FUNCTION",
           "status": "unchanged"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useIsDeploying",
-          "start_line": 343,
-          "end_line": 344,
-          "node_type": "CLASS",
-          "status": "deleted"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useIsDeploying.useConfigWizardStore() callback",
-          "start_line": 344,
-          "end_line": 344,
-          "node_type": "FUNCTION",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useDeploymentResult",
-          "start_line": 345,
-          "end_line": 346,
-          "node_type": "CLASS",
-          "status": "deleted"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useDeploymentResult.useConfigWizardStore() callback",
-          "start_line": 346,
-          "end_line": 346,
-          "node_type": "FUNCTION",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useWizardError",
-          "start_line": 347,
-          "end_line": 348,
-          "node_type": "CLASS",
-          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setDeployMode",
-          "start_line": 347,
-          "end_line": 349,
+          "start_line": 348,
+          "end_line": 350,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "unchanged"
         },
         {
-          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useWizardError.useConfigWizardStore() callback",
-          "start_line": 348,
-          "end_line": 348,
+          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.addProvider",
+          "start_line": 353,
+          "end_line": 367,
+          "node_type": "METHOD",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.addProvider.exists.selectedProviders.some() callback",
+          "start_line": 355,
+          "end_line": 355,
           "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.removeProvider",
+          "start_line": 369,
+          "end_line": 381,
+          "node_type": "METHOD",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.removeProvider.filtered.selectedProviders.filter() callback",
+          "start_line": 372,
+          "end_line": 372,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.removeProvider.filtered.some() callback",
+          "start_line": 376,
+          "end_line": 376,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.updateProvider",
+          "start_line": 383,
+          "end_line": 390,
+          "node_type": "METHOD",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.updateProvider.selectedProviders.selectedProviders.map() callback",
+          "start_line": 386,
+          "end_line": 387,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setDefaultProvider",
+          "start_line": 392,
+          "end_line": 400,
+          "node_type": "METHOD",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setDefaultProvider.selectedProviders.selectedProviders.map() callback",
+          "start_line": 395,
+          "end_line": 398,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setSelectedTier",
+          "start_line": 403,
+          "end_line": 405,
+          "node_type": "METHOD",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setPreference",
+          "start_line": 408,
+          "end_line": 411,
+          "node_type": "METHOD",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setIsDeploying",
+          "start_line": 414,
+          "end_line": 416,
+          "node_type": "METHOD",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setDeploymentResult",
+          "start_line": 418,
+          "end_line": 420,
+          "node_type": "METHOD",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setIsLoadingProviders",
+          "start_line": 423,
+          "end_line": 425,
+          "node_type": "METHOD",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setIsLoadingTiers",
+          "start_line": 427,
+          "end_line": 429,
+          "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setIsLoadingInfrastructure",
-          "start_line": 430,
-          "end_line": 432,
+          "start_line": 431,
+          "end_line": 433,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setIsValidating",
+          "start_line": 435,
+          "end_line": 437,
+          "node_type": "METHOD",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setIsSubmitting",
+          "start_line": 439,
+          "end_line": 441,
+          "node_type": "METHOD",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setError",
+          "start_line": 443,
+          "end_line": 445,
+          "node_type": "METHOD",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.resetWizard",
+          "start_line": 448,
+          "end_line": 454,
+          "node_type": "METHOD",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.partialize",
+          "start_line": 458,
+          "end_line": 462,
+          "node_type": "METHOD",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useCurrentWizardStep.useConfigWizardStore() callback",
+          "start_line": 472,
+          "end_line": 472,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useSelectedProviders.useConfigWizardStore() callback",
+          "start_line": 474,
+          "end_line": 474,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useSelectedTier.useConfigWizardStore() callback",
+          "start_line": 476,
+          "end_line": 477,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useSelectedTier.useConfigWizardStore() callback.state.availableTiers.find() callback",
+          "start_line": 477,
+          "end_line": 477,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.usePreferences.useConfigWizardStore() callback",
+          "start_line": 480,
+          "end_line": 480,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useIsDeploying.useConfigWizardStore() callback",
+          "start_line": 482,
+          "end_line": 482,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useDeploymentResult.useConfigWizardStore() callback",
+          "start_line": 484,
+          "end_line": 484,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useWizardError.useConfigWizardStore() callback",
+          "start_line": 486,
+          "end_line": 486,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
         }
       ]
     },
@@ -52522,6 +52452,10 @@
     },
     "src/heretek_swarm/api/agents/__init__.py": {
       "file_status": "unchanged",
+      "methods": []
+    },
+    "src/heretek_swarm/infrastructure/__init__.py": {
+      "file_status": "modified",
       "methods": []
     }
   },
@@ -107153,8 +107087,8 @@
     "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.SelectedProvider": {
       "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
       "qualified_name": "dashboard.frontend.src.stores.configWizardStore.SelectedProvider",
-      "start_line": 31,
-      "end_line": 39,
+      "start_line": 33,
+      "end_line": 41,
       "type": "INTERFACE",
       "status": "unchanged"
     },
@@ -107164,7 +107098,7 @@
       "start_line": 44,
       "end_line": 52,
       "type": "INTERFACE",
-      "status": "added"
+      "status": "unchanged"
     },
     "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.SelectedInfrastructure": {
       "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
@@ -107172,7 +107106,7 @@
       "start_line": 54,
       "end_line": 62,
       "type": "INTERFACE",
-      "status": "added"
+      "status": "unchanged"
     },
     "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.WizardState": {
       "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
@@ -107180,126 +107114,6 @@
       "start_line": 113,
       "end_line": 200,
       "type": "INTERFACE",
-      "status": "modified"
-    },
-    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore": {
-      "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
-      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore",
-      "start_line": 155,
-      "end_line": 327,
-      "type": "CLASS",
-      "status": "deleted"
-    },
-    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setStep": {
-      "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
-      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setStep",
-      "start_line": 161,
-      "end_line": 167,
-      "type": "METHOD",
-      "status": "unchanged"
-    },
-    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.nextStep": {
-      "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
-      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.nextStep",
-      "start_line": 169,
-      "end_line": 178,
-      "type": "METHOD",
-      "status": "unchanged"
-    },
-    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.prevStep": {
-      "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
-      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.prevStep",
-      "start_line": 180,
-      "end_line": 189,
-      "type": "METHOD",
-      "status": "unchanged"
-    },
-    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.goBack": {
-      "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
-      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.goBack",
-      "start_line": 191,
-      "end_line": 203,
-      "type": "METHOD",
-      "status": "unchanged"
-    },
-    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setProviders": {
-      "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
-      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setProviders",
-      "start_line": 206,
-      "end_line": 208,
-      "type": "METHOD",
-      "status": "unchanged"
-    },
-    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setTiers": {
-      "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
-      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setTiers",
-      "start_line": 210,
-      "end_line": 212,
-      "type": "METHOD",
-      "status": "unchanged"
-    },
-    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setConfigStatus": {
-      "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
-      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setConfigStatus",
-      "start_line": 214,
-      "end_line": 216,
-      "type": "METHOD",
-      "status": "unchanged"
-    },
-    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.addProvider": {
-      "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
-      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.addProvider",
-      "start_line": 219,
-      "end_line": 233,
-      "type": "METHOD",
-      "status": "unchanged"
-    },
-    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.addProvider.exists": {
-      "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
-      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.addProvider.exists",
-      "start_line": 221,
-      "end_line": 221,
-      "type": "CLASS",
-      "status": "deleted"
-    },
-    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.addProvider.exists.selectedProviders.some() callback": {
-      "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
-      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.addProvider.exists.selectedProviders.some() callback",
-      "start_line": 221,
-      "end_line": 221,
-      "type": "FUNCTION",
-      "status": "unchanged"
-    },
-    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.removeProvider": {
-      "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
-      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.removeProvider",
-      "start_line": 235,
-      "end_line": 247,
-      "type": "METHOD",
-      "status": "unchanged"
-    },
-    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.removeProvider.filtered": {
-      "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
-      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.removeProvider.filtered",
-      "start_line": 237,
-      "end_line": 239,
-      "type": "CLASS",
-      "status": "deleted"
-    },
-    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.removeProvider.filtered.selectedProviders.filter() callback": {
-      "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
-      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.removeProvider.filtered.selectedProviders.filter() callback",
-      "start_line": 238,
-      "end_line": 238,
-      "type": "FUNCTION",
-      "status": "unchanged"
-    },
-    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.removeProvider.filtered.some() callback": {
-      "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
-      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.removeProvider.filtered.some() callback",
-      "start_line": 242,
-      "end_line": 242,
-      "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback": {
@@ -107308,107 +107122,59 @@
       "start_line": 248,
       "end_line": 455,
       "type": "FUNCTION",
-      "status": "modified"
-    },
-    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.updateProvider": {
-      "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
-      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.updateProvider",
-      "start_line": 249,
-      "end_line": 256,
-      "type": "METHOD",
       "status": "unchanged"
     },
-    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.updateProvider.selectedProviders.selectedProviders.map() callback": {
+    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setStep": {
       "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
-      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.updateProvider.selectedProviders.selectedProviders.map() callback",
+      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setStep",
       "start_line": 252,
-      "end_line": 253,
-      "type": "FUNCTION",
-      "status": "unchanged"
-    },
-    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setDefaultProvider": {
-      "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
-      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setDefaultProvider",
-      "start_line": 258,
-      "end_line": 266,
+      "end_line": 258,
       "type": "METHOD",
       "status": "unchanged"
     },
-    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setDefaultProvider.selectedProviders.selectedProviders.map() callback": {
+    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.nextStep": {
       "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
-      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setDefaultProvider.selectedProviders.selectedProviders.map() callback",
-      "start_line": 261,
-      "end_line": 264,
-      "type": "FUNCTION",
-      "status": "unchanged"
-    },
-    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setSelectedTier": {
-      "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
-      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setSelectedTier",
-      "start_line": 269,
-      "end_line": 271,
+      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.nextStep",
+      "start_line": 260,
+      "end_line": 269,
       "type": "METHOD",
       "status": "unchanged"
     },
-    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setPreference": {
+    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.prevStep": {
       "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
-      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setPreference",
-      "start_line": 274,
-      "end_line": 277,
+      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.prevStep",
+      "start_line": 271,
+      "end_line": 280,
       "type": "METHOD",
       "status": "unchanged"
     },
-    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setIsDeploying": {
+    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.goBack": {
       "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
-      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setIsDeploying",
-      "start_line": 280,
-      "end_line": 282,
+      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.goBack",
+      "start_line": 282,
+      "end_line": 294,
       "type": "METHOD",
       "status": "unchanged"
     },
-    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setDeploymentResult": {
+    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setProviders": {
       "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
-      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setDeploymentResult",
-      "start_line": 284,
-      "end_line": 286,
-      "type": "METHOD",
-      "status": "unchanged"
-    },
-    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setIsLoadingProviders": {
-      "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
-      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setIsLoadingProviders",
-      "start_line": 289,
-      "end_line": 291,
-      "type": "METHOD",
-      "status": "unchanged"
-    },
-    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setIsLoadingTiers": {
-      "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
-      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setIsLoadingTiers",
-      "start_line": 293,
-      "end_line": 295,
-      "type": "METHOD",
-      "status": "unchanged"
-    },
-    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setIsValidating": {
-      "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
-      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setIsValidating",
+      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setProviders",
       "start_line": 297,
       "end_line": 299,
       "type": "METHOD",
       "status": "unchanged"
     },
-    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setIsSubmitting": {
+    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setTiers": {
       "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
-      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setIsSubmitting",
+      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setTiers",
       "start_line": 301,
       "end_line": 303,
       "type": "METHOD",
       "status": "unchanged"
     },
-    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setError": {
+    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setConfigStatus": {
       "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
-      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setError",
+      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setConfigStatus",
       "start_line": 305,
       "end_line": 307,
       "type": "METHOD",
@@ -107417,210 +107183,298 @@
     "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setInfrastructure": {
       "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
       "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setInfrastructure",
-      "start_line": 309,
-      "end_line": 311,
-      "type": "METHOD",
-      "status": "added"
-    },
-    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.resetWizard": {
-      "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
-      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.resetWizard",
       "start_line": 310,
-      "end_line": 316,
+      "end_line": 312,
       "type": "METHOD",
       "status": "unchanged"
     },
     "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.addInfrastructure": {
       "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
       "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.addInfrastructure",
-      "start_line": 313,
-      "end_line": 327,
+      "start_line": 314,
+      "end_line": 328,
       "type": "METHOD",
-      "status": "added"
+      "status": "unchanged"
     },
     "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.addInfrastructure.exists.selectedInfrastructure.some() callback": {
       "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
       "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.addInfrastructure.exists.selectedInfrastructure.some() callback",
-      "start_line": 315,
-      "end_line": 315,
+      "start_line": 316,
+      "end_line": 316,
       "type": "FUNCTION",
-      "status": "added"
-    },
-    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.partialize": {
-      "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
-      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.partialize",
-      "start_line": 320,
-      "end_line": 324,
-      "type": "METHOD",
       "status": "unchanged"
     },
     "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.removeInfrastructure": {
       "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
       "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.removeInfrastructure",
-      "start_line": 329,
-      "end_line": 336,
+      "start_line": 330,
+      "end_line": 337,
       "type": "METHOD",
-      "status": "added"
+      "status": "unchanged"
     },
     "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.removeInfrastructure.selectedInfrastructure.selectedInfrastructure.filter() callback": {
       "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
       "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.removeInfrastructure.selectedInfrastructure.selectedInfrastructure.filter() callback",
-      "start_line": 333,
-      "end_line": 333,
-      "type": "FUNCTION",
-      "status": "added"
-    },
-    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useCurrentWizardStep": {
-      "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
-      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useCurrentWizardStep",
-      "start_line": 333,
-      "end_line": 334,
-      "type": "CLASS",
-      "status": "deleted"
-    },
-    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useCurrentWizardStep.useConfigWizardStore() callback": {
-      "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
-      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useCurrentWizardStep.useConfigWizardStore() callback",
       "start_line": 334,
       "end_line": 334,
-      "type": "FUNCTION",
-      "status": "unchanged"
-    },
-    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useSelectedProviders": {
-      "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
-      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useSelectedProviders",
-      "start_line": 335,
-      "end_line": 336,
-      "type": "CLASS",
-      "status": "deleted"
-    },
-    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useSelectedProviders.useConfigWizardStore() callback": {
-      "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
-      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useSelectedProviders.useConfigWizardStore() callback",
-      "start_line": 336,
-      "end_line": 336,
-      "type": "FUNCTION",
-      "status": "unchanged"
-    },
-    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useSelectedTier": {
-      "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
-      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useSelectedTier",
-      "start_line": 337,
-      "end_line": 340,
-      "type": "CLASS",
-      "status": "deleted"
-    },
-    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useSelectedTier.useConfigWizardStore() callback": {
-      "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
-      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useSelectedTier.useConfigWizardStore() callback",
-      "start_line": 338,
-      "end_line": 339,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.updateInfrastructure": {
       "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
       "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.updateInfrastructure",
-      "start_line": 338,
-      "end_line": 345,
-      "type": "METHOD",
-      "status": "added"
-    },
-    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useSelectedTier.useConfigWizardStore() callback.state.availableTiers.find() callback": {
-      "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
-      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useSelectedTier.useConfigWizardStore() callback.state.availableTiers.find() callback",
       "start_line": 339,
-      "end_line": 339,
-      "type": "FUNCTION",
+      "end_line": 346,
+      "type": "METHOD",
       "status": "unchanged"
     },
     "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.updateInfrastructure.selectedInfrastructure.selectedInfrastructure.map() callback": {
       "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
       "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.updateInfrastructure.selectedInfrastructure.selectedInfrastructure.map() callback",
-      "start_line": 341,
-      "end_line": 342,
-      "type": "FUNCTION",
-      "status": "added"
-    },
-    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.usePreferences": {
-      "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
-      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.usePreferences",
-      "start_line": 341,
-      "end_line": 342,
-      "type": "CLASS",
-      "status": "deleted"
-    },
-    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.usePreferences.useConfigWizardStore() callback": {
-      "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
-      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.usePreferences.useConfigWizardStore() callback",
       "start_line": 342,
-      "end_line": 342,
+      "end_line": 343,
       "type": "FUNCTION",
       "status": "unchanged"
-    },
-    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useIsDeploying": {
-      "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
-      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useIsDeploying",
-      "start_line": 343,
-      "end_line": 344,
-      "type": "CLASS",
-      "status": "deleted"
-    },
-    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useIsDeploying.useConfigWizardStore() callback": {
-      "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
-      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useIsDeploying.useConfigWizardStore() callback",
-      "start_line": 344,
-      "end_line": 344,
-      "type": "FUNCTION",
-      "status": "unchanged"
-    },
-    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useDeploymentResult": {
-      "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
-      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useDeploymentResult",
-      "start_line": 345,
-      "end_line": 346,
-      "type": "CLASS",
-      "status": "deleted"
-    },
-    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useDeploymentResult.useConfigWizardStore() callback": {
-      "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
-      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useDeploymentResult.useConfigWizardStore() callback",
-      "start_line": 346,
-      "end_line": 346,
-      "type": "FUNCTION",
-      "status": "unchanged"
-    },
-    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useWizardError": {
-      "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
-      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useWizardError",
-      "start_line": 347,
-      "end_line": 348,
-      "type": "CLASS",
-      "status": "deleted"
     },
     "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setDeployMode": {
       "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
       "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setDeployMode",
-      "start_line": 347,
-      "end_line": 349,
-      "type": "METHOD",
-      "status": "added"
-    },
-    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useWizardError.useConfigWizardStore() callback": {
-      "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
-      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useWizardError.useConfigWizardStore() callback",
       "start_line": 348,
-      "end_line": 348,
+      "end_line": 350,
+      "type": "METHOD",
+      "status": "unchanged"
+    },
+    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.addProvider": {
+      "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
+      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.addProvider",
+      "start_line": 353,
+      "end_line": 367,
+      "type": "METHOD",
+      "status": "unchanged"
+    },
+    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.addProvider.exists.selectedProviders.some() callback": {
+      "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
+      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.addProvider.exists.selectedProviders.some() callback",
+      "start_line": 355,
+      "end_line": 355,
       "type": "FUNCTION",
+      "status": "unchanged"
+    },
+    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.removeProvider": {
+      "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
+      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.removeProvider",
+      "start_line": 369,
+      "end_line": 381,
+      "type": "METHOD",
+      "status": "unchanged"
+    },
+    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.removeProvider.filtered.selectedProviders.filter() callback": {
+      "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
+      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.removeProvider.filtered.selectedProviders.filter() callback",
+      "start_line": 372,
+      "end_line": 372,
+      "type": "FUNCTION",
+      "status": "unchanged"
+    },
+    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.removeProvider.filtered.some() callback": {
+      "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
+      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.removeProvider.filtered.some() callback",
+      "start_line": 376,
+      "end_line": 376,
+      "type": "FUNCTION",
+      "status": "unchanged"
+    },
+    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.updateProvider": {
+      "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
+      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.updateProvider",
+      "start_line": 383,
+      "end_line": 390,
+      "type": "METHOD",
+      "status": "unchanged"
+    },
+    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.updateProvider.selectedProviders.selectedProviders.map() callback": {
+      "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
+      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.updateProvider.selectedProviders.selectedProviders.map() callback",
+      "start_line": 386,
+      "end_line": 387,
+      "type": "FUNCTION",
+      "status": "unchanged"
+    },
+    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setDefaultProvider": {
+      "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
+      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setDefaultProvider",
+      "start_line": 392,
+      "end_line": 400,
+      "type": "METHOD",
+      "status": "unchanged"
+    },
+    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setDefaultProvider.selectedProviders.selectedProviders.map() callback": {
+      "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
+      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setDefaultProvider.selectedProviders.selectedProviders.map() callback",
+      "start_line": 395,
+      "end_line": 398,
+      "type": "FUNCTION",
+      "status": "unchanged"
+    },
+    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setSelectedTier": {
+      "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
+      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setSelectedTier",
+      "start_line": 403,
+      "end_line": 405,
+      "type": "METHOD",
+      "status": "unchanged"
+    },
+    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setPreference": {
+      "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
+      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setPreference",
+      "start_line": 408,
+      "end_line": 411,
+      "type": "METHOD",
+      "status": "unchanged"
+    },
+    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setIsDeploying": {
+      "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
+      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setIsDeploying",
+      "start_line": 414,
+      "end_line": 416,
+      "type": "METHOD",
+      "status": "unchanged"
+    },
+    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setDeploymentResult": {
+      "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
+      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setDeploymentResult",
+      "start_line": 418,
+      "end_line": 420,
+      "type": "METHOD",
+      "status": "unchanged"
+    },
+    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setIsLoadingProviders": {
+      "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
+      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setIsLoadingProviders",
+      "start_line": 423,
+      "end_line": 425,
+      "type": "METHOD",
+      "status": "unchanged"
+    },
+    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setIsLoadingTiers": {
+      "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
+      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setIsLoadingTiers",
+      "start_line": 427,
+      "end_line": 429,
+      "type": "METHOD",
       "status": "unchanged"
     },
     "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setIsLoadingInfrastructure": {
       "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
       "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setIsLoadingInfrastructure",
-      "start_line": 430,
-      "end_line": 432,
+      "start_line": 431,
+      "end_line": 433,
       "type": "METHOD",
-      "status": "added"
+      "status": "unchanged"
+    },
+    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setIsValidating": {
+      "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
+      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setIsValidating",
+      "start_line": 435,
+      "end_line": 437,
+      "type": "METHOD",
+      "status": "unchanged"
+    },
+    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setIsSubmitting": {
+      "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
+      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setIsSubmitting",
+      "start_line": 439,
+      "end_line": 441,
+      "type": "METHOD",
+      "status": "unchanged"
+    },
+    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setError": {
+      "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
+      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setError",
+      "start_line": 443,
+      "end_line": 445,
+      "type": "METHOD",
+      "status": "unchanged"
+    },
+    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.resetWizard": {
+      "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
+      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.resetWizard",
+      "start_line": 448,
+      "end_line": 454,
+      "type": "METHOD",
+      "status": "unchanged"
+    },
+    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.partialize": {
+      "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
+      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.partialize",
+      "start_line": 458,
+      "end_line": 462,
+      "type": "METHOD",
+      "status": "unchanged"
+    },
+    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useCurrentWizardStep.useConfigWizardStore() callback": {
+      "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
+      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useCurrentWizardStep.useConfigWizardStore() callback",
+      "start_line": 472,
+      "end_line": 472,
+      "type": "FUNCTION",
+      "status": "unchanged"
+    },
+    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useSelectedProviders.useConfigWizardStore() callback": {
+      "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
+      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useSelectedProviders.useConfigWizardStore() callback",
+      "start_line": 474,
+      "end_line": 474,
+      "type": "FUNCTION",
+      "status": "unchanged"
+    },
+    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useSelectedTier.useConfigWizardStore() callback": {
+      "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
+      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useSelectedTier.useConfigWizardStore() callback",
+      "start_line": 476,
+      "end_line": 477,
+      "type": "FUNCTION",
+      "status": "unchanged"
+    },
+    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useSelectedTier.useConfigWizardStore() callback.state.availableTiers.find() callback": {
+      "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
+      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useSelectedTier.useConfigWizardStore() callback.state.availableTiers.find() callback",
+      "start_line": 477,
+      "end_line": 477,
+      "type": "FUNCTION",
+      "status": "unchanged"
+    },
+    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.usePreferences.useConfigWizardStore() callback": {
+      "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
+      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.usePreferences.useConfigWizardStore() callback",
+      "start_line": 480,
+      "end_line": 480,
+      "type": "FUNCTION",
+      "status": "unchanged"
+    },
+    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useIsDeploying.useConfigWizardStore() callback": {
+      "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
+      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useIsDeploying.useConfigWizardStore() callback",
+      "start_line": 482,
+      "end_line": 482,
+      "type": "FUNCTION",
+      "status": "unchanged"
+    },
+    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useDeploymentResult.useConfigWizardStore() callback": {
+      "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
+      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useDeploymentResult.useConfigWizardStore() callback",
+      "start_line": 484,
+      "end_line": 484,
+      "type": "FUNCTION",
+      "status": "unchanged"
+    },
+    "dashboard/frontend/src/stores/configWizardStore.ts|dashboard.frontend.src.stores.configWizardStore.useWizardError.useConfigWizardStore() callback": {
+      "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
+      "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useWizardError.useConfigWizardStore() callback",
+      "start_line": 486,
+      "end_line": 486,
+      "type": "FUNCTION",
+      "status": "unchanged"
     },
     "dashboard/frontend/src/stores/metricsStore.ts|dashboard.frontend.src.stores.metricsStore.ConsciousnessMetrics": {
       "file_path": "dashboard/frontend/src/stores/metricsStore.ts",
@@ -241063,10 +240917,11 @@
         },
         {
           "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
-          "file_status": "modified",
+          "file_status": "unchanged",
           "methods": [
             "dashboard.frontend.src.stores.configWizardStore.SelectedProvider",
             "dashboard.frontend.src.stores.configWizardStore.WizardState",
+            "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback",
             "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setStep",
             "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.nextStep",
             "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.prevStep",
@@ -241076,7 +240931,6 @@
             "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setConfigStatus",
             "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.addProvider",
             "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.removeProvider",
-            "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback",
             "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.updateProvider",
             "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setDefaultProvider",
             "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setSelectedTier",
@@ -260202,10 +260056,11 @@
             },
             {
               "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
-              "file_status": "modified",
+              "file_status": "unchanged",
               "methods": [
                 "dashboard.frontend.src.stores.configWizardStore.SelectedProvider",
                 "dashboard.frontend.src.stores.configWizardStore.WizardState",
+                "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback",
                 "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setStep",
                 "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.nextStep",
                 "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.prevStep",
@@ -260218,7 +260073,6 @@
                 "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.removeProvider",
                 "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.removeProvider.filtered.selectedProviders.filter() callback",
                 "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.removeProvider.filtered.some() callback",
-                "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback",
                 "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.updateProvider",
                 "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.updateProvider.selectedProviders.selectedProviders.map() callback",
                 "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setDefaultProvider",
@@ -261745,10 +261599,11 @@
                 },
                 {
                   "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
-                  "file_status": "modified",
+                  "file_status": "unchanged",
                   "methods": [
                     "dashboard.frontend.src.stores.configWizardStore.SelectedProvider",
                     "dashboard.frontend.src.stores.configWizardStore.WizardState",
+                    "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback",
                     "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setStep",
                     "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.nextStep",
                     "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.prevStep",
@@ -261761,7 +261616,6 @@
                     "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.removeProvider",
                     "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.removeProvider.filtered.selectedProviders.filter() callback",
                     "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.removeProvider.filtered.some() callback",
-                    "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback",
                     "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.updateProvider",
                     "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.updateProvider.selectedProviders.selectedProviders.map() callback",
                     "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setDefaultProvider",
@@ -263257,10 +263111,11 @@
                     },
                     {
                       "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
-                      "file_status": "modified",
+                      "file_status": "unchanged",
                       "methods": [
                         "dashboard.frontend.src.stores.configWizardStore.SelectedProvider",
                         "dashboard.frontend.src.stores.configWizardStore.WizardState",
+                        "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback",
                         "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setStep",
                         "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.nextStep",
                         "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.prevStep",
@@ -263273,7 +263128,6 @@
                         "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.removeProvider",
                         "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.removeProvider.filtered.selectedProviders.filter() callback",
                         "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.removeProvider.filtered.some() callback",
-                        "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback",
                         "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.updateProvider",
                         "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.updateProvider.selectedProviders.selectedProviders.map() callback",
                         "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setDefaultProvider",
@@ -264783,10 +264637,11 @@
                         },
                         {
                           "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "dashboard.frontend.src.stores.configWizardStore.SelectedProvider",
                             "dashboard.frontend.src.stores.configWizardStore.WizardState",
+                            "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback",
                             "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setStep",
                             "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.nextStep",
                             "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.prevStep",
@@ -264799,7 +264654,6 @@
                             "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.removeProvider",
                             "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.removeProvider.filtered.selectedProviders.filter() callback",
                             "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.removeProvider.filtered.some() callback",
-                            "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback",
                             "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.updateProvider",
                             "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.updateProvider.selectedProviders.selectedProviders.map() callback",
                             "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setDefaultProvider",
@@ -265414,7 +265268,7 @@
                   "file_methods": [
                     {
                       "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
-                      "file_status": "modified",
+                      "file_status": "unchanged",
                       "methods": []
                     },
                     {
@@ -265465,7 +265319,7 @@
                       "file_methods": [
                         {
                           "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "dashboard.frontend.src.stores.configWizardStore.SelectedProvider",
                             "dashboard.frontend.src.stores.configWizardStore.WizardState",
@@ -265623,7 +265477,7 @@
                       "file_methods": [
                         {
                           "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback",
                             "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.partialize",
@@ -267503,7 +267357,7 @@
                 },
                 {
                   "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
-                  "file_status": "modified",
+                  "file_status": "unchanged",
                   "methods": []
                 },
                 {
@@ -267605,10 +267459,11 @@
                     },
                     {
                       "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
-                      "file_status": "modified",
+                      "file_status": "unchanged",
                       "methods": [
                         "dashboard.frontend.src.stores.configWizardStore.SelectedProvider",
                         "dashboard.frontend.src.stores.configWizardStore.WizardState",
+                        "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback",
                         "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setStep",
                         "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.nextStep",
                         "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.prevStep",
@@ -267621,7 +267476,6 @@
                         "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.removeProvider",
                         "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.removeProvider.filtered.selectedProviders.filter() callback",
                         "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.removeProvider.filtered.some() callback",
-                        "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback",
                         "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.updateProvider",
                         "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.updateProvider.selectedProviders.selectedProviders.map() callback",
                         "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setDefaultProvider",
@@ -267792,10 +267646,11 @@
                         },
                         {
                           "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "dashboard.frontend.src.stores.configWizardStore.SelectedProvider",
                             "dashboard.frontend.src.stores.configWizardStore.WizardState",
+                            "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback",
                             "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setStep",
                             "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.nextStep",
                             "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.prevStep",
@@ -267805,7 +267660,6 @@
                             "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setConfigStatus",
                             "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.addProvider",
                             "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.removeProvider",
-                            "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback",
                             "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.updateProvider",
                             "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setDefaultProvider",
                             "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setSelectedTier",
@@ -267911,7 +267765,7 @@
                       "file_methods": [
                         {
                           "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.addProvider.exists.selectedProviders.some() callback",
                             "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.removeProvider.filtered.selectedProviders.filter() callback",
@@ -272410,15 +272264,10 @@
         },
         {
           "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
-          "file_status": "modified",
+          "file_status": "unchanged",
           "methods": [
             "dashboard.frontend.src.stores.configWizardStore.InfrastructureServiceConfig",
             "dashboard.frontend.src.stores.configWizardStore.SelectedInfrastructure",
-            "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.addProvider.exists.selectedProviders.some() callback",
-            "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.removeProvider.filtered.selectedProviders.filter() callback",
-            "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.removeProvider.filtered.some() callback",
-            "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.updateProvider.selectedProviders.selectedProviders.map() callback",
-            "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setDefaultProvider.selectedProviders.selectedProviders.map() callback",
             "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setInfrastructure",
             "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.addInfrastructure",
             "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.addInfrastructure.exists.selectedInfrastructure.some() callback",
@@ -272427,6 +272276,11 @@
             "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.updateInfrastructure",
             "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.updateInfrastructure.selectedInfrastructure.selectedInfrastructure.map() callback",
             "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setDeployMode",
+            "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.addProvider.exists.selectedProviders.some() callback",
+            "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.removeProvider.filtered.selectedProviders.filter() callback",
+            "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.removeProvider.filtered.some() callback",
+            "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.updateProvider.selectedProviders.selectedProviders.map() callback",
+            "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setDefaultProvider.selectedProviders.selectedProviders.map() callback",
             "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setIsLoadingInfrastructure"
           ]
         },
@@ -275688,12 +275542,13 @@
             },
             {
               "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
-              "file_status": "modified",
+              "file_status": "unchanged",
               "methods": [
                 "dashboard.frontend.src.stores.configWizardStore.SelectedProvider",
                 "dashboard.frontend.src.stores.configWizardStore.InfrastructureServiceConfig",
                 "dashboard.frontend.src.stores.configWizardStore.SelectedInfrastructure",
                 "dashboard.frontend.src.stores.configWizardStore.WizardState",
+                "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback",
                 "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setStep",
                 "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.nextStep",
                 "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.prevStep",
@@ -275701,12 +275556,19 @@
                 "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setProviders",
                 "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setTiers",
                 "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setConfigStatus",
+                "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setInfrastructure",
+                "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.addInfrastructure",
+                "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.addInfrastructure.exists.selectedInfrastructure.some() callback",
+                "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.removeInfrastructure",
+                "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.removeInfrastructure.selectedInfrastructure.selectedInfrastructure.filter() callback",
+                "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.updateInfrastructure",
+                "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.updateInfrastructure.selectedInfrastructure.selectedInfrastructure.map() callback",
+                "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setDeployMode",
                 "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.addProvider",
                 "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.addProvider.exists.selectedProviders.some() callback",
                 "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.removeProvider",
                 "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.removeProvider.filtered.selectedProviders.filter() callback",
                 "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.removeProvider.filtered.some() callback",
-                "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback",
                 "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.updateProvider",
                 "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.updateProvider.selectedProviders.selectedProviders.map() callback",
                 "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setDefaultProvider",
@@ -275717,28 +275579,20 @@
                 "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setDeploymentResult",
                 "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setIsLoadingProviders",
                 "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setIsLoadingTiers",
+                "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setIsLoadingInfrastructure",
                 "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setIsValidating",
                 "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setIsSubmitting",
                 "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setError",
-                "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setInfrastructure",
                 "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.resetWizard",
-                "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.addInfrastructure",
-                "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.addInfrastructure.exists.selectedInfrastructure.some() callback",
                 "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.partialize",
-                "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.removeInfrastructure",
-                "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.removeInfrastructure.selectedInfrastructure.selectedInfrastructure.filter() callback",
                 "dashboard.frontend.src.stores.configWizardStore.useCurrentWizardStep.useConfigWizardStore() callback",
                 "dashboard.frontend.src.stores.configWizardStore.useSelectedProviders.useConfigWizardStore() callback",
                 "dashboard.frontend.src.stores.configWizardStore.useSelectedTier.useConfigWizardStore() callback",
-                "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.updateInfrastructure",
                 "dashboard.frontend.src.stores.configWizardStore.useSelectedTier.useConfigWizardStore() callback.state.availableTiers.find() callback",
-                "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.updateInfrastructure.selectedInfrastructure.selectedInfrastructure.map() callback",
                 "dashboard.frontend.src.stores.configWizardStore.usePreferences.useConfigWizardStore() callback",
                 "dashboard.frontend.src.stores.configWizardStore.useIsDeploying.useConfigWizardStore() callback",
                 "dashboard.frontend.src.stores.configWizardStore.useDeploymentResult.useConfigWizardStore() callback",
-                "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setDeployMode",
-                "dashboard.frontend.src.stores.configWizardStore.useWizardError.useConfigWizardStore() callback",
-                "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setIsLoadingInfrastructure"
+                "dashboard.frontend.src.stores.configWizardStore.useWizardError.useConfigWizardStore() callback"
               ]
             }
           ],
@@ -275775,12 +275629,13 @@
                 },
                 {
                   "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
-                  "file_status": "modified",
+                  "file_status": "unchanged",
                   "methods": [
                     "dashboard.frontend.src.stores.configWizardStore.SelectedProvider",
                     "dashboard.frontend.src.stores.configWizardStore.InfrastructureServiceConfig",
                     "dashboard.frontend.src.stores.configWizardStore.SelectedInfrastructure",
                     "dashboard.frontend.src.stores.configWizardStore.WizardState",
+                    "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback",
                     "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setStep",
                     "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.nextStep",
                     "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.prevStep",
@@ -275788,12 +275643,19 @@
                     "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setProviders",
                     "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setTiers",
                     "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setConfigStatus",
+                    "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setInfrastructure",
+                    "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.addInfrastructure",
+                    "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.addInfrastructure.exists.selectedInfrastructure.some() callback",
+                    "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.removeInfrastructure",
+                    "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.removeInfrastructure.selectedInfrastructure.selectedInfrastructure.filter() callback",
+                    "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.updateInfrastructure",
+                    "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.updateInfrastructure.selectedInfrastructure.selectedInfrastructure.map() callback",
+                    "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setDeployMode",
                     "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.addProvider",
                     "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.addProvider.exists.selectedProviders.some() callback",
                     "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.removeProvider",
                     "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.removeProvider.filtered.selectedProviders.filter() callback",
                     "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.removeProvider.filtered.some() callback",
-                    "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback",
                     "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.updateProvider",
                     "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.updateProvider.selectedProviders.selectedProviders.map() callback",
                     "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setDefaultProvider",
@@ -275804,28 +275666,20 @@
                     "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setDeploymentResult",
                     "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setIsLoadingProviders",
                     "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setIsLoadingTiers",
+                    "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setIsLoadingInfrastructure",
                     "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setIsValidating",
                     "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setIsSubmitting",
                     "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setError",
-                    "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setInfrastructure",
                     "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.resetWizard",
-                    "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.addInfrastructure",
-                    "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.addInfrastructure.exists.selectedInfrastructure.some() callback",
                     "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.partialize",
-                    "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.removeInfrastructure",
-                    "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.removeInfrastructure.selectedInfrastructure.selectedInfrastructure.filter() callback",
                     "dashboard.frontend.src.stores.configWizardStore.useCurrentWizardStep.useConfigWizardStore() callback",
                     "dashboard.frontend.src.stores.configWizardStore.useSelectedProviders.useConfigWizardStore() callback",
                     "dashboard.frontend.src.stores.configWizardStore.useSelectedTier.useConfigWizardStore() callback",
-                    "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.updateInfrastructure",
                     "dashboard.frontend.src.stores.configWizardStore.useSelectedTier.useConfigWizardStore() callback.state.availableTiers.find() callback",
-                    "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.updateInfrastructure.selectedInfrastructure.selectedInfrastructure.map() callback",
                     "dashboard.frontend.src.stores.configWizardStore.usePreferences.useConfigWizardStore() callback",
                     "dashboard.frontend.src.stores.configWizardStore.useIsDeploying.useConfigWizardStore() callback",
                     "dashboard.frontend.src.stores.configWizardStore.useDeploymentResult.useConfigWizardStore() callback",
-                    "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setDeployMode",
-                    "dashboard.frontend.src.stores.configWizardStore.useWizardError.useConfigWizardStore() callback",
-                    "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setIsLoadingInfrastructure"
+                    "dashboard.frontend.src.stores.configWizardStore.useWizardError.useConfigWizardStore() callback"
                   ]
                 }
               ],
@@ -275921,10 +275775,11 @@
                     },
                     {
                       "file_path": "dashboard/frontend/src/stores/configWizardStore.ts",
-                      "file_status": "modified",
+                      "file_status": "unchanged",
                       "methods": [
                         "dashboard.frontend.src.stores.configWizardStore.SelectedProvider",
                         "dashboard.frontend.src.stores.configWizardStore.WizardState",
+                        "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback",
                         "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setStep",
                         "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.nextStep",
                         "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.prevStep",
@@ -275937,7 +275792,6 @@
                         "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.removeProvider",
                         "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.removeProvider.filtered.selectedProviders.filter() callback",
                         "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.removeProvider.filtered.some() callback",
-                        "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback",
                         "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.updateProvider",
                         "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.updateProvider.selectedProviders.selectedProviders.map() callback",
                         "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore.persist() callback.setDefaultProvider",
