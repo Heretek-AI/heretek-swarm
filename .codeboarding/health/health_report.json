@@ -1,7 +1,7 @@
 {
   "repository_name": "heretek-swarm",
-  "timestamp": "2026-04-19T03:52:45.682618+00:00",
-  "overall_score": 0.9869394359685622,
+  "timestamp": "2026-04-19T04:25:24.198781+00:00",
+  "overall_score": 0.9867683596232738,
   "check_summaries": [
     {
       "check_name": "function_size",
@@ -790,8 +790,8 @@
       "description": "Detects unused imports, variables, functions, and dead code via LSP diagnostics",
       "language": "Python",
       "check_type": "standard",
-      "total_entities_checked": 54,
-      "findings_count": 54,
+      "total_entities_checked": 57,
+      "findings_count": 57,
       "warning_count": 6,
       "score": 0.0,
       "finding_groups": [
@@ -1134,6 +1134,27 @@
               "file_path": "src/heretek_swarm/api/observability.py",
               "line_start": 1836,
               "line_end": 1836,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"trace_id\" is not accessed",
+              "file_path": "src/heretek_swarm/infrastructure/otel/tracing.py",
+              "line_start": 201,
+              "line_end": 201,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"parent_id\" is not accessed",
+              "file_path": "src/heretek_swarm/infrastructure/otel/tracing.py",
+              "line_start": 202,
+              "line_end": 202,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"exc_info\" is not accessed",
+              "file_path": "src/heretek_swarm/infrastructure/otel/tracing.py",
+              "line_start": 819,
+              "line_end": 819,
               "metric_value": 0.0
             }
           ]

@@ -8,14 +8,16 @@ Supports OTLP export, console export, and B3 context propagation.
 from __future__ import annotations
 
 import os
+import time
 import uuid
 from collections.abc import Callable
 from contextlib import contextmanager
 from dataclasses import dataclass
 from enum import Enum
 from functools import wraps
-from typing import Any
+from typing import TYPE_CHECKING, Any, Self, TypeVar
 
+import httpx
 import structlog
 from opentelemetry import trace
 from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
@@ -26,6 +28,12 @@ from opentelemetry.sdk.trace.export import BatchSpanProcessor, ConsoleSpanExport
 from opentelemetry.sdk.trace.sampling import Sampler, TraceIdRatioBased
 from opentelemetry.trace import Span, SpanKind, Status, StatusCode
 from opentelemetry.trace.propagation.tracecontext import TraceContextTextMapPropagator
+
+from heretek_swarm.models.external_call_log import ExternalCallLog
+from heretek_swarm.models.external_call_log_encryption import get_encryptor
+
+if TYPE_CHECKING:
+    from sqlalchemy.ext.asyncio import async_sessionmaker
 
 logger = structlog.get_logger(__name__)
 
@@ -211,13 +219,11 @@ def create_span(
     ctx = trace.get_current_context()
 
     tracer_impl = get_tracer()
-    span = tracer_impl.start_span(
+    return tracer_impl.start_span(
         name=name,
         context=ctx,
         kind=span_kind,
     )
-
-    return span
 
 
 def with_span(name: str) -> Callable:
@@ -397,11 +403,485 @@ class SpanAttributes:
     HTTP_STATUS_CODE = "http.status_code"
 
 
+# =============================================================================
+# Instrumented httpx Client
+# =============================================================================
+
+_extra_logger = structlog.get_logger(__name__)
+
+# Module-level session factory singleton for ExternalCallLog
+_external_call_log_session_factory: async_sessionmaker | None = None  # type: ignore[type-arg]
+
+
+def _get_external_call_log_session_factory() -> async_sessionmaker:  # type: ignore[type-arg]
+    """
+    Get or create the module-level session factory for ExternalCallLog.
+
+    Mirrors the pattern used in api/observability.py.
+    """
+    global _external_call_log_session_factory
+    if _external_call_log_session_factory is None:
+        database_url = os.environ.get("DATABASE_URL")
+        if not database_url:
+            _extra_logger.warning(
+                "DATABASE_URL not set — ExternalCallLog entries will not be persisted"
+            )
+            # Return a no-op sentinel that the caller handles gracefully
+            return None  # type: ignore[return-value]
+
+        from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+
+        engine = create_async_engine(
+            database_url,
+            echo=False,
+            pool_pre_ping=True,
+        )
+        _external_call_log_session_factory = async_sessionmaker(
+            engine,
+            class_=AsyncSession,
+            expire_on_commit=False,
+        )
+        _extra_logger.info("ExternalCallLog session factory initialized")
+    return _external_call_log_session_factory
+
+
+def _get_agent_context() -> tuple[str, str]:
+    """
+    Extract agent_id and agent_type from the current OTel span context.
+
+    Reads span attributes set by the agent's tracing layer (heretek.agent.id
+    and heretek.agent.type). Returns ("unknown", "unknown") when no span is
+    active or the attributes are not set.
+    """
+    span = trace.get_current_span()
+    if span and span.is_recording():
+        # Access .attributes via getattr to satisfy type checkers that see the
+        # abstract Span interface (NonRecordingSpan has no attributes).
+        attrs: dict[str, Any] = getattr(span, "attributes", {})
+        agent_id = str(attrs.get(SpanAttributes.AGENT_ID) or "unknown")
+        agent_type = str(attrs.get(SpanAttributes.AGENT_TYPE) or "unknown")
+        return agent_id, agent_type
+    return "unknown", "unknown"
+
+
+async def _write_call_log(
+    session_factory: async_sessionmaker,  # type: ignore[type-arg]
+    agent_id: str,
+    agent_type: str,
+    url: str,
+    method: str,
+    status_code: int | None,
+    duration_ms: float,
+    request_headers: dict[str, Any] | None,
+    request_body: str | None,
+    response_body: str | None,
+    tool_name: str | None,
+    error_message: str | None,
+    call_type: str = "http",
+) -> None:
+    """
+    Write an ExternalCallLog entry to the database.
+
+    Encrypts request headers, request body, and response body before storage.
+    Silently catches and logs DB errors so they never propagate to callers.
+    """
+    encryptor = get_encryptor()
+
+    # Sanitize and encrypt headers
+    headers_encrypted: str | None = None
+    if request_headers:
+        sanitized = encryptor.sanitize(request_headers)
+        headers_encrypted = encryptor.encrypt(sanitized).get("encrypted") or None
+
+    # Encrypt bodies
+    request_body_encrypted: str | None = None
+    if request_body:
+        request_body_encrypted = encryptor.encrypt({"body": request_body}).get("encrypted") or None
+
+    response_body_encrypted: str | None = None
+    if response_body:
+        encrypted = encryptor.encrypt({"body": response_body})
+        response_body_encrypted = encrypted.get("encrypted") or None
+
+    try:
+
+        async def _write() -> None:
+            nonlocal headers_encrypted, request_body_encrypted, response_body_encrypted
+            async with session_factory() as session:
+                log = ExternalCallLog(
+                    agent_id=agent_id,
+                    agent_type=agent_type,
+                    call_type=call_type,
+                    url=url,
+                    method=method,
+                    status_code=status_code,
+                    duration_ms=duration_ms,
+                    request_headers_encrypted=headers_encrypted,
+                    request_body_encrypted=request_body_encrypted,
+                    response_body_encrypted=response_body_encrypted,
+                    tool_name=tool_name,
+                    error_message=error_message,
+                )
+                session.add(log)
+                await session.commit()
+
+        await _write()
+    except Exception as e:
+        _extra_logger.warning(
+            "external_call_log_write_failed",
+            agent_id=agent_id,
+            url=url,
+            method=method,
+            error=str(e),
+        )
+
+
+class InstrumentedAsyncClient:
+    """
+    httpx.AsyncClient wrapper that instruments all HTTP calls with OTel spans
+    and writes ExternalCallLog entries to the database.
+
+    Wraps an existing httpx.AsyncClient (or creates one lazily) and intercepts
+    every HTTP request to:
+      1. Extract agent context from the current OTel span.
+      2. Create an OTel span covering the HTTP call.
+      3. Execute the underlying request.
+      4. Write an ExternalCallLog entry with encrypted headers/bodies.
+
+    Errors (timeouts, connection errors, HTTP errors) are logged with
+    status='error' and the error message, without re-raising.
+
+    Usage::
+
+        async with instrumented_httpx_client() as client:
+            response = await client.get("https://api.example.com/v1/completions")
+    """
+
+    def __init__(
+        self,
+        client: httpx.AsyncClient | None = None,
+        session_factory: async_sessionmaker | None = None,  # type: ignore[type-arg]
+        call_type: str = "http",
+    ) -> None:
+        """
+        Initialize the instrumented client.
+
+        Args:
+            client: Existing httpx.AsyncClient to wrap. If None, one is created
+                on first use via ``httpx.AsyncClient()``.
+            session_factory: Async SQLAlchemy session factory for writing
+                ExternalCallLog entries. If None, uses the module-level factory
+                (which is a no-op when DATABASE_URL is not set).
+            call_type: Call type label written to ExternalCallLog.call_type
+                (default "http"). Used to distinguish httpx calls from MCP calls.
+        """
+        self._client = client
+        self._session_factory = session_factory
+        self._call_type = call_type
+        self._owns_client = client is None
+
+    # ------------------------------------------------------------------
+    # Public httpx.AsyncClient interface
+    # ------------------------------------------------------------------
+
+    async def get(
+        self,
+        url: str,
+        *,
+        headers: dict[str, str] | None = None,
+        **kwargs: Any,
+    ) -> httpx.Response:
+        return await self.request("GET", url, headers=headers, **kwargs)
+
+    async def post(
+        self,
+        url: str,
+        *,
+        headers: dict[str, str] | None = None,
+        **kwargs: Any,
+    ) -> httpx.Response:
+        return await self.request("POST", url, headers=headers, **kwargs)
+
+    async def put(
+        self,
+        url: str,
+        *,
+        headers: dict[str, str] | None = None,
+        **kwargs: Any,
+    ) -> httpx.Response:
+        return await self.request("PUT", url, headers=headers, **kwargs)
+
+    async def patch(
+        self,
+        url: str,
+        *,
+        headers: dict[str, str] | None = None,
+        **kwargs: Any,
+    ) -> httpx.Response:
+        return await self.request("PATCH", url, headers=headers, **kwargs)
+
+    async def delete(
+        self,
+        url: str,
+        *,
+        headers: dict[str, str] | None = None,
+        **kwargs: Any,
+    ) -> httpx.Response:
+        return await self.request("DELETE", url, headers=headers, **kwargs)
+
+    async def head(
+        self,
+        url: str,
+        *,
+        headers: dict[str, str] | None = None,
+        **kwargs: Any,
+    ) -> httpx.Response:
+        return await self.request("HEAD", url, headers=headers, **kwargs)
+
+    async def options(
+        self,
+        url: str,
+        *,
+        headers: dict[str, str] | None = None,
+        **kwargs: Any,
+    ) -> httpx.Response:
+        return await self.request("OPTIONS", url, headers=headers, **kwargs)
+
+    async def request(
+        self,
+        method: str,
+        url: str,
+        *,
+        headers: dict[str, str] | None = None,
+        content: bytes | str | None = None,
+        **kwargs: Any,
+    ) -> httpx.Response:
+        """
+        Execute an HTTP request with OTel instrumentation and call logging.
+
+        Creates a CLIENT span named ``http.request``, sets HTTP method/URL/status
+        attributes, then delegates to the underlying httpx.AsyncClient.
+        On completion (success or error) writes an ExternalCallLog entry.
+        """
+        client = self._get_client()
+        session_factory = self._session_factory or _get_external_call_log_session_factory()
+
+        agent_id, agent_type = _get_agent_context()
+
+        # Determine the URL domain for the span name
+        domain = url
+        if "://" in url:
+            domain = url.split("://", 1)[1].split("/", 1)[0]
+
+        span_name = f"http {method} {domain}"
+        tracer = get_tracer()
+
+        with tracer.start_as_current_span(
+            span_name,
+            kind=SpanKind.CLIENT,
+            attributes={
+                SpanAttributes.HTTP_METHOD: method,
+                SpanAttributes.HTTP_URL: url,
+                SpanAttributes.AGENT_ID: agent_id,
+                SpanAttributes.AGENT_TYPE: agent_type,
+            },
+        ) as span:
+            start = time.perf_counter()
+            response_body_str: str | None = None
+            request_body_str: str | None = None
+            if content is not None:
+                if isinstance(content, bytes):
+                    request_body_str = content.decode("utf-8", errors="replace")
+                else:
+                    request_body_str = content
+
+            try:
+                response = await client.request(
+                    method,
+                    url,
+                    headers=headers,
+                    content=content,
+                    **kwargs,
+                )
+
+                duration_ms = (time.perf_counter() - start) * 1000
+
+                span.set_attribute(SpanAttributes.HTTP_STATUS_CODE, response.status_code)
+                span.set_status(
+                    Status(StatusCode.OK)
+                    if 200 <= response.status_code < 400
+                    else Status(StatusCode.ERROR)
+                )
+
+                # Extract response body for logging (up to MAX_BODY_SIZE = 10KB)
+                if response.text:
+                    from heretek_swarm.models.external_call_log_encryption import MAX_BODY_SIZE
+
+                    response_body_str = response.text[:MAX_BODY_SIZE]
+
+                # Write log entry (fire-and-forget — errors caught inside)
+                if session_factory is not None:
+                    await _write_call_log(
+                        session_factory=session_factory,
+                        agent_id=agent_id,
+                        agent_type=agent_type,
+                        url=url,
+                        method=method,
+                        status_code=response.status_code,
+                        duration_ms=duration_ms,
+                        request_headers=headers,
+                        request_body=request_body_str,
+                        response_body=response_body_str,
+                        tool_name=None,
+                        error_message=None,
+                        call_type=self._call_type,
+                    )
+
+                return response
+
+            except httpx.TimeoutException as e:
+                duration_ms = (time.perf_counter() - start) * 1000
+                span.set_status(Status(StatusCode.ERROR, str(e)))
+                span.record_exception(e)
+
+                if session_factory is not None:
+                    await _write_call_log(
+                        session_factory=session_factory,
+                        agent_id=agent_id,
+                        agent_type=agent_type,
+                        url=url,
+                        method=method,
+                        status_code=None,
+                        duration_ms=duration_ms,
+                        request_headers=headers,
+                        request_body=request_body_str,
+                        response_body=None,
+                        tool_name=None,
+                        error_message=f"TimeoutException: {e}",
+                        call_type=self._call_type,
+                    )
+                raise
+
+            except httpx.ConnectError as e:
+                duration_ms = (time.perf_counter() - start) * 1000
+                span.set_status(Status(StatusCode.ERROR, str(e)))
+                span.record_exception(e)
+
+                if session_factory is not None:
+                    await _write_call_log(
+                        session_factory=session_factory,
+                        agent_id=agent_id,
+                        agent_type=agent_type,
+                        url=url,
+                        method=method,
+                        status_code=None,
+                        duration_ms=duration_ms,
+                        request_headers=headers,
+                        request_body=request_body_str,
+                        response_body=None,
+                        tool_name=None,
+                        error_message=f"ConnectError: {e}",
+                        call_type=self._call_type,
+                    )
+                raise
+
+            except Exception as e:
+                duration_ms = (time.perf_counter() - start) * 1000
+                span.set_status(Status(StatusCode.ERROR, str(e)))
+                span.record_exception(e)
+
+                if session_factory is not None:
+                    await _write_call_log(
+                        session_factory=session_factory,
+                        agent_id=agent_id,
+                        agent_type=agent_type,
+                        url=url,
+                        method=method,
+                        status_code=None,
+                        duration_ms=duration_ms,
+                        request_headers=headers,
+                        request_body=request_body_str,
+                        response_body=None,
+                        tool_name=None,
+                        error_message=f"{type(e).__name__}: {e}",
+                        call_type=self._call_type,
+                    )
+                raise
+
+    async def aclose(self) -> None:
+        """Close the underlying httpx.AsyncClient if we own it."""
+        if self._client is not None and self._owns_client:
+            await self._client.aclose()
+
+    async def __aenter__(self) -> Self:
+        return self
+
+    async def __aexit__(self, *exc_info: object) -> None:
+        await self.aclose()
+
+    # ------------------------------------------------------------------
+    # Internal helpers
+    # ------------------------------------------------------------------
+
+    def _get_client(self) -> httpx.AsyncClient:
+        if self._client is None:
+            self._client = httpx.AsyncClient()
+        return self._client
+
+
+def instrumented_httpx_client(
+    client: httpx.AsyncClient | None = None,
+    session_factory: async_sessionmaker | None = None,  # type: ignore[type-arg]
+    call_type: str = "http",
+) -> InstrumentedAsyncClient:
+    """
+    Create an InstrumentedAsyncClient that wraps an httpx.AsyncClient.
+
+    This is the primary entry point. The returned InstrumentedAsyncClient is an
+    async-context-manager that can be used with ``async with``::
+
+        async with instrumented_httpx_client() as client:
+            response = await client.post("https://api.example.com", json={"prompt": "hi"})
+
+    Or directly::
+
+        client = instrumented_httpx_client()
+        try:
+            response = await client.get("https://api.example.com")
+        finally:
+            await client.aclose()
+
+    Args:
+        client: Optional pre-configured httpx.AsyncClient to wrap. If not
+            provided, one is created lazily on first request.
+        session_factory: SQLAlchemy async session factory for ExternalCallLog
+            persistence. Defaults to the module-level factory (silently skipped
+            when DATABASE_URL is not configured).
+        call_type: Label written to ExternalCallLog.call_type. Default "http".
+            Use e.g. "mcp" when wrapping MCP transport calls.
+
+    Returns:
+        InstrumentedAsyncClient instance (also an async context manager).
+    """
+    return InstrumentedAsyncClient(
+        client=client,
+        session_factory=session_factory,
+        call_type=call_type,
+    )
+
+
+# =============================================================================
+# Public API
+# =============================================================================
+
+F = TypeVar("F", bound=Callable[..., Any])
+
 __all__ = [
+    "InstrumentedAsyncClient",
     "Span",
+    "SpanAttributes",
     "SpanKind",
     "SpanNames",
-    "SpanAttributes",
     "SpanStatus",
     "TraceState",
     "TracingConfig",
@@ -411,6 +891,7 @@ __all__ = [
     "get_trace_context",
     "get_tracer",
     "init_tracing",
+    "instrumented_httpx_client",
     "set_span_attribute",
     "set_span_attributes",
     "span_context",

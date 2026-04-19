@@ -18,6 +18,7 @@ from heretek_swarm.infrastructure.otel.metrics import (
     record_metric,
 )
 from heretek_swarm.infrastructure.otel.tracing import (
+    InstrumentedAsyncClient,
     SpanAttributes,
     SpanKind,
     SpanNames,
@@ -30,6 +31,7 @@ from heretek_swarm.infrastructure.otel.tracing import (
     get_trace_context,
     get_tracer,
     init_tracing,
+    instrumented_httpx_client,
     set_span_attribute,
     set_span_attributes,
     span_context,
@@ -37,12 +39,10 @@ from heretek_swarm.infrastructure.otel.tracing import (
 )
 
 __all__ = [
-    # Logging
+    "InstrumentedAsyncClient",
     "LoggingConfig",
     "MetricsCollector",
-    # Metrics
     "MetricsConfig",
-    # Tracing
     "SpanAttributes",
     "SpanKind",
     "SpanNames",
@@ -59,6 +59,7 @@ __all__ = [
     "init_logging",
     "init_metrics",
     "init_tracing",
+    "instrumented_httpx_client",
     "record_metric",
     "set_span_attribute",
     "set_span_attributes",
