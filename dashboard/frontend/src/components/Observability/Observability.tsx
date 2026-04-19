@@ -10,6 +10,7 @@
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
+import { ExternalCallsPanel } from './ExternalCallsPanel';
 
 interface LLMTrace {
   id: string;
@@ -89,6 +90,7 @@ export function Observability() {
   const [selectedTrace, setSelectedTrace] = useState<LLMTrace | null>(null);
   const [selectedExecution, setSelectedExecution] = useState<AgentExecution | null>(null);
   const [timeRange, setTimeRange] = useState<'1h' | '24h' | '7d'>('1h');
+  const [activeTab, setActiveTab] = useState<'overview' | 'llm' | 'a2a' | 'external'>('overview');
 
   // Fetch observability data
   const fetchData = useCallback(async () => {
@@ -227,7 +229,7 @@ export function Observability() {
     <div className="observability p-6 bg-gray-900 text-white min-h-screen">
       {/* Header */}
       <div className="mb-6">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between mb-4">
           <h1 className="text-3xl font-bold">Observability</h1>
           <select
             value={timeRange}
@@ -239,11 +241,61 @@ export function Observability() {
             <option value="7d">Last 7 Days</option>
           </select>
         </div>
+
+        {/* Tab Navigation */}
+        <div className="flex border-b border-gray-700">
+          <button
+            onClick={() => setActiveTab('overview')}
+            className={`px-4 py-2 text-sm font-medium transition-colors ${
+              activeTab === 'overview'
+                ? 'text-blue-400 border-b-2 border-blue-400'
+                : 'text-gray-400 hover:text-white'
+            }`}
+          >
+            Overview
+          </button>
+          <button
+            onClick={() => setActiveTab('llm')}
+            className={`px-4 py-2 text-sm font-medium transition-colors ${
+              activeTab === 'llm'
+                ? 'text-blue-400 border-b-2 border-blue-400'
+                : 'text-gray-400 hover:text-white'
+            }`}
+          >
+            LLM Traces
+          </button>
+          <button
+            onClick={() => setActiveTab('a2a')}
+            className={`px-4 py-2 text-sm font-medium transition-colors ${
+              activeTab === 'a2a'
+                ? 'text-blue-400 border-b-2 border-blue-400'
+                : 'text-gray-400 hover:text-white'
+            }`}
+          >
+            A2A Tracker
+          </button>
+          <button
+            onClick={() => setActiveTab('external')}
+            className={`px-4 py-2 text-sm font-medium transition-colors ${
+              activeTab === 'external'
+                ? 'text-blue-400 border-b-2 border-blue-400'
+                : 'text-gray-400 hover:text-white'
+            }`}
+          >
+            External Calls
+          </button>
+        </div>
       </div>
 
-      {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        {/* LLM Traces */}
+      {/* Tab Content */}
+      {activeTab === 'external' ? (
+        <ExternalCallsPanel />
+      ) : (
+        <>
+
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          {/* LLM Traces */}
         <div className="bg-gray-800 rounded-lg p-4">
           <h2 className="text-xl font-semibold mb-4">LLM Traces</h2>
           <div className="space-y-2 max-h-96 overflow-y-auto">
@@ -487,6 +539,8 @@ export function Observability() {
           </div>
         </div>
       </div>
+        </>
+      )}
     </div>
   );
 }
