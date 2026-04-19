@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-19T17:16:31.837867+00:00",
+    "generated_at": "2026-04-19T19:42:46.743964+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -7930,229 +7930,229 @@
       ]
     },
     "src/heretek_swarm/api/main.py": {
-      "file_status": "modified",
+      "file_status": "unchanged",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.api.main.lifespan",
-          "start_line": 93,
-          "end_line": 127,
+          "start_line": 94,
+          "end_line": 128,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.main._init_config_service",
-          "start_line": 130,
-          "end_line": 157,
+          "start_line": 131,
+          "end_line": 158,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.main._init_supervisor",
-          "start_line": 160,
-          "end_line": 168,
+          "start_line": 161,
+          "end_line": 169,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.main._spawn_all_agents",
-          "start_line": 171,
-          "end_line": 255,
+          "start_line": 172,
+          "end_line": 256,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.main._init_memory_store",
-          "start_line": 258,
-          "end_line": 271,
+          "start_line": 259,
+          "end_line": 272,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.main._init_mem0",
-          "start_line": 274,
-          "end_line": 302,
+          "start_line": 275,
+          "end_line": 303,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.main._init_nats_bridge",
-          "start_line": 305,
-          "end_line": 372,
+          "start_line": 306,
+          "end_line": 373,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.main._init_nats_bridge.a2a_event_handler",
-          "start_line": 318,
-          "end_line": 336,
+          "start_line": 319,
+          "end_line": 337,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.main._init_nats_bridge.external_call_handler",
-          "start_line": 344,
-          "end_line": 363,
+          "start_line": 345,
+          "end_line": 364,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.main._init_spa_mount",
-          "start_line": 375,
-          "end_line": 390,
+          "start_line": 376,
+          "end_line": 391,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.main._log_startup_complete",
-          "start_line": 393,
-          "end_line": 398,
+          "start_line": 394,
+          "end_line": 399,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.main.check_gateway",
-          "start_line": 483,
-          "end_line": 497,
+          "start_line": 485,
+          "end_line": 499,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.main.check_redis",
-          "start_line": 500,
-          "end_line": 519,
+          "start_line": 502,
+          "end_line": 521,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.main.check_postgres",
-          "start_line": 522,
-          "end_line": 558,
+          "start_line": 524,
+          "end_line": 560,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.main.check_qdrant",
-          "start_line": 561,
-          "end_line": 591,
+          "start_line": 563,
+          "end_line": 593,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.main.health_check",
-          "start_line": 600,
-          "end_line": 623,
+          "start_line": 602,
+          "end_line": 625,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.main.liveness_check",
-          "start_line": 627,
-          "end_line": 629,
+          "start_line": 629,
+          "end_line": 631,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.main.readiness_check",
-          "start_line": 633,
-          "end_line": 639,
+          "start_line": 635,
+          "end_line": 641,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.main.get_agents",
-          "start_line": 648,
-          "end_line": 673,
+          "start_line": 650,
+          "end_line": 675,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.main.get_agent",
-          "start_line": 677,
-          "end_line": 707,
+          "start_line": 679,
+          "end_line": 709,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.main.get_agent_metrics",
-          "start_line": 711,
-          "end_line": 735,
+          "start_line": 713,
+          "end_line": 737,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.main.terminate_agent",
-          "start_line": 739,
-          "end_line": 760,
+          "start_line": 741,
+          "end_line": 762,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.main.get_supervisor_status",
-          "start_line": 769,
-          "end_line": 779,
+          "start_line": 771,
+          "end_line": 781,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.main.get_memory_stats",
-          "start_line": 788,
-          "end_line": 845,
+          "start_line": 790,
+          "end_line": 847,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.main.get_litellm_metrics",
-          "start_line": 854,
-          "end_line": 890,
+          "start_line": 856,
+          "end_line": 892,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.main.get_mem0_stats",
-          "start_line": 899,
-          "end_line": 916,
+          "start_line": 901,
+          "end_line": 918,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.main.search_mem0_memory",
-          "start_line": 920,
-          "end_line": 961,
+          "start_line": 922,
+          "end_line": 963,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.main.get_agent_memories",
-          "start_line": 965,
-          "end_line": 996,
+          "start_line": 967,
+          "end_line": 998,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.main.get_a2a_messages",
-          "start_line": 1005,
-          "end_line": 1038,
+          "start_line": 1007,
+          "end_line": 1040,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.main.get_a2a_conversation",
-          "start_line": 1042,
-          "end_line": 1092,
+          "start_line": 1044,
+          "end_line": 1094,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.main.root",
-          "start_line": 1101,
-          "end_line": 1117,
+          "start_line": 1103,
+          "end_line": 1119,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.main.serve_spa",
-          "start_line": 1126,
-          "end_line": 1150,
+          "start_line": 1128,
+          "end_line": 1152,
           "node_type": "FUNCTION",
           "status": "unchanged"
         }
@@ -28168,7 +28168,7 @@
       ]
     },
     "src/heretek_swarm/memory/persistent.py": {
-      "file_status": "modified",
+      "file_status": "unchanged",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.memory.persistent.Mem0Config",
@@ -28294,7 +28294,7 @@
           "start_line": 432,
           "end_line": 876,
           "node_type": "CLASS",
-          "status": "modified"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.memory.persistent.Mem0Backend.__init__",
@@ -28325,20 +28325,6 @@
           "status": "unchanged"
         },
         {
-          "qualified_name": "src.heretek_swarm.memory.persistent.Mem0Backend.search",
-          "start_line": 513,
-          "end_line": 561,
-          "node_type": "METHOD",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.memory.persistent.Mem0Backend.get_all",
-          "start_line": 563,
-          "end_line": 596,
-          "node_type": "METHOD",
-          "status": "unchanged"
-        },
-        {
           "qualified_name": "src.heretek_swarm.memory.persistent.Mem0Backend.delete",
           "start_line": 598,
           "end_line": 616,
@@ -28364,56 +28350,70 @@
           "start_line": 661,
           "end_line": 704,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.memory.persistent.Mem0Backend.search",
+          "start_line": 706,
+          "end_line": 746,
+          "node_type": "METHOD",
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.memory.persistent.Mem0Backend.update",
           "start_line": 748,
           "end_line": 763,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.memory.persistent.Mem0Backend.get",
           "start_line": 765,
           "end_line": 778,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.memory.persistent.Mem0Backend.get_all",
+          "start_line": 780,
+          "end_line": 805,
+          "node_type": "METHOD",
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.memory.persistent.Mem0Backend.delete_memory",
           "start_line": 807,
           "end_line": 817,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.memory.persistent.Mem0Backend.delete_all",
           "start_line": 819,
           "end_line": 841,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.memory.persistent.Mem0Backend.history",
           "start_line": 843,
           "end_line": 856,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.memory.persistent.Mem0Backend.reset",
           "start_line": 858,
           "end_line": 863,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.memory.persistent.Mem0Backend.configure",
           "start_line": 865,
           "end_line": 876,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "unchanged"
         }
       ]
     },
@@ -52860,161 +52860,161 @@
       "methods": []
     },
     "src/heretek_swarm/cli.py": {
-      "file_status": "modified",
+      "file_status": "unchanged",
       "methods": [
-        {
-          "qualified_name": "src.heretek_swarm.cli._check_service_health",
-          "start_line": 40,
-          "end_line": 75,
-          "node_type": "FUNCTION",
-          "status": "added"
-        },
         {
           "qualified_name": "src.heretek_swarm.cli._load_infrastructure_config_and_echo",
           "start_line": 41,
           "end_line": 52,
           "node_type": "FUNCTION",
-          "status": "added"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.cli._print_infrastructure_config",
           "start_line": 55,
           "end_line": 77,
           "node_type": "FUNCTION",
-          "status": "added"
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.cli._check_service_health",
+          "start_line": 84,
+          "end_line": 119,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.cli._make_result",
-          "start_line": 78,
-          "end_line": 91,
+          "start_line": 122,
+          "end_line": 135,
           "node_type": "FUNCTION",
-          "status": "added"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.cli._check_postgres",
-          "start_line": 94,
-          "end_line": 104,
+          "start_line": 138,
+          "end_line": 148,
           "node_type": "FUNCTION",
-          "status": "added"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.cli._check_redis",
-          "start_line": 107,
-          "end_line": 118,
+          "start_line": 151,
+          "end_line": 162,
           "node_type": "FUNCTION",
-          "status": "added"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.cli._check_qdrant",
-          "start_line": 121,
-          "end_line": 135,
+          "start_line": 165,
+          "end_line": 179,
           "node_type": "FUNCTION",
-          "status": "added"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.cli._check_nats",
-          "start_line": 138,
-          "end_line": 171,
+          "start_line": 182,
+          "end_line": 215,
           "node_type": "FUNCTION",
-          "status": "added"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.cli._check_mem0",
-          "start_line": 174,
-          "end_line": 188,
+          "start_line": 218,
+          "end_line": 232,
           "node_type": "FUNCTION",
-          "status": "added"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.cli.check_container_runtime",
-          "start_line": 195,
-          "end_line": 218,
+          "start_line": 239,
+          "end_line": 262,
           "node_type": "FUNCTION",
-          "status": "added"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.cli.check_compose_plugin",
-          "start_line": 221,
-          "end_line": 240,
+          "start_line": 265,
+          "end_line": 284,
           "node_type": "FUNCTION",
-          "status": "added"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.cli.cli",
-          "start_line": 249,
-          "end_line": 250,
+          "start_line": 293,
+          "end_line": 294,
           "node_type": "FUNCTION",
-          "status": "added"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.cli.deploy",
-          "start_line": 259,
-          "end_line": 330,
+          "start_line": 303,
+          "end_line": 374,
           "node_type": "FUNCTION",
-          "status": "added"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.cli._start_autonomous_swarm",
-          "start_line": 337,
-          "end_line": 383,
+          "start_line": 381,
+          "end_line": 427,
           "node_type": "FUNCTION",
-          "status": "added"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.cli._handle_signal",
-          "start_line": 386,
-          "end_line": 396,
+          "start_line": 430,
+          "end_line": 440,
           "node_type": "FUNCTION",
-          "status": "added"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.cli.run",
           "start_line": 455,
           "end_line": 514,
           "node_type": "FUNCTION",
-          "status": "modified"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.cli.serve",
           "start_line": 535,
           "end_line": 588,
           "node_type": "FUNCTION",
-          "status": "modified"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.cli.update",
-          "start_line": 537,
-          "end_line": 572,
+          "start_line": 593,
+          "end_line": 628,
           "node_type": "FUNCTION",
-          "status": "added"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.cli.status",
-          "start_line": 579,
-          "end_line": 709,
+          "start_line": 635,
+          "end_line": 765,
           "node_type": "FUNCTION",
-          "status": "added"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.cli.status.run_health_checks",
-          "start_line": 626,
-          "end_line": 645,
+          "start_line": 682,
+          "end_line": 701,
           "node_type": "FUNCTION",
-          "status": "added"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.cli._fetch_wizard_config",
-          "start_line": 712,
-          "end_line": 734,
+          "start_line": 768,
+          "end_line": 790,
           "node_type": "FUNCTION",
-          "status": "added"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.cli.main",
-          "start_line": 737,
-          "end_line": 739,
+          "start_line": 793,
+          "end_line": 795,
           "node_type": "FUNCTION",
-          "status": "added"
+          "status": "unchanged"
         }
       ]
     }
@@ -61679,256 +61679,256 @@
     "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main.lifespan": {
       "file_path": "src/heretek_swarm/api/main.py",
       "qualified_name": "src.heretek_swarm.api.main.lifespan",
-      "start_line": 93,
-      "end_line": 127,
+      "start_line": 94,
+      "end_line": 128,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main._init_config_service": {
       "file_path": "src/heretek_swarm/api/main.py",
       "qualified_name": "src.heretek_swarm.api.main._init_config_service",
-      "start_line": 130,
-      "end_line": 157,
+      "start_line": 131,
+      "end_line": 158,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main._init_supervisor": {
       "file_path": "src/heretek_swarm/api/main.py",
       "qualified_name": "src.heretek_swarm.api.main._init_supervisor",
-      "start_line": 160,
-      "end_line": 168,
+      "start_line": 161,
+      "end_line": 169,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main._spawn_all_agents": {
       "file_path": "src/heretek_swarm/api/main.py",
       "qualified_name": "src.heretek_swarm.api.main._spawn_all_agents",
-      "start_line": 171,
-      "end_line": 255,
+      "start_line": 172,
+      "end_line": 256,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main._init_memory_store": {
       "file_path": "src/heretek_swarm/api/main.py",
       "qualified_name": "src.heretek_swarm.api.main._init_memory_store",
-      "start_line": 258,
-      "end_line": 271,
+      "start_line": 259,
+      "end_line": 272,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main._init_mem0": {
       "file_path": "src/heretek_swarm/api/main.py",
       "qualified_name": "src.heretek_swarm.api.main._init_mem0",
-      "start_line": 274,
-      "end_line": 302,
+      "start_line": 275,
+      "end_line": 303,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main._init_nats_bridge": {
       "file_path": "src/heretek_swarm/api/main.py",
       "qualified_name": "src.heretek_swarm.api.main._init_nats_bridge",
-      "start_line": 305,
-      "end_line": 372,
+      "start_line": 306,
+      "end_line": 373,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main._init_nats_bridge.a2a_event_handler": {
       "file_path": "src/heretek_swarm/api/main.py",
       "qualified_name": "src.heretek_swarm.api.main._init_nats_bridge.a2a_event_handler",
-      "start_line": 318,
-      "end_line": 336,
+      "start_line": 319,
+      "end_line": 337,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main._init_nats_bridge.external_call_handler": {
       "file_path": "src/heretek_swarm/api/main.py",
       "qualified_name": "src.heretek_swarm.api.main._init_nats_bridge.external_call_handler",
-      "start_line": 344,
-      "end_line": 363,
+      "start_line": 345,
+      "end_line": 364,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main._init_spa_mount": {
       "file_path": "src/heretek_swarm/api/main.py",
       "qualified_name": "src.heretek_swarm.api.main._init_spa_mount",
-      "start_line": 375,
-      "end_line": 390,
+      "start_line": 376,
+      "end_line": 391,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main._log_startup_complete": {
       "file_path": "src/heretek_swarm/api/main.py",
       "qualified_name": "src.heretek_swarm.api.main._log_startup_complete",
-      "start_line": 393,
-      "end_line": 398,
+      "start_line": 394,
+      "end_line": 399,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main.check_gateway": {
       "file_path": "src/heretek_swarm/api/main.py",
       "qualified_name": "src.heretek_swarm.api.main.check_gateway",
-      "start_line": 483,
-      "end_line": 497,
+      "start_line": 485,
+      "end_line": 499,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main.check_redis": {
       "file_path": "src/heretek_swarm/api/main.py",
       "qualified_name": "src.heretek_swarm.api.main.check_redis",
-      "start_line": 500,
-      "end_line": 519,
+      "start_line": 502,
+      "end_line": 521,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main.check_postgres": {
       "file_path": "src/heretek_swarm/api/main.py",
       "qualified_name": "src.heretek_swarm.api.main.check_postgres",
-      "start_line": 522,
-      "end_line": 558,
+      "start_line": 524,
+      "end_line": 560,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main.check_qdrant": {
       "file_path": "src/heretek_swarm/api/main.py",
       "qualified_name": "src.heretek_swarm.api.main.check_qdrant",
-      "start_line": 561,
-      "end_line": 591,
+      "start_line": 563,
+      "end_line": 593,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main.health_check": {
       "file_path": "src/heretek_swarm/api/main.py",
       "qualified_name": "src.heretek_swarm.api.main.health_check",
-      "start_line": 600,
-      "end_line": 623,
+      "start_line": 602,
+      "end_line": 625,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main.liveness_check": {
       "file_path": "src/heretek_swarm/api/main.py",
       "qualified_name": "src.heretek_swarm.api.main.liveness_check",
-      "start_line": 627,
-      "end_line": 629,
+      "start_line": 629,
+      "end_line": 631,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main.readiness_check": {
       "file_path": "src/heretek_swarm/api/main.py",
       "qualified_name": "src.heretek_swarm.api.main.readiness_check",
-      "start_line": 633,
-      "end_line": 639,
+      "start_line": 635,
+      "end_line": 641,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main.get_agents": {
       "file_path": "src/heretek_swarm/api/main.py",
       "qualified_name": "src.heretek_swarm.api.main.get_agents",
-      "start_line": 648,
-      "end_line": 673,
+      "start_line": 650,
+      "end_line": 675,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main.get_agent": {
       "file_path": "src/heretek_swarm/api/main.py",
       "qualified_name": "src.heretek_swarm.api.main.get_agent",
-      "start_line": 677,
-      "end_line": 707,
+      "start_line": 679,
+      "end_line": 709,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main.get_agent_metrics": {
       "file_path": "src/heretek_swarm/api/main.py",
       "qualified_name": "src.heretek_swarm.api.main.get_agent_metrics",
-      "start_line": 711,
-      "end_line": 735,
+      "start_line": 713,
+      "end_line": 737,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main.terminate_agent": {
       "file_path": "src/heretek_swarm/api/main.py",
       "qualified_name": "src.heretek_swarm.api.main.terminate_agent",
-      "start_line": 739,
-      "end_line": 760,
+      "start_line": 741,
+      "end_line": 762,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main.get_supervisor_status": {
       "file_path": "src/heretek_swarm/api/main.py",
       "qualified_name": "src.heretek_swarm.api.main.get_supervisor_status",
-      "start_line": 769,
-      "end_line": 779,
+      "start_line": 771,
+      "end_line": 781,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main.get_memory_stats": {
       "file_path": "src/heretek_swarm/api/main.py",
       "qualified_name": "src.heretek_swarm.api.main.get_memory_stats",
-      "start_line": 788,
-      "end_line": 845,
+      "start_line": 790,
+      "end_line": 847,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main.get_litellm_metrics": {
       "file_path": "src/heretek_swarm/api/main.py",
       "qualified_name": "src.heretek_swarm.api.main.get_litellm_metrics",
-      "start_line": 854,
-      "end_line": 890,
+      "start_line": 856,
+      "end_line": 892,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main.get_mem0_stats": {
       "file_path": "src/heretek_swarm/api/main.py",
       "qualified_name": "src.heretek_swarm.api.main.get_mem0_stats",
-      "start_line": 899,
-      "end_line": 916,
+      "start_line": 901,
+      "end_line": 918,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main.search_mem0_memory": {
       "file_path": "src/heretek_swarm/api/main.py",
       "qualified_name": "src.heretek_swarm.api.main.search_mem0_memory",
-      "start_line": 920,
-      "end_line": 961,
+      "start_line": 922,
+      "end_line": 963,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main.get_agent_memories": {
       "file_path": "src/heretek_swarm/api/main.py",
       "qualified_name": "src.heretek_swarm.api.main.get_agent_memories",
-      "start_line": 965,
-      "end_line": 996,
+      "start_line": 967,
+      "end_line": 998,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main.get_a2a_messages": {
       "file_path": "src/heretek_swarm/api/main.py",
       "qualified_name": "src.heretek_swarm.api.main.get_a2a_messages",
-      "start_line": 1005,
-      "end_line": 1038,
+      "start_line": 1007,
+      "end_line": 1040,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main.get_a2a_conversation": {
       "file_path": "src/heretek_swarm/api/main.py",
       "qualified_name": "src.heretek_swarm.api.main.get_a2a_conversation",
-      "start_line": 1042,
-      "end_line": 1092,
+      "start_line": 1044,
+      "end_line": 1094,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main.root": {
       "file_path": "src/heretek_swarm/api/main.py",
       "qualified_name": "src.heretek_swarm.api.main.root",
-      "start_line": 1101,
-      "end_line": 1117,
+      "start_line": 1103,
+      "end_line": 1119,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main.serve_spa": {
       "file_path": "src/heretek_swarm/api/main.py",
       "qualified_name": "src.heretek_swarm.api.main.serve_spa",
-      "start_line": 1126,
-      "end_line": 1150,
+      "start_line": 1128,
+      "end_line": 1152,
       "type": "FUNCTION",
       "status": "unchanged"
     },
@@ -84330,7 +84330,7 @@
       "start_line": 432,
       "end_line": 876,
       "type": "CLASS",
-      "status": "modified"
+      "status": "unchanged"
     },
     "src/heretek_swarm/memory/persistent.py|src.heretek_swarm.memory.persistent.Mem0Backend.__init__": {
       "file_path": "src/heretek_swarm/memory/persistent.py",
@@ -84364,22 +84364,6 @@
       "type": "METHOD",
       "status": "unchanged"
     },
-    "src/heretek_swarm/memory/persistent.py|src.heretek_swarm.memory.persistent.Mem0Backend.search": {
-      "file_path": "src/heretek_swarm/memory/persistent.py",
-      "qualified_name": "src.heretek_swarm.memory.persistent.Mem0Backend.search",
-      "start_line": 513,
-      "end_line": 561,
-      "type": "METHOD",
-      "status": "unchanged"
-    },
-    "src/heretek_swarm/memory/persistent.py|src.heretek_swarm.memory.persistent.Mem0Backend.get_all": {
-      "file_path": "src/heretek_swarm/memory/persistent.py",
-      "qualified_name": "src.heretek_swarm.memory.persistent.Mem0Backend.get_all",
-      "start_line": 563,
-      "end_line": 596,
-      "type": "METHOD",
-      "status": "unchanged"
-    },
     "src/heretek_swarm/memory/persistent.py|src.heretek_swarm.memory.persistent.Mem0Backend.delete": {
       "file_path": "src/heretek_swarm/memory/persistent.py",
       "qualified_name": "src.heretek_swarm.memory.persistent.Mem0Backend.delete",
@@ -84410,7 +84394,15 @@
       "start_line": 661,
       "end_line": 704,
       "type": "METHOD",
-      "status": "added"
+      "status": "unchanged"
+    },
+    "src/heretek_swarm/memory/persistent.py|src.heretek_swarm.memory.persistent.Mem0Backend.search": {
+      "file_path": "src/heretek_swarm/memory/persistent.py",
+      "qualified_name": "src.heretek_swarm.memory.persistent.Mem0Backend.search",
+      "start_line": 706,
+      "end_line": 746,
+      "type": "METHOD",
+      "status": "unchanged"
     },
     "src/heretek_swarm/memory/persistent.py|src.heretek_swarm.memory.persistent.Mem0Backend.update": {
       "file_path": "src/heretek_swarm/memory/persistent.py",
@@ -84418,7 +84410,7 @@
       "start_line": 748,
       "end_line": 763,
       "type": "METHOD",
-      "status": "added"
+      "status": "unchanged"
     },
     "src/heretek_swarm/memory/persistent.py|src.heretek_swarm.memory.persistent.Mem0Backend.get": {
       "file_path": "src/heretek_swarm/memory/persistent.py",
@@ -84426,7 +84418,15 @@
       "start_line": 765,
       "end_line": 778,
       "type": "METHOD",
-      "status": "added"
+      "status": "unchanged"
+    },
+    "src/heretek_swarm/memory/persistent.py|src.heretek_swarm.memory.persistent.Mem0Backend.get_all": {
+      "file_path": "src/heretek_swarm/memory/persistent.py",
+      "qualified_name": "src.heretek_swarm.memory.persistent.Mem0Backend.get_all",
+      "start_line": 780,
+      "end_line": 805,
+      "type": "METHOD",
+      "status": "unchanged"
     },
     "src/heretek_swarm/memory/persistent.py|src.heretek_swarm.memory.persistent.Mem0Backend.delete_memory": {
       "file_path": "src/heretek_swarm/memory/persistent.py",
@@ -84434,7 +84434,7 @@
       "start_line": 807,
       "end_line": 817,
       "type": "METHOD",
-      "status": "added"
+      "status": "unchanged"
     },
     "src/heretek_swarm/memory/persistent.py|src.heretek_swarm.memory.persistent.Mem0Backend.delete_all": {
       "file_path": "src/heretek_swarm/memory/persistent.py",
@@ -84442,7 +84442,7 @@
       "start_line": 819,
       "end_line": 841,
       "type": "METHOD",
-      "status": "added"
+      "status": "unchanged"
     },
     "src/heretek_swarm/memory/persistent.py|src.heretek_swarm.memory.persistent.Mem0Backend.history": {
       "file_path": "src/heretek_swarm/memory/persistent.py",
@@ -84450,7 +84450,7 @@
       "start_line": 843,
       "end_line": 856,
       "type": "METHOD",
-      "status": "added"
+      "status": "unchanged"
     },
     "src/heretek_swarm/memory/persistent.py|src.heretek_swarm.memory.persistent.Mem0Backend.reset": {
       "file_path": "src/heretek_swarm/memory/persistent.py",
@@ -84458,7 +84458,7 @@
       "start_line": 858,
       "end_line": 863,
       "type": "METHOD",
-      "status": "added"
+      "status": "unchanged"
     },
     "src/heretek_swarm/memory/persistent.py|src.heretek_swarm.memory.persistent.Mem0Backend.configure": {
       "file_path": "src/heretek_swarm/memory/persistent.py",
@@ -84466,7 +84466,7 @@
       "start_line": 865,
       "end_line": 876,
       "type": "METHOD",
-      "status": "added"
+      "status": "unchanged"
     },
     "src/heretek_swarm/memory/prefetcher.py|src.heretek_swarm.memory.prefetcher.PreFetchStrategy": {
       "file_path": "src/heretek_swarm/memory/prefetcher.py",
@@ -111436,21 +111436,13 @@
       "type": "FUNCTION",
       "status": "unchanged"
     },
-    "src/heretek_swarm/cli.py|src.heretek_swarm.cli._check_service_health": {
-      "file_path": "src/heretek_swarm/cli.py",
-      "qualified_name": "src.heretek_swarm.cli._check_service_health",
-      "start_line": 40,
-      "end_line": 75,
-      "type": "FUNCTION",
-      "status": "added"
-    },
     "src/heretek_swarm/cli.py|src.heretek_swarm.cli._load_infrastructure_config_and_echo": {
       "file_path": "src/heretek_swarm/cli.py",
       "qualified_name": "src.heretek_swarm.cli._load_infrastructure_config_and_echo",
       "start_line": 41,
       "end_line": 52,
       "type": "FUNCTION",
-      "status": "added"
+      "status": "unchanged"
     },
     "src/heretek_swarm/cli.py|src.heretek_swarm.cli._print_infrastructure_config": {
       "file_path": "src/heretek_swarm/cli.py",
@@ -111458,103 +111450,111 @@
       "start_line": 55,
       "end_line": 77,
       "type": "FUNCTION",
-      "status": "added"
+      "status": "unchanged"
+    },
+    "src/heretek_swarm/cli.py|src.heretek_swarm.cli._check_service_health": {
+      "file_path": "src/heretek_swarm/cli.py",
+      "qualified_name": "src.heretek_swarm.cli._check_service_health",
+      "start_line": 84,
+      "end_line": 119,
+      "type": "FUNCTION",
+      "status": "unchanged"
     },
     "src/heretek_swarm/cli.py|src.heretek_swarm.cli._make_result": {
       "file_path": "src/heretek_swarm/cli.py",
       "qualified_name": "src.heretek_swarm.cli._make_result",
-      "start_line": 78,
-      "end_line": 91,
+      "start_line": 122,
+      "end_line": 135,
       "type": "FUNCTION",
-      "status": "added"
+      "status": "unchanged"
     },
     "src/heretek_swarm/cli.py|src.heretek_swarm.cli._check_postgres": {
       "file_path": "src/heretek_swarm/cli.py",
       "qualified_name": "src.heretek_swarm.cli._check_postgres",
-      "start_line": 94,
-      "end_line": 104,
+      "start_line": 138,
+      "end_line": 148,
       "type": "FUNCTION",
-      "status": "added"
+      "status": "unchanged"
     },
     "src/heretek_swarm/cli.py|src.heretek_swarm.cli._check_redis": {
       "file_path": "src/heretek_swarm/cli.py",
       "qualified_name": "src.heretek_swarm.cli._check_redis",
-      "start_line": 107,
-      "end_line": 118,
+      "start_line": 151,
+      "end_line": 162,
       "type": "FUNCTION",
-      "status": "added"
+      "status": "unchanged"
     },
     "src/heretek_swarm/cli.py|src.heretek_swarm.cli._check_qdrant": {
       "file_path": "src/heretek_swarm/cli.py",
       "qualified_name": "src.heretek_swarm.cli._check_qdrant",
-      "start_line": 121,
-      "end_line": 135,
+      "start_line": 165,
+      "end_line": 179,
       "type": "FUNCTION",
-      "status": "added"
+      "status": "unchanged"
     },
     "src/heretek_swarm/cli.py|src.heretek_swarm.cli._check_nats": {
       "file_path": "src/heretek_swarm/cli.py",
       "qualified_name": "src.heretek_swarm.cli._check_nats",
-      "start_line": 138,
-      "end_line": 171,
+      "start_line": 182,
+      "end_line": 215,
       "type": "FUNCTION",
-      "status": "added"
+      "status": "unchanged"
     },
     "src/heretek_swarm/cli.py|src.heretek_swarm.cli._check_mem0": {
       "file_path": "src/heretek_swarm/cli.py",
       "qualified_name": "src.heretek_swarm.cli._check_mem0",
-      "start_line": 174,
-      "end_line": 188,
+      "start_line": 218,
+      "end_line": 232,
       "type": "FUNCTION",
-      "status": "added"
+      "status": "unchanged"
     },
     "src/heretek_swarm/cli.py|src.heretek_swarm.cli.check_container_runtime": {
       "file_path": "src/heretek_swarm/cli.py",
       "qualified_name": "src.heretek_swarm.cli.check_container_runtime",
-      "start_line": 195,
-      "end_line": 218,
+      "start_line": 239,
+      "end_line": 262,
       "type": "FUNCTION",
-      "status": "added"
+      "status": "unchanged"
     },
     "src/heretek_swarm/cli.py|src.heretek_swarm.cli.check_compose_plugin": {
       "file_path": "src/heretek_swarm/cli.py",
       "qualified_name": "src.heretek_swarm.cli.check_compose_plugin",
-      "start_line": 221,
-      "end_line": 240,
+      "start_line": 265,
+      "end_line": 284,
       "type": "FUNCTION",
-      "status": "added"
+      "status": "unchanged"
     },
     "src/heretek_swarm/cli.py|src.heretek_swarm.cli.cli": {
       "file_path": "src/heretek_swarm/cli.py",
       "qualified_name": "src.heretek_swarm.cli.cli",
-      "start_line": 249,
-      "end_line": 250,
+      "start_line": 293,
+      "end_line": 294,
       "type": "FUNCTION",
-      "status": "added"
+      "status": "unchanged"
     },
     "src/heretek_swarm/cli.py|src.heretek_swarm.cli.deploy": {
       "file_path": "src/heretek_swarm/cli.py",
       "qualified_name": "src.heretek_swarm.cli.deploy",
-      "start_line": 259,
-      "end_line": 330,
+      "start_line": 303,
+      "end_line": 374,
       "type": "FUNCTION",
-      "status": "added"
+      "status": "unchanged"
     },
     "src/heretek_swarm/cli.py|src.heretek_swarm.cli._start_autonomous_swarm": {
       "file_path": "src/heretek_swarm/cli.py",
       "qualified_name": "src.heretek_swarm.cli._start_autonomous_swarm",
-      "start_line": 337,
-      "end_line": 383,
+      "start_line": 381,
+      "end_line": 427,
       "type": "FUNCTION",
-      "status": "added"
+      "status": "unchanged"
     },
     "src/heretek_swarm/cli.py|src.heretek_swarm.cli._handle_signal": {
       "file_path": "src/heretek_swarm/cli.py",
       "qualified_name": "src.heretek_swarm.cli._handle_signal",
-      "start_line": 386,
-      "end_line": 396,
+      "start_line": 430,
+      "end_line": 440,
       "type": "FUNCTION",
-      "status": "added"
+      "status": "unchanged"
     },
     "src/heretek_swarm/cli.py|src.heretek_swarm.cli.run": {
       "file_path": "src/heretek_swarm/cli.py",
@@ -111562,7 +111562,7 @@
       "start_line": 455,
       "end_line": 514,
       "type": "FUNCTION",
-      "status": "modified"
+      "status": "unchanged"
     },
     "src/heretek_swarm/cli.py|src.heretek_swarm.cli.serve": {
       "file_path": "src/heretek_swarm/cli.py",
@@ -111570,47 +111570,47 @@
       "start_line": 535,
       "end_line": 588,
       "type": "FUNCTION",
-      "status": "modified"
+      "status": "unchanged"
     },
     "src/heretek_swarm/cli.py|src.heretek_swarm.cli.update": {
       "file_path": "src/heretek_swarm/cli.py",
       "qualified_name": "src.heretek_swarm.cli.update",
-      "start_line": 537,
-      "end_line": 572,
+      "start_line": 593,
+      "end_line": 628,
       "type": "FUNCTION",
-      "status": "added"
+      "status": "unchanged"
     },
     "src/heretek_swarm/cli.py|src.heretek_swarm.cli.status": {
       "file_path": "src/heretek_swarm/cli.py",
       "qualified_name": "src.heretek_swarm.cli.status",
-      "start_line": 579,
-      "end_line": 709,
+      "start_line": 635,
+      "end_line": 765,
       "type": "FUNCTION",
-      "status": "added"
+      "status": "unchanged"
     },
     "src/heretek_swarm/cli.py|src.heretek_swarm.cli.status.run_health_checks": {
       "file_path": "src/heretek_swarm/cli.py",
       "qualified_name": "src.heretek_swarm.cli.status.run_health_checks",
-      "start_line": 626,
-      "end_line": 645,
+      "start_line": 682,
+      "end_line": 701,
       "type": "FUNCTION",
-      "status": "added"
+      "status": "unchanged"
     },
     "src/heretek_swarm/cli.py|src.heretek_swarm.cli._fetch_wizard_config": {
       "file_path": "src/heretek_swarm/cli.py",
       "qualified_name": "src.heretek_swarm.cli._fetch_wizard_config",
-      "start_line": 712,
-      "end_line": 734,
+      "start_line": 768,
+      "end_line": 790,
       "type": "FUNCTION",
-      "status": "added"
+      "status": "unchanged"
     },
     "src/heretek_swarm/cli.py|src.heretek_swarm.cli.main": {
       "file_path": "src/heretek_swarm/cli.py",
       "qualified_name": "src.heretek_swarm.cli.main",
-      "start_line": 737,
-      "end_line": 739,
+      "start_line": 793,
+      "end_line": 795,
       "type": "FUNCTION",
-      "status": "added"
+      "status": "unchanged"
     }
   },
   "components": [
@@ -112966,7 +112966,7 @@
         },
         {
           "file_path": "src/heretek_swarm/api/main.py",
-          "file_status": "modified",
+          "file_status": "unchanged",
           "methods": [
             "src.heretek_swarm.api.main.lifespan",
             "src.heretek_swarm.api.main._init_config_service",
@@ -116419,7 +116419,7 @@
         },
         {
           "file_path": "src/heretek_swarm/memory/persistent.py",
-          "file_status": "modified",
+          "file_status": "unchanged",
           "methods": [
             "src.heretek_swarm.memory.persistent.Mem0Config",
             "src.heretek_swarm.memory.persistent.Mem0Config.to_dict",
@@ -116443,14 +116443,14 @@
             "src.heretek_swarm.memory.persistent.Mem0Backend.initialize",
             "src.heretek_swarm.memory.persistent.Mem0Backend.shutdown",
             "src.heretek_swarm.memory.persistent.Mem0Backend.store",
-            "src.heretek_swarm.memory.persistent.Mem0Backend.search",
-            "src.heretek_swarm.memory.persistent.Mem0Backend.get_all",
             "src.heretek_swarm.memory.persistent.Mem0Backend.delete",
             "src.heretek_swarm.memory.persistent.Mem0Backend.store_batch",
             "src.heretek_swarm.memory.persistent.Mem0Backend.get_latency_stats",
             "src.heretek_swarm.memory.persistent.Mem0Backend.add",
+            "src.heretek_swarm.memory.persistent.Mem0Backend.search",
             "src.heretek_swarm.memory.persistent.Mem0Backend.update",
             "src.heretek_swarm.memory.persistent.Mem0Backend.get",
+            "src.heretek_swarm.memory.persistent.Mem0Backend.get_all",
             "src.heretek_swarm.memory.persistent.Mem0Backend.delete_memory",
             "src.heretek_swarm.memory.persistent.Mem0Backend.delete_all",
             "src.heretek_swarm.memory.persistent.Mem0Backend.history",
@@ -119299,7 +119299,7 @@
             },
             {
               "file_path": "src/heretek_swarm/api/main.py",
-              "file_status": "modified",
+              "file_status": "unchanged",
               "methods": [
                 "src.heretek_swarm.api.main.lifespan",
                 "src.heretek_swarm.api.main._init_config_service",
@@ -121212,7 +121212,7 @@
             },
             {
               "file_path": "src/heretek_swarm/memory/persistent.py",
-              "file_status": "modified",
+              "file_status": "unchanged",
               "methods": [
                 "src.heretek_swarm.memory.persistent.Mem0Config",
                 "src.heretek_swarm.memory.persistent.Mem0Config.to_dict",
@@ -121236,14 +121236,14 @@
                 "src.heretek_swarm.memory.persistent.Mem0Backend.initialize",
                 "src.heretek_swarm.memory.persistent.Mem0Backend.shutdown",
                 "src.heretek_swarm.memory.persistent.Mem0Backend.store",
-                "src.heretek_swarm.memory.persistent.Mem0Backend.search",
-                "src.heretek_swarm.memory.persistent.Mem0Backend.get_all",
                 "src.heretek_swarm.memory.persistent.Mem0Backend.delete",
                 "src.heretek_swarm.memory.persistent.Mem0Backend.store_batch",
                 "src.heretek_swarm.memory.persistent.Mem0Backend.get_latency_stats",
                 "src.heretek_swarm.memory.persistent.Mem0Backend.add",
+                "src.heretek_swarm.memory.persistent.Mem0Backend.search",
                 "src.heretek_swarm.memory.persistent.Mem0Backend.update",
                 "src.heretek_swarm.memory.persistent.Mem0Backend.get",
+                "src.heretek_swarm.memory.persistent.Mem0Backend.get_all",
                 "src.heretek_swarm.memory.persistent.Mem0Backend.delete_memory",
                 "src.heretek_swarm.memory.persistent.Mem0Backend.delete_all",
                 "src.heretek_swarm.memory.persistent.Mem0Backend.history",
@@ -126996,7 +126996,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/api/main.py",
-                  "file_status": "modified",
+                  "file_status": "unchanged",
                   "methods": [
                     "src.heretek_swarm.api.main.lifespan",
                     "src.heretek_swarm.api.main._init_config_service",
@@ -127569,7 +127569,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/memory/persistent.py",
-                  "file_status": "modified",
+                  "file_status": "unchanged",
                   "methods": [
                     "src.heretek_swarm.memory.persistent.Mem0Config",
                     "src.heretek_swarm.memory.persistent.Mem0Config.to_dict",
@@ -127593,14 +127593,14 @@
                     "src.heretek_swarm.memory.persistent.Mem0Backend.initialize",
                     "src.heretek_swarm.memory.persistent.Mem0Backend.shutdown",
                     "src.heretek_swarm.memory.persistent.Mem0Backend.store",
-                    "src.heretek_swarm.memory.persistent.Mem0Backend.search",
-                    "src.heretek_swarm.memory.persistent.Mem0Backend.get_all",
                     "src.heretek_swarm.memory.persistent.Mem0Backend.delete",
                     "src.heretek_swarm.memory.persistent.Mem0Backend.store_batch",
                     "src.heretek_swarm.memory.persistent.Mem0Backend.get_latency_stats",
                     "src.heretek_swarm.memory.persistent.Mem0Backend.add",
+                    "src.heretek_swarm.memory.persistent.Mem0Backend.search",
                     "src.heretek_swarm.memory.persistent.Mem0Backend.update",
                     "src.heretek_swarm.memory.persistent.Mem0Backend.get",
+                    "src.heretek_swarm.memory.persistent.Mem0Backend.get_all",
                     "src.heretek_swarm.memory.persistent.Mem0Backend.delete_memory",
                     "src.heretek_swarm.memory.persistent.Mem0Backend.delete_all",
                     "src.heretek_swarm.memory.persistent.Mem0Backend.history",
@@ -129341,7 +129341,7 @@
                     },
                     {
                       "file_path": "src/heretek_swarm/memory/persistent.py",
-                      "file_status": "modified",
+                      "file_status": "unchanged",
                       "methods": [
                         "src.heretek_swarm.memory.persistent.Mem0Config",
                         "src.heretek_swarm.memory.persistent.Mem0Config.to_dict",
@@ -129365,14 +129365,14 @@
                         "src.heretek_swarm.memory.persistent.Mem0Backend.initialize",
                         "src.heretek_swarm.memory.persistent.Mem0Backend.shutdown",
                         "src.heretek_swarm.memory.persistent.Mem0Backend.store",
-                        "src.heretek_swarm.memory.persistent.Mem0Backend.search",
-                        "src.heretek_swarm.memory.persistent.Mem0Backend.get_all",
                         "src.heretek_swarm.memory.persistent.Mem0Backend.delete",
                         "src.heretek_swarm.memory.persistent.Mem0Backend.store_batch",
                         "src.heretek_swarm.memory.persistent.Mem0Backend.get_latency_stats",
                         "src.heretek_swarm.memory.persistent.Mem0Backend.add",
+                        "src.heretek_swarm.memory.persistent.Mem0Backend.search",
                         "src.heretek_swarm.memory.persistent.Mem0Backend.update",
                         "src.heretek_swarm.memory.persistent.Mem0Backend.get",
+                        "src.heretek_swarm.memory.persistent.Mem0Backend.get_all",
                         "src.heretek_swarm.memory.persistent.Mem0Backend.delete_memory",
                         "src.heretek_swarm.memory.persistent.Mem0Backend.delete_all",
                         "src.heretek_swarm.memory.persistent.Mem0Backend.history",
@@ -130440,7 +130440,7 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/memory/persistent.py",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "src.heretek_swarm.memory.persistent.Mem0Config",
                             "src.heretek_swarm.memory.persistent.Mem0Config.to_dict",
@@ -130464,14 +130464,14 @@
                             "src.heretek_swarm.memory.persistent.Mem0Backend.initialize",
                             "src.heretek_swarm.memory.persistent.Mem0Backend.shutdown",
                             "src.heretek_swarm.memory.persistent.Mem0Backend.store",
-                            "src.heretek_swarm.memory.persistent.Mem0Backend.search",
-                            "src.heretek_swarm.memory.persistent.Mem0Backend.get_all",
                             "src.heretek_swarm.memory.persistent.Mem0Backend.delete",
                             "src.heretek_swarm.memory.persistent.Mem0Backend.store_batch",
                             "src.heretek_swarm.memory.persistent.Mem0Backend.get_latency_stats",
                             "src.heretek_swarm.memory.persistent.Mem0Backend.add",
+                            "src.heretek_swarm.memory.persistent.Mem0Backend.search",
                             "src.heretek_swarm.memory.persistent.Mem0Backend.update",
                             "src.heretek_swarm.memory.persistent.Mem0Backend.get",
+                            "src.heretek_swarm.memory.persistent.Mem0Backend.get_all",
                             "src.heretek_swarm.memory.persistent.Mem0Backend.delete_memory",
                             "src.heretek_swarm.memory.persistent.Mem0Backend.delete_all",
                             "src.heretek_swarm.memory.persistent.Mem0Backend.history",
@@ -132196,7 +132196,7 @@
                     },
                     {
                       "file_path": "src/heretek_swarm/api/main.py",
-                      "file_status": "modified",
+                      "file_status": "unchanged",
                       "methods": [
                         "src.heretek_swarm.api.main.lifespan",
                         "src.heretek_swarm.api.main._init_config_service",
@@ -132628,7 +132628,7 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/api/main.py",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "src.heretek_swarm.api.main.lifespan",
                             "src.heretek_swarm.api.main._init_config_service",
