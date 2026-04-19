@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-19T10:51:30.718782+00:00",
+    "generated_at": "2026-04-19T11:03:39.197459+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -4360,7 +4360,7 @@
       ]
     },
     "src/heretek_swarm/actors/mixins/learning.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.actors.mixins.learning.LearningState",
@@ -4372,16 +4372,16 @@
         {
           "qualified_name": "src.heretek_swarm.actors.mixins.learning.LearningMixin",
           "start_line": 23,
-          "end_line": 83,
+          "end_line": 84,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.mixins.learning.LearningMixin.__init__",
           "start_line": 42,
-          "end_line": 45,
+          "end_line": 46,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.mixins.learning.LearningMixin.get_learning_status",
@@ -57563,17 +57563,17 @@
       "file_path": "src/heretek_swarm/actors/mixins/learning.py",
       "qualified_name": "src.heretek_swarm.actors.mixins.learning.LearningMixin",
       "start_line": 23,
-      "end_line": 83,
+      "end_line": 84,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/mixins/learning.py|src.heretek_swarm.actors.mixins.learning.LearningMixin.__init__": {
       "file_path": "src/heretek_swarm/actors/mixins/learning.py",
       "qualified_name": "src.heretek_swarm.actors.mixins.learning.LearningMixin.__init__",
       "start_line": 42,
-      "end_line": 45,
+      "end_line": 46,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/mixins/learning.py|src.heretek_swarm.actors.mixins.learning.LearningMixin.get_learning_status": {
       "file_path": "src/heretek_swarm/actors/mixins/learning.py",
@@ -111914,7 +111914,7 @@
         },
         {
           "file_path": "src/heretek_swarm/actors/mixins/learning.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "src.heretek_swarm.actors.mixins.learning.LearningState",
             "src.heretek_swarm.actors.mixins.learning.LearningMixin",
@@ -151440,7 +151440,7 @@
           "file_methods": [
             {
               "file_path": "src/heretek_swarm/actors/mixins/learning.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.heretek_swarm.actors.mixins.learning.LearningState",
                 "src.heretek_swarm.actors.mixins.learning.LearningMixin",
@@ -152210,7 +152210,7 @@
               "file_methods": [
                 {
                   "file_path": "src/heretek_swarm/actors/mixins/learning.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.actors.mixins.learning.LearningState",
                     "src.heretek_swarm.actors.mixins.learning.LearningMixin",
@@ -152477,7 +152477,7 @@
                   "file_methods": [
                     {
                       "file_path": "src/heretek_swarm/actors/mixins/learning.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.actors.mixins.learning.LearningState",
                         "src.heretek_swarm.actors.mixins.learning.LearningMixin",
@@ -152600,7 +152600,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/actors/mixins/learning.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.actors.mixins.learning.LearningState",
                             "src.heretek_swarm.actors.mixins.learning.LearningMixin",

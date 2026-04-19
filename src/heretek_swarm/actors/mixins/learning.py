@@ -40,9 +40,10 @@ class LearningMixin:
     access_analyzer: Any = None
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        """Override __init__ to continue the MRO chain while stopping object.__init__ from receiving kwargs."""
-        # Pass only positional args to super() - object.__init__() only accepts self
-        super().__init__(*args)
+        """Override __init__ to continue the MRO chain."""
+        # Pass both positional and keyword args to continue the chain
+        # Each mixin in the chain extracts what it needs and passes the rest
+        super().__init__(*args, **kwargs)
 
     def get_learning_status(self) -> dict[str, Any]:
         """
