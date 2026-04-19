@@ -1,6 +1,6 @@
 {
   "repository_name": "heretek-swarm",
-  "timestamp": "2026-04-19T03:38:30.290438+00:00",
+  "timestamp": "2026-04-19T03:42:15.151855+00:00",
   "overall_score": 0.9869964745997803,
   "check_summaries": [
     {
@@ -1034,85 +1034,50 @@
             {
               "entity_name": "[unused_variable] \"validator\" is not accessed",
               "file_path": "src/heretek_swarm/api/observability.py",
-              "line_start": 140,
-              "line_end": 140,
+              "line_start": 141,
+              "line_end": 141,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"self\" is not accessed",
               "file_path": "src/heretek_swarm/api/observability.py",
-              "line_start": 303,
-              "line_end": 303,
+              "line_start": 304,
+              "line_end": 304,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"_message\" is not accessed",
               "file_path": "src/heretek_swarm/api/observability.py",
-              "line_start": 830,
-              "line_end": 830,
+              "line_start": 831,
+              "line_end": 831,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"websocket\" is not accessed",
               "file_path": "src/heretek_swarm/api/observability.py",
-              "line_start": 1226,
-              "line_end": 1226,
+              "line_start": 1382,
+              "line_end": 1382,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"authenticated\" is not accessed",
               "file_path": "src/heretek_swarm/api/observability.py",
-              "line_start": 1358,
-              "line_end": 1358,
+              "line_start": 1514,
+              "line_end": 1514,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"authenticated\" is not accessed",
               "file_path": "src/heretek_swarm/api/observability.py",
-              "line_start": 1425,
-              "line_end": 1425,
+              "line_start": 1581,
+              "line_end": 1581,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"authenticated\" is not accessed",
               "file_path": "src/heretek_swarm/api/observability.py",
-              "line_start": 1458,
-              "line_end": 1458,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
-              "file_path": "src/heretek_swarm/api/observability.py",
-              "line_start": 1474,
-              "line_end": 1474,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
-              "file_path": "src/heretek_swarm/api/observability.py",
-              "line_start": 1490,
-              "line_end": 1490,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
-              "file_path": "src/heretek_swarm/api/observability.py",
-              "line_start": 1506,
-              "line_end": 1506,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
-              "file_path": "src/heretek_swarm/api/observability.py",
-              "line_start": 1557,
-              "line_end": 1557,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
-              "file_path": "src/heretek_swarm/api/observability.py",
-              "line_start": 1589,
-              "line_end": 1589,
+              "line_start": 1614,
+              "line_end": 1614,
               "metric_value": 0.0
             },
             {
@@ -1125,8 +1090,43 @@
             {
               "entity_name": "[unused_variable] \"authenticated\" is not accessed",
               "file_path": "src/heretek_swarm/api/observability.py",
-              "line_start": 1680,
-              "line_end": 1680,
+              "line_start": 1646,
+              "line_end": 1646,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/observability.py",
+              "line_start": 1662,
+              "line_end": 1662,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/observability.py",
+              "line_start": 1713,
+              "line_end": 1713,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/observability.py",
+              "line_start": 1745,
+              "line_end": 1745,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/observability.py",
+              "line_start": 1786,
+              "line_end": 1786,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/observability.py",
+              "line_start": 1836,
+              "line_end": 1836,
               "metric_value": 0.0
             }
           ]

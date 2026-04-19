@@ -42,6 +42,7 @@ from heretek_swarm.schemas.external_call_log import (
     ExternalCallLogCreate,
     ExternalCallLogListItem,
     ExternalCallLogListResponse,
+    ExternalCallLogResponse,
 )
 from heretek_swarm.security.zero_trust import LayerResult, ZeroTrustResult, ZeroTrustValidator
 
@@ -1177,6 +1178,161 @@ async def create_external_call(
             logger.error("external_call_create_error", error=str(e), exc_info=True)
             await session.rollback()
             raise HTTPException(status_code=500, detail="Failed to create external call log")
+
+
+@router.get("/external-calls/{call_id}", response_model=ExternalCallLogResponse)
+async def get_external_call(
+    call_id: str,
+    request: Request,
+    include_bodies: bool = Query(
+        True,
+        description="Include decrypted request/response bodies (sensitive data may be redacted)",
+    ),
+) -> ExternalCallLogResponse:
+    """
+    Get a single external call log entry by ID.
+
+    Returns detailed information including decrypted and sanitized request_headers,
+    request_body, and response_body. Sensitive data is sanitized before being returned.
+
+    Note: This endpoint returns decrypted data. In production, restrict access
+    to authorized clients only.
+
+    Args:
+        call_id: UUID of the external call log entry
+        request: FastAPI request for rate limiting
+        include_bodies: Whether to include decrypted request/response bodies
+
+    Returns:
+        ExternalCallLogResponse with decrypted and sanitized data
+    """
+    # Rate limiting
+    client_id = request.client.host if request.client else "unknown"
+    if not check_rate_limit(client_id):
+        raise HTTPException(status_code=429, detail="Rate limit exceeded")
+
+    # Parse UUID
+    try:
+        import uuid as uuid_module
+        call_uuid = uuid_module.UUID(call_id)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid call ID format")
+
+    try:
+        session_factory = _get_external_call_log_session_factory()
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error("external_calls_db_error", error=str(e))
+        raise HTTPException(status_code=503, detail="External call log database unavailable")
+
+    async with session_factory() as session:
+        try:
+            # Fetch the specific log entry
+            result = await session.execute(
+                select(ExternalCallLog).where(ExternalCallLog.id == call_uuid)
+            )
+            log = result.scalar_one_or_none()
+
+            if log is None:
+                raise HTTPException(status_code=404, detail="External call log not found")
+
+            # Initialize response data with basic fields
+            response_data = {
+                "id": log.id,
+                "agent_id": log.agent_id,
+                "agent_type": log.agent_type,
+                "call_type": log.call_type,
+                "url": log.url,
+                "url_domain": log.url.split("://", 1)[1].split("/")[0] if "://" in log.url else log.url.split("/")[0],
+                "url_full": log.url,
+                "method": log.method,
+                "status_code": log.status_code,
+                "duration_ms": log.duration_ms,
+                "tool_name": log.tool_name,
+                "error_message": log.error_message,
+                "created_at": log.created_at,
+            }
+
+            # Decrypt and sanitize bodies if requested
+            if include_bodies:
+                encryptor = get_encryptor()
+
+                # Decrypt request headers
+                decrypted_headers = None
+                if log.request_headers_encrypted:
+                    try:
+                        decrypted_data = encryptor.decrypt(log.request_headers_encrypted)
+                        if isinstance(decrypted_data, dict):
+                            decrypted_headers = encryptor.sanitize(decrypted_data)
+                        elif isinstance(decrypted_data, str):
+                            # Try parsing as JSON
+                            import json
+                            decrypted_headers = encryptor.sanitize(json.loads(decrypted_data))
+                    except Exception as e:
+                        logger.warning(
+                            "failed_to_decrypt_headers",
+                            call_id=str(call_id),
+                            error=str(e),
+                        )
+                        decrypted_headers = {"_error": "Failed to decrypt"}
+
+                # Decrypt request body
+                decrypted_request_body = None
+                if log.request_body_encrypted:
+                    try:
+                        decrypted_data = encryptor.decrypt(log.request_body_encrypted)
+                        if isinstance(decrypted_data, dict) and "body" in decrypted_data:
+                            decrypted_request_body = decrypted_data["body"]
+                        elif isinstance(decrypted_data, str):
+                            decrypted_request_body = decrypted_data
+                    except Exception as e:
+                        logger.warning(
+                            "failed_to_decrypt_request_body",
+                            call_id=str(call_id),
+                            error=str(e),
+                        )
+                        decrypted_request_body = "[decryption failed]"
+
+                # Decrypt response body
+                decrypted_response_body = None
+                if log.response_body_encrypted:
+                    try:
+                        decrypted_data = encryptor.decrypt(log.response_body_encrypted)
+                        if isinstance(decrypted_data, dict) and "body" in decrypted_data:
+                            decrypted_response_body = decrypted_data["body"]
+                        elif isinstance(decrypted_data, str):
+                            decrypted_response_body = decrypted_data
+                    except Exception as e:
+                        logger.warning(
+                            "failed_to_decrypt_response_body",
+                            call_id=str(call_id),
+                            error=str(e),
+                        )
+                        decrypted_response_body = "[decryption failed]"
+
+                response_data["request_headers"] = decrypted_headers
+                response_data["request_body"] = decrypted_request_body
+                response_data["response_body"] = decrypted_response_body
+            else:
+                # Don't include bodies
+                response_data["request_headers"] = None
+                response_data["request_body"] = None
+                response_data["response_body"] = None
+
+            logger.info(
+                "external_call_retrieved",
+                call_id=str(call_id),
+                include_bodies=include_bodies,
+            )
+
+            return ExternalCallLogResponse(**response_data)
+
+        except HTTPException:
+            raise
+        except Exception as e:
+            logger.error("external_call_get_error", error=str(e), exc_info=True)
+            raise HTTPException(status_code=500, detail="Failed to retrieve external call log")
 
 
 # ============== HELPER CLASSES ==============

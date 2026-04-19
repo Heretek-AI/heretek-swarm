@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-19T03:38:28.975097+00:00",
+    "generated_at": "2026-04-19T03:42:13.828311+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -8527,6 +8527,13 @@
           "end_line": 1183,
           "node_type": "CLASS",
           "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.observability.get_external_call",
+          "start_line": 1184,
+          "end_line": 1335,
+          "node_type": "FUNCTION",
+          "status": "added"
         },
         {
           "qualified_name": "src.heretek_swarm.api.observability.TimeTravelRequestCreate",
@@ -61934,6 +61941,14 @@
       "type": "CLASS",
       "status": "unchanged"
     },
+    "src/heretek_swarm/api/observability.py|src.heretek_swarm.api.observability.get_external_call": {
+      "file_path": "src/heretek_swarm/api/observability.py",
+      "qualified_name": "src.heretek_swarm.api.observability.get_external_call",
+      "start_line": 1184,
+      "end_line": 1335,
+      "type": "FUNCTION",
+      "status": "added"
+    },
     "src/heretek_swarm/api/observability.py|src.heretek_swarm.api.observability.TimeTravelRequestCreate": {
       "file_path": "src/heretek_swarm/api/observability.py",
       "qualified_name": "src.heretek_swarm.api.observability.TimeTravelRequestCreate",
@@ -112253,6 +112268,7 @@
             "src.heretek_swarm.api.observability.ReplayJobCreate",
             "src.heretek_swarm.api.observability.ReplayJobResponse",
             "src.heretek_swarm.api.observability.ReplayJobListResponse",
+            "src.heretek_swarm.api.observability.get_external_call",
             "src.heretek_swarm.api.observability.TimeTravelRequestCreate",
             "src.heretek_swarm.api.observability.TimeTravelResponse",
             "src.heretek_swarm.api.observability.create_replay_job",
@@ -118583,6 +118599,7 @@
                 "src.heretek_swarm.api.observability.ReplayJobCreate",
                 "src.heretek_swarm.api.observability.ReplayJobResponse",
                 "src.heretek_swarm.api.observability.ReplayJobListResponse",
+                "src.heretek_swarm.api.observability.get_external_call",
                 "src.heretek_swarm.api.observability.TimeTravelRequestCreate",
                 "src.heretek_swarm.api.observability.TimeTravelResponse",
                 "src.heretek_swarm.api.observability.create_replay_job",
@@ -138584,6 +138601,7 @@
                     "src.heretek_swarm.api.observability.ReplayJobCreate",
                     "src.heretek_swarm.api.observability.ReplayJobResponse",
                     "src.heretek_swarm.api.observability.ReplayJobListResponse",
+                    "src.heretek_swarm.api.observability.get_external_call",
                     "src.heretek_swarm.api.observability.TimeTravelRequestCreate",
                     "src.heretek_swarm.api.observability.TimeTravelResponse",
                     "src.heretek_swarm.api.observability.create_replay_job",
@@ -139816,6 +139834,7 @@
                         "src.heretek_swarm.api.observability.ReplayJobCreate",
                         "src.heretek_swarm.api.observability.ReplayJobResponse",
                         "src.heretek_swarm.api.observability.ReplayJobListResponse",
+                        "src.heretek_swarm.api.observability.get_external_call",
                         "src.heretek_swarm.api.observability.TimeTravelRequestCreate",
                         "src.heretek_swarm.api.observability.TimeTravelResponse",
                         "src.heretek_swarm.api.observability.create_replay_job",
