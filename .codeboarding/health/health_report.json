@@ -1,7 +1,7 @@
 {
   "repository_name": "heretek-swarm",
-  "timestamp": "2026-04-19T02:44:21.818664+00:00",
-  "overall_score": 0.9880242985247324,
+  "timestamp": "2026-04-19T03:11:43.308478+00:00",
+  "overall_score": 0.987795708253803,
   "check_summaries": [
     {
       "check_name": "function_size",
@@ -790,8 +790,8 @@
       "description": "Detects unused imports, variables, functions, and dead code via LSP diagnostics",
       "language": "Python",
       "check_type": "standard",
-      "total_entities_checked": 35,
-      "findings_count": 35,
+      "total_entities_checked": 39,
+      "findings_count": 39,
       "warning_count": 6,
       "score": 0.0,
       "finding_groups": [
@@ -1001,6 +1001,34 @@
               "file_path": "src/heretek_swarm/api/main.py",
               "line_start": 954,
               "line_end": 954,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"agent_id\" is not accessed",
+              "file_path": "src/heretek_swarm/observability/prometheus_metrics.py",
+              "line_start": 246,
+              "line_end": 246,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"agent_id\" is not accessed",
+              "file_path": "src/heretek_swarm/observability/prometheus_metrics.py",
+              "line_start": 250,
+              "line_end": 250,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"agent_type\" is not accessed",
+              "file_path": "src/heretek_swarm/observability/prometheus_metrics.py",
+              "line_start": 263,
+              "line_end": 263,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"agent_type\" is not accessed",
+              "file_path": "src/heretek_swarm/observability/prometheus_metrics.py",
+              "line_start": 271,
+              "line_end": 271,
               "metric_value": 0.0
             }
           ]
@@ -1643,6 +1671,12 @@
       "composite_risk_score": 45.0
     },
     {
+      "file_path": "src/heretek_swarm/observability/prometheus_metrics.py",
+      "total_findings": 4,
+      "warning_findings": 0,
+      "composite_risk_score": 40.0
+    },
+    {
       "file_path": "src/heretek_swarm/security/threat_detection.py",
       "total_findings": 2,
       "warning_findings": 2,
@@ -1698,12 +1732,6 @@
     },
     {
       "file_path": "serverless/handler.py",
-      "total_findings": 2,
-      "warning_findings": 2,
-      "composite_risk_score": 30.0
-    },
-    {
-      "file_path": "src/heretek_swarm/consciousness/phi_training.py",
       "total_findings": 2,
       "warning_findings": 2,
       "composite_risk_score": 30.0

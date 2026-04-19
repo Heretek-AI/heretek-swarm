@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-19T02:37:52.004670+00:00",
+    "generated_at": "2026-04-19T03:11:41.981375+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -29570,15 +29570,8 @@
       ]
     },
     "src/heretek_swarm/observability/prometheus_metrics.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
-        {
-          "qualified_name": "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics",
-          "start_line": 171,
-          "end_line": 329,
-          "node_type": "CLASS",
-          "status": "unchanged"
-        },
         {
           "qualified_name": "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.__init__",
           "start_line": 192,
@@ -29599,6 +29592,13 @@
           "end_line": 210,
           "node_type": "METHOD",
           "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics",
+          "start_line": 209,
+          "end_line": 417,
+          "node_type": "CLASS",
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.record_agent_inactive",
@@ -29692,6 +29692,13 @@
           "status": "unchanged"
         },
         {
+          "qualified_name": "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.record_external_call_log",
+          "start_line": 308,
+          "end_line": 336,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
           "qualified_name": "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.export_prometheus",
           "start_line": 310,
           "end_line": 318,
@@ -29711,6 +29718,13 @@
           "end_line": 329,
           "node_type": "METHOD",
           "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.record_encryption_latency",
+          "start_line": 338,
+          "end_line": 356,
+          "node_type": "METHOD",
+          "status": "added"
         },
         {
           "qualified_name": "src.heretek_swarm.observability.prometheus_metrics.get_metrics",
@@ -29809,6 +29823,20 @@
           "end_line": 461,
           "node_type": "METHOD",
           "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.observability.prometheus_metrics.increment_external_call_logs",
+          "start_line": 488,
+          "end_line": 508,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.observability.prometheus_metrics.record_encryption_latency",
+          "start_line": 511,
+          "end_line": 528,
+          "node_type": "FUNCTION",
+          "status": "added"
         }
       ]
     },
@@ -85294,14 +85322,6 @@
       "type": "FUNCTION",
       "status": "unchanged"
     },
-    "src/heretek_swarm/observability/prometheus_metrics.py|src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics": {
-      "file_path": "src/heretek_swarm/observability/prometheus_metrics.py",
-      "qualified_name": "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics",
-      "start_line": 171,
-      "end_line": 329,
-      "type": "CLASS",
-      "status": "unchanged"
-    },
     "src/heretek_swarm/observability/prometheus_metrics.py|src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.__init__": {
       "file_path": "src/heretek_swarm/observability/prometheus_metrics.py",
       "qualified_name": "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.__init__",
@@ -85325,6 +85345,14 @@
       "end_line": 210,
       "type": "METHOD",
       "status": "unchanged"
+    },
+    "src/heretek_swarm/observability/prometheus_metrics.py|src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics": {
+      "file_path": "src/heretek_swarm/observability/prometheus_metrics.py",
+      "qualified_name": "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics",
+      "start_line": 209,
+      "end_line": 417,
+      "type": "CLASS",
+      "status": "modified"
     },
     "src/heretek_swarm/observability/prometheus_metrics.py|src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.record_agent_inactive": {
       "file_path": "src/heretek_swarm/observability/prometheus_metrics.py",
@@ -85430,6 +85458,14 @@
       "type": "METHOD",
       "status": "unchanged"
     },
+    "src/heretek_swarm/observability/prometheus_metrics.py|src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.record_external_call_log": {
+      "file_path": "src/heretek_swarm/observability/prometheus_metrics.py",
+      "qualified_name": "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.record_external_call_log",
+      "start_line": 308,
+      "end_line": 336,
+      "type": "METHOD",
+      "status": "added"
+    },
     "src/heretek_swarm/observability/prometheus_metrics.py|src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.export_prometheus": {
       "file_path": "src/heretek_swarm/observability/prometheus_metrics.py",
       "qualified_name": "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.export_prometheus",
@@ -85453,6 +85489,14 @@
       "end_line": 329,
       "type": "METHOD",
       "status": "unchanged"
+    },
+    "src/heretek_swarm/observability/prometheus_metrics.py|src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.record_encryption_latency": {
+      "file_path": "src/heretek_swarm/observability/prometheus_metrics.py",
+      "qualified_name": "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.record_encryption_latency",
+      "start_line": 338,
+      "end_line": 356,
+      "type": "METHOD",
+      "status": "added"
     },
     "src/heretek_swarm/observability/prometheus_metrics.py|src.heretek_swarm.observability.prometheus_metrics.get_metrics": {
       "file_path": "src/heretek_swarm/observability/prometheus_metrics.py",
@@ -85565,6 +85609,22 @@
       "end_line": 461,
       "type": "METHOD",
       "status": "unchanged"
+    },
+    "src/heretek_swarm/observability/prometheus_metrics.py|src.heretek_swarm.observability.prometheus_metrics.increment_external_call_logs": {
+      "file_path": "src/heretek_swarm/observability/prometheus_metrics.py",
+      "qualified_name": "src.heretek_swarm.observability.prometheus_metrics.increment_external_call_logs",
+      "start_line": 488,
+      "end_line": 508,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/observability/prometheus_metrics.py|src.heretek_swarm.observability.prometheus_metrics.record_encryption_latency": {
+      "file_path": "src/heretek_swarm/observability/prometheus_metrics.py",
+      "qualified_name": "src.heretek_swarm.observability.prometheus_metrics.record_encryption_latency",
+      "start_line": 511,
+      "end_line": 528,
+      "type": "FUNCTION",
+      "status": "added"
     },
     "src/heretek_swarm/observability/tracing.py|src.heretek_swarm.observability.tracing.initialize_tracing": {
       "file_path": "src/heretek_swarm/observability/tracing.py",
@@ -115715,12 +115775,12 @@
         },
         {
           "file_path": "src/heretek_swarm/observability/prometheus_metrics.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
-            "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics",
             "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.__init__",
             "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.record_agent_registration",
             "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.record_agent_active",
+            "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics",
             "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.record_agent_inactive",
             "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.record_agent_unregistration",
             "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.record_task_completed",
@@ -115734,9 +115794,11 @@
             "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.record_health_score",
             "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.update_uptime",
             "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics._normalize_endpoint",
+            "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.record_external_call_log",
             "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.export_prometheus",
             "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.get_content_type",
             "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.reset",
+            "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.record_encryption_latency",
             "src.heretek_swarm.observability.prometheus_metrics.get_metrics",
             "src.heretek_swarm.observability.prometheus_metrics.reset_metrics",
             "src.heretek_swarm.observability.prometheus_metrics.increment_tasks_completed",
@@ -115750,7 +115812,9 @@
             "src.heretek_swarm.observability.prometheus_metrics.update_health_score",
             "src.heretek_swarm.observability.prometheus_metrics.setup_metrics_middleware",
             "src.heretek_swarm.observability.prometheus_metrics.setup_metrics_middleware.PrometheusMiddleware",
-            "src.heretek_swarm.observability.prometheus_metrics.setup_metrics_middleware.PrometheusMiddleware.dispatch"
+            "src.heretek_swarm.observability.prometheus_metrics.setup_metrics_middleware.PrometheusMiddleware.dispatch",
+            "src.heretek_swarm.observability.prometheus_metrics.increment_external_call_logs",
+            "src.heretek_swarm.observability.prometheus_metrics.record_encryption_latency"
           ]
         },
         {
@@ -120497,12 +120561,12 @@
             },
             {
               "file_path": "src/heretek_swarm/observability/prometheus_metrics.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
-                "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics",
                 "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.__init__",
                 "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.record_agent_registration",
                 "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.record_agent_active",
+                "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics",
                 "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.record_agent_inactive",
                 "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.record_agent_unregistration",
                 "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.record_task_completed",
@@ -120516,9 +120580,11 @@
                 "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.record_health_score",
                 "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.update_uptime",
                 "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics._normalize_endpoint",
+                "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.record_external_call_log",
                 "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.export_prometheus",
                 "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.get_content_type",
                 "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.reset",
+                "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.record_encryption_latency",
                 "src.heretek_swarm.observability.prometheus_metrics.get_metrics",
                 "src.heretek_swarm.observability.prometheus_metrics.reset_metrics",
                 "src.heretek_swarm.observability.prometheus_metrics.increment_tasks_completed",
@@ -120532,7 +120598,9 @@
                 "src.heretek_swarm.observability.prometheus_metrics.update_health_score",
                 "src.heretek_swarm.observability.prometheus_metrics.setup_metrics_middleware",
                 "src.heretek_swarm.observability.prometheus_metrics.setup_metrics_middleware.PrometheusMiddleware",
-                "src.heretek_swarm.observability.prometheus_metrics.setup_metrics_middleware.PrometheusMiddleware.dispatch"
+                "src.heretek_swarm.observability.prometheus_metrics.setup_metrics_middleware.PrometheusMiddleware.dispatch",
+                "src.heretek_swarm.observability.prometheus_metrics.increment_external_call_logs",
+                "src.heretek_swarm.observability.prometheus_metrics.record_encryption_latency"
               ]
             },
             {
@@ -138727,12 +138795,12 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/observability/prometheus_metrics.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
-                    "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics",
                     "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.__init__",
                     "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.record_agent_registration",
                     "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.record_agent_active",
+                    "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics",
                     "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.record_agent_inactive",
                     "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.record_agent_unregistration",
                     "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.record_task_completed",
@@ -138746,9 +138814,11 @@
                     "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.record_health_score",
                     "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.update_uptime",
                     "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics._normalize_endpoint",
+                    "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.record_external_call_log",
                     "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.export_prometheus",
                     "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.get_content_type",
                     "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.reset",
+                    "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.record_encryption_latency",
                     "src.heretek_swarm.observability.prometheus_metrics.get_metrics",
                     "src.heretek_swarm.observability.prometheus_metrics.reset_metrics",
                     "src.heretek_swarm.observability.prometheus_metrics.increment_tasks_completed",
@@ -138762,7 +138832,9 @@
                     "src.heretek_swarm.observability.prometheus_metrics.update_health_score",
                     "src.heretek_swarm.observability.prometheus_metrics.setup_metrics_middleware",
                     "src.heretek_swarm.observability.prometheus_metrics.setup_metrics_middleware.PrometheusMiddleware",
-                    "src.heretek_swarm.observability.prometheus_metrics.setup_metrics_middleware.PrometheusMiddleware.dispatch"
+                    "src.heretek_swarm.observability.prometheus_metrics.setup_metrics_middleware.PrometheusMiddleware.dispatch",
+                    "src.heretek_swarm.observability.prometheus_metrics.increment_external_call_logs",
+                    "src.heretek_swarm.observability.prometheus_metrics.record_encryption_latency"
                   ]
                 },
                 {
@@ -140624,12 +140696,12 @@
                     },
                     {
                       "file_path": "src/heretek_swarm/observability/prometheus_metrics.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
-                        "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics",
                         "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.__init__",
                         "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.record_agent_registration",
                         "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.record_agent_active",
+                        "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics",
                         "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.record_agent_inactive",
                         "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.record_agent_unregistration",
                         "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.record_task_completed",
@@ -140643,9 +140715,11 @@
                         "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.record_health_score",
                         "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.update_uptime",
                         "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics._normalize_endpoint",
+                        "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.record_external_call_log",
                         "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.export_prometheus",
                         "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.get_content_type",
                         "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.reset",
+                        "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.record_encryption_latency",
                         "src.heretek_swarm.observability.prometheus_metrics.get_metrics",
                         "src.heretek_swarm.observability.prometheus_metrics.reset_metrics",
                         "src.heretek_swarm.observability.prometheus_metrics.increment_tasks_completed",
@@ -140659,7 +140733,9 @@
                         "src.heretek_swarm.observability.prometheus_metrics.update_health_score",
                         "src.heretek_swarm.observability.prometheus_metrics.setup_metrics_middleware",
                         "src.heretek_swarm.observability.prometheus_metrics.setup_metrics_middleware.PrometheusMiddleware",
-                        "src.heretek_swarm.observability.prometheus_metrics.setup_metrics_middleware.PrometheusMiddleware.dispatch"
+                        "src.heretek_swarm.observability.prometheus_metrics.setup_metrics_middleware.PrometheusMiddleware.dispatch",
+                        "src.heretek_swarm.observability.prometheus_metrics.increment_external_call_logs",
+                        "src.heretek_swarm.observability.prometheus_metrics.record_encryption_latency"
                       ]
                     },
                     {
@@ -140899,12 +140975,12 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/observability/prometheus_metrics.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
-                            "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics",
                             "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.__init__",
                             "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.record_agent_registration",
                             "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.record_agent_active",
+                            "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics",
                             "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.record_agent_inactive",
                             "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.record_agent_unregistration",
                             "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.record_task_completed",
@@ -140918,9 +140994,11 @@
                             "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.record_health_score",
                             "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.update_uptime",
                             "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics._normalize_endpoint",
+                            "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.record_external_call_log",
                             "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.export_prometheus",
                             "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.get_content_type",
                             "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.reset",
+                            "src.heretek_swarm.observability.prometheus_metrics.PrometheusMetrics.record_encryption_latency",
                             "src.heretek_swarm.observability.prometheus_metrics.get_metrics",
                             "src.heretek_swarm.observability.prometheus_metrics.reset_metrics",
                             "src.heretek_swarm.observability.prometheus_metrics.increment_tasks_completed",
@@ -140934,7 +141012,9 @@
                             "src.heretek_swarm.observability.prometheus_metrics.update_health_score",
                             "src.heretek_swarm.observability.prometheus_metrics.setup_metrics_middleware",
                             "src.heretek_swarm.observability.prometheus_metrics.setup_metrics_middleware.PrometheusMiddleware",
-                            "src.heretek_swarm.observability.prometheus_metrics.setup_metrics_middleware.PrometheusMiddleware.dispatch"
+                            "src.heretek_swarm.observability.prometheus_metrics.setup_metrics_middleware.PrometheusMiddleware.dispatch",
+                            "src.heretek_swarm.observability.prometheus_metrics.increment_external_call_logs",
+                            "src.heretek_swarm.observability.prometheus_metrics.record_encryption_latency"
                           ]
                         },
                         {

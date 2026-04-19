@@ -14,6 +14,9 @@ Metrics:
 - heretek_swarm_free_energy (Gauge): Current free energy level
 - heretek_swarm_api_request_duration_seconds (Histogram): API request latency
 - heretek_swarm_api_requests_total (Counter): Total API requests
+- heretek_swarm_external_call_logs_total (Counter): Total external call logs
+- heretek_swarm_external_call_log_duration_seconds (Histogram): External call duration
+- heretek_swarm_encryption_latency_seconds (Histogram): Encryption/decryption latency
 
 Usage:
     from heretek_swarm.observability.prometheus_metrics import (
@@ -21,6 +24,8 @@ Usage:
         get_metrics,
         increment_tasks_completed,
         record_api_request,
+        increment_external_call_logs,
+        record_encryption_latency,
     )
 
     # Get singleton metrics instance
@@ -31,6 +36,12 @@ Usage:
 
     # Record API request
     record_api_request(method="GET", endpoint="/api/agents", status=200, duration=0.05)
+
+    # Record external call log
+    increment_external_call_logs(agent_type="executor", call_type="tool", status=200)
+
+    # Record encryption latency
+    record_encryption_latency(operation="encrypt", field_type="body", duration_seconds=0.001)
 
     # Export metrics in Prometheus format
     from starlette.responses import PlainTextResponse
@@ -148,6 +159,33 @@ heretek_swarm_api_requests_total = Counter(
     "heretek_swarm_api_requests_total",
     "Total number of API requests",
     ["method", "endpoint", "status"],
+    registry=_swarm_registry,
+)
+
+# ============================================================================
+# ExternalCallLog Model Metrics
+# ============================================================================
+
+heretek_swarm_external_call_logs_total = Counter(
+    "heretek_swarm_external_call_logs_total",
+    "Total number of external call logs recorded",
+    ["agent_type", "call_type", "status"],
+    registry=_swarm_registry,
+)
+
+heretek_swarm_external_call_log_duration_seconds = Histogram(
+    "heretek_swarm_external_call_log_duration_seconds",
+    "Duration of external API calls in seconds",
+    ["agent_type", "call_type", "method"],
+    buckets=(0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1.0, 2.5, 5.0, 10.0, 30.0),
+    registry=_swarm_registry,
+)
+
+heretek_swarm_encryption_latency_seconds = Histogram(
+    "heretek_swarm_encryption_latency_seconds",
+    "Latency of Fernet encryption/decryption operations in seconds",
+    ["operation", "field_type"],
+    buckets=(0.0001, 0.0005, 0.001, 0.005, 0.01, 0.025, 0.05, 0.1),
     registry=_swarm_registry,
 )
 
@@ -278,6 +316,56 @@ class PrometheusMetrics:
             method=method, endpoint=normalized_endpoint, status=str(status)
         ).inc()
 
+    def record_external_call_log(
+        self,
+        agent_type: str = "unknown",
+        call_type: str = "general",
+        status: int | None = None,
+        duration_seconds: float | None = None,
+    ) -> None:
+        """
+        Record an external call log entry.
+
+        Args:
+            agent_type: Type of agent making the call
+            call_type: Type of external call (e.g., 'tool', 'api', 'mcp')
+            status: HTTP status code of the response
+            duration_seconds: Duration of the external call
+        """
+        status_label = str(status) if status is not None else "unknown"
+        heretek_swarm_external_call_logs_total.labels(
+            agent_type=agent_type,
+            call_type=call_type,
+            status=status_label,
+        ).inc()
+
+        if duration_seconds is not None:
+            heretek_swarm_external_call_log_duration_seconds.labels(
+                agent_type=agent_type,
+                call_type=call_type,
+                method="UNKNOWN",  # Method tracked separately in call log
+            ).observe(duration_seconds)
+
+    def record_encryption_latency(
+        self,
+        operation: str = "encrypt",
+        field_type: str = "body",
+        duration_seconds: float | None = None,
+    ) -> None:
+        """
+        Record encryption/decryption latency.
+
+        Args:
+            operation: Type of operation ('encrypt' or 'decrypt')
+            field_type: Type of field being encrypted ('body', 'headers', 'response')
+            duration_seconds: Duration of the encryption operation
+        """
+        if duration_seconds is not None:
+            heretek_swarm_encryption_latency_seconds.labels(
+                operation=operation,
+                field_type=field_type,
+            ).observe(duration_seconds)
+
     def record_health_score(self, score: float) -> None:
         """Record the overall health score."""
         heretek_swarm_health_score.set(score)
@@ -406,6 +494,49 @@ def record_api_request(method: str, endpoint: str, status: int, duration: float)
 def update_health_score(score: float) -> None:
     """Convenience function to update the health score."""
     get_metrics().record_health_score(score)
+
+
+def increment_external_call_logs(
+    agent_type: str = "unknown",
+    call_type: str = "general",
+    status: int | None = None,
+    duration_seconds: float | None = None,
+) -> None:
+    """
+    Convenience function to record an external call log entry.
+
+    Args:
+        agent_type: Type of agent making the call
+        call_type: Type of external call (e.g., 'tool', 'api', 'mcp')
+        status: HTTP status code of the response
+        duration_seconds: Duration of the external call
+    """
+    get_metrics().record_external_call_log(
+        agent_type=agent_type,
+        call_type=call_type,
+        status=status,
+        duration_seconds=duration_seconds,
+    )
+
+
+def record_encryption_latency(
+    operation: str = "encrypt",
+    field_type: str = "body",
+    duration_seconds: float | None = None,
+) -> None:
+    """
+    Convenience function to record encryption/decryption latency.
+
+    Args:
+        operation: Type of operation ('encrypt' or 'decrypt')
+        field_type: Type of field being encrypted ('body', 'headers', 'response')
+        duration_seconds: Duration of the encryption operation
+    """
+    get_metrics().record_encryption_latency(
+        operation=operation,
+        field_type=field_type,
+        duration_seconds=duration_seconds,
+    )
 
 
 # ============================================================================
