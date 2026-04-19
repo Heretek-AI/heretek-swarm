@@ -317,6 +317,7 @@ async def _init_nats_bridge() -> None:
                 """Handle A2A event from NATS and broadcast to WebSocket clients."""
                 try:
                     await websockets.manager.broadcast_a2a(data)
+                    await websockets.manager.broadcast_dashboard({"type": "a2a_message", **data})
                     logger.debug(
                         "broadcast_a2a_from_nats",
                         subject=subject,
