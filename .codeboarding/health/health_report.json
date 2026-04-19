@@ -1,7 +1,7 @@
 {
   "repository_name": "heretek-swarm",
-  "timestamp": "2026-04-19T01:43:25.579992+00:00",
-  "overall_score": 0.989742178447277,
+  "timestamp": "2026-04-19T01:50:37.640216+00:00",
+  "overall_score": 0.9891585104534661,
   "check_summaries": [
     {
       "check_name": "function_size",
@@ -790,10 +790,10 @@
       "description": "Detects unused imports, variables, functions, and dead code via LSP diagnostics",
       "language": "Python",
       "check_type": "standard",
-      "total_entities_checked": 11,
-      "findings_count": 11,
-      "warning_count": 3,
-      "score": 0.44999999999999996,
+      "total_entities_checked": 18,
+      "findings_count": 18,
+      "warning_count": 5,
+      "score": 0.09999999999999998,
       "finding_groups": [
         {
           "severity": "info",
@@ -801,59 +801,94 @@
           "description": "Variables declared but never used",
           "entities": [
             {
-              "entity_name": "[unused_variable] \"InfrastructureService\" is not accessed",
+              "entity_name": "[unused_variable] \"config_type\" is not accessed",
               "file_path": "src/heretek_swarm/config/crud.py",
-              "line_start": 41,
-              "line_end": 41,
+              "line_start": 1009,
+              "line_end": 1009,
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_variable] \"config_type\" is not accessed",
+              "entity_name": "[unused_variable] \"include_sensitive\" is not accessed",
               "file_path": "src/heretek_swarm/config/crud.py",
               "line_start": 1010,
               "line_end": 1010,
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_variable] \"include_sensitive\" is not accessed",
+              "entity_name": "[unused_variable] \"import_data\" is not accessed",
               "file_path": "src/heretek_swarm/config/crud.py",
-              "line_start": 1011,
-              "line_end": 1011,
+              "line_start": 1030,
+              "line_end": 1030,
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_variable] \"import_data\" is not accessed",
+              "entity_name": "[unused_variable] \"options\" is not accessed",
               "file_path": "src/heretek_swarm/config/crud.py",
               "line_start": 1031,
               "line_end": 1031,
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_variable] \"options\" is not accessed",
-              "file_path": "src/heretek_swarm/config/crud.py",
-              "line_start": 1032,
-              "line_end": 1032,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"NATSPublisher\" is not accessed",
-              "file_path": "src/heretek_swarm/api/wizard.py",
-              "line_start": 24,
-              "line_end": 24,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"HealthCheckResult\" is not accessed",
-              "file_path": "src/heretek_swarm/api/wizard.py",
-              "line_start": 42,
-              "line_end": 42,
-              "metric_value": 0.0
-            },
-            {
               "entity_name": "[unused_variable] \"api_key\" is not accessed",
               "file_path": "src/heretek_swarm/api/wizard.py",
-              "line_start": 741,
-              "line_end": 741,
+              "line_start": 736,
+              "line_end": 736,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"shutil\" is not accessed",
+              "file_path": "src/cli.py",
+              "line_start": 10,
+              "line_end": 10,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"reader\" is not accessed",
+              "file_path": "src/cli.py",
+              "line_start": 90,
+              "line_end": 90,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"time\" is not accessed",
+              "file_path": "src/cli.py",
+              "line_start": 103,
+              "line_end": 103,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"time\" is not accessed",
+              "file_path": "src/cli.py",
+              "line_start": 117,
+              "line_end": 117,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"time\" is not accessed",
+              "file_path": "src/cli.py",
+              "line_start": 133,
+              "line_end": 133,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"time\" is not accessed",
+              "file_path": "src/cli.py",
+              "line_start": 170,
+              "line_end": 170,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"check_runtime\" is not accessed",
+              "file_path": "src/cli.py",
+              "line_start": 252,
+              "line_end": 252,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"output_json\" is not accessed",
+              "file_path": "src/cli.py",
+              "line_start": 370,
+              "line_end": 370,
               "metric_value": 0.0
             }
           ]
@@ -864,24 +899,38 @@
           "description": "Unused import statements that should be removed",
           "entities": [
             {
-              "entity_name": "[unused_import] Import \"InfrastructureService\" is not accessed",
-              "file_path": "src/heretek_swarm/config/crud.py",
-              "line_start": 41,
-              "line_end": 41,
+              "entity_name": "[unused_import] Import \"shutil\" is not accessed",
+              "file_path": "src/cli.py",
+              "line_start": 10,
+              "line_end": 10,
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_import] Import \"NATSPublisher\" is not accessed",
-              "file_path": "src/heretek_swarm/api/wizard.py",
-              "line_start": 24,
-              "line_end": 24,
+              "entity_name": "[unused_import] Import \"time\" is not accessed",
+              "file_path": "src/cli.py",
+              "line_start": 103,
+              "line_end": 103,
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_import] Import \"HealthCheckResult\" is not accessed",
-              "file_path": "src/heretek_swarm/api/wizard.py",
-              "line_start": 42,
-              "line_end": 42,
+              "entity_name": "[unused_import] Import \"time\" is not accessed",
+              "file_path": "src/cli.py",
+              "line_start": 117,
+              "line_end": 117,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"time\" is not accessed",
+              "file_path": "src/cli.py",
+              "line_start": 133,
+              "line_end": 133,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"time\" is not accessed",
+              "file_path": "src/cli.py",
+              "line_start": 170,
+              "line_end": 170,
               "metric_value": 0.0
             }
           ]
@@ -1407,14 +1456,14 @@
   ],
   "file_summaries": [
     {
-      "file_path": "src/heretek_swarm/config/crud.py",
-      "total_findings": 8,
-      "warning_findings": 3,
-      "composite_risk_score": 65.0
+      "file_path": "src/cli.py",
+      "total_findings": 13,
+      "warning_findings": 5,
+      "composite_risk_score": 75.0
     },
     {
-      "file_path": "src/heretek_swarm/api/wizard.py",
-      "total_findings": 5,
+      "file_path": "src/heretek_swarm/config/crud.py",
+      "total_findings": 6,
       "warning_findings": 2,
       "composite_risk_score": 60.0
     },
