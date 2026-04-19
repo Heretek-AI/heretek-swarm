@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-19T02:04:27.258975+00:00",
+    "generated_at": "2026-04-19T02:11:50.567570+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -7930,7 +7930,7 @@
       ]
     },
     "src/heretek_swarm/api/main.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.api.main.lifespan",
@@ -111820,7 +111820,7 @@
         },
         {
           "file_path": "src/heretek_swarm/api/main.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "src.heretek_swarm.api.main.lifespan",
             "src.heretek_swarm.api.main._init_config_service",
@@ -118142,7 +118142,7 @@
             },
             {
               "file_path": "src/heretek_swarm/api/main.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.heretek_swarm.api.main.lifespan",
                 "src.heretek_swarm.api.main._init_config_service",
@@ -125828,7 +125828,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/api/main.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.api.main.lifespan",
                     "src.heretek_swarm.api.main._init_config_service",
@@ -131037,7 +131037,7 @@
                     },
                     {
                       "file_path": "src/heretek_swarm/api/main.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.api.main.lifespan",
                         "src.heretek_swarm.api.main._init_config_service",
@@ -131445,7 +131445,7 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/api/main.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.api.main.lifespan",
                             "src.heretek_swarm.api.main._init_config_service",
