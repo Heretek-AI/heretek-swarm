@@ -500,6 +500,72 @@ class MCPProviderTestResponse(BaseModel):
     error: str | None = None
 
 
+# =============================================================================
+# Infrastructure Service Models
+# =============================================================================
+
+
+class InfrastructureService(StrEnum):
+    """Infrastructure service types."""
+    POSTGRES = "postgres"
+    REDIS = "redis"
+    QDRANT = "qdrant"
+    NATS = "nats"
+    MEM0 = "mem0"
+
+
+class InfrastructureConfig(BaseModel):
+    """Infrastructure service configuration."""
+    id: UUID = Field(default_factory=uuid4)
+    service: InfrastructureService
+    host: str = Field(default="localhost")
+    port: int = Field(...)
+    connection_url: str | None = Field(None, max_length=500)
+    is_enabled: bool = Field(default=True)
+    health_status: HealthStatus = Field(default=HealthStatus.UNKNOWN)
+    last_health_check: datetime | None = None
+    health_check_latency_ms: float | None = None
+    health_check_error: str | None = None
+    extra_config: dict[str, Any] = Field(default_factory=dict)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+
+    class Config:
+        use_enum_values = True
+        json_encoders = {
+            UUID: str,
+            datetime: lambda v: v.isoformat(),
+        }
+
+
+class InfrastructureConfigCreate(BaseModel):
+    """Model for creating infrastructure service configuration."""
+    service: InfrastructureService
+    host: str = Field(default="localhost")
+    port: int
+    connection_url: str | None = Field(None, max_length=500)
+    is_enabled: bool = Field(default=True)
+    extra_config: dict[str, Any] | None = None
+
+
+class InfrastructureConfigUpdate(BaseModel):
+    """Model for updating infrastructure service configuration."""
+    host: str | None = None
+    port: int | None = None
+    connection_url: str | None = None
+    is_enabled: bool | None = None
+    extra_config: dict[str, Any] | None = None
+
+
+class InfrastructureHealthCheck(BaseModel):
+    """Result of an infrastructure health check."""
+    service: InfrastructureService
+    status: HealthStatus
+    latency_ms: float
+    error: str | None = None
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
+
+
 class MCPConfig(BaseModel):
     """MCP server configuration."""
     id: UUID = Field(default_factory=uuid4)

@@ -5,6 +5,7 @@ Provides foundational infrastructure for the swarm:
 - A2A: Agent-to-Agent protocol for structured inter-agent communication
 - NATS: Event mesh for pub/sub messaging
 - OTel: OpenTelemetry for distributed tracing, metrics, and logging
+- Health: Infrastructure service health checks
 """
 
 from heretek_swarm.infrastructure.a2a import (
@@ -17,6 +18,16 @@ from heretek_swarm.infrastructure.a2a import (
     create_delegation_message,
     create_task_request,
     create_task_response,
+)
+from heretek_swarm.infrastructure.health import (
+    HealthCheckResult,
+    check_all_infrastructure,
+    check_infrastructure_health,
+    check_mem0_health,
+    check_nats_health,
+    check_postgres_health,
+    check_qdrant_health,
+    check_redis_health,
 )
 from heretek_swarm.infrastructure.nats import (
     NATSClient,
@@ -54,6 +65,15 @@ __all__ = [
     "NATSClient",
     "NATSPublisher",
     "NATSSubscriber",
+    # Health Checks
+    "HealthCheckResult",
+    "check_all_infrastructure",
+    "check_infrastructure_health",
+    "check_mem0_health",
+    "check_nats_health",
+    "check_postgres_health",
+    "check_qdrant_health",
+    "check_redis_health",
     # OpenTelemetry
     "TracingConfig",
     "create_consensus_message",

@@ -11,22 +11,21 @@ from __future__ import annotations
 
 import asyncio
 from typing import Any
-
-import structlog
-from fastapi import APIRouter, HTTPException
-
 from uuid import UUID
 
+import structlog
 from fastapi import APIRouter, HTTPException, Response
 from structlog import get_logger
 
 from heretek_swarm.infrastructure.nats.publisher import (
-    NATSPublisher,
     SwarmEvent,
     get_nats_publisher,
 )
 
 from heretek_swarm.config.models import (
+    InfrastructureConfigCreate,
+    InfrastructureConfigUpdate,
+    InfrastructureService,
     LLMProviderCreate,
     LLMProviderType,
     LLMProviderUpdate,
@@ -34,6 +33,10 @@ from heretek_swarm.config.models import (
 from heretek_swarm.config.service import (
     ConfigurationService,
     get_config_service,
+)
+from heretek_swarm.infrastructure.health import (
+    check_all_infrastructure,
+    check_infrastructure_health,
 )
 
 logger = get_logger("api.wizard")
@@ -519,6 +522,25 @@ async def get_config_status() -> dict[str, Any]:
     except Exception as e:
         logger.warning("Failed to get system config", error=str(e))
 
+    # Get infrastructure configurations with health status
+    infrastructure = []
+    try:
+        infra_configs = await service.list_infrastructure_configs(include_disabled=False)
+        infrastructure = [
+            {
+                "id": str(c.id),
+                "service": c.service,
+                "host": c.host,
+                "port": c.port,
+                "health_status": c.health_status,
+                "last_health_check": c.last_health_check.isoformat() if c.last_health_check else None,
+                "health_check_latency_ms": c.health_check_latency_ms,
+            }
+            for c in infra_configs
+        ]
+    except Exception as e:
+        logger.warning("Failed to list infrastructure configs", error=str(e))
+
     return {
         "wizard_completed": wizard_state.is_completed(),
         "wizard_state": {
@@ -529,11 +551,13 @@ async def get_config_status() -> dict[str, Any]:
             "providers": configured_providers,
             "total_providers": len(configured_providers),
         },
+        "infrastructure": infrastructure,
         "system_config": system_config,
         "needs_setup": {
             "providers": len(configured_providers) == 0,
             "agents": True,  # Always needs setup initially
             "api_keys": any(p.get("requires_api_key") for p in AVAILABLE_PROVIDERS.values()),
+            "infrastructure": len(infrastructure) == 0,
         },
     }
 
@@ -1048,6 +1072,334 @@ async def submit_config(config: dict[str, Any]) -> dict[str, Any]:
     logger.info("Wizard configuration submitted", result=result)
 
     return result
+
+
+# =============================================================================
+# Infrastructure Configuration Endpoints
+# =============================================================================
+
+@router.get("/infrastructure")
+async def list_infrastructure_configs() -> dict[str, Any]:
+    """
+    List all infrastructure service configurations.
+
+    Returns:
+        List of infrastructure configs with health status
+    """
+    service = get_service()
+
+    try:
+        configs = await service.list_infrastructure_configs(include_disabled=True)
+
+        return {
+            "infrastructure": [
+                {
+                    "id": str(c.id),
+                    "service": c.service,
+                    "host": c.host,
+                    "port": c.port,
+                    "connection_url": c.connection_url,
+                    "is_enabled": c.is_enabled,
+                    "health_status": c.health_status,
+                    "last_health_check": c.last_health_check.isoformat() if c.last_health_check else None,
+                    "health_check_latency_ms": c.health_check_latency_ms,
+                    "health_check_error": c.health_check_error,
+                }
+                for c in configs
+            ],
+            "total": len(configs),
+        }
+    except Exception as e:
+        logger.error("Failed to list infrastructure configs", error=str(e))
+        raise HTTPException(500, f"Failed to list infrastructure configs: {e!s}")
+
+
+@router.post("/infrastructure")
+async def create_infrastructure_config(
+    config: InfrastructureConfigCreate,
+) -> dict[str, Any]:
+    """
+    Create or update infrastructure service configuration.
+
+    If a config for the same service already exists, updates it.
+    Otherwise creates a new config.
+
+    Args:
+        config: Infrastructure config data
+
+    Returns:
+        Created or updated config
+    """
+    service = get_service()
+
+    try:
+        # Check if config already exists for this service
+        existing = await service.get_infrastructure_config_by_service(config.service.value)
+
+        if existing:
+            # Update existing config
+            updates = InfrastructureConfigUpdate(
+                host=config.host,
+                port=config.port,
+                connection_url=config.connection_url,
+                is_enabled=config.is_enabled,
+                extra_config=config.extra_config,
+            )
+            updated = await service.update_infrastructure_config(existing.id, updates)
+
+            logger.info(
+                "infrastructure_config_updated",
+                service=config.service.value,
+                id=str(existing.id),
+            )
+
+            return {
+                "id": str(updated.id),
+                "service": updated.service,
+                "host": updated.host,
+                "port": updated.port,
+                "connection_url": updated.connection_url,
+                "is_enabled": updated.is_enabled,
+                "message": "Configuration updated",
+            }
+        else:
+            # Create new config
+            created = await service.create_infrastructure_config(config)
+
+            logger.info(
+                "infrastructure_config_created",
+                service=config.service.value,
+                id=str(created.id),
+            )
+
+            return {
+                "id": str(created.id),
+                "service": created.service,
+                "host": created.host,
+                "port": created.port,
+                "connection_url": created.connection_url,
+                "is_enabled": created.is_enabled,
+                "message": "Configuration created",
+            }
+    except Exception as e:
+        logger.error("Failed to create/update infrastructure config", service=config.service.value, error=str(e))
+        raise HTTPException(500, f"Failed to create/update infrastructure config: {e!s}")
+
+
+@router.get("/infrastructure/{service}")
+async def get_infrastructure_config(service: str) -> dict[str, Any]:
+    """
+    Get infrastructure configuration for a specific service.
+
+    Args:
+        service: Infrastructure service type (postgres, redis, qdrant, nats, mem0)
+
+    Returns:
+        Infrastructure config with health status
+    """
+    service = get_service()
+
+    try:
+        infra_service = InfrastructureService(service.lower())
+    except ValueError:
+        raise HTTPException(400, f"Invalid service type: {service}. Valid types: postgres, redis, qdrant, nats, mem0")
+
+    try:
+        config = await service.get_infrastructure_config_by_service(infra_service.value)
+
+        if not config:
+            raise HTTPException(404, f"No configuration found for service: {service}")
+
+        return {
+            "id": str(config.id),
+            "service": config.service,
+            "host": config.host,
+            "port": config.port,
+            "connection_url": config.connection_url,
+            "is_enabled": config.is_enabled,
+            "health_status": config.health_status,
+            "last_health_check": config.last_health_check.isoformat() if config.last_health_check else None,
+            "health_check_latency_ms": config.health_check_latency_ms,
+            "health_check_error": config.health_check_error,
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error("Failed to get infrastructure config", service=service, error=str(e))
+        raise HTTPException(500, f"Failed to get infrastructure config: {e!s}")
+
+
+@router.post("/infrastructure/{service}/health-check")
+async def check_service_health(service: str) -> dict[str, Any]:
+    """
+    Run health check for a specific infrastructure service.
+
+    Args:
+        service: Infrastructure service type (postgres, redis, qdrant, nats, mem0)
+
+    Returns:
+        Health check result
+    """
+    service_obj = get_service()
+
+    try:
+        infra_service = InfrastructureService(service.lower())
+    except ValueError:
+        raise HTTPException(400, f"Invalid service type: {service}. Valid types: postgres, redis, qdrant, nats, mem0")
+
+    try:
+        config = await service_obj.get_infrastructure_config_by_service(infra_service.value)
+
+        if not config:
+            raise HTTPException(404, f"No configuration found for service: {service}")
+
+        # Run health check
+        result = await check_infrastructure_health(
+            service=infra_service,
+            host=config.host,
+            port=config.port,
+            timeout=5.0,
+        )
+
+        # Update health status in database
+        await service_obj.update_infrastructure_health(
+            config_id=config.id,
+            health_status=result.status.value,
+            latency_ms=result.latency_ms,
+            error=result.error,
+        )
+
+        logger.info(
+            "infrastructure_health_check",
+            service=infra_service.value,
+            status=result.status.value,
+            latency_ms=result.latency_ms,
+            error=result.error,
+        )
+
+        return {
+            "service": result.service.value,
+            "status": result.status.value,
+            "latency_ms": result.latency_ms,
+            "error": result.error,
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error("Health check failed", service=service, error=str(e))
+        raise HTTPException(500, f"Health check failed: {e!s}")
+
+
+@router.post("/infrastructure/health-check-all")
+async def check_all_services_health() -> dict[str, Any]:
+    """
+    Run health check for all configured infrastructure services.
+
+    Returns:
+        Health check results for all services
+    """
+    service = get_service()
+
+    try:
+        configs = await service.list_infrastructure_configs(include_disabled=False)
+
+        if not configs:
+            return {
+                "results": [],
+                "summary": "No infrastructure services configured",
+            }
+
+        # Convert configs to dict format for health check
+        config_dicts = [
+            {
+                "service": c.service,
+                "host": c.host,
+                "port": c.port,
+            }
+            for c in configs
+        ]
+
+        # Run all health checks concurrently
+        results = await check_all_infrastructure(config_dicts, timeout=5.0)
+
+        # Update health status in database for each service
+        for i, result in enumerate(results):
+            config = configs[i]
+            await service.update_infrastructure_health(
+                config_id=config.id,
+                health_status=result.status.value,
+                latency_ms=result.latency_ms,
+                error=result.error,
+            )
+
+            logger.info(
+                "infrastructure_health_check",
+                service=result.service.value,
+                status=result.status.value,
+                latency_ms=result.latency_ms,
+            )
+
+        # Count statuses
+        healthy = sum(1 for r in results if r.status.value == "healthy")
+        unhealthy = sum(1 for r in results if r.status.value == "unhealthy")
+        degraded = sum(1 for r in results if r.status.value == "degraded")
+
+        return {
+            "results": [
+                {
+                    "service": r.service.value,
+                    "status": r.status.value,
+                    "latency_ms": r.latency_ms,
+                    "error": r.error,
+                }
+                for r in results
+            ],
+            "summary": {
+                "total": len(results),
+                "healthy": healthy,
+                "unhealthy": unhealthy,
+                "degraded": degraded,
+            },
+        }
+    except Exception as e:
+        logger.error("Failed to run health checks", error=str(e))
+        raise HTTPException(500, f"Failed to run health checks: {e!s}")
+
+
+@router.delete("/infrastructure/{service}")
+async def delete_infrastructure_config(service: str) -> Response:
+    """
+    Delete infrastructure configuration for a specific service.
+
+    Args:
+        service: Infrastructure service type
+
+    Returns:
+        204 No Content on success
+    """
+    service = get_service()
+
+    try:
+        infra_service = InfrastructureService(service.lower())
+    except ValueError:
+        raise HTTPException(400, f"Invalid service type: {service}")
+
+    try:
+        config = await service.get_infrastructure_config_by_service(infra_service.value)
+
+        if not config:
+            raise HTTPException(404, f"No configuration found for service: {service}")
+
+        await service.delete_infrastructure_config(config.id)
+
+        logger.info("infrastructure_config_deleted", service=service)
+
+        return Response(status_code=204)
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error("Failed to delete infrastructure config", service=service, error=str(e))
+        raise HTTPException(500, f"Failed to delete infrastructure config: {e!s}")
 
 
 # =============================================================================

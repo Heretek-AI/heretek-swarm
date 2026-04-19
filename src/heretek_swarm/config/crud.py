@@ -35,6 +35,9 @@ from .models import (
     EmbeddingProvider,
     EmbeddingProviderCreate,
     EmbeddingProviderUpdate,
+    InfrastructureConfig,
+    InfrastructureConfigCreate,
+    InfrastructureConfigUpdate,
     LLMProvider,
     LLMProviderCreate,
     LLMProviderUpdate,
@@ -47,6 +50,11 @@ if TYPE_CHECKING:
     from uuid import UUID
 
     from .service import ConfigurationService
+
+# Import ORM models at module level
+from .db_models import (
+    InfrastructureConfig as InfrastructureConfigORM,
+)
 
 logger = structlog.get_logger("config.crud")
 
@@ -1130,3 +1138,209 @@ class ConfigurationServiceCrud:
             "skipped": skipped_count,
             "errors": errors,
         }
+
+    # =====================================================================
+    # Infrastructure Configuration CRUD
+    # =====================================================================
+
+    async def get_infrastructure_config(
+        self: ConfigurationService,
+        config_id: UUID,
+    ) -> InfrastructureConfig | None:
+        """
+        Get infrastructure configuration by ID.
+
+        Args:
+            config_id: Configuration UUID
+
+        Returns:
+            InfrastructureConfig if found, None otherwise
+        """
+        async with self._session_factory() as session:
+            result = await session.execute(
+                select(InfrastructureConfigORM).where(InfrastructureConfigORM.id == config_id)
+            )
+            config = result.scalar_one_or_none()
+            return self._orm_to_pydantic(config) if config else None
+
+    async def get_infrastructure_config_by_service(
+        self: ConfigurationService,
+        service: str,
+    ) -> InfrastructureConfig | None:
+        """
+        Get infrastructure configuration by service type.
+
+        Args:
+            service: Infrastructure service type (postgres, redis, qdrant, nats, mem0)
+
+        Returns:
+            InfrastructureConfig if found, None otherwise
+        """
+        async with self._session_factory() as session:
+            result = await session.execute(
+                select(InfrastructureConfigORM).where(
+                    InfrastructureConfigORM.service == service
+                )
+            )
+            config = result.scalar_one_or_none()
+            return self._orm_to_pydantic(config) if config else None
+
+    async def list_infrastructure_configs(
+        self: ConfigurationService,
+        include_disabled: bool = False,
+    ) -> list[InfrastructureConfig]:
+        """
+        List all infrastructure configurations.
+
+        Args:
+            include_disabled: Whether to include disabled configs
+
+        Returns:
+            List of InfrastructureConfig objects
+        """
+        async with self._session_factory() as session:
+            query = select(InfrastructureConfigORM)
+            if not include_disabled:
+                query = query.where(InfrastructureConfigORM.is_enabled == True)  # noqa: E712
+            result = await session.execute(query.order_by(InfrastructureConfigORM.service))
+            configs = result.scalars().all()
+            return [self._orm_to_pydantic(c) for c in configs]
+
+    async def create_infrastructure_config(
+        self: ConfigurationService,
+        config: InfrastructureConfigCreate,
+        user: str | None = None,
+    ) -> InfrastructureConfig:
+        """
+        Create a new infrastructure configuration.
+
+        Args:
+            config: Configuration data
+            user: User creating the config
+
+        Returns:
+            Created InfrastructureConfig
+        """
+        async with self._session_factory() as session:
+            orm_obj = InfrastructureConfigORM(
+                service=config.service,
+                host=config.host,
+                port=config.port,
+                connection_url=config.connection_url,
+                is_enabled=config.is_enabled,
+                extra_config=config.extra_config or {},
+            )
+            session.add(orm_obj)
+            await session.commit()
+            await session.refresh(orm_obj)
+
+            self._log_change("create", "infrastructure_config", str(orm_obj.id), None, user)
+            return self._orm_to_pydantic(orm_obj)
+
+    async def update_infrastructure_config(
+        self: ConfigurationService,
+        config_id: UUID,
+        updates: InfrastructureConfigUpdate,
+        user: str | None = None,
+    ) -> InfrastructureConfig | None:
+        """
+        Update an existing infrastructure configuration.
+
+        Args:
+            config_id: ID of config to update
+            updates: Update data
+            user: User making the update
+
+        Returns:
+            Updated InfrastructureConfig or None if not found
+        """
+        async with self._session_factory() as session:
+            result = await session.execute(
+                select(InfrastructureConfigORM).where(InfrastructureConfigORM.id == config_id)
+            )
+            config = result.scalar_one_or_none()
+
+            if not config:
+                return None
+
+            changes = {}
+            update_data = updates.model_dump(exclude_unset=True)
+
+            for key, value in update_data.items():
+                if getattr(config, key, None) != value:
+                    changes[key] = {"old": getattr(config, key), "new": value}
+                    setattr(config, key, value)
+
+            await session.commit()
+            await session.refresh(config)
+
+            self._log_change("update", "infrastructure_config", str(config.id), changes, user)
+            return self._orm_to_pydantic(config)
+
+    async def delete_infrastructure_config(
+        self: ConfigurationService,
+        config_id: UUID,
+        user: str | None = None,
+    ) -> bool:
+        """
+        Delete an infrastructure configuration.
+
+        Args:
+            config_id: ID of config to delete
+            user: User making the deletion
+
+        Returns:
+            True if deleted, False if not found
+        """
+        async with self._session_factory() as session:
+            result = await session.execute(
+                select(InfrastructureConfigORM).where(InfrastructureConfigORM.id == config_id)
+            )
+            config = result.scalar_one_or_none()
+
+            if not config:
+                return False
+
+            await session.delete(config)
+            await session.commit()
+
+            self._log_change("delete", "infrastructure_config", str(config.id), None, user)
+            return True
+
+    async def update_infrastructure_health(
+        self: ConfigurationService,
+        config_id: UUID,
+        health_status: str,
+        latency_ms: float | None,
+        error: str | None = None,
+    ) -> InfrastructureConfig | None:
+        """
+        Update infrastructure health check results.
+
+        Args:
+            config_id: ID of config to update
+            health_status: Health status (healthy, unhealthy, degraded)
+            latency_ms: Health check latency in milliseconds
+            error: Error message if unhealthy
+
+        Returns:
+            Updated InfrastructureConfig or None if not found
+        """
+        async with self._session_factory() as session:
+            result = await session.execute(
+                select(InfrastructureConfigORM).where(InfrastructureConfigORM.id == config_id)
+            )
+            config = result.scalar_one_or_none()
+
+            if not config:
+                return None
+
+            config.health_status = health_status
+            config.last_health_check = datetime.now(UTC)
+            config.health_check_latency_ms = latency_ms
+            config.health_check_error = error
+
+            await session.commit()
+            await session.refresh(config)
+
+            return self._orm_to_pydantic(config)

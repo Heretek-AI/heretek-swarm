@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-19T01:25:45.731333+00:00",
+    "generated_at": "2026-04-19T01:43:24.238454+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -9195,7 +9195,7 @@
       ]
     },
     "src/heretek_swarm/api/wizard.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.api.wizard.WizardState",
@@ -9325,10 +9325,10 @@
         },
         {
           "qualified_name": "src.heretek_swarm.api.wizard.get_config_status",
-          "start_line": 480,
-          "end_line": 538,
+          "start_line": 488,
+          "end_line": 567,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.wizard._dispatch_validation",
@@ -9413,6 +9413,48 @@
           "end_line": 1073,
           "node_type": "FUNCTION",
           "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.wizard.list_infrastructure_configs",
+          "start_line": 1087,
+          "end_line": 1119,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.wizard.create_infrastructure_config",
+          "start_line": 1123,
+          "end_line": 1191,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.wizard.get_infrastructure_config",
+          "start_line": 1195,
+          "end_line": 1234,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.wizard.check_service_health",
+          "start_line": 1238,
+          "end_line": 1295,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.wizard.check_all_services_health",
+          "start_line": 1299,
+          "end_line": 1371,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.wizard.delete_infrastructure_config",
+          "start_line": 1375,
+          "end_line": 1407,
+          "node_type": "FUNCTION",
+          "status": "added"
         }
       ]
     },
@@ -13944,14 +13986,14 @@
       ]
     },
     "src/heretek_swarm/config/crud.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.config.crud.ConfigurationServiceCrud",
-          "start_line": 54,
-          "end_line": 1132,
+          "start_line": 63,
+          "end_line": 1347,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.config.crud.ConfigurationServiceCrud._log_change",
@@ -14204,11 +14246,60 @@
           "end_line": 1132,
           "node_type": "METHOD",
           "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.config.crud.ConfigurationServiceCrud.get_infrastructure_config",
+          "start_line": 1147,
+          "end_line": 1165,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.config.crud.ConfigurationServiceCrud.get_infrastructure_config_by_service",
+          "start_line": 1167,
+          "end_line": 1187,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.config.crud.ConfigurationServiceCrud.list_infrastructure_configs",
+          "start_line": 1189,
+          "end_line": 1208,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.config.crud.ConfigurationServiceCrud.create_infrastructure_config",
+          "start_line": 1210,
+          "end_line": 1239,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.config.crud.ConfigurationServiceCrud.update_infrastructure_config",
+          "start_line": 1241,
+          "end_line": 1279,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.config.crud.ConfigurationServiceCrud.delete_infrastructure_config",
+          "start_line": 1281,
+          "end_line": 1309,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.config.crud.ConfigurationServiceCrud.update_infrastructure_health",
+          "start_line": 1311,
+          "end_line": 1347,
+          "node_type": "METHOD",
+          "status": "added"
         }
       ]
     },
     "src/heretek_swarm/config/db_models.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.config.db_models.Base",
@@ -14257,7 +14348,14 @@
           "start_line": 180,
           "end_line": 193,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.config.db_models.InfrastructureConfig",
+          "start_line": 196,
+          "end_line": 217,
+          "node_type": "CLASS",
+          "status": "added"
         }
       ]
     },
@@ -14503,7 +14601,7 @@
       ]
     },
     "src/heretek_swarm/config/models.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.config.models.ConfigType",
@@ -14772,11 +14870,25 @@
           "status": "unchanged"
         },
         {
+          "qualified_name": "src.heretek_swarm.config.models.InfrastructureService",
+          "start_line": 508,
+          "end_line": 514,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
           "qualified_name": "src.heretek_swarm.config.models.MCPConfig.Config",
           "start_line": 517,
           "end_line": 522,
           "node_type": "CLASS",
           "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.config.models.InfrastructureConfig",
+          "start_line": 517,
+          "end_line": 538,
+          "node_type": "CLASS",
+          "status": "added"
         },
         {
           "qualified_name": "src.heretek_swarm.config.models.MCPConfigCreate",
@@ -14786,16 +14898,44 @@
           "status": "unchanged"
         },
         {
+          "qualified_name": "src.heretek_swarm.config.models.InfrastructureConfig.Config",
+          "start_line": 533,
+          "end_line": 538,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
           "qualified_name": "src.heretek_swarm.config.models.MCPConfigUpdate",
           "start_line": 537,
           "end_line": 545,
           "node_type": "CLASS",
           "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.config.models.InfrastructureConfigCreate",
+          "start_line": 541,
+          "end_line": 548,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.config.models.InfrastructureConfigUpdate",
+          "start_line": 551,
+          "end_line": 557,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.config.models.InfrastructureHealthCheck",
+          "start_line": 560,
+          "end_line": 566,
+          "node_type": "CLASS",
+          "status": "added"
         }
       ]
     },
     "src/heretek_swarm/config/service.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.config.service.SeedResult",
@@ -14806,10 +14946,10 @@
         },
         {
           "qualified_name": "src.heretek_swarm.config.service.ConfigurationService",
-          "start_line": 62,
-          "end_line": 459,
+          "start_line": 67,
+          "end_line": 480,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.__init__",
@@ -14883,10 +15023,10 @@
         },
         {
           "qualified_name": "src.heretek_swarm.config.service.ConfigurationService._orm_to_pydantic",
-          "start_line": 222,
-          "end_line": 303,
+          "start_line": 227,
+          "end_line": 324,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.seed_from_env",
@@ -62435,10 +62575,10 @@
     "src/heretek_swarm/api/wizard.py|src.heretek_swarm.api.wizard.get_config_status": {
       "file_path": "src/heretek_swarm/api/wizard.py",
       "qualified_name": "src.heretek_swarm.api.wizard.get_config_status",
-      "start_line": 480,
-      "end_line": 538,
+      "start_line": 488,
+      "end_line": 567,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/wizard.py|src.heretek_swarm.api.wizard._dispatch_validation": {
       "file_path": "src/heretek_swarm/api/wizard.py",
@@ -62535,6 +62675,54 @@
       "end_line": 1073,
       "type": "FUNCTION",
       "status": "unchanged"
+    },
+    "src/heretek_swarm/api/wizard.py|src.heretek_swarm.api.wizard.list_infrastructure_configs": {
+      "file_path": "src/heretek_swarm/api/wizard.py",
+      "qualified_name": "src.heretek_swarm.api.wizard.list_infrastructure_configs",
+      "start_line": 1087,
+      "end_line": 1119,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/api/wizard.py|src.heretek_swarm.api.wizard.create_infrastructure_config": {
+      "file_path": "src/heretek_swarm/api/wizard.py",
+      "qualified_name": "src.heretek_swarm.api.wizard.create_infrastructure_config",
+      "start_line": 1123,
+      "end_line": 1191,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/api/wizard.py|src.heretek_swarm.api.wizard.get_infrastructure_config": {
+      "file_path": "src/heretek_swarm/api/wizard.py",
+      "qualified_name": "src.heretek_swarm.api.wizard.get_infrastructure_config",
+      "start_line": 1195,
+      "end_line": 1234,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/api/wizard.py|src.heretek_swarm.api.wizard.check_service_health": {
+      "file_path": "src/heretek_swarm/api/wizard.py",
+      "qualified_name": "src.heretek_swarm.api.wizard.check_service_health",
+      "start_line": 1238,
+      "end_line": 1295,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/api/wizard.py|src.heretek_swarm.api.wizard.check_all_services_health": {
+      "file_path": "src/heretek_swarm/api/wizard.py",
+      "qualified_name": "src.heretek_swarm.api.wizard.check_all_services_health",
+      "start_line": 1299,
+      "end_line": 1371,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/api/wizard.py|src.heretek_swarm.api.wizard.delete_infrastructure_config": {
+      "file_path": "src/heretek_swarm/api/wizard.py",
+      "qualified_name": "src.heretek_swarm.api.wizard.delete_infrastructure_config",
+      "start_line": 1375,
+      "end_line": 1407,
+      "type": "FUNCTION",
+      "status": "added"
     },
     "src/heretek_swarm/api/workflows.py|src.heretek_swarm.api.workflows.create_workflow": {
       "file_path": "src/heretek_swarm/api/workflows.py",
@@ -67587,10 +67775,10 @@
     "src/heretek_swarm/config/crud.py|src.heretek_swarm.config.crud.ConfigurationServiceCrud": {
       "file_path": "src/heretek_swarm/config/crud.py",
       "qualified_name": "src.heretek_swarm.config.crud.ConfigurationServiceCrud",
-      "start_line": 54,
-      "end_line": 1132,
+      "start_line": 63,
+      "end_line": 1347,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/config/crud.py|src.heretek_swarm.config.crud.ConfigurationServiceCrud._log_change": {
       "file_path": "src/heretek_swarm/config/crud.py",
@@ -67880,6 +68068,62 @@
       "type": "METHOD",
       "status": "unchanged"
     },
+    "src/heretek_swarm/config/crud.py|src.heretek_swarm.config.crud.ConfigurationServiceCrud.get_infrastructure_config": {
+      "file_path": "src/heretek_swarm/config/crud.py",
+      "qualified_name": "src.heretek_swarm.config.crud.ConfigurationServiceCrud.get_infrastructure_config",
+      "start_line": 1147,
+      "end_line": 1165,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/config/crud.py|src.heretek_swarm.config.crud.ConfigurationServiceCrud.get_infrastructure_config_by_service": {
+      "file_path": "src/heretek_swarm/config/crud.py",
+      "qualified_name": "src.heretek_swarm.config.crud.ConfigurationServiceCrud.get_infrastructure_config_by_service",
+      "start_line": 1167,
+      "end_line": 1187,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/config/crud.py|src.heretek_swarm.config.crud.ConfigurationServiceCrud.list_infrastructure_configs": {
+      "file_path": "src/heretek_swarm/config/crud.py",
+      "qualified_name": "src.heretek_swarm.config.crud.ConfigurationServiceCrud.list_infrastructure_configs",
+      "start_line": 1189,
+      "end_line": 1208,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/config/crud.py|src.heretek_swarm.config.crud.ConfigurationServiceCrud.create_infrastructure_config": {
+      "file_path": "src/heretek_swarm/config/crud.py",
+      "qualified_name": "src.heretek_swarm.config.crud.ConfigurationServiceCrud.create_infrastructure_config",
+      "start_line": 1210,
+      "end_line": 1239,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/config/crud.py|src.heretek_swarm.config.crud.ConfigurationServiceCrud.update_infrastructure_config": {
+      "file_path": "src/heretek_swarm/config/crud.py",
+      "qualified_name": "src.heretek_swarm.config.crud.ConfigurationServiceCrud.update_infrastructure_config",
+      "start_line": 1241,
+      "end_line": 1279,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/config/crud.py|src.heretek_swarm.config.crud.ConfigurationServiceCrud.delete_infrastructure_config": {
+      "file_path": "src/heretek_swarm/config/crud.py",
+      "qualified_name": "src.heretek_swarm.config.crud.ConfigurationServiceCrud.delete_infrastructure_config",
+      "start_line": 1281,
+      "end_line": 1309,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/config/crud.py|src.heretek_swarm.config.crud.ConfigurationServiceCrud.update_infrastructure_health": {
+      "file_path": "src/heretek_swarm/config/crud.py",
+      "qualified_name": "src.heretek_swarm.config.crud.ConfigurationServiceCrud.update_infrastructure_health",
+      "start_line": 1311,
+      "end_line": 1347,
+      "type": "METHOD",
+      "status": "added"
+    },
     "src/heretek_swarm/config/db_models.py|src.heretek_swarm.config.db_models.Base": {
       "file_path": "src/heretek_swarm/config/db_models.py",
       "qualified_name": "src.heretek_swarm.config.db_models.Base",
@@ -67934,7 +68178,15 @@
       "start_line": 180,
       "end_line": 193,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
+    },
+    "src/heretek_swarm/config/db_models.py|src.heretek_swarm.config.db_models.InfrastructureConfig": {
+      "file_path": "src/heretek_swarm/config/db_models.py",
+      "qualified_name": "src.heretek_swarm.config.db_models.InfrastructureConfig",
+      "start_line": 196,
+      "end_line": 217,
+      "type": "CLASS",
+      "status": "added"
     },
     "src/heretek_swarm/config/encryption.py|src.heretek_swarm.config.encryption.ApiKeyEncryptor": {
       "file_path": "src/heretek_swarm/config/encryption.py",
@@ -68504,6 +68756,14 @@
       "type": "CLASS",
       "status": "unchanged"
     },
+    "src/heretek_swarm/config/models.py|src.heretek_swarm.config.models.InfrastructureService": {
+      "file_path": "src/heretek_swarm/config/models.py",
+      "qualified_name": "src.heretek_swarm.config.models.InfrastructureService",
+      "start_line": 508,
+      "end_line": 514,
+      "type": "CLASS",
+      "status": "added"
+    },
     "src/heretek_swarm/config/models.py|src.heretek_swarm.config.models.MCPConfig.Config": {
       "file_path": "src/heretek_swarm/config/models.py",
       "qualified_name": "src.heretek_swarm.config.models.MCPConfig.Config",
@@ -68511,6 +68771,14 @@
       "end_line": 522,
       "type": "CLASS",
       "status": "unchanged"
+    },
+    "src/heretek_swarm/config/models.py|src.heretek_swarm.config.models.InfrastructureConfig": {
+      "file_path": "src/heretek_swarm/config/models.py",
+      "qualified_name": "src.heretek_swarm.config.models.InfrastructureConfig",
+      "start_line": 517,
+      "end_line": 538,
+      "type": "CLASS",
+      "status": "added"
     },
     "src/heretek_swarm/config/models.py|src.heretek_swarm.config.models.MCPConfigCreate": {
       "file_path": "src/heretek_swarm/config/models.py",
@@ -68520,6 +68788,14 @@
       "type": "CLASS",
       "status": "unchanged"
     },
+    "src/heretek_swarm/config/models.py|src.heretek_swarm.config.models.InfrastructureConfig.Config": {
+      "file_path": "src/heretek_swarm/config/models.py",
+      "qualified_name": "src.heretek_swarm.config.models.InfrastructureConfig.Config",
+      "start_line": 533,
+      "end_line": 538,
+      "type": "CLASS",
+      "status": "added"
+    },
     "src/heretek_swarm/config/models.py|src.heretek_swarm.config.models.MCPConfigUpdate": {
       "file_path": "src/heretek_swarm/config/models.py",
       "qualified_name": "src.heretek_swarm.config.models.MCPConfigUpdate",
@@ -68527,6 +68803,30 @@
       "end_line": 545,
       "type": "CLASS",
       "status": "unchanged"
+    },
+    "src/heretek_swarm/config/models.py|src.heretek_swarm.config.models.InfrastructureConfigCreate": {
+      "file_path": "src/heretek_swarm/config/models.py",
+      "qualified_name": "src.heretek_swarm.config.models.InfrastructureConfigCreate",
+      "start_line": 541,
+      "end_line": 548,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "src/heretek_swarm/config/models.py|src.heretek_swarm.config.models.InfrastructureConfigUpdate": {
+      "file_path": "src/heretek_swarm/config/models.py",
+      "qualified_name": "src.heretek_swarm.config.models.InfrastructureConfigUpdate",
+      "start_line": 551,
+      "end_line": 557,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "src/heretek_swarm/config/models.py|src.heretek_swarm.config.models.InfrastructureHealthCheck": {
+      "file_path": "src/heretek_swarm/config/models.py",
+      "qualified_name": "src.heretek_swarm.config.models.InfrastructureHealthCheck",
+      "start_line": 560,
+      "end_line": 566,
+      "type": "CLASS",
+      "status": "added"
     },
     "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.SeedResult": {
       "file_path": "src/heretek_swarm/config/service.py",
@@ -68539,10 +68839,10 @@
     "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService": {
       "file_path": "src/heretek_swarm/config/service.py",
       "qualified_name": "src.heretek_swarm.config.service.ConfigurationService",
-      "start_line": 62,
-      "end_line": 459,
+      "start_line": 67,
+      "end_line": 480,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService.__init__": {
       "file_path": "src/heretek_swarm/config/service.py",
@@ -68627,10 +68927,10 @@
     "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService._orm_to_pydantic": {
       "file_path": "src/heretek_swarm/config/service.py",
       "qualified_name": "src.heretek_swarm.config.service.ConfigurationService._orm_to_pydantic",
-      "start_line": 222,
-      "end_line": 303,
+      "start_line": 227,
+      "end_line": 324,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService.seed_from_env": {
       "file_path": "src/heretek_swarm/config/service.py",
@@ -111559,7 +111859,7 @@
         },
         {
           "file_path": "src/heretek_swarm/api/wizard.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "src.heretek_swarm.api.wizard.WizardState",
             "src.heretek_swarm.api.wizard.WizardState.__init__",
@@ -111591,7 +111891,13 @@
             "src.heretek_swarm.api.wizard._validate_local",
             "src.heretek_swarm.api.wizard._emit_wizard_completed_event",
             "src.heretek_swarm.api.wizard.submit_config",
-            "src.heretek_swarm.api.wizard.reset_wizard"
+            "src.heretek_swarm.api.wizard.reset_wizard",
+            "src.heretek_swarm.api.wizard.list_infrastructure_configs",
+            "src.heretek_swarm.api.wizard.create_infrastructure_config",
+            "src.heretek_swarm.api.wizard.get_infrastructure_config",
+            "src.heretek_swarm.api.wizard.check_service_health",
+            "src.heretek_swarm.api.wizard.check_all_services_health",
+            "src.heretek_swarm.api.wizard.delete_infrastructure_config"
           ]
         },
         {
@@ -112357,7 +112663,7 @@
         },
         {
           "file_path": "src/heretek_swarm/config/crud.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "src.heretek_swarm.config.crud.ConfigurationServiceCrud",
             "src.heretek_swarm.config.crud.ConfigurationServiceCrud._log_change",
@@ -112395,12 +112701,19 @@
             "src.heretek_swarm.config.crud.ConfigurationServiceCrud.export_configurations",
             "src.heretek_swarm.config.crud.ConfigurationServiceCrud.import_configurations",
             "src.heretek_swarm.config.crud.ConfigurationServiceCrud._validate_config_value",
-            "src.heretek_swarm.config.crud.ConfigurationServiceCrud.migrate_from_env"
+            "src.heretek_swarm.config.crud.ConfigurationServiceCrud.migrate_from_env",
+            "src.heretek_swarm.config.crud.ConfigurationServiceCrud.get_infrastructure_config",
+            "src.heretek_swarm.config.crud.ConfigurationServiceCrud.get_infrastructure_config_by_service",
+            "src.heretek_swarm.config.crud.ConfigurationServiceCrud.list_infrastructure_configs",
+            "src.heretek_swarm.config.crud.ConfigurationServiceCrud.create_infrastructure_config",
+            "src.heretek_swarm.config.crud.ConfigurationServiceCrud.update_infrastructure_config",
+            "src.heretek_swarm.config.crud.ConfigurationServiceCrud.delete_infrastructure_config",
+            "src.heretek_swarm.config.crud.ConfigurationServiceCrud.update_infrastructure_health"
           ]
         },
         {
           "file_path": "src/heretek_swarm/config/db_models.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "src.heretek_swarm.config.db_models.Base",
             "src.heretek_swarm.config.db_models.UserConfiguration",
@@ -112408,7 +112721,8 @@
             "src.heretek_swarm.config.db_models.EmbeddingProvider",
             "src.heretek_swarm.config.db_models.AgentConfig",
             "src.heretek_swarm.config.db_models.ConfigAuditLog",
-            "src.heretek_swarm.config.db_models.ConfigCache"
+            "src.heretek_swarm.config.db_models.ConfigCache",
+            "src.heretek_swarm.config.db_models.InfrastructureConfig"
           ]
         },
         {
@@ -112458,7 +112772,7 @@
         },
         {
           "file_path": "src/heretek_swarm/config/models.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "src.heretek_swarm.config.models.ConfigType",
             "src.heretek_swarm.config.models.HealthStatus",
@@ -112498,14 +112812,20 @@
             "src.heretek_swarm.config.models.MCPProviderUpdate",
             "src.heretek_swarm.config.models.MCPProviderTestResponse",
             "src.heretek_swarm.config.models.MCPConfig",
+            "src.heretek_swarm.config.models.InfrastructureService",
             "src.heretek_swarm.config.models.MCPConfig.Config",
+            "src.heretek_swarm.config.models.InfrastructureConfig",
             "src.heretek_swarm.config.models.MCPConfigCreate",
-            "src.heretek_swarm.config.models.MCPConfigUpdate"
+            "src.heretek_swarm.config.models.InfrastructureConfig.Config",
+            "src.heretek_swarm.config.models.MCPConfigUpdate",
+            "src.heretek_swarm.config.models.InfrastructureConfigCreate",
+            "src.heretek_swarm.config.models.InfrastructureConfigUpdate",
+            "src.heretek_swarm.config.models.InfrastructureHealthCheck"
           ]
         },
         {
           "file_path": "src/heretek_swarm/config/service.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "src.heretek_swarm.config.service.SeedResult",
             "src.heretek_swarm.config.service.ConfigurationService",
@@ -117850,7 +118170,7 @@
             },
             {
               "file_path": "src/heretek_swarm/api/wizard.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.heretek_swarm.api.wizard.WizardState",
                 "src.heretek_swarm.api.wizard.WizardState.__init__",
@@ -117882,7 +118202,13 @@
                 "src.heretek_swarm.api.wizard._validate_local",
                 "src.heretek_swarm.api.wizard._emit_wizard_completed_event",
                 "src.heretek_swarm.api.wizard.submit_config",
-                "src.heretek_swarm.api.wizard.reset_wizard"
+                "src.heretek_swarm.api.wizard.reset_wizard",
+                "src.heretek_swarm.api.wizard.list_infrastructure_configs",
+                "src.heretek_swarm.api.wizard.create_infrastructure_config",
+                "src.heretek_swarm.api.wizard.get_infrastructure_config",
+                "src.heretek_swarm.api.wizard.check_service_health",
+                "src.heretek_swarm.api.wizard.check_all_services_health",
+                "src.heretek_swarm.api.wizard.delete_infrastructure_config"
               ]
             },
             {
@@ -118125,7 +118451,7 @@
             },
             {
               "file_path": "src/heretek_swarm/config/db_models.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.heretek_swarm.config.db_models.Base",
                 "src.heretek_swarm.config.db_models.UserConfiguration",
@@ -118133,7 +118459,8 @@
                 "src.heretek_swarm.config.db_models.EmbeddingProvider",
                 "src.heretek_swarm.config.db_models.AgentConfig",
                 "src.heretek_swarm.config.db_models.ConfigAuditLog",
-                "src.heretek_swarm.config.db_models.ConfigCache"
+                "src.heretek_swarm.config.db_models.ConfigCache",
+                "src.heretek_swarm.config.db_models.InfrastructureConfig"
               ]
             },
             {
@@ -121255,7 +121582,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/config/db_models.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.config.db_models.Base",
                     "src.heretek_swarm.config.db_models.UserConfiguration",
@@ -121263,7 +121590,8 @@
                     "src.heretek_swarm.config.db_models.EmbeddingProvider",
                     "src.heretek_swarm.config.db_models.AgentConfig",
                     "src.heretek_swarm.config.db_models.ConfigAuditLog",
-                    "src.heretek_swarm.config.db_models.ConfigCache"
+                    "src.heretek_swarm.config.db_models.ConfigCache",
+                    "src.heretek_swarm.config.db_models.InfrastructureConfig"
                   ]
                 },
                 {
@@ -124072,7 +124400,7 @@
                     },
                     {
                       "file_path": "src/heretek_swarm/config/db_models.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.config.db_models.Base",
                         "src.heretek_swarm.config.db_models.UserConfiguration",
@@ -124080,7 +124408,8 @@
                         "src.heretek_swarm.config.db_models.EmbeddingProvider",
                         "src.heretek_swarm.config.db_models.AgentConfig",
                         "src.heretek_swarm.config.db_models.ConfigAuditLog",
-                        "src.heretek_swarm.config.db_models.ConfigCache"
+                        "src.heretek_swarm.config.db_models.ConfigCache",
+                        "src.heretek_swarm.config.db_models.InfrastructureConfig"
                       ]
                     },
                     {
@@ -124207,7 +124536,7 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/config/db_models.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.config.db_models.Base",
                             "src.heretek_swarm.config.db_models.UserConfiguration",
@@ -124215,7 +124544,8 @@
                             "src.heretek_swarm.config.db_models.EmbeddingProvider",
                             "src.heretek_swarm.config.db_models.AgentConfig",
                             "src.heretek_swarm.config.db_models.ConfigAuditLog",
-                            "src.heretek_swarm.config.db_models.ConfigCache"
+                            "src.heretek_swarm.config.db_models.ConfigCache",
+                            "src.heretek_swarm.config.db_models.InfrastructureConfig"
                           ]
                         },
                         {
@@ -125361,7 +125691,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/api/wizard.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.api.wizard.WizardState",
                     "src.heretek_swarm.api.wizard.WizardState.__init__",
@@ -125393,7 +125723,13 @@
                     "src.heretek_swarm.api.wizard._validate_local",
                     "src.heretek_swarm.api.wizard._emit_wizard_completed_event",
                     "src.heretek_swarm.api.wizard.submit_config",
-                    "src.heretek_swarm.api.wizard.reset_wizard"
+                    "src.heretek_swarm.api.wizard.reset_wizard",
+                    "src.heretek_swarm.api.wizard.list_infrastructure_configs",
+                    "src.heretek_swarm.api.wizard.create_infrastructure_config",
+                    "src.heretek_swarm.api.wizard.get_infrastructure_config",
+                    "src.heretek_swarm.api.wizard.check_service_health",
+                    "src.heretek_swarm.api.wizard.check_all_services_health",
+                    "src.heretek_swarm.api.wizard.delete_infrastructure_config"
                   ]
                 },
                 {
@@ -127333,7 +127669,7 @@
                     },
                     {
                       "file_path": "src/heretek_swarm/api/wizard.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.api.wizard.WizardState",
                         "src.heretek_swarm.api.wizard.WizardState.__init__",
@@ -127365,7 +127701,13 @@
                         "src.heretek_swarm.api.wizard._validate_local",
                         "src.heretek_swarm.api.wizard._emit_wizard_completed_event",
                         "src.heretek_swarm.api.wizard.submit_config",
-                        "src.heretek_swarm.api.wizard.reset_wizard"
+                        "src.heretek_swarm.api.wizard.reset_wizard",
+                        "src.heretek_swarm.api.wizard.list_infrastructure_configs",
+                        "src.heretek_swarm.api.wizard.create_infrastructure_config",
+                        "src.heretek_swarm.api.wizard.get_infrastructure_config",
+                        "src.heretek_swarm.api.wizard.check_service_health",
+                        "src.heretek_swarm.api.wizard.check_all_services_health",
+                        "src.heretek_swarm.api.wizard.delete_infrastructure_config"
                       ]
                     },
                     {
@@ -129098,7 +129440,7 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/api/wizard.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.api.wizard.WizardState",
                             "src.heretek_swarm.api.wizard.WizardState.__init__",
@@ -129130,7 +129472,13 @@
                             "src.heretek_swarm.api.wizard._validate_local",
                             "src.heretek_swarm.api.wizard._emit_wizard_completed_event",
                             "src.heretek_swarm.api.wizard.submit_config",
-                            "src.heretek_swarm.api.wizard.reset_wizard"
+                            "src.heretek_swarm.api.wizard.reset_wizard",
+                            "src.heretek_swarm.api.wizard.list_infrastructure_configs",
+                            "src.heretek_swarm.api.wizard.create_infrastructure_config",
+                            "src.heretek_swarm.api.wizard.get_infrastructure_config",
+                            "src.heretek_swarm.api.wizard.check_service_health",
+                            "src.heretek_swarm.api.wizard.check_all_services_health",
+                            "src.heretek_swarm.api.wizard.delete_infrastructure_config"
                           ]
                         },
                         {
@@ -169883,7 +170231,7 @@
             },
             {
               "file_path": "src/heretek_swarm/config/crud.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.heretek_swarm.config.crud.ConfigurationServiceCrud",
                 "src.heretek_swarm.config.crud.ConfigurationServiceCrud._log_change",
@@ -169921,7 +170269,14 @@
                 "src.heretek_swarm.config.crud.ConfigurationServiceCrud.export_configurations",
                 "src.heretek_swarm.config.crud.ConfigurationServiceCrud.import_configurations",
                 "src.heretek_swarm.config.crud.ConfigurationServiceCrud._validate_config_value",
-                "src.heretek_swarm.config.crud.ConfigurationServiceCrud.migrate_from_env"
+                "src.heretek_swarm.config.crud.ConfigurationServiceCrud.migrate_from_env",
+                "src.heretek_swarm.config.crud.ConfigurationServiceCrud.get_infrastructure_config",
+                "src.heretek_swarm.config.crud.ConfigurationServiceCrud.get_infrastructure_config_by_service",
+                "src.heretek_swarm.config.crud.ConfigurationServiceCrud.list_infrastructure_configs",
+                "src.heretek_swarm.config.crud.ConfigurationServiceCrud.create_infrastructure_config",
+                "src.heretek_swarm.config.crud.ConfigurationServiceCrud.update_infrastructure_config",
+                "src.heretek_swarm.config.crud.ConfigurationServiceCrud.delete_infrastructure_config",
+                "src.heretek_swarm.config.crud.ConfigurationServiceCrud.update_infrastructure_health"
               ]
             },
             {
@@ -169971,7 +170326,7 @@
             },
             {
               "file_path": "src/heretek_swarm/config/models.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.heretek_swarm.config.models.ConfigType",
                 "src.heretek_swarm.config.models.HealthStatus",
@@ -170011,14 +170366,20 @@
                 "src.heretek_swarm.config.models.MCPProviderUpdate",
                 "src.heretek_swarm.config.models.MCPProviderTestResponse",
                 "src.heretek_swarm.config.models.MCPConfig",
+                "src.heretek_swarm.config.models.InfrastructureService",
                 "src.heretek_swarm.config.models.MCPConfig.Config",
+                "src.heretek_swarm.config.models.InfrastructureConfig",
                 "src.heretek_swarm.config.models.MCPConfigCreate",
-                "src.heretek_swarm.config.models.MCPConfigUpdate"
+                "src.heretek_swarm.config.models.InfrastructureConfig.Config",
+                "src.heretek_swarm.config.models.MCPConfigUpdate",
+                "src.heretek_swarm.config.models.InfrastructureConfigCreate",
+                "src.heretek_swarm.config.models.InfrastructureConfigUpdate",
+                "src.heretek_swarm.config.models.InfrastructureHealthCheck"
               ]
             },
             {
               "file_path": "src/heretek_swarm/config/service.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.heretek_swarm.config.service.SeedResult",
                 "src.heretek_swarm.config.service.ConfigurationService",
@@ -171952,7 +172313,7 @@
               "file_methods": [
                 {
                   "file_path": "src/heretek_swarm/config/crud.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.config.crud.ConfigurationServiceCrud",
                     "src.heretek_swarm.config.crud.ConfigurationServiceCrud._log_change",
@@ -171990,7 +172351,14 @@
                     "src.heretek_swarm.config.crud.ConfigurationServiceCrud.export_configurations",
                     "src.heretek_swarm.config.crud.ConfigurationServiceCrud.import_configurations",
                     "src.heretek_swarm.config.crud.ConfigurationServiceCrud._validate_config_value",
-                    "src.heretek_swarm.config.crud.ConfigurationServiceCrud.migrate_from_env"
+                    "src.heretek_swarm.config.crud.ConfigurationServiceCrud.migrate_from_env",
+                    "src.heretek_swarm.config.crud.ConfigurationServiceCrud.get_infrastructure_config",
+                    "src.heretek_swarm.config.crud.ConfigurationServiceCrud.get_infrastructure_config_by_service",
+                    "src.heretek_swarm.config.crud.ConfigurationServiceCrud.list_infrastructure_configs",
+                    "src.heretek_swarm.config.crud.ConfigurationServiceCrud.create_infrastructure_config",
+                    "src.heretek_swarm.config.crud.ConfigurationServiceCrud.update_infrastructure_config",
+                    "src.heretek_swarm.config.crud.ConfigurationServiceCrud.delete_infrastructure_config",
+                    "src.heretek_swarm.config.crud.ConfigurationServiceCrud.update_infrastructure_health"
                   ]
                 },
                 {
@@ -172040,7 +172408,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/config/models.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.config.models.ConfigType",
                     "src.heretek_swarm.config.models.HealthStatus",
@@ -172080,14 +172448,20 @@
                     "src.heretek_swarm.config.models.MCPProviderUpdate",
                     "src.heretek_swarm.config.models.MCPProviderTestResponse",
                     "src.heretek_swarm.config.models.MCPConfig",
+                    "src.heretek_swarm.config.models.InfrastructureService",
                     "src.heretek_swarm.config.models.MCPConfig.Config",
+                    "src.heretek_swarm.config.models.InfrastructureConfig",
                     "src.heretek_swarm.config.models.MCPConfigCreate",
-                    "src.heretek_swarm.config.models.MCPConfigUpdate"
+                    "src.heretek_swarm.config.models.InfrastructureConfig.Config",
+                    "src.heretek_swarm.config.models.MCPConfigUpdate",
+                    "src.heretek_swarm.config.models.InfrastructureConfigCreate",
+                    "src.heretek_swarm.config.models.InfrastructureConfigUpdate",
+                    "src.heretek_swarm.config.models.InfrastructureHealthCheck"
                   ]
                 },
                 {
                   "file_path": "src/heretek_swarm/config/service.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.config.service.SeedResult",
                     "src.heretek_swarm.config.service.ConfigurationService",
@@ -172153,7 +172527,7 @@
                     },
                     {
                       "file_path": "src/heretek_swarm/config/service.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.config.service.SeedResult",
                         "src.heretek_swarm.config.service.ConfigurationService.__init__",
@@ -172238,7 +172612,7 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/config/service.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.config.service.SeedResult",
                             "src.heretek_swarm.config.service.ConfigurationService",
@@ -172318,7 +172692,7 @@
                   "file_methods": [
                     {
                       "file_path": "src/heretek_swarm/config/crud.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.config.crud.ConfigurationServiceCrud",
                         "src.heretek_swarm.config.crud.ConfigurationServiceCrud.get_config",
@@ -172343,12 +172717,19 @@
                         "src.heretek_swarm.config.crud.ConfigurationServiceCrud.export_configurations",
                         "src.heretek_swarm.config.crud.ConfigurationServiceCrud.import_configurations",
                         "src.heretek_swarm.config.crud.ConfigurationServiceCrud._validate_config_value",
-                        "src.heretek_swarm.config.crud.ConfigurationServiceCrud.migrate_from_env"
+                        "src.heretek_swarm.config.crud.ConfigurationServiceCrud.migrate_from_env",
+                        "src.heretek_swarm.config.crud.ConfigurationServiceCrud.get_infrastructure_config",
+                        "src.heretek_swarm.config.crud.ConfigurationServiceCrud.get_infrastructure_config_by_service",
+                        "src.heretek_swarm.config.crud.ConfigurationServiceCrud.list_infrastructure_configs",
+                        "src.heretek_swarm.config.crud.ConfigurationServiceCrud.create_infrastructure_config",
+                        "src.heretek_swarm.config.crud.ConfigurationServiceCrud.update_infrastructure_config",
+                        "src.heretek_swarm.config.crud.ConfigurationServiceCrud.delete_infrastructure_config",
+                        "src.heretek_swarm.config.crud.ConfigurationServiceCrud.update_infrastructure_health"
                       ]
                     },
                     {
                       "file_path": "src/heretek_swarm/config/models.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.config.models.ConfigType",
                         "src.heretek_swarm.config.models.HealthStatus",
@@ -172388,14 +172769,20 @@
                         "src.heretek_swarm.config.models.MCPProviderUpdate",
                         "src.heretek_swarm.config.models.MCPProviderTestResponse",
                         "src.heretek_swarm.config.models.MCPConfig",
+                        "src.heretek_swarm.config.models.InfrastructureService",
                         "src.heretek_swarm.config.models.MCPConfig.Config",
+                        "src.heretek_swarm.config.models.InfrastructureConfig",
                         "src.heretek_swarm.config.models.MCPConfigCreate",
-                        "src.heretek_swarm.config.models.MCPConfigUpdate"
+                        "src.heretek_swarm.config.models.InfrastructureConfig.Config",
+                        "src.heretek_swarm.config.models.MCPConfigUpdate",
+                        "src.heretek_swarm.config.models.InfrastructureConfigCreate",
+                        "src.heretek_swarm.config.models.InfrastructureConfigUpdate",
+                        "src.heretek_swarm.config.models.InfrastructureHealthCheck"
                       ]
                     },
                     {
                       "file_path": "src/heretek_swarm/config/service.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.config.service.SeedResult",
                         "src.heretek_swarm.config.service.ConfigurationService",
@@ -172443,7 +172830,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/config/crud.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.config.crud.ConfigurationServiceCrud.create_config",
                             "src.heretek_swarm.config.crud.ConfigurationServiceCrud.update_llm_provider",
@@ -172452,7 +172839,7 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/config/models.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.config.models.ConfigType",
                             "src.heretek_swarm.config.models.HealthStatus",
@@ -172513,7 +172900,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/config/crud.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.config.crud.ConfigurationServiceCrud.list_configs",
                             "src.heretek_swarm.config.crud.ConfigurationServiceCrud.delete_config",
@@ -172526,7 +172913,7 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/config/models.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.config.models.UserConfiguration",
                             "src.heretek_swarm.config.models.LLMProvider",
@@ -172536,7 +172923,7 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/config/service.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.config.service.ConfigurationService.decrypt_api_key",
                             "src.heretek_swarm.config.service.ConfigurationService._orm_to_pydantic"
@@ -172568,7 +172955,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/config/crud.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.config.crud.ConfigurationServiceCrud._log_change",
                             "src.heretek_swarm.config.crud.ConfigurationServiceCrud.get_config",
@@ -172586,7 +172973,7 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/config/service.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.config.service.ConfigurationService._warm_cache"
                           ]
@@ -172629,7 +173016,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/config/crud.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.config.crud.ConfigurationServiceCrud",
                             "src.heretek_swarm.config.crud.ConfigurationServiceCrud.get_llm_provider_by_name",
@@ -172650,7 +173037,7 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/config/models.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.config.models.UserConfigurationCreate",
                             "src.heretek_swarm.config.models.ConfigCacheEntry"
@@ -172658,7 +173045,7 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/config/service.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.config.service.ConfigurationService",
                             "src.heretek_swarm.config.service.ConfigurationService.__init__",
@@ -173041,7 +173428,7 @@
                   "file_methods": [
                     {
                       "file_path": "src/heretek_swarm/config/crud.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.config.crud.ConfigurationServiceCrud._log_change",
                         "src.heretek_swarm.config.crud.ConfigurationServiceCrud.update_config",
@@ -173055,12 +173442,19 @@
                         "src.heretek_swarm.config.crud.ConfigurationServiceCrud.delete_embedding_provider",
                         "src.heretek_swarm.config.crud.ConfigurationServiceCrud.create_agent_config",
                         "src.heretek_swarm.config.crud.ConfigurationServiceCrud.update_agent_config",
-                        "src.heretek_swarm.config.crud.ConfigurationServiceCrud.delete_agent_config"
+                        "src.heretek_swarm.config.crud.ConfigurationServiceCrud.delete_agent_config",
+                        "src.heretek_swarm.config.crud.ConfigurationServiceCrud.get_infrastructure_config",
+                        "src.heretek_swarm.config.crud.ConfigurationServiceCrud.get_infrastructure_config_by_service",
+                        "src.heretek_swarm.config.crud.ConfigurationServiceCrud.list_infrastructure_configs",
+                        "src.heretek_swarm.config.crud.ConfigurationServiceCrud.create_infrastructure_config",
+                        "src.heretek_swarm.config.crud.ConfigurationServiceCrud.update_infrastructure_config",
+                        "src.heretek_swarm.config.crud.ConfigurationServiceCrud.delete_infrastructure_config",
+                        "src.heretek_swarm.config.crud.ConfigurationServiceCrud.update_infrastructure_health"
                       ]
                     },
                     {
                       "file_path": "src/heretek_swarm/config/service.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.config.service.SeedResult",
                         "src.heretek_swarm.config.service.ConfigurationService._invalidate_cache",
@@ -173094,7 +173488,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/config/crud.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.config.crud.ConfigurationServiceCrud.get_config",
                             "src.heretek_swarm.config.crud.ConfigurationServiceCrud.get_config_value",
@@ -173104,7 +173498,7 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/config/service.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.config.service.ConfigurationService._get_cache_key",
                             "src.heretek_swarm.config.service.ConfigurationService._invalidate_cache",
@@ -173149,7 +173543,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/config/crud.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.config.crud.ConfigurationServiceCrud",
                             "src.heretek_swarm.config.crud.ConfigurationServiceCrud._log_change",
@@ -173186,7 +173580,7 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/config/service.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.config.service.ConfigurationService.__init__",
                             "src.heretek_swarm.config.service.ConfigurationService.encrypt_api_key",
@@ -173236,7 +173630,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/config/crud.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.config.crud.ConfigurationServiceCrud.create_config",
                             "src.heretek_swarm.config.crud.ConfigurationServiceCrud.migrate_from_env"
@@ -173244,7 +173638,7 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/config/service.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.config.service.ConfigurationService",
                             "src.heretek_swarm.config.service.ConfigurationService.initialize",

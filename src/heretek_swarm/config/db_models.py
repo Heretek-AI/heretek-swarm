@@ -191,3 +191,27 @@ class ConfigCache(Base):
     __table_args__ = (
         Index("idx_config_cache_expires", "expires_at"),
     )
+
+
+class InfrastructureConfig(Base):
+    """Infrastructure service configuration - maps to infrastructure_config table."""
+    __tablename__ = "infrastructure_config"
+
+    id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
+    service: Mapped[str] = mapped_column(String(50), nullable=False)
+    host: Mapped[str] = mapped_column(String(255), default="localhost")
+    port: Mapped[int] = mapped_column(Integer, nullable=False)
+    connection_url: Mapped[str | None] = mapped_column(String(500), nullable=True)
+    is_enabled: Mapped[bool] = mapped_column(Boolean, default=True)
+    health_status: Mapped[str] = mapped_column(String(50), default="unknown")
+    last_health_check: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    health_check_latency_ms: Mapped[float | None] = mapped_column(nullable=True)
+    health_check_error: Mapped[str | None] = mapped_column(Text, nullable=True)
+    extra_config: Mapped[dict] = mapped_column(JSON, default=dict)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=func.now(), onupdate=func.now())
+
+    __table_args__ = (
+        Index("idx_infrastructure_config_service", "service"),
+        Index("idx_infrastructure_config_enabled", "is_enabled"),
+    )

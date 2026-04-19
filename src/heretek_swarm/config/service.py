@@ -30,6 +30,9 @@ from .db_models import (
     LLMProvider as LLMProviderORM,
 )
 from .db_models import (
+    InfrastructureConfig as InfrastructureConfigORM,
+)
+from .db_models import (
     UserConfiguration as UserConfigurationORM,
 )
 from .encryption import ApiKeyEncryptor
@@ -40,6 +43,8 @@ from .models import (
     EmbeddingProvider,
     EmbeddingProviderCreate,
     EmbeddingProviderType,
+    InfrastructureConfig,
+    InfrastructureService,
     LLMProvider,
     LLMProviderCreate,
     LLMProviderType,
@@ -296,6 +301,22 @@ class ConfigurationService(ConfigurationServiceCrud):
                 updated_at=orm_obj.updated_at,
                 created_by=orm_obj.created_by,
                 updated_by=orm_obj.updated_by,
+            )
+        if isinstance(orm_obj, InfrastructureConfigORM):
+            return InfrastructureConfig(
+                id=orm_obj.id,
+                service=InfrastructureService(orm_obj.service),
+                host=orm_obj.host,
+                port=orm_obj.port,
+                connection_url=orm_obj.connection_url,
+                is_enabled=orm_obj.is_enabled,
+                health_status=orm_obj.health_status,
+                last_health_check=orm_obj.last_health_check,
+                health_check_latency_ms=orm_obj.health_check_latency_ms,
+                health_check_error=orm_obj.health_check_error,
+                extra_config=orm_obj.extra_config or {},
+                created_at=orm_obj.created_at,
+                updated_at=orm_obj.updated_at,
             )
         # For unknown types, try to return as-is or convert via dict
         if hasattr(orm_obj, "__dict__"):
