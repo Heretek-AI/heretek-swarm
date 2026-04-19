@@ -653,3 +653,224 @@ class Mem0Backend:
             "p99": (sorted_stats[int(n * 0.99)] * 1000) if n > 0 else 0.0,
             "avg": (sum(sorted_stats) / n * 1000) if n > 0 else 0.0,
         }
+
+    # -------------------------------------------------------------------------
+    # Raw mem0 API proxy methods (sync, called by REST router)
+    # -------------------------------------------------------------------------
+
+    def add(
+        self,
+        messages: list[dict],
+        user_id: str | None = None,
+        agent_id: str | None = None,
+        run_id: str | None = None,
+        metadata: dict | None = None,
+        infer: bool = True,
+        memory_type: str | None = None,
+        prompt: str | None = None,
+    ) -> dict:
+        """
+        Add memories via raw mem0 API.
+
+        Args:
+            messages: List of message dicts with 'role' and 'content'
+            user_id: User identifier
+            agent_id: Agent identifier
+            run_id: Run identifier
+            metadata: Additional metadata
+            infer: Whether to extract facts from messages
+            memory_type: Type of memory to store
+            prompt: Custom prompt for fact extraction
+
+        Returns:
+            Raw mem0 API response dict
+        """
+        if not self._initialized:
+            self.initialize()
+
+        params = {
+            k: v
+            for k, v in {
+                "user_id": user_id,
+                "agent_id": agent_id,
+                "run_id": run_id,
+                "metadata": metadata,
+                "infer": infer,
+                "memory_type": memory_type,
+                "prompt": prompt,
+            }.items()
+            if v is not None
+        }
+        return self._memory.add(messages=messages, **params)
+
+    def search(
+        self,
+        query: str,
+        user_id: str | None = None,
+        run_id: str | None = None,
+        agent_id: str | None = None,
+        filters: dict | None = None,
+        top_k: int | None = None,
+        threshold: float | None = None,
+    ) -> list[dict]:
+        """
+        Search via raw mem0 API.
+
+        Args:
+            query: Search query text
+            user_id: User identifier
+            run_id: Run identifier
+            agent_id: Agent identifier
+            filters: Additional filters
+            top_k: Maximum results to return
+            threshold: Minimum similarity score
+
+        Returns:
+            List of memory dicts
+        """
+        if not self._initialized:
+            self.initialize()
+
+        params = {
+            k: v
+            for k, v in {
+                "user_id": user_id,
+                "run_id": run_id,
+                "agent_id": agent_id,
+                "filters": filters,
+                "top_k": top_k,
+                "threshold": threshold,
+            }.items()
+            if v is not None
+        }
+        return self._memory.search(query=query, **params)
+
+    def update(self, memory_id: str, data: str, metadata: dict | None = None) -> dict:
+        """
+        Update a memory entry.
+
+        Args:
+            memory_id: Memory identifier
+            data: New content
+            metadata: Updated metadata
+
+        Returns:
+            Raw mem0 API response dict
+        """
+        if not self._initialized:
+            self.initialize()
+
+        return self._memory.update(memory_id=memory_id, data=data, metadata=metadata)
+
+    def get(self, memory_id: str) -> dict:
+        """
+        Get a specific memory.
+
+        Args:
+            memory_id: Memory identifier
+
+        Returns:
+            Raw mem0 API response dict
+        """
+        if not self._initialized:
+            self.initialize()
+
+        return self._memory.get(memory_id)
+
+    def get_all(
+        self,
+        user_id: str | None = None,
+        run_id: str | None = None,
+        agent_id: str | None = None,
+    ) -> list[dict]:
+        """
+        Get all memories for an identifier (extended signature).
+
+        Args:
+            user_id: User identifier
+            run_id: Run identifier
+            agent_id: Agent identifier
+
+        Returns:
+            List of memory dicts
+        """
+        if not self._initialized:
+            self.initialize()
+
+        params = {
+            k: v
+            for k, v in {"user_id": user_id, "run_id": run_id, "agent_id": agent_id}.items()
+            if v is not None
+        }
+        return self._memory.get_all(**params)
+
+    def delete_memory(self, memory_id: str) -> None:
+        """
+        Delete a specific memory.
+
+        Args:
+            memory_id: Memory identifier
+        """
+        if not self._initialized:
+            self.initialize()
+
+        self._memory.delete(memory_id)
+
+    def delete_all(
+        self,
+        user_id: str | None = None,
+        run_id: str | None = None,
+        agent_id: str | None = None,
+    ) -> None:
+        """
+        Delete all memories for an identifier.
+
+        Args:
+            user_id: User identifier
+            run_id: Run identifier
+            agent_id: Agent identifier
+        """
+        if not self._initialized:
+            self.initialize()
+
+        params = {
+            k: v
+            for k, v in {"user_id": user_id, "run_id": run_id, "agent_id": agent_id}.items()
+            if v is not None
+        }
+        self._memory.delete_all(**params)
+
+    def history(self, memory_id: str) -> list[dict]:
+        """
+        Get memory edit history.
+
+        Args:
+            memory_id: Memory identifier
+
+        Returns:
+            List of history entries
+        """
+        if not self._initialized:
+            self.initialize()
+
+        return self._memory.history(memory_id=memory_id)
+
+    def reset(self) -> None:
+        """Reset ALL memories."""
+        if not self._initialized:
+            self.initialize()
+
+        self._memory.reset()
+
+    async def configure(self, config: dict) -> None:
+        """
+        Reconfigure mem0 with new config.
+
+        Args:
+            config: New mem0 configuration dict
+        """
+        from mem0 import Memory
+
+        self._memory = Memory.from_config(config)
+        self._initialized = True
+        logger.info("mem0_reconfigured", config_keys=list(config.keys()))

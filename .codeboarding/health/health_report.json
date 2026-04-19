@@ -1,7 +1,7 @@
 {
   "repository_name": "heretek-swarm",
-  "timestamp": "2026-04-19T16:29:48.017071+00:00",
-  "overall_score": 0.9858000461787116,
+  "timestamp": "2026-04-19T16:44:49.723902+00:00",
+  "overall_score": 0.9850608525119686,
   "check_summaries": [
     {
       "check_name": "function_size",
@@ -790,8 +790,8 @@
       "description": "Detects unused imports, variables, functions, and dead code via LSP diagnostics",
       "language": "Python",
       "check_type": "standard",
-      "total_entities_checked": 74,
-      "findings_count": 74,
+      "total_entities_checked": 87,
+      "findings_count": 87,
       "warning_count": 13,
       "score": 0.0,
       "finding_groups": [
@@ -901,106 +901,106 @@
             {
               "entity_name": "[unused_variable] \"config_source\" is not accessed",
               "file_path": "src/heretek_swarm/api/main.py",
-              "line_start": 134,
-              "line_end": 134,
+              "line_start": 135,
+              "line_end": 135,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"config_source\" is not accessed",
               "file_path": "src/heretek_swarm/api/main.py",
-              "line_start": 142,
-              "line_end": 142,
+              "line_start": 143,
+              "line_end": 143,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"mesh\" is not accessed",
               "file_path": "src/heretek_swarm/api/main.py",
-              "line_start": 319,
-              "line_end": 319,
+              "line_start": 320,
+              "line_end": 320,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"mesh\" is not accessed",
               "file_path": "src/heretek_swarm/api/main.py",
-              "line_start": 345,
-              "line_end": 345,
+              "line_start": 346,
+              "line_end": 346,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"authenticated\" is not accessed",
               "file_path": "src/heretek_swarm/api/main.py",
-              "line_start": 648,
-              "line_end": 648,
+              "line_start": 650,
+              "line_end": 650,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"authenticated\" is not accessed",
               "file_path": "src/heretek_swarm/api/main.py",
-              "line_start": 677,
-              "line_end": 677,
+              "line_start": 679,
+              "line_end": 679,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"authenticated\" is not accessed",
               "file_path": "src/heretek_swarm/api/main.py",
-              "line_start": 711,
-              "line_end": 711,
+              "line_start": 713,
+              "line_end": 713,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"authenticated\" is not accessed",
               "file_path": "src/heretek_swarm/api/main.py",
-              "line_start": 739,
-              "line_end": 739,
+              "line_start": 741,
+              "line_end": 741,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"authenticated\" is not accessed",
               "file_path": "src/heretek_swarm/api/main.py",
-              "line_start": 769,
-              "line_end": 769,
+              "line_start": 771,
+              "line_end": 771,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"authenticated\" is not accessed",
               "file_path": "src/heretek_swarm/api/main.py",
-              "line_start": 788,
-              "line_end": 788,
+              "line_start": 790,
+              "line_end": 790,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"authenticated\" is not accessed",
               "file_path": "src/heretek_swarm/api/main.py",
-              "line_start": 854,
-              "line_end": 854,
+              "line_start": 856,
+              "line_end": 856,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"authenticated\" is not accessed",
               "file_path": "src/heretek_swarm/api/main.py",
-              "line_start": 899,
-              "line_end": 899,
+              "line_start": 901,
+              "line_end": 901,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"authenticated\" is not accessed",
               "file_path": "src/heretek_swarm/api/main.py",
-              "line_start": 921,
-              "line_end": 921,
+              "line_start": 923,
+              "line_end": 923,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"authenticated\" is not accessed",
               "file_path": "src/heretek_swarm/api/main.py",
-              "line_start": 966,
-              "line_end": 966,
+              "line_start": 968,
+              "line_end": 968,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"authenticated\" is not accessed",
               "file_path": "src/heretek_swarm/api/main.py",
-              "line_start": 1005,
-              "line_end": 1005,
+              "line_start": 1007,
+              "line_end": 1007,
               "metric_value": 0.0
             },
             {
@@ -1225,6 +1225,97 @@
               "file_path": "src/heretek_swarm/cli.py",
               "line_start": 579,
               "line_end": 579,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] Result of async function call is not used; use \"await\" or assign result to variable",
+              "file_path": "src/heretek_swarm/memory/persistent.py",
+              "line_start": 524,
+              "line_end": 524,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] Result of async function call is not used; use \"await\" or assign result to variable",
+              "file_path": "src/heretek_swarm/memory/persistent.py",
+              "line_start": 574,
+              "line_end": 574,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] Result of async function call is not used; use \"await\" or assign result to variable",
+              "file_path": "src/heretek_swarm/memory/persistent.py",
+              "line_start": 609,
+              "line_end": 609,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] Result of async function call is not used; use \"await\" or assign result to variable",
+              "file_path": "src/heretek_swarm/memory/persistent.py",
+              "line_start": 629,
+              "line_end": 629,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] Result of async function call is not used; use \"await\" or assign result to variable",
+              "file_path": "src/heretek_swarm/memory/persistent.py",
+              "line_start": 689,
+              "line_end": 689,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] Result of async function call is not used; use \"await\" or assign result to variable",
+              "file_path": "src/heretek_swarm/memory/persistent.py",
+              "line_start": 732,
+              "line_end": 732,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] Result of async function call is not used; use \"await\" or assign result to variable",
+              "file_path": "src/heretek_swarm/memory/persistent.py",
+              "line_start": 761,
+              "line_end": 761,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] Result of async function call is not used; use \"await\" or assign result to variable",
+              "file_path": "src/heretek_swarm/memory/persistent.py",
+              "line_start": 776,
+              "line_end": 776,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] Result of async function call is not used; use \"await\" or assign result to variable",
+              "file_path": "src/heretek_swarm/memory/persistent.py",
+              "line_start": 798,
+              "line_end": 798,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] Result of async function call is not used; use \"await\" or assign result to variable",
+              "file_path": "src/heretek_swarm/memory/persistent.py",
+              "line_start": 815,
+              "line_end": 815,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] Result of async function call is not used; use \"await\" or assign result to variable",
+              "file_path": "src/heretek_swarm/memory/persistent.py",
+              "line_start": 834,
+              "line_end": 834,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] Result of async function call is not used; use \"await\" or assign result to variable",
+              "file_path": "src/heretek_swarm/memory/persistent.py",
+              "line_start": 854,
+              "line_end": 854,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] Result of async function call is not used; use \"await\" or assign result to variable",
+              "file_path": "src/heretek_swarm/memory/persistent.py",
+              "line_start": 861,
+              "line_end": 861,
               "metric_value": 0.0
             }
           ]
@@ -1898,6 +1989,12 @@
       "composite_risk_score": 55.0
     },
     {
+      "file_path": "src/heretek_swarm/memory/persistent.py",
+      "total_findings": 13,
+      "warning_findings": 0,
+      "composite_risk_score": 50.0
+    },
+    {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
       "total_findings": 3,
       "warning_findings": 3,
@@ -1971,12 +2068,6 @@
     },
     {
       "file_path": "src/heretek_swarm/workflow/engine.py",
-      "total_findings": 2,
-      "warning_findings": 2,
-      "composite_risk_score": 30.0
-    },
-    {
-      "file_path": "src/heretek_swarm/collective/agent_adaptation.py",
       "total_findings": 2,
       "warning_findings": 2,
       "composite_risk_score": 30.0

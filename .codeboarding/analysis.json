@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-19T16:29:19.974128+00:00",
+    "generated_at": "2026-04-19T16:44:48.384813+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -7930,7 +7930,7 @@
       ]
     },
     "src/heretek_swarm/api/main.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.api.main.lifespan",
@@ -28168,7 +28168,7 @@
       ]
     },
     "src/heretek_swarm/memory/persistent.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.memory.persistent.Mem0Config",
@@ -28292,9 +28292,9 @@
         {
           "qualified_name": "src.heretek_swarm.memory.persistent.Mem0Backend",
           "start_line": 432,
-          "end_line": 655,
+          "end_line": 876,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.memory.persistent.Mem0Backend.__init__",
@@ -28358,6 +28358,62 @@
           "end_line": 655,
           "node_type": "METHOD",
           "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.memory.persistent.Mem0Backend.add",
+          "start_line": 661,
+          "end_line": 704,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.memory.persistent.Mem0Backend.update",
+          "start_line": 748,
+          "end_line": 763,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.memory.persistent.Mem0Backend.get",
+          "start_line": 765,
+          "end_line": 778,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.memory.persistent.Mem0Backend.delete_memory",
+          "start_line": 807,
+          "end_line": 817,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.memory.persistent.Mem0Backend.delete_all",
+          "start_line": 819,
+          "end_line": 841,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.memory.persistent.Mem0Backend.history",
+          "start_line": 843,
+          "end_line": 856,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.memory.persistent.Mem0Backend.reset",
+          "start_line": 858,
+          "end_line": 863,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.memory.persistent.Mem0Backend.configure",
+          "start_line": 865,
+          "end_line": 876,
+          "node_type": "METHOD",
+          "status": "added"
         }
       ]
     },
@@ -84258,9 +84314,9 @@
       "file_path": "src/heretek_swarm/memory/persistent.py",
       "qualified_name": "src.heretek_swarm.memory.persistent.Mem0Backend",
       "start_line": 432,
-      "end_line": 655,
+      "end_line": 876,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/memory/persistent.py|src.heretek_swarm.memory.persistent.Mem0Backend.__init__": {
       "file_path": "src/heretek_swarm/memory/persistent.py",
@@ -84333,6 +84389,70 @@
       "end_line": 655,
       "type": "METHOD",
       "status": "unchanged"
+    },
+    "src/heretek_swarm/memory/persistent.py|src.heretek_swarm.memory.persistent.Mem0Backend.add": {
+      "file_path": "src/heretek_swarm/memory/persistent.py",
+      "qualified_name": "src.heretek_swarm.memory.persistent.Mem0Backend.add",
+      "start_line": 661,
+      "end_line": 704,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/memory/persistent.py|src.heretek_swarm.memory.persistent.Mem0Backend.update": {
+      "file_path": "src/heretek_swarm/memory/persistent.py",
+      "qualified_name": "src.heretek_swarm.memory.persistent.Mem0Backend.update",
+      "start_line": 748,
+      "end_line": 763,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/memory/persistent.py|src.heretek_swarm.memory.persistent.Mem0Backend.get": {
+      "file_path": "src/heretek_swarm/memory/persistent.py",
+      "qualified_name": "src.heretek_swarm.memory.persistent.Mem0Backend.get",
+      "start_line": 765,
+      "end_line": 778,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/memory/persistent.py|src.heretek_swarm.memory.persistent.Mem0Backend.delete_memory": {
+      "file_path": "src/heretek_swarm/memory/persistent.py",
+      "qualified_name": "src.heretek_swarm.memory.persistent.Mem0Backend.delete_memory",
+      "start_line": 807,
+      "end_line": 817,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/memory/persistent.py|src.heretek_swarm.memory.persistent.Mem0Backend.delete_all": {
+      "file_path": "src/heretek_swarm/memory/persistent.py",
+      "qualified_name": "src.heretek_swarm.memory.persistent.Mem0Backend.delete_all",
+      "start_line": 819,
+      "end_line": 841,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/memory/persistent.py|src.heretek_swarm.memory.persistent.Mem0Backend.history": {
+      "file_path": "src/heretek_swarm/memory/persistent.py",
+      "qualified_name": "src.heretek_swarm.memory.persistent.Mem0Backend.history",
+      "start_line": 843,
+      "end_line": 856,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/memory/persistent.py|src.heretek_swarm.memory.persistent.Mem0Backend.reset": {
+      "file_path": "src/heretek_swarm/memory/persistent.py",
+      "qualified_name": "src.heretek_swarm.memory.persistent.Mem0Backend.reset",
+      "start_line": 858,
+      "end_line": 863,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/memory/persistent.py|src.heretek_swarm.memory.persistent.Mem0Backend.configure": {
+      "file_path": "src/heretek_swarm/memory/persistent.py",
+      "qualified_name": "src.heretek_swarm.memory.persistent.Mem0Backend.configure",
+      "start_line": 865,
+      "end_line": 876,
+      "type": "METHOD",
+      "status": "added"
     },
     "src/heretek_swarm/memory/prefetcher.py|src.heretek_swarm.memory.prefetcher.PreFetchStrategy": {
       "file_path": "src/heretek_swarm/memory/prefetcher.py",
@@ -112816,7 +112936,7 @@
         },
         {
           "file_path": "src/heretek_swarm/api/main.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "src.heretek_swarm.api.main.lifespan",
             "src.heretek_swarm.api.main._init_config_service",
@@ -116269,7 +116389,7 @@
         },
         {
           "file_path": "src/heretek_swarm/memory/persistent.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "src.heretek_swarm.memory.persistent.Mem0Config",
             "src.heretek_swarm.memory.persistent.Mem0Config.to_dict",
@@ -116297,7 +116417,15 @@
             "src.heretek_swarm.memory.persistent.Mem0Backend.get_all",
             "src.heretek_swarm.memory.persistent.Mem0Backend.delete",
             "src.heretek_swarm.memory.persistent.Mem0Backend.store_batch",
-            "src.heretek_swarm.memory.persistent.Mem0Backend.get_latency_stats"
+            "src.heretek_swarm.memory.persistent.Mem0Backend.get_latency_stats",
+            "src.heretek_swarm.memory.persistent.Mem0Backend.add",
+            "src.heretek_swarm.memory.persistent.Mem0Backend.update",
+            "src.heretek_swarm.memory.persistent.Mem0Backend.get",
+            "src.heretek_swarm.memory.persistent.Mem0Backend.delete_memory",
+            "src.heretek_swarm.memory.persistent.Mem0Backend.delete_all",
+            "src.heretek_swarm.memory.persistent.Mem0Backend.history",
+            "src.heretek_swarm.memory.persistent.Mem0Backend.reset",
+            "src.heretek_swarm.memory.persistent.Mem0Backend.configure"
           ]
         },
         {
@@ -119141,7 +119269,7 @@
             },
             {
               "file_path": "src/heretek_swarm/api/main.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.heretek_swarm.api.main.lifespan",
                 "src.heretek_swarm.api.main._init_config_service",
@@ -121054,7 +121182,7 @@
             },
             {
               "file_path": "src/heretek_swarm/memory/persistent.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.heretek_swarm.memory.persistent.Mem0Config",
                 "src.heretek_swarm.memory.persistent.Mem0Config.to_dict",
@@ -121082,7 +121210,15 @@
                 "src.heretek_swarm.memory.persistent.Mem0Backend.get_all",
                 "src.heretek_swarm.memory.persistent.Mem0Backend.delete",
                 "src.heretek_swarm.memory.persistent.Mem0Backend.store_batch",
-                "src.heretek_swarm.memory.persistent.Mem0Backend.get_latency_stats"
+                "src.heretek_swarm.memory.persistent.Mem0Backend.get_latency_stats",
+                "src.heretek_swarm.memory.persistent.Mem0Backend.add",
+                "src.heretek_swarm.memory.persistent.Mem0Backend.update",
+                "src.heretek_swarm.memory.persistent.Mem0Backend.get",
+                "src.heretek_swarm.memory.persistent.Mem0Backend.delete_memory",
+                "src.heretek_swarm.memory.persistent.Mem0Backend.delete_all",
+                "src.heretek_swarm.memory.persistent.Mem0Backend.history",
+                "src.heretek_swarm.memory.persistent.Mem0Backend.reset",
+                "src.heretek_swarm.memory.persistent.Mem0Backend.configure"
               ]
             },
             {
@@ -126830,7 +126966,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/api/main.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.api.main.lifespan",
                     "src.heretek_swarm.api.main._init_config_service",
@@ -127403,7 +127539,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/memory/persistent.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.memory.persistent.Mem0Config",
                     "src.heretek_swarm.memory.persistent.Mem0Config.to_dict",
@@ -127431,7 +127567,15 @@
                     "src.heretek_swarm.memory.persistent.Mem0Backend.get_all",
                     "src.heretek_swarm.memory.persistent.Mem0Backend.delete",
                     "src.heretek_swarm.memory.persistent.Mem0Backend.store_batch",
-                    "src.heretek_swarm.memory.persistent.Mem0Backend.get_latency_stats"
+                    "src.heretek_swarm.memory.persistent.Mem0Backend.get_latency_stats",
+                    "src.heretek_swarm.memory.persistent.Mem0Backend.add",
+                    "src.heretek_swarm.memory.persistent.Mem0Backend.update",
+                    "src.heretek_swarm.memory.persistent.Mem0Backend.get",
+                    "src.heretek_swarm.memory.persistent.Mem0Backend.delete_memory",
+                    "src.heretek_swarm.memory.persistent.Mem0Backend.delete_all",
+                    "src.heretek_swarm.memory.persistent.Mem0Backend.history",
+                    "src.heretek_swarm.memory.persistent.Mem0Backend.reset",
+                    "src.heretek_swarm.memory.persistent.Mem0Backend.configure"
                   ]
                 },
                 {
@@ -129167,7 +129311,7 @@
                     },
                     {
                       "file_path": "src/heretek_swarm/memory/persistent.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.memory.persistent.Mem0Config",
                         "src.heretek_swarm.memory.persistent.Mem0Config.to_dict",
@@ -129195,7 +129339,15 @@
                         "src.heretek_swarm.memory.persistent.Mem0Backend.get_all",
                         "src.heretek_swarm.memory.persistent.Mem0Backend.delete",
                         "src.heretek_swarm.memory.persistent.Mem0Backend.store_batch",
-                        "src.heretek_swarm.memory.persistent.Mem0Backend.get_latency_stats"
+                        "src.heretek_swarm.memory.persistent.Mem0Backend.get_latency_stats",
+                        "src.heretek_swarm.memory.persistent.Mem0Backend.add",
+                        "src.heretek_swarm.memory.persistent.Mem0Backend.update",
+                        "src.heretek_swarm.memory.persistent.Mem0Backend.get",
+                        "src.heretek_swarm.memory.persistent.Mem0Backend.delete_memory",
+                        "src.heretek_swarm.memory.persistent.Mem0Backend.delete_all",
+                        "src.heretek_swarm.memory.persistent.Mem0Backend.history",
+                        "src.heretek_swarm.memory.persistent.Mem0Backend.reset",
+                        "src.heretek_swarm.memory.persistent.Mem0Backend.configure"
                       ]
                     },
                     {
@@ -130258,7 +130410,7 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/memory/persistent.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.memory.persistent.Mem0Config",
                             "src.heretek_swarm.memory.persistent.Mem0Config.to_dict",
@@ -130286,7 +130438,15 @@
                             "src.heretek_swarm.memory.persistent.Mem0Backend.get_all",
                             "src.heretek_swarm.memory.persistent.Mem0Backend.delete",
                             "src.heretek_swarm.memory.persistent.Mem0Backend.store_batch",
-                            "src.heretek_swarm.memory.persistent.Mem0Backend.get_latency_stats"
+                            "src.heretek_swarm.memory.persistent.Mem0Backend.get_latency_stats",
+                            "src.heretek_swarm.memory.persistent.Mem0Backend.add",
+                            "src.heretek_swarm.memory.persistent.Mem0Backend.update",
+                            "src.heretek_swarm.memory.persistent.Mem0Backend.get",
+                            "src.heretek_swarm.memory.persistent.Mem0Backend.delete_memory",
+                            "src.heretek_swarm.memory.persistent.Mem0Backend.delete_all",
+                            "src.heretek_swarm.memory.persistent.Mem0Backend.history",
+                            "src.heretek_swarm.memory.persistent.Mem0Backend.reset",
+                            "src.heretek_swarm.memory.persistent.Mem0Backend.configure"
                           ]
                         },
                         {
@@ -132006,7 +132166,7 @@
                     },
                     {
                       "file_path": "src/heretek_swarm/api/main.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.api.main.lifespan",
                         "src.heretek_swarm.api.main._init_config_service",
@@ -132438,7 +132598,7 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/api/main.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.api.main.lifespan",
                             "src.heretek_swarm.api.main._init_config_service",

@@ -46,6 +46,7 @@ from heretek_swarm.api import (
     emergent_intelligence,
     evaluation,
     metrics,
+    memories,
     observability,
     plugins,
     provisioner,
@@ -425,7 +426,7 @@ app.add_middleware(
     allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "PATCH"],
-    allow_headers=["Authorization", "Content-Type", "X-Requested-With"],
+    allow_headers=["Authorization", "Content-Type", "X-Requested-With", "X-API-Key"],
 )
 
 # Setup logging middleware for request tracking
@@ -449,6 +450,7 @@ app.include_router(configuration.router)
 app.include_router(wizard.router)
 app.include_router(provisioner.router)
 app.include_router(metrics.router)
+app.include_router(memories.router)
 app.include_router(collective_evolution.router)
 
 # Setup Prometheus metrics middleware
