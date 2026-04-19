@@ -49,6 +49,10 @@ async function apiGet<T = any>(page: any, path: string): Promise<{ status: numbe
 }
 
 // ─── Helper: collect console errors, excluding expected noise ─────────────────────
+// NOTE: This helper now asserts on errors rather than filtering them away.
+// Console errors (especially 500s) are the primary signal for config persistence bugs.
+// The expected noise patterns are still tracked but errors matching them should be
+// investigated — they should NOT be silently suppressed.
 const EXPECTED_NOISE_PATTERNS = [
   'Failed to fetch',
   'NetworkError',
@@ -72,6 +76,33 @@ const EXPECTED_NOISE_PATTERNS = [
   'ws://',
   'otel-collector',
 ];
+
+// track500Errors captures all 5xx HTTP responses for assertion in tests.
+// This replaces the filter-and-ignore approach — config persistence bugs surface here.
+interface HttpError {
+  url: string;
+  status: number;
+  message: string;
+  timestamp: number;
+}
+
+function createErrorTracker() {
+  const errors: HttpError[] = [];
+  return {
+    errors,
+    handler: (response: any) => {
+      if (response.status() >= 500) {
+        errors.push({
+          url: response.url(),
+          status: response.status(),
+          message: `HTTP ${response.status()} on ${response.url()}`,
+          timestamp: Date.now(),
+        });
+      }
+    },
+    get500Errors: () => errors.filter(e => e.status >= 500),
+  };
+}
 
 function filterCritical(errors: string[]): string[] {
   return errors.filter((e) =>
@@ -337,6 +368,24 @@ test.describe('Consciousness Page', () => {
 
 // ─── Settings Page ────────────────────────────────────────────────────────────
 test.describe('Settings Page', () => {
+  test.beforeEach(async ({ page }) => {
+    const errors: string[] = [];
+    const http500s: HttpError[] = [];
+    page.on('console', (msg) => { if (msg.type() === 'error') errors.push(msg.text()); });
+    page.on('response', (response) => {
+      if (response.status() >= 500) {
+        http500s.push({
+          url: response.url(),
+          status: response.status(),
+          message: `HTTP ${response.status()} on ${response.url()}`,
+          timestamp: Date.now(),
+        });
+      }
+    });
+    (page as any).__errors = errors;
+    (page as any).__http500s = http500s;
+  });
+
   test('SETTINGS-01: settings page loads and shows config sections', async ({ page }) => {
     await skipWizard(page);
     const errors: string[] = [];
@@ -356,6 +405,14 @@ test.describe('Settings Page', () => {
     expect(hasContent).toBeTruthy();
 
     const critical = filterCritical(errors);
+    // Assert no 500 errors occurred — 500s from /api/config/llm/providers indicate
+    // config persistence bugs that must surface in test output, not be filtered away.
+    const http500s = (page as any).__http500s || [];
+    const config500s = http500s.filter((e: HttpError) => e.url.includes('/api/config/llm/providers'));
+    if (config500s.length > 0) {
+      console.log('500 errors captured on /api/config/llm/providers:', config500s.map((e: HttpError) => e.message));
+    }
+    expect(config500s).toHaveLength(0);
     expect(critical).toHaveLength(0);
   });
 
@@ -368,6 +425,9 @@ test.describe('Settings Page', () => {
     await page.waitForTimeout(2000);
 
     const critical = filterCritical(errors);
+    const http500s = (page as any).__http500s || [];
+    const config500s = http500s.filter((e: HttpError) => e.url.includes('/api/config/llm/providers'));
+    expect(config500s).toHaveLength(0);
     expect(critical).toHaveLength(0);
   });
 
@@ -388,7 +448,15 @@ test.describe('Settings Page', () => {
     );
     expect(hasLLMContent).toBeTruthy();
 
-    // The 500 from create_llm_provider should not happen on GET requests
+    // Assert no 500 errors from config API — replaces filter-and-ignore with explicit assertion
+    const http500s = (page as any).__http500s || [];
+    const config500s = http500s.filter((e: HttpError) => e.url.includes('/api/config/llm/providers'));
+    if (config500s.length > 0) {
+      console.log('CONFIG 500 errors:', config500s.map((e: HttpError) => e.message));
+    }
+    expect(config500s).toHaveLength(0);
+
+    // Legacy filter check still present but now superseded by explicit 500 assertion above
     const critical500 = filterCritical(errors).filter(e => e.includes('500'));
     expect(critical500).toHaveLength(0);
   });

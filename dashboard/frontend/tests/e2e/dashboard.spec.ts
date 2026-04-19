@@ -249,9 +249,19 @@ test.describe('Setup Wizard E2E', () => {
      * Verify no console errors occur during wizard flow
      */
     const consoleErrors: string[] = [];
+    const http500s: any[] = [];
     page.on('console', (msg) => {
       if (msg.type() === 'error') {
         consoleErrors.push(msg.text());
+      }
+    });
+    page.on('response', (response) => {
+      if (response.status() >= 500) {
+        http500s.push({
+          url: response.url(),
+          status: response.status(),
+          message: `HTTP ${response.status()} on ${response.url()}`,
+        });
       }
     });
 
@@ -286,6 +296,13 @@ test.describe('Setup Wizard E2E', () => {
     await page.getByRole('button', { name: /complete setup/i }).click();
     await expect(page.getByText('Setup Complete')).toBeVisible();
 
+    // Assert: no 500 errors from config API — 500s mean config didn't persist
+    const config500s = http500s.filter((e: any) => e.url.includes('/api/config/llm/providers'));
+    if (config500s.length > 0) {
+      console.log('CONFIG PERSISTENCE BUG: 500 errors captured:', config500s.map((e: any) => e.message));
+    }
+    expect(config500s).toHaveLength(0);
+
     // Filter out expected/benign errors (e.g., network errors from test environment)
     const criticalErrors = consoleErrors.filter(err => 
       !err.includes('Failed to fetch') && 
@@ -294,6 +311,66 @@ test.describe('Setup Wizard E2E', () => {
     );
 
     expect(criticalErrors).toHaveLength(0);
+  });
+
+  test('CONSOLE-500: assert no 500 errors from config API after wizard completion', async ({ page }) => {
+    /**
+     * Dedicated test to capture and assert on backend 500 errors.
+     * 
+     * The acceptance criteria says "capture and assert on console errors (not filter-and-ignore)".
+     * This test specifically tracks HTTP 500 responses from /api/config/llm/providers POST
+     * — the primary signal for config persistence bugs. If any 500s are captured, the test fails
+     * with the actual error message so the bug surfaces in test output rather than being suppressed.
+     */
+    const http500s: any[] = [];
+    page.on('response', (response) => {
+      if (response.status() >= 500) {
+        http500s.push({
+          url: response.url(),
+          status: response.status(),
+          message: `HTTP ${response.status()} from ${response.url()}`,
+          timestamp: Date.now(),
+        });
+      }
+    });
+
+    // Navigate and clear storage
+    await page.goto('/');
+    await page.evaluate(() => localStorage.clear());
+    await page.reload();
+
+    // Complete wizard - any config POST should succeed after wizard completes
+    await page.getByRole('button', { name: /get started/i }).click();
+    await page.getByPlaceholder('http://localhost:8000').fill(API_ENDPOINT);
+    await page.getByRole('button', { name: /continue/i }).click();
+    await page.getByPlaceholder('Enter your API key').fill(API_KEY);
+    await page.getByRole('button', { name: /continue/i }).click();
+
+    try {
+      await expect(page.getByText(/all connections verified/i, { exact: false })).toBeVisible({ timeout: 15000 });
+    } catch { /* services may fail */ }
+    
+    await page.getByRole('button', { name: /continue/i }).click();
+    
+    try {
+      await expect(page.getByText(/agent status/i, { exact: false })).toBeVisible({ timeout: 15000 });
+    } catch { /* agent may not be running */ }
+    
+    await page.getByRole('button', { name: /complete setup/i }).click();
+    await expect(page.getByText('Setup Complete')).toBeVisible();
+
+    // Wait a moment for any background config API calls
+    await page.waitForTimeout(2000);
+
+    // Assert: zero 500 errors from config API — this is the primary signal for persistence bugs
+    const config500s = http500s.filter((e: any) => e.url.includes('/api/config'));
+    
+    if (config500s.length > 0) {
+      const errorSummary = config500s.map((e: any) => `${e.status} at ${e.url}`).join(', ');
+      console.error(`CONFIG PERSISTENCE BUG DETECTED: ${errorSummary}`);
+    }
+    
+    expect(config500s).toHaveLength(0);
   });
 });
 
