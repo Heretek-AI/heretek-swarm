@@ -1,7 +1,7 @@
 {
   "repository_name": "heretek-swarm",
-  "timestamp": "2026-04-19T00:53:01.673630+00:00",
-  "overall_score": 0.9891031208383996,
+  "timestamp": "2026-04-19T01:25:47.708986+00:00",
+  "overall_score": 0.9900423114820611,
   "check_summaries": [
     {
       "check_name": "function_size",
@@ -790,107 +790,16 @@
       "description": "Detects unused imports, variables, functions, and dead code via LSP diagnostics",
       "language": "Python",
       "check_type": "standard",
-      "total_entities_checked": 34,
-      "findings_count": 34,
-      "warning_count": 1,
-      "score": 0.0,
+      "total_entities_checked": 4,
+      "findings_count": 4,
+      "warning_count": 0,
+      "score": 0.8,
       "finding_groups": [
         {
           "severity": "info",
           "threshold": 0,
           "description": "Variables declared but never used",
           "entities": [
-            {
-              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
-              "file_path": "src/heretek_swarm/api/configuration.py",
-              "line_start": 84,
-              "line_end": 84,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
-              "file_path": "src/heretek_swarm/api/configuration.py",
-              "line_start": 100,
-              "line_end": 100,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
-              "file_path": "src/heretek_swarm/api/configuration.py",
-              "line_start": 167,
-              "line_end": 167,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
-              "file_path": "src/heretek_swarm/api/configuration.py",
-              "line_start": 183,
-              "line_end": 183,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
-              "file_path": "src/heretek_swarm/api/configuration.py",
-              "line_start": 239,
-              "line_end": 239,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
-              "file_path": "src/heretek_swarm/api/configuration.py",
-              "line_start": 297,
-              "line_end": 297,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
-              "file_path": "src/heretek_swarm/api/configuration.py",
-              "line_start": 313,
-              "line_end": 313,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
-              "file_path": "src/heretek_swarm/api/configuration.py",
-              "line_start": 370,
-              "line_end": 370,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
-              "file_path": "src/heretek_swarm/api/configuration.py",
-              "line_start": 427,
-              "line_end": 427,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
-              "file_path": "src/heretek_swarm/api/configuration.py",
-              "line_start": 441,
-              "line_end": 441,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
-              "file_path": "src/heretek_swarm/api/configuration.py",
-              "line_start": 501,
-              "line_end": 501,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
-              "file_path": "src/heretek_swarm/api/configuration.py",
-              "line_start": 555,
-              "line_end": 555,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"service\" is not accessed",
-              "file_path": "src/heretek_swarm/api/configuration.py",
-              "line_start": 581,
-              "line_end": 581,
-              "metric_value": 0.0
-            },
             {
               "entity_name": "[unused_variable] \"config_type\" is not accessed",
               "file_path": "src/heretek_swarm/config/crud.py",
@@ -917,132 +826,6 @@
               "file_path": "src/heretek_swarm/config/crud.py",
               "line_start": 1023,
               "line_end": 1023,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"UTC\" is not accessed",
-              "file_path": "src/heretek_swarm/api/main.py",
-              "line_start": 19,
-              "line_end": 19,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"app\" is not accessed",
-              "file_path": "src/heretek_swarm/api/main.py",
-              "line_start": 90,
-              "line_end": 90,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"config_source\" is not accessed",
-              "file_path": "src/heretek_swarm/api/main.py",
-              "line_start": 130,
-              "line_end": 130,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"config_source\" is not accessed",
-              "file_path": "src/heretek_swarm/api/main.py",
-              "line_start": 138,
-              "line_end": 138,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"mesh\" is not accessed",
-              "file_path": "src/heretek_swarm/api/main.py",
-              "line_start": 315,
-              "line_end": 315,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
-              "file_path": "src/heretek_swarm/api/main.py",
-              "line_start": 595,
-              "line_end": 595,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
-              "file_path": "src/heretek_swarm/api/main.py",
-              "line_start": 624,
-              "line_end": 624,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
-              "file_path": "src/heretek_swarm/api/main.py",
-              "line_start": 658,
-              "line_end": 658,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
-              "file_path": "src/heretek_swarm/api/main.py",
-              "line_start": 686,
-              "line_end": 686,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
-              "file_path": "src/heretek_swarm/api/main.py",
-              "line_start": 716,
-              "line_end": 716,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
-              "file_path": "src/heretek_swarm/api/main.py",
-              "line_start": 735,
-              "line_end": 735,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
-              "file_path": "src/heretek_swarm/api/main.py",
-              "line_start": 801,
-              "line_end": 801,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
-              "file_path": "src/heretek_swarm/api/main.py",
-              "line_start": 846,
-              "line_end": 846,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
-              "file_path": "src/heretek_swarm/api/main.py",
-              "line_start": 868,
-              "line_end": 868,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
-              "file_path": "src/heretek_swarm/api/main.py",
-              "line_start": 913,
-              "line_end": 913,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
-              "file_path": "src/heretek_swarm/api/main.py",
-              "line_start": 952,
-              "line_end": 952,
-              "metric_value": 0.0
-            }
-          ]
-        },
-        {
-          "severity": "warning",
-          "threshold": 0,
-          "description": "Unused import statements that should be removed",
-          "entities": [
-            {
-              "entity_name": "[unused_import] Import \"UTC\" is not accessed",
-              "file_path": "src/heretek_swarm/api/main.py",
-              "line_start": 19,
-              "line_end": 19,
               "metric_value": 0.0
             }
           ]
@@ -1325,9 +1108,9 @@
         "src.components.Agents -> src.components.UI -> src.components.Settings -> src.api -> src.components.Agents",
         "src.components.Agents -> src.components.UI -> src.components.Settings -> src.components.Agents",
         "src.components.Agents -> src.components.UI -> src.utils -> src.components.Agents",
-        "src.components.Settings -> src.api -> src.components.UI -> src.components.Settings",
-        "src.components.Settings -> src.components.UI -> src.components.Settings",
-        "src.utils -> src.components.UI -> src.utils",
+        "src.components.UI -> src.components.Settings -> src.api -> src.components.UI",
+        "src.components.UI -> src.components.Settings -> src.components.UI",
+        "src.components.UI -> src.utils -> src.components.UI",
         "dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api -> dashboard.frontend.src.components.UI",
         "dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api -> dashboard.frontend.src.components.UI",
         "dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.UI",
@@ -1376,10 +1159,10 @@
       "description": "Detects unused imports, variables, functions, and dead code via LSP diagnostics",
       "language": "TypeScript",
       "check_type": "standard",
-      "total_entities_checked": 12,
-      "findings_count": 12,
+      "total_entities_checked": 24,
+      "findings_count": 24,
       "warning_count": 0,
-      "score": 0.3999999999999999,
+      "score": 0.0,
       "finding_groups": [
         {
           "severity": "info",
@@ -1387,80 +1170,150 @@
           "description": "Variables declared but never used",
           "entities": [
             {
-              "entity_name": "[unused_variable] 'providers' is declared but its value is never read.",
-              "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
-              "line_start": 50,
-              "line_end": 50,
+              "entity_name": "[unused_variable] 'DashboardLayout' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/App.tsx",
+              "line_start": 21,
+              "line_end": 21,
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_variable] 'loading' is declared but its value is never read.",
-              "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
-              "line_start": 51,
-              "line_end": 51,
+              "entity_name": "[unused_variable] 'HomePage' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/App.tsx",
+              "line_start": 22,
+              "line_end": 22,
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_variable] 'testing' is declared but its value is never read.",
-              "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
-              "line_start": 52,
-              "line_end": 52,
+              "entity_name": "[unused_variable] 'AgentsPage' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/App.tsx",
+              "line_start": 23,
+              "line_end": 23,
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_variable] 'showForm' is declared but its value is never read.",
-              "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
-              "line_start": 53,
-              "line_end": 53,
+              "entity_name": "[unused_variable] 'ConsciousnessPage' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/App.tsx",
+              "line_start": 24,
+              "line_end": 24,
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_variable] 'handleSubmit' is declared but its value is never read.",
-              "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
-              "line_start": 124,
-              "line_end": 124,
+              "entity_name": "[unused_variable] 'SettingsPage' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/App.tsx",
+              "line_start": 25,
+              "line_end": 25,
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_variable] 'handleDelete' is declared but its value is never read.",
-              "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
-              "line_start": 166,
-              "line_end": 166,
+              "entity_name": "[unused_variable] 'LogsPage' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/App.tsx",
+              "line_start": 26,
+              "line_end": 26,
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_variable] 'handleTest' is declared but its value is never read.",
-              "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
-              "line_start": 179,
-              "line_end": 179,
+              "entity_name": "[unused_variable] 'ToastProvider' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/App.tsx",
+              "line_start": 27,
+              "line_end": 27,
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_variable] 'handleProviderTypeChange' is declared but its value is never read.",
-              "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
-              "line_start": 199,
-              "line_end": 199,
+              "entity_name": "[unused_variable] 'ErrorBoundary' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/App.tsx",
+              "line_start": 28,
+              "line_end": 28,
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_variable] 'getProviderTypeLabel' is declared but its value is never read.",
-              "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
-              "line_start": 209,
-              "line_end": 209,
+              "entity_name": "[unused_variable] 'DebugPanel' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/App.tsx",
+              "line_start": 29,
+              "line_end": 29,
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_variable] 'getHealthStatusColor' is declared but its value is never read.",
-              "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
-              "line_start": 213,
-              "line_end": 213,
+              "entity_name": "[unused_variable] 'SetupWizard' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/App.tsx",
+              "line_start": 31,
+              "line_end": 31,
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_variable] 'provider' is declared but its value is never read.",
-              "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
-              "line_start": 259,
-              "line_end": 259,
+              "entity_name": "[unused_variable] 'Dashboard' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/App.tsx",
+              "line_start": 36,
+              "line_end": 36,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'CollectiveCanvas' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/App.tsx",
+              "line_start": 37,
+              "line_end": 37,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'WorkflowBuilder' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/App.tsx",
+              "line_start": 38,
+              "line_end": 38,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'Observability' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/App.tsx",
+              "line_start": 39,
+              "line_end": 39,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'ChatInterface' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/App.tsx",
+              "line_start": 40,
+              "line_end": 40,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'navItems' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/App.tsx",
+              "line_start": 54,
+              "line_end": 54,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'systemStatus' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/App.tsx",
+              "line_start": 67,
+              "line_end": 67,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'isConfigured' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/App.tsx",
+              "line_start": 72,
+              "line_end": 72,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'isRerunning' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/App.tsx",
+              "line_start": 73,
+              "line_end": 73,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'handleNavClick' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/App.tsx",
+              "line_start": 181,
+              "line_end": 181,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'handleSetupComplete' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/App.tsx",
+              "line_start": 186,
+              "line_end": 186,
               "metric_value": 0.0
             }
           ]
@@ -1472,9 +1325,23 @@
           "entities": [
             {
               "entity_name": "[unreachable_code] Unreachable code detected.",
-              "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
-              "line_start": 225,
-              "line_end": 233,
+              "file_path": "dashboard/frontend/src/App.tsx",
+              "line_start": 212,
+              "line_end": 212,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unreachable_code] Unreachable code detected.",
+              "file_path": "dashboard/frontend/src/App.tsx",
+              "line_start": 231,
+              "line_end": 236,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unreachable_code] Unreachable code detected.",
+              "file_path": "dashboard/frontend/src/App.tsx",
+              "line_start": 264,
+              "line_end": 267,
               "metric_value": 0.0
             }
           ]
@@ -1490,20 +1357,8 @@
       "composite_risk_score": 60.0
     },
     {
-      "file_path": "src/heretek_swarm/api/configuration.py",
-      "total_findings": 14,
-      "warning_findings": 1,
-      "composite_risk_score": 55.0
-    },
-    {
-      "file_path": "src/heretek_swarm/api/main.py",
-      "total_findings": 17,
-      "warning_findings": 1,
-      "composite_risk_score": 55.0
-    },
-    {
-      "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
-      "total_findings": 13,
+      "file_path": "dashboard/frontend/src/App.tsx",
+      "total_findings": 25,
       "warning_findings": 1,
       "composite_risk_score": 55.0
     },
@@ -1599,6 +1454,18 @@
     },
     {
       "file_path": "src/heretek_swarm/consciousness/phi_training.py",
+      "total_findings": 2,
+      "warning_findings": 2,
+      "composite_risk_score": 30.0
+    },
+    {
+      "file_path": "src/heretek_swarm/collective/adaptive_learning.py",
+      "total_findings": 2,
+      "warning_findings": 2,
+      "composite_risk_score": 30.0
+    },
+    {
+      "file_path": "src/heretek_swarm/actors/coordinator.py",
       "total_findings": 2,
       "warning_findings": 2,
       "composite_risk_score": 30.0

@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-19T00:53:00.376888+00:00",
+    "generated_at": "2026-04-19T01:25:45.731333+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -13944,14 +13944,14 @@
       ]
     },
     "src/heretek_swarm/config/crud.py": {
-      "file_status": "modified",
+      "file_status": "unchanged",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.config.crud.ConfigurationServiceCrud",
           "start_line": 54,
           "end_line": 1132,
           "node_type": "CLASS",
-          "status": "modified"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.config.crud.ConfigurationServiceCrud._log_change",
@@ -14105,7 +14105,7 @@
           "start_line": 647,
           "end_line": 687,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.config.crud.ConfigurationServiceCrud.update_embedding_provider",
@@ -14208,7 +14208,7 @@
       ]
     },
     "src/heretek_swarm/config/db_models.py": {
-      "file_status": "modified",
+      "file_status": "unchanged",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.config.db_models.Base",
@@ -14222,40 +14222,40 @@
           "start_line": 24,
           "end_line": 45,
           "node_type": "CLASS",
-          "status": "modified"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.config.db_models.LLMProvider",
-          "start_line": 47,
-          "end_line": 85,
+          "start_line": 48,
+          "end_line": 86,
           "node_type": "CLASS",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.config.db_models.EmbeddingProvider",
-          "start_line": 88,
-          "end_line": 121,
+          "start_line": 89,
+          "end_line": 122,
           "node_type": "CLASS",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.config.db_models.AgentConfig",
-          "start_line": 124,
-          "end_line": 153,
+          "start_line": 125,
+          "end_line": 154,
           "node_type": "CLASS",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.config.db_models.ConfigAuditLog",
-          "start_line": 156,
-          "end_line": 176,
+          "start_line": 157,
+          "end_line": 177,
           "node_type": "CLASS",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.config.db_models.ConfigCache",
-          "start_line": 179,
-          "end_line": 192,
+          "start_line": 180,
+          "end_line": 193,
           "node_type": "CLASS",
           "status": "unchanged"
         }
@@ -14503,7 +14503,7 @@
       ]
     },
     "src/heretek_swarm/config/models.py": {
-      "file_status": "modified",
+      "file_status": "unchanged",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.config.models.ConfigType",
@@ -14538,12 +14538,12 @@
           "start_line": 60,
           "end_line": 81,
           "node_type": "CLASS",
-          "status": "modified"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.config.models.UserConfiguration.Config",
-          "start_line": 75,
-          "end_line": 80,
+          "start_line": 76,
+          "end_line": 81,
           "node_type": "CLASS",
           "status": "unchanged"
         },
@@ -14552,243 +14552,243 @@
           "start_line": 84,
           "end_line": 94,
           "node_type": "CLASS",
-          "status": "modified"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.config.models.UserConfigurationUpdate",
-          "start_line": 95,
-          "end_line": 100,
+          "start_line": 97,
+          "end_line": 102,
           "node_type": "CLASS",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.config.models.LLMProvider",
-          "start_line": 107,
-          "end_line": 139,
+          "start_line": 109,
+          "end_line": 141,
           "node_type": "CLASS",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.config.models.LLMProvider.Config",
-          "start_line": 134,
-          "end_line": 139,
+          "start_line": 136,
+          "end_line": 141,
           "node_type": "CLASS",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.config.models.LLMProviderCreate",
-          "start_line": 142,
-          "end_line": 162,
+          "start_line": 144,
+          "end_line": 164,
           "node_type": "CLASS",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.config.models.LLMProviderUpdate",
-          "start_line": 165,
-          "end_line": 183,
+          "start_line": 167,
+          "end_line": 185,
           "node_type": "CLASS",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.config.models.LLMProviderTestRequest",
-          "start_line": 186,
-          "end_line": 190,
+          "start_line": 188,
+          "end_line": 192,
           "node_type": "CLASS",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.config.models.LLMProviderTestResponse",
-          "start_line": 193,
-          "end_line": 200,
+          "start_line": 195,
+          "end_line": 202,
           "node_type": "CLASS",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.config.models.EmbeddingProvider",
-          "start_line": 207,
-          "end_line": 235,
+          "start_line": 209,
+          "end_line": 237,
           "node_type": "CLASS",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.config.models.EmbeddingProvider.Config",
-          "start_line": 230,
-          "end_line": 235,
+          "start_line": 232,
+          "end_line": 237,
           "node_type": "CLASS",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.config.models.EmbeddingProviderCreate",
-          "start_line": 238,
-          "end_line": 254,
+          "start_line": 240,
+          "end_line": 256,
           "node_type": "CLASS",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.config.models.EmbeddingProviderUpdate",
-          "start_line": 257,
-          "end_line": 271,
+          "start_line": 259,
+          "end_line": 273,
           "node_type": "CLASS",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.config.models.EmbeddingProviderTestRequest",
-          "start_line": 274,
-          "end_line": 277,
+          "start_line": 276,
+          "end_line": 279,
           "node_type": "CLASS",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.config.models.EmbeddingProviderTestResponse",
-          "start_line": 280,
-          "end_line": 287,
+          "start_line": 282,
+          "end_line": 289,
           "node_type": "CLASS",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.config.models.AgentConfig",
-          "start_line": 294,
-          "end_line": 317,
+          "start_line": 296,
+          "end_line": 319,
           "node_type": "CLASS",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.config.models.AgentConfig.Config",
-          "start_line": 312,
-          "end_line": 317,
+          "start_line": 314,
+          "end_line": 319,
           "node_type": "CLASS",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.config.models.AgentConfigCreate",
-          "start_line": 320,
-          "end_line": 331,
+          "start_line": 322,
+          "end_line": 333,
           "node_type": "CLASS",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.config.models.AgentConfigUpdate",
-          "start_line": 334,
-          "end_line": 343,
+          "start_line": 336,
+          "end_line": 345,
           "node_type": "CLASS",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.config.models.ConfigAuditLog",
-          "start_line": 350,
-          "end_line": 368,
+          "start_line": 352,
+          "end_line": 370,
           "node_type": "CLASS",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.config.models.ConfigAuditLog.Config",
-          "start_line": 364,
-          "end_line": 368,
+          "start_line": 366,
+          "end_line": 370,
           "node_type": "CLASS",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.config.models.ConfigCacheEntry",
-          "start_line": 375,
-          "end_line": 382,
+          "start_line": 377,
+          "end_line": 384,
           "node_type": "CLASS",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.config.models.ConfigurationExport",
-          "start_line": 389,
-          "end_line": 397,
+          "start_line": 391,
+          "end_line": 399,
           "node_type": "CLASS",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.config.models.ConfigurationImport",
-          "start_line": 400,
-          "end_line": 406,
+          "start_line": 402,
+          "end_line": 408,
           "node_type": "CLASS",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.config.models.ImportOptions",
-          "start_line": 409,
-          "end_line": 416,
+          "start_line": 411,
+          "end_line": 418,
           "node_type": "CLASS",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.config.models.ImportResult",
-          "start_line": 419,
-          "end_line": 426,
+          "start_line": 421,
+          "end_line": 428,
           "node_type": "CLASS",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.config.models.MCPProviderType",
-          "start_line": 434,
-          "end_line": 437,
+          "start_line": 436,
+          "end_line": 439,
           "node_type": "CLASS",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.config.models.MCPProvider",
-          "start_line": 440,
-          "end_line": 463,
+          "start_line": 442,
+          "end_line": 465,
           "node_type": "CLASS",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.config.models.MCPProvider.Config",
-          "start_line": 458,
-          "end_line": 463,
+          "start_line": 460,
+          "end_line": 465,
           "node_type": "CLASS",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.config.models.MCPProviderCreate",
-          "start_line": 466,
-          "end_line": 477,
+          "start_line": 468,
+          "end_line": 479,
           "node_type": "CLASS",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.config.models.MCPProviderUpdate",
-          "start_line": 480,
-          "end_line": 489,
+          "start_line": 482,
+          "end_line": 491,
           "node_type": "CLASS",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.config.models.MCPProviderTestResponse",
-          "start_line": 492,
-          "end_line": 498,
+          "start_line": 494,
+          "end_line": 500,
           "node_type": "CLASS",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.config.models.MCPConfig",
-          "start_line": 501,
-          "end_line": 520,
+          "start_line": 503,
+          "end_line": 522,
           "node_type": "CLASS",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.config.models.MCPConfig.Config",
-          "start_line": 515,
-          "end_line": 520,
+          "start_line": 517,
+          "end_line": 522,
           "node_type": "CLASS",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.config.models.MCPConfigCreate",
-          "start_line": 523,
-          "end_line": 532,
+          "start_line": 525,
+          "end_line": 534,
           "node_type": "CLASS",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.config.models.MCPConfigUpdate",
-          "start_line": 535,
-          "end_line": 543,
+          "start_line": 537,
+          "end_line": 545,
           "node_type": "CLASS",
           "status": "unchanged"
         }
@@ -25458,7 +25458,7 @@
       ]
     },
     "src/heretek_swarm/llm/providers/factory.py": {
-      "file_status": "modified",
+      "file_status": "unchanged",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.llm.providers.factory.register_provider",
@@ -25493,26 +25493,26 @@
           "start_line": 92,
           "end_line": 223,
           "node_type": "FUNCTION",
-          "status": "modified"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.llm.providers.factory.create_llm_provider_from_db_config",
-          "start_line": 225,
-          "end_line": 256,
+          "start_line": 226,
+          "end_line": 257,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.llm.providers.factory.get_provider_info",
-          "start_line": 259,
-          "end_line": 303,
+          "start_line": 260,
+          "end_line": 304,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.llm.providers.factory.get_all_provider_info",
-          "start_line": 306,
-          "end_line": 313,
+          "start_line": 307,
+          "end_line": 314,
           "node_type": "FUNCTION",
           "status": "unchanged"
         }
@@ -39533,7 +39533,7 @@
       ]
     },
     "dashboard/frontend/src/App.tsx": {
-      "file_status": "modified",
+      "file_status": "unchanged",
       "methods": [
         {
           "qualified_name": "dashboard.frontend.src.App._safeUrl",
@@ -39544,64 +39544,64 @@
         },
         {
           "qualified_name": "dashboard.frontend.src.App.DashboardContent",
-          "start_line": 63,
-          "end_line": 252,
+          "start_line": 65,
+          "end_line": 254,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.App.DashboardContent.useEffect() callback.error",
-          "start_line": 131,
-          "end_line": 131,
+          "start_line": 133,
+          "end_line": 133,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.App.DashboardContent.checkSystemHealth.useCallback() callback",
-          "start_line": 136,
-          "end_line": 168,
+          "start_line": 138,
+          "end_line": 170,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.App.DashboardContent.useEffect() callback",
-          "start_line": 170,
-          "end_line": 177,
+          "start_line": 172,
+          "end_line": 179,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.App.DashboardContent.handleNavClick.useCallback() callback",
-          "start_line": 179,
-          "end_line": 181,
+          "start_line": 181,
+          "end_line": 183,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.App.DashboardContent.handleSetupComplete.useCallback() callback",
-          "start_line": 184,
-          "end_line": 188,
+          "start_line": 186,
+          "end_line": 190,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.App.DashboardContent.handleRerunSetup.useCallback() callback",
-          "start_line": 191,
-          "end_line": 195,
+          "start_line": 193,
+          "end_line": 197,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.App.DashboardContent.showSetup",
-          "start_line": 239,
-          "end_line": 249,
+          "start_line": 241,
+          "end_line": 251,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.App.App",
-          "start_line": 257,
-          "end_line": 266,
+          "start_line": 259,
+          "end_line": 268,
           "node_type": "FUNCTION",
           "status": "unchanged"
         }
@@ -39835,7 +39835,7 @@
       ]
     },
     "dashboard/frontend/src/api/configuration.ts": {
-      "file_status": "modified",
+      "file_status": "unchanged",
       "methods": [
         {
           "qualified_name": "dashboard.frontend.src.api.configuration.UserConfiguration",
@@ -39849,243 +39849,236 @@
           "start_line": 28,
           "end_line": 43,
           "node_type": "INTERFACE",
-          "status": "modified"
+          "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.api.configuration.EmbeddingProvider",
-          "start_line": 44,
-          "end_line": 58,
+          "start_line": 45,
+          "end_line": 59,
           "node_type": "INTERFACE",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.api.configuration.AgentConfig",
-          "start_line": 60,
-          "end_line": 74,
+          "start_line": 61,
+          "end_line": 75,
           "node_type": "INTERFACE",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.api.configuration.LLMProviderCreate",
-          "start_line": 76,
-          "end_line": 87,
+          "start_line": 77,
+          "end_line": 88,
           "node_type": "INTERFACE",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.api.configuration.EmbeddingProviderCreate",
-          "start_line": 89,
-          "end_line": 100,
+          "start_line": 90,
+          "end_line": 101,
           "node_type": "INTERFACE",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.api.configuration.ProviderTestResult",
-          "start_line": 102,
-          "end_line": 109,
+          "start_line": 103,
+          "end_line": 110,
           "node_type": "INTERFACE",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.api.configuration.EmbeddingProviderTestResult",
-          "start_line": 111,
-          "end_line": 118,
+          "start_line": 112,
+          "end_line": 119,
           "node_type": "INTERFACE",
           "status": "unchanged"
         },
         {
-          "qualified_name": "dashboard.frontend.src.api.configuration.configurationApi",
-          "start_line": 124,
-          "end_line": 281,
-          "node_type": "CLASS",
-          "status": "deleted"
-        },
-        {
           "qualified_name": "dashboard.frontend.src.api.configuration.configurationApi.getConfigs",
-          "start_line": 126,
-          "end_line": 130,
+          "start_line": 127,
+          "end_line": 131,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.api.configuration.configurationApi.getConfig",
-          "start_line": 132,
-          "end_line": 135,
+          "start_line": 133,
+          "end_line": 136,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.api.configuration.configurationApi.updateConfig",
-          "start_line": 137,
-          "end_line": 140,
+          "start_line": 138,
+          "end_line": 141,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.api.configuration.configurationApi.createConfig",
-          "start_line": 142,
-          "end_line": 145,
+          "start_line": 143,
+          "end_line": 146,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.api.configuration.configurationApi.deleteConfig",
-          "start_line": 147,
-          "end_line": 149,
+          "start_line": 148,
+          "end_line": 150,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.api.configuration.configurationApi.listLLMProviders",
-          "start_line": 152,
-          "end_line": 158,
+          "start_line": 153,
+          "end_line": 159,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.api.configuration.configurationApi.getLLMProvider",
-          "start_line": 160,
-          "end_line": 163,
+          "start_line": 161,
+          "end_line": 164,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.api.configuration.configurationApi.createLLMProvider",
-          "start_line": 165,
-          "end_line": 168,
+          "start_line": 166,
+          "end_line": 169,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.api.configuration.configurationApi.updateLLMProvider",
-          "start_line": 170,
-          "end_line": 173,
+          "start_line": 171,
+          "end_line": 174,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.api.configuration.configurationApi.deleteLLMProvider",
-          "start_line": 175,
-          "end_line": 177,
+          "start_line": 176,
+          "end_line": 178,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.api.configuration.configurationApi.testLLMProvider",
-          "start_line": 179,
-          "end_line": 186,
+          "start_line": 180,
+          "end_line": 187,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.api.configuration.configurationApi.listLLMProviderTypes",
-          "start_line": 188,
-          "end_line": 191,
+          "start_line": 189,
+          "end_line": 192,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.api.configuration.configurationApi.listEmbeddingProviders",
-          "start_line": 194,
-          "end_line": 200,
+          "start_line": 195,
+          "end_line": 201,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.api.configuration.configurationApi.getEmbeddingProvider",
-          "start_line": 202,
-          "end_line": 205,
+          "start_line": 203,
+          "end_line": 206,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.api.configuration.configurationApi.createEmbeddingProvider",
-          "start_line": 207,
-          "end_line": 210,
+          "start_line": 208,
+          "end_line": 211,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.api.configuration.configurationApi.updateEmbeddingProvider",
-          "start_line": 212,
-          "end_line": 215,
+          "start_line": 213,
+          "end_line": 216,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.api.configuration.configurationApi.deleteEmbeddingProvider",
-          "start_line": 217,
-          "end_line": 219,
+          "start_line": 218,
+          "end_line": 220,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.api.configuration.configurationApi.testEmbeddingProvider",
-          "start_line": 221,
-          "end_line": 227,
+          "start_line": 222,
+          "end_line": 228,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.api.configuration.configurationApi.listEmbeddingProviderTypes",
-          "start_line": 229,
-          "end_line": 232,
+          "start_line": 230,
+          "end_line": 233,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.api.configuration.configurationApi.listAgentConfigs",
-          "start_line": 235,
-          "end_line": 241,
+          "start_line": 236,
+          "end_line": 242,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.api.configuration.configurationApi.getAgentConfig",
-          "start_line": 243,
-          "end_line": 246,
+          "start_line": 244,
+          "end_line": 247,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.api.configuration.configurationApi.createAgentConfig",
-          "start_line": 248,
-          "end_line": 251,
+          "start_line": 249,
+          "end_line": 252,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.api.configuration.configurationApi.updateAgentConfig",
-          "start_line": 253,
-          "end_line": 256,
+          "start_line": 254,
+          "end_line": 257,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.api.configuration.configurationApi.deleteAgentConfig",
-          "start_line": 258,
-          "end_line": 260,
+          "start_line": 259,
+          "end_line": 261,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.api.configuration.configurationApi.exportConfigurations",
-          "start_line": 263,
-          "end_line": 266,
+          "start_line": 264,
+          "end_line": 267,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.api.configuration.configurationApi.importConfigurations",
-          "start_line": 268,
-          "end_line": 274,
+          "start_line": 269,
+          "end_line": 275,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.api.configuration.configurationApi.migrateFromEnv",
-          "start_line": 277,
-          "end_line": 280,
+          "start_line": 278,
+          "end_line": 281,
           "node_type": "METHOD",
           "status": "unchanged"
         }
@@ -41089,7 +41082,7 @@
       ]
     },
     "dashboard/frontend/src/components/Canvas/Canvas.tsx": {
-      "file_status": "modified",
+      "file_status": "unchanged",
       "methods": [
         {
           "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.AgentApiResponse",
@@ -41103,159 +41096,159 @@
           "start_line": 94,
           "end_line": 300,
           "node_type": "FUNCTION",
-          "status": "modified"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback",
-          "start_line": 112,
-          "end_line": 116,
-          "node_type": "FUNCTION",
-          "status": "modified"
+          "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.activeEdges.forEach() callback",
-          "start_line": 119,
-          "end_line": 132,
+          "start_line": 121,
+          "end_line": 134,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.setEdges() callback",
-          "start_line": 135,
-          "end_line": 138,
+          "start_line": 137,
+          "end_line": 140,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.setEdges() callback.userEdges.prevEdges.filter() callback",
-          "start_line": 136,
-          "end_line": 136,
+          "start_line": 138,
+          "end_line": 138,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setShowMetrics() callback",
-          "start_line": 145,
-          "end_line": 145,
+          "start_line": 147,
+          "end_line": 147,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.fetchAgents.useCallback() callback",
-          "start_line": 153,
-          "end_line": 185,
+          "start_line": 155,
+          "end_line": 187,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.fetchAgents.useCallback() callback.agentNodes.data.agents.map() callback",
-          "start_line": 161,
-          "end_line": 174,
+          "start_line": 163,
+          "end_line": 176,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onConnect.useCallback() callback",
-          "start_line": 201,
-          "end_line": 203,
+          "start_line": 203,
+          "end_line": 205,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onConnect.useCallback() callback.setEdges() callback",
-          "start_line": 202,
-          "end_line": 202,
+          "start_line": 204,
+          "end_line": 204,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.addNodeFromPalette.useCallback() callback",
-          "start_line": 208,
-          "end_line": 223,
+          "start_line": 210,
+          "end_line": 225,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.addNodeFromPalette.useCallback() callback.setNodes() callback",
-          "start_line": 222,
-          "end_line": 222,
+          "start_line": 224,
+          "end_line": 224,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onNodeClick.useCallback() callback",
-          "start_line": 226,
-          "end_line": 228,
+          "start_line": 228,
+          "end_line": 230,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onPaneClick.useCallback() callback",
-          "start_line": 231,
-          "end_line": 233,
+          "start_line": 233,
+          "end_line": 235,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback",
+          "start_line": 238,
+          "end_line": 252,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setNodes() callback",
-          "start_line": 243,
-          "end_line": 243,
+          "start_line": 245,
+          "end_line": 245,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setNodes() callback.nds.filter() callback",
-          "start_line": 243,
-          "end_line": 243,
+          "start_line": 245,
+          "end_line": 245,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setEdges() callback",
-          "start_line": 244,
-          "end_line": 244,
+          "start_line": 246,
+          "end_line": 246,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setEdges() callback.eds.filter() callback",
-          "start_line": 244,
-          "end_line": 244,
+          "start_line": 246,
+          "end_line": 246,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.NODE_PALETTE.map() callback",
-          "start_line": 282,
-          "end_line": 283,
+          "start_line": 284,
+          "end_line": 285,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.<unknown>..nodes.map() callback",
-          "start_line": 288,
-          "end_line": 290,
+          "start_line": 290,
+          "end_line": 292,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.setShowPalette() callback",
-          "start_line": 309,
-          "end_line": 309,
+          "start_line": 311,
+          "end_line": 311,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.<function>.setShowMetrics() callback",
-          "start_line": 322,
-          "end_line": 322,
+          "start_line": 324,
+          "end_line": 324,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.<function>",
-          "start_line": 371,
-          "end_line": 381,
+          "start_line": 381,
+          "end_line": 391,
           "node_type": "FUNCTION",
           "status": "unchanged"
         }
@@ -44309,7 +44302,7 @@
       ]
     },
     "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx": {
-      "file_status": "modified",
+      "file_status": "unchanged",
       "methods": [
         {
           "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSectionProps",
@@ -44323,201 +44316,124 @@
           "start_line": 16,
           "end_line": 27,
           "node_type": "INTERFACE",
-          "status": "modified"
+          "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection",
           "start_line": 49,
           "end_line": 233,
           "node_type": "FUNCTION",
-          "status": "modified"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.loadProviders",
-          "start_line": 68,
-          "end_line": 78,
-          "node_type": "CLASS",
-          "status": "deleted"
+          "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.loadProviders.useCallback() callback",
-          "start_line": 68,
-          "end_line": 78,
+          "start_line": 70,
+          "end_line": 80,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.useEffect() callback",
-          "start_line": 80,
-          "end_line": 82,
+          "start_line": 82,
+          "end_line": 84,
           "node_type": "FUNCTION",
           "status": "unchanged"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleOpenForm",
-          "start_line": 84,
-          "end_line": 113,
-          "node_type": "CLASS",
-          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleOpenForm.useCallback() callback",
           "start_line": 86,
           "end_line": 117,
           "node_type": "FUNCTION",
-          "status": "modified"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleCloseForm",
-          "start_line": 115,
-          "end_line": 118,
-          "node_type": "CLASS",
-          "status": "deleted"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleCloseForm.useCallback() callback",
-          "start_line": 115,
-          "end_line": 118,
-          "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
-          "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleSubmit",
-          "start_line": 120,
-          "end_line": 155,
-          "node_type": "CLASS",
-          "status": "deleted"
+          "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleCloseForm.useCallback() callback",
+          "start_line": 119,
+          "end_line": 122,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleSubmit.useCallback() callback",
           "start_line": 124,
           "end_line": 164,
           "node_type": "FUNCTION",
-          "status": "modified"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleDelete",
-          "start_line": 157,
-          "end_line": 168,
-          "node_type": "CLASS",
-          "status": "deleted"
+          "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleDelete.useCallback() callback",
-          "start_line": 157,
-          "end_line": 168,
+          "start_line": 166,
+          "end_line": 177,
           "node_type": "FUNCTION",
           "status": "unchanged"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleTest",
-          "start_line": 170,
-          "end_line": 188,
-          "node_type": "CLASS",
-          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleTest.useCallback() callback",
-          "start_line": 170,
-          "end_line": 188,
-          "node_type": "FUNCTION",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleProviderTypeChange",
-          "start_line": 190,
-          "end_line": 198,
-          "node_type": "CLASS",
-          "status": "deleted"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleProviderTypeChange.useCallback() callback",
-          "start_line": 190,
-          "end_line": 198,
-          "node_type": "FUNCTION",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleProviderTypeChange.useCallback() callback.providerType",
-          "start_line": 191,
-          "end_line": 191,
-          "node_type": "CLASS",
-          "status": "deleted"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleProviderTypeChange.useCallback() callback.providerType.PROVIDER_TYPES.find() callback",
-          "start_line": 191,
-          "end_line": 191,
-          "node_type": "FUNCTION",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleProviderTypeChange.useCallback() callback.setFormData() callback",
-          "start_line": 192,
+          "start_line": 179,
           "end_line": 197,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
-          "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.getProviderTypeLabel",
+          "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleProviderTypeChange.useCallback() callback",
+          "start_line": 199,
+          "end_line": 207,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleProviderTypeChange.useCallback() callback.providerType.PROVIDER_TYPES.find() callback",
           "start_line": 200,
-          "end_line": 202,
-          "node_type": "CLASS",
-          "status": "deleted"
+          "end_line": 200,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleProviderTypeChange.useCallback() callback.setFormData() callback",
+          "start_line": 201,
+          "end_line": 206,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.getProviderTypeLabel.useCallback() callback",
-          "start_line": 200,
-          "end_line": 202,
+          "start_line": 209,
+          "end_line": 211,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.getProviderTypeLabel.useCallback() callback.PROVIDER_TYPES.find() callback",
-          "start_line": 201,
-          "end_line": 201,
+          "start_line": 210,
+          "end_line": 210,
           "node_type": "FUNCTION",
           "status": "unchanged"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.getHealthStatusColor",
-          "start_line": 204,
-          "end_line": 211,
-          "node_type": "CLASS",
-          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.getHealthStatusColor.useCallback() callback",
-          "start_line": 204,
-          "end_line": 211,
+          "start_line": 213,
+          "end_line": 220,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
-          "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection..map() callback",
-          "start_line": 240,
-          "end_line": 242,
-          "node_type": "FUNCTION",
-          "status": "deleted"
-        },
-        {
           "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.<unknown>.getProviderTypeLabel",
-          "start_line": 250,
-          "end_line": 250,
+          "start_line": 259,
+          "end_line": 259,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.<unknown>..map() callback",
-          "start_line": 348,
-          "end_line": 349,
+          "start_line": 357,
+          "end_line": 358,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.setFormData() callback",
-          "start_line": 437,
-          "end_line": 437,
+          "start_line": 465,
+          "end_line": 465,
           "node_type": "FUNCTION",
           "status": "unchanged"
         }
@@ -48889,7 +48805,7 @@
       ]
     },
     "dashboard/frontend/src/hooks/useWebSocket.ts": {
-      "file_status": "modified",
+      "file_status": "unchanged",
       "methods": [
         {
           "qualified_name": "dashboard.frontend.src.hooks.useWebSocket.WebSocketMessage",
@@ -48910,26 +48826,12 @@
           "start_line": 24,
           "end_line": 142,
           "node_type": "FUNCTION",
-          "status": "modified"
+          "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.apiHost.<function>",
           "start_line": 45,
           "end_line": 52,
-          "node_type": "FUNCTION",
-          "status": "added"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect",
-          "start_line": 46,
-          "end_line": 89,
-          "node_type": "CLASS",
-          "status": "deleted"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onopen",
-          "start_line": 54,
-          "end_line": 58,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
@@ -48938,82 +48840,75 @@
           "start_line": 54,
           "end_line": 102,
           "node_type": "FUNCTION",
-          "status": "modified"
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onopen",
+          "start_line": 67,
+          "end_line": 71,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onclose",
-          "start_line": 60,
-          "end_line": 69,
+          "start_line": 73,
+          "end_line": 82,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onmessage",
-          "start_line": 71,
-          "end_line": 79,
+          "start_line": 84,
+          "end_line": 92,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onerror",
-          "start_line": 81,
-          "end_line": 84,
+          "start_line": 94,
+          "end_line": 97,
           "node_type": "FUNCTION",
           "status": "unchanged"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.hooks.useWebSocket.sendMessage",
-          "start_line": 91,
-          "end_line": 98,
-          "node_type": "CLASS",
-          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.sendMessage.useCallback() callback",
-          "start_line": 91,
-          "end_line": 98,
+          "start_line": 104,
+          "end_line": 111,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
-          "qualified_name": "dashboard.frontend.src.hooks.useWebSocket.disconnect",
-          "start_line": 100,
-          "end_line": 110,
-          "node_type": "CLASS",
-          "status": "deleted"
-        },
-        {
           "qualified_name": "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.disconnect.useCallback() callback",
-          "start_line": 100,
-          "end_line": 110,
+          "start_line": 113,
+          "end_line": 123,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.useEffect() callback",
-          "start_line": 113,
-          "end_line": 120,
+          "start_line": 126,
+          "end_line": 133,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.hooks.useWebSocket.useAgentEvents",
-          "start_line": 134,
-          "end_line": 140,
+          "start_line": 147,
+          "end_line": 153,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.hooks.useWebSocket.useMetricsStream",
-          "start_line": 145,
-          "end_line": 151,
+          "start_line": 158,
+          "end_line": 164,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.hooks.useWebSocket.useExecutionStream",
-          "start_line": 156,
-          "end_line": 165,
+          "start_line": 169,
+          "end_line": 178,
           "node_type": "FUNCTION",
           "status": "unchanged"
         }
@@ -52209,7 +52104,7 @@
       ]
     },
     "src/heretek_swarm/api/agents_management.py": {
-      "file_status": "modified",
+      "file_status": "unchanged",
       "methods": []
     },
     "src/heretek_swarm/collective/__init__.py": {
@@ -52332,7 +52227,7 @@
       ]
     },
     "src/heretek_swarm/api/agents/__init__.py": {
-      "file_status": "modified",
+      "file_status": "unchanged",
       "methods": []
     }
   },
@@ -67695,7 +67590,7 @@
       "start_line": 54,
       "end_line": 1132,
       "type": "CLASS",
-      "status": "modified"
+      "status": "unchanged"
     },
     "src/heretek_swarm/config/crud.py|src.heretek_swarm.config.crud.ConfigurationServiceCrud._log_change": {
       "file_path": "src/heretek_swarm/config/crud.py",
@@ -67871,7 +67766,7 @@
       "start_line": 647,
       "end_line": 687,
       "type": "METHOD",
-      "status": "modified"
+      "status": "unchanged"
     },
     "src/heretek_swarm/config/crud.py|src.heretek_swarm.config.crud.ConfigurationServiceCrud.update_embedding_provider": {
       "file_path": "src/heretek_swarm/config/crud.py",
@@ -67999,45 +67894,45 @@
       "start_line": 24,
       "end_line": 45,
       "type": "CLASS",
-      "status": "modified"
+      "status": "unchanged"
     },
     "src/heretek_swarm/config/db_models.py|src.heretek_swarm.config.db_models.LLMProvider": {
       "file_path": "src/heretek_swarm/config/db_models.py",
       "qualified_name": "src.heretek_swarm.config.db_models.LLMProvider",
-      "start_line": 47,
-      "end_line": 85,
+      "start_line": 48,
+      "end_line": 86,
       "type": "CLASS",
       "status": "unchanged"
     },
     "src/heretek_swarm/config/db_models.py|src.heretek_swarm.config.db_models.EmbeddingProvider": {
       "file_path": "src/heretek_swarm/config/db_models.py",
       "qualified_name": "src.heretek_swarm.config.db_models.EmbeddingProvider",
-      "start_line": 88,
-      "end_line": 121,
+      "start_line": 89,
+      "end_line": 122,
       "type": "CLASS",
       "status": "unchanged"
     },
     "src/heretek_swarm/config/db_models.py|src.heretek_swarm.config.db_models.AgentConfig": {
       "file_path": "src/heretek_swarm/config/db_models.py",
       "qualified_name": "src.heretek_swarm.config.db_models.AgentConfig",
-      "start_line": 124,
-      "end_line": 153,
+      "start_line": 125,
+      "end_line": 154,
       "type": "CLASS",
       "status": "unchanged"
     },
     "src/heretek_swarm/config/db_models.py|src.heretek_swarm.config.db_models.ConfigAuditLog": {
       "file_path": "src/heretek_swarm/config/db_models.py",
       "qualified_name": "src.heretek_swarm.config.db_models.ConfigAuditLog",
-      "start_line": 156,
-      "end_line": 176,
+      "start_line": 157,
+      "end_line": 177,
       "type": "CLASS",
       "status": "unchanged"
     },
     "src/heretek_swarm/config/db_models.py|src.heretek_swarm.config.db_models.ConfigCache": {
       "file_path": "src/heretek_swarm/config/db_models.py",
       "qualified_name": "src.heretek_swarm.config.db_models.ConfigCache",
-      "start_line": 179,
-      "end_line": 192,
+      "start_line": 180,
+      "end_line": 193,
       "type": "CLASS",
       "status": "unchanged"
     },
@@ -68343,13 +68238,13 @@
       "start_line": 60,
       "end_line": 81,
       "type": "CLASS",
-      "status": "modified"
+      "status": "unchanged"
     },
     "src/heretek_swarm/config/models.py|src.heretek_swarm.config.models.UserConfiguration.Config": {
       "file_path": "src/heretek_swarm/config/models.py",
       "qualified_name": "src.heretek_swarm.config.models.UserConfiguration.Config",
-      "start_line": 75,
-      "end_line": 80,
+      "start_line": 76,
+      "end_line": 81,
       "type": "CLASS",
       "status": "unchanged"
     },
@@ -68359,277 +68254,277 @@
       "start_line": 84,
       "end_line": 94,
       "type": "CLASS",
-      "status": "modified"
+      "status": "unchanged"
     },
     "src/heretek_swarm/config/models.py|src.heretek_swarm.config.models.UserConfigurationUpdate": {
       "file_path": "src/heretek_swarm/config/models.py",
       "qualified_name": "src.heretek_swarm.config.models.UserConfigurationUpdate",
-      "start_line": 95,
-      "end_line": 100,
+      "start_line": 97,
+      "end_line": 102,
       "type": "CLASS",
       "status": "unchanged"
     },
     "src/heretek_swarm/config/models.py|src.heretek_swarm.config.models.LLMProvider": {
       "file_path": "src/heretek_swarm/config/models.py",
       "qualified_name": "src.heretek_swarm.config.models.LLMProvider",
-      "start_line": 107,
-      "end_line": 139,
+      "start_line": 109,
+      "end_line": 141,
       "type": "CLASS",
       "status": "unchanged"
     },
     "src/heretek_swarm/config/models.py|src.heretek_swarm.config.models.LLMProvider.Config": {
       "file_path": "src/heretek_swarm/config/models.py",
       "qualified_name": "src.heretek_swarm.config.models.LLMProvider.Config",
-      "start_line": 134,
-      "end_line": 139,
+      "start_line": 136,
+      "end_line": 141,
       "type": "CLASS",
       "status": "unchanged"
     },
     "src/heretek_swarm/config/models.py|src.heretek_swarm.config.models.LLMProviderCreate": {
       "file_path": "src/heretek_swarm/config/models.py",
       "qualified_name": "src.heretek_swarm.config.models.LLMProviderCreate",
-      "start_line": 142,
-      "end_line": 162,
+      "start_line": 144,
+      "end_line": 164,
       "type": "CLASS",
       "status": "unchanged"
     },
     "src/heretek_swarm/config/models.py|src.heretek_swarm.config.models.LLMProviderUpdate": {
       "file_path": "src/heretek_swarm/config/models.py",
       "qualified_name": "src.heretek_swarm.config.models.LLMProviderUpdate",
-      "start_line": 165,
-      "end_line": 183,
+      "start_line": 167,
+      "end_line": 185,
       "type": "CLASS",
       "status": "unchanged"
     },
     "src/heretek_swarm/config/models.py|src.heretek_swarm.config.models.LLMProviderTestRequest": {
       "file_path": "src/heretek_swarm/config/models.py",
       "qualified_name": "src.heretek_swarm.config.models.LLMProviderTestRequest",
-      "start_line": 186,
-      "end_line": 190,
+      "start_line": 188,
+      "end_line": 192,
       "type": "CLASS",
       "status": "unchanged"
     },
     "src/heretek_swarm/config/models.py|src.heretek_swarm.config.models.LLMProviderTestResponse": {
       "file_path": "src/heretek_swarm/config/models.py",
       "qualified_name": "src.heretek_swarm.config.models.LLMProviderTestResponse",
-      "start_line": 193,
-      "end_line": 200,
+      "start_line": 195,
+      "end_line": 202,
       "type": "CLASS",
       "status": "unchanged"
     },
     "src/heretek_swarm/config/models.py|src.heretek_swarm.config.models.EmbeddingProvider": {
       "file_path": "src/heretek_swarm/config/models.py",
       "qualified_name": "src.heretek_swarm.config.models.EmbeddingProvider",
-      "start_line": 207,
-      "end_line": 235,
+      "start_line": 209,
+      "end_line": 237,
       "type": "CLASS",
       "status": "unchanged"
     },
     "src/heretek_swarm/config/models.py|src.heretek_swarm.config.models.EmbeddingProvider.Config": {
       "file_path": "src/heretek_swarm/config/models.py",
       "qualified_name": "src.heretek_swarm.config.models.EmbeddingProvider.Config",
-      "start_line": 230,
-      "end_line": 235,
+      "start_line": 232,
+      "end_line": 237,
       "type": "CLASS",
       "status": "unchanged"
     },
     "src/heretek_swarm/config/models.py|src.heretek_swarm.config.models.EmbeddingProviderCreate": {
       "file_path": "src/heretek_swarm/config/models.py",
       "qualified_name": "src.heretek_swarm.config.models.EmbeddingProviderCreate",
-      "start_line": 238,
-      "end_line": 254,
+      "start_line": 240,
+      "end_line": 256,
       "type": "CLASS",
       "status": "unchanged"
     },
     "src/heretek_swarm/config/models.py|src.heretek_swarm.config.models.EmbeddingProviderUpdate": {
       "file_path": "src/heretek_swarm/config/models.py",
       "qualified_name": "src.heretek_swarm.config.models.EmbeddingProviderUpdate",
-      "start_line": 257,
-      "end_line": 271,
+      "start_line": 259,
+      "end_line": 273,
       "type": "CLASS",
       "status": "unchanged"
     },
     "src/heretek_swarm/config/models.py|src.heretek_swarm.config.models.EmbeddingProviderTestRequest": {
       "file_path": "src/heretek_swarm/config/models.py",
       "qualified_name": "src.heretek_swarm.config.models.EmbeddingProviderTestRequest",
-      "start_line": 274,
-      "end_line": 277,
+      "start_line": 276,
+      "end_line": 279,
       "type": "CLASS",
       "status": "unchanged"
     },
     "src/heretek_swarm/config/models.py|src.heretek_swarm.config.models.EmbeddingProviderTestResponse": {
       "file_path": "src/heretek_swarm/config/models.py",
       "qualified_name": "src.heretek_swarm.config.models.EmbeddingProviderTestResponse",
-      "start_line": 280,
-      "end_line": 287,
+      "start_line": 282,
+      "end_line": 289,
       "type": "CLASS",
       "status": "unchanged"
     },
     "src/heretek_swarm/config/models.py|src.heretek_swarm.config.models.AgentConfig": {
       "file_path": "src/heretek_swarm/config/models.py",
       "qualified_name": "src.heretek_swarm.config.models.AgentConfig",
-      "start_line": 294,
-      "end_line": 317,
+      "start_line": 296,
+      "end_line": 319,
       "type": "CLASS",
       "status": "unchanged"
     },
     "src/heretek_swarm/config/models.py|src.heretek_swarm.config.models.AgentConfig.Config": {
       "file_path": "src/heretek_swarm/config/models.py",
       "qualified_name": "src.heretek_swarm.config.models.AgentConfig.Config",
-      "start_line": 312,
-      "end_line": 317,
+      "start_line": 314,
+      "end_line": 319,
       "type": "CLASS",
       "status": "unchanged"
     },
     "src/heretek_swarm/config/models.py|src.heretek_swarm.config.models.AgentConfigCreate": {
       "file_path": "src/heretek_swarm/config/models.py",
       "qualified_name": "src.heretek_swarm.config.models.AgentConfigCreate",
-      "start_line": 320,
-      "end_line": 331,
+      "start_line": 322,
+      "end_line": 333,
       "type": "CLASS",
       "status": "unchanged"
     },
     "src/heretek_swarm/config/models.py|src.heretek_swarm.config.models.AgentConfigUpdate": {
       "file_path": "src/heretek_swarm/config/models.py",
       "qualified_name": "src.heretek_swarm.config.models.AgentConfigUpdate",
-      "start_line": 334,
-      "end_line": 343,
+      "start_line": 336,
+      "end_line": 345,
       "type": "CLASS",
       "status": "unchanged"
     },
     "src/heretek_swarm/config/models.py|src.heretek_swarm.config.models.ConfigAuditLog": {
       "file_path": "src/heretek_swarm/config/models.py",
       "qualified_name": "src.heretek_swarm.config.models.ConfigAuditLog",
-      "start_line": 350,
-      "end_line": 368,
+      "start_line": 352,
+      "end_line": 370,
       "type": "CLASS",
       "status": "unchanged"
     },
     "src/heretek_swarm/config/models.py|src.heretek_swarm.config.models.ConfigAuditLog.Config": {
       "file_path": "src/heretek_swarm/config/models.py",
       "qualified_name": "src.heretek_swarm.config.models.ConfigAuditLog.Config",
-      "start_line": 364,
-      "end_line": 368,
+      "start_line": 366,
+      "end_line": 370,
       "type": "CLASS",
       "status": "unchanged"
     },
     "src/heretek_swarm/config/models.py|src.heretek_swarm.config.models.ConfigCacheEntry": {
       "file_path": "src/heretek_swarm/config/models.py",
       "qualified_name": "src.heretek_swarm.config.models.ConfigCacheEntry",
-      "start_line": 375,
-      "end_line": 382,
+      "start_line": 377,
+      "end_line": 384,
       "type": "CLASS",
       "status": "unchanged"
     },
     "src/heretek_swarm/config/models.py|src.heretek_swarm.config.models.ConfigurationExport": {
       "file_path": "src/heretek_swarm/config/models.py",
       "qualified_name": "src.heretek_swarm.config.models.ConfigurationExport",
-      "start_line": 389,
-      "end_line": 397,
+      "start_line": 391,
+      "end_line": 399,
       "type": "CLASS",
       "status": "unchanged"
     },
     "src/heretek_swarm/config/models.py|src.heretek_swarm.config.models.ConfigurationImport": {
       "file_path": "src/heretek_swarm/config/models.py",
       "qualified_name": "src.heretek_swarm.config.models.ConfigurationImport",
-      "start_line": 400,
-      "end_line": 406,
+      "start_line": 402,
+      "end_line": 408,
       "type": "CLASS",
       "status": "unchanged"
     },
     "src/heretek_swarm/config/models.py|src.heretek_swarm.config.models.ImportOptions": {
       "file_path": "src/heretek_swarm/config/models.py",
       "qualified_name": "src.heretek_swarm.config.models.ImportOptions",
-      "start_line": 409,
-      "end_line": 416,
+      "start_line": 411,
+      "end_line": 418,
       "type": "CLASS",
       "status": "unchanged"
     },
     "src/heretek_swarm/config/models.py|src.heretek_swarm.config.models.ImportResult": {
       "file_path": "src/heretek_swarm/config/models.py",
       "qualified_name": "src.heretek_swarm.config.models.ImportResult",
-      "start_line": 419,
-      "end_line": 426,
+      "start_line": 421,
+      "end_line": 428,
       "type": "CLASS",
       "status": "unchanged"
     },
     "src/heretek_swarm/config/models.py|src.heretek_swarm.config.models.MCPProviderType": {
       "file_path": "src/heretek_swarm/config/models.py",
       "qualified_name": "src.heretek_swarm.config.models.MCPProviderType",
-      "start_line": 434,
-      "end_line": 437,
+      "start_line": 436,
+      "end_line": 439,
       "type": "CLASS",
       "status": "unchanged"
     },
     "src/heretek_swarm/config/models.py|src.heretek_swarm.config.models.MCPProvider": {
       "file_path": "src/heretek_swarm/config/models.py",
       "qualified_name": "src.heretek_swarm.config.models.MCPProvider",
-      "start_line": 440,
-      "end_line": 463,
+      "start_line": 442,
+      "end_line": 465,
       "type": "CLASS",
       "status": "unchanged"
     },
     "src/heretek_swarm/config/models.py|src.heretek_swarm.config.models.MCPProvider.Config": {
       "file_path": "src/heretek_swarm/config/models.py",
       "qualified_name": "src.heretek_swarm.config.models.MCPProvider.Config",
-      "start_line": 458,
-      "end_line": 463,
+      "start_line": 460,
+      "end_line": 465,
       "type": "CLASS",
       "status": "unchanged"
     },
     "src/heretek_swarm/config/models.py|src.heretek_swarm.config.models.MCPProviderCreate": {
       "file_path": "src/heretek_swarm/config/models.py",
       "qualified_name": "src.heretek_swarm.config.models.MCPProviderCreate",
-      "start_line": 466,
-      "end_line": 477,
+      "start_line": 468,
+      "end_line": 479,
       "type": "CLASS",
       "status": "unchanged"
     },
     "src/heretek_swarm/config/models.py|src.heretek_swarm.config.models.MCPProviderUpdate": {
       "file_path": "src/heretek_swarm/config/models.py",
       "qualified_name": "src.heretek_swarm.config.models.MCPProviderUpdate",
-      "start_line": 480,
-      "end_line": 489,
+      "start_line": 482,
+      "end_line": 491,
       "type": "CLASS",
       "status": "unchanged"
     },
     "src/heretek_swarm/config/models.py|src.heretek_swarm.config.models.MCPProviderTestResponse": {
       "file_path": "src/heretek_swarm/config/models.py",
       "qualified_name": "src.heretek_swarm.config.models.MCPProviderTestResponse",
-      "start_line": 492,
-      "end_line": 498,
+      "start_line": 494,
+      "end_line": 500,
       "type": "CLASS",
       "status": "unchanged"
     },
     "src/heretek_swarm/config/models.py|src.heretek_swarm.config.models.MCPConfig": {
       "file_path": "src/heretek_swarm/config/models.py",
       "qualified_name": "src.heretek_swarm.config.models.MCPConfig",
-      "start_line": 501,
-      "end_line": 520,
+      "start_line": 503,
+      "end_line": 522,
       "type": "CLASS",
       "status": "unchanged"
     },
     "src/heretek_swarm/config/models.py|src.heretek_swarm.config.models.MCPConfig.Config": {
       "file_path": "src/heretek_swarm/config/models.py",
       "qualified_name": "src.heretek_swarm.config.models.MCPConfig.Config",
-      "start_line": 515,
-      "end_line": 520,
+      "start_line": 517,
+      "end_line": 522,
       "type": "CLASS",
       "status": "unchanged"
     },
     "src/heretek_swarm/config/models.py|src.heretek_swarm.config.models.MCPConfigCreate": {
       "file_path": "src/heretek_swarm/config/models.py",
       "qualified_name": "src.heretek_swarm.config.models.MCPConfigCreate",
-      "start_line": 523,
-      "end_line": 532,
+      "start_line": 525,
+      "end_line": 534,
       "type": "CLASS",
       "status": "unchanged"
     },
     "src/heretek_swarm/config/models.py|src.heretek_swarm.config.models.MCPConfigUpdate": {
       "file_path": "src/heretek_swarm/config/models.py",
       "qualified_name": "src.heretek_swarm.config.models.MCPConfigUpdate",
-      "start_line": 535,
-      "end_line": 543,
+      "start_line": 537,
+      "end_line": 545,
       "type": "CLASS",
       "status": "unchanged"
     },
@@ -80543,29 +80438,29 @@
       "start_line": 92,
       "end_line": 223,
       "type": "FUNCTION",
-      "status": "modified"
+      "status": "unchanged"
     },
     "src/heretek_swarm/llm/providers/factory.py|src.heretek_swarm.llm.providers.factory.create_llm_provider_from_db_config": {
       "file_path": "src/heretek_swarm/llm/providers/factory.py",
       "qualified_name": "src.heretek_swarm.llm.providers.factory.create_llm_provider_from_db_config",
-      "start_line": 225,
-      "end_line": 256,
+      "start_line": 226,
+      "end_line": 257,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/llm/providers/factory.py|src.heretek_swarm.llm.providers.factory.get_provider_info": {
       "file_path": "src/heretek_swarm/llm/providers/factory.py",
       "qualified_name": "src.heretek_swarm.llm.providers.factory.get_provider_info",
-      "start_line": 259,
-      "end_line": 303,
+      "start_line": 260,
+      "end_line": 304,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/llm/providers/factory.py|src.heretek_swarm.llm.providers.factory.get_all_provider_info": {
       "file_path": "src/heretek_swarm/llm/providers/factory.py",
       "qualified_name": "src.heretek_swarm.llm.providers.factory.get_all_provider_info",
-      "start_line": 306,
-      "end_line": 313,
+      "start_line": 307,
+      "end_line": 314,
       "type": "FUNCTION",
       "status": "unchanged"
     },
@@ -96156,72 +96051,72 @@
     "dashboard/frontend/src/App.tsx|dashboard.frontend.src.App.DashboardContent": {
       "file_path": "dashboard/frontend/src/App.tsx",
       "qualified_name": "dashboard.frontend.src.App.DashboardContent",
-      "start_line": 63,
-      "end_line": 252,
+      "start_line": 65,
+      "end_line": 254,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/App.tsx|dashboard.frontend.src.App.DashboardContent.useEffect() callback.error": {
       "file_path": "dashboard/frontend/src/App.tsx",
       "qualified_name": "dashboard.frontend.src.App.DashboardContent.useEffect() callback.error",
-      "start_line": 131,
-      "end_line": 131,
+      "start_line": 133,
+      "end_line": 133,
       "type": "METHOD",
       "status": "unchanged"
     },
     "dashboard/frontend/src/App.tsx|dashboard.frontend.src.App.DashboardContent.checkSystemHealth.useCallback() callback": {
       "file_path": "dashboard/frontend/src/App.tsx",
       "qualified_name": "dashboard.frontend.src.App.DashboardContent.checkSystemHealth.useCallback() callback",
-      "start_line": 136,
-      "end_line": 168,
+      "start_line": 138,
+      "end_line": 170,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/App.tsx|dashboard.frontend.src.App.DashboardContent.useEffect() callback": {
       "file_path": "dashboard/frontend/src/App.tsx",
       "qualified_name": "dashboard.frontend.src.App.DashboardContent.useEffect() callback",
-      "start_line": 170,
-      "end_line": 177,
+      "start_line": 172,
+      "end_line": 179,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/App.tsx|dashboard.frontend.src.App.DashboardContent.handleNavClick.useCallback() callback": {
       "file_path": "dashboard/frontend/src/App.tsx",
       "qualified_name": "dashboard.frontend.src.App.DashboardContent.handleNavClick.useCallback() callback",
-      "start_line": 179,
-      "end_line": 181,
+      "start_line": 181,
+      "end_line": 183,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/App.tsx|dashboard.frontend.src.App.DashboardContent.handleSetupComplete.useCallback() callback": {
       "file_path": "dashboard/frontend/src/App.tsx",
       "qualified_name": "dashboard.frontend.src.App.DashboardContent.handleSetupComplete.useCallback() callback",
-      "start_line": 184,
-      "end_line": 188,
+      "start_line": 186,
+      "end_line": 190,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/App.tsx|dashboard.frontend.src.App.DashboardContent.handleRerunSetup.useCallback() callback": {
       "file_path": "dashboard/frontend/src/App.tsx",
       "qualified_name": "dashboard.frontend.src.App.DashboardContent.handleRerunSetup.useCallback() callback",
-      "start_line": 191,
-      "end_line": 195,
+      "start_line": 193,
+      "end_line": 197,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/App.tsx|dashboard.frontend.src.App.DashboardContent.showSetup": {
       "file_path": "dashboard/frontend/src/App.tsx",
       "qualified_name": "dashboard.frontend.src.App.DashboardContent.showSetup",
-      "start_line": 239,
-      "end_line": 249,
+      "start_line": 241,
+      "end_line": 251,
       "type": "METHOD",
       "status": "unchanged"
     },
     "dashboard/frontend/src/App.tsx|dashboard.frontend.src.App.App": {
       "file_path": "dashboard/frontend/src/App.tsx",
       "qualified_name": "dashboard.frontend.src.App.App",
-      "start_line": 257,
-      "end_line": 266,
+      "start_line": 259,
+      "end_line": 268,
       "type": "FUNCTION",
       "status": "unchanged"
     },
@@ -96487,277 +96382,269 @@
       "start_line": 28,
       "end_line": 43,
       "type": "INTERFACE",
-      "status": "modified"
+      "status": "unchanged"
     },
     "dashboard/frontend/src/api/configuration.ts|dashboard.frontend.src.api.configuration.EmbeddingProvider": {
       "file_path": "dashboard/frontend/src/api/configuration.ts",
       "qualified_name": "dashboard.frontend.src.api.configuration.EmbeddingProvider",
-      "start_line": 44,
-      "end_line": 58,
+      "start_line": 45,
+      "end_line": 59,
       "type": "INTERFACE",
       "status": "unchanged"
     },
     "dashboard/frontend/src/api/configuration.ts|dashboard.frontend.src.api.configuration.AgentConfig": {
       "file_path": "dashboard/frontend/src/api/configuration.ts",
       "qualified_name": "dashboard.frontend.src.api.configuration.AgentConfig",
-      "start_line": 60,
-      "end_line": 74,
+      "start_line": 61,
+      "end_line": 75,
       "type": "INTERFACE",
       "status": "unchanged"
     },
     "dashboard/frontend/src/api/configuration.ts|dashboard.frontend.src.api.configuration.LLMProviderCreate": {
       "file_path": "dashboard/frontend/src/api/configuration.ts",
       "qualified_name": "dashboard.frontend.src.api.configuration.LLMProviderCreate",
-      "start_line": 76,
-      "end_line": 87,
+      "start_line": 77,
+      "end_line": 88,
       "type": "INTERFACE",
       "status": "unchanged"
     },
     "dashboard/frontend/src/api/configuration.ts|dashboard.frontend.src.api.configuration.EmbeddingProviderCreate": {
       "file_path": "dashboard/frontend/src/api/configuration.ts",
       "qualified_name": "dashboard.frontend.src.api.configuration.EmbeddingProviderCreate",
-      "start_line": 89,
-      "end_line": 100,
+      "start_line": 90,
+      "end_line": 101,
       "type": "INTERFACE",
       "status": "unchanged"
     },
     "dashboard/frontend/src/api/configuration.ts|dashboard.frontend.src.api.configuration.ProviderTestResult": {
       "file_path": "dashboard/frontend/src/api/configuration.ts",
       "qualified_name": "dashboard.frontend.src.api.configuration.ProviderTestResult",
-      "start_line": 102,
-      "end_line": 109,
+      "start_line": 103,
+      "end_line": 110,
       "type": "INTERFACE",
       "status": "unchanged"
     },
     "dashboard/frontend/src/api/configuration.ts|dashboard.frontend.src.api.configuration.EmbeddingProviderTestResult": {
       "file_path": "dashboard/frontend/src/api/configuration.ts",
       "qualified_name": "dashboard.frontend.src.api.configuration.EmbeddingProviderTestResult",
-      "start_line": 111,
-      "end_line": 118,
+      "start_line": 112,
+      "end_line": 119,
       "type": "INTERFACE",
       "status": "unchanged"
-    },
-    "dashboard/frontend/src/api/configuration.ts|dashboard.frontend.src.api.configuration.configurationApi": {
-      "file_path": "dashboard/frontend/src/api/configuration.ts",
-      "qualified_name": "dashboard.frontend.src.api.configuration.configurationApi",
-      "start_line": 124,
-      "end_line": 281,
-      "type": "CLASS",
-      "status": "deleted"
     },
     "dashboard/frontend/src/api/configuration.ts|dashboard.frontend.src.api.configuration.configurationApi.getConfigs": {
       "file_path": "dashboard/frontend/src/api/configuration.ts",
       "qualified_name": "dashboard.frontend.src.api.configuration.configurationApi.getConfigs",
-      "start_line": 126,
-      "end_line": 130,
+      "start_line": 127,
+      "end_line": 131,
       "type": "METHOD",
       "status": "unchanged"
     },
     "dashboard/frontend/src/api/configuration.ts|dashboard.frontend.src.api.configuration.configurationApi.getConfig": {
       "file_path": "dashboard/frontend/src/api/configuration.ts",
       "qualified_name": "dashboard.frontend.src.api.configuration.configurationApi.getConfig",
-      "start_line": 132,
-      "end_line": 135,
+      "start_line": 133,
+      "end_line": 136,
       "type": "METHOD",
       "status": "unchanged"
     },
     "dashboard/frontend/src/api/configuration.ts|dashboard.frontend.src.api.configuration.configurationApi.updateConfig": {
       "file_path": "dashboard/frontend/src/api/configuration.ts",
       "qualified_name": "dashboard.frontend.src.api.configuration.configurationApi.updateConfig",
-      "start_line": 137,
-      "end_line": 140,
+      "start_line": 138,
+      "end_line": 141,
       "type": "METHOD",
       "status": "unchanged"
     },
     "dashboard/frontend/src/api/configuration.ts|dashboard.frontend.src.api.configuration.configurationApi.createConfig": {
       "file_path": "dashboard/frontend/src/api/configuration.ts",
       "qualified_name": "dashboard.frontend.src.api.configuration.configurationApi.createConfig",
-      "start_line": 142,
-      "end_line": 145,
+      "start_line": 143,
+      "end_line": 146,
       "type": "METHOD",
       "status": "unchanged"
     },
     "dashboard/frontend/src/api/configuration.ts|dashboard.frontend.src.api.configuration.configurationApi.deleteConfig": {
       "file_path": "dashboard/frontend/src/api/configuration.ts",
       "qualified_name": "dashboard.frontend.src.api.configuration.configurationApi.deleteConfig",
-      "start_line": 147,
-      "end_line": 149,
+      "start_line": 148,
+      "end_line": 150,
       "type": "METHOD",
       "status": "unchanged"
     },
     "dashboard/frontend/src/api/configuration.ts|dashboard.frontend.src.api.configuration.configurationApi.listLLMProviders": {
       "file_path": "dashboard/frontend/src/api/configuration.ts",
       "qualified_name": "dashboard.frontend.src.api.configuration.configurationApi.listLLMProviders",
-      "start_line": 152,
-      "end_line": 158,
+      "start_line": 153,
+      "end_line": 159,
       "type": "METHOD",
       "status": "unchanged"
     },
     "dashboard/frontend/src/api/configuration.ts|dashboard.frontend.src.api.configuration.configurationApi.getLLMProvider": {
       "file_path": "dashboard/frontend/src/api/configuration.ts",
       "qualified_name": "dashboard.frontend.src.api.configuration.configurationApi.getLLMProvider",
-      "start_line": 160,
-      "end_line": 163,
+      "start_line": 161,
+      "end_line": 164,
       "type": "METHOD",
       "status": "unchanged"
     },
     "dashboard/frontend/src/api/configuration.ts|dashboard.frontend.src.api.configuration.configurationApi.createLLMProvider": {
       "file_path": "dashboard/frontend/src/api/configuration.ts",
       "qualified_name": "dashboard.frontend.src.api.configuration.configurationApi.createLLMProvider",
-      "start_line": 165,
-      "end_line": 168,
+      "start_line": 166,
+      "end_line": 169,
       "type": "METHOD",
       "status": "unchanged"
     },
     "dashboard/frontend/src/api/configuration.ts|dashboard.frontend.src.api.configuration.configurationApi.updateLLMProvider": {
       "file_path": "dashboard/frontend/src/api/configuration.ts",
       "qualified_name": "dashboard.frontend.src.api.configuration.configurationApi.updateLLMProvider",
-      "start_line": 170,
-      "end_line": 173,
+      "start_line": 171,
+      "end_line": 174,
       "type": "METHOD",
       "status": "unchanged"
     },
     "dashboard/frontend/src/api/configuration.ts|dashboard.frontend.src.api.configuration.configurationApi.deleteLLMProvider": {
       "file_path": "dashboard/frontend/src/api/configuration.ts",
       "qualified_name": "dashboard.frontend.src.api.configuration.configurationApi.deleteLLMProvider",
-      "start_line": 175,
-      "end_line": 177,
+      "start_line": 176,
+      "end_line": 178,
       "type": "METHOD",
       "status": "unchanged"
     },
     "dashboard/frontend/src/api/configuration.ts|dashboard.frontend.src.api.configuration.configurationApi.testLLMProvider": {
       "file_path": "dashboard/frontend/src/api/configuration.ts",
       "qualified_name": "dashboard.frontend.src.api.configuration.configurationApi.testLLMProvider",
-      "start_line": 179,
-      "end_line": 186,
+      "start_line": 180,
+      "end_line": 187,
       "type": "METHOD",
       "status": "unchanged"
     },
     "dashboard/frontend/src/api/configuration.ts|dashboard.frontend.src.api.configuration.configurationApi.listLLMProviderTypes": {
       "file_path": "dashboard/frontend/src/api/configuration.ts",
       "qualified_name": "dashboard.frontend.src.api.configuration.configurationApi.listLLMProviderTypes",
-      "start_line": 188,
-      "end_line": 191,
+      "start_line": 189,
+      "end_line": 192,
       "type": "METHOD",
       "status": "unchanged"
     },
     "dashboard/frontend/src/api/configuration.ts|dashboard.frontend.src.api.configuration.configurationApi.listEmbeddingProviders": {
       "file_path": "dashboard/frontend/src/api/configuration.ts",
       "qualified_name": "dashboard.frontend.src.api.configuration.configurationApi.listEmbeddingProviders",
-      "start_line": 194,
-      "end_line": 200,
+      "start_line": 195,
+      "end_line": 201,
       "type": "METHOD",
       "status": "unchanged"
     },
     "dashboard/frontend/src/api/configuration.ts|dashboard.frontend.src.api.configuration.configurationApi.getEmbeddingProvider": {
       "file_path": "dashboard/frontend/src/api/configuration.ts",
       "qualified_name": "dashboard.frontend.src.api.configuration.configurationApi.getEmbeddingProvider",
-      "start_line": 202,
-      "end_line": 205,
+      "start_line": 203,
+      "end_line": 206,
       "type": "METHOD",
       "status": "unchanged"
     },
     "dashboard/frontend/src/api/configuration.ts|dashboard.frontend.src.api.configuration.configurationApi.createEmbeddingProvider": {
       "file_path": "dashboard/frontend/src/api/configuration.ts",
       "qualified_name": "dashboard.frontend.src.api.configuration.configurationApi.createEmbeddingProvider",
-      "start_line": 207,
-      "end_line": 210,
+      "start_line": 208,
+      "end_line": 211,
       "type": "METHOD",
       "status": "unchanged"
     },
     "dashboard/frontend/src/api/configuration.ts|dashboard.frontend.src.api.configuration.configurationApi.updateEmbeddingProvider": {
       "file_path": "dashboard/frontend/src/api/configuration.ts",
       "qualified_name": "dashboard.frontend.src.api.configuration.configurationApi.updateEmbeddingProvider",
-      "start_line": 212,
-      "end_line": 215,
+      "start_line": 213,
+      "end_line": 216,
       "type": "METHOD",
       "status": "unchanged"
     },
     "dashboard/frontend/src/api/configuration.ts|dashboard.frontend.src.api.configuration.configurationApi.deleteEmbeddingProvider": {
       "file_path": "dashboard/frontend/src/api/configuration.ts",
       "qualified_name": "dashboard.frontend.src.api.configuration.configurationApi.deleteEmbeddingProvider",
-      "start_line": 217,
-      "end_line": 219,
+      "start_line": 218,
+      "end_line": 220,
       "type": "METHOD",
       "status": "unchanged"
     },
     "dashboard/frontend/src/api/configuration.ts|dashboard.frontend.src.api.configuration.configurationApi.testEmbeddingProvider": {
       "file_path": "dashboard/frontend/src/api/configuration.ts",
       "qualified_name": "dashboard.frontend.src.api.configuration.configurationApi.testEmbeddingProvider",
-      "start_line": 221,
-      "end_line": 227,
+      "start_line": 222,
+      "end_line": 228,
       "type": "METHOD",
       "status": "unchanged"
     },
     "dashboard/frontend/src/api/configuration.ts|dashboard.frontend.src.api.configuration.configurationApi.listEmbeddingProviderTypes": {
       "file_path": "dashboard/frontend/src/api/configuration.ts",
       "qualified_name": "dashboard.frontend.src.api.configuration.configurationApi.listEmbeddingProviderTypes",
-      "start_line": 229,
-      "end_line": 232,
+      "start_line": 230,
+      "end_line": 233,
       "type": "METHOD",
       "status": "unchanged"
     },
     "dashboard/frontend/src/api/configuration.ts|dashboard.frontend.src.api.configuration.configurationApi.listAgentConfigs": {
       "file_path": "dashboard/frontend/src/api/configuration.ts",
       "qualified_name": "dashboard.frontend.src.api.configuration.configurationApi.listAgentConfigs",
-      "start_line": 235,
-      "end_line": 241,
+      "start_line": 236,
+      "end_line": 242,
       "type": "METHOD",
       "status": "unchanged"
     },
     "dashboard/frontend/src/api/configuration.ts|dashboard.frontend.src.api.configuration.configurationApi.getAgentConfig": {
       "file_path": "dashboard/frontend/src/api/configuration.ts",
       "qualified_name": "dashboard.frontend.src.api.configuration.configurationApi.getAgentConfig",
-      "start_line": 243,
-      "end_line": 246,
+      "start_line": 244,
+      "end_line": 247,
       "type": "METHOD",
       "status": "unchanged"
     },
     "dashboard/frontend/src/api/configuration.ts|dashboard.frontend.src.api.configuration.configurationApi.createAgentConfig": {
       "file_path": "dashboard/frontend/src/api/configuration.ts",
       "qualified_name": "dashboard.frontend.src.api.configuration.configurationApi.createAgentConfig",
-      "start_line": 248,
-      "end_line": 251,
+      "start_line": 249,
+      "end_line": 252,
       "type": "METHOD",
       "status": "unchanged"
     },
     "dashboard/frontend/src/api/configuration.ts|dashboard.frontend.src.api.configuration.configurationApi.updateAgentConfig": {
       "file_path": "dashboard/frontend/src/api/configuration.ts",
       "qualified_name": "dashboard.frontend.src.api.configuration.configurationApi.updateAgentConfig",
-      "start_line": 253,
-      "end_line": 256,
+      "start_line": 254,
+      "end_line": 257,
       "type": "METHOD",
       "status": "unchanged"
     },
     "dashboard/frontend/src/api/configuration.ts|dashboard.frontend.src.api.configuration.configurationApi.deleteAgentConfig": {
       "file_path": "dashboard/frontend/src/api/configuration.ts",
       "qualified_name": "dashboard.frontend.src.api.configuration.configurationApi.deleteAgentConfig",
-      "start_line": 258,
-      "end_line": 260,
+      "start_line": 259,
+      "end_line": 261,
       "type": "METHOD",
       "status": "unchanged"
     },
     "dashboard/frontend/src/api/configuration.ts|dashboard.frontend.src.api.configuration.configurationApi.exportConfigurations": {
       "file_path": "dashboard/frontend/src/api/configuration.ts",
       "qualified_name": "dashboard.frontend.src.api.configuration.configurationApi.exportConfigurations",
-      "start_line": 263,
-      "end_line": 266,
+      "start_line": 264,
+      "end_line": 267,
       "type": "METHOD",
       "status": "unchanged"
     },
     "dashboard/frontend/src/api/configuration.ts|dashboard.frontend.src.api.configuration.configurationApi.importConfigurations": {
       "file_path": "dashboard/frontend/src/api/configuration.ts",
       "qualified_name": "dashboard.frontend.src.api.configuration.configurationApi.importConfigurations",
-      "start_line": 268,
-      "end_line": 274,
+      "start_line": 269,
+      "end_line": 275,
       "type": "METHOD",
       "status": "unchanged"
     },
     "dashboard/frontend/src/api/configuration.ts|dashboard.frontend.src.api.configuration.configurationApi.migrateFromEnv": {
       "file_path": "dashboard/frontend/src/api/configuration.ts",
       "qualified_name": "dashboard.frontend.src.api.configuration.configurationApi.migrateFromEnv",
-      "start_line": 277,
-      "end_line": 280,
+      "start_line": 278,
+      "end_line": 281,
       "type": "METHOD",
       "status": "unchanged"
     },
@@ -97863,181 +97750,181 @@
       "start_line": 94,
       "end_line": 300,
       "type": "FUNCTION",
-      "status": "modified"
-    },
-    "dashboard/frontend/src/components/Canvas/Canvas.tsx|dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback": {
-      "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
-      "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback",
-      "start_line": 112,
-      "end_line": 116,
-      "type": "FUNCTION",
-      "status": "modified"
+      "status": "unchanged"
     },
     "dashboard/frontend/src/components/Canvas/Canvas.tsx|dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.activeEdges.forEach() callback": {
       "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
       "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.activeEdges.forEach() callback",
-      "start_line": 119,
-      "end_line": 132,
+      "start_line": 121,
+      "end_line": 134,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/Canvas/Canvas.tsx|dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.setEdges() callback": {
       "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
       "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.setEdges() callback",
-      "start_line": 135,
-      "end_line": 138,
+      "start_line": 137,
+      "end_line": 140,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/Canvas/Canvas.tsx|dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.setEdges() callback.userEdges.prevEdges.filter() callback": {
       "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
       "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.setEdges() callback.userEdges.prevEdges.filter() callback",
-      "start_line": 136,
-      "end_line": 136,
+      "start_line": 138,
+      "end_line": 138,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/Canvas/Canvas.tsx|dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setShowMetrics() callback": {
       "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
       "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setShowMetrics() callback",
-      "start_line": 145,
-      "end_line": 145,
+      "start_line": 147,
+      "end_line": 147,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/Canvas/Canvas.tsx|dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.fetchAgents.useCallback() callback": {
       "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
       "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.fetchAgents.useCallback() callback",
-      "start_line": 153,
-      "end_line": 185,
+      "start_line": 155,
+      "end_line": 187,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/Canvas/Canvas.tsx|dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.fetchAgents.useCallback() callback.agentNodes.data.agents.map() callback": {
       "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
       "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.fetchAgents.useCallback() callback.agentNodes.data.agents.map() callback",
-      "start_line": 161,
-      "end_line": 174,
+      "start_line": 163,
+      "end_line": 176,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/Canvas/Canvas.tsx|dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onConnect.useCallback() callback": {
       "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
       "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onConnect.useCallback() callback",
-      "start_line": 201,
-      "end_line": 203,
+      "start_line": 203,
+      "end_line": 205,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/Canvas/Canvas.tsx|dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onConnect.useCallback() callback.setEdges() callback": {
       "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
       "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onConnect.useCallback() callback.setEdges() callback",
-      "start_line": 202,
-      "end_line": 202,
+      "start_line": 204,
+      "end_line": 204,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/Canvas/Canvas.tsx|dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.addNodeFromPalette.useCallback() callback": {
       "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
       "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.addNodeFromPalette.useCallback() callback",
-      "start_line": 208,
-      "end_line": 223,
+      "start_line": 210,
+      "end_line": 225,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/Canvas/Canvas.tsx|dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.addNodeFromPalette.useCallback() callback.setNodes() callback": {
       "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
       "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.addNodeFromPalette.useCallback() callback.setNodes() callback",
-      "start_line": 222,
-      "end_line": 222,
+      "start_line": 224,
+      "end_line": 224,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/Canvas/Canvas.tsx|dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onNodeClick.useCallback() callback": {
       "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
       "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onNodeClick.useCallback() callback",
-      "start_line": 226,
-      "end_line": 228,
+      "start_line": 228,
+      "end_line": 230,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/Canvas/Canvas.tsx|dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onPaneClick.useCallback() callback": {
       "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
       "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onPaneClick.useCallback() callback",
-      "start_line": 231,
-      "end_line": 233,
+      "start_line": 233,
+      "end_line": 235,
+      "type": "FUNCTION",
+      "status": "unchanged"
+    },
+    "dashboard/frontend/src/components/Canvas/Canvas.tsx|dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback": {
+      "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback",
+      "start_line": 238,
+      "end_line": 252,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/Canvas/Canvas.tsx|dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setNodes() callback": {
       "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
       "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setNodes() callback",
-      "start_line": 243,
-      "end_line": 243,
+      "start_line": 245,
+      "end_line": 245,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/Canvas/Canvas.tsx|dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setNodes() callback.nds.filter() callback": {
       "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
       "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setNodes() callback.nds.filter() callback",
-      "start_line": 243,
-      "end_line": 243,
+      "start_line": 245,
+      "end_line": 245,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/Canvas/Canvas.tsx|dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setEdges() callback": {
       "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
       "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setEdges() callback",
-      "start_line": 244,
-      "end_line": 244,
+      "start_line": 246,
+      "end_line": 246,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/Canvas/Canvas.tsx|dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setEdges() callback.eds.filter() callback": {
       "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
       "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setEdges() callback.eds.filter() callback",
-      "start_line": 244,
-      "end_line": 244,
+      "start_line": 246,
+      "end_line": 246,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/Canvas/Canvas.tsx|dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.NODE_PALETTE.map() callback": {
       "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
       "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.NODE_PALETTE.map() callback",
-      "start_line": 282,
-      "end_line": 283,
+      "start_line": 284,
+      "end_line": 285,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/Canvas/Canvas.tsx|dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.<unknown>..nodes.map() callback": {
       "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
       "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.<unknown>..nodes.map() callback",
-      "start_line": 288,
-      "end_line": 290,
+      "start_line": 290,
+      "end_line": 292,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/Canvas/Canvas.tsx|dashboard.frontend.src.components.Canvas.Canvas.setShowPalette() callback": {
       "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
       "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.setShowPalette() callback",
-      "start_line": 309,
-      "end_line": 309,
+      "start_line": 311,
+      "end_line": 311,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/Canvas/Canvas.tsx|dashboard.frontend.src.components.Canvas.Canvas.<function>.setShowMetrics() callback": {
       "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
       "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.<function>.setShowMetrics() callback",
-      "start_line": 322,
-      "end_line": 322,
+      "start_line": 324,
+      "end_line": 324,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/Canvas/Canvas.tsx|dashboard.frontend.src.components.Canvas.Canvas.<function>": {
       "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
       "qualified_name": "dashboard.frontend.src.components.Canvas.Canvas.<function>",
-      "start_line": 371,
-      "end_line": 381,
+      "start_line": 381,
+      "end_line": 391,
       "type": "FUNCTION",
       "status": "unchanged"
     },
@@ -101383,7 +101270,7 @@
       "start_line": 16,
       "end_line": 27,
       "type": "INTERFACE",
-      "status": "modified"
+      "status": "unchanged"
     },
     "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx|dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection": {
       "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
@@ -101391,39 +101278,23 @@
       "start_line": 49,
       "end_line": 233,
       "type": "FUNCTION",
-      "status": "modified"
-    },
-    "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx|dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.loadProviders": {
-      "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
-      "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.loadProviders",
-      "start_line": 68,
-      "end_line": 78,
-      "type": "CLASS",
-      "status": "deleted"
+      "status": "unchanged"
     },
     "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx|dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.loadProviders.useCallback() callback": {
       "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
       "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.loadProviders.useCallback() callback",
-      "start_line": 68,
-      "end_line": 78,
+      "start_line": 70,
+      "end_line": 80,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx|dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.useEffect() callback": {
       "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
       "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.useEffect() callback",
-      "start_line": 80,
-      "end_line": 82,
+      "start_line": 82,
+      "end_line": 84,
       "type": "FUNCTION",
       "status": "unchanged"
-    },
-    "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx|dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleOpenForm": {
-      "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
-      "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleOpenForm",
-      "start_line": 84,
-      "end_line": 113,
-      "type": "CLASS",
-      "status": "deleted"
     },
     "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx|dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleOpenForm.useCallback() callback": {
       "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
@@ -101431,31 +101302,15 @@
       "start_line": 86,
       "end_line": 117,
       "type": "FUNCTION",
-      "status": "modified"
-    },
-    "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx|dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleCloseForm": {
-      "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
-      "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleCloseForm",
-      "start_line": 115,
-      "end_line": 118,
-      "type": "CLASS",
-      "status": "deleted"
+      "status": "unchanged"
     },
     "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx|dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleCloseForm.useCallback() callback": {
       "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
       "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleCloseForm.useCallback() callback",
-      "start_line": 115,
-      "end_line": 118,
+      "start_line": 119,
+      "end_line": 122,
       "type": "FUNCTION",
       "status": "unchanged"
-    },
-    "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx|dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleSubmit": {
-      "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
-      "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleSubmit",
-      "start_line": 120,
-      "end_line": 155,
-      "type": "CLASS",
-      "status": "deleted"
     },
     "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx|dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleSubmit.useCallback() callback": {
       "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
@@ -101463,149 +101318,93 @@
       "start_line": 124,
       "end_line": 164,
       "type": "FUNCTION",
-      "status": "modified"
-    },
-    "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx|dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleDelete": {
-      "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
-      "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleDelete",
-      "start_line": 157,
-      "end_line": 168,
-      "type": "CLASS",
-      "status": "deleted"
+      "status": "unchanged"
     },
     "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx|dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleDelete.useCallback() callback": {
       "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
       "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleDelete.useCallback() callback",
-      "start_line": 157,
-      "end_line": 168,
+      "start_line": 166,
+      "end_line": 177,
       "type": "FUNCTION",
       "status": "unchanged"
-    },
-    "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx|dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleTest": {
-      "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
-      "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleTest",
-      "start_line": 170,
-      "end_line": 188,
-      "type": "CLASS",
-      "status": "deleted"
     },
     "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx|dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleTest.useCallback() callback": {
       "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
       "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleTest.useCallback() callback",
-      "start_line": 170,
-      "end_line": 188,
+      "start_line": 179,
+      "end_line": 197,
       "type": "FUNCTION",
       "status": "unchanged"
-    },
-    "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx|dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleProviderTypeChange": {
-      "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
-      "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleProviderTypeChange",
-      "start_line": 190,
-      "end_line": 198,
-      "type": "CLASS",
-      "status": "deleted"
     },
     "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx|dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleProviderTypeChange.useCallback() callback": {
       "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
       "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleProviderTypeChange.useCallback() callback",
-      "start_line": 190,
-      "end_line": 198,
+      "start_line": 199,
+      "end_line": 207,
       "type": "FUNCTION",
       "status": "unchanged"
-    },
-    "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx|dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleProviderTypeChange.useCallback() callback.providerType": {
-      "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
-      "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleProviderTypeChange.useCallback() callback.providerType",
-      "start_line": 191,
-      "end_line": 191,
-      "type": "CLASS",
-      "status": "deleted"
     },
     "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx|dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleProviderTypeChange.useCallback() callback.providerType.PROVIDER_TYPES.find() callback": {
       "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
       "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleProviderTypeChange.useCallback() callback.providerType.PROVIDER_TYPES.find() callback",
-      "start_line": 191,
-      "end_line": 191,
+      "start_line": 200,
+      "end_line": 200,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx|dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleProviderTypeChange.useCallback() callback.setFormData() callback": {
       "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
       "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleProviderTypeChange.useCallback() callback.setFormData() callback",
-      "start_line": 192,
-      "end_line": 197,
+      "start_line": 201,
+      "end_line": 206,
       "type": "FUNCTION",
       "status": "unchanged"
-    },
-    "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx|dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.getProviderTypeLabel": {
-      "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
-      "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.getProviderTypeLabel",
-      "start_line": 200,
-      "end_line": 202,
-      "type": "CLASS",
-      "status": "deleted"
     },
     "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx|dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.getProviderTypeLabel.useCallback() callback": {
       "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
       "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.getProviderTypeLabel.useCallback() callback",
-      "start_line": 200,
-      "end_line": 202,
+      "start_line": 209,
+      "end_line": 211,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx|dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.getProviderTypeLabel.useCallback() callback.PROVIDER_TYPES.find() callback": {
       "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
       "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.getProviderTypeLabel.useCallback() callback.PROVIDER_TYPES.find() callback",
-      "start_line": 201,
-      "end_line": 201,
+      "start_line": 210,
+      "end_line": 210,
       "type": "FUNCTION",
       "status": "unchanged"
-    },
-    "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx|dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.getHealthStatusColor": {
-      "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
-      "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.getHealthStatusColor",
-      "start_line": 204,
-      "end_line": 211,
-      "type": "CLASS",
-      "status": "deleted"
     },
     "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx|dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.getHealthStatusColor.useCallback() callback": {
       "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
       "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.getHealthStatusColor.useCallback() callback",
-      "start_line": 204,
-      "end_line": 211,
+      "start_line": 213,
+      "end_line": 220,
       "type": "FUNCTION",
       "status": "unchanged"
-    },
-    "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx|dashboard.frontend.src.components.Settings.LLMProvidersSection..map() callback": {
-      "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
-      "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection..map() callback",
-      "start_line": 240,
-      "end_line": 242,
-      "type": "FUNCTION",
-      "status": "deleted"
     },
     "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx|dashboard.frontend.src.components.Settings.LLMProvidersSection.<unknown>.getProviderTypeLabel": {
       "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
       "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.<unknown>.getProviderTypeLabel",
-      "start_line": 250,
-      "end_line": 250,
+      "start_line": 259,
+      "end_line": 259,
       "type": "METHOD",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx|dashboard.frontend.src.components.Settings.LLMProvidersSection.<unknown>..map() callback": {
       "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
       "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.<unknown>..map() callback",
-      "start_line": 348,
-      "end_line": 349,
+      "start_line": 357,
+      "end_line": 358,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx|dashboard.frontend.src.components.Settings.LLMProvidersSection.setFormData() callback": {
       "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
       "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.setFormData() callback",
-      "start_line": 437,
-      "end_line": 437,
+      "start_line": 465,
+      "end_line": 465,
       "type": "FUNCTION",
       "status": "unchanged"
     },
@@ -106431,29 +106230,13 @@
       "start_line": 24,
       "end_line": 142,
       "type": "FUNCTION",
-      "status": "modified"
+      "status": "unchanged"
     },
     "dashboard/frontend/src/hooks/useWebSocket.ts|dashboard.frontend.src.hooks.useWebSocket.useWebSocket.apiHost.<function>": {
       "file_path": "dashboard/frontend/src/hooks/useWebSocket.ts",
       "qualified_name": "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.apiHost.<function>",
       "start_line": 45,
       "end_line": 52,
-      "type": "FUNCTION",
-      "status": "added"
-    },
-    "dashboard/frontend/src/hooks/useWebSocket.ts|dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect": {
-      "file_path": "dashboard/frontend/src/hooks/useWebSocket.ts",
-      "qualified_name": "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect",
-      "start_line": 46,
-      "end_line": 89,
-      "type": "CLASS",
-      "status": "deleted"
-    },
-    "dashboard/frontend/src/hooks/useWebSocket.ts|dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onopen": {
-      "file_path": "dashboard/frontend/src/hooks/useWebSocket.ts",
-      "qualified_name": "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onopen",
-      "start_line": 54,
-      "end_line": 58,
       "type": "FUNCTION",
       "status": "unchanged"
     },
@@ -106463,93 +106246,85 @@
       "start_line": 54,
       "end_line": 102,
       "type": "FUNCTION",
-      "status": "modified"
+      "status": "unchanged"
+    },
+    "dashboard/frontend/src/hooks/useWebSocket.ts|dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onopen": {
+      "file_path": "dashboard/frontend/src/hooks/useWebSocket.ts",
+      "qualified_name": "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onopen",
+      "start_line": 67,
+      "end_line": 71,
+      "type": "FUNCTION",
+      "status": "unchanged"
     },
     "dashboard/frontend/src/hooks/useWebSocket.ts|dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onclose": {
       "file_path": "dashboard/frontend/src/hooks/useWebSocket.ts",
       "qualified_name": "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onclose",
-      "start_line": 60,
-      "end_line": 69,
+      "start_line": 73,
+      "end_line": 82,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/hooks/useWebSocket.ts|dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onmessage": {
       "file_path": "dashboard/frontend/src/hooks/useWebSocket.ts",
       "qualified_name": "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onmessage",
-      "start_line": 71,
-      "end_line": 79,
+      "start_line": 84,
+      "end_line": 92,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/hooks/useWebSocket.ts|dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onerror": {
       "file_path": "dashboard/frontend/src/hooks/useWebSocket.ts",
       "qualified_name": "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onerror",
-      "start_line": 81,
-      "end_line": 84,
+      "start_line": 94,
+      "end_line": 97,
       "type": "FUNCTION",
       "status": "unchanged"
-    },
-    "dashboard/frontend/src/hooks/useWebSocket.ts|dashboard.frontend.src.hooks.useWebSocket.sendMessage": {
-      "file_path": "dashboard/frontend/src/hooks/useWebSocket.ts",
-      "qualified_name": "dashboard.frontend.src.hooks.useWebSocket.sendMessage",
-      "start_line": 91,
-      "end_line": 98,
-      "type": "CLASS",
-      "status": "deleted"
     },
     "dashboard/frontend/src/hooks/useWebSocket.ts|dashboard.frontend.src.hooks.useWebSocket.useWebSocket.sendMessage.useCallback() callback": {
       "file_path": "dashboard/frontend/src/hooks/useWebSocket.ts",
       "qualified_name": "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.sendMessage.useCallback() callback",
-      "start_line": 91,
-      "end_line": 98,
+      "start_line": 104,
+      "end_line": 111,
       "type": "FUNCTION",
       "status": "unchanged"
-    },
-    "dashboard/frontend/src/hooks/useWebSocket.ts|dashboard.frontend.src.hooks.useWebSocket.disconnect": {
-      "file_path": "dashboard/frontend/src/hooks/useWebSocket.ts",
-      "qualified_name": "dashboard.frontend.src.hooks.useWebSocket.disconnect",
-      "start_line": 100,
-      "end_line": 110,
-      "type": "CLASS",
-      "status": "deleted"
     },
     "dashboard/frontend/src/hooks/useWebSocket.ts|dashboard.frontend.src.hooks.useWebSocket.useWebSocket.disconnect.useCallback() callback": {
       "file_path": "dashboard/frontend/src/hooks/useWebSocket.ts",
       "qualified_name": "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.disconnect.useCallback() callback",
-      "start_line": 100,
-      "end_line": 110,
+      "start_line": 113,
+      "end_line": 123,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/hooks/useWebSocket.ts|dashboard.frontend.src.hooks.useWebSocket.useWebSocket.useEffect() callback": {
       "file_path": "dashboard/frontend/src/hooks/useWebSocket.ts",
       "qualified_name": "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.useEffect() callback",
-      "start_line": 113,
-      "end_line": 120,
+      "start_line": 126,
+      "end_line": 133,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/hooks/useWebSocket.ts|dashboard.frontend.src.hooks.useWebSocket.useAgentEvents": {
       "file_path": "dashboard/frontend/src/hooks/useWebSocket.ts",
       "qualified_name": "dashboard.frontend.src.hooks.useWebSocket.useAgentEvents",
-      "start_line": 134,
-      "end_line": 140,
+      "start_line": 147,
+      "end_line": 153,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/hooks/useWebSocket.ts|dashboard.frontend.src.hooks.useWebSocket.useMetricsStream": {
       "file_path": "dashboard/frontend/src/hooks/useWebSocket.ts",
       "qualified_name": "dashboard.frontend.src.hooks.useWebSocket.useMetricsStream",
-      "start_line": 145,
-      "end_line": 151,
+      "start_line": 158,
+      "end_line": 164,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/hooks/useWebSocket.ts|dashboard.frontend.src.hooks.useWebSocket.useExecutionStream": {
       "file_path": "dashboard/frontend/src/hooks/useWebSocket.ts",
       "qualified_name": "dashboard.frontend.src.hooks.useWebSocket.useExecutionStream",
-      "start_line": 156,
-      "end_line": 165,
+      "start_line": 169,
+      "end_line": 178,
       "type": "FUNCTION",
       "status": "unchanged"
     },
@@ -112582,7 +112357,7 @@
         },
         {
           "file_path": "src/heretek_swarm/config/crud.py",
-          "file_status": "modified",
+          "file_status": "unchanged",
           "methods": [
             "src.heretek_swarm.config.crud.ConfigurationServiceCrud",
             "src.heretek_swarm.config.crud.ConfigurationServiceCrud._log_change",
@@ -112625,7 +112400,7 @@
         },
         {
           "file_path": "src/heretek_swarm/config/db_models.py",
-          "file_status": "modified",
+          "file_status": "unchanged",
           "methods": [
             "src.heretek_swarm.config.db_models.Base",
             "src.heretek_swarm.config.db_models.UserConfiguration",
@@ -112683,7 +112458,7 @@
         },
         {
           "file_path": "src/heretek_swarm/config/models.py",
-          "file_status": "modified",
+          "file_status": "unchanged",
           "methods": [
             "src.heretek_swarm.config.models.ConfigType",
             "src.heretek_swarm.config.models.HealthStatus",
@@ -114537,7 +114312,7 @@
         },
         {
           "file_path": "src/heretek_swarm/llm/providers/factory.py",
-          "file_status": "modified",
+          "file_status": "unchanged",
           "methods": [
             "src.heretek_swarm.llm.providers.factory.register_provider",
             "src.heretek_swarm.llm.providers.factory.unregister_provider",
@@ -118350,7 +118125,7 @@
             },
             {
               "file_path": "src/heretek_swarm/config/db_models.py",
-              "file_status": "modified",
+              "file_status": "unchanged",
               "methods": [
                 "src.heretek_swarm.config.db_models.Base",
                 "src.heretek_swarm.config.db_models.UserConfiguration",
@@ -121480,7 +121255,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/config/db_models.py",
-                  "file_status": "modified",
+                  "file_status": "unchanged",
                   "methods": [
                     "src.heretek_swarm.config.db_models.Base",
                     "src.heretek_swarm.config.db_models.UserConfiguration",
@@ -124297,7 +124072,7 @@
                     },
                     {
                       "file_path": "src/heretek_swarm/config/db_models.py",
-                      "file_status": "modified",
+                      "file_status": "unchanged",
                       "methods": [
                         "src.heretek_swarm.config.db_models.Base",
                         "src.heretek_swarm.config.db_models.UserConfiguration",
@@ -124432,7 +124207,7 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/config/db_models.py",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "src.heretek_swarm.config.db_models.Base",
                             "src.heretek_swarm.config.db_models.UserConfiguration",
@@ -158977,7 +158752,7 @@
             },
             {
               "file_path": "src/heretek_swarm/llm/providers/factory.py",
-              "file_status": "modified",
+              "file_status": "unchanged",
               "methods": [
                 "src.heretek_swarm.llm.providers.factory.register_provider",
                 "src.heretek_swarm.llm.providers.factory.unregister_provider",
@@ -159382,7 +159157,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/llm/providers/factory.py",
-                  "file_status": "modified",
+                  "file_status": "unchanged",
                   "methods": [
                     "src.heretek_swarm.llm.providers.factory.register_provider",
                     "src.heretek_swarm.llm.providers.factory.unregister_provider",
@@ -160400,7 +160175,7 @@
                     },
                     {
                       "file_path": "src/heretek_swarm/llm/providers/factory.py",
-                      "file_status": "modified",
+                      "file_status": "unchanged",
                       "methods": [
                         "src.heretek_swarm.llm.providers.factory.register_provider",
                         "src.heretek_swarm.llm.providers.factory.unregister_provider",
@@ -160761,7 +160536,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/llm/providers/factory.py",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "src.heretek_swarm.llm.providers.factory.register_provider",
                             "src.heretek_swarm.llm.providers.factory.unregister_provider",
@@ -170108,7 +169883,7 @@
             },
             {
               "file_path": "src/heretek_swarm/config/crud.py",
-              "file_status": "modified",
+              "file_status": "unchanged",
               "methods": [
                 "src.heretek_swarm.config.crud.ConfigurationServiceCrud",
                 "src.heretek_swarm.config.crud.ConfigurationServiceCrud._log_change",
@@ -170196,7 +169971,7 @@
             },
             {
               "file_path": "src/heretek_swarm/config/models.py",
-              "file_status": "modified",
+              "file_status": "unchanged",
               "methods": [
                 "src.heretek_swarm.config.models.ConfigType",
                 "src.heretek_swarm.config.models.HealthStatus",
@@ -172177,7 +171952,7 @@
               "file_methods": [
                 {
                   "file_path": "src/heretek_swarm/config/crud.py",
-                  "file_status": "modified",
+                  "file_status": "unchanged",
                   "methods": [
                     "src.heretek_swarm.config.crud.ConfigurationServiceCrud",
                     "src.heretek_swarm.config.crud.ConfigurationServiceCrud._log_change",
@@ -172265,7 +172040,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/config/models.py",
-                  "file_status": "modified",
+                  "file_status": "unchanged",
                   "methods": [
                     "src.heretek_swarm.config.models.ConfigType",
                     "src.heretek_swarm.config.models.HealthStatus",
@@ -172543,7 +172318,7 @@
                   "file_methods": [
                     {
                       "file_path": "src/heretek_swarm/config/crud.py",
-                      "file_status": "modified",
+                      "file_status": "unchanged",
                       "methods": [
                         "src.heretek_swarm.config.crud.ConfigurationServiceCrud",
                         "src.heretek_swarm.config.crud.ConfigurationServiceCrud.get_config",
@@ -172573,7 +172348,7 @@
                     },
                     {
                       "file_path": "src/heretek_swarm/config/models.py",
-                      "file_status": "modified",
+                      "file_status": "unchanged",
                       "methods": [
                         "src.heretek_swarm.config.models.ConfigType",
                         "src.heretek_swarm.config.models.HealthStatus",
@@ -172668,7 +172443,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/config/crud.py",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "src.heretek_swarm.config.crud.ConfigurationServiceCrud.create_config",
                             "src.heretek_swarm.config.crud.ConfigurationServiceCrud.update_llm_provider",
@@ -172677,7 +172452,7 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/config/models.py",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "src.heretek_swarm.config.models.ConfigType",
                             "src.heretek_swarm.config.models.HealthStatus",
@@ -172738,7 +172513,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/config/crud.py",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "src.heretek_swarm.config.crud.ConfigurationServiceCrud.list_configs",
                             "src.heretek_swarm.config.crud.ConfigurationServiceCrud.delete_config",
@@ -172751,7 +172526,7 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/config/models.py",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "src.heretek_swarm.config.models.UserConfiguration",
                             "src.heretek_swarm.config.models.LLMProvider",
@@ -172793,7 +172568,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/config/crud.py",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "src.heretek_swarm.config.crud.ConfigurationServiceCrud._log_change",
                             "src.heretek_swarm.config.crud.ConfigurationServiceCrud.get_config",
@@ -172854,7 +172629,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/config/crud.py",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "src.heretek_swarm.config.crud.ConfigurationServiceCrud",
                             "src.heretek_swarm.config.crud.ConfigurationServiceCrud.get_llm_provider_by_name",
@@ -172875,7 +172650,7 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/config/models.py",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "src.heretek_swarm.config.models.UserConfigurationCreate",
                             "src.heretek_swarm.config.models.ConfigCacheEntry"
@@ -173266,7 +173041,7 @@
                   "file_methods": [
                     {
                       "file_path": "src/heretek_swarm/config/crud.py",
-                      "file_status": "modified",
+                      "file_status": "unchanged",
                       "methods": [
                         "src.heretek_swarm.config.crud.ConfigurationServiceCrud._log_change",
                         "src.heretek_swarm.config.crud.ConfigurationServiceCrud.update_config",
@@ -173319,7 +173094,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/config/crud.py",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "src.heretek_swarm.config.crud.ConfigurationServiceCrud.get_config",
                             "src.heretek_swarm.config.crud.ConfigurationServiceCrud.get_config_value",
@@ -173374,7 +173149,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/config/crud.py",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "src.heretek_swarm.config.crud.ConfigurationServiceCrud",
                             "src.heretek_swarm.config.crud.ConfigurationServiceCrud._log_change",
@@ -173461,7 +173236,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/config/crud.py",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "src.heretek_swarm.config.crud.ConfigurationServiceCrud.create_config",
                             "src.heretek_swarm.config.crud.ConfigurationServiceCrud.migrate_from_env"
@@ -238725,7 +238500,7 @@
       "file_methods": [
         {
           "file_path": "dashboard/frontend/src/App.tsx",
-          "file_status": "modified",
+          "file_status": "unchanged",
           "methods": [
             "dashboard.frontend.src.App._safeUrl",
             "dashboard.frontend.src.App.DashboardContent",
@@ -238784,7 +238559,7 @@
         },
         {
           "file_path": "dashboard/frontend/src/api/configuration.ts",
-          "file_status": "modified",
+          "file_status": "unchanged",
           "methods": [
             "dashboard.frontend.src.api.configuration.UserConfiguration",
             "dashboard.frontend.src.api.configuration.LLMProvider",
@@ -239015,11 +238790,10 @@
         },
         {
           "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
-          "file_status": "modified",
+          "file_status": "unchanged",
           "methods": [
             "dashboard.frontend.src.components.Canvas.Canvas.AgentApiResponse",
             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas",
-            "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback",
             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setShowMetrics() callback",
             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.fetchAgents.useCallback() callback",
             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.fetchAgents.useCallback() callback.agentNodes.data.agents.map() callback",
@@ -239029,6 +238803,7 @@
             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.addNodeFromPalette.useCallback() callback.setNodes() callback",
             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onNodeClick.useCallback() callback",
             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onPaneClick.useCallback() callback",
+            "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback",
             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setNodes() callback",
             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setNodes() callback.nds.filter() callback",
             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setEdges() callback",
@@ -239620,7 +239395,7 @@
         },
         {
           "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
-          "file_status": "modified",
+          "file_status": "unchanged",
           "methods": [
             "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSectionProps",
             "dashboard.frontend.src.components.Settings.LLMProvidersSection.ProviderFormData",
@@ -240441,14 +240216,14 @@
         },
         {
           "file_path": "dashboard/frontend/src/hooks/useWebSocket.ts",
-          "file_status": "modified",
+          "file_status": "unchanged",
           "methods": [
             "dashboard.frontend.src.hooks.useWebSocket.WebSocketMessage",
             "dashboard.frontend.src.hooks.useWebSocket.UseWebSocketOptions",
             "dashboard.frontend.src.hooks.useWebSocket.useWebSocket",
             "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.apiHost.<function>",
-            "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onopen",
             "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback",
+            "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onopen",
             "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onclose",
             "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onmessage",
             "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onerror",
@@ -240779,11 +240554,10 @@
             },
             {
               "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
-              "file_status": "modified",
+              "file_status": "unchanged",
               "methods": [
                 "dashboard.frontend.src.components.Canvas.Canvas.AgentApiResponse",
                 "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas",
-                "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback",
                 "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setShowMetrics() callback",
                 "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.fetchAgents.useCallback() callback",
                 "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.fetchAgents.useCallback() callback.agentNodes.data.agents.map() callback",
@@ -240793,6 +240567,7 @@
                 "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.addNodeFromPalette.useCallback() callback.setNodes() callback",
                 "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onNodeClick.useCallback() callback",
                 "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onPaneClick.useCallback() callback",
+                "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback",
                 "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setNodes() callback",
                 "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setNodes() callback.nds.filter() callback",
                 "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setEdges() callback",
@@ -241176,11 +240951,10 @@
                 },
                 {
                   "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
-                  "file_status": "modified",
+                  "file_status": "unchanged",
                   "methods": [
                     "dashboard.frontend.src.components.Canvas.Canvas.AgentApiResponse",
                     "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas",
-                    "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback",
                     "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setShowMetrics() callback",
                     "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.fetchAgents.useCallback() callback",
                     "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.fetchAgents.useCallback() callback.agentNodes.data.agents.map() callback",
@@ -241190,6 +240964,7 @@
                     "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.addNodeFromPalette.useCallback() callback.setNodes() callback",
                     "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onNodeClick.useCallback() callback",
                     "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onPaneClick.useCallback() callback",
+                    "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback",
                     "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setNodes() callback",
                     "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setNodes() callback.nds.filter() callback",
                     "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setEdges() callback",
@@ -241597,11 +241372,10 @@
                     },
                     {
                       "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
-                      "file_status": "modified",
+                      "file_status": "unchanged",
                       "methods": [
                         "dashboard.frontend.src.components.Canvas.Canvas.AgentApiResponse",
                         "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas",
-                        "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback",
                         "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setShowMetrics() callback",
                         "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.fetchAgents.useCallback() callback",
                         "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.fetchAgents.useCallback() callback.agentNodes.data.agents.map() callback",
@@ -241611,6 +241385,7 @@
                         "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.addNodeFromPalette.useCallback() callback.setNodes() callback",
                         "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onNodeClick.useCallback() callback",
                         "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onPaneClick.useCallback() callback",
+                        "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback",
                         "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setNodes() callback",
                         "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setNodes() callback.nds.filter() callback",
                         "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setEdges() callback",
@@ -241927,11 +241702,10 @@
                         },
                         {
                           "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "dashboard.frontend.src.components.Canvas.Canvas.AgentApiResponse",
                             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas",
-                            "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback",
                             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setShowMetrics() callback",
                             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.fetchAgents.useCallback() callback",
                             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.fetchAgents.useCallback() callback.agentNodes.data.agents.map() callback",
@@ -241941,6 +241715,7 @@
                             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.addNodeFromPalette.useCallback() callback.setNodes() callback",
                             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onNodeClick.useCallback() callback",
                             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onPaneClick.useCallback() callback",
+                            "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback",
                             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setNodes() callback",
                             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setNodes() callback.nds.filter() callback",
                             "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setEdges() callback",
@@ -242244,16 +242019,16 @@
                             },
                             {
                               "file_path": "dashboard/frontend/src/components/Canvas/Canvas.tsx",
-                              "file_status": "modified",
+                              "file_status": "unchanged",
                               "methods": [
                                 "dashboard.frontend.src.components.Canvas.Canvas.AgentApiResponse",
                                 "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas",
-                                "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback",
                                 "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback.handleKeyDown.setShowMetrics() callback",
                                 "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.fetchAgents.useCallback() callback",
                                 "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.fetchAgents.useCallback() callback.agentNodes.data.agents.map() callback",
                                 "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onConnect.useCallback() callback",
-                                "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onConnect.useCallback() callback.setEdges() callback"
+                                "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.onConnect.useCallback() callback.setEdges() callback",
+                                "dashboard.frontend.src.components.Canvas.Canvas.CollectiveCanvas.useEffect() callback"
                               ]
                             },
                             {
@@ -254736,7 +254511,7 @@
             },
             {
               "file_path": "dashboard/frontend/src/hooks/useWebSocket.ts",
-              "file_status": "modified",
+              "file_status": "unchanged",
               "methods": [
                 "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.apiHost.<function>",
                 "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback",
@@ -255934,11 +255709,11 @@
                 },
                 {
                   "file_path": "dashboard/frontend/src/hooks/useWebSocket.ts",
-                  "file_status": "modified",
+                  "file_status": "unchanged",
                   "methods": [
                     "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.apiHost.<function>",
-                    "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onopen",
                     "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback",
+                    "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onopen",
                     "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onclose",
                     "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onmessage",
                     "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onerror",
@@ -256069,7 +255844,7 @@
                     },
                     {
                       "file_path": "dashboard/frontend/src/hooks/useWebSocket.ts",
-                      "file_status": "modified",
+                      "file_status": "unchanged",
                       "methods": [
                         "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback",
                         "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.sendMessage.useCallback() callback",
@@ -256260,7 +256035,7 @@
                     },
                     {
                       "file_path": "dashboard/frontend/src/hooks/useWebSocket.ts",
-                      "file_status": "modified",
+                      "file_status": "unchanged",
                       "methods": [
                         "dashboard.frontend.src.hooks.useWebSocket.WebSocketMessage",
                         "dashboard.frontend.src.hooks.useWebSocket.UseWebSocketOptions",
@@ -257059,7 +256834,7 @@
                 },
                 {
                   "file_path": "dashboard/frontend/src/hooks/useWebSocket.ts",
-                  "file_status": "modified",
+                  "file_status": "unchanged",
                   "methods": [
                     "dashboard.frontend.src.hooks.useWebSocket.WebSocketMessage",
                     "dashboard.frontend.src.hooks.useWebSocket.UseWebSocketOptions",
@@ -257419,13 +257194,13 @@
                     },
                     {
                       "file_path": "dashboard/frontend/src/hooks/useWebSocket.ts",
-                      "file_status": "modified",
+                      "file_status": "unchanged",
                       "methods": [
                         "dashboard.frontend.src.hooks.useWebSocket.WebSocketMessage",
                         "dashboard.frontend.src.hooks.useWebSocket.UseWebSocketOptions",
                         "dashboard.frontend.src.hooks.useWebSocket.useWebSocket",
-                        "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onopen",
                         "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback",
+                        "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onopen",
                         "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onclose",
                         "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onmessage",
                         "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onerror",
@@ -258301,7 +258076,7 @@
           "file_methods": [
             {
               "file_path": "dashboard/frontend/src/App.tsx",
-              "file_status": "modified",
+              "file_status": "unchanged",
               "methods": [
                 "dashboard.frontend.src.App._safeUrl",
                 "dashboard.frontend.src.App.DashboardContent",
@@ -258360,7 +258135,7 @@
             },
             {
               "file_path": "dashboard/frontend/src/api/configuration.ts",
-              "file_status": "modified",
+              "file_status": "unchanged",
               "methods": [
                 "dashboard.frontend.src.api.configuration.UserConfiguration",
                 "dashboard.frontend.src.api.configuration.LLMProvider",
@@ -258880,7 +258655,7 @@
             },
             {
               "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
-              "file_status": "modified",
+              "file_status": "unchanged",
               "methods": [
                 "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSectionProps",
                 "dashboard.frontend.src.components.Settings.LLMProvidersSection.ProviderFormData",
@@ -259591,7 +259366,7 @@
             },
             {
               "file_path": "dashboard/frontend/src/hooks/useWebSocket.ts",
-              "file_status": "modified",
+              "file_status": "unchanged",
               "methods": [
                 "dashboard.frontend.src.hooks.useWebSocket.WebSocketMessage",
                 "dashboard.frontend.src.hooks.useWebSocket.UseWebSocketOptions",
@@ -259886,7 +259661,7 @@
               "file_methods": [
                 {
                   "file_path": "dashboard/frontend/src/App.tsx",
-                  "file_status": "modified",
+                  "file_status": "unchanged",
                   "methods": [
                     "dashboard.frontend.src.App._safeUrl",
                     "dashboard.frontend.src.App.DashboardContent",
@@ -259945,7 +259720,7 @@
                 },
                 {
                   "file_path": "dashboard/frontend/src/api/configuration.ts",
-                  "file_status": "modified",
+                  "file_status": "unchanged",
                   "methods": [
                     "dashboard.frontend.src.api.configuration.UserConfiguration",
                     "dashboard.frontend.src.api.configuration.LLMProvider",
@@ -260437,7 +260212,7 @@
                 },
                 {
                   "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
-                  "file_status": "modified",
+                  "file_status": "unchanged",
                   "methods": [
                     "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSectionProps",
                     "dashboard.frontend.src.components.Settings.LLMProvidersSection.ProviderFormData",
@@ -261148,7 +260923,7 @@
                 },
                 {
                   "file_path": "dashboard/frontend/src/hooks/useWebSocket.ts",
-                  "file_status": "modified",
+                  "file_status": "unchanged",
                   "methods": [
                     "dashboard.frontend.src.hooks.useWebSocket.WebSocketMessage",
                     "dashboard.frontend.src.hooks.useWebSocket.UseWebSocketOptions",
@@ -261423,7 +261198,7 @@
                   "file_methods": [
                     {
                       "file_path": "dashboard/frontend/src/App.tsx",
-                      "file_status": "modified",
+                      "file_status": "unchanged",
                       "methods": [
                         "dashboard.frontend.src.App._safeUrl",
                         "dashboard.frontend.src.App.DashboardContent",
@@ -261482,7 +261257,7 @@
                     },
                     {
                       "file_path": "dashboard/frontend/src/api/configuration.ts",
-                      "file_status": "modified",
+                      "file_status": "unchanged",
                       "methods": [
                         "dashboard.frontend.src.api.configuration.UserConfiguration",
                         "dashboard.frontend.src.api.configuration.LLMProvider",
@@ -261974,7 +261749,7 @@
                     },
                     {
                       "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
-                      "file_status": "modified",
+                      "file_status": "unchanged",
                       "methods": [
                         "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSectionProps",
                         "dashboard.frontend.src.components.Settings.LLMProvidersSection.ProviderFormData",
@@ -262661,14 +262436,14 @@
                     },
                     {
                       "file_path": "dashboard/frontend/src/hooks/useWebSocket.ts",
-                      "file_status": "modified",
+                      "file_status": "unchanged",
                       "methods": [
                         "dashboard.frontend.src.hooks.useWebSocket.WebSocketMessage",
                         "dashboard.frontend.src.hooks.useWebSocket.UseWebSocketOptions",
                         "dashboard.frontend.src.hooks.useWebSocket.useWebSocket",
                         "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.apiHost.<function>",
-                        "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onopen",
                         "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback",
+                        "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onopen",
                         "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onclose",
                         "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onmessage",
                         "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onerror",
@@ -262964,7 +262739,7 @@
                       "file_methods": [
                         {
                           "file_path": "dashboard/frontend/src/App.tsx",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "dashboard.frontend.src.App.DashboardContent",
                             "dashboard.frontend.src.App.DashboardContent.useEffect() callback.error",
@@ -263021,7 +262796,7 @@
                         },
                         {
                           "file_path": "dashboard/frontend/src/api/configuration.ts",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "dashboard.frontend.src.api.configuration.UserConfiguration",
                             "dashboard.frontend.src.api.configuration.LLMProvider",
@@ -263519,7 +263294,7 @@
                         },
                         {
                           "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSectionProps",
                             "dashboard.frontend.src.components.Settings.LLMProvidersSection.ProviderFormData",
@@ -264203,7 +263978,7 @@
                         },
                         {
                           "file_path": "dashboard/frontend/src/hooks/useWebSocket.ts",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "dashboard.frontend.src.hooks.useWebSocket.WebSocketMessage",
                             "dashboard.frontend.src.hooks.useWebSocket.UseWebSocketOptions",
@@ -264502,10 +264277,10 @@
                         },
                         {
                           "file_path": "dashboard/frontend/src/hooks/useWebSocket.ts",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
-                            "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onopen",
                             "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback",
+                            "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onopen",
                             "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onclose",
                             "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onmessage",
                             "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onerror",
@@ -265594,7 +265369,7 @@
                     },
                     {
                       "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
-                      "file_status": "modified",
+                      "file_status": "unchanged",
                       "methods": [
                         "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleProviderTypeChange.useCallback() callback.setFormData() callback"
                       ]
@@ -265748,7 +265523,7 @@
                         },
                         {
                           "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSectionProps",
                             "dashboard.frontend.src.components.Settings.LLMProvidersSection.ProviderFormData",
@@ -266977,7 +266752,7 @@
                 },
                 {
                   "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
-                  "file_status": "modified",
+                  "file_status": "unchanged",
                   "methods": [
                     "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection.handleProviderTypeChange.useCallback() callback.setFormData() callback"
                   ]
@@ -267584,7 +267359,7 @@
                     },
                     {
                       "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
-                      "file_status": "modified",
+                      "file_status": "unchanged",
                       "methods": [
                         "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSectionProps",
                         "dashboard.frontend.src.components.Settings.LLMProvidersSection.ProviderFormData",
@@ -267762,7 +267537,7 @@
                         },
                         {
                           "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSectionProps",
                             "dashboard.frontend.src.components.Settings.LLMProvidersSection.ProviderFormData",
@@ -270392,11 +270167,11 @@
                 },
                 {
                   "file_path": "dashboard/frontend/src/hooks/useWebSocket.ts",
-                  "file_status": "modified",
+                  "file_status": "unchanged",
                   "methods": [
                     "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.apiHost.<function>",
-                    "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onopen",
                     "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback",
+                    "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onopen",
                     "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onclose",
                     "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onmessage",
                     "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onerror",
@@ -270466,11 +270241,11 @@
                     },
                     {
                       "file_path": "dashboard/frontend/src/hooks/useWebSocket.ts",
-                      "file_status": "modified",
+                      "file_status": "unchanged",
                       "methods": [
                         "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.apiHost.<function>",
-                        "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onopen",
                         "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback",
+                        "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onopen",
                         "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onclose",
                         "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onmessage",
                         "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onerror",
@@ -270620,13 +270395,13 @@
                         },
                         {
                           "file_path": "dashboard/frontend/src/hooks/useWebSocket.ts",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "dashboard.frontend.src.hooks.useWebSocket.WebSocketMessage",
                             "dashboard.frontend.src.hooks.useWebSocket.UseWebSocketOptions",
                             "dashboard.frontend.src.hooks.useWebSocket.useWebSocket",
-                            "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onopen",
                             "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback",
+                            "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onopen",
                             "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onclose",
                             "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onmessage",
                             "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onerror",
@@ -270875,7 +270650,7 @@
                     },
                     {
                       "file_path": "dashboard/frontend/src/hooks/useWebSocket.ts",
-                      "file_status": "modified",
+                      "file_status": "unchanged",
                       "methods": [
                         "dashboard.frontend.src.hooks.useWebSocket.WebSocketMessage",
                         "dashboard.frontend.src.hooks.useWebSocket.UseWebSocketOptions",
@@ -270973,7 +270748,7 @@
                         },
                         {
                           "file_path": "dashboard/frontend/src/hooks/useWebSocket.ts",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "dashboard.frontend.src.hooks.useWebSocket.WebSocketMessage",
                             "dashboard.frontend.src.hooks.useWebSocket.UseWebSocketOptions",
@@ -271005,7 +270780,7 @@
                       "file_methods": [
                         {
                           "file_path": "dashboard/frontend/src/hooks/useWebSocket.ts",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback",
                             "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.sendMessage.useCallback() callback",
@@ -271051,7 +270826,7 @@
                         },
                         {
                           "file_path": "dashboard/frontend/src/hooks/useWebSocket.ts",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onopen",
                             "dashboard.frontend.src.hooks.useWebSocket.useWebSocket.connect.useCallback() callback.onclose",
