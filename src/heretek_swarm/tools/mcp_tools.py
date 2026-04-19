@@ -14,7 +14,66 @@ from typing import Any
 
 import structlog
 
+from heretek_swarm.models.external_call_log import ExternalCallLog
+from heretek_swarm.models.external_call_log_encryption import (
+    ExternalCallLogEncryptor,
+)
+
 logger = structlog.get_logger(__name__)
+
+# Global encryptor instance (initialized lazily)
+_encryptor: ExternalCallLogEncryptor | None = None
+
+
+def _get_encryptor() -> ExternalCallLogEncryptor:
+    """Get or create the global encryptor instance."""
+    global _encryptor
+    if _encryptor is None:
+        import os
+
+        encryption_key = os.environ.get("EXTERNAL_CALL_LOG_ENCRYPTION_KEY")
+        _encryptor = ExternalCallLogEncryptor(encryption_key)
+    return _encryptor
+
+
+def _create_log_entry_sync(
+    agent_id: str,
+    agent_type: str,
+    tool_name: str,
+    arguments: dict[str, Any],
+    result: dict[str, Any],
+    error: str | None,
+    duration_ms: float,
+) -> ExternalCallLog:
+    """
+    Create an ExternalCallLog entry synchronously.
+
+    This is a helper for creating log entries that can be added to a session.
+    """
+    encryptor = _get_encryptor()
+
+    # Encrypt arguments (as request body) and result/error (as response body)
+    request_encrypted = encryptor.encrypt(arguments)
+    if error:
+        response_encrypted = encryptor.encrypt({"error": error})
+        status_code: int | None = None
+    else:
+        response_encrypted = encryptor.encrypt(result)
+        status_code = result.get("status_code")
+
+    return ExternalCallLog(
+        agent_id=agent_id,
+        agent_type=agent_type,
+        call_type="mcp",
+        url=f"mcp://tool/{tool_name}",
+        method="INVOKE",
+        status_code=status_code,
+        duration_ms=duration_ms,
+        request_body_encrypted=request_encrypted.get("encrypted", ""),
+        response_body_encrypted=response_encrypted.get("encrypted", ""),
+        tool_name=tool_name,
+        error_message=error,
+    )
 
 
 @dataclass
@@ -167,26 +226,30 @@ class MCPToolRegistry:
 
         start_time = time.time()
 
-        if name not in self._tools:
-            logger.error("tool_not_found", name=name)
-            raise ValueError(f"Tool {name} not found")
-
-        tool = self._tools[name]
-
-        if not tool.enabled:
-            logger.warning("tool_disabled", name=name)
-            raise ValueError(f"Tool {name} is disabled")
-
-        # Validate arguments against schema
-        if not self._validate_arguments(arguments, tool.input_schema):
-            logger.error("tool_validation_failed", name=name, arguments=arguments)
-            raise ValueError(f"Invalid arguments for tool {name}")
-
-        # Update stats
-        self._tool_stats[name]["calls"] += 1
-        self._tool_stats[name]["last_called"] = datetime.now(UTC).isoformat()
+        # Extract agent info from context
+        agent_id = context.get("agent_id", "unknown") if context else "unknown"
+        agent_type = context.get("agent_type", "mcp_agent") if context else "mcp_agent"
 
         try:
+            if name not in self._tools:
+                logger.error("tool_not_found", name=name)
+                raise ValueError(f"Tool {name} not found")
+
+            tool = self._tools[name]
+
+            if not tool.enabled:
+                logger.warning("tool_disabled", name=name)
+                raise ValueError(f"Tool {name} is disabled")
+
+            # Validate arguments against schema
+            if not self._validate_arguments(arguments, tool.input_schema):
+                logger.error("tool_validation_failed", name=name, arguments=arguments)
+                raise ValueError(f"Invalid arguments for tool {name}")
+
+            # Update stats
+            self._tool_stats[name]["calls"] += 1
+            self._tool_stats[name]["last_called"] = datetime.now(UTC).isoformat()
+
             # Invoke handler
             result = await tool.handler(arguments, context or {})
 
@@ -197,11 +260,69 @@ class MCPToolRegistry:
             stats["avg_latency_ms"] = (stats["avg_latency_ms"] * (calls - 1) + latency_ms) / calls
 
             logger.debug("tool_invoked", name=name, latency_ms=latency_ms)
+
+            # Log successful call to ExternalCallLog.
+            # Wrapped in try/except so logging failures don't prevent tool execution.
+            try:
+                _create_log_entry_sync(
+                    agent_id=agent_id,
+                    agent_type=agent_type,
+                    tool_name=name,
+                    arguments=arguments,
+                    result=result,
+                    error=None,
+                    duration_ms=latency_ms,
+                )
+                # Note: In production, this would be added to a session and committed
+                # For now, we just log the creation (actual persistence requires DB session)
+                logger.debug(
+                    "external_call_log_created",
+                    agent_id=agent_id,
+                    tool_name=name,
+                    call_type="mcp",
+                    duration_ms=latency_ms,
+                )
+            except Exception as log_error:
+                logger.warning(
+                    "external_call_log_creation_failed",
+                    tool_name=name,
+                    error=str(log_error),
+                )
+
             return {"success": True, "result": result}
 
         except Exception as e:
+            latency_ms = (time.time() - start_time) * 1000
             self._tool_stats[name]["errors"] += 1
             logger.error("tool_invocation_error", name=name, error=str(e))
+
+            # Log failed call to ExternalCallLog.
+            # Wrapped in try/except so logging failures don't prevent tool execution.
+            try:
+                _create_log_entry_sync(
+                    agent_id=agent_id,
+                    agent_type=agent_type,
+                    tool_name=name,
+                    arguments=arguments,
+                    result={},
+                    error=str(e),
+                    duration_ms=latency_ms,
+                )
+                logger.debug(
+                    "external_call_log_created",
+                    agent_id=agent_id,
+                    tool_name=name,
+                    call_type="mcp",
+                    duration_ms=latency_ms,
+                    error=str(e),
+                )
+            except Exception as log_error:
+                logger.warning(
+                    "external_call_log_creation_failed",
+                    tool_name=name,
+                    error=str(log_error),
+                )
+
             return {"success": False, "error": str(e)}
 
     def _validate_arguments(

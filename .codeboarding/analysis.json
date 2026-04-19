@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-19T04:33:31.355507+00:00",
+    "generated_at": "2026-04-19T04:37:44.802128+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -52774,7 +52774,7 @@
       "methods": []
     },
     "src/heretek_swarm/infrastructure/otel/__init__.py": {
-      "file_status": "modified",
+      "file_status": "unchanged",
       "methods": []
     }
   },
