@@ -39,6 +39,10 @@ Starts PostgreSQL, Redis, Qdrant, the API server, and the frontend dashboard.
 
 ```
 heretek-swarm/
+├── config/               # Configuration files
+│   ├── litellm_config.yaml
+│   ├── otel-collector-config.yaml
+│   └── config.example.json
 ├── src/heretek_swarm/      # Python package (pip-installable)
 │   ├── actors/            # 23 agent implementations
 │   ├── api/               # FastAPI endpoints

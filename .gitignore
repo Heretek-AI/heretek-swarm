@@ -40,6 +40,12 @@ ENV/
 .env.*.local
 
 # Secrets and credentials
+# Config directory (user-specific overrides)
+config/
+# Exception: keep template files
+!config/*.example.json
+!config/litellm_config.yaml
+!config/otel-collector-config.yaml
 *.key
 *.pem
 *.p12
