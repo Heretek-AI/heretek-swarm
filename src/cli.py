@@ -530,5 +530,8 @@ def main() -> None:
     cli(prog_name="heretek-swarm")
 
 
+main = cli
+
+
 if __name__ == "__main__":
     main()

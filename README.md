@@ -1,6 +1,6 @@
 # Heretek Swarm - The Collective
 
-**Version:** 1.0.0  
+**Version:** 0.1.0  
 **Framework:** Python 3.11+  
 **Status:** `PRODUCTION READY`  
 **Last Updated:** 2026-04-18

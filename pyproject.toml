@@ -111,7 +111,7 @@ dev = [
 ]
 
 [project.scripts]
-heretek-swarm = "src.cli:main"
+heretek-swarm = "heretek_swarm.__main__:cli_main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

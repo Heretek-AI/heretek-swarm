@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-19T02:20:38.137982+00:00",
+    "generated_at": "2026-04-19T02:37:52.004670+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -502,7 +502,7 @@
       ]
     },
     "src/cli.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "src.cli._check_service_health",
@@ -110802,7 +110802,7 @@
         },
         {
           "file_path": "src/cli.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "src.cli._check_service_health",
             "src.cli._make_result",
@@ -117284,7 +117284,7 @@
             },
             {
               "file_path": "src/cli.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.cli._check_service_health",
                 "src.cli._make_result",
@@ -125381,7 +125381,7 @@
                 },
                 {
                   "file_path": "src/cli.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.cli._check_service_health",
                     "src.cli._make_result",
@@ -131074,7 +131074,7 @@
                     },
                     {
                       "file_path": "src/cli.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.cli._check_service_health",
                         "src.cli._make_result",
@@ -131914,7 +131914,7 @@
                         },
                         {
                           "file_path": "src/cli.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.cli._check_service_health",
                             "src.cli._make_result",
