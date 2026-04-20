@@ -830,3 +830,138 @@ async def get_timeseries_data(
         "data_points": data_points,
         "count": len(data_points),
     }
+
+
+# =============================================================================
+# Deliberation Explain — M019 S01: Cognitive Observability Surface
+# =============================================================================
+
+
+@router.get("/deliberation/{deliberation_id}")
+async def get_deliberation_explanation(
+    deliberation_id: str,
+    authenticated: Annotated[str, Depends(verify_auth)],
+) -> dict[str, Any]:
+    """
+    Get structured explanation of a deliberation decision.
+
+    Returns why/whyNot/rollback_plan for OpenAEON-compatible explainability surface.
+
+    This endpoint provides:
+    - why: Top FOR arguments
+    - why_not: Top AGAINST arguments
+    - rollback_plan: Recommended action if consensus is weak
+    - position_distribution: FOR/AGAINST/NEUTRAL counts
+    - dissent_summary: Dissenting opinions and their resolution status
+
+    Prime Directive: "Unbounded Autonomy" — agents must be able to explain their
+    decisions to maintain accountability while preserving independence.
+    """
+    from heretek_swarm.consensus.deliberation import DeliberationEngine
+
+    engine = DeliberationEngine()
+    explanation = engine.get_deliberation_explanation(deliberation_id)
+
+    if explanation is None:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Deliberation {deliberation_id} not found. "
+            "Deliberations are stored in memory and may have been cleaned up.",
+        )
+
+    return {
+        "timestamp": datetime.now(UTC).isoformat(),
+        **explanation,
+    }
+
+
+# =============================================================================
+# Thinking Stream — M019 S01: Cognitive Observability Surface
+# =============================================================================
+
+
+@router.get("/thinking-stream/{agent_id}")
+async def get_agent_thinking_stream(
+    agent_id: str,
+    authenticated: Annotated[str, Depends(verify_auth)],
+    limit: int = Query(50, ge=1, le=500, description="Maximum rounds to return"),
+) -> dict[str, Any]:
+    """
+    Get deliberation thinking stream for a specific agent.
+
+    Returns JSONL-compatible list of DeliberationRound entries for the agent,
+    providing a trace of the agent's deliberation reasoning.
+
+    Each entry includes:
+    - round_id, topic, participant_agents
+    - arguments and counter_arguments submitted
+    - consensus_score, outcome, position_changes
+    - start_time, end_time, round_duration
+
+    OpenAEON pattern: mirrors aeon.thinking.stream() RPC for replay.
+    """
+    plugin = get_consciousness_plugin()
+    thinking_store = getattr(plugin, "_thinking_stream", None)
+
+    if thinking_store is None:
+        # Thinking stream not yet initialized — return empty
+        return {
+            "agent_id": agent_id,
+            "timestamp": datetime.now(UTC).isoformat(),
+            "entries": [],
+            "count": 0,
+        }
+
+    # Filter entries for this agent
+    all_entries = thinking_store.get("entries", [])
+    agent_entries = [
+        {
+            "round_id": e.get("round_id", ""),
+            "topic": e.get("topic", ""),
+            "participant_agents": e.get("participant_agents", []),
+            "arguments": e.get("arguments", []),
+            "counter_arguments": e.get("counter_arguments", []),
+            "consensus_score": e.get("consensus_score", 0.0),
+            "outcome": e.get("outcome", ""),
+            "start_time": e.get("start_time"),
+            "end_time": e.get("end_time"),
+        }
+        for e in all_entries
+        if agent_id in e.get("participant_agents", [])
+    ]
+
+    return {
+        "agent_id": agent_id,
+        "timestamp": datetime.now(UTC).isoformat(),
+        "entries": agent_entries[-limit:],
+        "count": len(agent_entries),
+    }
+
+
+@router.get("/thinking-stream/all")
+async def get_all_thinking_streams(
+    authenticated: Annotated[str, Depends(verify_auth)],
+    limit: int = Query(100, ge=1, le=1000, description="Maximum total entries"),
+) -> dict[str, Any]:
+    """
+    Get deliberation thinking streams for all agents.
+
+    Returns aggregated thinking stream across the entire swarm.
+    Useful for visualizing collective deliberation traces.
+    """
+    plugin = get_consciousness_plugin()
+    thinking_store = getattr(plugin, "_thinking_stream", None)
+
+    if thinking_store is None:
+        return {
+            "timestamp": datetime.now(UTC).isoformat(),
+            "entries": [],
+            "count": 0,
+        }
+
+    all_entries = thinking_store.get("entries", [])
+    return {
+        "timestamp": datetime.now(UTC).isoformat(),
+        "entries": all_entries[-limit:],
+        "count": len(all_entries),
+    }

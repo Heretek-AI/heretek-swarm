@@ -1368,6 +1368,90 @@ class DeliberationEngine:
         """Get complete round history for a deliberation."""
         return self.round_results.get(deliberation_id, [])
 
+    def get_deliberation_explanation(
+        self,
+        deliberation_id: str,
+    ) -> dict[str, Any] | None:
+        """
+        Get a structured explanation of a deliberation decision.
+
+        Returns why/whyNot/rollback_plan for OpenAEON-compatible explainability surface.
+
+        Args:
+            deliberation_id: Deliberation identifier
+
+        Returns:
+            Dict with deliberation explanation, or None if deliberation not found
+        """
+        if deliberation_id not in self.active_deliberations:
+            return None
+
+        deliberation = self.active_deliberations[deliberation_id]
+        state = self.deliberation_states.get(deliberation_id, "unknown")
+
+        # Compute position distribution
+        positions = deliberation.get("positions", {})
+        for_pos = sum(1 for p in positions.values() if hasattr(p, "value") and p.value == "FOR")
+        against_pos = sum(1 for p in positions.values() if hasattr(p, "value") and p.value == "AGAINST")
+        neutral_pos = sum(1 for p in positions.values() if hasattr(p, "value") and p.value == "NEUTRAL")
+
+        # Determine final position from last round or consensus
+        final_round = self.round_results.get(deliberation_id, [])
+        final_position = "UNDETERMINED"
+        consensus_score = 0.0
+        if final_round:
+            last = final_round[-1]
+            final_position = last.outcome.value if hasattr(last.outcome, "value") else str(last.outcome)
+            consensus_score = last.consensus_score
+
+        # Top FOR and AGAINST arguments (up to 3 each)
+        all_args = deliberation.get("arguments", [])
+        for_args = [a for a in all_args if getattr(a.position, "value", "") == "FOR"][:3]
+        against_args = [a for a in all_args if getattr(a.position, "value", "") == "AGAINST"][:3]
+
+        # Rollback plan: suggest reverting to NEUTRAL if consensus is weak
+        rollback_plan = None
+        if consensus_score < self.config.consensus_threshold:
+            rollback_plan = (
+                f"Consensus ({consensus_score:.2f}) below threshold "
+                f"({self.config.consensus_threshold}). Recommend reverting to NEUTRAL "
+                f"and re-deliberating with additional evidence."
+            )
+
+        # Dissent records
+        dissent = self.dissent_records.get(deliberation_id, [])
+        dissent_summary = [
+            {
+                "agent_id": d.agent_id,
+                "position": d.position.value if hasattr(d.position, "value") else str(d.position),
+                "reasoning": d.reasoning,
+                "resolved": d.resolved,
+            }
+            for d in dissent
+        ]
+
+        return {
+            "deliberation_id": deliberation_id,
+            "topic": deliberation.get("topic", ""),
+            "domain": deliberation.get("domain", ""),
+            "state": state,
+            "final_position": final_position,
+            "consensus_score": consensus_score,
+            "participants": list(deliberation.get("participants", [])),
+            "why": [a.content for a in for_args],
+            "why_not": [a.content for a in against_args],
+            "rollback_plan": rollback_plan,
+            "position_distribution": {
+                "for": for_pos,
+                "against": against_pos,
+                "neutral": neutral_pos,
+                "total": len(positions),
+            },
+            "dissent_summary": dissent_summary,
+            "rounds_completed": len(final_round),
+            "start_time": deliberation.get("start_time"),
+        }
+
     def get_statistics(self) -> dict[str, Any]:
         """Get deliberation engine statistics."""
         active_count = len(self.active_deliberations)

@@ -45,12 +45,14 @@ from heretek_swarm.api import (
     consensus,
     emergent_intelligence,
     evaluation,
+    memory_versions,
     metrics,
     memories,
     observability,
     plugins,
     provisioner,
     rag,
+    skills,
     websockets,
     workflows,
     wizard,
@@ -443,6 +445,7 @@ app.include_router(observability.router)
 app.include_router(evaluation.router)
 app.include_router(rag.router)
 app.include_router(consciousness.router)
+app.include_router(skills.router)
 app.include_router(emergent_intelligence.router)
 app.include_router(agents_management.router)
 app.include_router(autonomous.router)
@@ -451,6 +454,7 @@ app.include_router(wizard.router)
 app.include_router(provisioner.router)
 app.include_router(metrics.router)
 app.include_router(memories.router)
+app.include_router(memory_versions.router)
 app.include_router(collective_evolution.router)
 
 # Setup Prometheus metrics middleware

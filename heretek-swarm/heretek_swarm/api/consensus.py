@@ -44,6 +44,29 @@ from heretek_swarm.consensus.tribunal import (
 
 logger = structlog.get_logger("api.consensus")
 
+
+async def _snapshot_after_round(
+    deliberation_id: str,
+    round_number: int,
+    summary: str,
+    agent_id: str,
+) -> None:
+    """
+    Fire-and-forget memory snapshot after a deliberation round.
+
+    Non-fatal: snapshot failures must not propagate to the caller.
+    """
+    try:
+        from heretek_swarm.memory.versioned import get_versioned_store
+
+        await get_versioned_store().create_snapshot(
+            message=f"Round {round_number}: {summary}",
+            deliberation_id=deliberation_id,
+            agent_id=agent_id,
+        )
+    except Exception as e:
+        logger.warning("memory_snapshot_failed", deliberation_id=deliberation_id, error=str(e))
+
 # =============================================================================
 # Error Messages (Constants)
 # =============================================================================
@@ -820,6 +843,17 @@ async def run_deliberation_round(deliberation_id: str, auth: dict = Depends(get_
 
     if not round_result:
         raise HTTPException(status_code=400, detail="Failed to run deliberation round")
+
+    # Fire-and-forget: create memory version snapshot after deliberation round
+    # Snapshot must not block the deliberation response
+    asyncio.create_task(
+        _snapshot_after_round(
+            deliberation_id=deliberation_id,
+            round_number=round_result.round_number,
+            summary=round_result.summary,
+            agent_id=agent_id,
+        )
+    )
 
     return {
         "deliberation_id": deliberation_id,

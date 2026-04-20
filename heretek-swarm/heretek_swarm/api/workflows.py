@@ -128,7 +128,8 @@ async def get_workflow(
 async def execute_workflow(
     workflow_id: str,
     input_data: dict[str, Any],
-    authenticated: str = Depends(verify_auth)
+    authenticated: str = Depends(verify_auth),
+    strategy: str = "dag",
 ) -> dict[str, Any]:
     """
     Execute a workflow.
@@ -137,6 +138,10 @@ async def execute_workflow(
         workflow_id: Workflow ID
         input_data: Input data for workflow
         authenticated: Authentication token
+        strategy: Execution strategy - "dag" (default), "cycle", "majority_vote"
+                  - dag: Topological sort (dependency order)
+                  - cycle: Feedback loop with convergence monitoring
+                  - majority_vote: Parallel execution with vote aggregation
 
     Returns:
         Execution result
@@ -148,10 +153,16 @@ async def execute_workflow(
 
     result = await engine.execute_workflow(
         workflow_id=workflow_id,
-        input_data=input_data
+        input_data=input_data,
+        strategy=strategy,
     )
 
-    logger.info("workflow_executed", workflow_id=workflow_id, status=result.status)
+    logger.info(
+        "workflow_executed",
+        workflow_id=workflow_id,
+        strategy=strategy,
+        status=result.status,
+    )
 
     return {
         "execution_id": result.execution_id,
@@ -161,7 +172,7 @@ async def execute_workflow(
         "variables": result.variables,
         "start_time": result.start_time.isoformat(),
         "end_time": result.end_time.isoformat() if result.end_time else None,
-        "error": str(result.error) if result.error else None
+        "error": str(result.error) if result.error else None,
     }
 
 

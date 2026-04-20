@@ -23,6 +23,23 @@ logger = structlog.get_logger("AgentActor")
 class AgentActorMessageHandling(AgentActor):
     """Mixin class for message handling functionality."""
 
+    def _record_agent_interaction(self, from_agent: str, to_agent: str) -> None:
+        """
+        Record agent-to-agent interaction for consciousness metrics.
+
+        Uses lazy import to avoid circular imports with the consciousness plugin.
+        This is non-fatal: consciousness tracking failures must not break message delivery.
+        """
+        try:
+            # Lazy import to avoid circular dependency
+            from heretek_swarm.api.consciousness import get_consciousness_plugin
+
+            plugin = get_consciousness_plugin()
+            plugin.record_interaction(from_agent, to_agent)
+        except Exception:  # noqa: S110
+            # Consciousness tracking is non-fatal — do not break message delivery
+            pass
+
     async def send(
         self,
         topic: str,
@@ -149,7 +166,11 @@ class AgentActorMessageHandling(AgentActor):
             delivered = False
             for reg_actor in actor_registry.values():
                 if topic in getattr(reg_actor, "topics", []):
+                    recipient_id = getattr(reg_actor, "agent_id", None)
                     await reg_actor.put_message(message)
+                    # Wire consciousness: record interaction for each recipient
+                    if recipient_id:
+                        self._record_agent_interaction(self.agent_id, recipient_id)
                     delivered = True
             if delivered:
                 logger.info(
@@ -213,6 +234,8 @@ class AgentActorMessageHandling(AgentActor):
                     correlation_id=correlation_id,
                 )
                 await target_actor.put_message(message)
+                # Wire consciousness: record this agent-to-agent interaction
+                self._record_agent_interaction(self.agent_id, target_actor_id)
                 logger.info(
                     f"[{self.agent_id}] Direct message sent to {target_actor_id}",
                     extra={"message_type": message_type},
@@ -509,6 +532,8 @@ class AgentActorMessageHandling(AgentActor):
                 if reg_actor_id != self.agent_id:  # Don't send to self
                     try:
                         await reg_actor.put_message(message)
+                        # Wire consciousness: record broadcast interaction
+                        self._record_agent_interaction(self.agent_id, reg_actor_id)
                         sent_count += 1
                     except Exception as e:
                         logger.error(

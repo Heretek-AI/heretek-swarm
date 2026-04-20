@@ -25,10 +25,23 @@ from heretek_swarm.actors.stubs import get_db_pool  # noqa: F401 - imported for 
 from heretek_swarm.actors.validation import (
     validate_message,
 )
+from heretek_swarm.agents.skills import SkillCategory, SkillMetadata
 from heretek_swarm.state.repository import (
     AgentStateRecord,
     StateRepository,
 )
+
+
+def _make_skill_metadata(capability: str) -> SkillMetadata:
+    """Create skill metadata from a capability string."""
+    return SkillMetadata(
+        name=capability,
+        description=f"Agent capability: {capability}",
+        category=SkillCategory.CUSTOM,
+        tags=[capability],
+        source="runtime",
+    )
+
 
 structlog.configure(
     processors=[
@@ -240,6 +253,9 @@ class AgentActor:
         self._message_handlers: dict[str, Callable] = {}
         self._register_default_handlers()
 
+        # Register agent capabilities with the global skill registry
+        self._register_agent_skills()
+
         logger.info(
             f"[{self.agent_id}] Actor initialized",
             extra={
@@ -281,6 +297,50 @@ class AgentActor:
         self.register_handler("resume", self._handle_resume)
         self.register_handler("terminate", self._handle_terminate)
         self.register_handler("collective_task", self._handle_collective_task)
+
+    def _register_agent_skills(self) -> None:
+        """
+        Register agent capabilities with the global skill registry.
+
+        Non-fatal: skill registration failures are logged but do not
+        prevent agent initialization.
+        """
+        if not self.capabilities:
+            return
+
+        try:
+            from heretek_swarm.agents.skills import (
+                SkillCategory,
+                SkillMetadata,
+                get_agent_skill_registry,
+            )
+
+            registry = get_agent_skill_registry()
+
+            for capability in self.capabilities:
+                # Check if skill already registered (from another agent)
+                existing = registry.get_skill(capability)
+                if existing:
+                    # Add this agent to existing skill
+                    if self.agent_id not in existing.agent_ids:
+                        existing.agent_ids.append(self.agent_id)
+                else:
+                    # Create new skill metadata from capability
+                    registry.register_skill(
+                        agent_id=self.agent_id,
+                        skill=SkillMetadata(
+                            name=capability,
+                            description=f"Agent capability: {capability}",
+                            category=SkillCategory.CUSTOM,
+                            tags=[capability],
+                            source="runtime",
+                        ),
+                    )
+        except Exception as e:
+            logger.warning(
+                f"[{self.agent_id}] Skill registration failed",
+                error=str(e),
+            )
 
     def _validate_message_content(self, message_type: str, content: dict[str, Any]) -> Any | None:
         """
@@ -435,7 +495,9 @@ class AgentActor:
                 pass
             except Exception as e:
                 # P1-10d fix: Log any other exceptions during task cancellation
-                logger.error(f"[{self.agent_id}] Error during task cancellation: {e}", exc_info=True)
+                logger.error(
+                    f"[{self.agent_id}] Error during task cancellation: {e}", exc_info=True
+                )
 
 
 # Trigger mixin bindings when this module is imported

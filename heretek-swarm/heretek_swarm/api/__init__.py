@@ -24,8 +24,10 @@ from heretek_swarm.api import (
     consciousness,
     consensus,
     emergent_intelligence,
+    memory_versions,
     observability,
     plugins,
+    skills,
     websockets,
 )
 from heretek_swarm.api.main import app
@@ -38,5 +40,6 @@ __all__ = [
     "emergent_intelligence",
     "observability",
     "plugins",
+    "skills",
     "websockets",
 ]

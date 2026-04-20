@@ -649,7 +649,8 @@ class WorkflowEngine:
     async def execute_workflow(
         self,
         workflow_id: str,
-        input_data: dict[str, Any] | None = None
+        input_data: dict[str, Any] | None = None,
+        strategy: str = "dag",
     ) -> WorkflowResult:
         """
         Execute a workflow with cycle detection.
@@ -657,6 +658,8 @@ class WorkflowEngine:
         Args:
             workflow_id: Workflow ID
             input_data: Optional initial input data
+            strategy: Execution strategy - "dag", "cycle", or "majority_vote"
+                      Defaults to "dag" (topological sort).
 
         Returns:
             WorkflowResult
@@ -688,10 +691,42 @@ class WorkflowEngine:
         logger.info("workflow_started", workflow_id=workflow_id, execution_id=execution_id)
 
         try:
-            # Build dependency graph
-            graph = self._build_graph(workflow)
+            # Route to execution strategy
+            if strategy == "majority_vote":
+                from heretek_swarm.workflow.strategies import (
+                    MajorityVoteStrategy,
+                    WorkflowExecutionResult,
+                )
 
-            # Get execution order (topological sort)
+                strat = MajorityVoteStrategy()
+                async def node_executor(nid: str, ndata: dict) -> Any:
+                    node = next(n for n in workflow.nodes if n.id == nid)
+                    return await self._execute_and_capture(workflow, nid, context, node)
+
+                strat_result: WorkflowExecutionResult = await strat.execute(
+                    workflow,
+                    {"execution_id": execution_id, "elapsed": 0.0},
+                    node_executor,
+                )
+                # Convert strategy result to WorkflowResult
+                return self._strategy_result_to_result(strat_result, context)
+            elif strategy == "cycle":
+                from heretek_swarm.workflow.strategies import CycleStrategy
+
+                strat = CycleStrategy(max_iterations=self.max_iterations, timeout_seconds=self.timeout_seconds)
+                async def node_executor(nid: str, ndata: dict) -> Any:
+                    node = next(n for n in workflow.nodes if n.id == nid)
+                    return await self._execute_and_capture(workflow, nid, context, node)
+
+                strat_result = await strat.execute(
+                    workflow,
+                    {"execution_id": execution_id, "elapsed": 0.0},
+                    node_executor,
+                )
+                return self._strategy_result_to_result(strat_result, context)
+
+            # Default: DAG (topological sort)
+            graph = self._build_graph(workflow)
             execution_order = self._topological_sort(graph)
 
             # Execute nodes in order with cycle detection
@@ -846,6 +881,75 @@ class WorkflowEngine:
                 error=e,
                 execution_time=(datetime.now(UTC) - start_time).total_seconds()
             )
+
+    async def _execute_and_capture(
+        self,
+        workflow: Workflow,
+        node_id: str,
+        context: WorkflowContext,
+        node: WorkflowNode,
+    ) -> Any:
+        """
+        Execute a node and capture the result.
+
+        Used by strategy wrappers to capture results without writing to context.
+        Returns the output directly for strategy aggregation.
+        """
+        input_data = self._get_node_input(workflow, node, context)
+        start_time = datetime.now(UTC)
+
+        try:
+            if node.type == "agent":
+                return await self._execute_agent_node(node, input_data, context)
+            elif node.type == "tool":
+                return await self._execute_tool_node(node, input_data, context)
+            elif node.type == "chain":
+                return await self._execute_chain_node(node, input_data, context)
+            elif node.type == "memory":
+                return await self._execute_memory_node(node, input_data, context)
+            else:
+                return {"error": f"Unknown node type: {node.type}"}
+        except Exception as e:
+            logger.error("node_execution_failed", node_id=node_id, error=str(e))
+            return {"error": str(e)}
+
+    def _strategy_result_to_result(
+        self,
+        strat_result: "WorkflowExecutionResult",
+        context: WorkflowContext,
+    ) -> WorkflowResult:
+        """
+        Convert a strategy-level WorkflowExecutionResult to a WorkflowResult.
+
+        Args:
+            strat_result: Result from execution strategy
+            context: Execution context
+
+        Returns:
+            WorkflowResult matching the engine's dataclass schema
+        """
+        # Map strategy node results (raw values) to NodeResult objects
+        node_result_map: dict[str, NodeResult] = {}
+        for nid, val in strat_result.node_results.items():
+            status = NodeStatus.COMPLETED
+            if isinstance(val, dict) and "error" in val:
+                status = NodeStatus.FAILED
+            node_result_map[nid] = NodeResult(
+                node_id=nid,
+                status=status,
+                output=val,
+            )
+
+        return WorkflowResult(
+            workflow_id=strat_result.workflow_id,
+            execution_id=context.execution_id,
+            status=WorkflowState.COMPLETED if strat_result.success else WorkflowState.FAILED,
+            node_results=node_result_map,
+            variables=context.variables,
+            start_time=context.start_time,
+            end_time=datetime.now(UTC),
+            error=Exception(strat_result.error_message) if strat_result.error_message else None,
+        )
 
     def _should_execute_node(
         self,

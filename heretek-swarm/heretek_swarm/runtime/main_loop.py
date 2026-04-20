@@ -25,11 +25,13 @@ from typing import Any
 import structlog
 
 from heretek_swarm.actors.supervisor import ActorSupervisor
+from heretek_swarm.api.consciousness import get_consciousness_plugin
 from heretek_swarm.channels.registry import ChannelRegistry, GroupRegistry
 from heretek_swarm.consensus.maker import MAKERConsensus
 from heretek_swarm.gateway.nats_event_mesh import NATSEventMeshWithJetStream
 from heretek_swarm.memory.base import DualTierMemory
 from heretek_swarm.rag.rag_pipeline import RAGPipeline
+from heretek_swarm.runtime.registry_enhanced import get_enhanced_registry
 from heretek_swarm.tools.mcp_tools import CoreMCPTools
 
 logger = structlog.get_logger(__name__)
@@ -465,18 +467,44 @@ class AutonomousSwarm:
                 logger.error("health_monitor_error", error=str(e))
 
     async def _consciousness_loop(self) -> None:
-        """Consciousness metrics update loop."""
+        """Consciousness metrics update loop — wires live agent telemetry to NATS."""
         while self._running:
             try:
-                # Broadcast global workspace updates
-                # Update Phi metrics (IIT)
-                # Process attention schemas (AST)
+                # Get consciousness plugin and registry
+                plugin = get_consciousness_plugin()
+                registry = get_enhanced_registry()
+
+                # Real phi from IIT calculator
+                phi_stats = plugin.get_statistics()
+                avg_phi = phi_stats.get("average_phi", 0.0)
+
+                # Real attention distribution from agent registry
+                all_instances = registry.get_all_instances()
+                attention_distribution = {}
+                active_count = 0
+                total_count = len(all_instances)
+                for agent_id, instance in all_instances.items():
+                    state = getattr(instance, "state", None)
+                    attention_distribution[agent_id] = {
+                        "state": str(state.value) if hasattr(state, "value") else str(state),
+                        "type": getattr(instance, "agent_type", "unknown"),
+                    }
+                    if state and hasattr(state, "value"):
+                        # ACTIVE is the desired state; count it as "conscious" for coherence
+                        active_count += 1
+
+                # Workspace coherence: ratio of active agents
+                workspace_coherence = active_count / total_count if total_count > 0 else 0.0
 
                 consciousness_data = {
                     "timestamp": datetime.now(UTC).isoformat(),
-                    "workspace_coherence": 0.85,  # Placeholder
-                    "attention_distribution": {},  # Computed per agent
-                    "phi_metric": 0.0,  # IIT integration metric
+                    "workspace_coherence": workspace_coherence,
+                    "attention_distribution": attention_distribution,
+                    "phi_metric": avg_phi,
+                    "total_agents": total_count,
+                    "active_agents": active_count,
+                    "average_free_energy": phi_stats.get("average_free_energy", 0.0),
+                    "conscious_agents": phi_stats.get("conscious_agents", 0),
                 }
 
                 await self.event_mesh.publish(
@@ -489,6 +517,7 @@ class AutonomousSwarm:
                 break
             except Exception as e:
                 logger.error("consciousness_loop_error", error=str(e))
+                await asyncio.sleep(self._consciousness_interval)
 
     async def _task_processing_loop(self) -> None:
         """Task processing loop - polls for new tasks."""

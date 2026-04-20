@@ -17,7 +17,7 @@ The plugin provides tools for:
 import asyncio
 import math
 import time
-from collections import defaultdict
+from collections import defaultdict, deque
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from enum import Enum
@@ -592,6 +592,10 @@ class EnhancedConsciousnessPlugin:
         self.agent_metrics: dict[str, ConsciousnessMetrics] = {}
         self.metrics_history: list[dict[str, Any]] = []
 
+        # Thinking stream — bounded deque of deliberation rounds (OpenAEON pattern)
+        # Stores the last 1000 rounds across all deliberations for replay/trace
+        self._thinking_stream: deque[dict[str, Any]] = deque(maxlen=1000)
+
         # State
         self.initialized = False
         self.running = False
@@ -653,6 +657,54 @@ class EnhancedConsciousnessPlugin:
             strength: Interaction strength
         """
         self.iit_calculator.record_interaction(from_agent, to_agent, strength)
+
+    def record_deliberation_round(
+        self,
+        deliberation_id: str,
+        round_data: dict[str, Any],
+    ) -> None:
+        """
+        Record a deliberation round to the thinking stream.
+
+        This wires the triad's deliberation traces into the consciousness plugin's
+        thinking stream for the /api/consciousness/thinking-stream endpoints.
+
+        Args:
+            deliberation_id: Deliberation identifier
+            round_data: Dict with round_id, topic, participant_agents, arguments,
+                       counter_arguments, consensus_score, outcome, start_time, end_time
+        """
+        entry = {
+            "deliberation_id": deliberation_id,
+            "round_id": round_data.get("round_id", ""),
+            "topic": round_data.get("topic", ""),
+            "participant_agents": round_data.get("participant_agents", []),
+            "arguments": [
+                {
+                    "position": getattr(a, "position", None),
+                    "content": getattr(a, "content", ""),
+                    "agent_id": getattr(a, "agent_id", ""),
+                }
+                for a in round_data.get("arguments", [])
+            ],
+            "counter_arguments": [
+                {
+                    "position": getattr(a, "position", None),
+                    "content": getattr(a, "content", ""),
+                    "agent_id": getattr(a, "agent_id", ""),
+                }
+                for a in round_data.get("counter_arguments", [])
+            ],
+            "consensus_score": round_data.get("consensus_score", 0.0),
+            "outcome": str(round_data.get("outcome", "")),
+            "start_time": round_data.get("start_time", ""),
+            "end_time": round_data.get("end_time", ""),
+            "timestamp": datetime.now(UTC).isoformat(),
+        }
+        self._thinking_stream.append(entry)
+        # Cleanup: trim if over limit (deque handles maxlen but be defensive)
+        while len(self._thinking_stream) > 1000:
+            self._thinking_stream.popleft()
 
     def calculate_iit_phi(
         self,

@@ -484,3 +484,143 @@ def _update_storage_config(pipeline: RAGPipeline, storage: dict[str, Any] | None
         pipeline.config.collection_name = storage["collection_name"]
     if "persist_processed" in storage:
         pipeline.config.persist_processed = storage["persist_processed"]
+
+
+# =============================================================================
+# Knowledge Graph Retrieval Endpoints (RAGFlow pattern)
+# =============================================================================
+
+_knowledge_graph_retriever: "KnowledgeGraphRetriever | None" = None  # type: ignore
+
+
+def get_knowledge_graph_retriever() -> "KnowledgeGraphRetriever":  # type: ignore
+    """Get or initialize the knowledge graph retriever."""
+    global _knowledge_graph_retriever
+    if _knowledge_graph_retriever is None:
+        from heretek_swarm.rag.knowledge_graph import KnowledgeGraphRetriever
+
+        _knowledge_graph_retriever = KnowledgeGraphRetriever()
+    return _knowledge_graph_retriever
+
+
+@router.post("/graph/query", status_code=200)
+async def query_with_graph(
+    query: str,
+    top_k: int = 5,
+    seed_chunk_ids: str | None = None,
+    authenticated: str = Depends(verify_auth),
+) -> dict[str, Any]:
+    """
+    Query using graph-based retrieval (RAGFlow pattern).
+
+    Exploits document heading structure and chunk hierarchy
+    for better context in complex queries.
+
+    Args:
+        query: Search query
+        top_k: Number of results
+        seed_chunk_ids: Optional comma-separated seed chunk IDs for graph expansion
+
+    Returns:
+        Graph retrieval results with traversal metadata
+    """
+    kg = get_knowledge_graph_retriever()
+
+    seed_list = seed_chunk_ids.split(",") if seed_chunk_ids else None
+
+    results = await kg.retrieve(
+        query=query,
+        top_k=top_k,
+        seed_chunk_ids=seed_list,
+    )
+
+    return {
+        "query": query,
+        "results": [
+            {
+                "chunk_id": r.chunk_id,
+                "content": r.content,
+                "score": r.score,
+                "heading_path": r.heading_path,
+                "hop_depth": r.hop_depth,
+                "traversal_path": r.traversal_path,
+                "document_id": r.document_id,
+            }
+            for r in results
+        ],
+        "count": len(results),
+    }
+
+
+@router.post("/graph/chunks", status_code=201)
+async def register_graph_chunks(
+    chunks: list[dict[str, Any]],
+    authenticated: str = Depends(verify_auth),
+) -> dict[str, Any]:
+    """
+    Register document chunks in the knowledge graph.
+
+    Builds parent-child heading relationships automatically based on the
+    heading_path hierarchy in each chunk.
+
+    Expects chunk dicts with: chunk_id, document_id, content, heading_path,
+    parent_chunk_id, level.
+    """
+    from heretek_swarm.rag.knowledge_graph import GraphChunkNode
+
+    kg = get_knowledge_graph_retriever()
+
+    nodes = [
+        GraphChunkNode(
+            chunk_id=c["chunk_id"],
+            document_id=c["document_id"],
+            content=c.get("content", ""),
+            heading_path=c.get("heading_path", []),
+            parent_chunk_id=c.get("parent_chunk_id"),
+            level=c.get("level", 0),
+            metadata=c.get("metadata", {}),
+        )
+        for c in chunks
+    ]
+
+    count = kg.register_chunks(nodes)
+
+    return {"registered": count, "graph_size": len(kg._chunk_graph)}
+
+
+@router.get("/graph/statistics", status_code=200)
+async def get_graph_statistics(
+    authenticated: str = Depends(verify_auth),
+) -> dict[str, Any]:
+    """Get knowledge graph statistics."""
+    kg = get_knowledge_graph_retriever()
+    return kg.get_statistics()
+
+
+@router.get("/graph/document/{document_id}/headings", status_code=200)
+async def get_document_headings(
+    document_id: str,
+    authenticated: str = Depends(verify_auth),
+) -> dict[str, Any]:
+    """Get the heading tree for a document."""
+    kg = get_knowledge_graph_retriever()
+    headings = kg.get_document_headings(document_id)
+    return {"document_id": document_id, "headings": headings, "count": len(headings)}
+
+
+@router.post("/graph/decompose", status_code=200)
+async def decompose_query(
+    query: str,
+    authenticated: str = Depends(verify_auth),
+) -> dict[str, Any]:
+    """
+    Decompose a complex query into simpler sub-questions.
+
+    Supports sequential, comparative, causal, and hierarchical decomposition.
+    """
+    from heretek_swarm.rag.knowledge_graph import SubQuestionDecomposer
+
+    decomposer = SubQuestionDecomposer()
+    sub_questions = decomposer.decompose(query)
+
+    return {"original": query, "sub_questions": sub_questions, "count": len(sub_questions)}
