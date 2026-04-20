@@ -14,6 +14,8 @@ import structlog
 from fastapi import APIRouter, Depends, HTTPException, UploadFile
 
 from heretek_swarm.gateway.auth import verify_auth
+from heretek_swarm.rag.rag_pipeline import RAGPipeline
+from heretek_swarm.rag.document_processor import DocumentType
 
 # Stub imports - rag module is Phase 1 infrastructure
 try:
@@ -72,35 +74,32 @@ async def ingest_document(
 
     try:
         # Read file content
-        content = await file.read()
+        content = (await file.read()).decode("utf-8")
 
-        # Build processing config
-        _config = ProcessingConfig(
-            chunk_strategy=chunk_strategy,
-            extract_metadata=True,
-            normalize_whitespace=True,
+        # Ingest document content via the pipeline's ingest method.
+        # Note: ingest() takes list[str] | str, not a file path + content pattern.
+        results = await pipeline.ingest(
+            documents=content,
+            metadata={"filename": file.filename, **(metadata or {})},
+            document_type=DocumentType.TEXT,
         )
 
-        # Process document
-        result = await pipeline.ingest_file(
-            file_path=file.filename,
-            content=content.decode("utf-8"),
-            metadata=metadata,
-        )
+        # Return the first result's fields (pipeline.ingest returns list[IngestedDocument])
+        result = results[0] if results else None
 
         logger.info(
             "document_ingested",
             filename=file.filename,
-            chunks_processed=result.chunks_processed,
-            vectors_stored=result.vectors_stored,
+            chunks_processed=result.chunks_ingested if result else 0,
+            vectors_stored=result.chunks_ingested if result else 0,  # approximate
         )
 
         return {
             "filename": file.filename,
-            "chunks_processed": result.chunks_processed,
-            "vectors_stored": result.vectors_stored,
-            "processing_time_ms": result.processing_time_ms,
-            "document_id": result.id,
+            "chunks_processed": result.chunks_ingested if result else 0,
+            "vectors_stored": result.chunks_ingested if result else 0,
+            "processing_time_ms": result.processing_time_ms if result else 0,
+            "document_id": result.document_id if result else file.filename,
         }
 
     except Exception as e:

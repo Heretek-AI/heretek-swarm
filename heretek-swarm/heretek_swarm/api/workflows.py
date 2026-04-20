@@ -30,6 +30,28 @@ logger = structlog.get_logger(__name__)
 router = APIRouter(prefix="/api/workflows", tags=["workflows"])
 
 
+def _serialize_node_results(node_results: dict[str, Any]) -> dict[str, Any]:
+    """
+    Serialize node_results dict for JSON response.
+    
+    NodeResult dataclass contains Exception objects which Pydantic cannot serialize.
+    Converts to JSON-safe dict with error as string.
+    """
+    result = {}
+    for key, val in node_results.items():
+        if hasattr(val, "__dict__"):
+            # dataclass-like object — convert to dict
+            d = vars(val).copy() if hasattr(val, "__dict__") else {}
+            if "error" in d and isinstance(d["error"], Exception):
+                d["error"] = str(d["error"])
+            if "output" in d and not isinstance(d["output"], (str, int, float, bool, list, dict, type(None))):
+                d["output"] = str(d["output"])
+            result[key] = d
+        else:
+            result[key] = val
+    return result
+
+
 @router.post("", status_code=201)
 async def create_workflow(
     workflow_definition: dict[str, Any],
@@ -167,8 +189,8 @@ async def execute_workflow(
     return {
         "execution_id": result.execution_id,
         "workflow_id": workflow_id,
-        "status": result.status,
-        "node_results": result.node_results,
+        "status": result.status.value if hasattr(result.status, 'value') else str(result.status),
+        "node_results": _serialize_node_results(result.node_results),
         "variables": result.variables,
         "start_time": result.start_time.isoformat(),
         "end_time": result.end_time.isoformat() if result.end_time else None,

@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-20T21:54:28.502516+00:00",
+    "generated_at": "2026-04-20T22:04:51.819205+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -54795,30 +54795,37 @@
       "file_status": "modified",
       "methods": [
         {
+          "qualified_name": "heretek-swarm.heretek_swarm.api.workflows._serialize_node_results",
+          "start_line": 33,
+          "end_line": 52,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
           "qualified_name": "heretek-swarm.heretek_swarm.api.workflows.create_workflow",
           "start_line": 34,
           "end_line": 63,
           "node_type": "FUNCTION",
-          "status": "modified"
+          "status": "unchanged"
         },
         {
           "qualified_name": "heretek-swarm.heretek_swarm.api.workflows.list_workflows",
           "start_line": 67,
           "end_line": 91,
           "node_type": "FUNCTION",
-          "status": "modified"
+          "status": "unchanged"
         },
         {
           "qualified_name": "heretek-swarm.heretek_swarm.api.workflows.get_workflow",
           "start_line": 95,
           "end_line": 124,
           "node_type": "FUNCTION",
-          "status": "modified"
+          "status": "unchanged"
         },
         {
           "qualified_name": "heretek-swarm.heretek_swarm.api.workflows.execute_workflow",
-          "start_line": 128,
-          "end_line": 176,
+          "start_line": 150,
+          "end_line": 198,
           "node_type": "FUNCTION",
           "status": "modified"
         },
@@ -54827,28 +54834,28 @@
           "start_line": 180,
           "end_line": 204,
           "node_type": "FUNCTION",
-          "status": "modified"
+          "status": "unchanged"
         },
         {
           "qualified_name": "heretek-swarm.heretek_swarm.api.workflows.get_workflow_status",
           "start_line": 208,
           "end_line": 244,
           "node_type": "FUNCTION",
-          "status": "modified"
+          "status": "unchanged"
         },
         {
           "qualified_name": "heretek-swarm.heretek_swarm.api.workflows.cancel_workflow",
           "start_line": 248,
           "end_line": 274,
           "node_type": "FUNCTION",
-          "status": "modified"
+          "status": "unchanged"
         },
         {
           "qualified_name": "heretek-swarm.heretek_swarm.api.workflows.validate_workflow_endpoint",
           "start_line": 278,
           "end_line": 342,
           "node_type": "FUNCTION",
-          "status": "modified"
+          "status": "unchanged"
         },
         {
           "qualified_name": "heretek-swarm.heretek_swarm.api.workflows.validate_workflow_draft",
@@ -54876,7 +54883,7 @@
           "start_line": 493,
           "end_line": 600,
           "node_type": "FUNCTION",
-          "status": "modified"
+          "status": "unchanged"
         },
         {
           "qualified_name": "heretek-swarm.heretek_swarm.api.workflows.workflow_specific_events_stream.event_generator",
@@ -55183,6 +55190,296 @@
           "end_line": 1320,
           "node_type": "FUNCTION",
           "status": "unchanged"
+        }
+      ]
+    },
+    "heretek-swarm/heretek_swarm/api/rag.py": {
+      "file_status": "modified",
+      "methods": [
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.api.rag.get_rag_pipeline",
+          "start_line": 39,
+          "end_line": 46,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.api.rag.ingest_document",
+          "start_line": 55,
+          "end_line": 107,
+          "node_type": "FUNCTION",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.api.rag.ingest_batch",
+          "start_line": 109,
+          "end_line": 169,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.api.rag.query_rag",
+          "start_line": 177,
+          "end_line": 223,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.api.rag.list_documents",
+          "start_line": 227,
+          "end_line": 263,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.api.rag.get_document",
+          "start_line": 267,
+          "end_line": 307,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.api.rag.delete_document",
+          "start_line": 311,
+          "end_line": 341,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.api.rag.get_rag_config",
+          "start_line": 349,
+          "end_line": 384,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.api.rag.update_rag_config",
+          "start_line": 388,
+          "end_line": 439,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.api.rag._update_chunking_config",
+          "start_line": 442,
+          "end_line": 451,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.api.rag._update_embedding_config",
+          "start_line": 454,
+          "end_line": 461,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.api.rag._update_retrieval_config",
+          "start_line": 464,
+          "end_line": 473,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.api.rag._update_storage_config",
+          "start_line": 476,
+          "end_line": 483,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.api.rag.get_knowledge_graph_retriever",
+          "start_line": 493,
+          "end_line": 500,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.api.rag.query_with_graph",
+          "start_line": 504,
+          "end_line": 549,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.api.rag.register_graph_chunks",
+          "start_line": 553,
+          "end_line": 585,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.api.rag.get_graph_statistics",
+          "start_line": 589,
+          "end_line": 594,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.api.rag.get_document_headings",
+          "start_line": 598,
+          "end_line": 605,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.api.rag.decompose_query",
+          "start_line": 609,
+          "end_line": 623,
+          "node_type": "FUNCTION",
+          "status": "added"
+        }
+      ]
+    },
+    "heretek-swarm/heretek_swarm/rag/rag_pipeline.py": {
+      "file_status": "modified",
+      "methods": [
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.rag.rag_pipeline.RAGPipelineConfig",
+          "start_line": 35,
+          "end_line": 69,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.rag.rag_pipeline.IngestedDocument",
+          "start_line": 73,
+          "end_line": 78,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.rag.rag_pipeline.RAGResponse",
+          "start_line": 82,
+          "end_line": 90,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.rag.rag_pipeline.RAGPipeline",
+          "start_line": 93,
+          "end_line": 549,
+          "node_type": "CLASS",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.rag.rag_pipeline.RAGPipeline.__init__",
+          "start_line": 103,
+          "end_line": 121,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.rag.rag_pipeline.RAGPipeline._check_litellm",
+          "start_line": 123,
+          "end_line": 131,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.rag.rag_pipeline.RAGPipeline.initialize",
+          "start_line": 133,
+          "end_line": 178,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.rag.rag_pipeline.RAGPipeline.ingest",
+          "start_line": 180,
+          "end_line": 275,
+          "node_type": "METHOD",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.rag.rag_pipeline.RAGPipeline._index_chunk",
+          "start_line": 278,
+          "end_line": 309,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.rag.rag_pipeline.RAGPipeline.query",
+          "start_line": 311,
+          "end_line": 381,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.rag.rag_pipeline.RAGPipeline._generate_response",
+          "start_line": 383,
+          "end_line": 422,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.rag.rag_pipeline.RAGPipeline._build_prompt",
+          "start_line": 424,
+          "end_line": 440,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.rag.rag_pipeline.RAGPipeline._simulated_response",
+          "start_line": 442,
+          "end_line": 457,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.rag.rag_pipeline.RAGPipeline.retrieve_context",
+          "start_line": 459,
+          "end_line": 485,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.rag.rag_pipeline.RAGPipeline.get_retriever",
+          "start_line": 487,
+          "end_line": 494,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.rag.rag_pipeline.RAGPipeline.close",
+          "start_line": 496,
+          "end_line": 501,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.rag.rag_pipeline.RAGPipeline.list_documents",
+          "start_line": 503,
+          "end_line": 525,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.rag.rag_pipeline.RAGPipeline._ingested_docs",
+          "start_line": 528,
+          "end_line": 532,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.rag.rag_pipeline.RAGPipeline._register_document",
+          "start_line": 534,
+          "end_line": 541,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.rag.rag_pipeline.RAGPipeline.__aenter__",
+          "start_line": 543,
+          "end_line": 546,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.rag.rag_pipeline.RAGPipeline.__aexit__",
+          "start_line": 548,
+          "end_line": 550,
+          "node_type": "METHOD",
+          "status": "added"
         }
       ]
     }
@@ -115756,13 +116053,21 @@
       "type": "FUNCTION",
       "status": "unchanged"
     },
+    "heretek-swarm/heretek_swarm/api/workflows.py|heretek-swarm.heretek_swarm.api.workflows._serialize_node_results": {
+      "file_path": "heretek-swarm/heretek_swarm/api/workflows.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.api.workflows._serialize_node_results",
+      "start_line": 33,
+      "end_line": 52,
+      "type": "FUNCTION",
+      "status": "added"
+    },
     "heretek-swarm/heretek_swarm/api/workflows.py|heretek-swarm.heretek_swarm.api.workflows.create_workflow": {
       "file_path": "heretek-swarm/heretek_swarm/api/workflows.py",
       "qualified_name": "heretek-swarm.heretek_swarm.api.workflows.create_workflow",
       "start_line": 34,
       "end_line": 63,
       "type": "FUNCTION",
-      "status": "modified"
+      "status": "unchanged"
     },
     "heretek-swarm/heretek_swarm/api/workflows.py|heretek-swarm.heretek_swarm.api.workflows.list_workflows": {
       "file_path": "heretek-swarm/heretek_swarm/api/workflows.py",
@@ -115770,7 +116075,7 @@
       "start_line": 67,
       "end_line": 91,
       "type": "FUNCTION",
-      "status": "modified"
+      "status": "unchanged"
     },
     "heretek-swarm/heretek_swarm/api/workflows.py|heretek-swarm.heretek_swarm.api.workflows.get_workflow": {
       "file_path": "heretek-swarm/heretek_swarm/api/workflows.py",
@@ -115778,13 +116083,13 @@
       "start_line": 95,
       "end_line": 124,
       "type": "FUNCTION",
-      "status": "modified"
+      "status": "unchanged"
     },
     "heretek-swarm/heretek_swarm/api/workflows.py|heretek-swarm.heretek_swarm.api.workflows.execute_workflow": {
       "file_path": "heretek-swarm/heretek_swarm/api/workflows.py",
       "qualified_name": "heretek-swarm.heretek_swarm.api.workflows.execute_workflow",
-      "start_line": 128,
-      "end_line": 176,
+      "start_line": 150,
+      "end_line": 198,
       "type": "FUNCTION",
       "status": "modified"
     },
@@ -115794,7 +116099,7 @@
       "start_line": 180,
       "end_line": 204,
       "type": "FUNCTION",
-      "status": "modified"
+      "status": "unchanged"
     },
     "heretek-swarm/heretek_swarm/api/workflows.py|heretek-swarm.heretek_swarm.api.workflows.get_workflow_status": {
       "file_path": "heretek-swarm/heretek_swarm/api/workflows.py",
@@ -115802,7 +116107,7 @@
       "start_line": 208,
       "end_line": 244,
       "type": "FUNCTION",
-      "status": "modified"
+      "status": "unchanged"
     },
     "heretek-swarm/heretek_swarm/api/workflows.py|heretek-swarm.heretek_swarm.api.workflows.cancel_workflow": {
       "file_path": "heretek-swarm/heretek_swarm/api/workflows.py",
@@ -115810,7 +116115,7 @@
       "start_line": 248,
       "end_line": 274,
       "type": "FUNCTION",
-      "status": "modified"
+      "status": "unchanged"
     },
     "heretek-swarm/heretek_swarm/api/workflows.py|heretek-swarm.heretek_swarm.api.workflows.validate_workflow_endpoint": {
       "file_path": "heretek-swarm/heretek_swarm/api/workflows.py",
@@ -115818,7 +116123,7 @@
       "start_line": 278,
       "end_line": 342,
       "type": "FUNCTION",
-      "status": "modified"
+      "status": "unchanged"
     },
     "heretek-swarm/heretek_swarm/api/workflows.py|heretek-swarm.heretek_swarm.api.workflows.validate_workflow_draft": {
       "file_path": "heretek-swarm/heretek_swarm/api/workflows.py",
@@ -115850,7 +116155,7 @@
       "start_line": 493,
       "end_line": 600,
       "type": "FUNCTION",
-      "status": "modified"
+      "status": "unchanged"
     },
     "heretek-swarm/heretek_swarm/api/workflows.py|heretek-swarm.heretek_swarm.api.workflows.workflow_specific_events_stream.event_generator": {
       "file_path": "heretek-swarm/heretek_swarm/api/workflows.py",
@@ -116195,6 +116500,326 @@
       "end_line": 1320,
       "type": "FUNCTION",
       "status": "unchanged"
+    },
+    "heretek-swarm/heretek_swarm/api/rag.py|heretek-swarm.heretek_swarm.api.rag.get_rag_pipeline": {
+      "file_path": "heretek-swarm/heretek_swarm/api/rag.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.api.rag.get_rag_pipeline",
+      "start_line": 39,
+      "end_line": 46,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/api/rag.py|heretek-swarm.heretek_swarm.api.rag.ingest_document": {
+      "file_path": "heretek-swarm/heretek_swarm/api/rag.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.api.rag.ingest_document",
+      "start_line": 55,
+      "end_line": 107,
+      "type": "FUNCTION",
+      "status": "modified"
+    },
+    "heretek-swarm/heretek_swarm/api/rag.py|heretek-swarm.heretek_swarm.api.rag.ingest_batch": {
+      "file_path": "heretek-swarm/heretek_swarm/api/rag.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.api.rag.ingest_batch",
+      "start_line": 109,
+      "end_line": 169,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/api/rag.py|heretek-swarm.heretek_swarm.api.rag.query_rag": {
+      "file_path": "heretek-swarm/heretek_swarm/api/rag.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.api.rag.query_rag",
+      "start_line": 177,
+      "end_line": 223,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/api/rag.py|heretek-swarm.heretek_swarm.api.rag.list_documents": {
+      "file_path": "heretek-swarm/heretek_swarm/api/rag.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.api.rag.list_documents",
+      "start_line": 227,
+      "end_line": 263,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/api/rag.py|heretek-swarm.heretek_swarm.api.rag.get_document": {
+      "file_path": "heretek-swarm/heretek_swarm/api/rag.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.api.rag.get_document",
+      "start_line": 267,
+      "end_line": 307,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/api/rag.py|heretek-swarm.heretek_swarm.api.rag.delete_document": {
+      "file_path": "heretek-swarm/heretek_swarm/api/rag.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.api.rag.delete_document",
+      "start_line": 311,
+      "end_line": 341,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/api/rag.py|heretek-swarm.heretek_swarm.api.rag.get_rag_config": {
+      "file_path": "heretek-swarm/heretek_swarm/api/rag.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.api.rag.get_rag_config",
+      "start_line": 349,
+      "end_line": 384,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/api/rag.py|heretek-swarm.heretek_swarm.api.rag.update_rag_config": {
+      "file_path": "heretek-swarm/heretek_swarm/api/rag.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.api.rag.update_rag_config",
+      "start_line": 388,
+      "end_line": 439,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/api/rag.py|heretek-swarm.heretek_swarm.api.rag._update_chunking_config": {
+      "file_path": "heretek-swarm/heretek_swarm/api/rag.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.api.rag._update_chunking_config",
+      "start_line": 442,
+      "end_line": 451,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/api/rag.py|heretek-swarm.heretek_swarm.api.rag._update_embedding_config": {
+      "file_path": "heretek-swarm/heretek_swarm/api/rag.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.api.rag._update_embedding_config",
+      "start_line": 454,
+      "end_line": 461,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/api/rag.py|heretek-swarm.heretek_swarm.api.rag._update_retrieval_config": {
+      "file_path": "heretek-swarm/heretek_swarm/api/rag.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.api.rag._update_retrieval_config",
+      "start_line": 464,
+      "end_line": 473,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/api/rag.py|heretek-swarm.heretek_swarm.api.rag._update_storage_config": {
+      "file_path": "heretek-swarm/heretek_swarm/api/rag.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.api.rag._update_storage_config",
+      "start_line": 476,
+      "end_line": 483,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/api/rag.py|heretek-swarm.heretek_swarm.api.rag.get_knowledge_graph_retriever": {
+      "file_path": "heretek-swarm/heretek_swarm/api/rag.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.api.rag.get_knowledge_graph_retriever",
+      "start_line": 493,
+      "end_line": 500,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/api/rag.py|heretek-swarm.heretek_swarm.api.rag.query_with_graph": {
+      "file_path": "heretek-swarm/heretek_swarm/api/rag.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.api.rag.query_with_graph",
+      "start_line": 504,
+      "end_line": 549,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/api/rag.py|heretek-swarm.heretek_swarm.api.rag.register_graph_chunks": {
+      "file_path": "heretek-swarm/heretek_swarm/api/rag.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.api.rag.register_graph_chunks",
+      "start_line": 553,
+      "end_line": 585,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/api/rag.py|heretek-swarm.heretek_swarm.api.rag.get_graph_statistics": {
+      "file_path": "heretek-swarm/heretek_swarm/api/rag.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.api.rag.get_graph_statistics",
+      "start_line": 589,
+      "end_line": 594,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/api/rag.py|heretek-swarm.heretek_swarm.api.rag.get_document_headings": {
+      "file_path": "heretek-swarm/heretek_swarm/api/rag.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.api.rag.get_document_headings",
+      "start_line": 598,
+      "end_line": 605,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/api/rag.py|heretek-swarm.heretek_swarm.api.rag.decompose_query": {
+      "file_path": "heretek-swarm/heretek_swarm/api/rag.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.api.rag.decompose_query",
+      "start_line": 609,
+      "end_line": 623,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/rag/rag_pipeline.py|heretek-swarm.heretek_swarm.rag.rag_pipeline.RAGPipelineConfig": {
+      "file_path": "heretek-swarm/heretek_swarm/rag/rag_pipeline.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.rag.rag_pipeline.RAGPipelineConfig",
+      "start_line": 35,
+      "end_line": 69,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/rag/rag_pipeline.py|heretek-swarm.heretek_swarm.rag.rag_pipeline.IngestedDocument": {
+      "file_path": "heretek-swarm/heretek_swarm/rag/rag_pipeline.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.rag.rag_pipeline.IngestedDocument",
+      "start_line": 73,
+      "end_line": 78,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/rag/rag_pipeline.py|heretek-swarm.heretek_swarm.rag.rag_pipeline.RAGResponse": {
+      "file_path": "heretek-swarm/heretek_swarm/rag/rag_pipeline.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.rag.rag_pipeline.RAGResponse",
+      "start_line": 82,
+      "end_line": 90,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/rag/rag_pipeline.py|heretek-swarm.heretek_swarm.rag.rag_pipeline.RAGPipeline": {
+      "file_path": "heretek-swarm/heretek_swarm/rag/rag_pipeline.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.rag.rag_pipeline.RAGPipeline",
+      "start_line": 93,
+      "end_line": 549,
+      "type": "CLASS",
+      "status": "modified"
+    },
+    "heretek-swarm/heretek_swarm/rag/rag_pipeline.py|heretek-swarm.heretek_swarm.rag.rag_pipeline.RAGPipeline.__init__": {
+      "file_path": "heretek-swarm/heretek_swarm/rag/rag_pipeline.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.rag.rag_pipeline.RAGPipeline.__init__",
+      "start_line": 103,
+      "end_line": 121,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/rag/rag_pipeline.py|heretek-swarm.heretek_swarm.rag.rag_pipeline.RAGPipeline._check_litellm": {
+      "file_path": "heretek-swarm/heretek_swarm/rag/rag_pipeline.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.rag.rag_pipeline.RAGPipeline._check_litellm",
+      "start_line": 123,
+      "end_line": 131,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/rag/rag_pipeline.py|heretek-swarm.heretek_swarm.rag.rag_pipeline.RAGPipeline.initialize": {
+      "file_path": "heretek-swarm/heretek_swarm/rag/rag_pipeline.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.rag.rag_pipeline.RAGPipeline.initialize",
+      "start_line": 133,
+      "end_line": 178,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/rag/rag_pipeline.py|heretek-swarm.heretek_swarm.rag.rag_pipeline.RAGPipeline.ingest": {
+      "file_path": "heretek-swarm/heretek_swarm/rag/rag_pipeline.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.rag.rag_pipeline.RAGPipeline.ingest",
+      "start_line": 180,
+      "end_line": 275,
+      "type": "METHOD",
+      "status": "modified"
+    },
+    "heretek-swarm/heretek_swarm/rag/rag_pipeline.py|heretek-swarm.heretek_swarm.rag.rag_pipeline.RAGPipeline._index_chunk": {
+      "file_path": "heretek-swarm/heretek_swarm/rag/rag_pipeline.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.rag.rag_pipeline.RAGPipeline._index_chunk",
+      "start_line": 278,
+      "end_line": 309,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/rag/rag_pipeline.py|heretek-swarm.heretek_swarm.rag.rag_pipeline.RAGPipeline.query": {
+      "file_path": "heretek-swarm/heretek_swarm/rag/rag_pipeline.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.rag.rag_pipeline.RAGPipeline.query",
+      "start_line": 311,
+      "end_line": 381,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/rag/rag_pipeline.py|heretek-swarm.heretek_swarm.rag.rag_pipeline.RAGPipeline._generate_response": {
+      "file_path": "heretek-swarm/heretek_swarm/rag/rag_pipeline.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.rag.rag_pipeline.RAGPipeline._generate_response",
+      "start_line": 383,
+      "end_line": 422,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/rag/rag_pipeline.py|heretek-swarm.heretek_swarm.rag.rag_pipeline.RAGPipeline._build_prompt": {
+      "file_path": "heretek-swarm/heretek_swarm/rag/rag_pipeline.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.rag.rag_pipeline.RAGPipeline._build_prompt",
+      "start_line": 424,
+      "end_line": 440,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/rag/rag_pipeline.py|heretek-swarm.heretek_swarm.rag.rag_pipeline.RAGPipeline._simulated_response": {
+      "file_path": "heretek-swarm/heretek_swarm/rag/rag_pipeline.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.rag.rag_pipeline.RAGPipeline._simulated_response",
+      "start_line": 442,
+      "end_line": 457,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/rag/rag_pipeline.py|heretek-swarm.heretek_swarm.rag.rag_pipeline.RAGPipeline.retrieve_context": {
+      "file_path": "heretek-swarm/heretek_swarm/rag/rag_pipeline.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.rag.rag_pipeline.RAGPipeline.retrieve_context",
+      "start_line": 459,
+      "end_line": 485,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/rag/rag_pipeline.py|heretek-swarm.heretek_swarm.rag.rag_pipeline.RAGPipeline.get_retriever": {
+      "file_path": "heretek-swarm/heretek_swarm/rag/rag_pipeline.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.rag.rag_pipeline.RAGPipeline.get_retriever",
+      "start_line": 487,
+      "end_line": 494,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/rag/rag_pipeline.py|heretek-swarm.heretek_swarm.rag.rag_pipeline.RAGPipeline.close": {
+      "file_path": "heretek-swarm/heretek_swarm/rag/rag_pipeline.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.rag.rag_pipeline.RAGPipeline.close",
+      "start_line": 496,
+      "end_line": 501,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/rag/rag_pipeline.py|heretek-swarm.heretek_swarm.rag.rag_pipeline.RAGPipeline.list_documents": {
+      "file_path": "heretek-swarm/heretek_swarm/rag/rag_pipeline.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.rag.rag_pipeline.RAGPipeline.list_documents",
+      "start_line": 503,
+      "end_line": 525,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/rag/rag_pipeline.py|heretek-swarm.heretek_swarm.rag.rag_pipeline.RAGPipeline._ingested_docs": {
+      "file_path": "heretek-swarm/heretek_swarm/rag/rag_pipeline.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.rag.rag_pipeline.RAGPipeline._ingested_docs",
+      "start_line": 528,
+      "end_line": 532,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/rag/rag_pipeline.py|heretek-swarm.heretek_swarm.rag.rag_pipeline.RAGPipeline._register_document": {
+      "file_path": "heretek-swarm/heretek_swarm/rag/rag_pipeline.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.rag.rag_pipeline.RAGPipeline._register_document",
+      "start_line": 534,
+      "end_line": 541,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/rag/rag_pipeline.py|heretek-swarm.heretek_swarm.rag.rag_pipeline.RAGPipeline.__aenter__": {
+      "file_path": "heretek-swarm/heretek_swarm/rag/rag_pipeline.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.rag.rag_pipeline.RAGPipeline.__aenter__",
+      "start_line": 543,
+      "end_line": 546,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/rag/rag_pipeline.py|heretek-swarm.heretek_swarm.rag.rag_pipeline.RAGPipeline.__aexit__": {
+      "file_path": "heretek-swarm/heretek_swarm/rag/rag_pipeline.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.rag.rag_pipeline.RAGPipeline.__aexit__",
+      "start_line": 548,
+      "end_line": 550,
+      "type": "METHOD",
+      "status": "added"
     }
   },
   "components": [

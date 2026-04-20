@@ -10,6 +10,7 @@ from __future__ import annotations
 import os
 import time
 from dataclasses import dataclass
+from datetime import UTC, datetime
 from typing import Any, Self
 
 import structlog
@@ -217,9 +218,8 @@ class RAGPipeline:
             # Process document (chunk)
             processed: ProcessedDocument = await self.document_processor.process_content(
                 content=document,
-                source=metadata.get("source", f"doc_{doc_idx}"),
-                doc_type=document_type,
-                chunk_strategy=chunk_strat,
+                source_path=metadata.get("source", f"doc_{doc_idx}"),
+                metadata=metadata,
             )
 
             # Merge document-level metadata with per-chunk metadata
@@ -253,6 +253,16 @@ class RAGPipeline:
                     chunks_ingested=chunks_indexed or len(processed.chunks),
                     processing_time_ms=processing_time_ms,
                 )
+            )
+
+            # Register in lightweight document registry for list_documents()
+            self._register_document(
+                doc_id=processed.id,
+                metadata={
+                    "filename": metadata.get("filename", f"doc_{doc_idx}"),
+                    "chunks": chunks_indexed or len(processed.chunks),
+                    "ingested_at": datetime.now(UTC).isoformat(),
+                },
             )
 
             logger.debug(
@@ -488,6 +498,46 @@ Answer based on the context provided above."""
             await self._hybrid_retriever.close()
         self._initialized = False
         logger.info("rag_pipeline_closed")
+
+    async def list_documents(
+        self,
+        limit: int = 100,
+        offset: int = 0,
+    ) -> list[dict[str, Any]]:
+        """
+        List documents tracked by the pipeline.
+
+        This provides a lightweight document registry by tracking what
+        the pipeline has ingested. Full document/chunk retrieval requires
+        the vector store's query capability.
+
+        Args:
+            limit: Maximum documents to return
+            offset: Pagination offset
+
+        Returns:
+            List of document metadata dicts
+        """
+        # Maintain a lightweight in-memory document registry.
+        # Each ingest() call registers its document_id in _ingested_docs.
+        all_docs = list(self._ingested_docs.values())
+        return all_docs[offset : offset + limit]
+
+    @property
+    def _ingested_docs(self) -> dict[str, dict[str, Any]]:
+        """Lazy document registry keyed by document_id."""
+        if not hasattr(self, "_document_registry"):
+            self._document_registry: dict[str, dict[str, Any]] = {}
+        return self._document_registry
+
+    def _register_document(self, doc_id: str, metadata: dict[str, Any]) -> None:
+        """Register a document in the in-memory registry."""
+        self._ingested_docs[doc_id] = {
+            "document_id": doc_id,
+            "filename": metadata.get("filename", "unknown"),
+            "chunks_ingested": metadata.get("chunks", 0),
+            "ingested_at": metadata.get("ingested_at"),
+        }
 
     async def __aenter__(self) -> Self:
         """Async context manager entry."""
