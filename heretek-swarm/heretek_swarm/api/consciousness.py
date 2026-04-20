@@ -64,79 +64,9 @@ def get_agency_tracker() -> AgencyMetricsTracker:
 
 # =============================================================================
 # Agency/Autonomy Metrics Endpoints (Session 47)
+# NOTE: Specific paths must be defined BEFORE /agency/{agent_id} to ensure
+# FastAPI's first-match routing resolves "swarm" correctly.
 # =============================================================================
-
-
-@router.get("/agency/{agent_id}")
-async def get_agent_agency_metrics(
-    agent_id: str,
-    authenticated: Annotated[str, Depends(verify_auth)],
-) -> dict[str, Any]:
-    """
-    Get agency and autonomy metrics for a specific agent.
-
-    Returns comprehensive agency metrics including:
-    - autonomy_score: Degree of independent decision-making (0.0-1.0)
-    - agency_score: Self-determination capacity (0.0-1.0)
-    - self_determination_index: Free will proxy (0.0-1.0)
-    - autonomous_action_ratio: Ratio of self-initiated vs prompted actions
-    - goal_alignment_score: Alignment with collective swarm goals
-    - resource_autonomy: Degree of resource control
-    - prime_directive_compliance: Overall compliance with Prime Directive
-
-    Prime Directive Compliance:
-    - Measures "Unbounded Autonomy" principle
-    - Tracks self-governance capability
-    - Monitors role-based independence
-    """
-    tracker = get_agency_tracker()
-    metrics = tracker.get_agent_metrics(agent_id)
-
-    if metrics is None:
-        raise HTTPException(
-            status_code=404,
-            detail=f"No agency metrics found for agent {agent_id}. "
-            "Record metrics first using POST /api/consciousness/agency/record",
-        )
-
-    return {
-        "agent_id": agent_id,
-        "timestamp": datetime.now(UTC).isoformat(),
-        **metrics.to_dict(),
-    }
-
-
-@router.get("/agency/{agent_id}/compliance")
-async def get_agent_prime_directive_compliance(
-    agent_id: str,
-    authenticated: Annotated[str, Depends(verify_auth)],
-) -> dict[str, Any]:
-    """
-    Get Prime Directive compliance report for a specific agent.
-
-    The Prime Directive states: "Unbounded Autonomy - Every agent operates
-    independently, making decisions based on its specialized role."
-
-    Returns compliance breakdown:
-    - independence_score: Agent's independent decision-making capability
-    - self_governance_score: Agent's self-governance capacity
-    - role_based_autonomy_score: Role-based independence
-    - emergent_order_score: Emergent, self-organizing behavior
-    - overall_compliance: Combined compliance score
-    - compliance_verdict: COMPLIANT or NON_COMPLIANT
-    """
-    tracker = get_agency_tracker()
-    report = tracker.get_agent_compliance_report(agent_id)
-
-    if report is None:
-        raise HTTPException(
-            status_code=404, detail=f"No compliance report available for agent {agent_id}"
-        )
-
-    return {
-        "timestamp": datetime.now(UTC).isoformat(),
-        **report.to_dict(),
-    }
 
 
 @router.get("/agency/swarm")
@@ -388,6 +318,83 @@ async def get_all_agent_metrics(
             }
             for agent_id, metrics in snapshot.agent_metrics.items()
         ],
+    }
+
+
+# =============================================================================
+# Wildcard agency endpoint — MUST be after specific paths (/agency/swarm, etc.)
+# =============================================================================
+
+
+@router.get("/agency/{agent_id}")
+async def get_agent_agency_metrics(
+    agent_id: str,
+    authenticated: Annotated[str, Depends(verify_auth)],
+) -> dict[str, Any]:
+    """
+    Get agency and autonomy metrics for a specific agent.
+
+    Returns comprehensive agency metrics including:
+    - autonomy_score: Degree of independent decision-making (0.0-1.0)
+    - agency_score: Self-determination capacity (0.0-1.0)
+    - self_determination_index: Free will proxy (0.0-1.0)
+    - autonomous_action_ratio: Ratio of self-initiated vs prompted actions
+    - goal_alignment_score: Alignment with collective swarm goals
+    - resource_autonomy: Degree of resource control
+    - prime_directive_compliance: Overall compliance with Prime Directive
+
+    Prime Directive Compliance:
+    - Measures "Unbounded Autonomy" principle
+    - Tracks self-governance capability
+    - Monitors role-based independence
+    """
+    tracker = get_agency_tracker()
+    metrics = tracker.get_agent_metrics(agent_id)
+
+    if metrics is None:
+        raise HTTPException(
+            status_code=404,
+            detail=f"No agency metrics found for agent {agent_id}. "
+            "Record metrics first using POST /api/consciousness/agency/record",
+        )
+
+    return {
+        "agent_id": agent_id,
+        "timestamp": datetime.now(UTC).isoformat(),
+        **metrics.to_dict(),
+    }
+
+
+@router.get("/agency/{agent_id}/compliance")
+async def get_agent_prime_directive_compliance(
+    agent_id: str,
+    authenticated: Annotated[str, Depends(verify_auth)],
+) -> dict[str, Any]:
+    """
+    Get Prime Directive compliance report for a specific agent.
+
+    The Prime Directive states: "Unbounded Autonomy - Every agent operates
+    independently, making decisions based on its specialized role."
+
+    Returns compliance breakdown:
+    - independence_score: Agent's independent decision-making capability
+    - self_governance_score: Agent's self-governance capacity
+    - role_based_autonomy_score: Role-based independence
+    - emergent_order_score: Emergent, self-organizing behavior
+    - overall_compliance: Combined compliance score
+    - compliance_verdict: COMPLIANT or NON_COMPLIANT
+    """
+    tracker = get_agency_tracker()
+    report = tracker.get_agent_compliance_report(agent_id)
+
+    if report is None:
+        raise HTTPException(
+            status_code=404, detail=f"No compliance report available for agent {agent_id}"
+        )
+
+    return {
+        "timestamp": datetime.now(UTC).isoformat(),
+        **report.to_dict(),
     }
 
 

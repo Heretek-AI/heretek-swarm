@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-20T20:09:31.454444+00:00",
+    "generated_at": "2026-04-20T21:54:28.502516+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -54792,63 +54792,63 @@
       ]
     },
     "heretek-swarm/heretek_swarm/api/workflows.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "heretek-swarm.heretek_swarm.api.workflows.create_workflow",
           "start_line": 34,
           "end_line": 63,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "heretek-swarm.heretek_swarm.api.workflows.list_workflows",
           "start_line": 67,
           "end_line": 91,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "heretek-swarm.heretek_swarm.api.workflows.get_workflow",
           "start_line": 95,
           "end_line": 124,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "heretek-swarm.heretek_swarm.api.workflows.execute_workflow",
           "start_line": 128,
           "end_line": 176,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "heretek-swarm.heretek_swarm.api.workflows.delete_workflow",
           "start_line": 180,
           "end_line": 204,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "heretek-swarm.heretek_swarm.api.workflows.get_workflow_status",
           "start_line": 208,
           "end_line": 244,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "heretek-swarm.heretek_swarm.api.workflows.cancel_workflow",
           "start_line": 248,
           "end_line": 274,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "heretek-swarm.heretek_swarm.api.workflows.validate_workflow_endpoint",
           "start_line": 278,
           "end_line": 342,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "heretek-swarm.heretek_swarm.api.workflows.validate_workflow_draft",
@@ -54876,7 +54876,7 @@
           "start_line": 493,
           "end_line": 600,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "heretek-swarm.heretek_swarm.api.workflows.workflow_specific_events_stream.event_generator",
@@ -115762,7 +115762,7 @@
       "start_line": 34,
       "end_line": 63,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "heretek-swarm/heretek_swarm/api/workflows.py|heretek-swarm.heretek_swarm.api.workflows.list_workflows": {
       "file_path": "heretek-swarm/heretek_swarm/api/workflows.py",
@@ -115770,7 +115770,7 @@
       "start_line": 67,
       "end_line": 91,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "heretek-swarm/heretek_swarm/api/workflows.py|heretek-swarm.heretek_swarm.api.workflows.get_workflow": {
       "file_path": "heretek-swarm/heretek_swarm/api/workflows.py",
@@ -115778,7 +115778,7 @@
       "start_line": 95,
       "end_line": 124,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "heretek-swarm/heretek_swarm/api/workflows.py|heretek-swarm.heretek_swarm.api.workflows.execute_workflow": {
       "file_path": "heretek-swarm/heretek_swarm/api/workflows.py",
@@ -115786,7 +115786,7 @@
       "start_line": 128,
       "end_line": 176,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "heretek-swarm/heretek_swarm/api/workflows.py|heretek-swarm.heretek_swarm.api.workflows.delete_workflow": {
       "file_path": "heretek-swarm/heretek_swarm/api/workflows.py",
@@ -115794,7 +115794,7 @@
       "start_line": 180,
       "end_line": 204,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "heretek-swarm/heretek_swarm/api/workflows.py|heretek-swarm.heretek_swarm.api.workflows.get_workflow_status": {
       "file_path": "heretek-swarm/heretek_swarm/api/workflows.py",
@@ -115802,7 +115802,7 @@
       "start_line": 208,
       "end_line": 244,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "heretek-swarm/heretek_swarm/api/workflows.py|heretek-swarm.heretek_swarm.api.workflows.cancel_workflow": {
       "file_path": "heretek-swarm/heretek_swarm/api/workflows.py",
@@ -115810,7 +115810,7 @@
       "start_line": 248,
       "end_line": 274,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "heretek-swarm/heretek_swarm/api/workflows.py|heretek-swarm.heretek_swarm.api.workflows.validate_workflow_endpoint": {
       "file_path": "heretek-swarm/heretek_swarm/api/workflows.py",
@@ -115818,7 +115818,7 @@
       "start_line": 278,
       "end_line": 342,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "heretek-swarm/heretek_swarm/api/workflows.py|heretek-swarm.heretek_swarm.api.workflows.validate_workflow_draft": {
       "file_path": "heretek-swarm/heretek_swarm/api/workflows.py",
@@ -115850,7 +115850,7 @@
       "start_line": 493,
       "end_line": 600,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "heretek-swarm/heretek_swarm/api/workflows.py|heretek-swarm.heretek_swarm.api.workflows.workflow_specific_events_stream.event_generator": {
       "file_path": "heretek-swarm/heretek_swarm/api/workflows.py",

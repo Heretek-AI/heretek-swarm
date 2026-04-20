@@ -1,7 +1,7 @@
 {
   "repository_name": "heretek-swarm",
-  "timestamp": "2026-04-20T21:14:27.653814+00:00",
-  "overall_score": 0.991465892597968,
+  "timestamp": "2026-04-20T21:54:29.894693+00:00",
+  "overall_score": 0.991054127748448,
   "check_summaries": [
     {
       "check_name": "function_size",
@@ -790,11 +790,103 @@
       "description": "Detects unused imports, variables, functions, and dead code via LSP diagnostics",
       "language": "Python",
       "check_type": "standard",
-      "total_entities_checked": 0,
-      "findings_count": 0,
+      "total_entities_checked": 12,
+      "findings_count": 12,
       "warning_count": 0,
-      "score": 1.0,
-      "finding_groups": []
+      "score": 0.3999999999999999,
+      "finding_groups": [
+        {
+          "severity": "info",
+          "threshold": 0,
+          "description": "Variables declared but never used",
+          "entities": [
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "heretek-swarm/heretek_swarm/api/workflows.py",
+              "line_start": 36,
+              "line_end": 36,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "heretek-swarm/heretek_swarm/api/workflows.py",
+              "line_start": 68,
+              "line_end": 68,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "heretek-swarm/heretek_swarm/api/workflows.py",
+              "line_start": 97,
+              "line_end": 97,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "heretek-swarm/heretek_swarm/api/workflows.py",
+              "line_start": 131,
+              "line_end": 131,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "heretek-swarm/heretek_swarm/api/workflows.py",
+              "line_start": 182,
+              "line_end": 182,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "heretek-swarm/heretek_swarm/api/workflows.py",
+              "line_start": 210,
+              "line_end": 210,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "heretek-swarm/heretek_swarm/api/workflows.py",
+              "line_start": 250,
+              "line_end": 250,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "heretek-swarm/heretek_swarm/api/workflows.py",
+              "line_start": 280,
+              "line_end": 280,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "heretek-swarm/heretek_swarm/api/workflows.py",
+              "line_start": 348,
+              "line_end": 348,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"i\" is not accessed",
+              "file_path": "heretek-swarm/heretek_swarm/api/workflows.py",
+              "line_start": 429,
+              "line_end": 429,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "heretek-swarm/heretek_swarm/api/workflows.py",
+              "line_start": 383,
+              "line_end": 383,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "heretek-swarm/heretek_swarm/api/workflows.py",
+              "line_start": 495,
+              "line_end": 495,
+              "metric_value": 0.0
+            }
+          ]
+        }
+      ]
     },
     {
       "check_name": "function_size",
@@ -1058,39 +1150,39 @@
       "language": "TypeScript",
       "check_type": "circular_dependencies",
       "cycles": [
-        "src.components.Agents -> src.api -> src.components.Agents",
-        "src.components.Agents -> src.api -> src.components.UI -> src.components.Agents",
-        "src.components.Agents -> src.api -> src.components.UI -> src.components.Settings -> src.components.Agents",
-        "src.components.Agents -> src.api -> src.components.UI -> src.utils -> src.components.Agents",
-        "src.components.Agents -> src.components.Settings -> src.api -> src.components.Agents",
-        "src.components.Agents -> src.components.Settings -> src.api -> src.components.UI -> src.components.Agents",
-        "src.components.Agents -> src.components.Settings -> src.api -> src.components.UI -> src.utils -> src.components.Agents",
-        "src.components.Agents -> src.components.Settings -> src.components.Agents",
-        "src.components.Agents -> src.components.Settings -> src.components.UI -> src.components.Agents",
-        "src.components.Agents -> src.components.Settings -> src.components.UI -> src.utils -> src.components.Agents",
-        "src.components.Agents -> src.components.UI -> src.components.Agents",
-        "src.components.Agents -> src.components.UI -> src.components.Settings -> src.api -> src.components.Agents",
-        "src.components.Agents -> src.components.UI -> src.components.Settings -> src.components.Agents",
-        "src.components.Agents -> src.components.UI -> src.utils -> src.components.Agents",
+        "src.components.UI -> src.components.Agents -> src.api -> src.components.UI",
+        "src.components.UI -> src.components.Agents -> src.components.Settings -> src.api -> src.components.UI",
+        "src.components.UI -> src.components.Agents -> src.components.Settings -> src.components.UI",
+        "src.components.UI -> src.components.Agents -> src.components.UI",
+        "src.components.UI -> src.components.Settings -> src.api -> src.components.Agents -> src.components.UI",
         "src.components.UI -> src.components.Settings -> src.api -> src.components.UI",
+        "src.components.UI -> src.components.Settings -> src.components.Agents -> src.api -> src.components.UI",
+        "src.components.UI -> src.components.Settings -> src.components.Agents -> src.components.UI",
         "src.components.UI -> src.components.Settings -> src.components.UI",
+        "src.components.UI -> src.utils -> src.components.Agents -> src.api -> src.components.UI",
+        "src.components.UI -> src.utils -> src.components.Agents -> src.components.Settings -> src.api -> src.components.UI",
+        "src.components.UI -> src.utils -> src.components.Agents -> src.components.Settings -> src.components.UI",
+        "src.components.UI -> src.utils -> src.components.Agents -> src.components.UI",
         "src.components.UI -> src.utils -> src.components.UI",
-        "dashboard.frontend.src.api -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api",
-        "dashboard.frontend.src.api -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api",
-        "dashboard.frontend.src.api -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api",
-        "dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api",
-        "dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api",
-        "dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api",
-        "dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api",
-        "dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api",
-        "dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api",
+        "src.components.Agents -> src.api -> src.components.Agents",
+        "src.components.Agents -> src.components.Settings -> src.api -> src.components.Agents",
+        "src.components.Agents -> src.components.Settings -> src.components.Agents",
+        "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api -> dashboard.frontend.src.components.Agents",
+        "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents",
+        "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.Agents",
+        "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils -> dashboard.frontend.src.components.Agents",
+        "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api -> dashboard.frontend.src.components.Agents",
+        "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents",
+        "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils -> dashboard.frontend.src.components.Agents",
         "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.Agents",
         "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents",
         "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils -> dashboard.frontend.src.components.Agents",
         "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents",
+        "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api -> dashboard.frontend.src.components.Agents",
         "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.Agents",
         "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils -> dashboard.frontend.src.components.Agents",
         "dashboard.frontend.src.utils -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils",
+        "dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api -> dashboard.frontend.src.components.UI",
         "dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.UI"
       ],
       "packages_checked": 47,
@@ -1131,6 +1223,12 @@
     }
   ],
   "file_summaries": [
+    {
+      "file_path": "heretek-swarm/heretek_swarm/api/workflows.py",
+      "total_findings": 12,
+      "warning_findings": 0,
+      "composite_risk_score": 50.0
+    },
     {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
       "total_findings": 3,
@@ -1241,12 +1339,6 @@
     },
     {
       "file_path": "src/heretek_swarm/actors/coordinator.py",
-      "total_findings": 2,
-      "warning_findings": 2,
-      "composite_risk_score": 30.0
-    },
-    {
-      "file_path": "src/heretek_swarm/consensus/immune.py",
       "total_findings": 2,
       "warning_findings": 2,
       "composite_risk_score": 30.0

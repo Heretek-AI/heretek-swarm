@@ -45,7 +45,7 @@ async def create_workflow(
     Returns:
         Created workflow with ID
     """
-    engine = get_workflow_engine()
+    engine = await get_workflow_engine()
 
     # Create workflow from definition
     workflow = await engine.load_workflow(workflow_definition)
@@ -76,7 +76,7 @@ async def list_workflows(
     Returns:
         List of workflows
     """
-    engine = get_workflow_engine()
+    engine = await get_workflow_engine()
 
     return {
         "workflows": [
@@ -106,7 +106,7 @@ async def get_workflow(
     Returns:
         Workflow definition
     """
-    engine = get_workflow_engine()
+    engine = await get_workflow_engine()
 
     if workflow_id not in engine.workflows:
         raise HTTPException(status_code=404, detail="Workflow not found")
@@ -120,7 +120,7 @@ async def get_workflow(
         "edges": workflow.edges,
         "metadata": workflow.metadata,
         "created_at": workflow.created_at,
-        "state": workflow.state
+        "state": WorkflowState.PENDING.value
     }
 
 
@@ -146,7 +146,7 @@ async def execute_workflow(
     Returns:
         Execution result
     """
-    engine = get_workflow_engine()
+    engine = await get_workflow_engine()
 
     if workflow_id not in engine.workflows:
         raise HTTPException(status_code=404, detail="Workflow not found")
@@ -191,7 +191,7 @@ async def delete_workflow(
     Returns:
         204 No Content on success
     """
-    engine = get_workflow_engine()
+    engine = await get_workflow_engine()
 
     if workflow_id not in engine.workflows:
         raise HTTPException(status_code=404, detail="Workflow not found")
@@ -219,7 +219,7 @@ async def get_workflow_status(
     Returns:
         Current execution status
     """
-    engine = get_workflow_engine()
+    engine = await get_workflow_engine()
 
     execution_id = f"exec_{workflow_id}_{uuid.uuid4().hex[:8]}"
 
@@ -259,7 +259,7 @@ async def cancel_workflow(
     Returns:
         Cancellation confirmation
     """
-    engine = get_workflow_engine()
+    engine = await get_workflow_engine()
 
     execution_id = f"exec_{workflow_id}_{uuid.uuid4().hex[:8]}"
 
@@ -296,7 +296,7 @@ async def validate_workflow_endpoint(
     Returns:
         Validation result with errors, warnings, and info messages
     """
-    engine = get_workflow_engine()
+    engine = await get_workflow_engine()
 
     if workflow_id not in engine.workflows:
         raise HTTPException(status_code=404, detail="Workflow not found")
@@ -504,7 +504,7 @@ async def workflow_specific_events_stream(
     Returns:
         StreamingResponse with text/event-stream content type
     """
-    engine = get_workflow_engine()
+    engine = await get_workflow_engine()
 
     # Check if workflow exists
     if workflow_id not in engine.workflows:
