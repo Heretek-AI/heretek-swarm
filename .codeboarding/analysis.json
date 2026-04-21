@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-21T06:05:07.659746+00:00",
+    "generated_at": "2026-04-21T06:05:59.410574+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -56196,21 +56196,21 @@
           "start_line": 416,
           "end_line": 425,
           "node_type": "CLASS",
-          "status": "added"
+          "status": "modified"
         },
         {
           "qualified_name": "heretek-swarm.heretek_swarm.actors.handoff.HandoffStrategy.should_handoff",
           "start_line": 420,
           "end_line": 421,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "modified"
         },
         {
           "qualified_name": "heretek-swarm.heretek_swarm.actors.handoff.HandoffStrategy.select_destination",
           "start_line": 424,
           "end_line": 425,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "modified"
         },
         {
           "qualified_name": "heretek-swarm.heretek_swarm.actors.handoff.TaskTypeStrategy",
@@ -118433,7 +118433,7 @@
       "start_line": 416,
       "end_line": 425,
       "type": "CLASS",
-      "status": "added"
+      "status": "modified"
     },
     "heretek-swarm/heretek_swarm/actors/handoff.py|heretek-swarm.heretek_swarm.actors.handoff.HandoffStrategy.should_handoff": {
       "file_path": "heretek-swarm/heretek_swarm/actors/handoff.py",
@@ -118441,7 +118441,7 @@
       "start_line": 420,
       "end_line": 421,
       "type": "METHOD",
-      "status": "added"
+      "status": "modified"
     },
     "heretek-swarm/heretek_swarm/actors/handoff.py|heretek-swarm.heretek_swarm.actors.handoff.HandoffStrategy.select_destination": {
       "file_path": "heretek-swarm/heretek_swarm/actors/handoff.py",
@@ -118449,7 +118449,7 @@
       "start_line": 424,
       "end_line": 425,
       "type": "METHOD",
-      "status": "added"
+      "status": "modified"
     },
     "heretek-swarm/heretek_swarm/actors/handoff.py|heretek-swarm.heretek_swarm.actors.handoff.TaskTypeStrategy": {
       "file_path": "heretek-swarm/heretek_swarm/actors/handoff.py",
