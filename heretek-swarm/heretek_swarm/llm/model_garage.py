@@ -458,8 +458,53 @@ class MiniMaxProvider(LLMProvider):
                 raise
 
     async def stream(self, request: LLMRequest) -> AsyncIterator[str]:
-        # MiniMax streaming implementation similar to others
-        raise NotImplementedError("MiniMax streaming not yet implemented")
+        """Stream chat completion tokens."""
+        await self._rate_limit()
+        async with self._rate_limiter:
+            client = await self._get_client()
+            model = request.model or self.config.default_model or "abab6.5s"
+            
+            # Convert messages to MiniMax format
+            messages = []
+            for msg in request.messages:
+                messages.append({
+                    "sender_type": msg.role,
+                    "text": msg.content,
+                })
+
+            payload = {
+                "model": model,
+                "messages": messages,
+                "temperature": request.temperature,
+                "top_p": request.top_p,
+                "stream": True,
+            }
+            if request.max_tokens:
+                payload["tokens_to_generate"] = request.max_tokens
+            if self.config.metadata.get("group_id"):
+                payload["group_id"] = self.config.metadata["group_id"]
+
+            try:
+                async with client.stream("POST", "/text/chatcompletion_v2", json=payload) as response:
+                    response.raise_for_status()
+                    async for line in response.aiter_lines():
+                        if line.startswith("data: "):
+                            data = line[6:]
+                            if data.strip() == "[DONE]":
+                                break
+                            try:
+                                chunk = json.loads(data)
+                                choices = chunk.get("choices", [])
+                                if choices:
+                                    delta = choices[0].get("delta", {})
+                                    content = delta.get("text", "")
+                                    if content:
+                                        yield content
+                            except json.JSONDecodeError:
+                                continue
+            except Exception as e:
+                logger.error("MiniMax streaming failed", error=str(e))
+                raise
 
 
 class AnthropicProvider(LLMProvider):
@@ -514,7 +559,63 @@ class AnthropicProvider(LLMProvider):
                 raise
 
     async def stream(self, request: LLMRequest) -> AsyncIterator[str]:
-        raise NotImplementedError("Anthropic streaming not yet implemented")
+        """Stream chat completion tokens."""
+        await self._rate_limit()
+        async with self._rate_limiter:
+            client = await self._get_client()
+            model = request.model or self.config.default_model or "claude-3-5-sonnet-20241022"
+
+            # Convert messages to Anthropic format
+            anthropic_messages = []
+            system_prompt = ""
+            for msg in request.messages:
+                if msg.role == "system":
+                    system_prompt += msg.content + "\n"
+                else:
+                    anthropic_messages.append({"role": msg.role, "content": msg.content})
+
+            payload: dict[str, Any] = {
+                "model": model,
+                "messages": anthropic_messages,
+                "max_tokens": request.max_tokens or 4096,
+                "temperature": request.temperature,
+                "stream": True,
+            }
+            if system_prompt:
+                payload["system"] = system_prompt
+
+            try:
+                async with client.stream("POST", "/v1/messages", json=payload) as response:
+                    response.raise_for_status()
+                    current_event = None
+                    async for line in response.aiter_lines():
+                        # Parse SSE line format: event: <type> or data: <json>
+                        if line.startswith("event: "):
+                            current_event = line[7:].strip()
+                        elif line.startswith("data: "):
+                            data_str = line[5:].strip()
+                            if data_str:
+                                try:
+                                    chunk = json.loads(data_str)
+                                    # Handle message delta events
+                                    if current_event == "message_delta" and "delta" in chunk:
+                                        delta = chunk["delta"]
+                                        if "text" in delta:
+                                            yield delta["text"]
+                                    # Handle content block delta events
+                                    elif current_event == "content_block_delta" and "delta" in chunk:
+                                        delta = chunk["delta"]
+                                        if "text" in delta:
+                                            yield delta["text"]
+                                    # Stop on message stop event
+                                    elif current_event == "message_stop":
+                                        break
+                                except json.JSONDecodeError:
+                                    pass
+                            current_event = None
+            except Exception as e:
+                logger.error("Anthropic streaming failed", error=str(e))
+                raise
 
 
 class OpenAICompatibleProvider(LLMProvider):
@@ -557,8 +658,39 @@ class OpenAICompatibleProvider(LLMProvider):
                 raise
 
     async def stream(self, request: LLMRequest) -> AsyncIterator[str]:
-        # Similar streaming implementation to OpenAIProvider
-        raise NotImplementedError("OpenAI-compatible streaming not yet implemented")
+        """Stream chat completion tokens."""
+        await self._rate_limit()
+        async with self._rate_limiter:
+            client = await self._get_client()
+            model = request.model or self.config.default_model
+            if not model:
+                raise ValueError("Model must be specified for OpenAI-compatible providers")
+            
+            payload = request.to_dict()
+            payload["model"] = model
+            payload["stream"] = True
+
+            try:
+                async with client.stream("POST", "/chat/completions", json=payload) as response:
+                    response.raise_for_status()
+                    async for line in response.aiter_lines():
+                        if line.startswith("data: "):
+                            data = line[6:]
+                            if data.strip() == "[DONE]":
+                                break
+                            try:
+                                chunk = json.loads(data)
+                                choices = chunk.get("choices", [])
+                                if choices:
+                                    delta = choices[0].get("delta", {})
+                                    content = delta.get("content", "")
+                                    if content:
+                                        yield content
+                            except json.JSONDecodeError:
+                                continue
+            except Exception as e:
+                logger.error("OpenAI-compatible streaming failed", error=str(e))
+                raise
 
 
 # ============================================================================
