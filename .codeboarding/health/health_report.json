@@ -1,7 +1,7 @@
 {
   "repository_name": "heretek-swarm",
-  "timestamp": "2026-04-21T06:01:53.791379+00:00",
-  "overall_score": 0.9903160336329371,
+  "timestamp": "2026-04-21T06:05:09.025844+00:00",
+  "overall_score": 0.9913271819870009,
   "check_summaries": [
     {
       "check_name": "function_size",
@@ -790,37 +790,16 @@
       "description": "Detects unused imports, variables, functions, and dead code via LSP diagnostics",
       "language": "Python",
       "check_type": "standard",
-      "total_entities_checked": 20,
-      "findings_count": 20,
-      "warning_count": 19,
-      "score": 0.0,
+      "total_entities_checked": 7,
+      "findings_count": 7,
+      "warning_count": 0,
+      "score": 0.6499999999999999,
       "finding_groups": [
         {
-          "severity": "warning",
+          "severity": "info",
           "threshold": 0,
           "description": "Variables declared but never used",
           "entities": [
-            {
-              "entity_name": "[unused_variable] \"exc_type\" is not accessed",
-              "file_path": "heretek-swarm/heretek_swarm/llm/providers/base.py",
-              "line_start": 341,
-              "line_end": 341,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] Expression value is unused",
-              "file_path": "heretek-swarm/heretek_swarm/state/models.py",
-              "line_start": 557,
-              "line_end": 557,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] Expression value is unused",
-              "file_path": "heretek-swarm/heretek_swarm/state/models.py",
-              "line_start": 562,
-              "line_end": 562,
-              "metric_value": 0.0
-            },
             {
               "entity_name": "[unused_variable] \"trace_id\" is not accessed",
               "file_path": "heretek-swarm/heretek_swarm/infrastructure/otel/tracing.py",
@@ -864,87 +843,10 @@
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_variable] \"_field\" is not accessed",
-              "file_path": "heretek-swarm/heretek_swarm/workflow/engine.py",
-              "line_start": 201,
-              "line_end": 201,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"ndata\" is not accessed",
-              "file_path": "heretek-swarm/heretek_swarm/workflow/engine.py",
-              "line_start": 702,
-              "line_end": 702,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"ndata\" is not accessed",
-              "file_path": "heretek-swarm/heretek_swarm/workflow/engine.py",
-              "line_start": 717,
-              "line_end": 717,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"input_data\" is not accessed",
-              "file_path": "heretek-swarm/heretek_swarm/workflow/engine.py",
-              "line_start": 652,
-              "line_end": 652,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"start_time\" is not accessed",
-              "file_path": "heretek-swarm/heretek_swarm/workflow/engine.py",
-              "line_start": 899,
-              "line_end": 899,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"workflow\" is not accessed",
-              "file_path": "heretek-swarm/heretek_swarm/workflow/engine.py",
-              "line_start": 1008,
-              "line_end": 1008,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"context\" is not accessed",
-              "file_path": "heretek-swarm/heretek_swarm/workflow/engine.py",
-              "line_start": 1040,
-              "line_end": 1040,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"context\" is not accessed",
-              "file_path": "heretek-swarm/heretek_swarm/workflow/engine.py",
-              "line_start": 1076,
-              "line_end": 1076,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"kwargs\" is not accessed",
-              "file_path": "heretek-swarm/heretek_swarm/tools/base.py",
-              "line_start": 74,
-              "line_end": 74,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"context\" is not accessed",
-              "file_path": "heretek-swarm/heretek_swarm/tools/base.py",
-              "line_start": 86,
-              "line_end": 86,
-              "metric_value": 0.0
-            }
-          ]
-        },
-        {
-          "severity": "info",
-          "threshold": 0,
-          "description": "Code that cannot be reached during execution",
-          "entities": [
-            {
-              "entity_name": "[unreachable_code] Code is unreachable",
-              "file_path": "heretek-swarm/heretek_swarm/state/models.py",
-              "line_start": 690,
-              "line_end": 690,
+              "entity_name": "[unused_variable] \"node_inputs\" is not accessed",
+              "file_path": "heretek-swarm/heretek_swarm/workflow/strategies.py",
+              "line_start": 122,
+              "line_end": 122,
               "metric_value": 0.0
             }
           ]
@@ -1213,40 +1115,40 @@
       "language": "TypeScript",
       "check_type": "circular_dependencies",
       "cycles": [
-        "src.components.Settings -> src.api -> src.components.Agents -> src.components.Settings",
-        "src.components.Settings -> src.api -> src.components.Agents -> src.components.UI -> src.components.Settings",
-        "src.components.Settings -> src.api -> src.components.UI -> src.components.Agents -> src.components.Settings",
-        "src.components.Settings -> src.api -> src.components.UI -> src.components.Settings",
-        "src.components.Settings -> src.api -> src.components.UI -> src.utils -> src.components.Agents -> src.components.Settings",
-        "src.components.Settings -> src.components.Agents -> src.api -> src.components.UI -> src.components.Settings",
-        "src.components.Settings -> src.components.Agents -> src.components.Settings",
-        "src.components.Settings -> src.components.Agents -> src.components.UI -> src.components.Settings",
-        "src.components.Settings -> src.components.UI -> src.components.Agents -> src.components.Settings",
-        "src.components.Settings -> src.components.UI -> src.components.Settings",
-        "src.components.Settings -> src.components.UI -> src.utils -> src.components.Agents -> src.components.Settings",
         "src.components.UI -> src.components.Agents -> src.api -> src.components.UI",
+        "src.components.UI -> src.components.Agents -> src.components.Settings -> src.api -> src.components.UI",
+        "src.components.UI -> src.components.Agents -> src.components.Settings -> src.components.UI",
         "src.components.UI -> src.components.Agents -> src.components.UI",
+        "src.components.UI -> src.components.Settings -> src.api -> src.components.Agents -> src.components.UI",
+        "src.components.UI -> src.components.Settings -> src.api -> src.components.UI",
+        "src.components.UI -> src.components.Settings -> src.components.Agents -> src.api -> src.components.UI",
+        "src.components.UI -> src.components.Settings -> src.components.Agents -> src.components.UI",
+        "src.components.UI -> src.components.Settings -> src.components.UI",
         "src.components.UI -> src.utils -> src.components.Agents -> src.api -> src.components.UI",
+        "src.components.UI -> src.utils -> src.components.Agents -> src.components.Settings -> src.api -> src.components.UI",
+        "src.components.UI -> src.utils -> src.components.Agents -> src.components.Settings -> src.components.UI",
         "src.components.UI -> src.utils -> src.components.Agents -> src.components.UI",
         "src.components.UI -> src.utils -> src.components.UI",
+        "src.components.Settings -> src.api -> src.components.Agents -> src.components.Settings",
+        "src.components.Settings -> src.components.Agents -> src.components.Settings",
         "src.components.Agents -> src.api -> src.components.Agents",
+        "dashboard.frontend.src.utils -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils",
+        "dashboard.frontend.src.utils -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils",
+        "dashboard.frontend.src.utils -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils",
+        "dashboard.frontend.src.utils -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils",
+        "dashboard.frontend.src.utils -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils",
         "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api -> dashboard.frontend.src.components.Agents",
         "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents",
         "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.Agents",
-        "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils -> dashboard.frontend.src.components.Agents",
         "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api -> dashboard.frontend.src.components.Agents",
         "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents",
-        "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils -> dashboard.frontend.src.components.Agents",
         "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.Agents",
         "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents",
-        "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils -> dashboard.frontend.src.components.Agents",
         "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents",
         "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api -> dashboard.frontend.src.components.Agents",
         "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.Agents",
-        "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils -> dashboard.frontend.src.components.Agents",
-        "dashboard.frontend.src.utils -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils",
-        "dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings",
-        "dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings"
+        "dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api -> dashboard.frontend.src.components.UI",
+        "dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.UI"
       ],
       "packages_checked": 47,
       "packages_in_cycles": 10
@@ -1287,12 +1189,6 @@
   ],
   "file_summaries": [
     {
-      "file_path": "heretek-swarm/heretek_swarm/workflow/engine.py",
-      "total_findings": 8,
-      "warning_findings": 8,
-      "composite_risk_score": 90.0
-    },
-    {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
       "total_findings": 3,
       "warning_findings": 3,
@@ -1321,24 +1217,6 @@
       "total_findings": 3,
       "warning_findings": 3,
       "composite_risk_score": 45.0
-    },
-    {
-      "file_path": "heretek-swarm/heretek_swarm/infrastructure/otel/tracing.py",
-      "total_findings": 3,
-      "warning_findings": 3,
-      "composite_risk_score": 45.0
-    },
-    {
-      "file_path": "heretek-swarm/heretek_swarm/observability/metrics.py",
-      "total_findings": 3,
-      "warning_findings": 3,
-      "composite_risk_score": 45.0
-    },
-    {
-      "file_path": "heretek-swarm/heretek_swarm/state/models.py",
-      "total_findings": 3,
-      "warning_findings": 2,
-      "composite_risk_score": 40.0
     },
     {
       "file_path": "src/heretek_swarm/security/threat_detection.py",
@@ -1402,6 +1280,30 @@
     },
     {
       "file_path": "src/heretek_swarm/consciousness/phi_training.py",
+      "total_findings": 2,
+      "warning_findings": 2,
+      "composite_risk_score": 30.0
+    },
+    {
+      "file_path": "src/heretek_swarm/collective/adaptive_learning.py",
+      "total_findings": 2,
+      "warning_findings": 2,
+      "composite_risk_score": 30.0
+    },
+    {
+      "file_path": "src/heretek_swarm/config/crud.py",
+      "total_findings": 2,
+      "warning_findings": 2,
+      "composite_risk_score": 30.0
+    },
+    {
+      "file_path": "src/heretek_swarm/actors/coordinator.py",
+      "total_findings": 2,
+      "warning_findings": 2,
+      "composite_risk_score": 30.0
+    },
+    {
+      "file_path": "src/heretek_swarm/consensus/immune.py",
       "total_findings": 2,
       "warning_findings": 2,
       "composite_risk_score": 30.0

@@ -13,6 +13,7 @@ Features:
 
 import sys
 import uuid
+from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from typing import Any
@@ -412,16 +413,16 @@ class AgentHandoff:
 # Handoff Strategies
 # =============================================================================
 
-class HandoffStrategy:
+class HandoffStrategy(ABC):
     """Base class for handoff strategies"""
 
+    @abstractmethod
     async def should_handoff(self, context: dict[str, Any]) -> bool:
         """Determine if handoff should occur"""
-        raise NotImplementedError
 
+    @abstractmethod
     async def select_destination(self, context: dict[str, Any]) -> str:
         """Select destination agent for handoff"""
-        raise NotImplementedError
 
 
 class TaskTypeStrategy(HandoffStrategy):
