@@ -19,7 +19,7 @@ from heretek_swarm.workflow.engine import (
     SafeExpressionEvaluator,
     WorkflowContext,
     WorkflowEngine,
-    WorkflowState,
+    WorkflowStatus,
 )
 
 
@@ -246,7 +246,7 @@ class TestWorkflowEngineConditionEvaluation:
             workflow_id="test-wf",
             execution_id="test-exec",
             start_time=datetime.now(UTC),
-            state=WorkflowState.RUNNING
+            state=WorkflowStatus.RUNNING
         )
         context.variables = {
             "status": "completed",
@@ -270,7 +270,7 @@ class TestWorkflowEngineConditionEvaluation:
             workflow_id="test-wf",
             execution_id="test-exec",
             start_time=datetime.now(UTC),
-            state=WorkflowState.RUNNING
+            state=WorkflowStatus.RUNNING
         )
         context.variables = {"value": "test"}
 
@@ -291,7 +291,7 @@ class TestWorkflowEngineConditionEvaluation:
             workflow_id="test-wf",
             execution_id="test-exec",
             start_time=datetime.now(UTC),
-            state=WorkflowState.RUNNING
+            state=WorkflowStatus.RUNNING
         )
         context.variables = {
             "status": "completed",
@@ -313,7 +313,7 @@ class TestWorkflowEngineConditionEvaluation:
             workflow_id="test-wf",
             execution_id="test-exec",
             start_time=datetime.now(UTC),
-            state=WorkflowState.RUNNING
+            state=WorkflowStatus.RUNNING
         )
         context.variables = {}
 

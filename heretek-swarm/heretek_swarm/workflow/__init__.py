@@ -14,6 +14,7 @@ from .engine import (
     WorkflowNode,
     WorkflowResult,
     WorkflowState,
+    WorkflowStatus,
     get_workflow_engine,
 )
 
@@ -26,5 +27,6 @@ __all__ = [
     "WorkflowNode",
     "WorkflowResult",
     "WorkflowState",
+    "WorkflowStatus",
     "get_workflow_engine",
 ]

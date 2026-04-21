@@ -1,7 +1,7 @@
 {
   "repository_name": "heretek-swarm",
-  "timestamp": "2026-04-21T05:35:12.591259+00:00",
-  "overall_score": 0.9911807368726429,
+  "timestamp": "2026-04-21T05:38:51.792041+00:00",
+  "overall_score": 0.9905352896827698,
   "check_summaries": [
     {
       "check_name": "function_size",
@@ -790,10 +790,10 @@
       "description": "Detects unused imports, variables, functions, and dead code via LSP diagnostics",
       "language": "Python",
       "check_type": "standard",
-      "total_entities_checked": 10,
-      "findings_count": 10,
-      "warning_count": 9,
-      "score": 0.5,
+      "total_entities_checked": 18,
+      "findings_count": 18,
+      "warning_count": 17,
+      "score": 0.09999999999999998,
       "finding_groups": [
         {
           "severity": "warning",
@@ -861,6 +861,62 @@
               "file_path": "heretek-swarm/heretek_swarm/observability/metrics.py",
               "line_start": 720,
               "line_end": 720,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_field\" is not accessed",
+              "file_path": "heretek-swarm/heretek_swarm/workflow/engine.py",
+              "line_start": 201,
+              "line_end": 201,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"ndata\" is not accessed",
+              "file_path": "heretek-swarm/heretek_swarm/workflow/engine.py",
+              "line_start": 702,
+              "line_end": 702,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"ndata\" is not accessed",
+              "file_path": "heretek-swarm/heretek_swarm/workflow/engine.py",
+              "line_start": 717,
+              "line_end": 717,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"input_data\" is not accessed",
+              "file_path": "heretek-swarm/heretek_swarm/workflow/engine.py",
+              "line_start": 652,
+              "line_end": 652,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"start_time\" is not accessed",
+              "file_path": "heretek-swarm/heretek_swarm/workflow/engine.py",
+              "line_start": 899,
+              "line_end": 899,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"workflow\" is not accessed",
+              "file_path": "heretek-swarm/heretek_swarm/workflow/engine.py",
+              "line_start": 1008,
+              "line_end": 1008,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"context\" is not accessed",
+              "file_path": "heretek-swarm/heretek_swarm/workflow/engine.py",
+              "line_start": 1040,
+              "line_end": 1040,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"context\" is not accessed",
+              "file_path": "heretek-swarm/heretek_swarm/workflow/engine.py",
+              "line_start": 1076,
+              "line_end": 1076,
               "metric_value": 0.0
             }
           ]
@@ -1217,6 +1273,12 @@
   ],
   "file_summaries": [
     {
+      "file_path": "heretek-swarm/heretek_swarm/workflow/engine.py",
+      "total_findings": 8,
+      "warning_findings": 8,
+      "composite_risk_score": 90.0
+    },
+    {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
       "total_findings": 3,
       "warning_findings": 3,
@@ -1326,12 +1388,6 @@
     },
     {
       "file_path": "src/heretek_swarm/consciousness/phi_training.py",
-      "total_findings": 2,
-      "warning_findings": 2,
-      "composite_risk_score": 30.0
-    },
-    {
-      "file_path": "src/heretek_swarm/collective/adaptive_learning.py",
       "total_findings": 2,
       "warning_findings": 2,
       "composite_risk_score": 30.0

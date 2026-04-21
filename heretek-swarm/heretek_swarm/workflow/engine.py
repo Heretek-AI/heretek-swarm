@@ -325,7 +325,7 @@ class WorkflowState(TypedDict, total=False):
 T = TypeVar("T", bound=WorkflowState)
 
 
-class WorkflowState(Enum):
+class WorkflowStatus(Enum):
     """Workflow execution states."""
 
     PENDING = "pending"
@@ -943,7 +943,7 @@ class WorkflowEngine:
         return WorkflowResult(
             workflow_id=strat_result.workflow_id,
             execution_id=context.execution_id,
-            status=WorkflowState.COMPLETED if strat_result.success else WorkflowState.FAILED,
+            status=WorkflowStatus.COMPLETED if strat_result.success else WorkflowStatus.FAILED,
             node_results=node_result_map,
             variables=context.variables,
             start_time=context.start_time,
