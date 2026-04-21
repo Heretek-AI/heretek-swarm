@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-21T05:38:50.418118+00:00",
+    "generated_at": "2026-04-21T06:01:52.121005+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -56000,6 +56000,95 @@
     "heretek-swarm/heretek_swarm/workflow/__init__.py": {
       "file_status": "modified",
       "methods": []
+    },
+    "heretek-swarm/heretek_swarm/tools/base.py": {
+      "file_status": "modified",
+      "methods": [
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.tools.base.ToolStatus",
+          "start_line": 14,
+          "end_line": 20,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.tools.base.ToolMetadata",
+          "start_line": 24,
+          "end_line": 30,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.tools.base.ToolContext",
+          "start_line": 34,
+          "end_line": 39,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.tools.base.ToolExecutionResult",
+          "start_line": 43,
+          "end_line": 51,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.tools.base.ToolExecutionError",
+          "start_line": 54,
+          "end_line": 55,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.tools.base.BaseTool",
+          "start_line": 58,
+          "end_line": 76,
+          "node_type": "CLASS",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.tools.base.BaseTool.__init__",
+          "start_line": 61,
+          "end_line": 64,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.tools.base.BaseTool.execute",
+          "start_line": 67,
+          "end_line": 72,
+          "node_type": "METHOD",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.tools.base.BaseTool.validate",
+          "start_line": 74,
+          "end_line": 76,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.tools.base.SimpleTool",
+          "start_line": 79,
+          "end_line": 103,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.tools.base.SimpleTool.__init__",
+          "start_line": 82,
+          "end_line": 84,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.tools.base.SimpleTool.execute",
+          "start_line": 86,
+          "end_line": 103,
+          "node_type": "METHOD",
+          "status": "added"
+        }
+      ]
     }
   },
   "methods_index": {
@@ -117912,6 +118001,102 @@
       "qualified_name": "heretek-swarm.heretek_swarm.workflow.strategies.MajorityVoteStrategy._majority_vote",
       "start_line": 430,
       "end_line": 465,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/tools/base.py|heretek-swarm.heretek_swarm.tools.base.ToolStatus": {
+      "file_path": "heretek-swarm/heretek_swarm/tools/base.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.tools.base.ToolStatus",
+      "start_line": 14,
+      "end_line": 20,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/tools/base.py|heretek-swarm.heretek_swarm.tools.base.ToolMetadata": {
+      "file_path": "heretek-swarm/heretek_swarm/tools/base.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.tools.base.ToolMetadata",
+      "start_line": 24,
+      "end_line": 30,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/tools/base.py|heretek-swarm.heretek_swarm.tools.base.ToolContext": {
+      "file_path": "heretek-swarm/heretek_swarm/tools/base.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.tools.base.ToolContext",
+      "start_line": 34,
+      "end_line": 39,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/tools/base.py|heretek-swarm.heretek_swarm.tools.base.ToolExecutionResult": {
+      "file_path": "heretek-swarm/heretek_swarm/tools/base.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.tools.base.ToolExecutionResult",
+      "start_line": 43,
+      "end_line": 51,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/tools/base.py|heretek-swarm.heretek_swarm.tools.base.ToolExecutionError": {
+      "file_path": "heretek-swarm/heretek_swarm/tools/base.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.tools.base.ToolExecutionError",
+      "start_line": 54,
+      "end_line": 55,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/tools/base.py|heretek-swarm.heretek_swarm.tools.base.BaseTool": {
+      "file_path": "heretek-swarm/heretek_swarm/tools/base.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.tools.base.BaseTool",
+      "start_line": 58,
+      "end_line": 76,
+      "type": "CLASS",
+      "status": "modified"
+    },
+    "heretek-swarm/heretek_swarm/tools/base.py|heretek-swarm.heretek_swarm.tools.base.BaseTool.__init__": {
+      "file_path": "heretek-swarm/heretek_swarm/tools/base.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.tools.base.BaseTool.__init__",
+      "start_line": 61,
+      "end_line": 64,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/tools/base.py|heretek-swarm.heretek_swarm.tools.base.BaseTool.execute": {
+      "file_path": "heretek-swarm/heretek_swarm/tools/base.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.tools.base.BaseTool.execute",
+      "start_line": 67,
+      "end_line": 72,
+      "type": "METHOD",
+      "status": "modified"
+    },
+    "heretek-swarm/heretek_swarm/tools/base.py|heretek-swarm.heretek_swarm.tools.base.BaseTool.validate": {
+      "file_path": "heretek-swarm/heretek_swarm/tools/base.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.tools.base.BaseTool.validate",
+      "start_line": 74,
+      "end_line": 76,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/tools/base.py|heretek-swarm.heretek_swarm.tools.base.SimpleTool": {
+      "file_path": "heretek-swarm/heretek_swarm/tools/base.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.tools.base.SimpleTool",
+      "start_line": 79,
+      "end_line": 103,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/tools/base.py|heretek-swarm.heretek_swarm.tools.base.SimpleTool.__init__": {
+      "file_path": "heretek-swarm/heretek_swarm/tools/base.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.tools.base.SimpleTool.__init__",
+      "start_line": 82,
+      "end_line": 84,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/tools/base.py|heretek-swarm.heretek_swarm.tools.base.SimpleTool.execute": {
+      "file_path": "heretek-swarm/heretek_swarm/tools/base.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.tools.base.SimpleTool.execute",
+      "start_line": 86,
+      "end_line": 103,
       "type": "METHOD",
       "status": "added"
     }

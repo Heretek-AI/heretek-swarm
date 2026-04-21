@@ -4,6 +4,7 @@ Heretek Swarm Tools Base Module.
 Provides base classes for tool execution in the swarm.
 """
 
+from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from enum import Enum
@@ -54,7 +55,7 @@ class ToolExecutionError(Exception):
     """Error during tool execution."""
 
 
-class BaseTool:
+class BaseTool(ABC):
     """Base class for all tools."""
 
     def __init__(self, name: str, description: str, metadata: ToolMetadata | None = None):
@@ -62,9 +63,13 @@ class BaseTool:
         self.description = description
         self.metadata = metadata or ToolMetadata(name=name, description=description)
 
+    @abstractmethod
     async def execute(self, context: ToolContext, **kwargs) -> ToolExecutionResult:
-        """Execute the tool with given context."""
-        raise NotImplementedError("Subclasses must implement execute()")
+        """Execute the tool with the given context.
+
+        Subclasses must implement this method.
+        """
+        ...
 
     async def validate(self, **kwargs) -> bool:
         """Validate tool parameters."""

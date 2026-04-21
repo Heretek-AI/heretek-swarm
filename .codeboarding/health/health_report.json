@@ -1,7 +1,7 @@
 {
   "repository_name": "heretek-swarm",
-  "timestamp": "2026-04-21T05:38:51.792041+00:00",
-  "overall_score": 0.9905352896827698,
+  "timestamp": "2026-04-21T06:01:53.791379+00:00",
+  "overall_score": 0.9903160336329371,
   "check_summaries": [
     {
       "check_name": "function_size",
@@ -790,10 +790,10 @@
       "description": "Detects unused imports, variables, functions, and dead code via LSP diagnostics",
       "language": "Python",
       "check_type": "standard",
-      "total_entities_checked": 18,
-      "findings_count": 18,
-      "warning_count": 17,
-      "score": 0.09999999999999998,
+      "total_entities_checked": 20,
+      "findings_count": 20,
+      "warning_count": 19,
+      "score": 0.0,
       "finding_groups": [
         {
           "severity": "warning",
@@ -917,6 +917,20 @@
               "file_path": "heretek-swarm/heretek_swarm/workflow/engine.py",
               "line_start": 1076,
               "line_end": 1076,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"kwargs\" is not accessed",
+              "file_path": "heretek-swarm/heretek_swarm/tools/base.py",
+              "line_start": 74,
+              "line_end": 74,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"context\" is not accessed",
+              "file_path": "heretek-swarm/heretek_swarm/tools/base.py",
+              "line_start": 86,
+              "line_end": 86,
               "metric_value": 0.0
             }
           ]
