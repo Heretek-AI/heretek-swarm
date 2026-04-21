@@ -1,7 +1,8 @@
 """Tests for duplicate class detection.
 
-Uses workflow/strategies.py as a fixture — it contains a duplicate
-WorkflowExecutionResult class at lines 29 and 60.
+Uses workflow/strategies.py as a fixture. After S03 cleanup,
+strategies.py has exactly one WorkflowExecutionResult class definition
+(no duplicate).
 """
 
 from pathlib import Path
@@ -30,48 +31,49 @@ class TestDuplicateClassDetection:
             "Ensure the audit package and test are run from the repo root."
         )
 
-    def test_strategies_file_has_duplicate_class(self) -> None:
-        """Confirm that workflow/strategies.py actually has a duplicate class."""
+    def test_strategies_file_has_single_class(self) -> None:
+        """Confirm that workflow/strategies.py has exactly one WorkflowExecutionResult class."""
         content = _STRATEGIES_PATH.read_text(encoding="utf-8")
         count = content.count("class WorkflowExecutionResult")
-        assert count == 2, (
-            f"Expected 2 occurrences of 'class WorkflowExecutionResult' in "
+        assert count == 1, (
+            f"Expected 1 occurrence of 'class WorkflowExecutionResult' in "
             f"{_STRATEGIES_PATH}, found {count}. "
             "Update this test if the source file changes."
         )
 
-    def test_ast_scan_finds_duplicate_class(self) -> None:
-        """The AST scanner must return a DuplicateClassDefinition finding."""
+    def test_ast_scan_finds_no_duplicate_class(self) -> None:
+        """After S03 cleanup, the AST scanner should find zero DuplicateClassDefinition findings."""
         content = _STRATEGIES_PATH.read_text(encoding="utf-8")
         findings = _scan_ast(content, str(_STRATEGIES_PATH), patterns=None)
 
         dup_names = [
             f for f in findings if f.pattern_name == "DuplicateClassDefinition"
         ]
-        assert len(dup_names) >= 1, (
-            "Expected at least one DuplicateClassDefinition finding for "
-            f"{_STRATEGIES_PATH}, but got none. "
-            "Check that the AST scanner is correctly identifying duplicate class names."
+        assert len(dup_names) == 0, (
+            "Expected zero DuplicateClassDefinition findings for "
+            f"{_STRATEGIES_PATH} after cleanup, but got {len(dup_names)}. "
+            "The duplicate class has been removed; update this test if needed."
         )
 
-    def test_scan_file_finds_duplicate_class(self) -> None:
-        """scan_file() must surface a CRITICAL or INFO finding for the duplicate class."""
+    def test_scan_file_finds_no_duplicate_class(self) -> None:
+        """After S03 cleanup, scan_file() must return zero DuplicateClassDefinition findings."""
         findings = scan_file(_STRATEGIES_PATH)
         dup_names = [
             f for f in findings if f.pattern_name == "DuplicateClassDefinition"
         ]
-        assert len(dup_names) >= 1
+        assert len(dup_names) == 0, (
+            f"Expected zero DuplicateClassDefinition findings for {_STRATEGIES_PATH} "
+            f"after cleanup, but got {len(dup_names)}."
+        )
 
-    def test_duplicate_class_has_workflow_execution_result_name(self) -> None:
-        """The finding description must mention WorkflowExecutionResult."""
-        findings = scan_file(_STRATEGIES_PATH)
-        dup_findings = [
-            f for f in findings if f.pattern_name == "DuplicateClassDefinition"
-        ]
-        assert len(dup_findings) >= 1
-        # At least one finding should mention the duplicated class name
-        descriptions = [f.description for f in dup_findings]
-        assert any("WorkflowExecutionResult" in d for d in descriptions)
+    def test_single_class_is_workflow_execution_result(self) -> None:
+        """Verify strategies.py contains exactly one WorkflowExecutionResult class definition."""
+        content = _STRATEGIES_PATH.read_text(encoding="utf-8")
+        count = content.count("class WorkflowExecutionResult")
+        assert count == 1, (
+            f"Expected exactly one WorkflowExecutionResult class in "
+            f"{_STRATEGIES_PATH}, found {count}."
+        )
 
     def test_scan_file_returns_findings_for_strategies(self) -> None:
         """Sanity: scan_file on strategies.py returns at least one finding."""
