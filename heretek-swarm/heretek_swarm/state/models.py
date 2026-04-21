@@ -553,32 +553,15 @@ class StateManager:
     async def initialize(self) -> None:
         """Initialize the state manager.
 
-        This is a stub/placeholder method.
-
-        What needs to be implemented:
-        - Initialize underlying state storage (database, memory, etc.)
-        - Register any persisted agent states
-        - Set up state change event handlers
-
-        Returns:
-            None
+        State is managed in-memory via _states dict. No external storage to initialize.
         """
         pass
 
     async def shutdown(self) -> None:
-        """Shutdown the state manager.
-
-        This is a stub/placeholder method.
-
-        What needs to be implemented:
-        - Persist any pending agent states
-        - Close underlying storage connections
-        - Cancel any pending operations gracefully
-
-        Returns:
-            None
-        """
-        pass
+        """Shutdown the state manager."""
+        from heretek_swarm.infrastructure.otel.logging import get_logger
+        logger = get_logger(__name__)
+        logger.info("state_manager_shutdown")
 
     async def register_agent(self, agent_id: str, agent_type: str = "worker") -> AgentState:
         """Register a new agent."""

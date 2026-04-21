@@ -18,8 +18,9 @@ class BaseToolRegistrar:
         self._handlers = handlers
 
     def register(self) -> None:
-        """Register all tools in this category. Override in subclasses."""
-        raise NotImplementedError
+        """Register all tools in this category."""
+        for handler in self._handlers.values():
+            handler()
 
 
 class MemoryToolsRegistrar(BaseToolRegistrar):

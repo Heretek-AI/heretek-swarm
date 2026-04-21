@@ -319,11 +319,12 @@ class LLMProviderBase(ABC):
 
         Returns:
             List of model names
-
-        Raises:
-            NotImplementedError: If the provider doesn't support listing models
         """
-        raise NotImplementedError("Model listing not supported for this provider")
+        if self.config.available_models:
+            return self.config.available_models
+        if self.config.default_model:
+            return [self.config.default_model]
+        return []
 
     def _get_model(self, model: str | None) -> str:
         """Get the model to use, falling back to default if needed."""

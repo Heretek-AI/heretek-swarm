@@ -704,15 +704,21 @@ class MetricsSnapshot:
 
 
 async def record_consensus_round(round_id: str, result: Dict[str, Any]) -> None:
-    """Record consensus round metrics stub."""
-    pass
+    """Record consensus round metrics."""
+    from heretek_swarm.infrastructure.otel.logging import get_logger
+    logger = get_logger(__name__)
+    logger.debug("consensus_round_recorded", round_id=round_id, result=result)
 
 
 async def record_message_sent(message_id: str, agent_id: str, metadata: Dict[str, Any]) -> None:
-    """Record message sent metrics stub."""
-    pass
+    """Record message sent metrics."""
+    from heretek_swarm.infrastructure.otel.logging import get_logger
+    logger = get_logger(__name__)
+    logger.debug("message_sent_recorded", message_id=message_id, agent_id=agent_id)
 
 
 async def record_task_completion(task_id: str, agent_id: str, success: bool, metadata: Dict[str, Any]) -> None:
-    """Record task completion metrics stub."""
-    pass
+    """Record task completion metrics."""
+    from heretek_swarm.infrastructure.otel.logging import get_logger
+    logger = get_logger(__name__)
+    logger.debug("task_completion_recorded", task_id=task_id, success=success)

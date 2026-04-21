@@ -427,6 +427,7 @@ def _get_external_call_log_session_factory() -> async_sessionmaker:  # type: ign
                 "DATABASE_URL not set — ExternalCallLog entries will not be persisted"
             )
             # Return a no-op sentinel that the caller handles gracefully
+            # Sentinel: caller handles None gracefully — no DB session when DATABASE_URL is unset
             return None  # type: ignore[return-value]
 
         from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine

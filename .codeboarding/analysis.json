@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-20T22:04:51.819205+00:00",
+    "generated_at": "2026-04-21T04:56:31.175956+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -55479,6 +55479,382 @@
           "start_line": 548,
           "end_line": 550,
           "node_type": "METHOD",
+          "status": "added"
+        }
+      ]
+    },
+    "heretek-swarm/heretek_swarm/llm/model_garage.py": {
+      "file_status": "modified",
+      "methods": [
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.ProviderType",
+          "start_line": 55,
+          "end_line": 66,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.ModelInfo",
+          "start_line": 70,
+          "end_line": 81,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.ProviderConfig",
+          "start_line": 85,
+          "end_line": 122,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.ProviderConfig.to_dict",
+          "start_line": 106,
+          "end_line": 122,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.ChatMessage",
+          "start_line": 126,
+          "end_line": 143,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.ChatMessage.to_dict",
+          "start_line": 134,
+          "end_line": 143,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.LLMRequest",
+          "start_line": 147,
+          "end_line": 189,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.LLMRequest.to_dict",
+          "start_line": 164,
+          "end_line": 189,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.LLMResponse",
+          "start_line": 193,
+          "end_line": 215,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.LLMResponse.prompt_tokens",
+          "start_line": 206,
+          "end_line": 207,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.LLMResponse.completion_tokens",
+          "start_line": 210,
+          "end_line": 211,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.LLMResponse.total_tokens",
+          "start_line": 214,
+          "end_line": 215,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.LLMProvider",
+          "start_line": 222,
+          "end_line": 280,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.LLMProvider.__init__",
+          "start_line": 225,
+          "end_line": 229,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.LLMProvider.complete",
+          "start_line": 232,
+          "end_line": 233,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.LLMProvider.stream",
+          "start_line": 236,
+          "end_line": 237,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.LLMProvider.health_check",
+          "start_line": 239,
+          "end_line": 247,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.LLMProvider.close",
+          "start_line": 249,
+          "end_line": 253,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.LLMProvider._get_client",
+          "start_line": 255,
+          "end_line": 271,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.LLMProvider._rate_limit",
+          "start_line": 273,
+          "end_line": 280,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.OpenAIProvider",
+          "start_line": 287,
+          "end_line": 346,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.OpenAIProvider.complete",
+          "start_line": 290,
+          "end_line": 324,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.OpenAIProvider.stream",
+          "start_line": 326,
+          "end_line": 346,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.OllamaProvider",
+          "start_line": 349,
+          "end_line": 416,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.OllamaProvider.complete",
+          "start_line": 352,
+          "end_line": 391,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.OllamaProvider.stream",
+          "start_line": 393,
+          "end_line": 416,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.MiniMaxProvider",
+          "start_line": 419,
+          "end_line": 507,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.MiniMaxProvider.complete",
+          "start_line": 422,
+          "end_line": 458,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.MiniMaxProvider.stream",
+          "start_line": 460,
+          "end_line": 507,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.AnthropicProvider",
+          "start_line": 510,
+          "end_line": 618,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.AnthropicProvider.complete",
+          "start_line": 513,
+          "end_line": 559,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.AnthropicProvider.stream",
+          "start_line": 561,
+          "end_line": 618,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.OpenAICompatibleProvider",
+          "start_line": 621,
+          "end_line": 693,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.OpenAICompatibleProvider.complete",
+          "start_line": 624,
+          "end_line": 658,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.OpenAICompatibleProvider.stream",
+          "start_line": 660,
+          "end_line": 693,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.register_provider_class",
+          "start_line": 709,
+          "end_line": 711,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.ModelGarage",
+          "start_line": 718,
+          "end_line": 991,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.ModelGarage.__init__",
+          "start_line": 731,
+          "end_line": 742,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.ModelGarage._load_config",
+          "start_line": 744,
+          "end_line": 775,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.ModelGarage._create_default_config",
+          "start_line": 777,
+          "end_line": 802,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.ModelGarage._save_config",
+          "start_line": 804,
+          "end_line": 830,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.ModelGarage.initialize",
+          "start_line": 832,
+          "end_line": 848,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.ModelGarage.close",
+          "start_line": 850,
+          "end_line": 856,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.ModelGarage.add_provider",
+          "start_line": 858,
+          "end_line": 861,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.ModelGarage.remove_provider",
+          "start_line": 863,
+          "end_line": 869,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.ModelGarage.get_provider_config",
+          "start_line": 871,
+          "end_line": 873,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.ModelGarage.list_providers",
+          "start_line": 875,
+          "end_line": 877,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.ModelGarage.health_check",
+          "start_line": 879,
+          "end_line": 899,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.ModelGarage.complete",
+          "start_line": 901,
+          "end_line": 954,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.ModelGarage.stream",
+          "start_line": 956,
+          "end_line": 991,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.get_model_garage",
+          "start_line": 1001,
+          "end_line": 1006,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.initialize_model_garage",
+          "start_line": 1009,
+          "end_line": 1014,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.main",
+          "start_line": 1021,
+          "end_line": 1035,
+          "node_type": "FUNCTION",
           "status": "added"
         }
       ]
@@ -116819,6 +117195,430 @@
       "start_line": 548,
       "end_line": 550,
       "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/llm/model_garage.py|heretek-swarm.heretek_swarm.llm.model_garage.ProviderType": {
+      "file_path": "heretek-swarm/heretek_swarm/llm/model_garage.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.ProviderType",
+      "start_line": 55,
+      "end_line": 66,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/llm/model_garage.py|heretek-swarm.heretek_swarm.llm.model_garage.ModelInfo": {
+      "file_path": "heretek-swarm/heretek_swarm/llm/model_garage.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.ModelInfo",
+      "start_line": 70,
+      "end_line": 81,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/llm/model_garage.py|heretek-swarm.heretek_swarm.llm.model_garage.ProviderConfig": {
+      "file_path": "heretek-swarm/heretek_swarm/llm/model_garage.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.ProviderConfig",
+      "start_line": 85,
+      "end_line": 122,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/llm/model_garage.py|heretek-swarm.heretek_swarm.llm.model_garage.ProviderConfig.to_dict": {
+      "file_path": "heretek-swarm/heretek_swarm/llm/model_garage.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.ProviderConfig.to_dict",
+      "start_line": 106,
+      "end_line": 122,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/llm/model_garage.py|heretek-swarm.heretek_swarm.llm.model_garage.ChatMessage": {
+      "file_path": "heretek-swarm/heretek_swarm/llm/model_garage.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.ChatMessage",
+      "start_line": 126,
+      "end_line": 143,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/llm/model_garage.py|heretek-swarm.heretek_swarm.llm.model_garage.ChatMessage.to_dict": {
+      "file_path": "heretek-swarm/heretek_swarm/llm/model_garage.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.ChatMessage.to_dict",
+      "start_line": 134,
+      "end_line": 143,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/llm/model_garage.py|heretek-swarm.heretek_swarm.llm.model_garage.LLMRequest": {
+      "file_path": "heretek-swarm/heretek_swarm/llm/model_garage.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.LLMRequest",
+      "start_line": 147,
+      "end_line": 189,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/llm/model_garage.py|heretek-swarm.heretek_swarm.llm.model_garage.LLMRequest.to_dict": {
+      "file_path": "heretek-swarm/heretek_swarm/llm/model_garage.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.LLMRequest.to_dict",
+      "start_line": 164,
+      "end_line": 189,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/llm/model_garage.py|heretek-swarm.heretek_swarm.llm.model_garage.LLMResponse": {
+      "file_path": "heretek-swarm/heretek_swarm/llm/model_garage.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.LLMResponse",
+      "start_line": 193,
+      "end_line": 215,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/llm/model_garage.py|heretek-swarm.heretek_swarm.llm.model_garage.LLMResponse.prompt_tokens": {
+      "file_path": "heretek-swarm/heretek_swarm/llm/model_garage.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.LLMResponse.prompt_tokens",
+      "start_line": 206,
+      "end_line": 207,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/llm/model_garage.py|heretek-swarm.heretek_swarm.llm.model_garage.LLMResponse.completion_tokens": {
+      "file_path": "heretek-swarm/heretek_swarm/llm/model_garage.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.LLMResponse.completion_tokens",
+      "start_line": 210,
+      "end_line": 211,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/llm/model_garage.py|heretek-swarm.heretek_swarm.llm.model_garage.LLMResponse.total_tokens": {
+      "file_path": "heretek-swarm/heretek_swarm/llm/model_garage.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.LLMResponse.total_tokens",
+      "start_line": 214,
+      "end_line": 215,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/llm/model_garage.py|heretek-swarm.heretek_swarm.llm.model_garage.LLMProvider": {
+      "file_path": "heretek-swarm/heretek_swarm/llm/model_garage.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.LLMProvider",
+      "start_line": 222,
+      "end_line": 280,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/llm/model_garage.py|heretek-swarm.heretek_swarm.llm.model_garage.LLMProvider.__init__": {
+      "file_path": "heretek-swarm/heretek_swarm/llm/model_garage.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.LLMProvider.__init__",
+      "start_line": 225,
+      "end_line": 229,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/llm/model_garage.py|heretek-swarm.heretek_swarm.llm.model_garage.LLMProvider.complete": {
+      "file_path": "heretek-swarm/heretek_swarm/llm/model_garage.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.LLMProvider.complete",
+      "start_line": 232,
+      "end_line": 233,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/llm/model_garage.py|heretek-swarm.heretek_swarm.llm.model_garage.LLMProvider.stream": {
+      "file_path": "heretek-swarm/heretek_swarm/llm/model_garage.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.LLMProvider.stream",
+      "start_line": 236,
+      "end_line": 237,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/llm/model_garage.py|heretek-swarm.heretek_swarm.llm.model_garage.LLMProvider.health_check": {
+      "file_path": "heretek-swarm/heretek_swarm/llm/model_garage.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.LLMProvider.health_check",
+      "start_line": 239,
+      "end_line": 247,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/llm/model_garage.py|heretek-swarm.heretek_swarm.llm.model_garage.LLMProvider.close": {
+      "file_path": "heretek-swarm/heretek_swarm/llm/model_garage.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.LLMProvider.close",
+      "start_line": 249,
+      "end_line": 253,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/llm/model_garage.py|heretek-swarm.heretek_swarm.llm.model_garage.LLMProvider._get_client": {
+      "file_path": "heretek-swarm/heretek_swarm/llm/model_garage.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.LLMProvider._get_client",
+      "start_line": 255,
+      "end_line": 271,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/llm/model_garage.py|heretek-swarm.heretek_swarm.llm.model_garage.LLMProvider._rate_limit": {
+      "file_path": "heretek-swarm/heretek_swarm/llm/model_garage.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.LLMProvider._rate_limit",
+      "start_line": 273,
+      "end_line": 280,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/llm/model_garage.py|heretek-swarm.heretek_swarm.llm.model_garage.OpenAIProvider": {
+      "file_path": "heretek-swarm/heretek_swarm/llm/model_garage.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.OpenAIProvider",
+      "start_line": 287,
+      "end_line": 346,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/llm/model_garage.py|heretek-swarm.heretek_swarm.llm.model_garage.OpenAIProvider.complete": {
+      "file_path": "heretek-swarm/heretek_swarm/llm/model_garage.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.OpenAIProvider.complete",
+      "start_line": 290,
+      "end_line": 324,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/llm/model_garage.py|heretek-swarm.heretek_swarm.llm.model_garage.OpenAIProvider.stream": {
+      "file_path": "heretek-swarm/heretek_swarm/llm/model_garage.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.OpenAIProvider.stream",
+      "start_line": 326,
+      "end_line": 346,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/llm/model_garage.py|heretek-swarm.heretek_swarm.llm.model_garage.OllamaProvider": {
+      "file_path": "heretek-swarm/heretek_swarm/llm/model_garage.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.OllamaProvider",
+      "start_line": 349,
+      "end_line": 416,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/llm/model_garage.py|heretek-swarm.heretek_swarm.llm.model_garage.OllamaProvider.complete": {
+      "file_path": "heretek-swarm/heretek_swarm/llm/model_garage.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.OllamaProvider.complete",
+      "start_line": 352,
+      "end_line": 391,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/llm/model_garage.py|heretek-swarm.heretek_swarm.llm.model_garage.OllamaProvider.stream": {
+      "file_path": "heretek-swarm/heretek_swarm/llm/model_garage.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.OllamaProvider.stream",
+      "start_line": 393,
+      "end_line": 416,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/llm/model_garage.py|heretek-swarm.heretek_swarm.llm.model_garage.MiniMaxProvider": {
+      "file_path": "heretek-swarm/heretek_swarm/llm/model_garage.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.MiniMaxProvider",
+      "start_line": 419,
+      "end_line": 507,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/llm/model_garage.py|heretek-swarm.heretek_swarm.llm.model_garage.MiniMaxProvider.complete": {
+      "file_path": "heretek-swarm/heretek_swarm/llm/model_garage.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.MiniMaxProvider.complete",
+      "start_line": 422,
+      "end_line": 458,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/llm/model_garage.py|heretek-swarm.heretek_swarm.llm.model_garage.MiniMaxProvider.stream": {
+      "file_path": "heretek-swarm/heretek_swarm/llm/model_garage.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.MiniMaxProvider.stream",
+      "start_line": 460,
+      "end_line": 507,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/llm/model_garage.py|heretek-swarm.heretek_swarm.llm.model_garage.AnthropicProvider": {
+      "file_path": "heretek-swarm/heretek_swarm/llm/model_garage.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.AnthropicProvider",
+      "start_line": 510,
+      "end_line": 618,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/llm/model_garage.py|heretek-swarm.heretek_swarm.llm.model_garage.AnthropicProvider.complete": {
+      "file_path": "heretek-swarm/heretek_swarm/llm/model_garage.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.AnthropicProvider.complete",
+      "start_line": 513,
+      "end_line": 559,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/llm/model_garage.py|heretek-swarm.heretek_swarm.llm.model_garage.AnthropicProvider.stream": {
+      "file_path": "heretek-swarm/heretek_swarm/llm/model_garage.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.AnthropicProvider.stream",
+      "start_line": 561,
+      "end_line": 618,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/llm/model_garage.py|heretek-swarm.heretek_swarm.llm.model_garage.OpenAICompatibleProvider": {
+      "file_path": "heretek-swarm/heretek_swarm/llm/model_garage.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.OpenAICompatibleProvider",
+      "start_line": 621,
+      "end_line": 693,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/llm/model_garage.py|heretek-swarm.heretek_swarm.llm.model_garage.OpenAICompatibleProvider.complete": {
+      "file_path": "heretek-swarm/heretek_swarm/llm/model_garage.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.OpenAICompatibleProvider.complete",
+      "start_line": 624,
+      "end_line": 658,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/llm/model_garage.py|heretek-swarm.heretek_swarm.llm.model_garage.OpenAICompatibleProvider.stream": {
+      "file_path": "heretek-swarm/heretek_swarm/llm/model_garage.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.OpenAICompatibleProvider.stream",
+      "start_line": 660,
+      "end_line": 693,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/llm/model_garage.py|heretek-swarm.heretek_swarm.llm.model_garage.register_provider_class": {
+      "file_path": "heretek-swarm/heretek_swarm/llm/model_garage.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.register_provider_class",
+      "start_line": 709,
+      "end_line": 711,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/llm/model_garage.py|heretek-swarm.heretek_swarm.llm.model_garage.ModelGarage": {
+      "file_path": "heretek-swarm/heretek_swarm/llm/model_garage.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.ModelGarage",
+      "start_line": 718,
+      "end_line": 991,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/llm/model_garage.py|heretek-swarm.heretek_swarm.llm.model_garage.ModelGarage.__init__": {
+      "file_path": "heretek-swarm/heretek_swarm/llm/model_garage.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.ModelGarage.__init__",
+      "start_line": 731,
+      "end_line": 742,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/llm/model_garage.py|heretek-swarm.heretek_swarm.llm.model_garage.ModelGarage._load_config": {
+      "file_path": "heretek-swarm/heretek_swarm/llm/model_garage.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.ModelGarage._load_config",
+      "start_line": 744,
+      "end_line": 775,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/llm/model_garage.py|heretek-swarm.heretek_swarm.llm.model_garage.ModelGarage._create_default_config": {
+      "file_path": "heretek-swarm/heretek_swarm/llm/model_garage.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.ModelGarage._create_default_config",
+      "start_line": 777,
+      "end_line": 802,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/llm/model_garage.py|heretek-swarm.heretek_swarm.llm.model_garage.ModelGarage._save_config": {
+      "file_path": "heretek-swarm/heretek_swarm/llm/model_garage.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.ModelGarage._save_config",
+      "start_line": 804,
+      "end_line": 830,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/llm/model_garage.py|heretek-swarm.heretek_swarm.llm.model_garage.ModelGarage.initialize": {
+      "file_path": "heretek-swarm/heretek_swarm/llm/model_garage.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.ModelGarage.initialize",
+      "start_line": 832,
+      "end_line": 848,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/llm/model_garage.py|heretek-swarm.heretek_swarm.llm.model_garage.ModelGarage.close": {
+      "file_path": "heretek-swarm/heretek_swarm/llm/model_garage.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.ModelGarage.close",
+      "start_line": 850,
+      "end_line": 856,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/llm/model_garage.py|heretek-swarm.heretek_swarm.llm.model_garage.ModelGarage.add_provider": {
+      "file_path": "heretek-swarm/heretek_swarm/llm/model_garage.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.ModelGarage.add_provider",
+      "start_line": 858,
+      "end_line": 861,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/llm/model_garage.py|heretek-swarm.heretek_swarm.llm.model_garage.ModelGarage.remove_provider": {
+      "file_path": "heretek-swarm/heretek_swarm/llm/model_garage.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.ModelGarage.remove_provider",
+      "start_line": 863,
+      "end_line": 869,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/llm/model_garage.py|heretek-swarm.heretek_swarm.llm.model_garage.ModelGarage.get_provider_config": {
+      "file_path": "heretek-swarm/heretek_swarm/llm/model_garage.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.ModelGarage.get_provider_config",
+      "start_line": 871,
+      "end_line": 873,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/llm/model_garage.py|heretek-swarm.heretek_swarm.llm.model_garage.ModelGarage.list_providers": {
+      "file_path": "heretek-swarm/heretek_swarm/llm/model_garage.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.ModelGarage.list_providers",
+      "start_line": 875,
+      "end_line": 877,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/llm/model_garage.py|heretek-swarm.heretek_swarm.llm.model_garage.ModelGarage.health_check": {
+      "file_path": "heretek-swarm/heretek_swarm/llm/model_garage.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.ModelGarage.health_check",
+      "start_line": 879,
+      "end_line": 899,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/llm/model_garage.py|heretek-swarm.heretek_swarm.llm.model_garage.ModelGarage.complete": {
+      "file_path": "heretek-swarm/heretek_swarm/llm/model_garage.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.ModelGarage.complete",
+      "start_line": 901,
+      "end_line": 954,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/llm/model_garage.py|heretek-swarm.heretek_swarm.llm.model_garage.ModelGarage.stream": {
+      "file_path": "heretek-swarm/heretek_swarm/llm/model_garage.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.ModelGarage.stream",
+      "start_line": 956,
+      "end_line": 991,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/llm/model_garage.py|heretek-swarm.heretek_swarm.llm.model_garage.get_model_garage": {
+      "file_path": "heretek-swarm/heretek_swarm/llm/model_garage.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.get_model_garage",
+      "start_line": 1001,
+      "end_line": 1006,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/llm/model_garage.py|heretek-swarm.heretek_swarm.llm.model_garage.initialize_model_garage": {
+      "file_path": "heretek-swarm/heretek_swarm/llm/model_garage.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.initialize_model_garage",
+      "start_line": 1009,
+      "end_line": 1014,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/llm/model_garage.py|heretek-swarm.heretek_swarm.llm.model_garage.main": {
+      "file_path": "heretek-swarm/heretek_swarm/llm/model_garage.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.llm.model_garage.main",
+      "start_line": 1021,
+      "end_line": 1035,
+      "type": "FUNCTION",
       "status": "added"
     }
   },
