@@ -30,37 +30,6 @@ class WorkflowExecutionResult:
     """
     Result from a workflow execution strategy.
 
-    Simplified result type matching what the strategies return.
-    The calling WorkflowEngine wraps this into its own WorkflowResult.
-    """
-
-    def __init__(
-        self,
-        workflow_id: str,
-        success: bool,
-        execution_time: float,
-        node_results: dict[str, Any],
-        error_message: str | None = None,
-        node_status: dict[str, str] | None = None,
-    ) -> None:
-        self.workflow_id = workflow_id
-        self.success = success
-        self.execution_time = execution_time
-        self.node_results = node_results
-        self.error_message = error_message
-        self.node_status = node_status or {}
-
-    @property
-    def status(self) -> str:
-        if self.success:
-            return "completed"
-        return "failed"
-
-
-class WorkflowExecutionResult:
-    """
-    Result from a workflow execution strategy.
-
     Simplified result type for strategy-level reporting.
     The calling WorkflowEngine wraps this into its own WorkflowResult.
     """
