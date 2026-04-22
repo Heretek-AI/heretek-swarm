@@ -1,7 +1,7 @@
 {
   "repository_name": "heretek-swarm",
-  "timestamp": "2026-04-21T06:06:00.795086+00:00",
-  "overall_score": 0.9913271819870009,
+  "timestamp": "2026-04-22T19:52:16.543012+00:00",
+  "overall_score": 0.991465892597968,
   "check_summaries": [
     {
       "check_name": "function_size",
@@ -790,68 +790,11 @@
       "description": "Detects unused imports, variables, functions, and dead code via LSP diagnostics",
       "language": "Python",
       "check_type": "standard",
-      "total_entities_checked": 7,
-      "findings_count": 7,
+      "total_entities_checked": 0,
+      "findings_count": 0,
       "warning_count": 0,
-      "score": 0.6499999999999999,
-      "finding_groups": [
-        {
-          "severity": "info",
-          "threshold": 0,
-          "description": "Variables declared but never used",
-          "entities": [
-            {
-              "entity_name": "[unused_variable] \"trace_id\" is not accessed",
-              "file_path": "heretek-swarm/heretek_swarm/infrastructure/otel/tracing.py",
-              "line_start": 201,
-              "line_end": 201,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"parent_id\" is not accessed",
-              "file_path": "heretek-swarm/heretek_swarm/infrastructure/otel/tracing.py",
-              "line_start": 202,
-              "line_end": 202,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"exc_info\" is not accessed",
-              "file_path": "heretek-swarm/heretek_swarm/infrastructure/otel/tracing.py",
-              "line_start": 995,
-              "line_end": 995,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"error_type\" is not accessed",
-              "file_path": "heretek-swarm/heretek_swarm/observability/metrics.py",
-              "line_start": 192,
-              "line_end": 192,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"metadata\" is not accessed",
-              "file_path": "heretek-swarm/heretek_swarm/observability/metrics.py",
-              "line_start": 713,
-              "line_end": 713,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"agent_id\" is not accessed",
-              "file_path": "heretek-swarm/heretek_swarm/observability/metrics.py",
-              "line_start": 720,
-              "line_end": 720,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"node_inputs\" is not accessed",
-              "file_path": "heretek-swarm/heretek_swarm/workflow/strategies.py",
-              "line_start": 122,
-              "line_end": 122,
-              "metric_value": 0.0
-            }
-          ]
-        }
-      ]
+      "score": 1.0,
+      "finding_groups": []
     },
     {
       "check_name": "function_size",
@@ -1115,40 +1058,40 @@
       "language": "TypeScript",
       "check_type": "circular_dependencies",
       "cycles": [
-        "src.components.UI -> src.components.Agents -> src.api -> src.components.UI",
-        "src.components.UI -> src.components.Agents -> src.components.Settings -> src.api -> src.components.UI",
-        "src.components.UI -> src.components.Agents -> src.components.Settings -> src.components.UI",
-        "src.components.UI -> src.components.Agents -> src.components.UI",
-        "src.components.UI -> src.components.Settings -> src.api -> src.components.Agents -> src.components.UI",
-        "src.components.UI -> src.components.Settings -> src.api -> src.components.UI",
-        "src.components.UI -> src.components.Settings -> src.components.Agents -> src.api -> src.components.UI",
-        "src.components.UI -> src.components.Settings -> src.components.Agents -> src.components.UI",
-        "src.components.UI -> src.components.Settings -> src.components.UI",
-        "src.components.UI -> src.utils -> src.components.Agents -> src.api -> src.components.UI",
-        "src.components.UI -> src.utils -> src.components.Agents -> src.components.Settings -> src.api -> src.components.UI",
-        "src.components.UI -> src.utils -> src.components.Agents -> src.components.Settings -> src.components.UI",
-        "src.components.UI -> src.utils -> src.components.Agents -> src.components.UI",
-        "src.components.UI -> src.utils -> src.components.UI",
-        "src.components.Settings -> src.api -> src.components.Agents -> src.components.Settings",
-        "src.components.Settings -> src.components.Agents -> src.components.Settings",
+        "src.utils -> src.components.Agents -> src.api -> src.components.UI -> src.utils",
+        "src.utils -> src.components.Agents -> src.components.Settings -> src.api -> src.components.UI -> src.utils",
+        "src.utils -> src.components.Agents -> src.components.Settings -> src.components.UI -> src.utils",
+        "src.utils -> src.components.Agents -> src.components.UI -> src.utils",
+        "src.utils -> src.components.UI -> src.utils",
         "src.components.Agents -> src.api -> src.components.Agents",
+        "src.components.Agents -> src.api -> src.components.UI -> src.components.Agents",
+        "src.components.Agents -> src.api -> src.components.UI -> src.components.Settings -> src.components.Agents",
+        "src.components.Agents -> src.components.Settings -> src.api -> src.components.Agents",
+        "src.components.Agents -> src.components.Settings -> src.api -> src.components.UI -> src.components.Agents",
+        "src.components.Agents -> src.components.Settings -> src.components.Agents",
+        "src.components.Agents -> src.components.Settings -> src.components.UI -> src.components.Agents",
+        "src.components.Agents -> src.components.UI -> src.components.Agents",
+        "src.components.Agents -> src.components.UI -> src.components.Settings -> src.api -> src.components.Agents",
+        "src.components.Agents -> src.components.UI -> src.components.Settings -> src.components.Agents",
+        "src.api -> src.components.UI -> src.components.Settings -> src.api",
+        "src.components.Settings -> src.components.UI -> src.components.Settings",
         "dashboard.frontend.src.utils -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils",
         "dashboard.frontend.src.utils -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils",
         "dashboard.frontend.src.utils -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils",
         "dashboard.frontend.src.utils -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils",
         "dashboard.frontend.src.utils -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils",
-        "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api -> dashboard.frontend.src.components.Agents",
-        "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents",
-        "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.Agents",
-        "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api -> dashboard.frontend.src.components.Agents",
-        "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents",
-        "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.Agents",
-        "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents",
-        "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents",
-        "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api -> dashboard.frontend.src.components.Agents",
-        "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.Agents",
-        "dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api -> dashboard.frontend.src.components.UI",
-        "dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.UI"
+        "dashboard.frontend.src.api -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api",
+        "dashboard.frontend.src.api -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api",
+        "dashboard.frontend.src.api -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api",
+        "dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api",
+        "dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api",
+        "dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api",
+        "dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api",
+        "dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.UI",
+        "dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.UI",
+        "dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.UI",
+        "dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.UI",
+        "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.Agents"
       ],
       "packages_checked": 47,
       "packages_in_cycles": 10

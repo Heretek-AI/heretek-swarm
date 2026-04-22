@@ -30,8 +30,8 @@ def not_implemented():
     raise NotImplementedError
 
 
-def create_sample_metrics():
-    '''This is a test fixture — intentionally excluded from findings.'''
+def create_sample_data():
+    '''This is a test fixture — should be flagged as SampleDataGenerator.'''
     return {"test": 1}
 """
     p = tmp_path / "sample.py"

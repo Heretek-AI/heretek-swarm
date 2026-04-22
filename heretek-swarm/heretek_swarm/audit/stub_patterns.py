@@ -96,6 +96,18 @@ EXCLUDED_DIRS = {
 }
 EXCLUDED_NAME_PARTS = re.compile(r"_sample|_test|_demo")
 
+# Files excluded from scanning (self-referential: audit tool detecting its own code)
+EXCLUDED_FILES = frozenset({
+    "stub_patterns.py",  # self-referential: generateRandom is the audit tool's own utility
+})
+
+# Function names excluded from SampleDataGenerator pattern
+# These match the naming convention but are legitimate production utilities
+EXCLUDED_FUNCTIONS = frozenset({
+    # Production utility in collective/agency_tracking.py, exported and used in API
+    "create_sample_metrics",
+})
+
 
 # ---------------------------------------------------------------------------
 # Public API
@@ -125,6 +137,10 @@ def scan_file(
 
     # Apply exclusions by filename
     if EXCLUDED_NAME_PARTS.search(path.name):
+        return findings
+
+    # Skip self-referential files (audit tool detecting its own utility functions)
+    if path.name in EXCLUDED_FILES:
         return findings
 
     if not path.is_file():
@@ -199,23 +215,31 @@ def _scan_ast(
                 ),
             ))
 
-        # DuplicateClassDefinition: same class name defined multiple times
+        # DuplicateClassDefinition: same class name defined multiple times at module level
+        # Nested classes (e.g. Pydantic's `class Config:` inside model classes) are excluded
+        # because they are scoped to their parent class, not the module
         if (
             "DuplicateClassDefinition" in active_pattern_names
             and isinstance(node, ast.ClassDef)
         ):
-            class_count = sum(
-                1 for n in ast.walk(tree)
-                if isinstance(n, ast.ClassDef) and n.name == node.name
-            )
-            if class_count > 1:
-                findings.append(AuditFinding(
-                    file=filename,
-                    line=node.lineno or 0,
-                    pattern_name="DuplicateClassDefinition",
-                    severity="INFO",
-                    description=f"Class `{node.name}` is defined multiple times.",
-                ))
+            # Module-level classes have col_offset == 0 and appear directly in tree.body
+            # Nested classes (e.g. `class Config:` inside `class UserConfiguration:`)
+            # have col_offset > 0 or are not in tree.body
+            is_module_level = node in tree.body
+            if is_module_level:
+                # Count module-level classes with the same name
+                class_count = sum(
+                    1 for n in tree.body
+                    if isinstance(n, ast.ClassDef) and n.name == node.name
+                )
+                if class_count > 1:
+                    findings.append(AuditFinding(
+                        file=filename,
+                        line=node.lineno or 0,
+                        pattern_name="DuplicateClassDefinition",
+                        severity="INFO",
+                        description=f"Class `{node.name}` defined multiple times at module scope.",
+                    ))
 
         # SampleDataGenerator: function named create_sample_* or _sample_*
         if (
@@ -224,6 +248,9 @@ def _scan_ast(
         ):
             name = node.name
             if name.startswith(("create_sample_", "_sample_")):
+                # Exclude known legitimate production utilities
+                if name in EXCLUDED_FUNCTIONS:
+                    continue
                 findings.append(AuditFinding(
                     file=filename,
                     line=node.lineno or 0,

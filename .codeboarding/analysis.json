@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-21T06:05:59.410574+00:00",
+    "generated_at": "2026-04-22T19:52:15.044579+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -56301,6 +56301,964 @@
           "start_line": 556,
           "end_line": 599,
           "node_type": "METHOD",
+          "status": "added"
+        }
+      ]
+    },
+    "heretek-swarm/heretek_swarm/audit/stub_patterns.py": {
+      "file_status": "modified",
+      "methods": [
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.audit.stub_patterns.Pattern",
+          "start_line": 16,
+          "end_line": 21,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.audit.stub_patterns.scan_file",
+          "start_line": 120,
+          "end_line": 178,
+          "node_type": "FUNCTION",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.audit.stub_patterns._scan_ast",
+          "start_line": 181,
+          "end_line": 262,
+          "node_type": "FUNCTION",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.audit.stub_patterns.scan_directory",
+          "start_line": 265,
+          "end_line": 293,
+          "node_type": "FUNCTION",
+          "status": "added"
+        }
+      ]
+    },
+    "heretek-swarm/heretek_swarm/config/models.py": {
+      "file_status": "modified",
+      "methods": [
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.config.models.ConfigType",
+          "start_line": 18,
+          "end_line": 25,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.config.models.HealthStatus",
+          "start_line": 28,
+          "end_line": 33,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.config.models.LLMProviderType",
+          "start_line": 36,
+          "end_line": 44,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.config.models.EmbeddingProviderType",
+          "start_line": 47,
+          "end_line": 53,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.config.models.UserConfiguration",
+          "start_line": 60,
+          "end_line": 82,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.config.models.UserConfiguration.Config",
+          "start_line": 77,
+          "end_line": 82,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.config.models.UserConfigurationCreate",
+          "start_line": 85,
+          "end_line": 95,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.config.models.UserConfigurationUpdate",
+          "start_line": 98,
+          "end_line": 103,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.config.models.LLMProvider",
+          "start_line": 110,
+          "end_line": 143,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.config.models.LLMProvider.Config",
+          "start_line": 138,
+          "end_line": 143,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.config.models.LLMProviderCreate",
+          "start_line": 146,
+          "end_line": 166,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.config.models.LLMProviderUpdate",
+          "start_line": 169,
+          "end_line": 187,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.config.models.LLMProviderTestRequest",
+          "start_line": 190,
+          "end_line": 194,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.config.models.LLMProviderTestResponse",
+          "start_line": 197,
+          "end_line": 204,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.config.models.EmbeddingProvider",
+          "start_line": 211,
+          "end_line": 240,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.config.models.EmbeddingProvider.Config",
+          "start_line": 235,
+          "end_line": 240,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.config.models.EmbeddingProviderCreate",
+          "start_line": 243,
+          "end_line": 259,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.config.models.EmbeddingProviderUpdate",
+          "start_line": 262,
+          "end_line": 276,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.config.models.EmbeddingProviderTestRequest",
+          "start_line": 279,
+          "end_line": 282,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.config.models.EmbeddingProviderTestResponse",
+          "start_line": 285,
+          "end_line": 292,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.config.models.AgentConfig",
+          "start_line": 299,
+          "end_line": 323,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.config.models.AgentConfig.Config",
+          "start_line": 318,
+          "end_line": 323,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.config.models.AgentConfigCreate",
+          "start_line": 326,
+          "end_line": 337,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.config.models.AgentConfigUpdate",
+          "start_line": 340,
+          "end_line": 349,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.config.models.ConfigAuditLog",
+          "start_line": 356,
+          "end_line": 375,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.config.models.ConfigAuditLog.Config",
+          "start_line": 371,
+          "end_line": 375,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.config.models.ConfigCacheEntry",
+          "start_line": 382,
+          "end_line": 389,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.config.models.ConfigurationExport",
+          "start_line": 396,
+          "end_line": 404,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.config.models.ConfigurationImport",
+          "start_line": 407,
+          "end_line": 413,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.config.models.ImportOptions",
+          "start_line": 416,
+          "end_line": 423,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.config.models.ImportResult",
+          "start_line": 426,
+          "end_line": 433,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.config.models.MCPProviderType",
+          "start_line": 441,
+          "end_line": 444,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.config.models.MCPProvider",
+          "start_line": 447,
+          "end_line": 471,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.config.models.MCPProvider.Config",
+          "start_line": 466,
+          "end_line": 471,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.config.models.MCPProviderCreate",
+          "start_line": 474,
+          "end_line": 485,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.config.models.MCPProviderUpdate",
+          "start_line": 488,
+          "end_line": 497,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.config.models.MCPProviderTestResponse",
+          "start_line": 500,
+          "end_line": 506,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.config.models.InfrastructureService",
+          "start_line": 514,
+          "end_line": 520,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.config.models.InfrastructureConfig",
+          "start_line": 523,
+          "end_line": 545,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.config.models.InfrastructureConfig.Config",
+          "start_line": 540,
+          "end_line": 545,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.config.models.InfrastructureConfigCreate",
+          "start_line": 548,
+          "end_line": 555,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.config.models.InfrastructureConfigUpdate",
+          "start_line": 558,
+          "end_line": 564,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.config.models.InfrastructureHealthCheck",
+          "start_line": 567,
+          "end_line": 573,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.config.models.MCPConfig",
+          "start_line": 576,
+          "end_line": 596,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.config.models.MCPConfig.Config",
+          "start_line": 591,
+          "end_line": 596,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.config.models.MCPConfigCreate",
+          "start_line": 599,
+          "end_line": 608,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.config.models.MCPConfigUpdate",
+          "start_line": 611,
+          "end_line": 619,
+          "node_type": "CLASS",
+          "status": "added"
+        }
+      ]
+    },
+    "heretek-swarm/heretek_swarm/validation/llm_output.py": {
+      "file_status": "modified",
+      "methods": [
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.llm_output.ValidationSeverity",
+          "start_line": 25,
+          "end_line": 30,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.llm_output.CodeLanguage",
+          "start_line": 33,
+          "end_line": 46,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.llm_output.ValidationResult",
+          "start_line": 142,
+          "end_line": 160,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.llm_output.ValidationResult.to_dict",
+          "start_line": 151,
+          "end_line": 160,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.llm_output.LLMOutputBase",
+          "start_line": 163,
+          "end_line": 169,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.llm_output.LLMOutputBase.Config",
+          "start_line": 167,
+          "end_line": 169,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.llm_output.CodeBlock",
+          "start_line": 172,
+          "end_line": 193,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.llm_output.CodeBlock.validate_code_safety",
+          "start_line": 180,
+          "end_line": 189,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.llm_output.CodeBlock.Config",
+          "start_line": 192,
+          "end_line": 193,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.llm_output.TextOutput",
+          "start_line": 196,
+          "end_line": 218,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.llm_output.TextOutput.validate_text_safety",
+          "start_line": 203,
+          "end_line": 214,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.llm_output.TextOutput.Config",
+          "start_line": 217,
+          "end_line": 218,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.llm_output.StructuredResponse",
+          "start_line": 221,
+          "end_line": 251,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.llm_output.StructuredResponse.validate_data_safety",
+          "start_line": 228,
+          "end_line": 247,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.llm_output.StructuredResponse.validate_data_safety.check_value",
+          "start_line": 233,
+          "end_line": 244,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.llm_output.StructuredResponse.Config",
+          "start_line": 250,
+          "end_line": 251,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.llm_output.ToolCall",
+          "start_line": 254,
+          "end_line": 284,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.llm_output.ToolCall.validate_tool_name",
+          "start_line": 262,
+          "end_line": 266,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.llm_output.ToolCall.validate_arguments_safety",
+          "start_line": 269,
+          "end_line": 280,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.llm_output.ToolCall.Config",
+          "start_line": 283,
+          "end_line": 284,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.llm_output.LLMOutputValidator",
+          "start_line": 287,
+          "end_line": 578,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.llm_output.LLMOutputValidator.__init__",
+          "start_line": 296,
+          "end_line": 306,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.llm_output.LLMOutputValidator._compile_patterns",
+          "start_line": 308,
+          "end_line": 311,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.llm_output.LLMOutputValidator.validate_code",
+          "start_line": 313,
+          "end_line": 377,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.llm_output.LLMOutputValidator.validate_text",
+          "start_line": 379,
+          "end_line": 431,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.llm_output.LLMOutputValidator.validate_structured",
+          "start_line": 433,
+          "end_line": 471,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.llm_output.LLMOutputValidator.validate_tool_call",
+          "start_line": 473,
+          "end_line": 503,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.llm_output.LLMOutputValidator._sanitize_code",
+          "start_line": 505,
+          "end_line": 528,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.llm_output.LLMOutputValidator.sanitize_string",
+          "start_line": 530,
+          "end_line": 546,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.llm_output.LLMOutputValidator.is_safe_code",
+          "start_line": 548,
+          "end_line": 561,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.llm_output.LLMOutputValidator.is_safe_text",
+          "start_line": 563,
+          "end_line": 578,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.llm_output.validate_llm_code",
+          "start_line": 582,
+          "end_line": 595,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.llm_output.validate_llm_text",
+          "start_line": 598,
+          "end_line": 610,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.llm_output.validate_llm_structured",
+          "start_line": 613,
+          "end_line": 624,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.llm_output.is_code_safe",
+          "start_line": 627,
+          "end_line": 638,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.llm_output.is_text_safe",
+          "start_line": 641,
+          "end_line": 652,
+          "node_type": "FUNCTION",
+          "status": "added"
+        }
+      ]
+    },
+    "heretek-swarm/heretek_swarm/validation/agent_messages.py": {
+      "file_status": "modified",
+      "methods": [
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.MessageType",
+          "start_line": 31,
+          "end_line": 91,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.MessagePriority",
+          "start_line": 94,
+          "end_line": 99,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.AgentMessageBase",
+          "start_line": 102,
+          "end_line": 117,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.AgentMessageBase.Config",
+          "start_line": 115,
+          "end_line": 117,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.ActorMessage",
+          "start_line": 120,
+          "end_line": 156,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.ActorMessage.validate_content_safety",
+          "start_line": 131,
+          "end_line": 152,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.ActorMessage.validate_content_safety.check_value",
+          "start_line": 138,
+          "end_line": 149,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.ActorMessage.Config",
+          "start_line": 155,
+          "end_line": 156,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.StateUpdate",
+          "start_line": 159,
+          "end_line": 210,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.StateUpdate.validate_state_key",
+          "start_line": 173,
+          "end_line": 177,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.StateUpdate.validate_state_value_safety",
+          "start_line": 180,
+          "end_line": 198,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.StateUpdate.validate_state_value_safety.check_value",
+          "start_line": 184,
+          "end_line": 196,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.StateUpdate.validate_operation",
+          "start_line": 201,
+          "end_line": 206,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.StateUpdate.Config",
+          "start_line": 209,
+          "end_line": 210,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.ToolRequest",
+          "start_line": 213,
+          "end_line": 254,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.ToolRequest.validate_tool_name",
+          "start_line": 227,
+          "end_line": 237,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.ToolRequest.validate_arguments_safety",
+          "start_line": 240,
+          "end_line": 250,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.ToolRequest.Config",
+          "start_line": 253,
+          "end_line": 254,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.ToolResponse",
+          "start_line": 257,
+          "end_line": 287,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.ToolResponse.validate_error_safety",
+          "start_line": 272,
+          "end_line": 283,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.ToolResponse.Config",
+          "start_line": 286,
+          "end_line": 287,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.CoordinationRequest",
+          "start_line": 290,
+          "end_line": 337,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.CoordinationRequest.validate_description_safety",
+          "start_line": 305,
+          "end_line": 311,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.CoordinationRequest.validate_payload_safety",
+          "start_line": 314,
+          "end_line": 333,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.CoordinationRequest.validate_payload_safety.check_value",
+          "start_line": 321,
+          "end_line": 331,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.CoordinationRequest.Config",
+          "start_line": 336,
+          "end_line": 337,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.ConsensusProposal",
+          "start_line": 340,
+          "end_line": 365,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.ConsensusProposal.validate_text_safety",
+          "start_line": 355,
+          "end_line": 361,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.ConsensusProposal.Config",
+          "start_line": 364,
+          "end_line": 365,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.ConsensusVote",
+          "start_line": 368,
+          "end_line": 393,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.ConsensusVote.validate_reasoning_safety",
+          "start_line": 380,
+          "end_line": 389,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.ConsensusVote.Config",
+          "start_line": 392,
+          "end_line": 393,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.ErrorMessage",
+          "start_line": 396,
+          "end_line": 419,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.ErrorMessage.validate_error_safety",
+          "start_line": 408,
+          "end_line": 415,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.ErrorMessage.Config",
+          "start_line": 418,
+          "end_line": 419,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.TaskMessage",
+          "start_line": 422,
+          "end_line": 456,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.TaskMessage.validate_task_data_safety",
+          "start_line": 433,
+          "end_line": 452,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.TaskMessage.validate_task_data_safety.check_value",
+          "start_line": 440,
+          "end_line": 450,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.TaskMessage.Config",
+          "start_line": 455,
+          "end_line": 456,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.CodeExecutionRequest",
+          "start_line": 459,
+          "end_line": 486,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.CodeExecutionRequest.validate_code_safety",
+          "start_line": 474,
+          "end_line": 482,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.CodeExecutionRequest.Config",
+          "start_line": 485,
+          "end_line": 486,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.validate_message",
+          "start_line": 511,
+          "end_line": 551,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.create_actor_message",
+          "start_line": 554,
+          "end_line": 580,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.create_state_update",
+          "start_line": 583,
+          "end_line": 609,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.create_tool_request",
+          "start_line": 612,
+          "end_line": 635,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.create_tool_response",
+          "start_line": 638,
+          "end_line": 667,
+          "node_type": "FUNCTION",
           "status": "added"
         }
       ]
@@ -118553,6 +119511,1078 @@
       "start_line": 556,
       "end_line": 599,
       "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/audit/stub_patterns.py|heretek-swarm.heretek_swarm.audit.stub_patterns.Pattern": {
+      "file_path": "heretek-swarm/heretek_swarm/audit/stub_patterns.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.audit.stub_patterns.Pattern",
+      "start_line": 16,
+      "end_line": 21,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/audit/stub_patterns.py|heretek-swarm.heretek_swarm.audit.stub_patterns.scan_file": {
+      "file_path": "heretek-swarm/heretek_swarm/audit/stub_patterns.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.audit.stub_patterns.scan_file",
+      "start_line": 120,
+      "end_line": 178,
+      "type": "FUNCTION",
+      "status": "modified"
+    },
+    "heretek-swarm/heretek_swarm/audit/stub_patterns.py|heretek-swarm.heretek_swarm.audit.stub_patterns._scan_ast": {
+      "file_path": "heretek-swarm/heretek_swarm/audit/stub_patterns.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.audit.stub_patterns._scan_ast",
+      "start_line": 181,
+      "end_line": 262,
+      "type": "FUNCTION",
+      "status": "modified"
+    },
+    "heretek-swarm/heretek_swarm/audit/stub_patterns.py|heretek-swarm.heretek_swarm.audit.stub_patterns.scan_directory": {
+      "file_path": "heretek-swarm/heretek_swarm/audit/stub_patterns.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.audit.stub_patterns.scan_directory",
+      "start_line": 265,
+      "end_line": 293,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/config/models.py|heretek-swarm.heretek_swarm.config.models.ConfigType": {
+      "file_path": "heretek-swarm/heretek_swarm/config/models.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.config.models.ConfigType",
+      "start_line": 18,
+      "end_line": 25,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/config/models.py|heretek-swarm.heretek_swarm.config.models.HealthStatus": {
+      "file_path": "heretek-swarm/heretek_swarm/config/models.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.config.models.HealthStatus",
+      "start_line": 28,
+      "end_line": 33,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/config/models.py|heretek-swarm.heretek_swarm.config.models.LLMProviderType": {
+      "file_path": "heretek-swarm/heretek_swarm/config/models.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.config.models.LLMProviderType",
+      "start_line": 36,
+      "end_line": 44,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/config/models.py|heretek-swarm.heretek_swarm.config.models.EmbeddingProviderType": {
+      "file_path": "heretek-swarm/heretek_swarm/config/models.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.config.models.EmbeddingProviderType",
+      "start_line": 47,
+      "end_line": 53,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/config/models.py|heretek-swarm.heretek_swarm.config.models.UserConfiguration": {
+      "file_path": "heretek-swarm/heretek_swarm/config/models.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.config.models.UserConfiguration",
+      "start_line": 60,
+      "end_line": 82,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/config/models.py|heretek-swarm.heretek_swarm.config.models.UserConfiguration.Config": {
+      "file_path": "heretek-swarm/heretek_swarm/config/models.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.config.models.UserConfiguration.Config",
+      "start_line": 77,
+      "end_line": 82,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/config/models.py|heretek-swarm.heretek_swarm.config.models.UserConfigurationCreate": {
+      "file_path": "heretek-swarm/heretek_swarm/config/models.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.config.models.UserConfigurationCreate",
+      "start_line": 85,
+      "end_line": 95,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/config/models.py|heretek-swarm.heretek_swarm.config.models.UserConfigurationUpdate": {
+      "file_path": "heretek-swarm/heretek_swarm/config/models.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.config.models.UserConfigurationUpdate",
+      "start_line": 98,
+      "end_line": 103,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/config/models.py|heretek-swarm.heretek_swarm.config.models.LLMProvider": {
+      "file_path": "heretek-swarm/heretek_swarm/config/models.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.config.models.LLMProvider",
+      "start_line": 110,
+      "end_line": 143,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/config/models.py|heretek-swarm.heretek_swarm.config.models.LLMProvider.Config": {
+      "file_path": "heretek-swarm/heretek_swarm/config/models.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.config.models.LLMProvider.Config",
+      "start_line": 138,
+      "end_line": 143,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/config/models.py|heretek-swarm.heretek_swarm.config.models.LLMProviderCreate": {
+      "file_path": "heretek-swarm/heretek_swarm/config/models.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.config.models.LLMProviderCreate",
+      "start_line": 146,
+      "end_line": 166,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/config/models.py|heretek-swarm.heretek_swarm.config.models.LLMProviderUpdate": {
+      "file_path": "heretek-swarm/heretek_swarm/config/models.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.config.models.LLMProviderUpdate",
+      "start_line": 169,
+      "end_line": 187,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/config/models.py|heretek-swarm.heretek_swarm.config.models.LLMProviderTestRequest": {
+      "file_path": "heretek-swarm/heretek_swarm/config/models.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.config.models.LLMProviderTestRequest",
+      "start_line": 190,
+      "end_line": 194,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/config/models.py|heretek-swarm.heretek_swarm.config.models.LLMProviderTestResponse": {
+      "file_path": "heretek-swarm/heretek_swarm/config/models.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.config.models.LLMProviderTestResponse",
+      "start_line": 197,
+      "end_line": 204,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/config/models.py|heretek-swarm.heretek_swarm.config.models.EmbeddingProvider": {
+      "file_path": "heretek-swarm/heretek_swarm/config/models.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.config.models.EmbeddingProvider",
+      "start_line": 211,
+      "end_line": 240,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/config/models.py|heretek-swarm.heretek_swarm.config.models.EmbeddingProvider.Config": {
+      "file_path": "heretek-swarm/heretek_swarm/config/models.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.config.models.EmbeddingProvider.Config",
+      "start_line": 235,
+      "end_line": 240,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/config/models.py|heretek-swarm.heretek_swarm.config.models.EmbeddingProviderCreate": {
+      "file_path": "heretek-swarm/heretek_swarm/config/models.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.config.models.EmbeddingProviderCreate",
+      "start_line": 243,
+      "end_line": 259,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/config/models.py|heretek-swarm.heretek_swarm.config.models.EmbeddingProviderUpdate": {
+      "file_path": "heretek-swarm/heretek_swarm/config/models.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.config.models.EmbeddingProviderUpdate",
+      "start_line": 262,
+      "end_line": 276,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/config/models.py|heretek-swarm.heretek_swarm.config.models.EmbeddingProviderTestRequest": {
+      "file_path": "heretek-swarm/heretek_swarm/config/models.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.config.models.EmbeddingProviderTestRequest",
+      "start_line": 279,
+      "end_line": 282,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/config/models.py|heretek-swarm.heretek_swarm.config.models.EmbeddingProviderTestResponse": {
+      "file_path": "heretek-swarm/heretek_swarm/config/models.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.config.models.EmbeddingProviderTestResponse",
+      "start_line": 285,
+      "end_line": 292,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/config/models.py|heretek-swarm.heretek_swarm.config.models.AgentConfig": {
+      "file_path": "heretek-swarm/heretek_swarm/config/models.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.config.models.AgentConfig",
+      "start_line": 299,
+      "end_line": 323,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/config/models.py|heretek-swarm.heretek_swarm.config.models.AgentConfig.Config": {
+      "file_path": "heretek-swarm/heretek_swarm/config/models.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.config.models.AgentConfig.Config",
+      "start_line": 318,
+      "end_line": 323,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/config/models.py|heretek-swarm.heretek_swarm.config.models.AgentConfigCreate": {
+      "file_path": "heretek-swarm/heretek_swarm/config/models.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.config.models.AgentConfigCreate",
+      "start_line": 326,
+      "end_line": 337,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/config/models.py|heretek-swarm.heretek_swarm.config.models.AgentConfigUpdate": {
+      "file_path": "heretek-swarm/heretek_swarm/config/models.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.config.models.AgentConfigUpdate",
+      "start_line": 340,
+      "end_line": 349,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/config/models.py|heretek-swarm.heretek_swarm.config.models.ConfigAuditLog": {
+      "file_path": "heretek-swarm/heretek_swarm/config/models.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.config.models.ConfigAuditLog",
+      "start_line": 356,
+      "end_line": 375,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/config/models.py|heretek-swarm.heretek_swarm.config.models.ConfigAuditLog.Config": {
+      "file_path": "heretek-swarm/heretek_swarm/config/models.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.config.models.ConfigAuditLog.Config",
+      "start_line": 371,
+      "end_line": 375,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/config/models.py|heretek-swarm.heretek_swarm.config.models.ConfigCacheEntry": {
+      "file_path": "heretek-swarm/heretek_swarm/config/models.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.config.models.ConfigCacheEntry",
+      "start_line": 382,
+      "end_line": 389,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/config/models.py|heretek-swarm.heretek_swarm.config.models.ConfigurationExport": {
+      "file_path": "heretek-swarm/heretek_swarm/config/models.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.config.models.ConfigurationExport",
+      "start_line": 396,
+      "end_line": 404,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/config/models.py|heretek-swarm.heretek_swarm.config.models.ConfigurationImport": {
+      "file_path": "heretek-swarm/heretek_swarm/config/models.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.config.models.ConfigurationImport",
+      "start_line": 407,
+      "end_line": 413,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/config/models.py|heretek-swarm.heretek_swarm.config.models.ImportOptions": {
+      "file_path": "heretek-swarm/heretek_swarm/config/models.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.config.models.ImportOptions",
+      "start_line": 416,
+      "end_line": 423,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/config/models.py|heretek-swarm.heretek_swarm.config.models.ImportResult": {
+      "file_path": "heretek-swarm/heretek_swarm/config/models.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.config.models.ImportResult",
+      "start_line": 426,
+      "end_line": 433,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/config/models.py|heretek-swarm.heretek_swarm.config.models.MCPProviderType": {
+      "file_path": "heretek-swarm/heretek_swarm/config/models.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.config.models.MCPProviderType",
+      "start_line": 441,
+      "end_line": 444,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/config/models.py|heretek-swarm.heretek_swarm.config.models.MCPProvider": {
+      "file_path": "heretek-swarm/heretek_swarm/config/models.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.config.models.MCPProvider",
+      "start_line": 447,
+      "end_line": 471,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/config/models.py|heretek-swarm.heretek_swarm.config.models.MCPProvider.Config": {
+      "file_path": "heretek-swarm/heretek_swarm/config/models.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.config.models.MCPProvider.Config",
+      "start_line": 466,
+      "end_line": 471,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/config/models.py|heretek-swarm.heretek_swarm.config.models.MCPProviderCreate": {
+      "file_path": "heretek-swarm/heretek_swarm/config/models.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.config.models.MCPProviderCreate",
+      "start_line": 474,
+      "end_line": 485,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/config/models.py|heretek-swarm.heretek_swarm.config.models.MCPProviderUpdate": {
+      "file_path": "heretek-swarm/heretek_swarm/config/models.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.config.models.MCPProviderUpdate",
+      "start_line": 488,
+      "end_line": 497,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/config/models.py|heretek-swarm.heretek_swarm.config.models.MCPProviderTestResponse": {
+      "file_path": "heretek-swarm/heretek_swarm/config/models.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.config.models.MCPProviderTestResponse",
+      "start_line": 500,
+      "end_line": 506,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/config/models.py|heretek-swarm.heretek_swarm.config.models.InfrastructureService": {
+      "file_path": "heretek-swarm/heretek_swarm/config/models.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.config.models.InfrastructureService",
+      "start_line": 514,
+      "end_line": 520,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/config/models.py|heretek-swarm.heretek_swarm.config.models.InfrastructureConfig": {
+      "file_path": "heretek-swarm/heretek_swarm/config/models.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.config.models.InfrastructureConfig",
+      "start_line": 523,
+      "end_line": 545,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/config/models.py|heretek-swarm.heretek_swarm.config.models.InfrastructureConfig.Config": {
+      "file_path": "heretek-swarm/heretek_swarm/config/models.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.config.models.InfrastructureConfig.Config",
+      "start_line": 540,
+      "end_line": 545,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/config/models.py|heretek-swarm.heretek_swarm.config.models.InfrastructureConfigCreate": {
+      "file_path": "heretek-swarm/heretek_swarm/config/models.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.config.models.InfrastructureConfigCreate",
+      "start_line": 548,
+      "end_line": 555,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/config/models.py|heretek-swarm.heretek_swarm.config.models.InfrastructureConfigUpdate": {
+      "file_path": "heretek-swarm/heretek_swarm/config/models.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.config.models.InfrastructureConfigUpdate",
+      "start_line": 558,
+      "end_line": 564,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/config/models.py|heretek-swarm.heretek_swarm.config.models.InfrastructureHealthCheck": {
+      "file_path": "heretek-swarm/heretek_swarm/config/models.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.config.models.InfrastructureHealthCheck",
+      "start_line": 567,
+      "end_line": 573,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/config/models.py|heretek-swarm.heretek_swarm.config.models.MCPConfig": {
+      "file_path": "heretek-swarm/heretek_swarm/config/models.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.config.models.MCPConfig",
+      "start_line": 576,
+      "end_line": 596,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/config/models.py|heretek-swarm.heretek_swarm.config.models.MCPConfig.Config": {
+      "file_path": "heretek-swarm/heretek_swarm/config/models.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.config.models.MCPConfig.Config",
+      "start_line": 591,
+      "end_line": 596,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/config/models.py|heretek-swarm.heretek_swarm.config.models.MCPConfigCreate": {
+      "file_path": "heretek-swarm/heretek_swarm/config/models.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.config.models.MCPConfigCreate",
+      "start_line": 599,
+      "end_line": 608,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/config/models.py|heretek-swarm.heretek_swarm.config.models.MCPConfigUpdate": {
+      "file_path": "heretek-swarm/heretek_swarm/config/models.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.config.models.MCPConfigUpdate",
+      "start_line": 611,
+      "end_line": 619,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/llm_output.py|heretek-swarm.heretek_swarm.validation.llm_output.ValidationSeverity": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/llm_output.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.llm_output.ValidationSeverity",
+      "start_line": 25,
+      "end_line": 30,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/llm_output.py|heretek-swarm.heretek_swarm.validation.llm_output.CodeLanguage": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/llm_output.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.llm_output.CodeLanguage",
+      "start_line": 33,
+      "end_line": 46,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/llm_output.py|heretek-swarm.heretek_swarm.validation.llm_output.ValidationResult": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/llm_output.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.llm_output.ValidationResult",
+      "start_line": 142,
+      "end_line": 160,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/llm_output.py|heretek-swarm.heretek_swarm.validation.llm_output.ValidationResult.to_dict": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/llm_output.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.llm_output.ValidationResult.to_dict",
+      "start_line": 151,
+      "end_line": 160,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/llm_output.py|heretek-swarm.heretek_swarm.validation.llm_output.LLMOutputBase": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/llm_output.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.llm_output.LLMOutputBase",
+      "start_line": 163,
+      "end_line": 169,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/llm_output.py|heretek-swarm.heretek_swarm.validation.llm_output.LLMOutputBase.Config": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/llm_output.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.llm_output.LLMOutputBase.Config",
+      "start_line": 167,
+      "end_line": 169,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/llm_output.py|heretek-swarm.heretek_swarm.validation.llm_output.CodeBlock": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/llm_output.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.llm_output.CodeBlock",
+      "start_line": 172,
+      "end_line": 193,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/llm_output.py|heretek-swarm.heretek_swarm.validation.llm_output.CodeBlock.validate_code_safety": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/llm_output.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.llm_output.CodeBlock.validate_code_safety",
+      "start_line": 180,
+      "end_line": 189,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/llm_output.py|heretek-swarm.heretek_swarm.validation.llm_output.CodeBlock.Config": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/llm_output.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.llm_output.CodeBlock.Config",
+      "start_line": 192,
+      "end_line": 193,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/llm_output.py|heretek-swarm.heretek_swarm.validation.llm_output.TextOutput": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/llm_output.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.llm_output.TextOutput",
+      "start_line": 196,
+      "end_line": 218,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/llm_output.py|heretek-swarm.heretek_swarm.validation.llm_output.TextOutput.validate_text_safety": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/llm_output.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.llm_output.TextOutput.validate_text_safety",
+      "start_line": 203,
+      "end_line": 214,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/llm_output.py|heretek-swarm.heretek_swarm.validation.llm_output.TextOutput.Config": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/llm_output.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.llm_output.TextOutput.Config",
+      "start_line": 217,
+      "end_line": 218,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/llm_output.py|heretek-swarm.heretek_swarm.validation.llm_output.StructuredResponse": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/llm_output.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.llm_output.StructuredResponse",
+      "start_line": 221,
+      "end_line": 251,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/llm_output.py|heretek-swarm.heretek_swarm.validation.llm_output.StructuredResponse.validate_data_safety": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/llm_output.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.llm_output.StructuredResponse.validate_data_safety",
+      "start_line": 228,
+      "end_line": 247,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/llm_output.py|heretek-swarm.heretek_swarm.validation.llm_output.StructuredResponse.validate_data_safety.check_value": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/llm_output.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.llm_output.StructuredResponse.validate_data_safety.check_value",
+      "start_line": 233,
+      "end_line": 244,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/llm_output.py|heretek-swarm.heretek_swarm.validation.llm_output.StructuredResponse.Config": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/llm_output.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.llm_output.StructuredResponse.Config",
+      "start_line": 250,
+      "end_line": 251,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/llm_output.py|heretek-swarm.heretek_swarm.validation.llm_output.ToolCall": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/llm_output.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.llm_output.ToolCall",
+      "start_line": 254,
+      "end_line": 284,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/llm_output.py|heretek-swarm.heretek_swarm.validation.llm_output.ToolCall.validate_tool_name": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/llm_output.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.llm_output.ToolCall.validate_tool_name",
+      "start_line": 262,
+      "end_line": 266,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/llm_output.py|heretek-swarm.heretek_swarm.validation.llm_output.ToolCall.validate_arguments_safety": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/llm_output.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.llm_output.ToolCall.validate_arguments_safety",
+      "start_line": 269,
+      "end_line": 280,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/llm_output.py|heretek-swarm.heretek_swarm.validation.llm_output.ToolCall.Config": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/llm_output.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.llm_output.ToolCall.Config",
+      "start_line": 283,
+      "end_line": 284,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/llm_output.py|heretek-swarm.heretek_swarm.validation.llm_output.LLMOutputValidator": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/llm_output.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.llm_output.LLMOutputValidator",
+      "start_line": 287,
+      "end_line": 578,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/llm_output.py|heretek-swarm.heretek_swarm.validation.llm_output.LLMOutputValidator.__init__": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/llm_output.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.llm_output.LLMOutputValidator.__init__",
+      "start_line": 296,
+      "end_line": 306,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/llm_output.py|heretek-swarm.heretek_swarm.validation.llm_output.LLMOutputValidator._compile_patterns": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/llm_output.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.llm_output.LLMOutputValidator._compile_patterns",
+      "start_line": 308,
+      "end_line": 311,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/llm_output.py|heretek-swarm.heretek_swarm.validation.llm_output.LLMOutputValidator.validate_code": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/llm_output.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.llm_output.LLMOutputValidator.validate_code",
+      "start_line": 313,
+      "end_line": 377,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/llm_output.py|heretek-swarm.heretek_swarm.validation.llm_output.LLMOutputValidator.validate_text": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/llm_output.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.llm_output.LLMOutputValidator.validate_text",
+      "start_line": 379,
+      "end_line": 431,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/llm_output.py|heretek-swarm.heretek_swarm.validation.llm_output.LLMOutputValidator.validate_structured": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/llm_output.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.llm_output.LLMOutputValidator.validate_structured",
+      "start_line": 433,
+      "end_line": 471,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/llm_output.py|heretek-swarm.heretek_swarm.validation.llm_output.LLMOutputValidator.validate_tool_call": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/llm_output.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.llm_output.LLMOutputValidator.validate_tool_call",
+      "start_line": 473,
+      "end_line": 503,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/llm_output.py|heretek-swarm.heretek_swarm.validation.llm_output.LLMOutputValidator._sanitize_code": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/llm_output.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.llm_output.LLMOutputValidator._sanitize_code",
+      "start_line": 505,
+      "end_line": 528,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/llm_output.py|heretek-swarm.heretek_swarm.validation.llm_output.LLMOutputValidator.sanitize_string": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/llm_output.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.llm_output.LLMOutputValidator.sanitize_string",
+      "start_line": 530,
+      "end_line": 546,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/llm_output.py|heretek-swarm.heretek_swarm.validation.llm_output.LLMOutputValidator.is_safe_code": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/llm_output.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.llm_output.LLMOutputValidator.is_safe_code",
+      "start_line": 548,
+      "end_line": 561,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/llm_output.py|heretek-swarm.heretek_swarm.validation.llm_output.LLMOutputValidator.is_safe_text": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/llm_output.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.llm_output.LLMOutputValidator.is_safe_text",
+      "start_line": 563,
+      "end_line": 578,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/llm_output.py|heretek-swarm.heretek_swarm.validation.llm_output.validate_llm_code": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/llm_output.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.llm_output.validate_llm_code",
+      "start_line": 582,
+      "end_line": 595,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/llm_output.py|heretek-swarm.heretek_swarm.validation.llm_output.validate_llm_text": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/llm_output.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.llm_output.validate_llm_text",
+      "start_line": 598,
+      "end_line": 610,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/llm_output.py|heretek-swarm.heretek_swarm.validation.llm_output.validate_llm_structured": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/llm_output.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.llm_output.validate_llm_structured",
+      "start_line": 613,
+      "end_line": 624,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/llm_output.py|heretek-swarm.heretek_swarm.validation.llm_output.is_code_safe": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/llm_output.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.llm_output.is_code_safe",
+      "start_line": 627,
+      "end_line": 638,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/llm_output.py|heretek-swarm.heretek_swarm.validation.llm_output.is_text_safe": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/llm_output.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.llm_output.is_text_safe",
+      "start_line": 641,
+      "end_line": 652,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/agent_messages.py|heretek-swarm.heretek_swarm.validation.agent_messages.MessageType": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/agent_messages.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.MessageType",
+      "start_line": 31,
+      "end_line": 91,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/agent_messages.py|heretek-swarm.heretek_swarm.validation.agent_messages.MessagePriority": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/agent_messages.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.MessagePriority",
+      "start_line": 94,
+      "end_line": 99,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/agent_messages.py|heretek-swarm.heretek_swarm.validation.agent_messages.AgentMessageBase": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/agent_messages.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.AgentMessageBase",
+      "start_line": 102,
+      "end_line": 117,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/agent_messages.py|heretek-swarm.heretek_swarm.validation.agent_messages.AgentMessageBase.Config": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/agent_messages.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.AgentMessageBase.Config",
+      "start_line": 115,
+      "end_line": 117,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/agent_messages.py|heretek-swarm.heretek_swarm.validation.agent_messages.ActorMessage": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/agent_messages.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.ActorMessage",
+      "start_line": 120,
+      "end_line": 156,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/agent_messages.py|heretek-swarm.heretek_swarm.validation.agent_messages.ActorMessage.validate_content_safety": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/agent_messages.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.ActorMessage.validate_content_safety",
+      "start_line": 131,
+      "end_line": 152,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/agent_messages.py|heretek-swarm.heretek_swarm.validation.agent_messages.ActorMessage.validate_content_safety.check_value": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/agent_messages.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.ActorMessage.validate_content_safety.check_value",
+      "start_line": 138,
+      "end_line": 149,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/agent_messages.py|heretek-swarm.heretek_swarm.validation.agent_messages.ActorMessage.Config": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/agent_messages.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.ActorMessage.Config",
+      "start_line": 155,
+      "end_line": 156,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/agent_messages.py|heretek-swarm.heretek_swarm.validation.agent_messages.StateUpdate": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/agent_messages.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.StateUpdate",
+      "start_line": 159,
+      "end_line": 210,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/agent_messages.py|heretek-swarm.heretek_swarm.validation.agent_messages.StateUpdate.validate_state_key": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/agent_messages.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.StateUpdate.validate_state_key",
+      "start_line": 173,
+      "end_line": 177,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/agent_messages.py|heretek-swarm.heretek_swarm.validation.agent_messages.StateUpdate.validate_state_value_safety": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/agent_messages.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.StateUpdate.validate_state_value_safety",
+      "start_line": 180,
+      "end_line": 198,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/agent_messages.py|heretek-swarm.heretek_swarm.validation.agent_messages.StateUpdate.validate_state_value_safety.check_value": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/agent_messages.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.StateUpdate.validate_state_value_safety.check_value",
+      "start_line": 184,
+      "end_line": 196,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/agent_messages.py|heretek-swarm.heretek_swarm.validation.agent_messages.StateUpdate.validate_operation": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/agent_messages.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.StateUpdate.validate_operation",
+      "start_line": 201,
+      "end_line": 206,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/agent_messages.py|heretek-swarm.heretek_swarm.validation.agent_messages.StateUpdate.Config": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/agent_messages.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.StateUpdate.Config",
+      "start_line": 209,
+      "end_line": 210,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/agent_messages.py|heretek-swarm.heretek_swarm.validation.agent_messages.ToolRequest": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/agent_messages.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.ToolRequest",
+      "start_line": 213,
+      "end_line": 254,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/agent_messages.py|heretek-swarm.heretek_swarm.validation.agent_messages.ToolRequest.validate_tool_name": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/agent_messages.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.ToolRequest.validate_tool_name",
+      "start_line": 227,
+      "end_line": 237,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/agent_messages.py|heretek-swarm.heretek_swarm.validation.agent_messages.ToolRequest.validate_arguments_safety": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/agent_messages.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.ToolRequest.validate_arguments_safety",
+      "start_line": 240,
+      "end_line": 250,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/agent_messages.py|heretek-swarm.heretek_swarm.validation.agent_messages.ToolRequest.Config": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/agent_messages.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.ToolRequest.Config",
+      "start_line": 253,
+      "end_line": 254,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/agent_messages.py|heretek-swarm.heretek_swarm.validation.agent_messages.ToolResponse": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/agent_messages.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.ToolResponse",
+      "start_line": 257,
+      "end_line": 287,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/agent_messages.py|heretek-swarm.heretek_swarm.validation.agent_messages.ToolResponse.validate_error_safety": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/agent_messages.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.ToolResponse.validate_error_safety",
+      "start_line": 272,
+      "end_line": 283,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/agent_messages.py|heretek-swarm.heretek_swarm.validation.agent_messages.ToolResponse.Config": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/agent_messages.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.ToolResponse.Config",
+      "start_line": 286,
+      "end_line": 287,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/agent_messages.py|heretek-swarm.heretek_swarm.validation.agent_messages.CoordinationRequest": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/agent_messages.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.CoordinationRequest",
+      "start_line": 290,
+      "end_line": 337,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/agent_messages.py|heretek-swarm.heretek_swarm.validation.agent_messages.CoordinationRequest.validate_description_safety": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/agent_messages.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.CoordinationRequest.validate_description_safety",
+      "start_line": 305,
+      "end_line": 311,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/agent_messages.py|heretek-swarm.heretek_swarm.validation.agent_messages.CoordinationRequest.validate_payload_safety": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/agent_messages.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.CoordinationRequest.validate_payload_safety",
+      "start_line": 314,
+      "end_line": 333,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/agent_messages.py|heretek-swarm.heretek_swarm.validation.agent_messages.CoordinationRequest.validate_payload_safety.check_value": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/agent_messages.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.CoordinationRequest.validate_payload_safety.check_value",
+      "start_line": 321,
+      "end_line": 331,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/agent_messages.py|heretek-swarm.heretek_swarm.validation.agent_messages.CoordinationRequest.Config": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/agent_messages.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.CoordinationRequest.Config",
+      "start_line": 336,
+      "end_line": 337,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/agent_messages.py|heretek-swarm.heretek_swarm.validation.agent_messages.ConsensusProposal": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/agent_messages.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.ConsensusProposal",
+      "start_line": 340,
+      "end_line": 365,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/agent_messages.py|heretek-swarm.heretek_swarm.validation.agent_messages.ConsensusProposal.validate_text_safety": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/agent_messages.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.ConsensusProposal.validate_text_safety",
+      "start_line": 355,
+      "end_line": 361,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/agent_messages.py|heretek-swarm.heretek_swarm.validation.agent_messages.ConsensusProposal.Config": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/agent_messages.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.ConsensusProposal.Config",
+      "start_line": 364,
+      "end_line": 365,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/agent_messages.py|heretek-swarm.heretek_swarm.validation.agent_messages.ConsensusVote": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/agent_messages.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.ConsensusVote",
+      "start_line": 368,
+      "end_line": 393,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/agent_messages.py|heretek-swarm.heretek_swarm.validation.agent_messages.ConsensusVote.validate_reasoning_safety": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/agent_messages.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.ConsensusVote.validate_reasoning_safety",
+      "start_line": 380,
+      "end_line": 389,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/agent_messages.py|heretek-swarm.heretek_swarm.validation.agent_messages.ConsensusVote.Config": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/agent_messages.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.ConsensusVote.Config",
+      "start_line": 392,
+      "end_line": 393,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/agent_messages.py|heretek-swarm.heretek_swarm.validation.agent_messages.ErrorMessage": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/agent_messages.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.ErrorMessage",
+      "start_line": 396,
+      "end_line": 419,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/agent_messages.py|heretek-swarm.heretek_swarm.validation.agent_messages.ErrorMessage.validate_error_safety": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/agent_messages.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.ErrorMessage.validate_error_safety",
+      "start_line": 408,
+      "end_line": 415,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/agent_messages.py|heretek-swarm.heretek_swarm.validation.agent_messages.ErrorMessage.Config": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/agent_messages.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.ErrorMessage.Config",
+      "start_line": 418,
+      "end_line": 419,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/agent_messages.py|heretek-swarm.heretek_swarm.validation.agent_messages.TaskMessage": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/agent_messages.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.TaskMessage",
+      "start_line": 422,
+      "end_line": 456,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/agent_messages.py|heretek-swarm.heretek_swarm.validation.agent_messages.TaskMessage.validate_task_data_safety": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/agent_messages.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.TaskMessage.validate_task_data_safety",
+      "start_line": 433,
+      "end_line": 452,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/agent_messages.py|heretek-swarm.heretek_swarm.validation.agent_messages.TaskMessage.validate_task_data_safety.check_value": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/agent_messages.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.TaskMessage.validate_task_data_safety.check_value",
+      "start_line": 440,
+      "end_line": 450,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/agent_messages.py|heretek-swarm.heretek_swarm.validation.agent_messages.TaskMessage.Config": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/agent_messages.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.TaskMessage.Config",
+      "start_line": 455,
+      "end_line": 456,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/agent_messages.py|heretek-swarm.heretek_swarm.validation.agent_messages.CodeExecutionRequest": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/agent_messages.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.CodeExecutionRequest",
+      "start_line": 459,
+      "end_line": 486,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/agent_messages.py|heretek-swarm.heretek_swarm.validation.agent_messages.CodeExecutionRequest.validate_code_safety": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/agent_messages.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.CodeExecutionRequest.validate_code_safety",
+      "start_line": 474,
+      "end_line": 482,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/agent_messages.py|heretek-swarm.heretek_swarm.validation.agent_messages.CodeExecutionRequest.Config": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/agent_messages.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.CodeExecutionRequest.Config",
+      "start_line": 485,
+      "end_line": 486,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/agent_messages.py|heretek-swarm.heretek_swarm.validation.agent_messages.validate_message": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/agent_messages.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.validate_message",
+      "start_line": 511,
+      "end_line": 551,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/agent_messages.py|heretek-swarm.heretek_swarm.validation.agent_messages.create_actor_message": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/agent_messages.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.create_actor_message",
+      "start_line": 554,
+      "end_line": 580,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/agent_messages.py|heretek-swarm.heretek_swarm.validation.agent_messages.create_state_update": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/agent_messages.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.create_state_update",
+      "start_line": 583,
+      "end_line": 609,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/agent_messages.py|heretek-swarm.heretek_swarm.validation.agent_messages.create_tool_request": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/agent_messages.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.create_tool_request",
+      "start_line": 612,
+      "end_line": 635,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/validation/agent_messages.py|heretek-swarm.heretek_swarm.validation.agent_messages.create_tool_response": {
+      "file_path": "heretek-swarm/heretek_swarm/validation/agent_messages.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.validation.agent_messages.create_tool_response",
+      "start_line": 638,
+      "end_line": 667,
+      "type": "FUNCTION",
       "status": "added"
     }
   },

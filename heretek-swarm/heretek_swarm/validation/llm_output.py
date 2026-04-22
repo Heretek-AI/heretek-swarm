@@ -163,6 +163,7 @@ class ValidationResult:
 class LLMOutputBase(BaseModel):
     """Base class for all LLM output models."""
 
+    # pydantic-config: Nested Config block scoped to parent model — not same-scope shadowing.
     class Config:
         extra = "forbid"  # Reject extra fields by default
         validate_assignment = True
@@ -187,6 +188,7 @@ class CodeBlock(LLMOutputBase):
 
         return v
 
+    # pydantic-config: Nested Config block scoped to parent model — not same-scope shadowing.
     class Config:
         extra = "ignore"  # Allow extra fields for flexibility
 
@@ -211,6 +213,7 @@ class TextOutput(LLMOutputBase):
 
         return v
 
+    # pydantic-config: Nested Config block scoped to parent model — not same-scope shadowing.
     class Config:
         extra = "ignore"
 
@@ -243,6 +246,7 @@ class StructuredResponse(LLMOutputBase):
         check_value(v)
         return v
 
+    # pydantic-config: Nested Config block scoped to parent model — not same-scope shadowing.
     class Config:
         extra = "allow"  # Allow extra fields in structured data
 
@@ -275,6 +279,7 @@ class ToolCall(LLMOutputBase):
 
         return v
 
+    # pydantic-config: Nested Config block scoped to parent model — not same-scope shadowing.
     class Config:
         extra = "forbid"
 
