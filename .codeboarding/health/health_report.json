@@ -1,7 +1,7 @@
 {
   "repository_name": "heretek-swarm",
-  "timestamp": "2026-04-23T03:10:11.426097+00:00",
-  "overall_score": 0.9902011944106222,
+  "timestamp": "2026-04-23T21:19:10.686076+00:00",
+  "overall_score": 0.9911807368726429,
   "check_summaries": [
     {
       "check_name": "function_size",
@@ -790,11 +790,96 @@
       "description": "Detects unused imports, variables, functions, and dead code via LSP diagnostics",
       "language": "Python",
       "check_type": "standard",
-      "total_entities_checked": 0,
-      "findings_count": 0,
-      "warning_count": 0,
-      "score": 1.0,
-      "finding_groups": []
+      "total_entities_checked": 10,
+      "findings_count": 10,
+      "warning_count": 1,
+      "score": 0.5,
+      "finding_groups": [
+        {
+          "severity": "info",
+          "threshold": 0,
+          "description": "Variables declared but never used",
+          "entities": [
+            {
+              "entity_name": "[unused_variable] \"NatsError\" is not accessed",
+              "file_path": "heretek-swarm/heretek_swarm/gateway/nats_event_mesh.py",
+              "line_start": 33,
+              "line_end": 33,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"stream_name\" is not accessed",
+              "file_path": "heretek-swarm/heretek_swarm/gateway/nats_event_mesh.py",
+              "line_start": 489,
+              "line_end": 489,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"durable_name\" is not accessed",
+              "file_path": "heretek-swarm/heretek_swarm/gateway/nats_event_mesh.py",
+              "line_start": 490,
+              "line_end": 490,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"subject\" is not accessed",
+              "file_path": "heretek-swarm/heretek_swarm/gateway/nats_event_mesh.py",
+              "line_start": 617,
+              "line_end": 617,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"sid\" is not accessed",
+              "file_path": "heretek-swarm/heretek_swarm/gateway/nats_event_mesh.py",
+              "line_start": 883,
+              "line_end": 883,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"timeout\" is not accessed",
+              "file_path": "heretek-swarm/heretek_swarm/gateway/nats_event_mesh.py",
+              "line_start": 891,
+              "line_end": 891,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"args\" is not accessed",
+              "file_path": "heretek-swarm/heretek_swarm/gateway/nats_event_mesh.py",
+              "line_start": 912,
+              "line_end": 912,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"mesh\" is not accessed",
+              "file_path": "heretek-swarm/heretek_swarm/gateway/nats_event_mesh.py",
+              "line_start": 1370,
+              "line_end": 1370,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"agent_id\" is not accessed",
+              "file_path": "heretek-swarm/heretek_swarm/plugins/consciousness_enhanced.py",
+              "line_start": 499,
+              "line_end": 499,
+              "metric_value": 0.0
+            }
+          ]
+        },
+        {
+          "severity": "warning",
+          "threshold": 0,
+          "description": "Unused import statements that should be removed",
+          "entities": [
+            {
+              "entity_name": "[unused_import] Import \"NatsError\" is not accessed",
+              "file_path": "heretek-swarm/heretek_swarm/gateway/nats_event_mesh.py",
+              "line_start": 33,
+              "line_end": 33,
+              "metric_value": 0.0
+            }
+          ]
+        }
+      ]
     },
     {
       "check_name": "function_size",
@@ -1058,23 +1143,23 @@
       "language": "TypeScript",
       "check_type": "circular_dependencies",
       "cycles": [
-        "src.components.UI -> src.components.Agents -> src.api -> src.components.UI",
-        "src.components.UI -> src.components.Agents -> src.components.Settings -> src.api -> src.components.UI",
-        "src.components.UI -> src.components.Agents -> src.components.Settings -> src.components.UI",
-        "src.components.UI -> src.components.Agents -> src.components.UI",
-        "src.components.UI -> src.components.Settings -> src.api -> src.components.Agents -> src.components.UI",
-        "src.components.UI -> src.components.Settings -> src.api -> src.components.UI",
-        "src.components.UI -> src.components.Settings -> src.components.Agents -> src.api -> src.components.UI",
-        "src.components.UI -> src.components.Settings -> src.components.Agents -> src.components.UI",
-        "src.components.UI -> src.components.Settings -> src.components.UI",
-        "src.components.UI -> src.utils -> src.components.Agents -> src.api -> src.components.UI",
-        "src.components.UI -> src.utils -> src.components.Agents -> src.components.Settings -> src.api -> src.components.UI",
-        "src.components.UI -> src.utils -> src.components.Agents -> src.components.Settings -> src.components.UI",
-        "src.components.UI -> src.utils -> src.components.Agents -> src.components.UI",
-        "src.components.UI -> src.utils -> src.components.UI",
+        "src.utils -> src.components.Agents -> src.api -> src.components.UI -> src.utils",
+        "src.utils -> src.components.Agents -> src.components.Settings -> src.api -> src.components.UI -> src.utils",
+        "src.utils -> src.components.Agents -> src.components.Settings -> src.components.UI -> src.utils",
+        "src.utils -> src.components.Agents -> src.components.UI -> src.utils",
+        "src.utils -> src.components.UI -> src.utils",
         "src.components.Settings -> src.api -> src.components.Agents -> src.components.Settings",
+        "src.components.Settings -> src.api -> src.components.Agents -> src.components.UI -> src.components.Settings",
+        "src.components.Settings -> src.api -> src.components.UI -> src.components.Agents -> src.components.Settings",
+        "src.components.Settings -> src.api -> src.components.UI -> src.components.Settings",
+        "src.components.Settings -> src.components.Agents -> src.api -> src.components.UI -> src.components.Settings",
         "src.components.Settings -> src.components.Agents -> src.components.Settings",
-        "src.components.Agents -> src.api -> src.components.Agents",
+        "src.components.Settings -> src.components.Agents -> src.components.UI -> src.components.Settings",
+        "src.components.Settings -> src.components.UI -> src.components.Agents -> src.components.Settings",
+        "src.components.Settings -> src.components.UI -> src.components.Settings",
+        "src.components.UI -> src.components.Agents -> src.api -> src.components.UI",
+        "src.components.UI -> src.components.Agents -> src.components.UI",
+        "src.api -> src.components.Agents -> src.api",
         "dashboard.frontend.src.utils -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils",
         "dashboard.frontend.src.utils -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils",
         "dashboard.frontend.src.utils -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils",
@@ -1090,7 +1175,7 @@
         "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents",
         "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api -> dashboard.frontend.src.components.Agents",
         "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.Agents",
-        "dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api -> dashboard.frontend.src.components.UI",
+        "dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api",
         "dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.UI"
       ],
       "packages_checked": 47,
@@ -1123,188 +1208,19 @@
       "description": "Detects unused imports, variables, functions, and dead code via LSP diagnostics",
       "language": "TypeScript",
       "check_type": "standard",
-      "total_entities_checked": 22,
-      "findings_count": 22,
+      "total_entities_checked": 0,
+      "findings_count": 0,
       "warning_count": 0,
-      "score": 0.0,
-      "finding_groups": [
-        {
-          "severity": "info",
-          "threshold": 0,
-          "description": "Variables declared but never used",
-          "entities": [
-            {
-              "entity_name": "[unused_variable] 'formatDuration' is declared but its value is never read.",
-              "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
-              "line_start": 105,
-              "line_end": 105,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] 'truncate' is declared but its value is never read.",
-              "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
-              "line_start": 113,
-              "line_end": 113,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] 'entry' is declared but its value is never read.",
-              "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
-              "line_start": 171,
-              "line_end": 171,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] 'entry' is declared but its value is never read.",
-              "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
-              "line_start": 246,
-              "line_end": 246,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] Unused label.",
-              "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
-              "line_start": 289,
-              "line_end": 289,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] 'setAgentFilter' is declared but its value is never read.",
-              "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
-              "line_start": 316,
-              "line_end": 316,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] 'callTypeFilter' is declared but its value is never read.",
-              "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
-              "line_start": 317,
-              "line_end": 317,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] 'setCallTypeFilter' is declared but its value is never read.",
-              "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
-              "line_start": 318,
-              "line_end": 318,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] 'statusFilter' is declared but its value is never read.",
-              "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
-              "line_start": 319,
-              "line_end": 319,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] 'setStatusFilter' is declared but its value is never read.",
-              "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
-              "line_start": 320,
-              "line_end": 320,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] 'uniqueAgents' is declared but its value is never read.",
-              "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
-              "line_start": 321,
-              "line_end": 321,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] 'uniqueCallTypes' is declared but its value is never read.",
-              "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
-              "line_start": 322,
-              "line_end": 322,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] 'onClearFilters' is declared but its value is never read.",
-              "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
-              "line_start": 323,
-              "line_end": 323,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] 'hasActiveFilters' is declared but its value is never read.",
-              "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
-              "line_start": 324,
-              "line_end": 324,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] 'e' is declared but its value is never read.",
-              "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
-              "line_start": 348,
-              "line_end": 348,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] 'e' is declared but its value is never read.",
-              "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
-              "line_start": 363,
-              "line_end": 363,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] 'setExpandedId' is declared but its value is never read.",
-              "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
-              "line_start": 394,
-              "line_end": 394,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] 'stats' is declared but its value is never read.",
-              "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
-              "line_start": 556,
-              "line_end": 556,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] Unused label.",
-              "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
-              "line_start": 616,
-              "line_end": 616,
-              "metric_value": 0.0
-            }
-          ]
-        },
-        {
-          "severity": "info",
-          "threshold": 0,
-          "description": "Code that cannot be reached during execution",
-          "entities": [
-            {
-              "entity_name": "[unreachable_code] Unreachable code detected.",
-              "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
-              "line_start": 127,
-              "line_end": 149,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unreachable_code] Unreachable code detected.",
-              "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
-              "line_start": 329,
-              "line_end": 333,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unreachable_code] Unreachable code detected.",
-              "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
-              "line_start": 531,
-              "line_end": 602,
-              "metric_value": 0.0
-            }
-          ]
-        }
-      ]
+      "score": 1.0,
+      "finding_groups": []
     }
   ],
   "file_summaries": [
     {
-      "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
-      "total_findings": 22,
-      "warning_findings": 0,
-      "composite_risk_score": 50.0
+      "file_path": "heretek-swarm/heretek_swarm/gateway/nats_event_mesh.py",
+      "total_findings": 9,
+      "warning_findings": 1,
+      "composite_risk_score": 55.0
     },
     {
       "file_path": "src/heretek_swarm/actors/sentinel.py",

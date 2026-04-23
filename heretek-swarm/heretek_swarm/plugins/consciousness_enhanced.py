@@ -920,3 +920,114 @@ class EnhancedConsciousnessPlugin:
             ),
             "timestamp": datetime.now(UTC).isoformat(),
         }
+
+    async def emit_consciousness_events(
+        self,
+        nats_publisher: Any,
+    ) -> None:
+        """
+        Emit consciousness events for all tracked agents to NATS.
+
+        Publishes three event types per agent:
+        - phi_update: IIT Phi score (normalized by max agents)
+        - fep_update: Free Energy Principle metrics
+        - agency_update: Agency/autonomy metrics
+
+        Args:
+            nats_publisher: NATSEventMesh instance with publish_to_nats method
+        """
+        if not self.agent_metrics:
+            logger.debug("emit_consciousness_events_no_agents")
+            return
+
+        max_agents = max(1, len(self.agent_metrics))
+        timestamp = datetime.now(UTC).isoformat()
+
+        for agent_id, metrics in self.agent_metrics.items():
+            # Normalize phi_score by max agents (phi is IIT integrated information)
+            phi_score = min(1.0, metrics.iit_phi / max_agents) if metrics.iit_phi > 0 else 0.0
+
+            # Get FEP data via get_agent_metrics, fall back to plugin-level average
+            agent_data = self.get_agent_metrics(agent_id)
+            if agent_data:
+                free_energy = agent_data.get("fep_free_energy", 0.5)
+                surprise = 1.0 - free_energy  # Invert: higher surprise = lower free_energy
+            else:
+                # Fall back to plugin-level average free energy
+                free_energy = self.get_statistics().get("average_free_energy", 0.5)
+                surprise = 1.0 - free_energy
+
+            # Publish phi_update event
+            phi_event = {
+                "type": "phi_update",
+                "agent_id": agent_id,
+                "phi_score": phi_score,
+                "timestamp": timestamp,
+            }
+            try:
+                success = await nats_publisher.publish_to_nats(
+                    "swarm.metrics.consciousness",
+                    phi_event,
+                )
+                logger.debug(
+                    "emit_phi_update",
+                    agent_id=agent_id,
+                    phi_score=phi_score,
+                    success=success,
+                )
+            except Exception as e:
+                logger.error("emit_phi_update_failed", agent_id=agent_id, error=str(e))
+
+            # Publish fep_update event
+            fep_event = {
+                "type": "fep_update",
+                "agent_id": agent_id,
+                "free_energy": free_energy,
+                "surprise": surprise,
+                "timestamp": timestamp,
+            }
+            try:
+                success = await nats_publisher.publish_to_nats(
+                    "swarm.metrics.consciousness",
+                    fep_event,
+                )
+                logger.debug(
+                    "emit_fep_update",
+                    agent_id=agent_id,
+                    free_energy=free_energy,
+                    surprise=surprise,
+                    success=success,
+                )
+            except Exception as e:
+                logger.error("emit_fep_update_failed", agent_id=agent_id, error=str(e))
+
+            # Publish agency_update event (using composite/agency score)
+            agency_score = metrics.composite_score
+            autonomy_score = metrics.gwt_score  # GWT as proxy for autonomy
+            agency_event = {
+                "type": "agency_update",
+                "agent_id": agent_id,
+                "agency_score": agency_score,
+                "autonomy_score": autonomy_score,
+                "timestamp": timestamp,
+            }
+            try:
+                success = await nats_publisher.publish_to_nats(
+                    "swarm.metrics.consciousness",
+                    agency_event,
+                )
+                logger.debug(
+                    "emit_agency_update",
+                    agent_id=agent_id,
+                    agency_score=agency_score,
+                    autonomy_score=autonomy_score,
+                    success=success,
+                )
+            except Exception as e:
+                logger.error("emit_agency_update_failed", agent_id=agent_id, error=str(e))
+
+        logger.info(
+            "emit_consciousness_events_complete",
+            agent_count=len(self.agent_metrics),
+            event_types=["phi_update", "fep_update", "agency_update"],
+        )

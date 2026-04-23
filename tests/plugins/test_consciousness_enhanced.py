@@ -314,3 +314,165 @@ class TestEnhancedConsciousnessPlugin:
         assert "average_composite_score" in stats
         assert "iit_average_phi" in stats
         assert "conscious_agents" in stats
+
+
+class TestEmitConsciousnessEvents:
+    """Test emit_consciousness_events method."""
+
+    @pytest.fixture
+    async def plugin_with_metrics(self):
+        """Create plugin with tracked agents."""
+        plugin = EnhancedConsciousnessPlugin()
+        await plugin.initialize()
+
+        # Add metrics for 3 agents
+        for i in range(3):
+            plugin.calculate_consciousness_metrics(
+                agent_id=f"agent_{i}",
+                gwt_score=0.7 + i * 0.05,
+                ast_competence=0.6 + i * 0.05,
+            )
+
+        yield plugin
+        await plugin.shutdown()
+
+    @pytest.mark.asyncio
+    async def test_emit_consciousness_events_empty(self):
+        """Test emit_consciousness_events with no agents."""
+        plugin = EnhancedConsciousnessPlugin()
+        await plugin.initialize()
+
+        # Mock publisher
+        mock_publisher = AsyncMock()
+        await plugin.emit_consciousness_events(mock_publisher)
+
+        # Should not call publish_to_nats when no agents
+        mock_publisher.publish_to_nats.assert_not_called()
+
+        await plugin.shutdown()
+
+    @pytest.mark.asyncio
+    async def test_emit_consciousness_events_success(self, plugin_with_metrics):
+        """Test successful emission of consciousness events."""
+        # Mock publisher
+        mock_publisher = AsyncMock(return_value=True)
+
+        await plugin_with_metrics.emit_consciousness_events(mock_publisher)
+
+        # Should publish 3 events per agent (phi_update, fep_update, agency_update)
+        expected_calls = 3 * 3  # 3 agents * 3 events each
+        assert mock_publisher.publish_to_nats.call_count == expected_calls
+
+        # Verify all calls use correct topic
+        for call in mock_publisher.publish_to_nats.call_args_list:
+            assert call[0][0] == "swarm.metrics.consciousness"
+
+    @pytest.mark.asyncio
+    async def test_emit_consciousness_events_phi_update(self, plugin_with_metrics):
+        """Test phi_update event structure."""
+        mock_publisher = AsyncMock(return_value=True)
+
+        await plugin_with_metrics.emit_consciousness_events(mock_publisher)
+
+        # Find phi_update calls
+        phi_calls = [
+            call for call in mock_publisher.publish_to_nats.call_args_list
+            if call[0][1]["type"] == "phi_update"
+        ]
+
+        assert len(phi_calls) == 3  # One per agent
+        for call in phi_calls:
+            event = call[0][1]
+            assert "agent_id" in event
+            assert "phi_score" in event
+            assert "timestamp" in event
+            assert 0.0 <= event["phi_score"] <= 1.0
+
+    @pytest.mark.asyncio
+    async def test_emit_consciousness_events_fep_update(self, plugin_with_metrics):
+        """Test fep_update event structure."""
+        mock_publisher = AsyncMock(return_value=True)
+
+        await plugin_with_metrics.emit_consciousness_events(mock_publisher)
+
+        # Find fep_update calls
+        fep_calls = [
+            call for call in mock_publisher.publish_to_nats.call_args_list
+            if call[0][1]["type"] == "fep_update"
+        ]
+
+        assert len(fep_calls) == 3  # One per agent
+        for call in fep_calls:
+            event = call[0][1]
+            assert "agent_id" in event
+            assert "free_energy" in event
+            assert "surprise" in event
+            assert "timestamp" in event
+            assert 0.0 <= event["free_energy"] <= 1.0
+            assert 0.0 <= event["surprise"] <= 1.0
+
+    @pytest.mark.asyncio
+    async def test_emit_consciousness_events_agency_update(self, plugin_with_metrics):
+        """Test agency_update event structure."""
+        mock_publisher = AsyncMock(return_value=True)
+
+        await plugin_with_metrics.emit_consciousness_events(mock_publisher)
+
+        # Find agency_update calls
+        agency_calls = [
+            call for call in mock_publisher.publish_to_nats.call_args_list
+            if call[0][1]["type"] == "agency_update"
+        ]
+
+        assert len(agency_calls) == 3  # One per agent
+        for call in agency_calls:
+            event = call[0][1]
+            assert "agent_id" in event
+            assert "agency_score" in event
+            assert "autonomy_score" in event
+            assert "timestamp" in event
+            assert 0.0 <= event["agency_score"] <= 1.0
+            assert 0.0 <= event["autonomy_score"] <= 1.0
+
+    @pytest.mark.asyncio
+    async def test_emit_consciousness_events_error_handling(self, plugin_with_metrics):
+        """Test error handling when publish fails."""
+        # Mock publisher that raises an exception
+        mock_publisher = AsyncMock(side_effect=Exception("NATS connection error"))
+
+        # Should not raise, just log error
+        await plugin_with_metrics.emit_consciousness_events(mock_publisher)
+
+        # Verify all 9 calls were attempted despite errors
+        assert mock_publisher.publish_to_nats.call_count == 9
+
+    @pytest.mark.asyncio
+    async def test_emit_consciousness_events_fallback_free_energy(self):
+        """Test fallback to plugin-level average free energy when per-agent FEP unavailable."""
+        plugin = EnhancedConsciousnessPlugin()
+        await plugin.initialize()
+
+        # Add metrics without FEP data
+        for i in range(2):
+            plugin.calculate_consciousness_metrics(
+                agent_id=f"agent_{i}",
+                gwt_score=0.7,
+                ast_competence=0.6,
+            )
+
+        mock_publisher = AsyncMock(return_value=True)
+        await plugin.emit_consciousness_events(mock_publisher)
+
+        # Find fep_update calls
+        fep_calls = [
+            call for call in mock_publisher.publish_to_nats.call_args_list
+            if call[0][1]["type"] == "fep_update"
+        ]
+
+        # Should have 2 fep_update events (one per agent)
+        assert len(fep_calls) == 2
+
+        await plugin.shutdown()
+
+
+from unittest.mock import AsyncMock

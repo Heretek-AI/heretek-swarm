@@ -1,17 +1,157 @@
 {
   "testModules": [
     {
-      "moduleId": "tests/cli/test_config_loader.py",
+      "moduleId": "tests/plugins/test_consciousness_enhanced.py",
       "tests": [
         {
-          "name": "collection_error_tests/cli/test_config_loader.py",
-          "fullName": "tests/cli/test_config_loader.py",
-          "state": "failed",
-          "errors": [
-            {
-              "message": "../tests/cli/test_config_loader.py:17: in <module>\n    from heretek_swarm.cli.config_loader import (\nheretek_swarm/cli/__init__.py:22: in <module>\n    _spec.loader.exec_module(_cli_module)\n<frozen importlib._bootstrap_external>:1022: in exec_module\n    ???\n<frozen importlib._bootstrap_external>:1159: in get_code\n    ???\n<frozen importlib._bootstrap_external>:1217: in get_data\n    ???\nE   FileNotFoundError: [Errno 2] No such file or directory: '/home/john/Projects/heretek-swarm/heretek-swarm/heretek-swarm/heretek_swarm/cli.py'"
-            }
-          ]
+          "name": "test_record_interaction",
+          "fullName": "tests/plugins/test_consciousness_enhanced.py::TestIITCalculator::test_record_interaction",
+          "state": "passed"
+        },
+        {
+          "name": "test_calculate_phi_single_agent",
+          "fullName": "tests/plugins/test_consciousness_enhanced.py::TestIITCalculator::test_calculate_phi_single_agent",
+          "state": "passed"
+        },
+        {
+          "name": "test_calculate_phi_multiple_agents",
+          "fullName": "tests/plugins/test_consciousness_enhanced.py::TestIITCalculator::test_calculate_phi_multiple_agents",
+          "state": "passed"
+        },
+        {
+          "name": "test_build_connectivity_matrix",
+          "fullName": "tests/plugins/test_consciousness_enhanced.py::TestIITCalculator::test_build_connectivity_matrix",
+          "state": "passed"
+        },
+        {
+          "name": "test_get_average_phi",
+          "fullName": "tests/plugins/test_consciousness_enhanced.py::TestIITCalculator::test_get_average_phi",
+          "state": "passed"
+        },
+        {
+          "name": "test_record_prediction",
+          "fullName": "tests/plugins/test_consciousness_enhanced.py::TestFEPTracker::test_record_prediction",
+          "state": "passed"
+        },
+        {
+          "name": "test_record_outcome",
+          "fullName": "tests/plugins/test_consciousness_enhanced.py::TestFEPTracker::test_record_outcome",
+          "state": "passed"
+        },
+        {
+          "name": "test_surprise_calculation",
+          "fullName": "tests/plugins/test_consciousness_enhanced.py::TestFEPTracker::test_surprise_calculation",
+          "state": "passed"
+        },
+        {
+          "name": "test_free_energy_calculation",
+          "fullName": "tests/plugins/test_consciousness_enhanced.py::TestFEPTracker::test_free_energy_calculation",
+          "state": "passed"
+        },
+        {
+          "name": "test_prediction_accuracy_update",
+          "fullName": "tests/plugins/test_consciousness_enhanced.py::TestFEPTracker::test_prediction_accuracy_update",
+          "state": "passed"
+        },
+        {
+          "name": "test_get_average_free_energy",
+          "fullName": "tests/plugins/test_consciousness_enhanced.py::TestFEPTracker::test_get_average_free_energy",
+          "state": "passed"
+        },
+        {
+          "name": "test_record_interaction",
+          "fullName": "tests/plugins/test_consciousness_enhanced.py::TestEnhancedConsciousnessPlugin::test_record_interaction",
+          "state": "passed"
+        },
+        {
+          "name": "test_record_prediction",
+          "fullName": "tests/plugins/test_consciousness_enhanced.py::TestEnhancedConsciousnessPlugin::test_record_prediction",
+          "state": "passed"
+        },
+        {
+          "name": "test_record_outcome",
+          "fullName": "tests/plugins/test_consciousness_enhanced.py::TestEnhancedConsciousnessPlugin::test_record_outcome",
+          "state": "passed"
+        },
+        {
+          "name": "test_calculate_iit_phi",
+          "fullName": "tests/plugins/test_consciousness_enhanced.py::TestEnhancedConsciousnessPlugin::test_calculate_iit_phi",
+          "state": "passed"
+        },
+        {
+          "name": "test_calculate_consciousness_metrics",
+          "fullName": "tests/plugins/test_consciousness_enhanced.py::TestEnhancedConsciousnessPlugin::test_calculate_consciousness_metrics",
+          "state": "passed"
+        },
+        {
+          "name": "test_determine_state_transcendent",
+          "fullName": "tests/plugins/test_consciousness_enhanced.py::TestEnhancedConsciousnessPlugin::test_determine_state_transcendent",
+          "state": "passed"
+        },
+        {
+          "name": "test_determine_state_hyper_conscious",
+          "fullName": "tests/plugins/test_consciousness_enhanced.py::TestEnhancedConsciousnessPlugin::test_determine_state_hyper_conscious",
+          "state": "passed"
+        },
+        {
+          "name": "test_determine_state_conscious",
+          "fullName": "tests/plugins/test_consciousness_enhanced.py::TestEnhancedConsciousnessPlugin::test_determine_state_conscious",
+          "state": "passed"
+        },
+        {
+          "name": "test_determine_state_minimal",
+          "fullName": "tests/plugins/test_consciousness_enhanced.py::TestEnhancedConsciousnessPlugin::test_determine_state_minimal",
+          "state": "passed"
+        },
+        {
+          "name": "test_determine_state_unconscious",
+          "fullName": "tests/plugins/test_consciousness_enhanced.py::TestEnhancedConsciousnessPlugin::test_determine_state_unconscious",
+          "state": "passed"
+        },
+        {
+          "name": "test_get_agent_metrics",
+          "fullName": "tests/plugins/test_consciousness_enhanced.py::TestEnhancedConsciousnessPlugin::test_get_agent_metrics",
+          "state": "passed"
+        },
+        {
+          "name": "test_get_statistics",
+          "fullName": "tests/plugins/test_consciousness_enhanced.py::TestEnhancedConsciousnessPlugin::test_get_statistics",
+          "state": "passed"
+        },
+        {
+          "name": "test_emit_consciousness_events_empty",
+          "fullName": "tests/plugins/test_consciousness_enhanced.py::TestEmitConsciousnessEvents::test_emit_consciousness_events_empty",
+          "state": "passed"
+        },
+        {
+          "name": "test_emit_consciousness_events_success",
+          "fullName": "tests/plugins/test_consciousness_enhanced.py::TestEmitConsciousnessEvents::test_emit_consciousness_events_success",
+          "state": "passed"
+        },
+        {
+          "name": "test_emit_consciousness_events_phi_update",
+          "fullName": "tests/plugins/test_consciousness_enhanced.py::TestEmitConsciousnessEvents::test_emit_consciousness_events_phi_update",
+          "state": "passed"
+        },
+        {
+          "name": "test_emit_consciousness_events_fep_update",
+          "fullName": "tests/plugins/test_consciousness_enhanced.py::TestEmitConsciousnessEvents::test_emit_consciousness_events_fep_update",
+          "state": "passed"
+        },
+        {
+          "name": "test_emit_consciousness_events_agency_update",
+          "fullName": "tests/plugins/test_consciousness_enhanced.py::TestEmitConsciousnessEvents::test_emit_consciousness_events_agency_update",
+          "state": "passed"
+        },
+        {
+          "name": "test_emit_consciousness_events_error_handling",
+          "fullName": "tests/plugins/test_consciousness_enhanced.py::TestEmitConsciousnessEvents::test_emit_consciousness_events_error_handling",
+          "state": "passed"
+        },
+        {
+          "name": "test_emit_consciousness_events_fallback_free_energy",
+          "fullName": "tests/plugins/test_consciousness_enhanced.py::TestEmitConsciousnessEvents::test_emit_consciousness_events_fallback_free_energy",
+          "state": "passed"
         }
       ]
     }
