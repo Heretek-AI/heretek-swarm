@@ -14,6 +14,7 @@
 
 import { useState } from 'react';
 import { useAgentDetail } from './useAgentDetail';
+import { useConsciousnessWebSocket } from '../../hooks/useConsciousnessWebSocket';
 
 interface AgentDetailDrawerProps {
   /** The selected agent ID. Pass null to hide the drawer. */
@@ -69,18 +70,36 @@ function SkeletonBar({ className = 'h-4 w-full' }: { className?: string }) {
 // Tab content components
 // ----------------------------------------------------------------------------
 
-function ConsciousnessTabContent({
-  consciousness,
-  agency,
-  loading,
-  error,
-}: {
+interface ConsciousnessTabContentProps {
   /** consciousness.metrics: null = no metrics yet (404); undefined = not yet loaded */
   consciousness: import('../../api/consciousness').AgentMetrics | null;
   agency: import('../../api/consciousness').AgencyMetrics | null;
   loading: boolean;
   error?: string;
-}) {
+  /** WebSocket-supplied consciousness state (optional, takes precedence over REST) */
+  wsState?: import('../../hooks/useConsciousnessWebSocket').ConsciousnessAgentState;
+}
+
+function ConsciousnessTabContent({
+  consciousness,
+  agency,
+  loading,
+  error,
+  wsState,
+}: ConsciousnessTabContentProps) {
+  // Merge WebSocket state with REST polling state (WS takes precedence)
+  const phi_score = wsState?.phi_score ?? consciousness?.phi_score ?? null;
+  const state_str = wsState?.state ?? consciousness?.state ?? null;
+  const free_energy =
+    wsState?.free_energy ?? consciousness?.fep_metrics?.free_energy ?? null;
+  const prediction_accuracy =
+    wsState?.prediction_accuracy ?? consciousness?.fep_metrics?.prediction_accuracy ?? null;
+  const surprise = wsState?.surprise ?? consciousness?.fep_metrics?.surprise ?? null;
+  const belief_precision =
+    wsState?.belief_precision ?? consciousness?.fep_metrics?.belief_precision ?? null;
+  const agency_score = wsState?.agency_score ?? agency?.agency_score ?? null;
+  const autonomy_score = wsState?.autonomy_score ?? agency?.autonomy_score ?? null;
+
   // Error state — show error message inline (not a crash)
   if (error && consciousness == null) {
     return (
@@ -121,14 +140,16 @@ function ConsciousnessTabContent({
     <div className="space-y-4 px-1">
       {/* Phi score — large hero number */}
       <div className="text-center py-2">
-        <div className="text-5xl font-bold text-white">{m.phi_score.toFixed(3)}</div>
+        <div className="text-5xl font-bold text-white">
+          {phi_score != null ? phi_score.toFixed(3) : '—'}
+        </div>
         <div className="text-gray-400 text-sm mt-1">Φ Score</div>
       </div>
 
       {/* State badge */}
       <div className="flex justify-center">
-        <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${getConsciousnessStateColor(m.state)}`}>
-          {m.state.charAt(0).toUpperCase() + m.state.slice(1)}
+        <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${getConsciousnessStateColor(state_str ?? 'dormant')}`}>
+          {state_str ? state_str.charAt(0).toUpperCase() + state_str.slice(1) : '—'}
         </span>
       </div>
 
@@ -141,25 +162,25 @@ function ConsciousnessTabContent({
           <div className="flex justify-between">
             <span className="text-gray-400 text-sm">Free Energy</span>
             <span className="text-white font-mono text-sm">
-              {m.fep_metrics.free_energy.toFixed(4)}
+              {free_energy != null ? free_energy.toFixed(4) : '—'}
             </span>
           </div>
           <div className="flex justify-between">
             <span className="text-gray-400 text-sm">Prediction Accuracy</span>
             <span className="text-white font-mono text-sm">
-              {m.fep_metrics.prediction_accuracy.toFixed(4)}
+              {prediction_accuracy != null ? prediction_accuracy.toFixed(4) : '—'}
             </span>
           </div>
           <div className="flex justify-between">
             <span className="text-gray-400 text-sm">Surprise</span>
             <span className="text-white font-mono text-sm">
-              {m.fep_metrics.surprise.toFixed(4)}
+              {surprise != null ? surprise.toFixed(4) : '—'}
             </span>
           </div>
           <div className="flex justify-between">
             <span className="text-gray-400 text-sm">Belief Precision</span>
             <span className="text-white font-mono text-sm">
-              {m.fep_metrics.belief_precision.toFixed(4)}
+              {belief_precision != null ? belief_precision.toFixed(4) : '—'}
             </span>
           </div>
         </div>
@@ -174,11 +195,15 @@ function ConsciousnessTabContent({
           <div className="bg-gray-800 rounded-lg p-3 space-y-2">
             <div className="flex justify-between">
               <span className="text-gray-400 text-sm">Agency Score</span>
-              <span className="text-white font-mono text-sm">{agency.agency_score.toFixed(4)}</span>
+              <span className="text-white font-mono text-sm">
+                {agency_score != null ? agency_score.toFixed(4) : '—'}
+              </span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-400 text-sm">Autonomy Score</span>
-              <span className="text-white font-mono text-sm">{agency.autonomy_score.toFixed(4)}</span>
+              <span className="text-white font-mono text-sm">
+                {autonomy_score != null ? autonomy_score.toFixed(4) : '—'}
+              </span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-400 text-sm">Decision Count</span>
@@ -199,7 +224,11 @@ function ConsciousnessTabContent({
       {/* Last updated */}
       <div className="text-center">
         <span className="text-gray-600 text-xs">
-          Updated {new Date(m.timestamp).toLocaleTimeString()}
+          {wsState?.last_updated
+            ? `WS ${new Date(wsState.last_updated).toLocaleTimeString()}`
+            : consciousness?.timestamp
+              ? `REST ${new Date(consciousness.timestamp).toLocaleTimeString()}`
+              : '—'}
         </span>
       </div>
     </div>
@@ -222,6 +251,9 @@ export function AgentDetailDrawer({ agentId, onClose }: AgentDetailDrawerProps) 
 
   // agentId null = drawer not rendered
   const { data, loading, errors } = useAgentDetail(agentId);
+
+  // WebSocket for live consciousness metrics (supplementary to polling)
+  const { agentStates: wsStates, connected: wsConnected } = useConsciousnessWebSocket();
 
   return (
     <div
@@ -290,6 +322,7 @@ export function AgentDetailDrawer({ agentId, onClose }: AgentDetailDrawerProps) 
             agency={data?.agency ?? null}
             loading={loading}
             error={errors.consciousness}
+            wsState={agentId ? wsStates.get(agentId) : undefined}
           />
         )}
         {activeTab === 'memory' && (
@@ -303,11 +336,20 @@ export function AgentDetailDrawer({ agentId, onClose }: AgentDetailDrawerProps) 
         )}
       </div>
 
-      {/* ── Footer: polling indicator ─────────────────────────── */}
+      {/* ── Footer: polling / WebSocket indicator ─────────────────── */}
       {agentId !== null && (
         <div className="flex-shrink-0 px-4 py-2 border-t border-gray-800 flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-          <span className="text-gray-600 text-xs">Polling every 10s</span>
+          {wsConnected ? (
+            <>
+              <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+              <span className="text-gray-600 text-xs">Live (WS)</span>
+            </>
+          ) : (
+            <>
+              <span className="w-2 h-2 rounded-full bg-gray-500" />
+              <span className="text-gray-600 text-xs">Polling every 10s</span>
+            </>
+          )}
           {loading && data && (
             <span className="ml-auto text-gray-600 text-xs">Refreshing…</span>
           )}
