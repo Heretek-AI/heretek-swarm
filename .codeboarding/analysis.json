@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-23T21:41:35.876241+00:00",
+    "generated_at": "2026-04-23T21:42:32.408621+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -58982,56 +58982,56 @@
       ]
     },
     "swarm-dashboard/src/components/Consciousness/RealTimeAgentPanel.tsx": {
-      "file_status": "modified",
+      "file_status": "unchanged",
       "methods": [
         {
           "qualified_name": "swarm-dashboard.src.components.Consciousness.RealTimeAgentPanel.AgentStatus",
           "start_line": 15,
           "end_line": 23,
           "node_type": "INTERFACE",
-          "status": "added"
+          "status": "unchanged"
         },
         {
           "qualified_name": "swarm-dashboard.src.components.Consciousness.RealTimeAgentPanel.RealTimeAgentPanelProps",
           "start_line": 60,
           "end_line": 63,
           "node_type": "INTERFACE",
-          "status": "added"
+          "status": "unchanged"
         },
         {
           "qualified_name": "swarm-dashboard.src.components.Consciousness.RealTimeAgentPanel.RealTimeAgentPanel",
           "start_line": 65,
           "end_line": 172,
           "node_type": "FUNCTION",
-          "status": "modified"
+          "status": "unchanged"
         },
         {
           "qualified_name": "swarm-dashboard.src.components.Consciousness.RealTimeAgentPanel.RealTimeAgentPanel.agents.map() callback",
           "start_line": 73,
           "end_line": 82,
           "node_type": "FUNCTION",
-          "status": "modified"
+          "status": "unchanged"
         },
         {
           "qualified_name": "swarm-dashboard.src.components.Consciousness.RealTimeAgentPanel.RealTimeAgentPanel.agentsByTier.agents.reduce() callback",
           "start_line": 85,
           "end_line": 90,
           "node_type": "FUNCTION",
-          "status": "added"
+          "status": "unchanged"
         },
         {
           "qualified_name": "swarm-dashboard.src.components.Consciousness.RealTimeAgentPanel.RealTimeAgentPanel.<unknown>..filter() callback",
           "start_line": 131,
           "end_line": 131,
           "node_type": "FUNCTION",
-          "status": "added"
+          "status": "unchanged"
         },
         {
           "qualified_name": "swarm-dashboard.src.components.Consciousness.RealTimeAgentPanel.RealTimeAgentPanel.<unknown>.map() callback",
           "start_line": 149,
           "end_line": 151,
           "node_type": "FUNCTION",
-          "status": "added"
+          "status": "unchanged"
         }
       ]
     }
@@ -124275,7 +124275,7 @@
       "start_line": 15,
       "end_line": 23,
       "type": "INTERFACE",
-      "status": "added"
+      "status": "unchanged"
     },
     "swarm-dashboard/src/components/Consciousness/RealTimeAgentPanel.tsx|swarm-dashboard.src.components.Consciousness.RealTimeAgentPanel.RealTimeAgentPanelProps": {
       "file_path": "swarm-dashboard/src/components/Consciousness/RealTimeAgentPanel.tsx",
@@ -124283,7 +124283,7 @@
       "start_line": 60,
       "end_line": 63,
       "type": "INTERFACE",
-      "status": "added"
+      "status": "unchanged"
     },
     "swarm-dashboard/src/components/Consciousness/RealTimeAgentPanel.tsx|swarm-dashboard.src.components.Consciousness.RealTimeAgentPanel.RealTimeAgentPanel": {
       "file_path": "swarm-dashboard/src/components/Consciousness/RealTimeAgentPanel.tsx",
@@ -124291,7 +124291,7 @@
       "start_line": 65,
       "end_line": 172,
       "type": "FUNCTION",
-      "status": "modified"
+      "status": "unchanged"
     },
     "swarm-dashboard/src/components/Consciousness/RealTimeAgentPanel.tsx|swarm-dashboard.src.components.Consciousness.RealTimeAgentPanel.RealTimeAgentPanel.agents.map() callback": {
       "file_path": "swarm-dashboard/src/components/Consciousness/RealTimeAgentPanel.tsx",
@@ -124299,7 +124299,7 @@
       "start_line": 73,
       "end_line": 82,
       "type": "FUNCTION",
-      "status": "modified"
+      "status": "unchanged"
     },
     "swarm-dashboard/src/components/Consciousness/RealTimeAgentPanel.tsx|swarm-dashboard.src.components.Consciousness.RealTimeAgentPanel.RealTimeAgentPanel.agentsByTier.agents.reduce() callback": {
       "file_path": "swarm-dashboard/src/components/Consciousness/RealTimeAgentPanel.tsx",
@@ -124307,7 +124307,7 @@
       "start_line": 85,
       "end_line": 90,
       "type": "FUNCTION",
-      "status": "added"
+      "status": "unchanged"
     },
     "swarm-dashboard/src/components/Consciousness/RealTimeAgentPanel.tsx|swarm-dashboard.src.components.Consciousness.RealTimeAgentPanel.RealTimeAgentPanel.<unknown>..filter() callback": {
       "file_path": "swarm-dashboard/src/components/Consciousness/RealTimeAgentPanel.tsx",
@@ -124315,7 +124315,7 @@
       "start_line": 131,
       "end_line": 131,
       "type": "FUNCTION",
-      "status": "added"
+      "status": "unchanged"
     },
     "swarm-dashboard/src/components/Consciousness/RealTimeAgentPanel.tsx|swarm-dashboard.src.components.Consciousness.RealTimeAgentPanel.RealTimeAgentPanel.<unknown>.map() callback": {
       "file_path": "swarm-dashboard/src/components/Consciousness/RealTimeAgentPanel.tsx",
@@ -124323,7 +124323,7 @@
       "start_line": 149,
       "end_line": 151,
       "type": "FUNCTION",
-      "status": "added"
+      "status": "unchanged"
     }
   },
   "components": [
