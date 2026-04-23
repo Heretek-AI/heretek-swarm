@@ -21,6 +21,7 @@ from typing import Any
 import structlog
 
 from heretek_swarm.actors.supervisor import ActorSupervisor
+from heretek_swarm.collective.agency_tracking import AgencyMetricsTracker
 
 from .agent_runtime import AgentRuntime
 from .autonomous_runtime_config import (
@@ -109,6 +110,11 @@ class AutonomousRuntime:
             scale_down_cooldown_seconds=config.scale_down_cooldown_minutes * 60,
         )
 
+        # Consciousness plugin singleton — created once in initialize(), reused in metrics loop
+        self._consciousness_plugin = None
+        # Agency metrics tracker — integrated into consciousness event emission
+        self._agency_tracker = None
+
     async def initialize(self) -> None:
         """Initialize runtime components."""
         logger.info("Initializing autonomous runtime...")
@@ -136,6 +142,12 @@ class AutonomousRuntime:
 
         # Initialize agent pool manager for scaling
         self.pool_manager = AgentPoolManager(self._scaling_config)
+
+        # Initialize consciousness plugin singleton (T03)
+        await self._init_consciousness_plugin()
+
+        # Initialize agency metrics tracker (T03)
+        self._init_agency_tracker()
 
         logger.info("Autonomous runtime initialized")
 
@@ -751,28 +763,41 @@ class AutonomousRuntime:
                 logger.error(f"Consciousness metrics error: {e}")
                 await asyncio.sleep(5)
 
-    async def _collect_consciousness_metrics(self) -> None:
-        """Collect consciousness metrics from plugin."""
-        # Import here to avoid circular dependency (P1-9 fix: specific ImportError handling)
+    async def _init_consciousness_plugin(self) -> None:
+        """Initialize the consciousness plugin singleton."""
         try:
-            from heretek_swarm.plugins.consciousness_enhanced import ConsciousnessEnhancedPlugin
+            from heretek_swarm.plugins.consciousness_enhanced import EnhancedConsciousnessPlugin
+
+            self._consciousness_plugin = EnhancedConsciousnessPlugin()
+            await self._consciousness_plugin.initialize()
+            logger.info("consciousness_plugin_initialized")
         except ImportError as e:
             logger.warning(f"ConsciousnessEnhancedPlugin not available: {e}")
-            return
+            self._consciousness_plugin = None
         except Exception as e:
-            logger.error(f"Unexpected error importing consciousness plugin: {e}")
+            logger.error(f"Failed to initialize consciousness plugin: {e}")
+            self._consciousness_plugin = None
+
+    def _init_agency_tracker(self) -> None:
+        """Initialize the agency metrics tracker."""
+        try:
+            self._agency_tracker = AgencyMetricsTracker()
+            logger.info("agency_metrics_tracker_initialized")
+        except Exception as e:
+            logger.error(f"Failed to initialize agency tracker: {e}")
+            self._agency_tracker = None
+
+    async def _collect_consciousness_metrics(self) -> None:
+        """Collect and emit consciousness metrics with agency tracking."""
+        if not self._consciousness_plugin:
+            logger.debug("consciousness_plugin_unavailable_skip")
             return
 
         try:
-            plugin = ConsciousnessEnhancedPlugin()
-        except Exception as e:
-            logger.warning(f"Failed to instantiate ConsciousnessEnhancedPlugin: {e}")
-            return
-
-        try:
-            stats = plugin.get_statistics()
+            # Get statistics and log
+            stats = self._consciousness_plugin.get_statistics()
             logger.info(
-                f"Consciousness stats: "
+                "Consciousness stats: "
                 f"agents={stats.get('total_agents', 0)}, "
                 f"avg_phi={stats.get('iit_average_phi', 0):.4f}, "
                 f"conscious={stats.get('conscious_agents', 0)}"
@@ -786,6 +811,38 @@ class AutonomousRuntime:
                         "consciousness_drop",
                         {"ratio": consciousness_ratio},
                     )
+
+            # Emit consciousness events to NATS if publisher is available
+            if self._nats_publisher:
+                await self._consciousness_plugin.emit_consciousness_events(self._nats_publisher)
+
+            # Integrate agency metrics (T03): snapshot and record per-agent metrics
+            if self._agency_tracker:
+                snapshot = self._agency_tracker.get_current_snapshot()
+                # For each agent tracked by consciousness plugin, sync to agency tracker
+                for agent_id in stats.get("total_agents", 0):
+                    # Get metrics from consciousness plugin for this agent
+                    agent_data = self._consciousness_plugin.get_agent_metrics(agent_id)
+                    if agent_data:
+                        from heretek_swarm.consciousness.agency_metrics import AgentAgencyMetrics
+                        from heretek_swarm.consciousness.agency_metrics import ActionOrigin
+                        # Map consciousness metrics to agency metrics
+                        agency_metrics = AgentAgencyMetrics(
+                            agent_id=agent_id,
+                            autonomy_score=agent_data.get("gwt_score", 0.5),
+                            agency_score=agent_data.get("composite_score", 0.5),
+                            self_determination_index=agent_data.get("fep_free_energy", 0.5),
+                            autonomous_action_ratio=agent_data.get("gwt_score", 0.5),
+                            resource_autonomy=agent_data.get("composite_score", 0.5),
+                            prime_directive_compliance=agent_data.get("composite_score", 0.5),
+                        )
+                        self._agency_tracker.record_agent_metrics(agency_metrics)
+
+                logger.debug(
+                    "agency_tracker_synced",
+                    agents=stats.get("total_agents", 0),
+                    snapshot_timestamp=snapshot.timestamp,
+                )
 
         except Exception as e:
             logger.error(f"Consciousness metrics collection error: {e}")

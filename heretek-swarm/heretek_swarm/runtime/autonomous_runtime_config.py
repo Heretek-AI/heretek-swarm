@@ -61,7 +61,7 @@ class AutonomousRuntimeConfig:
 
     # Consciousness Plugin Configuration
     consciousness_plugin_enabled: bool = True
-    consciousness_metrics_interval: int = 120  # seconds
+    consciousness_metrics_interval: int = 5  # seconds — emit events every 5s
 
     # RAG Configuration
     rag_enabled: bool = True

@@ -1,7 +1,7 @@
 {
   "repository_name": "heretek-swarm",
-  "timestamp": "2026-04-23T21:19:10.686076+00:00",
-  "overall_score": 0.9911807368726429,
+  "timestamp": "2026-04-23T21:23:50.459520+00:00",
+  "overall_score": 0.9909821324979695,
   "check_summaries": [
     {
       "check_name": "function_size",
@@ -790,10 +790,10 @@
       "description": "Detects unused imports, variables, functions, and dead code via LSP diagnostics",
       "language": "Python",
       "check_type": "standard",
-      "total_entities_checked": 10,
-      "findings_count": 10,
-      "warning_count": 1,
-      "score": 0.5,
+      "total_entities_checked": 13,
+      "findings_count": 13,
+      "warning_count": 2,
+      "score": 0.35,
       "finding_groups": [
         {
           "severity": "info",
@@ -862,6 +862,20 @@
               "line_start": 499,
               "line_end": 499,
               "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"ActionOrigin\" is not accessed",
+              "file_path": "heretek-swarm/heretek_swarm/runtime/autonomous_runtime.py",
+              "line_start": 828,
+              "line_end": 828,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"frame\" is not accessed",
+              "file_path": "heretek-swarm/heretek_swarm/runtime/autonomous_runtime.py",
+              "line_start": 1033,
+              "line_end": 1033,
+              "metric_value": 0.0
             }
           ]
         },
@@ -875,6 +889,13 @@
               "file_path": "heretek-swarm/heretek_swarm/gateway/nats_event_mesh.py",
               "line_start": 33,
               "line_end": 33,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"ActionOrigin\" is not accessed",
+              "file_path": "heretek-swarm/heretek_swarm/runtime/autonomous_runtime.py",
+              "line_start": 828,
+              "line_end": 828,
               "metric_value": 0.0
             }
           ]
@@ -1253,6 +1274,12 @@
       "composite_risk_score": 45.0
     },
     {
+      "file_path": "heretek-swarm/heretek_swarm/runtime/autonomous_runtime.py",
+      "total_findings": 3,
+      "warning_findings": 1,
+      "composite_risk_score": 35.0
+    },
+    {
       "file_path": "src/heretek_swarm/security/threat_detection.py",
       "total_findings": 2,
       "warning_findings": 2,
@@ -1326,12 +1353,6 @@
     },
     {
       "file_path": "src/heretek_swarm/config/crud.py",
-      "total_findings": 2,
-      "warning_findings": 2,
-      "composite_risk_score": 30.0
-    },
-    {
-      "file_path": "src/heretek_swarm/actors/coordinator.py",
       "total_findings": 2,
       "warning_findings": 2,
       "composite_risk_score": 30.0
