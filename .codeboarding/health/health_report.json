@@ -1,7 +1,7 @@
 {
   "repository_name": "heretek-swarm",
-  "timestamp": "2026-04-23T21:35:11.329049+00:00",
-  "overall_score": 0.9909821324979695,
+  "timestamp": "2026-04-23T21:41:37.302887+00:00",
+  "overall_score": 0.9909797552062185,
   "check_summaries": [
     {
       "check_name": "function_size",
@@ -1229,11 +1229,26 @@
       "description": "Detects unused imports, variables, functions, and dead code via LSP diagnostics",
       "language": "TypeScript",
       "check_type": "standard",
-      "total_entities_checked": 0,
-      "findings_count": 0,
+      "total_entities_checked": 1,
+      "findings_count": 1,
       "warning_count": 0,
-      "score": 1.0,
-      "finding_groups": []
+      "score": 0.95,
+      "finding_groups": [
+        {
+          "severity": "info",
+          "threshold": 0,
+          "description": "Variables declared but never used",
+          "entities": [
+            {
+              "entity_name": "[unused_variable] 'm' is declared but its value is never read.",
+              "file_path": "swarm-dashboard/src/components/Canvas/AgentDetailDrawer.tsx",
+              "line_start": 136,
+              "line_end": 136,
+              "metric_value": 0.0
+            }
+          ]
+        }
+      ]
     }
   ],
   "file_summaries": [

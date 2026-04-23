@@ -10,6 +10,7 @@
 
 import { useAgentStatus } from '../../hooks/useAgentStatus';
 import { useWebSocket } from '../../hooks/useWebSocket';
+import { useConsciousnessWebSocket } from '../../hooks/useConsciousnessWebSocket';
 
 interface AgentStatus {
   id: string;
@@ -66,6 +67,7 @@ export function RealTimeAgentPanel({
 }: RealTimeAgentPanelProps) {
   const { agentStatuses, connected, error } = useAgentStatus();
   const { connected: wsConnected } = useWebSocket('agents', {});
+  const { agentStates } = useConsciousnessWebSocket();
 
   // Convert agentStatuses Record to array for rendering
   const agents: AgentStatus[] = Object.entries(agentStatuses).map(([id, update]) => ({
@@ -74,7 +76,8 @@ export function RealTimeAgentPanel({
     status: update.status === 'processing' ? 'busy' : update.status === 'active' ? 'idle' : update.status,
     currentTask: update.currentTask,
     messagesCount: 0,
-    consciousnessScore: undefined,
+    // Populate consciousness score from WebSocket state map
+    consciousnessScore: agentStates.get(id)?.phi_score ?? undefined,
     lastActivity: update.lastHeartbeat,
   }));
 
