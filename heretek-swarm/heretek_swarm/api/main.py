@@ -367,7 +367,29 @@ async def _init_nats_bridge() -> None:
 
             await _nats_mesh.subscribe("swarm.external_call", external_call_handler)
 
-            logger.info("NATS subscriptions registered for A2A events and external calls")
+            # Subscribe to consciousness events from NATS and broadcast to dashboard
+            async def consciousness_event_handler(
+                mesh: NATSEventMesh, subject: str, data: dict[str, Any]
+            ) -> None:
+                """Handle consciousness event from NATS and broadcast to WebSocket dashboard."""
+                try:
+                    await websockets.manager.broadcast_dashboard(data)
+                    logger.debug(
+                        "broadcast_consciousness_event_from_nats",
+                        subject=subject,
+                        event_type=data.get("type"),
+                        agent_id=data.get("agent_id"),
+                    )
+                except Exception as e:
+                    logger.error(
+                        "broadcast_consciousness_event_failed",
+                        subject=subject,
+                        error=str(e),
+                    )
+
+            await _nats_mesh.subscribe("swarm.metrics.consciousness", consciousness_event_handler)
+
+            logger.info("NATS subscriptions registered for A2A events, external calls, and consciousness events")
         else:
             logger.warning("NATS EventMesh not available, WebSocket bridge using fallback")
     except Exception as e:

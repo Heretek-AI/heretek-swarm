@@ -656,6 +656,34 @@ class NATSEventMesh:
             logger.error("Failed to publish", subject=subject, error=str(e))
             return False
 
+    async def publish_to_nats(self, topic: str, data: dict[str, Any]) -> bool:
+        """
+        Publish structured event to a NATS topic with logging.
+
+        Args:
+            topic: NATS subject to publish to
+            data: Message data
+
+        Returns:
+            True if published successfully
+        """
+        try:
+            success = await self.publish(topic, data)
+            if success:
+                logger.debug(
+                    "emit_consciousness_event",
+                    topic=topic,
+                    event_type=data.get("type"),
+                    agent_id=data.get("agent_id"),
+                )
+                logger.info("publish_to_nats_success", topic=topic)
+            else:
+                logger.error("publish_to_nats_failure", topic=topic)
+            return success
+        except Exception as e:
+            logger.error("publish_to_nats_error", topic=topic, error=str(e))
+            return False
+
     async def subscribe(
         self,
         subject: str,
