@@ -216,9 +216,9 @@ describe('ExternalCallsPanel', () => {
     it('should only show calls for the selected agent', () => {
       render(<ExternalCallsPanel />);
 
-      feed([{ type: 'external_call_log', data: httpCall({ agent_id: 'agent-alpha' }) }]);
-      feed([{ type: 'external_call_log', data: httpCall({ agent_id: 'agent-beta' }) }]);
-      feed([{ type: 'external_call_log', data: httpCall({ agent_id: 'agent-alpha' }) }]);
+      feed([{ type: 'external_call', data: httpCall({ agent_id: 'agent-alpha' }) }]);
+      feed([{ type: 'external_call', data: httpCall({ agent_id: 'agent-beta' }) }]);
+      feed([{ type: 'external_call', data: httpCall({ agent_id: 'agent-alpha' }) }]);
       act(() => { vi.advanceTimersByTime(500); });
 
       // Find the agent combobox
@@ -241,9 +241,9 @@ describe('ExternalCallsPanel', () => {
     it('should populate the agent dropdown after receiving calls', async () => {
       render(<ExternalCallsPanel />);
 
-      feed([{ type: 'external_call_log', data: httpCall({ agent_id: 'agent-alpha' }) }]);
-      feed([{ type: 'external_call_log', data: httpCall({ agent_id: 'agent-beta' }) }]);
-      feed([{ type: 'external_call_log', data: httpCall({ agent_id: 'agent-gamma' }) }]);
+      feed([{ type: 'external_call', data: httpCall({ agent_id: 'agent-alpha' }) }]);
+      feed([{ type: 'external_call', data: httpCall({ agent_id: 'agent-beta' }) }]);
+      feed([{ type: 'external_call', data: httpCall({ agent_id: 'agent-gamma' }) }]);
 
       await waitFor(() => {
         const selects = screen.getAllByRole('combobox');
@@ -258,7 +258,7 @@ describe('ExternalCallsPanel', () => {
     it('should show filtered-empty state when no calls match agent filter', async () => {
       render(<ExternalCallsPanel />);
 
-      feed([{ type: 'external_call_log', data: httpCall({ agent_id: 'agent-alpha' }) }]);
+      feed([{ type: 'external_call', data: httpCall({ agent_id: 'agent-alpha' }) }]);
 
       await waitFor(() => {
         const selects = screen.getAllByRole('combobox');
@@ -282,9 +282,9 @@ describe('ExternalCallsPanel', () => {
     it('should show only HTTP calls when http_request filter is active', () => {
       render(<ExternalCallsPanel />);
 
-      feed([{ type: 'external_call_log', data: httpCall() }]);
-      feed([{ type: 'external_call_log', data: mcpCall() }]);
-      feed([{ type: 'external_call_log', data: httpCall({ id: 'http-2' }) }]);
+      feed([{ type: 'external_call', data: httpCall() }]);
+      feed([{ type: 'external_call', data: mcpCall() }]);
+      feed([{ type: 'external_call', data: httpCall({ id: 'http-2' }) }]);
       act(() => { vi.advanceTimersByTime(500); });
 
       const selects = screen.getAllByRole('combobox');
@@ -310,9 +310,9 @@ describe('ExternalCallsPanel', () => {
     it('should show only MCP calls when mcp_call filter is active', () => {
       render(<ExternalCallsPanel />);
 
-      feed([{ type: 'external_call_log', data: httpCall() }]);
-      feed([{ type: 'external_call_log', data: mcpCall({ id: 'mcp-1', tool_name: 'search' }) }]);
-      feed([{ type: 'external_call_log', data: mcpCall({ id: 'mcp-2', tool_name: 'list' }) }]);
+      feed([{ type: 'external_call', data: httpCall() }]);
+      feed([{ type: 'external_call', data: mcpCall({ id: 'mcp-1', tool_name: 'search' }) }]);
+      feed([{ type: 'external_call', data: mcpCall({ id: 'mcp-2', tool_name: 'list' }) }]);
       act(() => { vi.advanceTimersByTime(500); });
 
       const selects = screen.getAllByRole('combobox');
@@ -341,10 +341,10 @@ describe('ExternalCallsPanel', () => {
     it('should show only success (2xx) calls when success filter is active', () => {
       render(<ExternalCallsPanel />);
 
-      feed([{ type: 'external_call_log', data: httpCall({ status_code: 200 }) }]);
-      feed([{ type: 'external_call_log', data: httpCall({ status_code: 201 }) }]);
-      feed([{ type: 'external_call_log', data: errorCall(404) }]);
-      feed([{ type: 'external_call_log', data: httpCall({ status_code: 500 }) }]);
+      feed([{ type: 'external_call', data: httpCall({ status_code: 200 }) }]);
+      feed([{ type: 'external_call', data: httpCall({ status_code: 201 }) }]);
+      feed([{ type: 'external_call', data: errorCall(404) }]);
+      feed([{ type: 'external_call', data: httpCall({ status_code: 500 }) }]);
       act(() => { vi.advanceTimersByTime(500); });
 
       const selects = screen.getAllByRole('combobox');
@@ -372,9 +372,9 @@ describe('ExternalCallsPanel', () => {
     it('should show only client error (4xx) calls when client_error filter is active', () => {
       render(<ExternalCallsPanel />);
 
-      feed([{ type: 'external_call_log', data: httpCall({ status_code: 200 }) }]);
-      feed([{ type: 'external_call_log', data: errorCall(404) }]);
-      feed([{ type: 'external_call_log', data: errorCall(400) }]);
+      feed([{ type: 'external_call', data: httpCall({ status_code: 200 }) }]);
+      feed([{ type: 'external_call', data: errorCall(404) }]);
+      feed([{ type: 'external_call', data: errorCall(400) }]);
       act(() => { vi.advanceTimersByTime(500); });
 
       const selects = screen.getAllByRole('combobox');
@@ -400,9 +400,9 @@ describe('ExternalCallsPanel', () => {
       render(<ExternalCallsPanel />);
 
       feed([
-        { type: 'external_call_log', data: httpCall({ status_code: 200 }) },
-        { type: 'external_call_log', data: httpCall({ status_code: 500 }) },
-        { type: 'external_call_log', data: httpCall({ status_code: 503 }) },
+        { type: 'external_call', data: httpCall({ status_code: 200 }) },
+        { type: 'external_call', data: httpCall({ status_code: 500 }) },
+        { type: 'external_call', data: httpCall({ status_code: 503 }) },
       ]);
       act(() => { vi.advanceTimersByTime(500); });
 
@@ -427,8 +427,8 @@ describe('ExternalCallsPanel', () => {
     it('should show pending calls when pending filter is active', () => {
       render(<ExternalCallsPanel />);
 
-      feed([{ type: 'external_call_log', data: httpCall({ status_code: 200 }) }]);
-      feed([{ type: 'external_call_log', data: pendingCall() }]);
+      feed([{ type: 'external_call', data: httpCall({ status_code: 200 }) }]);
+      feed([{ type: 'external_call', data: pendingCall() }]);
       act(() => { vi.advanceTimersByTime(500); });
 
       const selects = screen.getAllByRole('combobox');
@@ -450,7 +450,7 @@ describe('ExternalCallsPanel', () => {
     it('should expand a call entry and show additional details', () => {
       render(<ExternalCallsPanel />);
 
-      feed([{ type: 'external_call_log', data: httpCall({ id: 'expandable-call-1' }) }]);
+      feed([{ type: 'external_call', data: httpCall({ id: 'expandable-call-1' }) }]);
       act(() => { vi.advanceTimersByTime(500); });
 
       // Use the first occurrence for clicking; closest() walks up to the clickable row
@@ -472,7 +472,7 @@ describe('ExternalCallsPanel', () => {
     it('should collapse an expanded entry on second click', () => {
       render(<ExternalCallsPanel />);
 
-      feed([{ type: 'external_call_log', data: httpCall({ id: 'expandable-call-2' }) }]);
+      feed([{ type: 'external_call', data: httpCall({ id: 'expandable-call-2' }) }]);
       act(() => { vi.advanceTimersByTime(500); });
 
       const domainEls = screen.queryAllByText('api.example.com');
@@ -501,7 +501,7 @@ describe('ExternalCallsPanel', () => {
     it('should display tool_name badge for MCP calls', () => {
       render(<ExternalCallsPanel />);
 
-      feed([{ type: 'external_call_log', data: mcpCall({ tool_name: 'search' }) }]);
+      feed([{ type: 'external_call', data: mcpCall({ tool_name: 'search' }) }]);
       act(() => { vi.advanceTimersByTime(500); });
 
       // May appear twice (tool badge + expanded detail)
@@ -511,7 +511,7 @@ describe('ExternalCallsPanel', () => {
     it('should show mcp_call type badge', () => {
       render(<ExternalCallsPanel />);
 
-      feed([{ type: 'external_call_log', data: mcpCall() }]);
+      feed([{ type: 'external_call', data: mcpCall() }]);
       act(() => { vi.advanceTimersByTime(500); });
 
       // May appear twice (type badge + expanded detail)
@@ -521,7 +521,7 @@ describe('ExternalCallsPanel', () => {
     it('should show request body in expanded MCP row', () => {
       render(<ExternalCallsPanel />);
 
-      feed([{ type: 'external_call_log', data: mcpCall({ tool_name: 'search', request_body: '{"query":"warhammer"}' }) }]);
+      feed([{ type: 'external_call', data: mcpCall({ tool_name: 'search', request_body: '{"query":"warhammer"}' }) }]);
       act(() => { vi.advanceTimersByTime(500); });
 
       // Expand the MCP row by clicking its tool badge's parent row
@@ -544,7 +544,7 @@ describe('ExternalCallsPanel', () => {
     it('should show clear button when filters are active', () => {
       render(<ExternalCallsPanel />);
 
-      feed([{ type: 'external_call_log', data: httpCall() }]);
+      feed([{ type: 'external_call', data: httpCall() }]);
       act(() => { vi.advanceTimersByTime(500); });
 
       const selects = screen.getAllByRole('combobox');
@@ -561,8 +561,8 @@ describe('ExternalCallsPanel', () => {
       render(<ExternalCallsPanel />);
 
       feed([
-        { type: 'external_call_log', data: httpCall({ agent_id: 'agent-alpha' }) },
-        { type: 'external_call_log', data: httpCall({ agent_id: 'agent-beta' }) },
+        { type: 'external_call', data: httpCall({ agent_id: 'agent-alpha' }) },
+        { type: 'external_call', data: httpCall({ agent_id: 'agent-beta' }) },
       ]);
       act(() => { vi.advanceTimersByTime(500); });
 
@@ -607,7 +607,7 @@ describe('ExternalCallsPanel', () => {
     it('should show pending indicator for calls with null status_code', () => {
       render(<ExternalCallsPanel />);
 
-      feed([{ type: 'external_call_log', data: pendingCall() }]);
+      feed([{ type: 'external_call', data: pendingCall() }]);
       act(() => { vi.advanceTimersByTime(500); });
 
       // Pending calls show "..." for status code
@@ -618,9 +618,9 @@ describe('ExternalCallsPanel', () => {
       render(<ExternalCallsPanel maxEntries={2} />);
 
       feed([
-        { type: 'external_call_log', data: httpCall({ id: 'call-1' }) },
-        { type: 'external_call_log', data: httpCall({ id: 'call-2' }) },
-        { type: 'external_call_log', data: httpCall({ id: 'call-3' }) },
+        { type: 'external_call', data: httpCall({ id: 'call-1' }) },
+        { type: 'external_call', data: httpCall({ id: 'call-2' }) },
+        { type: 'external_call', data: httpCall({ id: 'call-3' }) },
       ]);
       act(() => { vi.advanceTimersByTime(500); });
 
@@ -635,8 +635,8 @@ describe('ExternalCallsPanel', () => {
     it('should display stats row after receiving calls', () => {
       render(<ExternalCallsPanel refreshInterval={100} />);
 
-      feed([{ type: 'external_call_log', data: httpCall({ status_code: 200 }) }]);
-      feed([{ type: 'external_call_log', data: errorCall(404) }]);
+      feed([{ type: 'external_call', data: httpCall({ status_code: 200 }) }]);
+      feed([{ type: 'external_call', data: errorCall(404) }]);
 
       // Stats update every refreshInterval (100ms); advance past one update cycle
       act(() => { vi.advanceTimersByTime(200); });

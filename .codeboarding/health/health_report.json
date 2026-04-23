@@ -1,7 +1,7 @@
 {
   "repository_name": "heretek-swarm",
-  "timestamp": "2026-04-23T00:10:05.100246+00:00",
-  "overall_score": 0.9914412584165312,
+  "timestamp": "2026-04-23T03:10:11.426097+00:00",
+  "overall_score": 0.9902011944106222,
   "check_summaries": [
     {
       "check_name": "function_size",
@@ -790,40 +790,11 @@
       "description": "Detects unused imports, variables, functions, and dead code via LSP diagnostics",
       "language": "Python",
       "check_type": "standard",
-      "total_entities_checked": 3,
-      "findings_count": 3,
+      "total_entities_checked": 0,
+      "findings_count": 0,
       "warning_count": 0,
-      "score": 0.85,
-      "finding_groups": [
-        {
-          "severity": "info",
-          "threshold": 0,
-          "description": "Variables declared but never used",
-          "entities": [
-            {
-              "entity_name": "[unused_variable] \"_client_id\" is not accessed",
-              "file_path": "heretek-swarm/heretek_swarm/gateway/event_mesh.py",
-              "line_start": 381,
-              "line_end": 381,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"data\" is not accessed",
-              "file_path": "heretek-swarm/heretek_swarm/gateway/a2a_server.py",
-              "line_start": 260,
-              "line_end": 260,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"data\" is not accessed",
-              "file_path": "heretek-swarm/heretek_swarm/gateway/a2a_server.py",
-              "line_start": 265,
-              "line_end": 265,
-              "metric_value": 0.0
-            }
-          ]
-        }
-      ]
+      "score": 1.0,
+      "finding_groups": []
     },
     {
       "check_name": "function_size",
@@ -1087,6 +1058,11 @@
       "language": "TypeScript",
       "check_type": "circular_dependencies",
       "cycles": [
+        "src.utils -> src.components.Agents -> src.api -> src.components.UI -> src.utils",
+        "src.utils -> src.components.Agents -> src.components.Settings -> src.api -> src.components.UI -> src.utils",
+        "src.utils -> src.components.Agents -> src.components.Settings -> src.components.UI -> src.utils",
+        "src.utils -> src.components.Agents -> src.components.UI -> src.utils",
+        "src.utils -> src.components.UI -> src.utils",
         "src.components.UI -> src.components.Agents -> src.api -> src.components.UI",
         "src.components.UI -> src.components.Agents -> src.components.Settings -> src.api -> src.components.UI",
         "src.components.UI -> src.components.Agents -> src.components.Settings -> src.components.UI",
@@ -1096,31 +1072,26 @@
         "src.components.UI -> src.components.Settings -> src.components.Agents -> src.api -> src.components.UI",
         "src.components.UI -> src.components.Settings -> src.components.Agents -> src.components.UI",
         "src.components.UI -> src.components.Settings -> src.components.UI",
-        "src.components.UI -> src.utils -> src.components.Agents -> src.api -> src.components.UI",
-        "src.components.UI -> src.utils -> src.components.Agents -> src.components.Settings -> src.api -> src.components.UI",
-        "src.components.UI -> src.utils -> src.components.Agents -> src.components.Settings -> src.components.UI",
-        "src.components.UI -> src.utils -> src.components.Agents -> src.components.UI",
-        "src.components.UI -> src.utils -> src.components.UI",
+        "src.components.Settings -> src.api -> src.components.Agents -> src.components.Settings",
+        "src.components.Settings -> src.components.Agents -> src.components.Settings",
         "src.api -> src.components.Agents -> src.api",
-        "src.api -> src.components.Agents -> src.components.Settings -> src.api",
-        "src.components.Agents -> src.components.Settings -> src.components.Agents",
-        "dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api -> dashboard.frontend.src.components.UI",
-        "dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api -> dashboard.frontend.src.components.UI",
-        "dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.UI",
-        "dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.UI",
-        "dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.UI",
+        "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api -> dashboard.frontend.src.components.Agents",
+        "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents",
+        "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.Agents",
+        "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils -> dashboard.frontend.src.components.Agents",
+        "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api -> dashboard.frontend.src.components.Agents",
+        "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents",
+        "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils -> dashboard.frontend.src.components.Agents",
+        "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.Agents",
+        "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents",
+        "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils -> dashboard.frontend.src.components.Agents",
+        "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents",
+        "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api -> dashboard.frontend.src.components.Agents",
+        "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.Agents",
+        "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils -> dashboard.frontend.src.components.Agents",
+        "dashboard.frontend.src.utils -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils",
         "dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api -> dashboard.frontend.src.components.UI",
-        "dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api -> dashboard.frontend.src.components.UI",
-        "dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.UI",
-        "dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.UI",
-        "dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api -> dashboard.frontend.src.components.UI",
-        "dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api -> dashboard.frontend.src.components.UI",
-        "dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.UI",
-        "dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.UI",
-        "dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils -> dashboard.frontend.src.components.UI",
-        "dashboard.frontend.src.api -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api",
-        "dashboard.frontend.src.api -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api",
-        "dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings"
+        "dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.UI"
       ],
       "packages_checked": 47,
       "packages_in_cycles": 10
@@ -1152,14 +1123,189 @@
       "description": "Detects unused imports, variables, functions, and dead code via LSP diagnostics",
       "language": "TypeScript",
       "check_type": "standard",
-      "total_entities_checked": 0,
-      "findings_count": 0,
+      "total_entities_checked": 22,
+      "findings_count": 22,
       "warning_count": 0,
-      "score": 1.0,
-      "finding_groups": []
+      "score": 0.0,
+      "finding_groups": [
+        {
+          "severity": "info",
+          "threshold": 0,
+          "description": "Variables declared but never used",
+          "entities": [
+            {
+              "entity_name": "[unused_variable] 'formatDuration' is declared but its value is never read.",
+              "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
+              "line_start": 105,
+              "line_end": 105,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'truncate' is declared but its value is never read.",
+              "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
+              "line_start": 113,
+              "line_end": 113,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'entry' is declared but its value is never read.",
+              "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
+              "line_start": 171,
+              "line_end": 171,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'entry' is declared but its value is never read.",
+              "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
+              "line_start": 246,
+              "line_end": 246,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] Unused label.",
+              "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
+              "line_start": 289,
+              "line_end": 289,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'setAgentFilter' is declared but its value is never read.",
+              "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
+              "line_start": 316,
+              "line_end": 316,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'callTypeFilter' is declared but its value is never read.",
+              "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
+              "line_start": 317,
+              "line_end": 317,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'setCallTypeFilter' is declared but its value is never read.",
+              "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
+              "line_start": 318,
+              "line_end": 318,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'statusFilter' is declared but its value is never read.",
+              "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
+              "line_start": 319,
+              "line_end": 319,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'setStatusFilter' is declared but its value is never read.",
+              "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
+              "line_start": 320,
+              "line_end": 320,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'uniqueAgents' is declared but its value is never read.",
+              "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
+              "line_start": 321,
+              "line_end": 321,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'uniqueCallTypes' is declared but its value is never read.",
+              "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
+              "line_start": 322,
+              "line_end": 322,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'onClearFilters' is declared but its value is never read.",
+              "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
+              "line_start": 323,
+              "line_end": 323,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'hasActiveFilters' is declared but its value is never read.",
+              "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
+              "line_start": 324,
+              "line_end": 324,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'e' is declared but its value is never read.",
+              "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
+              "line_start": 348,
+              "line_end": 348,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'e' is declared but its value is never read.",
+              "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
+              "line_start": 363,
+              "line_end": 363,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'setExpandedId' is declared but its value is never read.",
+              "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
+              "line_start": 394,
+              "line_end": 394,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'stats' is declared but its value is never read.",
+              "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
+              "line_start": 556,
+              "line_end": 556,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] Unused label.",
+              "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
+              "line_start": 616,
+              "line_end": 616,
+              "metric_value": 0.0
+            }
+          ]
+        },
+        {
+          "severity": "info",
+          "threshold": 0,
+          "description": "Code that cannot be reached during execution",
+          "entities": [
+            {
+              "entity_name": "[unreachable_code] Unreachable code detected.",
+              "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
+              "line_start": 127,
+              "line_end": 149,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unreachable_code] Unreachable code detected.",
+              "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
+              "line_start": 329,
+              "line_end": 333,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unreachable_code] Unreachable code detected.",
+              "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
+              "line_start": 531,
+              "line_end": 602,
+              "metric_value": 0.0
+            }
+          ]
+        }
+      ]
     }
   ],
   "file_summaries": [
+    {
+      "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
+      "total_findings": 22,
+      "warning_findings": 0,
+      "composite_risk_score": 50.0
+    },
     {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
       "total_findings": 3,
@@ -1270,12 +1416,6 @@
     },
     {
       "file_path": "src/heretek_swarm/actors/coordinator.py",
-      "total_findings": 2,
-      "warning_findings": 2,
-      "composite_risk_score": 30.0
-    },
-    {
-      "file_path": "src/heretek_swarm/consensus/immune.py",
       "total_findings": 2,
       "warning_findings": 2,
       "composite_risk_score": 30.0

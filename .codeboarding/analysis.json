@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-23T00:10:03.596220+00:00",
+    "generated_at": "2026-04-23T03:10:09.422802+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -57542,6 +57542,450 @@
           "start_line": 427,
           "end_line": 429,
           "node_type": "METHOD",
+          "status": "added"
+        }
+      ]
+    },
+    "swarm-dashboard/src/components/Observability/A2ATracker.tsx": {
+      "file_status": "unchanged",
+      "methods": [
+        {
+          "qualified_name": "swarm-dashboard.src.components.Observability.A2ATracker.A2AMessage",
+          "start_line": 18,
+          "end_line": 28,
+          "node_type": "INTERFACE",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "swarm-dashboard.src.components.Observability.A2ATracker.AgentActivity",
+          "start_line": 30,
+          "end_line": 41,
+          "node_type": "INTERFACE",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "swarm-dashboard.src.components.Observability.A2ATracker.WorkflowStats",
+          "start_line": 43,
+          "end_line": 48,
+          "node_type": "INTERFACE",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "swarm-dashboard.src.components.Observability.A2ATracker.ResourceStats",
+          "start_line": 50,
+          "end_line": 55,
+          "node_type": "INTERFACE",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "swarm-dashboard.src.components.Observability.A2ATracker.A2ATrackerProps",
+          "start_line": 57,
+          "end_line": 61,
+          "node_type": "INTERFACE",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "swarm-dashboard.src.components.Observability.A2ATracker.mapEventType",
+          "start_line": 63,
+          "end_line": 68,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "swarm-dashboard.src.components.Observability.A2ATracker.MessageTimeline.filteredMessages.messages.filter() callback",
+          "start_line": 73,
+          "end_line": 73,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "swarm-dashboard.src.components.Observability.A2ATracker.MessageTimeline.yet",
+          "start_line": 99,
+          "end_line": 99,
+          "node_type": "METHOD",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "swarm-dashboard.src.components.Observability.A2ATracker.getStatusIcon",
+          "start_line": 110,
+          "end_line": 110,
+          "node_type": "METHOD",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "swarm-dashboard.src.components.Observability.A2ATracker.agents.map() callback",
+          "start_line": 147,
+          "end_line": 149,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "swarm-dashboard.src.components.Observability.A2ATracker.tasks",
+          "start_line": 185,
+          "end_line": 186,
+          "node_type": "METHOD",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "swarm-dashboard.src.components.Observability.A2ATracker.MessageFlowGraph.useEffect() callback",
+          "start_line": 198,
+          "end_line": 205,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "swarm-dashboard.src.components.Observability.A2ATracker.MessageFlowGraph.useEffect() callback.forEach() callback",
+          "start_line": 200,
+          "end_line": 203,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "swarm-dashboard.src.components.Observability.A2ATracker.MessageFlowGraph.topConnections.sort() callback",
+          "start_line": 208,
+          "end_line": 208,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "swarm-dashboard.src.components.Observability.A2ATracker.MessageFlowGraph.yet",
+          "start_line": 214,
+          "end_line": 214,
+          "node_type": "METHOD",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "swarm-dashboard.src.components.Observability.A2ATracker.topConnections.map(\"h-full bg-purple-500 rounded-full\") callback",
+          "start_line": 216,
+          "end_line": 217,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "swarm-dashboard.src.components.Observability.A2ATracker.A2ATracker",
+          "start_line": 288,
+          "end_line": 440,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "swarm-dashboard.src.components.Observability.A2ATracker.A2ATracker.messages.useMemo() callback",
+          "start_line": 321,
+          "end_line": 333,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "swarm-dashboard.src.components.Observability.A2ATracker.A2ATracker.messages.useMemo() callback.hookMessages.map() callback",
+          "start_line": 322,
+          "end_line": 332,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "swarm-dashboard.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.hookMessages.forEach() callback",
+          "start_line": 340,
+          "end_line": 385,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "swarm-dashboard.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.activityList.map() callback",
+          "start_line": 389,
+          "end_line": 393,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "swarm-dashboard.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.activityList.sort() callback",
+          "start_line": 394,
+          "end_line": 394,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "swarm-dashboard.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.activeConnections.agentActivity.filter() callback",
+          "start_line": 406,
+          "end_line": 406,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "swarm-dashboard.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback",
+          "start_line": 419,
+          "end_line": 424,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "swarm-dashboard.src.components.Observability.A2ATracker.A2ATracker.internalMonologue.messages.filter() callback",
+          "start_line": 428,
+          "end_line": 428,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "swarm-dashboard.src.components.Observability.A2ATracker.<unknown>..filter() callback",
+          "start_line": 449,
+          "end_line": 449,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "swarm-dashboard.src.components.Observability.A2ATracker.map() callback",
+          "start_line": 456,
+          "end_line": 458,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "swarm-dashboard.src.components.Observability.A2ATracker.<unknown>..reduce() callback",
+          "start_line": 546,
+          "end_line": 546,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "swarm-dashboard.src.components.Observability.A2ATracker.<unknown>.messages.reduce() callback",
+          "start_line": 553,
+          "end_line": 553,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        }
+      ]
+    },
+    "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx": {
+      "file_status": "modified",
+      "methods": [
+        {
+          "qualified_name": "swarm-dashboard.src.components.Observability.ExternalCallsPanel.ExternalCallEntry",
+          "start_line": 19,
+          "end_line": 35,
+          "node_type": "INTERFACE",
+          "status": "added"
+        },
+        {
+          "qualified_name": "swarm-dashboard.src.components.Observability.ExternalCallsPanel.ExternalCallsPanelProps",
+          "start_line": 37,
+          "end_line": 40,
+          "node_type": "INTERFACE",
+          "status": "added"
+        },
+        {
+          "qualified_name": "swarm-dashboard.src.components.Observability.ExternalCallsPanel.extractDomain",
+          "start_line": 43,
+          "end_line": 58,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "swarm-dashboard.src.components.Observability.ExternalCallsPanel.getMethodColor",
+          "start_line": 61,
+          "end_line": 72,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "swarm-dashboard.src.components.Observability.ExternalCallsPanel.getStatusColor",
+          "start_line": 75,
+          "end_line": 82,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "swarm-dashboard.src.components.Observability.ExternalCallsPanel.getStatusBgColor",
+          "start_line": 84,
+          "end_line": 91,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "swarm-dashboard.src.components.Observability.ExternalCallsPanel.getCallTypeColor",
+          "start_line": 94,
+          "end_line": 102,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "swarm-dashboard.src.components.Observability.ExternalCallsPanel.formatDuration",
+          "start_line": 105,
+          "end_line": 110,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "swarm-dashboard.src.components.Observability.ExternalCallsPanel.truncate",
+          "start_line": 113,
+          "end_line": 116,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "swarm-dashboard.src.components.Observability.ExternalCallsPanel.uniqueAgents.map() callback",
+          "start_line": 337,
+          "end_line": 338,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "swarm-dashboard.src.components.Observability.ExternalCallsPanel.setCallTypeFilter",
+          "start_line": 348,
+          "end_line": 348,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "swarm-dashboard.src.components.Observability.ExternalCallsPanel.uniqueCallTypes.map() callback",
+          "start_line": 352,
+          "end_line": 353,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "swarm-dashboard.src.components.Observability.ExternalCallsPanel.setStatusFilter",
+          "start_line": 363,
+          "end_line": 363,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "swarm-dashboard.src.components.Observability.ExternalCallsPanel.ExternalCallsPanel",
+          "start_line": 389,
+          "end_line": 602,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "swarm-dashboard.src.components.Observability.ExternalCallsPanel.ExternalCallsPanel.handleMessage.useCallback() callback",
+          "start_line": 409,
+          "end_line": 439,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "swarm-dashboard.src.components.Observability.ExternalCallsPanel.ExternalCallsPanel.handleMessage.useCallback() callback.setCalls() callback",
+          "start_line": 433,
+          "end_line": 436,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "swarm-dashboard.src.components.Observability.ExternalCallsPanel.ExternalCallsPanel.useEffect() callback",
+          "start_line": 455,
+          "end_line": 471,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "swarm-dashboard.src.components.Observability.ExternalCallsPanel.ExternalCallsPanel.useEffect() callback.interval.setInterval() callback",
+          "start_line": 456,
+          "end_line": 468,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "swarm-dashboard.src.components.Observability.ExternalCallsPanel.ExternalCallsPanel.useEffect() callback.interval.setInterval() callback.setStats() callback",
+          "start_line": 457,
+          "end_line": 467,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "swarm-dashboard.src.components.Observability.ExternalCallsPanel.ExternalCallsPanel.useEffect() callback.interval.setInterval() callback.setStats() callback.success.calls.filter() callback",
+          "start_line": 459,
+          "end_line": 459,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "swarm-dashboard.src.components.Observability.ExternalCallsPanel.ExternalCallsPanel.useEffect() callback.interval.setInterval() callback.setStats() callback.error.calls.filter() callback",
+          "start_line": 460,
+          "end_line": 460,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "swarm-dashboard.src.components.Observability.ExternalCallsPanel.ExternalCallsPanel.useEffect() callback.interval.setInterval() callback.setStats() callback.durations.calls.filter() callback",
+          "start_line": 461,
+          "end_line": 461,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "swarm-dashboard.src.components.Observability.ExternalCallsPanel.ExternalCallsPanel.useEffect() callback.interval.setInterval() callback.setStats() callback.durations.map() callback",
+          "start_line": 461,
+          "end_line": 461,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "swarm-dashboard.src.components.Observability.ExternalCallsPanel.ExternalCallsPanel.useEffect() callback.interval.setInterval() callback.setStats() callback.avgDuration.durations.reduce() callback",
+          "start_line": 463,
+          "end_line": 463,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "swarm-dashboard.src.components.Observability.ExternalCallsPanel.ExternalCallsPanel.uniqueAgents.useMemo() callback",
+          "start_line": 475,
+          "end_line": 477,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "swarm-dashboard.src.components.Observability.ExternalCallsPanel.ExternalCallsPanel.uniqueAgents.useMemo() callback.calls.map() callback",
+          "start_line": 476,
+          "end_line": 476,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "swarm-dashboard.src.components.Observability.ExternalCallsPanel.ExternalCallsPanel.uniqueCallTypes.useMemo() callback",
+          "start_line": 479,
+          "end_line": 481,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "swarm-dashboard.src.components.Observability.ExternalCallsPanel.ExternalCallsPanel.uniqueCallTypes.useMemo() callback.calls.map() callback",
+          "start_line": 480,
+          "end_line": 480,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "swarm-dashboard.src.components.Observability.ExternalCallsPanel.ExternalCallsPanel.handleClearFilters.useCallback() callback",
+          "start_line": 487,
+          "end_line": 491,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "swarm-dashboard.src.components.Observability.ExternalCallsPanel.ExternalCallsPanel.filteredCalls.useMemo() callback",
+          "start_line": 494,
+          "end_line": 526,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "swarm-dashboard.src.components.Observability.ExternalCallsPanel.ExternalCallsPanel.filteredCalls.useMemo() callback.calls.filter() callback",
+          "start_line": 495,
+          "end_line": 525,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "swarm-dashboard.src.components.Observability.ExternalCallsPanel.ExternalCallsPanel.formatDuration",
+          "start_line": 556,
+          "end_line": 556,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "swarm-dashboard.src.components.Observability.ExternalCallsPanel.ExternalCallsPanel.filteredCalls.map() callback",
+          "start_line": 598,
+          "end_line": 600,
+          "node_type": "FUNCTION",
           "status": "added"
         }
       ]
@@ -121178,6 +121622,502 @@
       "start_line": 427,
       "end_line": 429,
       "type": "METHOD",
+      "status": "added"
+    },
+    "swarm-dashboard/src/components/Observability/A2ATracker.tsx|swarm-dashboard.src.components.Observability.A2ATracker.A2AMessage": {
+      "file_path": "swarm-dashboard/src/components/Observability/A2ATracker.tsx",
+      "qualified_name": "swarm-dashboard.src.components.Observability.A2ATracker.A2AMessage",
+      "start_line": 18,
+      "end_line": 28,
+      "type": "INTERFACE",
+      "status": "unchanged"
+    },
+    "swarm-dashboard/src/components/Observability/A2ATracker.tsx|swarm-dashboard.src.components.Observability.A2ATracker.AgentActivity": {
+      "file_path": "swarm-dashboard/src/components/Observability/A2ATracker.tsx",
+      "qualified_name": "swarm-dashboard.src.components.Observability.A2ATracker.AgentActivity",
+      "start_line": 30,
+      "end_line": 41,
+      "type": "INTERFACE",
+      "status": "unchanged"
+    },
+    "swarm-dashboard/src/components/Observability/A2ATracker.tsx|swarm-dashboard.src.components.Observability.A2ATracker.WorkflowStats": {
+      "file_path": "swarm-dashboard/src/components/Observability/A2ATracker.tsx",
+      "qualified_name": "swarm-dashboard.src.components.Observability.A2ATracker.WorkflowStats",
+      "start_line": 43,
+      "end_line": 48,
+      "type": "INTERFACE",
+      "status": "unchanged"
+    },
+    "swarm-dashboard/src/components/Observability/A2ATracker.tsx|swarm-dashboard.src.components.Observability.A2ATracker.ResourceStats": {
+      "file_path": "swarm-dashboard/src/components/Observability/A2ATracker.tsx",
+      "qualified_name": "swarm-dashboard.src.components.Observability.A2ATracker.ResourceStats",
+      "start_line": 50,
+      "end_line": 55,
+      "type": "INTERFACE",
+      "status": "unchanged"
+    },
+    "swarm-dashboard/src/components/Observability/A2ATracker.tsx|swarm-dashboard.src.components.Observability.A2ATracker.A2ATrackerProps": {
+      "file_path": "swarm-dashboard/src/components/Observability/A2ATracker.tsx",
+      "qualified_name": "swarm-dashboard.src.components.Observability.A2ATracker.A2ATrackerProps",
+      "start_line": 57,
+      "end_line": 61,
+      "type": "INTERFACE",
+      "status": "unchanged"
+    },
+    "swarm-dashboard/src/components/Observability/A2ATracker.tsx|swarm-dashboard.src.components.Observability.A2ATracker.mapEventType": {
+      "file_path": "swarm-dashboard/src/components/Observability/A2ATracker.tsx",
+      "qualified_name": "swarm-dashboard.src.components.Observability.A2ATracker.mapEventType",
+      "start_line": 63,
+      "end_line": 68,
+      "type": "FUNCTION",
+      "status": "unchanged"
+    },
+    "swarm-dashboard/src/components/Observability/A2ATracker.tsx|swarm-dashboard.src.components.Observability.A2ATracker.MessageTimeline.filteredMessages.messages.filter() callback": {
+      "file_path": "swarm-dashboard/src/components/Observability/A2ATracker.tsx",
+      "qualified_name": "swarm-dashboard.src.components.Observability.A2ATracker.MessageTimeline.filteredMessages.messages.filter() callback",
+      "start_line": 73,
+      "end_line": 73,
+      "type": "FUNCTION",
+      "status": "unchanged"
+    },
+    "swarm-dashboard/src/components/Observability/A2ATracker.tsx|swarm-dashboard.src.components.Observability.A2ATracker.MessageTimeline.yet": {
+      "file_path": "swarm-dashboard/src/components/Observability/A2ATracker.tsx",
+      "qualified_name": "swarm-dashboard.src.components.Observability.A2ATracker.MessageTimeline.yet",
+      "start_line": 99,
+      "end_line": 99,
+      "type": "METHOD",
+      "status": "unchanged"
+    },
+    "swarm-dashboard/src/components/Observability/A2ATracker.tsx|swarm-dashboard.src.components.Observability.A2ATracker.getStatusIcon": {
+      "file_path": "swarm-dashboard/src/components/Observability/A2ATracker.tsx",
+      "qualified_name": "swarm-dashboard.src.components.Observability.A2ATracker.getStatusIcon",
+      "start_line": 110,
+      "end_line": 110,
+      "type": "METHOD",
+      "status": "unchanged"
+    },
+    "swarm-dashboard/src/components/Observability/A2ATracker.tsx|swarm-dashboard.src.components.Observability.A2ATracker.agents.map() callback": {
+      "file_path": "swarm-dashboard/src/components/Observability/A2ATracker.tsx",
+      "qualified_name": "swarm-dashboard.src.components.Observability.A2ATracker.agents.map() callback",
+      "start_line": 147,
+      "end_line": 149,
+      "type": "FUNCTION",
+      "status": "unchanged"
+    },
+    "swarm-dashboard/src/components/Observability/A2ATracker.tsx|swarm-dashboard.src.components.Observability.A2ATracker.tasks": {
+      "file_path": "swarm-dashboard/src/components/Observability/A2ATracker.tsx",
+      "qualified_name": "swarm-dashboard.src.components.Observability.A2ATracker.tasks",
+      "start_line": 185,
+      "end_line": 186,
+      "type": "METHOD",
+      "status": "unchanged"
+    },
+    "swarm-dashboard/src/components/Observability/A2ATracker.tsx|swarm-dashboard.src.components.Observability.A2ATracker.MessageFlowGraph.useEffect() callback": {
+      "file_path": "swarm-dashboard/src/components/Observability/A2ATracker.tsx",
+      "qualified_name": "swarm-dashboard.src.components.Observability.A2ATracker.MessageFlowGraph.useEffect() callback",
+      "start_line": 198,
+      "end_line": 205,
+      "type": "FUNCTION",
+      "status": "unchanged"
+    },
+    "swarm-dashboard/src/components/Observability/A2ATracker.tsx|swarm-dashboard.src.components.Observability.A2ATracker.MessageFlowGraph.useEffect() callback.forEach() callback": {
+      "file_path": "swarm-dashboard/src/components/Observability/A2ATracker.tsx",
+      "qualified_name": "swarm-dashboard.src.components.Observability.A2ATracker.MessageFlowGraph.useEffect() callback.forEach() callback",
+      "start_line": 200,
+      "end_line": 203,
+      "type": "FUNCTION",
+      "status": "unchanged"
+    },
+    "swarm-dashboard/src/components/Observability/A2ATracker.tsx|swarm-dashboard.src.components.Observability.A2ATracker.MessageFlowGraph.topConnections.sort() callback": {
+      "file_path": "swarm-dashboard/src/components/Observability/A2ATracker.tsx",
+      "qualified_name": "swarm-dashboard.src.components.Observability.A2ATracker.MessageFlowGraph.topConnections.sort() callback",
+      "start_line": 208,
+      "end_line": 208,
+      "type": "FUNCTION",
+      "status": "unchanged"
+    },
+    "swarm-dashboard/src/components/Observability/A2ATracker.tsx|swarm-dashboard.src.components.Observability.A2ATracker.MessageFlowGraph.yet": {
+      "file_path": "swarm-dashboard/src/components/Observability/A2ATracker.tsx",
+      "qualified_name": "swarm-dashboard.src.components.Observability.A2ATracker.MessageFlowGraph.yet",
+      "start_line": 214,
+      "end_line": 214,
+      "type": "METHOD",
+      "status": "unchanged"
+    },
+    "swarm-dashboard/src/components/Observability/A2ATracker.tsx|swarm-dashboard.src.components.Observability.A2ATracker.topConnections.map(\"h-full bg-purple-500 rounded-full\") callback": {
+      "file_path": "swarm-dashboard/src/components/Observability/A2ATracker.tsx",
+      "qualified_name": "swarm-dashboard.src.components.Observability.A2ATracker.topConnections.map(\"h-full bg-purple-500 rounded-full\") callback",
+      "start_line": 216,
+      "end_line": 217,
+      "type": "FUNCTION",
+      "status": "unchanged"
+    },
+    "swarm-dashboard/src/components/Observability/A2ATracker.tsx|swarm-dashboard.src.components.Observability.A2ATracker.A2ATracker": {
+      "file_path": "swarm-dashboard/src/components/Observability/A2ATracker.tsx",
+      "qualified_name": "swarm-dashboard.src.components.Observability.A2ATracker.A2ATracker",
+      "start_line": 288,
+      "end_line": 440,
+      "type": "FUNCTION",
+      "status": "unchanged"
+    },
+    "swarm-dashboard/src/components/Observability/A2ATracker.tsx|swarm-dashboard.src.components.Observability.A2ATracker.A2ATracker.messages.useMemo() callback": {
+      "file_path": "swarm-dashboard/src/components/Observability/A2ATracker.tsx",
+      "qualified_name": "swarm-dashboard.src.components.Observability.A2ATracker.A2ATracker.messages.useMemo() callback",
+      "start_line": 321,
+      "end_line": 333,
+      "type": "FUNCTION",
+      "status": "unchanged"
+    },
+    "swarm-dashboard/src/components/Observability/A2ATracker.tsx|swarm-dashboard.src.components.Observability.A2ATracker.A2ATracker.messages.useMemo() callback.hookMessages.map() callback": {
+      "file_path": "swarm-dashboard/src/components/Observability/A2ATracker.tsx",
+      "qualified_name": "swarm-dashboard.src.components.Observability.A2ATracker.A2ATracker.messages.useMemo() callback.hookMessages.map() callback",
+      "start_line": 322,
+      "end_line": 332,
+      "type": "FUNCTION",
+      "status": "unchanged"
+    },
+    "swarm-dashboard/src/components/Observability/A2ATracker.tsx|swarm-dashboard.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.hookMessages.forEach() callback": {
+      "file_path": "swarm-dashboard/src/components/Observability/A2ATracker.tsx",
+      "qualified_name": "swarm-dashboard.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.hookMessages.forEach() callback",
+      "start_line": 340,
+      "end_line": 385,
+      "type": "FUNCTION",
+      "status": "unchanged"
+    },
+    "swarm-dashboard/src/components/Observability/A2ATracker.tsx|swarm-dashboard.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.activityList.map() callback": {
+      "file_path": "swarm-dashboard/src/components/Observability/A2ATracker.tsx",
+      "qualified_name": "swarm-dashboard.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.activityList.map() callback",
+      "start_line": 389,
+      "end_line": 393,
+      "type": "FUNCTION",
+      "status": "unchanged"
+    },
+    "swarm-dashboard/src/components/Observability/A2ATracker.tsx|swarm-dashboard.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.activityList.sort() callback": {
+      "file_path": "swarm-dashboard/src/components/Observability/A2ATracker.tsx",
+      "qualified_name": "swarm-dashboard.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.activityList.sort() callback",
+      "start_line": 394,
+      "end_line": 394,
+      "type": "FUNCTION",
+      "status": "unchanged"
+    },
+    "swarm-dashboard/src/components/Observability/A2ATracker.tsx|swarm-dashboard.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.activeConnections.agentActivity.filter() callback": {
+      "file_path": "swarm-dashboard/src/components/Observability/A2ATracker.tsx",
+      "qualified_name": "swarm-dashboard.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.activeConnections.agentActivity.filter() callback",
+      "start_line": 406,
+      "end_line": 406,
+      "type": "FUNCTION",
+      "status": "unchanged"
+    },
+    "swarm-dashboard/src/components/Observability/A2ATracker.tsx|swarm-dashboard.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback": {
+      "file_path": "swarm-dashboard/src/components/Observability/A2ATracker.tsx",
+      "qualified_name": "swarm-dashboard.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback",
+      "start_line": 419,
+      "end_line": 424,
+      "type": "FUNCTION",
+      "status": "unchanged"
+    },
+    "swarm-dashboard/src/components/Observability/A2ATracker.tsx|swarm-dashboard.src.components.Observability.A2ATracker.A2ATracker.internalMonologue.messages.filter() callback": {
+      "file_path": "swarm-dashboard/src/components/Observability/A2ATracker.tsx",
+      "qualified_name": "swarm-dashboard.src.components.Observability.A2ATracker.A2ATracker.internalMonologue.messages.filter() callback",
+      "start_line": 428,
+      "end_line": 428,
+      "type": "FUNCTION",
+      "status": "unchanged"
+    },
+    "swarm-dashboard/src/components/Observability/A2ATracker.tsx|swarm-dashboard.src.components.Observability.A2ATracker.<unknown>..filter() callback": {
+      "file_path": "swarm-dashboard/src/components/Observability/A2ATracker.tsx",
+      "qualified_name": "swarm-dashboard.src.components.Observability.A2ATracker.<unknown>..filter() callback",
+      "start_line": 449,
+      "end_line": 449,
+      "type": "FUNCTION",
+      "status": "unchanged"
+    },
+    "swarm-dashboard/src/components/Observability/A2ATracker.tsx|swarm-dashboard.src.components.Observability.A2ATracker.map() callback": {
+      "file_path": "swarm-dashboard/src/components/Observability/A2ATracker.tsx",
+      "qualified_name": "swarm-dashboard.src.components.Observability.A2ATracker.map() callback",
+      "start_line": 456,
+      "end_line": 458,
+      "type": "FUNCTION",
+      "status": "unchanged"
+    },
+    "swarm-dashboard/src/components/Observability/A2ATracker.tsx|swarm-dashboard.src.components.Observability.A2ATracker.<unknown>..reduce() callback": {
+      "file_path": "swarm-dashboard/src/components/Observability/A2ATracker.tsx",
+      "qualified_name": "swarm-dashboard.src.components.Observability.A2ATracker.<unknown>..reduce() callback",
+      "start_line": 546,
+      "end_line": 546,
+      "type": "FUNCTION",
+      "status": "unchanged"
+    },
+    "swarm-dashboard/src/components/Observability/A2ATracker.tsx|swarm-dashboard.src.components.Observability.A2ATracker.<unknown>.messages.reduce() callback": {
+      "file_path": "swarm-dashboard/src/components/Observability/A2ATracker.tsx",
+      "qualified_name": "swarm-dashboard.src.components.Observability.A2ATracker.<unknown>.messages.reduce() callback",
+      "start_line": 553,
+      "end_line": 553,
+      "type": "FUNCTION",
+      "status": "unchanged"
+    },
+    "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx|swarm-dashboard.src.components.Observability.ExternalCallsPanel.ExternalCallEntry": {
+      "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
+      "qualified_name": "swarm-dashboard.src.components.Observability.ExternalCallsPanel.ExternalCallEntry",
+      "start_line": 19,
+      "end_line": 35,
+      "type": "INTERFACE",
+      "status": "added"
+    },
+    "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx|swarm-dashboard.src.components.Observability.ExternalCallsPanel.ExternalCallsPanelProps": {
+      "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
+      "qualified_name": "swarm-dashboard.src.components.Observability.ExternalCallsPanel.ExternalCallsPanelProps",
+      "start_line": 37,
+      "end_line": 40,
+      "type": "INTERFACE",
+      "status": "added"
+    },
+    "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx|swarm-dashboard.src.components.Observability.ExternalCallsPanel.extractDomain": {
+      "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
+      "qualified_name": "swarm-dashboard.src.components.Observability.ExternalCallsPanel.extractDomain",
+      "start_line": 43,
+      "end_line": 58,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx|swarm-dashboard.src.components.Observability.ExternalCallsPanel.getMethodColor": {
+      "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
+      "qualified_name": "swarm-dashboard.src.components.Observability.ExternalCallsPanel.getMethodColor",
+      "start_line": 61,
+      "end_line": 72,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx|swarm-dashboard.src.components.Observability.ExternalCallsPanel.getStatusColor": {
+      "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
+      "qualified_name": "swarm-dashboard.src.components.Observability.ExternalCallsPanel.getStatusColor",
+      "start_line": 75,
+      "end_line": 82,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx|swarm-dashboard.src.components.Observability.ExternalCallsPanel.getStatusBgColor": {
+      "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
+      "qualified_name": "swarm-dashboard.src.components.Observability.ExternalCallsPanel.getStatusBgColor",
+      "start_line": 84,
+      "end_line": 91,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx|swarm-dashboard.src.components.Observability.ExternalCallsPanel.getCallTypeColor": {
+      "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
+      "qualified_name": "swarm-dashboard.src.components.Observability.ExternalCallsPanel.getCallTypeColor",
+      "start_line": 94,
+      "end_line": 102,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx|swarm-dashboard.src.components.Observability.ExternalCallsPanel.formatDuration": {
+      "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
+      "qualified_name": "swarm-dashboard.src.components.Observability.ExternalCallsPanel.formatDuration",
+      "start_line": 105,
+      "end_line": 110,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx|swarm-dashboard.src.components.Observability.ExternalCallsPanel.truncate": {
+      "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
+      "qualified_name": "swarm-dashboard.src.components.Observability.ExternalCallsPanel.truncate",
+      "start_line": 113,
+      "end_line": 116,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx|swarm-dashboard.src.components.Observability.ExternalCallsPanel.uniqueAgents.map() callback": {
+      "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
+      "qualified_name": "swarm-dashboard.src.components.Observability.ExternalCallsPanel.uniqueAgents.map() callback",
+      "start_line": 337,
+      "end_line": 338,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx|swarm-dashboard.src.components.Observability.ExternalCallsPanel.setCallTypeFilter": {
+      "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
+      "qualified_name": "swarm-dashboard.src.components.Observability.ExternalCallsPanel.setCallTypeFilter",
+      "start_line": 348,
+      "end_line": 348,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx|swarm-dashboard.src.components.Observability.ExternalCallsPanel.uniqueCallTypes.map() callback": {
+      "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
+      "qualified_name": "swarm-dashboard.src.components.Observability.ExternalCallsPanel.uniqueCallTypes.map() callback",
+      "start_line": 352,
+      "end_line": 353,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx|swarm-dashboard.src.components.Observability.ExternalCallsPanel.setStatusFilter": {
+      "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
+      "qualified_name": "swarm-dashboard.src.components.Observability.ExternalCallsPanel.setStatusFilter",
+      "start_line": 363,
+      "end_line": 363,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx|swarm-dashboard.src.components.Observability.ExternalCallsPanel.ExternalCallsPanel": {
+      "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
+      "qualified_name": "swarm-dashboard.src.components.Observability.ExternalCallsPanel.ExternalCallsPanel",
+      "start_line": 389,
+      "end_line": 602,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx|swarm-dashboard.src.components.Observability.ExternalCallsPanel.ExternalCallsPanel.handleMessage.useCallback() callback": {
+      "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
+      "qualified_name": "swarm-dashboard.src.components.Observability.ExternalCallsPanel.ExternalCallsPanel.handleMessage.useCallback() callback",
+      "start_line": 409,
+      "end_line": 439,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx|swarm-dashboard.src.components.Observability.ExternalCallsPanel.ExternalCallsPanel.handleMessage.useCallback() callback.setCalls() callback": {
+      "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
+      "qualified_name": "swarm-dashboard.src.components.Observability.ExternalCallsPanel.ExternalCallsPanel.handleMessage.useCallback() callback.setCalls() callback",
+      "start_line": 433,
+      "end_line": 436,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx|swarm-dashboard.src.components.Observability.ExternalCallsPanel.ExternalCallsPanel.useEffect() callback": {
+      "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
+      "qualified_name": "swarm-dashboard.src.components.Observability.ExternalCallsPanel.ExternalCallsPanel.useEffect() callback",
+      "start_line": 455,
+      "end_line": 471,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx|swarm-dashboard.src.components.Observability.ExternalCallsPanel.ExternalCallsPanel.useEffect() callback.interval.setInterval() callback": {
+      "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
+      "qualified_name": "swarm-dashboard.src.components.Observability.ExternalCallsPanel.ExternalCallsPanel.useEffect() callback.interval.setInterval() callback",
+      "start_line": 456,
+      "end_line": 468,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx|swarm-dashboard.src.components.Observability.ExternalCallsPanel.ExternalCallsPanel.useEffect() callback.interval.setInterval() callback.setStats() callback": {
+      "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
+      "qualified_name": "swarm-dashboard.src.components.Observability.ExternalCallsPanel.ExternalCallsPanel.useEffect() callback.interval.setInterval() callback.setStats() callback",
+      "start_line": 457,
+      "end_line": 467,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx|swarm-dashboard.src.components.Observability.ExternalCallsPanel.ExternalCallsPanel.useEffect() callback.interval.setInterval() callback.setStats() callback.success.calls.filter() callback": {
+      "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
+      "qualified_name": "swarm-dashboard.src.components.Observability.ExternalCallsPanel.ExternalCallsPanel.useEffect() callback.interval.setInterval() callback.setStats() callback.success.calls.filter() callback",
+      "start_line": 459,
+      "end_line": 459,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx|swarm-dashboard.src.components.Observability.ExternalCallsPanel.ExternalCallsPanel.useEffect() callback.interval.setInterval() callback.setStats() callback.error.calls.filter() callback": {
+      "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
+      "qualified_name": "swarm-dashboard.src.components.Observability.ExternalCallsPanel.ExternalCallsPanel.useEffect() callback.interval.setInterval() callback.setStats() callback.error.calls.filter() callback",
+      "start_line": 460,
+      "end_line": 460,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx|swarm-dashboard.src.components.Observability.ExternalCallsPanel.ExternalCallsPanel.useEffect() callback.interval.setInterval() callback.setStats() callback.durations.calls.filter() callback": {
+      "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
+      "qualified_name": "swarm-dashboard.src.components.Observability.ExternalCallsPanel.ExternalCallsPanel.useEffect() callback.interval.setInterval() callback.setStats() callback.durations.calls.filter() callback",
+      "start_line": 461,
+      "end_line": 461,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx|swarm-dashboard.src.components.Observability.ExternalCallsPanel.ExternalCallsPanel.useEffect() callback.interval.setInterval() callback.setStats() callback.durations.map() callback": {
+      "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
+      "qualified_name": "swarm-dashboard.src.components.Observability.ExternalCallsPanel.ExternalCallsPanel.useEffect() callback.interval.setInterval() callback.setStats() callback.durations.map() callback",
+      "start_line": 461,
+      "end_line": 461,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx|swarm-dashboard.src.components.Observability.ExternalCallsPanel.ExternalCallsPanel.useEffect() callback.interval.setInterval() callback.setStats() callback.avgDuration.durations.reduce() callback": {
+      "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
+      "qualified_name": "swarm-dashboard.src.components.Observability.ExternalCallsPanel.ExternalCallsPanel.useEffect() callback.interval.setInterval() callback.setStats() callback.avgDuration.durations.reduce() callback",
+      "start_line": 463,
+      "end_line": 463,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx|swarm-dashboard.src.components.Observability.ExternalCallsPanel.ExternalCallsPanel.uniqueAgents.useMemo() callback": {
+      "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
+      "qualified_name": "swarm-dashboard.src.components.Observability.ExternalCallsPanel.ExternalCallsPanel.uniqueAgents.useMemo() callback",
+      "start_line": 475,
+      "end_line": 477,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx|swarm-dashboard.src.components.Observability.ExternalCallsPanel.ExternalCallsPanel.uniqueAgents.useMemo() callback.calls.map() callback": {
+      "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
+      "qualified_name": "swarm-dashboard.src.components.Observability.ExternalCallsPanel.ExternalCallsPanel.uniqueAgents.useMemo() callback.calls.map() callback",
+      "start_line": 476,
+      "end_line": 476,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx|swarm-dashboard.src.components.Observability.ExternalCallsPanel.ExternalCallsPanel.uniqueCallTypes.useMemo() callback": {
+      "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
+      "qualified_name": "swarm-dashboard.src.components.Observability.ExternalCallsPanel.ExternalCallsPanel.uniqueCallTypes.useMemo() callback",
+      "start_line": 479,
+      "end_line": 481,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx|swarm-dashboard.src.components.Observability.ExternalCallsPanel.ExternalCallsPanel.uniqueCallTypes.useMemo() callback.calls.map() callback": {
+      "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
+      "qualified_name": "swarm-dashboard.src.components.Observability.ExternalCallsPanel.ExternalCallsPanel.uniqueCallTypes.useMemo() callback.calls.map() callback",
+      "start_line": 480,
+      "end_line": 480,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx|swarm-dashboard.src.components.Observability.ExternalCallsPanel.ExternalCallsPanel.handleClearFilters.useCallback() callback": {
+      "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
+      "qualified_name": "swarm-dashboard.src.components.Observability.ExternalCallsPanel.ExternalCallsPanel.handleClearFilters.useCallback() callback",
+      "start_line": 487,
+      "end_line": 491,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx|swarm-dashboard.src.components.Observability.ExternalCallsPanel.ExternalCallsPanel.filteredCalls.useMemo() callback": {
+      "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
+      "qualified_name": "swarm-dashboard.src.components.Observability.ExternalCallsPanel.ExternalCallsPanel.filteredCalls.useMemo() callback",
+      "start_line": 494,
+      "end_line": 526,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx|swarm-dashboard.src.components.Observability.ExternalCallsPanel.ExternalCallsPanel.filteredCalls.useMemo() callback.calls.filter() callback": {
+      "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
+      "qualified_name": "swarm-dashboard.src.components.Observability.ExternalCallsPanel.ExternalCallsPanel.filteredCalls.useMemo() callback.calls.filter() callback",
+      "start_line": 495,
+      "end_line": 525,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx|swarm-dashboard.src.components.Observability.ExternalCallsPanel.ExternalCallsPanel.formatDuration": {
+      "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
+      "qualified_name": "swarm-dashboard.src.components.Observability.ExternalCallsPanel.ExternalCallsPanel.formatDuration",
+      "start_line": 556,
+      "end_line": 556,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx|swarm-dashboard.src.components.Observability.ExternalCallsPanel.ExternalCallsPanel.filteredCalls.map() callback": {
+      "file_path": "swarm-dashboard/src/components/Observability/ExternalCallsPanel.tsx",
+      "qualified_name": "swarm-dashboard.src.components.Observability.ExternalCallsPanel.ExternalCallsPanel.filteredCalls.map() callback",
+      "start_line": 598,
+      "end_line": 600,
+      "type": "FUNCTION",
       "status": "added"
     }
   },
