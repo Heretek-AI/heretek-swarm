@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-23T21:24:46.757873+00:00",
+    "generated_at": "2026-04-23T21:34:38.534077+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -58828,6 +58828,74 @@
           "end_line": 1035,
           "node_type": "FUNCTION",
           "status": "unchanged"
+        }
+      ]
+    },
+    "swarm-dashboard/src/api/consciousness.ts": {
+      "file_status": "modified",
+      "methods": [
+        {
+          "qualified_name": "swarm-dashboard.src.api.consciousness.api.interceptors.request.use() callback",
+          "start_line": 18,
+          "end_line": 24,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "swarm-dashboard.src.api.consciousness.ConsciousnessStatistics",
+          "start_line": 26,
+          "end_line": 32,
+          "node_type": "INTERFACE",
+          "status": "added"
+        },
+        {
+          "qualified_name": "swarm-dashboard.src.api.consciousness.AgentMetrics",
+          "start_line": 34,
+          "end_line": 45,
+          "node_type": "INTERFACE",
+          "status": "added"
+        },
+        {
+          "qualified_name": "swarm-dashboard.src.api.consciousness.AgencyMetrics",
+          "start_line": 47,
+          "end_line": 52,
+          "node_type": "INTERFACE",
+          "status": "added"
+        },
+        {
+          "qualified_name": "swarm-dashboard.src.api.consciousness.TimeSeriesData",
+          "start_line": 54,
+          "end_line": 63,
+          "node_type": "INTERFACE",
+          "status": "added"
+        },
+        {
+          "qualified_name": "swarm-dashboard.src.api.consciousness.NetworkVisualization",
+          "start_line": 65,
+          "end_line": 76,
+          "node_type": "INTERFACE",
+          "status": "added"
+        },
+        {
+          "qualified_name": "swarm-dashboard.src.api.consciousness.PhiUpdateEvent",
+          "start_line": 84,
+          "end_line": 90,
+          "node_type": "INTERFACE",
+          "status": "added"
+        },
+        {
+          "qualified_name": "swarm-dashboard.src.api.consciousness.FepUpdateEvent",
+          "start_line": 93,
+          "end_line": 101,
+          "node_type": "INTERFACE",
+          "status": "added"
+        },
+        {
+          "qualified_name": "swarm-dashboard.src.api.consciousness.AgencyUpdateEvent",
+          "start_line": 104,
+          "end_line": 110,
+          "node_type": "INTERFACE",
+          "status": "added"
         }
       ]
     }
@@ -123904,6 +123972,78 @@
       "end_line": 1035,
       "type": "FUNCTION",
       "status": "unchanged"
+    },
+    "swarm-dashboard/src/api/consciousness.ts|swarm-dashboard.src.api.consciousness.api.interceptors.request.use() callback": {
+      "file_path": "swarm-dashboard/src/api/consciousness.ts",
+      "qualified_name": "swarm-dashboard.src.api.consciousness.api.interceptors.request.use() callback",
+      "start_line": 18,
+      "end_line": 24,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "swarm-dashboard/src/api/consciousness.ts|swarm-dashboard.src.api.consciousness.ConsciousnessStatistics": {
+      "file_path": "swarm-dashboard/src/api/consciousness.ts",
+      "qualified_name": "swarm-dashboard.src.api.consciousness.ConsciousnessStatistics",
+      "start_line": 26,
+      "end_line": 32,
+      "type": "INTERFACE",
+      "status": "added"
+    },
+    "swarm-dashboard/src/api/consciousness.ts|swarm-dashboard.src.api.consciousness.AgentMetrics": {
+      "file_path": "swarm-dashboard/src/api/consciousness.ts",
+      "qualified_name": "swarm-dashboard.src.api.consciousness.AgentMetrics",
+      "start_line": 34,
+      "end_line": 45,
+      "type": "INTERFACE",
+      "status": "added"
+    },
+    "swarm-dashboard/src/api/consciousness.ts|swarm-dashboard.src.api.consciousness.AgencyMetrics": {
+      "file_path": "swarm-dashboard/src/api/consciousness.ts",
+      "qualified_name": "swarm-dashboard.src.api.consciousness.AgencyMetrics",
+      "start_line": 47,
+      "end_line": 52,
+      "type": "INTERFACE",
+      "status": "added"
+    },
+    "swarm-dashboard/src/api/consciousness.ts|swarm-dashboard.src.api.consciousness.TimeSeriesData": {
+      "file_path": "swarm-dashboard/src/api/consciousness.ts",
+      "qualified_name": "swarm-dashboard.src.api.consciousness.TimeSeriesData",
+      "start_line": 54,
+      "end_line": 63,
+      "type": "INTERFACE",
+      "status": "added"
+    },
+    "swarm-dashboard/src/api/consciousness.ts|swarm-dashboard.src.api.consciousness.NetworkVisualization": {
+      "file_path": "swarm-dashboard/src/api/consciousness.ts",
+      "qualified_name": "swarm-dashboard.src.api.consciousness.NetworkVisualization",
+      "start_line": 65,
+      "end_line": 76,
+      "type": "INTERFACE",
+      "status": "added"
+    },
+    "swarm-dashboard/src/api/consciousness.ts|swarm-dashboard.src.api.consciousness.PhiUpdateEvent": {
+      "file_path": "swarm-dashboard/src/api/consciousness.ts",
+      "qualified_name": "swarm-dashboard.src.api.consciousness.PhiUpdateEvent",
+      "start_line": 84,
+      "end_line": 90,
+      "type": "INTERFACE",
+      "status": "added"
+    },
+    "swarm-dashboard/src/api/consciousness.ts|swarm-dashboard.src.api.consciousness.FepUpdateEvent": {
+      "file_path": "swarm-dashboard/src/api/consciousness.ts",
+      "qualified_name": "swarm-dashboard.src.api.consciousness.FepUpdateEvent",
+      "start_line": 93,
+      "end_line": 101,
+      "type": "INTERFACE",
+      "status": "added"
+    },
+    "swarm-dashboard/src/api/consciousness.ts|swarm-dashboard.src.api.consciousness.AgencyUpdateEvent": {
+      "file_path": "swarm-dashboard/src/api/consciousness.ts",
+      "qualified_name": "swarm-dashboard.src.api.consciousness.AgencyUpdateEvent",
+      "start_line": 104,
+      "end_line": 110,
+      "type": "INTERFACE",
+      "status": "added"
     }
   },
   "components": [

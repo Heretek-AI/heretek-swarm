@@ -76,6 +76,43 @@ export interface NetworkVisualization {
 }
 
 /**
+ * WebSocket event types for consciousness updates
+ * These mirror the event shapes broadcast from the backend via /ws/dashboard
+ */
+
+/** phi_update event broadcast from consciousness_event_handler */
+export interface PhiUpdateEvent {
+  type: 'phi_update';
+  agent_id: string;
+  phi_score: number;
+  state: 'dormant' | 'emerging' | 'coherent' | 'transcendent';
+  timestamp: string;
+}
+
+/** fep_update event broadcast from consciousness_event_handler */
+export interface FepUpdateEvent {
+  type: 'fep_update';
+  agent_id: string;
+  free_energy: number;
+  prediction_accuracy: number;
+  surprise: number;
+  belief_precision: number;
+  timestamp: string;
+}
+
+/** agency_update event broadcast from consciousness_event_handler */
+export interface AgencyUpdateEvent {
+  type: 'agency_update';
+  agent_id: string;
+  agency_score: number;
+  autonomy_score: number;
+  timestamp: string;
+}
+
+/** Union type for all consciousness WebSocket event types */
+export type ConsciousnessWebSocketEvent = PhiUpdateEvent | FepUpdateEvent | AgencyUpdateEvent;
+
+/**
  * Get collective consciousness statistics
  */
 export const getConsciousnessStatistics = async (): Promise<ConsciousnessStatistics> => {
