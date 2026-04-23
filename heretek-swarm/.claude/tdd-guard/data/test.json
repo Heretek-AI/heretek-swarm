@@ -1,3 +1,19 @@
 {
-  "testModules": []
+  "testModules": [
+    {
+      "moduleId": "tests/cli/test_config_loader.py",
+      "tests": [
+        {
+          "name": "collection_error_tests/cli/test_config_loader.py",
+          "fullName": "tests/cli/test_config_loader.py",
+          "state": "failed",
+          "errors": [
+            {
+              "message": "../tests/cli/test_config_loader.py:17: in <module>\n    from heretek_swarm.cli.config_loader import (\nheretek_swarm/cli/__init__.py:22: in <module>\n    _spec.loader.exec_module(_cli_module)\n<frozen importlib._bootstrap_external>:1022: in exec_module\n    ???\n<frozen importlib._bootstrap_external>:1159: in get_code\n    ???\n<frozen importlib._bootstrap_external>:1217: in get_data\n    ???\nE   FileNotFoundError: [Errno 2] No such file or directory: '/home/john/Projects/heretek-swarm/heretek-swarm/heretek-swarm/heretek_swarm/cli.py'"
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

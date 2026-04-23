@@ -111,6 +111,7 @@ class AgentMessageBase(BaseModel):
     correlation_id: str | None = Field(None, description="ID to correlate related messages")
     metadata: dict[str, Any] = Field(default_factory=dict, description="Additional metadata")
 
+    # pydantic-config: Nested Config block scoped to parent model — not same-scope shadowing.
     class Config:
         extra = "allow"  # Allow extra fields for flexibility
         validate_assignment = True
@@ -150,6 +151,7 @@ class ActorMessage(AgentMessageBase):
         check_value(v)
         return v
 
+    # pydantic-config: Nested Config block scoped to parent model — not same-scope shadowing.
     class Config:
         extra = "allow"
 
@@ -203,6 +205,7 @@ class StateUpdate(AgentMessageBase):
             raise ValueError(f"Invalid operation: {v}. Must be one of {valid_operations}")
         return v
 
+    # pydantic-config: Nested Config block scoped to parent model — not same-scope shadowing.
     class Config:
         extra = "forbid"
 
@@ -246,6 +249,7 @@ class ToolRequest(AgentMessageBase):
 
         return v
 
+    # pydantic-config: Nested Config block scoped to parent model — not same-scope shadowing.
     class Config:
         extra = "forbid"
 
@@ -278,6 +282,7 @@ class ToolResponse(AgentMessageBase):
 
         return v
 
+    # pydantic-config: Nested Config block scoped to parent model — not same-scope shadowing.
     class Config:
         extra = "forbid"
 
@@ -327,6 +332,7 @@ class CoordinationRequest(AgentMessageBase):
 
         return check_value(v)
 
+    # pydantic-config: Nested Config block scoped to parent model — not same-scope shadowing.
     class Config:
         extra = "forbid"
 
@@ -354,6 +360,7 @@ class ConsensusProposal(AgentMessageBase):
             raise ValueError(f"Unsafe text: {', '.join(result.errors)}")
         return v
 
+    # pydantic-config: Nested Config block scoped to parent model — not same-scope shadowing.
     class Config:
         extra = "forbid"
 
@@ -381,6 +388,7 @@ class ConsensusVote(AgentMessageBase):
             raise ValueError(f"Unsafe reasoning: {', '.join(result.errors)}")
         return v
 
+    # pydantic-config: Nested Config block scoped to parent model — not same-scope shadowing.
     class Config:
         extra = "forbid"
 
@@ -406,6 +414,7 @@ class ErrorMessage(AgentMessageBase):
         result = validator.validate_text(v)
         return result.sanitized_content or v
 
+    # pydantic-config: Nested Config block scoped to parent model — not same-scope shadowing.
     class Config:
         extra = "forbid"
 
@@ -442,6 +451,7 @@ class TaskMessage(AgentMessageBase):
 
         return check_value(v)
 
+    # pydantic-config: Nested Config block scoped to parent model — not same-scope shadowing.
     class Config:
         extra = "forbid"
 
@@ -471,6 +481,7 @@ class CodeExecutionRequest(AgentMessageBase):
 
         return v
 
+    # pydantic-config: Nested Config block scoped to parent model — not same-scope shadowing.
     class Config:
         extra = "forbid"
 

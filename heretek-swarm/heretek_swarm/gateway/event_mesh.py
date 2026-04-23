@@ -21,6 +21,11 @@ from heretek_swarm.gateway.content_router import (
     RoutingDecision,
     get_content_router,
 )
+from heretek_swarm.infrastructure.nats.publisher import (
+    NATSPublisher,
+    SwarmEvent,
+    get_nats_publisher,
+)
 
 logger = structlog.get_logger(__name__)
 
@@ -44,6 +49,63 @@ class EventMesh:
         self.clients: dict[str, WebSocket] = {}
         self._lock = asyncio.Lock()
         self._content_router = content_router or get_content_router()
+        self._nats_publisher: NATSPublisher | None = None
+
+    @property
+    def nats_publisher(self) -> NATSPublisher | None:
+        """Get the NATS publisher, initializing lazily if needed."""
+        return self._nats_publisher
+
+    async def set_nats_publisher(self, publisher: NATSPublisher | None) -> None:
+        """Set the NATS publisher. Pass None to use the global publisher."""
+        if publisher is None:
+            try:
+                self._nats_publisher = await get_nats_publisher()
+            except Exception:
+                logger.debug("nats_publisher_init_failed")
+                self._nats_publisher = None
+        else:
+            self._nats_publisher = publisher
+
+    async def publish_to_nats(
+        self,
+        event_type: str,
+        source_agent: str,
+        target_agent: str | None = None,
+        payload: dict | None = None,
+        topic: str = "swarm.events",
+    ) -> None:
+        """
+        Fire-and-forget publish a SwarmEvent to NATS.
+
+        Does not block if NATS is unavailable; logs at appropriate levels.
+
+        Args:
+            event_type: Event type string (e.g. 'a2a.message')
+            source_agent: Sending agent ID
+            target_agent: Optional target agent ID
+            payload: Optional event payload
+            topic: NATS topic to publish to (default: swarm.events)
+        """
+        if self._nats_publisher is None:
+            logger.debug("nats_publisher_not_available")
+            return
+
+        event = SwarmEvent(
+            event_type=event_type,
+            source_agent=source_agent,
+            target_agent=target_agent,
+            payload=payload or {},
+        )
+
+        try:
+            import asyncio
+            asyncio.create_task(
+                self._nats_publisher.publish_event(event)
+            )
+            logger.info("a2a_nats_publish_success", event_type=event_type, source=source_agent, topic=topic)
+        except Exception as e:
+            logger.debug("a2a_nats_publish_failed", error=str(e), event_type=event_type)
 
     @property
     def client_count(self) -> int:

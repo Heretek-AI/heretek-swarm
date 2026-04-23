@@ -309,6 +309,14 @@ class A2AServer:
         # Broadcast to all except sender
         await self.event_mesh.broadcast_json(message)
 
+        # Fire-and-forget: publish to NATS for dashboard/WebSocket bridge
+        await self.event_mesh.publish_to_nats(
+            event_type="a2a.message",
+            source_agent=sender_id,
+            payload=message,
+            topic="swarm.events",
+        )
+
         # Log message
         self._log_message(message)
 

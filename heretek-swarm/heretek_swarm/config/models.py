@@ -73,6 +73,7 @@ class UserConfiguration(BaseModel):
     updated_by: str | None = None
     created_by: str | None = None  # ORM has this; added here so orm_to_pydantic works
 
+    # pydantic-config: Nested Config block scoped to parent model — not same-scope shadowing.
     class Config:
         use_enum_values = True
         json_encoders = {
@@ -133,6 +134,7 @@ class LLMProvider(BaseModel):
     created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
+    # pydantic-config: Nested Config block scoped to parent model — not same-scope shadowing.
     class Config:
         use_enum_values = True
         json_encoders = {
@@ -229,6 +231,7 @@ class EmbeddingProvider(BaseModel):
     created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
+    # pydantic-config: Nested Config block scoped to parent model — not same-scope shadowing.
     class Config:
         use_enum_values = True
         json_encoders = {
@@ -311,6 +314,7 @@ class AgentConfig(BaseModel):
     created_by: str | None = None
     updated_by: str | None = None
 
+    # pydantic-config: Nested Config block scoped to parent model — not same-scope shadowing.
     class Config:
         use_enum_values = True
         json_encoders = {
@@ -363,6 +367,7 @@ class ConfigAuditLog(BaseModel):
     ip_address: str | None = None
     changed_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
+    # pydantic-config: Nested Config block scoped to parent model — not same-scope shadowing.
     class Config:
         json_encoders = {
             UUID: str,
@@ -457,6 +462,7 @@ class MCPProvider(BaseModel):
     created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
+    # pydantic-config: Nested Config block scoped to parent model — not same-scope shadowing.
     class Config:
         use_enum_values = True
         json_encoders = {
@@ -530,6 +536,7 @@ class InfrastructureConfig(BaseModel):
     created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
+    # pydantic-config: Nested Config block scoped to parent model — not same-scope shadowing.
     class Config:
         use_enum_values = True
         json_encoders = {
@@ -580,6 +587,7 @@ class MCPConfig(BaseModel):
     created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
+    # pydantic-config: Nested Config block scoped to parent model — not same-scope shadowing.
     class Config:
         use_enum_values = True
         json_encoders = {
