@@ -1,0 +1,142 @@
+version: "3.8"
+
+x-common-env: &common-env
+  HERETEK_LOG_LEVEL: ${HERETEK_LOG_LEVEL:-INFO}
+  ENVIRONMENT: ${ENVIRONMENT:-development}
+
+x-healthcheck-defaults: &healthcheck-defaults
+  interval: 30s
+  timeout: 10s
+  retries: 3
+  start_period: 10s
+
+services:
+  # =============================================================================
+  # Infrastructure Services
+  # =============================================================================
+
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      POSTGRES_DB: ${POSTGRES_DB:-heretek_swarm}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      <<: *healthcheck-defaults
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-heretek_swarm}"]
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      <<: *healthcheck-defaults
+      test: ["CMD", "redis-cli", "ping"]
+    restart: unless-stopped
+
+  qdrant:
+    image: qdrant/qdrant:latest
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - qdrant_data:/qdrant/storage
+    healthcheck:
+      <<: *healthcheck-defaults
+      test: ["CMD-SHELL", "curl -sf http://localhost:6333/healthz || exit 1"]
+    restart: unless-stopped
+
+  nats:
+    image: nats:latest
+    ports:
+      - "4222:4222"
+      - "8222:8222"
+    command: ["-js"]
+    volumes:
+      - nats_data:/data
+    healthcheck:
+      <<: *healthcheck-defaults
+      test: ["CMD-SHELL", "wget --spider -q http://localhost:8222/ || nc -z localhost 4222 || exit 1"]
+    restart: unless-stopped
+
+  # =============================================================================
+  # Autonomous Profile — API + 23 spawned agents
+  # =============================================================================
+
+  api:
+    profiles:
+      - autonomous
+    build:
+      context: .
+      dockerfile: heretek_swarm/Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      <<: *common-env
+      HERETEK_API_KEY: ${HERETEK_API_KEY:-htsk_your_api_key_here}
+      DATABASE_URL: ${DATABASE_URL:-postgresql+asyncpg://postgres:password@postgres:5432/heretek_swarm}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379}
+      QDRANT_HOST: ${QDRANT_HOST:-qdrant}
+      QDRANT_PORT: ${QDRANT_PORT:-6333}
+      QDRANT_URL: ${QDRANT_URL:-http://qdrant:6333}
+      QDRANT_API_KEY: ${QDRANT_API_KEY:-}
+      HERETEK_NATS_URL: ${HERETEK_NATS_URL:-nats://nats:4222}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_BASE_URL: ${OPENAI_BASE_URL:-https://api.minimax.io/v1}
+      LLM_MODEL: ${LLM_MODEL:-MiniMax-M2.7}
+      CORS_ORIGINS: ${CORS_ORIGINS:-*}
+      RATE_LIMIT_ENABLED: ${RATE_LIMIT_ENABLED:-true}
+      EMBEDDING_PROVIDER: ${EMBEDDING_PROVIDER:-openai_compatible}
+      EMBEDDING_BASE_URL: ${EMBEDDING_BASE_URL:-http://127.0.0.1:13305/api/v1}
+      EMBEDDING_API_KEY: ${EMBEDDING_API_KEY:-lemonade}
+      EMBEDDER_MODEL: ${EMBEDDER_MODEL:-nomic-embed-text-v2-moe-GGUF}
+      EMBEDDING_DIMENSIONS: ${EMBEDDING_DIMENSIONS:-768}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      qdrant:
+        condition: service_started
+      nats:
+        condition: service_started
+    healthcheck:
+      <<: *healthcheck-defaults
+      test: ["CMD", "curl", "-sf", "http://localhost:8000/health"]
+    restart: unless-stopped
+
+  # =============================================================================
+  # Dashboard Profile — React frontend
+  # =============================================================================
+
+  dashboard:
+    profiles:
+      - dashboard
+    build:
+      context: ./swarm-dashboard
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
+    environment:
+      <<: *common-env
+      VITE_API_URL: ${VITE_API_URL:-http://localhost:8000}
+    depends_on:
+      - api
+    restart: unless-stopped
+
+# =============================================================================
+# Volumes
+# =============================================================================
+
+volumes:
+  postgres_data:
+  redis_data:
+  qdrant_data:
+  nats_data:
