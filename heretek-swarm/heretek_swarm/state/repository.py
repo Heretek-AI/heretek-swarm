@@ -9,6 +9,8 @@ Provides PostgreSQL-backed persistence for agent states with:
 - Event sourcing integration for audit trail and state reconstruction
 """
 
+from __future__ import annotations
+
 import asyncio
 import importlib.util
 import json

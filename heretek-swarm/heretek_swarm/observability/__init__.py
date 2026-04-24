@@ -42,7 +42,7 @@ if TYPE_CHECKING:
 # Configuration
 # ============================================================================
 
-HERETEK_DATA_DIR = Path.home() / ".heretek-swarm"
+HERETEK_DATA_DIR = Path(os.environ.get("HERETEK_HOME", Path.home() / ".heretek-swarm"))
 HERETEK_LOGS_DIR = HERETEK_DATA_DIR / "logs"
 HERETEK_LOGS_DIR.mkdir(parents=True, exist_ok=True)
 

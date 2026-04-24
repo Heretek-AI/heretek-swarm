@@ -568,7 +568,7 @@ def serve(host: str, port: int, workers: int) -> None:
     _print_infrastructure_config(infra_config)
 
     # Build uvicorn command
-    app_module = "heretek_swarm.api.app:app"
+    app_module = "heretek_swarm.api.main:app"
 
     # Configure logging for uvicorn
     log_config = uvicorn.config.LOGGING_CONFIG

@@ -25,7 +25,8 @@ COPY heretek-swarm ./heretek-swarm
 
 # Install uv and project dependencies into a venv
 RUN pip install uv && \
-    uv sync --frozen --no-dev --no-editable
+    uv sync --frozen --no-dev --no-editable && \
+    uv pip install prometheus-client>=0.19.0 psycopg2-binary>=2.9.0 asyncpg>=0.29.0
 
 # =============================================================================
 # Stage 2: Production runtime
@@ -46,8 +47,8 @@ COPY --from=builder --chown=appuser:appgroup /app/heretek-swarm /app/heretek-swa
 # Copy migrations from build context root
 COPY --chown=appuser:appgroup migrations /app/migrations
 
-# Create agent_workspace directory owned by appuser (swarms package needs this)
-RUN mkdir -p /app/agent_workspace && chown appuser:appgroup /app/agent_workspace
+# Create agent_workspace and heretek_data directories owned by appuser
+RUN mkdir -p /app/agent_workspace /app/heretek_data && chown appuser:appgroup /app/agent_workspace /app/heretek_data
 
 # Set up environment
 ENV PATH="/app/.venv/bin:$PATH" \

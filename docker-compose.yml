@@ -2,6 +2,7 @@ version: "3.8"
 
 x-common-env: &common-env
   HERETEK_LOG_LEVEL: ${HERETEK_LOG_LEVEL:-INFO}
+  HERETEK_HOME: /app/heretek_data
   ENVIRONMENT: ${ENVIRONMENT:-development}
 
 x-healthcheck-defaults: &healthcheck-defaults

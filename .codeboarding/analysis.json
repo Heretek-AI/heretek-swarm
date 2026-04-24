@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-23T21:42:32.408621+00:00",
+    "generated_at": "2026-04-24T10:52:58.490608+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -59032,6 +59032,735 @@
           "end_line": 151,
           "node_type": "FUNCTION",
           "status": "unchanged"
+        }
+      ]
+    },
+    "heretek-swarm/heretek_swarm/state/repository.py": {
+      "file_status": "modified",
+      "methods": [
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.state.repository.AgentStateRecord",
+          "start_line": 46,
+          "end_line": 103,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.state.repository.AgentStateRecord.to_dict",
+          "start_line": 70,
+          "end_line": 81,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.state.repository.AgentStateRecord.from_dict",
+          "start_line": 84,
+          "end_line": 103,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.state.repository.StateCheckpoint",
+          "start_line": 107,
+          "end_line": 138,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.state.repository.StateCheckpoint.to_dict",
+          "start_line": 129,
+          "end_line": 138,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.state.repository.StateRepository",
+          "start_line": 141,
+          "end_line": 853,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.state.repository.StateRepository.__init__",
+          "start_line": 234,
+          "end_line": 267,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.state.repository.StateRepository.create_pool",
+          "start_line": 285,
+          "end_line": 319,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.state.repository.StateRepository.close_pool",
+          "start_line": 322,
+          "end_line": 327,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.state.repository.StateRepository.get_pool",
+          "start_line": 330,
+          "end_line": 339,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.state.repository.StateRepository.get_pool_stats",
+          "start_line": 342,
+          "end_line": 387,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.state.repository.StateRepository.initialize",
+          "start_line": 408,
+          "end_line": 430,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.state.repository.StateRepository._create_checkpoint_table",
+          "start_line": 432,
+          "end_line": 450,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.state.repository.StateRepository.save_state",
+          "start_line": 452,
+          "end_line": 486,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.state.repository.StateRepository._save_to_db",
+          "start_line": 488,
+          "end_line": 543,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.state.repository.StateRepository._save_to_memory",
+          "start_line": 545,
+          "end_line": 550,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.state.repository.StateRepository.load_state",
+          "start_line": 552,
+          "end_line": 570,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.state.repository.StateRepository._load_from_db",
+          "start_line": 572,
+          "end_line": 596,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.state.repository.StateRepository._load_from_memory",
+          "start_line": 598,
+          "end_line": 603,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.state.repository.StateRepository.delete_state",
+          "start_line": 605,
+          "end_line": 635,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.state.repository.StateRepository.list_active_states",
+          "start_line": 637,
+          "end_line": 667,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.state.repository.StateRepository.checkpoint",
+          "start_line": 669,
+          "end_line": 728,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.state.repository.StateRepository.get_checkpoint",
+          "start_line": 730,
+          "end_line": 768,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.state.repository.StateRepository.get_checkpoints",
+          "start_line": 770,
+          "end_line": 809,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.state.repository.StateRepository.restore_from_checkpoint",
+          "start_line": 811,
+          "end_line": 843,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.state.repository.StateRepository.get_stats",
+          "start_line": 845,
+          "end_line": 853,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.state.repository.ConcurrencyError",
+          "start_line": 856,
+          "end_line": 857,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.state.repository.EventSourcedRepository",
+          "start_line": 865,
+          "end_line": 1140,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.state.repository.EventSourcedRepository.__init__",
+          "start_line": 893,
+          "end_line": 925,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.state.repository.EventSourcedRepository.initialize",
+          "start_line": 927,
+          "end_line": 937,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.state.repository.EventSourcedRepository.save_state_with_event",
+          "start_line": 939,
+          "end_line": 999,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.state.repository.EventSourcedRepository.reconstruct_state",
+          "start_line": 1001,
+          "end_line": 1027,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.state.repository.EventSourcedRepository._apply_event",
+          "start_line": 1029,
+          "end_line": 1041,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.state.repository.EventSourcedRepository._apply_agent_state_changed",
+          "start_line": 1043,
+          "end_line": 1054,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.state.repository.EventSourcedRepository._apply_agent_config_updated",
+          "start_line": 1056,
+          "end_line": 1065,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.state.repository.EventSourcedRepository._apply_agent_created",
+          "start_line": 1067,
+          "end_line": 1075,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.state.repository.EventSourcedRepository.get_event_history",
+          "start_line": 1077,
+          "end_line": 1095,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.state.repository.EventSourcedRepository.create_state_snapshot",
+          "start_line": 1097,
+          "end_line": 1125,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.state.repository.EventSourcedRepository.register_event_applier",
+          "start_line": 1127,
+          "end_line": 1140,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.state.repository.get_event_sourced_repository",
+          "start_line": 1144,
+          "end_line": 1147,
+          "node_type": "FUNCTION",
+          "status": "added"
+        }
+      ]
+    },
+    "heretek-swarm/heretek_swarm/observability/__init__.py": {
+      "file_status": "modified",
+      "methods": [
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.LogLevel",
+          "start_line": 50,
+          "end_line": 56,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.ServiceStatus",
+          "start_line": 59,
+          "end_line": 66,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.LogEntry",
+          "start_line": 74,
+          "end_line": 88,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.LogEntry.to_dict",
+          "start_line": 86,
+          "end_line": 88,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.LokiHandler",
+          "start_line": 95,
+          "end_line": 262,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.LokiHandler.__init__",
+          "start_line": 102,
+          "end_line": 137,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.LokiHandler._get_client",
+          "start_line": 139,
+          "end_line": 144,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.LokiHandler._flush_buffer",
+          "start_line": 146,
+          "end_line": 191,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.LokiHandler._periodic_flush",
+          "start_line": 193,
+          "end_line": 197,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.LokiHandler.emit",
+          "start_line": 199,
+          "end_line": 210,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.LokiHandler._add_to_buffer",
+          "start_line": 212,
+          "end_line": 219,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.LokiHandler._format_record",
+          "start_line": 221,
+          "end_line": 248,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.LokiHandler.start",
+          "start_line": 250,
+          "end_line": 252,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.LokiHandler.stop",
+          "start_line": 254,
+          "end_line": 262,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.ObservabilityManager",
+          "start_line": 269,
+          "end_line": 566,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.ObservabilityManager.__init__",
+          "start_line": 295,
+          "end_line": 328,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.ObservabilityManager.initialize",
+          "start_line": 330,
+          "end_line": 366,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.ObservabilityManager.shutdown",
+          "start_line": 368,
+          "end_line": 375,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.ObservabilityManager.logger",
+          "start_line": 378,
+          "end_line": 380,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.ObservabilityManager.get_metrics",
+          "start_line": 386,
+          "end_line": 388,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.ObservabilityManager.get_metrics_content_type",
+          "start_line": 390,
+          "end_line": 392,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.ObservabilityManager.record_agent_registration",
+          "start_line": 394,
+          "end_line": 396,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.ObservabilityManager.record_agent_active",
+          "start_line": 398,
+          "end_line": 400,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.ObservabilityManager.record_task_completed",
+          "start_line": 402,
+          "end_line": 404,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.ObservabilityManager.record_task_failed",
+          "start_line": 406,
+          "end_line": 408,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.ObservabilityManager.record_message",
+          "start_line": 410,
+          "end_line": 412,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.ObservabilityManager.record_consensus_round",
+          "start_line": 414,
+          "end_line": 416,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.ObservabilityManager.record_phi_score",
+          "start_line": 418,
+          "end_line": 420,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.ObservabilityManager.record_free_energy",
+          "start_line": 422,
+          "end_line": 424,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.ObservabilityManager.record_api_request",
+          "start_line": 426,
+          "end_line": 434,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.ObservabilityManager.record_uptime",
+          "start_line": 436,
+          "end_line": 438,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.ObservabilityManager.trace_span",
+          "start_line": 444,
+          "end_line": 458,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.ObservabilityManager.traced",
+          "start_line": 460,
+          "end_line": 476,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.ObservabilityManager.register_health_check",
+          "start_line": 482,
+          "end_line": 490,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.ObservabilityManager.check_health",
+          "start_line": 492,
+          "end_line": 540,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.ObservabilityManager.log",
+          "start_line": 546,
+          "end_line": 566,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.get_observability",
+          "start_line": 576,
+          "end_line": 581,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.initialize_observability",
+          "start_line": 584,
+          "end_line": 589,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.main",
+          "start_line": 596,
+          "end_line": 623,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.main.check_api",
+          "start_line": 602,
+          "end_line": 603,
+          "node_type": "FUNCTION",
+          "status": "added"
+        }
+      ]
+    },
+    "heretek-swarm/heretek_swarm/cli.py": {
+      "file_status": "modified",
+      "methods": [
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.cli._load_infrastructure_config_and_echo",
+          "start_line": 41,
+          "end_line": 52,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.cli._print_infrastructure_config",
+          "start_line": 55,
+          "end_line": 77,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.cli._check_service_health",
+          "start_line": 84,
+          "end_line": 119,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.cli._make_result",
+          "start_line": 122,
+          "end_line": 135,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.cli._check_postgres",
+          "start_line": 138,
+          "end_line": 148,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.cli._check_redis",
+          "start_line": 151,
+          "end_line": 162,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.cli._check_qdrant",
+          "start_line": 165,
+          "end_line": 179,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.cli._check_nats",
+          "start_line": 182,
+          "end_line": 215,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.cli._check_mem0",
+          "start_line": 218,
+          "end_line": 232,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.cli.check_container_runtime",
+          "start_line": 239,
+          "end_line": 262,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.cli.check_compose_plugin",
+          "start_line": 265,
+          "end_line": 284,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.cli.cli",
+          "start_line": 293,
+          "end_line": 294,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.cli.deploy",
+          "start_line": 303,
+          "end_line": 374,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.cli._start_autonomous_swarm",
+          "start_line": 381,
+          "end_line": 427,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.cli._handle_signal",
+          "start_line": 430,
+          "end_line": 440,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.cli.run",
+          "start_line": 455,
+          "end_line": 514,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.cli.serve",
+          "start_line": 535,
+          "end_line": 588,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.cli.update",
+          "start_line": 593,
+          "end_line": 628,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.cli.status",
+          "start_line": 635,
+          "end_line": 765,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.cli.status.run_health_checks",
+          "start_line": 682,
+          "end_line": 701,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.cli._fetch_wizard_config",
+          "start_line": 768,
+          "end_line": 790,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "heretek-swarm.heretek_swarm.cli.main",
+          "start_line": 793,
+          "end_line": 795,
+          "node_type": "FUNCTION",
+          "status": "added"
         }
       ]
     }
@@ -124324,6 +125053,822 @@
       "end_line": 151,
       "type": "FUNCTION",
       "status": "unchanged"
+    },
+    "heretek-swarm/heretek_swarm/state/repository.py|heretek-swarm.heretek_swarm.state.repository.AgentStateRecord": {
+      "file_path": "heretek-swarm/heretek_swarm/state/repository.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.state.repository.AgentStateRecord",
+      "start_line": 46,
+      "end_line": 103,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/state/repository.py|heretek-swarm.heretek_swarm.state.repository.AgentStateRecord.to_dict": {
+      "file_path": "heretek-swarm/heretek_swarm/state/repository.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.state.repository.AgentStateRecord.to_dict",
+      "start_line": 70,
+      "end_line": 81,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/state/repository.py|heretek-swarm.heretek_swarm.state.repository.AgentStateRecord.from_dict": {
+      "file_path": "heretek-swarm/heretek_swarm/state/repository.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.state.repository.AgentStateRecord.from_dict",
+      "start_line": 84,
+      "end_line": 103,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/state/repository.py|heretek-swarm.heretek_swarm.state.repository.StateCheckpoint": {
+      "file_path": "heretek-swarm/heretek_swarm/state/repository.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.state.repository.StateCheckpoint",
+      "start_line": 107,
+      "end_line": 138,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/state/repository.py|heretek-swarm.heretek_swarm.state.repository.StateCheckpoint.to_dict": {
+      "file_path": "heretek-swarm/heretek_swarm/state/repository.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.state.repository.StateCheckpoint.to_dict",
+      "start_line": 129,
+      "end_line": 138,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/state/repository.py|heretek-swarm.heretek_swarm.state.repository.StateRepository": {
+      "file_path": "heretek-swarm/heretek_swarm/state/repository.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.state.repository.StateRepository",
+      "start_line": 141,
+      "end_line": 853,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/state/repository.py|heretek-swarm.heretek_swarm.state.repository.StateRepository.__init__": {
+      "file_path": "heretek-swarm/heretek_swarm/state/repository.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.state.repository.StateRepository.__init__",
+      "start_line": 234,
+      "end_line": 267,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/state/repository.py|heretek-swarm.heretek_swarm.state.repository.StateRepository.create_pool": {
+      "file_path": "heretek-swarm/heretek_swarm/state/repository.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.state.repository.StateRepository.create_pool",
+      "start_line": 285,
+      "end_line": 319,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/state/repository.py|heretek-swarm.heretek_swarm.state.repository.StateRepository.close_pool": {
+      "file_path": "heretek-swarm/heretek_swarm/state/repository.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.state.repository.StateRepository.close_pool",
+      "start_line": 322,
+      "end_line": 327,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/state/repository.py|heretek-swarm.heretek_swarm.state.repository.StateRepository.get_pool": {
+      "file_path": "heretek-swarm/heretek_swarm/state/repository.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.state.repository.StateRepository.get_pool",
+      "start_line": 330,
+      "end_line": 339,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/state/repository.py|heretek-swarm.heretek_swarm.state.repository.StateRepository.get_pool_stats": {
+      "file_path": "heretek-swarm/heretek_swarm/state/repository.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.state.repository.StateRepository.get_pool_stats",
+      "start_line": 342,
+      "end_line": 387,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/state/repository.py|heretek-swarm.heretek_swarm.state.repository.StateRepository.initialize": {
+      "file_path": "heretek-swarm/heretek_swarm/state/repository.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.state.repository.StateRepository.initialize",
+      "start_line": 408,
+      "end_line": 430,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/state/repository.py|heretek-swarm.heretek_swarm.state.repository.StateRepository._create_checkpoint_table": {
+      "file_path": "heretek-swarm/heretek_swarm/state/repository.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.state.repository.StateRepository._create_checkpoint_table",
+      "start_line": 432,
+      "end_line": 450,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/state/repository.py|heretek-swarm.heretek_swarm.state.repository.StateRepository.save_state": {
+      "file_path": "heretek-swarm/heretek_swarm/state/repository.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.state.repository.StateRepository.save_state",
+      "start_line": 452,
+      "end_line": 486,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/state/repository.py|heretek-swarm.heretek_swarm.state.repository.StateRepository._save_to_db": {
+      "file_path": "heretek-swarm/heretek_swarm/state/repository.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.state.repository.StateRepository._save_to_db",
+      "start_line": 488,
+      "end_line": 543,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/state/repository.py|heretek-swarm.heretek_swarm.state.repository.StateRepository._save_to_memory": {
+      "file_path": "heretek-swarm/heretek_swarm/state/repository.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.state.repository.StateRepository._save_to_memory",
+      "start_line": 545,
+      "end_line": 550,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/state/repository.py|heretek-swarm.heretek_swarm.state.repository.StateRepository.load_state": {
+      "file_path": "heretek-swarm/heretek_swarm/state/repository.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.state.repository.StateRepository.load_state",
+      "start_line": 552,
+      "end_line": 570,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/state/repository.py|heretek-swarm.heretek_swarm.state.repository.StateRepository._load_from_db": {
+      "file_path": "heretek-swarm/heretek_swarm/state/repository.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.state.repository.StateRepository._load_from_db",
+      "start_line": 572,
+      "end_line": 596,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/state/repository.py|heretek-swarm.heretek_swarm.state.repository.StateRepository._load_from_memory": {
+      "file_path": "heretek-swarm/heretek_swarm/state/repository.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.state.repository.StateRepository._load_from_memory",
+      "start_line": 598,
+      "end_line": 603,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/state/repository.py|heretek-swarm.heretek_swarm.state.repository.StateRepository.delete_state": {
+      "file_path": "heretek-swarm/heretek_swarm/state/repository.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.state.repository.StateRepository.delete_state",
+      "start_line": 605,
+      "end_line": 635,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/state/repository.py|heretek-swarm.heretek_swarm.state.repository.StateRepository.list_active_states": {
+      "file_path": "heretek-swarm/heretek_swarm/state/repository.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.state.repository.StateRepository.list_active_states",
+      "start_line": 637,
+      "end_line": 667,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/state/repository.py|heretek-swarm.heretek_swarm.state.repository.StateRepository.checkpoint": {
+      "file_path": "heretek-swarm/heretek_swarm/state/repository.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.state.repository.StateRepository.checkpoint",
+      "start_line": 669,
+      "end_line": 728,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/state/repository.py|heretek-swarm.heretek_swarm.state.repository.StateRepository.get_checkpoint": {
+      "file_path": "heretek-swarm/heretek_swarm/state/repository.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.state.repository.StateRepository.get_checkpoint",
+      "start_line": 730,
+      "end_line": 768,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/state/repository.py|heretek-swarm.heretek_swarm.state.repository.StateRepository.get_checkpoints": {
+      "file_path": "heretek-swarm/heretek_swarm/state/repository.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.state.repository.StateRepository.get_checkpoints",
+      "start_line": 770,
+      "end_line": 809,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/state/repository.py|heretek-swarm.heretek_swarm.state.repository.StateRepository.restore_from_checkpoint": {
+      "file_path": "heretek-swarm/heretek_swarm/state/repository.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.state.repository.StateRepository.restore_from_checkpoint",
+      "start_line": 811,
+      "end_line": 843,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/state/repository.py|heretek-swarm.heretek_swarm.state.repository.StateRepository.get_stats": {
+      "file_path": "heretek-swarm/heretek_swarm/state/repository.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.state.repository.StateRepository.get_stats",
+      "start_line": 845,
+      "end_line": 853,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/state/repository.py|heretek-swarm.heretek_swarm.state.repository.ConcurrencyError": {
+      "file_path": "heretek-swarm/heretek_swarm/state/repository.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.state.repository.ConcurrencyError",
+      "start_line": 856,
+      "end_line": 857,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/state/repository.py|heretek-swarm.heretek_swarm.state.repository.EventSourcedRepository": {
+      "file_path": "heretek-swarm/heretek_swarm/state/repository.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.state.repository.EventSourcedRepository",
+      "start_line": 865,
+      "end_line": 1140,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/state/repository.py|heretek-swarm.heretek_swarm.state.repository.EventSourcedRepository.__init__": {
+      "file_path": "heretek-swarm/heretek_swarm/state/repository.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.state.repository.EventSourcedRepository.__init__",
+      "start_line": 893,
+      "end_line": 925,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/state/repository.py|heretek-swarm.heretek_swarm.state.repository.EventSourcedRepository.initialize": {
+      "file_path": "heretek-swarm/heretek_swarm/state/repository.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.state.repository.EventSourcedRepository.initialize",
+      "start_line": 927,
+      "end_line": 937,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/state/repository.py|heretek-swarm.heretek_swarm.state.repository.EventSourcedRepository.save_state_with_event": {
+      "file_path": "heretek-swarm/heretek_swarm/state/repository.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.state.repository.EventSourcedRepository.save_state_with_event",
+      "start_line": 939,
+      "end_line": 999,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/state/repository.py|heretek-swarm.heretek_swarm.state.repository.EventSourcedRepository.reconstruct_state": {
+      "file_path": "heretek-swarm/heretek_swarm/state/repository.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.state.repository.EventSourcedRepository.reconstruct_state",
+      "start_line": 1001,
+      "end_line": 1027,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/state/repository.py|heretek-swarm.heretek_swarm.state.repository.EventSourcedRepository._apply_event": {
+      "file_path": "heretek-swarm/heretek_swarm/state/repository.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.state.repository.EventSourcedRepository._apply_event",
+      "start_line": 1029,
+      "end_line": 1041,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/state/repository.py|heretek-swarm.heretek_swarm.state.repository.EventSourcedRepository._apply_agent_state_changed": {
+      "file_path": "heretek-swarm/heretek_swarm/state/repository.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.state.repository.EventSourcedRepository._apply_agent_state_changed",
+      "start_line": 1043,
+      "end_line": 1054,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/state/repository.py|heretek-swarm.heretek_swarm.state.repository.EventSourcedRepository._apply_agent_config_updated": {
+      "file_path": "heretek-swarm/heretek_swarm/state/repository.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.state.repository.EventSourcedRepository._apply_agent_config_updated",
+      "start_line": 1056,
+      "end_line": 1065,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/state/repository.py|heretek-swarm.heretek_swarm.state.repository.EventSourcedRepository._apply_agent_created": {
+      "file_path": "heretek-swarm/heretek_swarm/state/repository.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.state.repository.EventSourcedRepository._apply_agent_created",
+      "start_line": 1067,
+      "end_line": 1075,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/state/repository.py|heretek-swarm.heretek_swarm.state.repository.EventSourcedRepository.get_event_history": {
+      "file_path": "heretek-swarm/heretek_swarm/state/repository.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.state.repository.EventSourcedRepository.get_event_history",
+      "start_line": 1077,
+      "end_line": 1095,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/state/repository.py|heretek-swarm.heretek_swarm.state.repository.EventSourcedRepository.create_state_snapshot": {
+      "file_path": "heretek-swarm/heretek_swarm/state/repository.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.state.repository.EventSourcedRepository.create_state_snapshot",
+      "start_line": 1097,
+      "end_line": 1125,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/state/repository.py|heretek-swarm.heretek_swarm.state.repository.EventSourcedRepository.register_event_applier": {
+      "file_path": "heretek-swarm/heretek_swarm/state/repository.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.state.repository.EventSourcedRepository.register_event_applier",
+      "start_line": 1127,
+      "end_line": 1140,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/state/repository.py|heretek-swarm.heretek_swarm.state.repository.get_event_sourced_repository": {
+      "file_path": "heretek-swarm/heretek_swarm/state/repository.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.state.repository.get_event_sourced_repository",
+      "start_line": 1144,
+      "end_line": 1147,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/observability/__init__.py|heretek-swarm.heretek_swarm.observability.__init__.LogLevel": {
+      "file_path": "heretek-swarm/heretek_swarm/observability/__init__.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.LogLevel",
+      "start_line": 50,
+      "end_line": 56,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/observability/__init__.py|heretek-swarm.heretek_swarm.observability.__init__.ServiceStatus": {
+      "file_path": "heretek-swarm/heretek_swarm/observability/__init__.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.ServiceStatus",
+      "start_line": 59,
+      "end_line": 66,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/observability/__init__.py|heretek-swarm.heretek_swarm.observability.__init__.LogEntry": {
+      "file_path": "heretek-swarm/heretek_swarm/observability/__init__.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.LogEntry",
+      "start_line": 74,
+      "end_line": 88,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/observability/__init__.py|heretek-swarm.heretek_swarm.observability.__init__.LogEntry.to_dict": {
+      "file_path": "heretek-swarm/heretek_swarm/observability/__init__.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.LogEntry.to_dict",
+      "start_line": 86,
+      "end_line": 88,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/observability/__init__.py|heretek-swarm.heretek_swarm.observability.__init__.LokiHandler": {
+      "file_path": "heretek-swarm/heretek_swarm/observability/__init__.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.LokiHandler",
+      "start_line": 95,
+      "end_line": 262,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/observability/__init__.py|heretek-swarm.heretek_swarm.observability.__init__.LokiHandler.__init__": {
+      "file_path": "heretek-swarm/heretek_swarm/observability/__init__.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.LokiHandler.__init__",
+      "start_line": 102,
+      "end_line": 137,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/observability/__init__.py|heretek-swarm.heretek_swarm.observability.__init__.LokiHandler._get_client": {
+      "file_path": "heretek-swarm/heretek_swarm/observability/__init__.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.LokiHandler._get_client",
+      "start_line": 139,
+      "end_line": 144,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/observability/__init__.py|heretek-swarm.heretek_swarm.observability.__init__.LokiHandler._flush_buffer": {
+      "file_path": "heretek-swarm/heretek_swarm/observability/__init__.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.LokiHandler._flush_buffer",
+      "start_line": 146,
+      "end_line": 191,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/observability/__init__.py|heretek-swarm.heretek_swarm.observability.__init__.LokiHandler._periodic_flush": {
+      "file_path": "heretek-swarm/heretek_swarm/observability/__init__.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.LokiHandler._periodic_flush",
+      "start_line": 193,
+      "end_line": 197,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/observability/__init__.py|heretek-swarm.heretek_swarm.observability.__init__.LokiHandler.emit": {
+      "file_path": "heretek-swarm/heretek_swarm/observability/__init__.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.LokiHandler.emit",
+      "start_line": 199,
+      "end_line": 210,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/observability/__init__.py|heretek-swarm.heretek_swarm.observability.__init__.LokiHandler._add_to_buffer": {
+      "file_path": "heretek-swarm/heretek_swarm/observability/__init__.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.LokiHandler._add_to_buffer",
+      "start_line": 212,
+      "end_line": 219,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/observability/__init__.py|heretek-swarm.heretek_swarm.observability.__init__.LokiHandler._format_record": {
+      "file_path": "heretek-swarm/heretek_swarm/observability/__init__.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.LokiHandler._format_record",
+      "start_line": 221,
+      "end_line": 248,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/observability/__init__.py|heretek-swarm.heretek_swarm.observability.__init__.LokiHandler.start": {
+      "file_path": "heretek-swarm/heretek_swarm/observability/__init__.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.LokiHandler.start",
+      "start_line": 250,
+      "end_line": 252,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/observability/__init__.py|heretek-swarm.heretek_swarm.observability.__init__.LokiHandler.stop": {
+      "file_path": "heretek-swarm/heretek_swarm/observability/__init__.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.LokiHandler.stop",
+      "start_line": 254,
+      "end_line": 262,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/observability/__init__.py|heretek-swarm.heretek_swarm.observability.__init__.ObservabilityManager": {
+      "file_path": "heretek-swarm/heretek_swarm/observability/__init__.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.ObservabilityManager",
+      "start_line": 269,
+      "end_line": 566,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/observability/__init__.py|heretek-swarm.heretek_swarm.observability.__init__.ObservabilityManager.__init__": {
+      "file_path": "heretek-swarm/heretek_swarm/observability/__init__.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.ObservabilityManager.__init__",
+      "start_line": 295,
+      "end_line": 328,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/observability/__init__.py|heretek-swarm.heretek_swarm.observability.__init__.ObservabilityManager.initialize": {
+      "file_path": "heretek-swarm/heretek_swarm/observability/__init__.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.ObservabilityManager.initialize",
+      "start_line": 330,
+      "end_line": 366,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/observability/__init__.py|heretek-swarm.heretek_swarm.observability.__init__.ObservabilityManager.shutdown": {
+      "file_path": "heretek-swarm/heretek_swarm/observability/__init__.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.ObservabilityManager.shutdown",
+      "start_line": 368,
+      "end_line": 375,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/observability/__init__.py|heretek-swarm.heretek_swarm.observability.__init__.ObservabilityManager.logger": {
+      "file_path": "heretek-swarm/heretek_swarm/observability/__init__.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.ObservabilityManager.logger",
+      "start_line": 378,
+      "end_line": 380,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/observability/__init__.py|heretek-swarm.heretek_swarm.observability.__init__.ObservabilityManager.get_metrics": {
+      "file_path": "heretek-swarm/heretek_swarm/observability/__init__.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.ObservabilityManager.get_metrics",
+      "start_line": 386,
+      "end_line": 388,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/observability/__init__.py|heretek-swarm.heretek_swarm.observability.__init__.ObservabilityManager.get_metrics_content_type": {
+      "file_path": "heretek-swarm/heretek_swarm/observability/__init__.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.ObservabilityManager.get_metrics_content_type",
+      "start_line": 390,
+      "end_line": 392,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/observability/__init__.py|heretek-swarm.heretek_swarm.observability.__init__.ObservabilityManager.record_agent_registration": {
+      "file_path": "heretek-swarm/heretek_swarm/observability/__init__.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.ObservabilityManager.record_agent_registration",
+      "start_line": 394,
+      "end_line": 396,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/observability/__init__.py|heretek-swarm.heretek_swarm.observability.__init__.ObservabilityManager.record_agent_active": {
+      "file_path": "heretek-swarm/heretek_swarm/observability/__init__.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.ObservabilityManager.record_agent_active",
+      "start_line": 398,
+      "end_line": 400,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/observability/__init__.py|heretek-swarm.heretek_swarm.observability.__init__.ObservabilityManager.record_task_completed": {
+      "file_path": "heretek-swarm/heretek_swarm/observability/__init__.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.ObservabilityManager.record_task_completed",
+      "start_line": 402,
+      "end_line": 404,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/observability/__init__.py|heretek-swarm.heretek_swarm.observability.__init__.ObservabilityManager.record_task_failed": {
+      "file_path": "heretek-swarm/heretek_swarm/observability/__init__.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.ObservabilityManager.record_task_failed",
+      "start_line": 406,
+      "end_line": 408,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/observability/__init__.py|heretek-swarm.heretek_swarm.observability.__init__.ObservabilityManager.record_message": {
+      "file_path": "heretek-swarm/heretek_swarm/observability/__init__.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.ObservabilityManager.record_message",
+      "start_line": 410,
+      "end_line": 412,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/observability/__init__.py|heretek-swarm.heretek_swarm.observability.__init__.ObservabilityManager.record_consensus_round": {
+      "file_path": "heretek-swarm/heretek_swarm/observability/__init__.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.ObservabilityManager.record_consensus_round",
+      "start_line": 414,
+      "end_line": 416,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/observability/__init__.py|heretek-swarm.heretek_swarm.observability.__init__.ObservabilityManager.record_phi_score": {
+      "file_path": "heretek-swarm/heretek_swarm/observability/__init__.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.ObservabilityManager.record_phi_score",
+      "start_line": 418,
+      "end_line": 420,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/observability/__init__.py|heretek-swarm.heretek_swarm.observability.__init__.ObservabilityManager.record_free_energy": {
+      "file_path": "heretek-swarm/heretek_swarm/observability/__init__.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.ObservabilityManager.record_free_energy",
+      "start_line": 422,
+      "end_line": 424,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/observability/__init__.py|heretek-swarm.heretek_swarm.observability.__init__.ObservabilityManager.record_api_request": {
+      "file_path": "heretek-swarm/heretek_swarm/observability/__init__.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.ObservabilityManager.record_api_request",
+      "start_line": 426,
+      "end_line": 434,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/observability/__init__.py|heretek-swarm.heretek_swarm.observability.__init__.ObservabilityManager.record_uptime": {
+      "file_path": "heretek-swarm/heretek_swarm/observability/__init__.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.ObservabilityManager.record_uptime",
+      "start_line": 436,
+      "end_line": 438,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/observability/__init__.py|heretek-swarm.heretek_swarm.observability.__init__.ObservabilityManager.trace_span": {
+      "file_path": "heretek-swarm/heretek_swarm/observability/__init__.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.ObservabilityManager.trace_span",
+      "start_line": 444,
+      "end_line": 458,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/observability/__init__.py|heretek-swarm.heretek_swarm.observability.__init__.ObservabilityManager.traced": {
+      "file_path": "heretek-swarm/heretek_swarm/observability/__init__.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.ObservabilityManager.traced",
+      "start_line": 460,
+      "end_line": 476,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/observability/__init__.py|heretek-swarm.heretek_swarm.observability.__init__.ObservabilityManager.register_health_check": {
+      "file_path": "heretek-swarm/heretek_swarm/observability/__init__.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.ObservabilityManager.register_health_check",
+      "start_line": 482,
+      "end_line": 490,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/observability/__init__.py|heretek-swarm.heretek_swarm.observability.__init__.ObservabilityManager.check_health": {
+      "file_path": "heretek-swarm/heretek_swarm/observability/__init__.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.ObservabilityManager.check_health",
+      "start_line": 492,
+      "end_line": 540,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/observability/__init__.py|heretek-swarm.heretek_swarm.observability.__init__.ObservabilityManager.log": {
+      "file_path": "heretek-swarm/heretek_swarm/observability/__init__.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.ObservabilityManager.log",
+      "start_line": 546,
+      "end_line": 566,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/observability/__init__.py|heretek-swarm.heretek_swarm.observability.__init__.get_observability": {
+      "file_path": "heretek-swarm/heretek_swarm/observability/__init__.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.get_observability",
+      "start_line": 576,
+      "end_line": 581,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/observability/__init__.py|heretek-swarm.heretek_swarm.observability.__init__.initialize_observability": {
+      "file_path": "heretek-swarm/heretek_swarm/observability/__init__.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.initialize_observability",
+      "start_line": 584,
+      "end_line": 589,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/observability/__init__.py|heretek-swarm.heretek_swarm.observability.__init__.main": {
+      "file_path": "heretek-swarm/heretek_swarm/observability/__init__.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.main",
+      "start_line": 596,
+      "end_line": 623,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/observability/__init__.py|heretek-swarm.heretek_swarm.observability.__init__.main.check_api": {
+      "file_path": "heretek-swarm/heretek_swarm/observability/__init__.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.observability.__init__.main.check_api",
+      "start_line": 602,
+      "end_line": 603,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/cli.py|heretek-swarm.heretek_swarm.cli._load_infrastructure_config_and_echo": {
+      "file_path": "heretek-swarm/heretek_swarm/cli.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.cli._load_infrastructure_config_and_echo",
+      "start_line": 41,
+      "end_line": 52,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/cli.py|heretek-swarm.heretek_swarm.cli._print_infrastructure_config": {
+      "file_path": "heretek-swarm/heretek_swarm/cli.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.cli._print_infrastructure_config",
+      "start_line": 55,
+      "end_line": 77,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/cli.py|heretek-swarm.heretek_swarm.cli._check_service_health": {
+      "file_path": "heretek-swarm/heretek_swarm/cli.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.cli._check_service_health",
+      "start_line": 84,
+      "end_line": 119,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/cli.py|heretek-swarm.heretek_swarm.cli._make_result": {
+      "file_path": "heretek-swarm/heretek_swarm/cli.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.cli._make_result",
+      "start_line": 122,
+      "end_line": 135,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/cli.py|heretek-swarm.heretek_swarm.cli._check_postgres": {
+      "file_path": "heretek-swarm/heretek_swarm/cli.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.cli._check_postgres",
+      "start_line": 138,
+      "end_line": 148,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/cli.py|heretek-swarm.heretek_swarm.cli._check_redis": {
+      "file_path": "heretek-swarm/heretek_swarm/cli.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.cli._check_redis",
+      "start_line": 151,
+      "end_line": 162,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/cli.py|heretek-swarm.heretek_swarm.cli._check_qdrant": {
+      "file_path": "heretek-swarm/heretek_swarm/cli.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.cli._check_qdrant",
+      "start_line": 165,
+      "end_line": 179,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/cli.py|heretek-swarm.heretek_swarm.cli._check_nats": {
+      "file_path": "heretek-swarm/heretek_swarm/cli.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.cli._check_nats",
+      "start_line": 182,
+      "end_line": 215,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/cli.py|heretek-swarm.heretek_swarm.cli._check_mem0": {
+      "file_path": "heretek-swarm/heretek_swarm/cli.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.cli._check_mem0",
+      "start_line": 218,
+      "end_line": 232,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/cli.py|heretek-swarm.heretek_swarm.cli.check_container_runtime": {
+      "file_path": "heretek-swarm/heretek_swarm/cli.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.cli.check_container_runtime",
+      "start_line": 239,
+      "end_line": 262,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/cli.py|heretek-swarm.heretek_swarm.cli.check_compose_plugin": {
+      "file_path": "heretek-swarm/heretek_swarm/cli.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.cli.check_compose_plugin",
+      "start_line": 265,
+      "end_line": 284,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/cli.py|heretek-swarm.heretek_swarm.cli.cli": {
+      "file_path": "heretek-swarm/heretek_swarm/cli.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.cli.cli",
+      "start_line": 293,
+      "end_line": 294,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/cli.py|heretek-swarm.heretek_swarm.cli.deploy": {
+      "file_path": "heretek-swarm/heretek_swarm/cli.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.cli.deploy",
+      "start_line": 303,
+      "end_line": 374,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/cli.py|heretek-swarm.heretek_swarm.cli._start_autonomous_swarm": {
+      "file_path": "heretek-swarm/heretek_swarm/cli.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.cli._start_autonomous_swarm",
+      "start_line": 381,
+      "end_line": 427,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/cli.py|heretek-swarm.heretek_swarm.cli._handle_signal": {
+      "file_path": "heretek-swarm/heretek_swarm/cli.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.cli._handle_signal",
+      "start_line": 430,
+      "end_line": 440,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/cli.py|heretek-swarm.heretek_swarm.cli.run": {
+      "file_path": "heretek-swarm/heretek_swarm/cli.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.cli.run",
+      "start_line": 455,
+      "end_line": 514,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/cli.py|heretek-swarm.heretek_swarm.cli.serve": {
+      "file_path": "heretek-swarm/heretek_swarm/cli.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.cli.serve",
+      "start_line": 535,
+      "end_line": 588,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/cli.py|heretek-swarm.heretek_swarm.cli.update": {
+      "file_path": "heretek-swarm/heretek_swarm/cli.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.cli.update",
+      "start_line": 593,
+      "end_line": 628,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/cli.py|heretek-swarm.heretek_swarm.cli.status": {
+      "file_path": "heretek-swarm/heretek_swarm/cli.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.cli.status",
+      "start_line": 635,
+      "end_line": 765,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/cli.py|heretek-swarm.heretek_swarm.cli.status.run_health_checks": {
+      "file_path": "heretek-swarm/heretek_swarm/cli.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.cli.status.run_health_checks",
+      "start_line": 682,
+      "end_line": 701,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/cli.py|heretek-swarm.heretek_swarm.cli._fetch_wizard_config": {
+      "file_path": "heretek-swarm/heretek_swarm/cli.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.cli._fetch_wizard_config",
+      "start_line": 768,
+      "end_line": 790,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "heretek-swarm/heretek_swarm/cli.py|heretek-swarm.heretek_swarm.cli.main": {
+      "file_path": "heretek-swarm/heretek_swarm/cli.py",
+      "qualified_name": "heretek-swarm.heretek_swarm.cli.main",
+      "start_line": 793,
+      "end_line": 795,
+      "type": "FUNCTION",
+      "status": "added"
     }
   },
   "components": [

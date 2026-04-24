@@ -1,7 +1,7 @@
 {
   "repository_name": "heretek-swarm",
-  "timestamp": "2026-04-23T21:42:33.865044+00:00",
-  "overall_score": 0.9909797552062185,
+  "timestamp": "2026-04-24T10:52:59.934338+00:00",
+  "overall_score": 0.9904285548596614,
   "check_summaries": [
     {
       "check_name": "function_size",
@@ -790,10 +790,10 @@
       "description": "Detects unused imports, variables, functions, and dead code via LSP diagnostics",
       "language": "Python",
       "check_type": "standard",
-      "total_entities_checked": 13,
-      "findings_count": 13,
-      "warning_count": 2,
-      "score": 0.35,
+      "total_entities_checked": 19,
+      "findings_count": 19,
+      "warning_count": 7,
+      "score": 0.04999999999999993,
       "finding_groups": [
         {
           "severity": "info",
@@ -801,80 +801,87 @@
           "description": "Variables declared but never used",
           "entities": [
             {
-              "entity_name": "[unused_variable] \"NatsError\" is not accessed",
-              "file_path": "heretek-swarm/heretek_swarm/gateway/nats_event_mesh.py",
-              "line_start": 33,
-              "line_end": 33,
+              "entity_name": "[unused_variable] \"version\" is not accessed",
+              "file_path": "heretek-swarm/heretek_swarm/state/repository.py",
+              "line_start": 946,
+              "line_end": 946,
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_variable] \"stream_name\" is not accessed",
-              "file_path": "heretek-swarm/heretek_swarm/gateway/nats_event_mesh.py",
-              "line_start": 489,
-              "line_end": 489,
+              "entity_name": "[unused_variable] \"shutil\" is not accessed",
+              "file_path": "heretek-swarm/heretek_swarm/cli.py",
+              "line_start": 12,
+              "line_end": 12,
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_variable] \"durable_name\" is not accessed",
-              "file_path": "heretek-swarm/heretek_swarm/gateway/nats_event_mesh.py",
-              "line_start": 490,
-              "line_end": 490,
+              "entity_name": "[unused_variable] \"threading\" is not accessed",
+              "file_path": "heretek-swarm/heretek_swarm/cli.py",
+              "line_start": 15,
+              "line_end": 15,
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_variable] \"subject\" is not accessed",
-              "file_path": "heretek-swarm/heretek_swarm/gateway/nats_event_mesh.py",
-              "line_start": 617,
-              "line_end": 617,
+              "entity_name": "[unused_variable] \"reader\" is not accessed",
+              "file_path": "heretek-swarm/heretek_swarm/cli.py",
+              "line_start": 141,
+              "line_end": 141,
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_variable] \"sid\" is not accessed",
-              "file_path": "heretek-swarm/heretek_swarm/gateway/nats_event_mesh.py",
-              "line_start": 883,
-              "line_end": 883,
+              "entity_name": "[unused_variable] \"time\" is not accessed",
+              "file_path": "heretek-swarm/heretek_swarm/cli.py",
+              "line_start": 154,
+              "line_end": 154,
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_variable] \"timeout\" is not accessed",
-              "file_path": "heretek-swarm/heretek_swarm/gateway/nats_event_mesh.py",
-              "line_start": 891,
-              "line_end": 891,
+              "entity_name": "[unused_variable] \"time\" is not accessed",
+              "file_path": "heretek-swarm/heretek_swarm/cli.py",
+              "line_start": 168,
+              "line_end": 168,
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_variable] \"args\" is not accessed",
-              "file_path": "heretek-swarm/heretek_swarm/gateway/nats_event_mesh.py",
-              "line_start": 912,
-              "line_end": 912,
+              "entity_name": "[unused_variable] \"time\" is not accessed",
+              "file_path": "heretek-swarm/heretek_swarm/cli.py",
+              "line_start": 184,
+              "line_end": 184,
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_variable] \"mesh\" is not accessed",
-              "file_path": "heretek-swarm/heretek_swarm/gateway/nats_event_mesh.py",
-              "line_start": 1370,
-              "line_end": 1370,
+              "entity_name": "[unused_variable] \"time\" is not accessed",
+              "file_path": "heretek-swarm/heretek_swarm/cli.py",
+              "line_start": 221,
+              "line_end": 221,
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_variable] \"agent_id\" is not accessed",
-              "file_path": "heretek-swarm/heretek_swarm/plugins/consciousness_enhanced.py",
-              "line_start": 499,
-              "line_end": 499,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"ActionOrigin\" is not accessed",
-              "file_path": "heretek-swarm/heretek_swarm/runtime/autonomous_runtime.py",
-              "line_start": 828,
-              "line_end": 828,
+              "entity_name": "[unused_variable] \"check_runtime\" is not accessed",
+              "file_path": "heretek-swarm/heretek_swarm/cli.py",
+              "line_start": 303,
+              "line_end": 303,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"frame\" is not accessed",
-              "file_path": "heretek-swarm/heretek_swarm/runtime/autonomous_runtime.py",
-              "line_start": 1033,
-              "line_end": 1033,
+              "file_path": "heretek-swarm/heretek_swarm/cli.py",
+              "line_start": 430,
+              "line_end": 430,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"os\" is not accessed",
+              "file_path": "heretek-swarm/heretek_swarm/cli.py",
+              "line_start": 547,
+              "line_end": 547,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"output_json\" is not accessed",
+              "file_path": "heretek-swarm/heretek_swarm/cli.py",
+              "line_start": 635,
+              "line_end": 635,
               "metric_value": 0.0
             }
           ]
@@ -885,17 +892,52 @@
           "description": "Unused import statements that should be removed",
           "entities": [
             {
-              "entity_name": "[unused_import] Import \"NatsError\" is not accessed",
-              "file_path": "heretek-swarm/heretek_swarm/gateway/nats_event_mesh.py",
-              "line_start": 33,
-              "line_end": 33,
+              "entity_name": "[unused_import] Import \"shutil\" is not accessed",
+              "file_path": "heretek-swarm/heretek_swarm/cli.py",
+              "line_start": 12,
+              "line_end": 12,
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_import] Import \"ActionOrigin\" is not accessed",
-              "file_path": "heretek-swarm/heretek_swarm/runtime/autonomous_runtime.py",
-              "line_start": 828,
-              "line_end": 828,
+              "entity_name": "[unused_import] Import \"threading\" is not accessed",
+              "file_path": "heretek-swarm/heretek_swarm/cli.py",
+              "line_start": 15,
+              "line_end": 15,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"time\" is not accessed",
+              "file_path": "heretek-swarm/heretek_swarm/cli.py",
+              "line_start": 154,
+              "line_end": 154,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"time\" is not accessed",
+              "file_path": "heretek-swarm/heretek_swarm/cli.py",
+              "line_start": 168,
+              "line_end": 168,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"time\" is not accessed",
+              "file_path": "heretek-swarm/heretek_swarm/cli.py",
+              "line_start": 184,
+              "line_end": 184,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"time\" is not accessed",
+              "file_path": "heretek-swarm/heretek_swarm/cli.py",
+              "line_start": 221,
+              "line_end": 221,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"os\" is not accessed",
+              "file_path": "heretek-swarm/heretek_swarm/cli.py",
+              "line_start": 547,
+              "line_end": 547,
               "metric_value": 0.0
             }
           ]
@@ -1169,33 +1211,33 @@
         "src.utils -> src.components.Agents -> src.components.Settings -> src.components.UI -> src.utils",
         "src.utils -> src.components.Agents -> src.components.UI -> src.utils",
         "src.utils -> src.components.UI -> src.utils",
-        "src.components.Settings -> src.api -> src.components.Agents -> src.components.Settings",
-        "src.components.Settings -> src.api -> src.components.Agents -> src.components.UI -> src.components.Settings",
-        "src.components.Settings -> src.api -> src.components.UI -> src.components.Agents -> src.components.Settings",
-        "src.components.Settings -> src.api -> src.components.UI -> src.components.Settings",
-        "src.components.Settings -> src.components.Agents -> src.api -> src.components.UI -> src.components.Settings",
-        "src.components.Settings -> src.components.Agents -> src.components.Settings",
-        "src.components.Settings -> src.components.Agents -> src.components.UI -> src.components.Settings",
-        "src.components.Settings -> src.components.UI -> src.components.Agents -> src.components.Settings",
-        "src.components.Settings -> src.components.UI -> src.components.Settings",
-        "src.components.UI -> src.components.Agents -> src.api -> src.components.UI",
-        "src.components.UI -> src.components.Agents -> src.components.UI",
         "src.api -> src.components.Agents -> src.api",
-        "dashboard.frontend.src.utils -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils",
-        "dashboard.frontend.src.utils -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils",
-        "dashboard.frontend.src.utils -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils",
-        "dashboard.frontend.src.utils -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils",
-        "dashboard.frontend.src.utils -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils",
+        "src.api -> src.components.Agents -> src.components.Settings -> src.api",
+        "src.api -> src.components.Agents -> src.components.UI -> src.components.Settings -> src.api",
+        "src.api -> src.components.UI -> src.components.Agents -> src.api",
+        "src.api -> src.components.UI -> src.components.Agents -> src.components.Settings -> src.api",
+        "src.api -> src.components.UI -> src.components.Settings -> src.api",
+        "src.api -> src.components.UI -> src.components.Settings -> src.components.Agents -> src.api",
+        "src.components.UI -> src.components.Agents -> src.components.Settings -> src.components.UI",
+        "src.components.UI -> src.components.Agents -> src.components.UI",
+        "src.components.UI -> src.components.Settings -> src.components.Agents -> src.components.UI",
+        "src.components.UI -> src.components.Settings -> src.components.UI",
+        "src.components.Agents -> src.components.Settings -> src.components.Agents",
         "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api -> dashboard.frontend.src.components.Agents",
         "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents",
         "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.Agents",
+        "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils -> dashboard.frontend.src.components.Agents",
         "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api -> dashboard.frontend.src.components.Agents",
         "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents",
+        "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils -> dashboard.frontend.src.components.Agents",
         "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.Agents",
         "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents",
+        "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils -> dashboard.frontend.src.components.Agents",
         "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents",
         "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api -> dashboard.frontend.src.components.Agents",
         "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.Agents",
+        "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils -> dashboard.frontend.src.components.Agents",
+        "dashboard.frontend.src.utils -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils",
         "dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api",
         "dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.UI"
       ],
@@ -1229,34 +1271,19 @@
       "description": "Detects unused imports, variables, functions, and dead code via LSP diagnostics",
       "language": "TypeScript",
       "check_type": "standard",
-      "total_entities_checked": 1,
-      "findings_count": 1,
+      "total_entities_checked": 0,
+      "findings_count": 0,
       "warning_count": 0,
-      "score": 0.95,
-      "finding_groups": [
-        {
-          "severity": "info",
-          "threshold": 0,
-          "description": "Variables declared but never used",
-          "entities": [
-            {
-              "entity_name": "[unused_variable] 'm' is declared but its value is never read.",
-              "file_path": "swarm-dashboard/src/components/Canvas/AgentDetailDrawer.tsx",
-              "line_start": 136,
-              "line_end": 136,
-              "metric_value": 0.0
-            }
-          ]
-        }
-      ]
+      "score": 1.0,
+      "finding_groups": []
     }
   ],
   "file_summaries": [
     {
-      "file_path": "heretek-swarm/heretek_swarm/gateway/nats_event_mesh.py",
-      "total_findings": 9,
-      "warning_findings": 1,
-      "composite_risk_score": 55.0
+      "file_path": "heretek-swarm/heretek_swarm/cli.py",
+      "total_findings": 18,
+      "warning_findings": 7,
+      "composite_risk_score": 85.0
     },
     {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
@@ -1287,12 +1314,6 @@
       "total_findings": 3,
       "warning_findings": 3,
       "composite_risk_score": 45.0
-    },
-    {
-      "file_path": "heretek-swarm/heretek_swarm/runtime/autonomous_runtime.py",
-      "total_findings": 3,
-      "warning_findings": 1,
-      "composite_risk_score": 35.0
     },
     {
       "file_path": "src/heretek_swarm/security/threat_detection.py",
@@ -1368,6 +1389,12 @@
     },
     {
       "file_path": "src/heretek_swarm/config/crud.py",
+      "total_findings": 2,
+      "warning_findings": 2,
+      "composite_risk_score": 30.0
+    },
+    {
+      "file_path": "src/heretek_swarm/actors/coordinator.py",
       "total_findings": 2,
       "warning_findings": 2,
       "composite_risk_score": 30.0
