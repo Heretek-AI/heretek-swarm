@@ -149,3 +149,4 @@ target/
 vendor/
 .cache/
 tmp/
+swarm-dashboard/playwright-report/data/*
