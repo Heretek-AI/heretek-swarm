@@ -17,7 +17,7 @@
  * Verification: npx playwright test tests/e2e/m029-workflow-strategies.spec.ts --project=chromium --reporter=line
  */
 
-import { test, expect } from '@playwright/test';
+import { test, expect, defineConfig, devices } from '@playwright/test';
 import { execSync } from 'child_process';
 import { fileURLToPath } from 'url';
 import { dirname, resolve } from 'path';
