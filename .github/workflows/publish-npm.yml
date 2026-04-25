@@ -6,12 +6,12 @@ on:
   push: { tags: ['v*'] }
   workflow_dispatch:
 
+env:
+  NODE_VERSION: '22'
+
 jobs:
   build-and-package:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: dashboard/frontend
 
     steps:
       - name: Checkout repository
@@ -20,25 +20,29 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: ${{ env.NODE_VERSION }}
           registry-url: 'https://registry.npmjs.org'
 
       - name: Install dependencies
+        working-directory: swarm-dashboard
         run: npm ci
 
       - name: Build
+        working-directory: swarm-dashboard
         run: npm run build
 
       - name: Pack tarball
+        working-directory: swarm-dashboard
         run: npm pack
 
       - name: Upload tarball artifact
         uses: actions/upload-artifact@v4
         with:
           name: npm-package
-          path: dashboard/frontend/*.tgz
+          path: swarm-dashboard/*.tgz
 
       - name: Publish to npm
+        working-directory: swarm-dashboard
         run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
