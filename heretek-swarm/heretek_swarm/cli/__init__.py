@@ -32,6 +32,8 @@ from heretek_swarm._cli_module import (
     _handle_signal,
     check_container_runtime,
     check_compose_plugin,
+    init,
+    wizard,
 )
 
 __all__ = [
@@ -45,4 +47,6 @@ __all__ = [
     "_handle_signal",
     "check_container_runtime",
     "check_compose_plugin",
+    "init",
+    "wizard",
 ]
