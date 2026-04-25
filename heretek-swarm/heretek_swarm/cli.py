@@ -14,6 +14,7 @@ import subprocess
 import sys
 import threading
 import time
+import webbrowser
 from pathlib import Path
 from typing import Any
 
@@ -589,43 +590,23 @@ def serve(host: str, port: int, workers: int) -> None:
 
 
 @cli.command()
-@click.option("--version", default="latest", help="Version to update to")
-def update(version: str) -> None:
-    """Update Heretek Swarm to a new version."""
-    logger.info("update_command", version=version)
+def wizard() -> None:
+    """
+    Open the Heretek Swarm wizard in your browser.
 
-    click.echo("Heretek Swarm Update")
-    click.echo("=" * 40)
+    Opens http://localhost:3000 in the default browser. If no browser is available,
+    prints the URL instead.
+    """
+    logger.info("wizard_command")
 
-    if version == "latest":
-        click.echo("\nFetching latest version from PyPI...")
+    url = "http://localhost:3000"
 
-        try:
-            result = subprocess.run(
-                [sys.executable, "-m", "pip", "index", "versions", "heretek-swarm"],
-                capture_output=True,
-                text=True,
-                timeout=10,
-            )
-            if result.returncode == 0 and result.stdout:
-                # Parse available versions from pip output
-                lines = result.stdout.strip().split("\n")
-                for line in lines:
-                    if "Available versions:" in line:
-                        click.echo(f"\nAvailable versions: {line.split('Available versions:')[1].strip()}")
-                        break
-        except subprocess.SubprocessError:
-            pass
-
-        click.echo("\nTo update to the latest version:")
-        click.echo("  pip install --upgrade heretek-swarm")
-    else:
-        click.echo(f"\nTo update to version {version}:")
-        click.echo(f"  pip install --upgrade heretek-swarm=={version}")
-
-    click.echo("\nAfter updating, verify with:")
-    click.echo("  heretek-swarm --version")
-    click.echo("\n" + "=" * 40)
+    try:
+        webbrowser.open(url)
+        click.echo(f"Opening {url} in browser...")
+    except Exception:
+        click.echo(f"No browser available. Navigate to: {url}")
+        sys.exit(0)
 
 
 @cli.command()
