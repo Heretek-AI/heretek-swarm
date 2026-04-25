@@ -12,10 +12,11 @@ from heretek_swarm.cli.config_loader import load_infrastructure_config
 # the naming conflict.
 import importlib.util
 import sys
+from pathlib import Path
 
 _spec = importlib.util.spec_from_file_location(
     "heretek_swarm._cli_module",
-    "heretek_swarm/cli.py"
+    Path(__file__).parent.parent / "cli.py"
 )
 _cli_module = importlib.util.module_from_spec(_spec)
 sys.modules["heretek_swarm._cli_module"] = _cli_module
