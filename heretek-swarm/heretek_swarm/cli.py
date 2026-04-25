@@ -667,13 +667,18 @@ def status(api_base: str, timeout: int, output_json: bool) -> None:
 
     logger.info("status_command", api_base=api_base, timeout=timeout)
 
-    click.echo("Heretek Swarm Status")
-    click.echo("=" * 40)
+    if output_json:
+        # JSON-only output: suppress all human-readable text
+        pass
+    else:
+        click.echo("Heretek Swarm Status")
+        click.echo("=" * 40)
 
     start_time = time.perf_counter()
 
     # Fetch infrastructure config from API
-    click.echo(f"\nFetching infrastructure configuration from {api_base}...")
+    if not output_json:
+        click.echo(f"\nFetching infrastructure configuration from {api_base}...")
 
     try:
         response = httpx.get(
@@ -683,24 +688,43 @@ def status(api_base: str, timeout: int, output_json: bool) -> None:
         response.raise_for_status()
         data = response.json()
     except httpx.ConnectError:
+        if output_json:
+            import json
+            click.echo(json.dumps({"error": f"Cannot connect to API server at {api_base}"}))
+            sys.exit(2)
         click.echo("  ✗ Cannot connect to API server")
         click.echo(f"    Is the server running at {api_base}?")
         click.echo("    Start with: heretek-swarm serve")
         sys.exit(1)
     except httpx.HTTPError as e:
+        if output_json:
+            import json
+            click.echo(json.dumps({"error": f"API error: {e}"}))
+            sys.exit(2)
         click.echo(f"  ✗ API error: {e}")
         sys.exit(1)
 
     configs = data.get("infrastructure", [])
     if not configs:
+        if output_json:
+            import json
+            result = {
+                "services": [],
+                "summary": {"total": 0, "healthy": 0, "unhealthy": 0, "unknown": 0, "duration_ms": round((time.perf_counter() - start_time) * 1000, 1)},
+                "timestamp": __import__("datetime").datetime.now(__import__("datetime").timezone.utc).isoformat().replace("+00:00", "Z"),
+            }
+            click.echo(json.dumps(result))
+            sys.exit(0)
         click.echo("  ⚠ No infrastructure services configured")
         click.echo("\nRun 'heretek-swarm deploy' or use the wizard to configure services.")
         sys.exit(0)
 
-    click.echo(f"  Found {len(configs)} configured service(s)")
+    if not output_json:
+        click.echo(f"  Found {len(configs)} configured service(s)")
 
     # Perform health checks
-    click.echo("\nPerforming health checks...")
+    if not output_json:
+        click.echo("\nPerforming health checks...")
     results: list[dict[str, Any]] = []
 
     async def run_health_checks() -> list[dict[str, Any]]:
@@ -726,14 +750,47 @@ def status(api_base: str, timeout: int, output_json: bool) -> None:
 
     results = asyncio.run(run_health_checks())
 
-    # Display results
-    click.echo("\n" + "-" * 60)
-    click.echo(f"{'Service':<12} {'Status':<12} {'Latency':<12} Details")
-    click.echo("-" * 60)
-
     healthy_count = 0
     unhealthy_count = 0
     unknown_count = 0
+    for r in results:
+        s = r.get("status", "unknown")
+        if s == "healthy":
+            healthy_count += 1
+        elif s == "unhealthy":
+            unhealthy_count += 1
+        else:
+            unknown_count += 1
+
+    if output_json:
+        import json
+        total_time_ms = (time.perf_counter() - start_time) * 1000
+        result = {
+            "services": [
+                {
+                    "service": r.get("service", "unknown"),
+                    "status": r.get("status", "unknown"),
+                    "latency_ms": round(r.get("latency_ms", 0), 1),
+                    "error": r.get("error"),
+                }
+                for r in results
+            ],
+            "summary": {
+                "total": len(results),
+                "healthy": healthy_count,
+                "unhealthy": unhealthy_count,
+                "unknown": unknown_count,
+                "duration_ms": round(total_time_ms, 1),
+            },
+            "timestamp": __import__("datetime").datetime.now(__import__("datetime").timezone.utc).isoformat().replace("+00:00", "Z"),
+        }
+        click.echo(json.dumps(result))
+        sys.exit(1 if unhealthy_count > 0 else 0)
+
+    # Display results (human-readable table)
+    click.echo("\n" + "-" * 60)
+    click.echo(f"{'Service':<12} {'Status':<12} {'Latency':<12} Details")
+    click.echo("-" * 60)
 
     for result in results:
         service = result.get("service", "unknown")
@@ -744,13 +801,10 @@ def status(api_base: str, timeout: int, output_json: bool) -> None:
         # Status icon and color
         if status_val == "healthy":
             icon = "✓"
-            healthy_count += 1
         elif status_val == "unhealthy":
             icon = "✗"
-            unhealthy_count += 1
         else:
             icon = "?"
-            unknown_count += 1
 
         # Format latency
         if latency < 1000:

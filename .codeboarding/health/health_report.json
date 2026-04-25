@@ -1,7 +1,7 @@
 {
   "repository_name": "heretek-swarm",
-  "timestamp": "2026-04-25T04:03:52.953958+00:00",
-  "overall_score": 0.9906362370954646,
+  "timestamp": "2026-04-25T04:16:37.460963+00:00",
+  "overall_score": 0.990731396090714,
   "check_summaries": [
     {
       "check_name": "function_size",
@@ -790,10 +790,10 @@
       "description": "Detects unused imports, variables, functions, and dead code via LSP diagnostics",
       "language": "Python",
       "check_type": "standard",
-      "total_entities_checked": 17,
-      "findings_count": 17,
+      "total_entities_checked": 16,
+      "findings_count": 16,
       "warning_count": 6,
-      "score": 0.1499999999999999,
+      "score": 0.19999999999999996,
       "finding_groups": [
         {
           "severity": "info",
@@ -868,13 +868,6 @@
               "file_path": "heretek-swarm/heretek_swarm/cli.py",
               "line_start": 548,
               "line_end": 548,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"output_json\" is not accessed",
-              "file_path": "heretek-swarm/heretek_swarm/cli.py",
-              "line_start": 659,
-              "line_end": 659,
               "metric_value": 0.0
             }
           ]
@@ -1267,7 +1260,7 @@
   "file_summaries": [
     {
       "file_path": "heretek-swarm/heretek_swarm/cli.py",
-      "total_findings": 16,
+      "total_findings": 15,
       "warning_findings": 6,
       "composite_risk_score": 80.0
     },

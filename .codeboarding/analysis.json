@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-25T04:02:31.014445+00:00",
+    "generated_at": "2026-04-25T04:16:35.701619+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -59743,10 +59743,10 @@
         },
         {
           "qualified_name": "heretek-swarm.heretek_swarm.cli.status",
-          "start_line": 616,
-          "end_line": 746,
+          "start_line": 659,
+          "end_line": 843,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "heretek-swarm.heretek_swarm.cli.status.run_health_checks",
@@ -125860,10 +125860,10 @@
     "heretek-swarm/heretek_swarm/cli.py|heretek-swarm.heretek_swarm.cli.status": {
       "file_path": "heretek-swarm/heretek_swarm/cli.py",
       "qualified_name": "heretek-swarm.heretek_swarm.cli.status",
-      "start_line": 616,
-      "end_line": 746,
+      "start_line": 659,
+      "end_line": 843,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "heretek-swarm/heretek_swarm/cli.py|heretek-swarm.heretek_swarm.cli.status.run_health_checks": {
       "file_path": "heretek-swarm/heretek_swarm/cli.py",

@@ -123,6 +123,27 @@ For production Kubernetes deployment, see [`k8s/README.md`](k8s/README.md).
 
 ---
 
+## Command Reference
+
+| Command | Description |
+|---------|-------------|
+| `heretek-swarm deploy` | Print infrastructure setup instructions for Docker Compose |
+| `heretek-swarm run` | Start the autonomous runtime (all 23 agents) as a standalone process |
+| `heretek-swarm serve` | Start the FastAPI API server with auto-reload |
+| `heretek-swarm status` | Check infrastructure health; use `--json` for machine-readable output |
+| `heretek-swarm wizard` | Open the browser to the React dashboard setup wizard |
+| `heretek-swarm init` | Bootstrap `~/.heretek-swarm/.env` from `.env.example` |
+
+### Status Command Options
+
+| Option | Description |
+|--------|-------------|
+| `--api-base URL` | API base URL (default: `http://localhost:8000`) |
+| `--timeout SECONDS` | Health check timeout (default: 30) |
+| `--json` | Output results as JSON |
+
+---
+
 ## Infrastructure (External Services)
 
 The system depends on the following external services:
