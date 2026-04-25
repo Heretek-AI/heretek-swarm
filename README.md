@@ -9,18 +9,27 @@
 
 ## Installation
 
+### Two-Package Architecture
+
+This project ships as two separate packages:
+
+| Package | Manager | Install Command | Path |
+|---------|---------|------------------|------|
+| **heretek-swarm** | pip | `pip install heretek-swarm` | `heretek-swarm/` |
+| **@heretek-ai/swarm-dashboard** | npm | `cd swarm-dashboard && npm install` | `swarm-dashboard/` |
+
 ### Python Package (pip)
 
 ```bash
 pip install heretek-swarm
 ```
 
-The package provides the core `heretek_swarm` library installed under `src/heretek_swarm/`.
+The package provides the core `heretek_swarm` library installed under `heretek-swarm/heretek_swarm/`.
 
-### Frontend (npm)
+### Frontend Dashboard (npm)
 
 ```bash
-cd dashboard/frontend
+cd swarm-dashboard
 npm install
 npm run dev
 ```
@@ -38,25 +47,26 @@ Starts PostgreSQL, Redis, Qdrant, the API server, and the frontend dashboard.
 ## Package Structure
 
 ```
-heretek-swarm/
-├── config/               # Configuration files
+heretek-swarm/                  # Python package (pip-installable)
+├── heretek_swarm/              # Core library
+│   ├── actors/                # 23 agent implementations
+│   ├── api/                    # FastAPI endpoints
+│   ├── consciousness/         # Consciousness metrics (GWT, IIT, FEP)
+│   ├── consensus/             # MAKER protocol implementation
+│   ├── gateway/                # NATS event mesh
+│   ├── memory/                 # Multi-tier memory system
+│   ├── security/               # Zero-trust validation
+│   └── state/                  # PostgreSQL persistence
+├── config/                     # Configuration files
 │   ├── litellm_config.yaml
 │   ├── otel-collector-config.yaml
 │   └── config.example.json
-├── src/heretek_swarm/      # Python package (pip-installable)
-│   ├── actors/            # 23 agent implementations
-│   ├── api/               # FastAPI endpoints
-│   ├── consciousness/     # Consciousness metrics (GWT, IIT, FEP)
-│   ├── consensus/         # MAKER protocol implementation
-│   ├── gateway/           # NATS event mesh
-│   ├── memory/            # Multi-tier memory system
-│   ├── security/          # Zero-trust validation
-│   └── state/             # PostgreSQL persistence
-│
-└── dashboard/frontend/    # React dashboard (npm-managed)
-    ├── src/               # React/Vite application
-    ├── public/
-    └── package.json
+└── cli/                        # CLI entry point
+
+swarm-dashboard/                # React dashboard (npm-managed)
+├── src/                        # React/Vite application
+├── public/
+└── package.json
 ```
 
 ---
@@ -89,7 +99,7 @@ docker-compose up -d postgres redis qdrant
 uvicorn src.heretek_swarm.api.main:app --reload
 
 # Start frontend
-cd dashboard/frontend && npm run dev
+cd swarm-dashboard && npm run dev
 ```
 
 ### Script Commands
@@ -173,7 +183,7 @@ All services are defined in `docker-compose.yml`. For local development without 
 
 ### Frontend Dashboard
 
-The React-based dashboard provides:
+The React-based dashboard (located in `swarm-dashboard/`) provides:
 
 - **Agent Management:** Deploy and monitor agents
 - **Consciousness Metrics:** Real-time consciousness visualizations
@@ -191,7 +201,9 @@ The React-based dashboard provides:
 | `DATABASE_URL` | Yes | PostgreSQL connection string |
 | `REDIS_URL` | Yes | Redis connection string |
 | `QDRANT_HOST` | Yes | Qdrant host |
-| `MINIMAX_API_KEY` | Yes | MiniMax API key |
+| `OPENAI_API_KEY` | Yes | OpenAI-compatible API key |
+| `OPENAI_BASE_URL` | Yes | OpenAI-compatible API base URL |
+| `LLM_MODEL` | Yes | LLM model name |
 
 ---
 
@@ -205,7 +217,7 @@ The React-based dashboard provides:
 | [`docs/CONSCIOUSNESS_PLUGINS.md`](docs/CONSCIOUSNESS_PLUGINS.md) | Consciousness frameworks |
 | [`docs/AGENTS.md`](docs/AGENTS.md) | Complete agent reference |
 | [`PRIME_DIRECTIVE.md`](PRIME_DIRECTIVE.md) | Project vision and philosophy |
-| [`dashboard/frontend/README.md`](dashboard/frontend/README.md) | Frontend dashboard docs |
+| [`swarm-dashboard/README.md`](swarm-dashboard/README.md) | Frontend dashboard docs |
 
 ---
 

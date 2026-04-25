@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-25T03:53:33.406657+00:00",
+    "generated_at": "2026-04-25T03:55:03.126040+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -59763,6 +59763,10 @@
           "status": "unchanged"
         }
       ]
+    },
+    "heretek-swarm/heretek_swarm/cli/__init__.py": {
+      "file_status": "modified",
+      "methods": []
     }
   },
   "methods_index": {
