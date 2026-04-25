@@ -1,6 +1,6 @@
-# NOTE: The @heretek-ai npm org must be connected to the GitHub repo via npm's GitHub App.
-# Set up at: https://www.npmjs.com/settings/@heretek-ai/secrets
-# Add the "Publish" connection for the heretek-swarm repository.
+# NOTE: For trusted publishing to work, the @heretek-ai npm org must have
+# a "Publish" connection to the heretek-swarm repository in npm settings.
+# Set up at: https://www.npmjs.com/org/heretek-ai → Settings → Publishing
 name: Publish NPM Package
 
 on:
@@ -15,7 +15,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      attestations: write
       id-token: write
     steps:
       - name: Checkout repository
@@ -35,8 +34,8 @@ jobs:
         run: npm run build
 
       - name: Publish to npm
-        uses: npm/publish@v4
+        uses: JS-DevTools/npm-publish@v4
         with:
-          working-directory: swarm-dashboard
+          package: swarm-dashboard
           access: public
           provenance: true
