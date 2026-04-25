@@ -610,6 +610,49 @@ def wizard() -> None:
 
 
 @cli.command()
+def init() -> None:
+    """
+    Initialize Heretek Swarm configuration.
+
+    Creates ~/.heretek-swarm/.env from .env.example if it doesn't already exist.
+    """
+    logger.info("init_command")
+
+    config_dir = Path.home() / ".heretek-swarm"
+    config_file = config_dir / ".env"
+
+    # Create config directory if it doesn't exist
+    config_dir.mkdir(parents=True, exist_ok=True)
+
+    # Check if already initialized
+    if config_file.exists():
+        click.echo(f"Already initialized: {config_file}")
+        sys.exit(0)
+
+    # Resolve .env.example - try CWD first, then package directory
+    example_paths = [
+        Path(".env.example"),
+        Path(__file__).parent.parent.parent / ".env.example",
+    ]
+
+    example_path: Path | None = None
+    for p in example_paths:
+        if p.exists():
+            example_path = p
+            break
+
+    if example_path is None:
+        click.echo("Error: .env.example not found")
+        click.echo("  Searched in current directory and package directory")
+        sys.exit(1)
+
+    # Copy .env.example to ~/.heretek-swarm/.env
+    shutil.copy2(example_path, config_file)
+
+    click.echo(f"Initialized: {config_file}")
+
+
+@cli.command()
 @click.option("--api-base", default=DEFAULT_API_BASE, help="API base URL")
 @click.option("--timeout", default=30, type=int, help="Health check timeout in seconds")
 @click.option("--json", "output_json", is_flag=True, help="Output results as JSON")

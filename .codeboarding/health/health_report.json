@@ -1,7 +1,7 @@
 {
   "repository_name": "heretek-swarm",
-  "timestamp": "2026-04-25T03:56:36.902137+00:00",
-  "overall_score": 0.9904285548596614,
+  "timestamp": "2026-04-25T04:02:32.501603+00:00",
+  "overall_score": 0.9906362370954646,
   "check_summaries": [
     {
       "check_name": "function_size",
@@ -790,10 +790,10 @@
       "description": "Detects unused imports, variables, functions, and dead code via LSP diagnostics",
       "language": "Python",
       "check_type": "standard",
-      "total_entities_checked": 19,
-      "findings_count": 19,
-      "warning_count": 7,
-      "score": 0.04999999999999993,
+      "total_entities_checked": 17,
+      "findings_count": 17,
+      "warning_count": 6,
+      "score": 0.1499999999999999,
       "finding_groups": [
         {
           "severity": "info",
@@ -805,13 +805,6 @@
               "file_path": "heretek-swarm/heretek_swarm/state/repository.py",
               "line_start": 946,
               "line_end": 946,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"shutil\" is not accessed",
-              "file_path": "heretek-swarm/heretek_swarm/cli.py",
-              "line_start": 12,
-              "line_end": 12,
               "metric_value": 0.0
             },
             {
@@ -880,8 +873,8 @@
             {
               "entity_name": "[unused_variable] \"output_json\" is not accessed",
               "file_path": "heretek-swarm/heretek_swarm/cli.py",
-              "line_start": 616,
-              "line_end": 616,
+              "line_start": 659,
+              "line_end": 659,
               "metric_value": 0.0
             }
           ]
@@ -891,13 +884,6 @@
           "threshold": 0,
           "description": "Unused import statements that should be removed",
           "entities": [
-            {
-              "entity_name": "[unused_import] Import \"shutil\" is not accessed",
-              "file_path": "heretek-swarm/heretek_swarm/cli.py",
-              "line_start": 12,
-              "line_end": 12,
-              "metric_value": 0.0
-            },
             {
               "entity_name": "[unused_import] Import \"threading\" is not accessed",
               "file_path": "heretek-swarm/heretek_swarm/cli.py",
@@ -1281,9 +1267,9 @@
   "file_summaries": [
     {
       "file_path": "heretek-swarm/heretek_swarm/cli.py",
-      "total_findings": 18,
-      "warning_findings": 7,
-      "composite_risk_score": 85.0
+      "total_findings": 16,
+      "warning_findings": 6,
+      "composite_risk_score": 80.0
     },
     {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
