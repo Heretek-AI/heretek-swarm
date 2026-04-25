@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "heretek-swarm"
-version = "0.1.0"
+version = "0.1.1"
 description = "Heretek Swarm v2.0 - Next-generation multi-agent system built on Swarms framework"
 readme = "README.md"
 license = {text = "MIT"}
