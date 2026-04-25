@@ -117,9 +117,14 @@ docker-compose ps          # Check service status
 docker-compose logs api    # View error logs
 ```
 
-### Kubernetes
+### Docker Commands
 
-For production Kubernetes deployment, see [`k8s/README.md`](k8s/README.md).
+```bash
+docker-compose ps          # Check service status
+docker-compose logs api    # View error logs
+```
+
+For production Kubernetes deployment, set up your own Kubernetes manifests and configure the appropriate infrastructure.
 
 ---
 
