@@ -1,5 +1,6 @@
-# NOTE: The @heretek npm organization must exist before the first real publish.
-# Create it at https://www.npmjs.com/org/create if it doesn't exist yet.
+# NOTE: The @heretek-ai npm org must be connected to the GitHub repo via npm's GitHub App.
+# Set up at: https://www.npmjs.com/settings/@heretek-ai/secrets
+# Add the "Publish" connection for the heretek-swarm repository.
 name: Publish NPM Package
 
 on:
@@ -12,7 +13,10 @@ env:
 jobs:
   build-and-package:
     runs-on: ubuntu-latest
-
+    permissions:
+      contents: read
+      attestations: write
+      id-token: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -21,7 +25,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          registry-url: 'https://registry.npmjs.org'
 
       - name: Install dependencies
         working-directory: swarm-dashboard
@@ -31,18 +34,9 @@ jobs:
         working-directory: swarm-dashboard
         run: npm run build
 
-      - name: Pack tarball
-        working-directory: swarm-dashboard
-        run: npm pack
-
-      - name: Upload tarball artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: npm-package
-          path: swarm-dashboard/*.tgz
-
       - name: Publish to npm
-        working-directory: swarm-dashboard
-        run: npm publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        uses: npm/publish@v4
+        with:
+          working-directory: swarm-dashboard
+          access: public
+          provenance: true
