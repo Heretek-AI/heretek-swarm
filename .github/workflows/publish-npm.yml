@@ -20,6 +20,24 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Extract version from tag
+        run: |
+          TAG_VERSION="${GITHUB_REF#refs/tags/v}"
+          echo "TAG_VERSION=$TAG_VERSION" >> $GITHUB_ENV
+          echo "tag_version=$TAG_VERSION"
+
+      - name: Validate version matches package.json
+        working-directory: swarm-dashboard
+        run: |
+          FILE_VERSION=$(node -e "console.log(require('./package.json').version)")
+          echo "FILE_VERSION=$FILE_VERSION"
+          if [ "$TAG_VERSION" != "$FILE_VERSION" ]; then
+            echo "ERROR: Tag version '$TAG_VERSION' does not match package.json version '$FILE_VERSION'"
+            echo "Update swarm-dashboard/package.json to version '$TAG_VERSION' and push a new tag."
+            exit 1
+          fi
+          echo "Version validated: $TAG_VERSION"
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
