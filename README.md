@@ -84,10 +84,15 @@ swarm-dashboard/                # React dashboard (npm-managed)
 ### One-Shot Deployment
 
 ```bash
-./deploy.sh
-```
+# Install the CLI
+pip install heretek-swarm
 
-The script checks prerequisites, creates `.env`, pulls images, starts services, and runs migrations.
+# Initialize configuration
+heretek-swarm init
+
+# Start infrastructure
+docker-compose up -d
+```
 
 ### Manual Start
 
@@ -95,30 +100,21 @@ The script checks prerequisites, creates `.env`, pulls images, starts services, 
 # Start infrastructure
 docker-compose up -d postgres redis qdrant
 
+# Initialize configuration
+heretek-swarm init
+
 # Start API
-uvicorn src.heretek_swarm.api.main:app --reload
+heretek-swarm serve
 
 # Start frontend
 cd swarm-dashboard && npm run dev
 ```
-
-### Script Commands
-
-| Command | Description |
-|---------|-------------|
-| `./deploy.sh` | Deploy all services |
-| `./deploy.sh stop` | Stop all services |
-| `./deploy.sh restart` | Restart all services |
-| `./deploy.sh status` | Show service status |
-| `./deploy.sh logs` | View live logs |
-| `./deploy.sh clean` | Remove all containers and volumes |
 
 ### Troubleshooting
 
 ```bash
 docker-compose ps          # Check service status
 docker-compose logs api    # View error logs
-docker-compose restart api # Restart a specific service
 ```
 
 ### Kubernetes
