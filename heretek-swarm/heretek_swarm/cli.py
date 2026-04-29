@@ -379,7 +379,23 @@ def deploy(production: bool, scale: int, nats_url: str, api_base: str, check_run
 # Run Command - Autonomous Swarm
 # =============================================================================
 
-async def _start_autonomous_swarm() -> None:
+def _print_startup_banner(swarm: "AutonomousSwarm") -> None:
+    """Print a formatted startup status table showing component health."""
+    status = swarm.get_startup_status()
+    click.echo("")
+    click.echo("  " + "-" * 50)
+    click.echo(f"  {'Component':<20} {'Status':<12}")
+    click.echo("  " + "-" * 50)
+    for name, s in status.items():
+        click.echo(f"  {name:<20}: {s}")
+    click.echo("  " + "-" * 50)
+    any_fail = any(s.startswith("✗") for s in status.values())
+    if any_fail:
+        click.echo("  ⚠ Some components unavailable — swarm running with degraded capabilities")
+    click.echo("")
+
+
+async def _start_autonomous_swarm(no_infra: bool = False) -> None:
     """Start the AutonomousSwarm with signal handlers for graceful shutdown."""
     from heretek_swarm.logging.config import setup_logging
     from heretek_swarm.runtime.main_loop import AutonomousSwarm
@@ -419,12 +435,22 @@ async def _start_autonomous_swarm() -> None:
         },
     }
 
-    swarm = AutonomousSwarm(config)
+    if no_infra:
+        click.echo("  --no-infra: skipping external infrastructure connections")
+        click.echo("  Components requiring Postgres, Redis, Qdrant, or NATS will be unavailable")
+        # Clear connection strings so no component tries external connections
+        config["persistent"]["connection_string"] = ""
+
+    swarm = AutonomousSwarm(config, no_infra=no_infra)
     global _swarm_instance
     _swarm_instance = swarm
 
     # Initialize and run
     await swarm.initialize()
+
+    # Print startup diagnostics banner
+    _print_startup_banner(swarm)
+
     await swarm.run()
 
 
@@ -453,7 +479,12 @@ def _handle_signal(signum: int, frame) -> None:
     default="nats://localhost:4222",
     help="NATS server URL(s), comma-separated for multiple servers",
 )
-def run(detach: bool, nats_url: str) -> None:
+@click.option(
+    "--no-infra",
+    is_flag=True,
+    help="Skip external infrastructure connections (Postgres, Redis, Qdrant, NATS); use in-memory state only",
+)
+def run(detach: bool, nats_url: str, no_infra: bool) -> None:
     """
     Start the Heretek Swarm autonomous runtime.
 
@@ -465,20 +496,27 @@ def run(detach: bool, nats_url: str) -> None:
     - DATABASE_URL: PostgreSQL connection string
     - RAG_* environment variables for RAG configuration
 
+    Use --no-infra to run without Docker/Postgres/Redis — the swarm uses
+    in-memory state and logs graceful fallback warnings.
+
     Examples:
         heretek-swarm run
         heretek-swarm run --detach
+        heretek-swarm run --no-infra
         HERETEK_NATS_URL=nats://cluster1:4222,nats://cluster2:4222 heretek-swarm run
     """
     import os
 
-    logger.info("run_command", detach=detach, nats_url=nats_url)
+    logger.info("run_command", detach=detach, nats_url=nats_url, no_infra=no_infra)
 
     click.echo("Heretek Swarm Autonomous Runtime")
     click.echo("=" * 40)
 
-    # Load infrastructure configuration from database (if DATABASE_URL is set)
-    infra_config = _load_infrastructure_config_and_echo()
+    if no_infra:
+        click.echo("\n  --no-infra mode: external infrastructure connections will be skipped")
+    else:
+        # Load infrastructure configuration from database (if DATABASE_URL is set)
+        infra_config = _load_infrastructure_config_and_echo()
 
     if detach:
         click.echo("\nStarting in detached mode...")
@@ -500,12 +538,13 @@ def run(detach: bool, nats_url: str) -> None:
     click.echo("\nInitializing autonomous swarm...")
     click.echo(f"  NATS: {nats_url}")
 
-    # Print loaded infrastructure configuration
-    _print_infrastructure_config(infra_config)
+    if not no_infra:
+        # Print loaded infrastructure configuration
+        _print_infrastructure_config(infra_config)
 
     try:
         # Run the async main
-        asyncio.run(_start_autonomous_swarm())
+        asyncio.run(_start_autonomous_swarm(no_infra=no_infra))
     except KeyboardInterrupt:
         logger.info("shutdown_keyboard_interrupt")
         click.echo("\nShutdown complete.")

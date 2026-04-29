@@ -59,8 +59,9 @@ class AutonomousSwarm:
         mcp_tools: MCP tools registry
     """
 
-    def __init__(self, config: dict[str, Any] | None = None):
+    def __init__(self, config: dict[str, Any] | None = None, no_infra: bool = False):
         self.config = config or self._default_config()
+        self._no_infra = no_infra
 
         # Core components (initialized in initialize())
         self.supervisor: ActorSupervisor | None = None
@@ -113,7 +114,33 @@ class AutonomousSwarm:
         Failed components are set to ``None`` and a warning is logged with
         the component name and error string.
         """
-        logger.info("initializing_autonomous_swarm")
+        logger.info("initializing_autonomous_swarm", no_infra=self._no_infra)
+
+        # When --no-infra is set, only initialize in-memory components
+        if self._no_infra:
+            logger.warning("infra_skipped_no_infra_flag")
+            self.channel_registry = ChannelRegistry()
+            self.group_registry = GroupRegistry(self.channel_registry)
+            from heretek_swarm.rag.rag_pipeline import RAGPipelineConfig
+            rag_cfg = RAGPipelineConfig(
+                embedding_provider=self.config.get("rag", {}).get("embedding_provider", "openai"),
+                embedding_model="text-embedding-3-small",
+                llm_provider="openai",
+                llm_model="gpt-4o-mini",
+                top_k=5,
+            )
+            self.rag = RAGPipeline(config=rag_cfg)
+            consensus_config = self.config.get("consensus", {})
+            self.consensus = MAKERConsensus(
+                ahead_by_k=consensus_config.get("ahead_by_k", 2),
+                min_votes=consensus_config.get("min_votes", 3),
+                confidence_threshold=consensus_config.get("red_flag_threshold", 0.3),
+            )
+            self.mcp_tools = CoreMCPTools(memory_system=None, rag_pipeline=self.rag, consensus_engine=self.consensus, event_mesh=None)
+            self.supervisor = ActorSupervisor(health_check_interval=self._health_check_interval, auto_restart=True, max_restarts=5)
+            await self._spawn_all_actors()
+            logger.info("autonomous_swarm_fully_initialized")
+            return
 
         # 1. Initialize channel registry
         try:
@@ -273,6 +300,53 @@ class AutonomousSwarm:
             )
 
         logger.info("autonomous_swarm_fully_initialized")
+
+    def get_startup_status(self) -> dict[str, str]:
+        """Return startup status of each component for diagnostics.
+
+        Returns a dict mapping component display names to status strings:
+        ``"✓ Connected"``, ``"✓ Initialized"``, ``"✗ Unavailable"``, etc.
+        """
+        status: dict[str, str] = {}
+
+        # In-memory / always-available
+        if self.channel_registry is not None:
+            status["Channels"] = "✓ Initialized"
+        else:
+            status["Channels"] = "✗ Unavailable"
+
+        if self.memory is not None:
+            status["Memory"] = "✓ Initialized"
+        else:
+            status["Memory"] = "✗ Unavailable"
+
+        if self.rag is not None:
+            status["RAG"] = "✓ Initialized"
+        else:
+            status["RAG"] = "✗ Unavailable"
+
+        if self.consensus is not None:
+            status["Consensus"] = "✓ Initialized"
+        else:
+            status["Consensus"] = "✗ Unavailable"
+
+        if self.event_mesh is not None:
+            status["Event Mesh"] = "✓ Connected"
+        else:
+            status["Event Mesh"] = "✗ Unavailable"
+
+        if self.mcp_tools is not None:
+            status["MCP Tools"] = "✓ Initialized"
+        else:
+            status["MCP Tools"] = "✗ Unavailable"
+
+        if self.supervisor is not None:
+            agent_count = len(self.supervisor.actors) if hasattr(self.supervisor, "actors") else 0
+            status["Agents"] = f"✓ {agent_count} spawned"
+        else:
+            status["Agents"] = "✗ Unavailable"
+
+        return status
 
     async def _spawn_all_actors(self) -> None:
         """Spawn all 23 agents across 6 tiers."""
