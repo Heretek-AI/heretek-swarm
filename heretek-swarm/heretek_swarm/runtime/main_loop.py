@@ -106,88 +106,171 @@ class AutonomousSwarm:
         }
 
     async def initialize(self) -> None:
-        """Initialize all swarm components."""
+        """Initialize all swarm components.
+
+        Each component is wrapped in an independent try/except so a failure
+        in one step (e.g. NATS unavailable) does not crash the entire swarm.
+        Failed components are set to ``None`` and a warning is logged with
+        the component name and error string.
+        """
         logger.info("initializing_autonomous_swarm")
 
         # 1. Initialize channel registry
-        self.channel_registry = ChannelRegistry()
-        self.group_registry = GroupRegistry(self.channel_registry)
-        logger.info("channel_registry_initialized")
+        try:
+            self.channel_registry = ChannelRegistry()
+            self.group_registry = GroupRegistry(self.channel_registry)
+            logger.info("channel_registry_initialized")
+        except Exception as exc:
+            logger.warning(
+                "channel_registry_init_failed",
+                error=str(exc),
+            )
+            self.channel_registry = None
+            self.group_registry = None
 
         # 2. Initialize memory system
-        self.memory = DualTierMemory(
-            ephemeral_config=self.config.get("ephemeral", {}),
-            persistent_config=self.config.get("persistent", {}),
-        )
-        await self.memory.initialize()
-        logger.info("memory_system_initialized")
+        try:
+            self.memory = DualTierMemory(
+                ephemeral_config=self.config.get("ephemeral", {}),
+                persistent_config=self.config.get("persistent", {}),
+            )
+            await self.memory.initialize()
+            logger.info("memory_system_initialized")
+        except Exception as exc:
+            logger.warning(
+                "memory_init_failed",
+                error=str(exc),
+            )
+            self.memory = None
 
         # 3. Initialize RAG pipeline
-        from heretek_swarm.rag.rag_pipeline import RAGPipelineConfig
-        rag_config_dict = self.config.get("rag", {})
-        rag_cfg = RAGPipelineConfig(
-            embedding_provider=rag_config_dict.get("embedding_provider", "openai"),
-            embedding_model=rag_config_dict.get("embedding_model", "text-embedding-3-small"),
-            llm_provider=rag_config_dict.get("llm_provider", "openai"),
-            llm_model=rag_config_dict.get("llm_model", "gpt-4o-mini"),
-            top_k=rag_config_dict.get("top_k", 5),
-        )
-        self.rag = RAGPipeline(config=rag_cfg)
-        logger.info("rag_pipeline_initialized")
+        try:
+            from heretek_swarm.rag.rag_pipeline import RAGPipelineConfig
+            rag_config_dict = self.config.get("rag", {})
+            rag_cfg = RAGPipelineConfig(
+                embedding_provider=rag_config_dict.get("embedding_provider", "openai"),
+                embedding_model=rag_config_dict.get("embedding_model", "text-embedding-3-small"),
+                llm_provider=rag_config_dict.get("llm_provider", "openai"),
+                llm_model=rag_config_dict.get("llm_model", "gpt-4o-mini"),
+                top_k=rag_config_dict.get("top_k", 5),
+            )
+            self.rag = RAGPipeline(config=rag_cfg)
+            logger.info("rag_pipeline_initialized")
+        except Exception as exc:
+            logger.warning(
+                "rag_init_failed",
+                error=str(exc),
+            )
+            self.rag = None
 
         # 4. Initialize consensus engine
-        consensus_config = self.config.get("consensus", {})
-        self.consensus = MAKERConsensus(
-            ahead_by_k=consensus_config.get("ahead_by_k", 2),
-            min_votes=consensus_config.get("min_votes", 3),
-            confidence_threshold=consensus_config.get("red_flag_threshold", 0.3),
-        )
-        logger.info("maker_consensus_initialized")
+        try:
+            consensus_config = self.config.get("consensus", {})
+            self.consensus = MAKERConsensus(
+                ahead_by_k=consensus_config.get("ahead_by_k", 2),
+                min_votes=consensus_config.get("min_votes", 3),
+                confidence_threshold=consensus_config.get("red_flag_threshold", 0.3),
+            )
+            logger.info("maker_consensus_initialized")
+        except Exception as exc:
+            logger.warning(
+                "consensus_init_failed",
+                error=str(exc),
+            )
+            self.consensus = None
 
         # 5. Initialize event mesh (NATS)
-        self.event_mesh = NATSEventMeshWithJetStream(
-            servers=self.config.get("nats_servers", ["nats://localhost:4222"]),
-            fallback=True,
-        )
-        await self.event_mesh.connect()
-        logger.info("event_mesh_connected")
+        try:
+            self.event_mesh = NATSEventMeshWithJetStream(
+                servers=self.config.get("nats_servers", ["nats://localhost:4222"]),
+                fallback=True,
+            )
+            await self.event_mesh.connect()
+            logger.info("event_mesh_connected")
+        except Exception as exc:
+            logger.warning(
+                "event_mesh_init_failed",
+                error=str(exc),
+            )
+            self.event_mesh = None
 
         # 5a. Initialize JetStream streams (durable message delivery)
-        jetstream_initialized = await self.event_mesh.initialize_jetstream(
-            create_default_streams=True
-        )
-        if jetstream_initialized:
-            logger.info("jetstream_streams_initialized")
+        if self.event_mesh is not None:
+            try:
+                jetstream_initialized = await self.event_mesh.initialize_jetstream(
+                    create_default_streams=True,
+                )
+                if jetstream_initialized:
+                    logger.info("jetstream_streams_initialized")
+                else:
+                    logger.warning(
+                        "jetstream_initialization_failed",
+                        message="Continuing without durable streams",
+                    )
+            except Exception as exc:
+                logger.warning(
+                    "jetstream_init_failed",
+                    error=str(exc),
+                )
         else:
             logger.warning(
-                "jetstream_initialization_failed",
-                message="Continuing without durable streams",
+                "jetstream_skipped",
+                message="No event mesh available — skipping JetStream initialization",
             )
 
         # 6. Initialize MCP tools
-        self.mcp_tools = CoreMCPTools(
-            memory_system=self.memory,
-            rag_pipeline=self.rag,
-            consensus_engine=self.consensus,
-            event_mesh=self.event_mesh,
-        )
-        logger.info("mcp_tools_initialized", tool_count=len(self.mcp_tools.get_registry().list_tools()))
+        try:
+            self.mcp_tools = CoreMCPTools(
+                memory_system=self.memory,
+                rag_pipeline=self.rag,
+                consensus_engine=self.consensus,
+                event_mesh=self.event_mesh,
+            )
+            logger.info(
+                "mcp_tools_initialized",
+                tool_count=len(self.mcp_tools.get_registry().list_tools()),
+            )
+        except Exception as exc:
+            logger.warning(
+                "mcp_tools_init_failed",
+                error=str(exc),
+            )
+            self.mcp_tools = None
 
         # 7. Initialize supervisor
-        self.supervisor = ActorSupervisor(
-            health_check_interval=self._health_check_interval,
-            auto_restart=True,
-            max_restarts=5,
-        )
-        logger.info("actor_supervisor_initialized")
+        try:
+            self.supervisor = ActorSupervisor(
+                health_check_interval=self._health_check_interval,
+                auto_restart=True,
+                max_restarts=5,
+            )
+            logger.info("actor_supervisor_initialized")
+        except Exception as exc:
+            logger.warning(
+                "supervisor_init_failed",
+                error=str(exc),
+            )
+            self.supervisor = None
 
         # 8. Spawn all agents
-        await self._spawn_all_actors()
-        logger.info("all_actors_spawned", count=23)
+        try:
+            await self._spawn_all_actors()
+            logger.info("all_actors_spawned")
+        except Exception as exc:
+            logger.warning(
+                "actor_spawn_init_failed",
+                error=str(exc),
+            )
 
         # 9. Set up channel subscriptions
-        await self._setup_channel_subscriptions()
-        logger.info("channel_subscriptions_configured")
+        try:
+            await self._setup_channel_subscriptions()
+            logger.info("channel_subscriptions_configured")
+        except Exception as exc:
+            logger.warning(
+                "channel_subscriptions_init_failed",
+                error=str(exc),
+            )
 
         logger.info("autonomous_swarm_fully_initialized")
 
@@ -304,7 +387,29 @@ class AutonomousSwarm:
         return tier_mapping.get(agent_id, "Unknown")
 
     async def _setup_channel_subscriptions(self) -> None:
-        """Set up channel subscriptions for all agents based on the channel registry."""
+        """Set up channel subscriptions for all agents based on the channel registry.
+
+        If no supervisor or no actors are registered, all subscription setup is
+        skipped gracefully with a warning.
+        """
+        # Guard: no supervisor or no actors → nothing to subscribe
+        if self.supervisor is None:
+            logger.warning("channel_subscriptions_skipped_no_supervisor")
+            return
+        if not self.supervisor.actors:
+            logger.warning("channel_subscriptions_skipped_no_actors")
+            return
+
+        # Guard: no channel registry → no subscription metadata
+        if self.channel_registry is None:
+            logger.warning("channel_subscriptions_skipped_no_channel_registry")
+            return
+
+        # Guard: no event mesh → subscriptions impossible
+        if self.event_mesh is None:
+            logger.warning("channel_subscriptions_skipped_no_event_mesh")
+            return
+
         # The ChannelRegistry already has default channels set up
         # Subscribe each agent to their designated channels
 
@@ -362,7 +467,8 @@ class AutonomousSwarm:
             await actor.put_message(actor_message)
 
             # Record delivery
-            self.channel_registry.record_message(channel_name, delivered=True)
+            if self.channel_registry is not None:
+                self.channel_registry.record_message(channel_name, delivered=True)
 
         except Exception as e:
             logger.error(
@@ -371,7 +477,8 @@ class AutonomousSwarm:
                 channel=channel_name,
                 error=str(e),
             )
-            self.channel_registry.record_error(channel_name)
+            if self.channel_registry is not None:
+                self.channel_registry.record_error(channel_name)
 
     async def run(self) -> None:
         """Main autonomous loop - runs 24/7."""
@@ -720,9 +827,18 @@ async def main():
         },
     }
 
-    swarm = AutonomousSwarm(config)
-    await swarm.initialize()
-    await swarm.run()
+    try:
+        swarm = AutonomousSwarm(config)
+        await swarm.initialize()
+        await swarm.run()
+    except Exception as exc:
+        logger.error(
+            "autonomous_swarm_main_failed",
+            error=str(exc),
+            exc_info=True,
+        )
+        print(f"ERROR: Swarm initialization failed: {exc}", flush=True)
+        raise
 
 
 if __name__ == "__main__":
