@@ -82,9 +82,6 @@ class SafeExpressionEvaluator:
     SAFE_NODE_TYPES = (
         ast.Expression,
         ast.Constant,  # Literal values (Python 3.8+)
-        ast.Num,       # Numbers (deprecated but for compatibility)
-        ast.Str,       # Strings (deprecated but for compatibility)
-        ast.NameConstant,  # True, False, None (deprecated but for compatibility)
         ast.List,
         ast.Tuple,
         ast.Dict,
@@ -221,12 +218,6 @@ class SafeExpressionEvaluator:
         """
         # Handle literal values
         if isinstance(node, ast.Constant):  # Python 3.8+
-            return node.value
-        if isinstance(node, ast.Num):  # Deprecated, for compatibility
-            return node.n
-        if isinstance(node, ast.Str):  # Deprecated, for compatibility
-            return node.s
-        if isinstance(node, ast.NameConstant):  # Deprecated, for compatibility
             return node.value
 
         # Handle variable references
