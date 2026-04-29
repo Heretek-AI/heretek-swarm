@@ -395,6 +395,34 @@ def _print_startup_banner(swarm: "AutonomousSwarm") -> None:
     click.echo("")
 
 
+def _display_deliberation_results(results: dict[str, dict]) -> None:
+    """Print formatted deliberation results per agent.
+
+    Args:
+        results: The dict returned by ``AutonomousSwarm.run_deliberation()``,
+            mapping agent IDs to result dicts containing ``analyses``,
+            ``challenges``, or ``error`` keys.
+    """
+    for agent_id in ["alpha", "beta", "charlie"]:
+        agent_result = results.get(agent_id, {})
+        click.echo("")
+        click.echo(f"  {agent_id.upper()} response:")
+        if "error" in agent_result:
+            click.echo(f"    [Error: {agent_result['error']}]")
+            continue
+        analyses = agent_result.get("analyses", agent_result.get("challenges", []))
+        if not analyses:
+            click.echo("    [No analysis produced]")
+            continue
+        for entry in analyses:
+            decision = entry.get("analysis", entry.get("decision", ""))
+            if isinstance(decision, dict):
+                decision = decision.get("decision", str(decision))
+            click.echo(f"    {decision}")
+    click.echo("")
+    click.echo("  Deliberation complete.")
+
+
 async def _start_autonomous_swarm(no_infra: bool = False, prompt: str | None = None) -> None:
     """Start the AutonomousSwarm with signal handlers for graceful shutdown."""
     from heretek_swarm.logging.config import setup_logging
@@ -460,25 +488,7 @@ async def _start_autonomous_swarm(no_infra: bool = False, prompt: str | None = N
         except Exception as e:
             click.echo(f"\n  ✗ Deliberation failed: {e}")
             return
-        for agent_id in ["alpha", "beta", "charlie"]:
-            agent_result = results.get(agent_id, {})
-            click.echo("")
-            click.echo(f"  {agent_id.upper()} response:")
-            if "error" in agent_result:
-                click.echo(f"    [Error: {agent_result['error']}]")
-                continue
-            # Extract the decision/analysis text
-            analyses = agent_result.get("analyses", agent_result.get("challenges", []))
-            if not analyses:
-                click.echo("    [No analysis produced]")
-                continue
-            for entry in analyses:
-                decision = entry.get("analysis", entry.get("decision", ""))
-                if isinstance(decision, dict):
-                    decision = decision.get("decision", str(decision))
-                click.echo(f"    {decision}")
-        click.echo("")
-        click.echo("  Deliberation complete.")
+        _display_deliberation_results(results)
         return  # Don't call swarm.run()
 
     await swarm.run()
