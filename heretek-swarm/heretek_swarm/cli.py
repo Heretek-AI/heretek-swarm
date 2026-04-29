@@ -395,7 +395,7 @@ def _print_startup_banner(swarm: "AutonomousSwarm") -> None:
     click.echo("")
 
 
-async def _start_autonomous_swarm(no_infra: bool = False) -> None:
+async def _start_autonomous_swarm(no_infra: bool = False, prompt: str | None = None) -> None:
     """Start the AutonomousSwarm with signal handlers for graceful shutdown."""
     from heretek_swarm.logging.config import setup_logging
     from heretek_swarm.runtime.main_loop import AutonomousSwarm
@@ -451,6 +451,36 @@ async def _start_autonomous_swarm(no_infra: bool = False) -> None:
     # Print startup diagnostics banner
     _print_startup_banner(swarm)
 
+    if prompt:
+        click.echo("")
+        click.echo(f"  Deliberating prompt: {prompt}")
+        click.echo("  " + "-" * 50)
+        try:
+            results = await swarm.run_deliberation(prompt)
+        except Exception as e:
+            click.echo(f"\n  ✗ Deliberation failed: {e}")
+            return
+        for agent_id in ["alpha", "beta", "charlie"]:
+            agent_result = results.get(agent_id, {})
+            click.echo("")
+            click.echo(f"  {agent_id.upper()} response:")
+            if "error" in agent_result:
+                click.echo(f"    [Error: {agent_result['error']}]")
+                continue
+            # Extract the decision/analysis text
+            analyses = agent_result.get("analyses", agent_result.get("challenges", []))
+            if not analyses:
+                click.echo("    [No analysis produced]")
+                continue
+            for entry in analyses:
+                decision = entry.get("analysis", entry.get("decision", ""))
+                if isinstance(decision, dict):
+                    decision = decision.get("decision", str(decision))
+                click.echo(f"    {decision}")
+        click.echo("")
+        click.echo("  Deliberation complete.")
+        return  # Don't call swarm.run()
+
     await swarm.run()
 
 
@@ -484,7 +514,13 @@ def _handle_signal(signum: int, frame) -> None:
     is_flag=True,
     help="Skip external infrastructure connections (Postgres, Redis, Qdrant, NATS); use in-memory state only",
 )
-def run(detach: bool, nats_url: str, no_infra: bool) -> None:
+@click.option(
+    "--prompt",
+    type=str,
+    default=None,
+    help="Single prompt to deliberate through the triad, then exit",
+)
+def run(detach: bool, nats_url: str, no_infra: bool, prompt: str | None = None) -> None:
     """
     Start the Heretek Swarm autonomous runtime.
 
@@ -503,6 +539,7 @@ def run(detach: bool, nats_url: str, no_infra: bool) -> None:
         heretek-swarm run
         heretek-swarm run --detach
         heretek-swarm run --no-infra
+        heretek-swarm run --no-infra --prompt "Analyze the strategic implications of X"
         HERETEK_NATS_URL=nats://cluster1:4222,nats://cluster2:4222 heretek-swarm run
     """
     import os
@@ -527,14 +564,6 @@ def run(detach: bool, nats_url: str, no_infra: bool) -> None:
             click.echo("  Use 'kill {pid}' to stop, or check logs for status.")
             sys.exit(0)
 
-    # Set up signal handlers
-    shutdown_event = asyncio.Event()
-    global _shutdown_event
-    _shutdown_event = shutdown_event
-
-    signal.signal(signal.SIGINT, _handle_signal)
-    signal.signal(signal.SIGTERM, _handle_signal)
-
     click.echo("\nInitializing autonomous swarm...")
     click.echo(f"  NATS: {nats_url}")
 
@@ -542,8 +571,26 @@ def run(detach: bool, nats_url: str, no_infra: bool) -> None:
         # Print loaded infrastructure configuration
         _print_infrastructure_config(infra_config)
 
+    if prompt:
+        # Prompt mode: no signal handlers needed, exit after deliberation
+        try:
+            asyncio.run(_start_autonomous_swarm(no_infra=no_infra, prompt=prompt))
+        except Exception as e:
+            logger.error("prompt_mode_failure", error=str(e))
+            click.echo(f"\n✗ Failed to start: {e}")
+            sys.exit(1)
+        return
+
+    # Set up signal handlers for long-running mode
+    shutdown_event = asyncio.Event()
+    global _shutdown_event
+    _shutdown_event = shutdown_event
+
+    signal.signal(signal.SIGINT, _handle_signal)
+    signal.signal(signal.SIGTERM, _handle_signal)
+
     try:
-        # Run the async main
+        # Run the async main in long-running mode
         asyncio.run(_start_autonomous_swarm(no_infra=no_infra))
     except KeyboardInterrupt:
         logger.info("shutdown_keyboard_interrupt")
