@@ -283,6 +283,12 @@ class AutonomousSwarm:
         try:
             await self._spawn_all_actors()
             logger.info("all_actors_spawned")
+            # Bridge actor registries: sync AutonomousSwarm's supervisor actors
+            # into the global get_supervisor() singleton so send_to_actor()
+            # (used by triad deliberation) can find them.
+            from heretek_swarm.actors.supervisor import get_supervisor
+            get_supervisor().actors.update(self.supervisor.actors)
+            logger.info("actor_registry_bridged", total_actors=len(self.supervisor.actors))
         except Exception as exc:
             logger.warning(
                 "actor_spawn_init_failed",
@@ -300,6 +306,104 @@ class AutonomousSwarm:
             )
 
         logger.info("autonomous_swarm_fully_initialized")
+
+    async def run_deliberation(
+        self,
+        prompt: str,
+        timeout: int = 120,
+    ) -> dict[str, Any]:
+        """
+        Run a triad deliberation: route a prompt through Steward → Alpha → Beta → Charlie.
+
+        Args:
+            prompt: The deliberation topic/prompt.
+            timeout: Maximum total wall-clock seconds to wait for all three
+                     agents to produce output (default 120). Each agent's LLM
+                     call has a 60s internal timeout in run_with_llm.
+
+        Returns:
+            Dict mapping each agent_id to its output. Partial results are
+            returned on timeout or agent failure.
+
+        Raises:
+            RuntimeError: If Steward agent is not in the actor registry.
+        """
+        logger.info(
+            "run_deliberation_started",
+            prompt=prompt,
+            timeout=timeout,
+        )
+
+        steward = self.supervisor.actors.get("steward")
+        if steward is None:
+            raise RuntimeError(
+                "Steward agent not found in supervisor.actors — "
+                "cannot coordinate triad. Ensure _spawn_all_actors() "
+                "completed successfully."
+            )
+
+        try:
+            # Initiate triad deliberation via Steward's coordinate_triad.
+            # This sends a "start_deliberation" message through steward.send()
+            # which goes into the topic routing system. The message chain:
+            #   coordinate_triad → send("triad", start_deliberation) →
+            #   _deliver_to_registry_actors → Steward owns "triad" topic
+            deliberation_id = await steward.coordinate_triad(
+                topic=prompt,
+                triad_members=["alpha", "beta", "charlie"],
+            )
+            logger.info(
+                "deliberation_initiated",
+                deliberation_id=deliberation_id,
+            )
+
+            # Wait for async mailbox processing to complete across all agents.
+            # The message chain is: Steward mailbox → _handle_start_deliberation
+            # → send_to_actor(member, deliberation_request) → each member mailbox
+            # → _handle_deliberation_request → _perform_analysis() →
+            # run_with_llm() (60s timeout per agent). We sleep generously since
+            # the method-level timeout param caps total wall time.
+            sleep_time = min(timeout, 120)
+            await asyncio.sleep(sleep_time)
+
+        except asyncio.TimeoutError:
+            logger.warning("deliberation_timeout", prompt=prompt)
+        except Exception as exc:
+            logger.error(
+                "deliberation_failed",
+                prompt=prompt,
+                error=str(exc),
+            )
+
+        # Read results from per-agent state attributes.
+        results: dict[str, Any] = {}
+        for agent_id in ["alpha", "beta", "charlie"]:
+            agent = self.supervisor.actors.get(agent_id)
+            if agent is None:
+                results[agent_id] = {"error": f"Agent {agent_id} not found"}
+                continue
+
+            if agent_id == "alpha":
+                history = getattr(agent, "analysis_history", [])
+                results[agent_id] = {"analyses": history[-3:] if history else []}
+            elif agent_id == "beta":
+                analyses = getattr(agent, "_analyses", {})
+                results[agent_id] = {
+                    "analyses": list(analyses.values())[-3:] if analyses else []
+                }
+            elif agent_id == "charlie":
+                challenges = getattr(agent, "_challenges", {})
+                results[agent_id] = {
+                    "challenges": list(challenges.values())[-3:] if challenges else []
+                }
+
+        logger.info(
+            "run_deliberation_complete",
+            alpha_count=len(results.get("alpha", {}).get("analyses", [])),
+            beta_count=len(results.get("beta", {}).get("analyses", [])),
+            charlie_count=len(results.get("charlie", {}).get("challenges", [])),
+        )
+        return results
 
     def get_startup_status(self) -> dict[str, str]:
         """Return startup status of each component for diagnostics.
