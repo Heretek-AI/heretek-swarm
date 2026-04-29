@@ -25,6 +25,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
+from heretek_swarm.agents.agent_factory import build_agent_for
+
 from heretek_swarm.logging.config import logger as logging_logger
 
 # Initialize logging with JSON output for Loki/Promtail
@@ -249,7 +251,9 @@ async def _spawn_all_agents() -> None:
     spawned_count = 0
     for agent_class, agent_id in actors:
         try:
-            await supervisor.spawn_actor(agent_class, agent_id)
+            actor = await supervisor.spawn_actor(agent_class, agent_id)
+            # Inject a swarms.Agent so the actor can produce real LLM output
+            actor.swarms_agent = build_agent_for(agent_id, agent_class.__name__)
             logger.info("actor_spawned", agent_id=agent_id)
             spawned_count += 1
         except Exception as e:

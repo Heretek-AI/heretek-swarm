@@ -24,6 +24,7 @@ from typing import Any
 
 import structlog
 
+from heretek_swarm.agents.agent_factory import build_agent_for
 from heretek_swarm.actors.supervisor import ActorSupervisor
 from heretek_swarm.api.consciousness import get_consciousness_plugin
 from heretek_swarm.channels.registry import ChannelRegistry, GroupRegistry
@@ -264,7 +265,9 @@ class AutonomousSwarm:
 
         for agent_class, agent_id, topics in actors:
             try:
-                await self.supervisor.spawn_actor(agent_class, agent_id)
+                actor = await self.supervisor.spawn_actor(agent_class, agent_id)
+                # Inject a swarms.Agent so the actor can produce real LLM output
+                actor.swarms_agent = build_agent_for(agent_id, agent_class.__name__)
                 logger.info("actor_spawned", agent_id=agent_id, tier=self._get_tier(agent_id))
             except Exception as e:
                 logger.error("actor_spawn_failed", agent_id=agent_id, error=str(e))
