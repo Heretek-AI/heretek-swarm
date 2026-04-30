@@ -567,12 +567,50 @@ def run(detach: bool, nats_url: str, no_infra: bool, prompt: str | None = None) 
 
     if detach:
         click.echo("\nStarting in detached mode...")
-        # Fork process for daemon mode
-        pid = os.fork()
-        if pid > 0:
-            click.echo(f"  ✓ Process started in background (PID: {pid})")
-            click.echo("  Use 'kill {pid}' to stop, or check logs for status.")
-            sys.exit(0)
+        # Use the daemon module — handles fork, PID file, Unix socket, signal handling.
+        from heretek_swarm.runtime.daemon import daemonize
+        from heretek_swarm.runtime.main_loop import AutonomousSwarm
+
+        from heretek_swarm.logging.config import setup_logging
+        setup_logging(json_output=False, include_caller_info=False)
+
+        nats_servers = [s.strip() for s in nats_url.split(",")]
+
+        config = {
+            "nats_servers": nats_servers,
+            "health_check_interval": 30,
+            "loop_interval": 1,
+            "consciousness_interval": 5,
+            "memory_maintenance_interval": 300,
+            "scaling_interval": 60,
+            "ephemeral": {"ttl_seconds": 3600},
+            "persistent": {
+                "connection_string": os.getenv(
+                    "DATABASE_URL",
+                    "postgresql://heretek:password@localhost/heretek_swarm"
+                ),
+            },
+            "rag": {
+                "embedding_provider": os.getenv("RAG_EMBEDDING_PROVIDER", "openai"),
+                "embedding_model": os.getenv("RAG_EMBEDDING_MODEL", "text-embedding-3-small"),
+                "llm_provider": os.getenv("RAG_LLM_PROVIDER", "openai"),
+                "llm_model": os.getenv("RAG_LLM_MODEL", "gpt-4o-mini"),
+                "collection_name": os.getenv("RAG_COLLECTION", "heretek_documents"),
+            },
+            "consensus": {
+                "ahead_by_k": 2,
+                "min_votes": 3,
+                "red_flag_threshold": 0.3,
+            },
+        }
+
+        if no_infra:
+            config["persistent"]["connection_string"] = ""
+
+        swarm = AutonomousSwarm(config, no_infra=no_infra)
+        daemonize(swarm)
+        # daemonize() exits the parent after printing the PID — control never reaches here.
+        return
 
     click.echo("\nInitializing autonomous swarm...")
     click.echo(f"  NATS: {nats_url}")
@@ -756,17 +794,28 @@ def status(api_base: str, timeout: int, output_json: bool) -> None:
     """
     Check Heretek Swarm status.
 
-    Fetches infrastructure configuration from the API and performs
-    health checks on all configured services.
+    If the background daemon is running, queries it via the Unix socket
+    for agent status.  Otherwise falls back to fetching infrastructure
+    configuration from the HTTP API and performing health checks.
     """
-    import time
+    import json as json_mod
 
     logger.info("status_command", api_base=api_base, timeout=timeout)
 
-    if output_json:
-        # JSON-only output: suppress all human-readable text
-        pass
-    else:
+    # --- Try daemon socket first --------------------------------------------
+    from heretek_swarm.runtime.daemon import DEFAULT_PID_FILE, DEFAULT_SOCKET_PATH, read_pid_file
+
+    pid = read_pid_file(DEFAULT_PID_FILE)
+    if pid is not None:
+        agent_data = _query_daemon_socket()
+        if agent_data is not None:
+            _display_daemon_status(agent_data, pid, output_json)
+            return
+
+    # ── Fallback: API-based health check ────────────────────────────────────
+    import time
+
+    if not output_json:
         click.echo("Heretek Swarm Status")
         click.echo("=" * 40)
 
@@ -785,17 +834,15 @@ def status(api_base: str, timeout: int, output_json: bool) -> None:
         data = response.json()
     except httpx.ConnectError:
         if output_json:
-            import json
-            click.echo(json.dumps({"error": f"Cannot connect to API server at {api_base}"}))
+            click.echo(json_mod.dumps({"error": f"Cannot connect to API server at {api_base}"}))
             sys.exit(2)
+        # Check if there's genuinely nothing available
         click.echo("  ✗ Cannot connect to API server")
-        click.echo(f"    Is the server running at {api_base}?")
-        click.echo("    Start with: heretek-swarm serve")
+        click.echo("  No running daemon or API server found")
         sys.exit(1)
     except httpx.HTTPError as e:
         if output_json:
-            import json
-            click.echo(json.dumps({"error": f"API error: {e}"}))
+            click.echo(json_mod.dumps({"error": f"API error: {e}"}))
             sys.exit(2)
         click.echo(f"  ✗ API error: {e}")
         sys.exit(1)
@@ -937,6 +984,143 @@ def status(api_base: str, timeout: int, output_json: bool) -> None:
         sys.exit(1)
     else:
         click.echo("\n✓ All services healthy")
+
+
+@cli.command()
+def stop() -> None:
+    """
+    Stop a running Heretek Swarm background daemon.
+
+    Sends SIGTERM to the daemon process and cleans up the socket file.
+    Exits with code 1 if no daemon PID file is found.
+    """
+    from heretek_swarm.runtime.daemon import (
+        DEFAULT_PID_FILE,
+        DEFAULT_SOCKET_PATH,
+        cleanup_daemon,
+        read_pid_file,
+        send_stop,
+    )
+
+    logger.info("stop_command")
+
+    pid = read_pid_file(DEFAULT_PID_FILE)
+    if pid is None:
+        click.echo("No running daemon found")
+        sys.exit(1)
+
+    sent = send_stop(pid)
+    if sent:
+        click.echo(f"Shutdown signal sent to PID {pid}")
+    else:
+        click.echo(f"Failed to send stop signal to PID {pid} (process already gone?)")
+
+    # Clean up stale files regardless — if the daemon is gone, these are leftovers.
+    cleanup_daemon(DEFAULT_PID_FILE, DEFAULT_SOCKET_PATH)
+
+
+# =============================================================================
+# Daemon socket helpers
+# =============================================================================
+
+
+def _query_daemon_socket() -> dict | None:
+    """Connect to the daemon's Unix socket and send a status query.
+
+    Returns the parsed JSON response dict, or ``None`` if the socket is
+    unreachable or the exchange fails.
+    """
+    from heretek_swarm.runtime.daemon import DEFAULT_SOCKET_PATH
+
+    import json
+
+    socket_path = DEFAULT_SOCKET_PATH
+    if not socket_path.exists():
+        return None
+
+    try:
+        import socket as sock_mod
+
+        s = sock_mod.socket(sock_mod.AF_UNIX, sock_mod.SOCK_STREAM)
+        s.settimeout(5.0)
+        s.connect(str(socket_path))
+        s.sendall(json.dumps({"type": "status"}).encode("utf-8") + b"\n")
+
+        # Read response
+        data = b""
+        while True:
+            chunk = s.recv(4096)
+            if not chunk:
+                break
+            data += chunk
+            if b"\n" in data:
+                break
+        s.close()
+
+        return json.loads(data.decode("utf-8").strip())
+    except (OSError, json.JSONDecodeError) as exc:
+        logger.warning("daemon_socket_query_failed", error=str(exc))
+        return None
+
+
+def _display_daemon_status(agent_data: dict, pid: int, output_json: bool) -> None:
+    """Print agent status from the daemon to stdout.
+
+    Args:
+        agent_data: Response dict containing an ``"agents"`` list.
+        pid: The daemon PID (printed in the header).
+        output_json: If ``True``, output JSON only.
+    """
+    import json
+
+    agents = agent_data.get("agents", [])
+
+    if output_json:
+        click.echo(json.dumps({
+            "daemon_pid": pid,
+            "agents": agents,
+            "agent_count": len(agents),
+        }))
+        return
+
+    click.echo("Heretek Swarm Status (daemon)")
+    click.echo("=" * 40)
+    click.echo(f"  Daemon PID: {pid}")
+    click.echo("")
+
+    if not agents:
+        click.echo("  No agent data available from daemon.")
+        return
+
+    # Column widths
+    id_w = max(len(a.get("agent_id", "")) for a in agents) + 2  # padding
+    id_w = max(id_w, 12)
+    state_w = 12
+    mb_w = 8
+    msg_w = 10
+    err_w = 6
+
+    header = (
+        f"  {'Agent ID':<{id_w}} {'State':<{state_w}} "
+        f"{'Mailbox':<{mb_w}} {'Messages':<{msg_w}} {'Errors':<{err_w}} Last Activity"
+    )
+    click.echo(header)
+    click.echo("  " + "-" * len(header))
+
+    for a in agents:
+        aid = a.get("agent_id", "?")
+        state = a.get("state", "?")
+        mb = a.get("mailbox_size", 0)
+        msgs = a.get("message_count", 0)
+        errs = a.get("error_count", 0)
+        last_act = a.get("last_activity", "")
+        click.echo(
+            f"  {aid:<{id_w}} {state:<{state_w}} "
+            f"{mb:<{mb_w}} {msgs:<{msg_w}} {errs:<{err_w}} {last_act}"
+        )
+
+    click.echo("")
+    click.echo(f"  ✓ {len(agents)} agent(s) running")
 
 
 def _fetch_wizard_config(api_base: str) -> dict[str, Any]:

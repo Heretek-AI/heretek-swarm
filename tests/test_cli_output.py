@@ -1,17 +1,23 @@
-"""Tests for CLI display functions — startup banner and deliberation result output.
+"""Tests for CLI display functions — startup banner, deliberation result output,
+and daemon status display.
 
-Verifies that ``_print_startup_banner()`` and ``_display_deliberation_results()``
-render text to stdout without errors, covering happy-path, error, and empty
-result scenarios.
+Verifies that ``_print_startup_banner()``, ``_display_deliberation_results()``,
+``_display_daemon_status()``, and ``_query_daemon_socket()`` render / interact
+correctly.
 """
 
 from __future__ import annotations
 
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 import pytest
 
-from heretek_swarm.cli import _display_deliberation_results, _print_startup_banner
+from heretek_swarm.cli import (
+    _display_daemon_status,
+    _display_deliberation_results,
+    _print_startup_banner,
+    _query_daemon_socket,
+)
 
 
 # ---------------------------------------------------------------------------
@@ -207,3 +213,163 @@ class TestDisplayDeliberationResults:
         assert "ALPHA response:" in captured
         assert "only alpha" in captured
         assert "[No analysis produced]" in captured
+
+
+# ---------------------------------------------------------------------------
+# _display_daemon_status tests
+# ---------------------------------------------------------------------------
+
+
+class TestDisplayDaemonStatus:
+    """Tests for ``_display_daemon_status()``."""
+
+    @staticmethod
+    def test_prints_header_and_pid(capsys: pytest.CaptureFixture[str]) -> None:
+        """Prints a header with the daemon PID."""
+        _display_daemon_status({"agents": []}, pid=12345, output_json=False)
+        captured = capsys.readouterr().out
+        assert "Daemon PID: 12345" in captured
+        assert "Heretek Swarm Status (daemon)" in captured
+
+    @staticmethod
+    def test_shows_no_agent_message(capsys: pytest.CaptureFixture[str]) -> None:
+        """Shows a message when the agent list is empty."""
+        _display_daemon_status({"agents": []}, pid=999, output_json=False)
+        captured = capsys.readouterr().out
+        assert "No agent data available from daemon" in captured
+
+    @staticmethod
+    def test_prints_agent_table(capsys: pytest.CaptureFixture[str]) -> None:
+        """Prints a formatted table of agent status."""
+        data = {
+            "agents": [
+                {"agent_id": "alpha", "state": "active", "mailbox_size": 2, "message_count": 10, "error_count": 0, "last_activity": "2025-01-01T00:00:00Z"},
+                {"agent_id": "beta",  "state": "idle",   "mailbox_size": 0, "message_count": 5,  "error_count": 1, "last_activity": ""},
+            ],
+        }
+        _display_daemon_status(data, pid=42, output_json=False)
+        captured = capsys.readouterr().out
+
+        assert "Agent ID" in captured
+        assert "State" in captured
+        assert "Mailbox" in captured
+        assert "Messages" in captured
+        assert "Errors" in captured
+        assert "alpha" in captured
+        assert "beta" in captured
+        assert "active" in captured
+        assert "idle" in captured
+        assert "2 agent(s) running" in captured
+
+    @staticmethod
+    def test_outputs_json_when_requested(capsys: pytest.CaptureFixture[str]) -> None:
+        """Outputs valid JSON when output_json=True."""
+        data = {
+            "agents": [
+                {"agent_id": "gamma", "state": "active", "mailbox_size": 0, "message_count": 3, "error_count": 0, "last_activity": ""},
+            ],
+        }
+        import json
+        _display_daemon_status(data, pid=77, output_json=True)
+        captured = capsys.readouterr().out
+        parsed = json.loads(captured)
+        assert parsed["daemon_pid"] == 77
+        assert len(parsed["agents"]) == 1
+        assert parsed["agents"][0]["agent_id"] == "gamma"
+
+    @staticmethod
+    def test_json_mode_includes_agent_count(capsys: pytest.CaptureFixture[str]) -> None:
+        """JSON output includes an agent_count field."""
+        import json
+        _display_daemon_status({"agents": []}, pid=1, output_json=True)
+        parsed = json.loads(capsys.readouterr().out)
+        assert parsed["agent_count"] == 0
+
+    @staticmethod
+    def test_handles_missing_agent_data_keys(capsys: pytest.CaptureFixture[str]) -> None:
+        """Missing keys in agent dicts don't cause errors."""
+        data = {
+            "agents": [
+                {"agent_id": "minimal"},
+            ],
+        }
+        # Should not raise
+        _display_daemon_status(data, pid=9, output_json=False)
+        captured = capsys.readouterr().out
+        assert "minimal" in captured
+        assert "1 agent(s) running" in captured
+
+
+# ---------------------------------------------------------------------------
+# _query_daemon_socket tests (mock-based)
+# ---------------------------------------------------------------------------
+
+
+class TestQueryDaemonSocket:
+    """Tests for ``_query_daemon_socket()``."""
+
+    @staticmethod
+    def test_returns_none_when_socket_missing() -> None:
+        """Returns None when the socket file does not exist."""
+        with patch("heretek_swarm.cli.Path.exists") as mock_exists:
+            mock_exists.return_value = False
+            result = _query_daemon_socket()
+            assert result is None
+
+    @staticmethod
+    def test_returns_none_on_connection_error() -> None:
+        """Returns None when connecting to the socket fails."""
+        import socket
+        # AF_UNIX not available on Windows; add it so the function can look it up.
+        if not hasattr(socket, "AF_UNIX"):
+            socket.AF_UNIX = 1  # arbitrary, mock won't actually use it
+
+        with (
+            patch("heretek_swarm.cli.Path.exists") as mock_exists,
+            patch("socket.socket") as mock_socket_cls,
+        ):
+            mock_exists.return_value = True
+            mock_socket = MagicMock()
+            mock_socket_cls.return_value = mock_socket
+            mock_socket.connect.side_effect = OSError("Connection refused")
+            result = _query_daemon_socket()
+            assert result is None
+
+    @staticmethod
+    def test_returns_parsed_response() -> None:
+        """Returns parsed JSON on successful exchange."""
+        import socket
+        if not hasattr(socket, "AF_UNIX"):
+            socket.AF_UNIX = 1
+
+        with (
+            patch("heretek_swarm.cli.Path.exists") as mock_exists,
+            patch("socket.socket") as mock_socket_cls,
+        ):
+            mock_exists.return_value = True
+            mock_socket = MagicMock()
+            mock_socket_cls.return_value = mock_socket
+            mock_socket.recv.side_effect = [b'{"agents":[],"ok":true}\n', b""]
+            result = _query_daemon_socket()
+            assert result == {"agents": [], "ok": True}
+
+    @staticmethod
+    def test_sends_status_query() -> None:
+        """Sends {\"type\": \"status\"} over the socket."""
+        import socket
+        if not hasattr(socket, "AF_UNIX"):
+            socket.AF_UNIX = 1
+
+        with (
+            patch("heretek_swarm.cli.Path.exists") as mock_exists,
+            patch("socket.socket") as mock_socket_cls,
+        ):
+            mock_exists.return_value = True
+            mock_socket = MagicMock()
+            mock_socket_cls.return_value = mock_socket
+            mock_socket.recv.side_effect = [b'{"ok":true}\n', b""]
+            _query_daemon_socket()
+            # Check that the sent data contains the status query
+            sent_data = mock_socket.sendall.call_args[0][0]
+            import json
+            assert json.loads(sent_data.decode()) == {"type": "status"}
