@@ -157,6 +157,7 @@ class MetisAgent(
         self.register_handler("analyze_scenarios", self._handle_analyze_scenarios)
         self.register_handler("set_strategic_objective", self._handle_set_strategic_objective)
         self.register_handler("get_plan_status", self._handle_get_plan_status)
+        self.register_handler("on_demand_analysis", self._handle_on_demand_analysis)
 
         logger.info(f"[{self.agent_id}] Metis initialization complete")
 
@@ -800,6 +801,151 @@ Format each risk as JSON object.
             )
 
         return scenarios
+
+    async def _handle_on_demand_analysis(self, message: ActorMessage) -> None:
+        """
+        Handle on-demand strategic analysis requests.
+
+        Expected message.content keys:
+        - context (str): The context or situation to analyze
+        - perspective (str, optional): Strategic lens to apply (default: "neutral")
+
+        Responds with:
+        - message_type: "on_demand_analysis_response"
+        - analysis (str): Strategic analysis text
+        - confidence (float): Confidence score 0-1
+        - recommendations (list[str]): Strategic recommendations
+        """
+        context = message.content.get("context", "")
+        perspective = message.content.get("perspective", "neutral")
+
+        if not context:
+            logger.warning(
+                f"[{self.agent_id}] on_demand_analysis called with empty context"
+            )
+            if message.content.get("reply_to"):
+                await self.send(
+                    topic=message.content["reply_to"],
+                    content={
+                        "message_type": "error_response",
+                        "error": "Empty context provided",
+                        "original_message_type": "on_demand_analysis",
+                    },
+                    correlation_id=message.correlation_id,
+                )
+            return
+
+        logger.info(
+            f"[{self.agent_id}] Performing on-demand strategic analysis",
+            extra={"context_preview": context[:80], "perspective": perspective},
+        )
+
+        result = await self._perform_analysis(
+            context=context,
+            perspective=perspective,
+        )
+
+        if message.content.get("reply_to"):
+            await self.send(
+                topic=message.content["reply_to"],
+                content={
+                    "message_type": "on_demand_analysis_response",
+                    "analysis": result["analysis"],
+                    "confidence": result["confidence"],
+                    "recommendations": result["recommendations"],
+                    "perspective": perspective,
+                },
+                correlation_id=message.correlation_id,
+            )
+
+        logger.info(
+            f"[{self.agent_id}] On-demand strategic analysis complete",
+            extra={"confidence": result["confidence"]},
+        )
+
+    async def _perform_analysis(
+        self,
+        context: str,
+        perspective: str = "neutral",
+    ) -> dict[str, Any]:
+        """
+        Perform a lightweight on-demand strategic analysis.
+
+        This is a lighter-weight method than _generate_strategic_plan().
+        It uses run_with_llm() to analyze a situation and returns
+        analysis text, confidence, and recommendations.  Falls back to a
+        degraded result on LLM failure.
+
+        Args:
+            context: The situation or context to analyze
+            perspective: Strategic lens (e.g. "neutral", "aggressive",
+                          "conservative", "opportunistic")
+
+        Returns:
+            Dict with keys:
+            - analysis (str): The strategic analysis text
+            - confidence (float): Confidence score 0-1
+            - recommendations (list[str]): Strategic recommendations
+        """
+        prompt = f"""
+On-Demand Strategic Analysis Request:
+
+Context: {context}
+Perspective: {perspective}
+
+Provide a concise strategic analysis of the above context, including:
+1. Key strategic observations
+2. Potential opportunities and risks
+3. 3-5 actionable recommendations
+
+Format your response as a clear analysis with recommendations.
+"""
+        try:
+            response = await self.run_with_llm(
+                prompt=prompt,
+                system_prompt=(
+                    "You are Metis, a strategic planning specialist AI. "
+                    "Provide clear, actionable strategic analysis."
+                ),
+                timeout=60,
+            )
+
+            # Extract recommendations from the response (simplified).
+            # In production, this would use structured output parsing.
+            recommendations = [
+                line.strip().lstrip("0123456789.- ")
+                for line in (response or "").split("\n")
+                if line.strip()
+                and (line.strip()[0].isdigit() or line.strip().startswith("-"))
+            ][:5]
+
+            return {
+                "analysis": response[:2000] if response else "Analysis complete.",
+                "confidence": 0.85,
+                "recommendations": recommendations or ["Review the full analysis"],
+            }
+
+        except TimeoutError:
+            logger.warning(
+                f"[{self.agent_id}] On-demand analysis timed out",
+                extra={"context_preview": context[:60]},
+            )
+            return {
+                "analysis": "Analysis timed out — LLM did not respond within 60 seconds.",
+                "confidence": 0.0,
+                "recommendations": ["Retry analysis with a narrower context"],
+            }
+
+        except Exception as e:
+            logger.error(
+                f"[{self.agent_id}] On-demand analysis failed: {e}",
+                exc_info=True,
+            )
+            return {
+                "analysis": f"Analysis failed: {e!s}",
+                "confidence": 0.0,
+                "recommendations": [],
+            }
 
     async def get_strategic_summary(self) -> dict[str, Any]:
         """
