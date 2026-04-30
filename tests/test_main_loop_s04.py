@@ -3,8 +3,9 @@
 Covers:
 1. MetisAgent._perform_analysis() fallback without swarms_agent
 2. MetisAgent._handle_on_demand_analysis() message handler
-3. EmpathAgent._perform_sentiment() fallback
+3. EmpathAgent._perform_sentiment() fallback (new run_with_llm method)
 4. EmpathAgent._handle_on_demand_sentiment() message handler
+5. EmpathAgent._analyze_sentiment_llm() existing LLM-based method
 """
 
 from __future__ import annotations
@@ -232,12 +233,177 @@ class TestMetisOnDemandAnalysisHandler:
 
 
 # ===================================================================
-# EmpathAgent — _perform_sentiment()
+# EmpathAgent — _perform_sentiment() (new run_with_llm method)
 # ===================================================================
 
 
-class TestEmpathPerformSentiment:
-    """EmpathAgent._perform_sentiment() fallback behaviour."""
+class TestEmpathPerformSentimentNew:
+    """EmpathAgent._perform_sentiment() fallback behaviour.
+
+    This new method uses run_with_llm() for consistent timeout/error
+    handling, unlike the existing _analyze_sentiment_llm() which calls
+    self.swarms_agent.llm() directly.
+    """
+
+    @staticmethod
+    async def test_returns_dict_with_expected_keys() -> None:
+        """The fallback result contains sentiment, tone, and
+        confidence."""
+        agent = _make_empath()
+        result = await agent._perform_sentiment("some text")
+
+        assert isinstance(result, dict)
+        assert "sentiment" in result
+        assert "tone" in result
+        assert "confidence" in result
+
+    @staticmethod
+    async def test_returns_degraded_without_llm() -> None:
+        """Without swarms_agent, the method returns a degraded result
+        indicating the LLM was unavailable."""
+        agent = _make_empath()
+        result = await agent._perform_sentiment("test text")
+
+        # Without swarms_agent, run_with_llm raises RuntimeError,
+        # which is caught by the except Exception branch
+        assert result["confidence"] == 0.0
+        assert result["sentiment"] == "neutral"
+        assert result["tone"] == "unknown"
+
+    @staticmethod
+    async def test_with_mocked_swarms_agent_returns_sentiment() -> None:
+        """With a mocked swarms_agent, the method returns the LLM
+        response as the basis for sentiment."""
+        agent = _make_empath()
+        agent.swarms_agent = AsyncMock()
+        agent.swarms_agent.agent_name = "test-agent"
+        agent.run_with_llm = AsyncMock(
+            return_value="The text expresses a positive outlook. "
+            "The tone is confident and supportive."
+        )
+
+        result = await agent._perform_sentiment(
+            text="We achieved all our goals this quarter!",
+            source_agent="test-sender",
+        )
+
+        assert result["sentiment"] == "positive"
+        assert result["tone"] == "confident"
+        assert result["confidence"] == 0.8
+
+    @staticmethod
+    async def test_catches_llm_error_and_returns_degraded() -> None:
+        """When run_with_llm raises, the method returns a degraded
+        result gracefully."""
+        agent = _make_empath()
+        agent.swarms_agent = AsyncMock()
+        agent.swarms_agent.agent_name = "test-agent"
+
+        async def _raise_error(*args, **kwargs):
+            raise RuntimeError("LLM unavailable")
+
+        agent.run_with_llm = _raise_error
+
+        result = await agent._perform_sentiment("test")
+
+        assert result["confidence"] == 0.0
+        assert result["sentiment"] == "neutral"
+
+    @staticmethod
+    async def test_handles_timeout_gracefully() -> None:
+        """A TimeoutError from run_with_llm returns a degraded result."""
+        agent = _make_empath()
+        agent.run_with_llm = AsyncMock(side_effect=TimeoutError("timed out"))
+
+        result = await agent._perform_sentiment("test")
+
+        assert result["confidence"] == 0.0
+        assert result["sentiment"] == "neutral"
+        assert result["tone"] == "unknown"
+
+    @staticmethod
+    async def test_detects_negative_sentiment_from_llm_response() -> None:
+        """The method detects negative sentiment in the LLM response."""
+        agent = _make_empath()
+        agent.run_with_llm = AsyncMock(
+            return_value="The text is negative and pessimistic. "
+            "The tone is critical."
+        )
+
+        result = await agent._perform_sentiment("This is a terrible failure.")
+
+        assert result["sentiment"] == "negative"
+        assert result["tone"] == "critical"
+
+    @staticmethod
+    async def test_detects_concerned_tone() -> None:
+        """The method detects 'concerned' tone from LLM response."""
+        agent = _make_empath()
+        agent.run_with_llm = AsyncMock(
+            return_value="The text expresses concern about the timeline. "
+            "The sentiment is neutral with worried undertones."
+        )
+
+        result = await agent._perform_sentiment("I am concerned about the deadline.")
+
+        assert result["sentiment"] == "neutral"  # No positive/negative keyword match
+        assert result["tone"] == "concerned"
+
+
+# ===================================================================
+# EmpathAgent — _handle_on_demand_sentiment()
+# ===================================================================
+
+
+class TestEmpathOnDemandSentimentHandler:
+    """EmpathAgent._handle_on_demand_sentiment() message handler."""
+
+    @staticmethod
+    async def test_sends_response_on_valid_input() -> None:
+        """A valid on_demand_sentiment message triggers a send()
+        response."""
+        agent = _make_empath()
+        msg = _make_sentiment_message(text="This is great news!")
+
+        await agent._handle_on_demand_sentiment(msg)
+
+        agent.send.assert_awaited_once()
+        assert agent.send.await_count == 1
+
+    @staticmethod
+    async def test_empty_text_triggers_error_response() -> None:
+        """Empty text sends an error_response instead of analysis."""
+        agent = _make_empath()
+        msg = _make_sentiment_message(text="")
+
+        await agent._handle_on_demand_sentiment(msg)
+
+        agent.send.assert_awaited_once()
+        call_args = agent.send.await_args
+        assert call_args is not None
+        kwargs = call_args.kwargs if call_args.kwargs else call_args[1]
+        content = kwargs.get("content") if hasattr(kwargs, "get") else kwargs
+        assert content.get("message_type") == "error_response"
+
+    @staticmethod
+    async def test_no_reply_to_does_not_send() -> None:
+        """If the message has no reply_to, no send() is called."""
+        agent = _make_empath()
+        msg = _make_sentiment_message(text="test text")
+        msg.content = {"text": "test text"}  # No reply_to
+
+        await agent._handle_on_demand_sentiment(msg)
+
+        assert agent.send.await_count == 0
+
+
+# ===================================================================
+# EmpathAgent — _analyze_sentiment_llm() (existing heuristic fallback)
+# ===================================================================
+
+
+class TestEmpathAnalyzeSentimentLlm:
+    """EmpathAgent._analyze_sentiment_llm() fallback behaviour."""
 
     @staticmethod
     async def test_returns_dict_with_expected_keys() -> None:
@@ -264,33 +430,3 @@ class TestEmpathPerformSentiment:
 
         assert result["sentiment"] == "positive"
         assert result["confidence"] > 0
-
-
-# ===================================================================
-# EmpathAgent — on_demand_sentiment
-# ===================================================================
-
-
-class TestEmpathOnDemandSentiment:
-    """EmpathAgent handling of on_demand_sentiment messages."""
-
-    @staticmethod
-    async def test_analyze_sentiment_handles_empty_text() -> None:
-        """Empty text triggers a warning log and error response."""
-        agent = _make_empath()
-        # We need a message with reply_to so the handler sends
-        msg = ActorMessage(
-            sender="steward-1",
-            message_type="analyze_sentiment",
-            content={
-                "text": "",
-                "source_agent": "tester",
-                "reply_to": "test-replies",
-            },
-            timestamp="2026-04-30T00:00:00+00:00",
-        )
-
-        await agent._handle_analyze_sentiment(msg)
-
-        # The handler should call send() with the error response
-        assert agent.send.await_count >= 1

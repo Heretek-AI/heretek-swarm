@@ -181,6 +181,7 @@ class EmpathAgent(
         self.register_handler("get_emotional_state", self._handle_get_emotional_state)
         self.register_handler("mediate_conflict", self._handle_mediate_conflict)
         self.register_handler("get_collective_mood", self._handle_get_collective_mood)
+        self.register_handler("on_demand_sentiment", self._handle_on_demand_sentiment)
 
         logger.info(f"[{self.agent_id}] Empath initialization complete")
 
@@ -898,6 +899,177 @@ Return as JSON: {{"resolution": "...", "reasoning": "..."}}
     # Session 44: Collective Learning, Deliberation, and Memory Integration
     # Provided by DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin
     # =========================================================================
+
+    async def _perform_sentiment(
+        self,
+        text: str,
+        source_agent: str | None = None,
+    ) -> dict[str, Any]:
+        """
+        Perform a lightweight on-demand sentiment analysis.
+
+        Uses run_with_llm() for consistent timeout/error handling with
+        the rest of the codebase.  Falls back to a degraded result on
+        LLM failure.
+
+        Args:
+            text: The text to analyze
+            source_agent: Optional source agent identifier
+
+        Returns:
+            Dict with keys:
+            - sentiment (str): "positive", "negative", or "neutral"
+            - tone (str): Descriptive tone label (e.g. "confident",
+                          "concerned", "assertive")
+            - confidence (float): Confidence score 0-1
+        """
+        prompt = f"""
+On-Demand Sentiment Analysis Request:
+
+Text: {text}
+{f"Source: {source_agent}" if source_agent else ""}
+
+Analyze the sentiment and tone of the above text. Provide:
+1. Overall sentiment (positive, negative, or neutral)
+2. Dominant tone (e.g. confident, concerned, urgent, assertive,
+   supportive, doubtful)
+3. Confidence in your assessment (0-1)
+
+Format your response as a clear analysis with these three elements.
+"""
+        try:
+            response = await self.run_with_llm(
+                prompt=prompt,
+                system_prompt=(
+                    "You are Empath, an emotional intelligence and sentiment "
+                    "analysis specialist. Provide concise, accurate sentiment "
+                    "analysis."
+                ),
+                timeout=60,
+            )
+
+            # Extract sentiment and tone from the response (simplified).
+            # In production, this would use structured output parsing.
+            response_lower = (response or "").lower()
+
+            # Determine overall sentiment from response text
+            if any(w in response_lower for w in ["positive", "optimistic", "supportive"]):
+                sentiment = "positive"
+            elif any(w in response_lower for w in ["negative", "pessimistic", "hostile"]):
+                sentiment = "negative"
+            else:
+                sentiment = "neutral"
+
+            # Simple tone extraction
+            tone = "neutral"
+            tone_keywords = {
+                "confident": "confident",
+                "concern": "concerned",
+                "urgent": "urgent",
+                "assertive": "assertive",
+                "supportive": "supportive",
+                "doubt": "doubtful",
+                "hopeful": "hopeful",
+                "critical": "critical",
+            }
+            for keyword, label in tone_keywords.items():
+                if keyword in response_lower:
+                    tone = label
+                    break
+
+            return {
+                "sentiment": sentiment,
+                "tone": tone,
+                "confidence": 0.8,
+            }
+
+        except TimeoutError:
+            logger.warning(
+                f"[{self.agent_id}] On-demand sentiment analysis timed out",
+                extra={"text_preview": text[:60]},
+            )
+            return {
+                "sentiment": "neutral",
+                "tone": "unknown",
+                "confidence": 0.0,
+            }
+
+        except Exception as e:
+            logger.error(
+                f"[{self.agent_id}] On-demand sentiment analysis failed: {e}",
+                exc_info=True,
+            )
+            return {
+                "sentiment": "neutral",
+                "tone": "unknown",
+                "confidence": 0.0,
+            }
+
+    async def _handle_on_demand_sentiment(self, message: ActorMessage) -> None:
+        """
+        Handle on-demand sentiment analysis requests.
+
+        Expected message.content keys:
+        - text (str): Text to analyze for sentiment
+        - source_agent (str, optional): ID of the source agent
+
+        Responds with:
+        - message_type: "on_demand_sentiment_response"
+        - sentiment (str): "positive", "negative", or "neutral"
+        - tone (str): Descriptive tone label
+        - confidence (float): Confidence score 0-1
+        """
+        text = message.content.get("text", "")
+        source_agent = message.content.get("source_agent", "unknown")
+
+        if not text:
+            logger.warning(
+                f"[{self.agent_id}] on_demand_sentiment called with empty text"
+            )
+            if message.content.get("reply_to"):
+                await self.send(
+                    topic=message.content["reply_to"],
+                    content={
+                        "message_type": "error_response",
+                        "error": "Empty text provided",
+                        "original_message_type": "on_demand_sentiment",
+                    },
+                    correlation_id=message.correlation_id,
+                )
+            return
+
+        logger.info(
+            f"[{self.agent_id}] Performing on-demand sentiment analysis",
+            extra={
+                "text_preview": text[:80],
+                "source_agent": source_agent,
+            },
+        )
+
+        result = await self._perform_sentiment(
+            text=text,
+            source_agent=source_agent,
+        )
+
+        if message.content.get("reply_to"):
+            await self.send(
+                topic=message.content["reply_to"],
+                content={
+                    "message_type": "on_demand_sentiment_response",
+                    "sentiment": result["sentiment"],
+                    "tone": result["tone"],
+                    "confidence": result["confidence"],
+                },
+                correlation_id=message.correlation_id,
+            )
+
+        logger.info(
+            f"[{self.agent_id}] On-demand sentiment analysis complete",
+            extra={
+                "sentiment": result["sentiment"],
+                "confidence": result["confidence"],
+            },
+        )
 
     async def _send_error_response(self, message: ActorMessage, error: str) -> None:
         """Send error response."""
