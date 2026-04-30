@@ -9,9 +9,14 @@ module level), we patch ``"swarms.Agent"`` directly rather than trying to
 patch the module-level reference which does not exist until the function runs.
 """
 
+import ast
+import inspect
+import textwrap
 from unittest.mock import MagicMock, patch
 
 import pytest
+
+from heretek_swarm.runtime.main_loop import AutonomousSwarm
 
 
 # ---------------------------------------------------------------------------
@@ -119,3 +124,116 @@ class TestBuildAgentFor:
 
         mock_cls.assert_called_once()
         assert mock_cls.call_args.kwargs.get("llm_base_url") == "https://api.openai.com/v1"
+
+
+# ---------------------------------------------------------------------------
+# System-prompt coverage tests (M003/S01)
+# ---------------------------------------------------------------------------
+
+
+_ALL_AGENT_IDS: list[str] = [
+    # Tier 1: Core Triad (Governance)
+    "steward", "alpha", "beta", "charlie",
+    # Tier 2: Support Agents (Knowledge & Memory)
+    "historian", "metis", "empath", "perceiver", "echo",
+    # Tier 3: Exploration Agents (Discovery & Creation)
+    "explorer", "examiner", "dreamer", "coder",
+    # Tier 4: Safety & Security (Protection)
+    "sentinel", "sentinel-prime", "arbiter",
+    # Tier 5: Coordination Agents (Integration)
+    "coordinator", "nexus", "catalyst", "chronos",
+    # Tier 6: Enhancement Agents (Optimization)
+    "prism", "habit-forge", "perceiver-plus",
+]
+
+
+def _extract_system_prompts_from_source() -> dict[str, str | None]:
+    """Read ``_SYSTEM_PROMPTS`` keys from the ``main_loop.py`` source file.
+
+    Because ``_SYSTEM_PROMPTS`` is a local variable inside an async method,
+    we find it by scanning for the dict-literal pattern ``"key": name``
+    in the source lines.  This returns a dict keyed by agent ID with a
+    dummy value — our tests only care about which IDs exist and whether
+    the value is ``None``.
+    """
+    import re
+
+    source = textwrap.dedent(
+        inspect.getsource(AutonomousSwarm._spawn_all_actors)  # noqa: SLF001
+    )
+
+    prompts: dict[str, str | None] = {}
+    # Look for patterns like:  "historian": _HISTORIAN_SYSTEM_PROMPT,
+    in_system_prompts = False
+    for line in source.splitlines():
+        stripped = line.strip()
+        if stripped.startswith("_SYSTEM_PROMPTS"):
+            in_system_prompts = True
+            continue
+        if in_system_prompts:
+            if stripped == "}":
+                break
+            # Match:  "key": value_pattern,
+            m = re.match(r'^\s*"([^"]+)"\s*:\s*(.+?),?\s*$', stripped)
+            if m:
+                agent_id = m.group(1)
+                value_expr = m.group(2).rstrip(",").strip()
+                # If the value is "None" (bare Python None), set to None
+                # Otherwise it's a variable reference — treat as non-None
+                prompts[agent_id] = None if value_expr == "None" else value_expr
+
+    return prompts
+
+
+def test_all_23_agent_ids_have_system_prompts() -> None:
+    """Every agent ID in ``_ALL_AGENT_IDS`` has a non-``None`` entry in
+    ``_SYSTEM_PROMPTS``."""
+    prompts = _extract_system_prompts_from_source()
+
+    # Every expected ID must be present
+    for agent_id in _ALL_AGENT_IDS:
+        assert agent_id in prompts, (
+            f"Agent {agent_id!r} is missing from _SYSTEM_PROMPTS"
+        )
+
+    # Every entry must be a non-None string (not auto-generated default)
+    for agent_id, prompt in prompts.items():
+        assert prompt is not None, (
+            f"Agent {agent_id!r} has None system_prompt"
+        )
+
+
+def test_all_23_agent_ids_have_exactly_23_prompts() -> None:
+    """The ``_SYSTEM_PROMPTS`` dict contains exactly 23 entries, one per
+    agent."""
+    prompts = _extract_system_prompts_from_source()
+    assert len(prompts) == 23, (
+        f"Expected exactly 23 system prompts, got {len(prompts)}"
+    )
+
+
+def test_every_agent_gets_system_prompt_through_build(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Call ``build_agent_for`` for every agent ID with its system prompt
+    and verify the ``system_prompt`` kwarg is forwarded to ``Agent(...)``."""
+    monkeypatch.setenv("OPENAI_API_KEY", "sk-test-key")
+
+    prompts = _extract_system_prompts_from_source()
+    from heretek_swarm.agents.agent_factory import build_agent_for
+
+    for agent_id in _ALL_AGENT_IDS:
+        prompt = prompts[agent_id]
+        mock_cls = _mock_agent_class()
+        with patch("swarms.Agent", mock_cls):
+            agent = build_agent_for(agent_id, f"{agent_id.title()}Agent", system_prompt=prompt)
+
+        mock_cls.assert_called_once()
+        assert mock_cls.call_args.kwargs.get("system_prompt") == prompt, (
+            f"system_prompt not forwarded for agent {agent_id!r}"
+        )
+        assert mock_cls.call_args.kwargs.get("agent_name") == agent_id, (
+            f"agent_name mismatch for {agent_id!r}"
+        )
+        assert agent is mock_cls.return_value
+        mock_cls.reset_mock()
