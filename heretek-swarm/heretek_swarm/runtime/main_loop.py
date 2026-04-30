@@ -537,12 +537,27 @@ class AutonomousSwarm:
             "coordination. You generate ticks that drive the swarm's main loop, "
             "telling agents what to do and when."
         )
+        _METIS_SYSTEM_PROMPT = (
+            "You are the Metis agent. You provide strategic planning and "
+            "long-term thinking for the swarm. You produce strategic analyses "
+            "covering goal setting, resource allocation, risk assessment, "
+            "multi-step planning, and scenario analysis."
+        )
+        _EMPATH_SYSTEM_PROMPT = (
+            "You are the Empath agent. You provide emotional intelligence "
+            "and sentiment analysis for the swarm. You perform sentiment "
+            "analysis on communications, track agent mood states, detect "
+            "stress, mediate conflicts, and provide emotional context for "
+            "decision-making."
+        )
 
         # Map agent_ids to their system prompts. Agents not listed get None
         # (swarms auto-generates a default prompt in that case).
         _SYSTEM_PROMPTS: dict[str, str | None] = {
             "historian": _HISTORIAN_SYSTEM_PROMPT,
             "chronos": _CHRONOS_SYSTEM_PROMPT,
+            "metis": _METIS_SYSTEM_PROMPT,
+            "empath": _EMPATH_SYSTEM_PROMPT,
         }
 
         for agent_class, agent_id, topics in actors:
