@@ -524,11 +524,35 @@ class AutonomousSwarm:
             (PerceiverPlusAgent, "perceiver-plus", ["analytics", "advanced", "perception"]),
         ]
 
+        # Per-agent system prompts loaded at spawn time.
+        # These give each agent its role identity so swarms.Agent can
+        # use a meaningful persona rather than the default auto-generated one.
+        _HISTORIAN_SYSTEM_PROMPT = (
+            "You are the Historian agent. You record and retrieve structured "
+            "events for the swarm. You persist events to a JSONL file and "
+            "provide memory and context for deliberations."
+        )
+        _CHRONOS_SYSTEM_PROMPT = (
+            "You are the Chronos agent. You manage scheduling and temporal "
+            "coordination. You generate ticks that drive the swarm's main loop, "
+            "telling agents what to do and when."
+        )
+
+        # Map agent_ids to their system prompts. Agents not listed get None
+        # (swarms auto-generates a default prompt in that case).
+        _SYSTEM_PROMPTS: dict[str, str | None] = {
+            "historian": _HISTORIAN_SYSTEM_PROMPT,
+            "chronos": _CHRONOS_SYSTEM_PROMPT,
+        }
+
         for agent_class, agent_id, topics in actors:
             try:
                 actor = await self.supervisor.spawn_actor(agent_class, agent_id)
                 # Inject a swarms.Agent so the actor can produce real LLM output
-                actor.swarms_agent = build_agent_for(agent_id, agent_class.__name__)
+                system_prompt = _SYSTEM_PROMPTS.get(agent_id)
+                actor.swarms_agent = build_agent_for(
+                    agent_id, agent_class.__name__, system_prompt=system_prompt,
+                )
                 logger.info("actor_spawned", agent_id=agent_id, tier=self._get_tier(agent_id))
             except Exception as e:
                 logger.error("actor_spawn_failed", agent_id=agent_id, error=str(e))
