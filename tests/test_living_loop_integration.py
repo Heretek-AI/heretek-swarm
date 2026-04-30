@@ -562,9 +562,13 @@ class TestStatusResponseWithRealAgents:
                     fake_status = {}
                     for aid in swarm.supervisor.actors:
                         fake_status[aid] = ActorStatus(
+                            agent_id=aid,
                             state=ActorState.ACTIVE,
-                            mailbox_size=0,
                             message_count=0,
+                            created_at=datetime.now(UTC).isoformat(),
+                            topics=["test"],
+                            capabilities=["test"],
+                            mailbox_size=0,
                             last_activity=datetime.now(UTC).isoformat(),
                             error_count=0,
                         )
@@ -603,9 +607,13 @@ class TestStatusResponseWithRealAgents:
                     fake_status = {}
                     for aid in swarm.supervisor.actors:
                         fake_status[aid] = ActorStatus(
+                            agent_id=aid,
                             state=ActorState.ACTIVE,
-                            mailbox_size=0,
                             message_count=0,
+                            created_at=datetime.now(UTC).isoformat(),
+                            topics=["test"],
+                            capabilities=["test"],
+                            mailbox_size=0,
                             last_activity=datetime.now(UTC).isoformat(),
                             error_count=0,
                         )
