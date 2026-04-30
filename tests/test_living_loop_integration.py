@@ -625,3 +625,214 @@ class TestStatusResponseWithRealAgents:
                     if swarm.supervisor is not None:
                         await swarm.supervisor.terminate_all()
                     _cleanup_supervisors(swarm)
+
+# ===================================================================
+# TestDaemonSocketIPC (2 tests)
+# ===================================================================
+
+
+class TestDaemonSocketIPC:
+    """Socket IPC handler tested via a real TCP server (Windows-compatible).
+
+    ``asyncio.start_unix_server`` is not available on Windows, so we use
+    ``asyncio.start_server`` on ``127.0.0.1:0`` (ephemeral port).  The
+    ``handle_daemon_connection`` function works with any
+    ``StreamReader``/``StreamWriter`` pair — the protocol (JSON line) is
+    platform-agnostic.
+    """
+
+    @staticmethod
+    async def test_status_query_returns_agent_list() -> None:
+        """Start a TCP server with ``handle_daemon_connection`` handler.
+        Connect a client, send ``{"type": "status"}``, verify response
+        contains ``"agents"`` key with correct fields."""
+        from heretek_swarm.runtime.daemon import handle_daemon_connection
+        from heretek_swarm.actors.base import ActorStatus, ActorState
+
+        # Build a mock swarm with known agent status data
+        swarm = MagicMock()
+        swarm.supervisor.get_all_status.return_value = {
+            "steward": ActorStatus(
+                agent_id="steward",
+                state=ActorState.ACTIVE,
+                message_count=5,
+                created_at="2025-01-01T00:00:00Z",
+                topics=["steward"],
+                capabilities=["steward"],
+                mailbox_size=1,
+                last_activity="2025-06-01T12:00:00Z",
+                error_count=0,
+            ),
+            "historian": ActorStatus(
+                agent_id="historian",
+                state=ActorState.ACTIVE,
+                message_count=42,
+                created_at="2025-01-01T00:00:00Z",
+                topics=["historian"],
+                capabilities=["historian"],
+                mailbox_size=2,
+                last_activity="2025-06-01T12:05:00Z",
+                error_count=1,
+            ),
+        }
+
+        async def _handler(reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:
+            await handle_daemon_connection(reader, writer, swarm)
+            if not writer.is_closing():
+                writer.close()
+                await writer.wait_closed()
+
+        server = await asyncio.start_server(_handler, host="127.0.0.1", port=0)
+        try:
+            port = server.sockets[0].getsockname()[1]
+
+            reader, writer = await asyncio.open_connection("127.0.0.1", port)
+            try:
+                writer.write(b'{"type": "status"}\n')
+                await writer.drain()
+
+                raw = await asyncio.wait_for(reader.readline(), timeout=5.0)
+                response = json.loads(raw.decode("utf-8").strip())
+
+                assert "agents" in response
+                assert len(response["agents"]) == 2
+
+                agent_ids = {a["agent_id"] for a in response["agents"]}
+                assert agent_ids == {"steward", "historian"}
+
+                # Verify correct fields in each entry
+                for entry in response["agents"]:
+                    assert "state" in entry
+                    assert "mailbox_size" in entry
+                    assert "message_count" in entry
+                    assert "last_activity" in entry
+                    assert "error_count" in entry
+            finally:
+                if not writer.is_closing():
+                    writer.close()
+                    await writer.wait_closed()
+        finally:
+            server.close()
+            await server.wait_closed()
+
+    @staticmethod
+    async def test_unknown_query_type_returns_error() -> None:
+        """Send ``{"type": "unknown"}`` to socket. Verify response contains
+        ``"error"`` field."""
+        from heretek_swarm.runtime.daemon import handle_daemon_connection
+
+        swarm = MagicMock()
+
+        async def _handler(reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:
+            await handle_daemon_connection(reader, writer, swarm)
+            if not writer.is_closing():
+                writer.close()
+                await writer.wait_closed()
+
+        server = await asyncio.start_server(_handler, host="127.0.0.1", port=0)
+        try:
+            port = server.sockets[0].getsockname()[1]
+
+            reader, writer = await asyncio.open_connection("127.0.0.1", port)
+            try:
+                writer.write(b'{"type": "unknown"}\n')
+                await writer.drain()
+
+                raw = await asyncio.wait_for(reader.readline(), timeout=5.0)
+                response = json.loads(raw.decode("utf-8").strip())
+
+                assert "error" in response
+                assert "unknown" in response["error"].lower()
+            finally:
+                if not writer.is_closing():
+                    writer.close()
+                    await writer.wait_closed()
+        finally:
+            server.close()
+            await server.wait_closed()
+
+
+# ===================================================================
+# TestJsonlEndToEnd (3 tests)
+# ===================================================================
+
+
+class TestJsonlEndToEnd:
+    """JSONL end-to-end integration — multiple sources, queue drain on
+    cleanup, and parent-directory creation."""
+
+    @staticmethod
+    async def test_multiple_sources_write_to_jsonl(tmp_path: Path) -> None:
+        """Call ``log_event()`` from a historian instance, simulate
+        main_loop agent also calling it.  Verify both appear in JSONL."""
+        import heretek_swarm.actors.historian as _h_mod
+
+        orig_file = _h_mod._HISTORIAN_FILE
+        jsonl_path = tmp_path / "multi_source.jsonl"
+        _h_mod._HISTORIAN_FILE = jsonl_path
+
+        historian = HistorianAgent()
+        await historian.initialize()
+        try:
+            # Two sources: historian logs a pulse; "main_loop" logs a cycle
+            eid1 = await historian.log_event(
+                event_type="steward_pulse", agent_id="steward",
+                payload={"actors": 5},
+            )
+            eid2 = await historian.log_event(
+                event_type="cycle_complete", agent_id="main_loop",
+                payload={"cycle": 1},
+            )
+
+            await historian._jsonl_queue.join()
+
+            lines = _read_jsonl(jsonl_path)
+            assert len(lines) == 2
+
+            types = {l["agent_id"] for l in lines}
+            assert types == {"steward", "main_loop"}
+
+            ids = {l["event_id"] for l in lines}
+            assert eid1 in ids
+            assert eid2 in ids
+        finally:
+            await _drain_and_cleanup_historian(historian)
+            _h_mod._HISTORIAN_FILE = orig_file
+
+    @staticmethod
+    async def test_cleanup_drains_pending_events(tmp_path: Path) -> None:
+        """Write events without awaiting queue.  Call ``cleanup()``.
+        Verify events appear in file."""
+        import heretek_swarm.actors.historian as _h_mod
+
+        orig_file = _h_mod._HISTORIAN_FILE
+        jsonl_path = tmp_path / "drain_test.jsonl"
+        _h_mod._HISTORIAN_FILE = jsonl_path
+
+        agent = HistorianAgent()
+        await agent.initialize()
+
+        # Enqueue without waiting
+        await agent.log_event(
+            event_type="pre_cleanup", agent_id="test",
+            payload={"flush": True},
+        )
+        # Do NOT await the queue — clean up should drain it
+        await agent.cleanup()
+
+        _h_mod._HISTORIAN_FILE = orig_file
+
+        lines = _read_jsonl(jsonl_path)
+        assert len(lines) == 1, "cleanup should have flushed the pending event"
+        assert lines[0]["type"] == "pre_cleanup"
+
+    @staticmethod
+    async def test_jsonl_file_created_with_correct_parent(tmp_path: Path) -> None:
+        """Verify ``_HISTORIAN_FILE.parent`` directory is created on first
+        write by calling ``_write_jsonl_line`` directly with a deep path."""
+        from heretek_swarm.actors.historian import HistorianAgent
+
+        deep_path = tmp_path / "a" / "b" / "c" / "deep.jsonl"
+        assert not deep_path.parent.exists()
+
+        HistorianAgent._write_jsonl_line(deep_path, '{"msg": "first write"}')
