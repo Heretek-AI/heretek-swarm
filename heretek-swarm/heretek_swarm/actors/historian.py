@@ -11,11 +11,15 @@ The Historian provides:
 Features:
 - LRU cache with configurable max size for context and patterns
 - Cache eviction when limits are reached
+- JSONL event log to ``.gsd/historian.jsonl``
 """
 
+import asyncio
+import uuid
 from collections import OrderedDict
 from datetime import UTC, datetime
-from typing import Any
+from pathlib import Path
+from typing import Any, Set
 
 import structlog
 from swarms import Agent
@@ -44,6 +48,7 @@ from heretek_swarm.memory.base import DualTierMemory, MemoryEntry
 # Session 44: Zero-Trust Validation
 from heretek_swarm.security.zero_trust import ZeroTrustValidator
 
+_HISTORIAN_FILE = Path(".gsd/historian.jsonl")
 logger = structlog.get_logger("HistorianAgent")
 
 
@@ -261,6 +266,10 @@ class HistorianAgent(
         self._active_deliberations: dict[str, str] = {}
         self._pattern_emitted: Set[str] = set()
 
+        # JSONL event log infrastructure
+        self._jsonl_queue: asyncio.Queue[dict[str, Any]] = asyncio.Queue()
+        self._jsonl_writer_task: asyncio.Task | None = None
+
         logger.info(f"[{self.agent_id}] Historian agent initialized")
 
     async def initialize(self) -> None:
@@ -282,6 +291,10 @@ class HistorianAgent(
             )
             logger.info(f"[{self.agent_id}] Knowledge access initialized (memory only)")
 
+        # JSONL event log: create queue and start the writer task
+        self._jsonl_queue = asyncio.Queue()
+        self._jsonl_writer_task = asyncio.create_task(self._jsonl_writer())
+
         # Register message handlers
         self.register_handler("store_memory", self._handle_store_memory)
         self.register_handler("retrieve_context", self._handle_retrieve_context)
@@ -289,6 +302,7 @@ class HistorianAgent(
         self.register_handler("track_lineage", self._handle_track_lineage)
         self.register_handler("pattern_match", self._handle_pattern_match)
         self.register_handler("unified_query", self._handle_unified_query)
+        self.register_handler("log_event", self._handle_log_event)
 
         logger.info(f"[{self.agent_id}] Historian initialization complete")
 
@@ -1017,7 +1031,126 @@ class HistorianAgent(
     # Session 44: Collective Learning, Consensus Deliberation, and Memory Optimization
     # integration methods now provided by DeliberationMixin, LearningMixin, MemoryMixin, and PatternMixin.
 
+    # ------------------------------------------------------------------
+    # JSONL event log
+    # ------------------------------------------------------------------
+
+    async def _jsonl_writer(self) -> None:
+        """Drain ``_jsonl_queue`` and write each event as a JSON line to
+        ``_HISTORIAN_FILE``.
+
+        Runs as a background ``asyncio.Task`` started during
+        ``initialize()``.  The file is opened/closed per write (safe for
+        concurrent readers on POSIX / NTFS).
+        """
+        while True:
+            try:
+                record = await self._jsonl_queue.get()
+            except asyncio.CancelledError:
+                # Task is being cancelled — exit cleanly so the
+                # CancelledError propagates to the caller.
+                break
+
+            try:
+                import json
+
+                line = json.dumps(record, default=str, ensure_ascii=False)
+                # Use asyncio.to_thread so file I/O does not block the
+                # event loop — stdlib only, no aiofiles dependency.
+                await asyncio.to_thread(
+                    self._write_jsonl_line, _HISTORIAN_FILE, line
+                )
+            except Exception:
+                logger.exception(
+                    f"[{self.agent_id}] JSONL writer error"
+                )
+            finally:
+                self._jsonl_queue.task_done()
+
+    @staticmethod
+    def _write_jsonl_line(path: Path, line: str) -> None:
+        """Synchronous file-write helper called from ``asyncio.to_thread``."""
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with open(str(path), "a", encoding="utf-8") as f:
+            f.write(line)
+            f.write("\n")
+
+    async def log_event(
+        self,
+        event_type: str,
+        agent_id: str,
+        payload: dict[str, Any],
+    ) -> str:
+        """Enqueue a structured event record and return the generated
+        ``event_id``.
+
+        The record is written asynchronously by the background JSONL
+        writer — callers do **not** block on file I/O.
+
+        Schema (all fields top-level):
+        - ``event_id`` — ``uuid.uuid4().hex``
+        - ``type`` — the *event_type* argument
+        - ``timestamp`` — ISO-8601 (UTC)
+        - ``agent_id`` — the *agent_id* argument
+        - ``payload`` — the *payload* dict
+        """
+        record: dict[str, Any] = {
+            "event_id": uuid.uuid4().hex,
+            "type": event_type,
+            "timestamp": datetime.now(UTC).isoformat(),
+            "agent_id": agent_id,
+            "payload": payload,
+        }
+        await self._jsonl_queue.put(record)
+        return str(record["event_id"])
+
+    async def _handle_log_event(self, message: ActorMessage) -> None:
+        """Handle ``"log_event"`` message dispatch.
+
+        Expected ``message.content`` keys:
+        - ``"event_type"`` (str, required)
+        - ``"agent_id"`` (str, required)
+        - ``"payload"`` (dict, required)
+
+        Responds with ``{"message_type": "log_event_response", "event_id": ...}``.
+        """
+        event_type = message.content.get("event_type")
+        agent_id = message.content.get("agent_id")
+        payload = message.content.get("payload", {})
+
+        if not event_type or not agent_id:
+            logger.error(
+                f"[{self.agent_id}] log_event missing required fields",
+                extra={"content_keys": list(message.content)},
+            )
+            return
+
+        event_id = await self.log_event(
+            event_type=event_type,
+            agent_id=agent_id,
+            payload=payload,
+        )
+
+        reply_topic = message.content.get("reply_to", "history")
+        await self.send(
+            topic=reply_topic,
+            content={
+                "message_type": "log_event_response",
+                "event_id": event_id,
+            },
+            correlation_id=message.correlation_id,
+        )
+
     async def cleanup(self) -> None:
-        """Cleanup resources."""
+        """Cleanup resources — flush remaining JSONL events first."""
+        # Drain remaining JSONL queue items before closing
+        if self._jsonl_writer_task is not None and not self._jsonl_writer_task.done():
+            await self._jsonl_queue.join()
+            self._jsonl_writer_task.cancel()
+            try:
+                await self._jsonl_writer_task
+            except asyncio.CancelledError:
+                pass
+
         await self.memory_system.close()
         logger.info(f"[{self.agent_id}] Historian cleanup complete")
