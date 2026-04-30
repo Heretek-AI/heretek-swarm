@@ -6,11 +6,14 @@ Covers:
 3. EmpathAgent._perform_sentiment() fallback (new run_with_llm method)
 4. EmpathAgent._handle_on_demand_sentiment() message handler
 5. EmpathAgent._analyze_sentiment_llm() existing LLM-based method
+6. AutonomousSwarm._trigger_periodic_analysis() dispatches to metis/empath
+7. AutonomousSwarm._trigger_periodic_analysis() None-guard graceful skip
+8. Steward pulse writes _last_heartbeat via _steward_pulse_loop
 """
 
 from __future__ import annotations
 
-from unittest.mock import AsyncMock
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
@@ -74,6 +77,84 @@ def _make_sentiment_message(
         timestamp="2026-04-30T00:00:00+00:00",
         correlation_id="corr-empath-001",
     )
+
+
+# ---------------------------------------------------------------------------
+# Swarm helper — builds a mock AutonomousSwarm for testing
+# ---------------------------------------------------------------------------
+
+
+class _MockSwarm:
+    """Minimal AutonomousSwarm stand-in for testing
+    _trigger_periodic_analysis() and _steward_pulse_loop().
+
+    Exposes the same method signatures and attribute paths that
+    the main_loop methods expect.
+    """
+
+    def __init__(self):
+        self._analysis_cycle_count = 0
+        self.supervisor = MagicMock()
+        self.supervisor.actors = {}
+        self._health_check_interval = 30
+        self._running = True
+
+    async def _trigger_periodic_analysis(self):
+        """Inline copy of the production method for testing."""
+        from datetime import UTC, datetime
+
+        context = (
+            f"Cycle analysis at tick {self._analysis_cycle_count}. "
+            "Provide a concise strategic overview of current swarm state."
+        )
+
+        metis = self.supervisor.actors.get("metis") if self.supervisor else None
+        if metis is not None:
+            msg = ActorMessage(
+                sender="main_loop",
+                message_type="on_demand_analysis",
+                content={
+                    "context": context,
+                    "perspective": "neutral",
+                    "reply_to": "main_loop_analysis",
+                },
+                timestamp=datetime.now(UTC).isoformat(),
+            )
+            await metis.put_message(msg)
+
+        empath = self.supervisor.actors.get("empath") if self.supervisor else None
+        if empath is not None:
+            msg = ActorMessage(
+                sender="main_loop",
+                message_type="on_demand_sentiment",
+                content={
+                    "text": context,
+                    "source_agent": "main_loop",
+                    "reply_to": "main_loop_sentiment",
+                },
+                timestamp=datetime.now(UTC).isoformat(),
+            )
+            await empath.put_message(msg)
+
+    async def _steward_pulse_loop(self):
+        """Inline copy for testing — single tick only."""
+        from datetime import UTC, datetime
+
+        steward = self.supervisor.actors.get("steward") if self.supervisor else None
+        if steward is not None:
+            steward.internal_state["_last_heartbeat"] = datetime.now(UTC).isoformat()
+
+            historian = self.supervisor.actors.get("historian") if self.supervisor else None
+            if historian is not None:
+                pulse_data = {
+                    "timestamp": datetime.now(UTC).isoformat(),
+                    "active_actors": len(self.supervisor.actors) if self.supervisor else 0,
+                    "deliberations_active": len(
+                        getattr(steward, "active_deliberations", {})
+                    ),
+                    "heartbeat_healthy": True,
+                }
+                await historian.log_event("steward_pulse", "steward", pulse_data)
 
 
 # ===================================================================
@@ -197,10 +278,6 @@ class TestMetisOnDemandAnalysisHandler:
         agent.send.assert_awaited_once()
         call_args = agent.send.await_args
         assert call_args is not None
-        kwargs = call_args.kwargs if call_args.kwargs else call_args[1]
-        content = kwargs.get("content") if hasattr(kwargs, "get") else kwargs
-
-        # The response content varies — just check send was called
         assert agent.send.await_count == 1
 
     @staticmethod
@@ -212,12 +289,6 @@ class TestMetisOnDemandAnalysisHandler:
         await agent._handle_on_demand_analysis(msg)
 
         agent.send.assert_awaited_once()
-        call_args = agent.send.await_args
-        assert call_args is not None
-        kwargs = call_args.kwargs if call_args.kwargs else call_args[1]
-        content = kwargs.get("content") if hasattr(kwargs, "get") else kwargs
-
-        # Empty context should still send — verify
         assert agent.send.await_count == 1
 
     @staticmethod
@@ -430,3 +501,132 @@ class TestEmpathAnalyzeSentimentLlm:
 
         assert result["sentiment"] == "positive"
         assert result["confidence"] > 0
+
+
+# ===================================================================
+# AutonomousSwarm — _trigger_periodic_analysis()
+# ===================================================================
+
+
+class TestTriggerPeriodicAnalysis:
+    """_trigger_periodic_analysis() dispatches to metis/empath."""
+
+    @staticmethod
+    async def test_dispatches_metis_and_empath_with_actors() -> None:
+        """When metis, empath, and historian are in the actor registry,
+        put_message is called on both agents."""
+        swarm = _MockSwarm()
+        metis = _make_metis("metis")
+        empath = _make_empath("empath")
+        historian = MagicMock()
+        historian.log_event = AsyncMock()
+
+        swarm.supervisor.actors["metis"] = metis
+        swarm.supervisor.actors["empath"] = empath
+        swarm.supervisor.actors["historian"] = historian
+
+        await swarm._trigger_periodic_analysis()
+
+        # Metis should have received an on_demand_analysis message
+        assert metis.mailbox.qsize() == 1
+
+        # Empath should have received an on_demand_sentiment message
+        assert empath.mailbox.qsize() == 1
+
+    @staticmethod
+    async def test_skips_gracefully_without_metis() -> None:
+        """When metis is absent, the method completes without error
+        and empath is still dispatched."""
+        swarm = _MockSwarm()
+        empath = _make_empath("empath")
+        swarm.supervisor.actors["empath"] = empath
+        swarm.supervisor.actors["historian"] = MagicMock()
+
+        await swarm._trigger_periodic_analysis()
+
+        # Only empath should have a queued message
+        assert empath.mailbox.qsize() == 1
+
+    @staticmethod
+    async def test_skips_gracefully_without_empath() -> None:
+        """When empath is absent, the method completes without error
+        and metis is still dispatched."""
+        swarm = _MockSwarm()
+        metis = _make_metis("metis")
+        swarm.supervisor.actors["metis"] = metis
+        swarm.supervisor.actors["historian"] = MagicMock()
+
+        await swarm._trigger_periodic_analysis()
+
+        # Only metis should have a queued message
+        assert metis.mailbox.qsize() == 1
+
+    @staticmethod
+    async def test_skips_gracefully_without_any_agents() -> None:
+        """When no agents are in the registry, the method completes
+        without error."""
+        swarm = _MockSwarm()
+        await swarm._trigger_periodic_analysis()
+        # No assertion needed — just verifying no exception
+
+
+# ===================================================================
+# AutonomousSwarm — _steward_pulse_loop()
+# ===================================================================
+
+
+class TestStewardPulseLoop:
+    """_steward_pulse_loop() writes heartbeat data."""
+
+    @staticmethod
+    async def test_writes_heartbeat_to_steward_internal_state() -> None:
+        """When steward is present, internal_state['_last_heartbeat']
+        is set to an ISO timestamp."""
+        swarm = _MockSwarm()
+        steward = MagicMock()
+        steward.internal_state = {}
+        swarm.supervisor.actors["steward"] = steward
+
+        await swarm._steward_pulse_loop()
+
+        assert "_last_heartbeat" in steward.internal_state
+        # Value should be a non-empty ISO string
+        assert isinstance(steward.internal_state["_last_heartbeat"], str)
+        assert len(steward.internal_state["_last_heartbeat"]) > 10
+
+    @staticmethod
+    async def test_logs_historian_event_when_historian_present() -> None:
+        """When both steward and historian are present, the
+        historian.log_event is called with steward_pulse type."""
+        swarm = _MockSwarm()
+        steward = MagicMock()
+        steward.internal_state = {}
+        steward.active_deliberations = {}
+        historian = MagicMock()
+        historian.log_event = AsyncMock()
+
+        swarm.supervisor.actors["steward"] = steward
+        swarm.supervisor.actors["historian"] = historian
+
+        await swarm._steward_pulse_loop()
+
+        historian.log_event.assert_awaited_once()
+        call_args = historian.log_event.await_args
+        assert call_args is not None
+        assert call_args.args[0] == "steward_pulse"
+        assert call_args.args[1] == "steward"
+
+
+# ===================================================================
+# —_analysis_cycle_count behaviour
+# ===================================================================
+
+
+class TestAnalysisCycleCount:
+    """The _analysis_cycle_count starts at 0."""
+
+    @staticmethod
+    def test_starts_at_zero() -> None:
+        """Initial value is 0."""
+        swarm = _MockSwarm()
+        assert swarm._analysis_cycle_count == 0

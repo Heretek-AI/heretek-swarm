@@ -82,6 +82,9 @@ class AutonomousSwarm:
         self._memory_maintenance_interval = self.config.get("memory_maintenance_interval", 300)
         self._scaling_interval = self.config.get("scaling_interval", 60)
 
+        # S04: Periodic analysis cycle counter — triggers Metis/Empath every 30 cycles
+        self._analysis_cycle_count = 0
+
     def _default_config(self) -> dict[str, Any]:
         """Default configuration for autonomous swarm."""
         return {
@@ -710,6 +713,7 @@ class AutonomousSwarm:
             asyncio.create_task(self._memory_maintenance_loop()),
             asyncio.create_task(self._scaling_loop()),
             asyncio.create_task(self._report_agents_loop()),
+            asyncio.create_task(self._steward_pulse_loop()),
         ]
 
         logger.info("autonomous_loop_started", background_tasks=len(self._tasks))
@@ -742,7 +746,13 @@ class AutonomousSwarm:
         # 4. Run health checks
         await self._run_health_checks()
 
-        # 5. Log cycle completion to Historian
+        # 5. Periodic analysis (Metis/Empath) every 30 cycles
+        self._analysis_cycle_count += 1
+        if self._analysis_cycle_count >= 30:
+            self._analysis_cycle_count = 0
+            await self._trigger_periodic_analysis()
+
+        # 6. Log cycle completion to Historian
         historian = self.supervisor.actors.get("historian") if self.supervisor else None
         if historian is not None:
             await historian.log_event("cycle_complete", "main_loop", {})
@@ -798,6 +808,73 @@ class AutonomousSwarm:
             )
         else:
             logger.warning("scheduled_tasks_historian_skipped_no_historian")
+
+    async def _trigger_periodic_analysis(self) -> None:
+        """Trigger periodic Metis analysis and Empath sentiment analysis.
+
+        Called every 30 cycles from _process_cycle(). Sends on-demand
+        analysis/sentiment requests to metis and empath agents via
+        put_message().  Uses the None-guard pattern from
+        _process_scheduled_tasks(): missing agents are logged with a
+        warning and skipped gracefully.
+        """
+        # Build a shared context string from recent cycle activity
+        context = (
+            f"Cycle analysis at tick {self._analysis_cycle_count}. "
+            "Provide a concise strategic overview of current swarm state."
+        )
+
+        # --- Metis analysis ---
+        metis = self.supervisor.actors.get("metis") if self.supervisor else None
+        if metis is not None:
+            from heretek_swarm.actors.base import ActorMessage
+            msg = ActorMessage(
+                sender="main_loop",
+                message_type="on_demand_analysis",
+                content={
+                    "context": context,
+                    "perspective": "neutral",
+                    "reply_to": "main_loop_analysis",
+                },
+                timestamp=datetime.now(UTC).isoformat(),
+            )
+            await metis.put_message(msg)
+            logger.info("periodic_metis_analysis_dispatched")
+        else:
+            logger.warning("periodic_analysis_skipped_no_metis")
+
+        # --- Empath sentiment ---
+        empath = self.supervisor.actors.get("empath") if self.supervisor else None
+        if empath is not None:
+            from heretek_swarm.actors.base import ActorMessage
+            msg = ActorMessage(
+                sender="main_loop",
+                message_type="on_demand_sentiment",
+                content={
+                    "text": context,
+                    "source_agent": "main_loop",
+                    "reply_to": "main_loop_sentiment",
+                },
+                timestamp=datetime.now(UTC).isoformat(),
+            )
+            await empath.put_message(msg)
+            logger.info("periodic_empath_sentiment_dispatched")
+        else:
+            logger.warning("periodic_analysis_skipped_no_empath")
+
+        # --- Log to Historian ---
+        historian = self.supervisor.actors.get("historian") if self.supervisor else None
+        if historian is not None:
+            await historian.log_event(
+                "periodic_analysis",
+                "main_loop",
+                {
+                    "metis_dispatched": metis is not None,
+                    "empath_dispatched": empath is not None,
+                },
+            )
+        else:
+            logger.warning("periodic_analysis_historian_skipped_no_historian")
 
     async def _process_external_events(self) -> None:
         """Process external events from Discord, Slack, Telegram, webhooks."""
@@ -1033,6 +1110,52 @@ class AutonomousSwarm:
                 json=payload,
             )
         logger.debug("reported_agents_to_api", count=len(agents))
+
+    async def _steward_pulse_loop(self) -> None:
+        """Steward heartbeat pulse loop.
+
+        Runs at _health_check_interval (30s) frequency. Sets
+        internal_state['_last_heartbeat'] and logs heartbeat/health data
+        via the Historian agent.  Uses the None-guard pattern — missing
+        steward or historian agents log a warning and skip gracefully.
+        """
+        while self._running:
+            try:
+                steward = self.supervisor.actors.get("steward") if self.supervisor else None
+                if steward is not None:
+                    # Record heartbeat on steward's internal state
+                    steward.internal_state["_last_heartbeat"] = datetime.now(UTC).isoformat()
+
+                    # Collect heartbeat data
+                    pulse_data = {
+                        "timestamp": datetime.now(UTC).isoformat(),
+                        "active_actors": len(self.supervisor.actors) if self.supervisor else 0,
+                        "deliberations_active": len(
+                            getattr(steward, "active_deliberations", {})
+                        ),
+                        "heartbeat_healthy": True,
+                    }
+
+                    # Log via Historian
+                    historian = self.supervisor.actors.get("historian") if self.supervisor else None
+                    if historian is not None:
+                        await historian.log_event(
+                            "steward_pulse",
+                            "steward",
+                            pulse_data,
+                        )
+                        logger.info("steward_pulse_logged", pulse_data=pulse_data)
+                    else:
+                        logger.warning("steward_pulse_historian_skipped_no_historian")
+                else:
+                    logger.warning("steward_pulse_skipped_no_steward")
+
+                await asyncio.sleep(self._health_check_interval)
+            except asyncio.CancelledError:
+                break
+            except Exception as e:
+                logger.error("steward_pulse_error", error=str(e))
+                await asyncio.sleep(self._health_check_interval)
 
     async def shutdown(self) -> None:
         """Graceful shutdown of the autonomous swarm."""
