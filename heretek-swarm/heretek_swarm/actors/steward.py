@@ -389,7 +389,7 @@ class StewardAgent(
         return last_hb >= cutoff
 
     def detect_heartbeat_failure(self) -> list[str]:
-        """Return list of agent IDs with stale heartbeats."""
+        """Return list of agent IDs with stale heartbeats from NATS data."""
         cutoff = datetime.now(UTC) - timedelta(seconds=self._heartbeat_timeout)
         failed = []
         for agent_id, ts_str in self._agent_heartbeats.items():
@@ -398,15 +398,94 @@ class StewardAgent(
                 failed.append(agent_id)
         return sorted(failed)
 
+    def _check_registry_heartbeats(self) -> list[str]:
+        """Return list of agent IDs with stale ``last_activity`` in the actor
+        registry.
+
+        Reads ``last_activity`` from each actor registered with the global
+        supervisor and compares it against ``_heartbeat_timeout``.  This is
+        the in-process heartbeat bus — it works without NATS by reading the
+        field that ``_process_mailbox`` (see
+        :meth:`AgentActorMessageHandling._process_mailbox`) updates on every
+        mailbox tick.
+
+        **Key behaviours (see MEM031, MEM034):**
+
+        * Agents whose ``last_activity`` is ``None`` are treated as
+          "initializing" and are **not** reported as stale.  This avoids a
+          false-positive race when an actor is spawned but hasn't processed
+          its first mailbox message yet.
+        * The steward itself (``self.agent_id``, which is ``"steward"``) is
+          excluded from failure detection — do not fail on self.
+        * Malformed timestamp strings are treated as stale (safe side).
+        * Returned list is sorted for deterministic ordering.
+        """
+        cutoff = datetime.now(UTC) - timedelta(seconds=self._heartbeat_timeout)
+        registry = self._get_actor_registry()
+        if registry is None:
+            logger.debug(
+                f"[{self.agent_id}] No actor registry available for heartbeat check"
+            )
+            return []
+
+        stale: list[str] = []
+        for agent_id, actor in registry.items():
+            # Exclude self from failure detection
+            if agent_id == self.agent_id:
+                continue
+
+            last_activity = getattr(actor, "last_activity", None)
+            if last_activity is None:
+                # Initialising — race on first heartbeat, not stale
+                continue
+
+            try:
+                last_ts = datetime.fromisoformat(last_activity)
+                if last_ts < cutoff:
+                    stale.append(agent_id)
+            except (ValueError, TypeError):
+                # Malformed timestamp — treat as stale to be safe
+                logger.warning(
+                    f"[{self.agent_id}] Malformed last_activity for {agent_id}: "
+                    f"{last_activity!r}, treating as stale"
+                )
+                stale.append(agent_id)
+
+        return sorted(stale)
+
     async def _monitor_loop(self) -> None:
-        """Periodically check for heartbeat failures."""
+        """Periodically check for heartbeat failures.
+
+        Uses two detection paths:
+        1. **NATS path** — :meth:`detect_heartbeat_failure` reads
+           ``_agent_heartbeats``, populated by NATS heartbeat messages
+           (infra mode).
+        2. **Registry path** — :meth:`_check_registry_heartbeats` reads
+           ``last_activity`` from the in-process actor registry directly
+           (no-infra / defense-in-depth).
+
+        Results are merged, deduplicated, and passed to
+        :meth:`_handle_agent_failure`.  The NATS-only path in
+        :meth:`detect_heartbeat_failure` remains intact for infra-mode
+        compatibility.
+        """
         while self._running:
             await asyncio.sleep(5.0)
             if not self._running:
                 break
-            failed = self.detect_heartbeat_failure()
-            for agent_id in failed:
-                await self._handle_agent_failure(agent_id)
+
+            # Primary: NATS-based heartbeat detection (infra mode)
+            nats_failed = self.detect_heartbeat_failure()
+
+            # Defense-in-depth: registry heartbeat detection (no-infra mode)
+            registry_failed = self._check_registry_heartbeats()
+
+            # Merge and deduplicate
+            all_failed = sorted(set(nats_failed + registry_failed))
+
+            for agent_id in all_failed:
+                if agent_id not in self._failed_agents:
+                    await self._handle_agent_failure(agent_id)
 
     async def _handle_agent_failure(
         self, agent_id: str, supervisor: Optional["ActorSupervisor"] = None
