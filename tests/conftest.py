@@ -8,7 +8,12 @@ Provides:
   agents.
 * An **autouse** fixture that clears ``get_supervisor().actors`` after every
   test to prevent singleton state from leaking between tests.
+* A **pytest filterwarnings** entry that suppresses ``ResourceWarning`` —
+  these are emitted by unclosed ``aiohttp.ClientSession`` objects from
+  ``AgentActor`` heartbeat loops in integration tests.
 """
+
+import warnings
 
 from collections.abc import Generator
 from unittest.mock import MagicMock
@@ -16,6 +21,12 @@ from unittest.mock import MagicMock
 import pytest
 
 from heretek_swarm.actors.supervisor import get_supervisor
+
+
+# Ignore ResourceWarning from unclosed aiohttp.ClientSession objects —
+# these are created by AgentActor heartbeat background tasks in integration
+# tests and are harmless (cleaned up by the event loop on shutdown).
+warnings.filterwarnings("ignore", category=ResourceWarning, message=".*unclosed.*")
 
 
 @pytest.fixture
