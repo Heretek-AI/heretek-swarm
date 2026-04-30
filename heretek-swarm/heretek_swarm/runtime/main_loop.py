@@ -727,10 +727,62 @@ class AutonomousSwarm:
         # 4. Run health checks
         await self._run_health_checks()
 
+        # 5. Log cycle completion to Historian
+        historian = self.supervisor.actors.get("historian") if self.supervisor else None
+        if historian is not None:
+            await historian.log_event("cycle_complete", "main_loop", {})
+
     async def _process_scheduled_tasks(self) -> None:
-        """Process tasks scheduled by Chronos."""
-        # Query memory for scheduled tasks
-        # Trigger appropriate agents based on schedule
+        """Process tasks scheduled by Chronos.
+
+        Gets due ticks from the Chronos actor, routes each tick to its
+        target agent via ``put_message()``, and logs the cycle event to
+        the Historian actor.
+
+        Gracefully handles missing Chronos, Historian, or target agents
+        in the supervisor registry — logs a warning and skips each.
+        """
+        # 1. Get the Chronos actor
+        chronos = self.supervisor.actors.get("chronos") if self.supervisor else None
+        if chronos is None:
+            logger.warning("scheduled_tasks_skipped_no_chronos")
+            return
+
+        # 2. Get due ticks
+        ticks = await chronos.generate_ticks()
+
+        # 3. Route each tick to its target agent
+        for tick in ticks:
+            target = self.supervisor.actors.get(tick.agent_id) if self.supervisor else None
+            if target is None:
+                logger.warning(
+                    "scheduled_task_skipped_no_target",
+                    tick_id=tick.tick_id,
+                    agent_id=tick.agent_id,
+                )
+                continue
+
+            from heretek_swarm.actors.base import ActorMessage
+
+            msg = ActorMessage(
+                sender="chronos",
+                message_type=tick.action,
+                content=tick.to_dict(),
+                timestamp=datetime.now(UTC).isoformat(),
+                recipient=tick.agent_id,
+            )
+            await target.put_message(msg)
+
+        # 4. Log event to Historian
+        historian = self.supervisor.actors.get("historian") if self.supervisor else None
+        if historian is not None:
+            await historian.log_event(
+                "cycle_scheduled_tasks",
+                "main_loop",
+                {"tick_count": len(ticks)},
+            )
+        else:
+            logger.warning("scheduled_tasks_historian_skipped_no_historian")
 
     async def _process_external_events(self) -> None:
         """Process external events from Discord, Slack, Telegram, webhooks."""
