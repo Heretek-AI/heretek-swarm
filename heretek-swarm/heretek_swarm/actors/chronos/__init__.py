@@ -24,6 +24,7 @@ from heretek_swarm.actors.chronos.types import (
     RecurrenceType,
     ScheduleStatus,
     ScheduledTask,
+    Tick,
 )
 
 # Re-export agent from agent.py
@@ -41,6 +42,7 @@ __all__ = [
     # Dataclasses
     "ScheduledTask",
     "Deadline",
+    "Tick",
     # Agent
     "ChronosAgent",
     # Mixins

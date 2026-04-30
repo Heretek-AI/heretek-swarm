@@ -617,3 +617,31 @@ class ChronosHandlersMixin:
                 f"Failed to register reminder: {e!s}",
                 message.message_type,
             )
+
+    async def _handle_generate_ticks(self, message: ActorMessage) -> None:
+        """
+        Generate ticks from due PENDING tasks and return them.
+
+        Receives no required payload.  Delegates to ``generate_ticks()``
+        on the scheduler mixin and returns the serialised tick list.
+
+        Returns:
+            {"ticks": [tick.to_dict() for tick in ticks]}
+        """
+        try:
+            ticks = await self.generate_ticks()
+            await self.send(
+                message.sender_id,
+                ActorMessage(
+                    message_type="generate_ticks_result",
+                    content={"ticks": [t.to_dict() for t in ticks]},
+                    sender_id=self.agent_id,
+                ),
+            )
+        except Exception as e:
+            logger.error("generate_ticks_failed", error=str(e))
+            await self._send_error(
+                message.sender_id,
+                f"Failed to generate ticks: {e!s}",
+                message.message_type,
+            )

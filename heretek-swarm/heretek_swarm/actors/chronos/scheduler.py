@@ -201,6 +201,44 @@ class ChronosSchedulerMixin:
                 ),
             )
 
+    async def generate_ticks(self) -> list["Tick"]:
+        """Generate ticks from due PENDING tasks.
+
+        Iterates ``_task_queue``, finds tasks whose ``scheduled_at`` ≤ now
+        and whose status is PENDING, converts each to a ``Tick``, marks the
+        source task as ACTIVE, and returns the ticks ordered by
+        ``scheduled_at``.
+
+        Returns:
+            An empty list when ``_task_queue`` is empty or no tasks are due.
+        """
+        from .types import ScheduleStatus, Tick
+
+        now = self._get_current_time()
+        ticks: list[Tick] = []
+        remaining: list[tuple[datetime, str]] = []
+
+        for scheduled_at, task_id in self._task_queue:
+            task = self._tasks.get(task_id)
+            if task is None:
+                continue
+            if task.status == ScheduleStatus.PENDING and scheduled_at <= now:
+                tick = Tick(
+                    tick_id=task.task_id,
+                    agent_id=(task.target_agents[0] if task.target_agents else self.agent_id),
+                    action=task.action or "scheduled_task",
+                    scheduled_at=task.scheduled_at,
+                    status=ScheduleStatus.PENDING,
+                )
+                task.status = ScheduleStatus.ACTIVE
+                ticks.append(tick)
+            else:
+                remaining.append((scheduled_at, task_id))
+
+        self._task_queue = remaining
+        ticks.sort(key=lambda t: t.scheduled_at)
+        return ticks
+
     # Helper methods for time access (allows override for testing)
     def _get_current_time(self):
         """Get current UTC time. Override in tests."""

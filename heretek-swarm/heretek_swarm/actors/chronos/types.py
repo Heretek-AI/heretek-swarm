@@ -93,6 +93,32 @@ class ScheduledTask:
 
 
 @dataclass
+class Tick:
+    """A tick represents a single unit of work dispatched by the scheduler.
+
+    Ticks are created by ``generate_ticks()`` when a due ``ScheduledTask``
+    is found in PENDING state.  The source task is advanced to ACTIVE after
+    the tick is produced.
+    """
+
+    tick_id: str
+    agent_id: str
+    action: str
+    scheduled_at: datetime
+    status: ScheduleStatus = ScheduleStatus.PENDING
+
+    def to_dict(self) -> dict[str, Any]:
+        """Convert to dictionary for serialization."""
+        return {
+            "tick_id": self.tick_id,
+            "agent_id": self.agent_id,
+            "action": self.action,
+            "scheduled_at": self.scheduled_at.isoformat(),
+            "status": self.status.value,
+        }
+
+
+@dataclass
 class Deadline:
     """A deadline tracking entry."""
 

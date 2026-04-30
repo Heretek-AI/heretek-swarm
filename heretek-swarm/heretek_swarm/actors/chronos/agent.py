@@ -152,6 +152,8 @@ class ChronosAgent(
             "pause_task": self._handle_pause_task,
             "resume_task": self._handle_resume_task,
             "get_task_status": self._handle_get_task_status,
+            # Tick generation
+            "generate_ticks": self._handle_generate_ticks,
             # Deadline handlers
             "set_deadline": self._handle_set_deadline,
             "check_deadline": self._handle_check_deadline,
@@ -760,6 +762,7 @@ class ChronosAgent(
             "calendar_management",
             "timeline_tracking",
             "reminder_service",
+            "tick_generation",
         ]
 
         # INTG-04: Add time perception capabilities
