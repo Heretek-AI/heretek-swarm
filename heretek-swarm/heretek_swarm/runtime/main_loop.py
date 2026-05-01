@@ -408,6 +408,115 @@ class AutonomousSwarm:
         )
         return results
 
+    async def run_routed_task(
+        self,
+        agent_name: str,
+        task_type: str,
+        task_data: dict[str, Any],
+        timeout: int = 30,
+    ) -> dict[str, Any]:
+        """
+        Route a task to a specific agent using Steward's ``route_to_agent()``
+        and log the event to Historian.
+
+        This is a one-shot dispatch path for the CLI ``--target-agent``
+        flag — it sends a structured task to a single agent (cast-style
+        delivery) rather than orchestrating a triad deliberation.
+
+        Args:
+            agent_name: Target agent ID (e.g. ``"coder"``).
+            task_type: Machine-readable task label (e.g. ``"code_analysis"``).
+            task_data: Arbitrary payload dict for the receiving agent.
+            timeout: Maximum wall-clock seconds to sleep for async mailbox
+                     processing (capped at 30). The agent's internal handler
+                     deadline should be shorter; this sleep is a best-effort
+                     wait for the mailbox to be consumed.
+
+        Returns:
+            A dict with dispatch status, target agent, task type, and the
+            message ID from Steward's send_to_actor on success::
+
+                {"status": "dispatched", "target_agent": "coder",
+                 "task_type": "code_analysis", "message_id": "abc123"}
+
+            On dispatch failure: ``{"status": "failed",
+            "error": "route_to_agent returned empty"}``
+
+        Raises:
+            RuntimeError: If Steward agent is not in the actor registry.
+        """
+        logger.info(
+            "run_routed_task_started",
+            agent_name=agent_name,
+            task_type=task_type,
+            timeout=timeout,
+        )
+
+        steward = self.supervisor.actors.get("steward")
+        if steward is None:
+            raise RuntimeError(
+                "Steward agent not found in supervisor.actors — "
+                "cannot route task. Ensure _spawn_all_actors() "
+                "completed successfully."
+            )
+
+        message_id = await steward.route_to_agent(
+            agent_name=agent_name,
+            task_type=task_type,
+            task_data=task_data,
+        )
+
+        if not message_id:
+            logger.warning(
+                "run_routed_task_dispatch_failed",
+                agent_name=agent_name,
+                task_type=task_type,
+            )
+            return {
+                "status": "failed",
+                "error": "route_to_agent returned empty",
+            }
+
+        logger.info(
+            "run_routed_task_dispatched",
+            agent_name=agent_name,
+            task_type=task_type,
+            message_id=message_id,
+        )
+
+        # Best-effort wait for async mailbox processing (same sleep pattern
+        # as run_deliberation()).
+        sleep_time = min(timeout, 30)
+        await asyncio.sleep(sleep_time)
+
+        # Log the routed event to Historian. Gracefully handle missing
+        # historian (log warning, still return dispatch status). This
+        # follows the same None-guard pattern as _process_scheduled_tasks().
+        historian = self.supervisor.actors.get("historian") if self.supervisor else None
+        if historian is not None:
+            await historian.log_event(
+                "routed_task",
+                "main_loop",
+                {
+                    "target_agent": agent_name,
+                    "task_type": task_type,
+                    "message_id": message_id,
+                },
+            )
+        else:
+            logger.warning(
+                "run_routed_task_historian_skipped",
+                agent_name=agent_name,
+                task_type=task_type,
+            )
+
+        return {
+            "status": "dispatched",
+            "target_agent": agent_name,
+            "task_type": task_type,
+            "message_id": message_id,
+        }
+
     def get_startup_status(self) -> dict[str, str]:
         """Return startup status of each component for diagnostics.
 
