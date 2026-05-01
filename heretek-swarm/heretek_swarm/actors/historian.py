@@ -1158,6 +1158,108 @@ class HistorianAgent(
             finally:
                 self._jsonl_queue.task_done()
 
+    # ------------------------------------------------------------------
+    # Event reading
+    # ------------------------------------------------------------------
+
+    async def read_events(
+        self,
+        agent_id: str | None = None,
+        event_type: str | None = None,
+        since: str | None = None,
+        until: str | None = None,
+        limit: int = 100,
+    ) -> list[dict[str, Any]]:
+        """Query past events from the Postgres-backed event store.
+
+        Args:
+            agent_id: Filter by agent identifier (optional).
+            event_type: Filter by event type string (optional).
+            since: ISO-8601 lower bound for ``timestamp`` (optional).
+            until: ISO-8601 upper bound for ``timestamp`` (optional).
+            limit: Maximum number of results (default: 100).
+
+        Returns:
+            List of event dicts with the same shape as ``log_event``::
+
+                {
+                    "event_id": str,
+                    "type": str,
+                    "timestamp": str (ISO-8601),
+                    "agent_id": str,
+                    "payload": dict,
+                }
+
+            Returns an empty list when the Postgres writer is not active
+            (i.e. JSONL mode) or on query failure.
+        """
+        if not self._using_pg:
+            return []
+
+        db_pool = self._db_pool or self.get_state("_db_pool")
+        if db_pool is None:
+            logger.warning(
+                f"[{self.agent_id}] read_events called but no db_pool available"
+            )
+            return []
+
+        # Build dynamic WHERE clause with parameterized placeholders
+        conditions: list[str] = []
+        params: list[Any] = []
+        idx = 0  # param counter for $1, $2, … style placeholders
+
+        if agent_id is not None:
+            idx += 1
+            conditions.append(f"agent_id = ${idx}")
+            params.append(agent_id)
+        if event_type is not None:
+            idx += 1
+            conditions.append(f"event_type = ${idx}")
+            params.append(event_type)
+        if since is not None:
+            idx += 1
+            conditions.append(f"timestamp >= ${idx}")
+            params.append(since)
+        if until is not None:
+            idx += 1
+            conditions.append(f"timestamp <= ${idx}")
+            params.append(until)
+
+        where_clause = " AND ".join(conditions) if conditions else "TRUE"
+        limit_idx = idx + 1
+        query = f"""
+            SELECT event_id, event_type, timestamp, agent_id, payload
+            FROM historian_events
+            WHERE {where_clause}
+            ORDER BY timestamp DESC
+            LIMIT ${limit_idx}
+        """
+        params.append(limit)
+
+        try:
+            async with db_pool.acquire() as conn:
+                rows = await conn.fetch(query, *params)
+        except Exception:
+            logger.exception(
+                f"[{self.agent_id}] read_events query failed"
+            )
+            return []
+
+        return [
+            {
+                "event_id": row["event_id"],
+                "type": row["event_type"],
+                "timestamp": (
+                    row["timestamp"].isoformat()
+                    if hasattr(row["timestamp"], "isoformat")
+                    else str(row["timestamp"])
+                ),
+                "agent_id": row["agent_id"],
+                "payload": dict(row["payload"]) if row["payload"] else {},
+            }
+            for row in rows
+        ]
+
     async def log_event(
         self,
         event_type: str,
