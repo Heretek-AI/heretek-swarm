@@ -151,19 +151,24 @@ function DashboardContent() {
       }
       const data = await response.json();
       
-      const isHealthy = 
-        data.gateway?.status === 'healthy' &&
-        data.redis?.status === 'healthy' &&
-        data.postgres?.status === 'healthy' &&
-        data.qdrant?.status === 'healthy';
-      
-      const isDegraded = 
-        data.gateway?.status === 'healthy' ||
-        data.redis?.status === 'healthy' ||
-        data.postgres?.status === 'healthy' ||
-        data.qdrant?.status === 'healthy';
-      
-      setSystemStatus(isHealthy ? 'healthy' : isDegraded ? 'degraded' : 'offline');
+      // Primary signal: top-level status from the API.
+      // In --no-infra mode, the API returns { status: 'healthy' } even when
+      // infra services are unavailable — this is correct behavior.
+      if (data.status === 'healthy') {
+        setSystemStatus('healthy');
+        return;
+      }
+
+      // Secondary: if the API responded but top-level status isn't 'healthy',
+      // check individual services for the 'degraded' state.
+      const svc = data.services || {};
+      const anyServiceHealthy =
+        svc.gateway?.status === 'healthy' ||
+        svc.redis?.status === 'healthy' ||
+        svc.postgres?.status === 'healthy' ||
+        svc.qdrant?.status === 'healthy';
+
+      setSystemStatus(anyServiceHealthy ? 'degraded' : 'offline');
     } catch {
       setSystemStatus('offline');
     }
