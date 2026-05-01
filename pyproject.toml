@@ -76,6 +76,10 @@ agents = [
     "opentelemetry-sdk>=1.22.0",
     "opentelemetry-exporter-otlp>=1.22.0",
 ]
+postgres = [
+    # Postgres-backed event store (optional)
+    "asyncpg>=0.29.0",
+]
 full = [
     "heretek-swarm[agents]",
     # Infrastructure
