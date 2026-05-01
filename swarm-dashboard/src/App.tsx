@@ -3,6 +3,12 @@
  * 
  * Central control panel for deploying, monitoring, and configuring
  * the Heretek Swarm application.
+ * 
+ * Health check pattern (M005/S01): `checkSystemHealth()` reads the top-level
+ * `data.status === 'healthy'` as primary signal. Service-level status lives
+ * under `data.services.*.status` and is only consulted for 'degraded' detection.
+ * This handles `--no-infra` mode where infra services report 'unhealthy' but
+ * the top-level status is still 'healthy'.
  */
 
 import { useState, useEffect, useCallback } from 'react';
