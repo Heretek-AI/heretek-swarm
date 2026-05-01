@@ -15,11 +15,12 @@ Features:
 """
 
 import asyncio
+import json
 import uuid
 from collections import OrderedDict
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, Set
+from typing import Any, Optional, Set
 
 import structlog
 from swarms import Agent
@@ -202,6 +203,7 @@ class HistorianAgent(
         deliberation_engine: SwarmDeliberationEngine | None = None,
         access_analyzer: AccessPatternAnalyzer | None = None,
         zero_trust_validator: ZeroTrustValidator | None = None,
+        db_pool: Any | None = None,
         **kwargs,
     ) -> None:
         """
@@ -266,9 +268,13 @@ class HistorianAgent(
         self._active_deliberations: dict[str, str] = {}
         self._pattern_emitted: Set[str] = set()
 
-        # JSONL event log infrastructure
+        # Optional asyncpg connection pool for Postgres-backed event store
+        self._db_pool: Any | None = db_pool  # may be injected later via internal_state
+
+        # Event log infrastructure — shared queue, one writer at a time
         self._jsonl_queue: asyncio.Queue[dict[str, Any]] = asyncio.Queue()
-        self._jsonl_writer_task: asyncio.Task | None = None
+        self._writer_task: asyncio.Task | None = None
+        self._using_pg: bool = False  # True → _pg_writer, False → _jsonl_writer
 
         logger.info(f"[{self.agent_id}] Historian agent initialized")
 
@@ -291,9 +297,23 @@ class HistorianAgent(
             )
             logger.info(f"[{self.agent_id}] Knowledge access initialized (memory only)")
 
-        # JSONL event log: create queue and start the writer task
+        # Event log: create shared queue and start the appropriate writer.
+        # If a db_pool is available (injected by the supervisor or constructor),
+        # start the Postgres writer; otherwise fall back to the JSONL writer.
         self._jsonl_queue = asyncio.Queue()
-        self._jsonl_writer_task = asyncio.create_task(self._jsonl_writer())
+        db_pool = self._db_pool or self.get_state("_db_pool")
+        if db_pool is not None:
+            self._using_pg = True
+            self._writer_task = asyncio.create_task(self._pg_writer(db_pool))
+            logger.info(
+                f"[{self.agent_id}] Starting Postgres event writer"
+            )
+        else:
+            self._using_pg = False
+            self._writer_task = asyncio.create_task(self._jsonl_writer())
+            logger.info(
+                f"[{self.agent_id}] Starting JSONL event writer"
+            )
 
         # Register message handlers
         self.register_handler("store_memory", self._handle_store_memory)
@@ -1075,6 +1095,69 @@ class HistorianAgent(
             f.write(line)
             f.write("\n")
 
+    # ------------------------------------------------------------------
+    # Postgres-backed event writer
+    # ------------------------------------------------------------------
+
+    _CREATE_HISTORIAN_EVENTS_DDL = """
+        CREATE TABLE IF NOT EXISTS historian_events (
+            event_id   TEXT PRIMARY KEY,
+            event_type TEXT NOT NULL,
+            timestamp  TIMESTAMPTZ NOT NULL,
+            agent_id   TEXT NOT NULL,
+            payload    JSONB NOT NULL DEFAULT '{}'
+        );
+    """
+
+    _INSERT_EVENT_STMT = """
+        INSERT INTO historian_events (event_id, event_type, timestamp, agent_id, payload)
+        VALUES ($1, $2, $3, $4, $5)
+        ON CONFLICT (event_id) DO NOTHING;
+    """
+
+    async def _pg_writer(self, db_pool: Any) -> None:
+        """Drain ``_jsonl_queue`` and insert each event as a row into the
+        ``historian_events`` table.
+
+        Runs as a background ``asyncio.Task`` started during
+        ``initialize()`` when a db_pool is available.  Creates the table on
+        startup via ``CREATE TABLE IF NOT EXISTS``.
+        """
+        try:
+            async with db_pool.acquire() as conn:
+                await conn.execute(self._CREATE_HISTORIAN_EVENTS_DDL)
+        except Exception:
+            logger.exception(
+                f"[{self.agent_id}] Failed to create historian_events table"
+            )
+            return
+
+        while True:
+            try:
+                record = await self._jsonl_queue.get()
+            except asyncio.CancelledError:
+                break
+
+            try:
+                async with db_pool.acquire() as conn:
+                    await conn.execute(
+                        self._INSERT_EVENT_STMT,
+                        record["event_id"],
+                        record["type"],
+                        record["timestamp"],
+                        record["agent_id"],
+                        json.dumps(record["payload"]),
+                    )
+                logger.debug(
+                    f"[{self.agent_id}] PG writer: inserted event {record['event_id']}"
+                )
+            except Exception:
+                logger.exception(
+                    f"[{self.agent_id}] PG writer error for event {record.get('event_id', '?')}"
+                )
+            finally:
+                self._jsonl_queue.task_done()
+
     async def log_event(
         self,
         event_type: str,
@@ -1084,8 +1167,9 @@ class HistorianAgent(
         """Enqueue a structured event record and return the generated
         ``event_id``.
 
-        The record is written asynchronously by the background JSONL
-        writer — callers do **not** block on file I/O.
+        The record is written asynchronously by the background writer
+        (Postgres or JSONL, whichever is active) — callers do **not**
+        block on I/O.
 
         Schema (all fields top-level):
         - ``event_id`` — ``uuid.uuid4().hex``
@@ -1142,15 +1226,26 @@ class HistorianAgent(
         )
 
     async def cleanup(self) -> None:
-        """Cleanup resources — flush remaining JSONL events first."""
-        # Drain remaining JSONL queue items before closing
-        if self._jsonl_writer_task is not None and not self._jsonl_writer_task.done():
+        """Cleanup resources — flush remaining events first."""
+        # Drain remaining queue items before closing the writer
+        if self._writer_task is not None and not self._writer_task.done():
             await self._jsonl_queue.join()
-            self._jsonl_writer_task.cancel()
+            self._writer_task.cancel()
             try:
-                await self._jsonl_writer_task
+                await self._writer_task
             except asyncio.CancelledError:
                 pass
+
+        # If PG mode was active, close the pool
+        if self._using_pg:
+            db_pool = self._db_pool or self.get_state("_db_pool")
+            if db_pool is not None:
+                try:
+                    await db_pool.close()
+                except Exception:
+                    logger.exception(
+                        f"[{self.agent_id}] Error closing db_pool during cleanup"
+                    )
 
         await self.memory_system.close()
         logger.info(f"[{self.agent_id}] Historian cleanup complete")

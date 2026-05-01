@@ -51,11 +51,11 @@ async def historian(tmp_jsonl_path: Path) -> HistorianAgent:
     yield agent
 
     # Cleanup
-    if agent._jsonl_writer_task is not None and not agent._jsonl_writer_task.done():
+    if agent._writer_task is not None and not agent._writer_task.done():
         await agent._jsonl_queue.join()
-        agent._jsonl_writer_task.cancel()
+        agent._writer_task.cancel()
         try:
-            await agent._jsonl_writer_task
+            await agent._writer_task
         except asyncio.CancelledError:
             pass
 

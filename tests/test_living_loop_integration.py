@@ -88,11 +88,11 @@ def _make_historian(tmp_path: Path, jsonl_name: str = "test.jsonl") -> Historian
 
 async def _drain_and_cleanup_historian(agent: HistorianAgent) -> None:
     """Join the JSONL queue and cancel the writer task."""
-    if agent._jsonl_writer_task is not None and not agent._jsonl_writer_task.done():
+    if agent._writer_task is not None and not agent._writer_task.done():
         await agent._jsonl_queue.join()
-        agent._jsonl_writer_task.cancel()
+        agent._writer_task.cancel()
         try:
-            await agent._jsonl_writer_task
+            await agent._writer_task
         except asyncio.CancelledError:
             pass
 
