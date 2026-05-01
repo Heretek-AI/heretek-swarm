@@ -721,6 +721,61 @@ async def readiness_check():
 
 
 # =============================================================================
+# Historian Event Endpoints
+# =============================================================================
+
+
+@app.get("/api/historian/events")
+async def get_historian_events(
+    agent_id: str | None = None,
+    event_type: str | None = None,
+    since: str | None = None,
+    until: str | None = None,
+    limit: int = 100,
+    authenticated: str = Depends(verify_auth),
+):
+    """
+    Query persisted events from the Historian agent's event store.
+
+    Query parameters:
+    - agent_id: Filter by agent identifier (optional)
+    - event_type: Filter by event type string (optional)
+    - since: ISO-8601 lower bound for timestamp (optional)
+    - until: ISO-8601 upper bound for timestamp (optional)
+    - limit: Maximum number of results (default 100)
+
+    Returns:
+        { events: [...], mode: "postgres" | "jsonl" | "unavailable" | "error" }
+    """
+    if not supervisor:
+        raise HTTPException(503, "Supervisor not initialized")
+
+    historian = supervisor.actors.get("historian")
+    if historian is None:
+        return {"events": [], "mode": "unavailable", "detail": "Historian agent not yet spawned"}
+
+    try:
+        events = await historian.read_events(
+            agent_id=agent_id,
+            event_type=event_type,
+            since=since,
+            until=until,
+            limit=limit,
+        )
+        mode = "postgres" if getattr(historian, "_using_pg", False) else "jsonl"
+        return {"events": events, "mode": mode}
+    except Exception as e:
+        logger.error(
+            "historian_events_error",
+            agent_id=agent_id,
+            event_type=event_type,
+            error=str(e),
+            exc_info=True,
+        )
+        return {"events": [], "mode": "error", "detail": str(e)}
+
+
+# =============================================================================
 # Agent Management Endpoints
 # =============================================================================
 
