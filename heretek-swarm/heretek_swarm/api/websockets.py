@@ -1274,6 +1274,9 @@ async def send_agent_status_update(agent_id: str, status: str, current_task: str
     """
     Send an agent status update to all subscribers.
 
+    Also broadcasts to dashboard listeners with the envelope format
+    the frontend expects (type: 'agent_status' + agentId at top level).
+
     Args:
         agent_id: Agent identifier
         status: Agent status (active, idle, processing, error)
@@ -1286,6 +1289,11 @@ async def send_agent_status_update(agent_id: str, status: str, current_task: str
     }
     _agent_states[agent_id] = update
     await manager.broadcast_agent_status(agent_id, update)
+    await manager.broadcast_dashboard({
+        "type": "agent_status",
+        "agentId": agent_id,
+        **update,
+    })
 
 
 async def send_workflow_progress_update(

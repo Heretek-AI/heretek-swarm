@@ -92,12 +92,13 @@ supervisor: ActorSupervisor | None = None
 memory_store: PersistentMemoryStore | None = None
 mem0_backend: Any | None = None  # Mem0Backend when available
 _nats_mesh: NATSEventMesh | None = None  # NATS event mesh for WebSocket bridge
+_ws_pump_task: asyncio.Task | None = None  # WebSocket status pump background task
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Application lifespan handler for startup and shutdown."""
-    global supervisor, memory_store, mem0_backend
+    global supervisor, memory_store, mem0_backend, _ws_pump_task
 
     # Startup
     logger.info("Starting Heretek Swarm API...")
@@ -108,12 +109,26 @@ async def lifespan(app: FastAPI):
     await _init_mem0()
     await _init_nats_bridge()
     await _init_spa_mount(app)
+
+    # Start the WebSocket status pump — must happen after supervisor init
+    _ws_pump_task = asyncio.create_task(_ws_status_pump())
+    logger.info("ws_status_pump_task_created")
+
     await _log_startup_complete()
 
     yield
 
     # Shutdown
     logger.info("Shutting down Heretek Swarm API...")
+
+    # Cancel the WebSocket status pump first
+    if _ws_pump_task and not _ws_pump_task.done():
+        _ws_pump_task.cancel()
+        try:
+            await _ws_pump_task
+        except asyncio.CancelledError:
+            pass
+        logger.info("ws_status_pump_task_cancelled")
 
     if supervisor:
         await supervisor.terminate_all()
@@ -417,6 +432,40 @@ async def _init_spa_mount(app: FastAPI) -> None:
         logger.info("dashboard_spa_mounted", dist_path=dist_path)
     else:
         logger.warning("dashboard_dist_not_found", dist_path=dist_path)
+
+
+async def _ws_status_pump() -> None:
+    """
+    Background pump that reads supervisor actor states every 10s and
+    broadcasts agent_status messages to dashboard WebSocket clients.
+
+    Cancelled cleanly on API shutdown via asyncio.CancelledError.
+    """
+    global supervisor
+    from heretek_swarm.api.websockets import send_agent_status_update
+
+    logger.info("ws_status_pump_started")
+    while True:
+        try:
+            await asyncio.sleep(10)
+            if supervisor is None:
+                continue
+            actors = list(supervisor.actors.items())
+            for agent_id, actor in actors:
+                status = actor.get_status()
+                if status is None:
+                    continue
+                # broadcast_agent_status + broadcast_dashboard happen inside
+                await send_agent_status_update(
+                    agent_id=str(agent_id),
+                    status=status.state.value if status.state else "unknown",
+                )
+            logger.info("agent_status_push_cycle", agent_count=len(actors))
+        except asyncio.CancelledError:
+            logger.info("ws_status_pump_cancelled")
+            raise
+        except Exception:
+            logger.exception("ws_status_pump_error")
 
 
 async def _log_startup_complete() -> None:
