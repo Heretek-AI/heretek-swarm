@@ -11,6 +11,7 @@ The Steward is the primary coordinator for the Triad, responsible for:
 """
 
 import asyncio
+import uuid
 from datetime import UTC, datetime, timedelta
 from typing import Any, Optional
 
@@ -372,6 +373,82 @@ class StewardAgent(
     def get_governance_policy(self, policy_id: str) -> dict[str, Any] | None:
         """Get a governance policy."""
         return self.governance_policies.get(policy_id)
+
+    async def route_to_agent(
+        self,
+        agent_name: str,
+        task_type: str,
+        task_data: dict,
+        correlation_id: str | None = None,
+    ) -> str:
+        """
+        Route a task to a registered agent via a standardized ``'route_task'``
+        message envelope.
+
+        This is a one-shot, fire-and-forget dispatch — it wraps
+        :meth:`send_to_actor` with a structured payload so the receiving agent
+        can pattern-match on ``task_type`` without parsing bespoke message
+        schemas.  The caller is responsible for determining routing semantics
+        (cast, unicast, anycast); this method always delivers to exactly one
+        actor.
+
+        Args:
+            agent_name: Target agent ID (must be in the actor registry).
+            task_type: Machine-readable task label (e.g. ``"on_demand_analysis"``).
+            task_data: Arbitrary payload for the receiving agent.
+            correlation_id: Optional correlation ID for traceability.  Auto-
+                generated if omitted.
+
+        Returns:
+            The message ID on success, or an empty string if the target agent
+            could not be found or the send failed.
+
+        .. admonition:: None-guard
+           :class: note
+
+           If ``send_to_actor()`` raises or returns an empty message ID, or if
+           the actor registry does not contain ``agent_name``, a structlog
+           warning is emitted and an empty string is returned — ensuring the
+           caller never hangs on a failed dispatch.
+        """
+        effective_correlation_id = correlation_id or str(uuid.uuid4())
+        payload = {
+            "target_agent": agent_name,
+            "task_type": task_type,
+            "task_data": task_data,
+            "correlation_id": effective_correlation_id,
+            "sender": self.agent_id,
+            "timestamp": datetime.now(UTC).isoformat(),
+        }
+
+        # Pre-check: is the target in the actor registry at all?
+        registry = self._get_actor_registry()
+        if registry is None or agent_name not in registry:
+            logger.warning(
+                f"[{self.agent_id}] route_to_agent target not in registry",
+                extra={"target_agent": agent_name, "task_type": task_type},
+            )
+            return ""
+
+        try:
+            message_id = await self.send_to_actor(
+                target_actor_id=agent_name,
+                message_type="route_task",
+                content=payload,
+                correlation_id=effective_correlation_id,
+            )
+            if not message_id:
+                logger.warning(
+                    f"[{self.agent_id}] route_to_agent send_to_actor returned empty",
+                    extra={"target_agent": agent_name, "task_type": task_type},
+                )
+            return message_id
+        except Exception as e:
+            logger.warning(
+                f"[{self.agent_id}] route_to_agent send_to_actor failed: {e}",
+                extra={"target_agent": agent_name, "task_type": task_type},
+            )
+            return ""
 
     async def _handle_agent_heartbeat(self, message: ActorMessage) -> None:
         """Store heartbeat timestamps from monitored agents."""
