@@ -297,6 +297,7 @@ class AgentActor:
         self.register_handler("resume", self._handle_resume)
         self.register_handler("terminate", self._handle_terminate)
         self.register_handler("collective_task", self._handle_collective_task)
+        self.register_handler("route_task", self._handle_route_task)
 
     def _register_agent_skills(self) -> None:
         """

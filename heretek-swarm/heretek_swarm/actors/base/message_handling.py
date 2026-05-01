@@ -619,6 +619,87 @@ class AgentActorMessageHandling(AgentActor):
             return
         await self.terminate()
 
+    async def _handle_route_task(self, message: ActorMessage) -> None:
+        """
+        Handle route_task messages for on-demand task routing.
+
+        This handler processes tasks dispatched via
+        :meth:`StewardAgent.route_to_agent`.  Subclasses can override
+        :meth:`_process_route_task` to implement custom task handling.
+
+        The handler:
+        1. Logs receipt via structlog with target_agent, task_type, correlation_id
+        2. Calls :meth:`_process_route_task(payload)` for actual processing
+        3. Optionally sends a response back via ``reply_to`` if the payload
+           includes one
+
+        Args:
+            message: ActorMessage containing the route_task payload
+        """
+        payload = message.content.get("content", message.content)
+        target_agent = payload.get("target_agent", "unknown")
+        task_type = payload.get("task_type", "unknown")
+        correlation_id = payload.get("correlation_id", message.correlation_id)
+
+        logger.info(
+            f"[{self.agent_id}] Received route_task",
+            extra={
+                "target_agent": target_agent,
+                "task_type": task_type,
+                "correlation_id": correlation_id,
+                "sender": message.sender,
+            },
+        )
+
+        # Process the routed task
+        result = await self._process_route_task(payload)
+
+        # Send response if reply_to is specified in the payload
+        reply_to = payload.get("reply_to")
+        if reply_to:
+            await self.send(
+                topic=reply_to,
+                content={
+                    "message_type": "route_task_response",
+                    "task_type": task_type,
+                    "correlation_id": correlation_id,
+                    "result": result,
+                },
+                correlation_id=correlation_id,
+            )
+
+    async def _process_route_task(
+        self,
+        payload: dict[str, Any],
+    ) -> dict[str, Any]:
+        """
+        Process a routed task payload.
+
+        Subclasses should override this method to implement custom task
+        processing.  The default implementation logs a warning and returns
+        ``{"status": "unhandled"}`` — providing graceful degradation so
+        agents that register the handler but don't override it still log and
+        don't crash.
+
+        Args:
+            payload: The route_task payload dict containing target_agent,
+                     task_type, task_data, correlation_id, sender, timestamp.
+
+        Returns:
+            A dict with at minimum a ``"status"`` key.  Subclasses may
+            include additional keys such as ``"result"``, ``"error"``, etc.
+        """
+        task_type = payload.get("task_type", "unknown")
+        logger.warning(
+            f"[{self.agent_id}] Route task not handled — no override for {task_type}",
+            extra={
+                "task_type": task_type,
+                "target_agent": payload.get("target_agent"),
+                "correlation_id": payload.get("correlation_id"),
+            },
+        )
+        return {"status": "unhandled", "task_type": task_type}
+
     async def _handle_collective_task(self, message: ActorMessage) -> None:
         """
         Handle collective task contribution requests with validation.
@@ -845,6 +926,8 @@ AgentActor._handle_health_check = AgentActorMessageHandling._handle_health_check
 AgentActor._handle_suspend = AgentActorMessageHandling._handle_suspend
 AgentActor._handle_resume = AgentActorMessageHandling._handle_resume
 AgentActor._handle_terminate = AgentActorMessageHandling._handle_terminate
+AgentActor._handle_route_task = AgentActorMessageHandling._handle_route_task
+AgentActor._process_route_task = AgentActorMessageHandling._process_route_task
 AgentActor._handle_collective_task = AgentActorMessageHandling._handle_collective_task
 AgentActor._generate_collective_contribution = (
     AgentActorMessageHandling._generate_collective_contribution
