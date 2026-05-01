@@ -373,3 +373,77 @@ class TestQueryDaemonSocket:
             sent_data = mock_socket.sendall.call_args[0][0]
             import json
             assert json.loads(sent_data.decode()) == {"type": "status"}
+
+
+# ---------------------------------------------------------------------------
+# _display_routed_result tests
+# ---------------------------------------------------------------------------
+
+
+class TestDisplayRoutedResult:
+    """Tests for ``_display_routed_result()``."""
+
+    @staticmethod
+    def test_shows_dispatched_result(capsys: pytest.CaptureFixture[str]) -> None:
+        """Prints success icon, target agent, task type, and message ID
+        when status is ``\"dispatched\"``."""
+        from heretek_swarm.cli import _display_routed_result
+
+        result = {
+            "status": "dispatched",
+            "target_agent": "coder",
+            "task_type": "code_analysis",
+            "message_id": "msg_abc123",
+        }
+        _display_routed_result(result)
+        captured = capsys.readouterr().out
+
+        assert "Routed to agent: coder" in captured
+        assert "Task type:       code_analysis" in captured
+        assert "Status:          dispatched" in captured
+        assert "Message ID:      msg_abc123" in captured
+        assert "Route complete." in captured
+
+    @staticmethod
+    def test_shows_failed_result(capsys: pytest.CaptureFixture[str]) -> None:
+        """Prints failure icon and error message when status is
+        ``\"failed\"``."""
+        from heretek_swarm.cli import _display_routed_result
+
+        result = {
+            "status": "failed",
+            "target_agent": "coder",
+            "task_type": "code_analysis",
+            "message_id": "?",
+            "error": "Agent not found in registry",
+        }
+        _display_routed_result(result)
+        captured = capsys.readouterr().out
+
+        assert "Routed to agent: coder" in captured
+        assert "Status:          failed" in captured
+        assert "Error:           Agent not found in registry" in captured
+
+    @staticmethod
+    def test_shows_unknown_status(capsys: pytest.CaptureFixture[str]) -> None:
+        """Uses ``?`` icon when status is unrecognized."""
+        from heretek_swarm.cli import _display_routed_result
+
+        result = {"status": "pending"}
+        _display_routed_result(result)
+        captured = capsys.readouterr().out
+
+        assert "Routed to agent: ?" in captured
+        assert "Status:          pending" in captured
+
+    @staticmethod
+    def test_handles_empty_dict(capsys: pytest.CaptureFixture[str]) -> None:
+        """Does not raise when given an empty dict — falls back to
+        default values for all fields."""
+        from heretek_swarm.cli import _display_routed_result
+
+        result: dict = {}
+        _display_routed_result(result)
+        captured = capsys.readouterr().out
+
+        assert "Routed to agent: ?" in captured

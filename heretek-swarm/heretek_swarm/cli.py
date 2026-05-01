@@ -423,7 +423,41 @@ def _display_deliberation_results(results: dict[str, dict]) -> None:
     click.echo("  Deliberation complete.")
 
 
-async def _start_autonomous_swarm(no_infra: bool = False, prompt: str | None = None) -> None:
+def _display_routed_result(result: dict) -> None:
+    """Print a compact summary of a routed task result.
+
+    Args:
+        result: The dict returned by ``AutonomousSwarm.run_routed_task()``,
+            containing at minimum ``status`` and optionally ``target_agent``,
+            ``task_type``, ``message_id``, and ``error`` keys.
+    """
+    status = result.get("status", "unknown")
+    target = result.get("target_agent", "?")
+    task_type = result.get("task_type", "?")
+    message_id = result.get("message_id", "?")
+
+    if status == "dispatched":
+        status_icon = "✓"
+    elif status == "failed":
+        status_icon = "✗"
+    else:
+        status_icon = "?"
+
+    click.echo("")
+    click.echo(f"  {status_icon} Routed to agent: {target}")
+    click.echo(f"    Task type:       {task_type}")
+    click.echo(f"    Status:          {status}")
+    click.echo(f"    Message ID:      {message_id}")
+
+    error = result.get("error")
+    if error:
+        click.echo(f"    Error:           {error}")
+
+    click.echo("")
+    click.echo("  Route complete.")
+
+
+async def _start_autonomous_swarm(no_infra: bool = False, prompt: str | None = None, target_agent: str | None = None) -> None:
     """Start the AutonomousSwarm with signal handlers for graceful shutdown."""
     from heretek_swarm.logging.config import setup_logging
     from heretek_swarm.runtime.main_loop import AutonomousSwarm
@@ -481,14 +515,28 @@ async def _start_autonomous_swarm(no_infra: bool = False, prompt: str | None = N
 
     if prompt:
         click.echo("")
-        click.echo(f"  Deliberating prompt: {prompt}")
-        click.echo("  " + "-" * 50)
-        try:
-            results = await swarm.run_deliberation(prompt)
-        except Exception as e:
-            click.echo(f"\n  ✗ Deliberation failed: {e}")
-            return
-        _display_deliberation_results(results)
+        if target_agent:
+            click.echo(f"  Routing prompt to agent '{target_agent}': {prompt}")
+            click.echo("  " + "-" * 50)
+            try:
+                result = await swarm.run_routed_task(
+                    target_agent,
+                    "on_demand_analysis",
+                    {"prompt": prompt},
+                )
+            except Exception as e:
+                click.echo(f"\n  ✗ Route failed: {e}")
+                return
+            _display_routed_result(result)
+        else:
+            click.echo(f"  Deliberating prompt: {prompt}")
+            click.echo("  " + "-" * 50)
+            try:
+                results = await swarm.run_deliberation(prompt)
+            except Exception as e:
+                click.echo(f"\n  ✗ Deliberation failed: {e}")
+                return
+            _display_deliberation_results(results)
         return  # Don't call swarm.run()
 
     await swarm.run()
@@ -530,7 +578,13 @@ def _handle_signal(signum: int, frame) -> None:
     default=None,
     help="Single prompt to deliberate through the triad, then exit",
 )
-def run(detach: bool, nats_url: str, no_infra: bool, prompt: str | None = None) -> None:
+@click.option(
+    "--target-agent",
+    type=str,
+    default=None,
+    help="Route prompt to a specific agent (default: triad deliberation)",
+)
+def run(detach: bool, nats_url: str, no_infra: bool, prompt: str | None = None, target_agent: str | None = None) -> None:
     """
     Start the Heretek Swarm autonomous runtime.
 
@@ -622,7 +676,7 @@ def run(detach: bool, nats_url: str, no_infra: bool, prompt: str | None = None) 
     if prompt:
         # Prompt mode: no signal handlers needed, exit after deliberation
         try:
-            asyncio.run(_start_autonomous_swarm(no_infra=no_infra, prompt=prompt))
+            asyncio.run(_start_autonomous_swarm(no_infra=no_infra, prompt=prompt, target_agent=target_agent))
         except Exception as e:
             logger.error("prompt_mode_failure", error=str(e))
             click.echo(f"\n✗ Failed to start: {e}")
