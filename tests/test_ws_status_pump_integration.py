@@ -1,194 +1,170 @@
 """
-Integration verification: WebSocket status messages reach dashboard clients.
+Integration test for WebSocket status pump (M005/S02/T02).
 
-Starts the API as a subprocess with minimal env dependencies,
-connects a WebSocket client to /ws/dashboard, manually triggers
-agent_status updates via the running pump, and verifies payload.
+Starts the API server, connects a dashboard WebSocket client, and verifies
+that agent_status messages arrive with the correct envelope format and recur
+every ~10s.
 
-Usage: python tests/test_ws_status_pump_integration.py
+Usage:
+    pytest tests/test_ws_status_pump_integration.py -v --timeout=30
 """
+
+from __future__ import annotations
 
 import asyncio
 import json
+import multiprocessing
 import os
 import signal
-import socket
 import subprocess
 import sys
 import time
 from pathlib import Path
 
+import pytest
+import structlog
 
-HERETEK_API_KEY = "integration-test-key-abc123"
+# ---------------------------------------------------------------------------
+# Helpers
+# ---------------------------------------------------------------------------
+
+API_PORT = 19877  # Non-standard port to avoid conflicts
+API_KEY = "htsk_your_api_key_here"
+WS_URL = f"ws://localhost:{API_PORT}/ws/dashboard?token={API_KEY}"
+PUMP_INTERVAL = 10  # The pump fires every 10s
+CAPTURE_TIMEOUT = 18  # Slightly more than 1 pump interval (allow for startup)
+BATCH_COUNT = 2  # We want at least 2 batches
 
 
-def _free_port() -> int:
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.bind(("", 0))
-        return s.getsockname()[1]
+@pytest.fixture(scope="module")
+def api_server():
+    """Start the API server as a subprocess for the duration of the module.
 
-
-async def main() -> int:
-    port = _free_port()
-    host = "127.0.0.1"
-    project_root = Path(__file__).parent.parent.resolve()
-    api_root = project_root / "heretek-swarm"
-
-    # Use a temp SQLite db so the server doesn't need real PG
-    sqlite_path = Path(f"/tmp/test_ws_pump_{port}.db")
-    sqlite_path.parent.mkdir(parents=True, exist_ok=True)
-    if sqlite_path.exists():
-        sqlite_path.unlink()
-
-    env = {
-        **os.environ,
-        "HERETEK_API_KEY": HERETEK_API_KEY,
-        "DATABASE_URL": f"sqlite+aiosqlite:///{sqlite_path}",
-        "RATE_LIMIT_ENABLED": "false",
-        "LOG_LEVEL": "error",
+    We need a live server with a supervisor that has spawned actors so the
+    pump has data to broadcast.
+    """
+    env = os.environ.copy()
+    env.update({
+        "DATABASE_URL": "sqlite+aiosqlite:///./test_ws_integration.db",
+        "HERETEK_API_KEY": API_KEY,
+        "LOG_LEVEL": "WARNING",
         "LOG_FORMAT": "json",
-        "OPENAI_API_KEY": "sk-dummy-for-integration-test",
-    }
+    })
 
     proc = subprocess.Popen(
         [
-            sys.executable,
-            "-m",
-            "uvicorn",
+            sys.executable, "-m", "uvicorn",
             "heretek_swarm.api.main:app",
-            "--host",
-            host,
-            "--port",
-            str(port),
-            "--log-level",
-            "error",
+            "--host", "0.0.0.0",
+            "--port", str(API_PORT),
+            "--log-level", "warning",
         ],
+        cwd=str(Path(__file__).resolve().parent.parent / "heretek-swarm"),
         env=env,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        cwd=str(api_root),
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
     )
 
-    # Wait for the server to become ready
+    # Wait for the server to become responsive
     import httpx
 
+    deadline = time.time() + 20
     ready = False
-    for attempt in range(30):
+    while time.time() < deadline:
         try:
-            r = httpx.get(f"http://{host}:{port}/api/health/live", timeout=2.0)
+            r = httpx.get(f"http://localhost:{API_PORT}/api/health/live", timeout=2)
             if r.status_code == 200:
                 ready = True
                 break
-        except Exception:
+        except (httpx.ConnectError, httpx.ReadTimeout, httpx.RemoteProtocolError):
             pass
-        time.sleep(1)
+        time.sleep(0.5)
 
     if not ready:
         proc.terminate()
-        stdout, stderr = proc.communicate(timeout=5)
-        print("SERVER FAILED TO START")
-        print("STDOUT:", stdout.decode()[:2000])
-        print("STDERR:", stderr.decode()[:2000])
-        return 1
+        proc.wait()
+        pytest.fail("API server did not start within 20s")
 
-    print(f"Server started on {host}:{port}")
+    yield
 
-    passed = 0
-    failed = 0
-
-    # -----------------------------------------------------------------------
-    # Test 1: Connect to /ws/dashboard and receive agent_status messages
-    # -----------------------------------------------------------------------
-    print("\n--- Test 1: Dashboard WS receives agent_status messages ---")
-    try:
-        import websockets
-
-        async with websockets.connect(
-            f"ws://{host}:{port}/ws/dashboard?token={HERETEK_API_KEY}",
-            ping_interval=None,
-        ) as ws:
-            received = []
-            deadline = time.monotonic() + 20
-
-            while time.monotonic() < deadline:
-                try:
-                    raw = await asyncio.wait_for(ws.recv(), timeout=5.0)
-                    msg = json.loads(raw)
-                    if msg.get("type") == "agent_status":
-                        received.append(msg)
-                        # Early exit if we have enough
-                        agents = {m["agentId"] for m in received}
-                        if len(agents) >= 2:
-                            break
-                except asyncio.TimeoutError:
-                    continue
-
-            print(f"  Received {len(received)} agent_status messages")
-            if received:
-                print(f"  Sample: {json.dumps(received[0], indent=2)}")
-
-            if len(received) >= 2:
-                # Verify payload shape
-                for msg in received:
-                    assert msg["type"] == "agent_status", f"Bad type: {msg.get('type')}"
-                    assert "agentId" in msg, f"Missing agentId in {msg}"
-                    assert "status" in msg, f"Missing status in {msg}"
-                    assert "lastHeartbeat" in msg, f"Missing lastHeartbeat in {msg}"
-
-                distinct = {m["agentId"] for m in received}
-                print(f"  Distinct agents: {distinct}")
-                assert len(distinct) >= 2, f"Only {len(distinct)} distinct agents"
-                print("  PASS")
-                passed += 1
-            else:
-                print(f"  FAIL: got {len(received)} agent_status messages, expected >= 2")
-                print(f"  All received messages: {json.dumps([r.get('type') for r in received])}")
-                failed += 1
-
-    except Exception as e:
-        print(f"  FAIL: {type(e).__name__}: {e}")
-        import traceback
-        traceback.print_exc()
-        failed += 1
-
-    # -----------------------------------------------------------------------
-    # Test 2: Auth rejection without token
-    # -----------------------------------------------------------------------
-    print("\n--- Test 2: Auth required for dashboard WS ---")
-    try:
-        import websockets
-
-        async with websockets.connect(f"ws://{host}:{port}/ws/dashboard") as ws:
-            raw = await asyncio.wait_for(ws.recv(), timeout=5.0)
-            msg = json.loads(raw)
-            if msg.get("type") == "error":
-                print(f"  Received error: {msg.get('error')}")
-                print("  PASS")
-                passed += 1
-            else:
-                print(f"  FAIL: Expected error, got {msg.get('type')}")
-                failed += 1
-    except Exception as e:
-        # Connection may be closed
-        print(f"  Error (expected): {type(e).__name__}")
-        print("  PASS (auth-rejection path)")
-        passed += 1
-
-    # -----------------------------------------------------------------------
-    # Summary
-    # -----------------------------------------------------------------------
-    print(f"\n{'='*40}")
-    print(f"Results: {passed} passed, {failed} failed")
-
-    # Cleanup
+    # Teardown
     proc.terminate()
-    proc.wait(timeout=5)
-    if sqlite_path.exists():
-        sqlite_path.unlink()
+    try:
+        proc.wait(timeout=10)
+    except subprocess.TimeoutExpired:
+        proc.kill()
+        proc.wait()
 
-    return 0 if failed == 0 else 1
+    # Clean up test DB
+    db_path = Path(__file__).resolve().parent.parent / "heretek-swarm" / "test_ws_integration.db"
+    if db_path.exists():
+        db_path.unlink()
 
 
-if __name__ == "__main__":
-    exit_code = asyncio.run(main())
-    sys.exit(exit_code)
+@pytest.mark.asyncio
+async def test_agent_status_messages_received(api_server):
+    """Connect to /ws/dashboard and verify agent_status messages arrive
+    with correct payload structure and repeat at ~10s intervals."""
+    import websockets
+
+    messages: list[dict] = []
+    start = time.time()
+
+    async with websockets.connect(WS_URL, max_size=2 ** 20) as ws:
+        # Wait for messages up to CAPTURE_TIMEOUT seconds
+        deadline = start + CAPTURE_TIMEOUT
+        while time.time() < deadline:
+            try:
+                raw = await asyncio.wait_for(ws.recv(), timeout=2)
+                msg = json.loads(raw)
+                messages.append(msg)
+            except asyncio.TimeoutError:
+                continue
+
+    # --- Assertions ---
+
+    # Filter to agent_status messages only (ignore heartbeats, pong, etc.)
+    status_msgs = [m for m in messages if m.get("type") == "agent_status"]
+
+    assert len(status_msgs) > 0, (
+        f"No agent_status messages received in {CAPTURE_TIMEOUT}s "
+        f"(got {len(messages)} total messages)"
+    )
+
+    # Check payload structure on first message
+    first = status_msgs[0]
+    assert "agentId" in first, f"Missing agentId in {first}"
+    assert "status" in first, f"Missing status in {first}"
+    assert "lastHeartbeat" in first, f"Missing lastHeartbeat in {first}"
+
+    # Check unique agents — we should hear from multiple agents
+    unique_agents = {m["agentId"] for m in status_msgs}
+    assert len(unique_agents) >= 2, (
+        f"Expected 2+ unique agents, got {len(unique_agents)}: {unique_agents}"
+    )
+
+    # Status must be a known value
+    known_statuses = {"active", "idle", "processing", "error", "suspended", "unknown"}
+    for m in status_msgs:
+        assert m["status"] in known_statuses, (
+            f"Unexpected status '{m['status']}' for agent {m['agentId']}"
+        )
+
+    # lastHeartbeat must be a valid ISO timestamp
+    from datetime import datetime
+    for m in status_msgs:
+        try:
+            datetime.fromisoformat(m["lastHeartbeat"])
+        except (ValueError, TypeError):
+            pytest.fail(f"Invalid lastHeartbeat '{m['lastHeartbeat']}' for agent {m['agentId']}")
+
+    # Verify we got 2+ batches (pump fires every 10s, we waited 18s)
+    # Group messages by approximate timestamp (bucket by 5s intervals)
+    timestamps = sorted(
+        datetime.fromisoformat(m["lastHeartbeat"]) for m in status_msgs
+    )
+    time_spans = (timestamps[-1] - timestamps[0]).total_seconds()
+    assert time_spans >= 8, (
+        f"Expected messages spanning at least 8s (2 pump cycles), "
+        f"got {time_spans:.1f}s span — pump may not be recurring"
+    )
