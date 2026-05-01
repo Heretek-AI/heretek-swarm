@@ -9,6 +9,7 @@ import { useWebSocket, WebSocketMessage } from '../../hooks/useWebSocket';
 import { StatusBadge } from '../UI/StatusBadge';
 import { EmptyState } from '../UI/EmptyState';
 import { useToast } from '../UI/Toast';
+import { getHistorianEvents, HistorianEvent } from '../../api/events';
 
 interface LogEntry {
   id: string;
@@ -35,6 +36,28 @@ const logLevelIcons: Record<string, string> = {
   critical: '🔥',
 };
 
+/** Return Tailwind classes for an event type badge pill. */
+function eventTypeBadge(eventType: string): string {
+  switch (eventType) {
+    case 'deliberation':
+      return 'bg-blue-900/40 text-blue-300';
+    case 'heartbeat':
+      return 'bg-green-900/40 text-green-300';
+    case 'steward_pulse':
+      return 'bg-purple-900/40 text-purple-300';
+    case 'routed_task':
+      return 'bg-cyan-900/40 text-cyan-300';
+    case 'scheduled_task':
+      return 'bg-orange-900/40 text-orange-300';
+    case 'agent_spawn':
+      return 'bg-yellow-900/40 text-yellow-300';
+    case 'agent_death':
+      return 'bg-red-900/40 text-red-300';
+    default:
+      return 'bg-gray-700/40 text-gray-400';
+  }
+}
+
 export function LogsPage() {
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [filterLevel, setFilterLevel] = useState<string>('all');
@@ -42,8 +65,24 @@ export function LogsPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [autoScroll, setAutoScroll] = useState(true);
   const [isConnected, setIsConnected] = useState(false);
+  const [historianEvents, setHistorianEvents] = useState<HistorianEvent[]>([]);
+  const [historianMode, setHistorianMode] = useState<string | null>(null);
   const logsEndRef = useRef<HTMLDivElement>(null);
   const toast = useToast();
+
+  // Fetch historian events on mount
+  const fetchHistorianEvents = useCallback(() => {
+    getHistorianEvents({ limit: 50 }).then((response) => {
+      setHistorianEvents(response.events);
+      setHistorianMode(response.mode);
+    }).catch(() => {
+      setHistorianMode('error');
+    });
+  }, []);
+
+  useEffect(() => {
+    fetchHistorianEvents();
+  }, [fetchHistorianEvents]);
 
   // WebSocket for real-time logs
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -181,6 +220,74 @@ export function LogsPage() {
         </div>
       </div>
 
+      {/* Event History Section */}
+      <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-lg overflow-hidden">
+        <div className="flex items-center justify-between p-3 border-b border-gray-700">
+          <div className="flex items-center gap-3">
+            <h2 className="text-sm font-semibold uppercase tracking-wider text-gray-400">
+              Event History
+            </h2>
+            {historianMode && (
+              <span className={`px-2 py-0.5 rounded text-xs font-medium ${
+                historianMode === 'error' || historianMode === 'unavailable'
+                  ? 'bg-red-900/30 text-red-400'
+                  : historianMode === 'jsonl'
+                    ? 'bg-yellow-900/30 text-yellow-400'
+                    : 'bg-green-900/30 text-green-400'
+              }`}>
+                {historianMode}
+              </span>
+            )}
+            <span className="text-xs text-gray-500">
+              {historianEvents.length} event{historianEvents.length !== 1 ? 's' : ''}
+            </span>
+          </div>
+          <button
+            onClick={fetchHistorianEvents}
+            className="px-3 py-1.5 bg-gray-700 hover:bg-gray-600 rounded-lg text-xs font-medium transition-colors"
+            title="Refresh event history"
+          >
+            Refresh History
+          </button>
+        </div>
+
+        <div className="max-h-48 overflow-auto">
+          {historianEvents.length > 0 ? (
+            <div className="divide-y divide-gray-700/50">
+              {historianEvents.map((event) => (
+                <div
+                  key={event.event_id}
+                  className="flex items-center gap-3 px-4 py-2 text-sm hover:bg-gray-700/30 transition-colors"
+                >
+                  <span className="text-gray-500 shrink-0 font-mono text-xs w-20">
+                    {new Date(event.timestamp).toLocaleTimeString()}
+                  </span>
+                  <span className={`shrink-0 px-2 py-0.5 rounded text-xs font-medium ${eventTypeBadge(event.type)}`}>
+                    {event.type}
+                  </span>
+                  <span className="text-gray-400 shrink-0 font-mono text-xs w-24 truncate">
+                    {event.agent_id}
+                  </span>
+                  <span className="flex-1 text-gray-600 text-xs truncate font-mono">
+                    {JSON.stringify(event.payload).slice(0, 100)}
+                  </span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="p-6 text-center">
+              <p className="text-sm text-gray-500">
+                {historianMode === 'error'
+                  ? 'Failed to load historical events — historian may be unavailable'
+                  : historianMode === 'unavailable'
+                    ? 'Historian is not available in this deployment mode'
+                    : 'No historical events recorded'}
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
+
       {/* Stats Bar */}
       <div className="flex items-center gap-4 text-sm text-gray-400">
         <span>Total: <span className="text-white font-mono">{logs.length}</span></span>
@@ -215,6 +322,12 @@ export function LogsPage() {
                 </div>
               ))}
               <div ref={logsEndRef} />
+            </div>
+          ) : historianEvents.length > 0 ? (
+            <div className="flex items-center justify-center h-full p-6">
+              <p className="text-sm text-gray-500">
+                Real-time log streaming will appear here
+              </p>
             </div>
           ) : (
             <EmptyState
