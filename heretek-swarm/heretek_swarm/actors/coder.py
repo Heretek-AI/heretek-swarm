@@ -190,6 +190,10 @@ class CoderAgent(
 
         self._config: dict[str, Any] = {}
 
+        # Add routing capability for route_to_agent() support
+        if "routing" not in self.capabilities:
+            self.capabilities.append("routing")
+
         # Code storage
         self._code_snippets: dict[str, CodeSnippet] = {}
         self._snippet_counter = 0
@@ -234,6 +238,99 @@ class CoderAgent(
             "explain_code": self._handle_explain_code,
             "implement_task": self._handle_implement_task,
         }
+
+    async def _process_route_task(
+        self,
+        payload: dict[str, Any],
+    ) -> dict[str, Any]:
+        """
+        Process a routed task payload dispatched via route_to_agent().
+
+        Reads ``task_type`` from the payload and dispatches to the
+        corresponding handler from :meth:`get_handlers()`.  For the
+        initial proof case, supports ``task_type='on_demand_analysis'``
+        which calls ``_handle_generate_code`` with the ``task_data``.
+
+        Args:
+            payload: Route task payload with keys:
+                - ``target_agent``: target agent name
+                - ``task_type``: type of task to perform
+                - ``task_data``: dict of data for the handler
+                - ``correlation_id``: optional correlation ID
+                - ``sender``: originating agent name
+                - ``timestamp``: ISO8601 timestamp
+
+        Returns:
+            Result dict with at minimum a ``"status"`` key.
+        """
+        task_type = payload.get("task_type", "unknown")
+        task_data = payload.get("task_data", {})
+
+        # Map route task types to handler keys
+        type_to_handler: dict[str, str] = {
+            "on_demand_analysis": "generate_code",
+            "generate_code": "generate_code",
+            "review_code": "review_code",
+            "debug_code": "debug_code",
+            "generate_tests": "generate_tests",
+            "generate_docs": "generate_docs",
+            "refactor_code": "refactor_code",
+            "explain_code": "explain_code",
+            "implement_task": "implement_task",
+        }
+
+        handler_key = type_to_handler.get(task_type)
+        if handler_key is None:
+            logger.warning(
+                f"[{self.agent_id}] Unsupported route task type: {task_type}",
+                extra={
+                    "task_type": task_type,
+                    "correlation_id": payload.get("correlation_id"),
+                },
+            )
+            return {"status": "error", "error": f"Unsupported task_type: {task_type}"}
+
+        handler = self.get_handlers().get(handler_key)
+        if handler is None:
+            logger.error(
+                f"[{self.agent_id}] Handler {handler_key} not registered",
+                extra={"task_type": task_type},
+            )
+            return {"status": "error", "error": f"Handler {handler_key} not available"}
+
+        logger.info(
+            f"[{self.agent_id}] Processing route task {task_type} via {handler_key}",
+            extra={
+                "task_type": task_type,
+                "handler_key": handler_key,
+                "correlation_id": payload.get("correlation_id"),
+            },
+        )
+
+        # Build a minimal ActorMessage for the handler
+        from datetime import UTC, datetime
+
+        msg = ActorMessage(
+            sender=payload.get("sender", "unknown"),
+            message_type=handler_key,
+            content=task_data if isinstance(task_data, dict) else {},
+            timestamp=datetime.now(UTC).isoformat(),
+            correlation_id=payload.get("correlation_id"),
+        )
+
+        try:
+            result = await handler(msg)
+            return {"status": "success", "result": result}
+        except Exception as e:
+            logger.error(
+                f"[{self.agent_id}] Route task handler failed",
+                extra={
+                    "task_type": task_type,
+                    "handler_key": handler_key,
+                    "error": str(e),
+                },
+            )
+            return {"status": "error", "error": str(e)}
 
     async def _handle_generate_code(self, message: ActorMessage) -> dict[str, Any] | None:
         """
