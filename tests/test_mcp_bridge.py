@@ -11,6 +11,7 @@ Verifies that:
 
 from __future__ import annotations
 
+from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -66,16 +67,18 @@ def _make_core_mcp_with_tools(tool_count: int = 3) -> CoreMCPTools:
 
 
 @pytest.fixture(autouse=True)
-def _clear_mcp_registry() -> None:
+def _clear_mcp_registry(tmp_path: Path) -> None:
     """Autouse fixture — clear the global mcp/ registry before each test.
 
-    ``get_registry()`` / ``set_registry()`` operate on a module-level
-    singleton. Without this teardown, tests that bridge tools would leak
-    state into subsequent tests.
+    Also patches ``TOOLS_STATE_FILE`` to a non-existent path in tmp so
+    the bridge's persisted-state loading doesn't pick up real user state
+    from disk.
     """
     from heretek_swarm.mcp.server import set_registry
     set_registry(MCPToolRegistry())
-    yield
+    with patch("heretek_swarm.mcp.registry.TOOLS_STATE_FILE",
+               tmp_path / "nonexistent" / "tools_state.json"):
+        yield
 
 
 class TestMcpBridge:

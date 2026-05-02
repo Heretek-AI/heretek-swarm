@@ -105,10 +105,36 @@ def sync_mcp_registries(core_tools: CoreMCPTools | None) -> int:
     # Sync the global so the HTTP API sees all bridged tools.
     set_registry(mcp_registry)
 
+    # ------------------------------------------------------------------
+    # Apply persisted tool states from tools_state.json.
+    #
+    # After all tools are registered, load the persisted enabled/disabled
+    # states and apply them.  This ensures that tools disabled via the
+    # dashboard survive daemon restarts — the bridge never overwrites a
+    # user-disabled tool back to enabled.
+    # ------------------------------------------------------------------
+    persisted_states = mcp_registry._load_tool_states()
+    applied_count = 0
+    orphan_count = 0
+    for tool_name, persisted_enabled in persisted_states.items():
+        tool = mcp_registry._tools.get(tool_name)
+        if tool is not None:
+            tool.enabled = persisted_enabled
+            applied_count += 1
+        else:
+            orphan_count += 1
+            logger.warning(
+                "mcp_bridge_orphan_state",
+                tool_name=tool_name,
+                message="Persisted state references tool not in registry",
+            )
+
     logger.info(
         "mcp_bridge_complete",
         total_tools=len(mcp_registry.list_tools()),
         bridged=bridged_count,
         skipped=skipped_count,
+        persisted_states_applied=applied_count,
+        orphan_states=orphan_count,
     )
     return bridged_count

@@ -20,11 +20,29 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
+from heretek_swarm.mcp.bridge import sync_mcp_registries
 from heretek_swarm.mcp.registry import (
     MCPToolMetadata,
     MCPToolRegistry,
     TOOLS_STATE_FILE,
 )
+
+
+# ---------------------------------------------------------------------------
+# Module-level autouse fixture: reset global mcp registry before each test
+# ---------------------------------------------------------------------------
+
+
+@pytest.fixture(autouse=True)
+def _reset_mcp_registry() -> None:
+    """Reset the global mcp/ registry before each test.
+
+    ``get_registry()`` / ``set_registry()`` operate on a module-level
+    singleton.  Without this teardown, tests that bridge tools would leak
+    state into subsequent tests.
+    """
+    set_registry(MCPToolRegistry())
+    yield
 
 
 # ---------------------------------------------------------------------------
@@ -481,3 +499,186 @@ class TestToggleEndpoint:
         assert state_file.exists()
         data = json.loads(state_file.read_text(encoding="utf-8"))
         assert data["tool_states"]["test_tool_0"] is False
+
+
+# ---------------------------------------------------------------------------
+# Tests: Bridge applies persisted states on startup (T03)
+# ---------------------------------------------------------------------------
+
+
+class TestBridgePersistsToolStates:
+    """Suite for the bridge's persisted-state application logic.
+
+    The bridge (``sync_mcp_registries``) should load ``tools_state.json``
+    after registering all tools and apply the persisted enabled/disabled
+    states so that tools disabled via the dashboard survive daemon restarts.
+    """
+
+    def _bridge_with_states(
+        self,
+        tmp_path: Path,
+        tool_count: int = 3,
+        states: dict[str, bool] | None = None,
+    ) -> MCPToolRegistry:
+        """Helper: write a state file, bridge tools, return the mcp registry.
+
+        This simulates the full startup sequence: tools are registered, then
+        persisted states are applied.
+        """
+        from heretek_swarm.mcp.server import get_registry
+
+        # Write the state file if states are provided.
+        if states is not None:
+            state_file = tmp_path / "tools_state.json"
+            state_file.parent.mkdir(parents=True, exist_ok=True)
+            payload = {
+                "version": "1.0.0",
+                "tool_states": states,
+            }
+            state_file.write_text(json.dumps(payload), encoding="utf-8")
+        else:
+            state_file = tmp_path / "tools_state.json"
+
+        # Build CoreMCPTools with controlled tool definitions.
+        from tests.test_mcp_bridge import _make_core_mcp_with_tools
+        core = _make_core_mcp_with_tools(tool_count=tool_count)
+
+        # Patch the state file path so the bridge reads from tmp.
+        with patch("heretek_swarm.mcp.registry.TOOLS_STATE_FILE", state_file):
+            sync_mcp_registries(core)
+
+        return get_registry()
+
+    def test_bridge_applies_disabled_states_from_file(self, tmp_path: Path) -> None:
+        """Tools disabled in tools_state.json come up disabled after bridge."""
+        states = {
+            "test_tool_0": False,  # disabled
+            "test_tool_1": True,   # enabled
+            "test_tool_2": False,  # disabled
+        }
+        reg = self._bridge_with_states(tmp_path, tool_count=3, states=states)
+
+        assert reg._tools["test_tool_0"].enabled is False
+        assert reg._tools["test_tool_1"].enabled is True
+        assert reg._tools["test_tool_2"].enabled is False
+
+    def test_bridge_never_re_enables_user_disabled_tool(self, tmp_path: Path) -> None:
+        """If a tool was disabled by the user, the bridge does not reset it
+        to enabled — even if the tools-layer registry defaults to enabled."""
+        states = {"test_tool_0": False}
+        reg = self._bridge_with_states(tmp_path, tool_count=2, states=states)
+
+        # Even though CoreMCPTools defaults tools to enabled=True,
+        # the persisted state overrides this.
+        assert reg._tools["test_tool_0"].enabled is False
+
+    def test_bridge_survives_restart_round_trip(self, tmp_path: Path) -> None:
+        """Full restart simulation: bridge → toggle off → bridge again →
+        disabled tools stay disabled."""
+        state_file = tmp_path / "tools_state.json"
+
+        from tests.test_mcp_bridge import _make_core_mcp_with_tools
+        from heretek_swarm.mcp.server import get_registry
+
+        with patch("heretek_swarm.mcp.registry.TOOLS_STATE_FILE", state_file):
+            core = _make_core_mcp_with_tools(tool_count=3)
+
+            # 1. First bridge (no state file yet).
+            sync_mcp_registries(core)
+
+            reg = get_registry()
+            assert reg._tools["test_tool_0"].enabled is True
+
+            # 2. Toggle a tool off (simulates user action via dashboard).
+            reg.set_tool_enabled("test_tool_0", False)
+            assert reg._tools["test_tool_0"].enabled is False
+
+            # 3. Second bridge (simulates daemon restart).
+            #    Set up a fresh CoreMCPTools and clear the mcp registry.
+            core2 = _make_core_mcp_with_tools(tool_count=3)
+            set_registry(MCPToolRegistry())
+
+            sync_mcp_registries(core2)
+
+            reg2 = get_registry()
+            # The disabled tool should STILL be disabled after restart.
+            assert reg2._tools["test_tool_0"].enabled is False
+            assert reg2._tools["test_tool_1"].enabled is True
+            assert reg2._tools["test_tool_2"].enabled is True
+
+    def test_bridge_logs_orphan_states_as_warning(self, tmp_path: Path) -> None:
+        """A tool in tools_state.json that doesn't exist in the registry
+        triggers a WARNING-level mcp_bridge_orphan_state log."""
+        states = {
+            "test_tool_0": True,
+            "removed_tool": False,  # not in registry — orphan
+        }
+        from tests.test_mcp_bridge import _make_core_mcp_with_tools
+
+        state_file = tmp_path / "tools_state.json"
+        state_file.parent.mkdir(parents=True, exist_ok=True)
+        payload = {"version": "1.0.0", "tool_states": states}
+        state_file.write_text(json.dumps(payload), encoding="utf-8")
+
+        core = _make_core_mcp_with_tools(tool_count=1)
+
+        with patch("heretek_swarm.mcp.registry.TOOLS_STATE_FILE", state_file):
+            with patch("heretek_swarm.mcp.bridge.logger") as mock_logger:
+                sync_mcp_registries(core)
+
+        # Find the orphan warning.
+        orphan_calls = [
+            call for call in mock_logger.warning.call_args_list
+            if call[0][0] == "mcp_bridge_orphan_state"
+        ]
+        assert len(orphan_calls) == 1
+        assert orphan_calls[0].kwargs["tool_name"] == "removed_tool"
+
+    def test_bridge_logs_persisted_states_applied_count(self, tmp_path: Path) -> None:
+        """The bridge's mcp_bridge_complete log includes persisted_states_applied."""
+        states = {"test_tool_0": False, "test_tool_1": True}
+
+        from tests.test_mcp_bridge import _make_core_mcp_with_tools
+
+        state_file = tmp_path / "tools_state.json"
+        state_file.parent.mkdir(parents=True, exist_ok=True)
+        payload = {"version": "1.0.0", "tool_states": states}
+        state_file.write_text(json.dumps(payload), encoding="utf-8")
+
+        core = _make_core_mcp_with_tools(tool_count=3)
+
+        with patch("heretek_swarm.mcp.registry.TOOLS_STATE_FILE", state_file):
+            with patch("heretek_swarm.mcp.bridge.logger") as mock_logger:
+                sync_mcp_registries(core)
+
+        # Find the bridge_complete log call.
+        complete_calls = [
+            call for call in mock_logger.info.call_args_list
+            if call[0][0] == "mcp_bridge_complete"
+        ]
+        assert len(complete_calls) == 1
+        kwargs = complete_calls[0].kwargs
+        assert kwargs["persisted_states_applied"] == 2
+        assert kwargs["orphan_states"] == 0
+
+    def test_bridge_no_state_file_leaves_all_enabled(self, tmp_path: Path) -> None:
+        """When no tools_state.json exists, all tools remain enabled (default)."""
+        reg = self._bridge_with_states(
+            tmp_path, tool_count=3, states=None  # no file written
+        )
+
+        # Delete the state file if it got created by mkdir.
+        state_file = tmp_path / "tools_state.json"
+        state_file.unlink(missing_ok=True)
+
+        # Re-bridge without a state file.
+        from tests.test_mcp_bridge import _make_core_mcp_with_tools
+        core = _make_core_mcp_with_tools(tool_count=3)
+        set_registry(MCPToolRegistry())
+
+        with patch("heretek_swarm.mcp.registry.TOOLS_STATE_FILE", state_file):
+            sync_mcp_registries(core)
+
+        reg2 = get_registry()
+        for tool in reg2._tools.values():
+            assert tool.enabled is True
