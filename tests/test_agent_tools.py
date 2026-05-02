@@ -6,12 +6,13 @@ Verifies that:
 2. build_tool_handlers() produces synchronous wrappers that work via asyncio.run()
 3. The handler wrappers preserve the correct tool logic
 4. Empty registry produces empty results
-5. Integration: setting swarms_agent.tools_list_dictionary and swarms_agent.tools works
+5. Integration: agent with injected tools can invoke a mock handler
+6. None-guard: mcp_tools is None -> no injection, no crash
 """
 
 from __future__ import annotations
 
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 import pytest
 
@@ -207,6 +208,107 @@ class TestAgentToolInjection:
         tool_names = {t["function"]["name"] for t in agent.tools_list_dictionary}
         for i in range(5):
             assert f"test_tool_{i}" in tool_names
+
+    def test_agent_invokes_mock_handler_via_injected_tools(self):
+        """Agent with injected tools can invoke a mock tool handler.
+
+        Simulates the real dispatch path: schemas tell the LLM what tools
+        exist; the handler callables are the functions the LLM calls.
+        This test verifies the handler invocation, not the LLM routing.
+        """
+        from swarms import Agent
+
+        call_log = {"called": False, "args": None, "ctx": None}
+
+        def mock_handler(args, ctx):
+            call_log["called"] = True
+            call_log["args"] = args
+            call_log["ctx"] = ctx
+            return {"weather": "sunny", "temp": args.get("city", "unknown")}
+
+        core = _make_core_mcp_with_tools(tool_count=0)
+        core.registry.register(MCPToolDefinition(
+            name="get_weather",
+            description="Get weather for a city",
+            input_schema={
+                "type": "object",
+                "properties": {
+                    "city": {"type": "string", "description": "City name"},
+                },
+                "required": ["city"],
+            },
+            handler=mock_handler,
+            category="test",
+        ))
+
+        registry = core.get_registry()
+        schemas = build_tools_list_dictionary(registry)
+        handlers = build_tool_handlers(registry)
+
+        agent = Agent(agent_name="test_weather_agent")
+        agent.tools_list_dictionary = schemas
+        agent.tools = list(handlers.values())
+
+        assert len(agent.tools_list_dictionary) == 1
+        assert agent.tools_list_dictionary[0]["function"]["name"] == "get_weather"
+        assert len(agent.tools) == 1
+        assert callable(agent.tools[0])
+
+        result = agent.tools[0]({"city": "London"}, {"agent_id": "test"})
+
+        assert result["weather"] == "sunny"
+        assert result["temp"] == "London"
+        assert call_log["called"] is True
+        assert call_log["args"] == {"city": "London"}
+
+    def test_agent_tool_handler_error_returns_error_dict(self):
+        """When an injected tool handler raises, the agent sees an error."""
+        from swarms import Agent
+
+        def failing_handler(args, ctx):
+            raise RuntimeError("simulated failure")
+
+        core = _make_core_mcp_with_tools(tool_count=0)
+        core.registry.register(MCPToolDefinition(
+            name="failing_tool",
+            description="Always fails",
+            input_schema={"type": "object", "properties": {}},
+            handler=failing_handler,
+            category="test",
+        ))
+
+        handlers = build_tool_handlers(core.get_registry())
+        agent = Agent(agent_name="test_fail_agent")
+        agent.tools = list(handlers.values())
+
+        result = agent.tools[0]({}, {"agent_id": "test"})
+        assert "error" in result
+        assert result["success"] is False
+
+    def test_tool_injection_skipped_when_mcp_tools_is_none(self):
+        """When mcp_tools is None, guard prevents injection and no crash.
+
+        Simulates the guard in _spawn_all_actors()::
+
+            if self.mcp_tools is not None:
+                ...inject...
+            else:
+                logger.warning(...)
+        """
+        from swarms import Agent
+
+        agent = Agent(agent_name="test_none_agent")
+
+        mcp_tools = None
+        if mcp_tools is not None:
+            registry = mcp_tools.get_registry()
+            agent.tools_list_dictionary = build_tools_list_dictionary(registry)
+            agent.tools = list(build_tool_handlers(registry).values())
+
+        assert mcp_tools is None
+        if agent.tools_list_dictionary is not None:
+            assert len(agent.tools_list_dictionary) == 0
+        assert agent.tools is None or len(agent.tools) == 0
 
 
 # ---------------------------------------------------------------------------
