@@ -28,6 +28,30 @@ from heretek_swarm.mcp.registry import (
 
 
 # ---------------------------------------------------------------------------
+# TestClient plumbing for endpoint tests
+# ---------------------------------------------------------------------------
+
+from fastapi.testclient import TestClient
+from heretek_swarm.mcp.server import get_registry, router, set_registry
+
+
+@pytest.fixture
+def endpoint_client() -> TestClient:
+    """Return a ``TestClient`` wired to the MCP router with a fresh registry."""
+    from fastapi import FastAPI
+
+    app = FastAPI()
+    app.include_router(router)
+
+    # Provide a fresh, pre-populated registry via the module-level global.
+    registry = _make_registry_with_tools(count=3)
+    set_registry(registry)
+
+    # Override dependency — TestClient uses the already-set module global.
+    return TestClient(app)
+
+
+# ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
 
@@ -346,3 +370,114 @@ class TestPersistenceRoundTrip:
         data = json.loads(state_file.read_text(encoding="utf-8"))
         assert data["tool_states"]["test_tool_0"] is False
         assert data["tool_states"]["test_tool_1"] is True
+
+
+# ---------------------------------------------------------------------------
+# Tests: PUT /mcp/tools/toggle/{name} endpoint
+# ---------------------------------------------------------------------------
+
+class TestToggleEndpoint:
+    """Suite for the ``PUT /mcp/tools/toggle/{name}`` endpoint."""
+
+    @pytest.fixture(autouse=True)
+    def _patch_state_file(self, tmp_path: Path) -> None:
+        """Redirect TOOLS_STATE_FILE into a temp dir for each test."""
+        state_file = tmp_path / "tools_state.json"
+        with patch("heretek_swarm.mcp.registry.TOOLS_STATE_FILE", state_file):
+            yield
+
+    @pytest.fixture
+    def client(self) -> TestClient:
+        from fastapi import FastAPI
+
+        app = FastAPI()
+        app.include_router(router)
+
+        registry = _make_registry_with_tools(count=3)
+        set_registry(registry)
+
+        return TestClient(app)
+
+    def test_toggle_happy_path_disables(self, client: TestClient) -> None:
+        """toggle test_tool_0 → disabled, returns 200 with enabled=False."""
+        response = client.put(
+            "/mcp/tools/toggle/test_tool_0",
+            json={"enabled": False},
+        )
+        assert response.status_code == 200
+        data = response.json()
+        assert data["name"] == "test_tool_0"
+        assert data["enabled"] is False
+        assert data["success"] is True
+
+    def test_toggle_happy_path_re_enables(self, client: TestClient) -> None:
+        """Disable then re-enable → both requests return 200."""
+        r1 = client.put(
+            "/mcp/tools/toggle/test_tool_1",
+            json={"enabled": False},
+        )
+        assert r1.status_code == 200
+        assert r1.json()["enabled"] is False
+
+        r2 = client.put(
+            "/mcp/tools/toggle/test_tool_1",
+            json={"enabled": True},
+        )
+        assert r2.status_code == 200
+        assert r2.json()["enabled"] is True
+
+    def test_toggle_unknown_tool_returns_404(self, client: TestClient) -> None:
+        """Unknown tool name → 404 with clear message."""
+        response = client.put(
+            "/mcp/tools/toggle/nonexistent_xyz",
+            json={"enabled": True},
+        )
+        assert response.status_code == 404
+        detail = response.json()["detail"]
+        assert "nonexistent_xyz" in detail
+        assert "not found" in detail.lower()
+
+    def test_toggle_missing_body_returns_422(self, client: TestClient) -> None:
+        """Request without 'enabled' field → 422 (Pydantic validation)."""
+        response = client.put(
+            "/mcp/tools/toggle/test_tool_0",
+            json={},
+        )
+        assert response.status_code == 422
+
+    def test_toggle_wrong_type_body_returns_422(self, client: TestClient) -> None:
+        """Request with 'enabled' as string → 422."""
+        response = client.put(
+            "/mcp/tools/toggle/test_tool_0",
+            json={"enabled": "yes"},
+        )
+        assert response.status_code == 422
+
+    def test_toggle_audit_log(self, client: TestClient) -> None:
+        """Successful toggle emits mcp_tool_toggle_endpoint audit log."""
+        with patch("heretek_swarm.mcp.server.logger") as mock_logger:
+            client.put(
+                "/mcp/tools/toggle/test_tool_2",
+                json={"enabled": False},
+            )
+            mock_logger.info.assert_any_call(
+                "mcp_tool_toggle_endpoint",
+                endpoint="/mcp/tools/toggle/{name}",
+                method="PUT",
+                caller_ip="testclient",
+                tool_name="test_tool_2",
+                enabled=False,
+                duration_ms=pytest.approx(0.0, abs=100.0),
+            )
+
+    def test_toggle_persists_to_file(self, client: TestClient, tmp_path: Path) -> None:
+        """After toggle, tools_state.json reflects the new state."""
+        client.put(
+            "/mcp/tools/toggle/test_tool_0",
+            json={"enabled": False},
+        )
+
+        state_file = tmp_path / "tools_state.json"
+        assert state_file.exists()
+        data = json.loads(state_file.read_text(encoding="utf-8"))
+        assert data["tool_states"]["test_tool_0"] is False

@@ -72,6 +72,7 @@ from heretek_swarm.config.service import (
 )
 from heretek_swarm.gateway.auth import verify_auth
 from heretek_swarm.gateway.nats_event_mesh import NATSEventMesh
+from heretek_swarm.mcp.server import router as mcp_router
 from heretek_swarm.memory.persistent import PersistentMemory as PersistentMemoryStore
 from heretek_swarm.observability.tracing import setup_telemetry_middleware
 
@@ -533,6 +534,7 @@ app.include_router(metrics.router)
 app.include_router(memories.router)
 app.include_router(memory_versions.router)
 app.include_router(collective_evolution.router)
+app.include_router(mcp_router)
 
 # Setup Prometheus metrics middleware
 from heretek_swarm.observability.prometheus_metrics import setup_metrics_middleware

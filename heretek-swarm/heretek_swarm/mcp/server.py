@@ -17,7 +17,9 @@ from datetime import UTC, datetime
 from typing import Any
 
 import structlog
-from fastapi import APIRouter, HTTPException
+import time as _time_module
+
+from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel, Field
 
 from heretek_swarm.mcp.registry import MCPToolRegistry
@@ -93,6 +95,11 @@ class ToolDetailResponse(BaseModel):
     tags: list[str]
     enabled: bool
     stats: dict[str, Any] | None = None
+
+
+class ToolToggleRequest(BaseModel):
+    """Request body for toggling a tool's enabled state."""
+    enabled: bool = Field(..., description="New enabled state for the tool")
 
 
 class HealthResponse(BaseModel):
@@ -217,6 +224,50 @@ async def call_tool(request: ToolCallRequest) -> ToolCallResponse:
         error=result.get("error"),
         latency_ms=latency_ms,
     )
+
+
+@router.put("/tools/toggle/{tool_name}")
+async def toggle_tool(
+    tool_name: str,
+    body: ToolToggleRequest,
+    request: Request,
+) -> dict[str, Any]:
+    """
+    Toggle a tool's enabled state.
+
+    Args:
+        tool_name: Name of the tool to toggle
+        body: Request body with ``enabled: bool``
+
+    Returns:
+        ``{"name": ..., "enabled": ..., "success": True}`` on success,
+        or raises 404 when the tool name is unknown.
+    """
+    start_ts = _time_module.time()
+    registry = get_registry()
+
+    ok = registry.set_tool_enabled(tool_name, body.enabled)
+    if not ok:
+        raise HTTPException(
+            404,
+            f"Tool '{tool_name}' not found. Use GET /mcp/tools to list available tools.",
+        )
+
+    duration_ms = (_time_module.time() - start_ts) * 1000
+
+    # Structured audit log
+    caller_ip = request.client.host if request.client else "unknown"
+    logger.info(
+        "mcp_tool_toggle_endpoint",
+        endpoint="/mcp/tools/toggle/{name}",
+        method="PUT",
+        caller_ip=caller_ip,
+        tool_name=tool_name,
+        enabled=body.enabled,
+        duration_ms=round(duration_ms, 3),
+    )
+
+    return {"name": tool_name, "enabled": body.enabled, "success": True}
 
 
 @router.get("/tools/{tool_name}/stats")
