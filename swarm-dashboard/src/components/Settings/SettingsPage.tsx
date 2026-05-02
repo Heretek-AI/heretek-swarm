@@ -2,7 +2,7 @@
  * Settings Page
  * 
  * Configuration management for Heretek Swarm.
- * Provides UI for managing LLM providers, embedding providers, system settings, and more.
+ * Provides UI for managing system settings, agent defaults, and configuration import/export.
  */
 
 import React, { useState, useCallback } from 'react';
@@ -21,8 +21,6 @@ function _safeUrl(raw: string): string {
 import { useToast } from '../UI/Toast';
 import { DeveloperModeToggle } from './DeveloperModeToggle';
 import {
-  LLMProvidersSection,
-  EmbeddingProvidersSection,
   SystemConfigSection,
   AgentDefaultsSection,
   ImportExportSection,
@@ -39,15 +37,13 @@ interface SettingsPageProps {
 }
 
 const tabs: TabConfig[] = [
-  { id: 'llm', label: 'LLM Providers', icon: '🤖' },
-  { id: 'embedding', label: 'Embedding', icon: '📊' },
   { id: 'system', label: 'System', icon: '⚙️' },
   { id: 'agents', label: 'Agent Defaults', icon: '👥' },
   { id: 'import', label: 'Import/Export', icon: '📁' },
 ];
 
 export function SettingsPage({ onRerunSetup }: SettingsPageProps) {
-  const [activeTab, setActiveTab] = useState<string>('llm');
+  const [activeTab, setActiveTab] = useState<string>('system');
   const [apiKey, setApiKey] = useState(localStorage.getItem('api_key') || '');
   const [apiUrl, setApiUrl] = useState(localStorage.getItem('swarm_api_host') || '');
   const [showResetConfirm, setShowResetConfirm] = useState(false);
@@ -88,10 +84,6 @@ export function SettingsPage({ onRerunSetup }: SettingsPageProps) {
 
   const renderTabContent = () => {
     switch (activeTab) {
-      case 'llm':
-        return <LLMProvidersSection />;
-      case 'embedding':
-        return <EmbeddingProvidersSection />;
       case 'system':
         return <SystemConfigSection />;
       case 'agents':
