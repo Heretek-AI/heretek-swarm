@@ -91,7 +91,9 @@ AVAILABLE_PROVIDERS: dict[str, dict[str, Any]] = {
     },
 }
 
-HERETEK_CONFIG_FILE = Path.home() / ".heretek-swarm" / "config.json"
+import heretek_swarm.config as _config_mod  # shared config-path constants
+
+HERETEK_CONFIG_FILE = _config_mod.get_config_path()  # single source of truth
 
 
 # =============================================================================

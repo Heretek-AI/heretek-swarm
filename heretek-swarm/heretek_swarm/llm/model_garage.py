@@ -40,16 +40,18 @@ if TYPE_CHECKING:
 logger = structlog.get_logger("model_garage")
 
 # ============================================================================
-# Configuration
+# Configuration — canonical path from shared config module
 # ============================================================================
 
-HERETEK_DATA_DIR = Path.home() / ".heretek-swarm"
-HERETEK_CONFIG_FILE = HERETEK_DATA_DIR / "config.json"
-HERETEK_LOGS_DIR = HERETEK_DATA_DIR / "logs"
+HEREKET_LOGS_DIR = Path.home() / ".heretek-swarm" / "logs"
 
 # Ensure directories exist
-HERETEK_DATA_DIR.mkdir(parents=True, exist_ok=True)
-HERETEK_LOGS_DIR.mkdir(parents=True, exist_ok=True)
+Path.home().as_posix()  # (keep import side-effect guard happy — Path.home is already imported)
+HEREKET_LOGS_DIR.mkdir(parents=True, exist_ok=True)
+
+# Import shared config-path after module constants to avoid circular reference.
+# This is always safe because config.__init__ only depends on its sub-modules.
+from heretek_swarm.config import get_config_path  # noqa: E402
 
 
 class ProviderType(StrEnum):
@@ -102,6 +104,8 @@ class ProviderConfig:
     health_status: str = "unknown"
     last_health_check: str | None = None
     error_message: str | None = None
+    metadata: dict[str, str] = field(default_factory=dict)
+    """Arbitrary metadata (e.g. group_id for MiniMax)."""
 
     def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary."""
@@ -751,7 +755,7 @@ class ModelGarage:
         config_file: Path | None = None,
         default_provider: ProviderType | None = None,
     ):
-        self.config_file = config_file or HERETEK_CONFIG_FILE
+        self.config_file = config_file or get_config_path()
         self._providers: dict[str, LLMProvider] = {}
         self._provider_configs: dict[str, ProviderConfig] = {}
         self._initialized = False
@@ -843,32 +847,57 @@ class ModelGarage:
         return 0.0
 
     def _save_config(self) -> None:
-        """Save provider configuration to file."""
-        try:
-            config_data = {"version": "1.0.0", "modelProviders": []}
-            for config in self._provider_configs.values():
-                provider_data = {
-                    "id": config.id,
-                    "type": config.provider_type.value,
-                    "name": config.name,
-                    "baseUrl": config.base_url,
-                    "defaultModel": config.default_model,
-                    "models": config.available_models,
-                    "isEnabled": config.is_enabled,
-                    "isDefault": config.is_default,
-                    "priority": config.priority,
-                }
-                if config.api_key:
-                    provider_data["apiKey"] = config.api_key
-                if config.metadata.get("group_id"):
-                    provider_data["groupId"] = config.metadata["group_id"]
-                config_data["modelProviders"].append(provider_data)
+        """Save provider configuration to file using atomic write.
 
-            with open(self.config_file, "w") as f:
+        Writes to a temp file, fsyncs, then atomically replaces the target.
+        If the write fails mid-flight the original file is preserved (no
+        corrupt partial write).  Last-writer-wins for concurrent access.
+        """
+        import os as _os  # local alias to avoid shadowing outer import
+
+        config_data = {"version": "1.0.0", "modelProviders": []}
+        for config in self._provider_configs.values():
+            provider_data = {
+                "id": config.id,
+                "type": config.provider_type.value,
+                "name": config.name,
+                "baseUrl": config.base_url,
+                "defaultModel": config.default_model,
+                "models": config.available_models,
+                "isEnabled": config.is_enabled,
+                "isDefault": config.is_default,
+                "priority": config.priority,
+            }
+            if config.api_key:
+                provider_data["apiKey"] = config.api_key
+            if config.metadata.get("group_id"):
+                provider_data["groupId"] = config.metadata["group_id"]
+            config_data["modelProviders"].append(provider_data)
+
+        target = self.config_file
+        tmp = target.with_suffix(target.suffix + ".tmp")
+        try:
+            # Ensure parent dir exists
+            target.parent.mkdir(parents=True, exist_ok=True)
+
+            with open(tmp, "w", encoding="utf-8") as f:
                 json.dump(config_data, f, indent=2)
-            logger.info("Saved provider configuration")
-        except Exception as e:
-            logger.error("Failed to save configuration", error=str(e))
+                f.flush()
+                _os.fsync(f.fileno())
+
+            # Atomic rename (Windows: replaces target if it exists)
+            tmp.replace(target)
+            logger.info("config_saved", path=str(target))
+        except OSError as e:
+            logger.error("config_save_failed_atomic",
+                         path=str(target),
+                         error=e.__class__.__name__,
+                         detail=str(e))
+            # Best-effort cleanup of the temp file
+            try:
+                tmp.unlink()
+            except FileNotFoundError:
+                pass
 
     async def initialize(self) -> None:
         """Initialize all enabled providers."""
@@ -908,6 +937,116 @@ class ModelGarage:
         if provider_id in self._providers:
             del self._providers[provider_id]
         self._save_config()
+
+    def reload_config(self) -> None:
+        """Re-read config.json and rebuild ``_provider_configs``.
+
+        Does NOT re-initialize ``_providers`` — provider connections are
+        created lazily on the first ``complete()`` call.
+
+        Useful when the config file is edited externally (e.g. CLI wizard,
+        hand-edits) while the daemon is running.
+        """
+        old_count = len(self._provider_configs)
+        self._provider_configs.clear()
+        self._load_config()
+        new_count = len(self._provider_configs)
+        logger.info("config_reloaded",
+                    previous_providers=old_count,
+                    new_providers=new_count)
+
+    def update_provider(self, provider_id: str, config: ProviderConfig) -> None:
+        """Replace an existing provider's configuration.
+
+        Args:
+            provider_id: ID of the provider to update.
+            config: New ``ProviderConfig`` to replace with.
+
+        Raises:
+            KeyError: If ``provider_id`` does not exist.
+        """
+        if provider_id not in self._provider_configs:
+            raise KeyError(provider_id)
+
+        self._provider_configs[provider_id] = config
+        # If the provider is already initialized, replace it in _providers too
+        if provider_id in self._providers:
+            # Close old provider instance
+            old_provider = self._providers[provider_id]
+            # Schedule close without awaiting (fire-and-forget cleanup)
+            try:
+                loop = asyncio.get_running_loop()
+                loop.create_task(old_provider.close())
+            except RuntimeError:
+                pass  # no event loop in this thread — close on next initialization
+            del self._providers[provider_id]
+
+        self._save_config()
+        logger.info("provider_updated", provider_id=provider_id, name=config.name)
+
+    async def test_provider(self, provider_id: str) -> dict[str, Any]:
+        """Test connectivity to a configured provider.
+
+        Instantiates the provider's class, calls ``health_check()``,
+        measures latency, then closes the test instance.
+
+        Args:
+            provider_id: ID of the provider to test.
+
+        Returns:
+            ``{"reachable": bool, "latency_ms": float, "error": str | None}``.
+            For unknown IDs returns ``{"reachable": false, "error": "..."}``.
+        """
+        config = self._provider_configs.get(provider_id)
+        if config is None:
+            return {
+                "reachable": False,
+                "latency_ms": 0.0,
+                "error": f"Provider not found: {provider_id}",
+            }
+
+        provider_class = PROVIDER_CLASSES.get(config.provider_type)
+        if provider_class is None:
+            return {
+                "reachable": False,
+                "latency_ms": 0.0,
+                "error": f"No provider class registered for type: {config.provider_type}",
+            }
+
+        t0 = time.time()
+        try:
+            provider = provider_class(config)
+            reachable = await provider.health_check()
+            latency_ms = (time.time() - t0) * 1000.0
+
+            result = {
+                "reachable": reachable,
+                "latency_ms": round(latency_ms, 2),
+                "error": None if reachable else "Health check failed",
+            }
+        except Exception as e:
+            latency_ms = (time.time() - t0) * 1000.0
+            result = {
+                "reachable": False,
+                "latency_ms": round(latency_ms, 2),
+                "error": str(e),
+            }
+            logger.warning("provider_test_failed",
+                          provider_id=provider_id,
+                          name=config.name,
+                          error=str(e))
+        finally:
+            try:
+                await provider.close()
+            except Exception:
+                pass  # best-effort cleanup
+
+        logger.info("provider_test_result",
+                    provider_id=provider_id,
+                    name=config.name,
+                    reachable=result["reachable"],
+                    latency_ms=result["latency_ms"])
+        return result
 
     def get_provider_config(self, provider_id: str) -> ProviderConfig | None:
         """Get provider configuration by ID."""

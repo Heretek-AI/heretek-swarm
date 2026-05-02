@@ -1,22 +1,18 @@
 """
-Configuration Service Module
+Configuration module for Heretek Swarm.
 
-Provides database-backed configuration management with:
-- CRUD operations for configurations
-- In-memory caching with TTL
-- API key encryption
-- Import/export functionality
-- Migration from environment variables
+Provides:
+- get_config_path(): canonical config file location (env-var-overridable)
+- ConfigurationService, ConfigLoader, ConfigCache: database-backed config management
 
 Usage:
-    from heretek_swarm.config import (
-        ConfigurationService,
-        ConfigLoader,
-        get_config,
-        initialize_config_service,
-        shutdown_config_service,
-    )
+    from heretek_swarm.config import get_config_path, ConfigurationService
 """
+
+from __future__ import annotations
+
+import os
+from pathlib import Path
 
 from .cache import ConfigCache
 from .loader import (
@@ -34,19 +30,49 @@ from .service import (
     shutdown_config_service,
 )
 
+# =============================================================================
+# Canonical config path — single source of truth for provider config location.
+# =============================================================================
+
+HEREKET_CONFIG_DIR = Path.home() / ".heretek-swarm"
+"""Default directory for Heretek Swarm configuration files."""
+
+HEREKET_CONFIG_FILE = HEREKET_CONFIG_DIR / "config.json"
+"""Default path for the provider configuration file."""
+
+
+def get_config_path() -> Path:
+    """Return the canonical path to the provider configuration file.
+
+    Checks ``HEREKET_CONFIG_PATH`` environment variable first (for test
+    isolation), then falls back to ``~/.heretek-swarm/config.json``.
+
+    Returns:
+        Full Path to the config file (does NOT guarantee it exists).
+    """
+    env_override = os.environ.get("HEREKET_CONFIG_PATH")
+    if env_override:
+        return Path(env_override)
+    return HEREKET_CONFIG_FILE
+
+
 __all__ = [
+    # Config path
+    "HEREKET_CONFIG_DIR",
+    "HEREKET_CONFIG_FILE",
+    "get_config_path",
     # Cache
     "ConfigCache",
     # Loader
     "ConfigLoader",
-    # Service
-    "ConfigurationService",
     "get_config",
     "get_config_loader",
-    "get_config_service",
     "get_config_with_source",
     "initialize_config_loader",
-    "initialize_config_service",
     "reload_config",
+    # Service
+    "ConfigurationService",
+    "get_config_service",
+    "initialize_config_service",
     "shutdown_config_service",
 ]
