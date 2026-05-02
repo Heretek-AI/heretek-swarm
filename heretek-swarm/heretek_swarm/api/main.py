@@ -52,6 +52,7 @@ from heretek_swarm.api import (
     memories,
     observability,
     plugins,
+    providers_config,
     provisioner,
     rag,
     skills,
@@ -525,6 +526,7 @@ app.include_router(emergent_intelligence.router)
 app.include_router(agents_management.router)
 app.include_router(autonomous.router)
 app.include_router(configuration.router)
+app.include_router(providers_config.router)
 app.include_router(wizard.router)
 app.include_router(provisioner.router)
 app.include_router(metrics.router)
