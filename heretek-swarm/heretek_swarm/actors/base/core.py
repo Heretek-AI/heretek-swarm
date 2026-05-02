@@ -26,6 +26,10 @@ from heretek_swarm.actors.validation import (
     validate_message,
 )
 from heretek_swarm.agents.skills import SkillCategory, SkillMetadata
+from heretek_swarm.routing import (
+    AgentModelRouter,
+    get_router,
+)
 from heretek_swarm.state.repository import (
     AgentStateRecord,
     StateRepository,
@@ -180,6 +184,7 @@ class AgentActor:
         topics: list[str] | None = None,
         capabilities: list[str] | None = None,
         swarms_agent: Agent | None = None,
+        model_router: AgentModelRouter | None = None,
         max_mailbox_size: int = 1000,
         heartbeat_interval: float = 10.0,
         actor_type: str | None = None,
@@ -244,6 +249,12 @@ class AgentActor:
         self._processing_task: asyncio.Task | None = None
         self._heartbeat_task: asyncio.Task | None = None
         self._running = False
+
+        # Model router for multi-provider LLM routing (injectable, or auto-created)
+        self._model_router: AgentModelRouter | None = model_router
+        if self._model_router is None:
+            # Auto-create a router for this agent using the global registry
+            self._model_router = get_router(self.agent_id)
 
         # LLM and event mesh providers (injectable via stubs for testing)
         self._llm_provider = _actor_stubs.get_llm_provider()

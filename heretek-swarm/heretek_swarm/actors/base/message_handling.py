@@ -843,7 +843,11 @@ Please provide your analysis and recommendation for this collective task."""
 
     async def run_with_llm(self, prompt: str, timeout: int = 60, **kwargs) -> str:
         """
-        Run a prompt through the Swarms agent (if available).
+        Run a prompt through the best available LLM provider.
+
+        When a model_router is configured and has registered providers, the call
+        is routed through AgentModelRouter → ModelGarage for per-task complexity-based
+        provider selection. Falls back to self.swarms_agent.run() otherwise.
 
         Args:
             prompt: Input prompt
@@ -851,14 +855,68 @@ Please provide your analysis and recommendation for this collective task."""
             **kwargs: Additional arguments for agent run
 
         Returns:
-            Agent response
+            Agent response as string
 
         Raises:
-            RuntimeError: If no Swarms agent configured
+            RuntimeError: If no LLM path is available
             asyncio.TimeoutError: If LLM call times out
         """
+        # Try routing through AgentModelRouter when providers are available
+        router = getattr(self, "_model_router", None)
+        if router is not None:
+            try:
+                # Classify the task and get a routing decision
+                decision = router.route(
+                    task=prompt,
+                    tokens_estimate=len(prompt.split()),
+                )
+
+                # Build the LLM request through ModelGarage if available
+                # Otherwise fall back to the swarms agent
+                model_garage = getattr(router, "_model_garage", None)
+                if model_garage is not None:
+                    from heretek_swarm.llm.model_garage import ChatMessage, LLMRequest
+
+                    request = LLMRequest(
+                        messages=[ChatMessage(role="user", content=prompt)],
+                        model=decision.model,
+                        temperature=kwargs.pop("temperature", 0.7),
+                        max_tokens=kwargs.pop("max_tokens", None),
+                    )
+                    response = await model_garage.complete(
+                        messages=request.messages,
+                        model=decision.model,
+                        provider_id=decision.provider_id,
+                    )
+                    logger.info(
+                        f"[{self.agent_id}] Routed via garage",
+                        extra={
+                            "provider": decision.provider_id,
+                            "model": decision.model,
+                            "complexity": decision.complexity.value,
+                            "confidence": decision.confidence,
+                            "tokens": response.total_tokens,
+                            "latency_ms": response.latency_ms,
+                        },
+                    )
+                    return response.content
+
+                # Router exists but no garage — fall back to swarms_agent
+                logger.info(
+                    f"[{self.agent_id}] Router available, falling back to swarms_agent",
+                    extra={"provider": decision.provider_id, "model": decision.model},
+                )
+            except RuntimeError:
+                # No providers registered in router, fall through to swarms_agent
+                logger.debug(f"[{self.agent_id}] No router providers, using swarms_agent fallback")
+            except Exception as e:
+                logger.warning(f"[{self.agent_id}] Router failed, using swarms_agent fallback: {e}")
+
+        # Fallback: use the swarms Agent directly
         if self.swarms_agent is None:
-            raise RuntimeError("No Swarms agent configured")
+            raise RuntimeError(
+                "No LLM path available — configure providers or provide a swarms_agent"
+            )
 
         try:
             return await asyncio.wait_for(

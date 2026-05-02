@@ -1,7 +1,18 @@
-"""Native per-agent model routing with multi-provider support."""
+"""Native per-agent model routing with multi-provider support.
+
+AgentModelRouter classifies task complexity and routes to the best
+provider/model combination. When wired to ModelGarage, it uses the
+garage's provider configs as the source of truth and falls back to
+its own standalone configs when no garage is available.
+"""
+from __future__ import annotations
+
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from heretek_swarm.llm.model_garage import ModelGarage
 
 
 class TaskComplexity(Enum):
@@ -11,7 +22,13 @@ class TaskComplexity(Enum):
 
 
 @dataclass
-class ProviderConfig:
+class RouterProviderConfig:
+    """Per-provider configuration for the AgentModelRouter.
+
+    This is a standalone config for use when ModelGarage is not wired.
+    When ModelGarage is connected, the router derives its provider info
+    from the garage's ProviderConfigs instead.
+    """
     provider_id: str
     base_url: str
     api_key: str
@@ -31,16 +48,56 @@ class RoutingDecision:
 
 
 class AgentModelRouter:
-    """Per-agent model router with dynamic provider selection."""
+    """Per-agent model router with dynamic provider selection.
 
-    def __init__(self, agent_id: str, providers: Optional[List[ProviderConfig]] = None):
+    Routes LLM calls to the best provider based on task complexity,
+    provider priority, and health status. Can work standalone (own configs)
+    or connected to ModelGarage (shared config source).
+    """
+
+    def __init__(
+        self,
+        agent_id: str,
+        providers: Optional[List[RouterProviderConfig]] = None,
+        model_garage: Optional["ModelGarage"] = None,
+    ):
         self.agent_id = agent_id
-        self.providers = {p.provider_id: p for p in (providers or [])}
+        self._providers: Dict[str, RouterProviderConfig] = {
+            p.provider_id: p for p in (providers or [])
+        }
+        self._model_garage = model_garage
         self._request_counts: Dict[str, int] = {}
         self._cost_tracking: Dict[str, float] = {}
 
-    def register_provider(self, config: ProviderConfig) -> None:
-        self.providers[config.provider_id] = config
+    def register_provider(self, config: RouterProviderConfig) -> None:
+        """Register a standalone provider config (garage-independent path)."""
+        self._providers[config.provider_id] = config
+
+    def _get_providers(self) -> Dict[str, RouterProviderConfig]:
+        """Get provider configs, preferring ModelGarage when available.
+
+        When a ModelGarage is wired, converts its ProviderConfig objects
+        to RouterProviderConfig on-the-fly so the routing logic stays consistent.
+        """
+        providers = dict(self._providers)  # start with standalone configs
+
+        if self._model_garage is not None:
+            garage_configs = self._model_garage.list_providers()
+            for cfg in garage_configs:
+                pid = cfg.get("id", "")
+                if not pid:
+                    continue
+                # Only add if not overridden by a standalone config
+                if pid not in providers:
+                    providers[pid] = RouterProviderConfig(
+                        provider_id=pid,
+                        base_url=cfg.get("baseUrl", ""),
+                        api_key=cfg.get("apiKey", "") or "",
+                        models=cfg.get("models", []),
+                        priority=cfg.get("priority", 100),
+                        health_status=cfg.get("health_status", "unknown") == "healthy",
+                    )
+        return providers
 
     def classify_complexity(
         self,
@@ -81,7 +138,7 @@ class AgentModelRouter:
         return model_map[complexity]
 
     def _find_matching_model(
-        self, provider: ProviderConfig, preferred_models: list[str]
+        self, provider: RouterProviderConfig, preferred_models: list[str]
     ) -> str | None:
         """Find a matching model from preferred list in provider's models."""
         for model in preferred_models:
@@ -98,7 +155,8 @@ class AgentModelRouter:
         fallback_chain: list[str] = []
         use_preferred = preferred_provider is not None
 
-        for pid, provider in sorted(self.providers.items(), key=lambda x: x[1].priority):
+        providers = self._get_providers()
+        for pid, provider in sorted(providers.items(), key=lambda x: x[1].priority):
             if not provider.health_status:
                 fallback_chain.append(pid)
                 continue
@@ -124,7 +182,8 @@ class AgentModelRouter:
         self, complexity: TaskComplexity, fallback_chain: list[str]
     ) -> RoutingDecision | None:
         """Find any healthy provider as fallback."""
-        for pid, provider in sorted(self.providers.items(), key=lambda x: x[1].priority):
+        providers = self._get_providers()
+        for pid, provider in sorted(providers.items(), key=lambda x: x[1].priority):
             if provider.health_status and provider.models:
                 return RoutingDecision(
                     provider_id=pid,
@@ -156,10 +215,12 @@ class AgentModelRouter:
         raise RuntimeError("No healthy model providers available")
 
     def get_stats(self) -> Dict[str, Any]:
+        providers = self._get_providers()
         return {
             "agent_id": self.agent_id,
-            "providers_registered": len(self.providers),
-            "providers_healthy": sum(1 for p in self.providers.values() if p.health_status),
+            "providers_registered": len(providers),
+            "providers_healthy": sum(1 for p in providers.values() if p.health_status),
+            "source": "garage" if self._model_garage is not None else "standalone",
             "request_counts": dict(self._request_counts),
             "cost_tracking": dict(self._cost_tracking),
         }
