@@ -11,15 +11,30 @@ Provides centralized tool management for MCP protocol:
 from __future__ import annotations
 
 import asyncio
+import json
+import os
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from enum import StrEnum
+from pathlib import Path
 from typing import Any
 from uuid import UUID, uuid4
 
 import structlog
 
 logger = structlog.get_logger(__name__)
+
+# ---------------------------------------------------------------------------
+# Persisted tool state
+# ---------------------------------------------------------------------------
+
+TOOLS_STATE_FILE = Path.home() / ".heretek-swarm" / "tools_state.json"
+"""Path to per-user persistence file for tool enabled/disabled states.
+
+Using ``Path.home()`` so the same file is used regardless of which directory
+the daemon is started from.  Tests override this by patching the module-level
+constant or setting ``HEREKET_CONFIG_DIR`` before import.
+"""
 
 
 class ToolProviderType(StrEnum):
@@ -120,6 +135,96 @@ class MCPToolRegistry:
             provider=metadata.provider.value,
         )
 
+    # ------------------------------------------------------------------
+    # Tool state persistence
+    # ------------------------------------------------------------------
+
+    def _load_tool_states(self) -> dict[str, bool]:
+        """Load persisted tool enabled/disabled states from disk.
+
+        Returns a ``dict`` mapping tool name → enabled flag, or an empty
+        ``dict`` when the file is missing, unparseable, or an OS error occurs.
+        """
+        try:
+            raw = TOOLS_STATE_FILE.read_text(encoding="utf-8")
+        except OSError:
+            return {}
+
+        try:
+            data = json.loads(raw)
+        except json.JSONDecodeError as exc:
+            logger.warning(
+                "tools_state_load_failed",
+                error=str(exc),
+                path=str(TOOLS_STATE_FILE),
+            )
+            return {}
+
+        tool_states: dict[str, bool] = {}
+        states = data.get("tool_states", {})
+        for name, val in states.items():
+            if isinstance(val, bool):
+                tool_states[name] = val
+        return tool_states
+
+    def _save_tool_states(self) -> None:
+        """Persist current tool enabled/disabled states to disk atomically.
+
+        Writes to a ``.tmp`` file, flushes, fsyncs, and then atomically
+        replaces the real file so a crash mid-write never corrupts
+        ``tools_state.json``.
+        """
+        payload: dict[str, Any] = {
+            "version": "1.0.0",
+            "tool_states": {
+                name: meta.enabled
+                for name, meta in self._tools.items()
+            },
+        }
+
+        tmp_path = Path(str(TOOLS_STATE_FILE) + ".tmp")
+
+        try:
+            tmp_path.parent.mkdir(parents=True, exist_ok=True)
+            raw = json.dumps(payload, indent=2, sort_keys=True)
+            tmp_path.write_text(raw, encoding="utf-8")
+            tmp_fd = os.open(str(tmp_path), os.O_RDWR)
+            try:
+                os.fsync(tmp_fd)
+            finally:
+                os.close(tmp_fd)
+            os.replace(str(tmp_path), str(TOOLS_STATE_FILE))
+        except OSError as exc:
+            logger.error(
+                "tools_state_save_failed",
+                error=str(exc),
+                path=str(TOOLS_STATE_FILE),
+            )
+            # Best-effort cleanup of the temp file.
+            try:
+                tmp_path.unlink(missing_ok=True)
+            except OSError:
+                pass
+
+    def set_tool_enabled(self, name: str, enabled: bool) -> bool:
+        """Enable or disable a registered tool by name.
+
+        Returns ``True`` if the tool was found and the state was persisted,
+        ``False`` if the tool name is unknown (persistence is skipped).
+        """
+        tool = self._tools.get(name)
+        if tool is None:
+            return False
+
+        tool.enabled = enabled
+        self._save_tool_states()
+        logger.info(
+            "mcp_tool_toggled",
+            name=name,
+            enabled=enabled,
+        )
+        return True
+
     def unregister_tool(self, name: str) -> bool:
         """
         Unregister a tool by name.
@@ -173,8 +278,20 @@ class MCPToolRegistry:
 
         return list(tools)
 
-    def list_tool_summaries(self) -> list[dict[str, Any]]:
-        """List tools in MCP protocol format."""
+    def list_tool_summaries(
+        self,
+        enabled_only: bool = True,
+    ) -> list[dict[str, Any]]:
+        """List tools in MCP protocol format.
+
+        Args:
+            enabled_only: If True (default), only enabled tools are included.
+                Set to False to include disabled tools (with ``"enabled": false``)
+                for dashboard / admin views.
+        """
+        tools = self._tools.values()
+        if enabled_only:
+            tools = [t for t in tools if t.enabled]
         return [
             {
                 "name": t.name,
@@ -187,8 +304,7 @@ class MCPToolRegistry:
                 "serverId": t.server_id,
                 "enabled": t.enabled,
             }
-            for t in self._tools.values()
-            if t.enabled
+            for t in tools
         ]
 
     def get_stats(self, name: str) -> dict[str, Any] | None:
