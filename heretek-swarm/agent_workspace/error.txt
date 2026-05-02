@@ -23895,3 +23895,259 @@ Traceback (most recent call last):
     raise TimeoutError from exc_val
 TimeoutError
 {"error": "unsupported operand type(s) for -: 'datetime.datetime' and 'Field'", "event": "scheduler_error", "level": "error", "logger": "ChronosSchedulerMixin", "timestamp": "2026-05-02T03:04:02.610820Z", "service": "heretek-swarm", "environment": "development", "lineno": 75, "filename": "scheduler.py", "func_name": "_run_scheduler"}
+{"event": "[steward] File system load failed: Expecting value: line 4 column 7 (char 57)", "level": "error", "logger": "AgentActor", "timestamp": "2026-05-02T05:11:05.171234Z", "service": "heretek-swarm", "environment": "development", "filename": "state_management.py", "lineno": 283, "func_name": "load_state", "exception": "Traceback (most recent call last):\n  File \"C:\\Users\\Derek\\Desktop\\heretek-swarm\\heretek-swarm\\heretek_swarm\\actors\\base\\state_management.py\", line 266, in load_state\n    loaded_state = json.load(f)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 298, in load\n    return loads(fp.read(),\n        cls=cls, object_hook=object_hook,\n        parse_float=parse_float, parse_int=parse_int,\n        parse_constant=parse_constant, object_pairs_hook=object_pairs_hook, **kw)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 352, in loads\n    return _default_decoder.decode(s)\n           ~~~~~~~~~~~~~~~~~~~~~~~^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 345, in decode\n    obj, end = self.raw_decode(s, idx=_w(s, 0).end())\n               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 363, in raw_decode\n    raise JSONDecodeError(\"Expecting value\", s, err.value) from None\njson.decoder.JSONDecodeError: Expecting value: line 4 column 7 (char 57)"}
+{"agent_id": "steward", "error": "OPENAI_API_KEY environment variable is not set. Agent construction requires a valid OpenAI-compatible API key.", "event": "actor_spawn_failed", "level": "error", "logger": "api.main", "timestamp": "2026-05-02T05:11:05.172913Z", "service": "heretek-swarm", "environment": "development", "filename": "main.py", "lineno": 275, "func_name": "_spawn_all_agents"}
+{"agent_id": "alpha", "error": "OPENAI_API_KEY environment variable is not set. Agent construction requires a valid OpenAI-compatible API key.", "event": "actor_spawn_failed", "level": "error", "logger": "api.main", "timestamp": "2026-05-02T05:11:05.173565Z", "service": "heretek-swarm", "environment": "development", "filename": "main.py", "lineno": 275, "func_name": "_spawn_all_agents"}
+{"agent_id": "beta", "error": "OPENAI_API_KEY environment variable is not set. Agent construction requires a valid OpenAI-compatible API key.", "event": "actor_spawn_failed", "level": "error", "logger": "api.main", "timestamp": "2026-05-02T05:11:05.174177Z", "service": "heretek-swarm", "environment": "development", "filename": "main.py", "lineno": 275, "func_name": "_spawn_all_agents"}
+{"agent_id": "charlie", "error": "OPENAI_API_KEY environment variable is not set. Agent construction requires a valid OpenAI-compatible API key.", "event": "actor_spawn_failed", "level": "error", "logger": "api.main", "timestamp": "2026-05-02T05:11:05.174801Z", "service": "heretek-swarm", "environment": "development", "filename": "main.py", "lineno": 275, "func_name": "_spawn_all_agents"}
+{"agent_id": "historian", "error": "OPENAI_API_KEY environment variable is not set. Agent construction requires a valid OpenAI-compatible API key.", "event": "actor_spawn_failed", "level": "error", "logger": "api.main", "timestamp": "2026-05-02T05:11:05.178803Z", "service": "heretek-swarm", "environment": "development", "filename": "main.py", "lineno": 275, "func_name": "_spawn_all_agents"}
+{"agent_id": "metis", "error": "OPENAI_API_KEY environment variable is not set. Agent construction requires a valid OpenAI-compatible API key.", "event": "actor_spawn_failed", "level": "error", "logger": "api.main", "timestamp": "2026-05-02T05:11:05.179668Z", "service": "heretek-swarm", "environment": "development", "filename": "main.py", "lineno": 275, "func_name": "_spawn_all_agents"}
+{"agent_id": "empath", "error": "OPENAI_API_KEY environment variable is not set. Agent construction requires a valid OpenAI-compatible API key.", "event": "actor_spawn_failed", "level": "error", "logger": "api.main", "timestamp": "2026-05-02T05:11:05.180499Z", "service": "heretek-swarm", "environment": "development", "filename": "main.py", "lineno": 275, "func_name": "_spawn_all_agents"}
+{"agent_id": "perceiver", "error": "OPENAI_API_KEY environment variable is not set. Agent construction requires a valid OpenAI-compatible API key.", "event": "actor_spawn_failed", "level": "error", "logger": "api.main", "timestamp": "2026-05-02T05:11:05.181385Z", "service": "heretek-swarm", "environment": "development", "filename": "main.py", "lineno": 275, "func_name": "_spawn_all_agents"}
+{"agent_id": "echo", "error": "OPENAI_API_KEY environment variable is not set. Agent construction requires a valid OpenAI-compatible API key.", "event": "actor_spawn_failed", "level": "error", "logger": "api.main", "timestamp": "2026-05-02T05:11:05.182052Z", "service": "heretek-swarm", "environment": "development", "filename": "main.py", "lineno": 275, "func_name": "_spawn_all_agents"}
+{"agent_id": "explorer", "error": "OPENAI_API_KEY environment variable is not set. Agent construction requires a valid OpenAI-compatible API key.", "event": "actor_spawn_failed", "level": "error", "logger": "api.main", "timestamp": "2026-05-02T05:11:05.182876Z", "service": "heretek-swarm", "environment": "development", "filename": "main.py", "lineno": 275, "func_name": "_spawn_all_agents"}
+{"agent_id": "examiner", "error": "OPENAI_API_KEY environment variable is not set. Agent construction requires a valid OpenAI-compatible API key.", "event": "actor_spawn_failed", "level": "error", "logger": "api.main", "timestamp": "2026-05-02T05:11:05.183369Z", "service": "heretek-swarm", "environment": "development", "filename": "main.py", "lineno": 275, "func_name": "_spawn_all_agents"}
+{"agent_id": "dreamer", "error": "OPENAI_API_KEY environment variable is not set. Agent construction requires a valid OpenAI-compatible API key.", "event": "actor_spawn_failed", "level": "error", "logger": "api.main", "timestamp": "2026-05-02T05:11:05.183894Z", "service": "heretek-swarm", "environment": "development", "filename": "main.py", "lineno": 275, "func_name": "_spawn_all_agents"}
+{"agent_id": "coder", "error": "OPENAI_API_KEY environment variable is not set. Agent construction requires a valid OpenAI-compatible API key.", "event": "actor_spawn_failed", "level": "error", "logger": "api.main", "timestamp": "2026-05-02T05:11:05.186667Z", "service": "heretek-swarm", "environment": "development", "filename": "main.py", "lineno": 275, "func_name": "_spawn_all_agents"}
+{"agent_id": "sentinel", "error": "OPENAI_API_KEY environment variable is not set. Agent construction requires a valid OpenAI-compatible API key.", "event": "actor_spawn_failed", "level": "error", "logger": "api.main", "timestamp": "2026-05-02T05:11:05.187761Z", "service": "heretek-swarm", "environment": "development", "filename": "main.py", "lineno": 275, "func_name": "_spawn_all_agents"}
+{"agent_id": "sentinel-prime", "error": "OPENAI_API_KEY environment variable is not set. Agent construction requires a valid OpenAI-compatible API key.", "event": "actor_spawn_failed", "level": "error", "logger": "api.main", "timestamp": "2026-05-02T05:11:05.242773Z", "service": "heretek-swarm", "environment": "development", "filename": "main.py", "lineno": 275, "func_name": "_spawn_all_agents"}
+{"agent_id": "arbiter", "error": "OPENAI_API_KEY environment variable is not set. Agent construction requires a valid OpenAI-compatible API key.", "event": "actor_spawn_failed", "level": "error", "logger": "api.main", "timestamp": "2026-05-02T05:11:05.244212Z", "service": "heretek-swarm", "environment": "development", "filename": "main.py", "lineno": 275, "func_name": "_spawn_all_agents"}
+{"agent_id": "coordinator", "error": "OPENAI_API_KEY environment variable is not set. Agent construction requires a valid OpenAI-compatible API key.", "event": "actor_spawn_failed", "level": "error", "logger": "api.main", "timestamp": "2026-05-02T05:11:05.244709Z", "service": "heretek-swarm", "environment": "development", "filename": "main.py", "lineno": 275, "func_name": "_spawn_all_agents"}
+{"agent_id": "nexus", "error": "OPENAI_API_KEY environment variable is not set. Agent construction requires a valid OpenAI-compatible API key.", "event": "actor_spawn_failed", "level": "error", "logger": "api.main", "timestamp": "2026-05-02T05:11:05.245572Z", "service": "heretek-swarm", "environment": "development", "filename": "main.py", "lineno": 275, "func_name": "_spawn_all_agents"}
+{"agent_id": "catalyst", "error": "OPENAI_API_KEY environment variable is not set. Agent construction requires a valid OpenAI-compatible API key.", "event": "actor_spawn_failed", "level": "error", "logger": "api.main", "timestamp": "2026-05-02T05:11:05.246004Z", "service": "heretek-swarm", "environment": "development", "filename": "main.py", "lineno": 275, "func_name": "_spawn_all_agents"}
+{"agent_id": "chronos", "error": "OPENAI_API_KEY environment variable is not set. Agent construction requires a valid OpenAI-compatible API key.", "event": "actor_spawn_failed", "level": "error", "logger": "api.main", "timestamp": "2026-05-02T05:11:05.246462Z", "service": "heretek-swarm", "environment": "development", "filename": "main.py", "lineno": 275, "func_name": "_spawn_all_agents"}
+{"agent_id": "prism", "error": "OPENAI_API_KEY environment variable is not set. Agent construction requires a valid OpenAI-compatible API key.", "event": "actor_spawn_failed", "level": "error", "logger": "api.main", "timestamp": "2026-05-02T05:11:05.247051Z", "service": "heretek-swarm", "environment": "development", "filename": "main.py", "lineno": 275, "func_name": "_spawn_all_agents"}
+{"agent_id": "habit-forge", "error": "OPENAI_API_KEY environment variable is not set. Agent construction requires a valid OpenAI-compatible API key.", "event": "actor_spawn_failed", "level": "error", "logger": "api.main", "timestamp": "2026-05-02T05:11:05.247662Z", "service": "heretek-swarm", "environment": "development", "filename": "main.py", "lineno": 275, "func_name": "_spawn_all_agents"}
+{"agent_id": "perceiver-plus", "error": "OPENAI_API_KEY environment variable is not set. Agent construction requires a valid OpenAI-compatible API key.", "event": "actor_spawn_failed", "level": "error", "logger": "api.main", "timestamp": "2026-05-02T05:11:05.248310Z", "service": "heretek-swarm", "environment": "development", "filename": "main.py", "lineno": 275, "func_name": "_spawn_all_agents"}
+{"error": "unsupported operand type(s) for -: 'datetime.datetime' and 'Field'", "event": "scheduler_error", "level": "error", "logger": "ChronosSchedulerMixin", "timestamp": "2026-05-02T05:11:05.250981Z", "service": "heretek-swarm", "environment": "development", "filename": "scheduler.py", "lineno": 75, "func_name": "_run_scheduler"}
+{"error": "unsupported operand type(s) for -: 'datetime.datetime' and 'Field'", "event": "scheduler_error", "level": "error", "logger": "ChronosSchedulerMixin", "timestamp": "2026-05-02T05:11:06.263034Z", "service": "heretek-swarm", "environment": "development", "filename": "scheduler.py", "lineno": 75, "func_name": "_run_scheduler"}
+nats: encountered error
+Traceback (most recent call last):
+  File "C:\Python314\Lib\asyncio\tasks.py", line 488, in wait_for
+    return await fut
+           ^^^^^^^^^
+  File "C:\Python314\Lib\asyncio\streams.py", line 48, in open_connection
+    transport, _ = await loop.create_connection(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        lambda: protocol, host, port, **kwds)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\asyncio\base_events.py", line 1143, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+        exceptions, addrinfo, laddr_infos)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\asyncio\base_events.py", line 1042, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "C:\Python314\Lib\asyncio\proactor_events.py", line 728, in sock_connect
+    return await self._proactor.connect(sock, address)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+asyncio.exceptions.CancelledError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\Derek\AppData\Roaming\Python\Python314\site-packages\nats\aio\client.py", line 1437, in _select_next_server
+    await self._connect_to_server(s)
+  File "C:\Users\Derek\AppData\Roaming\Python\Python314\site-packages\nats\aio\client.py", line 1406, in _connect_to_server
+    await self._transport.connect(
+    ...<3 lines>...
+    )
+  File "C:\Users\Derek\AppData\Roaming\Python\Python314\site-packages\nats\aio\transport.py", line 117, in connect
+    r, w = await asyncio.wait_for(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "C:\Python314\Lib\asyncio\tasks.py", line 487, in wait_for
+    async with timeouts.timeout(timeout):
+               ~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Python314\Lib\asyncio\timeouts.py", line 114, in __aexit__
+    raise TimeoutError from exc_val
+TimeoutError
+{"error": "unsupported operand type(s) for -: 'datetime.datetime' and 'Field'", "event": "scheduler_error", "level": "error", "logger": "ChronosSchedulerMixin", "timestamp": "2026-05-02T05:11:07.265447Z", "service": "heretek-swarm", "environment": "development", "filename": "scheduler.py", "lineno": 75, "func_name": "_run_scheduler"}
+{"error": "unsupported operand type(s) for -: 'datetime.datetime' and 'Field'", "event": "scheduler_error", "level": "error", "logger": "ChronosSchedulerMixin", "timestamp": "2026-05-02T05:11:08.276976Z", "service": "heretek-swarm", "environment": "development", "filename": "scheduler.py", "lineno": 75, "func_name": "_run_scheduler"}
+{"error": "unsupported operand type(s) for -: 'datetime.datetime' and 'Field'", "event": "scheduler_error", "level": "error", "logger": "ChronosSchedulerMixin", "timestamp": "2026-05-02T05:11:09.292318Z", "service": "heretek-swarm", "environment": "development", "filename": "scheduler.py", "lineno": 75, "func_name": "_run_scheduler"}
+nats: encountered error
+Traceback (most recent call last):
+  File "C:\Python314\Lib\asyncio\tasks.py", line 488, in wait_for
+    return await fut
+           ^^^^^^^^^
+  File "C:\Python314\Lib\asyncio\streams.py", line 48, in open_connection
+    transport, _ = await loop.create_connection(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        lambda: protocol, host, port, **kwds)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\asyncio\base_events.py", line 1143, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+        exceptions, addrinfo, laddr_infos)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\asyncio\base_events.py", line 1042, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "C:\Python314\Lib\asyncio\proactor_events.py", line 728, in sock_connect
+    return await self._proactor.connect(sock, address)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+asyncio.exceptions.CancelledError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\Derek\AppData\Roaming\Python\Python314\site-packages\nats\aio\client.py", line 1437, in _select_next_server
+    await self._connect_to_server(s)
+  File "C:\Users\Derek\AppData\Roaming\Python\Python314\site-packages\nats\aio\client.py", line 1406, in _connect_to_server
+    await self._transport.connect(
+    ...<3 lines>...
+    )
+  File "C:\Users\Derek\AppData\Roaming\Python\Python314\site-packages\nats\aio\transport.py", line 117, in connect
+    r, w = await asyncio.wait_for(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "C:\Python314\Lib\asyncio\tasks.py", line 487, in wait_for
+    async with timeouts.timeout(timeout):
+               ~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Python314\Lib\asyncio\timeouts.py", line 114, in __aexit__
+    raise TimeoutError from exc_val
+TimeoutError
+{"error": "unsupported operand type(s) for -: 'datetime.datetime' and 'Field'", "event": "scheduler_error", "level": "error", "logger": "ChronosSchedulerMixin", "timestamp": "2026-05-02T05:11:10.301039Z", "service": "heretek-swarm", "environment": "development", "filename": "scheduler.py", "lineno": 75, "func_name": "_run_scheduler"}
+{"error": "unsupported operand type(s) for -: 'datetime.datetime' and 'Field'", "event": "scheduler_error", "level": "error", "logger": "ChronosSchedulerMixin", "timestamp": "2026-05-02T05:11:11.315271Z", "service": "heretek-swarm", "environment": "development", "filename": "scheduler.py", "lineno": 75, "func_name": "_run_scheduler"}
+{"error": "unsupported operand type(s) for -: 'datetime.datetime' and 'Field'", "event": "scheduler_error", "level": "error", "logger": "ChronosSchedulerMixin", "timestamp": "2026-05-02T05:11:12.326047Z", "service": "heretek-swarm", "environment": "development", "filename": "scheduler.py", "lineno": 75, "func_name": "_run_scheduler"}
+nats: encountered error
+Traceback (most recent call last):
+  File "C:\Python314\Lib\asyncio\tasks.py", line 488, in wait_for
+    return await fut
+           ^^^^^^^^^
+  File "C:\Python314\Lib\asyncio\streams.py", line 48, in open_connection
+    transport, _ = await loop.create_connection(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        lambda: protocol, host, port, **kwds)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\asyncio\base_events.py", line 1143, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+        exceptions, addrinfo, laddr_infos)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\asyncio\base_events.py", line 1042, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "C:\Python314\Lib\asyncio\proactor_events.py", line 728, in sock_connect
+    return await self._proactor.connect(sock, address)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+asyncio.exceptions.CancelledError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\Derek\AppData\Roaming\Python\Python314\site-packages\nats\aio\client.py", line 1437, in _select_next_server
+    await self._connect_to_server(s)
+  File "C:\Users\Derek\AppData\Roaming\Python\Python314\site-packages\nats\aio\client.py", line 1406, in _connect_to_server
+    await self._transport.connect(
+    ...<3 lines>...
+    )
+  File "C:\Users\Derek\AppData\Roaming\Python\Python314\site-packages\nats\aio\transport.py", line 117, in connect
+    r, w = await asyncio.wait_for(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "C:\Python314\Lib\asyncio\tasks.py", line 487, in wait_for
+    async with timeouts.timeout(timeout):
+               ~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Python314\Lib\asyncio\timeouts.py", line 114, in __aexit__
+    raise TimeoutError from exc_val
+TimeoutError
+{"error": "unsupported operand type(s) for -: 'datetime.datetime' and 'Field'", "event": "scheduler_error", "level": "error", "logger": "ChronosSchedulerMixin", "timestamp": "2026-05-02T05:11:13.338783Z", "service": "heretek-swarm", "environment": "development", "filename": "scheduler.py", "lineno": 75, "func_name": "_run_scheduler"}
+{"error": "unsupported operand type(s) for -: 'datetime.datetime' and 'Field'", "event": "scheduler_error", "level": "error", "logger": "ChronosSchedulerMixin", "timestamp": "2026-05-02T05:11:14.353938Z", "service": "heretek-swarm", "environment": "development", "filename": "scheduler.py", "lineno": 75, "func_name": "_run_scheduler"}
+{"error": "unsupported operand type(s) for -: 'datetime.datetime' and 'Field'", "event": "scheduler_error", "level": "error", "logger": "ChronosSchedulerMixin", "timestamp": "2026-05-02T05:11:15.365589Z", "service": "heretek-swarm", "environment": "development", "filename": "scheduler.py", "lineno": 75, "func_name": "_run_scheduler"}
+nats: encountered error
+Traceback (most recent call last):
+  File "C:\Python314\Lib\asyncio\tasks.py", line 488, in wait_for
+    return await fut
+           ^^^^^^^^^
+  File "C:\Python314\Lib\asyncio\streams.py", line 48, in open_connection
+    transport, _ = await loop.create_connection(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        lambda: protocol, host, port, **kwds)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\asyncio\base_events.py", line 1143, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+        exceptions, addrinfo, laddr_infos)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\asyncio\base_events.py", line 1042, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "C:\Python314\Lib\asyncio\proactor_events.py", line 728, in sock_connect
+    return await self._proactor.connect(sock, address)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+asyncio.exceptions.CancelledError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\Derek\AppData\Roaming\Python\Python314\site-packages\nats\aio\client.py", line 1437, in _select_next_server
+    await self._connect_to_server(s)
+  File "C:\Users\Derek\AppData\Roaming\Python\Python314\site-packages\nats\aio\client.py", line 1406, in _connect_to_server
+    await self._transport.connect(
+    ...<3 lines>...
+    )
+  File "C:\Users\Derek\AppData\Roaming\Python\Python314\site-packages\nats\aio\transport.py", line 117, in connect
+    r, w = await asyncio.wait_for(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "C:\Python314\Lib\asyncio\tasks.py", line 487, in wait_for
+    async with timeouts.timeout(timeout):
+               ~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Python314\Lib\asyncio\timeouts.py", line 114, in __aexit__
+    raise TimeoutError from exc_val
+TimeoutError
+{"error": "unsupported operand type(s) for -: 'datetime.datetime' and 'Field'", "event": "scheduler_error", "level": "error", "logger": "ChronosSchedulerMixin", "timestamp": "2026-05-02T05:11:16.381407Z", "service": "heretek-swarm", "environment": "development", "filename": "scheduler.py", "lineno": 75, "func_name": "_run_scheduler"}
+{"error": "unsupported operand type(s) for -: 'datetime.datetime' and 'Field'", "event": "scheduler_error", "level": "error", "logger": "ChronosSchedulerMixin", "timestamp": "2026-05-02T05:11:17.396350Z", "service": "heretek-swarm", "environment": "development", "filename": "scheduler.py", "lineno": 75, "func_name": "_run_scheduler"}
+{"error": "unsupported operand type(s) for -: 'datetime.datetime' and 'Field'", "event": "scheduler_error", "level": "error", "logger": "ChronosSchedulerMixin", "timestamp": "2026-05-02T05:11:18.407422Z", "service": "heretek-swarm", "environment": "development", "filename": "scheduler.py", "lineno": 75, "func_name": "_run_scheduler"}
+nats: encountered error
+Traceback (most recent call last):
+  File "C:\Python314\Lib\asyncio\tasks.py", line 488, in wait_for
+    return await fut
+           ^^^^^^^^^
+  File "C:\Python314\Lib\asyncio\streams.py", line 48, in open_connection
+    transport, _ = await loop.create_connection(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        lambda: protocol, host, port, **kwds)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\asyncio\base_events.py", line 1143, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+        exceptions, addrinfo, laddr_infos)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\asyncio\base_events.py", line 1042, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "C:\Python314\Lib\asyncio\proactor_events.py", line 728, in sock_connect
+    return await self._proactor.connect(sock, address)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+asyncio.exceptions.CancelledError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\Derek\AppData\Roaming\Python\Python314\site-packages\nats\aio\client.py", line 1437, in _select_next_server
+    await self._connect_to_server(s)
+  File "C:\Users\Derek\AppData\Roaming\Python\Python314\site-packages\nats\aio\client.py", line 1406, in _connect_to_server
+    await self._transport.connect(
+    ...<3 lines>...
+    )
+  File "C:\Users\Derek\AppData\Roaming\Python\Python314\site-packages\nats\aio\transport.py", line 117, in connect
+    r, w = await asyncio.wait_for(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "C:\Python314\Lib\asyncio\tasks.py", line 487, in wait_for
+    async with timeouts.timeout(timeout):
+               ~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Python314\Lib\asyncio\timeouts.py", line 114, in __aexit__
+    raise TimeoutError from exc_val
+TimeoutError
+{"error": "unsupported operand type(s) for -: 'datetime.datetime' and 'Field'", "event": "scheduler_error", "level": "error", "logger": "ChronosSchedulerMixin", "timestamp": "2026-05-02T05:11:19.420550Z", "service": "heretek-swarm", "environment": "development", "filename": "scheduler.py", "lineno": 75, "func_name": "_run_scheduler"}
+{"error": "unsupported operand type(s) for -: 'datetime.datetime' and 'Field'", "event": "scheduler_error", "level": "error", "logger": "ChronosSchedulerMixin", "timestamp": "2026-05-02T05:11:20.434311Z", "service": "heretek-swarm", "environment": "development", "filename": "scheduler.py", "lineno": 75, "func_name": "_run_scheduler"}
+{"error": "unsupported operand type(s) for -: 'datetime.datetime' and 'Field'", "event": "scheduler_error", "level": "error", "logger": "ChronosSchedulerMixin", "timestamp": "2026-05-02T05:11:21.437384Z", "service": "heretek-swarm", "environment": "development", "filename": "scheduler.py", "lineno": 75, "func_name": "_run_scheduler"}
