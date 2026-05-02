@@ -12,7 +12,7 @@ from enum import Enum
 from typing import Any, Dict, List, Optional, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from heretek_swarm.llm.model_garage import ModelGarage
+    from heretek_swarm.llm.model_garage import LLMResponse, ModelGarage
 
 
 class TaskComplexity(Enum):
@@ -68,10 +68,33 @@ class AgentModelRouter:
         self._model_garage = model_garage
         self._request_counts: Dict[str, int] = {}
         self._cost_tracking: Dict[str, float] = {}
+        self._token_tracking: Dict[str, int] = {}
 
     def register_provider(self, config: RouterProviderConfig) -> None:
         """Register a standalone provider config (garage-independent path)."""
         self._providers[config.provider_id] = config
+
+    def record_usage(
+        self, provider_id: str, response: "LLMResponse"
+    ) -> None:
+        """Record token usage, request count, and cost for a provider after an LLM call.
+
+        Args:
+            provider_id: The provider that handled the request.
+            response: The LLMResponse returned by the provider, which may
+                      include ``cost``, ``total_tokens``, and ``usage``.
+        """
+        self._request_counts[provider_id] = (
+            self._request_counts.get(provider_id, 0) + 1
+        )
+        self._cost_tracking[provider_id] = (
+            self._cost_tracking.get(provider_id, 0.0)
+            + (response.cost or 0.0)
+        )
+        self._token_tracking[provider_id] = (
+            self._token_tracking.get(provider_id, 0)
+            + response.total_tokens
+        )
 
     def _get_providers(self) -> Dict[str, RouterProviderConfig]:
         """Get provider configs, preferring ModelGarage when available.
@@ -223,6 +246,7 @@ class AgentModelRouter:
             "source": "garage" if self._model_garage is not None else "standalone",
             "request_counts": dict(self._request_counts),
             "cost_tracking": dict(self._cost_tracking),
+            "token_tracking": dict(self._token_tracking),
         }
 
 

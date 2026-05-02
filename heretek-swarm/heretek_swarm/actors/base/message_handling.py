@@ -899,6 +899,7 @@ Please provide your analysis and recommendation for this collective task."""
                             "latency_ms": response.latency_ms,
                         },
                     )
+                    router.record_usage(decision.provider_id, response)
                     return response.content
 
                 # Router exists but no garage — fall back to swarms_agent
