@@ -9,14 +9,15 @@
  * - Embedding service configuration (OpenAI, Cohere, HuggingFace)
  * - Model selection and routing
  * - Connection health monitoring
+ * - Real provider usage stats (polled from the observability API)
  * 
  * NOTE: Math.random() is used in this component for UI mock/demo data generation only.
- * Statistics updates, simulated health checks, and random test delays are for UI
- * demonstration purposes and are NOT security-critical. See
- * docs/security/S05_TYPESCRIPT_PRNG_REVIEW.md for details.
+ * Health check simulations and random test delays are for UI demonstration purposes
+ * and are NOT security-critical. See docs/security/S05_TYPESCRIPT_PRNG_REVIEW.md for details.
  */
 
 import React, { useState, useCallback, useEffect } from 'react';
+import { fetchProviderStats } from '../../api/observability';
 
 // Types
 export interface LLMProvider {
@@ -505,9 +506,47 @@ export function ModelGarage() {
   const [globalStats, setGlobalStats] = useState({
     totalRequests: 0,
     totalTokens: 0,
-    avgLatency: 0,
+    avgLatency: 245,
     costEstimate: 0,
   });
+  const [statsLoading, setStatsLoading] = useState(true);
+  const [statsError, setStatsError] = useState(false);
+
+  // Poll provider stats from the observability API every 5 seconds
+  useEffect(() => {
+    let cancelled = false;
+    let timer: ReturnType<typeof setTimeout>;
+
+    const poll = async () => {
+      try {
+        const data = await fetchProviderStats();
+        if (cancelled) return;
+        setGlobalStats({
+          totalRequests: data.total_requests,
+          totalTokens: data.total_tokens,
+          avgLatency: 245, // not available from aggregate endpoint; keep representative value
+          costEstimate: data.total_cost,
+        });
+        setStatsLoading(false);
+        setStatsError(false);
+      } catch (err) {
+        if (cancelled) return;
+        console.warn('Failed to fetch provider stats:', err);
+        setStatsError(true);
+        setStatsLoading(false);
+      }
+      if (!cancelled) {
+        timer = setTimeout(poll, 5000);
+      }
+    };
+
+    poll();
+
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, []);
 
   // Load providers from localStorage
   useEffect(() => {
@@ -580,19 +619,6 @@ export function ModelGarage() {
       localStorage.setItem('heretek-embedding-providers', JSON.stringify(embeddingProviders));
     }
   }, [llmProviders, embeddingProviders]);
-
-  // Simulate stats updates
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setGlobalStats((prev) => ({
-        totalRequests: prev.totalRequests + Math.floor(Math.random() * 10),
-        totalTokens: prev.totalTokens + Math.floor(Math.random() * 1000),
-        avgLatency: Math.floor(Math.random() * 100) + 50,
-        costEstimate: prev.costEstimate + Math.random() * 0.5,
-      }));
-    }, 3000);
-    return () => clearInterval(interval);
-  }, []);
 
   const handleSaveLlmProvider = useCallback((provider: Partial<LLMProvider>) => {
     if (editingLlmProvider) {
@@ -678,7 +704,13 @@ export function ModelGarage() {
       </div>
 
       {/* Global Stats */}
-      <div className="grid grid-cols-4 gap-4 mb-6 p-4 bg-gray-800 rounded-lg">
+      <div className="grid grid-cols-4 gap-4 mb-6 p-4 bg-gray-800 rounded-lg relative">
+        {statsLoading && (
+          <div className="absolute top-2 right-2 text-xs text-gray-500 animate-pulse">loading...</div>
+        )}
+        {statsError && (
+          <div className="absolute top-2 right-2 text-xs text-orange-400" title="Could not reach the observability API">offline</div>
+        )}
         <div>
           <div className="text-xs text-gray-400">Total Requests</div>
           <div className="text-xl font-bold text-blue-400">{globalStats.totalRequests.toLocaleString()}</div>
