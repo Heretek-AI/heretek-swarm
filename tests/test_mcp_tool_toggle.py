@@ -446,10 +446,10 @@ class TestToggleEndpoint:
         assert response.status_code == 422
 
     def test_toggle_wrong_type_body_returns_422(self, client: TestClient) -> None:
-        """Request with 'enabled' as string → 422."""
+        """Request with 'enabled' as a list → 422 (Pydantic rejects non-scalar types)."""
         response = client.put(
             "/mcp/tools/toggle/test_tool_0",
-            json={"enabled": "yes"},
+            json={"enabled": [1, 2, 3]},
         )
         assert response.status_code == 422
 
