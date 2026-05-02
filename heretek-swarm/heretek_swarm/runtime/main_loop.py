@@ -140,6 +140,11 @@ class AutonomousSwarm:
                 confidence_threshold=consensus_config.get("red_flag_threshold", 0.3),
             )
             self.mcp_tools = CoreMCPTools(memory_system=None, rag_pipeline=self.rag, consensus_engine=self.consensus, event_mesh=None)
+            # Bridge CoreMCPTools into mcp/ server registry so the HTTP API
+            # can serve these tool definitions.
+            from heretek_swarm.mcp.bridge import sync_mcp_registries
+            bridged = sync_mcp_registries(self.mcp_tools)
+            logger.info("mcp_bridge_applied", tool_count=bridged)
             self.supervisor = ActorSupervisor(health_check_interval=self._health_check_interval, auto_restart=True, max_restarts=5)
             await self._spawn_all_actors()
             logger.info("autonomous_swarm_fully_initialized")
@@ -256,9 +261,14 @@ class AutonomousSwarm:
                 consensus_engine=self.consensus,
                 event_mesh=self.event_mesh,
             )
+            # Bridge CoreMCPTools into mcp/ server registry so the HTTP API
+            # can serve these tool definitions.
+            from heretek_swarm.mcp.bridge import sync_mcp_registries
+            bridged = sync_mcp_registries(self.mcp_tools)
             logger.info(
                 "mcp_tools_initialized",
                 tool_count=len(self.mcp_tools.get_registry().list_tools()),
+                bridged_count=bridged,
             )
         except Exception as exc:
             logger.warning(
