@@ -227,9 +227,25 @@ class AgentModelRouter:
 
 
 _router_registry: Dict[str, AgentModelRouter] = {}
+_global_model_garage: "ModelGarage | None" = None
+
+
+def set_global_model_garage(garage: "ModelGarage | None") -> None:
+    """Set the global ModelGarage instance used by all new AgentModelRouter instances.
+
+    When a ModelGarage is wired, every AgentModelRouter created via
+    ``get_router()`` will use it as the shared provider config source.
+    Router providers derived from the garage are merged with any standalone
+    ``RouterProviderConfig`` registrations, with standalone configs taking
+    precedence for override compatibility.
+    """
+    global _global_model_garage
+    _global_model_garage = garage
 
 
 def get_router(agent_id: str) -> AgentModelRouter:
     if agent_id not in _router_registry:
-        _router_registry[agent_id] = AgentModelRouter(agent_id)
+        _router_registry[agent_id] = AgentModelRouter(
+            agent_id, model_garage=_global_model_garage,
+        )
     return _router_registry[agent_id]

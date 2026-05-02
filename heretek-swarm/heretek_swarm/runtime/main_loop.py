@@ -30,8 +30,10 @@ from heretek_swarm.api.consciousness import get_consciousness_plugin
 from heretek_swarm.channels.registry import ChannelRegistry, GroupRegistry
 from heretek_swarm.consensus.maker import MAKERConsensus
 from heretek_swarm.gateway.nats_event_mesh import NATSEventMeshWithJetStream
+from heretek_swarm.llm.model_garage import ModelGarage, initialize_model_garage
 from heretek_swarm.memory.base import DualTierMemory
 from heretek_swarm.rag.rag_pipeline import RAGPipeline
+from heretek_swarm.routing.model_router import set_global_model_garage
 from heretek_swarm.runtime.registry_enhanced import get_enhanced_registry
 from heretek_swarm.tools.mcp_tools import CoreMCPTools
 
@@ -72,6 +74,7 @@ class AutonomousSwarm:
         self.channel_registry: ChannelRegistry | None = None
         self.group_registry: GroupRegistry | None = None
         self.mcp_tools: CoreMCPTools | None = None
+        self.model_garage: ModelGarage | None = None
 
         # State
         self._running = False
@@ -145,6 +148,11 @@ class AutonomousSwarm:
             from heretek_swarm.mcp.bridge import sync_mcp_registries
             bridged = sync_mcp_registries(self.mcp_tools)
             logger.info("mcp_bridge_applied", tool_count=bridged)
+            # Initialize ModelGarage and wire into global router registry
+            self.model_garage = ModelGarage()
+            await self.model_garage.initialize()
+            set_global_model_garage(self.model_garage)
+            logger.info("model_garage_initialized")
             self.supervisor = ActorSupervisor(health_check_interval=self._health_check_interval, auto_restart=True, max_restarts=5)
             await self._spawn_all_actors()
             logger.info("autonomous_swarm_fully_initialized")
@@ -291,6 +299,19 @@ class AutonomousSwarm:
                 error=str(exc),
             )
             self.supervisor = None
+
+        # 7a. Initialize ModelGarage and wire into global router registry
+        try:
+            self.model_garage = ModelGarage()
+            await self.model_garage.initialize()
+            set_global_model_garage(self.model_garage)
+            logger.info("model_garage_initialized")
+        except Exception as exc:
+            logger.warning(
+                "model_garage_init_failed",
+                error=str(exc),
+            )
+            self.model_garage = None
 
         # 8. Spawn all agents
         try:
@@ -1467,6 +1488,11 @@ class AutonomousSwarm:
         if self.rag:
             await self.rag.shutdown()
             logger.info("rag_shutdown_complete")
+
+        # Close ModelGarage
+        if self.model_garage:
+            await self.model_garage.close()
+            logger.info("model_garage_closed")
 
         logger.info("autonomous_swarm_shutdown_complete")
 
