@@ -24,6 +24,12 @@ _spec.loader.exec_module(_cli_module)
 
 from heretek_swarm._cli_module import (
     cli,
+    config,
+    config_wizard,
+    config_list,
+    config_remove,
+    config_set_default,
+    config_validate,
     run,
     serve,
     status,
@@ -44,9 +50,26 @@ from heretek_swarm._cli_module import (
     wizard,
 )
 
+from heretek_swarm.cli.config_wizard import (
+    AVAILABLE_PROVIDERS,
+    add_provider,
+    list_configured_providers,
+    prompt_for_provider,
+    remove_provider,
+    run_wizard,
+    set_default_provider,
+    validate_provider,
+)
+
 __all__ = [
     "load_infrastructure_config",
     "cli",
+    "config",
+    "config_wizard",
+    "config_list",
+    "config_remove",
+    "config_set_default",
+    "config_validate",
     "run",
     "serve",
     "status",
@@ -65,4 +88,12 @@ __all__ = [
     "check_container_runtime",
     "init",
     "wizard",
+    "AVAILABLE_PROVIDERS",
+    "add_provider",
+    "list_configured_providers",
+    "prompt_for_provider",
+    "remove_provider",
+    "run_wizard",
+    "set_default_provider",
+    "validate_provider",
 ]
