@@ -652,7 +652,44 @@ async def get_alerts(request: Request) -> dict[str, Any]:
     }
 
 
-# ============== PROMETHEUS EXPORT ==============
+@router.get("/provider-stats")
+async def get_provider_stats(request: Request) -> dict[str, Any]:
+    """
+    Get aggregate LLM provider usage statistics across all agents.
+
+    Returns per-provider totals (requests, cost, tokens) and per-model
+    breakdowns aggregated from every registered AgentModelRouter, plus
+    grand totals.
+
+    Rate-limited to 100 requests/min per client.
+    """
+    client_id = request.client.host if request.client else "unknown"
+    if not check_rate_limit(client_id):
+        raise HTTPException(status_code=429, detail="Rate limit exceeded")
+
+    validator = get_zero_trust()
+    request_id = str(uuid.uuid4())
+    audit_result = ZeroTrustResult(
+        passed=True,
+        layer1=LayerResult(layer="input_validation", passed=True),
+        layer2=LayerResult(layer="context_validation", passed=True),
+        layer3=LayerResult(layer="output_validation", passed=True),
+        layer4=LayerResult(layer="audit_logging", passed=True),
+        request_id=request_id,
+    )
+    validator.audit_logger.log(
+        event_type="api_call",
+        result=audit_result,
+        additional_context={
+            "endpoint": "/api/v1/observability/provider-stats",
+            "client_id": client_id,
+            "method": "GET",
+        },
+    )
+
+    from heretek_swarm.routing.model_router import get_all_provider_stats
+
+    return get_all_provider_stats()
 
 
 @router.get("/metrics/prometheus")

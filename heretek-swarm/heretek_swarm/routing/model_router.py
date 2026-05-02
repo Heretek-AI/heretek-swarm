@@ -7,6 +7,7 @@ its own standalone configs when no garage is available.
 """
 from __future__ import annotations
 
+from collections import defaultdict
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any, Dict, List, Optional, TYPE_CHECKING
@@ -69,6 +70,7 @@ class AgentModelRouter:
         self._request_counts: Dict[str, int] = {}
         self._cost_tracking: Dict[str, float] = {}
         self._token_tracking: Dict[str, int] = {}
+        self._models_used: Dict[str, Dict[str, int]] = {}
 
     def register_provider(self, config: RouterProviderConfig) -> None:
         """Register a standalone provider config (garage-independent path)."""
@@ -94,6 +96,13 @@ class AgentModelRouter:
         self._token_tracking[provider_id] = (
             self._token_tracking.get(provider_id, 0)
             + response.total_tokens
+        )
+        # Track per-model request counts within each provider
+        if provider_id not in self._models_used:
+            self._models_used[provider_id] = {}
+        model_name = response.model or "unknown"
+        self._models_used[provider_id][model_name] = (
+            self._models_used[provider_id].get(model_name, 0) + 1
         )
 
     def _get_providers(self) -> Dict[str, RouterProviderConfig]:
@@ -247,6 +256,7 @@ class AgentModelRouter:
             "request_counts": dict(self._request_counts),
             "cost_tracking": dict(self._cost_tracking),
             "token_tracking": dict(self._token_tracking),
+            "models_used": {k: dict(v) for k, v in self._models_used.items()},
         }
 
 
@@ -273,3 +283,64 @@ def get_router(agent_id: str) -> AgentModelRouter:
             agent_id, model_garage=_global_model_garage,
         )
     return _router_registry[agent_id]
+
+
+def get_all_provider_stats() -> dict[str, Any]:
+    """Aggregate provider usage statistics across all registered routers.
+
+    Iterates every :class:`AgentModelRouter` in the global registry, calls
+    ``get_stats()`` on each, and merges per-provider request counts, cost,
+    token tracking, and per-model breakdowns. Returns a single dict with the
+    shape::
+
+        {
+            "providers": {
+                "ollama-local": {
+                    "total_requests": 42,
+                    "total_cost": 0.0,
+                    "total_tokens": 5000,
+                    "models_used": {"llama3.1": 30, "llama3.2": 12},
+                },
+            },
+            "total_cost": 0.0,
+            "total_requests": 57,
+            "total_tokens": 5000,
+        }
+    """
+    merged: dict[str, dict[str, Any]] = {}
+
+    for router in _router_registry.values():
+        stats = router.get_stats()
+        for pid in stats.get("request_counts", {}):
+            if pid not in merged:
+                merged[pid] = {
+                    "total_requests": 0,
+                    "total_cost": 0.0,
+                    "total_tokens": 0,
+                    "models_used": {},
+                }
+
+        for pid, count in stats.get("request_counts", {}).items():
+            merged[pid]["total_requests"] += count
+
+        for pid, cost in stats.get("cost_tracking", {}).items():
+            merged[pid]["total_cost"] += cost
+
+        for pid, tokens in stats.get("token_tracking", {}).items():
+            merged[pid]["total_tokens"] += tokens
+
+        for pid, model_counts in stats.get("models_used", {}).items():
+            for model, c in model_counts.items():
+                mu = merged[pid]["models_used"]
+                mu[model] = mu.get(model, 0) + c
+
+    total_cost = sum(v["total_cost"] for v in merged.values())
+    total_requests = sum(v["total_requests"] for v in merged.values())
+    total_tokens = sum(v["total_tokens"] for v in merged.values())
+
+    return {
+        "providers": merged,
+        "total_cost": total_cost,
+        "total_requests": total_requests,
+        "total_tokens": total_tokens,
+    }
