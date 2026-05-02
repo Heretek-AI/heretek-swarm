@@ -728,6 +728,24 @@ class ModelGarage:
     - Unified OpenAI-compatible API
     """
 
+    # Pricing per 1K tokens: {model_substring: (input_cost, output_cost)}
+    # Ordered from most-specific to least-specific for safe substring matching.
+    # The first matching key wins, so longer/more specific keys must come first.
+    _PRICING_TABLE: dict[str, tuple[float, float]] = {
+        "gpt-4o-mini": (0.15, 0.60),
+        "gpt-4-turbo": (10.0, 30.0),
+        "gpt-4o": (2.50, 10.0),
+        "gpt-3.5-turbo": (0.50, 1.50),
+        "o1-preview": (15.0, 60.0),
+        "claude-3-5-sonnet": (3.0, 15.0),
+        "claude-3-opus": (15.0, 75.0),
+        "claude-3-haiku": (0.25, 1.25),
+        "gemini-1.5-pro": (1.25, 5.0),
+        "gemini-1.5-flash": (0.075, 0.30),
+        "llama": (0.0, 0.0),
+        "mistral": (0.0, 0.0),
+    }
+
     def __init__(
         self,
         config_file: Path | None = None,
@@ -800,6 +818,29 @@ class ModelGarage:
             self._load_config()
         except Exception as e:
             logger.error("Failed to create default configuration", error=str(e))
+
+    def _calculate_cost(self, response: LLMResponse, model_name: str) -> float:
+        """Calculate cost for a response based on model pricing table.
+
+        Performs substring matching against ``_PRICING_TABLE`` keys, trying
+        the longest (most specific) keys first.  Returns 0.0 when no table
+        entry matches or when usage dict is empty (e.g. local models).
+        """
+        if not response.usage:
+            return 0.0
+        prompt_tokens = response.prompt_tokens
+        completion_tokens = response.completion_tokens
+        if prompt_tokens == 0 and completion_tokens == 0:
+            return 0.0
+
+        # Try most-specific (longest) keys first so "gpt-4o-mini" matches
+        # before "gpt-4o".
+        for key in sorted(self._PRICING_TABLE, key=len, reverse=True):
+            if key in model_name:
+                input_rate, output_rate = self._PRICING_TABLE[key]
+                cost = (prompt_tokens / 1000.0 * input_rate) + (completion_tokens / 1000.0 * output_rate)
+                return round(cost, 6)
+        return 0.0
 
     def _save_config(self) -> None:
         """Save provider configuration to file."""
@@ -945,7 +986,17 @@ class ModelGarage:
             try:
                 logger.debug("Attempting completion", provider=pid, model=model or provider.config.default_model)
                 response = await provider.complete(request)
-                logger.info("Completion successful", provider=pid, model=response.model, latency_ms=response.latency_ms)
+                # Set cost from pricing table; will be 0.0 for local/unknown models
+                response.cost = self._calculate_cost(response, response.model)
+                logger.info(
+                    "Completion successful",
+                    provider=pid,
+                    model=response.model,
+                    latency_ms=response.latency_ms,
+                    prompt_tokens=response.prompt_tokens,
+                    completion_tokens=response.completion_tokens,
+                    cost=response.cost,
+                )
                 return response
             except Exception as e:
                 last_error = e
