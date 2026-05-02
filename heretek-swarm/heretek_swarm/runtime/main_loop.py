@@ -828,6 +828,33 @@ class AutonomousSwarm:
                 actor.swarms_agent = build_agent_for(
                     agent_id, agent_class.__name__, system_prompt=system_prompt,
                 )
+                # Inject MCP tools into every agent's swarms_agent post-spawn
+                if self.mcp_tools is not None:
+                    from heretek_swarm.mcp.agent_tools import (
+                        build_tool_handlers,
+                        build_tools_list_dictionary,
+                    )
+                    mcp_registry = self.mcp_tools.get_registry()
+                    tool_schemas = build_tools_list_dictionary(mcp_registry)
+                    tool_handlers = build_tool_handlers(mcp_registry)
+                    if tool_schemas:
+                        actor.swarms_agent.tools_list_dictionary = tool_schemas
+                        actor.swarms_agent.tools = list(tool_handlers.values())
+                        logger.info(
+                            "mcp_tools_injected",
+                            agent_id=agent_id,
+                            tool_count=len(tool_schemas),
+                        )
+                    else:
+                        logger.warning(
+                            "mcp_tools_injection_skipped_empty",
+                            agent_id=agent_id,
+                        )
+                else:
+                    logger.warning(
+                        "mcp_tools_injection_skipped_no_registry",
+                        agent_id=agent_id,
+                    )
                 logger.info("actor_spawned", agent_id=agent_id, tier=self._get_tier(agent_id))
             except Exception as e:
                 logger.error("actor_spawn_failed", agent_id=agent_id, error=str(e))
