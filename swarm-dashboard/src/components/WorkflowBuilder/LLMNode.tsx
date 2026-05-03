@@ -13,6 +13,11 @@ interface LLMData {
   provider: 'openai' | 'anthropic' | 'google' | 'azure' | 'litellm' | 'custom';
   status: 'idle' | 'thinking' | 'acting' | 'error';
   lastActivity?: string;
+  /** Execution status from useWorkflowProgress: pending | running | completed | failed */
+  executionStatus?: 'pending' | 'running' | 'completed' | 'failed';
+  executionOutput?: unknown;
+  executionError?: string;
+  executionDuration?: number;
 }
 
 const statusColors = {
@@ -35,6 +40,20 @@ function LLMNode({ data, selected }: NodeProps<LLMData>) {
   const colors = statusColors[data.status] || statusColors.idle;
   const icon = providerIcons[data.provider] || '🎯';
   
+  // Derive visual state: execution status overrides model status when present
+  const execStatus = data.executionStatus;
+  const isRunning = execStatus === 'running';
+  const isCompleted = execStatus === 'completed';
+  const isFailed = execStatus === 'failed';
+  
+  const executionBorder = isRunning
+    ? 'shadow-blue-500/40 shadow-[0_0_12px_rgba(59,130,246,0.5)]'
+    : isCompleted
+      ? 'shadow-green-500/30'
+      : isFailed
+        ? 'shadow-red-500/30'
+        : '';
+  
   const timeAgo = (timestamp: string) => {
     const now = new Date();
     const past = new Date(timestamp);
@@ -51,13 +70,16 @@ function LLMNode({ data, selected }: NodeProps<LLMData>) {
       className={`
         px-4 py-3 rounded-lg shadow-lg border-2 transition-all duration-200
         ${selected ? 'ring-2 ring-white ring-offset-2 ring-offset-gray-900' : ''}
+        ${executionBorder}
       `}
       style={{
         backgroundColor: colors.bg,
-        borderColor: colors.border,
+        borderColor: isRunning ? '#3B82F6' : isCompleted ? '#22C55E' : isFailed ? '#EF4444' : colors.border,
         minWidth: '220px',
         maxWidth: '280px',
+        ...(isRunning ? { animation: 'pulse 2s ease-in-out infinite' } : {}),
       }}
+      title={isFailed ? `Failed: ${data.executionError || 'Unknown error'}` : undefined}
     >
       {/* Target Handle (input) */}
       <Handle
@@ -69,15 +91,27 @@ function LLMNode({ data, selected }: NodeProps<LLMData>) {
       {/* Header */}
       <div className="flex items-center justify-between mb-2">
         <span className="text-2xl">{icon}</span>
-        <span
-          className="text-xs font-semibold px-2 py-1 rounded uppercase"
-          style={{
-            backgroundColor: colors.border,
-            color: '#FFFFFF',
-          }}
-        >
-          {data.status}
-        </span>
+        {execStatus ? (
+          <span
+            className="text-xs font-semibold px-2 py-1 rounded uppercase"
+            style={{
+              backgroundColor: isRunning ? '#3B82F6' : isCompleted ? '#22C55E' : isFailed ? '#EF4444' : '#6B7280',
+              color: '#FFFFFF',
+            }}
+          >
+            {execStatus === 'running' ? '⏳ Running' : execStatus === 'completed' ? '✓ Done' : execStatus === 'failed' ? '✗ Failed' : execStatus}
+          </span>
+        ) : (
+          <span
+            className="text-xs font-semibold px-2 py-1 rounded uppercase"
+            style={{
+              backgroundColor: colors.border,
+              color: '#FFFFFF',
+            }}
+          >
+            {data.status}
+          </span>
+        )}
       </div>
       
       {/* LLM Info */}
@@ -91,6 +125,17 @@ function LLMNode({ data, selected }: NodeProps<LLMData>) {
         {data.lastActivity && (
           <div className="text-xs text-gray-500">
             {timeAgo(data.lastActivity)}
+          </div>
+        )}
+        {/* Execution results */}
+        {isCompleted && data.executionDuration !== undefined && (
+          <div className="text-xs text-green-400">
+            ✓ {data.executionDuration}ms
+          </div>
+        )}
+        {isFailed && data.executionError && (
+          <div className="text-xs text-red-400 truncate max-w-[200px]" title={data.executionError}>
+            ✗ {data.executionError}
           </div>
         )}
       </div>

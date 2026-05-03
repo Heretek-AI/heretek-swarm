@@ -135,7 +135,15 @@ export async function startDeliberation(
   timeout_minutes: number;
   state: string;
 }> {
-  const response = await api.post('/api/consensus/deliberation/start', {
+  const response = await api.post<{
+    deliberation_id: string;
+    proposal: string;
+    topic: string | null;
+    participants: string[];
+    max_rounds: number;
+    timeout_minutes: number;
+    state: string;
+  }>('/api/consensus/deliberation/start', {
     proposal,
     participants,
     topic: options?.topic,
@@ -162,7 +170,13 @@ export async function submitDeliberationPosition(
   confidence: number;
   submitted: boolean;
 }> {
-  const response = await api.post(
+  const response = await api.post<{
+    deliberation_id: string;
+    agent_id: string;
+    position: DeliberationPosition;
+    confidence: number;
+    submitted: boolean;
+  }>(
     `/api/consensus/deliberation/${deliberationId}/submit_position`,
     { position, confidence, reasoning }
   );
@@ -188,7 +202,14 @@ export async function submitDeliberationArgument(
   reasoning: string;
   evidence_refs: string[];
 }> {
-  const response = await api.post(
+  const response = await api.post<{
+    argument_id: string;
+    deliberation_id: string;
+    agent_id: string;
+    position: DeliberationPosition;
+    reasoning: string;
+    evidence_refs: string[];
+  }>(
     `/api/consensus/deliberation/${deliberationId}/submit_argument`,
     { position, reasoning, evidence_refs: evidenceRefs, confidence }
   );
@@ -213,7 +234,13 @@ export async function submitDeliberationEvidence(
   content_length: number;
   quality_score: number;
 }> {
-  const response = await api.post(
+  const response = await api.post<{
+    evidence_id: string;
+    argument_id: string;
+    deliberation_id: string;
+    content_length: number;
+    quality_score: number;
+  }>(
     `/api/consensus/deliberation/${deliberationId}/submit_evidence`,
     { argument_id: argumentId, content, source, quality_score: qualityScore }
   );
@@ -257,9 +284,10 @@ export async function getDeliberationHistory(
   deliberationId: string,
   limit: number = 10
 ): Promise<{ deliberation_id: string; rounds: DeliberationRoundResult[] }> {
-  const response = await api.get(
-    `/api/consensus/deliberation/${deliberationId}/history?limit=${limit}`
-  );
+  const response = await api.get<{
+    deliberation_id: string;
+    rounds: DeliberationRoundResult[];
+  }>(`/api/consensus/deliberation/${deliberationId}/history?limit=${limit}`);
   return response.data;
 }
 
@@ -285,7 +313,10 @@ export async function finalizeDeliberation(
 export async function cleanupDeliberation(
   deliberationId: string
 ): Promise<{ deliberation_id: string; cleaned_up: boolean }> {
-  const response = await api.delete(
+  const response = await api.delete<{
+    deliberation_id: string;
+    cleaned_up: boolean;
+  }>(
     `/api/consensus/deliberation/${deliberationId}`
   );
   return response.data;
@@ -317,7 +348,11 @@ export async function getDecisionAudit(
 export async function exportDecisionAudit(
   decisionId: string
 ): Promise<{ decision_id: string; export_format: string; data: unknown }> {
-  const response = await api.get(
+  const response = await api.get<{
+    decision_id: string;
+    export_format: string;
+    data: unknown;
+  }>(
     `/api/consensus/audit/decision/${decisionId}/export`
   );
   return response.data;
@@ -331,7 +366,11 @@ export async function exportDecisionAudit(
 export async function verifyDecisionAudit(
   decisionId: string
 ): Promise<{ decision_id: string; valid: boolean; error?: string }> {
-  const response = await api.get(
+  const response = await api.get<{
+    decision_id: string;
+    valid: boolean;
+    error?: string;
+  }>(
     `/api/consensus/audit/decision/${decisionId}/verify`
   );
   return response.data;
@@ -358,7 +397,10 @@ export async function getFailedAudits(): Promise<{
   total_failed: number;
   audits: AuditDecisionRecord[];
 }> {
-  const response = await api.get('/api/consensus/audit/failed');
+  const response = await api.get<{
+    total_failed: number;
+    audits: AuditDecisionRecord[];
+  }>('/api/consensus/audit/failed');
   return response.data;
 }
 
@@ -371,6 +413,9 @@ export async function getSuccessfulAudits(): Promise<{
   total_successful: number;
   audits: AuditDecisionRecord[];
 }> {
-  const response = await api.get('/api/consensus/audit/successful');
+  const response = await api.get<{
+    total_successful: number;
+    audits: AuditDecisionRecord[];
+  }>('/api/consensus/audit/successful');
   return response.data;
 }

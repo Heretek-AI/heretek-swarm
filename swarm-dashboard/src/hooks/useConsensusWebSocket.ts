@@ -174,7 +174,7 @@ const CONSENSUS_EVENT_TYPES = new Set([
   'deliberation_finalized',
 ]);
 
-function isConsensusEvent(msg: WebSocketMessage): msg is ConsensusWebSocketEvent {
+function isConsensusEvent(msg: WebSocketMessage): msg is WebSocketMessage & ConsensusWebSocketEvent {
   return CONSENSUS_EVENT_TYPES.has(msg.type);
 }
 

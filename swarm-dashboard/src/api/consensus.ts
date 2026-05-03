@@ -152,7 +152,13 @@ export async function createConsensusRound(
   state: ConsensusState;
   created_at: string;
 }> {
-  const response = await api.post('/api/consensus', { topic, description });
+  const response = await api.post<{
+    id: string;
+    topic: string;
+    description: string;
+    state: ConsensusState;
+    created_at: string;
+  }>('/api/consensus', { topic, description });
   return response.data;
 }
 
@@ -178,7 +184,13 @@ export async function submitVote(
   vote_count: number;
   current_state: ConsensusState;
 }> {
-  const response = await api.post(`/api/consensus/${consensusId}/vote`, {
+  const response = await api.post<{
+    status: string;
+    consensus_id: string;
+    agent_id: string;
+    vote_count: number;
+    current_state: ConsensusState;
+  }>(`/api/consensus/${consensusId}/vote`, {
     decision,
     confidence,
     metadata,
@@ -218,7 +230,17 @@ export async function getConsensusResults(
   completed_at: string | null;
   message?: string;
 }> {
-  const response = await api.get(`/api/consensus/${consensusId}/results`);
+  const response = await api.get<{
+    id: string;
+    topic: string;
+    decision: string | null;
+    confidence: number | null;
+    state: ConsensusState;
+    votes: ConsensusVote[];
+    red_flags: string[];
+    completed_at: string | null;
+    message?: string;
+  }>(`/api/consensus/${consensusId}/results`);
   return response.data;
 }
 
@@ -230,7 +252,9 @@ export async function getConsensusResults(
 export async function cancelConsensus(
   consensusId: string
 ): Promise<{ status: string; consensus_id: string }> {
-  const response = await api.delete(`/api/consensus/${consensusId}`);
+  const response = await api.delete<{ status: string; consensus_id: string }>(
+    `/api/consensus/${consensusId}`
+  );
   return response.data;
 }
 

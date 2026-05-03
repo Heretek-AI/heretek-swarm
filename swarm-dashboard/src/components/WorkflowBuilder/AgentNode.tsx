@@ -23,6 +23,11 @@ interface AgentData {
   lastActivity?: string;
   onOpenConfig?: (nodeId: string) => void;
   enableDynamicHandles?: boolean;
+  /** Execution status from useWorkflowProgress: pending | running | completed | failed */
+  executionStatus?: 'pending' | 'running' | 'completed' | 'failed';
+  executionOutput?: unknown;
+  executionError?: string;
+  executionDuration?: number;
 }
 
 const statusColors = {
@@ -98,6 +103,21 @@ function AgentNode({ data, selected }: NodeProps<AgentData>) {
     // Could open channel configuration or show channel details
   }, []);
   
+  // Derive visual state: execution status overrides agent status when present
+  const execStatus = data.executionStatus;
+  const isRunning = execStatus === 'running';
+  const isCompleted = execStatus === 'completed';
+  const isFailed = execStatus === 'failed';
+  
+  // Compute border/glow based on execution status
+  const executionBorder = isRunning
+    ? 'border-blue-500 shadow-blue-500/40 shadow-[0_0_12px_rgba(59,130,246,0.5)]'
+    : isCompleted
+      ? 'border-green-500 shadow-green-500/30'
+      : isFailed
+        ? 'border-red-500 shadow-red-500/30'
+        : '';
+  
   return (
     <div
       className={`
@@ -105,16 +125,18 @@ function AgentNode({ data, selected }: NodeProps<AgentData>) {
         ${selected ? 'ring-2 ring-white ring-offset-2 ring-offset-gray-900' : ''}
         hover:shadow-xl hover:scale-105
         cursor-pointer
+        ${executionBorder}
       `}
       style={{
         backgroundColor: colors.bg,
-        borderColor: colors.border,
+        borderColor: isRunning ? '#3B82F6' : isCompleted ? '#22C55E' : isFailed ? '#EF4444' : colors.border,
         minWidth: '220px',
         maxWidth: '280px',
+        ...(isRunning ? { animation: 'pulse 2s ease-in-out infinite' } : {}),
       }}
       onClick={handleClick}
       onDoubleClick={handleDoubleClick}
-      title="Click to configure agent"
+      title={isFailed ? `Failed: ${data.executionError || 'Unknown error'}` : 'Click to configure agent'}
     >
       {/* Dynamic Handles or Static Fallback */}
       {handles.length > 0 ? (
@@ -146,15 +168,28 @@ function AgentNode({ data, selected }: NodeProps<AgentData>) {
       <div className="flex items-center justify-between mb-2">
         <span className="text-2xl">{icon}</span>
         <div className="flex items-center gap-2">
-          <span
-            className="text-xs font-semibold px-2 py-1 rounded uppercase"
-            style={{
-              backgroundColor: colors.border,
-              color: '#FFFFFF',
-            }}
-          >
-            {data.status}
-          </span>
+          {/* Execution status badge takes priority over agent status */}
+          {execStatus ? (
+            <span
+              className="text-xs font-semibold px-2 py-1 rounded uppercase"
+              style={{
+                backgroundColor: isRunning ? '#3B82F6' : isCompleted ? '#22C55E' : isFailed ? '#EF4444' : '#6B7280',
+                color: '#FFFFFF',
+              }}
+            >
+              {execStatus === 'running' ? '⏳ Running' : execStatus === 'completed' ? '✓ Done' : execStatus === 'failed' ? '✗ Failed' : execStatus}
+            </span>
+          ) : (
+            <span
+              className="text-xs font-semibold px-2 py-1 rounded uppercase"
+              style={{
+                backgroundColor: colors.border,
+                color: '#FFFFFF',
+              }}
+            >
+              {data.status}
+            </span>
+          )}
           <span className="text-xs" title="Click to configure">
             ⚙️
           </span>
@@ -172,6 +207,17 @@ function AgentNode({ data, selected }: NodeProps<AgentData>) {
         {data.lastActivity && (
           <div className="text-xs text-gray-500">
             {timeAgo(data.lastActivity)}
+          </div>
+        )}
+        {/* Execution results */}
+        {execStatus === 'completed' && data.executionDuration !== undefined && (
+          <div className="text-xs text-green-400">
+            ✓ {data.executionDuration}ms
+          </div>
+        )}
+        {isFailed && data.executionError && (
+          <div className="text-xs text-red-400 truncate max-w-[200px]" title={data.executionError}>
+            ✗ {data.executionError}
           </div>
         )}
         {/* Channel subscription count */}

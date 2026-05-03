@@ -28,6 +28,7 @@ import ReactFlow, {
   NodeTypes,
 } from 'reactflow';
 import { api } from '../../api/client';
+import { useWorkflowProgress, type NodeResult, type ExecutionState as WsExecutionState } from '../../hooks/useWorkflowProgress';
 
 import {
   BaseNodeData,
@@ -79,13 +80,31 @@ export function WorkflowBuilder() {
   const [isExecuting, setIsExecuting] = useState(false);
   const [savedWorkflows, setSavedWorkflows] = useState<Workflow[]>([]);
   const [currentWorkflowId, setCurrentWorkflowId] = useState<string | null>(null);
-  const [executionState, setExecutionState] = useState({
-    status: 'idle' as 'idle' | 'running' | 'completed' | 'failed' | 'connected',
-    progress: 0,
-    currentNode: null as string | null,
-    message: '',
-    executionId: '',
-  });
+  
+  // Real-time execution progress via WebSocket hook (replaces SSE)
+  const {
+    executionState: wsExecutionState,
+    currentNode: wsCurrentNode,
+    progress: wsProgress,
+    nodeResults: wsNodeResults,
+    error: wsError,
+    connected: wsConnected,
+    executeWorkflow: wsExecuteWorkflow,
+    reExecuteWorkflow: wsReExecuteWorkflow,
+  } = useWorkflowProgress();
+
+  // Derive display state from WebSocket hook
+  const executionState = {
+    status: wsExecutionState === 'idle' && !wsConnected
+      ? 'idle' as const
+      : wsConnected && wsExecutionState === 'idle'
+        ? 'connected' as const
+        : wsExecutionState,
+    progress: wsProgress,
+    currentNode: wsCurrentNode,
+    message: wsError || '',
+    executionId: currentWorkflowId || '',
+  };
   
   // Helper to get status badge CSS classes — avoids nested ternary chains (S3358)
   const getStatusBadgeClass = (status: string) => {
@@ -117,7 +136,6 @@ export function WorkflowBuilder() {
     };
   } | null>(null);
 
-  const eventSourceRef = useRef<EventSource | null>(null);
   const reactFlowWrapperRef = useRef<HTMLDivElement>(null);
 
   /**
@@ -590,65 +608,9 @@ export function WorkflowBuilder() {
   }, []);
 
   /**
-   * Execute workflow with SSE event streaming
+   * Execute workflow using WebSocket-based progress tracking.
+   * Saves the workflow first, then triggers execution via the WS hook.
    */
-  const connectToWorkflowEvents = useCallback((workflowId?: string) => {
-    // Close existing connection
-    if (eventSourceRef.current) {
-      eventSourceRef.current.close();
-    }
-
-    const safeWorkflowId = workflowId && /^[a-zA-Z0-9_-]+$/.test(workflowId) ? workflowId : undefined;
-    const url = safeWorkflowId
-      ? `${API_URL}/api/workflows/${safeWorkflowId}/events`
-      : `${API_URL}/api/workflows/events`;
-
-    console.log('Connecting to SSE stream for workflow:', safeWorkflowId ?? 'all');
-
-    const eventSource = new EventSource(url);
-    eventSourceRef.current = eventSource;
-
-    eventSource.onopen = () => {
-      console.log('SSE connection opened');
-      setIsExecuting(true);
-      setExecutionState(prev => ({ ...prev, status: 'connected', message: 'Connected to workflow stream...' }));
-    };
-
-    eventSource.onmessage = (event) => {
-      try {
-        const data = JSON.parse(event.data);
-        console.log('SSE event received:', data);
-
-        setExecutionState({
-          status: data.status as typeof executionState.status,
-          progress: data.progress || 0,
-          currentNode: data.currentNode || null,
-          message: data.message || '',
-          executionId: data.execution_id || '',
-        });
-
-        // Auto-stop on completed/failed
-        if (data.status === 'completed' || data.status === 'failed') {
-          setTimeout(() => {
-            eventSource.close();
-            setIsExecuting(false);
-          }, 2000);
-        }
-      } catch (e) {
-        console.error('Failed to parse SSE event:', e);
-      }
-    };
-
-    eventSource.onerror = (error) => {
-      console.error('SSE error:', error);
-      setExecutionState(prev => ({ ...prev, status: 'failed', message: 'Connection error' }));
-      setIsExecuting(false);
-      eventSource.close();
-    };
-
-    return eventSource;
-  }, []);
-
   const executeWorkflow = useCallback(async () => {
     if (!validation.valid || nodes.length === 0) {
       alert('Please fix validation errors before executing');
@@ -656,6 +618,8 @@ export function WorkflowBuilder() {
     }
     
     try {
+      setIsExecuting(true);
+      
       // First, save the workflow
       const saveResponse = await authFetch(`${API_URL}/api/workflows`, {
         method: 'POST',
@@ -676,15 +640,55 @@ export function WorkflowBuilder() {
       const saved = await saveResponse.json();
       setCurrentWorkflowId(saved.id);
 
-      // Connect to SSE events for this workflow
-      connectToWorkflowEvents(saved.id);
+      // Execute via WebSocket hook (connects + POSTs to execute endpoint)
+      await wsExecuteWorkflow(saved.id);
 
     } catch (error) {
       console.error('Failed to execute workflow:', error);
-      setExecutionState(prev => ({ ...prev, status: 'failed', message: 'Failed to execute workflow' }));
       setIsExecuting(false);
     }
-  }, [nodes, edges, currentWorkflowId, validation.valid, connectToWorkflowEvents]);
+  }, [nodes, edges, currentWorkflowId, validation.valid, wsExecuteWorkflow]);
+
+  /**
+   * Re-execute the last workflow via the hook
+   */
+  const reExecuteWorkflow = useCallback(async () => {
+    setIsExecuting(true);
+    await wsReExecuteWorkflow();
+  }, [wsReExecuteWorkflow]);
+
+  // Sync isExecuting with WebSocket execution state
+  useEffect(() => {
+    if (wsExecutionState === 'completed' || wsExecutionState === 'failed') {
+      const timer = setTimeout(() => setIsExecuting(false), 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [wsExecutionState]);
+
+  /**
+   * Map node execution results from WS hook to node visual state.
+   * Updates ReactFlow nodes with executionStatus data.
+   */
+  useEffect(() => {
+    if (wsNodeResults.size === 0) return;
+    
+    setNodes((nds) =>
+      nds.map((node) => {
+        const result = wsNodeResults.get(node.id);
+        if (!result) return node;
+        return {
+          ...node,
+          data: {
+            ...node.data,
+            executionStatus: result.status,
+            executionOutput: result.output,
+            executionError: result.error,
+            executionDuration: result.duration,
+          },
+        };
+      })
+    );
+  }, [wsNodeResults, setNodes]);
 
   /**
    * Load workflows on mount
@@ -748,8 +752,47 @@ export function WorkflowBuilder() {
           >
             Execute Workflow
           </button>
+          <button
+            onClick={reExecuteWorkflow}
+            className="btn btn-secondary"
+            disabled={!currentWorkflowId || wsExecutionState === 'running'}
+            title="Re-execute the last workflow"
+          >
+            Re-execute
+          </button>
         </div>
       </div>
+
+      {/* Execution Progress Bar */}
+      {isExecuting && (
+        <div className="px-5 py-2 bg-white border-b border-gray-200">
+          <div className="flex items-center gap-3">
+            <span className={`text-xs px-2 py-1 rounded font-medium ${getStatusBadgeClass(executionState.status)}`}>
+              {executionState.status === 'running' ? 'Executing...' : executionState.status}
+            </span>
+            <div className="flex-1 bg-gray-200 rounded-full h-2">
+              <div
+                className={`h-2 rounded-full transition-all duration-300 ${getProgressBarClass(executionState.status)}`}
+                style={{ width: `${executionState.progress}%` }}
+              />
+            </div>
+            <span className="text-sm text-gray-600 font-medium min-w-[3rem] text-right">
+              {executionState.progress}%
+            </span>
+            {wsCurrentNode && (
+              <span className="text-xs text-gray-500">
+                Node: <span className="font-medium text-gray-700">{wsCurrentNode}</span>
+              </span>
+            )}
+            {!wsConnected && wsExecutionState === 'running' && (
+              <span className="text-xs text-red-500">🔴 Disconnected</span>
+            )}
+            {wsConnected && (
+              <span className="text-xs text-green-500">🟢 Connected</span>
+            )}
+          </div>
+        </div>
+      )}
 
       {!validation.valid && (
         <div className="validation-errors">
@@ -852,7 +895,7 @@ export function WorkflowBuilder() {
 
             {/* Execution Progress Panel */}
             {isExecuting && (
-              <div className="absolute top-4 right-4 w-80 bg-white border border-gray-300 rounded-lg shadow-lg p-4 z-50">
+              <div className="absolute top-4 right-4 w-80 bg-white border border-gray-300 rounded-lg shadow-lg p-4 z-50 max-h-[70vh] overflow-y-auto">
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="font-semibold text-gray-800">Workflow Execution</h3>
                   <span className={`text-xs px-2 py-1 rounded ${getStatusBadgeClass(executionState.status)}`}>
@@ -875,22 +918,85 @@ export function WorkflowBuilder() {
                 </div>
 
                 {/* Current Node */}
-                {executionState.currentNode && (
+                {wsCurrentNode && (
                   <div className="mb-2 text-sm">
                     <span className="text-gray-600">Current Node:</span>
-                    <span className="ml-2 text-gray-800 font-medium">{executionState.currentNode}</span>
+                    <span className="ml-2 text-gray-800 font-medium">{wsCurrentNode}</span>
                   </div>
                 )}
 
-                {/* Message */}
-                {executionState.message && (
-                  <div className="text-sm text-gray-600">{executionState.message}</div>
+                {/* WebSocket Connection Status */}
+                <div className="mb-2 text-xs">
+                  {wsConnected ? (
+                    <span className="text-green-600">🟢 WebSocket connected</span>
+                  ) : (
+                    <span className="text-red-600">🔴 WebSocket disconnected</span>
+                  )}
+                </div>
+
+                {/* Error Message */}
+                {wsError && (
+                  <div className="mb-2 text-sm text-red-600 bg-red-50 rounded p-2">
+                    {wsError}
+                  </div>
+                )}
+
+                {/* Per-Node Results */}
+                {wsNodeResults.size > 0 && (
+                  <div className="mt-3 border-t border-gray-200 pt-3">
+                    <h4 className="text-xs font-semibold text-gray-600 uppercase mb-2">Node Results</h4>
+                    <div className="space-y-2">
+                      {Array.from(wsNodeResults.entries()).map(([nodeId, result]) => (
+                        <div
+                          key={nodeId}
+                          className={`p-2 rounded text-xs border ${
+                            result.status === 'completed' ? 'bg-green-50 border-green-200' :
+                            result.status === 'failed' ? 'bg-red-50 border-red-200' :
+                            result.status === 'running' ? 'bg-blue-50 border-blue-200' :
+                            'bg-gray-50 border-gray-200'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between mb-1">
+                            <span className="font-medium text-gray-800 truncate max-w-[140px]" title={nodeId}>
+                              {nodeId}
+                            </span>
+                            <span className={`px-1.5 py-0.5 rounded text-[10px] font-semibold ${
+                              result.status === 'completed' ? 'bg-green-100 text-green-800' :
+                              result.status === 'failed' ? 'bg-red-100 text-red-800' :
+                              result.status === 'running' ? 'bg-blue-100 text-blue-800' :
+                              'bg-gray-100 text-gray-800'
+                            }`}>
+                              {result.status}
+                            </span>
+                          </div>
+                          {result.duration !== undefined && (
+                            <div className="text-gray-500">
+                              Duration: {result.duration}ms
+                            </div>
+                          )}
+                          {result.output !== undefined && result.output !== null && (
+                            <div className="text-gray-600 mt-1 truncate" title={typeof result.output === 'string' ? result.output : JSON.stringify(result.output)}>
+                              Output: {String(typeof result.output === 'string'
+                                ? result.output.slice(0, 80)
+                                : JSON.stringify(result.output).slice(0, 80))}
+                              {((typeof result.output === 'string' ? result.output.length : JSON.stringify(result.output).length) > 80) && '…'}
+                            </div>
+                          )}
+                          {result.error && (
+                            <div className="text-red-600 mt-1">
+                              Error: {result.error}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 )}
 
                 {/* Execution ID */}
-                {executionState.executionId && (
-                  <div className="mt-2 text-xs text-gray-400">
-                    Execution: {executionState.executionId}
+                {currentWorkflowId && (
+                  <div className="mt-3 text-xs text-gray-400">
+                    Workflow: {currentWorkflowId}
                   </div>
                 )}
               </div>
