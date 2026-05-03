@@ -26375,3 +26375,549 @@ TimeoutError
 {"error": "unsupported operand type(s) for -: 'datetime.datetime' and 'Field'", "event": "scheduler_error", "level": "error", "logger": "ChronosSchedulerMixin", "timestamp": "2026-05-03T02:11:25.292993Z", "service": "heretek-swarm", "environment": "development", "lineno": 75, "filename": "scheduler.py", "func_name": "_run_scheduler"}
 {"error": "unsupported operand type(s) for -: 'datetime.datetime' and 'Field'", "event": "scheduler_error", "level": "error", "logger": "ChronosSchedulerMixin", "timestamp": "2026-05-03T02:11:26.299762Z", "service": "heretek-swarm", "environment": "development", "lineno": 75, "filename": "scheduler.py", "func_name": "_run_scheduler"}
 {"error": "unsupported operand type(s) for -: 'datetime.datetime' and 'Field'", "event": "scheduler_error", "level": "error", "logger": "ChronosSchedulerMixin", "timestamp": "2026-05-03T02:11:27.311285Z", "service": "heretek-swarm", "environment": "development", "lineno": 75, "filename": "scheduler.py", "func_name": "_run_scheduler"}
+{"agent_id": "steward", "error": "OPENAI_API_KEY environment variable is not set. Agent construction requires a valid OpenAI-compatible API key.", "event": "actor_spawn_failed", "level": "error", "logger": "api.main", "timestamp": "2026-05-03T02:17:17.771950Z", "service": "heretek-swarm", "environment": "development", "lineno": 277, "func_name": "_spawn_all_agents", "filename": "main.py"}
+{"agent_id": "alpha", "error": "OPENAI_API_KEY environment variable is not set. Agent construction requires a valid OpenAI-compatible API key.", "event": "actor_spawn_failed", "level": "error", "logger": "api.main", "timestamp": "2026-05-03T02:17:17.772614Z", "service": "heretek-swarm", "environment": "development", "lineno": 277, "func_name": "_spawn_all_agents", "filename": "main.py"}
+{"agent_id": "beta", "error": "OPENAI_API_KEY environment variable is not set. Agent construction requires a valid OpenAI-compatible API key.", "event": "actor_spawn_failed", "level": "error", "logger": "api.main", "timestamp": "2026-05-03T02:17:17.773158Z", "service": "heretek-swarm", "environment": "development", "lineno": 277, "func_name": "_spawn_all_agents", "filename": "main.py"}
+{"agent_id": "charlie", "error": "OPENAI_API_KEY environment variable is not set. Agent construction requires a valid OpenAI-compatible API key.", "event": "actor_spawn_failed", "level": "error", "logger": "api.main", "timestamp": "2026-05-03T02:17:17.773714Z", "service": "heretek-swarm", "environment": "development", "lineno": 277, "func_name": "_spawn_all_agents", "filename": "main.py"}
+{"agent_id": "historian", "error": "OPENAI_API_KEY environment variable is not set. Agent construction requires a valid OpenAI-compatible API key.", "event": "actor_spawn_failed", "level": "error", "logger": "api.main", "timestamp": "2026-05-03T02:17:17.777179Z", "service": "heretek-swarm", "environment": "development", "lineno": 277, "func_name": "_spawn_all_agents", "filename": "main.py"}
+{"event": "[metis] File system load failed: Expecting value: line 4 column 20 (char 68)", "level": "error", "logger": "AgentActor", "timestamp": "2026-05-03T02:17:17.777856Z", "service": "heretek-swarm", "environment": "development", "lineno": 283, "func_name": "load_state", "filename": "state_management.py", "exception": "Traceback (most recent call last):\n  File \"C:\\Users\\Derek\\Desktop\\heretek-swarm\\heretek-swarm\\heretek_swarm\\actors\\base\\state_management.py\", line 266, in load_state\n    loaded_state = json.load(f)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 298, in load\n    return loads(fp.read(),\n        cls=cls, object_hook=object_hook,\n        parse_float=parse_float, parse_int=parse_int,\n        parse_constant=parse_constant, object_pairs_hook=object_pairs_hook, **kw)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 352, in loads\n    return _default_decoder.decode(s)\n           ~~~~~~~~~~~~~~~~~~~~~~~^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 345, in decode\n    obj, end = self.raw_decode(s, idx=_w(s, 0).end())\n               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 363, in raw_decode\n    raise JSONDecodeError(\"Expecting value\", s, err.value) from None\njson.decoder.JSONDecodeError: Expecting value: line 4 column 20 (char 68)"}
+{"agent_id": "metis", "error": "OPENAI_API_KEY environment variable is not set. Agent construction requires a valid OpenAI-compatible API key.", "event": "actor_spawn_failed", "level": "error", "logger": "api.main", "timestamp": "2026-05-03T02:17:17.779473Z", "service": "heretek-swarm", "environment": "development", "lineno": 277, "func_name": "_spawn_all_agents", "filename": "main.py"}
+{"event": "[empath] File system load failed: Expecting value: line 4 column 20 (char 68)", "level": "error", "logger": "AgentActor", "timestamp": "2026-05-03T02:17:17.780139Z", "service": "heretek-swarm", "environment": "development", "lineno": 283, "func_name": "load_state", "filename": "state_management.py", "exception": "Traceback (most recent call last):\n  File \"C:\\Users\\Derek\\Desktop\\heretek-swarm\\heretek-swarm\\heretek_swarm\\actors\\base\\state_management.py\", line 266, in load_state\n    loaded_state = json.load(f)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 298, in load\n    return loads(fp.read(),\n        cls=cls, object_hook=object_hook,\n        parse_float=parse_float, parse_int=parse_int,\n        parse_constant=parse_constant, object_pairs_hook=object_pairs_hook, **kw)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 352, in loads\n    return _default_decoder.decode(s)\n           ~~~~~~~~~~~~~~~~~~~~~~~^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 345, in decode\n    obj, end = self.raw_decode(s, idx=_w(s, 0).end())\n               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 363, in raw_decode\n    raise JSONDecodeError(\"Expecting value\", s, err.value) from None\njson.decoder.JSONDecodeError: Expecting value: line 4 column 20 (char 68)"}
+{"agent_id": "empath", "error": "OPENAI_API_KEY environment variable is not set. Agent construction requires a valid OpenAI-compatible API key.", "event": "actor_spawn_failed", "level": "error", "logger": "api.main", "timestamp": "2026-05-03T02:17:17.781210Z", "service": "heretek-swarm", "environment": "development", "lineno": 277, "func_name": "_spawn_all_agents", "filename": "main.py"}
+{"event": "[perceiver] File system load failed: Expecting value: line 4 column 20 (char 68)", "level": "error", "logger": "AgentActor", "timestamp": "2026-05-03T02:17:17.782060Z", "service": "heretek-swarm", "environment": "development", "lineno": 283, "func_name": "load_state", "filename": "state_management.py", "exception": "Traceback (most recent call last):\n  File \"C:\\Users\\Derek\\Desktop\\heretek-swarm\\heretek-swarm\\heretek_swarm\\actors\\base\\state_management.py\", line 266, in load_state\n    loaded_state = json.load(f)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 298, in load\n    return loads(fp.read(),\n        cls=cls, object_hook=object_hook,\n        parse_float=parse_float, parse_int=parse_int,\n        parse_constant=parse_constant, object_pairs_hook=object_pairs_hook, **kw)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 352, in loads\n    return _default_decoder.decode(s)\n           ~~~~~~~~~~~~~~~~~~~~~~~^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 345, in decode\n    obj, end = self.raw_decode(s, idx=_w(s, 0).end())\n               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 363, in raw_decode\n    raise JSONDecodeError(\"Expecting value\", s, err.value) from None\njson.decoder.JSONDecodeError: Expecting value: line 4 column 20 (char 68)"}
+{"agent_id": "perceiver", "error": "OPENAI_API_KEY environment variable is not set. Agent construction requires a valid OpenAI-compatible API key.", "event": "actor_spawn_failed", "level": "error", "logger": "api.main", "timestamp": "2026-05-03T02:17:17.783027Z", "service": "heretek-swarm", "environment": "development", "lineno": 277, "func_name": "_spawn_all_agents", "filename": "main.py"}
+{"event": "[echo] File system load failed: Expecting value: line 4 column 20 (char 68)", "level": "error", "logger": "AgentActor", "timestamp": "2026-05-03T02:17:17.783547Z", "service": "heretek-swarm", "environment": "development", "lineno": 283, "func_name": "load_state", "filename": "state_management.py", "exception": "Traceback (most recent call last):\n  File \"C:\\Users\\Derek\\Desktop\\heretek-swarm\\heretek-swarm\\heretek_swarm\\actors\\base\\state_management.py\", line 266, in load_state\n    loaded_state = json.load(f)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 298, in load\n    return loads(fp.read(),\n        cls=cls, object_hook=object_hook,\n        parse_float=parse_float, parse_int=parse_int,\n        parse_constant=parse_constant, object_pairs_hook=object_pairs_hook, **kw)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 352, in loads\n    return _default_decoder.decode(s)\n           ~~~~~~~~~~~~~~~~~~~~~~~^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 345, in decode\n    obj, end = self.raw_decode(s, idx=_w(s, 0).end())\n               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 363, in raw_decode\n    raise JSONDecodeError(\"Expecting value\", s, err.value) from None\njson.decoder.JSONDecodeError: Expecting value: line 4 column 20 (char 68)"}
+{"agent_id": "echo", "error": "OPENAI_API_KEY environment variable is not set. Agent construction requires a valid OpenAI-compatible API key.", "event": "actor_spawn_failed", "level": "error", "logger": "api.main", "timestamp": "2026-05-03T02:17:17.784359Z", "service": "heretek-swarm", "environment": "development", "lineno": 277, "func_name": "_spawn_all_agents", "filename": "main.py"}
+{"event": "[explorer] File system load failed: Expecting value: line 4 column 20 (char 68)", "level": "error", "logger": "AgentActor", "timestamp": "2026-05-03T02:17:17.785119Z", "service": "heretek-swarm", "environment": "development", "lineno": 283, "func_name": "load_state", "filename": "state_management.py", "exception": "Traceback (most recent call last):\n  File \"C:\\Users\\Derek\\Desktop\\heretek-swarm\\heretek-swarm\\heretek_swarm\\actors\\base\\state_management.py\", line 266, in load_state\n    loaded_state = json.load(f)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 298, in load\n    return loads(fp.read(),\n        cls=cls, object_hook=object_hook,\n        parse_float=parse_float, parse_int=parse_int,\n        parse_constant=parse_constant, object_pairs_hook=object_pairs_hook, **kw)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 352, in loads\n    return _default_decoder.decode(s)\n           ~~~~~~~~~~~~~~~~~~~~~~~^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 345, in decode\n    obj, end = self.raw_decode(s, idx=_w(s, 0).end())\n               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 363, in raw_decode\n    raise JSONDecodeError(\"Expecting value\", s, err.value) from None\njson.decoder.JSONDecodeError: Expecting value: line 4 column 20 (char 68)"}
+{"agent_id": "explorer", "error": "OPENAI_API_KEY environment variable is not set. Agent construction requires a valid OpenAI-compatible API key.", "event": "actor_spawn_failed", "level": "error", "logger": "api.main", "timestamp": "2026-05-03T02:17:17.785854Z", "service": "heretek-swarm", "environment": "development", "lineno": 277, "func_name": "_spawn_all_agents", "filename": "main.py"}
+{"event": "[examiner] File system load failed: Expecting value: line 4 column 20 (char 68)", "level": "error", "logger": "AgentActor", "timestamp": "2026-05-03T02:17:17.786317Z", "service": "heretek-swarm", "environment": "development", "lineno": 283, "func_name": "load_state", "filename": "state_management.py", "exception": "Traceback (most recent call last):\n  File \"C:\\Users\\Derek\\Desktop\\heretek-swarm\\heretek-swarm\\heretek_swarm\\actors\\base\\state_management.py\", line 266, in load_state\n    loaded_state = json.load(f)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 298, in load\n    return loads(fp.read(),\n        cls=cls, object_hook=object_hook,\n        parse_float=parse_float, parse_int=parse_int,\n        parse_constant=parse_constant, object_pairs_hook=object_pairs_hook, **kw)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 352, in loads\n    return _default_decoder.decode(s)\n           ~~~~~~~~~~~~~~~~~~~~~~~^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 345, in decode\n    obj, end = self.raw_decode(s, idx=_w(s, 0).end())\n               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 363, in raw_decode\n    raise JSONDecodeError(\"Expecting value\", s, err.value) from None\njson.decoder.JSONDecodeError: Expecting value: line 4 column 20 (char 68)"}
+{"agent_id": "examiner", "error": "OPENAI_API_KEY environment variable is not set. Agent construction requires a valid OpenAI-compatible API key.", "event": "actor_spawn_failed", "level": "error", "logger": "api.main", "timestamp": "2026-05-03T02:17:17.787024Z", "service": "heretek-swarm", "environment": "development", "lineno": 277, "func_name": "_spawn_all_agents", "filename": "main.py"}
+{"event": "[dreamer] File system load failed: Expecting value: line 4 column 20 (char 68)", "level": "error", "logger": "AgentActor", "timestamp": "2026-05-03T02:17:17.787478Z", "service": "heretek-swarm", "environment": "development", "lineno": 283, "func_name": "load_state", "filename": "state_management.py", "exception": "Traceback (most recent call last):\n  File \"C:\\Users\\Derek\\Desktop\\heretek-swarm\\heretek-swarm\\heretek_swarm\\actors\\base\\state_management.py\", line 266, in load_state\n    loaded_state = json.load(f)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 298, in load\n    return loads(fp.read(),\n        cls=cls, object_hook=object_hook,\n        parse_float=parse_float, parse_int=parse_int,\n        parse_constant=parse_constant, object_pairs_hook=object_pairs_hook, **kw)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 352, in loads\n    return _default_decoder.decode(s)\n           ~~~~~~~~~~~~~~~~~~~~~~~^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 345, in decode\n    obj, end = self.raw_decode(s, idx=_w(s, 0).end())\n               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 363, in raw_decode\n    raise JSONDecodeError(\"Expecting value\", s, err.value) from None\njson.decoder.JSONDecodeError: Expecting value: line 4 column 20 (char 68)"}
+{"agent_id": "dreamer", "error": "OPENAI_API_KEY environment variable is not set. Agent construction requires a valid OpenAI-compatible API key.", "event": "actor_spawn_failed", "level": "error", "logger": "api.main", "timestamp": "2026-05-03T02:17:17.788158Z", "service": "heretek-swarm", "environment": "development", "lineno": 277, "func_name": "_spawn_all_agents", "filename": "main.py"}
+{"event": "[coder] File system load failed: Expecting value: line 4 column 20 (char 68)", "level": "error", "logger": "AgentActor", "timestamp": "2026-05-03T02:17:17.790469Z", "service": "heretek-swarm", "environment": "development", "lineno": 283, "func_name": "load_state", "filename": "state_management.py", "exception": "Traceback (most recent call last):\n  File \"C:\\Users\\Derek\\Desktop\\heretek-swarm\\heretek-swarm\\heretek_swarm\\actors\\base\\state_management.py\", line 266, in load_state\n    loaded_state = json.load(f)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 298, in load\n    return loads(fp.read(),\n        cls=cls, object_hook=object_hook,\n        parse_float=parse_float, parse_int=parse_int,\n        parse_constant=parse_constant, object_pairs_hook=object_pairs_hook, **kw)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 352, in loads\n    return _default_decoder.decode(s)\n           ~~~~~~~~~~~~~~~~~~~~~~~^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 345, in decode\n    obj, end = self.raw_decode(s, idx=_w(s, 0).end())\n               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 363, in raw_decode\n    raise JSONDecodeError(\"Expecting value\", s, err.value) from None\njson.decoder.JSONDecodeError: Expecting value: line 4 column 20 (char 68)"}
+{"agent_id": "coder", "error": "OPENAI_API_KEY environment variable is not set. Agent construction requires a valid OpenAI-compatible API key.", "event": "actor_spawn_failed", "level": "error", "logger": "api.main", "timestamp": "2026-05-03T02:17:17.791295Z", "service": "heretek-swarm", "environment": "development", "lineno": 277, "func_name": "_spawn_all_agents", "filename": "main.py"}
+{"event": "[sentinel] File system load failed: Expecting value: line 4 column 20 (char 68)", "level": "error", "logger": "AgentActor", "timestamp": "2026-05-03T02:17:17.792284Z", "service": "heretek-swarm", "environment": "development", "lineno": 283, "func_name": "load_state", "filename": "state_management.py", "exception": "Traceback (most recent call last):\n  File \"C:\\Users\\Derek\\Desktop\\heretek-swarm\\heretek-swarm\\heretek_swarm\\actors\\base\\state_management.py\", line 266, in load_state\n    loaded_state = json.load(f)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 298, in load\n    return loads(fp.read(),\n        cls=cls, object_hook=object_hook,\n        parse_float=parse_float, parse_int=parse_int,\n        parse_constant=parse_constant, object_pairs_hook=object_pairs_hook, **kw)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 352, in loads\n    return _default_decoder.decode(s)\n           ~~~~~~~~~~~~~~~~~~~~~~~^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 345, in decode\n    obj, end = self.raw_decode(s, idx=_w(s, 0).end())\n               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 363, in raw_decode\n    raise JSONDecodeError(\"Expecting value\", s, err.value) from None\njson.decoder.JSONDecodeError: Expecting value: line 4 column 20 (char 68)"}
+{"agent_id": "sentinel", "error": "OPENAI_API_KEY environment variable is not set. Agent construction requires a valid OpenAI-compatible API key.", "event": "actor_spawn_failed", "level": "error", "logger": "api.main", "timestamp": "2026-05-03T02:17:17.793062Z", "service": "heretek-swarm", "environment": "development", "lineno": 277, "func_name": "_spawn_all_agents", "filename": "main.py"}
+{"event": "[sentinel-prime] File system load failed: Expecting value: line 4 column 20 (char 68)", "level": "error", "logger": "AgentActor", "timestamp": "2026-05-03T02:17:17.842999Z", "service": "heretek-swarm", "environment": "development", "lineno": 283, "func_name": "load_state", "filename": "state_management.py", "exception": "Traceback (most recent call last):\n  File \"C:\\Users\\Derek\\Desktop\\heretek-swarm\\heretek-swarm\\heretek_swarm\\actors\\base\\state_management.py\", line 266, in load_state\n    loaded_state = json.load(f)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 298, in load\n    return loads(fp.read(),\n        cls=cls, object_hook=object_hook,\n        parse_float=parse_float, parse_int=parse_int,\n        parse_constant=parse_constant, object_pairs_hook=object_pairs_hook, **kw)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 352, in loads\n    return _default_decoder.decode(s)\n           ~~~~~~~~~~~~~~~~~~~~~~~^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 345, in decode\n    obj, end = self.raw_decode(s, idx=_w(s, 0).end())\n               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 363, in raw_decode\n    raise JSONDecodeError(\"Expecting value\", s, err.value) from None\njson.decoder.JSONDecodeError: Expecting value: line 4 column 20 (char 68)"}
+{"agent_id": "sentinel-prime", "error": "OPENAI_API_KEY environment variable is not set. Agent construction requires a valid OpenAI-compatible API key.", "event": "actor_spawn_failed", "level": "error", "logger": "api.main", "timestamp": "2026-05-03T02:17:17.843755Z", "service": "heretek-swarm", "environment": "development", "lineno": 277, "func_name": "_spawn_all_agents", "filename": "main.py"}
+{"event": "[arbiter] File system load failed: Expecting value: line 4 column 20 (char 68)", "level": "error", "logger": "AgentActor", "timestamp": "2026-05-03T02:17:17.845335Z", "service": "heretek-swarm", "environment": "development", "lineno": 283, "func_name": "load_state", "filename": "state_management.py", "exception": "Traceback (most recent call last):\n  File \"C:\\Users\\Derek\\Desktop\\heretek-swarm\\heretek-swarm\\heretek_swarm\\actors\\base\\state_management.py\", line 266, in load_state\n    loaded_state = json.load(f)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 298, in load\n    return loads(fp.read(),\n        cls=cls, object_hook=object_hook,\n        parse_float=parse_float, parse_int=parse_int,\n        parse_constant=parse_constant, object_pairs_hook=object_pairs_hook, **kw)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 352, in loads\n    return _default_decoder.decode(s)\n           ~~~~~~~~~~~~~~~~~~~~~~~^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 345, in decode\n    obj, end = self.raw_decode(s, idx=_w(s, 0).end())\n               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 363, in raw_decode\n    raise JSONDecodeError(\"Expecting value\", s, err.value) from None\njson.decoder.JSONDecodeError: Expecting value: line 4 column 20 (char 68)"}
+{"agent_id": "arbiter", "error": "OPENAI_API_KEY environment variable is not set. Agent construction requires a valid OpenAI-compatible API key.", "event": "actor_spawn_failed", "level": "error", "logger": "api.main", "timestamp": "2026-05-03T02:17:17.846093Z", "service": "heretek-swarm", "environment": "development", "lineno": 277, "func_name": "_spawn_all_agents", "filename": "main.py"}
+{"event": "[coordinator] File system load failed: Expecting value: line 4 column 20 (char 68)", "level": "error", "logger": "AgentActor", "timestamp": "2026-05-03T02:17:17.846664Z", "service": "heretek-swarm", "environment": "development", "lineno": 283, "func_name": "load_state", "filename": "state_management.py", "exception": "Traceback (most recent call last):\n  File \"C:\\Users\\Derek\\Desktop\\heretek-swarm\\heretek-swarm\\heretek_swarm\\actors\\base\\state_management.py\", line 266, in load_state\n    loaded_state = json.load(f)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 298, in load\n    return loads(fp.read(),\n        cls=cls, object_hook=object_hook,\n        parse_float=parse_float, parse_int=parse_int,\n        parse_constant=parse_constant, object_pairs_hook=object_pairs_hook, **kw)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 352, in loads\n    return _default_decoder.decode(s)\n           ~~~~~~~~~~~~~~~~~~~~~~~^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 345, in decode\n    obj, end = self.raw_decode(s, idx=_w(s, 0).end())\n               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 363, in raw_decode\n    raise JSONDecodeError(\"Expecting value\", s, err.value) from None\njson.decoder.JSONDecodeError: Expecting value: line 4 column 20 (char 68)"}
+{"agent_id": "coordinator", "error": "OPENAI_API_KEY environment variable is not set. Agent construction requires a valid OpenAI-compatible API key.", "event": "actor_spawn_failed", "level": "error", "logger": "api.main", "timestamp": "2026-05-03T02:17:17.847383Z", "service": "heretek-swarm", "environment": "development", "lineno": 277, "func_name": "_spawn_all_agents", "filename": "main.py"}
+{"event": "[nexus] File system load failed: Expecting value: line 4 column 20 (char 68)", "level": "error", "logger": "AgentActor", "timestamp": "2026-05-03T02:17:17.848113Z", "service": "heretek-swarm", "environment": "development", "lineno": 283, "func_name": "load_state", "filename": "state_management.py", "exception": "Traceback (most recent call last):\n  File \"C:\\Users\\Derek\\Desktop\\heretek-swarm\\heretek-swarm\\heretek_swarm\\actors\\base\\state_management.py\", line 266, in load_state\n    loaded_state = json.load(f)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 298, in load\n    return loads(fp.read(),\n        cls=cls, object_hook=object_hook,\n        parse_float=parse_float, parse_int=parse_int,\n        parse_constant=parse_constant, object_pairs_hook=object_pairs_hook, **kw)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 352, in loads\n    return _default_decoder.decode(s)\n           ~~~~~~~~~~~~~~~~~~~~~~~^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 345, in decode\n    obj, end = self.raw_decode(s, idx=_w(s, 0).end())\n               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 363, in raw_decode\n    raise JSONDecodeError(\"Expecting value\", s, err.value) from None\njson.decoder.JSONDecodeError: Expecting value: line 4 column 20 (char 68)"}
+{"agent_id": "nexus", "error": "OPENAI_API_KEY environment variable is not set. Agent construction requires a valid OpenAI-compatible API key.", "event": "actor_spawn_failed", "level": "error", "logger": "api.main", "timestamp": "2026-05-03T02:17:17.848845Z", "service": "heretek-swarm", "environment": "development", "lineno": 277, "func_name": "_spawn_all_agents", "filename": "main.py"}
+{"event": "[catalyst] File system load failed: Expecting value: line 4 column 20 (char 68)", "level": "error", "logger": "AgentActor", "timestamp": "2026-05-03T02:17:17.849240Z", "service": "heretek-swarm", "environment": "development", "lineno": 283, "func_name": "load_state", "filename": "state_management.py", "exception": "Traceback (most recent call last):\n  File \"C:\\Users\\Derek\\Desktop\\heretek-swarm\\heretek-swarm\\heretek_swarm\\actors\\base\\state_management.py\", line 266, in load_state\n    loaded_state = json.load(f)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 298, in load\n    return loads(fp.read(),\n        cls=cls, object_hook=object_hook,\n        parse_float=parse_float, parse_int=parse_int,\n        parse_constant=parse_constant, object_pairs_hook=object_pairs_hook, **kw)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 352, in loads\n    return _default_decoder.decode(s)\n           ~~~~~~~~~~~~~~~~~~~~~~~^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 345, in decode\n    obj, end = self.raw_decode(s, idx=_w(s, 0).end())\n               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 363, in raw_decode\n    raise JSONDecodeError(\"Expecting value\", s, err.value) from None\njson.decoder.JSONDecodeError: Expecting value: line 4 column 20 (char 68)"}
+{"agent_id": "catalyst", "error": "OPENAI_API_KEY environment variable is not set. Agent construction requires a valid OpenAI-compatible API key.", "event": "actor_spawn_failed", "level": "error", "logger": "api.main", "timestamp": "2026-05-03T02:17:17.849904Z", "service": "heretek-swarm", "environment": "development", "lineno": 277, "func_name": "_spawn_all_agents", "filename": "main.py"}
+{"event": "[chronos] File system load failed: Expecting value: line 4 column 18 (char 66)", "level": "error", "logger": "AgentActor", "timestamp": "2026-05-03T02:17:17.850316Z", "service": "heretek-swarm", "environment": "development", "lineno": 283, "func_name": "load_state", "filename": "state_management.py", "exception": "Traceback (most recent call last):\n  File \"C:\\Users\\Derek\\Desktop\\heretek-swarm\\heretek-swarm\\heretek_swarm\\actors\\base\\state_management.py\", line 266, in load_state\n    loaded_state = json.load(f)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 298, in load\n    return loads(fp.read(),\n        cls=cls, object_hook=object_hook,\n        parse_float=parse_float, parse_int=parse_int,\n        parse_constant=parse_constant, object_pairs_hook=object_pairs_hook, **kw)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 352, in loads\n    return _default_decoder.decode(s)\n           ~~~~~~~~~~~~~~~~~~~~~~~^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 345, in decode\n    obj, end = self.raw_decode(s, idx=_w(s, 0).end())\n               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 363, in raw_decode\n    raise JSONDecodeError(\"Expecting value\", s, err.value) from None\njson.decoder.JSONDecodeError: Expecting value: line 4 column 18 (char 66)"}
+{"agent_id": "chronos", "error": "OPENAI_API_KEY environment variable is not set. Agent construction requires a valid OpenAI-compatible API key.", "event": "actor_spawn_failed", "level": "error", "logger": "api.main", "timestamp": "2026-05-03T02:17:17.851035Z", "service": "heretek-swarm", "environment": "development", "lineno": 277, "func_name": "_spawn_all_agents", "filename": "main.py"}
+{"event": "[prism] File system load failed: Expecting value: line 4 column 20 (char 68)", "level": "error", "logger": "AgentActor", "timestamp": "2026-05-03T02:17:17.851565Z", "service": "heretek-swarm", "environment": "development", "lineno": 283, "func_name": "load_state", "filename": "state_management.py", "exception": "Traceback (most recent call last):\n  File \"C:\\Users\\Derek\\Desktop\\heretek-swarm\\heretek-swarm\\heretek_swarm\\actors\\base\\state_management.py\", line 266, in load_state\n    loaded_state = json.load(f)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 298, in load\n    return loads(fp.read(),\n        cls=cls, object_hook=object_hook,\n        parse_float=parse_float, parse_int=parse_int,\n        parse_constant=parse_constant, object_pairs_hook=object_pairs_hook, **kw)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 352, in loads\n    return _default_decoder.decode(s)\n           ~~~~~~~~~~~~~~~~~~~~~~~^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 345, in decode\n    obj, end = self.raw_decode(s, idx=_w(s, 0).end())\n               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 363, in raw_decode\n    raise JSONDecodeError(\"Expecting value\", s, err.value) from None\njson.decoder.JSONDecodeError: Expecting value: line 4 column 20 (char 68)"}
+{"agent_id": "prism", "error": "OPENAI_API_KEY environment variable is not set. Agent construction requires a valid OpenAI-compatible API key.", "event": "actor_spawn_failed", "level": "error", "logger": "api.main", "timestamp": "2026-05-03T02:17:17.852484Z", "service": "heretek-swarm", "environment": "development", "lineno": 277, "func_name": "_spawn_all_agents", "filename": "main.py"}
+{"event": "[habit-forge] File system load failed: Expecting value: line 4 column 20 (char 68)", "level": "error", "logger": "AgentActor", "timestamp": "2026-05-03T02:17:17.853073Z", "service": "heretek-swarm", "environment": "development", "lineno": 283, "func_name": "load_state", "filename": "state_management.py", "exception": "Traceback (most recent call last):\n  File \"C:\\Users\\Derek\\Desktop\\heretek-swarm\\heretek-swarm\\heretek_swarm\\actors\\base\\state_management.py\", line 266, in load_state\n    loaded_state = json.load(f)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 298, in load\n    return loads(fp.read(),\n        cls=cls, object_hook=object_hook,\n        parse_float=parse_float, parse_int=parse_int,\n        parse_constant=parse_constant, object_pairs_hook=object_pairs_hook, **kw)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 352, in loads\n    return _default_decoder.decode(s)\n           ~~~~~~~~~~~~~~~~~~~~~~~^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 345, in decode\n    obj, end = self.raw_decode(s, idx=_w(s, 0).end())\n               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 363, in raw_decode\n    raise JSONDecodeError(\"Expecting value\", s, err.value) from None\njson.decoder.JSONDecodeError: Expecting value: line 4 column 20 (char 68)"}
+{"agent_id": "habit-forge", "error": "OPENAI_API_KEY environment variable is not set. Agent construction requires a valid OpenAI-compatible API key.", "event": "actor_spawn_failed", "level": "error", "logger": "api.main", "timestamp": "2026-05-03T02:17:17.854071Z", "service": "heretek-swarm", "environment": "development", "lineno": 277, "func_name": "_spawn_all_agents", "filename": "main.py"}
+{"event": "[perceiver-plus] File system load failed: Expecting value: line 4 column 20 (char 68)", "level": "error", "logger": "AgentActor", "timestamp": "2026-05-03T02:17:17.854675Z", "service": "heretek-swarm", "environment": "development", "lineno": 283, "func_name": "load_state", "filename": "state_management.py", "exception": "Traceback (most recent call last):\n  File \"C:\\Users\\Derek\\Desktop\\heretek-swarm\\heretek-swarm\\heretek_swarm\\actors\\base\\state_management.py\", line 266, in load_state\n    loaded_state = json.load(f)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 298, in load\n    return loads(fp.read(),\n        cls=cls, object_hook=object_hook,\n        parse_float=parse_float, parse_int=parse_int,\n        parse_constant=parse_constant, object_pairs_hook=object_pairs_hook, **kw)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 352, in loads\n    return _default_decoder.decode(s)\n           ~~~~~~~~~~~~~~~~~~~~~~~^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 345, in decode\n    obj, end = self.raw_decode(s, idx=_w(s, 0).end())\n               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 363, in raw_decode\n    raise JSONDecodeError(\"Expecting value\", s, err.value) from None\njson.decoder.JSONDecodeError: Expecting value: line 4 column 20 (char 68)"}
+{"agent_id": "perceiver-plus", "error": "OPENAI_API_KEY environment variable is not set. Agent construction requires a valid OpenAI-compatible API key.", "event": "actor_spawn_failed", "level": "error", "logger": "api.main", "timestamp": "2026-05-03T02:17:17.855657Z", "service": "heretek-swarm", "environment": "development", "lineno": 277, "func_name": "_spawn_all_agents", "filename": "main.py"}
+{"error": "unsupported operand type(s) for -: 'datetime.datetime' and 'Field'", "event": "scheduler_error", "level": "error", "logger": "ChronosSchedulerMixin", "timestamp": "2026-05-03T02:17:17.857949Z", "service": "heretek-swarm", "environment": "development", "lineno": 75, "func_name": "_run_scheduler", "filename": "scheduler.py"}
+{"error": "unsupported operand type(s) for -: 'datetime.datetime' and 'Field'", "event": "scheduler_error", "level": "error", "logger": "ChronosSchedulerMixin", "timestamp": "2026-05-03T02:17:18.860371Z", "service": "heretek-swarm", "environment": "development", "lineno": 75, "func_name": "_run_scheduler", "filename": "scheduler.py"}
+nats: encountered error
+Traceback (most recent call last):
+  File "C:\Python314\Lib\asyncio\tasks.py", line 488, in wait_for
+    return await fut
+           ^^^^^^^^^
+  File "C:\Python314\Lib\asyncio\streams.py", line 48, in open_connection
+    transport, _ = await loop.create_connection(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        lambda: protocol, host, port, **kwds)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\asyncio\base_events.py", line 1143, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+        exceptions, addrinfo, laddr_infos)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\asyncio\base_events.py", line 1042, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "C:\Python314\Lib\asyncio\proactor_events.py", line 728, in sock_connect
+    return await self._proactor.connect(sock, address)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+asyncio.exceptions.CancelledError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\Derek\AppData\Roaming\Python\Python314\site-packages\nats\aio\client.py", line 1437, in _select_next_server
+    await self._connect_to_server(s)
+  File "C:\Users\Derek\AppData\Roaming\Python\Python314\site-packages\nats\aio\client.py", line 1406, in _connect_to_server
+    await self._transport.connect(
+    ...<3 lines>...
+    )
+  File "C:\Users\Derek\AppData\Roaming\Python\Python314\site-packages\nats\aio\transport.py", line 117, in connect
+    r, w = await asyncio.wait_for(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "C:\Python314\Lib\asyncio\tasks.py", line 487, in wait_for
+    async with timeouts.timeout(timeout):
+               ~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Python314\Lib\asyncio\timeouts.py", line 114, in __aexit__
+    raise TimeoutError from exc_val
+TimeoutError
+{"error": "unsupported operand type(s) for -: 'datetime.datetime' and 'Field'", "event": "scheduler_error", "level": "error", "logger": "ChronosSchedulerMixin", "timestamp": "2026-05-03T02:17:19.875494Z", "service": "heretek-swarm", "environment": "development", "lineno": 75, "func_name": "_run_scheduler", "filename": "scheduler.py"}
+{"error": "unsupported operand type(s) for -: 'datetime.datetime' and 'Field'", "event": "scheduler_error", "level": "error", "logger": "ChronosSchedulerMixin", "timestamp": "2026-05-03T02:17:20.885758Z", "service": "heretek-swarm", "environment": "development", "lineno": 75, "func_name": "_run_scheduler", "filename": "scheduler.py"}
+{"error": "unsupported operand type(s) for -: 'datetime.datetime' and 'Field'", "event": "scheduler_error", "level": "error", "logger": "ChronosSchedulerMixin", "timestamp": "2026-05-03T02:17:21.896365Z", "service": "heretek-swarm", "environment": "development", "lineno": 75, "func_name": "_run_scheduler", "filename": "scheduler.py"}
+nats: encountered error
+Traceback (most recent call last):
+  File "C:\Python314\Lib\asyncio\tasks.py", line 488, in wait_for
+    return await fut
+           ^^^^^^^^^
+  File "C:\Python314\Lib\asyncio\streams.py", line 48, in open_connection
+    transport, _ = await loop.create_connection(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        lambda: protocol, host, port, **kwds)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\asyncio\base_events.py", line 1143, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+        exceptions, addrinfo, laddr_infos)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\asyncio\base_events.py", line 1042, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "C:\Python314\Lib\asyncio\proactor_events.py", line 728, in sock_connect
+    return await self._proactor.connect(sock, address)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+asyncio.exceptions.CancelledError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\Derek\AppData\Roaming\Python\Python314\site-packages\nats\aio\client.py", line 1437, in _select_next_server
+    await self._connect_to_server(s)
+  File "C:\Users\Derek\AppData\Roaming\Python\Python314\site-packages\nats\aio\client.py", line 1406, in _connect_to_server
+    await self._transport.connect(
+    ...<3 lines>...
+    )
+  File "C:\Users\Derek\AppData\Roaming\Python\Python314\site-packages\nats\aio\transport.py", line 117, in connect
+    r, w = await asyncio.wait_for(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "C:\Python314\Lib\asyncio\tasks.py", line 487, in wait_for
+    async with timeouts.timeout(timeout):
+               ~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Python314\Lib\asyncio\timeouts.py", line 114, in __aexit__
+    raise TimeoutError from exc_val
+TimeoutError
+{"error": "unsupported operand type(s) for -: 'datetime.datetime' and 'Field'", "event": "scheduler_error", "level": "error", "logger": "ChronosSchedulerMixin", "timestamp": "2026-05-03T02:17:22.903385Z", "service": "heretek-swarm", "environment": "development", "lineno": 75, "func_name": "_run_scheduler", "filename": "scheduler.py"}
+{"error": "unsupported operand type(s) for -: 'datetime.datetime' and 'Field'", "event": "scheduler_error", "level": "error", "logger": "ChronosSchedulerMixin", "timestamp": "2026-05-03T02:17:23.913645Z", "service": "heretek-swarm", "environment": "development", "lineno": 75, "func_name": "_run_scheduler", "filename": "scheduler.py"}
+{"error": "unsupported operand type(s) for -: 'datetime.datetime' and 'Field'", "event": "scheduler_error", "level": "error", "logger": "ChronosSchedulerMixin", "timestamp": "2026-05-03T02:17:24.919022Z", "service": "heretek-swarm", "environment": "development", "lineno": 75, "func_name": "_run_scheduler", "filename": "scheduler.py"}
+nats: encountered error
+Traceback (most recent call last):
+  File "C:\Python314\Lib\asyncio\tasks.py", line 488, in wait_for
+    return await fut
+           ^^^^^^^^^
+  File "C:\Python314\Lib\asyncio\streams.py", line 48, in open_connection
+    transport, _ = await loop.create_connection(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        lambda: protocol, host, port, **kwds)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\asyncio\base_events.py", line 1143, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+        exceptions, addrinfo, laddr_infos)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\asyncio\base_events.py", line 1042, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "C:\Python314\Lib\asyncio\proactor_events.py", line 728, in sock_connect
+    return await self._proactor.connect(sock, address)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+asyncio.exceptions.CancelledError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\Derek\AppData\Roaming\Python\Python314\site-packages\nats\aio\client.py", line 1437, in _select_next_server
+    await self._connect_to_server(s)
+  File "C:\Users\Derek\AppData\Roaming\Python\Python314\site-packages\nats\aio\client.py", line 1406, in _connect_to_server
+    await self._transport.connect(
+    ...<3 lines>...
+    )
+  File "C:\Users\Derek\AppData\Roaming\Python\Python314\site-packages\nats\aio\transport.py", line 117, in connect
+    r, w = await asyncio.wait_for(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "C:\Python314\Lib\asyncio\tasks.py", line 487, in wait_for
+    async with timeouts.timeout(timeout):
+               ~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Python314\Lib\asyncio\timeouts.py", line 114, in __aexit__
+    raise TimeoutError from exc_val
+TimeoutError
+{"error": "unsupported operand type(s) for -: 'datetime.datetime' and 'Field'", "event": "scheduler_error", "level": "error", "logger": "ChronosSchedulerMixin", "timestamp": "2026-05-03T02:17:25.926435Z", "service": "heretek-swarm", "environment": "development", "lineno": 75, "func_name": "_run_scheduler", "filename": "scheduler.py"}
+{"error": "unsupported operand type(s) for -: 'datetime.datetime' and 'Field'", "event": "scheduler_error", "level": "error", "logger": "ChronosSchedulerMixin", "timestamp": "2026-05-03T02:17:26.933369Z", "service": "heretek-swarm", "environment": "development", "lineno": 75, "func_name": "_run_scheduler", "filename": "scheduler.py"}
+{"error": "unsupported operand type(s) for -: 'datetime.datetime' and 'Field'", "event": "scheduler_error", "level": "error", "logger": "ChronosSchedulerMixin", "timestamp": "2026-05-03T02:17:27.943258Z", "service": "heretek-swarm", "environment": "development", "lineno": 75, "func_name": "_run_scheduler", "filename": "scheduler.py"}
+nats: encountered error
+Traceback (most recent call last):
+  File "C:\Python314\Lib\asyncio\tasks.py", line 488, in wait_for
+    return await fut
+           ^^^^^^^^^
+  File "C:\Python314\Lib\asyncio\streams.py", line 48, in open_connection
+    transport, _ = await loop.create_connection(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        lambda: protocol, host, port, **kwds)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\asyncio\base_events.py", line 1143, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+        exceptions, addrinfo, laddr_infos)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\asyncio\base_events.py", line 1042, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "C:\Python314\Lib\asyncio\proactor_events.py", line 728, in sock_connect
+    return await self._proactor.connect(sock, address)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+asyncio.exceptions.CancelledError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\Derek\AppData\Roaming\Python\Python314\site-packages\nats\aio\client.py", line 1437, in _select_next_server
+    await self._connect_to_server(s)
+  File "C:\Users\Derek\AppData\Roaming\Python\Python314\site-packages\nats\aio\client.py", line 1406, in _connect_to_server
+    await self._transport.connect(
+    ...<3 lines>...
+    )
+  File "C:\Users\Derek\AppData\Roaming\Python\Python314\site-packages\nats\aio\transport.py", line 117, in connect
+    r, w = await asyncio.wait_for(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "C:\Python314\Lib\asyncio\tasks.py", line 487, in wait_for
+    async with timeouts.timeout(timeout):
+               ~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Python314\Lib\asyncio\timeouts.py", line 114, in __aexit__
+    raise TimeoutError from exc_val
+TimeoutError
+{"error": "unsupported operand type(s) for -: 'datetime.datetime' and 'Field'", "event": "scheduler_error", "level": "error", "logger": "ChronosSchedulerMixin", "timestamp": "2026-05-03T02:17:28.951273Z", "service": "heretek-swarm", "environment": "development", "lineno": 75, "func_name": "_run_scheduler", "filename": "scheduler.py"}
+{"error": "unsupported operand type(s) for -: 'datetime.datetime' and 'Field'", "event": "scheduler_error", "level": "error", "logger": "ChronosSchedulerMixin", "timestamp": "2026-05-03T02:17:29.962047Z", "service": "heretek-swarm", "environment": "development", "lineno": 75, "func_name": "_run_scheduler", "filename": "scheduler.py"}
+{"error": "unsupported operand type(s) for -: 'datetime.datetime' and 'Field'", "event": "scheduler_error", "level": "error", "logger": "ChronosSchedulerMixin", "timestamp": "2026-05-03T02:17:30.974149Z", "service": "heretek-swarm", "environment": "development", "lineno": 75, "func_name": "_run_scheduler", "filename": "scheduler.py"}
+nats: encountered error
+Traceback (most recent call last):
+  File "C:\Python314\Lib\asyncio\tasks.py", line 488, in wait_for
+    return await fut
+           ^^^^^^^^^
+  File "C:\Python314\Lib\asyncio\streams.py", line 48, in open_connection
+    transport, _ = await loop.create_connection(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        lambda: protocol, host, port, **kwds)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\asyncio\base_events.py", line 1143, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+        exceptions, addrinfo, laddr_infos)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\asyncio\base_events.py", line 1042, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "C:\Python314\Lib\asyncio\proactor_events.py", line 728, in sock_connect
+    return await self._proactor.connect(sock, address)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+asyncio.exceptions.CancelledError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\Derek\AppData\Roaming\Python\Python314\site-packages\nats\aio\client.py", line 1437, in _select_next_server
+    await self._connect_to_server(s)
+  File "C:\Users\Derek\AppData\Roaming\Python\Python314\site-packages\nats\aio\client.py", line 1406, in _connect_to_server
+    await self._transport.connect(
+    ...<3 lines>...
+    )
+  File "C:\Users\Derek\AppData\Roaming\Python\Python314\site-packages\nats\aio\transport.py", line 117, in connect
+    r, w = await asyncio.wait_for(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "C:\Python314\Lib\asyncio\tasks.py", line 487, in wait_for
+    async with timeouts.timeout(timeout):
+               ~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Python314\Lib\asyncio\timeouts.py", line 114, in __aexit__
+    raise TimeoutError from exc_val
+TimeoutError
+{"error": "unsupported operand type(s) for -: 'datetime.datetime' and 'Field'", "event": "scheduler_error", "level": "error", "logger": "ChronosSchedulerMixin", "timestamp": "2026-05-03T02:17:31.984181Z", "service": "heretek-swarm", "environment": "development", "lineno": 75, "func_name": "_run_scheduler", "filename": "scheduler.py"}
+{"error": "unsupported operand type(s) for -: 'datetime.datetime' and 'Field'", "event": "scheduler_error", "level": "error", "logger": "ChronosSchedulerMixin", "timestamp": "2026-05-03T02:17:32.987464Z", "service": "heretek-swarm", "environment": "development", "lineno": 75, "func_name": "_run_scheduler", "filename": "scheduler.py"}
+{"error": "unsupported operand type(s) for -: 'datetime.datetime' and 'Field'", "event": "scheduler_error", "level": "error", "logger": "ChronosSchedulerMixin", "timestamp": "2026-05-03T02:17:33.999269Z", "service": "heretek-swarm", "environment": "development", "lineno": 75, "func_name": "_run_scheduler", "filename": "scheduler.py"}
+{"agent_id": "steward", "error": "OPENAI_API_KEY environment variable is not set. Agent construction requires a valid OpenAI-compatible API key.", "event": "actor_spawn_failed", "level": "error", "logger": "api.main", "timestamp": "2026-05-03T02:17:56.399301Z", "service": "heretek-swarm", "environment": "development", "lineno": 277, "filename": "main.py", "func_name": "_spawn_all_agents"}
+{"agent_id": "alpha", "error": "OPENAI_API_KEY environment variable is not set. Agent construction requires a valid OpenAI-compatible API key.", "event": "actor_spawn_failed", "level": "error", "logger": "api.main", "timestamp": "2026-05-03T02:17:56.399948Z", "service": "heretek-swarm", "environment": "development", "lineno": 277, "filename": "main.py", "func_name": "_spawn_all_agents"}
+{"agent_id": "beta", "error": "OPENAI_API_KEY environment variable is not set. Agent construction requires a valid OpenAI-compatible API key.", "event": "actor_spawn_failed", "level": "error", "logger": "api.main", "timestamp": "2026-05-03T02:17:56.400500Z", "service": "heretek-swarm", "environment": "development", "lineno": 277, "filename": "main.py", "func_name": "_spawn_all_agents"}
+{"agent_id": "charlie", "error": "OPENAI_API_KEY environment variable is not set. Agent construction requires a valid OpenAI-compatible API key.", "event": "actor_spawn_failed", "level": "error", "logger": "api.main", "timestamp": "2026-05-03T02:17:56.401082Z", "service": "heretek-swarm", "environment": "development", "lineno": 277, "filename": "main.py", "func_name": "_spawn_all_agents"}
+{"agent_id": "historian", "error": "OPENAI_API_KEY environment variable is not set. Agent construction requires a valid OpenAI-compatible API key.", "event": "actor_spawn_failed", "level": "error", "logger": "api.main", "timestamp": "2026-05-03T02:17:56.404278Z", "service": "heretek-swarm", "environment": "development", "lineno": 277, "filename": "main.py", "func_name": "_spawn_all_agents"}
+{"event": "[metis] File system load failed: Expecting value: line 4 column 20 (char 68)", "level": "error", "logger": "AgentActor", "timestamp": "2026-05-03T02:17:56.404944Z", "service": "heretek-swarm", "environment": "development", "lineno": 283, "filename": "state_management.py", "func_name": "load_state", "exception": "Traceback (most recent call last):\n  File \"C:\\Users\\Derek\\Desktop\\heretek-swarm\\heretek-swarm\\heretek_swarm\\actors\\base\\state_management.py\", line 266, in load_state\n    loaded_state = json.load(f)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 298, in load\n    return loads(fp.read(),\n        cls=cls, object_hook=object_hook,\n        parse_float=parse_float, parse_int=parse_int,\n        parse_constant=parse_constant, object_pairs_hook=object_pairs_hook, **kw)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 352, in loads\n    return _default_decoder.decode(s)\n           ~~~~~~~~~~~~~~~~~~~~~~~^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 345, in decode\n    obj, end = self.raw_decode(s, idx=_w(s, 0).end())\n               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 363, in raw_decode\n    raise JSONDecodeError(\"Expecting value\", s, err.value) from None\njson.decoder.JSONDecodeError: Expecting value: line 4 column 20 (char 68)"}
+{"agent_id": "metis", "error": "OPENAI_API_KEY environment variable is not set. Agent construction requires a valid OpenAI-compatible API key.", "event": "actor_spawn_failed", "level": "error", "logger": "api.main", "timestamp": "2026-05-03T02:17:56.406478Z", "service": "heretek-swarm", "environment": "development", "lineno": 277, "filename": "main.py", "func_name": "_spawn_all_agents"}
+{"event": "[empath] File system load failed: Expecting value: line 4 column 20 (char 68)", "level": "error", "logger": "AgentActor", "timestamp": "2026-05-03T02:17:56.407058Z", "service": "heretek-swarm", "environment": "development", "lineno": 283, "filename": "state_management.py", "func_name": "load_state", "exception": "Traceback (most recent call last):\n  File \"C:\\Users\\Derek\\Desktop\\heretek-swarm\\heretek-swarm\\heretek_swarm\\actors\\base\\state_management.py\", line 266, in load_state\n    loaded_state = json.load(f)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 298, in load\n    return loads(fp.read(),\n        cls=cls, object_hook=object_hook,\n        parse_float=parse_float, parse_int=parse_int,\n        parse_constant=parse_constant, object_pairs_hook=object_pairs_hook, **kw)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 352, in loads\n    return _default_decoder.decode(s)\n           ~~~~~~~~~~~~~~~~~~~~~~~^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 345, in decode\n    obj, end = self.raw_decode(s, idx=_w(s, 0).end())\n               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 363, in raw_decode\n    raise JSONDecodeError(\"Expecting value\", s, err.value) from None\njson.decoder.JSONDecodeError: Expecting value: line 4 column 20 (char 68)"}
+{"agent_id": "empath", "error": "OPENAI_API_KEY environment variable is not set. Agent construction requires a valid OpenAI-compatible API key.", "event": "actor_spawn_failed", "level": "error", "logger": "api.main", "timestamp": "2026-05-03T02:17:56.407816Z", "service": "heretek-swarm", "environment": "development", "lineno": 277, "filename": "main.py", "func_name": "_spawn_all_agents"}
+{"event": "[perceiver] File system load failed: Expecting value: line 4 column 20 (char 68)", "level": "error", "logger": "AgentActor", "timestamp": "2026-05-03T02:17:56.408426Z", "service": "heretek-swarm", "environment": "development", "lineno": 283, "filename": "state_management.py", "func_name": "load_state", "exception": "Traceback (most recent call last):\n  File \"C:\\Users\\Derek\\Desktop\\heretek-swarm\\heretek-swarm\\heretek_swarm\\actors\\base\\state_management.py\", line 266, in load_state\n    loaded_state = json.load(f)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 298, in load\n    return loads(fp.read(),\n        cls=cls, object_hook=object_hook,\n        parse_float=parse_float, parse_int=parse_int,\n        parse_constant=parse_constant, object_pairs_hook=object_pairs_hook, **kw)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 352, in loads\n    return _default_decoder.decode(s)\n           ~~~~~~~~~~~~~~~~~~~~~~~^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 345, in decode\n    obj, end = self.raw_decode(s, idx=_w(s, 0).end())\n               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 363, in raw_decode\n    raise JSONDecodeError(\"Expecting value\", s, err.value) from None\njson.decoder.JSONDecodeError: Expecting value: line 4 column 20 (char 68)"}
+{"agent_id": "perceiver", "error": "OPENAI_API_KEY environment variable is not set. Agent construction requires a valid OpenAI-compatible API key.", "event": "actor_spawn_failed", "level": "error", "logger": "api.main", "timestamp": "2026-05-03T02:17:56.409195Z", "service": "heretek-swarm", "environment": "development", "lineno": 277, "filename": "main.py", "func_name": "_spawn_all_agents"}
+{"event": "[echo] File system load failed: Expecting value: line 4 column 20 (char 68)", "level": "error", "logger": "AgentActor", "timestamp": "2026-05-03T02:17:56.409651Z", "service": "heretek-swarm", "environment": "development", "lineno": 283, "filename": "state_management.py", "func_name": "load_state", "exception": "Traceback (most recent call last):\n  File \"C:\\Users\\Derek\\Desktop\\heretek-swarm\\heretek-swarm\\heretek_swarm\\actors\\base\\state_management.py\", line 266, in load_state\n    loaded_state = json.load(f)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 298, in load\n    return loads(fp.read(),\n        cls=cls, object_hook=object_hook,\n        parse_float=parse_float, parse_int=parse_int,\n        parse_constant=parse_constant, object_pairs_hook=object_pairs_hook, **kw)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 352, in loads\n    return _default_decoder.decode(s)\n           ~~~~~~~~~~~~~~~~~~~~~~~^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 345, in decode\n    obj, end = self.raw_decode(s, idx=_w(s, 0).end())\n               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 363, in raw_decode\n    raise JSONDecodeError(\"Expecting value\", s, err.value) from None\njson.decoder.JSONDecodeError: Expecting value: line 4 column 20 (char 68)"}
+{"agent_id": "echo", "error": "OPENAI_API_KEY environment variable is not set. Agent construction requires a valid OpenAI-compatible API key.", "event": "actor_spawn_failed", "level": "error", "logger": "api.main", "timestamp": "2026-05-03T02:17:56.410430Z", "service": "heretek-swarm", "environment": "development", "lineno": 277, "filename": "main.py", "func_name": "_spawn_all_agents"}
+{"event": "[explorer] File system load failed: Expecting value: line 4 column 20 (char 68)", "level": "error", "logger": "AgentActor", "timestamp": "2026-05-03T02:17:56.411112Z", "service": "heretek-swarm", "environment": "development", "lineno": 283, "filename": "state_management.py", "func_name": "load_state", "exception": "Traceback (most recent call last):\n  File \"C:\\Users\\Derek\\Desktop\\heretek-swarm\\heretek-swarm\\heretek_swarm\\actors\\base\\state_management.py\", line 266, in load_state\n    loaded_state = json.load(f)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 298, in load\n    return loads(fp.read(),\n        cls=cls, object_hook=object_hook,\n        parse_float=parse_float, parse_int=parse_int,\n        parse_constant=parse_constant, object_pairs_hook=object_pairs_hook, **kw)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 352, in loads\n    return _default_decoder.decode(s)\n           ~~~~~~~~~~~~~~~~~~~~~~~^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 345, in decode\n    obj, end = self.raw_decode(s, idx=_w(s, 0).end())\n               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 363, in raw_decode\n    raise JSONDecodeError(\"Expecting value\", s, err.value) from None\njson.decoder.JSONDecodeError: Expecting value: line 4 column 20 (char 68)"}
+{"agent_id": "explorer", "error": "OPENAI_API_KEY environment variable is not set. Agent construction requires a valid OpenAI-compatible API key.", "event": "actor_spawn_failed", "level": "error", "logger": "api.main", "timestamp": "2026-05-03T02:17:56.411874Z", "service": "heretek-swarm", "environment": "development", "lineno": 277, "filename": "main.py", "func_name": "_spawn_all_agents"}
+{"event": "[examiner] File system load failed: Expecting value: line 4 column 20 (char 68)", "level": "error", "logger": "AgentActor", "timestamp": "2026-05-03T02:17:56.412362Z", "service": "heretek-swarm", "environment": "development", "lineno": 283, "filename": "state_management.py", "func_name": "load_state", "exception": "Traceback (most recent call last):\n  File \"C:\\Users\\Derek\\Desktop\\heretek-swarm\\heretek-swarm\\heretek_swarm\\actors\\base\\state_management.py\", line 266, in load_state\n    loaded_state = json.load(f)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 298, in load\n    return loads(fp.read(),\n        cls=cls, object_hook=object_hook,\n        parse_float=parse_float, parse_int=parse_int,\n        parse_constant=parse_constant, object_pairs_hook=object_pairs_hook, **kw)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 352, in loads\n    return _default_decoder.decode(s)\n           ~~~~~~~~~~~~~~~~~~~~~~~^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 345, in decode\n    obj, end = self.raw_decode(s, idx=_w(s, 0).end())\n               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 363, in raw_decode\n    raise JSONDecodeError(\"Expecting value\", s, err.value) from None\njson.decoder.JSONDecodeError: Expecting value: line 4 column 20 (char 68)"}
+{"agent_id": "examiner", "error": "OPENAI_API_KEY environment variable is not set. Agent construction requires a valid OpenAI-compatible API key.", "event": "actor_spawn_failed", "level": "error", "logger": "api.main", "timestamp": "2026-05-03T02:17:56.413184Z", "service": "heretek-swarm", "environment": "development", "lineno": 277, "filename": "main.py", "func_name": "_spawn_all_agents"}
+{"event": "[dreamer] File system load failed: Expecting value: line 4 column 20 (char 68)", "level": "error", "logger": "AgentActor", "timestamp": "2026-05-03T02:17:56.413759Z", "service": "heretek-swarm", "environment": "development", "lineno": 283, "filename": "state_management.py", "func_name": "load_state", "exception": "Traceback (most recent call last):\n  File \"C:\\Users\\Derek\\Desktop\\heretek-swarm\\heretek-swarm\\heretek_swarm\\actors\\base\\state_management.py\", line 266, in load_state\n    loaded_state = json.load(f)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 298, in load\n    return loads(fp.read(),\n        cls=cls, object_hook=object_hook,\n        parse_float=parse_float, parse_int=parse_int,\n        parse_constant=parse_constant, object_pairs_hook=object_pairs_hook, **kw)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 352, in loads\n    return _default_decoder.decode(s)\n           ~~~~~~~~~~~~~~~~~~~~~~~^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 345, in decode\n    obj, end = self.raw_decode(s, idx=_w(s, 0).end())\n               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 363, in raw_decode\n    raise JSONDecodeError(\"Expecting value\", s, err.value) from None\njson.decoder.JSONDecodeError: Expecting value: line 4 column 20 (char 68)"}
+{"agent_id": "dreamer", "error": "OPENAI_API_KEY environment variable is not set. Agent construction requires a valid OpenAI-compatible API key.", "event": "actor_spawn_failed", "level": "error", "logger": "api.main", "timestamp": "2026-05-03T02:17:56.414583Z", "service": "heretek-swarm", "environment": "development", "lineno": 277, "filename": "main.py", "func_name": "_spawn_all_agents"}
+{"event": "[coder] File system load failed: Expecting value: line 4 column 20 (char 68)", "level": "error", "logger": "AgentActor", "timestamp": "2026-05-03T02:17:56.417190Z", "service": "heretek-swarm", "environment": "development", "lineno": 283, "filename": "state_management.py", "func_name": "load_state", "exception": "Traceback (most recent call last):\n  File \"C:\\Users\\Derek\\Desktop\\heretek-swarm\\heretek-swarm\\heretek_swarm\\actors\\base\\state_management.py\", line 266, in load_state\n    loaded_state = json.load(f)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 298, in load\n    return loads(fp.read(),\n        cls=cls, object_hook=object_hook,\n        parse_float=parse_float, parse_int=parse_int,\n        parse_constant=parse_constant, object_pairs_hook=object_pairs_hook, **kw)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 352, in loads\n    return _default_decoder.decode(s)\n           ~~~~~~~~~~~~~~~~~~~~~~~^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 345, in decode\n    obj, end = self.raw_decode(s, idx=_w(s, 0).end())\n               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 363, in raw_decode\n    raise JSONDecodeError(\"Expecting value\", s, err.value) from None\njson.decoder.JSONDecodeError: Expecting value: line 4 column 20 (char 68)"}
+{"agent_id": "coder", "error": "OPENAI_API_KEY environment variable is not set. Agent construction requires a valid OpenAI-compatible API key.", "event": "actor_spawn_failed", "level": "error", "logger": "api.main", "timestamp": "2026-05-03T02:17:56.417976Z", "service": "heretek-swarm", "environment": "development", "lineno": 277, "filename": "main.py", "func_name": "_spawn_all_agents"}
+{"event": "[sentinel] File system load failed: Expecting value: line 4 column 20 (char 68)", "level": "error", "logger": "AgentActor", "timestamp": "2026-05-03T02:17:56.419223Z", "service": "heretek-swarm", "environment": "development", "lineno": 283, "filename": "state_management.py", "func_name": "load_state", "exception": "Traceback (most recent call last):\n  File \"C:\\Users\\Derek\\Desktop\\heretek-swarm\\heretek-swarm\\heretek_swarm\\actors\\base\\state_management.py\", line 266, in load_state\n    loaded_state = json.load(f)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 298, in load\n    return loads(fp.read(),\n        cls=cls, object_hook=object_hook,\n        parse_float=parse_float, parse_int=parse_int,\n        parse_constant=parse_constant, object_pairs_hook=object_pairs_hook, **kw)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 352, in loads\n    return _default_decoder.decode(s)\n           ~~~~~~~~~~~~~~~~~~~~~~~^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 345, in decode\n    obj, end = self.raw_decode(s, idx=_w(s, 0).end())\n               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 363, in raw_decode\n    raise JSONDecodeError(\"Expecting value\", s, err.value) from None\njson.decoder.JSONDecodeError: Expecting value: line 4 column 20 (char 68)"}
+{"agent_id": "sentinel", "error": "OPENAI_API_KEY environment variable is not set. Agent construction requires a valid OpenAI-compatible API key.", "event": "actor_spawn_failed", "level": "error", "logger": "api.main", "timestamp": "2026-05-03T02:17:56.420055Z", "service": "heretek-swarm", "environment": "development", "lineno": 277, "filename": "main.py", "func_name": "_spawn_all_agents"}
+{"event": "[sentinel-prime] File system load failed: Expecting value: line 4 column 20 (char 68)", "level": "error", "logger": "AgentActor", "timestamp": "2026-05-03T02:17:56.469306Z", "service": "heretek-swarm", "environment": "development", "lineno": 283, "filename": "state_management.py", "func_name": "load_state", "exception": "Traceback (most recent call last):\n  File \"C:\\Users\\Derek\\Desktop\\heretek-swarm\\heretek-swarm\\heretek_swarm\\actors\\base\\state_management.py\", line 266, in load_state\n    loaded_state = json.load(f)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 298, in load\n    return loads(fp.read(),\n        cls=cls, object_hook=object_hook,\n        parse_float=parse_float, parse_int=parse_int,\n        parse_constant=parse_constant, object_pairs_hook=object_pairs_hook, **kw)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 352, in loads\n    return _default_decoder.decode(s)\n           ~~~~~~~~~~~~~~~~~~~~~~~^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 345, in decode\n    obj, end = self.raw_decode(s, idx=_w(s, 0).end())\n               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 363, in raw_decode\n    raise JSONDecodeError(\"Expecting value\", s, err.value) from None\njson.decoder.JSONDecodeError: Expecting value: line 4 column 20 (char 68)"}
+{"agent_id": "sentinel-prime", "error": "OPENAI_API_KEY environment variable is not set. Agent construction requires a valid OpenAI-compatible API key.", "event": "actor_spawn_failed", "level": "error", "logger": "api.main", "timestamp": "2026-05-03T02:17:56.470220Z", "service": "heretek-swarm", "environment": "development", "lineno": 277, "filename": "main.py", "func_name": "_spawn_all_agents"}
+{"event": "[arbiter] File system load failed: Expecting value: line 4 column 20 (char 68)", "level": "error", "logger": "AgentActor", "timestamp": "2026-05-03T02:17:56.471811Z", "service": "heretek-swarm", "environment": "development", "lineno": 283, "filename": "state_management.py", "func_name": "load_state", "exception": "Traceback (most recent call last):\n  File \"C:\\Users\\Derek\\Desktop\\heretek-swarm\\heretek-swarm\\heretek_swarm\\actors\\base\\state_management.py\", line 266, in load_state\n    loaded_state = json.load(f)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 298, in load\n    return loads(fp.read(),\n        cls=cls, object_hook=object_hook,\n        parse_float=parse_float, parse_int=parse_int,\n        parse_constant=parse_constant, object_pairs_hook=object_pairs_hook, **kw)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 352, in loads\n    return _default_decoder.decode(s)\n           ~~~~~~~~~~~~~~~~~~~~~~~^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 345, in decode\n    obj, end = self.raw_decode(s, idx=_w(s, 0).end())\n               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 363, in raw_decode\n    raise JSONDecodeError(\"Expecting value\", s, err.value) from None\njson.decoder.JSONDecodeError: Expecting value: line 4 column 20 (char 68)"}
+{"agent_id": "arbiter", "error": "OPENAI_API_KEY environment variable is not set. Agent construction requires a valid OpenAI-compatible API key.", "event": "actor_spawn_failed", "level": "error", "logger": "api.main", "timestamp": "2026-05-03T02:17:56.472590Z", "service": "heretek-swarm", "environment": "development", "lineno": 277, "filename": "main.py", "func_name": "_spawn_all_agents"}
+{"event": "[coordinator] File system load failed: Expecting value: line 4 column 20 (char 68)", "level": "error", "logger": "AgentActor", "timestamp": "2026-05-03T02:17:56.473195Z", "service": "heretek-swarm", "environment": "development", "lineno": 283, "filename": "state_management.py", "func_name": "load_state", "exception": "Traceback (most recent call last):\n  File \"C:\\Users\\Derek\\Desktop\\heretek-swarm\\heretek-swarm\\heretek_swarm\\actors\\base\\state_management.py\", line 266, in load_state\n    loaded_state = json.load(f)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 298, in load\n    return loads(fp.read(),\n        cls=cls, object_hook=object_hook,\n        parse_float=parse_float, parse_int=parse_int,\n        parse_constant=parse_constant, object_pairs_hook=object_pairs_hook, **kw)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 352, in loads\n    return _default_decoder.decode(s)\n           ~~~~~~~~~~~~~~~~~~~~~~~^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 345, in decode\n    obj, end = self.raw_decode(s, idx=_w(s, 0).end())\n               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 363, in raw_decode\n    raise JSONDecodeError(\"Expecting value\", s, err.value) from None\njson.decoder.JSONDecodeError: Expecting value: line 4 column 20 (char 68)"}
+{"agent_id": "coordinator", "error": "OPENAI_API_KEY environment variable is not set. Agent construction requires a valid OpenAI-compatible API key.", "event": "actor_spawn_failed", "level": "error", "logger": "api.main", "timestamp": "2026-05-03T02:17:56.474074Z", "service": "heretek-swarm", "environment": "development", "lineno": 277, "filename": "main.py", "func_name": "_spawn_all_agents"}
+{"event": "[nexus] File system load failed: Expecting value: line 4 column 20 (char 68)", "level": "error", "logger": "AgentActor", "timestamp": "2026-05-03T02:17:56.474946Z", "service": "heretek-swarm", "environment": "development", "lineno": 283, "filename": "state_management.py", "func_name": "load_state", "exception": "Traceback (most recent call last):\n  File \"C:\\Users\\Derek\\Desktop\\heretek-swarm\\heretek-swarm\\heretek_swarm\\actors\\base\\state_management.py\", line 266, in load_state\n    loaded_state = json.load(f)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 298, in load\n    return loads(fp.read(),\n        cls=cls, object_hook=object_hook,\n        parse_float=parse_float, parse_int=parse_int,\n        parse_constant=parse_constant, object_pairs_hook=object_pairs_hook, **kw)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 352, in loads\n    return _default_decoder.decode(s)\n           ~~~~~~~~~~~~~~~~~~~~~~~^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 345, in decode\n    obj, end = self.raw_decode(s, idx=_w(s, 0).end())\n               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 363, in raw_decode\n    raise JSONDecodeError(\"Expecting value\", s, err.value) from None\njson.decoder.JSONDecodeError: Expecting value: line 4 column 20 (char 68)"}
+{"agent_id": "nexus", "error": "OPENAI_API_KEY environment variable is not set. Agent construction requires a valid OpenAI-compatible API key.", "event": "actor_spawn_failed", "level": "error", "logger": "api.main", "timestamp": "2026-05-03T02:17:56.475822Z", "service": "heretek-swarm", "environment": "development", "lineno": 277, "filename": "main.py", "func_name": "_spawn_all_agents"}
+{"event": "[catalyst] File system load failed: Expecting value: line 4 column 20 (char 68)", "level": "error", "logger": "AgentActor", "timestamp": "2026-05-03T02:17:56.476294Z", "service": "heretek-swarm", "environment": "development", "lineno": 283, "filename": "state_management.py", "func_name": "load_state", "exception": "Traceback (most recent call last):\n  File \"C:\\Users\\Derek\\Desktop\\heretek-swarm\\heretek-swarm\\heretek_swarm\\actors\\base\\state_management.py\", line 266, in load_state\n    loaded_state = json.load(f)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 298, in load\n    return loads(fp.read(),\n        cls=cls, object_hook=object_hook,\n        parse_float=parse_float, parse_int=parse_int,\n        parse_constant=parse_constant, object_pairs_hook=object_pairs_hook, **kw)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 352, in loads\n    return _default_decoder.decode(s)\n           ~~~~~~~~~~~~~~~~~~~~~~~^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 345, in decode\n    obj, end = self.raw_decode(s, idx=_w(s, 0).end())\n               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 363, in raw_decode\n    raise JSONDecodeError(\"Expecting value\", s, err.value) from None\njson.decoder.JSONDecodeError: Expecting value: line 4 column 20 (char 68)"}
+{"agent_id": "catalyst", "error": "OPENAI_API_KEY environment variable is not set. Agent construction requires a valid OpenAI-compatible API key.", "event": "actor_spawn_failed", "level": "error", "logger": "api.main", "timestamp": "2026-05-03T02:17:56.477085Z", "service": "heretek-swarm", "environment": "development", "lineno": 277, "filename": "main.py", "func_name": "_spawn_all_agents"}
+{"event": "[chronos] File system load failed: Expecting value: line 4 column 18 (char 66)", "level": "error", "logger": "AgentActor", "timestamp": "2026-05-03T02:17:56.477799Z", "service": "heretek-swarm", "environment": "development", "lineno": 283, "filename": "state_management.py", "func_name": "load_state", "exception": "Traceback (most recent call last):\n  File \"C:\\Users\\Derek\\Desktop\\heretek-swarm\\heretek-swarm\\heretek_swarm\\actors\\base\\state_management.py\", line 266, in load_state\n    loaded_state = json.load(f)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 298, in load\n    return loads(fp.read(),\n        cls=cls, object_hook=object_hook,\n        parse_float=parse_float, parse_int=parse_int,\n        parse_constant=parse_constant, object_pairs_hook=object_pairs_hook, **kw)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 352, in loads\n    return _default_decoder.decode(s)\n           ~~~~~~~~~~~~~~~~~~~~~~~^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 345, in decode\n    obj, end = self.raw_decode(s, idx=_w(s, 0).end())\n               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 363, in raw_decode\n    raise JSONDecodeError(\"Expecting value\", s, err.value) from None\njson.decoder.JSONDecodeError: Expecting value: line 4 column 18 (char 66)"}
+{"agent_id": "chronos", "error": "OPENAI_API_KEY environment variable is not set. Agent construction requires a valid OpenAI-compatible API key.", "event": "actor_spawn_failed", "level": "error", "logger": "api.main", "timestamp": "2026-05-03T02:17:56.478674Z", "service": "heretek-swarm", "environment": "development", "lineno": 277, "filename": "main.py", "func_name": "_spawn_all_agents"}
+{"event": "[prism] File system load failed: Expecting value: line 4 column 20 (char 68)", "level": "error", "logger": "AgentActor", "timestamp": "2026-05-03T02:17:56.479405Z", "service": "heretek-swarm", "environment": "development", "lineno": 283, "filename": "state_management.py", "func_name": "load_state", "exception": "Traceback (most recent call last):\n  File \"C:\\Users\\Derek\\Desktop\\heretek-swarm\\heretek-swarm\\heretek_swarm\\actors\\base\\state_management.py\", line 266, in load_state\n    loaded_state = json.load(f)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 298, in load\n    return loads(fp.read(),\n        cls=cls, object_hook=object_hook,\n        parse_float=parse_float, parse_int=parse_int,\n        parse_constant=parse_constant, object_pairs_hook=object_pairs_hook, **kw)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 352, in loads\n    return _default_decoder.decode(s)\n           ~~~~~~~~~~~~~~~~~~~~~~~^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 345, in decode\n    obj, end = self.raw_decode(s, idx=_w(s, 0).end())\n               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 363, in raw_decode\n    raise JSONDecodeError(\"Expecting value\", s, err.value) from None\njson.decoder.JSONDecodeError: Expecting value: line 4 column 20 (char 68)"}
+{"agent_id": "prism", "error": "OPENAI_API_KEY environment variable is not set. Agent construction requires a valid OpenAI-compatible API key.", "event": "actor_spawn_failed", "level": "error", "logger": "api.main", "timestamp": "2026-05-03T02:17:56.480259Z", "service": "heretek-swarm", "environment": "development", "lineno": 277, "filename": "main.py", "func_name": "_spawn_all_agents"}
+{"event": "[habit-forge] File system load failed: Expecting value: line 4 column 20 (char 68)", "level": "error", "logger": "AgentActor", "timestamp": "2026-05-03T02:17:56.480862Z", "service": "heretek-swarm", "environment": "development", "lineno": 283, "filename": "state_management.py", "func_name": "load_state", "exception": "Traceback (most recent call last):\n  File \"C:\\Users\\Derek\\Desktop\\heretek-swarm\\heretek-swarm\\heretek_swarm\\actors\\base\\state_management.py\", line 266, in load_state\n    loaded_state = json.load(f)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 298, in load\n    return loads(fp.read(),\n        cls=cls, object_hook=object_hook,\n        parse_float=parse_float, parse_int=parse_int,\n        parse_constant=parse_constant, object_pairs_hook=object_pairs_hook, **kw)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 352, in loads\n    return _default_decoder.decode(s)\n           ~~~~~~~~~~~~~~~~~~~~~~~^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 345, in decode\n    obj, end = self.raw_decode(s, idx=_w(s, 0).end())\n               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 363, in raw_decode\n    raise JSONDecodeError(\"Expecting value\", s, err.value) from None\njson.decoder.JSONDecodeError: Expecting value: line 4 column 20 (char 68)"}
+{"agent_id": "habit-forge", "error": "OPENAI_API_KEY environment variable is not set. Agent construction requires a valid OpenAI-compatible API key.", "event": "actor_spawn_failed", "level": "error", "logger": "api.main", "timestamp": "2026-05-03T02:17:56.482109Z", "service": "heretek-swarm", "environment": "development", "lineno": 277, "filename": "main.py", "func_name": "_spawn_all_agents"}
+{"event": "[perceiver-plus] File system load failed: Expecting value: line 4 column 20 (char 68)", "level": "error", "logger": "AgentActor", "timestamp": "2026-05-03T02:17:56.482848Z", "service": "heretek-swarm", "environment": "development", "lineno": 283, "filename": "state_management.py", "func_name": "load_state", "exception": "Traceback (most recent call last):\n  File \"C:\\Users\\Derek\\Desktop\\heretek-swarm\\heretek-swarm\\heretek_swarm\\actors\\base\\state_management.py\", line 266, in load_state\n    loaded_state = json.load(f)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 298, in load\n    return loads(fp.read(),\n        cls=cls, object_hook=object_hook,\n        parse_float=parse_float, parse_int=parse_int,\n        parse_constant=parse_constant, object_pairs_hook=object_pairs_hook, **kw)\n  File \"C:\\Python314\\Lib\\json\\__init__.py\", line 352, in loads\n    return _default_decoder.decode(s)\n           ~~~~~~~~~~~~~~~~~~~~~~~^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 345, in decode\n    obj, end = self.raw_decode(s, idx=_w(s, 0).end())\n               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Python314\\Lib\\json\\decoder.py\", line 363, in raw_decode\n    raise JSONDecodeError(\"Expecting value\", s, err.value) from None\njson.decoder.JSONDecodeError: Expecting value: line 4 column 20 (char 68)"}
+{"agent_id": "perceiver-plus", "error": "OPENAI_API_KEY environment variable is not set. Agent construction requires a valid OpenAI-compatible API key.", "event": "actor_spawn_failed", "level": "error", "logger": "api.main", "timestamp": "2026-05-03T02:17:56.483738Z", "service": "heretek-swarm", "environment": "development", "lineno": 277, "filename": "main.py", "func_name": "_spawn_all_agents"}
+{"error": "unsupported operand type(s) for -: 'datetime.datetime' and 'Field'", "event": "scheduler_error", "level": "error", "logger": "ChronosSchedulerMixin", "timestamp": "2026-05-03T02:17:56.485953Z", "service": "heretek-swarm", "environment": "development", "lineno": 75, "filename": "scheduler.py", "func_name": "_run_scheduler"}
+{"error": "unsupported operand type(s) for -: 'datetime.datetime' and 'Field'", "event": "scheduler_error", "level": "error", "logger": "ChronosSchedulerMixin", "timestamp": "2026-05-03T02:17:57.489116Z", "service": "heretek-swarm", "environment": "development", "lineno": 75, "filename": "scheduler.py", "func_name": "_run_scheduler"}
+nats: encountered error
+Traceback (most recent call last):
+  File "C:\Python314\Lib\asyncio\tasks.py", line 488, in wait_for
+    return await fut
+           ^^^^^^^^^
+  File "C:\Python314\Lib\asyncio\streams.py", line 48, in open_connection
+    transport, _ = await loop.create_connection(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        lambda: protocol, host, port, **kwds)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\asyncio\base_events.py", line 1143, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+        exceptions, addrinfo, laddr_infos)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\asyncio\base_events.py", line 1042, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "C:\Python314\Lib\asyncio\proactor_events.py", line 728, in sock_connect
+    return await self._proactor.connect(sock, address)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+asyncio.exceptions.CancelledError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\Derek\AppData\Roaming\Python\Python314\site-packages\nats\aio\client.py", line 1437, in _select_next_server
+    await self._connect_to_server(s)
+  File "C:\Users\Derek\AppData\Roaming\Python\Python314\site-packages\nats\aio\client.py", line 1406, in _connect_to_server
+    await self._transport.connect(
+    ...<3 lines>...
+    )
+  File "C:\Users\Derek\AppData\Roaming\Python\Python314\site-packages\nats\aio\transport.py", line 117, in connect
+    r, w = await asyncio.wait_for(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "C:\Python314\Lib\asyncio\tasks.py", line 487, in wait_for
+    async with timeouts.timeout(timeout):
+               ~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Python314\Lib\asyncio\timeouts.py", line 114, in __aexit__
+    raise TimeoutError from exc_val
+TimeoutError
+{"error": "unsupported operand type(s) for -: 'datetime.datetime' and 'Field'", "event": "scheduler_error", "level": "error", "logger": "ChronosSchedulerMixin", "timestamp": "2026-05-03T02:17:58.501021Z", "service": "heretek-swarm", "environment": "development", "lineno": 75, "filename": "scheduler.py", "func_name": "_run_scheduler"}
+{"error": "unsupported operand type(s) for -: 'datetime.datetime' and 'Field'", "event": "scheduler_error", "level": "error", "logger": "ChronosSchedulerMixin", "timestamp": "2026-05-03T02:17:59.505459Z", "service": "heretek-swarm", "environment": "development", "lineno": 75, "filename": "scheduler.py", "func_name": "_run_scheduler"}
+{"error": "unsupported operand type(s) for -: 'datetime.datetime' and 'Field'", "event": "scheduler_error", "level": "error", "logger": "ChronosSchedulerMixin", "timestamp": "2026-05-03T02:18:00.516953Z", "service": "heretek-swarm", "environment": "development", "lineno": 75, "filename": "scheduler.py", "func_name": "_run_scheduler"}
+nats: encountered error
+Traceback (most recent call last):
+  File "C:\Python314\Lib\asyncio\tasks.py", line 488, in wait_for
+    return await fut
+           ^^^^^^^^^
+  File "C:\Python314\Lib\asyncio\streams.py", line 48, in open_connection
+    transport, _ = await loop.create_connection(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        lambda: protocol, host, port, **kwds)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\asyncio\base_events.py", line 1143, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+        exceptions, addrinfo, laddr_infos)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\asyncio\base_events.py", line 1042, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "C:\Python314\Lib\asyncio\proactor_events.py", line 728, in sock_connect
+    return await self._proactor.connect(sock, address)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+asyncio.exceptions.CancelledError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\Derek\AppData\Roaming\Python\Python314\site-packages\nats\aio\client.py", line 1437, in _select_next_server
+    await self._connect_to_server(s)
+  File "C:\Users\Derek\AppData\Roaming\Python\Python314\site-packages\nats\aio\client.py", line 1406, in _connect_to_server
+    await self._transport.connect(
+    ...<3 lines>...
+    )
+  File "C:\Users\Derek\AppData\Roaming\Python\Python314\site-packages\nats\aio\transport.py", line 117, in connect
+    r, w = await asyncio.wait_for(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "C:\Python314\Lib\asyncio\tasks.py", line 487, in wait_for
+    async with timeouts.timeout(timeout):
+               ~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Python314\Lib\asyncio\timeouts.py", line 114, in __aexit__
+    raise TimeoutError from exc_val
+TimeoutError
+{"error": "unsupported operand type(s) for -: 'datetime.datetime' and 'Field'", "event": "scheduler_error", "level": "error", "logger": "ChronosSchedulerMixin", "timestamp": "2026-05-03T02:18:01.528085Z", "service": "heretek-swarm", "environment": "development", "lineno": 75, "filename": "scheduler.py", "func_name": "_run_scheduler"}
+{"error": "unsupported operand type(s) for -: 'datetime.datetime' and 'Field'", "event": "scheduler_error", "level": "error", "logger": "ChronosSchedulerMixin", "timestamp": "2026-05-03T02:18:02.539339Z", "service": "heretek-swarm", "environment": "development", "lineno": 75, "filename": "scheduler.py", "func_name": "_run_scheduler"}
+{"error": "unsupported operand type(s) for -: 'datetime.datetime' and 'Field'", "event": "scheduler_error", "level": "error", "logger": "ChronosSchedulerMixin", "timestamp": "2026-05-03T02:18:03.552006Z", "service": "heretek-swarm", "environment": "development", "lineno": 75, "filename": "scheduler.py", "func_name": "_run_scheduler"}
+nats: encountered error
+Traceback (most recent call last):
+  File "C:\Python314\Lib\asyncio\tasks.py", line 488, in wait_for
+    return await fut
+           ^^^^^^^^^
+  File "C:\Python314\Lib\asyncio\streams.py", line 48, in open_connection
+    transport, _ = await loop.create_connection(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        lambda: protocol, host, port, **kwds)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\asyncio\base_events.py", line 1143, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+        exceptions, addrinfo, laddr_infos)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\asyncio\base_events.py", line 1042, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "C:\Python314\Lib\asyncio\proactor_events.py", line 728, in sock_connect
+    return await self._proactor.connect(sock, address)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+asyncio.exceptions.CancelledError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\Derek\AppData\Roaming\Python\Python314\site-packages\nats\aio\client.py", line 1437, in _select_next_server
+    await self._connect_to_server(s)
+  File "C:\Users\Derek\AppData\Roaming\Python\Python314\site-packages\nats\aio\client.py", line 1406, in _connect_to_server
+    await self._transport.connect(
+    ...<3 lines>...
+    )
+  File "C:\Users\Derek\AppData\Roaming\Python\Python314\site-packages\nats\aio\transport.py", line 117, in connect
+    r, w = await asyncio.wait_for(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "C:\Python314\Lib\asyncio\tasks.py", line 487, in wait_for
+    async with timeouts.timeout(timeout):
+               ~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Python314\Lib\asyncio\timeouts.py", line 114, in __aexit__
+    raise TimeoutError from exc_val
+TimeoutError
+{"error": "unsupported operand type(s) for -: 'datetime.datetime' and 'Field'", "event": "scheduler_error", "level": "error", "logger": "ChronosSchedulerMixin", "timestamp": "2026-05-03T02:18:04.561897Z", "service": "heretek-swarm", "environment": "development", "lineno": 75, "filename": "scheduler.py", "func_name": "_run_scheduler"}
+{"error": "unsupported operand type(s) for -: 'datetime.datetime' and 'Field'", "event": "scheduler_error", "level": "error", "logger": "ChronosSchedulerMixin", "timestamp": "2026-05-03T02:18:05.570008Z", "service": "heretek-swarm", "environment": "development", "lineno": 75, "filename": "scheduler.py", "func_name": "_run_scheduler"}
+{"error": "unsupported operand type(s) for -: 'datetime.datetime' and 'Field'", "event": "scheduler_error", "level": "error", "logger": "ChronosSchedulerMixin", "timestamp": "2026-05-03T02:18:06.580027Z", "service": "heretek-swarm", "environment": "development", "lineno": 75, "filename": "scheduler.py", "func_name": "_run_scheduler"}
+nats: encountered error
+Traceback (most recent call last):
+  File "C:\Python314\Lib\asyncio\tasks.py", line 488, in wait_for
+    return await fut
+           ^^^^^^^^^
+  File "C:\Python314\Lib\asyncio\streams.py", line 48, in open_connection
+    transport, _ = await loop.create_connection(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        lambda: protocol, host, port, **kwds)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\asyncio\base_events.py", line 1143, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+        exceptions, addrinfo, laddr_infos)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\asyncio\base_events.py", line 1042, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "C:\Python314\Lib\asyncio\proactor_events.py", line 728, in sock_connect
+    return await self._proactor.connect(sock, address)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+asyncio.exceptions.CancelledError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\Derek\AppData\Roaming\Python\Python314\site-packages\nats\aio\client.py", line 1437, in _select_next_server
+    await self._connect_to_server(s)
+  File "C:\Users\Derek\AppData\Roaming\Python\Python314\site-packages\nats\aio\client.py", line 1406, in _connect_to_server
+    await self._transport.connect(
+    ...<3 lines>...
+    )
+  File "C:\Users\Derek\AppData\Roaming\Python\Python314\site-packages\nats\aio\transport.py", line 117, in connect
+    r, w = await asyncio.wait_for(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "C:\Python314\Lib\asyncio\tasks.py", line 487, in wait_for
+    async with timeouts.timeout(timeout):
+               ~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Python314\Lib\asyncio\timeouts.py", line 114, in __aexit__
+    raise TimeoutError from exc_val
+TimeoutError
+{"error": "unsupported operand type(s) for -: 'datetime.datetime' and 'Field'", "event": "scheduler_error", "level": "error", "logger": "ChronosSchedulerMixin", "timestamp": "2026-05-03T02:18:07.590896Z", "service": "heretek-swarm", "environment": "development", "lineno": 75, "filename": "scheduler.py", "func_name": "_run_scheduler"}
+{"error": "unsupported operand type(s) for -: 'datetime.datetime' and 'Field'", "event": "scheduler_error", "level": "error", "logger": "ChronosSchedulerMixin", "timestamp": "2026-05-03T02:18:08.602061Z", "service": "heretek-swarm", "environment": "development", "lineno": 75, "filename": "scheduler.py", "func_name": "_run_scheduler"}
+{"error": "unsupported operand type(s) for -: 'datetime.datetime' and 'Field'", "event": "scheduler_error", "level": "error", "logger": "ChronosSchedulerMixin", "timestamp": "2026-05-03T02:18:09.614801Z", "service": "heretek-swarm", "environment": "development", "lineno": 75, "filename": "scheduler.py", "func_name": "_run_scheduler"}
+nats: encountered error
+Traceback (most recent call last):
+  File "C:\Python314\Lib\asyncio\tasks.py", line 488, in wait_for
+    return await fut
+           ^^^^^^^^^
+  File "C:\Python314\Lib\asyncio\streams.py", line 48, in open_connection
+    transport, _ = await loop.create_connection(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        lambda: protocol, host, port, **kwds)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\asyncio\base_events.py", line 1143, in create_connection
+    sock = await self._connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+        exceptions, addrinfo, laddr_infos)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\asyncio\base_events.py", line 1042, in _connect_sock
+    await self.sock_connect(sock, address)
+  File "C:\Python314\Lib\asyncio\proactor_events.py", line 728, in sock_connect
+    return await self._proactor.connect(sock, address)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+asyncio.exceptions.CancelledError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\Derek\AppData\Roaming\Python\Python314\site-packages\nats\aio\client.py", line 1437, in _select_next_server
+    await self._connect_to_server(s)
+  File "C:\Users\Derek\AppData\Roaming\Python\Python314\site-packages\nats\aio\client.py", line 1406, in _connect_to_server
+    await self._transport.connect(
+    ...<3 lines>...
+    )
+  File "C:\Users\Derek\AppData\Roaming\Python\Python314\site-packages\nats\aio\transport.py", line 117, in connect
+    r, w = await asyncio.wait_for(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "C:\Python314\Lib\asyncio\tasks.py", line 487, in wait_for
+    async with timeouts.timeout(timeout):
+               ~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Python314\Lib\asyncio\timeouts.py", line 114, in __aexit__
+    raise TimeoutError from exc_val
+TimeoutError
+{"error": "unsupported operand type(s) for -: 'datetime.datetime' and 'Field'", "event": "scheduler_error", "level": "error", "logger": "ChronosSchedulerMixin", "timestamp": "2026-05-03T02:18:10.626637Z", "service": "heretek-swarm", "environment": "development", "lineno": 75, "filename": "scheduler.py", "func_name": "_run_scheduler"}
+{"error": "unsupported operand type(s) for -: 'datetime.datetime' and 'Field'", "event": "scheduler_error", "level": "error", "logger": "ChronosSchedulerMixin", "timestamp": "2026-05-03T02:18:11.636134Z", "service": "heretek-swarm", "environment": "development", "lineno": 75, "filename": "scheduler.py", "func_name": "_run_scheduler"}
+{"error": "unsupported operand type(s) for -: 'datetime.datetime' and 'Field'", "event": "scheduler_error", "level": "error", "logger": "ChronosSchedulerMixin", "timestamp": "2026-05-03T02:18:12.648995Z", "service": "heretek-swarm", "environment": "development", "lineno": 75, "filename": "scheduler.py", "func_name": "_run_scheduler"}
