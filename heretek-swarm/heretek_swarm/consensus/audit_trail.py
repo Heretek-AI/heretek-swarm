@@ -12,9 +12,16 @@ The audit_models.py module contains shared dataclass definitions.
 """
 
 from datetime import UTC, datetime
+from pathlib import Path
 from typing import Any
+import json
+import queue
+import threading
 
 import structlog
+
+# JSONL file for --no-infra mode audit trail
+_CONSENSUS_AUDIT_FILE = Path(".heretek/consensus_audit.jsonl")
 
 from .audit_models import (
     ArgumentRecord,
@@ -77,11 +84,114 @@ class ConsensusAuditTrail:
         self.query_count = 0
         self.total_query_time_ms = 0.0
 
+        # JSONL writer infrastructure (--no-infra mode)
+        self._jsonl_queue: queue.Queue[dict[str, Any]] = queue.Queue()
+        self._writer_thread: threading.Thread | None = None
+        self._writer_stop = threading.Event()
+
         logger.info(
             "ConsensusAuditTrail initialized",
             backend=storage_backend,
             retention=retention_days,
         )
+
+    # ------------------------------------------------------------------------
+    # Initialization & JSONL Writer (--no-infra mode)
+    # ------------------------------------------------------------------------
+
+    def initialize(self) -> None:
+        """Start the background JSONL writer thread when in jsonl mode.
+
+        Call this after construction when storage_backend == "jsonl".
+        For in-memory mode, this is a no-op.
+        """
+        if self.storage_backend == "jsonl":
+            self._writer_stop.clear()
+            self._writer_thread = threading.Thread(
+                target=self._jsonl_writer,
+                name="consensus-audit-jsonl-writer",
+                daemon=True,
+            )
+            self._writer_thread.start()
+            logger.info("JSONL audit writer thread started")
+
+    def _jsonl_writer(self) -> None:
+        """Drain ``_jsonl_queue`` and write each event as a JSON line to
+        ``_CONSENSUS_AUDIT_FILE``.
+
+        Runs as a background thread started during ``initialize()``.
+        The file is opened/closed per write (safe for concurrent readers).
+        """
+        while not self._writer_stop.is_set():
+            try:
+                record = self._jsonl_queue.get(timeout=0.5)
+            except queue.Empty:
+                continue
+
+            try:
+                line = json.dumps(record, default=str, ensure_ascii=False)
+                self._write_jsonl_line(_CONSENSUS_AUDIT_FILE, line)
+                logger.debug(
+                    "audit_jsonl_write",
+                    event_type=record.get("event_type", "unknown"),
+                )
+            except TypeError as exc:
+                logger.error(
+                    "audit_jsonl_error",
+                    error=str(exc),
+                    record_keys=list(record.keys()) if isinstance(record, dict) else None,
+                )
+            except OSError as exc:
+                logger.error(
+                    "audit_jsonl_error",
+                    error=str(exc),
+                    path=str(_CONSENSUS_AUDIT_FILE),
+                )
+            finally:
+                self._jsonl_queue.task_done()
+
+        # Drain remaining items after stop signal
+        while not self._jsonl_queue.empty():
+            try:
+                record = self._jsonl_queue.get_nowait()
+                line = json.dumps(record, default=str, ensure_ascii=False)
+                self._write_jsonl_line(_CONSENSUS_AUDIT_FILE, line)
+                logger.debug("audit_jsonl_flush", event_type=record.get("event_type", "unknown"))
+            except (TypeError, OSError, queue.Empty):
+                break
+            finally:
+                self._jsonl_queue.task_done()
+
+    @staticmethod
+    def _write_jsonl_line(path: Path, line: str) -> None:
+        """Synchronous file-write helper for JSONL audit records."""
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with open(str(path), "a", encoding="utf-8") as f:
+            f.write(line)
+            f.write("\n")
+
+    def _record_to_jsonl(self, record: dict[str, Any]) -> None:
+        """Put a serializable record dict on the JSONL writer queue.
+
+        Only used when storage_backend == "jsonl". Non-blocking — the
+        background thread handles the actual file I/O.
+        """
+        self._jsonl_queue.put(record)
+
+    def cleanup(self) -> None:
+        """Flush pending JSONL writes and stop the background writer.
+
+        Safe to call multiple times. No-op for in-memory mode.
+        """
+        if self._writer_thread is None or not self._writer_thread.is_alive():
+            return
+
+        # Signal the writer to stop, then wait for queue to drain
+        self._writer_stop.set()
+        self._jsonl_queue.join()
+        self._writer_thread.join(timeout=5.0)
+        self._writer_thread = None
+        logger.info("audit_jsonl_flush", message="JSONL audit writer stopped")
 
     # ------------------------------------------------------------------------
     # Event Recording
@@ -189,6 +299,21 @@ class ConsensusAuditTrail:
             },
         )
 
+        # Queue for JSONL persistence in --no-infra mode
+        if self.storage_backend == "jsonl":
+            self._record_to_jsonl({
+                "record_type": "decision",
+                "decision_id": decision_id,
+                "consensus_id": consensus_id,
+                "proposal": proposal,
+                "decision": decision,
+                "confidence": confidence,
+                "participants": participants or [],
+                "reasoning_summary": reasoning,
+                "metadata": metadata or {},
+                "timestamp": record.start_time,
+            })
+
         logger.info(
             f"Decision recorded: {decision_id} -> {decision} "
             f"(confidence: {confidence:.2f})"
@@ -251,6 +376,20 @@ class ConsensusAuditTrail:
                 "confidence": confidence,
             },
         )
+
+        # Queue for JSONL persistence in --no-infra mode
+        if self.storage_backend == "jsonl":
+            self._record_to_jsonl({
+                "record_type": "vote",
+                "vote_id": vote_id,
+                "consensus_id": consensus_id,
+                "agent_id": agent_id,
+                "decision": decision,
+                "confidence": confidence,
+                "reasoning": reasoning,
+                "metadata": metadata or {},
+                "timestamp": vote.timestamp,
+            })
 
         logger.debug(
             f"Vote recorded: {agent_id} -> {decision} "
