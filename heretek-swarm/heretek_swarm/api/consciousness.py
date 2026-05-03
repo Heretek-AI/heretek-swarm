@@ -477,10 +477,17 @@ async def get_agent_iit_metrics(
     - Interaction history
     """
     plugin = get_consciousness_plugin()
-    phi = plugin.calculate_iit_phi(agent_id)
 
-    # Get connectivity details
+    # Collect all agents that the target agent interacts with (including self)
+    # so the IIT phi calculation measures real integration across connected agents.
     iit_calculator = plugin.iit_calculator
+    related_agents: set[str] = {agent_id}
+    for (from_a, to_a) in iit_calculator.interaction_matrix:
+        if from_a == agent_id or to_a == agent_id:
+            related_agents.add(from_a)
+            related_agents.add(to_a)
+    phi = plugin.calculate_iit_phi(list(related_agents))
+
     # Build adjacency dict from interaction matrix
     all_agents: set[str] = set()
     for (from_a, to_a) in iit_calculator.interaction_matrix:
@@ -494,7 +501,7 @@ async def get_agent_iit_metrics(
     return {
         "agent_id": agent_id,
         "timestamp": datetime.now(UTC).isoformat(),
-        "phi_score": phi,
+        "phi_score": phi.phi,
         "connectivity": connectivity,
         "average_phi": iit_calculator.get_average_phi(),
     }
@@ -644,7 +651,11 @@ async def record_interaction(
     if not from_agent or not to_agent:
         raise HTTPException(status_code=400, detail="from_agent and to_agent are required")
 
-    plugin.record_interaction(from_agent, to_agent, interaction_type)
+    # Map interaction type to a numeric strength; default 1.0 for all types
+    strength_map = {"message": 1.0, "task": 1.0, "response": 1.0, "error": 0.5}
+    strength = strength_map.get(interaction_type, 1.0)
+
+    plugin.record_interaction(from_agent, to_agent, strength)
 
     return {
         "status": "recorded",
@@ -666,12 +677,12 @@ async def record_prediction(
 
     agent_id = prediction.get("agent_id")
     predicted_outcome = prediction.get("predicted_outcome")
-    context = prediction.get("context", {})
+    confidence = prediction.get("confidence", 0.5)
 
     if not agent_id or predicted_outcome is None:
         raise HTTPException(status_code=400, detail="agent_id and predicted_outcome are required")
 
-    plugin.record_prediction(agent_id, predicted_outcome, context)
+    plugin.record_prediction(agent_id, predicted_outcome, confidence)
 
     return {
         "status": "recorded",
