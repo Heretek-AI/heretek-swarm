@@ -76,7 +76,7 @@ services:
       - autonomous
     build:
       context: .
-      dockerfile: heretek_swarm/Dockerfile
+      dockerfile: heretek-swarm/Dockerfile
     ports:
       - "8000:8000"
     environment:

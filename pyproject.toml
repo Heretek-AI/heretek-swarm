@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "heretek-swarm"
-version = "0.1.1"
+version = "0.2.0"
 description = "Heretek Swarm v2.0 - Next-generation multi-agent system built on Swarms framework"
 readme = "README.md"
 license = {text = "MIT"}
@@ -115,7 +115,13 @@ dev = [
 ]
 
 [project.scripts]
-heretek-swarm = "heretek_swarm.__main__:cli_main"
+heretek-swarm = "heretek_swarm.cli:cli"
+
+[project.urls]
+Homepage = "https://github.com/heretek-ai/heretek-swarm"
+Documentation = "https://github.com/heretek-ai/heretek-swarm/tree/main/docs"
+Repository = "https://github.com/heretek-ai/heretek-swarm"
+Issues = "https://github.com/heretek-ai/heretek-swarm/issues"
 
 [tool.setuptools.packages.find]
 where = ["heretek-swarm"]

@@ -5,7 +5,7 @@
 #   2. Production: slim runtime image with the installed package
 #
 # Build context: repo root (where pyproject.toml lives)
-# Usage: docker build -f heretek_swarm/Dockerfile -t heretek-swarm-api .
+# Usage: docker build -f heretek-swarm/Dockerfile -t heretek-swarm-api .
 
 # =============================================================================
 # Stage 1: Builder
