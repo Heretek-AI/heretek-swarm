@@ -28,6 +28,7 @@ import { DashboardLayout, NavItem } from './components/Dashboard/Layout';
 import { HomePage } from './components/Home/HomePage';
 import { AgentsPage } from './components/Agents/AgentsPage';
 import { ConsciousnessPage } from './components/Consciousness/ConsciousnessPage';
+import { DeliberationPage } from './components/Deliberation/DeliberationPage';
 import { SettingsPage } from './components/Settings/SettingsPage';
 import { LogsPage } from './components/Logs/LogsPage';
 import { ToastProvider, useToast } from './components/UI/Toast';
@@ -49,6 +50,7 @@ type View =
   | 'home' 
   | 'agents' 
   | 'consciousness' 
+  | 'deliberation'
   | 'workflows' 
   | 'logs' 
   | 'settings'
@@ -61,6 +63,7 @@ const navItems: NavItem[] = [
   { id: 'home', label: 'Home', icon: '🏠' },
   { id: 'agents', label: 'Agents', icon: '🤖' },
   { id: 'consciousness', label: 'Consciousness', icon: '🧠' },
+  { id: 'deliberation', label: 'Deliberation', icon: '🗳️' },
   { id: 'workflows', label: 'Workflows', icon: '🔀' },
   { id: 'legacy-canvas', label: 'Canvas', icon: '🎨' },
   { id: 'legacy-chat', label: 'Chat', icon: '💬' },
@@ -215,6 +218,8 @@ function DashboardContent() {
         return <AgentsPage />;
       case 'consciousness':
         return <ConsciousnessPage />;
+      case 'deliberation':
+        return <DeliberationPage />;
       case 'workflows':
         return <WorkflowBuilder />;
       case 'logs':
