@@ -313,7 +313,7 @@ class GroupedGroup(click.Group):
 
     #: Mapping of group label → list of command names in display order.
     COMMAND_GROUPS: dict[str, list[str]] = {
-        "Core Operations": ["run", "serve", "deploy", "wizard"],
+        "Core Operations": ["run", "serve", "deploy", "wizard", "consensus"],
         "Configuration": ["config", "init"],
         "Monitoring": ["status", "stop"],
     }
@@ -576,6 +576,75 @@ def _display_routed_result(result: dict) -> None:
     click.echo("  Route complete.")
 
 
+def _display_consensus_results(results: dict[str, Any]) -> None:
+    """Print formatted consensus results.
+
+    Args:
+        results: The dict returned by ``AutonomousSwarm.run_consensus()``,
+            containing ``decision``, ``confidence``, ``votes``, ``red_flags``,
+            ``reasoning``, and ``consensus_id`` keys.
+    """
+    decision = results.get("decision", "unknown")
+    confidence = results.get("confidence", 0.0)
+    votes = results.get("votes", [])
+    red_flags = results.get("red_flags", [])
+    reasoning = results.get("reasoning", "")
+    consensus_id = results.get("consensus_id", "unknown")
+
+    click.echo("")
+    click.echo(f"  Consensus ID: {consensus_id}")
+    click.echo("  " + "-" * 50)
+
+    # Selected agents
+    agent_ids = [v.get("agent_id", "?") for v in votes]
+    click.echo(f"  Agents ({len(agent_ids)}): {', '.join(agent_ids)}")
+    click.echo("")
+
+    # Individual votes
+    click.echo("  Votes:")
+    for v in votes:
+        agent_id = v.get("agent_id", "?")
+        v_decision = v.get("decision", "?")
+        v_confidence = v.get("confidence", 0.0)
+        reasoning_text = v.get("metadata", {}).get("reasoning", "")
+        line = f"    {agent_id:<20} → {v_decision:<20} (conf: {v_confidence:.2f})"
+        click.echo(line)
+        if reasoning_text:
+            click.echo(f"      Reasoning: {reasoning_text}")
+
+    click.echo("")
+    click.echo("  " + "-" * 50)
+
+    # Winning decision
+    click.echo(f"  ✓ Decision:  {decision}")
+    click.echo(f"  ✓ Confidence: {confidence:.2f}")
+
+    # Vote breakdown
+    breakdown: dict[str, int] = {}
+    for v in votes:
+        d = v.get("decision", "unknown")
+        breakdown[d] = breakdown.get(d, 0) + 1
+    breakdown_str = ", ".join(f"{d}: {c}" for d, c in sorted(breakdown.items()))
+    click.echo(f"  Vote breakdown: {breakdown_str}")
+
+    # Red flags
+    if red_flags:
+        click.echo("")
+        click.echo("  ⚠ Red Flags:")
+        for flag in red_flags:
+            click.echo(f"    - {flag}")
+
+    # Reasoning summary
+    if reasoning:
+        click.echo("")
+        click.echo("  Reasoning:")
+        # Wrap long reasoning text
+        for line in reasoning.split("; "):
+            click.echo(f"    {line}")
+
+    click.echo("")
+
+
 async def _start_autonomous_swarm(no_infra: bool = False, prompt: str | None = None, target_agent: str | None = None) -> None:
     """Start the AutonomousSwarm with signal handlers for graceful shutdown."""
     from heretek_swarm.logging.config import setup_logging
@@ -823,6 +892,111 @@ def run(detach: bool, nats_url: str, no_infra: bool, prompt: str | None = None, 
         logger.error("startup_failure", error=str(e))
         click.echo(f"\n✗ Failed to start: {e}")
         sys.exit(1)
+
+
+@cli.command(
+    epilog=(
+        "\b\n"
+        "Examples:\n"
+        "  heretek-swarm consensus \"should we add rate limiting?\"\n"
+        "  heretek-swarm consensus \"should we refactor the auth module?\" --timeout 180\n"
+        "  heretek-swarm consensus \"what database should we use?\" --participants 5"
+    ),
+)
+@click.argument("question")
+@click.option(
+    "--timeout",
+    default=120,
+    type=float,
+    help="Consensus timeout in seconds (default: 120)",
+)
+@click.option(
+    "--participants",
+    default=None,
+    type=int,
+    help="Override number of participants (default: 5-7 from domain selection)",
+)
+def consensus(question: str, timeout: float, participants: int | None) -> None:
+    """
+    Run MAKER consensus on a question.
+
+    Selects domain-relevant agents via topic matching, each agent votes with
+    a decision and confidence through LLM, MAKER ahead-by-k voting terminates
+    when a clear winner emerges, and the result is displayed with winning
+    decision, confidence score, vote breakdown, and red flags.
+    """
+    logger.info("consensus_command", question=question[:200], timeout=timeout, participants=participants)
+
+    click.echo("Heretek Swarm Consensus")
+    click.echo("=" * 40)
+    click.echo(f"\n  Question: {question}")
+    click.echo(f"  Timeout:  {timeout}s")
+    if participants is not None:
+        click.echo(f"  Participants: {participants} (override)")
+
+    click.echo("\nInitializing swarm...")
+
+    try:
+        results = asyncio.run(_run_consensus(question, timeout))
+        _display_consensus_results(results)
+    except Exception as e:
+        logger.error("consensus_failure", error=str(e))
+        click.echo(f"\n✗ Consensus failed: {e}")
+        sys.exit(1)
+
+
+async def _run_consensus(question: str, timeout: float) -> dict[str, Any]:
+    """Async helper for the consensus CLI command."""
+    from heretek_swarm.logging.config import setup_logging
+    from heretek_swarm.runtime.main_loop import AutonomousSwarm
+
+    setup_logging(json_output=False, include_caller_info=False)
+
+    nats_servers_str = os.getenv("HERETEK_NATS_URL", "nats://localhost:4222")
+    nats_servers = [s.strip() for s in nats_servers_str.split(",")]
+
+    config = {
+        "nats_servers": nats_servers,
+        "health_check_interval": 30,
+        "loop_interval": 1,
+        "consciousness_interval": 5,
+        "memory_maintenance_interval": 300,
+        "scaling_interval": 60,
+        "ephemeral": {"ttl_seconds": 3600},
+        "persistent": {
+            "connection_string": os.getenv(
+                "DATABASE_URL",
+                "postgresql://heretek:password@localhost/heretek_swarm"
+            ),
+        },
+        "rag": {
+            "embedding_provider": os.getenv("RAG_EMBEDDING_PROVIDER", "openai"),
+            "embedding_model": os.getenv("RAG_EMBEDDING_MODEL", "text-embedding-3-small"),
+            "llm_provider": os.getenv("RAG_LLM_PROVIDER", "openai"),
+            "llm_model": os.getenv("RAG_LLM_MODEL", "gpt-4o-mini"),
+            "collection_name": os.getenv("RAG_COLLECTION", "heretek_documents"),
+        },
+        "consensus": {
+            "ahead_by_k": 2,
+            "min_votes": 3,
+            "red_flag_threshold": 0.3,
+        },
+    }
+
+    # Always use --no-infra for consensus (short-lived, no need for external services)
+    no_infra = True
+    click.echo("  --no-infra: consensus runs without external infrastructure")
+
+    swarm = AutonomousSwarm(config, no_infra=no_infra)
+
+    await swarm.initialize()
+    _print_startup_banner(swarm)
+
+    click.echo("\nRunning consensus...")
+    click.echo("  " + "-" * 50)
+
+    results = await swarm.run_consensus(question, timeout=timeout)
+    return results
 
 
 @cli.command(

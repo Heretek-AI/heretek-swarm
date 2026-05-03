@@ -38,6 +38,7 @@ from heretek_swarm._cli_module import (
     _display_daemon_status,
     _display_deliberation_results,
     _display_routed_result,
+    _display_consensus_results,
     _handle_signal,
     _print_infrastructure_config,
     _print_startup_banner,
@@ -48,6 +49,8 @@ from heretek_swarm._cli_module import (
     check_container_runtime,
     init,
     wizard,
+    consensus,
+    _run_consensus,
 )
 
 from heretek_swarm.cli.config_wizard import (
@@ -88,6 +91,8 @@ __all__ = [
     "check_container_runtime",
     "init",
     "wizard",
+    "consensus",
+    "_display_consensus_results",
     "AVAILABLE_PROVIDERS",
     "add_provider",
     "list_configured_providers",
