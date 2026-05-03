@@ -499,14 +499,7 @@ class WorkflowContext:
     node_results: dict[str, Any] = field(default_factory=dict)
     variables: dict[str, Any] = field(default_factory=dict)
     start_time: datetime = field(default_factory=lambda: datetime.now(UTC))
-    state: WorkflowState = field(default_factory=lambda: WorkflowState(
-        messages=[],
-        results={},
-        current_phase="initialized",
-        metadata={},
-        checkpoint=None,
-        cycle_count=0
-    ))
+    state: WorkflowStatus = field(default_factory=lambda: WorkflowStatus.PENDING)
     checkpoints: list[dict[str, Any]] = field(default_factory=list)
     error: Exception | None = None
 
@@ -549,7 +542,7 @@ class WorkflowResult:
 
     workflow_id: str
     execution_id: str
-    status: WorkflowState
+    status: WorkflowStatus
     node_results: dict[str, NodeResult]
     variables: dict[str, Any]
     start_time: datetime
@@ -691,7 +684,7 @@ class WorkflowEngine:
             workflow_id=workflow_id,
             execution_id=execution_id,
             start_time=datetime.now(UTC),
-            state=WorkflowState.RUNNING
+            state=WorkflowStatus.RUNNING
         )
 
         self.active_executions[execution_id] = context
@@ -779,7 +772,7 @@ class WorkflowEngine:
                 await self._execute_node(workflow, node_id, context)
 
             # Mark workflow as completed
-            context.state = WorkflowState.COMPLETED
+            context.state = WorkflowStatus.COMPLETED
             context.end_time = datetime.now(UTC)
 
             logger.info("workflow_completed", workflow_id=workflow_id, execution_id=execution_id)
@@ -797,7 +790,7 @@ class WorkflowEngine:
 
         except Exception as e:
             # Handle workflow failure
-            context.state = WorkflowState.FAILED
+            context.state = WorkflowStatus.FAILED
             context.error = e
             context.end_time = datetime.now(UTC)
 
@@ -1418,7 +1411,7 @@ class WorkflowEngine:
             return False
 
         context = self.active_executions[execution_id]
-        context.state = WorkflowState.CANCELLED
+        context.state = WorkflowStatus.CANCELLED
         context.end_time = datetime.now(UTC)
 
         logger.info("workflow_cancelled", execution_id=execution_id)
