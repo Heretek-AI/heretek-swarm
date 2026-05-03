@@ -19,6 +19,7 @@ import ReactFlow, {
   MiniMap,
   Node,
   NodeChange,
+  EdgeChange,
   ReactFlowProvider,
   useNodesState,
   useEdgesState,
@@ -26,6 +27,7 @@ import ReactFlow, {
   MarkerType,
   Connection,
   NodeTypes,
+  useReactFlow,
 } from 'reactflow';
 import { api } from '../../api/client';
 import { useWorkflowProgress, type NodeResult, type ExecutionState as WsExecutionState } from '../../hooks/useWorkflowProgress';
@@ -53,6 +55,7 @@ import {
 } from './index';
 import { NodeConfigPanel } from '../Workflow/NodeConfigPanel';
 import type { AgentConfig } from '../Workflow/NodeConfigPanel';
+import { WorkflowList } from './WorkflowList';
 
 // Use environment variable or relative path (nginx proxies /api to api:8000)
 const API_URL = import.meta.env.VITE_API_HOST || localStorage.getItem('swarm_api_host') || '';
@@ -68,6 +71,266 @@ async function authFetch(url: string, init?: RequestInit): Promise<Response> {
   return fetch(url, { ...init, headers });
 }
 
+// =============================================================================
+// CanvasFlow — inner component with useReactFlow for drag-and-drop
+// =============================================================================
+
+interface CanvasFlowProps {
+  nodes: Node<BaseNodeData>[];
+  edges: Edge[];
+  onNodesChange: (changes: NodeChange[]) => void;
+  onEdgesChange: (changes: EdgeChange[]) => void;
+  onConnect: (connection: Connection) => void;
+  onNodeClick: (event: React.MouseEvent, node: Node) => void;
+  onPaneClick: () => void;
+  nodeTypes: NodeTypes;
+  onDrop: (type: string, position: { x: number; y: number }) => void;
+  configPanelNode: { id: string; type: string; data: { agentId?: string; agentType?: string; config?: Record<string, any> } } | null;
+  configPanelOpen: boolean;
+  handleCloseConfig: () => void;
+  handleSaveConfig: (config: AgentConfig) => Promise<void>;
+  isExecuting: boolean;
+  executionState: { status: string; progress: number; currentNode: string | null };
+  wsCurrentNode: string | null;
+  wsConnected: boolean;
+  wsExecutionState: WsExecutionState;
+  wsError: string | null;
+  wsNodeResults: Map<string, NodeResult>;
+  currentWorkflowId: string | null;
+  getStatusBadgeClass: (status: string) => string;
+  getProgressBarClass: (status: string) => string;
+}
+
+function CanvasFlow({
+  nodes,
+  edges,
+  onNodesChange,
+  onEdgesChange,
+  onConnect,
+  onNodeClick,
+  onPaneClick,
+  nodeTypes: nt,
+  onDrop,
+  configPanelNode,
+  configPanelOpen,
+  handleCloseConfig,
+  handleSaveConfig,
+  isExecuting,
+  executionState,
+  wsCurrentNode,
+  wsConnected,
+  wsExecutionState,
+  wsError,
+  wsNodeResults,
+  currentWorkflowId,
+  getStatusBadgeClass,
+  getProgressBarClass,
+}: CanvasFlowProps) {
+  const reactFlow = useReactFlow();
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
+  /** Allow drop by preventing default */
+  const onDragOver = useCallback((event: React.DragEvent) => {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'move';
+  }, []);
+
+  /** Handle drop: read type from dataTransfer, convert screen→flow position */
+  const onDropHandler = useCallback(
+    (event: React.DragEvent) => {
+      event.preventDefault();
+      const rawData = event.dataTransfer.getData('application/reactflow');
+      if (!rawData) return;
+
+      const type = rawData;
+      const position = reactFlow.screenToFlowPosition({
+        x: event.clientX,
+        y: event.clientY,
+      });
+      onDrop(type, position);
+    },
+    [reactFlow, onDrop],
+  );
+
+  return (
+    <div className="canvas-container" ref={wrapperRef}>
+      <ReactFlow
+        nodes={nodes}
+        edges={edges}
+        onNodesChange={onNodesChange}
+        onEdgesChange={onEdgesChange}
+        onConnect={onConnect}
+        onNodeClick={onNodeClick}
+        onPaneClick={onPaneClick}
+        onDragOver={onDragOver}
+        onDrop={onDropHandler}
+        nodeTypes={nt}
+        fitView
+        snapToGrid
+        snapGrid={[15, 15]}
+        defaultEdgeOptions={{
+          animated: true,
+          type: 'smoothstep',
+          style: { stroke: '#b1b1b1b1', strokeWidth: 2 },
+          markerEnd: {
+            type: MarkerType.ArrowClosed,
+            color: '#b1b1b1',
+          },
+        }}
+        deleteKeyCode="Delete"
+      >
+        <Background color="#f8fafc" variant={BackgroundVariant.Dots} />
+        <Controls />
+        <MiniMap
+          nodeColor={(node) => {
+            const data = node.data as BaseNodeData;
+            switch (data.type) {
+              case NodeType.AGENT:
+                return '#3b82f6';
+              case NodeType.TOOL:
+                return '#06b6d4';
+              case NodeType.MEMORY:
+                return '#8b5cf6';
+              case NodeType.DECISION:
+                return '#eab308';
+              case NodeType.CONNECTOR:
+                return '#6366f1';
+              case NodeType.LLM:
+                return '#10b981';
+              default:
+                return '#6b7280';
+            }
+          }}
+          nodeStrokeWidth={2}
+          zoomable
+          pannable
+        />
+      </ReactFlow>
+
+      {/* Node Configuration Panel */}
+      <NodeConfigPanel
+        node={configPanelNode}
+        isOpen={configPanelOpen}
+        onClose={handleCloseConfig}
+        onSave={handleSaveConfig}
+      />
+
+      {/* Execution Progress Panel */}
+      {isExecuting && (
+        <div className="absolute top-4 right-4 w-80 bg-white border border-gray-300 rounded-lg shadow-lg p-4 z-50 max-h-[70vh] overflow-y-auto">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="font-semibold text-gray-800">Workflow Execution</h3>
+            <span className={`text-xs px-2 py-1 rounded ${getStatusBadgeClass(executionState.status)}`}>
+              {executionState.status}
+            </span>
+          </div>
+
+          {/* Progress Bar */}
+          <div className="mb-3">
+            <div className="flex justify-between text-sm mb-1">
+              <span className="text-gray-600">Progress</span>
+              <span className="text-gray-800 font-medium">{executionState.progress}%</span>
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-2">
+              <div
+                className={`h-2 rounded-full transition-all duration-300 ${getProgressBarClass(executionState.status)}`}
+                style={{ width: `${executionState.progress}%` }}
+              />
+            </div>
+          </div>
+
+          {/* Current Node */}
+          {wsCurrentNode && (
+            <div className="mb-2 text-sm">
+              <span className="text-gray-600">Current Node:</span>
+              <span className="ml-2 text-gray-800 font-medium">{wsCurrentNode}</span>
+            </div>
+          )}
+
+          {/* WebSocket Connection Status */}
+          <div className="mb-2 text-xs">
+            {wsConnected ? (
+              <span className="text-green-600">🟢 WebSocket connected</span>
+            ) : (
+              <span className="text-red-600">🔴 WebSocket disconnected</span>
+            )}
+          </div>
+
+          {/* Error Message */}
+          {wsError && (
+            <div className="mb-2 text-sm text-red-600 bg-red-50 rounded p-2">
+              {wsError}
+            </div>
+          )}
+
+          {/* Per-Node Results */}
+          {wsNodeResults.size > 0 && (
+            <div className="mt-3 border-t border-gray-200 pt-3">
+              <h4 className="text-xs font-semibold text-gray-600 uppercase mb-2">Node Results</h4>
+              <div className="space-y-2">
+                {Array.from(wsNodeResults.entries()).map(([nodeId, result]) => (
+                  <div
+                    key={nodeId}
+                    className={`p-2 rounded text-xs border ${
+                      result.status === 'completed' ? 'bg-green-50 border-green-200' :
+                      result.status === 'failed' ? 'bg-red-50 border-red-200' :
+                      result.status === 'running' ? 'bg-blue-50 border-blue-200' :
+                      'bg-gray-50 border-gray-200'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="font-medium text-gray-800 truncate max-w-[140px]" title={nodeId}>
+                        {nodeId}
+                      </span>
+                      <span className={`px-1.5 py-0.5 rounded text-[10px] font-semibold ${
+                        result.status === 'completed' ? 'bg-green-100 text-green-800' :
+                        result.status === 'failed' ? 'bg-red-100 text-red-800' :
+                        result.status === 'running' ? 'bg-blue-100 text-blue-800' :
+                        'bg-gray-100 text-gray-800'
+                      }`}>
+                        {result.status}
+                      </span>
+                    </div>
+                    {result.duration !== undefined && (
+                      <div className="text-gray-500">
+                        Duration: {result.duration}ms
+                      </div>
+                    )}
+                    {result.output !== undefined && result.output !== null && (
+                      <div className="text-gray-600 mt-1 truncate" title={typeof result.output === 'string' ? result.output : JSON.stringify(result.output)}>
+                        Output: {String(typeof result.output === 'string'
+                          ? result.output.slice(0, 80)
+                          : JSON.stringify(result.output).slice(0, 80))}
+                        {((typeof result.output === 'string' ? result.output.length : JSON.stringify(result.output).length) > 80) && '…'}
+                      </div>
+                    )}
+                    {result.error && (
+                      <div className="text-red-600 mt-1">
+                        Error: {result.error}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Execution ID */}
+          {currentWorkflowId && (
+            <div className="mt-3 text-xs text-gray-400">
+              Workflow: {currentWorkflowId}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// =============================================================================
+// WorkflowBuilder — outer shell with state, palette, toolbar, properties
+// =============================================================================
+
 /**
  * Workflow Builder Component
  */
@@ -80,7 +343,9 @@ export function WorkflowBuilder() {
   const [isExecuting, setIsExecuting] = useState(false);
   const [savedWorkflows, setSavedWorkflows] = useState<Workflow[]>([]);
   const [currentWorkflowId, setCurrentWorkflowId] = useState<string | null>(null);
-  
+  const [workflowName, setWorkflowName] = useState<string>('Custom Workflow');
+  const [workflowListOpen, setWorkflowListOpen] = useState(false);
+
   // Real-time execution progress via WebSocket hook (replaces SSE)
   const {
     executionState: wsExecutionState,
@@ -135,8 +400,6 @@ export function WorkflowBuilder() {
       config?: Record<string, any>;
     };
   } | null>(null);
-
-  const reactFlowWrapperRef = useRef<HTMLDivElement>(null);
 
   /**
    * Node palette - organized by category
@@ -270,20 +533,21 @@ export function WorkflowBuilder() {
   }), []);
 
   /**
-   * Add node to canvas
+   * Add node to canvas. Accepts optional position for drag-and-drop placement;
+   * falls back to random position for click-to-add from palette.
    */
-  const addNode = useCallback((type: NodeType) => {
+  const addNode = useCallback((type: string, position?: { x: number; y: number }) => {
     const paletteItem = nodePalette.find((item) => item.type === type);
     if (!paletteItem) return;
 
     const nodeId = `node-${Date.now()}`;
     const newNode: Node<BaseNodeData> = {
       id: nodeId,
-      type: type,
-      position: { x: 100 + Math.random() * 200, y: 100 + Math.random() * 200 },
+      type: paletteItem.type,
+      position: position || { x: 100 + Math.random() * 200, y: 100 + Math.random() * 200 },
       data: {
         id: nodeId,
-        type: type,
+        type: paletteItem.type,
         ...paletteItem.defaultConfig,
         config: paletteItem.defaultConfig || {},
         // Add callback for opening config panel
@@ -500,7 +764,7 @@ export function WorkflowBuilder() {
   const exportWorkflow = useCallback((format: WorkflowExportFormat) => {
     const workflow: Workflow = {
       id: 'custom',
-      name: 'Custom Workflow',
+      name: workflowName,
       description: 'Custom workflow created in Workflow Builder',
       nodes: nodes.map((n) => n.data as BaseNodeData),
       edges: edges,
@@ -536,10 +800,10 @@ export function WorkflowBuilder() {
     a.href = url;
     a.download = `workflow.${format}`;
     a.click();
-  }, [nodes, edges]);
+  }, [nodes, edges, workflowName]);
 
   /**
-   * Save workflow to backend
+   * Save workflow to backend. Uses workflowName state for the name field.
    */
   const saveWorkflow = useCallback(async () => {
     try {
@@ -548,7 +812,7 @@ export function WorkflowBuilder() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           id: currentWorkflowId || `workflow-${Date.now()}`,
-          name: 'Custom Workflow',
+          name: workflowName || 'Untitled Workflow',
           description: 'Workflow created in Workflow Builder',
           nodes: nodes.map(n => ({ id: n.id, type: n.type, position: n.position, data: n.data })),
           edges: edges,
@@ -562,16 +826,17 @@ export function WorkflowBuilder() {
       
       const saved = await response.json();
       setCurrentWorkflowId(saved.id);
-      setSavedWorkflows(prev => [...prev, saved]);
-      alert('Workflow saved successfully!');
+
+      // Refresh workflow list
+      loadWorkflows();
     } catch (error) {
       console.error('Failed to save workflow:', error);
       alert('Failed to save workflow');
     }
-  }, [nodes, edges, currentWorkflowId]);
+  }, [nodes, edges, currentWorkflowId, workflowName]);
 
   /**
-   * Load workflow from backend
+   * Load workflow list from backend
    */
   const loadWorkflows = useCallback(async () => {
     try {
@@ -586,7 +851,7 @@ export function WorkflowBuilder() {
   }, []);
 
   /**
-   * Load specific workflow
+   * Load specific workflow by ID and populate the canvas
    */
   const loadWorkflow = useCallback(async (workflowId: string) => {
     try {
@@ -597,11 +862,13 @@ export function WorkflowBuilder() {
       setNodes(data.nodes.map((n: any) => ({
         id: n.id,
         type: n.type,
-        position: n.position,
+        position: n.position || { x: 0, y: 0 },
         data: n.data,
       })));
       setEdges(data.edges || []);
       setCurrentWorkflowId(workflowId);
+      setWorkflowName(data.name || 'Untitled Workflow');
+      setWorkflowListOpen(false);
     } catch (error) {
       console.error('Failed to load workflow:', error);
     }
@@ -626,7 +893,7 @@ export function WorkflowBuilder() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           id: currentWorkflowId || `workflow-${Date.now()}`,
-          name: 'Custom Workflow',
+          name: workflowName || 'Untitled Workflow',
           description: 'Workflow created in Workflow Builder',
           nodes: nodes.map(n => ({ id: n.id, type: n.type, position: n.position, data: n.data })),
           edges: edges,
@@ -647,7 +914,7 @@ export function WorkflowBuilder() {
       console.error('Failed to execute workflow:', error);
       setIsExecuting(false);
     }
-  }, [nodes, edges, currentWorkflowId, validation.valid, wsExecuteWorkflow]);
+  }, [nodes, edges, currentWorkflowId, validation.valid, wsExecuteWorkflow, workflowName]);
 
   /**
    * Re-execute the last workflow via the hook
@@ -656,6 +923,19 @@ export function WorkflowBuilder() {
     setIsExecuting(true);
     await wsReExecuteWorkflow();
   }, [wsReExecuteWorkflow]);
+
+  /**
+   * Re-execute a specific workflow from the WorkflowList sidebar.
+   * Loads the workflow first, then executes.
+   */
+  const handleReExecuteFromList = useCallback(async (workflowId: string) => {
+    await loadWorkflow(workflowId);
+    setIsExecuting(true);
+    // Small delay to let canvas populate before triggering execution
+    setTimeout(async () => {
+      await wsExecuteWorkflow(workflowId);
+    }, 100);
+  }, [loadWorkflow, wsExecuteWorkflow]);
 
   // Sync isExecuting with WebSocket execution state
   useEffect(() => {
@@ -709,6 +989,22 @@ export function WorkflowBuilder() {
       <div className="workflow-header">
         <h1>Workflow Builder</h1>
         <div className="header-actions">
+          {/* Workflow name input */}
+          <input
+            type="text"
+            value={workflowName}
+            onChange={(e) => setWorkflowName(e.target.value)}
+            placeholder="Workflow name"
+            className="workflow-name-input"
+            style={{
+              padding: '6px 10px',
+              border: '1px solid #d1d5db',
+              borderRadius: 6,
+              fontSize: 14,
+              width: 180,
+              outline: 'none',
+            }}
+          />
           <button
             onClick={validateWorkflow}
             className="btn btn-secondary"
@@ -733,10 +1029,12 @@ export function WorkflowBuilder() {
           </div>
         </div>
         <div className="workflow-actions">
+          {/* Legacy select (hidden, replaced by WorkflowList sidebar) */}
           <select
             value={currentWorkflowId || ''}
             onChange={(e) => loadWorkflow(e.target.value)}
             className="workflow-select"
+            style={{ display: 'none' }}
           >
             <option value="">Load Saved Workflow...</option>
             {savedWorkflows.map((wf) => (
@@ -745,6 +1043,16 @@ export function WorkflowBuilder() {
               </option>
             ))}
           </select>
+          <button
+            onClick={() => setWorkflowListOpen((o) => !o)}
+            className="btn btn-secondary"
+            style={{
+              background: workflowListOpen ? '#3b82f6' : undefined,
+              color: workflowListOpen ? 'white' : undefined,
+            }}
+          >
+            {workflowListOpen ? '✕ Close List' : '📋 Workflows'}
+          </button>
           <button
             onClick={executeWorkflow}
             className="btn btn-success"
@@ -819,7 +1127,10 @@ export function WorkflowBuilder() {
                       key={item.type}
                       className="palette-item"
                       draggable
-                      onDragStart={(e) => e.dataTransfer.setData('application/reactflow', item.type)}
+                      onDragStart={(e) => {
+                        e.dataTransfer.setData('application/reactflow', item.type);
+                        e.dataTransfer.effectAllowed = 'move';
+                      }}
                       onClick={() => addNode(item.type)}
                     >
                       <span className="palette-icon">{item.icon}</span>
@@ -832,177 +1143,42 @@ export function WorkflowBuilder() {
           </div>
         </div>
 
-        <div className="canvas-container" ref={reactFlowWrapperRef}>
-          <ReactFlowProvider>
-            <ReactFlow
-              nodes={nodes}
-              edges={edges}
-              onNodesChange={onNodesChange}
-              onEdgesChange={onEdgesChange}
-              onConnect={onConnect}
-              onNodeClick={onNodeClick}
-              onPaneClick={onPaneClick}
-              nodeTypes={nodeTypes}
-              fitView
-              snapToGrid
-              snapGrid={[15, 15]}
-              defaultEdgeOptions={{
-                animated: true,
-                type: 'smoothstep',
-                style: { stroke: '#b1b1b1b1', strokeWidth: 2 },
-                markerEnd: {
-                  type: MarkerType.ArrowClosed,
-                  color: '#b1b1b1',
-                },
-              }}
-              deleteKeyCode="Delete"
-            >
-              <Background color="#f8fafc" variant={BackgroundVariant.Dots} />
-              <Controls />
-              <MiniMap
-                nodeColor={(node) => {
-                  const data = node.data as BaseNodeData;
-                  switch (data.type) {
-                    case NodeType.AGENT:
-                      return '#3b82f6';
-                    case NodeType.TOOL:
-                      return '#06b6d4';
-                    case NodeType.MEMORY:
-                      return '#8b5cf6';
-                    case NodeType.DECISION:
-                      return '#eab308';
-                    case NodeType.CONNECTOR:
-                      return '#6366f1';
-                    case NodeType.LLM:
-                      return '#10b981';
-                    default:
-                      return '#6b7280';
-                  }
-                }}
-                nodeStrokeWidth={2}
-                zoomable
-                pannable
-              />
-            </ReactFlow>
-            
-            {/* Node Configuration Panel */}
-            <NodeConfigPanel
-              node={configPanelNode}
-              isOpen={configPanelOpen}
-              onClose={handleCloseConfig}
-              onSave={handleSaveConfig}
-            />
+        <ReactFlowProvider>
+          <CanvasFlow
+            nodes={nodes}
+            edges={edges}
+            onNodesChange={onNodesChange}
+            onEdgesChange={onEdgesChange}
+            onConnect={onConnect}
+            onNodeClick={onNodeClick}
+            onPaneClick={onPaneClick}
+            nodeTypes={nodeTypes}
+            onDrop={addNode}
+            configPanelNode={configPanelNode}
+            configPanelOpen={configPanelOpen}
+            handleCloseConfig={handleCloseConfig}
+            handleSaveConfig={handleSaveConfig}
+            isExecuting={isExecuting}
+            executionState={executionState}
+            wsCurrentNode={wsCurrentNode}
+            wsConnected={wsConnected}
+            wsExecutionState={wsExecutionState}
+            wsError={wsError}
+            wsNodeResults={wsNodeResults}
+            currentWorkflowId={currentWorkflowId}
+            getStatusBadgeClass={getStatusBadgeClass}
+            getProgressBarClass={getProgressBarClass}
+          />
+        </ReactFlowProvider>
 
-            {/* Execution Progress Panel */}
-            {isExecuting && (
-              <div className="absolute top-4 right-4 w-80 bg-white border border-gray-300 rounded-lg shadow-lg p-4 z-50 max-h-[70vh] overflow-y-auto">
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="font-semibold text-gray-800">Workflow Execution</h3>
-                  <span className={`text-xs px-2 py-1 rounded ${getStatusBadgeClass(executionState.status)}`}>
-                    {executionState.status}
-                  </span>
-                </div>
-
-                {/* Progress Bar */}
-                <div className="mb-3">
-                  <div className="flex justify-between text-sm mb-1">
-                    <span className="text-gray-600">Progress</span>
-                    <span className="text-gray-800 font-medium">{executionState.progress}%</span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div
-                      className={`h-2 rounded-full transition-all duration-300 ${getProgressBarClass(executionState.status)}`}
-                      style={{ width: `${executionState.progress}%` }}
-                    />
-                  </div>
-                </div>
-
-                {/* Current Node */}
-                {wsCurrentNode && (
-                  <div className="mb-2 text-sm">
-                    <span className="text-gray-600">Current Node:</span>
-                    <span className="ml-2 text-gray-800 font-medium">{wsCurrentNode}</span>
-                  </div>
-                )}
-
-                {/* WebSocket Connection Status */}
-                <div className="mb-2 text-xs">
-                  {wsConnected ? (
-                    <span className="text-green-600">🟢 WebSocket connected</span>
-                  ) : (
-                    <span className="text-red-600">🔴 WebSocket disconnected</span>
-                  )}
-                </div>
-
-                {/* Error Message */}
-                {wsError && (
-                  <div className="mb-2 text-sm text-red-600 bg-red-50 rounded p-2">
-                    {wsError}
-                  </div>
-                )}
-
-                {/* Per-Node Results */}
-                {wsNodeResults.size > 0 && (
-                  <div className="mt-3 border-t border-gray-200 pt-3">
-                    <h4 className="text-xs font-semibold text-gray-600 uppercase mb-2">Node Results</h4>
-                    <div className="space-y-2">
-                      {Array.from(wsNodeResults.entries()).map(([nodeId, result]) => (
-                        <div
-                          key={nodeId}
-                          className={`p-2 rounded text-xs border ${
-                            result.status === 'completed' ? 'bg-green-50 border-green-200' :
-                            result.status === 'failed' ? 'bg-red-50 border-red-200' :
-                            result.status === 'running' ? 'bg-blue-50 border-blue-200' :
-                            'bg-gray-50 border-gray-200'
-                          }`}
-                        >
-                          <div className="flex items-center justify-between mb-1">
-                            <span className="font-medium text-gray-800 truncate max-w-[140px]" title={nodeId}>
-                              {nodeId}
-                            </span>
-                            <span className={`px-1.5 py-0.5 rounded text-[10px] font-semibold ${
-                              result.status === 'completed' ? 'bg-green-100 text-green-800' :
-                              result.status === 'failed' ? 'bg-red-100 text-red-800' :
-                              result.status === 'running' ? 'bg-blue-100 text-blue-800' :
-                              'bg-gray-100 text-gray-800'
-                            }`}>
-                              {result.status}
-                            </span>
-                          </div>
-                          {result.duration !== undefined && (
-                            <div className="text-gray-500">
-                              Duration: {result.duration}ms
-                            </div>
-                          )}
-                          {result.output !== undefined && result.output !== null && (
-                            <div className="text-gray-600 mt-1 truncate" title={typeof result.output === 'string' ? result.output : JSON.stringify(result.output)}>
-                              Output: {String(typeof result.output === 'string'
-                                ? result.output.slice(0, 80)
-                                : JSON.stringify(result.output).slice(0, 80))}
-                              {((typeof result.output === 'string' ? result.output.length : JSON.stringify(result.output).length) > 80) && '…'}
-                            </div>
-                          )}
-                          {result.error && (
-                            <div className="text-red-600 mt-1">
-                              Error: {result.error}
-                            </div>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Execution ID */}
-                {currentWorkflowId && (
-                  <div className="mt-3 text-xs text-gray-400">
-                    Workflow: {currentWorkflowId}
-                  </div>
-                )}
-              </div>
-            )}
-          </ReactFlowProvider>
-        </div>
+        {/* Workflow List Sidebar */}
+        <WorkflowList
+          isOpen={workflowListOpen}
+          onClose={() => setWorkflowListOpen(false)}
+          onLoad={loadWorkflow}
+          onReExecute={handleReExecuteFromList}
+          onRefresh={loadWorkflows}
+        />
       </div>
 
       {selectedNode && (
