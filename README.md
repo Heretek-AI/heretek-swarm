@@ -1,157 +1,143 @@
-# Heretek Swarm - The Collective
+# Heretek Swarm — The Collective
 
-**Version:** 0.1.0  
+**Version:** 0.2.0  
 **Framework:** Python 3.11+  
-**Status:** `PRODUCTION READY`  
-**Last Updated:** 2026-04-18
+**Last Updated:** 2026-05-02
 
 ---
 
 ## Installation
 
-### Two-Package Architecture
-
-This project ships as two separate packages:
-
-| Package | Manager | Install Command | Path |
-|---------|---------|------------------|------|
-| **heretek-swarm** | pip | `pip install heretek-swarm` | `heretek-swarm/` |
-| **@heretek-ai/swarm-dashboard** | npm | `cd swarm-dashboard && npm install` | `swarm-dashboard/` |
-
 ### Python Package (pip)
 
 ```bash
+# Editable install (development)
+pip install -e .
+
+# Or install from PyPI (when published)
 pip install heretek-swarm
 ```
 
-The package provides the core `heretek_swarm` library installed under `heretek-swarm/heretek_swarm/`.
+This provides the `heretek-swarm` CLI command (see [Command Reference](#command-reference) below).
 
-### Frontend Dashboard (npm)
-
-```bash
-cd swarm-dashboard
-npm install
-npm run dev
-```
-
-### Docker Compose (Local Development)
+### Docker Compose
 
 ```bash
-docker-compose up -d
+cp .env.example .env
+# Edit .env and set your OPENAI_API_KEY (and other values as needed)
+docker compose up
 ```
 
-Starts PostgreSQL, Redis, Qdrant, the API server, and the frontend dashboard.
+Starts all 6 services with health checks: PostgreSQL, Redis, Qdrant, NATS, API server, and React dashboard. No profile flags needed — everything starts by default.
+
+---
+
+## Quick Start
+
+### Local (no infrastructure)
+
+Run the swarm with in-memory state — no Docker, Postgres, Redis, Qdrant, or NATS required:
+
+```bash
+pip install -e .
+heretek-swarm run --no-infra --prompt "Hello"
+```
+
+The swarm starts all 23 agents in-memory and deliberates your prompt through the Alpha/Beta/Charlie triad, then exits.
+
+### Full Stack
+
+```bash
+cp .env.example .env
+# Edit .env: set OPENAI_API_KEY, OPENAI_BASE_URL, LLM_MODEL
+docker compose up
+```
+
+The API server starts on `http://localhost:8000` and the dashboard on `http://localhost:3000`. Use `heretek-swarm status` to verify all services are healthy.
+
+---
+
+## Command Reference
+
+All commands are accessed via the `heretek-swarm` CLI. Run `heretek-swarm --help` for grouped help output.
+
+### Core Operations
+
+| Command | Description |
+|---------|-------------|
+| `heretek-swarm run` | Start the autonomous runtime (all 23 agents) as a standalone process |
+| `heretek-swarm serve` | Start the FastAPI API server with auto-reload |
+| `heretek-swarm deploy` | Print infrastructure setup instructions for Docker Compose |
+| `heretek-swarm wizard` | Open the browser to the React dashboard setup wizard |
+
+### Configuration
+
+| Command | Description |
+|---------|-------------|
+| `heretek-swarm config` | Manage LLM provider configuration (wizard, list, remove, set-default, validate) |
+| `heretek-swarm init` | Bootstrap `~/.heretek-swarm/.env` from `.env.example` |
+
+### Monitoring
+
+| Command | Description |
+|---------|-------------|
+| `heretek-swarm status` | Check infrastructure health; use `--json` for machine-readable output |
+| `heretek-swarm stop` | Stop a running background daemon |
+
+### Common Options
+
+```bash
+# Run in background (daemon mode)
+heretek-swarm run --detach
+
+# Skip all external infrastructure
+heretek-swarm run --no-infra
+
+# Route prompt to a specific agent
+heretek-swarm run --no-infra --prompt "Analyze X" --target-agent alpha
+
+# Serve on a custom host/port
+heretek-swarm serve --host 127.0.0.1 --port 9000
+
+# Get JSON status output
+heretek-swarm status --json
+```
 
 ---
 
 ## Package Structure
 
 ```
-heretek-swarm/                  # Python package (pip-installable)
-├── heretek_swarm/              # Core library
-│   ├── actors/                # 23 agent implementations
-│   ├── api/                    # FastAPI endpoints
-│   ├── consciousness/         # Consciousness metrics (GWT, IIT, FEP)
-│   ├── consensus/             # MAKER protocol implementation
-│   ├── gateway/                # NATS event mesh
-│   ├── memory/                 # Multi-tier memory system
-│   ├── security/               # Zero-trust validation
-│   └── state/                  # PostgreSQL persistence
-├── config/                     # Configuration files
-│   ├── litellm_config.yaml
-│   ├── otel-collector-config.yaml
-│   └── config.example.json
-└── cli/                        # CLI entry point
-
-swarm-dashboard/                # React dashboard (npm-managed)
-├── src/                        # React/Vite application
-├── public/
-└── package.json
+heretek-swarm/                  # Repository root
+├── pyproject.toml              # Package metadata & CLI entry point
+├── docker-compose.yml          # All 6 services with health checks
+├── .env.example                # Environment template with all vars
+├── README.md
+├── docs/                       # Architecture & API documentation
+│   ├── ARCHITECTURE.md
+│   ├── API_ENDPOINTS.md
+│   ├── DEPLOYMENT.md
+│   └── AGENTS.md
+└── heretek-swarm/              # Python package (pip-installable)
+    └── heretek_swarm/          # Core library
+        ├── actors/             # 23 agent implementations
+        ├── api/                # FastAPI endpoints
+        ├── cli/                # CLI commands & config loader
+        ├── config/             # Pydantic config models
+        ├── consciousness/      # Consciousness metrics (GWT, IIT, FEP)
+        ├── consensus/          # MAKER protocol implementation
+        ├── gateway/            # NATS event mesh
+        ├── memory/             # Multi-tier memory system
+        ├── runtime/            # AutonomousSwarm main loop & daemon
+        ├── security/           # Zero-trust validation
+        └── state/              # PostgreSQL persistence
 ```
 
 ---
 
-## Quick Start
+## Infrastructure
 
-### Prerequisites
-
-| Requirement | Minimum |
-|-------------|---------|
-| **Docker** | 20.10+ |
-| **Docker Compose** | 2.0+ |
-| **Python** | 3.11+ |
-
-### One-Shot Deployment
-
-```bash
-# Install the CLI
-pip install heretek-swarm
-
-# Initialize configuration
-heretek-swarm init
-
-# Start infrastructure
-docker-compose up -d
-```
-
-### Manual Start
-
-```bash
-# Start infrastructure
-docker-compose up -d postgres redis qdrant
-
-# Initialize configuration
-heretek-swarm init
-
-# Start API
-heretek-swarm serve
-
-# Start frontend
-cd swarm-dashboard && npm run dev
-```
-
-### Troubleshooting
-
-```bash
-docker-compose ps          # Check service status
-docker-compose logs api    # View error logs
-```
-
-### Docker Commands
-
-```bash
-docker-compose ps          # Check service status
-docker-compose logs api    # View error logs
-```
-
-For production Kubernetes deployment, set up your own Kubernetes manifests and configure the appropriate infrastructure.
-
----
-
-## Command Reference
-
-| Command | Description |
-|---------|-------------|
-| `heretek-swarm deploy` | Print infrastructure setup instructions for Docker Compose |
-| `heretek-swarm run` | Start the autonomous runtime (all 23 agents) as a standalone process |
-| `heretek-swarm serve` | Start the FastAPI API server with auto-reload |
-| `heretek-swarm status` | Check infrastructure health; use `--json` for machine-readable output |
-| `heretek-swarm wizard` | Open the browser to the React dashboard setup wizard |
-| `heretek-swarm init` | Bootstrap `~/.heretek-swarm/.env` from `.env.example` |
-
-### Status Command Options
-
-| Option | Description |
-|--------|-------------|
-| `--api-base URL` | API base URL (default: `http://localhost:8000`) |
-| `--timeout SECONDS` | Health check timeout (default: 30) |
-| `--json` | Output results as JSON |
-
----
-
-## Infrastructure (External Services)
-
-The system depends on the following external services:
+All services are defined in `docker-compose.yml` and start automatically with `docker compose up`.
 
 | Service | Default Port | Purpose |
 |---------|--------------|---------|
@@ -159,12 +145,14 @@ The system depends on the following external services:
 | Redis | 6379 | Working memory, caching |
 | Qdrant | 6333 | Semantic/vector memory storage |
 | NATS | 4222 | Event mesh (A2A agent communication) |
+| API Server | 8000 | FastAPI backend with 23 spawned agents |
+| Dashboard | 3000 | React frontend (Vite + Tailwind CSS) |
 
-All services are defined in `docker-compose.yml`. For local development without Docker, set `DATABASE_URL`, `REDIS_URL`, and `QDRANT_HOST` environment variables pointing to your infrastructure hosts.
+All services include health checks and restart policies. Docker Compose coordinates startup order via `depends_on` with `condition: service_healthy`.
 
 ---
 
-## 🏛️ The 23 Agents
+## The 23 Agents
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -185,38 +173,15 @@ All services are defined in `docker-compose.yml`. For local development without 
 │ TIER 3: EXPLORATION (4)    │ ├── Prism (Multi-Perspective)    │
 │ ├── Explorer (Discovery)   │ ├── Habit-Forge (Optimization)   │
 │ ├── Examiner (QA)          │ └── Perceiver+ (Advanced)        │
-│ └── Coder (Implementation)│                                   │
+│ └── Coder (Implementation) │                                   │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## System Architecture
-
-### Components
-
-| Component | Port | Notes |
-|-----------|------|-------|
-| FastAPI Server | 8000 | Python 3.11+ |
-| React Dashboard | 3000 → 80 | Vite/React |
-| PostgreSQL | 5432 | pgvector enabled |
-| Redis | 6379 | redis:7-alpine |
-| Qdrant | 6333 | Vector storage |
-
-### Frontend Dashboard
-
-The React-based dashboard (located in `swarm-dashboard/`) provides:
-
-- **Agent Management:** Deploy and monitor agents
-- **Consciousness Metrics:** Real-time consciousness visualizations
-- **Workflow Builder:** Visual workflow design with React Flow
-- **Settings:** LLM providers, embedding models, system config
-
-**Technology Stack:** React 18.2+, Vite 5.0+, @xyflow/react 12.0+, Zustand, Tailwind CSS 3.4+
-
----
-
 ## Configuration
+
+Copy `.env.example` to `.env` and fill in your values. The key variables:
 
 | Variable | Required | Description |
 |----------|----------|-------------|
@@ -227,6 +192,8 @@ The React-based dashboard (located in `swarm-dashboard/`) provides:
 | `OPENAI_BASE_URL` | Yes | OpenAI-compatible API base URL |
 | `LLM_MODEL` | Yes | LLM model name |
 
+Docker Compose defaults are pre-configured in `.env.example` — for local development outside Docker, update the hostnames from service names (`postgres`, `redis`, `qdrant`, `nats`) to `localhost`.
+
 ---
 
 ## Documentation
@@ -236,10 +203,8 @@ The React-based dashboard (located in `swarm-dashboard/`) provides:
 | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | System architecture details |
 | [`docs/API_ENDPOINTS.md`](docs/API_ENDPOINTS.md) | API reference |
 | [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md) | Deployment guide |
-| [`docs/CONSCIOUSNESS_PLUGINS.md`](docs/CONSCIOUSNESS_PLUGINS.md) | Consciousness frameworks |
 | [`docs/AGENTS.md`](docs/AGENTS.md) | Complete agent reference |
 | [`PRIME_DIRECTIVE.md`](PRIME_DIRECTIVE.md) | Project vision and philosophy |
-| [`swarm-dashboard/README.md`](swarm-dashboard/README.md) | Frontend dashboard docs |
 
 ---
 
@@ -253,4 +218,4 @@ The React-based dashboard (located in `swarm-dashboard/`) provides:
 
 **License:** Apache 2.0
 
-*Last Updated: 2026-04-18*
+*Last Updated: 2026-05-02*
