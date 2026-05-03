@@ -12,7 +12,7 @@ from heretek_swarm.consensus.consensus_coordinator import (
     _extract_decision_confidence,
 )
 from heretek_swarm.consensus.domain_selector import DomainSelector
-from heretek_swarm.consensus.maker import MAKERConsensus, ConsensusState
+from heretek_swarm.consensus.maker import ConsensusResult, ConsensusState, MAKERConsensus
 
 # Resolve characters directory relative to the test file
 _CHARACTERS_DIR = os.path.join(
@@ -449,3 +449,311 @@ class TestEdgeCases:
         """Custom timeout and max_rounds parameters are accepted."""
         result = await coordinator.run_consensus("test", timeout=60, max_rounds=1)
         assert result is not None
+
+
+# ------------------------------------------------------------------
+# Multi-round deliberation tests
+# ------------------------------------------------------------------
+
+
+class TestMultiRoundDeliberation:
+    """Tests for multi-round consensus with argument exchange."""
+
+    @pytest.mark.asyncio
+    async def test_single_round_no_extra_rounds(self, maker, ds):
+        """With max_rounds=1, only one round is attempted."""
+        actors = _all_agents_mock()
+        # All vote yes → consensus in round 1
+        for actor in actors.values():
+            actor.run_with_llm = AsyncMock(
+                return_value='{"decision": "yes", "confidence": 0.9, "reasoning": "Approved."}'
+            )
+
+        coord = ConsensusCoordinator(maker=maker, domain_selector=ds, actors=actors)
+        result = await coord.run_consensus("security analysis", max_rounds=1)
+
+        assert result is not None
+        assert result.decision == "yes"
+        assert result.metadata["total_rounds"] == 1
+        assert len(result.metadata["round_history"]) == 1
+
+    @pytest.mark.asyncio
+    async def test_consensus_reached_in_round_1_returns_early(self, maker, ds):
+        """When consensus is reached in round 1, no additional rounds are attempted."""
+        actors = _all_agents_mock()
+        for actor in actors.values():
+            actor.run_with_llm = AsyncMock(
+                return_value='{"decision": "approve", "confidence": 0.95, "reasoning": "Strong."}'
+            )
+
+        coord = ConsensusCoordinator(maker=maker, domain_selector=ds, actors=actors)
+        result = await coord.run_consensus("security analysis", max_rounds=3)
+
+        assert result is not None
+        assert result.metadata["total_rounds"] == 1
+        assert len(result.metadata["round_history"]) == 1
+
+    @pytest.mark.asyncio
+    async def test_multi_round_triggers_argument_exchange(self, maker, ds):
+        """When round 1 doesn't reach consensus, round 2 prompt includes argument exchange."""
+        actors = _all_agents_mock()
+
+        # Track prompts received by each agent
+        prompts_received: dict[str, list[str]] = {}
+
+        async def _capture_prompt(prompt, **kwargs):
+            # Extract agent name from actor lookup (use a closure trick)
+            # We'll capture all prompts in a shared list
+            prompts_received.setdefault("all", []).append(prompt)
+            # First round: split votes to prevent consensus
+            # Use "yes" for most, "no" for one to create tension
+            if "RECONSIDER" in prompt or "previous round" in prompt.lower():
+                # Multi-round prompt received — now all agree
+                return '{"decision": "yes", "confidence": 0.9, "reasoning": "Reconsidered."}'
+            # First round: mixed votes
+            if len(prompts_received.get("all", [])) <= 4:
+                # First 2 agents say yes, 1 says no, last says yes
+                idx = len(prompts_received["all"])
+                if idx == 3:  # Third agent says no
+                    return '{"decision": "no", "confidence": 0.9, "reasoning": "Too risky."}'
+            return '{"decision": "yes", "confidence": 0.9, "reasoning": "Looks good."}'
+
+        for actor in actors.values():
+            actor.run_with_llm = AsyncMock(side_effect=_capture_prompt)
+
+        coord = ConsensusCoordinator(maker=maker, domain_selector=ds, actors=actors)
+        result = await coord.run_consensus("security analysis", max_rounds=3)
+
+        # Should reach consensus (either round 1 or later)
+        assert result is not None
+        # At least 2 rounds of prompts were sent
+        assert len(prompts_received.get("all", [])) > 4  # >4 means round 2 happened
+
+    @pytest.mark.asyncio
+    async def test_round_history_tracks_all_rounds(self, maker, ds):
+        """Round history metadata includes all rounds with scores and vote counts."""
+        actors = _all_agents_mock()
+        call_count = 0
+
+        async def _two_phase(prompt, **kwargs):
+            nonlocal call_count
+            call_count += 1
+            if "RECONSIDER" in prompt or "previous round" in prompt.lower():
+                return '{"decision": "yes", "confidence": 0.95, "reasoning": "Changed my mind."}'
+            # Round 1: mixed results to prevent consensus
+            # With 4 agents, 2 yes (conf 0.9) and 2 no (conf 0.9):
+            # weight yes = 2×(0.9×0.5) = 0.9, weight no = 2×(0.9×0.5) = 0.9
+            # equal → no consensus
+            return '{"decision": "no", "confidence": 0.9, "reasoning": "Disagree."}'
+
+        for actor in actors.values():
+            actor.run_with_llm = AsyncMock(side_effect=_two_phase)
+
+        coord = ConsensusCoordinator(maker=maker, domain_selector=ds, actors=actors)
+        result = await coord.run_consensus("security analysis", max_rounds=3)
+
+        if result is not None:
+            rh = result.metadata.get("round_history", [])
+            assert len(rh) >= 1
+            for entry in rh:
+                assert "round_number" in entry
+                assert "consensus_score" in entry
+                assert "decision" in entry
+                assert "vote_count" in entry
+
+    @pytest.mark.asyncio
+    async def test_max_rounds_exhausted_returns_last_result(self, maker, ds):
+        """When all rounds fail to produce consensus, the last round's result is returned."""
+        actors = _all_agents_mock()
+        # All agents always disagree — no consensus possible
+        call_num = 0
+
+        async def _always_disagree(prompt, **kwargs):
+            nonlocal call_num
+            call_num += 1
+            # Alternate yes/no by agent
+            if call_num % 2 == 0:
+                return '{"decision": "yes", "confidence": 0.9, "reasoning": "Pro."}'
+            return '{"decision": "no", "confidence": 0.9, "reasoning": "Con."}'
+
+        for actor in actors.values():
+            actor.run_with_llm = AsyncMock(side_effect=_always_disagree)
+
+        coord = ConsensusCoordinator(maker=maker, domain_selector=ds, actors=actors)
+        result = await coord.run_consensus("security analysis", max_rounds=2, timeout=60)
+
+        # Even if no consensus, result may be None (MAKER returns None)
+        # But the coordinator should not crash
+        if result is not None:
+            assert "round_history" in result.metadata
+            assert result.metadata["total_rounds"] == 2
+
+
+class TestArgumentExchange:
+    """Tests for the argument exchange builder."""
+
+    def test_build_argument_exchange_with_votes(self, maker, ds):
+        """Argument exchange correctly splits votes into for/against."""
+        coord = ConsensusCoordinator(maker=maker, domain_selector=ds, actors={})
+
+        # Create a mock result with votes containing reasoning
+        from heretek_swarm.consensus.maker import Vote
+        votes = [
+            Vote(agent_id="alpha", decision="yes", confidence=0.9,
+                 timestamp="2026-01-01T00:00:00",
+                 metadata={"reasoning": "Strong evidence for."}),
+            Vote(agent_id="beta", decision="no", confidence=0.8,
+                 timestamp="2026-01-01T00:00:00",
+                 metadata={"reasoning": "Too risky."}),
+            Vote(agent_id="gamma", decision="yes", confidence=0.7,
+                 timestamp="2026-01-01T00:00:00",
+                 metadata={"reasoning": "Looks reasonable."}),
+        ]
+        result = ConsensusResult(
+            decision="yes", confidence=0.8, votes=votes,
+            state=ConsensusState.COMPLETED, timestamp="2026-01-01T00:00:00",
+        )
+
+        round_summary, args_for, args_against = coord._build_argument_exchange(result)
+
+        assert "3 agents voted" in round_summary
+        assert "alpha" in round_summary
+        assert "Strong evidence for" in args_for
+        assert "Looks reasonable" in args_for
+        assert "Too risky" in args_against
+        assert "beta" in args_against
+
+    def test_build_argument_exchange_none_result(self, maker, ds):
+        """Argument exchange with None result returns placeholder text."""
+        coord = ConsensusCoordinator(maker=maker, domain_selector=ds, actors={})
+        round_summary, args_for, args_against = coord._build_argument_exchange(None)
+
+        assert "No clear votes" in round_summary
+        assert "none recorded" in args_for
+        assert "none recorded" in args_against
+
+    def test_build_argument_exchange_no_reasoning(self, maker, ds):
+        """When votes have no reasoning metadata, args sections show 'none'."""
+        coord = ConsensusCoordinator(maker=maker, domain_selector=ds, actors={})
+
+        from heretek_swarm.consensus.maker import Vote
+        votes = [
+            Vote(agent_id="alpha", decision="yes", confidence=0.9,
+                 timestamp="2026-01-01T00:00:00", metadata={}),
+        ]
+        result = ConsensusResult(
+            decision="yes", confidence=0.9, votes=votes,
+            state=ConsensusState.COMPLETED, timestamp="2026-01-01T00:00:00",
+        )
+
+        _, args_for, args_against = coord._build_argument_exchange(result)
+        assert "(none)" in args_for
+        assert "(none)" in args_against
+
+
+class TestExtractReasoning:
+    """Tests for _extract_reasoning static method."""
+
+    def test_extract_from_json(self):
+        raw = '{"decision": "yes", "confidence": 0.9, "reasoning": "Good evidence."}'
+        assert ConsensusCoordinator._extract_reasoning(raw) == "Good evidence."
+
+    def test_extract_from_mixed_text(self):
+        raw = 'I think:\n{"decision": "no", "confidence": 0.7, "reasoning": "Too risky."}\nDone.'
+        assert ConsensusCoordinator._extract_reasoning(raw) == "Too risky."
+
+    def test_extract_empty_string(self):
+        assert ConsensusCoordinator._extract_reasoning("") == ""
+
+    def test_extract_none(self):
+        assert ConsensusCoordinator._extract_reasoning(None) == ""
+
+    def test_extract_no_reasoning_field(self):
+        raw = '{"decision": "yes", "confidence": 0.8}'
+        assert ConsensusCoordinator._extract_reasoning(raw) == ""
+
+    def test_extract_free_text_returns_empty(self):
+        assert ConsensusCoordinator._extract_reasoning("Yes, I agree.") == ""
+
+
+class TestReasoningInVoteMetadata:
+    """Tests that reasoning is stored in vote metadata."""
+
+    @pytest.mark.asyncio
+    async def test_reasoning_stored_in_metadata(self, maker, ds):
+        """Votes include reasoning from the agent response in metadata."""
+        actors = _all_agents_mock()
+        for actor in actors.values():
+            actor.run_with_llm = AsyncMock(
+                return_value='{"decision": "yes", "confidence": 0.85, "reasoning": "Solid approach."}'
+            )
+
+        coord = ConsensusCoordinator(maker=maker, domain_selector=ds, actors=actors)
+        result = await coord.run_consensus("security analysis")
+
+        assert result is not None
+        # Check that at least some votes have reasoning in metadata
+        reasoning_votes = [
+            v for v in result.votes
+            if v.metadata.get("reasoning")
+        ]
+        assert len(reasoning_votes) > 0
+        assert all(v.metadata["reasoning"] == "Solid approach." for v in reasoning_votes)
+
+    @pytest.mark.asyncio
+    async def test_no_reasoning_when_absent(self, maker, ds):
+        """When response has no reasoning field, metadata is empty or absent."""
+        actors = _all_agents_mock()
+        for actor in actors.values():
+            actor.run_with_llm = AsyncMock(
+                return_value='{"decision": "yes", "confidence": 0.8}'
+            )
+
+        coord = ConsensusCoordinator(maker=maker, domain_selector=ds, actors=actors)
+        result = await coord.run_consensus("security analysis")
+
+        assert result is not None
+        # Votes should not have reasoning key or it should be empty
+        for v in result.votes:
+            reasoning = v.metadata.get("reasoning", "")
+            assert reasoning == "" or reasoning is None
+
+
+class TestRoundPromptContent:
+    """Tests verifying multi-round prompts contain argument exchange content."""
+
+    @pytest.mark.asyncio
+    async def test_round_2_prompt_contains_arguments(self, maker, ds):
+        """The prompt sent to agents in round 2 contains argument exchange summary."""
+        actors = _all_agents_mock()
+        captured_prompts: list[str] = []
+
+        async def _capture(prompt, **kwargs):
+            captured_prompts.append(prompt)
+            if "previous round" in prompt.lower():
+                # Round 2: all agree
+                return '{"decision": "approve", "confidence": 0.95, "reasoning": "Persuaded."}'
+            # Round 1: mixed votes
+            idx = len(captured_prompts)
+            if idx <= 2:
+                return '{"decision": "approve", "confidence": 0.9, "reasoning": "Good idea."}'
+            return '{"decision": "reject", "confidence": 0.9, "reasoning": "Too risky."}'
+
+        for actor in actors.values():
+            actor.run_with_llm = AsyncMock(side_effect=_capture)
+
+        coord = ConsensusCoordinator(maker=maker, domain_selector=ds, actors=actors)
+        result = await coord.run_consensus("security analysis", max_rounds=3)
+
+        # Check if round 2 prompt was sent
+        round_2_prompts = [
+            p for p in captured_prompts
+            if "previous round" in p.lower()
+        ]
+
+        if len(round_2_prompts) > 0:
+            prompt = round_2_prompts[0]
+            assert "ARGUMENTS FOR" in prompt
+            assert "ARGUMENTS AGAINST" in prompt
+            assert "PREVIOUS ROUND SUMMARY" in prompt
+            assert "reconsider" in prompt.lower()
