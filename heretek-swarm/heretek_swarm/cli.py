@@ -19,6 +19,7 @@ from pathlib import Path
 from typing import Any
 
 import click
+import difflib
 import httpx
 import structlog
 
@@ -362,6 +363,23 @@ class GroupedGroup(click.Group):
             with formatter.section("Other"):
                 formatter.write_dl(rows)
 
+    def get_command(self, ctx: click.Context, cmd_name: str) -> click.Command | None:
+        """Look up a command by name, suggesting the closest match on miss."""
+        cmd = super().get_command(ctx, cmd_name)
+        if cmd is not None:
+            return cmd
+
+        # Suggest the closest valid command name
+        matches = difflib.get_close_matches(
+            cmd_name, self.list_commands(ctx), n=1, cutoff=0.6
+        )
+        if matches:
+            raise click.UsageError(
+                f"No such command '{cmd_name}'. Did you mean '{matches[0]}'?",
+                ctx=ctx,
+            )
+        raise click.UsageError(f"No such command '{cmd_name}'.", ctx=ctx)
+
 
 @click.group(
     cls=GroupedGroup,
@@ -388,7 +406,15 @@ def cli(ctx: click.Context) -> None:
         click.echo(ctx.get_help())
 
 
-@cli.command()
+@cli.command(
+    epilog=(
+        "\b\n"
+        "Examples:\n"
+        "  heretek-swarm deploy\n"
+        "  heretek-swarm deploy --production --scale 3\n"
+        "  heretek-swarm deploy --nats-url nats://cluster:4222"
+    ),
+)
 @click.option("--production", is_flag=True, help="Deploy to production mode")
 @click.option("--scale", default=1, type=int, help="Number of agent instances (default: 1)")
 @click.option("--nats-url", default="nats://localhost:4222", help="NATS server URL")
@@ -648,7 +674,17 @@ def _handle_signal(signum: int, frame) -> None:
         sys.exit(0)
 
 
-@cli.command()
+@cli.command(
+    epilog=(
+        "\b\n"
+        "Examples:\n"
+        "  heretek-swarm run\n"
+        "  heretek-swarm run --detach\n"
+        "  heretek-swarm run --no-infra\n"
+        "  heretek-swarm run --no-infra --prompt \"Analyze the strategic implications of X\"\n"
+        "  HERETEK_NATS_URL=nats://cluster1:4222,nats://cluster2:4222 heretek-swarm run"
+    ),
+)
 @click.option(
     "--detach",
     is_flag=True,
@@ -691,13 +727,6 @@ def run(detach: bool, nats_url: str, no_infra: bool, prompt: str | None = None, 
 
     Use --no-infra to run without Docker/Postgres/Redis — the swarm uses
     in-memory state and logs graceful fallback warnings.
-
-    Examples:
-        heretek-swarm run
-        heretek-swarm run --detach
-        heretek-swarm run --no-infra
-        heretek-swarm run --no-infra --prompt "Analyze the strategic implications of X"
-        HERETEK_NATS_URL=nats://cluster1:4222,nats://cluster2:4222 heretek-swarm run
     """
     import os
 
@@ -796,7 +825,15 @@ def run(detach: bool, nats_url: str, no_infra: bool, prompt: str | None = None, 
         sys.exit(1)
 
 
-@cli.command()
+@cli.command(
+    epilog=(
+        "\b\n"
+        "Examples:\n"
+        "  heretek-swarm serve\n"
+        "  heretek-swarm serve --host 127.0.0.1 --port 9000\n"
+        "  heretek-swarm serve --workers 4"
+    ),
+)
 @click.option(
     "--host",
     default="0.0.0.0",
@@ -820,11 +857,6 @@ def serve(host: str, port: int, workers: int) -> None:
 
     Starts uvicorn with the FastAPI application on the specified host and port.
     Uses structured logging via uvicorn's built-in configuration.
-
-    Examples:
-        heretek-swarm serve
-        heretek-swarm serve --host 127.0.0.1 --port 9000
-        heretek-swarm serve --workers 4
     """
     import os
 
