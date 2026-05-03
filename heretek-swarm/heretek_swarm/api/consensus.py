@@ -540,9 +540,11 @@ async def aggregate_consensus(
 
 
 @router.get("/{consensus_id}/results")
-async def get_consensus_results(consensus_id: str):
+async def get_consensus_results(consensus_id: str, agent_id: str = Depends(get_authenticated_agent)):
     """
     Get results of a completed consensus round.
+
+    SECURITY: Requires authentication.
 
     Args:
         consensus_id: Unique consensus round identifier
@@ -690,7 +692,7 @@ async def start_deliberation(
     topic: str | None = None,
     max_rounds: int = 5,
     timeout_minutes: int = 30,
-    auth: dict = Depends(get_authenticated_agent),
+    agent_id: str = Depends(get_authenticated_agent),
 ):
     """
     Start a new deliberation process.
@@ -705,7 +707,6 @@ async def start_deliberation(
     Returns:
         Deliberation ID and initial state
     """
-    agent_id = auth["agent_id"]
     logger.info("starting_deliberation", agent_id=agent_id, participants=len(participants))
 
     deliberation_id = deliberation_engine.start_deliberation(
@@ -732,7 +733,7 @@ async def submit_deliberation_position(
     position: str,
     confidence: float = 0.5,
     reasoning: str | None = None,
-    auth: dict = Depends(get_authenticated_agent),
+    agent_id: str = Depends(get_authenticated_agent),
 ):
     """
     Submit a position in a deliberation.
@@ -746,7 +747,6 @@ async def submit_deliberation_position(
     Returns:
         Submission confirmation
     """
-    agent_id = auth["agent_id"]
     logger.info("submitting_position", deliberation_id=deliberation_id, agent_id=agent_id)
 
     try:
@@ -781,7 +781,7 @@ async def submit_deliberation_argument(
     reasoning: str,
     evidence_refs: list[str] | None = None,
     confidence: float = 0.5,
-    auth: dict = Depends(get_authenticated_agent),
+    agent_id: str = Depends(get_authenticated_agent),
 ):
     """
     Submit an argument in a deliberation.
@@ -796,7 +796,6 @@ async def submit_deliberation_argument(
     Returns:
         Argument ID and confirmation
     """
-    agent_id = auth["agent_id"]
     logger.info("submitting_argument", deliberation_id=deliberation_id, agent_id=agent_id)
 
     try:
@@ -837,7 +836,7 @@ async def submit_deliberation_evidence(
     content: str,
     source: str | None = None,
     quality_score: float = 0.5,
-    auth: dict = Depends(get_authenticated_agent),
+    agent_id: str = Depends(get_authenticated_agent),
 ):
     """
     Submit evidence for an argument.
@@ -852,7 +851,6 @@ async def submit_deliberation_evidence(
     Returns:
         Evidence ID and confirmation
     """
-    agent_id = auth["agent_id"]
     logger.info("submitting_evidence", deliberation_id=deliberation_id, agent_id=agent_id)
 
     evidence = Evidence(
@@ -880,7 +878,7 @@ async def submit_deliberation_evidence(
 
 
 @router.post("/deliberation/{deliberation_id}/run_round")
-async def run_deliberation_round(deliberation_id: str, auth: dict = Depends(get_authenticated_agent)):
+async def run_deliberation_round(deliberation_id: str, agent_id: str = Depends(get_authenticated_agent)):
     """
     Run a single deliberation round.
 
@@ -890,7 +888,6 @@ async def run_deliberation_round(deliberation_id: str, auth: dict = Depends(get_
     Returns:
         Round results including consensus score and summary
     """
-    agent_id = auth["agent_id"]
     logger.info("running_deliberation_round", deliberation_id=deliberation_id, agent_id=agent_id)
 
     round_result = deliberation_engine.run_deliberation_round(deliberation_id=deliberation_id)
@@ -940,7 +937,7 @@ async def run_deliberation_round(deliberation_id: str, auth: dict = Depends(get_
 
 
 @router.get("/deliberation/{deliberation_id}/state")
-async def get_deliberation_state(deliberation_id: str, auth: dict = Depends(get_authenticated_agent)):
+async def get_deliberation_state(deliberation_id: str, agent_id: str = Depends(get_authenticated_agent)):
     """
     Get current deliberation state.
 
@@ -972,7 +969,7 @@ async def get_deliberation_state(deliberation_id: str, auth: dict = Depends(get_
 async def get_deliberation_history(
     deliberation_id: str,
     limit: int = 10,
-    auth: dict = Depends(get_authenticated_agent),
+    agent_id: str = Depends(get_authenticated_agent),
 ):
     """
     Get deliberation round history.
@@ -1003,7 +1000,7 @@ async def get_deliberation_history(
 
 
 @router.post("/deliberation/{deliberation_id}/finalize")
-async def finalize_deliberation(deliberation_id: str, auth: dict = Depends(get_authenticated_agent)):
+async def finalize_deliberation(deliberation_id: str, agent_id: str = Depends(get_authenticated_agent)):
     """
     Finalize a deliberation and return results.
 
@@ -1013,7 +1010,6 @@ async def finalize_deliberation(deliberation_id: str, auth: dict = Depends(get_a
     Returns:
         Final deliberation results including decision and minority reports
     """
-    agent_id = auth["agent_id"]
     logger.info("finalizing_deliberation", deliberation_id=deliberation_id, agent_id=agent_id)
 
     result = deliberation_engine.finalize_deliberation(deliberation_id=deliberation_id)
@@ -1035,7 +1031,7 @@ async def finalize_deliberation(deliberation_id: str, auth: dict = Depends(get_a
 
 
 @router.delete("/deliberation/{deliberation_id}")
-async def cleanup_deliberation(deliberation_id: str, auth: dict = Depends(get_authenticated_agent)):
+async def cleanup_deliberation(deliberation_id: str, agent_id: str = Depends(get_authenticated_agent)):
     """
     Cleanup and remove a deliberation.
 
@@ -1062,7 +1058,7 @@ audit_trail = ConsensusAuditTrail()
 
 
 @router.get("/audit/decision/{decision_id}")
-async def get_decision_audit(decision_id: str, auth: dict = Depends(get_authenticated_agent)):
+async def get_decision_audit(decision_id: str, agent_id: str = Depends(get_authenticated_agent)):
     """
     Get comprehensive decision audit record.
 
@@ -1081,7 +1077,7 @@ async def get_decision_audit(decision_id: str, auth: dict = Depends(get_authenti
 
 
 @router.get("/audit/decision/{decision_id}/export")
-async def export_decision_audit(decision_id: str, auth: dict = Depends(get_authenticated_agent)):
+async def export_decision_audit(decision_id: str, agent_id: str = Depends(get_authenticated_agent)):
     """
     Export decision audit record as JSON.
 
@@ -1103,7 +1099,7 @@ async def export_decision_audit(decision_id: str, auth: dict = Depends(get_authe
 
 
 @router.get("/audit/decision/{decision_id}/verify")
-async def verify_decision_audit(decision_id: str, auth: dict = Depends(get_authenticated_agent)):
+async def verify_decision_audit(decision_id: str, agent_id: str = Depends(get_authenticated_agent)):
     """
     Verify integrity of decision audit record.
 
@@ -1126,7 +1122,7 @@ async def verify_decision_audit(decision_id: str, auth: dict = Depends(get_authe
 
 
 @router.get("/audit/statistics")
-async def get_audit_statistics(auth: dict = Depends(get_authenticated_agent)):
+async def get_audit_statistics(agent_id: str = Depends(get_authenticated_agent)):
     """
     Get audit trail statistics.
 
@@ -1137,7 +1133,7 @@ async def get_audit_statistics(auth: dict = Depends(get_authenticated_agent)):
 
 
 @router.get("/audit/failed")
-async def get_failed_audits(auth: dict = Depends(get_authenticated_agent)):
+async def get_failed_audits(agent_id: str = Depends(get_authenticated_agent)):
     """
     Get all failed decision audits.
 
@@ -1152,7 +1148,7 @@ async def get_failed_audits(auth: dict = Depends(get_authenticated_agent)):
 
 
 @router.get("/audit/successful")
-async def get_successful_audits(auth: dict = Depends(get_authenticated_agent)):
+async def get_successful_audits(agent_id: str = Depends(get_authenticated_agent)):
     """
     Get all successful decision audits.
 
@@ -1167,7 +1163,7 @@ async def get_successful_audits(auth: dict = Depends(get_authenticated_agent)):
 
 
 @router.get("/audit/deliberation/{consensus_id}/history")
-async def get_deliberation_audit_history(consensus_id: str, auth: dict = Depends(get_authenticated_agent)):
+async def get_deliberation_audit_history(consensus_id: str, agent_id: str = Depends(get_authenticated_agent)):
     """
     Get deliberation history for audit.
 
@@ -1208,7 +1204,7 @@ def get_tribunal() -> Tribunal | None:
 
 @router.post("/tribunal/cases", responses={503: {"description": "Tribunal not available"}})
 async def create_tribunal_case(
-    auth: Annotated[dict, Depends(get_authenticated_agent)],
+    agent_id: Annotated[str, Depends(get_authenticated_agent)],
     original_decision_id: str = "",
     grounds: str = "",
     description: str = "",
@@ -1233,7 +1229,7 @@ async def create_tribunal_case(
     try:
         case = tribunal.create_case(
             original_decision_id=original_decision_id,
-            appellant_agent_id=auth["agent_id"],
+            appellant_agent_id=agent_id,
             grounds=grounds,
             description=description,
             original_consensus_id=original_consensus_id,
@@ -1246,7 +1242,7 @@ async def create_tribunal_case(
 
 @router.get("/tribunal/cases/{case_id}", responses={503: {"description": "Tribunal not available"}})
 async def get_tribunal_case(
-    auth: Annotated[dict, Depends(get_authenticated_agent)],
+    agent_id: Annotated[str, Depends(get_authenticated_agent)],
     case_id: str = "",
 ):
     """
@@ -1275,7 +1271,7 @@ async def submit_tribunal_evidence(
     evidence_type: EvidenceType = EvidenceType.DOCUMENT,
     source: str | None = None,
     reliability_score: float = 0.5,
-    auth: dict = Depends(get_authenticated_agent),
+    agent_id: str = Depends(get_authenticated_agent),
 ):
     """
     Submit evidence to a Tribunal case.
@@ -1296,7 +1292,7 @@ async def submit_tribunal_evidence(
 
     try:
         evidence = tribunal.submit_evidence(
-            agent_id=auth["agent_id"],
+            agent_id=agent_id,
             case_id=case_id,
             content=content,
             evidence_type=evidence_type,
@@ -1315,7 +1311,7 @@ async def issue_tribunal_ruling(
     ruling_type: RulingType,
     reasoning: str,
     confidence: float = 1.0,
-    auth: dict = Depends(get_authenticated_agent),
+    agent_id: str = Depends(get_authenticated_agent),
 ):
     """
     Issue a ruling on a Tribunal case.
@@ -1338,7 +1334,7 @@ async def issue_tribunal_ruling(
             case_id=case_id,
             ruling_type=ruling_type.value,
             reasoning=reasoning,
-            issued_by=auth["agent_id"],
+            issued_by=agent_id,
             confidence=confidence,
         )
         return {"ruling": ruling}
@@ -1350,7 +1346,7 @@ async def issue_tribunal_ruling(
 @router.get("/tribunal/precedents")
 async def get_tribunal_precedents(
     limit: int = 10,
-    auth: dict = Depends(get_authenticated_agent),
+    agent_id: str = Depends(get_authenticated_agent),
 ):
     """
     Get binding precedent rulings.
@@ -1373,7 +1369,7 @@ async def get_tribunal_precedents(
 async def find_similar_precedents(
     case_id: str,
     limit: int = 5,
-    auth: dict = Depends(get_authenticated_agent),
+    agent_id: str = Depends(get_authenticated_agent),
 ):
     """
     Find precedents similar to a case.

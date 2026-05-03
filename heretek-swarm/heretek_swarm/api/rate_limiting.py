@@ -136,6 +136,9 @@ RATE_LIMITS = {
 
     # Consensus - moderate
     "/api/consensus": "60/minute",
+    "/api/consensus/{consensus_id}/vote": "30/minute",
+    "/api/consensus/{consensus_id}/aggregate": "10/minute",
+    "/api/consensus/deliberation/{deliberation_id}/run_round": "20/minute",
 
     # LiteLLM metrics - lower (expensive)
     "/api/litellm/metrics": "30/minute",
