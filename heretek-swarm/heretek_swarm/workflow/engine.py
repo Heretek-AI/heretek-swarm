@@ -1466,21 +1466,24 @@ class WorkflowEngine:
         Perform topological sort on dependency graph.
 
         Args:
-            graph: Dependency graph
+            graph: Dependency graph where graph[node_id] = set of nodes
+                   that must execute before node_id (its dependencies).
 
         Returns:
-            List of node IDs in execution order
+            List of node IDs in execution order (dependencies before dependents).
         """
         # Kahn's algorithm
-        in_degree: dict[str, int] = dict.fromkeys(graph, 0)
+        # in_degree = number of dependencies each node has
+        in_degree: dict[str, int] = {node_id: len(deps) for node_id, deps in graph.items()}
         result: list[str] = []
 
-        # Calculate in-degrees
+        # Build reverse map: dependency → set of nodes that depend on it
+        dependents: dict[str, set[str]] = {nid: set() for nid in graph}
         for node_id, dependencies in graph.items():
             for dep in dependencies:
-                in_degree[dep] = in_degree.get(dep, 0) + 1
+                dependents[dep].add(node_id)
 
-        # Find nodes with no incoming edges
+        # Find nodes with no dependencies (in_degree == 0)
         queue = [node_id for node_id, degree in in_degree.items() if degree == 0]
 
         # Process nodes
@@ -1488,11 +1491,11 @@ class WorkflowEngine:
             node_id = queue.pop(0)
             result.append(node_id)
 
-            # Decrement in-degrees of dependents
-            for dep in graph.get(node_id, set()):
-                in_degree[dep] -= 1
-                if in_degree[dep] == 0:
-                    queue.append(dep)
+            # Decrement in-degrees of nodes that depended on the processed node
+            for dependent in dependents.get(node_id, set()):
+                in_degree[dependent] -= 1
+                if in_degree[dependent] == 0:
+                    queue.append(dependent)
 
         return result
 

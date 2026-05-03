@@ -399,12 +399,12 @@ class TestDiamondDependency:
 
         # All 4 nodes present
         assert set(order) == {"A", "B", "C", "D"}
-        # D (leaf, no dependents) must come before its dependencies B and C
-        assert order.index("D") < order.index("B")
-        assert order.index("D") < order.index("C")
-        # B and C must come before A (their dependency)
-        assert order.index("B") < order.index("A")
-        assert order.index("C") < order.index("A")
+        # A (root, no dependencies) must come before its dependents B and C
+        assert order.index("A") < order.index("B")
+        assert order.index("A") < order.index("C")
+        # B and C must come before D (D depends on both)
+        assert order.index("B") < order.index("D")
+        assert order.index("C") < order.index("D")
 
 
 # ---------------------------------------------------------------------------
@@ -525,43 +525,42 @@ class TestTopologicalSort:
     """Verify engine's topological sort for various graph shapes."""
 
     def test_linear_sort(self):
-        """Engine's topological sort processes leaf-first (reverse order).
+        """Engine's topological sort processes dependencies first.
 
         The engine's _build_graph maps each node to its incoming dependencies.
-        Its Kahn variant counts outgoing edges as in_degree, so nodes with
-        no dependents (leaves) start first.
+        Standard Kahn's algorithm: nodes with no dependencies (roots) execute first,
+        then their dependents.
         """
         engine = WorkflowEngine.__new__(WorkflowEngine)
         graph = {"start": set(), "mid": {"start"}, "end": {"mid"}}
         order = engine._topological_sort(graph)
-        # Leaf node (end, no one depends on it) comes first
-        assert order[0] == "end"
+        # Root node (start, no dependencies) comes first
+        assert order[0] == "start"
         assert set(order) == {"start", "mid", "end"}
-        # Dependencies appear after their dependents
-        assert order.index("end") < order.index("mid") < order.index("start")
+        # Dependencies appear before their dependents
+        assert order.index("start") < order.index("mid") < order.index("end")
 
     def test_diamond_sort(self):
-        """Diamond graph topological sort — leaf-first ordering."""
+        """Diamond graph topological sort — dependencies-first ordering."""
         engine = WorkflowEngine.__new__(WorkflowEngine)
         graph = {"A": set(), "B": {"A"}, "C": {"A"}, "D": {"B", "C"}}
         order = engine._topological_sort(graph)
-        # D (leaf) comes first, then B/C, then A
-        assert order[0] == "D"
+        # A (root, no dependencies) comes first, D (leaf) comes last
+        assert order[0] == "A"
         assert set(order) == {"A", "B", "C", "D"}
-        assert order.index("D") < order.index("B")
-        assert order.index("D") < order.index("C")
-        assert order.index("B") < order.index("A")
-        assert order.index("C") < order.index("A")
+        assert order.index("A") < order.index("B")
+        assert order.index("A") < order.index("C")
+        assert order.index("B") < order.index("D")
+        assert order.index("C") < order.index("D")
 
     def test_wide_fan_out_sort(self):
-        """A fans out to B, C, D — leaves (B,C,D) come before A."""
+        """A fans out to B, C, D — A (root) comes before its dependents."""
         engine = WorkflowEngine.__new__(WorkflowEngine)
         graph = {"A": set(), "B": {"A"}, "C": {"A"}, "D": {"A"}}
         order = engine._topological_sort(graph)
-        # B, C, D are leaves (no dependents), A is the root
+        # B, C, D depend on A, so A (root) must be first
         assert set(order) == {"A", "B", "C", "D"}
-        # A (root) must be last since everything depends on it
-        assert order[-1] == "A"
+        assert order[0] == "A"
 
     def test_empty_graph(self):
         engine = WorkflowEngine.__new__(WorkflowEngine)
