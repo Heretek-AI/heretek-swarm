@@ -11,8 +11,13 @@ Provides:
 * A **pytest filterwarnings** entry that suppresses ``ResourceWarning`` —
   these are emitted by unclosed ``aiohttp.ClientSession`` objects from
   ``AgentActor`` heartbeat loops in integration tests.
+* A **logging filter** on the ``asyncio`` logger that suppresses
+  ``Unclosed client session`` messages — these are emitted by the event
+  loop's default exception handler during teardown when background tasks
+  created ``aiohttp.ClientSession`` objects that were not explicitly closed.
 """
 
+import logging
 import warnings
 
 from collections.abc import Generator
@@ -27,6 +32,25 @@ from heretek_swarm.actors.supervisor import get_supervisor
 # these are created by AgentActor heartbeat background tasks in integration
 # tests and are harmless (cleaned up by the event loop on shutdown).
 warnings.filterwarnings("ignore", category=ResourceWarning, message=".*unclosed.*")
+
+
+class _SuppressUnclosedSessions(logging.Filter):
+    """Drop asyncio 'Unclosed client session' log records.
+
+    The asyncio event loop logs unclosed aiohttp sessions as ERROR-level
+    messages through the ``asyncio`` logger during event-loop teardown.
+    These are benign in the test suite (background heartbeat tasks create
+    sessions that are cleaned up when the loop closes).  Suppressing them
+    keeps ``pytest`` stderr clean and prevents false-negative verification.
+    """
+
+    def filter(self, record: logging.LogRecord) -> bool:
+        return "Unclosed client session" not in record.getMessage()
+
+
+# Apply the filter to the asyncio logger so structured-log and stdlib
+# handlers both see it.
+logging.getLogger("asyncio").addFilter(_SuppressUnclosedSessions())
 
 
 @pytest.fixture
