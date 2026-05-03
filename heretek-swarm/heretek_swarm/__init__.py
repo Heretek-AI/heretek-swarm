@@ -6,7 +6,7 @@ featuring event-driven communication, actor model orchestration, MAKER consensus
 HeavySwarm deliberation workflows, and consciousness/liberation plugins.
 """
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 __author__ = "Heretek AI"
 __email__ = "ai@heretek.io"
 

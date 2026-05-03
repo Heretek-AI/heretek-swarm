@@ -299,10 +299,17 @@ def check_compose_plugin(runtime: str) -> bool:
 # CLI Commands
 # =============================================================================
 
+from importlib.metadata import version as _get_version, PackageNotFoundError
+
+try:
+    __version__ = _get_version("heretek-swarm")
+except PackageNotFoundError:
+    __version__ = "0.0.0-dev"
+
 @click.group()
-@click.version_option(version="0.1.0")
+@click.version_option(version=__version__, prog_name="heretek-swarm")
 def cli() -> None:
-    """Heretek Swarm - Next-generation multi-agent system."""
+    """Heretek Swarm - Autonomous multi-agent system with 23 specialized agents."""
 
 
 @cli.command()
