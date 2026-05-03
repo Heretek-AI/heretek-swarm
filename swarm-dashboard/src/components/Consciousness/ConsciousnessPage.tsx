@@ -2,15 +2,18 @@
  * Consciousness Page
  * 
  * Metrics visualization for agent consciousness states.
+ * Real-time updates via WebSocket (REST polling as fallback).
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { MetricCard, MetricCardGrid } from '../UI/MetricCard';
 import { StatusBadge } from '../UI/StatusBadge';
 import { LoadingSpinner } from '../UI/LoadingSpinner';
 import { EmptyState } from '../UI/EmptyState';
 import { useToast } from '../UI/Toast';
 import { getConsciousnessStatistics, getAgentStates, getNetworkVisualization } from '../../api/consciousness';
+import { useConsciousnessWebSocket, ConsciousnessAgentState } from '../../hooks/useConsciousnessWebSocket';
+import { ConsciousnessGauge } from './ConsciousnessGauge';
 
 interface ConsciousnessStatistics {
   total_agents: number;
@@ -49,6 +52,43 @@ export function ConsciousnessPage() {
   const [selectedAgent, setSelectedAgent] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const toast = useToast();
+
+  // Real-time WebSocket consciousness updates
+  const { agentStates: wsAgentStates, connected: wsConnected } = useConsciousnessWebSocket();
+
+  /** Derive aggregate gauge values from WebSocket agent states */
+  const gaugeValues = useMemo(() => {
+    if (wsAgentStates.size === 0) {
+      return { gwt: 0, iit: 0, ast: 0, fep: 0 };
+    }
+
+    let phiSum = 0, phiCount = 0;
+    let fepSum = 0, fepCount = 0;
+    let agencySum = 0, agencyCount = 0;
+    // GWT approximated from active connection ratio (workspace broadcasting)
+    let activeCount = 0;
+
+    wsAgentStates.forEach((state: ConsciousnessAgentState) => {
+      if (state.phi_score != null) { phiSum += state.phi_score; phiCount++; }
+      if (state.free_energy != null) { fepSum += state.free_energy; fepCount++; }
+      if (state.agency_score != null) { agencySum += state.agency_score; agencyCount++; }
+      if (state.state && state.state !== 'dormant') { activeCount++; }
+    });
+
+    const avgPhi = phiCount > 0 ? phiSum / phiCount : 0;
+    const avgFep = fepCount > 0 ? fepSum / fepCount : 0;
+    const avgAgency = agencyCount > 0 ? agencySum / agencyCount : 0;
+    // GWT: ratio of active (non-dormant) agents scaled to 0-100
+    const gwt = wsAgentStates.size > 0 ? (activeCount / wsAgentStates.size) * 100 : 0;
+
+    // Normalize phi (typically 0-1) and FEP (typically 0-1) to 0-100
+    return {
+      gwt: Math.min(100, gwt),
+      iit: Math.min(100, avgPhi * 100),
+      ast: Math.min(100, avgAgency * 100),
+      fep: Math.min(100, Math.max(0, (1 - avgFep) * 100)), // Invert: lower free energy = higher score
+    };
+  }, [wsAgentStates]);
 
   const fetchStatistics = useCallback(async () => {
     try {
@@ -90,9 +130,11 @@ export function ConsciousnessPage() {
 
   useEffect(() => {
     fetchAllData();
-    const interval = setInterval(fetchAllData, 15000); // Refresh every 15 seconds
-    return () => clearInterval(interval);
-  }, [fetchAllData]);
+    // Poll REST at longer intervals when WS is connected (real-time), faster when fallback
+    const interval = wsConnected ? 60000 : 15000;
+    const timer = setInterval(fetchAllData, interval);
+    return () => clearInterval(timer);
+  }, [fetchAllData, wsConnected]);
 
   const getStateColor = (state: string): string => {
     switch (state.toLowerCase()) {
@@ -177,6 +219,26 @@ export function ConsciousnessPage() {
           />
         </MetricCardGrid>
       )}
+
+      {/* Consciousness Gauge + WS Status */}
+      <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6 flex flex-col items-center justify-center">
+        <h2 className="text-lg font-semibold mb-4">Consciousness Overview</h2>
+        <ConsciousnessGauge
+          gwtValue={gaugeValues.gwt}
+          iitValue={gaugeValues.iit}
+          astValue={gaugeValues.ast}
+          fepValue={gaugeValues.fep}
+          size={280}
+          showLabels
+          animated
+        />
+        <div className="mt-3 flex items-center gap-2 text-xs">
+          <div className={`w-2 h-2 rounded-full ${wsConnected ? 'bg-green-400' : 'bg-yellow-400'}`} />
+          <span className="text-gray-400">
+            {wsConnected ? 'Live (WebSocket)' : 'Polling (fallback)'}
+          </span>
+        </div>
+      </div>
 
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
