@@ -23,6 +23,9 @@ Core Features:
 - Quorum-based baseline updates to prevent corruption
 """
 
+from heretek_swarm.consensus.consensus_coordinator import (
+    ConsensusCoordinator,
+)
 from heretek_swarm.consensus.domain_selector import (
     DEFAULT_FALLBACK_AGENTS,
     DomainSelector,
@@ -106,6 +109,7 @@ __all__ = [
     "ArgumentRecord",
     # Audit Trail
     "ConsensusAuditTrail",
+    "ConsensusCoordinator",
     "ConsensusResult",
     "ConsensusState",
     "DecisionOutcome",
