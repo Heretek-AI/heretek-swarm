@@ -68,12 +68,10 @@ services:
     restart: unless-stopped
 
   # =============================================================================
-  # Autonomous Profile — API + 23 spawned agents
+  # API Service — 23 spawned agents
   # =============================================================================
 
   api:
-    profiles:
-      - autonomous
     build:
       context: .
       dockerfile: heretek-swarm/Dockerfile
@@ -114,12 +112,10 @@ services:
     restart: unless-stopped
 
   # =============================================================================
-  # Dashboard Profile — React frontend
+  # Dashboard — React frontend
   # =============================================================================
 
   dashboard:
-    profiles:
-      - dashboard
     build:
       context: ./swarm-dashboard
       dockerfile: Dockerfile
