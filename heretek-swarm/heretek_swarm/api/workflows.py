@@ -22,7 +22,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi.responses import StreamingResponse
 
 from heretek_swarm.gateway.auth import verify_auth
-from heretek_swarm.workflow.engine import WorkflowState, get_workflow_engine
+from heretek_swarm.workflow.engine import WorkflowStatus, get_workflow_engine
 from heretek_swarm.workflow.validator import WorkflowValidator
 
 logger = structlog.get_logger(__name__)
@@ -69,11 +69,8 @@ async def create_workflow(
     """
     engine = await get_workflow_engine()
 
-    # Create workflow from definition
+    # Create workflow from definition (load_workflow persists to disk)
     workflow = await engine.load_workflow(workflow_definition)
-
-    # Store workflow
-    engine.workflows[workflow.id] = workflow
 
     logger.info("workflow_created", workflow_id=workflow.id, name=workflow.name)
 
@@ -81,7 +78,7 @@ async def create_workflow(
         "id": workflow.id,
         "name": workflow.name,
         "created_at": workflow.created_at,
-        "state": WorkflowState.PENDING.value
+        "state": WorkflowStatus.PENDING.value
     }
 
 
@@ -106,7 +103,7 @@ async def list_workflows(
                 "id": workflow_id,
                 "name": workflow.name,
                 "created_at": workflow.created_at,
-                "state": workflow.state
+                "state": WorkflowStatus.PENDING.value,
             }
             for workflow_id, workflow in engine.workflows.items()
         ]
@@ -130,19 +127,36 @@ async def get_workflow(
     """
     engine = await get_workflow_engine()
 
-    if workflow_id not in engine.workflows:
+    workflow = engine.get_workflow(workflow_id)
+    if workflow is None:
         raise HTTPException(status_code=404, detail="Workflow not found")
-
-    workflow = engine.workflows[workflow_id]
 
     return {
         "id": workflow.id,
         "name": workflow.name,
-        "nodes": workflow.nodes,
-        "edges": workflow.edges,
+        "nodes": [
+            {
+                "id": n.id,
+                "type": n.type,
+                "data": n.data,
+                "inputs": n.inputs,
+                "outputs": n.outputs,
+                "position": n.position,
+            }
+            for n in workflow.nodes
+        ],
+        "edges": [
+            {
+                "id": e.id,
+                "source": e.source,
+                "target": e.target,
+                "condition": e.condition,
+            }
+            for e in workflow.edges
+        ],
         "metadata": workflow.metadata,
         "created_at": workflow.created_at,
-        "state": WorkflowState.PENDING.value
+        "state": WorkflowStatus.PENDING.value,
     }
 
 
@@ -170,7 +184,7 @@ async def execute_workflow(
     """
     engine = await get_workflow_engine()
 
-    if workflow_id not in engine.workflows:
+    if engine.get_workflow(workflow_id) is None:
         raise HTTPException(status_code=404, detail="Workflow not found")
 
     result = await engine.execute_workflow(
@@ -198,6 +212,41 @@ async def execute_workflow(
     }
 
 
+@router.put("/{workflow_id}", status_code=200)
+async def update_workflow(
+    workflow_id: str,
+    workflow_definition: dict[str, Any],
+    authenticated: str = Depends(verify_auth),
+) -> dict[str, Any]:
+    """Update an existing workflow definition.
+
+    Canvas uses this for save-as-you-type persistence.
+
+    Args:
+        workflow_id: Workflow ID to update.
+        workflow_definition: New workflow definition.
+        authenticated: Authentication token.
+
+    Returns:
+        Updated workflow metadata.
+    """
+    engine = await get_workflow_engine()
+
+    try:
+        workflow = await engine.update_workflow(workflow_id, workflow_definition)
+    except ValueError:
+        raise HTTPException(status_code=404, detail="Workflow not found")
+
+    logger.info("workflow_updated", workflow_id=workflow.id, name=workflow.name)
+
+    return {
+        "id": workflow.id,
+        "name": workflow.name,
+        "created_at": workflow.created_at,
+        "state": WorkflowStatus.PENDING.value,
+    }
+
+
 @router.delete("/{workflow_id}")
 async def delete_workflow(
     workflow_id: str,
@@ -215,13 +264,8 @@ async def delete_workflow(
     """
     engine = await get_workflow_engine()
 
-    if workflow_id not in engine.workflows:
+    if not engine.delete_workflow(workflow_id):
         raise HTTPException(status_code=404, detail="Workflow not found")
-
-    # Remove from storage
-    del engine.workflows[workflow_id]
-
-    logger.info("workflow_deleted", workflow_id=workflow_id)
 
     return
 
@@ -250,7 +294,7 @@ async def get_workflow_status(
     if not context:
         return {
             "workflow_id": workflow_id,
-            "status": WorkflowState.PENDING.value,
+            "status": WorkflowStatus.PENDING.value,
             "execution_id": None
         }
 
@@ -320,10 +364,9 @@ async def validate_workflow_endpoint(
     """
     engine = await get_workflow_engine()
 
-    if workflow_id not in engine.workflows:
+    workflow = engine.get_workflow(workflow_id)
+    if workflow is None:
         raise HTTPException(status_code=404, detail="Workflow not found")
-
-    workflow = engine.workflows[workflow_id]
 
     # Convert workflow to validation format
     workflow_definition = {

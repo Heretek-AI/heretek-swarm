@@ -22,6 +22,8 @@ from typing import Annotated, Any, TypeVar
 import structlog
 from typing_extensions import TypedDict
 
+from heretek_swarm.workflow.store import FileWorkflowStore
+
 logger = structlog.get_logger(__name__)
 
 # Import cycle detection
@@ -574,6 +576,7 @@ class WorkflowEngine:
         timeout_seconds: float = 300.0,
         consensus_coordinator: Any | None = None,
         supervisor: Any | None = None,
+        store: FileWorkflowStore | None = None,
     ):
         """
         Initialize workflow engine.
@@ -584,10 +587,15 @@ class WorkflowEngine:
             timeout_seconds: Timeout in seconds before cycle break (if no detector provided)
             consensus_coordinator: Optional ConsensusCoordinator for consensus node type
             supervisor: Optional ActorSupervisor for consensus agent resolution
+            store: Optional FileWorkflowStore for disk persistence. If None, a
+                   default store is created at ~/.heretek-swarm/workflows.json.
         """
         self.workflows: dict[str, Workflow] = {}
         self.active_executions: dict[str, WorkflowContext] = {}
         self._execution_lock = asyncio.Lock()
+
+        # Persistence store
+        self.store = store or FileWorkflowStore()
 
         # Cycle detection integration
         self.cycle_detector = cycle_detector or WorkflowCycleDetector(
@@ -641,6 +649,10 @@ class WorkflowEngine:
         )
 
         self.workflows[workflow.id] = workflow
+
+        # Persist to disk
+        self.store.save(workflow.id, workflow_definition)
+
         logger.info("workflow_loaded", workflow_id=workflow.id, name=workflow.name)
 
         return workflow
@@ -1425,13 +1437,111 @@ class WorkflowEngine:
         """
         Get a workflow by ID.
 
+        Checks in-memory cache first, then falls back to the disk store.
+
         Args:
             workflow_id: Workflow ID
 
         Returns:
             Workflow or None
         """
-        return self.workflows.get(workflow_id)
+        if workflow_id in self.workflows:
+            return self.workflows[workflow_id]
+
+        # Fall back to disk store
+        stored = self.store.load(workflow_id)
+        if stored is not None:
+            workflow = self._definition_to_workflow(stored)
+            self.workflows[workflow.id] = workflow
+            return workflow
+
+        return None
+
+    async def update_workflow(
+        self, workflow_id: str, definition: dict[str, Any]
+    ) -> Workflow:
+        """Update an existing workflow definition.
+
+        Persists the updated definition to disk and refreshes the in-memory
+        cache.
+
+        Raises:
+            ValueError: If the workflow does not exist.
+        """
+        if workflow_id not in self.workflows and not self.store.exists(workflow_id):
+            raise ValueError(f"Workflow not found: {workflow_id}")
+
+        workflow = await self.load_workflow(
+            {**definition, "id": workflow_id}
+        )
+        logger.info("workflow_updated", workflow_id=workflow_id)
+        return workflow
+
+    def delete_workflow(self, workflow_id: str) -> bool:
+        """Delete a workflow from memory and disk.
+
+        Returns True if the workflow existed and was deleted.
+        """
+        removed_from_disk = self.store.delete(workflow_id)
+        removed_from_memory = self.workflows.pop(workflow_id, None) is not None
+        if removed_from_disk or removed_from_memory:
+            logger.info("workflow_deleted", workflow_id=workflow_id)
+            return True
+        return False
+
+    def load_persisted_workflows(self) -> int:
+        """Load all persisted workflows from disk into memory.
+
+        Called during engine startup to restore state after restart.
+
+        Returns:
+            Number of workflows loaded.
+        """
+        stored = self.store.load_all()
+        count = 0
+        for wf_id, definition in stored.items():
+            if wf_id not in self.workflows:
+                workflow = self._definition_to_workflow(definition)
+                self.workflows[workflow.id] = workflow
+                count += 1
+        if count:
+            logger.info("persisted_workflows_loaded", count=count)
+        return count
+
+    # ------------------------------------------------------------------
+    # Internal helpers
+    # ------------------------------------------------------------------
+
+    def _definition_to_workflow(self, definition: dict[str, Any]) -> Workflow:
+        """Convert a raw definition dict to a Workflow dataclass."""
+        nodes = [
+            WorkflowNode(
+                id=node["id"],
+                type=node["type"],
+                data=node.get("data", {}),
+                inputs=node.get("inputs", []),
+                outputs=node.get("outputs", []),
+                position=node.get("position", {}),
+            )
+            for node in definition.get("nodes", [])
+        ]
+        edges = [
+            WorkflowEdge(
+                id=edge["id"],
+                source=edge["source"],
+                target=edge["target"],
+                condition=edge.get("condition"),
+            )
+            for edge in definition.get("edges", [])
+        ]
+        return Workflow(
+            id=definition.get("id", ""),
+            name=definition.get("name", "Untitled Workflow"),
+            nodes=nodes,
+            edges=edges,
+            metadata=definition.get("metadata", {}),
+            created_at=definition.get("created_at", datetime.now(UTC).isoformat()),
+        )
 
 
 # Global workflow engine instance
@@ -1444,9 +1554,13 @@ async def get_workflow_engine(
     timeout_seconds: float = 300.0,
     consensus_coordinator: Any | None = None,
     supervisor: Any | None = None,
+    store: FileWorkflowStore | None = None,
 ) -> WorkflowEngine:
     """
     Get global workflow engine instance with cycle detection.
+
+    On first call, creates the engine and loads any persisted workflows
+    from disk so they survive server restarts.
 
     Args:
         cycle_detector: Optional pre-configured cycle detector
@@ -1454,6 +1568,7 @@ async def get_workflow_engine(
         timeout_seconds: Timeout in seconds before cycle break
         consensus_coordinator: Optional ConsensusCoordinator for consensus nodes
         supervisor: Optional ActorSupervisor for consensus agent resolution
+        store: Optional FileWorkflowStore for disk persistence
 
     Returns:
         WorkflowEngine instance
@@ -1467,7 +1582,10 @@ async def get_workflow_engine(
             timeout_seconds=timeout_seconds,
             consensus_coordinator=consensus_coordinator,
             supervisor=supervisor,
+            store=store,
         )
+        # Restore persisted workflows on first access
+        _global_engine.load_persisted_workflows()
 
     return _global_engine
 

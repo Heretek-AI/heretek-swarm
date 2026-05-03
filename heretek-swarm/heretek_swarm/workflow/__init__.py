@@ -17,8 +17,10 @@ from .engine import (
     WorkflowStatus,
     get_workflow_engine,
 )
+from .store import FileWorkflowStore
 
 __all__ = [
+    "FileWorkflowStore",
     "NodeStatus",
     "Workflow",
     "WorkflowContext",
