@@ -28224,3 +28224,9 @@ TimeoutError
 {"error": "Swarm initialization failed", "event": "consensus_failure", "logger": "cli", "level": "error", "timestamp": "2026-05-03T15:25:55.638582Z"}
 {"error": "Swarm initialization failed", "event": "consensus_failure", "logger": "cli", "level": "error", "timestamp": "2026-05-03T15:27:38.408578Z"}
 {"error": "Swarm initialization failed", "event": "consensus_failure", "logger": "cli", "level": "error", "timestamp": "2026-05-03T15:29:05.936116Z"}
+{"error": "Swarm initialization failed", "event": "consensus_failure", "logger": "cli", "level": "error", "timestamp": "2026-05-03T15:30:59.226525Z"}
+{"error": "stop", "event": "prompt_mode_failure", "logger": "cli", "level": "error", "timestamp": "2026-05-03T15:33:30.915910Z"}
+{"error": "asyncio.run() cannot be called from a running event loop", "event": "consensus_failure", "logger": "cli", "level": "error", "timestamp": "2026-05-03T15:33:31.007797Z"}
+{"error": "Swarm initialization failed", "event": "consensus_failure", "logger": "cli", "level": "error", "timestamp": "2026-05-03T15:33:31.793727Z"}
+{"error": "stop", "event": "prompt_mode_failure", "logger": "cli", "level": "error", "timestamp": "2026-05-03T15:35:06.130173Z"}
+{"error": "Swarm initialization failed", "event": "consensus_failure", "logger": "cli", "level": "error", "timestamp": "2026-05-03T15:35:06.264660Z"}
