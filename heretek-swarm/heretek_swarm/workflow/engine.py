@@ -863,6 +863,8 @@ class WorkflowEngine:
                 output = await self._execute_memory_node(node, input_data, context)
             elif node.type == "consensus":
                 output = await self._execute_consensus_node(node, input_data, context)
+            elif node.type == "llm":
+                output = await self._execute_llm_node(node, input_data, context)
             else:
                 raise ValueError(f"Unknown node type: {node.type}")
 
@@ -915,6 +917,8 @@ class WorkflowEngine:
                 return await self._execute_memory_node(node, input_data, context)
             elif node.type == "consensus":
                 return await self._execute_consensus_node(node, input_data, context)
+            elif node.type == "llm":
+                return await self._execute_llm_node(node, input_data, context)
             else:
                 return {"error": f"Unknown node type: {node.type}"}
         except Exception as e:
@@ -1050,13 +1054,20 @@ class WorkflowEngine:
         """
         Execute an agent node.
 
+        Looks up the actor from the supervisor's actor registry and calls
+        run_with_llm() with the prompt from input_data.
+
         Args:
             node: Agent node
             input_data: Input data
             context: Execution context
 
         Returns:
-            Agent output
+            Agent output (string from LLM)
+
+        Raises:
+            ValueError: If agent_id is missing from node.data
+            RuntimeError: If the agent is not found or not active
         """
         from heretek_swarm.actors.supervisor import get_supervisor
 
@@ -1065,16 +1076,116 @@ class WorkflowEngine:
         if not agent_id:
             raise ValueError("Agent node requires agent_id")
 
-        # Get global supervisor
-        supervisor = get_supervisor()
-        agent_status = await supervisor.get_actor_status(agent_id)
+        # Use injected supervisor or fall back to global singleton
+        supervisor = self._supervisor or get_supervisor()
 
+        # Look up the actor directly from the registry
+        actor = supervisor.actors.get(agent_id)
+        if actor is None:
+            raise RuntimeError(f"Agent not found: {agent_id}")
+
+        agent_status = await supervisor.get_actor_status(agent_id)
         if not agent_status or agent_status.state != "active":
             raise RuntimeError(f"Agent not active: {agent_id}")
 
-        # Send message to agent
-        message = input_data.get("message", "")
-        return await supervisor.send_message(agent_id, message)
+        # Build prompt from input_data — prefer explicit prompt, fall back to message
+        # then to upstream node output stored in context.variables
+        prompt = (
+            input_data.get("prompt")
+            or input_data.get("message")
+            or input_data.get(agent_id)
+            or context.variables.get("prompt")
+            or context.variables.get("message")
+        )
+        # If still no prompt, check for any upstream node output stored by _execute_node
+        if not prompt:
+            for key, val in context.variables.items():
+                if key.startswith("node_") and key.endswith("_output") and isinstance(val, str):
+                    prompt = val
+                    break
+        if not prompt:
+            raise ValueError("Agent node requires a prompt or message in input_data")
+
+        # Optional timeout override from node config
+        timeout = node.data.get("timeout", 60)
+
+        logger.info(
+            "agent_node_started",
+            workflow_id=context.workflow_id,
+            node_id=node.id,
+            agent_id=agent_id,
+            prompt_length=len(prompt),
+        )
+
+        return await actor.run_with_llm(prompt, timeout=timeout)
+
+    async def _execute_llm_node(
+        self,
+        node: WorkflowNode,
+        input_data: dict[str, Any],
+        context: WorkflowContext,
+    ) -> str:
+        """
+        Execute a standalone LLM node.
+
+        Runs a prompt through the LLM without requiring a pre-spawned actor.
+        Uses the supervisor's first available active actor as the LLM conduit,
+        or raises if none are available.
+
+        Args:
+            node: LLM node with data.prompt, optional data.model
+            input_data: Input data from upstream nodes
+            context: Execution context
+
+        Returns:
+            LLM response string
+
+        Raises:
+            ValueError: If no prompt is provided
+            RuntimeError: If no active actor is available for LLM execution
+        """
+        from heretek_swarm.actors.supervisor import get_supervisor
+
+        # Extract prompt: prefer node.data, fall back to input_data
+        prompt = node.data.get("prompt") or input_data.get("prompt") or input_data.get("message", "")
+        if not prompt:
+            raise ValueError("LLM node requires a 'prompt' in node.data or input_data")
+
+        # Optional parameters from node config
+        timeout = node.data.get("timeout", 60)
+        temperature = node.data.get("temperature")
+
+        # Use injected supervisor or fall back to global singleton
+        supervisor = self._supervisor or get_supervisor()
+
+        # Find an active actor to serve as the LLM conduit
+        actor = None
+        for actor_id, candidate in supervisor.actors.items():
+            status = await supervisor.get_actor_status(actor_id)
+            if status and status.state == "active":
+                actor = candidate
+                break
+
+        if actor is None:
+            raise RuntimeError(
+                "LLM node requires at least one active actor in the supervisor "
+                "to serve as an LLM conduit."
+            )
+
+        logger.info(
+            "llm_node_started",
+            workflow_id=context.workflow_id,
+            node_id=node.id,
+            actor_id=actor.agent_id,
+            prompt_length=len(prompt),
+            temperature=temperature,
+        )
+
+        kwargs: dict[str, Any] = {}
+        if temperature is not None:
+            kwargs["temperature"] = temperature
+
+        return await actor.run_with_llm(prompt, timeout=timeout, **kwargs)
 
 
     async def _execute_tool_node(
