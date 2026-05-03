@@ -23,6 +23,10 @@ Core Features:
 - Quorum-based baseline updates to prevent corruption
 """
 
+from heretek_swarm.consensus.complexity import (
+    ComplexityHeuristic,
+    ComplexityResult,
+)
 from heretek_swarm.consensus.consensus_coordinator import (
     ConsensusCoordinator,
 )
@@ -154,6 +158,9 @@ __all__ = [
     "SwarmDeliberationEngine",
     # Tribunal
     "CaseStatus",
+    # Complexity Heuristic
+    "ComplexityHeuristic",
+    "ComplexityResult",
     "EvidenceType",
     "RulingType",
     "Tribunal",
