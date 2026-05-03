@@ -572,6 +572,8 @@ class WorkflowEngine:
         cycle_detector: WorkflowCycleDetector | None = None,
         max_iterations: int = 100,
         timeout_seconds: float = 300.0,
+        consensus_coordinator: Any | None = None,
+        supervisor: Any | None = None,
     ):
         """
         Initialize workflow engine.
@@ -580,6 +582,8 @@ class WorkflowEngine:
             cycle_detector: Optional pre-configured cycle detector
             max_iterations: Maximum iterations before cycle break (if no detector provided)
             timeout_seconds: Timeout in seconds before cycle break (if no detector provided)
+            consensus_coordinator: Optional ConsensusCoordinator for consensus node type
+            supervisor: Optional ActorSupervisor for consensus agent resolution
         """
         self.workflows: dict[str, Workflow] = {}
         self.active_executions: dict[str, WorkflowContext] = {}
@@ -591,6 +595,10 @@ class WorkflowEngine:
             timeout_seconds=timeout_seconds,
         )
         self.phase_tracker = FivePhaseWorkflowTracker()
+
+        # Consensus integration (optional)
+        self._consensus_coordinator = consensus_coordinator
+        self._supervisor = supervisor
 
     async def load_workflow(self, workflow_definition: dict[str, Any]) -> Workflow:
         """
@@ -848,6 +856,8 @@ class WorkflowEngine:
                 output = await self._execute_chain_node(node, input_data, context)
             elif node.type == "memory":
                 output = await self._execute_memory_node(node, input_data, context)
+            elif node.type == "consensus":
+                output = await self._execute_consensus_node(node, input_data, context)
             else:
                 raise ValueError(f"Unknown node type: {node.type}")
 
@@ -898,6 +908,8 @@ class WorkflowEngine:
                 return await self._execute_chain_node(node, input_data, context)
             elif node.type == "memory":
                 return await self._execute_memory_node(node, input_data, context)
+            elif node.type == "consensus":
+                return await self._execute_consensus_node(node, input_data, context)
             else:
                 return {"error": f"Unknown node type: {node.type}"}
         except Exception as e:
@@ -1204,6 +1216,116 @@ class WorkflowEngine:
             return await self._execute_memory_node(node, input_data, context)
         return None
 
+    async def _execute_consensus_node(
+        self,
+        node: WorkflowNode,
+        input_data: dict[str, Any],
+        context: WorkflowContext,
+    ) -> dict[str, Any]:
+        """
+        Execute a consensus node (MAKER voting as a workflow step).
+
+        Uses ConsensusCoordinator.run_consensus() to execute multi-agent
+        voting on a question derived from node configuration or upstream outputs.
+
+        Args:
+            node: Consensus node
+            input_data: Input data from upstream nodes and workflow variables
+            context: Execution context
+
+        Returns:
+            Dict with consensus result (decision, confidence, votes, red_flags)
+
+        Raises:
+            ValueError: If no question is provided in node.data or input_data
+            RuntimeError: If consensus_coordinator is not configured
+        """
+        if self._consensus_coordinator is None:
+            raise RuntimeError(
+                "Consensus node requires a ConsensusCoordinator. "
+                "Pass consensus_coordinator to WorkflowEngine constructor."
+            )
+
+        # Extract question from node.data or input_data
+        question = node.data.get("question") or input_data.get("question")
+        if not question:
+            raise ValueError(
+                "Consensus node requires a 'question' in node.data or input_data."
+            )
+
+        # Extract optional parameters
+        timeout = node.data.get("timeout", 120)
+        max_rounds = node.data.get("max_rounds", 1)
+
+        logger.info(
+            "consensus_node_started",
+            workflow_id=context.workflow_id,
+            node_id=node.id,
+            question=question[:200],
+            timeout=timeout,
+            max_rounds=max_rounds,
+        )
+
+        try:
+            result = await self._consensus_coordinator.run_consensus(
+                question=question,
+                timeout=timeout,
+                max_rounds=max_rounds,
+            )
+
+            if result is None:
+                logger.warning(
+                    "consensus_node_completed",
+                    workflow_id=context.workflow_id,
+                    node_id=node.id,
+                    consensus_reached=False,
+                )
+                return {
+                    "consensus_reached": False,
+                    "decision": None,
+                    "confidence": 0.0,
+                    "votes": [],
+                    "red_flags": [],
+                }
+
+            result_dict = {
+                "consensus_reached": True,
+                "decision": result.decision,
+                "confidence": result.confidence,
+                "votes": [
+                    {
+                        "agent_id": v.agent_id,
+                        "decision": v.decision,
+                        "confidence": v.confidence,
+                        "metadata": v.metadata,
+                    }
+                    for v in result.votes
+                ],
+                "red_flags": result.red_flags,
+                "metadata": result.metadata,
+            }
+
+            logger.info(
+                "consensus_node_completed",
+                workflow_id=context.workflow_id,
+                node_id=node.id,
+                consensus_reached=True,
+                decision=result.decision,
+                confidence=result.confidence,
+                vote_count=len(result.votes),
+            )
+
+            return result_dict
+
+        except Exception as exc:
+            logger.error(
+                "consensus_node_failed",
+                workflow_id=context.workflow_id,
+                node_id=node.id,
+                error=str(exc)[:200],
+            )
+            raise
+
     def _build_graph(self, workflow: Workflow) -> dict[str, set[str]]:
         """
         Build dependency graph from workflow edges.
@@ -1320,6 +1442,8 @@ async def get_workflow_engine(
     cycle_detector: WorkflowCycleDetector | None = None,
     max_iterations: int = 100,
     timeout_seconds: float = 300.0,
+    consensus_coordinator: Any | None = None,
+    supervisor: Any | None = None,
 ) -> WorkflowEngine:
     """
     Get global workflow engine instance with cycle detection.
@@ -1328,6 +1452,8 @@ async def get_workflow_engine(
         cycle_detector: Optional pre-configured cycle detector
         max_iterations: Maximum iterations before cycle break
         timeout_seconds: Timeout in seconds before cycle break
+        consensus_coordinator: Optional ConsensusCoordinator for consensus nodes
+        supervisor: Optional ActorSupervisor for consensus agent resolution
 
     Returns:
         WorkflowEngine instance
@@ -1339,6 +1465,8 @@ async def get_workflow_engine(
             cycle_detector=cycle_detector,
             max_iterations=max_iterations,
             timeout_seconds=timeout_seconds,
+            consensus_coordinator=consensus_coordinator,
+            supervisor=supervisor,
         )
 
     return _global_engine
