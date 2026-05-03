@@ -219,3 +219,4 @@ Docker Compose defaults are pre-configured in `.env.example` — for local devel
 **License:** Apache 2.0
 
 *Last Updated: 2026-05-02*
+
