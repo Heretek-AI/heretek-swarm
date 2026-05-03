@@ -590,10 +590,17 @@ def _display_consensus_results(results: dict[str, Any]) -> None:
     red_flags = results.get("red_flags", [])
     reasoning = results.get("reasoning", "")
     consensus_id = results.get("consensus_id", "unknown")
+    round_history = results.get("round_history", [])
+    total_rounds = results.get("total_rounds", 1)
 
     click.echo("")
     click.echo(f"  Consensus ID: {consensus_id}")
     click.echo("  " + "-" * 50)
+
+    # Show round progress if multi-round
+    if total_rounds > 1 or round_history:
+        click.echo(f"  Rounds: {total_rounds}")
+        click.echo("")
 
     # Selected agents
     agent_ids = [v.get("agent_id", "?") for v in votes]
@@ -642,10 +649,30 @@ def _display_consensus_results(results: dict[str, Any]) -> None:
         for line in reasoning.split("; "):
             click.echo(f"    {line}")
 
+    # Round history (multi-round deliberation)
+    if round_history:
+        click.echo("")
+        click.echo("  Round History:")
+        click.echo("  " + "-" * 50)
+        for rh in round_history:
+            r_num = rh.get("round_number", "?")
+            r_score = rh.get("consensus_score", 0.0)
+            r_decision = rh.get("decision", "none")
+            r_votes = rh.get("vote_count", 0)
+            click.echo(
+                f"    Round {r_num}: decision={r_decision}, "
+                f"score={r_score:.2f}, votes={r_votes}"
+            )
+
     click.echo("")
 
 
-async def _start_autonomous_swarm(no_infra: bool = False, prompt: str | None = None, target_agent: str | None = None) -> None:
+async def _start_autonomous_swarm(
+    no_infra: bool = False,
+    prompt: str | None = None,
+    target_agent: str | None = None,
+    force_consensus: bool = False,
+) -> None:
     """Start the AutonomousSwarm with signal handlers for graceful shutdown."""
     from heretek_swarm.logging.config import setup_logging
     from heretek_swarm.runtime.main_loop import AutonomousSwarm
@@ -702,6 +729,8 @@ async def _start_autonomous_swarm(no_infra: bool = False, prompt: str | None = N
     _print_startup_banner(swarm)
 
     if prompt:
+        from heretek_swarm.consensus.complexity import ComplexityHeuristic
+
         click.echo("")
         if target_agent:
             click.echo(f"  Routing prompt to agent '{target_agent}': {prompt}")
@@ -717,14 +746,40 @@ async def _start_autonomous_swarm(no_infra: bool = False, prompt: str | None = N
                 return
             _display_routed_result(result)
         else:
-            click.echo(f"  Deliberating prompt: {prompt}")
-            click.echo("  " + "-" * 50)
-            try:
-                results = await swarm.run_deliberation(prompt)
-            except Exception as e:
-                click.echo(f"\n  ✗ Deliberation failed: {e}")
-                return
-            _display_deliberation_results(results)
+            # Auto-route: use ComplexityHeuristic to decide consensus vs triad
+            heuristic = ComplexityHeuristic()
+            complexity = heuristic.assess(prompt)
+
+            logger.info(
+                "auto_routing_decision",
+                complexity_score=complexity.score,
+                routing_decision=complexity.routing_mode,
+                is_complex=complexity.is_complex,
+                matched_keywords=complexity.matched_keywords,
+                force_consensus=force_consensus,
+            )
+
+            if force_consensus or complexity.is_complex:
+                mode_label = "forced consensus" if force_consensus else "auto-consensus"
+                click.echo(f"  Routing: {mode_label} (complexity={complexity.score:.2f})")
+                click.echo(f"  Consensus prompt: {prompt}")
+                click.echo("  " + "-" * 50)
+                try:
+                    results = await swarm.run_consensus(prompt)
+                except Exception as e:
+                    click.echo(f"\n  ✗ Consensus failed: {e}")
+                    return
+                _display_consensus_results(results)
+            else:
+                click.echo(f"  Routing: triad deliberation (complexity={complexity.score:.2f})")
+                click.echo(f"  Deliberating prompt: {prompt}")
+                click.echo("  " + "-" * 50)
+                try:
+                    results = await swarm.run_deliberation(prompt)
+                except Exception as e:
+                    click.echo(f"\n  ✗ Deliberation failed: {e}")
+                    return
+                _display_deliberation_results(results)
         return  # Don't call swarm.run()
 
     await swarm.run()
@@ -751,6 +806,7 @@ def _handle_signal(signum: int, frame) -> None:
         "  heretek-swarm run --detach\n"
         "  heretek-swarm run --no-infra\n"
         "  heretek-swarm run --no-infra --prompt \"Analyze the strategic implications of X\"\n"
+        "  heretek-swarm run --prompt \"analyze tradeoffs of Redis\" --consensus\n"
         "  HERETEK_NATS_URL=nats://cluster1:4222,nats://cluster2:4222 heretek-swarm run"
     ),
 )
@@ -782,7 +838,14 @@ def _handle_signal(signum: int, frame) -> None:
     default=None,
     help="Route prompt to a specific agent (default: triad deliberation)",
 )
-def run(detach: bool, nats_url: str, no_infra: bool, prompt: str | None = None, target_agent: str | None = None) -> None:
+@click.option(
+    "--consensus",
+    "force_consensus",
+    is_flag=True,
+    default=False,
+    help="Force MAKER consensus routing (bypasses complexity heuristic)",
+)
+def run(detach: bool, nats_url: str, no_infra: bool, prompt: str | None = None, target_agent: str | None = None, force_consensus: bool = False) -> None:
     """
     Start the Heretek Swarm autonomous runtime.
 
@@ -867,7 +930,7 @@ def run(detach: bool, nats_url: str, no_infra: bool, prompt: str | None = None, 
     if prompt:
         # Prompt mode: no signal handlers needed, exit after deliberation
         try:
-            asyncio.run(_start_autonomous_swarm(no_infra=no_infra, prompt=prompt, target_agent=target_agent))
+            asyncio.run(_start_autonomous_swarm(no_infra=no_infra, prompt=prompt, target_agent=target_agent, force_consensus=force_consensus))
         except Exception as e:
             logger.error("prompt_mode_failure", error=str(e))
             click.echo(f"\n✗ Failed to start: {e}")
@@ -900,7 +963,8 @@ def run(detach: bool, nats_url: str, no_infra: bool, prompt: str | None = None, 
         "Examples:\n"
         "  heretek-swarm consensus \"should we add rate limiting?\"\n"
         "  heretek-swarm consensus \"should we refactor the auth module?\" --timeout 180\n"
-        "  heretek-swarm consensus \"what database should we use?\" --participants 5"
+        "  heretek-swarm consensus \"what database should we use?\" --participants 5\n"
+        "  heretek-swarm consensus \"analyze the tradeoffs of caching\" --rounds 3"
     ),
 )
 @click.argument("question")
@@ -916,7 +980,14 @@ def run(detach: bool, nats_url: str, no_infra: bool, prompt: str | None = None, 
     type=int,
     help="Override number of participants (default: 5-7 from domain selection)",
 )
-def consensus(question: str, timeout: float, participants: int | None) -> None:
+@click.option(
+    "--rounds",
+    "max_rounds",
+    default=1,
+    type=int,
+    help="Number of deliberation rounds with argument exchange (default: 1)",
+)
+def consensus(question: str, timeout: float, participants: int | None, max_rounds: int = 1) -> None:
     """
     Run MAKER consensus on a question.
 
@@ -925,7 +996,7 @@ def consensus(question: str, timeout: float, participants: int | None) -> None:
     when a clear winner emerges, and the result is displayed with winning
     decision, confidence score, vote breakdown, and red flags.
     """
-    logger.info("consensus_command", question=question[:200], timeout=timeout, participants=participants)
+    logger.info("consensus_command", question=question[:200], timeout=timeout, participants=participants, max_rounds=max_rounds)
 
     click.echo("Heretek Swarm Consensus")
     click.echo("=" * 40)
@@ -933,11 +1004,13 @@ def consensus(question: str, timeout: float, participants: int | None) -> None:
     click.echo(f"  Timeout:  {timeout}s")
     if participants is not None:
         click.echo(f"  Participants: {participants} (override)")
+    if max_rounds > 1:
+        click.echo(f"  Rounds:   {max_rounds} (with argument exchange)")
 
     click.echo("\nInitializing swarm...")
 
     try:
-        results = asyncio.run(_run_consensus(question, timeout))
+        results = asyncio.run(_run_consensus(question, timeout, max_rounds=max_rounds))
         _display_consensus_results(results)
     except Exception as e:
         logger.error("consensus_failure", error=str(e))
@@ -945,7 +1018,7 @@ def consensus(question: str, timeout: float, participants: int | None) -> None:
         sys.exit(1)
 
 
-async def _run_consensus(question: str, timeout: float) -> dict[str, Any]:
+async def _run_consensus(question: str, timeout: float, max_rounds: int = 1) -> dict[str, Any]:
     """Async helper for the consensus CLI command."""
     from heretek_swarm.logging.config import setup_logging
     from heretek_swarm.runtime.main_loop import AutonomousSwarm
@@ -995,7 +1068,7 @@ async def _run_consensus(question: str, timeout: float) -> dict[str, Any]:
     click.echo("\nRunning consensus...")
     click.echo("  " + "-" * 50)
 
-    results = await swarm.run_consensus(question, timeout=timeout)
+    results = await swarm.run_consensus(question, timeout=timeout, max_rounds=max_rounds)
     return results
 
 

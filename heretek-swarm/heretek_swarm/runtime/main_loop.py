@@ -555,6 +555,8 @@ class AutonomousSwarm:
             "red_flags": result.red_flags,
             "reasoning": "; ".join(reasoning_parts) if reasoning_parts else "No reasoning captured",
             "consensus_id": result.metadata.get("consensus_id", "unknown"),
+            "round_history": result.metadata.get("round_history", []),
+            "total_rounds": result.metadata.get("total_rounds", 1),
         }
 
         logger.info(
