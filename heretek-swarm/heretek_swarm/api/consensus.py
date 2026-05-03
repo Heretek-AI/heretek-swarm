@@ -12,6 +12,7 @@ Uses MAKER (Multi-Agent Knowledge Extraction & Reasoning) consensus.
 SECURITY: All endpoints require authentication. Agent identity verification required for voting.
 """
 
+import asyncio
 import os
 import secrets
 from datetime import UTC, datetime, timedelta
@@ -323,12 +324,30 @@ async def create_consensus_round(
 
     logger.info("Created consensus round", consensus_id=consensus_id, topic=topic)
 
+    created_at = _active_rounds[consensus_id]["created_at"]
+
+    # Broadcast to dashboard WebSocket listeners
+    try:
+        from heretek_swarm.api.websockets import manager as ws_manager
+
+        await ws_manager.broadcast_dashboard({
+            "type": "consensus_created",
+            "consensus_id": consensus_id,
+            "topic": topic,
+            "description": description,
+            "state": ConsensusState.GATHERING.value,
+            "created_at": created_at,
+            "timestamp": datetime.now(UTC).isoformat(),
+        })
+    except Exception as e:
+        logger.warning("consensus_ws_broadcast_failed", event="consensus_created", error=str(e))
+
     return {
         "id": consensus_id,
         "topic": topic,
         "description": description,
         "state": ConsensusState.GATHERING.value,
-        "created_at": _active_rounds[consensus_id]["created_at"],
+        "created_at": created_at,
     }
 
 
@@ -416,6 +435,23 @@ async def submit_vote(
         confidence=confidence,
     )
 
+    # Broadcast to dashboard WebSocket listeners
+    try:
+        from heretek_swarm.api.websockets import manager as ws_manager
+
+        await ws_manager.broadcast_dashboard({
+            "type": "consensus_vote",
+            "consensus_id": consensus_id,
+            "agent_id": agent_id,
+            "decision": decision,
+            "confidence": confidence,
+            "vote_count": len(data["votes"]),
+            "current_state": data["state"],
+            "timestamp": datetime.now(UTC).isoformat(),
+        })
+    except Exception as e:
+        logger.warning("consensus_ws_broadcast_failed", event="consensus_vote", error=str(e))
+
     return {
         "status": "vote_accepted",
         "consensus_id": consensus_id,
@@ -473,6 +509,24 @@ async def aggregate_consensus(
         decision=result.decision,
         confidence=result.confidence,
     )
+
+    # Broadcast to dashboard WebSocket listeners
+    try:
+        from heretek_swarm.api.websockets import manager as ws_manager
+
+        await ws_manager.broadcast_dashboard({
+            "type": "consensus_complete",
+            "consensus_id": consensus_id,
+            "decision": result.decision,
+            "confidence": result.confidence,
+            "state": result.state.value,
+            "vote_count": len(data["votes"]),
+            "red_flags": result.red_flags,
+            "completed_at": result.timestamp,
+            "timestamp": datetime.now(UTC).isoformat(),
+        })
+    except Exception as e:
+        logger.warning("consensus_ws_broadcast_failed", event="consensus_aggregated", error=str(e))
 
     return {
         "id": consensus_id,
@@ -855,11 +909,30 @@ async def run_deliberation_round(deliberation_id: str, auth: dict = Depends(get_
         )
     )
 
+    positions_dict = {k.value: v for k, v in round_result.positions.items()}
+
+    # Broadcast to dashboard WebSocket listeners
+    try:
+        from heretek_swarm.api.websockets import manager as ws_manager
+
+        await ws_manager.broadcast_dashboard({
+            "type": "deliberation_round",
+            "deliberation_id": deliberation_id,
+            "round_number": round_result.round_number,
+            "arguments_submitted": len(round_result.arguments_submitted),
+            "positions": positions_dict,
+            "consensus_score": round_result.consensus_score,
+            "summary": round_result.summary,
+            "timestamp": datetime.now(UTC).isoformat(),
+        })
+    except Exception as e:
+        logger.warning("consensus_ws_broadcast_failed", event="deliberation_round_complete", error=str(e))
+
     return {
         "deliberation_id": deliberation_id,
         "round_number": round_result.round_number,
         "arguments_submitted": len(round_result.arguments_submitted),
-        "positions": {k.value: v for k, v in round_result.positions.items()},
+        "positions": positions_dict,
         "consensus_score": round_result.consensus_score,
         "summary": round_result.summary,
         "timestamp": round_result.timestamp,
