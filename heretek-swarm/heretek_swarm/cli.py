@@ -306,10 +306,86 @@ try:
 except PackageNotFoundError:
     __version__ = "0.0.0-dev"
 
-@click.group()
+
+class GroupedGroup(click.Group):
+    """Custom Click group that organizes commands into labeled sections."""
+
+    #: Mapping of group label → list of command names in display order.
+    COMMAND_GROUPS: dict[str, list[str]] = {
+        "Core Operations": ["run", "serve", "deploy", "wizard"],
+        "Configuration": ["config", "init"],
+        "Monitoring": ["status", "stop"],
+    }
+
+    def format_commands(
+        self, ctx: click.Context, formatter: click.HelpFormatter
+    ) -> None:
+        """Write command groups with separator lines to *formatter*."""
+        # Collect all registered commands (excluding hidden)
+        commands = {
+            name: self.commands[name]
+            for name in sorted(self.commands)
+            if not self.commands[name].hidden
+        }
+
+        if not commands:
+            return
+
+        # Track which commands have been placed in a group
+        placed: set[str] = set()
+
+        for group_label, cmd_names in self.COMMAND_GROUPS.items():
+            rows: list[tuple[str, str]] = []
+            for cmd_name in cmd_names:
+                if cmd_name in commands:
+                    cmd = commands[cmd_name]
+                    help_text = cmd.get_short_help_str(limit=50)
+                    rows.append((cmd_name, help_text))
+                    placed.add(cmd_name)
+
+            if rows:
+                # Section header
+                with formatter.section(group_label):
+                    formatter.write_dl(rows)
+
+        # Any commands not in a group go into "Other"
+        remaining = {
+            name: cmd
+            for name, cmd in commands.items()
+            if name not in placed
+        }
+        if remaining:
+            rows = [
+                (name, cmd.get_short_help_str(limit=50))
+                for name, cmd in sorted(remaining.items())
+            ]
+            with formatter.section("Other"):
+                formatter.write_dl(rows)
+
+
+@click.group(
+    cls=GroupedGroup,
+    invoke_without_command=True,
+    help=(
+        "Heretek Swarm — autonomous multi-agent system with 23 specialized agents.\n"
+        "Run locally or deploy via Docker."
+    ),
+    epilog=(
+        "\b\n"
+        "Examples:\n"
+        "  pip install heretek-swarm\n"
+        "  heretek-swarm run\n"
+        "  heretek-swarm run --no-infra --prompt \"Analyze threat model\"\n"
+        "  heretek-swarm serve --host 127.0.0.1 --port 9000\n"
+        "  heretek-swarm config wizard"
+    ),
+)
 @click.version_option(version=__version__, prog_name="heretek-swarm")
-def cli() -> None:
+@click.pass_context
+def cli(ctx: click.Context) -> None:
     """Heretek Swarm - Autonomous multi-agent system with 23 specialized agents."""
+    if ctx.invoked_subcommand is None:
+        click.echo(ctx.get_help())
 
 
 @cli.command()
