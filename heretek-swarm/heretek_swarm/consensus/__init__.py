@@ -23,6 +23,10 @@ Core Features:
 - Quorum-based baseline updates to prevent corruption
 """
 
+from heretek_swarm.consensus.domain_selector import (
+    DEFAULT_FALLBACK_AGENTS,
+    DomainSelector,
+)
 from heretek_swarm.consensus.audit import (
     ArgumentRecord,
     ConsensusAuditTrail,
@@ -107,10 +111,13 @@ __all__ = [
     "DecisionOutcome",
     "DecisionProvenance",
     "DecisionRecord",
+    # Domain Selection
+    "DEFAULT_FALLBACK_AGENTS",
     "DeliberationResult",
     "DeliberationRound",
     "DeliberationState",
     "DomainExpertise",
+    "DomainSelector",
     # Enhanced MAKER
     "EnhancedMAKERConsensus",
     "EnhancedVote",
