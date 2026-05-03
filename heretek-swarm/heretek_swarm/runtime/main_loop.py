@@ -28,6 +28,8 @@ from heretek_swarm.agents.agent_factory import build_agent_for
 from heretek_swarm.actors.supervisor import ActorSupervisor
 from heretek_swarm.api.consciousness import get_consciousness_plugin
 from heretek_swarm.channels.registry import ChannelRegistry, GroupRegistry
+from heretek_swarm.consensus.consensus_coordinator import ConsensusCoordinator
+from heretek_swarm.consensus.domain_selector import DomainSelector
 from heretek_swarm.consensus.maker import MAKERConsensus
 from heretek_swarm.gateway.nats_event_mesh import NATSEventMeshWithJetStream
 from heretek_swarm.llm.model_garage import ModelGarage, initialize_model_garage
@@ -349,6 +351,10 @@ class AutonomousSwarm:
         """
         Run a triad deliberation: route a prompt through Steward → Alpha → Beta → Charlie.
 
+        NOTE: For complex questions requiring multi-agent consensus with domain-based
+        agent selection, prefer ``run_consensus()`` which uses the MAKER consensus
+        engine with DomainSelector for more rigorous decision-making.
+
         Args:
             prompt: The deliberation topic/prompt.
             timeout: Maximum total wall-clock seconds to wait for all three
@@ -438,6 +444,128 @@ class AutonomousSwarm:
             charlie_count=len(results.get("charlie", {}).get("challenges", [])),
         )
         return results
+
+    async def run_consensus(
+        self,
+        question: str,
+        timeout: float = 120,
+        max_rounds: int = 3,
+    ) -> dict[str, Any]:
+        """
+        Run a MAKER consensus process with domain-based agent selection.
+
+        Uses DomainSelector to find question-relevant agents, then orchestrates
+        MAKER ahead-by-k voting via ConsensusCoordinator. Each selected agent
+        produces a structured vote (decision + confidence) through its LLM.
+
+        Args:
+            question: The question to reach consensus on.
+            timeout: Overall timeout in seconds (default 120).
+            max_rounds: Reserved for future multi-round deliberation.
+
+        Returns:
+            Structured dict with keys:
+            - decision: Winning decision string
+            - confidence: Overall confidence score (0.0-1.0)
+            - votes: List of per-agent vote dicts
+            - red_flags: List of red flag messages
+            - reasoning: Aggregated reasoning from votes
+            - consensus_id: Unique process identifier
+
+            Returns an error dict if consensus cannot be initiated
+            (e.g. no supervisor, no consensus engine).
+        """
+        logger.info(
+            "run_consensus_started",
+            question=question[:200],
+            timeout=timeout,
+            max_rounds=max_rounds,
+        )
+
+        # Guard: supervisor must be available
+        if self.supervisor is None:
+            logger.error("run_consensus_no_supervisor")
+            return {
+                "decision": "error",
+                "confidence": 0.0,
+                "votes": [],
+                "red_flags": ["Supervisor not initialized"],
+                "reasoning": "Cannot run consensus without actor supervisor",
+            }
+
+        # Guard: consensus engine must be available
+        if self.consensus is None:
+            logger.error("run_consensus_no_consensus_engine")
+            return {
+                "decision": "error",
+                "confidence": 0.0,
+                "votes": [],
+                "red_flags": ["Consensus engine not initialized"],
+                "reasoning": "Cannot run consensus without MAKER consensus engine",
+            }
+
+        # Build domain selector from character files
+        domain_selector = DomainSelector()
+
+        # Build coordinator with real actors
+        coordinator = ConsensusCoordinator(
+            maker=self.consensus,
+            domain_selector=domain_selector,
+            actors=self.supervisor.actors,
+        )
+
+        # Run consensus
+        result = await coordinator.run_consensus(
+            question=question,
+            timeout=timeout,
+            max_rounds=max_rounds,
+        )
+
+        if result is None:
+            logger.warning("run_consensus_no_result", question=question[:200])
+            return {
+                "decision": "no_consensus",
+                "confidence": 0.0,
+                "votes": [],
+                "red_flags": ["No consensus reached"],
+                "reasoning": "MAKER could not reach a decisive consensus",
+            }
+
+        # Build structured response
+        vote_dicts = [
+            {
+                "agent_id": v.agent_id,
+                "decision": v.decision,
+                "confidence": v.confidence,
+                "metadata": v.metadata,
+            }
+            for v in result.votes
+        ]
+
+        # Aggregate reasoning from non-abstain votes
+        reasoning_parts = []
+        for v in result.votes:
+            if v.decision != "abstain" and v.metadata.get("reasoning"):
+                reasoning_parts.append(f"{v.agent_id}: {v.metadata['reasoning']}")
+
+        response = {
+            "decision": result.decision,
+            "confidence": result.confidence,
+            "votes": vote_dicts,
+            "red_flags": result.red_flags,
+            "reasoning": "; ".join(reasoning_parts) if reasoning_parts else "No reasoning captured",
+            "consensus_id": result.metadata.get("consensus_id", "unknown"),
+        }
+
+        logger.info(
+            "run_consensus_complete",
+            decision=response["decision"],
+            confidence=response["confidence"],
+            vote_count=len(vote_dicts),
+            red_flag_count=len(response["red_flags"]),
+        )
+
+        return response
 
     async def run_routed_task(
         self,
