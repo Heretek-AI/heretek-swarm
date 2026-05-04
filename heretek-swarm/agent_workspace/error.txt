@@ -28262,3 +28262,4 @@ TimeoutError
 {"event": "run_consensus_no_consensus_engine", "level": "error", "logger": "heretek_swarm.runtime.main_loop", "timestamp": "2026-05-03T20:30:39.828896Z", "service": "heretek-swarm", "environment": "development", "lineno": 498, "func_name": "run_consensus", "filename": "main_loop.py"}
 {"goal_id": "goal-001", "error": "Boom!", "event": "goal_vote_collection_failed", "logger": "GoalConsensus", "level": "error", "timestamp": "2026-05-04T17:50:19.424205Z"}
 {"goal_id": "goal-001", "error": "Boom!", "event": "goal_vote_collection_failed", "logger": "GoalConsensus", "level": "error", "timestamp": "2026-05-04T17:52:30.126500Z"}
+{"goal_id": "goal-001", "error": "Boom!", "event": "goal_vote_collection_failed", "logger": "GoalConsensus", "level": "error", "timestamp": "2026-05-04T18:41:00.786191Z"}

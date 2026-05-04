@@ -8,6 +8,7 @@ atomic file writes.
 
 from .consensus import GoalConsensus
 from .models import Goal, Vote
+from .pipeline import run_goal_cycle
 from .store import FileGoalStore
 
 __all__ = [
@@ -15,4 +16,5 @@ __all__ = [
     "Goal",
     "GoalConsensus",
     "Vote",
+    "run_goal_cycle",
 ]

@@ -90,6 +90,9 @@ class AutonomousSwarm:
         # S04: Periodic analysis cycle counter — triggers Metis/Empath every 30 cycles
         self._analysis_cycle_count = 0
 
+        # M011: Goal pipeline store (initialized on first use in --no-infra path)
+        self._goal_store: "FileGoalStore | None" = None
+
     def _default_config(self) -> dict[str, Any]:
         """Default configuration for autonomous swarm."""
         return {
