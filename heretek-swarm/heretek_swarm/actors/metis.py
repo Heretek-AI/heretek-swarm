@@ -30,6 +30,10 @@ from heretek_swarm.actors.mixins import (
 # Session 44: Collective Learning Integration
 from heretek_swarm.collective.learning import PatternExtractor
 
+# Goal proposal generation
+from heretek_swarm.goals.models import Goal
+from heretek_swarm.goals.proposer import GoalProposer
+
 # Session 44: Consensus Integration
 from heretek_swarm.consensus.swarm_deliberation import SwarmDeliberationEngine
 
@@ -946,6 +950,135 @@ Format your response as a clear analysis with recommendations.
                 "confidence": 0.0,
                 "recommendations": [],
             }
+
+    async def generate_goal_proposal(
+        self,
+        goal_id: str | None = None,
+    ) -> dict[str, Any]:
+        """Generate a strategic goal proposal via the LLM.
+
+        Calls :meth:`run_with_llm` with the structured prompt from
+        :class:`GoalProposer`, parses the response into a :class:`Goal`,
+        logs a ``goal_proposed`` historian event, and returns the result.
+
+        Args:
+            goal_id: Optional goal identifier (auto-generated if omitted).
+
+        Returns:
+            Dict with keys:
+            - ``goal`` — the :class:`Goal` object (or ``None`` on failure)
+            - ``error`` — error message (empty string on success)
+        """
+        from uuid import uuid4
+
+        if goal_id is None:
+            goal_id = f"goal_{uuid4().hex[:12]}"
+
+        prompt = GoalProposer.generate_proposal_prompt()
+        system_prompt = GoalProposer.proposal_system_prompt()
+
+        logger.info(
+            f"[{self.agent_id}] Generating goal proposal",
+            extra={"goal_id": goal_id},
+        )
+
+        try:
+            response = await self.run_with_llm(
+                prompt=prompt,
+                system_prompt=system_prompt,
+                timeout=60,
+            )
+        except (TimeoutError, RuntimeError, Exception) as exc:
+            error_msg = f"LLM call failed: {exc!s}"
+            logger.error(
+                f"[{self.agent_id}] Goal proposal LLM failed: {exc}",
+                exc_info=True,
+            )
+            # Log the failure to the event stream
+            await self._log_historian_event(
+                "goal_proposal_error",
+                {"goal_id": goal_id, "error": error_msg},
+            )
+            error_goal = Goal(
+                id=goal_id,
+                title="Goal proposal generation failed",
+                description=error_msg,
+                status="error",
+            )
+            return {"goal": error_goal, "error": error_msg}
+
+        # Parse the LLM response
+        parsed = GoalProposer.parse_llm_response(response)
+
+        if parsed.get("_parse_error"):
+            error_msg = parsed.get("error", "Unknown parse error")
+            logger.warning(
+                f"[{self.agent_id}] Goal proposal parse failed",
+                extra={"error": error_msg},
+            )
+            await self._log_historian_event(
+                "goal_proposal_error",
+                {"goal_id": goal_id, "error": error_msg},
+            )
+            error_goal = Goal(
+                id=goal_id,
+                title=parsed.get("_partial", {}).get("title", "Parse Error"),
+                description=f"LLM response could not be parsed: {error_msg}",
+                status="error",
+            )
+            return {"goal": error_goal, "error": error_msg}
+
+        # Build the Goal object
+        goal = Goal(
+            id=goal_id,
+            title=parsed["title"],
+            description=parsed["description"],
+            success_criteria=parsed["success_criteria"],
+            estimated_node_types=parsed["estimated_node_types"],
+            status="proposed",
+        )
+
+        # Log success event
+        await self._log_historian_event(
+            "goal_proposed",
+            {
+                "goal_id": goal_id,
+                "title": goal.title,
+                "description_preview": goal.description[:200],
+            },
+        )
+
+        logger.info(
+            f"[{self.agent_id}] Goal proposal generated successfully",
+            extra={"goal_id": goal_id, "title": goal.title},
+        )
+
+        return {"goal": goal, "error": ""}
+
+    async def _log_historian_event(
+        self,
+        event_type: str,
+        payload: dict[str, Any],
+    ) -> None:
+        """Send an event to the Historian agent for durable logging.
+
+        Uses topic-based routing — the Historian listens on ``"history"``
+        topic for ``"log_event"`` message types.
+        """
+        try:
+            await self.send(
+                topic="history",
+                content={
+                    "event_type": event_type,
+                    "agent_id": self.agent_id,
+                    "payload": payload,
+                },
+                message_type="log_event",
+            )
+        except Exception as exc:
+            logger.warning(
+                f"[{self.agent_id}] Failed to log historian event '{event_type}': {exc}",
+            )
 
     async def get_strategic_summary(self) -> dict[str, Any]:
         """
