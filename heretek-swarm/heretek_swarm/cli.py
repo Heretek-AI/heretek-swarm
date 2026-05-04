@@ -1820,6 +1820,10 @@ def main() -> None:
     cli(prog_name="heretek-swarm")
 
 
+# Register the goal command group
+from heretek_swarm.cli.goal_commands import goal
+cli.add_command(goal)
+
 main = cli
 
 
