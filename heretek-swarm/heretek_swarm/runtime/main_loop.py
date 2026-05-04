@@ -1314,6 +1314,9 @@ class AutonomousSwarm:
         else:
             logger.warning("periodic_analysis_historian_skipped_no_historian")
 
+        # --- M011: Autonomous goal pipeline ---
+        await self._run_goal_pipeline_cycle(metis, historian)
+
     async def _process_external_events(self) -> None:
         """Process external events from Discord, Slack, Telegram, webhooks."""
         # Check event mesh for external messages
