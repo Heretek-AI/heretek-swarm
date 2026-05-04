@@ -6,11 +6,13 @@ MAKER consensus voting, and are persisted via :class:`FileGoalStore` using
 atomic file writes.
 """
 
+from .consensus import GoalConsensus
 from .models import Goal, Vote
 from .store import FileGoalStore
 
 __all__ = [
     "FileGoalStore",
     "Goal",
+    "GoalConsensus",
     "Vote",
 ]
