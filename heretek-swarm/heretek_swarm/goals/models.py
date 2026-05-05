@@ -11,7 +11,7 @@ from dataclasses import dataclass, field, asdict
 from datetime import UTC, datetime
 from typing import Any, Literal
 
-GoalStatus = Literal["proposed", "voting", "accepted", "rejected", "error"]
+GoalStatus = Literal["proposed", "voting", "accepted", "rejected", "error", "executing", "completed"]
 
 
 @dataclass
@@ -42,7 +42,7 @@ class Goal:
     """A strategic goal proposed by the swarm.
 
     Goals move through a lifecycle:
-    ``proposed`` → ``voting`` → ``accepted`` / ``rejected``.
+    ``proposed`` → ``voting`` → ``accepted`` / ``rejected`` → ``executing`` → ``completed`` / ``error``.
 
     Attributes:
         id: Unique goal identifier (generated at proposal time).
