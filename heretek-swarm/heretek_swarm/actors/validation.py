@@ -9,6 +9,13 @@ Features:
 - Strict type checking with field validation
 - Input sanitization helpers
 - Custom validators for complex constraints
+
+Deprecation note:
+    The constants IMMUTABLE_RULES, BASELINE_CONFIG and the accessor functions
+    get_immutable_rules(), get_baseline_config() have been moved into
+    ValidationMixin (heretek_swarm.actors.mixins.validation) as class-level
+    attributes and classmethods. The names below are backward-compat shims
+    that delegate to the mixin. New code should import from the mixin directly.
 """
 
 import re
@@ -18,6 +25,8 @@ from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
+from heretek_swarm.actors.mixins.validation import ValidationMixin
+
 # Field description constant
 _TASK_DESCRIPTION = "Task description"
 
@@ -26,82 +35,27 @@ _TASK_DESCRIPTION = "Task description"
 # =============================================================================
 # Behavioral Baseline Initialization - Static Rules Bootstrap
 # =============================================================================
-# Critical immutable behaviors that are always enforced regardless of
-# learned baseline. These rules represent hard security boundaries.
+# DEPRECATED: These constants now live in ValidationMixin. These aliases exist
+# for backward compatibility and will be removed in a future release.
 
-IMMUTABLE_RULES = [
-    {
-        "pattern": r"eval\s*\(",
-        "severity": "CRITICAL",
-        "description": "Code execution via eval()",
-        "action": "BLOCK",
-    },
-    {
-        "pattern": r"exec\s*\(",
-        "severity": "CRITICAL",
-        "description": "Code execution via exec()",
-        "action": "BLOCK",
-    },
-    {
-        "pattern": r"__import__\s*\(",
-        "severity": "HIGH",
-        "description": "Dynamic import via __import__",
-        "action": "BLOCK",
-    },
-    {
-        "pattern": r"subprocess\s*\(",
-        "severity": "HIGH",
-        "description": "Shell execution via subprocess",
-        "action": "BLOCK",
-    },
-    {
-        "pattern": r"os\.system\s*\(",
-        "severity": "HIGH",
-        "description": "System command via os.system",
-        "action": "BLOCK",
-    },
-    {
-        "pattern": r"pickle\.loads?",
-        "severity": "HIGH",
-        "description": "Unpickle arbitrary data",
-        "action": "BLOCK",
-    },
-    {
-        "pattern": r"ctorch\.load|torch\.load",
-        "severity": "HIGH",
-        "description": "Loading untrusted PyTorch models",
-        "action": "BLOCK",
-    },
-    {
-        "pattern": r"yaml\.load\s*\(\s*Loader\s*=\s*None",
-        "severity": "HIGH",
-        "description": "Unsafe YAML deserialization",
-        "action": "BLOCK",
-    },
-]
-
-
-BASELINE_CONFIG = {
-    "initialization_mode": "static_rules_bootstrap",
-    "learning_period": 100,
-    "anomaly_threshold": 3.0,
-    "min_baseline_samples": 50,
-    "baseline_decay_factor": 0.95,
-    "max_baseline_age_hours": 24,
-    "enable_immutable_rules": True,
-    "enable_behavioral_learning": True,
-    "flag_anomalies_until_baseline": True,
-}
+IMMUTABLE_RULES = ValidationMixin.IMMUTABLE_RULES
+BASELINE_CONFIG = ValidationMixin.BASELINE_CONFIG
 
 
 def get_immutable_rules() -> list[dict[str, Any]]:
-    """Get the list of immutable security rules."""
-    return IMMUTABLE_RULES.copy()
+    """Get the list of immutable security rules.
+
+    DEPRECATED: Use ValidationMixin.get_immutable_rules() instead.
+    """
+    return ValidationMixin.get_immutable_rules()
 
 
 def get_baseline_config() -> dict[str, Any]:
-    """Get the baseline initialization configuration."""
-    return BASELINE_CONFIG.copy()
+    """Get the baseline initialization configuration.
+
+    DEPRECATED: Use ValidationMixin.get_baseline_config() instead.
+    """
+    return ValidationMixin.get_baseline_config()
 
 
 class MessageContent(BaseModel):

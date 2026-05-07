@@ -22,6 +22,89 @@ logger = structlog.get_logger("ValidationMixin")
 class ValidationMixin:
     """Mixin for Zero-Trust internal validation (ZERO-02)."""
 
+    # =========================================================================
+    # Behavioral Baseline Constants
+    # =========================================================================
+    # Critical immutable behaviors that are always enforced regardless of
+    # learned baseline. These rules represent hard security boundaries.
+    # These were originally defined in actors/validation.py and are consolidated
+    # here as the single source of truth.
+
+    IMMUTABLE_RULES: list[dict[str, str]] = [
+        {
+            "pattern": r"eval\s*\(",
+            "severity": "CRITICAL",
+            "description": "Code execution via eval()",
+            "action": "BLOCK",
+        },
+        {
+            "pattern": r"exec\s*\(",
+            "severity": "CRITICAL",
+            "description": "Code execution via exec()",
+            "action": "BLOCK",
+        },
+        {
+            "pattern": r"__import__\s*\(",
+            "severity": "HIGH",
+            "description": "Dynamic import via __import__",
+            "action": "BLOCK",
+        },
+        {
+            "pattern": r"subprocess\s*\(",
+            "severity": "HIGH",
+            "description": "Shell execution via subprocess",
+            "action": "BLOCK",
+        },
+        {
+            "pattern": r"os\.system\s*\(",
+            "severity": "HIGH",
+            "description": "System command via os.system",
+            "action": "BLOCK",
+        },
+        {
+            "pattern": r"pickle\.loads?",
+            "severity": "HIGH",
+            "description": "Unpickle arbitrary data",
+            "action": "BLOCK",
+        },
+        {
+            "pattern": r"ctorch\.load|torch\.load",
+            "severity": "HIGH",
+            "description": "Loading untrusted PyTorch models",
+            "action": "BLOCK",
+        },
+        {
+            "pattern": r"yaml\.load\s*\(\s*Loader\s*=\s*None",
+            "severity": "HIGH",
+            "description": "Unsafe YAML deserialization",
+            "action": "BLOCK",
+        },
+    ]
+
+    BASELINE_CONFIG: dict[str, object] = {
+        "initialization_mode": "static_rules_bootstrap",
+        "learning_period": 100,
+        "anomaly_threshold": 3.0,
+        "min_baseline_samples": 50,
+        "baseline_decay_factor": 0.95,
+        "max_baseline_age_hours": 24,
+        "enable_immutable_rules": True,
+        "enable_behavioral_learning": True,
+        "flag_anomalies_until_baseline": True,
+    }
+
+    @classmethod
+    def get_immutable_rules(cls) -> list[dict[str, str]]:
+        """Get the list of immutable security rules (copied for safety)."""
+        import copy
+        return copy.deepcopy(cls.IMMUTABLE_RULES)
+
+    @classmethod
+    def get_baseline_config(cls) -> dict[str, object]:
+        """Get the baseline initialization configuration (copied for safety)."""
+        import copy
+        return copy.deepcopy(cls.BASELINE_CONFIG)
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
