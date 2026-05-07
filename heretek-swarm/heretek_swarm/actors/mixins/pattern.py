@@ -48,9 +48,9 @@ class PatternMixin:
             content: Pattern content/metadata
         """
         if not self.pattern_extractor:
-            return
+            raise TypeError("_emit_pattern requires pattern_extractor")
 
-        if item_id in self._pattern_emitted:
+        if item_id in (self._pattern_emitted or set()):
             return
 
         try:
@@ -86,7 +86,7 @@ class PatternMixin:
             List of validated pattern dictionaries
         """
         if not self.pattern_extractor:
-            return []
+            raise TypeError("_consume_patterns requires pattern_extractor")
 
         try:
             patterns = await self.pattern_extractor.extract_patterns(

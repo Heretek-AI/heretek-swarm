@@ -43,7 +43,7 @@ class MemoryMixin:
             access_type: Type of access ("read" or "write")
         """
         if not self.access_analyzer:
-            return
+            raise TypeError("_track_memory_access requires access_analyzer")
 
         memory_id = f"{item_type}_{item_id}"
         self.access_analyzer.record_access(
@@ -64,7 +64,7 @@ class MemoryMixin:
             AccessTier classification (HOT, WARM, COLD)
         """
         if not self.access_analyzer:
-            return AccessTier.COLD
+            raise TypeError("_get_memory_tier requires access_analyzer")
 
         memory_id = f"{item_type}_{item_id}"
         profile = self.access_analyzer.get_profile(memory_id)
@@ -86,7 +86,7 @@ class MemoryMixin:
             List of item IDs predicted to be relevant
         """
         if not self.access_analyzer:
-            return []
+            raise TypeError("_prefetch_relevant requires access_analyzer")
 
         try:
             predicted_memories = self.access_analyzer.predict_agent_access(agent_id)

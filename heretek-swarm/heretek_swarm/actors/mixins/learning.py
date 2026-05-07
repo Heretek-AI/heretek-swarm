@@ -67,7 +67,7 @@ class LearningMixin:
                 ),
             },
             "consensus": {
-                "active_deliberations": len(self._active_deliberations),
+                "active_deliberations": len(self._active_deliberations or {}),
                 "deliberation_engine_stats": (
                     self.deliberation_engine.get_statistics()
                     if self.deliberation_engine
