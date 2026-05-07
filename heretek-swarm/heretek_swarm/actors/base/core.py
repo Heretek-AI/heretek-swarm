@@ -3,9 +3,14 @@ Core module for AgentActor base class.
 
 This module contains:
 - ActorState enum
-- ActorMessage dataclass
+- ActorMessage dataclass (internal, not the Pydantic model)
 - ActorStatus dataclass
 - AgentActor core initialization and lifecycle methods
+
+The Pydantic models for inter-actor messaging are in heretek_swarm.schemas.actors.
+Import from there for validated message types::
+
+    from heretek_swarm.schemas.actors import ActorMessage as PydanticActorMessage
 """
 
 import asyncio
@@ -519,3 +524,8 @@ from heretek_swarm.actors.base.message_handling import (
 from heretek_swarm.actors.base.state_management import (
     AgentActorStateManagement,  # noqa: F401 - triggers state management bindings
 )
+from heretek_swarm.schemas.actors import ActorMessage as PydanticActorMessage
+
+# Backward-compat: existing code that imports ActorMessage from actors.base.core
+# gets the internal dataclass ActorMessage (defined above), not the Pydantic one.
+# Use heretek_swarm.schemas.actors for the Pydantic models.
