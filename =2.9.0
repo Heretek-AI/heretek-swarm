@@ -1,7 +1,0 @@
-Resolved 2 packages in 118ms
-Downloading psycopg2-binary (4.1MiB)
- Downloaded psycopg2-binary
-Prepared 2 packages in 122ms
-Installed 2 packages in 6ms
- + prometheus-client==0.25.0
- + psycopg2-binary==2.9.12
