@@ -53,11 +53,10 @@ class TribunalMixin:
         grounds: str,
         description: str,
         original_consensus_id: str = "",
-    ) -> "TribunalCase | None":
+    ) -> "TribunalCase":
         """Submit an appeal case to the Tribunal."""
         if not self.tribunal:
-            logger.warning("tribunal_not_available", agent_id=self.agent_id)
-            return None
+            raise TypeError("_submit_tribunal_case requires tribunal")
 
         try:
             case = self.tribunal.create_case(
@@ -89,13 +88,12 @@ class TribunalMixin:
         source: str | None = None,
         reliability_score: float = 0.5,
         metadata: dict[str, Any] | None = None,
-    ) -> "TribunalEvidence | None":
+    ) -> "TribunalEvidence":
         """Submit evidence to a Tribunal case."""
         from heretek_swarm.consensus.tribunal import EvidenceType
 
         if not self.tribunal:
-            logger.warning("tribunal_not_available", agent_id=self.agent_id)
-            return None
+            raise TypeError("_submit_tribunal_evidence requires tribunal")
 
         # Default to DOCUMENT if not specified
         if evidence_type is None:
@@ -126,10 +124,10 @@ class TribunalMixin:
             )
             return None
 
-    async def _get_tribunal_case(self, case_id: str) -> "TribunalCase | None":
+    async def _get_tribunal_case(self, case_id: str) -> "TribunalCase":
         """Get a Tribunal case by ID."""
         if not self.tribunal:
-            return None
+            raise TypeError("_get_tribunal_case requires tribunal")
         return self.tribunal.get_case(case_id)
 
     async def _issue_tribunal_ruling(
@@ -138,11 +136,10 @@ class TribunalMixin:
         ruling_type: "RulingType",
         reasoning: str,
         confidence: float = 1.0,
-    ) -> "TribunalRuling | None":
+    ) -> "TribunalRuling":
         """Issue a ruling on a Tribunal case."""
         if not self.tribunal:
-            logger.warning("tribunal_not_available", agent_id=self.agent_id)
-            return None
+            raise TypeError("_issue_tribunal_ruling requires tribunal")
 
         try:
             ruling = self.tribunal.issue_ruling(
@@ -165,7 +162,7 @@ class TribunalMixin:
     async def _get_tribunal_precedents(self, limit: int = 10) -> list["TribunalRuling"]:
         """Get binding precedent rulings."""
         if not self.tribunal:
-            return []
+            raise TypeError("_get_tribunal_precedents requires tribunal")
         return self.tribunal.get_precedents(limit=limit)
 
     async def _find_similar_precedents(
@@ -173,5 +170,5 @@ class TribunalMixin:
     ) -> list["TribunalRuling"]:
         """Find precedents similar to a case."""
         if not self.tribunal:
-            return []
+            raise TypeError("_find_similar_precedents requires tribunal")
         return self.tribunal.find_similar_precedents(case_id, limit=limit)
