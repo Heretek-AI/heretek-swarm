@@ -1,0 +1,1 @@
+{"id":"eda43d0d-9e94-40d8-923a-e059da438ca9","ts":"2026-05-07T03:12:36.915Z","severity":"warning","message":"External state migration warning: Migration rename/copy failed: EBUSY: resource busy or locked, unlink 'C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\gsd.db'","source":"notify","read":false}

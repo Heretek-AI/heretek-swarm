@@ -150,5 +150,3 @@ vendor/
 .cache/
 tmp/
 swarm-dashboard/playwright-report/data/*
-.gsd.migrating/
-.gsd/
