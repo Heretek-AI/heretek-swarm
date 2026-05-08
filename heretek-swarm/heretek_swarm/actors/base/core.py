@@ -196,6 +196,13 @@ class AgentActor:
         state_repository: StateRepository | None = None,
         load_state_on_init: bool = True,
         persistence_interval: int | None = None,  # P0-1: Continuous persistence
+        # Injectable dependency stubs (all optional — default to None for backward compat)
+        access_analyzer: Any | None = None,
+        pattern_extractor: Any | None = None,
+        deliberation_engine: Any | None = None,
+        tribunal: Any | None = None,
+        llm_provider: Any | None = None,
+        event_mesh: Any | None = None,
         **kwargs: Any,  # Accept additional kwargs for forward compatibility
     ) -> None:
         """
@@ -216,6 +223,20 @@ class AgentActor:
             persistence_interval: Optional interval (in messages) for auto-persistence.
                                   If None, only persists on terminate (legacy behavior).
                                   Recommended: 10-100 for production use.
+            access_analyzer: Optional AccessPatternAnalyzer stub for testing
+                             (injected as ``self.access_analyzer`` for mixin access)
+            pattern_extractor: Optional PatternExtractor stub for testing
+                               (injected as ``self.pattern_extractor`` for mixin access)
+            deliberation_engine: Optional SwarmDeliberationEngine stub for testing
+                                 (injected as ``self.deliberation_engine`` for mixin access)
+            tribunal: Optional Tribunal stub for testing
+                      (injected as ``self.tribunal`` for mixin access)
+            llm_provider: Optional LLM provider stub for testing
+                          (injected as ``self._llm_provider``, falls back to
+                          ``_actor_stubs.get_llm_provider()`` when None)
+            event_mesh: Optional event mesh stub for testing
+                        (injected as ``self._event_mesh``, falls back to
+                        ``_actor_stubs.get_nats_event_mesh()`` when None)
         """
         # P1-7: Configuration validation
         if max_mailbox_size <= 0:
@@ -261,9 +282,14 @@ class AgentActor:
             # Auto-create a router for this agent using the global registry
             self._model_router = get_router(self.agent_id)
 
+        # Injectable dependency stubs (optional kwargs, fall back to existing module stubs)
+        self.access_analyzer: Any | None = access_analyzer
+        self.pattern_extractor: Any | None = pattern_extractor
+        self.deliberation_engine: Any | None = deliberation_engine
+        self.tribunal: Any | None = tribunal
         # LLM and event mesh providers (injectable via stubs for testing)
-        self._llm_provider = _actor_stubs.get_llm_provider()
-        self._event_mesh = _actor_stubs.get_nats_event_mesh()
+        self._llm_provider: Any | None = llm_provider or _actor_stubs.get_llm_provider()
+        self._event_mesh: Any | None = event_mesh or _actor_stubs.get_nats_event_mesh()
 
         # Message handlers registry
         self._message_handlers: dict[str, Callable] = {}
