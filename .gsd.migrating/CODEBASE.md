@@ -1,7 +1,7 @@
 # Codebase Map
 
-Generated: 2026-05-07T03:12:47Z | Files: 500 | Described: 0/500
-<!-- gsd:codebase-meta {"generatedAt":"2026-05-07T03:12:47Z","fingerprint":"c956f4323ce54dc5cb95bed8521fd9b971eb6113","fileCount":500,"truncated":true} -->
+Generated: 2026-05-08T00:58:17Z | Files: 500 | Described: 0/500
+<!-- gsd:codebase-meta {"generatedAt":"2026-05-08T00:58:17Z","fingerprint":"90291362b16827462069c48ccb29e0dca7f8a0f2","fileCount":500,"truncated":true} -->
 Note: Truncated to first 500 files. Run with higher --max-files to include all.
 
 ### (root)/
@@ -29,6 +29,34 @@ Note: Truncated to first 500 files. Run with higher --max-files to include all.
 - `.github/workflows/load-test.yml`
 - `.github/workflows/publish-npm.yml`
 - `.github/workflows/publish-python.yml`
+
+### .gsd.migrating/
+- `.gsd.migrating/CODEBASE.md`
+- `.gsd.migrating/event-log.jsonl`
+- `.gsd.migrating/gsd.db-shm`
+- `.gsd.migrating/gsd.db-wal`
+- `.gsd.migrating/last-snapshot.md`
+- `.gsd.migrating/notifications.jsonl`
+- `.gsd.migrating/state-manifest.json`
+- `.gsd.migrating/STATE.md`
+
+### .gsd.migrating/milestones/M001/
+- `.gsd.migrating/milestones/M001/M001-ROADMAP.md`
+
+### .gsd.migrating/milestones/M002/
+- `.gsd.migrating/milestones/M002/M002-ROADMAP.md`
+
+### .gsd.migrating/milestones/M003/
+- `.gsd.migrating/milestones/M003/M003-ROADMAP.md`
+
+### .gsd.migrating/milestones/M004/
+- `.gsd.migrating/milestones/M004/M004-ROADMAP.md`
+
+### .gsd.migrating/milestones/M005/
+- `.gsd.migrating/milestones/M005/M005-ROADMAP.md`
+
+### .gsd.migrating/runtime/
+- `.gsd.migrating/runtime/write-gate-state.json`
 
 ### agent_workspace/agents/alpha/
 - `agent_workspace/agents/alpha/MEMORY.md`
@@ -124,7 +152,7 @@ Note: Truncated to first 500 files. Run with higher --max-files to include all.
 - `heretek-swarm/heretek_swarm/cli.py`
 
 ### heretek-swarm/heretek_swarm/actors/
-- *(31 files: 31 .py)*
+- *(21 files: 21 .py)*
 
 ### heretek-swarm/heretek_swarm/actors/arbiter/
 - `heretek-swarm/heretek_swarm/actors/arbiter/__init__.py`
@@ -547,6 +575,7 @@ Note: Truncated to first 500 files. Run with higher --max-files to include all.
 
 ### heretek-swarm/heretek_swarm/schemas/
 - `heretek-swarm/heretek_swarm/schemas/__init__.py`
+- `heretek-swarm/heretek_swarm/schemas/actors.py`
 - `heretek-swarm/heretek_swarm/schemas/external_call_log.py`
 
 ### heretek-swarm/heretek_swarm/security/
@@ -561,6 +590,9 @@ Note: Truncated to first 500 files. Run with higher --max-files to include all.
 - `heretek-swarm/heretek_swarm/security/threat_detection.py`
 - `heretek-swarm/heretek_swarm/security/validators.py`
 - `heretek-swarm/heretek_swarm/security/zero_trust.py`
+
+### heretek-swarm/heretek_swarm/slices/M002/S01/
+- `heretek-swarm/heretek_swarm/slices/M002/S01/S01-AUDIT.md`
 
 ### heretek-swarm/heretek_swarm/state/
 - `heretek-swarm/heretek_swarm/state/__init__.py`
@@ -601,9 +633,3 @@ Note: Truncated to first 500 files. Run with higher --max-files to include all.
 - `heretek-swarm/tests/test_auto_routing_integration.py`
 - `heretek-swarm/tests/test_complexity_heuristic.py`
 - `heretek-swarm/tests/test_consciousness_api.py`
-- `heretek-swarm/tests/test_consensus_audit_jsonl.py`
-- `heretek-swarm/tests/test_consensus_cli.py`
-- `heretek-swarm/tests/test_consensus_coordinator.py`
-- `heretek-swarm/tests/test_consensus_runtime.py`
-- `heretek-swarm/tests/test_consensus_websocket.py`
-- `heretek-swarm/tests/test_domain_selector.py`

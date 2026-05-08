@@ -1,16 +1,19 @@
 # GSD State
 
-**Active Milestone:** M001: Collapse dual actors/ directory into one canonical location
-**Active Slice:** S01: Audit actor file pairs and determine canonical source
-**Phase:** planning
+**Active Milestone:** M003: Type-seal Mixin contracts and make stub injection first-class
+**Active Slice:** S03: S03
+**Phase:** summarizing
 **Requirements Status:** 0 active · 0 validated · 0 deferred · 0 out of scope
 
 ## Milestone Registry
-- 🔄 **M001:** Collapse dual actors/ directory into one canonical location
-- ⬜ **M002:** Unify validation into a single entry point
-- ⬜ **M003:** Type-seal Mixin contracts and make stub injection first-class
+- ✅ **M001:** Collapse dual actors/ directory into one canonical location
+- ✅ **M002:** Unify validation into a single entry point
+- 🔄 **M003:** Type-seal Mixin contracts and make stub injection first-class
 - ⬜ **M004:** Add integration test scaffold and CI surface
 - ⬜ **M005:** Document architecture and compress flat actor API surface
+- ⬜ **M006:** Audit and plan repository restructure
+- ⬜ **M007:** Execute repository restructure
+- ⬜ **M008:** M008
 
 ## Recent Decisions
 - None recorded
@@ -19,4 +22,4 @@
 - None
 
 ## Next Action
-Slice S01 has no DB tasks. Plan slice tasks before execution.
+All tasks done in S03. Write slice summary and complete slice.
