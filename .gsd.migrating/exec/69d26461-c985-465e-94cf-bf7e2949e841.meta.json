@@ -1,0 +1,18 @@
+{
+  "id": "69d26461-c985-465e-94cf-bf7e2949e841",
+  "runtime": "bash",
+  "purpose": "Find actual actor directory path",
+  "script_chars": 52,
+  "started_at": "2026-05-07T03:24:27.325Z",
+  "finished_at": "2026-05-07T03:24:31.040Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 3715,
+  "stdout_bytes": 37,
+  "stderr_bytes": 0,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\69d26461-c985-465e-94cf-bf7e2949e841.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\69d26461-c985-465e-94cf-bf7e2949e841.stderr"
+}

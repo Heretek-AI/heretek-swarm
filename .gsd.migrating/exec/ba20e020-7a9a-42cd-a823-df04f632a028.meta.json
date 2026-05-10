@@ -1,0 +1,18 @@
+{
+  "id": "ba20e020-7a9a-42cd-a823-df04f632a028",
+  "runtime": "python",
+  "purpose": "Get canonical paths from subpackage __init__.py files",
+  "script_chars": 628,
+  "started_at": "2026-05-07T12:13:06.280Z",
+  "finished_at": "2026-05-07T12:13:06.378Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 98,
+  "stdout_bytes": 3882,
+  "stderr_bytes": 0,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\ba20e020-7a9a-42cd-a823-df04f632a028.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\ba20e020-7a9a-42cd-a823-df04f632a028.stderr"
+}

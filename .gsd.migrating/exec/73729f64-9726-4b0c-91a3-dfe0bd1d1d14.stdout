@@ -1,0 +1,4 @@
+=== Callers of get_immutable_rules ===
+./heretek-swarm/heretek_swarm/actors/validation.py:97:def get_immutable_rules() -> list[dict[str, Any]]:
+
+=== Callers of get_baseline_config ===

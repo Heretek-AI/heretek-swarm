@@ -1,0 +1,18 @@
+{
+  "id": "0eef17bd-bd5e-4b6e-88bc-acf354c3caa7",
+  "runtime": "bash",
+  "purpose": "Check git branch state properly for M002",
+  "script_chars": 972,
+  "started_at": "2026-05-07T16:31:06.041Z",
+  "finished_at": "2026-05-07T16:31:20.373Z",
+  "exit_code": 2,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 14332,
+  "stdout_bytes": 669,
+  "stderr_bytes": 0,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\0eef17bd-bd5e-4b6e-88bc-acf354c3caa7.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\0eef17bd-bd5e-4b6e-88bc-acf354c3caa7.stderr"
+}

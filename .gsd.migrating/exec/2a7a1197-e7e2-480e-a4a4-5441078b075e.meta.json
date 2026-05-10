@@ -1,0 +1,18 @@
+{
+  "id": "2a7a1197-e7e2-480e-a4a4-5441078b075e",
+  "runtime": "bash",
+  "purpose": "Verify all key agents import from heretek_swarm.actors",
+  "script_chars": 177,
+  "started_at": "2026-05-07T12:39:29.462Z",
+  "finished_at": "2026-05-07T12:39:33.877Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 4415,
+  "stdout_bytes": 7,
+  "stderr_bytes": 101,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\2a7a1197-e7e2-480e-a4a4-5441078b075e.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\2a7a1197-e7e2-480e-a4a4-5441078b075e.stderr"
+}

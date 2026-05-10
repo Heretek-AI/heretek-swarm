@@ -1,0 +1,155 @@
+=== Root contents ===
+total 1520
+drwxrwxrwx 1 john john    512 May  7 09:49 .
+drwxrwxrwx 1 john john    512 May  7 09:12 ..
+drwxrwxrwx 1 john john    512 Apr 30 10:59 .actor_states
+drwxrwxrwx 1 john john    512 May  6 23:05 .bg-shell
+-rwxrwxrwx 1 john john    210 May  2 22:38 .dockerignore
+-rwxrwxrwx 1 john john   5800 May  2 22:43 .env.example
+drwxrwxrwx 1 john john    512 May  7 10:01 .git
+drwxrwxrwx 1 john john    512 Apr 29 10:03 .github
+-rwxrwxrwx 1 john john   2009 May  7 08:39 .gitignore
+drwxrwxrwx 1 john john    512 May  7 10:01 .gsd
+-rwxrwxrwx 1 john john     13 May  6 23:12 .gsd-id
+drwxrwxrwx 1 john john    512 May  6 23:23 .gsd.migrating
+drwxrwxrwx 1 john john    512 Apr 29 10:03 .kilocode
+-rwxrwxrwx 1 john john      4 Apr 29 10:03 .nvmrc
+-rwxrwxrwx 1 john john   3789 Apr 29 10:03 .pre-commit-config.yaml
+drwxrwxrwx 1 john john    512 Apr 29 17:51 .pytest_cache
+drwxrwxrwx 1 john john    512 May  1 21:08 .venv
+-rwxrwxrwx 1 john john   1431 Apr 29 10:03 CLAUDE.md
+-rwxrwxrwx 1 john john   1088 Apr 29 10:03 LICENSE
+-rwxrwxrwx 1 john john   5391 Apr 29 10:03 PATH_TO_EMERGENCE.md
+-rwxrwxrwx 1 john john   6351 Apr 29 10:03 PRIME_DIRECTIVE.md
+-rwxrwxrwx 1 john john   5179 Apr 29 10:03 RALPH.md
+-rwxrwxrwx 1 john john   8277 May  3 09:13 README.md
+-rwxrwxrwx 1 john john  27008 Apr 29 10:03 RESEARCH.md
+-rwxrwxrwx 1 john john   6381 Apr 29 10:03 SWARM_STATE.md
+drwxrwxrwx 1 john john    512 Apr 29 13:16 agent_workspace
+drwxrwxrwx 1 john john    512 Apr 29 10:03 audit
+-rwxrwxrwx 1 john john   4019 Apr 29 10:03 audit-report-template.md
+-rwxrwxrwx 1 john john  71161 Apr 29 10:03 audit-report.md
+-rwxrwxrwx 1 john john   4389 May  2 22:42 docker-compose.yml
+drwxrwxrwx 1 john john    512 Apr 29 10:03 docs
+drwxrwxrwx 1 john john    512 May  4 12:51 heretek-swarm
+drwxrwxrwx 1 john john    512 Apr 29 10:03 migrations
+drwxrwxrwx 1 john john    512 May  3 11:56 node_modules
+-rwxrwxrwx 1 john john 329018 Apr 29 10:03 package-lock.json
+-rwxrwxrwx 1 john john   8533 May  2 22:09 pyproject.toml
+drwxrwxrwx 1 john john    512 Apr 29 10:03 src
+drwxrwxrwx 1 john john    512 May  3 17:02 swarm-dashboard
+drwxrwxrwx 1 john john    512 May  3 12:48 test-results
+drwxrwxrwx 1 john john    512 May  3 16:00 tests
+-rwxrwxrwx 1 john john    680 Apr 29 10:03 tmpku_9ys71.env
+-rwxrwxrwx 1 john john  16377 Apr 29 10:03 triage_classifier.py
+-rwxrwxrwx 1 john john 173206 Apr 29 10:03 triage_data.json
+-rwxrwxrwx 1 john john 830339 Apr 29 10:03 uv.lock
+
+=== heretek-swarm/heretek_swarm/ ===
+total 68
+drwxrwxrwx 1 john john   512 May  7 08:57 .
+drwxrwxrwx 1 john john   512 May  4 12:51 ..
+-rwxrwxrwx 1 john john  1016 May  2 21:33 __init__.py
+-rwxrwxrwx 1 john john   185 Apr 29 10:03 __main__.py
+drwxrwxrwx 1 john john   512 May  4 14:28 __pycache__
+drwxrwxrwx 1 john john   512 May  7 08:23 actors
+drwxrwxrwx 1 john john   512 Apr 29 10:03 agent_workspace
+drwxrwxrwx 1 john john   512 Apr 29 14:44 agents
+drwxrwxrwx 1 john john   512 May  3 15:19 api
+drwxrwxrwx 1 john john   512 Apr 29 10:03 audit
+drwxrwxrwx 1 john john   512 Apr 29 18:27 channels
+drwxrwxrwx 1 john john   512 May  4 14:47 cli
+-rwxrwxrwx 1 john john 63533 May  4 14:28 cli.py
+drwxrwxrwx 1 john john   512 Apr 29 13:13 collective
+drwxrwxrwx 1 john john   512 Apr 29 13:13 config
+drwxrwxrwx 1 john john   512 Apr 29 13:13 consciousness
+drwxrwxrwx 1 john john   512 May  3 11:06 consensus
+drwxrwxrwx 1 john john   512 Apr 29 13:13 coordination
+drwxrwxrwx 1 john john   512 Apr 29 13:13 creativity
+drwxrwxrwx 1 john john   512 Apr 29 10:03 embeddings
+drwxrwxrwx 1 john john   512 Apr 29 18:27 evaluation
+drwxrwxrwx 1 john john   512 Apr 29 13:13 gateway
+drwxrwxrwx 1 john john   512 May  5 08:00 goals
+drwxrwxrwx 1 john john   512 Apr 29 10:03 governance
+drwxrwxrwx 1 john john   512 Apr 29 13:13 infrastructure
+drwxrwxrwx 1 john john   512 Apr 29 10:03 integrations
+drwxrwxrwx 1 john john   512 Apr 29 10:03 interfaces
+drwxrwxrwx 1 john john   512 Apr 29 13:13 knowledge
+drwxrwxrwx 1 john john   512 May  1 20:37 llm
+drwxrwxrwx 1 john john   512 Apr 29 18:27 logging
+drwxrwxrwx 1 john john   512 May  1 21:26 mcp
+drwxrwxrwx 1 john john   512 Apr 29 13:13 memory
+drwxrwxrwx 1 john john   512 Apr 29 13:13 models
+drwxrwxrwx 1 john john   512 Apr 29 18:25 observability
+drwxrwxrwx 1 john john   512 Apr 29 13:13 orchestration
+drwxrwxrwx 1 john john   512 Apr 29 13:13 plugins
+drwxrwxrwx 1 john john   512 Apr 29 13:13 rag
+drwxrwxrwx 1 john john   512 May  1 19:50 routing
+drwxrwxrwx 1 john john   512 Apr 29 23:13 runtime
+drwxrwxrwx 1 john john   512 May  7 09:06 schemas
+drwxrwxrwx 1 john john   512 Apr 29 13:13 security
+drwxrwxrwx 1 john john   512 May  7 08:57 slices
+drwxrwxrwx 1 john john   512 Apr 29 13:13 state
+drwxrwxrwx 1 john john   512 Apr 29 13:13 testing
+drwxrwxrwx 1 john john   512 Apr 29 18:27 tools
+drwxrwxrwx 1 john john   512 Apr 29 18:27 utils
+drwxrwxrwx 1 john john   512 Apr 29 13:13 validation
+drwxrwxrwx 1 john john   512 May  3 15:15 workflow
+
+=== heretek-swarm/ ===
+total 8
+drwxrwxrwx 1 john john  512 May  4 12:51 .
+drwxrwxrwx 1 john john  512 May  7 09:49 ..
+drwxrwxrwx 1 john john  512 May  2 21:42 .actor_states
+drwxrwxrwx 1 john john  512 Apr 29 10:03 .claude
+drwxrwxrwx 1 john john  512 May  2 21:36 .pytest_cache
+-rwxrwxrwx 1 john john 2519 May  2 22:38 Dockerfile
+-rwxrwxrwx 1 john john 1088 May  2 21:34 LICENSE
+drwxrwxrwx 1 john john  512 May  2 23:22 agent_workspace
+drwxrwxrwx 1 john john  512 May  7 08:57 heretek_swarm
+-rwxrwxrwx 1 john john    0 May  1 13:52 heretek_swarm.db
+drwxrwxrwx 1 john john  512 May  2 22:10 heretek_swarm.egg-info
+-rwxrwxrwx 1 john john    0 May  1 13:55 test_ws_integration.db
+drwxrwxrwx 1 john john  512 May  5 08:03 tests
+
+=== Find all directories ===
+.
+./.actor_states
+./.bg-shell
+./.git
+./.github
+./.github/workflows
+./.gsd
+./.gsd.migrating
+./.gsd.migrating/milestones
+./.gsd.migrating/milestones/M001
+./.gsd.migrating/milestones/M002
+./.gsd.migrating/milestones/M003
+./.gsd.migrating/milestones/M004
+./.gsd.migrating/milestones/M005
+./.gsd.migrating/runtime
+./.kilocode
+./.pytest_cache
+./.pytest_cache/v
+./.pytest_cache/v/cache
+./.venv
+./.venv/Lib
+./.venv/Lib/site-packages
+./.venv/Lib/site-packages/__pycache__
+./.venv/Scripts
+./agent_workspace
+./agent_workspace/agents
+./agent_workspace/agents/alpha
+./agent_workspace/agents/alpha-brain
+./agent_workspace/agents/beta
+./agent_workspace/agents/gamma
+./agent_workspace/agents/test
+./agent_workspace/agents/test_agent
+./agent_workspace/agents/test_fail_agent
+./agent_workspace/agents/test_none_agent
+./agent_workspace/agents/test_weather_agent
+./audit
+./docs
+./docs/architecture
+./heretek-swarm
+./heretek-swarm/.actor_states

@@ -1,0 +1,10 @@
+[
+  {
+    "kind": "bash",
+    "toolCallId": "call_function_nw726yc082xm_2",
+    "command": "cd C:/Users/Derek/Desktop/heretek-swarm/heretek-swarm && grep -rn \"from heretek_swarm.actors\" --include=\"*.py\" | grep -i \"ActorMessage\\|MessageType\" | grep -v __pycache__",
+    "exitCode": 0,
+    "outputSnippet": "heretek_swarm/actors/alpha.py:19:from heretek_swarm.actors.base import ActorMessage, AgentActor\nheretek_swarm/actors/arbiter/handlers.py:15:from heretek_swarm.actors.base import ActorMessage\nheretek_swarm/actors/base/message_handling.py:18:from heretek_swarm.actors.base.core import ActorMessage, AgentActor\nheretek_swarm/actors/beta.py:19:from heretek_swarm.actors.base import ActorMessage, AgentActor\nheretek_swarm/actors/catalyst.py:26:from heretek_swarm.actors.base import ActorMessage, AgentActo",
+    "timestamp": 1778159683643
+  }
+]

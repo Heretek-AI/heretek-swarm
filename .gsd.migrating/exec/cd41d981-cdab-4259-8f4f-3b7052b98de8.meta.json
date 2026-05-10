@@ -1,0 +1,18 @@
+{
+  "id": "cd41d981-cdab-4259-8f4f-3b7052b98de8",
+  "runtime": "python",
+  "purpose": "Find actor files with Python",
+  "script_chars": 750,
+  "started_at": "2026-05-07T03:24:49.696Z",
+  "finished_at": "2026-05-07T03:24:49.815Z",
+  "exit_code": 1,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 119,
+  "stdout_bytes": 486,
+  "stderr_bytes": 538,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\cd41d981-cdab-4259-8f4f-3b7052b98de8.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\cd41d981-cdab-4259-8f4f-3b7052b98de8.stderr"
+}

@@ -1,0 +1,18 @@
+{
+  "id": "739e0464-8c4a-4752-8142-01f15d097245",
+  "runtime": "bash",
+  "purpose": "Check actual repo structure",
+  "script_chars": 521,
+  "started_at": "2026-05-07T16:53:37.342Z",
+  "finished_at": "2026-05-07T16:53:49.261Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 11919,
+  "stdout_bytes": 3963,
+  "stderr_bytes": 0,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\739e0464-8c4a-4752-8142-01f15d097245.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\739e0464-8c4a-4752-8142-01f15d097245.stderr"
+}

@@ -1,0 +1,18 @@
+{
+  "id": "1d0d5197-408d-42ba-a45b-ff58af3106f8",
+  "runtime": "bash",
+  "purpose": "Understand project directory structure",
+  "script_chars": 403,
+  "started_at": "2026-05-07T14:07:46.200Z",
+  "finished_at": "2026-05-07T14:07:53.111Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 6911,
+  "stdout_bytes": 6617,
+  "stderr_bytes": 87,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\1d0d5197-408d-42ba-a45b-ff58af3106f8.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\1d0d5197-408d-42ba-a45b-ff58af3106f8.stderr"
+}

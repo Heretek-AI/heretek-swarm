@@ -1,0 +1,18 @@
+{
+  "id": "b052c953-ae88-40e5-86e8-67e5e763d9a5",
+  "runtime": "bash",
+  "purpose": "Verify test file and ValidationMixin uniqueness",
+  "script_chars": 683,
+  "started_at": "2026-05-07T16:39:07.805Z",
+  "finished_at": "2026-05-07T16:39:10.383Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 2578,
+  "stdout_bytes": 1346,
+  "stderr_bytes": 0,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\b052c953-ae88-40e5-86e8-67e5e763d9a5.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\b052c953-ae88-40e5-86e8-67e5e763d9a5.stderr"
+}

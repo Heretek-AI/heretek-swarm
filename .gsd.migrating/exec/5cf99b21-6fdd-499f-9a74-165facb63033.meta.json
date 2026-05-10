@@ -1,0 +1,18 @@
+{
+  "id": "5cf99b21-6fdd-499f-9a74-165facb63033",
+  "runtime": "bash",
+  "purpose": "Test which python has pytest",
+  "script_chars": 248,
+  "started_at": "2026-05-08T00:41:29.107Z",
+  "finished_at": "2026-05-08T00:41:30.860Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 1753,
+  "stdout_bytes": 228,
+  "stderr_bytes": 0,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\5cf99b21-6fdd-499f-9a74-165facb63033.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\5cf99b21-6fdd-499f-9a74-165facb63033.stderr"
+}

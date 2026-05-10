@@ -12,13 +12,13 @@
 
 ## Slices
 
-- [ ] **S01: Audit actor file pairs and determine canonical source** `risk:low` `depends:[]`
+- [x] **S01: S01** `risk:low` `depends:[]`
   > After this: A complete map of which actor files are authoritative
 
-- [ ] **S02: Delete obsolete actor copies and fix broken imports** `risk:medium` `depends:[S01]`
+- [x] **S02: S02** `risk:medium` `depends:[]`
   > After this: All actor imports resolve from one canonical location
 
-- [ ] **S03: Wire actors/__init__.py as the single re-export surface** `risk:low` `depends:[S02]`
+- [x] **S03: S03** `risk:low` `depends:[]`
   > After this: from heretek_swarm.actors import AlphaAgent, ArbiterAgent works
 
 ## Boundary Map

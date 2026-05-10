@@ -1,0 +1,1150 @@
+{
+  "nodes": [
+    {
+      "id": "milestone:M003",
+      "label": "M003: Type-seal Mixin contracts and make stub injection first-class",
+      "type": "milestone",
+      "description": "Active milestone: M003",
+      "confidence": "EXTRACTED",
+      "sourceFile": "STATE.md"
+    },
+    {
+      "id": "concept:phase:validating-milestone",
+      "label": "Phase: validating-milestone",
+      "type": "concept",
+      "confidence": "EXTRACTED",
+      "sourceFile": "STATE.md"
+    },
+    {
+      "id": "milestone:M001",
+      "label": "M001: Collapse dual actors/ directory into one canonical location",
+      "type": "milestone",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M001/M001-ROADMAP.md"
+    },
+    {
+      "id": "slice:M001:S01",
+      "label": "S01: Audit actor file pairs and determine canonical source",
+      "type": "slice",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M001/slices/S01/S01-PLAN.md"
+    },
+    {
+      "id": "task:M001:S01:T01",
+      "label": "T01: Audit every actor file in heretek_swarm/actors/ and produce the canonical map",
+      "type": "task",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "id": "slice:M001:S02",
+      "label": "S02: Delete obsolete actor copies and fix broken imports",
+      "type": "slice",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M001/slices/S02/S02-PLAN.md"
+    },
+    {
+      "id": "task:M001:S02:T01",
+      "label": "T01: Delete 10 shim actor files",
+      "type": "task",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "id": "task:M001:S02:T02",
+      "label": "T02: Fix imports referencing deleted shims",
+      "type": "task",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "id": "slice:M001:S03",
+      "label": "S03: Wire actors/__init__.py as the single re-export surface",
+      "type": "slice",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M001/slices/S03/S03-PLAN.md"
+    },
+    {
+      "id": "task:M001:S03:T01",
+      "label": "T01: Create actors/__init__.py re-export surface",
+      "type": "task",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "id": "milestone:M002",
+      "label": "M002: Unify validation into a single entry point",
+      "type": "milestone",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M002/M002-ROADMAP.md"
+    },
+    {
+      "id": "slice:M002:S01",
+      "label": "S01: Audit scattered validation and model overlap",
+      "type": "slice",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M002/slices/S01/S01-PLAN.md"
+    },
+    {
+      "id": "task:M002:S01:T01",
+      "label": "T01: Audit validation functions and Pydantic models across codebase",
+      "type": "task",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "id": "slice:M002:S02",
+      "label": "S02: Move Pydantic models to schemas/ and refactor base/core.py",
+      "type": "slice",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M002/slices/S02/S02-PLAN.md"
+    },
+    {
+      "id": "task:M002:S02:T01",
+      "label": "T01: Create schemas/actors.py with consolidated Pydantic models",
+      "type": "task",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "id": "task:M002:S02:T02",
+      "label": "T02: Update actors/base/core.py to import Pydantic models from schemas.actors",
+      "type": "task",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "id": "task:M002:S02:T03",
+      "label": "T03: Find and update all callers importing ActorMessage from old paths",
+      "type": "task",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "id": "task:M002:S02:T04",
+      "label": "T04: Run pytest to verify no import or validation errors",
+      "type": "task",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "id": "slice:M002:S03",
+      "label": "S03: Consolidate ValidationMixin and deprecate duplicates",
+      "type": "slice",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M002/slices/S03/S03-PLAN.md"
+    },
+    {
+      "id": "task:M002:S03:T01",
+      "label": "T01: Move IMMUTABLE_RULES and BASELINE_CONFIG into ValidationMixin",
+      "type": "task",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "id": "task:M002:S03:T02",
+      "label": "T02: Verify full test suite passes",
+      "type": "task",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "id": "task:M002:S03:T03",
+      "label": "T03: Verify full test suite passes",
+      "type": "task",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "id": "slice:M003:S01",
+      "label": "S01: Add fail-fast guards to all mixin methods",
+      "type": "slice",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M003/slices/S01/S01-PLAN.md"
+    },
+    {
+      "id": "task:M003:S01:T01",
+      "label": "T01: Add fail-fast TypeError guards to LearningMixin, MemoryMixin, and PatternMixin",
+      "type": "task",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "id": "task:M003:S01:T02",
+      "label": "T02: Harden TribunalMixin guards and create test_mixin_guards.py",
+      "type": "task",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "id": "slice:M003:S02",
+      "label": "S02: Make stubs first-class constructor arguments",
+      "type": "slice",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M003/slices/S02/S02-PLAN.md"
+    },
+    {
+      "id": "task:M003:S02:T01",
+      "label": "T01: Add protocol stub classes to stubs.py",
+      "type": "task",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "id": "task:M003:S02:T02",
+      "label": "T02: Update AgentActor.__init__ to accept all deps as optional constructor kwargs",
+      "type": "task",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "id": "task:M003:S02:T03",
+      "label": "T03: Write and run tests for constructor-based stub injection",
+      "type": "task",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "id": "slice:M003:S03",
+      "label": "S03: Add mixin __init__.py exports and smoke test for stub injection",
+      "type": "slice",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M003/slices/S03/S03-PLAN.md"
+    },
+    {
+      "id": "task:M003:S03:T01",
+      "label": "T01: Write integration smoke test for mixin imports and stub-injected agent",
+      "type": "task",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "id": "milestone:M004",
+      "label": "M004: Add integration test scaffold and CI surface",
+      "type": "milestone",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M004/M004-ROADMAP.md"
+    },
+    {
+      "id": "milestone:M005",
+      "label": "M005: Document architecture and compress flat actor API surface",
+      "type": "milestone",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M005/M005-ROADMAP.md"
+    },
+    {
+      "id": "milestone:M006",
+      "label": "M006: Audit and plan repository restructure",
+      "type": "milestone",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M006/M006-ROADMAP.md"
+    },
+    {
+      "id": "slice:M006:S01",
+      "label": "S01: Audit file inventory and plan",
+      "type": "slice",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M006/slices/S01/S01-PLAN.md"
+    },
+    {
+      "id": "task:M006:S01:T01",
+      "label": "T01: File inventory",
+      "type": "task",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "id": "task:M006:S01:T02",
+      "label": "T02: Import dependency map",
+      "type": "task",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "id": "task:M006:S01:T03",
+      "label": "T03: CI/workflow impact list",
+      "type": "task",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "id": "milestone:M007",
+      "label": "M007: Execute repository restructure",
+      "type": "milestone",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M007/M007-ROADMAP.md"
+    },
+    {
+      "id": "slice:M007:S01",
+      "label": "S01: Rename heretek-swarm/ to backend/ via git mv",
+      "type": "slice",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M007/slices/S01/S01-PLAN.md"
+    },
+    {
+      "id": "task:M007:S01:T01",
+      "label": "T01: Rename heretek-swarm/ to backend/",
+      "type": "task",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "id": "slice:M007:S02",
+      "label": "S02: Rewrite imports and CI paths",
+      "type": "slice",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M007/slices/S02/S02-PLAN.md"
+    },
+    {
+      "id": "task:M007:S02:T01",
+      "label": "T01: Update Python imports in backend/",
+      "type": "task",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "id": "task:M007:S02:T02",
+      "label": "T02: Update CI workflow files",
+      "type": "task",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "id": "task:M007:S02:T03",
+      "label": "T03: Update Docker/config files in backend/",
+      "type": "task",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "id": "slice:M007:S03",
+      "label": "S03: Verify clean clone and full integration",
+      "type": "slice",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M007/slices/S03/S03-PLAN.md"
+    },
+    {
+      "id": "task:M007:S03:T01",
+      "label": "T01: Python package import check",
+      "type": "task",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "id": "task:M007:S03:T02",
+      "label": "T02: Docker build check",
+      "type": "task",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "id": "task:M007:S03:T03",
+      "label": "T03: Frontend integration check",
+      "type": "task",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "id": "milestone:M008",
+      "label": "M008: M008",
+      "type": "milestone",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M008/M008-ROADMAP.md"
+    },
+    {
+      "id": "decision:M001:1",
+      "label": "**Preserve standalone actors even if name matches a subpackage** explorer.py shares a name with the explorer/ subpackage but is a 1318-line standalone implementation. Only delete true shims (files that re-export from subpackages), never standalone implementations.",
+      "type": "decision",
+      "description": "Source: S02-SUMMARY.md/Key Decisions",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M001/M001-LEARNINGS.md"
+    },
+    {
+      "id": "decision:M001:2",
+      "label": "**No import updates needed for deleted shims** Scanning the entire codebase found only stubs.py referenced (by base/state_management.py). stubs.py was not among the 10 deleted shims — no broken imports existed.",
+      "type": "decision",
+      "description": "Source: S02-SUMMARY.md/Key Decisions",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M001/M001-LEARNINGS.md"
+    },
+    {
+      "id": "decision:M001:3",
+      "label": "**__init__.py as single canonical re-export surface** The pre-existing heretek_swarm/actors/__init__.py already correctly re-exports all public agent classes from subpackages only. No file modifications were needed once shims were eliminated.",
+      "type": "decision",
+      "description": "Source: S03-SUMMARY.md/Patterns Established",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M001/M001-LEARNINGS.md"
+    },
+    {
+      "id": "decision:M001:4",
+      "label": "**Shim files can be deleted once canonical re-export surface exists** Flat .py files that re-export from subpackages are redundant once `__init__.py` provides the public API. Delete the shims, not the subpackages.",
+      "type": "decision",
+      "description": "Source: S02-SUMMARY.md/Patterns Established",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M001/M001-LEARNINGS.md"
+    },
+    {
+      "id": "decision:M001:5",
+      "label": "**Import scanning is fast and conclusive** A single grep scan of the codebase for import statements referencing deleted files gives a definitive answer — no broken imports were found in this case. This approach should be the standard post-deletion verification step.",
+      "type": "decision",
+      "description": "Source: S02-SUMMARY.md/What Happened",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M001/M001-LEARNINGS.md"
+    },
+    {
+      "id": "decision:M001:6",
+      "label": "**Machine-parseable audit output enables programmatic automation** ACTOR_AUDIT.md's JSON block let S02 determine which files to delete without re-scanning source files. This pattern (audit produces machine-readable artifact consumed by next slice) should be standard practice.",
+      "type": "decision",
+      "description": "Source: S01-SUMMARY.md/What Happened",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M001/M001-LEARNINGS.md"
+    },
+    {
+      "id": "decision:M001:7",
+      "label": "**Pre-existing __init__.py was already correct** S03 required no file modifications — the re-export surface was already properly implemented. This means the milestone's value was purely in deleting the shims, not in building new import infrastructure.",
+      "type": "decision",
+      "description": "Source: S03-SUMMARY.md/What Happened",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M001/M001-LEARNINGS.md"
+    },
+    {
+      "id": "decision:M001:8",
+      "label": "**Planner file count estimates can be off by 1-2** Plan estimated 20 files remaining after shim deletion (actual: 21). This is a minor discrepancy, not a deviation — all 10 specified shims were correctly removed. Future plans should account for ~5% variance in file count estimates.",
+      "type": "decision",
+      "description": "Source: S02-SUMMARY.md/Deviations",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M001/M001-LEARNINGS.md"
+    },
+    {
+      "id": "decision:M001:9",
+      "label": "**Audit-then-Execute pipeline** Slice 1 produces machine-parseable audit (ACTOR_AUDIT.md with JSON); Slice 2 consumes the audit programmatically to determine deletions. Eliminates redundant re-scanning and ensures the audit and execution are tightly coupled.",
+      "type": "decision",
+      "description": "Source: S01-SUMMARY.md/What Happened + S02-SUMMARY.md/What Happened",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M001/M001-LEARNINGS.md"
+    },
+    {
+      "id": "decision:M001:10",
+      "label": "**Shim-to-subpackage migration** When a subpackage provides a full implementation, the corresponding flat .py re-export file is a shim. The correct action is to delete the shim once the public __init__.py surface correctly re-exports from subpackages. Never delete subpackages.",
+      "type": "decision",
+      "description": "Source: S02-SUMMARY.md/Patterns Established",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M001/M001-LEARNINGS.md"
+    },
+    {
+      "id": "lesson:M001:1",
+      "label": "**Import scanning is fast and conclusive** A single grep scan of the codebase for import statements referencing deleted files gives a definitive answer — no broken imports were found in this case. This approach should be the standard post-deletion verification step.",
+      "type": "lesson",
+      "description": "Source: S02-SUMMARY.md/What Happened",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M001/M001-LEARNINGS.md"
+    },
+    {
+      "id": "lesson:M001:2",
+      "label": "**Machine-parseable audit output enables programmatic automation** ACTOR_AUDIT.md's JSON block let S02 determine which files to delete without re-scanning source files. This pattern (audit produces machine-readable artifact consumed by next slice) should be standard practice.",
+      "type": "lesson",
+      "description": "Source: S01-SUMMARY.md/What Happened",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M001/M001-LEARNINGS.md"
+    },
+    {
+      "id": "lesson:M001:3",
+      "label": "**Pre-existing __init__.py was already correct** S03 required no file modifications — the re-export surface was already properly implemented. This means the milestone's value was purely in deleting the shims, not in building new import infrastructure.",
+      "type": "lesson",
+      "description": "Source: S03-SUMMARY.md/What Happened",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M001/M001-LEARNINGS.md"
+    },
+    {
+      "id": "lesson:M001:4",
+      "label": "**Planner file count estimates can be off by 1-2** Plan estimated 20 files remaining after shim deletion (actual: 21). This is a minor discrepancy, not a deviation — all 10 specified shims were correctly removed. Future plans should account for ~5% variance in file count estimates.",
+      "type": "lesson",
+      "description": "Source: S02-SUMMARY.md/Deviations",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M001/M001-LEARNINGS.md"
+    },
+    {
+      "id": "lesson:M001:5",
+      "label": "**Audit-then-Execute pipeline** Slice 1 produces machine-parseable audit (ACTOR_AUDIT.md with JSON); Slice 2 consumes the audit programmatically to determine deletions. Eliminates redundant re-scanning and ensures the audit and execution are tightly coupled.",
+      "type": "lesson",
+      "description": "Source: S01-SUMMARY.md/What Happened + S02-SUMMARY.md/What Happened",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M001/M001-LEARNINGS.md"
+    },
+    {
+      "id": "lesson:M001:6",
+      "label": "**Shim-to-subpackage migration** When a subpackage provides a full implementation, the corresponding flat .py re-export file is a shim. The correct action is to delete the shim once the public __init__.py surface correctly re-exports from subpackages. Never delete subpackages.",
+      "type": "lesson",
+      "description": "Source: S02-SUMMARY.md/Patterns Established",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M001/M001-LEARNINGS.md"
+    },
+    {
+      "id": "pattern:M001:1",
+      "label": "**Audit-then-Execute pipeline** Slice 1 produces machine-parseable audit (ACTOR_AUDIT.md with JSON); Slice 2 consumes the audit programmatically to determine deletions. Eliminates redundant re-scanning and ensures the audit and execution are tightly coupled.",
+      "type": "pattern",
+      "description": "Source: S01-SUMMARY.md/What Happened + S02-SUMMARY.md/What Happened",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M001/M001-LEARNINGS.md"
+    },
+    {
+      "id": "pattern:M001:2",
+      "label": "**Shim-to-subpackage migration** When a subpackage provides a full implementation, the corresponding flat .py re-export file is a shim. The correct action is to delete the shim once the public __init__.py surface correctly re-exports from subpackages. Never delete subpackages.",
+      "type": "pattern",
+      "description": "Source: S02-SUMMARY.md/Patterns Established",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M001/M001-LEARNINGS.md"
+    },
+    {
+      "id": "decision:M002:1",
+      "label": "schemas/actors.py re-exports from validation.agent_messages only; internal dataclass ActorMessage in actors/base/core.py is intentionally NOT re-exported to avoid name collision.",
+      "type": "decision",
+      "description": "Source: S02-SUMMARY.md/key_decisions",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M002/M002-LEARNINGS.md"
+    },
+    {
+      "id": "decision:M002:2",
+      "label": "Names absent from agent_messages.py are documented as stubs in _PLAN_REFERENCED_MISSING set with __getattr__ providing clear AttributeError on access.",
+      "type": "decision",
+      "description": "Source: S02-SUMMARY.md/key_decisions",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M002/M002-LEARNINGS.md"
+    },
+    {
+      "id": "decision:M002:3",
+      "label": "Backward-compat re-exports via actors/base/__init__.py keep existing ~40 callers unbroken — zero cascading import changes.",
+      "type": "decision",
+      "description": "Source: S02-SUMMARY.md/key_decisions",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M002/M002-LEARNINGS.md"
+    },
+    {
+      "id": "decision:M002:4",
+      "label": "ValidationMixin is the single source of truth for IMMUTABLE_RULES (8 security patterns) and BASELINE_CONFIG (9 config keys), owning both static constants and runtime behavioral baseline tracking.",
+      "type": "decision",
+      "description": "Source: S03-SUMMARY.md/key_decisions",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M002/M002-LEARNINGS.md"
+    },
+    {
+      "id": "decision:M002:5",
+      "label": "When consolidating duplicated constants, use backward-compat shims that delegate to the new source of truth plus a deprecation docstring at the module top.",
+      "type": "decision",
+      "description": "Source: S03-SUMMARY.md/patterns_established",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M002/M002-LEARNINGS.md"
+    },
+    {
+      "id": "decision:M002:6",
+      "label": "The _PLAN_REFERENCED_MISSING pattern (set of planned-but-missing names with __getattr__ AttributeError) cleanly handles the gap between planned and implemented public API surface — worth reusing in any schema consolidation effort.",
+      "type": "decision",
+      "description": "Source: S02-SUMMARY.md/What Happened",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M002/M002-LEARNINGS.md"
+    },
+    {
+      "id": "decision:M002:7",
+      "label": "Backward-compat shims with deprecation docstrings at the module top are a zero-risk migration strategy: ~40 callers unchanged, zero import cascades, and a clear deprecation signal for future cleanup.",
+      "type": "decision",
+      "description": "Source: S03-SUMMARY.md/What Happened",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M002/M002-LEARNINGS.md"
+    },
+    {
+      "id": "decision:M002:8",
+      "label": "CONTEXT.md acceptance criteria (tests/test_validation_consolidation.py) were not propagated into the ROADMAP or slice plans — this mismatch between CONTEXT.md and ROADMAP should be resolved during planning to avoid acceptance ambiguity.",
+      "type": "decision",
+      "description": "Source: M002-ROADMAP.md/Success Criteria, M002-CONTEXT.md/Acceptance Criteria",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M002/M002-LEARNINGS.md"
+    },
+    {
+      "id": "decision:M002:9",
+      "label": "The audit-first approach (S01) was valuable: discovering that file locations were already canonical before refactoring prevented unnecessary moves and focused effort on the real issue (duplicated constants vs. file location).",
+      "type": "decision",
+      "description": "Source: S01-SUMMARY.md/What Happened",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M002/M002-LEARNINGS.md"
+    },
+    {
+      "id": "decision:M002:10",
+      "label": "**PLAN_REFERENCED_MISSING**: When creating a canonical public API surface from existing imports, use a `_PLAN_REFERENCED_MISSING` set with module-level `__getattr__` to provide clear `AttributeError` messages for planned-but-not-yet-exported names instead of silent `ImportError` or missing-name failures.",
+      "type": "decision",
+      "description": "Source: S02-SUMMARY.md/patterns_established",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M002/M002-LEARNINGS.md"
+    },
+    {
+      "id": "decision:M002:11",
+      "label": "**Backward-compat shim + deprecation**: When consolidating duplicated constants between a module and a class, leave a backward-compat shim in the old location that delegates to the new source of truth, with a deprecation docstring at the module top. All existing callers work unchanged.",
+      "type": "decision",
+      "description": "Source: S03-SUMMARY.md/patterns_established",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M002/M002-LEARNINGS.md"
+    },
+    {
+      "id": "decision:M002:12",
+      "label": "File locations were already mostly canonical across the three validation layers — the real duplication was not about file placement but about module-level constants (IMMUTABLE_RULES, BASELINE_CONFIG) being duplicated as globals in actors/validation.py while ValidationMixin had its own copy. The consolidation needed was constant ownership, not file relocation.",
+      "type": "decision",
+      "description": "Source: S01-SUMMARY.md/What Happened",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M002/M002-LEARNINGS.md"
+    },
+    {
+      "id": "lesson:M002:1",
+      "label": "The _PLAN_REFERENCED_MISSING pattern (set of planned-but-missing names with __getattr__ AttributeError) cleanly handles the gap between planned and implemented public API surface — worth reusing in any schema consolidation effort.",
+      "type": "lesson",
+      "description": "Source: S02-SUMMARY.md/What Happened",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M002/M002-LEARNINGS.md"
+    },
+    {
+      "id": "lesson:M002:2",
+      "label": "Backward-compat shims with deprecation docstrings at the module top are a zero-risk migration strategy: ~40 callers unchanged, zero import cascades, and a clear deprecation signal for future cleanup.",
+      "type": "lesson",
+      "description": "Source: S03-SUMMARY.md/What Happened",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M002/M002-LEARNINGS.md"
+    },
+    {
+      "id": "lesson:M002:3",
+      "label": "CONTEXT.md acceptance criteria (tests/test_validation_consolidation.py) were not propagated into the ROADMAP or slice plans — this mismatch between CONTEXT.md and ROADMAP should be resolved during planning to avoid acceptance ambiguity.",
+      "type": "lesson",
+      "description": "Source: M002-ROADMAP.md/Success Criteria, M002-CONTEXT.md/Acceptance Criteria",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M002/M002-LEARNINGS.md"
+    },
+    {
+      "id": "lesson:M002:4",
+      "label": "The audit-first approach (S01) was valuable: discovering that file locations were already canonical before refactoring prevented unnecessary moves and focused effort on the real issue (duplicated constants vs. file location).",
+      "type": "lesson",
+      "description": "Source: S01-SUMMARY.md/What Happened",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M002/M002-LEARNINGS.md"
+    },
+    {
+      "id": "lesson:M002:5",
+      "label": "**PLAN_REFERENCED_MISSING**: When creating a canonical public API surface from existing imports, use a `_PLAN_REFERENCED_MISSING` set with module-level `__getattr__` to provide clear `AttributeError` messages for planned-but-not-yet-exported names instead of silent `ImportError` or missing-name failures.",
+      "type": "lesson",
+      "description": "Source: S02-SUMMARY.md/patterns_established",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M002/M002-LEARNINGS.md"
+    },
+    {
+      "id": "lesson:M002:6",
+      "label": "**Backward-compat shim + deprecation**: When consolidating duplicated constants between a module and a class, leave a backward-compat shim in the old location that delegates to the new source of truth, with a deprecation docstring at the module top. All existing callers work unchanged.",
+      "type": "lesson",
+      "description": "Source: S03-SUMMARY.md/patterns_established",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M002/M002-LEARNINGS.md"
+    },
+    {
+      "id": "lesson:M002:7",
+      "label": "File locations were already mostly canonical across the three validation layers — the real duplication was not about file placement but about module-level constants (IMMUTABLE_RULES, BASELINE_CONFIG) being duplicated as globals in actors/validation.py while ValidationMixin had its own copy. The consolidation needed was constant ownership, not file relocation.",
+      "type": "lesson",
+      "description": "Source: S01-SUMMARY.md/What Happened",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M002/M002-LEARNINGS.md"
+    },
+    {
+      "id": "pattern:M002:1",
+      "label": "**PLAN_REFERENCED_MISSING**: When creating a canonical public API surface from existing imports, use a `_PLAN_REFERENCED_MISSING` set with module-level `__getattr__` to provide clear `AttributeError` messages for planned-but-not-yet-exported names instead of silent `ImportError` or missing-name failures.",
+      "type": "pattern",
+      "description": "Source: S02-SUMMARY.md/patterns_established",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M002/M002-LEARNINGS.md"
+    },
+    {
+      "id": "pattern:M002:2",
+      "label": "**Backward-compat shim + deprecation**: When consolidating duplicated constants between a module and a class, leave a backward-compat shim in the old location that delegates to the new source of truth, with a deprecation docstring at the module top. All existing callers work unchanged.",
+      "type": "pattern",
+      "description": "Source: S03-SUMMARY.md/patterns_established",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M002/M002-LEARNINGS.md"
+    },
+    {
+      "id": "pattern:M002:3",
+      "label": "File locations were already mostly canonical across the three validation layers — the real duplication was not about file placement but about module-level constants (IMMUTABLE_RULES, BASELINE_CONFIG) being duplicated as globals in actors/validation.py while ValidationMixin had its own copy. The consolidation needed was constant ownership, not file relocation.",
+      "type": "pattern",
+      "description": "Source: S01-SUMMARY.md/What Happened",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M002/M002-LEARNINGS.md"
+    },
+    {
+      "id": "surprise:M002:1",
+      "label": "File locations were already mostly canonical across the three validation layers — the real duplication was not about file placement but about module-level constants (IMMUTABLE_RULES, BASELINE_CONFIG) being duplicated as globals in actors/validation.py while ValidationMixin had its own copy. The consolidation needed was constant ownership, not file relocation.",
+      "type": "lesson",
+      "description": "Source: S01-SUMMARY.md/What Happened",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M002/M002-LEARNINGS.md"
+    }
+  ],
+  "edges": [
+    {
+      "from": "milestone:M001",
+      "to": "slice:M001:S01",
+      "type": "contains",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "slice:M001:S01",
+      "to": "task:M001:S01:T01",
+      "type": "contains",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M001",
+      "to": "slice:M001:S02",
+      "type": "contains",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "slice:M001:S02",
+      "to": "task:M001:S02:T01",
+      "type": "contains",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "slice:M001:S02",
+      "to": "task:M001:S02:T02",
+      "type": "contains",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M001",
+      "to": "slice:M001:S03",
+      "type": "contains",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "slice:M001:S03",
+      "to": "task:M001:S03:T01",
+      "type": "contains",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M002",
+      "to": "slice:M002:S01",
+      "type": "contains",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "slice:M002:S01",
+      "to": "task:M002:S01:T01",
+      "type": "contains",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M002",
+      "to": "slice:M002:S02",
+      "type": "contains",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "slice:M002:S02",
+      "to": "task:M002:S02:T01",
+      "type": "contains",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "slice:M002:S02",
+      "to": "task:M002:S02:T02",
+      "type": "contains",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "slice:M002:S02",
+      "to": "task:M002:S02:T03",
+      "type": "contains",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "slice:M002:S02",
+      "to": "task:M002:S02:T04",
+      "type": "contains",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M002",
+      "to": "slice:M002:S03",
+      "type": "contains",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "slice:M002:S03",
+      "to": "task:M002:S03:T01",
+      "type": "contains",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "slice:M002:S03",
+      "to": "task:M002:S03:T02",
+      "type": "contains",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "slice:M002:S03",
+      "to": "task:M002:S03:T03",
+      "type": "contains",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M003",
+      "to": "slice:M003:S01",
+      "type": "contains",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "slice:M003:S01",
+      "to": "task:M003:S01:T01",
+      "type": "contains",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "slice:M003:S01",
+      "to": "task:M003:S01:T02",
+      "type": "contains",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M003",
+      "to": "slice:M003:S02",
+      "type": "contains",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "slice:M003:S02",
+      "to": "task:M003:S02:T01",
+      "type": "contains",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "slice:M003:S02",
+      "to": "task:M003:S02:T02",
+      "type": "contains",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "slice:M003:S02",
+      "to": "task:M003:S02:T03",
+      "type": "contains",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M003",
+      "to": "slice:M003:S03",
+      "type": "contains",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "slice:M003:S03",
+      "to": "task:M003:S03:T01",
+      "type": "contains",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M006",
+      "to": "slice:M006:S01",
+      "type": "contains",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "slice:M006:S01",
+      "to": "task:M006:S01:T01",
+      "type": "contains",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "slice:M006:S01",
+      "to": "task:M006:S01:T02",
+      "type": "contains",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "slice:M006:S01",
+      "to": "task:M006:S01:T03",
+      "type": "contains",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M007",
+      "to": "slice:M007:S01",
+      "type": "contains",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "slice:M007:S01",
+      "to": "task:M007:S01:T01",
+      "type": "contains",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M007",
+      "to": "slice:M007:S02",
+      "type": "contains",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "slice:M007:S02",
+      "to": "task:M007:S02:T01",
+      "type": "contains",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "slice:M007:S02",
+      "to": "task:M007:S02:T02",
+      "type": "contains",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "slice:M007:S02",
+      "to": "task:M007:S02:T03",
+      "type": "contains",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M007",
+      "to": "slice:M007:S03",
+      "type": "contains",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "slice:M007:S03",
+      "to": "task:M007:S03:T01",
+      "type": "contains",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "slice:M007:S03",
+      "to": "task:M007:S03:T02",
+      "type": "contains",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "slice:M007:S03",
+      "to": "task:M007:S03:T03",
+      "type": "contains",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M001",
+      "to": "decision:M001:1",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M001",
+      "to": "decision:M001:2",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M001",
+      "to": "decision:M001:3",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M001",
+      "to": "decision:M001:4",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M001",
+      "to": "decision:M001:5",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M001",
+      "to": "decision:M001:6",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M001",
+      "to": "decision:M001:7",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M001",
+      "to": "decision:M001:8",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M001",
+      "to": "decision:M001:9",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M001",
+      "to": "decision:M001:10",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M001",
+      "to": "lesson:M001:1",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M001",
+      "to": "lesson:M001:2",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M001",
+      "to": "lesson:M001:3",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M001",
+      "to": "lesson:M001:4",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M001",
+      "to": "lesson:M001:5",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M001",
+      "to": "lesson:M001:6",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M001",
+      "to": "pattern:M001:1",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M001",
+      "to": "pattern:M001:2",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M002",
+      "to": "decision:M002:1",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M002",
+      "to": "decision:M002:2",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M002",
+      "to": "decision:M002:3",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M002",
+      "to": "decision:M002:4",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M002",
+      "to": "decision:M002:5",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M002",
+      "to": "decision:M002:6",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M002",
+      "to": "decision:M002:7",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M002",
+      "to": "decision:M002:8",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M002",
+      "to": "decision:M002:9",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M002",
+      "to": "decision:M002:10",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M002",
+      "to": "decision:M002:11",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M002",
+      "to": "decision:M002:12",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M002",
+      "to": "lesson:M002:1",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M002",
+      "to": "lesson:M002:2",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M002",
+      "to": "lesson:M002:3",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M002",
+      "to": "lesson:M002:4",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M002",
+      "to": "lesson:M002:5",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M002",
+      "to": "lesson:M002:6",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M002",
+      "to": "lesson:M002:7",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M002",
+      "to": "pattern:M002:1",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M002",
+      "to": "pattern:M002:2",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M002",
+      "to": "pattern:M002:3",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M002",
+      "to": "surprise:M002:1",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    }
+  ],
+  "builtAt": "2026-05-08T01:32:33.801Z"
+}

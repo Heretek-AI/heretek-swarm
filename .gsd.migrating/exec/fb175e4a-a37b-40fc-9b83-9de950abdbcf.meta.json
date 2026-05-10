@@ -1,0 +1,18 @@
+{
+  "id": "fb175e4a-a37b-40fc-9b83-9de950abdbcf",
+  "runtime": "bash",
+  "purpose": "Verify imports and code structure for M002",
+  "script_chars": 766,
+  "started_at": "2026-05-07T16:38:04.650Z",
+  "finished_at": "2026-05-07T16:38:06.805Z",
+  "exit_code": 1,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 2155,
+  "stdout_bytes": 169,
+  "stderr_bytes": 0,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\fb175e4a-a37b-40fc-9b83-9de950abdbcf.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\fb175e4a-a37b-40fc-9b83-9de950abdbcf.stderr"
+}

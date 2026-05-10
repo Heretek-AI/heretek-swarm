@@ -1,0 +1,18 @@
+{
+  "id": "725a6e2d-0e89-4497-899f-e10800806683",
+  "runtime": "bash",
+  "purpose": "Find Python files that import from actors",
+  "script_chars": 171,
+  "started_at": "2026-05-07T12:31:40.990Z",
+  "finished_at": "2026-05-07T12:31:46.122Z",
+  "exit_code": 1,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 5132,
+  "stdout_bytes": 0,
+  "stderr_bytes": 87,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\725a6e2d-0e89-4497-899f-e10800806683.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\725a6e2d-0e89-4497-899f-e10800806683.stderr"
+}

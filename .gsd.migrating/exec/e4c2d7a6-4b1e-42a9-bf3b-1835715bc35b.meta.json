@@ -1,0 +1,18 @@
+{
+  "id": "e4c2d7a6-4b1e-42a9-bf3b-1835715bc35b",
+  "runtime": "bash",
+  "purpose": "List mixins with correct paths and check for valid-related content",
+  "script_chars": 848,
+  "started_at": "2026-05-07T14:32:44.426Z",
+  "finished_at": "2026-05-07T14:32:46.893Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 2467,
+  "stdout_bytes": 2439,
+  "stderr_bytes": 87,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\e4c2d7a6-4b1e-42a9-bf3b-1835715bc35b.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\e4c2d7a6-4b1e-42a9-bf3b-1835715bc35b.stderr"
+}

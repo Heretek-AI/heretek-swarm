@@ -1,0 +1,18 @@
+{
+  "id": "33d2fd11-d3a4-487a-be9a-a1c8ec2c1985",
+  "runtime": "bash",
+  "purpose": "Verify test_validation_consolidation.py doesn't exist and check if any test file covers canonical validation",
+  "script_chars": 771,
+  "started_at": "2026-05-07T16:53:11.348Z",
+  "finished_at": "2026-05-07T16:53:15.092Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 3744,
+  "stdout_bytes": 234,
+  "stderr_bytes": 142,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\33d2fd11-d3a4-487a-be9a-a1c8ec2c1985.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\33d2fd11-d3a4-487a-be9a-a1c8ec2c1985.stderr"
+}

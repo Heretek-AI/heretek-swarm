@@ -1,0 +1,31 @@
+=== Recent commits ===
+1494221 feat: Moved IMMUTABLE_RULES, BASELINE_CONFIG and accessor functions int…
+0d5c646 gsd snapshot: uncommitted changes after 79m inactivity
+7898a2d gsd snapshot: uncommitted changes after 38m inactivity
+853b083 feat: Audit validation functions and Pydantic models across codebase
+b3f9e8a chore: auto-commit after complete-milestone
+da7e317 gsd snapshot: pre-dispatch, uncommitted changes after 30m inactivity
+8244b79 gsd snapshot: uncommitted changes after 532m inactivity
+298dbc9 chore: init gsd
+1c5f033 gsd snapshot: pre-dispatch, uncommitted changes after 960m inactivity
+91cf42b gsd snapshot: uncommitted changes after 102m inactivity
+=== Check if latest commit touches non-.gsd files ===
+commit 1494221d2165ebca35f50d1dd202616a48f331dc
+Author: John Doe <johndoe@example.com>
+Date:   Thu May 7 11:21:28 2026 -0400
+
+    feat: Moved IMMUTABLE_RULES, BASELINE_CONFIG and accessor functions int…
+    
+    - heretek-swarm/heretek_swarm/actors/mixins/validation.py
+    - heretek-swarm/heretek_swarm/actors/validation.py
+    
+    GSD-Task: S03/T01
+
+ .../heretek_swarm/actors/mixins/validation.py      | 83 +++++++++++++++++++
+ heretek-swarm/heretek_swarm/actors/validation.py   | 94 ++++++----------------
+ 2 files changed, 107 insertions(+), 70 deletions(-)
+=== Check schemas/ and actors/ files for M002 changes ===
+--- schemas/actors.py exists? ---
+NO
+--- actors/mixins/validation.py ValidationMixin ---
+exit=0

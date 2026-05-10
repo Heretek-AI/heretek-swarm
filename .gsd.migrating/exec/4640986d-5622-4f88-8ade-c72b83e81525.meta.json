@@ -1,0 +1,18 @@
+{
+  "id": "4640986d-5622-4f88-8ade-c72b83e81525",
+  "runtime": "bash",
+  "purpose": "Count lines in actor subpackages",
+  "script_chars": 233,
+  "started_at": "2026-05-07T03:24:08.785Z",
+  "finished_at": "2026-05-07T03:24:09.045Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 260,
+  "stdout_bytes": 126,
+  "stderr_bytes": 0,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\4640986d-5622-4f88-8ade-c72b83e81525.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\4640986d-5622-4f88-8ade-c72b83e81525.stderr"
+}

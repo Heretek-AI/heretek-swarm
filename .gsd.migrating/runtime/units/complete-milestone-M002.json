@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "unitType": "complete-milestone",
+  "unitId": "M002",
+  "startedAt": 1778171071728,
+  "updatedAt": 1778172872030,
+  "phase": "recovered",
+  "wrapupWarningSent": true,
+  "continueHereFired": false,
+  "timeoutAt": 1778172871957,
+  "lastProgressAt": 1778172872029,
+  "progressCount": 1,
+  "lastProgressKind": "hard-recovery-retry",
+  "recoveryAttempts": 1,
+  "lastRecoveryReason": "hard"
+}

@@ -1,0 +1,18 @@
+{
+  "id": "7e130e84-f302-4eab-95c5-56418c2978f2",
+  "runtime": "bash",
+  "purpose": "Find which actors use ValidationMixin and check base/core.py",
+  "script_chars": 787,
+  "started_at": "2026-05-07T14:11:34.072Z",
+  "finished_at": "2026-05-07T14:11:49.080Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": true,
+  "duration_ms": 15008,
+  "stdout_bytes": 15835,
+  "stderr_bytes": 87,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\7e130e84-f302-4eab-95c5-56418c2978f2.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\7e130e84-f302-4eab-95c5-56418c2978f2.stderr"
+}

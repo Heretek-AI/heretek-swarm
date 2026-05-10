@@ -1,3 +1,9 @@
-# GSD context snapshot (2026-05-07T03:20:15.604Z)
+# GSD context snapshot (2026-05-08T21:48:17.203Z)
 
-_No durable memories, active context, or exec history to surface._
+## Top project memories
+- [MEM008] (architecture) ValidationMixin is now the single source of truth for IMMUTABLE_RULES (8 security patterns) and BASELINE_CONFIG. The original module-level globals in actors/validation.py are backward-compat shims delegating to the mixin. New code should import from heretek_swarm.actors.mixins.validation.ValidationMixin directly.
+- [MEM009] (architecture) Consolidated IMMUTABLE_RULES and BASELINE_CONFIG from actors/validation.py module-level globals into ValidationMixin as class-level attributes. Module-level accessor functions became backward-compat shims delegating to the mixin. This makes ValidationMixin the single source of truth for behavioral baseline constants.
+- [MEM014] (architecture) M003/S01 scope: Only mixins with explicit dependency attributes (access_analyzer, pattern_extractor, tribunal, _active_deliberations, _pattern_emitted) get fail-fast TypeError guards. Mixins using hasattr capability checks (HealthReportingMixin, MemoryAccessMixin, PatternConsumerMixin, DeliberationMixin, AuditMixin) are left alone — they check for optional subsystems, not required dependencies. LearningMixin's `len(None)` crash on `_active_deliberations` is the only crash footgun; MemoryMixin/PatternMixin/TribunalMixin silent no-ops are the main contract violations.
+- [MEM015] (pattern) Fail-fast TypeError guard pattern for mixins with optional dependency attributes: `if not self.{attr}: raise TypeError("{method} requires {attr}")`. Applied across 4 mixins (LearningMixin, MemoryMixin, PatternMixin, TribunalMixin) spanning 10 guarded methods. The message format is consistent: `"{MethodName} requires {attribute_name}"`. Used for required dependencies that are typed as `SomeType | None`. Not used for hasattr-capability-checked optional subsystems.
+- [MEM016] (pattern) Fail-fast TypeError guards for mixin dependency validation: mixin methods that depend on external collaborators (access_analyzer, pattern_extractor, tribunal) sho
+…[truncated]

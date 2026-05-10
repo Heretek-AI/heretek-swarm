@@ -1,0 +1,98 @@
+=== actors/validation.py - class list ===
+107:class MessageContent(BaseModel):
+181:class DeliberationRequest(BaseModel):
+212:class MemoryStoreRequest(BaseModel):
+245:class AnalysisRequest(BaseModel):
+268:class ValidationRequest(BaseModel):
+280:class QueryRequest(BaseModel):
+298:class LineageRequest(BaseModel):
+315:class HealthCheckRequest(BaseModel):
+323:class SuspendResumeRequest(BaseModel):
+333:class TerminateRequest(BaseModel):
+344:class CollectiveTaskRequest(BaseModel):
+353:class TaskRequest(BaseModel):
+374:class DependencyRequest(BaseModel):
+382:class CoordinationRequest(BaseModel):
+415:MESSAGE_TYPE_VALIDATORS = {
+455:def validate_message(message_type: str, content: dict[str, Any]) -> BaseModel:
+
+=== validation/agent_messages.py - class list ===
+31:class MessageType(StrEnum):
+94:class MessagePriority(StrEnum):
+102:class AgentMessageBase(BaseModel):
+120:class ActorMessage(AgentMessageBase):
+159:class StateUpdate(AgentMessageBase):
+213:class ToolRequest(AgentMessageBase):
+257:class ToolResponse(AgentMessageBase):
+290:class CoordinationRequest(AgentMessageBase):
+340:class ConsensusProposal(AgentMessageBase):
+368:class ConsensusVote(AgentMessageBase):
+396:class ErrorMessage(AgentMessageBase):
+422:class TaskMessage(AgentMessageBase):
+459:class CodeExecutionRequest(AgentMessageBase):
+490:MESSAGE_TYPES: dict[str, type] = {
+511:def validate_message(message_type: str, content: dict[str, Any]) -> ValidationResult:
+
+=== actors/validation.py - imports ===
+"""
+Input Validation Module - Pydantic v2 models for Zero-Trust input validation.
+
+This module provides strict schema validation for all actor message inputs,
+enforcing Zero-Trust principles by validating all data before processing.
+
+Features:
+- Pydantic v2 models for all message types
+- Strict type checking with field validation
+- Input sanitization helpers
+- Custom validators for complex constraints
+"""
+
+import re
+import uuid
+from datetime import UTC, datetime
+from typing import Any
+
+from pydantic import BaseModel, ConfigDict, Field, field_validator
+
+
+=== validation/agent_messages.py - imports ===
+"""
+Agent Message Validation Module
+
+This module provides Pydantic models for validating all types of agent messages
+in the Heretek Swarm system. It ensures message structure integrity and content
+safety before messages are processed or state updates are applied.
+
+Author: Heretek Swarm Collective
+Date: 2026-04-07
+Version: 1.0.0
+"""
+
+from __future__ import annotations
+
+import re
+import uuid
+from datetime import UTC, datetime
+from enum import StrEnum
+from typing import Any
+
+from pydantic import BaseModel, Field, ValidationError
+from pydantic import validator as pydantic_validator
+
+from heretek_swarm.validation.llm_output import (
+    LLMOutputValidator,
+    ValidationResult,
+    ValidationSeverity,
+)
+
+
+class MessageType(StrEnum):
+    """Standard message types in the swarm system."""
+    # Actor base messages
+    ACTOR_MESSAGE = "actor_message"
+    STATE_UPDATE = "state_update"
+    STATE_REQUEST = "state_request"
+
+    # Tool-related messages
+    TOOL_REQUEST = "tool_request"
+    TOOL_RESPONSE = "tool_response"

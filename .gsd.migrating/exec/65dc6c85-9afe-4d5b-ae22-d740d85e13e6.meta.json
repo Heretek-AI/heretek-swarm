@@ -1,0 +1,18 @@
+{
+  "id": "65dc6c85-9afe-4d5b-ae22-d740d85e13e6",
+  "runtime": "bash",
+  "purpose": "Find all importers of ValidationMixin and understand usage patterns",
+  "script_chars": 909,
+  "started_at": "2026-05-07T14:15:27.387Z",
+  "finished_at": "2026-05-07T14:15:37.385Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 9998,
+  "stdout_bytes": 14450,
+  "stderr_bytes": 87,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\65dc6c85-9afe-4d5b-ae22-d740d85e13e6.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\65dc6c85-9afe-4d5b-ae22-d740d85e13e6.stderr"
+}

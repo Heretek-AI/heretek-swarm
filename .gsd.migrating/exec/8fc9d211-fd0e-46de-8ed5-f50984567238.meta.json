@@ -1,0 +1,18 @@
+{
+  "id": "8fc9d211-fd0e-46de-8ed5-f50984567238",
+  "runtime": "bash",
+  "purpose": "Check all M002-related commits and files",
+  "script_chars": 888,
+  "started_at": "2026-05-07T16:33:45.644Z",
+  "finished_at": "2026-05-07T16:33:48.598Z",
+  "exit_code": 2,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 2954,
+  "stdout_bytes": 2211,
+  "stderr_bytes": 0,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\8fc9d211-fd0e-46de-8ed5-f50984567238.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\8fc9d211-fd0e-46de-8ed5-f50984567238.stderr"
+}

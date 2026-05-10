@@ -1,0 +1,225 @@
+=== Files importing ValidationMixin ===
+./heretek-swarm/heretek_swarm/actors/alpha.py:20:from heretek_swarm.actors.mixins import HealthReportingMixin, LearningMixin, ValidationMixin
+./heretek-swarm/heretek_swarm/actors/alpha.py:25:class AlphaAgent(HealthReportingMixin, ValidationMixin, LearningMixin, AgentActor):
+./heretek-swarm/heretek_swarm/actors/beta.py:20:from heretek_swarm.actors.mixins import HealthReportingMixin, LearningMixin, ValidationMixin
+./heretek-swarm/heretek_swarm/actors/beta.py:25:class BetaAgent(HealthReportingMixin, ValidationMixin, LearningMixin, AgentActor):
+./heretek-swarm/heretek_swarm/actors/catalyst.py:32:    ValidationMixin,
+./heretek-swarm/heretek_swarm/actors/catalyst.py:157:    ValidationMixin, DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, AgentActor
+./heretek-swarm/heretek_swarm/actors/charlie.py:20:from heretek_swarm.actors.mixins import HealthReportingMixin, LearningMixin, ValidationMixin
+./heretek-swarm/heretek_swarm/actors/charlie.py:25:class CharlieAgent(HealthReportingMixin, ValidationMixin, LearningMixin, AgentActor):
+./heretek-swarm/heretek_swarm/actors/chronos/agent.py:7:- ValidationMixin
+./heretek-swarm/heretek_swarm/actors/chronos/agent.py:31:    ValidationMixin,
+./heretek-swarm/heretek_swarm/actors/chronos/agent.py:58:    ValidationMixin,
+./heretek-swarm/heretek_swarm/actors/coder.py:29:from heretek_swarm.actors.mixins.validation import ValidationMixin
+./heretek-swarm/heretek_swarm/actors/coder.py:162:    ValidationMixin, DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, AgentActor
+./heretek-swarm/heretek_swarm/actors/coordinator/agent.py:40:from heretek_swarm.actors.mixins.validation import ValidationMixin
+./heretek-swarm/heretek_swarm/actors/coordinator/agent.py:57:    ValidationMixin, AgentActor, PatternMixin, DeliberationMixin, MemoryMixin, LearningMixin
+./heretek-swarm/heretek_swarm/actors/dreamer/agent.py:46:    ValidationMixin,
+./heretek-swarm/heretek_swarm/actors/dreamer/agent.py:67:    ValidationMixin,
+./heretek-swarm/heretek_swarm/actors/echo.py:31:    ValidationMixin,
+./heretek-swarm/heretek_swarm/actors/echo.py:97:    ValidationMixin,
+./heretek-swarm/heretek_swarm/actors/empath.py:29:    ValidationMixin,
+./heretek-swarm/heretek_swarm/actors/empath.py:41:    ValidationMixin,
+./heretek-swarm/heretek_swarm/actors/examiner/agent.py:34:from heretek_swarm.actors.examiner.testing import ExaminingTestingMixin, ExaminingValidationMixin
+./heretek-swarm/heretek_swarm/actors/examiner/agent.py:49:from heretek_swarm.actors.mixins.validation import ValidationMixin
+./heretek-swarm/heretek_swarm/actors/examiner/agent.py:85:    ExaminingValidationMixin,
+./heretek-swarm/heretek_swarm/actors/examiner/agent.py:86:    ValidationMixin,
+./heretek-swarm/heretek_swarm/actors/examiner/testing.py:6:- ExaminingValidationMixin: LLM-based validation helpers
+./heretek-swarm/heretek_swarm/actors/examiner/testing.py:66:class ExaminingValidationMixin:
+./heretek-swarm/heretek_swarm/actors/examiner/__init__.py:8:- testing.py: Testing mixins (ExaminingTestingMixin, ExaminingValidationMixin)
+./heretek-swarm/heretek_swarm/actors/examiner/__init__.py:27:    ExaminingValidationMixin,
+./heretek-swarm/heretek_swarm/actors/examiner/__init__.py:56:    "ExaminingValidationMixin",
+./heretek-swarm/heretek_swarm/actors/explorer/agent.py:35:    ValidationMixin,
+./heretek-swarm/heretek_swarm/actors/explorer/agent.py:43:    ValidationMixin,
+./heretek-swarm/heretek_swarm/actors/explorer.py:54:    ValidationMixin,
+./heretek-swarm/heretek_swarm/actors/explorer.py:184:    ValidationMixin, DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, AgentActor
+./heretek-swarm/heretek_swarm/actors/habit_forge/agent.py:35:from heretek_swarm.actors.mixins.validation import ValidationMixin
+./heretek-swarm/heretek_swarm/actors/habit_forge/agent.py:60:    ValidationMixin,
+./heretek-swarm/heretek_swarm/actors/historian.py:35:    ValidationMixin,
+./heretek-swarm/heretek_swarm/actors/historian.py:174:    ValidationMixin,
+./heretek-swarm/heretek_swarm/actors/metis.py:27:    ValidationMixin,
+./heretek-swarm/heretek_swarm/actors/metis.py:51:    ValidationMixin,
+./heretek-swarm/heretek_swarm/actors/nexus/agent.py:34:from heretek_swarm.actors.mixins.validation import ValidationMixin
+./heretek-swarm/heretek_swarm/actors/nexus/agent.py:69:    ValidationMixin,
+./heretek-swarm/heretek_swarm/actors/perceiver.py:32:    ValidationMixin,
+./heretek-swarm/heretek_swarm/actors/perceiver.py:62:    ValidationMixin,
+./heretek-swarm/heretek_swarm/actors/perceiver_plus/agent.py:31:    ValidationMixin,
+./heretek-swarm/heretek_swarm/actors/perceiver_plus/agent.py:52:    ValidationMixin,
+./heretek-swarm/heretek_swarm/actors/prism/agent.py:27:    ValidationMixin,
+./heretek-swarm/heretek_swarm/actors/prism/agent.py:59:    ValidationMixin, DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, PrismTransforms, AgentActor
+./heretek-swarm/heretek_swarm/actors/profiling.py:55:from heretek_swarm.actors.mixins import HealthReportingMixin, PatternMixin, ValidationMixin
+./heretek-swarm/heretek_swarm/actors/profiling.py:570:class BehaviorProfiler(ValidationMixin, PatternMixin, HealthReportingMixin, AgentActor):
+./heretek-swarm/heretek_swarm/actors/profiling.py:575:    - ValidationMixin: ZERO-02 Zero-Trust validation
+./heretek-swarm/heretek_swarm/actors/sentinel/agent.py:46:    ValidationMixin,
+./heretek-swarm/heretek_swarm/actors/sentinel/agent.py:86:    ValidationMixin,
+./heretek-swarm/heretek_swarm/actors/sentinel_prime/agent.py:8:- ValidationMixin
+./heretek-swarm/heretek_swarm/actors/sentinel_prime/agent.py:32:    ValidationMixin,
+./heretek-swarm/heretek_swarm/actors/sentinel_prime/agent.py:61:    ValidationMixin,
+./heretek-swarm/heretek_swarm/actors/steward.py:30:    ValidationMixin,
+./heretek-swarm/heretek_swarm/actors/steward.py:41:    ValidationMixin,
+./heretek-swarm/heretek_swarm/actors/supervisor.py:18:from heretek_swarm.actors.mixins import AuditMixin, HealthReportingMixin, ValidationMixin, PatternMixin
+./heretek-swarm/heretek_swarm/actors/supervisor.py:43:class ActorSupervisor(AuditMixin, ValidationMixin, HealthReportingMixin, PatternMixin, AgentActor):
+
+=== base/core.py head ===
+"""
+Core module for AgentActor base class.
+
+This module contains:
+- ActorState enum
+- ActorMessage dataclass (internal, not the Pydantic model)
+- ActorStatus dataclass
+- AgentActor core initialization and lifecycle methods
+
+The Pydantic models for inter-actor messaging are in heretek_swarm.schemas.actors.
+Import from there for validated message types::
+
+    from heretek_swarm.schemas.actors import ActorMessage as PydanticActorMessage
+"""
+
+import asyncio
+import uuid
+from collections.abc import Callable
+from dataclasses import dataclass, field
+from datetime import UTC, datetime
+from enum import Enum
+from typing import Any
+
+import structlog
+from pydantic import ValidationError
+from swarms import Agent
+
+import heretek_swarm.actors.stubs as _actor_stubs
+from heretek_swarm.actors.stubs import get_db_pool  # noqa: F401 - imported for test patching
+from heretek_swarm.actors.validation import (
+    validate_message,
+)
+from heretek_swarm.agents.skills import SkillCategory, SkillMetadata
+from heretek_swarm.routing import (
+    AgentModelRouter,
+    get_router,
+)
+from heretek_swarm.state.repository import (
+    AgentStateRecord,
+    StateRepository,
+)
+
+
+def _make_skill_metadata(capability: str) -> SkillMetadata:
+    """Create skill metadata from a capability string."""
+    return SkillMetadata(
+        name=capability,
+        description=f"Agent capability: {capability}",
+        category=SkillCategory.CUSTOM,
+        tags=[capability],
+        source="runtime",
+    )
+
+
+structlog.configure(
+    processors=[
+        structlog.stdlib.filter_by_level,
+        structlog.stdlib.add_logger_name,
+        structlog.stdlib.add_log_level,
+        structlog.stdlib.PositionalArgumentsFormatter(),
+        structlog.processors.TimeStamper(fmt="iso"),
+        structlog.processors.StackInfoRenderer(),
+        structlog.processors.format_exc_info,
+        structlog.processors.UnicodeDecoder(),
+        structlog.processors.JSONRenderer(),
+    ],
+    context_class=dict,
+    logger_factory=structlog.stdlib.LoggerFactory(),
+    wrapper_class=structlog.stdlib.BoundLogger,
+    cache_logger_on_first_use=True,
+)
+
+logger = structlog.get_logger("AgentActor")
+
+
+class ActorState(Enum):
+    """Actor lifecycle states."""
+
+    SPAWNING = "spawning"
+    ACTIVE = "active"
+    SUSPENDED = "suspended"
+    TERMINATED = "terminated"
+    ERROR = "error"
+
+
+@dataclass
+class ActorMessage:
+    """
+    Internal message structure for actor mailbox.
+
+    Attributes:
+        sender: ID of the sending actor
+        message_type: Type identifier for the message
+        content: Message payload
+        timestamp: ISO8601 timestamp
+        correlation_id: Optional correlation ID for request-response patterns
+        reply_to: Optional topic for responses
+        metadata: Additional metadata
+    """
+
+
+=== Check for any duplicate mixin logic ===
+./heretek-swarm/heretek_swarm/actors/alpha.py:25:class AlphaAgent(HealthReportingMixin, ValidationMixin, LearningMixin, AgentActor):
+./heretek-swarm/heretek_swarm/actors/arbiter/core.py:138:class ArbiterAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, AgentActor):
+./heretek-swarm/heretek_swarm/actors/beta.py:25:class BetaAgent(HealthReportingMixin, ValidationMixin, LearningMixin, AgentActor):
+./heretek-swarm/heretek_swarm/actors/charlie.py:25:class CharlieAgent(HealthReportingMixin, ValidationMixin, LearningMixin, AgentActor):
+./heretek-swarm/heretek_swarm/actors/chronos/handlers.py:19:class ChronosHandlersMixin:
+./heretek-swarm/heretek_swarm/actors/chronos/scheduler.py:18:class ChronosSchedulerMixin:
+./heretek-swarm/heretek_swarm/actors/dreamer/generators.py:24:class DreamerGeneratorsMixin:
+./heretek-swarm/heretek_swarm/actors/examiner/testing.py:26:class ExaminingTestingMixin:
+./heretek-swarm/heretek_swarm/actors/examiner/testing.py:66:class ExaminingValidationMixin:
+./heretek-swarm/heretek_swarm/actors/explorer/pathfinding.py:39:class ExplorerPathfindingMixins:
+./heretek-swarm/heretek_swarm/actors/habit_forge/streaks.py:28:class HabitForgeStreaksMixin:
+./heretek-swarm/heretek_swarm/actors/habit_forge/tracking.py:20:class HabitForgeTrackingMixin:
+./heretek-swarm/heretek_swarm/actors/handoff.py:508:class HandoffOrchestrator(PatternMixin, DeliberationMixin, MemoryMixin, LearningMixin):
+./heretek-swarm/heretek_swarm/actors/langroid_adapter.py:463:class ConversationHandlerMixin:
+./heretek-swarm/heretek_swarm/actors/langroid_adapter.py:474:        class ConversationalAgent(ConversationHandlerMixin, AgentActor):
+./heretek-swarm/heretek_swarm/actors/mixins/audit.py:10:    class MyAgent(AuditMixin, OtherMixin, AgentActor):
+./heretek-swarm/heretek_swarm/actors/mixins/audit.py:28:class AuditMixin:
+./heretek-swarm/heretek_swarm/actors/mixins/audit.py:227:        class MyAgent(AuditMixin, AgentActor):
+./heretek-swarm/heretek_swarm/actors/mixins/deliberation.py:6:class DeliberationMixin:
+./heretek-swarm/heretek_swarm/actors/mixins/health_reporting.py:7:class HealthReportingMixin:
+./heretek-swarm/heretek_swarm/actors/mixins/learning.py:23:class LearningMixin:
+./heretek-swarm/heretek_swarm/actors/mixins/memory.py:16:class MemoryMixin:
+./heretek-swarm/heretek_swarm/actors/mixins/memory_access.py:6:class MemoryAccessMixin:
+./heretek-swarm/heretek_swarm/actors/mixins/pattern.py:18:class PatternMixin:
+./heretek-swarm/heretek_swarm/actors/mixins/pattern_consumer.py:6:class PatternConsumerMixin:
+./heretek-swarm/heretek_swarm/actors/mixins/tribunal.py:25:class TribunalMixin:
+./heretek-swarm/heretek_swarm/actors/mixins/validation.py:22:class ValidationMixin:
+./heretek-swarm/heretek_swarm/actors/perceiver_plus/analytics.py:31:class PerceiverAnalyticsMixin:
+./heretek-swarm/heretek_swarm/actors/perceiver_plus/analytics.py:47:class PerceiverAnalyticsMixinImpl:
+./heretek-swarm/heretek_swarm/actors/profiling.py:570:class BehaviorProfiler(ValidationMixin, PatternMixin, HealthReportingMixin, AgentActor):
+./heretek-swarm/heretek_swarm/actors/supervisor.py:43:class ActorSupervisor(AuditMixin, ValidationMixin, HealthReportingMixin, PatternMixin, AgentActor):
+./heretek-swarm/heretek_swarm/actors/triad/agent.py:37:class TriadAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, AgentActor):
+./heretek-swarm/heretek_swarm/consciousness/gwt_deliberation.py:269:class GWTDeliberationMixin:
+./heretek-swarm/heretek_swarm/consensus/audit_query.py:29:class AuditQueryMixin:
+./heretek-swarm/heretek_swarm/gateway/nats_event_mesh.py:898:class NATSEventMeshMixin:
+./heretek-swarm/heretek_swarm/gateway/nats_event_mesh.py:904:        class NATSEnabledEventMesh(NATSEventMeshMixin, EventMesh):
+
+=== Import validation.py from actors ===
+./heretek-swarm/heretek_swarm/actors/arbiter/handlers.py:16:from heretek_swarm.actors.validation import validate_message
+./heretek-swarm/heretek_swarm/actors/base/core.py:30:from heretek_swarm.actors.validation import (
+./heretek-swarm/heretek_swarm/actors/catalyst.py:34:from heretek_swarm.actors.validation import validate_message
+./heretek-swarm/heretek_swarm/actors/chronos/agent.py:33:from heretek_swarm.actors.validation import validate_message
+./heretek-swarm/heretek_swarm/actors/coder.py:30:from heretek_swarm.actors.validation import validate_message as validate_message_schema
+./heretek-swarm/heretek_swarm/actors/coordinator/agent.py:41:from heretek_swarm.actors.validation import validate_message
+./heretek-swarm/heretek_swarm/actors/dreamer/agent.py:48:from heretek_swarm.actors.validation import validate_message
+./heretek-swarm/heretek_swarm/actors/examiner/agent.py:50:from heretek_swarm.actors.validation import validate_message as validate_message_schema
+./heretek-swarm/heretek_swarm/actors/explorer/pathfinding.py:233:            from heretek_swarm.actors.validation import validate_message
+./heretek-swarm/heretek_swarm/actors/explorer/pathfinding.py:277:            from heretek_swarm.actors.validation import validate_message
+./heretek-swarm/heretek_swarm/actors/explorer/pathfinding.py:315:            from heretek_swarm.actors.validation import validate_message
+./heretek-swarm/heretek_swarm/actors/explorer/pathfinding.py:381:            from heretek_swarm.actors.validation import validate_message
+./heretek-swarm/heretek_swarm/actors/explorer/pathfinding.py:455:            from heretek_swarm.actors.validation import validate_message
+./heretek-swarm/heretek_swarm/actors/explorer/pathfinding.py:535:            from heretek_swarm.actors.validation import validate_message
+./heretek-swarm/heretek_swarm/actors/explorer/pathfinding.py:581:            from heretek_swarm.actors.validation import validate_message
+./heretek-swarm/heretek_swarm/actors/explorer/pathfinding.py:786:            from heretek_swarm.actors.validation import validate_message
+./heretek-swarm/heretek_swarm/actors/explorer/pathfinding.py:910:            from heretek_swarm.actors.validation import validate_message
+./heretek-swarm/heretek_swarm/actors/explorer.py:56:from heretek_swarm.actors.validation import validate_message
+./heretek-swarm/heretek_swarm/actors/nexus/agent.py:43:from heretek_swarm.actors.validation import validate_message
+./heretek-swarm/heretek_swarm/actors/perceiver.py:34:from heretek_swarm.actors.validation import validate_message
+./heretek-swarm/heretek_swarm/actors/sentinel/agent.py:57:from heretek_swarm.actors.validation import validate_message
+./heretek-swarm/heretek_swarm/actors/sentinel_prime/handlers.py:13:from heretek_swarm.actors.validation import validate_message

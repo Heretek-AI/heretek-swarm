@@ -1,0 +1,96 @@
+=== mixins directory tree ===
+heretek-swarm/heretek_swarm/actors/mixins/__init__.py
+heretek-swarm/heretek_swarm/actors/mixins/audit.py
+heretek-swarm/heretek_swarm/actors/mixins/deliberation.py
+heretek-swarm/heretek_swarm/actors/mixins/health_reporting.py
+heretek-swarm/heretek_swarm/actors/mixins/learning.py
+heretek-swarm/heretek_swarm/actors/mixins/memory.py
+heretek-swarm/heretek_swarm/actors/mixins/memory_access.py
+heretek-swarm/heretek_swarm/actors/mixins/pattern.py
+heretek-swarm/heretek_swarm/actors/mixins/pattern_consumer.py
+heretek-swarm/heretek_swarm/actors/mixins/tribunal.py
+heretek-swarm/heretek_swarm/actors/mixins/validation.py
+
+=== mixins __init__.py ===
+"""Actor mixins for reusable functionality.
+
+These mixins extract common patterns from actor files to reduce duplication.
+"""
+
+from .audit import AuditMixin
+from .deliberation import DeliberationMixin
+from .health_reporting import HealthReportingMixin
+from .learning import LearningMixin
+from .memory import MemoryMixin
+from .memory_access import MemoryAccessMixin
+from .pattern import PatternMixin
+from .pattern_consumer import PatternConsumerMixin
+from .tribunal import TribunalMixin
+from .validation import ValidationMixin
+
+__all__ = [
+    "AuditMixin",
+    "DeliberationMixin",
+    "HealthReportingMixin",
+    "LearningMixin",
+    "MemoryAccessMixin",
+    "MemoryMixin",
+    "PatternConsumerMixin",
+    "PatternMixin",
+    "TribunalMixin",
+    "ValidationMixin",
+]
+
+=== Check for validation_mixins or validation in mixins ===
+heretek-swarm/heretek_swarm/actors/mixins/validation.py
+
+=== All files importing from mixins ===
+./heretek-swarm/heretek_swarm/actors/alpha.py:20:from heretek_swarm.actors.mixins import HealthReportingMixin, LearningMixin, ValidationMixin
+./heretek-swarm/heretek_swarm/actors/arbiter/core.py:20:from heretek_swarm.actors.mixins import (
+./heretek-swarm/heretek_swarm/actors/beta.py:20:from heretek_swarm.actors.mixins import HealthReportingMixin, LearningMixin, ValidationMixin
+./heretek-swarm/heretek_swarm/actors/catalyst.py:27:from heretek_swarm.actors.mixins import (
+./heretek-swarm/heretek_swarm/actors/charlie.py:20:from heretek_swarm.actors.mixins import HealthReportingMixin, LearningMixin, ValidationMixin
+./heretek-swarm/heretek_swarm/actors/chronos/agent.py:26:from heretek_swarm.actors.mixins import (
+./heretek-swarm/heretek_swarm/actors/coder.py:25:from heretek_swarm.actors.mixins.deliberation import DeliberationMixin
+./heretek-swarm/heretek_swarm/actors/coder.py:26:from heretek_swarm.actors.mixins.learning import LearningMixin
+./heretek-swarm/heretek_swarm/actors/coder.py:27:from heretek_swarm.actors.mixins.memory import MemoryMixin
+./heretek-swarm/heretek_swarm/actors/coder.py:28:from heretek_swarm.actors.mixins.pattern import PatternMixin
+./heretek-swarm/heretek_swarm/actors/coder.py:29:from heretek_swarm.actors.mixins.validation import ValidationMixin
+./heretek-swarm/heretek_swarm/actors/coordinator/agent.py:36:from heretek_swarm.actors.mixins.deliberation import DeliberationMixin
+./heretek-swarm/heretek_swarm/actors/coordinator/agent.py:37:from heretek_swarm.actors.mixins.learning import LearningMixin
+./heretek-swarm/heretek_swarm/actors/coordinator/agent.py:38:from heretek_swarm.actors.mixins.memory import MemoryMixin
+./heretek-swarm/heretek_swarm/actors/coordinator/agent.py:39:from heretek_swarm.actors.mixins.pattern import PatternMixin
+./heretek-swarm/heretek_swarm/actors/coordinator/agent.py:40:from heretek_swarm.actors.mixins.validation import ValidationMixin
+./heretek-swarm/heretek_swarm/actors/dreamer/agent.py:41:from heretek_swarm.actors.mixins import (
+./heretek-swarm/heretek_swarm/actors/echo.py:25:from heretek_swarm.actors.mixins import (
+./heretek-swarm/heretek_swarm/actors/empath.py:23:from heretek_swarm.actors.mixins import (
+./heretek-swarm/heretek_swarm/actors/examiner/agent.py:45:from heretek_swarm.actors.mixins.deliberation import DeliberationMixin
+./heretek-swarm/heretek_swarm/actors/examiner/agent.py:46:from heretek_swarm.actors.mixins.learning import LearningMixin
+./heretek-swarm/heretek_swarm/actors/examiner/agent.py:47:from heretek_swarm.actors.mixins.memory import MemoryMixin
+./heretek-swarm/heretek_swarm/actors/examiner/agent.py:48:from heretek_swarm.actors.mixins.pattern import PatternMixin
+./heretek-swarm/heretek_swarm/actors/examiner/agent.py:49:from heretek_swarm.actors.mixins.validation import ValidationMixin
+./heretek-swarm/heretek_swarm/actors/explorer.py:49:from heretek_swarm.actors.mixins import (
+./heretek-swarm/heretek_swarm/actors/explorer/agent.py:30:from heretek_swarm.actors.mixins import (
+./heretek-swarm/heretek_swarm/actors/habit_forge/agent.py:31:from heretek_swarm.actors.mixins.deliberation import DeliberationMixin
+./heretek-swarm/heretek_swarm/actors/habit_forge/agent.py:32:from heretek_swarm.actors.mixins.learning import LearningMixin
+./heretek-swarm/heretek_swarm/actors/habit_forge/agent.py:33:from heretek_swarm.actors.mixins.memory import MemoryMixin
+./heretek-swarm/heretek_swarm/actors/habit_forge/agent.py:34:from heretek_swarm.actors.mixins.pattern import PatternMixin
+./heretek-swarm/heretek_swarm/actors/habit_forge/agent.py:35:from heretek_swarm.actors.mixins.validation import ValidationMixin
+./heretek-swarm/heretek_swarm/actors/handoff.py:24:from heretek_swarm.actors.mixins import DeliberationMixin, LearningMixin, MemoryMixin, PatternMixin
+./heretek-swarm/heretek_swarm/actors/historian.py:29:from heretek_swarm.actors.mixins import (
+./heretek-swarm/heretek_swarm/actors/metis.py:21:from heretek_swarm.actors.mixins import (
+./heretek-swarm/heretek_swarm/actors/nexus/agent.py:29:from heretek_swarm.actors.mixins.deliberation import DeliberationMixin
+./heretek-swarm/heretek_swarm/actors/nexus/agent.py:30:from heretek_swarm.actors.mixins.health_reporting import HealthReportingMixin
+./heretek-swarm/heretek_swarm/actors/nexus/agent.py:31:from heretek_swarm.actors.mixins.learning import LearningMixin
+./heretek-swarm/heretek_swarm/actors/nexus/agent.py:32:from heretek_swarm.actors.mixins.memory import MemoryMixin
+./heretek-swarm/heretek_swarm/actors/nexus/agent.py:33:from heretek_swarm.actors.mixins.pattern import PatternMixin
+./heretek-swarm/heretek_swarm/actors/nexus/agent.py:34:from heretek_swarm.actors.mixins.validation import ValidationMixin
+./heretek-swarm/heretek_swarm/actors/perceiver.py:26:from heretek_swarm.actors.mixins import (
+./heretek-swarm/heretek_swarm/actors/perceiver_plus/agent.py:26:from heretek_swarm.actors.mixins import (
+./heretek-swarm/heretek_swarm/actors/prism/agent.py:22:from heretek_swarm.actors.mixins import (
+./heretek-swarm/heretek_swarm/actors/profiling.py:55:from heretek_swarm.actors.mixins import HealthReportingMixin, PatternMixin, ValidationMixin
+./heretek-swarm/heretek_swarm/actors/sentinel/agent.py:40:from heretek_swarm.actors.mixins import (
+./heretek-swarm/heretek_swarm/actors/sentinel_prime/agent.py:26:from heretek_swarm.actors.mixins import (
+./heretek-swarm/heretek_swarm/actors/steward.py:22:from heretek_swarm.actors.mixins import (
+./heretek-swarm/heretek_swarm/actors/supervisor.py:18:from heretek_swarm.actors.mixins import AuditMixin, HealthReportingMixin, ValidationMixin, PatternMixin
+./heretek-swarm/heretek_swarm/actors/triad/agent.py:27:from heretek_swarm.actors.mixins import (

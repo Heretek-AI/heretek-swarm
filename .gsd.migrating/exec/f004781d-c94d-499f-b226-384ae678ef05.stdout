@@ -1,0 +1,270 @@
+--- alpha.py (lines: 283) ---
+SHIM indicators: has_from_dot=False
+First 5 lines:
+  """
+  Alpha Agent - Primary decision maker and analyst.
+  
+  The Alpha is the primary analytical agent in the Triad:
+  - Provides first-pass analysis on problems
+
+--- arbiter.py (lines: 54) ---
+SHIM indicators: has_from_dot=False
+First 5 lines:
+  """
+  Arbiter Agent - Conflict Resolution & Dispute Mediation.
+  
+  The Arbiter provides:
+  - Inter-agent conflict detection and resolution
+
+--- base.py (lines: 38) ---
+SHIM indicators: has_from_dot=False
+First 5 lines:
+  """
+  Backward-compatible wrapper for AgentActor base class.
+  
+  This module re-exports all classes and methods from the split modules:
+  - heretek_swarm.actors.base.core
+
+--- beta.py (lines: 300) ---
+SHIM indicators: has_from_dot=False
+First 5 lines:
+  """
+  Beta Agent - Secondary analyst and validator.
+  
+  The Beta provides complementary analysis to Alpha:
+  - Secondary perspective on problems
+
+--- catalyst.py (lines: 1136) ---
+SHIM indicators: has_from_dot=False
+First 5 lines:
+  """
+  Catalyst Agent - Change Management Specialist
+  
+  Tier 5 Coordination Agent responsible for:
+  - Change detection and impact analysis
+
+--- charlie.py (lines: 394) ---
+SHIM indicators: has_from_dot=False
+First 5 lines:
+  """
+  Charlie Agent - Tertiary perspective and challenger.
+  
+  The Charlie provides critical challenge to the Triad:
+  - Devil's advocate perspective
+
+--- chronos.py (lines: 40) ---
+SHIM indicators: has_from_dot=False
+First 5 lines:
+  """
+  Chronos Agent - Temporal & Scheduling Specialist.
+  
+  Backward-compatibility shim for chronos.py.
+  All imports are re-exported from the chronos/ module directory.
+
+--- coder.py (lines: 980) ---
+SHIM indicators: has_from_dot=False
+First 5 lines:
+  """
+  Coder Agent - Code Implementation & Debugging Specialist.
+  
+  The Coder provides:
+  - Code generation and implementation
+
+--- dreamer.py (lines: 50) ---
+SHIM indicators: has_from_dot=False
+First 5 lines:
+  """
+  Dreamer Agent - Backward Compatibility Module.
+  
+  This module exists for backward compatibility. All exports have been moved to
+  the dreamer/ directory. Import from the new location:
+
+--- echo.py (lines: 750) ---
+SHIM indicators: has_from_dot=False
+First 5 lines:
+  """
+  Echo Agent - Communication & Protocol Translation
+  
+  The Echo agent is responsible for:
+  - Protocol translation between external systems
+
+--- empath.py (lines: 1086) ---
+SHIM indicators: has_from_dot=False
+First 5 lines:
+  """
+  Empath Agent - Emotional Intelligence & Sentiment Analysis.
+  
+  The Empath agent provides:
+  - Sentiment analysis on inputs and communications
+
+--- examiner.py (lines: 61) ---
+SHIM indicators: has_from_dot=False
+First 5 lines:
+  """
+  Examiner Agent - Backward Compatibility Module.
+  
+  This module exists for backward compatibility. All exports have been moved to
+  the examiner/ directory. Import from the new location:
+
+--- explorer.py (lines: 1318) ---
+SHIM indicators: has_from_dot=False
+First 5 lines:
+  """
+  Explorer Agent - Intelligence Gathering & Opportunity Discovery.
+  
+  The Explorer agent provides:
+  - Monitoring of upstream sources and external systems
+
+--- factory.py (lines: 224) ---
+SHIM indicators: has_from_dot=False
+First 5 lines:
+  """
+  ActorFactory - Factory pattern for creating and managing actor instances.
+  
+  This module provides:
+  - Registration of actor classes with initialization parameters
+
+--- habit_forge.py (lines: 56) ---
+SHIM indicators: has_from_dot=False
+First 5 lines:
+  """
+  Habit-Forge Agent - Backward Compatibility Module.
+  
+  This module exists for backward compatibility. All exports have been moved to
+  the habit_forge/ directory. Import from the new location:
+
+--- handoff.py (lines: 600) ---
+SHIM indicators: has_from_dot=False
+First 5 lines:
+  """
+  Agent Handoff Mechanism for Heretek Swarm
+  
+  Provides seamless agent-to-agent handoff with context transfer.
+  Reference: PraisonAI agent handoffs pattern, MetaGPT RoleContext
+
+--- handoff_handlers.py (lines: 244) ---
+SHIM indicators: has_from_dot=False
+First 5 lines:
+  """
+  Handoff Handlers for Agent Handoff System
+  
+  Provides handler functions for different phases of agent handoff.
+  """
+
+--- historian.py (lines: 1354) ---
+SHIM indicators: has_from_dot=False
+First 5 lines:
+  """
+  Historian Agent - Memory and context provider for the Triad.
+  
+  The Historian provides:
+  - Long-term memory storage and retrieval
+
+--- langroid_adapter.py (lines: 602) ---
+SHIM indicators: has_from_dot=False
+First 5 lines:
+  """
+  LangroidAdapter - Langroid Conversational AI Adapter for Heretek Swarm
+  
+  This module provides Langroid integration:
+  - Agent wrapper for Langroid agents
+
+--- metis.py (lines: 1111) ---
+SHIM indicators: has_from_dot=False
+First 5 lines:
+  """
+  Metis Agent - Strategic Planning and Long-Term Thinking.
+  
+  The Metis agent provides:
+  - Long-term goal setting and strategic planning
+
+--- perceiver.py (lines: 912) ---
+SHIM indicators: has_from_dot=False
+First 5 lines:
+  """
+  Perceiver Agent - Multi-Modal Sensory Input Processing.
+  
+  The Perceiver agent provides:
+  - Multi-modal input handling (text, image, audio, video)
+
+--- perceiver_plus.py (lines: 54) ---
+SHIM indicators: has_from_dot=False
+First 5 lines:
+  """
+  Perceiver+ Agent - Backward Compatibility Module.
+  
+  This module exists for backward compatibility. All exports have been moved to
+  the perceiver_plus/ directory. Import from the new location:
+
+--- prism.py (lines: 50) ---
+SHIM indicators: has_from_dot=False
+First 5 lines:
+  """
+  Prism Agent - Backward Compatibility Module.
+  
+  This module exists for backward compatibility. All exports have been moved to
+  the prism/ directory. Import from the new location:
+
+--- profiling.py (lines: 1095) ---
+SHIM indicators: has_from_dot=False
+First 5 lines:
+  """
+  Behavior Profiling System for Heretek Swarm Actors.
+  
+  Source Pattern: Code Forge Temple (agentic signal profiling)
+  
+
+--- sentinel_prime.py (lines: 44) ---
+SHIM indicators: has_from_dot=False
+First 5 lines:
+  """
+  Sentinel-Prime Agent - Security Commander & Threat Response.
+  
+  Backward-compatibility shim for sentinel_prime.py.
+  All imports are re-exported from the sentinel_prime/ module directory.
+
+--- steward.py (lines: 841) ---
+SHIM indicators: has_from_dot=False
+First 5 lines:
+  """
+  Steward Agent - Overall coordination and governance.
+  
+  This module implements the Steward agent extracted from triad.py.
+  The Steward is the primary coordinator for the Triad, responsible for:
+
+--- stubs.py (lines: 53) ---
+SHIM indicators: has_from_dot=False
+First 5 lines:
+  # Stub function for integration tests - provides mockable access to event mesh
+  # This allows tests to patch the NATS event mesh without importing the actual NA
+  from heretek_swarm.gateway import NATSEventMesh
+  
+  # Global mesh instance
+
+--- supervisor.py (lines: 557) ---
+SHIM indicators: has_from_dot=False
+First 5 lines:
+  """
+  ActorSupervisor - Supervisor for managing multiple actors.
+  
+  This module provides:
+  - Spawn and manage multiple actors
+
+--- triad.py (lines: 30) ---
+SHIM indicators: has_from_dot=False
+First 5 lines:
+  """
+  Backward-Compatible Wrapper for Triad Agents.
+  
+  This module re-exports all classes from the extracted triad module:
+  - TriadAgent: Base class for all Triad agents
+
+--- validation.py (lines: 476) ---
+SHIM indicators: has_from_dot=False
+First 5 lines:
+  """
+  Input Validation Module - Pydantic v2 models for Zero-Trust input validation.
+  
+  This module provides strict schema validation for all actor message inputs,
+  enforcing Zero-Trust principles by validating all data before processing.
+

@@ -1,0 +1,18 @@
+{
+  "id": "086c5100-808b-41da-a5d2-c66816431d27",
+  "runtime": "bash",
+  "purpose": "Find validation-related files and ValidationMixin references",
+  "script_chars": 802,
+  "started_at": "2026-05-07T14:08:41.683Z",
+  "finished_at": "2026-05-07T14:08:56.694Z",
+  "exit_code": null,
+  "signal": "SIGKILL",
+  "timed_out": true,
+  "duration_ms": 15011,
+  "stdout_bytes": 63862,
+  "stderr_bytes": 87,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\086c5100-808b-41da-a5d2-c66816431d27.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\086c5100-808b-41da-a5d2-c66816431d27.stderr"
+}

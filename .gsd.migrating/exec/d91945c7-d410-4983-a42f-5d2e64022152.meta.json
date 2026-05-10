@@ -1,0 +1,18 @@
+{
+  "id": "d91945c7-d410-4983-a42f-5d2e64022152",
+  "runtime": "bash",
+  "purpose": "Check all actors that import ValidationMixin for inline validation patterns",
+  "script_chars": 950,
+  "started_at": "2026-05-07T14:29:12.936Z",
+  "finished_at": "2026-05-07T14:29:27.543Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 14607,
+  "stdout_bytes": 8321,
+  "stderr_bytes": 87,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\d91945c7-d410-4983-a42f-5d2e64022152.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\d91945c7-d410-4983-a42f-5d2e64022152.stderr"
+}

@@ -1,0 +1,102 @@
+=== PWD ===
+/mnt/c/Users/Derek/Desktop/heretek-swarm
+=== Top level ===
+total 1536
+drwxrwxrwx 1 john john    512 May  7 12:01 .
+drwxrwxrwx 1 john john    512 May  7 09:12 ..
+drwxrwxrwx 1 john john    512 Apr 30 10:59 .actor_states
+drwxrwxrwx 1 john john    512 May  6 23:05 .bg-shell
+-rwxrwxrwx 1 john john    210 May  2 22:38 .dockerignore
+-rwxrwxrwx 1 john john   5800 May  2 22:43 .env.example
+drwxrwxrwx 1 john john    512 May  7 12:44 .git
+drwxrwxrwx 1 john john    512 Apr 29 10:03 .github
+-rwxrwxrwx 1 john john   2009 May  7 08:39 .gitignore
+drwxrwxrwx 1 john john    512 May  7 12:24 .gsd
+-rwxrwxrwx 1 john john     13 May  6 23:12 .gsd-id
+drwxrwxrwx 1 john john    512 May  6 23:23 .gsd.migrating
+drwxrwxrwx 1 john john    512 Apr 29 10:03 .kilocode
+-rwxrwxrwx 1 john john      4 Apr 29 10:03 .nvmrc
+-rwxrwxrwx 1 john john   3789 Apr 29 10:03 .pre-commit-config.yaml
+drwxrwxrwx 1 john john    512 Apr 29 17:51 .pytest_cache
+drwxrwxrwx 1 john john    512 May  1 21:08 .venv
+-rwxrwxrwx 1 john john   1431 Apr 29 10:03 CLAUDE.md
+-rwxrwxrwx 1 john john   1088 Apr 29 10:03 LICENSE
+-rwxrwxrwx 1 john john   5391 Apr 29 10:03 PATH_TO_EMERGENCE.md
+-rwxrwxrwx 1 john john   6351 Apr 29 10:03 PRIME_DIRECTIVE.md
+-rwxrwxrwx 1 john john   5179 Apr 29 10:03 RALPH.md
+-rwxrwxrwx 1 john john   8277 May  3 09:13 README.md
+-rwxrwxrwx 1 john john  27008 Apr 29 10:03 RESEARCH.md
+-rwxrwxrwx 1 john john   6381 Apr 29 10:03 SWARM_STATE.md
+drwxrwxrwx 1 john john    512 Apr 29 13:16 agent_workspace
+drwxrwxrwx 1 john john    512 Apr 29 10:03 audit
+-rwxrwxrwx 1 john john   4019 Apr 29 10:03 audit-report-template.md
+-rwxrwxrwx 1 john john  71161 Apr 29 10:03 audit-report.md
+-rwxrwxrwx 1 john john   4389 May  2 22:42 docker-compose.yml
+drwxrwxrwx 1 john john    512 Apr 29 10:03 docs
+drwxrwxrwx 1 john john    512 May  4 12:51 heretek-swarm
+drwxrwxrwx 1 john john    512 Apr 29 10:03 migrations
+drwxrwxrwx 1 john john    512 May  3 11:56 node_modules
+-rwxrwxrwx 1 john john 329018 Apr 29 10:03 package-lock.json
+-rwxrwxrwx 1 john john   8533 May  2 22:09 pyproject.toml
+-rwxrwxrwx 1 john john   9233 May  7 11:26 pytest_stderr.txt
+-rwxrwxrwx 1 john john    960 May  7 11:26 pytest_stdout.txt
+drwxrwxrwx 1 john john    512 Apr 29 10:03 src
+drwxrwxrwx 1 john john    512 May  3 17:02 swarm-dashboard
+drwxrwxrwx 1 john john    512 May  3 12:48 test-results
+drwxrwxrwx 1 john john    512 May  3 16:00 tests
+-rwxrwxrwx 1 john john    680 Apr 29 10:03 tmpku_9ys71.env
+-rwxrwxrwx 1 john john  16377 Apr 29 10:03 triage_classifier.py
+-rwxrwxrwx 1 john john 173206 Apr 29 10:03 triage_data.json
+-rwxrwxrwx 1 john john 830339 Apr 29 10:03 uv.lock
+=== Check for heretek_swarm dir ===
+./heretek-swarm/heretek_swarm
+=== Find schemas/actors.py anywhere ===
+./heretek-swarm/heretek_swarm/schemas/actors.py
+=== Find validation.py files ===
+./heretek-swarm/heretek_swarm/actors/mixins/validation.py
+./heretek-swarm/heretek_swarm/actors/validation.py
+=== List tests/ directory ===
+__init__.py
+__pycache__
+agent_workspace
+conftest.py
+test_actor_routing.py
+test_agent_factory.py
+test_agent_tools.py
+test_chronos_ticks.py
+test_cli_help.py
+test_cli_output.py
+test_config_cli.py
+test_consensus_api_auth.py
+test_cost_calculation.py
+test_cross_slice_mcp_routing.py
+test_daemon.py
+test_deliberation_flow.py
+test_docker_config.py
+test_end_to_end_s03.py
+test_heartbeat_bus.py
+test_historian_jsonl.py
+test_historian_pg.py
+test_living_loop_integration.py
+test_main_loop_s03.py
+test_main_loop_s04.py
+test_main_loop_s05.py
+test_mcp_bridge.py
+test_mcp_tool_toggle.py
+test_model_garage_config.py
+test_packaging.py
+test_provider_stats_api.py
+test_providers_config_api.py
+test_readme_accuracy.py
+test_route_task.py
+test_steward_heartbeats.py
+test_triad_analysis.py
+test_usage_recording.py
+test_workflow_api.py
+test_workflow_consensus_node.py
+test_workflow_data_flow.py
+test_workflow_e2e_nodes.py
+test_workflow_llm_node.py
+test_workflow_validation.py
+test_ws_status_pump.py
+test_ws_status_pump_integration.py

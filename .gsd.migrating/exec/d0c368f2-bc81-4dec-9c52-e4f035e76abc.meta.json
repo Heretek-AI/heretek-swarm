@@ -1,0 +1,18 @@
+{
+  "id": "d0c368f2-bc81-4dec-9c52-e4f035e76abc",
+  "runtime": "bash",
+  "purpose": "Find all ValidationMixin and Mixin classes",
+  "script_chars": 452,
+  "started_at": "2026-05-07T14:03:34.217Z",
+  "finished_at": "2026-05-07T14:03:38.737Z",
+  "exit_code": 1,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 4520,
+  "stdout_bytes": 149,
+  "stderr_bytes": 183,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\d0c368f2-bc81-4dec-9c52-e4f035e76abc.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\d0c368f2-bc81-4dec-9c52-e4f035e76abc.stderr"
+}

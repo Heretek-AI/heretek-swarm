@@ -1,0 +1,75 @@
+=== heretek_swarm/validation/ contents ===
+
+=== validation __init__ ===
+not found
+
+=== heretek_swarm directory listing ===
+total 68
+drwxrwxrwx 1 john john   512 May  7 08:57 .
+drwxrwxrwx 1 john john   512 May  4 12:51 ..
+-rwxrwxrwx 1 john john  1016 May  2 21:33 __init__.py
+-rwxrwxrwx 1 john john   185 Apr 29 10:03 __main__.py
+drwxrwxrwx 1 john john   512 May  4 14:28 __pycache__
+drwxrwxrwx 1 john john   512 May  7 08:23 actors
+drwxrwxrwx 1 john john   512 Apr 29 10:03 agent_workspace
+drwxrwxrwx 1 john john   512 Apr 29 14:44 agents
+drwxrwxrwx 1 john john   512 May  3 15:19 api
+drwxrwxrwx 1 john john   512 Apr 29 10:03 audit
+drwxrwxrwx 1 john john   512 Apr 29 18:27 channels
+drwxrwxrwx 1 john john   512 May  4 14:47 cli
+-rwxrwxrwx 1 john john 63533 May  4 14:28 cli.py
+drwxrwxrwx 1 john john   512 Apr 29 13:13 collective
+drwxrwxrwx 1 john john   512 Apr 29 13:13 config
+drwxrwxrwx 1 john john   512 Apr 29 13:13 consciousness
+drwxrwxrwx 1 john john   512 May  3 11:06 consensus
+drwxrwxrwx 1 john john   512 Apr 29 13:13 coordination
+drwxrwxrwx 1 john john   512 Apr 29 13:13 creativity
+drwxrwxrwx 1 john john   512 Apr 29 10:03 embeddings
+drwxrwxrwx 1 john john   512 Apr 29 18:27 evaluation
+drwxrwxrwx 1 john john   512 Apr 29 13:13 gateway
+drwxrwxrwx 1 john john   512 May  5 08:00 goals
+drwxrwxrwx 1 john john   512 Apr 29 10:03 governance
+drwxrwxrwx 1 john john   512 Apr 29 13:13 infrastructure
+drwxrwxrwx 1 john john   512 Apr 29 10:03 integrations
+drwxrwxrwx 1 john john   512 Apr 29 10:03 interfaces
+drwxrwxrwx 1 john john   512 Apr 29 13:13 knowledge
+drwxrwxrwx 1 john john   512 May  1 20:37 llm
+drwxrwxrwx 1 john john   512 Apr 29 18:27 logging
+drwxrwxrwx 1 john john   512 May  1 21:26 mcp
+drwxrwxrwx 1 john john   512 Apr 29 13:13 memory
+drwxrwxrwx 1 john john   512 Apr 29 13:13 models
+drwxrwxrwx 1 john john   512 Apr 29 18:25 observability
+drwxrwxrwx 1 john john   512 Apr 29 13:13 orchestration
+drwxrwxrwx 1 john john   512 Apr 29 13:13 plugins
+drwxrwxrwx 1 john john   512 Apr 29 13:13 rag
+drwxrwxrwx 1 john john   512 May  1 19:50 routing
+drwxrwxrwx 1 john john   512 Apr 29 23:13 runtime
+drwxrwxrwx 1 john john   512 May  7 09:06 schemas
+drwxrwxrwx 1 john john   512 Apr 29 13:13 security
+drwxrwxrwx 1 john john   512 May  7 08:57 slices
+drwxrwxrwx 1 john john   512 Apr 29 13:13 state
+drwxrwxrwx 1 john john   512 Apr 29 13:13 testing
+drwxrwxrwx 1 john john   512 Apr 29 18:27 tools
+drwxrwxrwx 1 john john   512 Apr 29 18:27 utils
+drwxrwxrwx 1 john john   512 Apr 29 13:13 validation
+drwxrwxrwx 1 john john   512 May  3 15:15 workflow
+
+=== Check for agent_messages.py ===
+./heretek-swarm/heretek_swarm/validation/agent_messages.py
+
+=== Callers of get_immutable_rules / get_baseline_config (outside definition) ===
+./heretek-swarm/heretek_swarm/actors/validation.py:97:def get_immutable_rules() -> list[dict[str, Any]]:
+./heretek-swarm/heretek_swarm/actors/validation.py:102:def get_baseline_config() -> dict[str, Any]:
+
+=== Check for any duplicate validate_input or validate_output ===
+./heretek-swarm/heretek_swarm/actors/mixins/validation.py:63:    async def validate_input(
+./heretek-swarm/heretek_swarm/actors/mixins/validation.py:376:    async def validate_output(
+./heretek-swarm/heretek_swarm/actors/nexus/routing.py:191:    def validate_content_type(self, content_type: str) -> bool:
+./heretek-swarm/heretek_swarm/actors/validation.py:168:    def validate_content(cls, v: dict[str, Any]) -> dict[str, Any]:
+./heretek-swarm/heretek_swarm/actors/validation.py:230:    def validate_content(cls, v: dict[str, Any]) -> dict[str, Any]:
+./heretek-swarm/heretek_swarm/actors/validation.py:455:def validate_message(message_type: str, content: dict[str, Any]) -> BaseModel:
+./heretek-swarm/heretek_swarm/infrastructure/a2a/protocol.py:281:    def validate_message(self, message: A2AMessage) -> tuple[bool, str | None]:
+./heretek-swarm/heretek_swarm/plugins/liberation.py:367:    async def validate_output(
+./heretek-swarm/heretek_swarm/security/guardrails.py:149:    async def validate_input(
+./heretek-swarm/heretek_swarm/validation/agent_messages.py:131:    def validate_content_safety(cls, v: dict[str, Any]) -> dict[str, Any]:
+./heretek-swarm/heretek_swarm/validation/agent_messages.py:511:def validate_message(message_type: str, content: dict[str, Any]) -> ValidationResult:

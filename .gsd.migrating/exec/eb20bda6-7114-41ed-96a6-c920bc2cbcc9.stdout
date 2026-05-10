@@ -1,0 +1,42 @@
+=== Check git for test_validation_consolidation in any branch ===
+=== Check if the test file is anywhere in the repo ===
+=== Try: python3 -c 'from heretek_swarm.schemas.actors import ActorMessage' (with PYTHONPATH) ===
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "/mnt/c/Users/Derek/Desktop/heretek-swarm/heretek-swarm/heretek_swarm/__init__.py", line 13, in <module>
+    from heretek_swarm.actors.base import AgentActor
+  File "/mnt/c/Users/Derek/Desktop/heretek-swarm/heretek-swarm/heretek_swarm/actors/__init__.py", line 16, in <module>
+=== Read schemas/actors.py imports ===
+"""
+schemas.actors — consolidated Pydantic models for inter-actor messages.
+
+This module re-exports all Pydantic models from the validation layer so that
+external callers can use a stable import path::
+
+    from heretek_swarm.schemas.actors import ActorMessage, MessageType, MESSAGE_TYPES
+
+The internal dataclass ActorMessage in actors/base/core.py is NOT re-exported here;
+it remains an internal implementation detail.
+"""
+
+from __future__ import annotations
+
+from typing import Any
+
+from heretek_swarm.validation.agent_messages import (
+    ActorMessage,
+    AgentMessageBase,
+    CodeExecutionRequest,
+    ConsensusProposal,
+    ConsensusVote,
+    CoordinationRequest,
+    ErrorMessage,
+    MESSAGE_TYPES,
+    MessagePriority,
+    MessageType,
+    StateUpdate,
+    TaskMessage,
+    ToolRequest,
+=== Check ValidationMixin class def count ===
+1
+0

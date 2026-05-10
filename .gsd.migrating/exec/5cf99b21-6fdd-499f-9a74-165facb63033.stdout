@@ -1,0 +1,6 @@
+/bin/bash: line 1: /c/Python314/python.exe: No such file or directory
+py314 no pytest
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+ModuleNotFoundError: No module named 'pytest'
+usr python3 no pytest

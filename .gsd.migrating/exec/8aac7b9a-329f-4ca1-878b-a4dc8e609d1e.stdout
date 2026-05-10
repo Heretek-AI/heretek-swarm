@@ -1,0 +1,51 @@
+=== All class definitions anywhere with 'Valid' in name ===
+./heretek-swarm/heretek_swarm/actors/alpha.py:25:class AlphaAgent(HealthReportingMixin, ValidationMixin, LearningMixin, AgentActor):
+./heretek-swarm/heretek_swarm/actors/beta.py:25:class BetaAgent(HealthReportingMixin, ValidationMixin, LearningMixin, AgentActor):
+./heretek-swarm/heretek_swarm/actors/charlie.py:25:class CharlieAgent(HealthReportingMixin, ValidationMixin, LearningMixin, AgentActor):
+./heretek-swarm/heretek_swarm/actors/examiner/testing.py:66:class ExaminingValidationMixin:
+./heretek-swarm/heretek_swarm/actors/handoff.py:56:class HandoffValidator:
+./heretek-swarm/heretek_swarm/actors/handoff_handlers.py:34:class HandoffValidationHandler:
+./heretek-swarm/heretek_swarm/actors/mixins/validation.py:22:class ValidationMixin:
+./heretek-swarm/heretek_swarm/actors/profiling.py:570:class BehaviorProfiler(ValidationMixin, PatternMixin, HealthReportingMixin, AgentActor):
+./heretek-swarm/heretek_swarm/actors/supervisor.py:43:class ActorSupervisor(AuditMixin, ValidationMixin, HealthReportingMixin, PatternMixin, AgentActor):
+./heretek-swarm/heretek_swarm/actors/validation.py:268:class ValidationRequest(BaseModel):
+./heretek-swarm/heretek_swarm/collective/knowledge_transform.py:944:class ValidationResult:
+./heretek-swarm/heretek_swarm/collective/pattern_validation.py:40:class ValidationStatus(StrEnum):
+./heretek-swarm/heretek_swarm/collective/pattern_validation.py:60:class ValidationEvidence:
+./heretek-swarm/heretek_swarm/collective/pattern_validation.py:87:class PatternValidation:
+./heretek-swarm/heretek_swarm/collective/pattern_validation.py:175:class PatternValidator:
+./heretek-swarm/heretek_swarm/governance/protocol.py:15:class ValidationStatus(StrEnum):
+./heretek-swarm/heretek_swarm/memory/migration_strategies.py:30:class MigrationValidationPhase(MigrationPhase):
+./heretek-swarm/heretek_swarm/security/guardrails.py:45:class ValidationResult:
+./heretek-swarm/heretek_swarm/security/validators.py:15:class InputValidator(ABC):
+./heretek-swarm/heretek_swarm/security/validators.py:32:class LengthValidator(InputValidator):
+./heretek-swarm/heretek_swarm/security/validators.py:66:class BlockedPatternValidator(InputValidator):
+./heretek-swarm/heretek_swarm/security/validators.py:91:class PersonalInfoValidator(InputValidator):
+./heretek-swarm/heretek_swarm/security/validators.py:134:class CodeExecutionValidator(InputValidator):
+./heretek-swarm/heretek_swarm/security/validators.py:165:class AllowedPatternsValidator(InputValidator):
+./heretek-swarm/heretek_swarm/security/validators.py:192:class ValidatorChain:
+./heretek-swarm/heretek_swarm/security/zero_trust.py:278:class ValidatedInput(BaseModel):
+./heretek-swarm/heretek_swarm/security/zero_trust.py:311:class InputValidationConfig:
+./heretek-swarm/heretek_swarm/security/zero_trust.py:330:class InputValidator:
+./heretek-swarm/heretek_swarm/security/zero_trust.py:376:        model_class: type[ValidatedInput] | None = None,
+./heretek-swarm/heretek_swarm/security/zero_trust.py:536:class ContextValidationConfig:
+./heretek-swarm/heretek_swarm/security/zero_trust.py:548:class ContextValidator:
+./heretek-swarm/heretek_swarm/security/zero_trust.py:734:class OutputValidationConfig:
+./heretek-swarm/heretek_swarm/security/zero_trust.py:744:class OutputValidator:
+./heretek-swarm/heretek_swarm/security/zero_trust.py:1065:class ExternalInputValidator:
+./heretek-swarm/heretek_swarm/security/zero_trust.py:1211:class ZeroTrustValidator:
+./heretek-swarm/heretek_swarm/security/zero_trust.py:1254:        model_class: type[ValidatedInput] | None = None,
+./heretek-swarm/heretek_swarm/validation/llm_output.py:25:class ValidationSeverity(StrEnum):
+./heretek-swarm/heretek_swarm/validation/llm_output.py:142:class ValidationResult:
+./heretek-swarm/heretek_swarm/validation/llm_output.py:287:class LLMOutputValidator:
+./heretek-swarm/heretek_swarm/workflow/validator.py:23:class ValidationErrorSeverity(StrEnum):
+./heretek-swarm/heretek_swarm/workflow/validator.py:31:class ValidationError:
+./heretek-swarm/heretek_swarm/workflow/validator.py:63:class ValidationResult:
+./heretek-swarm/heretek_swarm/workflow/validator.py:145:class WorkflowValidator:
+./heretek-swarm/tests/test_consensus_audit_jsonl.py:90:class TestJSONLLineValidity:
+./tests/test_config_cli.py:226:class TestValidateProvider:
+./tests/test_config_cli.py:386:class TestConfigValidateCommand:
+./tests/test_workflow_api.py:371:class TestWorkflowValidation:
+./tests/test_workflow_validation.py:485:class TestValidateDraft:
+
+=== All 'validate_message' definitions ===

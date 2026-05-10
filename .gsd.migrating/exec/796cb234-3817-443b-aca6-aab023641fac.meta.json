@@ -1,0 +1,18 @@
+{
+  "id": "796cb234-3817-443b-aca6-aab023641fac",
+  "runtime": "bash",
+  "purpose": "Find all callers of the functions we'll be consolidating",
+  "script_chars": 724,
+  "started_at": "2026-05-07T14:35:10.176Z",
+  "finished_at": "2026-05-07T14:35:20.184Z",
+  "exit_code": null,
+  "signal": "SIGKILL",
+  "timed_out": true,
+  "duration_ms": 10008,
+  "stdout_bytes": 0,
+  "stderr_bytes": 0,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\796cb234-3817-443b-aca6-aab023641fac.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\796cb234-3817-443b-aca6-aab023641fac.stderr"
+}

@@ -1,0 +1,118 @@
+=== arbiter/__init__.py (36 lines) ===
+"""
+Arbiter subpackage - Split module for arbiter agent.
+
+Modules:
+- core: Core arbitration logic, conflict detection, enums, dataclasses
+- handlers: Event handlers and responses
+- strategies: Resolution strategies
+- constants: Constants for the arbiter
+"""
+
+from .core import (
+    ArbiterAgent,
+   
+
+=== base/__init__.py (14 lines) ===
+"""
+Actors base package - re-exports from base.py wrapper for backwards compatibility.
+"""
+
+# Import directly from core module to avoid circular import via base.py wrapper
+from heretek_swarm.actors.base.core import (
+    ActorMessage,
+    ActorState,
+    ActorStatus,
+    AgentActor,
+)
+
+__all__ = ["A
+
+=== chronos/__init__.py (52 lines) ===
+"""
+Chronos Module - Temporal & Scheduling Specialist.
+
+This module has been refactored from a single chronos.py file into
+a package with separate components:
+
+- types.py: Type definitions (ScheduleStatus, RecurrenceType, Priority,
+            ScheduledTask, Deadline)
+- scheduler.py: ChronosSchedule
+
+=== dreamer/__init__.py (55 lines) ===
+"""
+Dreamer Module - Creative Solution Generation & Divergent Thinking.
+
+This module provides the DreamerAgent for creative ideation and divergent thinking.
+The module has been refactored into separate components:
+
+- types.py: Type definitions (CreativityTechnique, IdeaCategory, NoveltyLevel, etc.)
+
+
+=== examiner/__init__.py (58 lines) ===
+"""
+Examiner Module - Quality Assurance & Testing Specialist.
+
+This module provides the ExaminerAgent for quality assurance and testing.
+The module has been refactored into separate components:
+
+- types.py: Type definitions (TestType, TestStatus, QualityMetric, SeverityLevel, TestCase, TestSuite, Bu
+
+=== explorer/__init__.py (52 lines) ===
+"""
+Explorer Module - Intelligence Gathering Specialist
+
+This module provides the ExplorerAgent for intelligence gathering,
+opportunity discovery, and anomaly detection.
+
+For backward compatibility, this module re-exports from the new package structure.
+Import paths like `from heretek_swarm.actors.e
+
+=== habit_forge/__init__.py (67 lines) ===
+"""
+Habit-Forge Module - Behavior Architecture & Pattern Optimization.
+
+This module provides the HabitForgeAgent for habit formation and behavioral
+pattern optimization. The module has been refactored into separate components:
+
+- types.py: Type definitions (HabitStage, ReinforcementType, Habit, Beha
+
+=== perceiver_plus/__init__.py (53 lines) ===
+"""
+PerceiverPlus Module - Advanced Analytics Specialist.
+
+This module provides the PerceiverPlusAgent for advanced multi-modal analytics
+and pattern recognition. The module has been refactored into separate components:
+
+- types.py: Type definitions (AnalyticsType, DataModality, StatisticalTest, Ana
+
+=== prism/__init__.py (58 lines) ===
+"""
+Prism Agent Module - Multi-Perspective Analysis & Bias Detection.
+
+This module provides the Prism agent for multi-perspective analysis and cognitive
+bias detection. The module has been refactored into separate components:
+
+- types.py: Type definitions (PerspectiveType, BiasType, etc.)
+- transfor
+
+=== sentinel_prime/__init__.py (54 lines) ===
+"""
+Sentinel-Prime Module - Security Commander & Threat Response.
+
+This module has been refactored from a single sentinel_prime.py file into
+a package with separate components:
+
+- types.py: Type definitions (ThreatLevel, ThreatType, IncidentStatus, 
+            ResponseAction, ThreatIndicator, Secur
+
+=== triad/__init__.py (31 lines) ===
+"""
+Triad Agents Module - Backward-Compatible Exports.
+
+This module re-exports all classes from the extracted triad module:
+- TriadAgent: Base class for all Triad agents
+- StewardAgent: Coordinator and governance agent
+- AlphaAgent: Primary decision maker and analyst
+- BetaAgent: Secondary analyst a
+

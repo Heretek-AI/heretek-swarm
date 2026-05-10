@@ -12,13 +12,13 @@
 
 ## Slices
 
-- [ ] **S01: Add fail-fast guards to all mixin methods** `risk:low` `depends:[]`
+- [x] **S01: S01** `risk:low` `depends:[]`
   > After this: Bad()._validate_message({}) raises TypeError
 
-- [ ] **S02: Make stubs first-class constructor arguments** `risk:medium` `depends:[]`
+- [x] **S02: S02** `risk:medium` `depends:[]`
   > After this: Agent(llm_provider=stub_llm) uses stub without monkey-patching
 
-- [ ] **S03: Add mixin __init__.py exports and smoke test for stub injection** `risk:low` `depends:[S01,S02]`
+- [x] **S03: S03** `risk:low` `depends:[]`
   > After this: from heretek_swarm.actors.mixins import AuditMixin, DeliberationMixin
 
 ## Boundary Map

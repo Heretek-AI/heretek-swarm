@@ -1,0 +1,58 @@
+=== All imports from actors.validation ===
+./heretek-swarm/heretek_swarm/actors/arbiter/handlers.py:16:from heretek_swarm.actors.validation import validate_message
+./heretek-swarm/heretek_swarm/actors/base/core.py:30:from heretek_swarm.actors.validation import (
+./heretek-swarm/heretek_swarm/actors/catalyst.py:34:from heretek_swarm.actors.validation import validate_message
+./heretek-swarm/heretek_swarm/actors/chronos/agent.py:33:from heretek_swarm.actors.validation import validate_message
+./heretek-swarm/heretek_swarm/actors/coder.py:30:from heretek_swarm.actors.validation import validate_message as validate_message_schema
+./heretek-swarm/heretek_swarm/actors/coordinator/agent.py:41:from heretek_swarm.actors.validation import validate_message
+./heretek-swarm/heretek_swarm/actors/dreamer/agent.py:48:from heretek_swarm.actors.validation import validate_message
+./heretek-swarm/heretek_swarm/actors/examiner/agent.py:50:from heretek_swarm.actors.validation import validate_message as validate_message_schema
+./heretek-swarm/heretek_swarm/actors/explorer/pathfinding.py:233:            from heretek_swarm.actors.validation import validate_message
+./heretek-swarm/heretek_swarm/actors/explorer/pathfinding.py:277:            from heretek_swarm.actors.validation import validate_message
+./heretek-swarm/heretek_swarm/actors/explorer/pathfinding.py:315:            from heretek_swarm.actors.validation import validate_message
+./heretek-swarm/heretek_swarm/actors/explorer/pathfinding.py:381:            from heretek_swarm.actors.validation import validate_message
+./heretek-swarm/heretek_swarm/actors/explorer/pathfinding.py:455:            from heretek_swarm.actors.validation import validate_message
+./heretek-swarm/heretek_swarm/actors/explorer/pathfinding.py:535:            from heretek_swarm.actors.validation import validate_message
+./heretek-swarm/heretek_swarm/actors/explorer/pathfinding.py:581:            from heretek_swarm.actors.validation import validate_message
+./heretek-swarm/heretek_swarm/actors/explorer/pathfinding.py:786:            from heretek_swarm.actors.validation import validate_message
+./heretek-swarm/heretek_swarm/actors/explorer/pathfinding.py:910:            from heretek_swarm.actors.validation import validate_message
+./heretek-swarm/heretek_swarm/actors/explorer.py:56:from heretek_swarm.actors.validation import validate_message
+./heretek-swarm/heretek_swarm/actors/nexus/agent.py:43:from heretek_swarm.actors.validation import validate_message
+./heretek-swarm/heretek_swarm/actors/perceiver.py:34:from heretek_swarm.actors.validation import validate_message
+./heretek-swarm/heretek_swarm/actors/sentinel/agent.py:57:from heretek_swarm.actors.validation import validate_message
+./heretek-swarm/heretek_swarm/actors/sentinel_prime/handlers.py:13:from heretek_swarm.actors.validation import validate_message
+
+=== What does sentinel/agent.py import from validation? ===
+2:Sentinel Agent - Safety Guardian & Input/Output Validation.
+5:- Input validation and sanitization
+37:from pydantic import ValidationError
+46:    ValidationMixin,
+57:from heretek_swarm.actors.validation import validate_message
+86:    ValidationMixin,
+97:    Sentinel provides comprehensive input/output validation, guardrail enforcement,
+119:        description: str = "Safety Guardian - Input/Output Validation",
+223:                "validation_failures": 0,
+224:                "validation_successes": 0,
+
+=== What does sentinel_prime/agent.py import from validation? ===
+8:- ValidationMixin
+32:    ValidationMixin,
+61:    ValidationMixin,
+196:        """Process incoming message with security validation."""
+
+=== What does sentinel_prime/handlers.py import from validation? ===
+13:from heretek_swarm.actors.validation import validate_message
+71:            # Validate
+296:            # Validate
+
+=== What does base/core.py import from validation? ===
+25:from pydantic import ValidationError
+30:from heretek_swarm.actors.validation import (
+220:        # P1-7: Configuration validation
+364:        Validate message content using Pydantic models.
+371:            Validated model instance or None if validation not available
+374:            ValueError: If validation fails
+378:        except ValidationError as e:
+380:                f"[{self.agent_id}] Message validation failed for {message_type}: {e}",
+381:                extra={"validation_errors": e.errors()},
+385:            # Unknown message type - skip validation
