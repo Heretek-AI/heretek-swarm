@@ -12,7 +12,7 @@
 
 ## Slices
 
-- [ ] **S01: Baseline existing tests and configure pytest** `risk:low` `depends:[]`
+- [ ] **S01: S01** `risk:low` `depends:[]`
   > After this: pytest --co -q lists all existing tests
 
 - [ ] **S02: Write actor lifecycle smoke tests** `risk:medium` `depends:[]`

@@ -1,8 +1,8 @@
 # GSD State
 
 **Active Milestone:** M004: Add integration test scaffold and CI surface
-**Active Slice:** S01: Baseline existing tests and configure pytest
-**Phase:** planning
+**Active Slice:** S01: S01
+**Phase:** summarizing
 **Requirements Status:** 0 active · 0 validated · 0 deferred · 0 out of scope
 
 ## Milestone Registry
@@ -22,4 +22,4 @@
 - None
 
 ## Next Action
-Slice S01 has no DB tasks. Plan slice tasks before execution.
+All tasks done in S01. Write slice summary and complete slice.
