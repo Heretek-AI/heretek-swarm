@@ -600,6 +600,31 @@ class StubEventMesh:
         """Return stub client count."""
         return 1 if self._connected else 0
 
+    async def send_to_json(
+        self,
+        subject: str,
+        data: dict[str, Any],
+        **kwargs: Any,
+    ) -> None:
+        """Store a JSON-serialized message for test inspection."""
+        self._published.append({
+            "subject": subject,
+            "data": data,
+            "kwargs": kwargs,
+            "timestamp": datetime.now(UTC).isoformat(),
+        })
+
+    async def broadcast_json(
+        self,
+        data: dict[str, Any],
+    ) -> None:
+        """Store a broadcast message for test inspection."""
+        self._published.append({
+            "subject": "__broadcast__",
+            "data": data,
+            "timestamp": datetime.now(UTC).isoformat(),
+        })
+
 
 # ---------------------------------------------------------------------------
 # Legacy stub functions — preserved for backward compatibility.
