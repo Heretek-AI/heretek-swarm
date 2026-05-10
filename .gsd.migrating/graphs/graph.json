@@ -1,10 +1,10 @@
 {
   "nodes": [
     {
-      "id": "milestone:M003",
-      "label": "M003: Type-seal Mixin contracts and make stub injection first-class",
+      "id": "milestone:M004",
+      "label": "M004: Add integration test scaffold and CI surface",
       "type": "milestone",
-      "description": "Active milestone: M003",
+      "description": "Active milestone: M004",
       "confidence": "EXTRACTED",
       "sourceFile": "STATE.md"
     },
@@ -144,6 +144,13 @@
       "confidence": "EXTRACTED"
     },
     {
+      "id": "milestone:M003",
+      "label": "M003: Type-seal Mixin contracts and make stub injection first-class",
+      "type": "milestone",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M003/M003-ROADMAP.md"
+    },
+    {
       "id": "slice:M003:S01",
       "label": "S01: Add fail-fast guards to all mixin methods",
       "type": "slice",
@@ -201,11 +208,67 @@
       "confidence": "EXTRACTED"
     },
     {
-      "id": "milestone:M004",
-      "label": "M004: Add integration test scaffold and CI surface",
-      "type": "milestone",
+      "id": "slice:M004:S01",
+      "label": "S01: Baseline existing tests and configure pytest",
+      "type": "slice",
       "confidence": "EXTRACTED",
-      "sourceFile": "milestones/M004/M004-ROADMAP.md"
+      "sourceFile": "milestones/M004/slices/S01/S01-PLAN.md"
+    },
+    {
+      "id": "task:M004:S01:T01",
+      "label": "T01: Install dev dependencies into .venv and verify pytest is available",
+      "type": "task",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "id": "task:M004:S01:T02",
+      "label": "T02: Verify pytest collects all 16 existing test files without errors",
+      "type": "task",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "id": "task:M004:S01:T03",
+      "label": "T03: Add integration test markers and conftest improvements for clean collection",
+      "type": "task",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "id": "slice:M004:S02",
+      "label": "S02: Write actor lifecycle smoke tests",
+      "type": "slice",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M004/slices/S02/S02-PLAN.md"
+    },
+    {
+      "id": "task:M004:S02:T01",
+      "label": "T01: Create parameterized lifecycle smoke test for all canonical AgentActor subclasses",
+      "type": "task",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "id": "task:M004:S02:T02",
+      "label": "T02: Verify lifecycle tests pass and cover all canonical agents",
+      "type": "task",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "id": "slice:M004:S03",
+      "label": "S03: Add GitHub Actions CI for pytest and ruff",
+      "type": "slice",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M004/slices/S03/S03-PLAN.md"
+    },
+    {
+      "id": "task:M004:S03:T01",
+      "label": "T01: Fix coverage source path and ruff source roots in pyproject.toml",
+      "type": "task",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "id": "task:M004:S03:T02",
+      "label": "T02: Rewrite CI workflow for unit-only test execution with proper pass/fail gating",
+      "type": "task",
+      "confidence": "EXTRACTED"
     },
     {
       "id": "milestone:M005",
@@ -816,6 +879,66 @@
       "confidence": "EXTRACTED"
     },
     {
+      "from": "milestone:M004",
+      "to": "slice:M004:S01",
+      "type": "contains",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "slice:M004:S01",
+      "to": "task:M004:S01:T01",
+      "type": "contains",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "slice:M004:S01",
+      "to": "task:M004:S01:T02",
+      "type": "contains",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "slice:M004:S01",
+      "to": "task:M004:S01:T03",
+      "type": "contains",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M004",
+      "to": "slice:M004:S02",
+      "type": "contains",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "slice:M004:S02",
+      "to": "task:M004:S02:T01",
+      "type": "contains",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "slice:M004:S02",
+      "to": "task:M004:S02:T02",
+      "type": "contains",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M004",
+      "to": "slice:M004:S03",
+      "type": "contains",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "slice:M004:S03",
+      "to": "task:M004:S03:T01",
+      "type": "contains",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "slice:M004:S03",
+      "to": "task:M004:S03:T02",
+      "type": "contains",
+      "confidence": "EXTRACTED"
+    },
+    {
       "from": "milestone:M006",
       "to": "slice:M006:S01",
       "type": "contains",
@@ -1146,5 +1269,5 @@
       "confidence": "EXTRACTED"
     }
   ],
-  "builtAt": "2026-05-08T01:32:33.801Z"
+  "builtAt": "2026-05-10T20:54:19.028Z"
 }

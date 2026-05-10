@@ -12,13 +12,13 @@
 
 ## Slices
 
-- [ ] **S01: S01** `risk:low` `depends:[]`
+- [x] **S01: S01** `risk:low` `depends:[]`
   > After this: pytest --co -q lists all existing tests
 
-- [ ] **S02: Write actor lifecycle smoke tests** `risk:medium` `depends:[]`
+- [x] **S02: S02** `risk:medium` `depends:[]`
   > After this: pytest tests/test_actor_lifecycle.py -x -q passes
 
-- [ ] **S03: Add GitHub Actions CI for pytest and ruff** `risk:low` `depends:[S02]`
+- [x] **S03: S03** `risk:low` `depends:[]`
   > After this: CI runs on push/PR and reports pass/fail
 
 ## Boundary Map
