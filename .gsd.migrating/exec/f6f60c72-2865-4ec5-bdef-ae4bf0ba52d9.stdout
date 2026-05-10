@@ -1,0 +1,45 @@
+=== Source tree ===
+
+=== Test markers in use ===
+    111 pytest.mark.asyncio
+      2 pytest.mark.parametrize
+      1 pytest.mark.skipif
+
+=== Tests that use external services (postgres/redis/qdrant/nats) ===
+tests/test_docker_config.py
+tests/test_heartbeat_bus.py
+tests/test_steward_heartbeats.py
+
+=== Tests that use --slow or slow markers ===
+
+=== conftest.py markers/config ===
+    "--strict-markers",
+    "--strict-config",
+]
+asyncio_mode = "auto"
+markers = [
+    "unit: Unit tests (fast, isolated)",
+    "integration: Integration tests (require external services)",
+    "load: Load/performance tests",
+
+=== Makefile or justfile ===
+
+=== Coverage config source mismatch? ===
+    "ignore::ResourceWarning",
+source = ["src"]
+source = [
+
+=== .gitignore ===
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+# Coverage files (added by CoverLens)
+coverage/
+coverage.out
+coverage.out.partial
+coverage.xml
+coverage.cobertura.xml
+coverage.json
+coverage-final.json

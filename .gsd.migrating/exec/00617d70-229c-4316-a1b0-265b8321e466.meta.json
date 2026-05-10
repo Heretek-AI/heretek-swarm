@@ -1,0 +1,18 @@
+{
+  "id": "00617d70-229c-4316-a1b0-265b8321e466",
+  "runtime": "bash",
+  "purpose": "Count test functions per file",
+  "script_chars": 696,
+  "started_at": "2026-05-10T02:03:54.213Z",
+  "finished_at": "2026-05-10T02:04:03.346Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 9133,
+  "stdout_bytes": 0,
+  "stderr_bytes": 76,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\00617d70-229c-4316-a1b0-265b8321e466.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\00617d70-229c-4316-a1b0-265b8321e466.stderr"
+}

@@ -1,0 +1,18 @@
+{
+  "id": "7ed7b527-cbe9-4b71-8e89-ea34b8e05009",
+  "runtime": "bash",
+  "purpose": "Check package structure",
+  "script_chars": 388,
+  "started_at": "2026-05-10T02:03:54.226Z",
+  "finished_at": "2026-05-10T02:04:06.899Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 12673,
+  "stdout_bytes": 772,
+  "stderr_bytes": 0,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\7ed7b527-cbe9-4b71-8e89-ea34b8e05009.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\7ed7b527-cbe9-4b71-8e89-ea34b8e05009.stderr"
+}

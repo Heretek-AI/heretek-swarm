@@ -1,6 +1,10 @@
 {
   "version": 1,
+<<<<<<< HEAD
   "exported_at": "2026-05-10T16:40:46.379Z",
+=======
+  "exported_at": "2026-05-08T01:13:53.982Z",
+>>>>>>> 8fdf5dde2a4ed91b8d1bb75d3658c04e6fe7e869
   "milestones": [
     {
       "id": "M001",
@@ -494,14 +498,24 @@
       "milestone_id": "M003",
       "id": "S03",
       "title": "S03",
+<<<<<<< HEAD
       "status": "complete",
+=======
+      "status": "pending",
+>>>>>>> 8fdf5dde2a4ed91b8d1bb75d3658c04e6fe7e869
       "risk": "low",
       "depends": [],
       "demo": "from heretek_swarm.actors.mixins import AuditMixin, DeliberationMixin",
       "created_at": "2026-05-07T03:19:25.481Z",
+<<<<<<< HEAD
       "completed_at": "2026-05-08T01:32:33.724Z",
       "full_summary_md": "---\nid: S03\nparent: M003\nmilestone: M003\nprovides:\n  - heretek_swarm.actors.mixins public export path with all 10 mixins\n  - Stub injection infrastructure for test-friendly agent construction\n  - Integration smoke test proving M003 end-to-end acceptance\nrequires:\n  []\naffects:\n  []\nkey_files:\n  - heretek_swarm/actors/mixins/__init__.py\n  - heretek_swarm/actors/stubs.py\n  - heretek_swarm/actors/base/core.py\n  - tests/test_mixin_integration_s03.py\nkey_decisions:\n  - (none)\npatterns_established:\n  - Mixin import path: `from heretek_swarm.actors.mixins import AuditMixin, ...` is the canonical public interface\n  - Stub injection: stub kwargs (access_analyzer, pattern_extractor, tribunal, deliberation_engine) are stored as public instance attrs so MRO-resolved mixin methods can reach them\n  - Backward compat: `AlphaAgent()` with no stubs still constructs cleanly, falling back to None for optional mixin deps and module-level stubs for core deps\nobservability_surfaces:\n  - none\ndrill_down_paths:\n  - S03/T01-SUMMARY.md (does not exist — task T01 was small enough to complete inline)\nduration: \"\"\nverification_result: passed\ncompleted_at: 2026-05-08T01:32:33.725Z\nblocker_discovered: false\n---\n\n# S03: Add mixin __init__.py exports and smoke test for stub injection\n\n**Mixin public exports and stub injection smoke tests added and passing**\n\n## What Happened\n\nVerified the final milestone acceptance criteria: (1) all 10 mixin names are exported from heretek_swarm.actors.mixins, (2) AlphaAgent with injected StubAccessAnalyzer/StubPatternExtractor constructs without error and stores the stubs as public instance attrs, (3) MemoryMixin._track_memory_access dispatched via MRO calls the stub's record_access and returns a real profile without raising TypeError, (4) AlphaAgent() with no stubs still constructs cleanly with None stubs and falls back to module-level stubs for core deps. Test file at tests/test_mixin_integration_s03.py contains 18 tests, all passing. Backward compat is preserved throughout.\n\n## Verification\n\nAll 18 tests in tests/test_mixin_integration_s03.py passed (0.03s). Combined with tests/test_mixin_guards.py: 30 tests total passed (0.06s).\n\n## Requirements Advanced\n\nNone.\n\n## Requirements Validated\n\nNone.\n\n## New Requirements Surfaced\n\nNone.\n\n## Requirements Invalidated or Re-scoped\n\nNone.\n\n## Operational Readiness\n\nNone.\n\n## Deviations\n\nNone.\n\n## Known Limitations\n\nNone.\n\n## Follow-ups\n\nNone.\n\n## Files Created/Modified\n\n- `heretek_swarm/actors/mixins/__init__.py` — \n- `heretek_swarm/actors/stubs.py` — \n- `heretek_swarm/actors/base/core.py` — \n- `tests/test_mixin_integration_s03.py` — \n",
       "full_uat_md": "# S03: Add mixin __init__.py exports and smoke test for stub injection — UAT\n\n**Milestone:** M003\n**Written:** 2026-05-08T01:32:33.726Z\n\n**Manual verification steps:**\n\n1. `python -c \"from heretek_swarm.actors.mixins import *; print(len([x for x in dir() if 'Mixin' in x]))\"` — should print ≥10\n2. `python -c \"from heretek_swarm.actors import AlphaAgent; from heretek_swarm.actors.stubs import StubAccessAnalyzer; a = AlphaAgent(access_analyzer=StubAccessAnalyzer()); print('ok')\"` — should print 'ok'\n3. Run: `python -m pytest tests/test_mixin_integration_s03.py -v` — all 18 pass\n",
+=======
+      "completed_at": null,
+      "full_summary_md": "",
+      "full_uat_md": "",
+>>>>>>> 8fdf5dde2a4ed91b8d1bb75d3658c04e6fe7e869
       "goal": "Verify the public mixin import path and stub injection work end-to-end: `from heretek_swarm.actors.mixins import *` resolves all 10 mixin names, and a real agent constructed with stub dependencies can call guarded mixin methods through the MRO without TypeError, returning real stub data.",
       "success_criteria": "",
       "proof_level": "",
@@ -1481,6 +1495,7 @@
       "escalation_awaiting_review": 0,
       "escalation_artifact_path": null,
       "escalation_override_applied_at": null
+<<<<<<< HEAD
     },
     {
       "milestone_id": "M004",
@@ -1608,6 +1623,8 @@
       "escalation_awaiting_review": 0,
       "escalation_artifact_path": null,
       "escalation_override_applied_at": null
+=======
+>>>>>>> 8fdf5dde2a4ed91b8d1bb75d3658c04e6fe7e869
     }
   ],
   "decisions": [],
@@ -1963,6 +1980,7 @@
       "verdict": "✅ pass",
       "duration_ms": 90,
       "created_at": "2026-05-08T01:13:53.951Z"
+<<<<<<< HEAD
     },
     {
       "id": 33,
@@ -2051,6 +2069,8 @@
       "verdict": "✅ pass (no unregistered custom markers found)",
       "duration_ms": 500,
       "created_at": "2026-05-10T16:40:46.346Z"
+=======
+>>>>>>> 8fdf5dde2a4ed91b8d1bb75d3658c04e6fe7e869
     }
   ]
 }

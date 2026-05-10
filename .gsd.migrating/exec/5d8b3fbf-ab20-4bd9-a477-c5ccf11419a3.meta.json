@@ -1,0 +1,18 @@
+{
+  "id": "5d8b3fbf-ab20-4bd9-a477-c5ccf11419a3",
+  "runtime": "bash",
+  "purpose": "Check what workflow test files look like - fixture imports, patterns",
+  "script_chars": 93,
+  "started_at": "2026-05-10T02:05:54.311Z",
+  "finished_at": "2026-05-10T02:06:02.271Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 7960,
+  "stdout_bytes": 2002,
+  "stderr_bytes": 0,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\5d8b3fbf-ab20-4bd9-a477-c5ccf11419a3.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\5d8b3fbf-ab20-4bd9-a477-c5ccf11419a3.stderr"
+}

@@ -1,0 +1,61 @@
+=== Project root layout ===
+./agent_workspace/
+./audit/
+./docs/
+./heretek-swarm/
+./migrations/
+./node_modules/
+./src/
+./swarm-dashboard/
+./test-results/
+./tests/
+
+=== heretek-swarm/src/heretek_swarm/ ===
+
+=== actors directory ===
+
+=== agents/actor classes ===
+
+=== test count breakdown ===
+tests/: 0 files
+heretek-swarm/tests/: 0 files
+
+=== Total test functions ===
+694
+
+=== Existing pytest markers used ===
+    159     @pytest.mark.asyncio
+     21 @pytest.mark.asyncio
+      1     @pytest.mark.parametrize("raw,expected", [
+      1     @pytest.mark.parametrize("group", EXPECTED_GROUPS)
+      1     @pytest.mark.parametrize("cmd", EXPECTED_COMMANDS)
+
+=== docker-compose.yml ===
+version: "3.8"
+
+x-common-env: &common-env
+  HERETEK_LOG_LEVEL: ${HERETEK_LOG_LEVEL:-INFO}
+  HERETEK_HOME: /app/heretek_data
+  ENVIRONMENT: ${ENVIRONMENT:-development}
+
+x-healthcheck-defaults: &healthcheck-defaults
+  interval: 30s
+  timeout: 10s
+  retries: 3
+  start_period: 10s
+
+services:
+  # =============================================================================
+  # Infrastructure Services
+  # =============================================================================
+
+  postgres:
+    image: postgres:15
+
+=== .github/ ===
+ci-cd.yml
+ci.yml
+codeboarding.yml
+load-test.yml
+publish-npm.yml
+publish-python.yml

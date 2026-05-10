@@ -1,0 +1,12 @@
+    111 @pytest.mark.asyncio
+      2 @pytest.mark.parametrize
+===
+@pytest.fixture
+@pytest.fixture
+@pytest.fixture(autouse=True)
+===
+-rwxrwxrwx 1 john john 0 Apr 29 17:50 tests/__init__.py
+===
+tests/conftest.py
+===
+649

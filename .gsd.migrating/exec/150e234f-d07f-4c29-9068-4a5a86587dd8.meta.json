@@ -1,0 +1,18 @@
+{
+  "id": "150e234f-d07f-4c29-9068-4a5a86587dd8",
+  "runtime": "bash",
+  "purpose": "Find test files with actual test functions",
+  "script_chars": 77,
+  "started_at": "2026-05-10T02:03:31.006Z",
+  "finished_at": "2026-05-10T02:03:37.175Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 6169,
+  "stdout_bytes": 2131,
+  "stderr_bytes": 0,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\150e234f-d07f-4c29-9068-4a5a86587dd8.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\150e234f-d07f-4c29-9068-4a5a86587dd8.stderr"
+}

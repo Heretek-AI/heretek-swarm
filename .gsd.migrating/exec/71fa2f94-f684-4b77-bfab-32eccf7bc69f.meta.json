@@ -1,0 +1,18 @@
+{
+  "id": "71fa2f94-f684-4b77-bfab-32eccf7bc69f",
+  "runtime": "bash",
+  "purpose": "Scout project structure for M004 planning",
+  "script_chars": 363,
+  "started_at": "2026-05-10T13:08:59.306Z",
+  "finished_at": "2026-05-10T13:09:03.272Z",
+  "exit_code": 2,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 3966,
+  "stdout_bytes": 3623,
+  "stderr_bytes": 66,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\71fa2f94-f684-4b77-bfab-32eccf7bc69f.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\71fa2f94-f684-4b77-bfab-32eccf7bc69f.stderr"
+}

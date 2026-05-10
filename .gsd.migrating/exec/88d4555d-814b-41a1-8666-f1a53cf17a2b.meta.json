@@ -1,0 +1,18 @@
+{
+  "id": "88d4555d-814b-41a1-8666-f1a53cf17a2b",
+  "runtime": "bash",
+  "purpose": "Find conftest files",
+  "script_chars": 70,
+  "started_at": "2026-05-10T02:03:31.012Z",
+  "finished_at": "2026-05-10T02:03:36.305Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 5293,
+  "stdout_bytes": 20,
+  "stderr_bytes": 0,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\88d4555d-814b-41a1-8666-f1a53cf17a2b.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\88d4555d-814b-41a1-8666-f1a53cf17a2b.stderr"
+}

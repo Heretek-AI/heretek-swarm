@@ -1,0 +1,18 @@
+{
+  "id": "d1cc0d1d-4f70-40b4-9119-0f5ec34b9aca",
+  "runtime": "bash",
+  "purpose": "Check coverage path vs actual src layout",
+  "script_chars": 907,
+  "started_at": "2026-05-10T13:11:47.566Z",
+  "finished_at": "2026-05-10T13:11:53.823Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 6257,
+  "stdout_bytes": 3104,
+  "stderr_bytes": 0,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\d1cc0d1d-4f70-40b4-9119-0f5ec34b9aca.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\d1cc0d1d-4f70-40b4-9119-0f5ec34b9aca.stderr"
+}

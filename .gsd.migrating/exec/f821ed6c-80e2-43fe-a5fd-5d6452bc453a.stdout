@@ -1,0 +1,15 @@
+=== pyproject.toml test config ===
+No pytest config in pyproject
+
+=== markers defined ===
+No markers section
+
+=== coverage config ===
+
+=== conftest files ===
+./tests/conftest.py
+
+=== docker-compose files ===
+./docker-compose.yml
+./swarm-dashboard/node_modules/axios/lib/helpers/composeSignals.js
+./swarm-dashboard/node_modules/readable-stream/lib/internal/streams/compose.js

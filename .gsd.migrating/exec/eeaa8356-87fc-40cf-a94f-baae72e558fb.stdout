@@ -1,0 +1,71 @@
+ async  
+ async  
+ async  
+ async  
+ async  
+ async  
+ async  
+ async  
+ async  
+ async  
+ async  
+ async  
+ async  
+ async  
+ async  
+ async  
+ async  
+ async  
+ async  
+ async  
+ async  
+ async  
+ async  
+ async  
+ async  
+ async  
+ async  
+ async  
+ async  
+ async  
+ async  
+ async  
+ async  
+ async  
+ async  
+ async  
+ async  
+ async  
+ async  
+ async  
+ async  
+ async  
+ async  
+ async  
+ async  
+===
+tests/test_mixin_integration_s03.py
+tests/test_model_garage_config.py
+tests/test_packaging.py
+tests/test_provider_stats_api.py
+tests/test_providers_config_api.py
+tests/test_readme_accuracy.py
+tests/test_route_task.py
+tests/test_steward_heartbeats.py
+tests/test_stub_injection.py
+===
+from __future__ import annotations
+from pathlib import Path
+import pytest
+from fastapi import FastAPI
+from fastapi.testclient import TestClient
+from heretek_swarm.api.workflows import router
+from heretek_swarm.workflow.engine import WorkflowEngine
+from heretek_swarm.workflow.store import FileWorkflowStore
+from heretek_swarm.workflow.validator import (
+@pytest.fixture(autouse=True)
+@pytest.fixture()
+@pytest.fixture()
+@pytest.fixture()
+@pytest.fixture()
+@pytest.fixture()

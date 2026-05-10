@@ -1,0 +1,18 @@
+{
+  "id": "509a4cb7-00fd-43af-ac7e-7f1c8765f2bb",
+  "runtime": "bash",
+  "purpose": "Find available python",
+  "script_chars": 602,
+  "started_at": "2026-05-10T02:04:56.592Z",
+  "finished_at": "2026-05-10T02:04:58.670Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 2078,
+  "stdout_bytes": 282,
+  "stderr_bytes": 0,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\509a4cb7-00fd-43af-ac7e-7f1c8765f2bb.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\509a4cb7-00fd-43af-ac7e-7f1c8765f2bb.stderr"
+}

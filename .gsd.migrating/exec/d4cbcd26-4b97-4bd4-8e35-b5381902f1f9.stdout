@@ -1,0 +1,26 @@
+=== heretek-swarm/tests/ files ===
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+=== Does heretek-swarm/tests/ have __init__.py? ===
+NO __init__.py
+=== Does tests/ have __init__.py? ===
+-rwxrwxrwx 1 john john 0 Apr 29 17:50 tests/__init__.py
+=== pyproject testpaths ===
+=== Can the package be imported? ===
+/bin/bash: line 17: python: command not found
+=== pytest collection attempt (collect-only) ===
+---exit: 1

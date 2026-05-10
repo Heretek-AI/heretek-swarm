@@ -1,0 +1,18 @@
+{
+  "id": "b9583476-9c70-451c-a196-0b1138e05c0c",
+  "runtime": "bash",
+  "purpose": "Classify test files properly with Windows path",
+  "script_chars": 530,
+  "started_at": "2026-05-10T13:19:10.455Z",
+  "finished_at": "2026-05-10T13:19:10.524Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 69,
+  "stdout_bytes": 258,
+  "stderr_bytes": 6795,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\b9583476-9c70-451c-a196-0b1138e05c0c.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\b9583476-9c70-451c-a196-0b1138e05c0c.stderr"
+}

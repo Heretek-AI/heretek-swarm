@@ -18,7 +18,11 @@
 - [x] **S02: S02** `risk:medium` `depends:[]`
   > After this: Agent(llm_provider=stub_llm) uses stub without monkey-patching
 
+<<<<<<< HEAD
 - [x] **S03: S03** `risk:low` `depends:[]`
+=======
+- [ ] **S03: S03** `risk:low` `depends:[]`
+>>>>>>> 8fdf5dde2a4ed91b8d1bb75d3658c04e6fe7e869
   > After this: from heretek_swarm.actors.mixins import AuditMixin, DeliberationMixin
 
 ## Boundary Map

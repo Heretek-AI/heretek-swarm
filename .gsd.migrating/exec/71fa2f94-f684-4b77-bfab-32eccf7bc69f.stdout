@@ -1,0 +1,64 @@
+=== Tests ===
+total 648
+drwxrwxrwx 1 john john   512 May  7 21:11 .
+drwxrwxrwx 1 john john   512 May 10 09:05 ..
+-rwxrwxrwx 1 john john     0 Apr 29 17:50 __init__.py
+drwxrwxrwx 1 john john   512 May  7 21:11 __pycache__
+drwxrwxrwx 1 john john   512 May  2 09:56 agent_workspace
+-rwxrwxrwx 1 john john  3645 May  2 23:23 conftest.py
+-rwxrwxrwx 1 john john 10215 May  1 20:36 test_actor_routing.py
+-rwxrwxrwx 1 john john  9368 Apr 30 16:19 test_agent_factory.py
+-rwxrwxrwx 1 john john 12338 May  1 21:45 test_agent_tools.py
+-rwxrwxrwx 1 john john  9502 Apr 30 00:13 test_chronos_ticks.py
+-rwxrwxrwx 1 john john  5120 May  2 22:59 test_cli_help.py
+-rwxrwxrwx 1 john john 16557 May  1 00:12 test_cli_output.py
+-rwxrwxrwx 1 john john 28521 May  1 22:59 test_config_cli.py
+-rwxrwxrwx 1 john john 14147 May  3 13:13 test_consensus_api_auth.py
+-rwxrwxrwx 1 john john  7396 May  2 00:53 test_cost_calculation.py
+-rwxrwxrwx 1 john john 11251 May  1 23:41 test_cross_slice_mcp_routing.py
+-rwxrwxrwx 1 john john  8621 Apr 29 23:14 test_daemon.py
+-rwxrwxrwx 1 john john  8270 Apr 29 18:44 test_deliberation_flow.py
+-rwxrwxrwx 1 john john  2608 May  2 22:44 test_docker_config.py
+-rwxrwxrwx 1 john john 10566 May  1 00:42 test_end_to_end_s03.py
+-rwxrwxrwx 1 john john 10828 Apr 29 22:41 test_heartbeat_bus.py
+-rwxrwxrwx 1 john john  8133 Apr 30 22:53 test_historian_jsonl.py
+-rwxrwxrwx 1 john john 11378 Apr 30 23:23 test_historian_pg.py
+-rwxrwxrwx 1 john john 31485 Apr 30 22:54 test_living_loop_integration.py
+-rwxrwxrwx 1 john john 10386 Apr 30 00:41 test_main_loop_s03.py
+-rwxrwxrwx 1 john john 22903 Apr 30 01:59 test_main_loop_s04.py
+-rwxrwxrwx 1 john john  9230 May  1 00:05 test_main_loop_s05.py
+-rwxrwxrwx 1 john john  7962 May  2 17:58 test_mcp_bridge.py
+-rwxrwxrwx 1 john john 27828 May  2 17:56 test_mcp_tool_toggle.py
+-rwxrwxrwx 1 john john  5960 May  7 16:56 test_mixin_guards.py
+-rwxrwxrwx 1 john john  9191 May  7 21:11 test_mixin_integration_s03.py
+-rwxrwxrwx 1 john john 15498 May  2 07:24 test_model_garage_config.py
+-rwxrwxrwx 1 john john  1170 May  2 22:16 test_packaging.py
+-rwxrwxrwx 1 john john  7985 May  2 01:04 test_provider_stats_api.py
+-rwxrwxrwx 1 john john 17324 May  2 07:57 test_providers_config_api.py
+-rwxrwxrwx 1 john john  5155 May  2 23:13 test_readme_accuracy.py
+-rwxrwxrwx 1 john john  7798 Apr 30 22:30 test_route_task.py
+-rwxrwxrwx 1 john john 12798 Apr 29 22:28 test_steward_heartbeats.py
+-rwxrwxrwx 1 john john 10326 May  7 20:34 test_stub_injection.py
+-rwxrwxrwx 1 john john  9106 Apr 29 18:17 test_triad_analysis.py
+-rwxrwxrwx 1 john john  6195 May  2 00:58 test_usage_recording.py
+-rwxrwxrwx 1 john john 21664 May  3 15:23 test_workflow_api.py
+-rwxrwxrwx 1 john john 19274 May  3 13:24 test_workflow_consensus_node.py
+-rwxrwxrwx 1 john john 35618 May  3 15:52 test_workflow_data_flow.py
+-rwxrwxrwx 1 john john 28245 May  3 16:01 test_workflow_e2e_nodes.py
+-rwxrwxrwx 1 john john 31371 May  3 15:46 test_workflow_llm_node.py
+-rwxrwxrwx 1 john john 21637 May  3 15:56 test_workflow_validation.py
+-rwxrwxrwx 1 john john  5467 May  1 13:00 test_ws_status_pump.py
+-rwxrwxrwx 1 john john  5857 May  2 23:23 test_ws_status_pump_integration.py
+
+=== CI ===
+total 32
+drwxrwxrwx 1 john john  512 Apr 29 10:03 .
+drwxrwxrwx 1 john john  512 Apr 29 10:03 ..
+-rwxrwxrwx 1 john john 5553 Apr 29 10:03 ci-cd.yml
+-rwxrwxrwx 1 john john 4036 Apr 29 10:03 ci.yml
+-rwxrwxrwx 1 john john  973 Apr 29 10:03 codeboarding.yml
+-rwxrwxrwx 1 john john 5874 Apr 29 10:03 load-test.yml
+-rwxrwxrwx 1 john john 1858 Apr 29 10:03 publish-npm.yml
+-rwxrwxrwx 1 john john 2793 Apr 29 10:03 publish-python.yml
+
+=== Source ===

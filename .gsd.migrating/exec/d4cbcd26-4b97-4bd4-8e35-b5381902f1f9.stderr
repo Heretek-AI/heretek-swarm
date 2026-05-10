@@ -1,0 +1,4 @@
+basename: missing operand
+Try 'basename --help' for more information.
+/bin/bash: line 14: rg: command not found
+/bin/bash: line 20: cd: heretek-swarm: No such file or directory

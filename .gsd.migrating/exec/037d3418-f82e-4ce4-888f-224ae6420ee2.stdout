@@ -1,0 +1,12 @@
+=== Test files in tests/ ===
+43
+=== Test files in heretek-swarm/tests/ ===
+16
+=== Coverage source config in pyproject ===
+=== Ruff baseline ===
+/bin/bash: line 13: pip: command not found
+/bin/bash: line 14: ruff: command not found
+=== Tests that use markers ===
+0
+files use markers out of 43 total
+=== CI already does ===

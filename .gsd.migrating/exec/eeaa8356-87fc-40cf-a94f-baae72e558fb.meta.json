@@ -1,0 +1,18 @@
+{
+  "id": "eeaa8356-87fc-40cf-a94f-baae72e558fb",
+  "runtime": "bash",
+  "purpose": "Get more details about workflow test files to understand test patterns",
+  "script_chars": 678,
+  "started_at": "2026-05-10T02:06:20.538Z",
+  "finished_at": "2026-05-10T02:06:22.540Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 2002,
+  "stdout_bytes": 1166,
+  "stderr_bytes": 0,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\eeaa8356-87fc-40cf-a94f-baae72e558fb.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\eeaa8356-87fc-40cf-a94f-baae72e558fb.stderr"
+}

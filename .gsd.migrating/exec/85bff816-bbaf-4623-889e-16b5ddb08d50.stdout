@@ -1,0 +1,91 @@
+=== Tests importing/using DB or external clients ===
+tests/test_docker_config.py:58:    """All 6 services should be defined: postgres, redis, qdrant, nats, api, dashboard."""
+tests/test_docker_config.py:65:    expected_services = {"postgres", "redis", "qdrant", "nats", "api", "dashboard"}
+tests/test_historian_pg.py:31:    """Return an ``AsyncMock`` that looks like an asyncpg connection pool.
+tests/test_historian_pg.py:6:   via a mocked asyncpg pool.
+tests/test_historian_pg.py:77:    statements via a real-seeming asyncpg pool interface."""
+tests/test_ws_status_pump_integration.py:56:        "DATABASE_URL": "sqlite+aiosqlite:///./test_ws_integration.db",
+
+=== Test files that use AutonomousSwarm (may be unit or integration) ===
+tests/test_agent_factory.py:162:        inspect.getsource(AutonomousSwarm._spawn_all_actors)  # noqa: SLF001
+tests/test_agent_factory.py:19:from heretek_swarm.runtime.main_loop import AutonomousSwarm
+tests/test_agent_tools.py:330:        assert hasattr(main_loop, "AutonomousSwarm")
+tests/test_deliberation_flow.py:101:        swarm = AutonomousSwarm(no_infra=True)
+tests/test_deliberation_flow.py:139:        swarm = AutonomousSwarm(no_infra=True)
+tests/test_deliberation_flow.py:162:        swarm = AutonomousSwarm(no_infra=True)
+tests/test_deliberation_flow.py:1:"""Integration tests for ``AutonomousSwarm.run_deliberation()``.
+tests/test_deliberation_flow.py:30:from heretek_swarm.runtime.main_loop import AutonomousSwarm
+tests/test_deliberation_flow.py:33:async def _teardown_swarm(swarm: AutonomousSwarm) -> None:
+tests/test_deliberation_flow.py:47:    """Integration tests for ``AutonomousSwarm.run_deliberation()``."""
+tests/test_deliberation_flow.py:58:        swarm = AutonomousSwarm(no_infra=True)
+tests/test_end_to_end_s03.py:214:        """Construct ``AutonomousSwarm(no_infra=True)``, populate the
+tests/test_end_to_end_s03.py:233:        swarm = AutonomousSwarm(no_infra=True)
+tests/test_end_to_end_s03.py:29:from heretek_swarm.runtime.main_loop import AutonomousSwarm
+tests/test_end_to_end_s03.py:3:Verifies that ``AutonomousSwarm.run_routed_task()`` correctly dispatches
+tests/test_end_to_end_s03.py:61:) -> AutonomousSwarm:
+tests/test_end_to_end_s03.py:62:    """Create an ``AutonomousSwarm`` (``no_infra=True``) and replace its
+tests/test_end_to_end_s03.py:67:    swarm = AutonomousSwarm(no_infra=True)
+tests/test_end_to_end_s03.py:73:def _cleanup_supervisors(swarm: AutonomousSwarm | None = None) -> None:
+tests/test_living_loop_integration.py:110:def _cleanup_supervisors(swarm: AutonomousSwarm | None = None) -> None:
+tests/test_living_loop_integration.py:123:async def _run_pulse_tick(swarm: AutonomousSwarm) -> None:
+tests/test_living_loop_integration.py:155:        swarm = AutonomousSwarm(no_infra=True)
+tests/test_living_loop_integration.py:228:        swarm = AutonomousSwarm(no_infra=True)
+tests/test_living_loop_integration.py:269:        swarm = AutonomousSwarm(no_infra=True)
+tests/test_living_loop_integration.py:303:        swarm = AutonomousSwarm(no_infra=True)
+tests/test_living_loop_integration.py:338:        swarm = AutonomousSwarm(no_infra=True)
+tests/test_living_loop_integration.py:368:        swarm = AutonomousSwarm(no_infra=True)
+tests/test_living_loop_integration.py:37:from heretek_swarm.runtime.main_loop import AutonomousSwarm
+tests/test_living_loop_integration.py:404:        swarm = AutonomousSwarm(no_infra=True)
+tests/test_living_loop_integration.py:479:        swarm = AutonomousSwarm(no_infra=True)
+tests/test_living_loop_integration.py:507:        swarm = AutonomousSwarm(no_infra=True)
+tests/test_living_loop_integration.py:553:                swarm = AutonomousSwarm(no_infra=True)
+tests/test_living_loop_integration.py:601:                swarm = AutonomousSwarm(no_infra=True)
+tests/test_main_loop_s03.py:1:"""Contract tests for ``AutonomousSwarm._process_scheduled_tasks()``.
+tests/test_main_loop_s03.py:24:from heretek_swarm.runtime.main_loop import AutonomousSwarm
+tests/test_main_loop_s03.py:251:        swarm = AutonomousSwarm(no_infra=True)
+tests/test_main_loop_s03.py:81:) -> AutonomousSwarm:
+tests/test_main_loop_s03.py:82:    """Create an ``AutonomousSwarm`` (``no_infra=True``) and replace its
+tests/test_main_loop_s03.py:87:    swarm = AutonomousSwarm(no_infra=True)
+tests/test_main_loop_s04.py:10:7. AutonomousSwarm._trigger_periodic_analysis() None-guard graceful skip
+tests/test_main_loop_s04.py:507:# AutonomousSwarm — _trigger_periodic_analysis()
+tests/test_main_loop_s04.py:574:# AutonomousSwarm — _steward_pulse_loop()
+tests/test_main_loop_s04.py:83:# Swarm helper — builds a mock AutonomousSwarm for testing
+tests/test_main_loop_s04.py:88:    """Minimal AutonomousSwarm stand-in for testing
+tests/test_main_loop_s04.py:9:6. AutonomousSwarm._trigger_periodic_analysis() dispatches to metis/empath
+tests/test_main_loop_s05.py:1:"""Contract tests for ``AutonomousSwarm.run_routed_task()``.
+tests/test_main_loop_s05.py:27:from heretek_swarm.runtime.main_loop import AutonomousSwarm
+tests/test_main_loop_s05.py:59:) -> AutonomousSwarm:
+tests/test_main_loop_s05.py:60:    """Create an ``AutonomousSwarm`` (``no_infra=True``) and replace its
+tests/test_main_loop_s05.py:65:    swarm = AutonomousSwarm(no_infra=True)
+tests/test_main_loop_s05.py:95:        swarm = AutonomousSwarm(no_infra=True)
+
+=== Test files that start servers/listen on ports ===
+tests/test_actor_routing.py:6:1. No providers → fallback to ``swarms_agent.run()``
+tests/test_actor_routing.py:85:        ``swarms_agent.run()``."""
+tests/test_actor_routing.py:233:        back to ``swarms_agent.run()``."""
+tests/test_actor_routing.py:265:        catches and falls back to ``swarms_agent.run()``."""
+tests/test_agent_tools.py:6:2. build_tool_handlers() produces synchronous wrappers that work via asyncio.run()
+tests/test_cross_slice_mcp_routing.py:134:        hitting a real LLM during swarms_agent.run() fallback.
+tests/test_cross_slice_mcp_routing.py:268:        """When run_with_llm falls back to swarms_agent.run() (no providers),
+tests/test_deliberation_flow.py:8:- Mock ``swarms.Agent.run()`` via ``MagicMock`` for fast LLM bypass
+tests/test_living_loop_integration.py:646:    ``asyncio.start_server`` on ``127.0.0.1:0`` (ephemeral port).  The
+tests/test_living_loop_integration.py:693:        server = await asyncio.start_server(_handler, host="127.0.0.1", port=0)
+tests/test_living_loop_integration.py:740:        server = await asyncio.start_server(_handler, host="127.0.0.1", port=0)
+tests/test_ws_status_pump_integration.py:64:            sys.executable, "-m", "uvicorn",
+
+=== Tests that use testcontainers ===
+tests/test_docker_config.py:8:def test_docker_compose_config_validates():
+tests/test_docker_config.py:9:    """docker compose config should parse without errors."""
+tests/test_docker_config.py:11:        ["docker", "compose", "config"],
+tests/test_docker_config.py:14:    assert result.returncode == 0, f"docker compose config failed: {result.stderr}"
+tests/test_docker_config.py:20:        ["docker", "compose", "config", "--format", "json"],
+tests/test_docker_config.py:32:        ["docker", "compose", "config", "--format", "json"],
+tests/test_docker_config.py:44:        ["docker", "compose", "config", "--format", "json"],
+tests/test_docker_config.py:60:        ["docker", "compose", "config", "--format", "json"],
+tests/test_readme_accuracy.py:126:    """Instruction blocks should use 'docker compose' (V2), not the
+tests/test_readme_accuracy.py:127:    deprecated hyphenated 'docker-compose' (V1) as a command."""
+
+=== Actual source layout ===
+./heretek-swarm/heretek_swarm
+---
+package not importable

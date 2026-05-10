@@ -1,0 +1,181 @@
+=== CI uses || true? ===
+1:name: CI/CD Pipeline
+2:
+3:on:
+4:  push:
+5:    branches: [ main, develop ]
+6:  pull_request:
+7:    branches: [ main, develop ]
+8:
+9:env:
+10:  PYTHON_VERSION: '3.11'
+11:  NODE_VERSION: '22'
+12:
+13:jobs:
+14:  security-scan:
+15:    name: Security Scan
+16:    runs-on: ubuntu-latest
+17:    steps:
+18:      - uses: actions/checkout@v4
+19:
+20:      - name: Run Bandit Security Scan
+21:        run: |
+22:          pip install bandit[toml]
+23:          bandit -r src/ -f json -o bandit-report.json || true
+24:
+25:  lint-python:
+26:    name: Python Linting
+27:    runs-on: ubuntu-latest
+28:    steps:
+29:      - uses: actions/checkout@v4
+30:
+31:      - name: Set up Python
+32:        uses: actions/setup-python@v5
+33:        with:
+34:          python-version: ${{ env.PYTHON_VERSION }}
+35:          cache: 'pip'
+36:
+37:      - name: Install dependencies
+38:        run: |
+39:          pip install -e ".[dev]"
+40:
+41:      - name: Run Ruff
+42:        run: ruff check src/ tests/
+43:
+44:      - name: Run MyPy
+45:        run: mypy src/ --ignore-missing-imports || true
+46:
+47:  lint-frontend:
+48:    name: Frontend Linting
+49:    runs-on: ubuntu-latest
+50:    steps:
+51:      - uses: actions/checkout@v4
+52:
+53:      - name: Set up Node.js
+54:        uses: actions/setup-node@v4
+55:        with:
+56:          node-version: ${{ env.NODE_VERSION }}
+57:          cache: 'npm'
+58:          cache-dependency-path: swarm-dashboard/package-lock.json
+59:
+60:      - name: Install dependencies
+61:        working-directory: swarm-dashboard
+62:        run: npm ci
+63:
+64:      - name: Run ESLint
+65:        working-directory: swarm-dashboard
+66:        run: npm run lint || true
+67:
+68:      - name: Run TypeScript check
+69:        working-directory: swarm-dashboard
+70:        run: npm run type-check || true
+71:
+72:  test-python:
+73:    name: Python Tests
+74:    runs-on: ubuntu-latest
+75:    services:
+76:      postgres:
+77:        image: postgres:16
+78:        env:
+79:          POSTGRES_USER: test
+80:          POSTGRES_PASSWORD: test
+81:          POSTGRES_DB: test_swarm
+82:        ports:
+83:          - 5432:5432
+84:        options: >-
+85:          --health-cmd pg_isready
+86:          --health-interval 10s
+87:          --health-timeout 5s
+88:          --health-retries 5
+89:
+90:      redis:
+91:        image: redis:7
+92:        ports:
+93:          - 6379:6379
+94:        options: >-
+95:          --health-cmd "redis-cli ping"
+96:          --health-interval 10s
+97:          --health-timeout 5s
+98:          --health-retries 5
+99:
+100:      qdrant:
+101:        image: qdrant/qdrant:latest
+102:        ports:
+103:          - 6333:6333
+104:        options: >-
+105:          --health-cmd "curl -f http://localhost:6333/health || exit 1"
+106:          --health-interval 10s
+107:          --health-timeout 5s
+108:          --health-retries 5
+109:
+110:    steps:
+111:      - uses: actions/checkout@v4
+112:
+113:      - name: Set up Python
+114:        uses: actions/setup-python@v5
+115:        with:
+116:          python-version: ${{ env.PYTHON_VERSION }}
+117:          cache: 'pip'
+118:
+119:      - name: Install dependencies
+120:        run: |
+121:          pip install -e ".[dev]"
+122:
+123:      - name: Run tests with coverage
+124:        env:
+125:          DATABASE_URL: postgresql://test:test@localhost:5432/test_swarm
+126:          REDIS_URL: redis://localhost:6379
+127:          QDRANT_URL: http://localhost:6333
+128:        run: |
+129:          pytest tests/ -v --cov=src --cov-report=xml --cov-report=html --cov-report=term || true
+130:
+131:      - name: Upload coverage to Codecov
+132:        uses: codecov/codecov-action@v4
+133:        if: always()
+134:        with:
+135:          file: ./coverage.xml
+136:          flags: python
+137:          name: codecov-umbrella
+138:
+139:  test-frontend:
+140:    name: Frontend Tests
+141:    runs-on: ubuntu-latest
+142:    steps:
+143:      - uses: actions/checkout@v4
+144:
+145:      - name: Set up Node.js
+146:        uses: actions/setup-node@v4
+147:        with:
+148:          node-version: ${{ env.NODE_VERSION }}
+149:          cache: 'npm'
+150:          cache-dependency-path: swarm-dashboard/package-lock.json
+151:
+152:      - name: Install dependencies
+153:        working-directory: swarm-dashboard
+154:        run: npm ci
+155:
+156:      - name: Run tests
+157:        working-directory: swarm-dashboard
+158:        run: npm test -- --coverage --watchAll=false || true
+
+=== Coverage source mismatch ===
+Actual source: heretek-swarm/heretek_swarm/
+Coverage config: source = ["src"]
+coverage.run.source in pyproject:
+source = ["src"]
+omit = [
+    "*/tests/*",
+
+=== Package source dir ===
+setuptools where:
+[tool.setuptools.packages.find]
+where = ["heretek-swarm"]
+include = ["heretek_swarm*"]
+
+
+=== Canonical agent classes for lifecycle test ===
+heretek-swarm/heretek_swarm/actors/alpha.py:25:class AlphaAgent(HealthReportingMixin, ValidationMixin, LearningMixin, AgentActor):
+heretek-swarm/heretek_swarm/actors/arbiter/core.py:138:class ArbiterAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, AgentActor):
+heretek-swarm/heretek_swarm/actors/beta.py:25:class BetaAgent(HealthReportingMixin, ValidationMixin, LearningMixin, AgentActor):
+heretek-swarm/heretek_swarm/actors/charlie.py:25:class CharlieAgent(HealthReportingMixin, ValidationMixin, LearningMixin, AgentActor):
+heretek-swarm/heretek_swarm/actors/triad/agent.py:37:class TriadAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, AgentActor):

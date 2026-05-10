@@ -1,0 +1,26 @@
+=== Test files with markers ===
+    111 @pytest.mark.asyncio
+      2 @pytest.mark.parametrize
+
+=== Tests with 'integration' marker ===
+(none)
+
+=== Tests requiring external services ===
+tests/test_docker_config.py:58:    """All 6 services should be defined: postgres, redis, qdrant, nats, api, dashboard."""
+tests/test_docker_config.py:65:    expected_services = {"postgres", "redis", "qdrant", "nats", "api", "dashboard"}
+tests/test_ws_status_pump_integration.py:56:        "DATABASE_URL": "sqlite+aiosqlite:///./test_ws_integration.db",
+
+=== no_infra or skip_if_no_infra pattern ===
+tests/test_deliberation_flow.py:3:Tests the deliberation flow end-to-end using ``no_infra=True`` mode with
+tests/test_deliberation_flow.py:58:        swarm = AutonomousSwarm(no_infra=True)
+tests/test_deliberation_flow.py:101:        swarm = AutonomousSwarm(no_infra=True)
+tests/test_deliberation_flow.py:139:        swarm = AutonomousSwarm(no_infra=True)
+tests/test_deliberation_flow.py:162:        swarm = AutonomousSwarm(no_infra=True)
+tests/test_end_to_end_s03.py:62:    """Create an ``AutonomousSwarm`` (``no_infra=True``) and replace its
+tests/test_end_to_end_s03.py:67:    swarm = AutonomousSwarm(no_infra=True)
+tests/test_end_to_end_s03.py:214:        """Construct ``AutonomousSwarm(no_infra=True)``, populate the
+tests/test_end_to_end_s03.py:233:        swarm = AutonomousSwarm(no_infra=True)
+tests/test_living_loop_integration.py:155:        swarm = AutonomousSwarm(no_infra=True)
+
+=== Slow tests ===
+(none)

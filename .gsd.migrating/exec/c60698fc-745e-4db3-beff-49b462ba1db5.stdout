@@ -1,0 +1,60 @@
+=== Makefile/justfile ===
+No Makefile
+No justfile
+No taskfile
+
+=== Docker compose ===
+./docker-compose.yml
+
+=== CI job dependency chain ===
+    needs: [lint-python]
+    services:
+      postgres:
+    needs: [lint-typescript]
+    steps:
+      - name: Checkout code
+    needs: [lint-python]
+    steps:
+      - name: Checkout code
+
+=== Pytest markers in pyproject ===
+    "--strict-markers",
+    "--strict-config",
+]
+asyncio_mode = "auto"
+markers = [
+    "unit: Unit tests (fast, isolated)",
+    "integration: Integration tests (require external services)",
+    "load: Load/performance tests",
+    "slow: Tests that take >5s",
+    "a2a: Agent-to-Agent messaging tests",
+    "consensus: Consensus mechanism tests",
+    "latency: Latency benchmark tests (<100ms baseline)",
+    "security: Security-focused tests",
+]
+
+# ============== COVERAGE CONFIGURATION ==============
+[tool.coverage.run]
+branch = true
+source = ["src"]
+omit = [
+    "*/tests/*",
+    "*/__pycache__/*",
+    "*/.venv/*",
+    "*/site-packages/*",
+]
+
+=== test_ files that use conftest fixtures ===
+tests/conftest.py:4:* ``mock_agent`` — a ``unittest.mock.MagicMock`` pre-configured with the
+tests/conftest.py:6:* ``mock_agent_dict`` — builds a dict populated with ``analysis_history``,
+tests/conftest.py:57:def mock_agent() -> MagicMock:
+tests/conftest.py:71:def mock_agent_dict() -> dict:
+tests/test_agent_factory.py:27:def _mock_agent_class() -> MagicMock:
+tests/test_agent_factory.py:60:        mock_cls = _mock_agent_class()
+tests/test_agent_factory.py:77:        mock_cls = _mock_agent_class()
+tests/test_agent_factory.py:91:        mock_cls = _mock_agent_class()
+tests/test_agent_factory.py:105:        mock_cls = _mock_agent_class()
+tests/test_agent_factory.py:119:        mock_cls = _mock_agent_class()
+
+=== Environment-based test skipping ===
+tests/test_ws_status_pump_integration.py:30:pytestmark = pytest.mark.skipif(

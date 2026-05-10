@@ -1,0 +1,18 @@
+{
+  "id": "e12d3244-0d4a-4d44-b560-247681846310",
+  "runtime": "bash",
+  "purpose": "Scout current test infrastructure and CI surface",
+  "script_chars": 535,
+  "started_at": "2026-05-10T02:10:27.566Z",
+  "finished_at": "2026-05-10T02:10:31.516Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 3950,
+  "stdout_bytes": 8106,
+  "stderr_bytes": 0,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\e12d3244-0d4a-4d44-b560-247681846310.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\e12d3244-0d4a-4d44-b560-247681846310.stderr"
+}

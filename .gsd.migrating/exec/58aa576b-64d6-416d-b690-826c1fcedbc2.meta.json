@@ -1,0 +1,18 @@
+{
+  "id": "58aa576b-64d6-416d-b690-826c1fcedbc2",
+  "runtime": "bash",
+  "purpose": "Check what .venv has installed currently",
+  "script_chars": 411,
+  "started_at": "2026-05-10T02:06:38.785Z",
+  "finished_at": "2026-05-10T02:06:41.504Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 2719,
+  "stdout_bytes": 85,
+  "stderr_bytes": 0,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\58aa576b-64d6-416d-b690-826c1fcedbc2.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\58aa576b-64d6-416d-b690-826c1fcedbc2.stderr"
+}

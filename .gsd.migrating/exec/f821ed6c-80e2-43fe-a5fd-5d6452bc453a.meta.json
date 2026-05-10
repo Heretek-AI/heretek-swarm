@@ -1,0 +1,18 @@
+{
+  "id": "f821ed6c-80e2-43fe-a5fd-5d6452bc453a",
+  "runtime": "bash",
+  "purpose": "Inventory test config, markers, conftest, docker setup",
+  "script_chars": 668,
+  "started_at": "2026-05-10T14:50:51.935Z",
+  "finished_at": "2026-05-10T14:51:10.702Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 18767,
+  "stdout_bytes": 375,
+  "stderr_bytes": 41,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\f821ed6c-80e2-43fe-a5fd-5d6452bc453a.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\f821ed6c-80e2-43fe-a5fd-5d6452bc453a.stderr"
+}

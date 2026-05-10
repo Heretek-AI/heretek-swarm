@@ -1,0 +1,18 @@
+{
+  "id": "037d3418-f82e-4ce4-888f-224ae6420ee2",
+  "runtime": "bash",
+  "purpose": null,
+  "script_chars": 711,
+  "started_at": "2026-05-10T15:25:37.860Z",
+  "finished_at": "2026-05-10T15:25:41.970Z",
+  "exit_code": 127,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 4110,
+  "stdout_bytes": 322,
+  "stderr_bytes": 126,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\037d3418-f82e-4ce4-888f-224ae6420ee2.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\037d3418-f82e-4ce4-888f-224ae6420ee2.stderr"
+}
