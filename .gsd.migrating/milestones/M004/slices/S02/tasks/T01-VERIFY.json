@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "taskId": "T01",
+  "unitId": "M004/S02/T01",
+  "timestamp": 1778444029793,
+  "passed": false,
+  "discoverySource": "task-plan",
+  "checks": [
+    {
+      "command": "cd /c/Users/Derek/Desktop/heretek-swarm",
+      "exitCode": 1,
+      "durationMs": 14,
+      "verdict": "fail"
+    }
+  ],
+  "retryAttempt": 1,
+  "maxRetries": 2
+}

@@ -1,0 +1,18 @@
+{
+  "id": "1eb87669-2890-4fc6-b712-d1fe6a0fa8ab",
+  "runtime": "bash",
+  "purpose": "Verify strict-markers mode still passes",
+  "script_chars": 130,
+  "started_at": "2026-05-10T18:50:11.079Z",
+  "finished_at": "2026-05-10T18:50:23.850Z",
+  "exit_code": 1,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 12771,
+  "stdout_bytes": 0,
+  "stderr_bytes": 0,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\1eb87669-2890-4fc6-b712-d1fe6a0fa8ab.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\1eb87669-2890-4fc6-b712-d1fe6a0fa8ab.stderr"
+}

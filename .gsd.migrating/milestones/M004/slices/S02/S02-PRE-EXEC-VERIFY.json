@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "milestoneId": "M004",
+  "sliceId": "S02",
+  "timestamp": 1778440730384,
+  "status": "fail",
+  "durationMs": 1,
+  "checks": [
+    {
+      "category": "file",
+      "target": "heretek_swarm/actors/__init__.py",
+      "passed": false,
+      "message": "Task T01 references 'heretek_swarm/actors/__init__.py' which doesn't exist and isn't created by prior or same-task outputs",
+      "blocking": true
+    },
+    {
+      "category": "file",
+      "target": "heretek_swarm/actors/base/core.py",
+      "passed": false,
+      "message": "Task T01 references 'heretek_swarm/actors/base/core.py' which doesn't exist and isn't created by prior or same-task outputs",
+      "blocking": true
+    },
+    {
+      "category": "file",
+      "target": "heretek_swarm/actors/base/message_handling.py",
+      "passed": false,
+      "message": "Task T01 references 'heretek_swarm/actors/base/message_handling.py' which doesn't exist and isn't created by prior or same-task outputs",
+      "blocking": true
+    },
+    {
+      "category": "file",
+      "target": "heretek_swarm/actors/stubs.py",
+      "passed": false,
+      "message": "Task T01 references 'heretek_swarm/actors/stubs.py' which doesn't exist and isn't created by prior or same-task outputs",
+      "blocking": true
+    }
+  ]
+}

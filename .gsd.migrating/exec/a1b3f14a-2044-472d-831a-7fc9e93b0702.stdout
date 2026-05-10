@@ -1,0 +1,31 @@
+total 12
+drwxrwxrwx 1 john john  512 May 10 14:54 .
+drwxrwxrwx 1 john john  512 May  9 22:02 ..
+-rwxrwxrwx 1 john john 2410 May 10 12:40 S01-PLAN.md
+-rwxrwxrwx 1 john john  155 May  9 22:08 S01-PRE-EXEC-VERIFY.json
+-rwxrwxrwx 1 john john 3039 May 10 14:54 S01-SUMMARY.md
+-rwxrwxrwx 1 john john 1892 May 10 14:54 S01-UAT.md
+drwxrwxrwx 1 john john  512 May 10 14:54 tasks
+---
+---
+id: S01
+parent: M004
+milestone: M004
+provides:
+---
+# S01: Baseline existing tests and configure pytest — UAT
+
+**Milestone:** M004
+**Written:** 2026-05-10T18:54:19.343Z
+
+---
+# M004: Add integration test scaffold and CI surface
+
+**Vision:** 413 files with minimal test surface — establish a coverage baseline and a CI gate that prevents regressions. After this milestone, every PR runs pytest + ruff automatically, there is a canonical smoke test for agent lifecycle, and the test directory has a clear structure with fixtures reusable across agents.
+
+## Success Criteria
+
+- pytest collects all tests without collection errors
+- At least one actor lifecycle test exists per canonical agent
+- GitHub Actions CI runs pytest and ruff on push/PR
+- CI completes in under 2min on a standard runner

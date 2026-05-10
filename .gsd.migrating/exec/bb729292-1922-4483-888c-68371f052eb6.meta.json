@@ -1,0 +1,18 @@
+{
+  "id": "bb729292-1922-4483-888c-68371f052eb6",
+  "runtime": "bash",
+  "purpose": "Verify pytest collects all tests via .venv python",
+  "script_chars": 57,
+  "started_at": "2026-05-10T18:47:09.920Z",
+  "finished_at": "2026-05-10T18:47:20.351Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 10431,
+  "stdout_bytes": 156,
+  "stderr_bytes": 0,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\bb729292-1922-4483-888c-68371f052eb6.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\bb729292-1922-4483-888c-68371f052eb6.stderr"
+}

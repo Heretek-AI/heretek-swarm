@@ -1,0 +1,18 @@
+{
+  "id": "b1a95f1e-c3c2-47a3-9b26-461d31563247",
+  "runtime": "bash",
+  "purpose": "Verify pytest collects all tests (slice demo/verification)",
+  "script_chars": 82,
+  "started_at": "2026-05-10T18:46:10.794Z",
+  "finished_at": "2026-05-10T18:46:15.434Z",
+  "exit_code": 1,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 4640,
+  "stdout_bytes": 0,
+  "stderr_bytes": 87,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\b1a95f1e-c3c2-47a3-9b26-461d31563247.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\b1a95f1e-c3c2-47a3-9b26-461d31563247.stderr"
+}

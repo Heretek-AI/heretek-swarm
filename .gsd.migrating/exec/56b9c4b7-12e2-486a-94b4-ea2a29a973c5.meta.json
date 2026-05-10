@@ -1,0 +1,18 @@
+{
+  "id": "56b9c4b7-12e2-486a-94b4-ea2a29a973c5",
+  "runtime": "bash",
+  "purpose": "Find all AgentActor subclasses",
+  "script_chars": 597,
+  "started_at": "2026-05-10T19:04:54.582Z",
+  "finished_at": "2026-05-10T19:04:58.278Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 3696,
+  "stdout_bytes": 188,
+  "stderr_bytes": 87,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\56b9c4b7-12e2-486a-94b4-ea2a29a973c5.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\56b9c4b7-12e2-486a-94b4-ea2a29a973c5.stderr"
+}

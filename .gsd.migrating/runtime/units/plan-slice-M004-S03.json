@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "unitType": "plan-slice",
+  "unitId": "M004/S03",
+  "startedAt": 1778444742207,
+  "updatedAt": 1778445507955,
+  "phase": "finalized",
+  "wrapupWarningSent": false,
+  "continueHereFired": false,
+  "timeoutAt": null,
+  "lastProgressAt": 1778445507955,
+  "progressCount": 1,
+  "lastProgressKind": "finalize-success",
+  "recoveryAttempts": 1,
+  "lastRecoveryReason": "idle"
+}

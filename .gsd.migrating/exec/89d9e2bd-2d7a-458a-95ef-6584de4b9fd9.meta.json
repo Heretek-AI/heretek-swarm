@@ -1,0 +1,18 @@
+{
+  "id": "89d9e2bd-2d7a-458a-95ef-6584de4b9fd9",
+  "runtime": "bash",
+  "purpose": "Get total collected count from pytest",
+  "script_chars": 104,
+  "started_at": "2026-05-10T18:48:15.857Z",
+  "finished_at": "2026-05-10T18:48:24.298Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 8441,
+  "stdout_bytes": 47,
+  "stderr_bytes": 0,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\89d9e2bd-2d7a-458a-95ef-6584de4b9fd9.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\89d9e2bd-2d7a-458a-95ef-6584de4b9fd9.stderr"
+}

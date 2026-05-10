@@ -1,0 +1,18 @@
+{
+  "id": "ce5a4a37-d328-418b-bc75-b9b02edcbd79",
+  "runtime": "bash",
+  "purpose": "Check current test and actor directory structure",
+  "script_chars": 138,
+  "started_at": "2026-05-10T19:24:07.867Z",
+  "finished_at": "2026-05-10T19:24:11.876Z",
+  "exit_code": 1,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 4009,
+  "stdout_bytes": 0,
+  "stderr_bytes": 87,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\ce5a4a37-d328-418b-bc75-b9b02edcbd79.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\ce5a4a37-d328-418b-bc75-b9b02edcbd79.stderr"
+}
