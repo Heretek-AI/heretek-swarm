@@ -21,10 +21,10 @@ from datetime import UTC, datetime
 from enum import Enum
 from typing import Any
 
-import structlog
 from pydantic import ValidationError
 from swarms import Agent
 
+from heretek_swarm.logging.config import get_logger
 import heretek_swarm.actors.stubs as _actor_stubs
 from heretek_swarm.actors.stubs import get_db_pool  # noqa: F401 - imported for test patching
 from heretek_swarm.actors.validation import (
@@ -52,25 +52,7 @@ def _make_skill_metadata(capability: str) -> SkillMetadata:
     )
 
 
-structlog.configure(
-    processors=[
-        structlog.stdlib.filter_by_level,
-        structlog.stdlib.add_logger_name,
-        structlog.stdlib.add_log_level,
-        structlog.stdlib.PositionalArgumentsFormatter(),
-        structlog.processors.TimeStamper(fmt="iso"),
-        structlog.processors.StackInfoRenderer(),
-        structlog.processors.format_exc_info,
-        structlog.processors.UnicodeDecoder(),
-        structlog.processors.JSONRenderer(),
-    ],
-    context_class=dict,
-    logger_factory=structlog.stdlib.LoggerFactory(),
-    wrapper_class=structlog.stdlib.BoundLogger,
-    cache_logger_on_first_use=True,
-)
-
-logger = structlog.get_logger("AgentActor")
+logger = get_logger("AgentActor")
 
 
 class ActorState(Enum):
