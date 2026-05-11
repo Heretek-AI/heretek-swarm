@@ -3,6 +3,12 @@ OpenTelemetry Logging for Heretek Swarm.
 
 Provides structured logging with OpenTelemetry context propagation.
 Integrates structlog with trace context for unified observability.
+
+Note: structlog configuration is delegated to
+``heretek_swarm.logging.config.setup_logging()`` (the canonical config path).
+This module's ``init_logging()`` maps its ``LoggingConfig`` fields to
+``setup_logging()`` parameters and calls it, ensuring only one code path ever
+calls ``structlog.configure()``.
 """
 
 from dataclasses import dataclass
@@ -10,6 +16,8 @@ from enum import Enum
 from typing import Any
 
 import structlog
+
+from heretek_swarm.logging.config import setup_logging as _setup_logging
 
 logger = structlog.get_logger(__name__)
 
@@ -42,6 +50,11 @@ def init_logging(config: LoggingConfig | None = None) -> LoggingConfig:
     """
     Initialize structured logging with OpenTelemetry context.
 
+    Delegates structlog configuration to
+    ``heretek_swarm.logging.config.setup_logging()``, the canonical single
+    source of truth for log configuration.  The ``LoggingConfig`` dataclass
+    fields are mapped to ``setup_logging()`` parameters.
+
     Args:
         config: Logging configuration
 
@@ -51,34 +64,14 @@ def init_logging(config: LoggingConfig | None = None) -> LoggingConfig:
     global _log_config
     _log_config = config or LoggingConfig()
 
-    # Configure structlog processors
-    processors = [
-        structlog.contextvars.merge_contextvars,
-        structlog.stdlib.add_log_level,
-        structlog.stdlib.add_logger_name,
-        structlog.stdlib.PositionalArgumentsFilter(),
-        structlog.processors.TimeStamper(
-            fmt=_log_config.timestamp_format,
-            utc=True,
-        ),
-        structlog.processors.StackInfoRenderer(),
-        structlog.processors.format_exc_info,
-    ]
+    # Map LoggingConfig → setup_logging() parameters
+    json_output = _log_config.format == "json"
+    include_caller_info = _log_config.include_trace_context
 
-    if _log_config.include_trace_context:
-        processors.append(_add_trace_context)
-
-    if _log_config.format == "json":
-        processors.append(structlog.processors.JSONRenderer())
-    else:
-        processors.append(structlog.dev.ConsoleRenderer())
-
-    structlog.configure(
-        processors=processors,
-        wrapper_class=structlog.stdlib.BoundLogger,
-        context_class=dict,
-        logger_factory=structlog.PrintLoggerFactory(),
-        cache_logger_on_first_use=True,
+    _setup_logging(
+        log_level=_log_config.log_level,
+        json_output=json_output,
+        include_caller_info=include_caller_info,
     )
 
     logger.info(
