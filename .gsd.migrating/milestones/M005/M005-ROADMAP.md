@@ -12,10 +12,10 @@
 
 ## Slices
 
-- [ ] **S01: Write ARCHITECTURE.md and actors/README.md** `risk:low` `depends:[]`
+- [x] **S01: S01** `risk:low` `depends:[]`
   > After this: A new contributor can understand the system from docs
 
-- [ ] **S02: Consolidate structlog configuration** `risk:low` `depends:[]`
+- [x] **S02: S02** `risk:low` `depends:[]`
   > After this: from heretek_swarm.logging.config import configure_logging
 
 - [ ] **S03: Convert surviving flat actors to thin re-exports** `risk:low` `depends:[]`

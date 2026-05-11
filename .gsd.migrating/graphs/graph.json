@@ -1,16 +1,16 @@
 {
   "nodes": [
     {
-      "id": "milestone:M004",
-      "label": "M004: Add integration test scaffold and CI surface",
+      "id": "milestone:M005",
+      "label": "M005: Document architecture and compress flat actor API surface",
       "type": "milestone",
-      "description": "Active milestone: M004",
+      "description": "Active milestone: M005",
       "confidence": "EXTRACTED",
       "sourceFile": "STATE.md"
     },
     {
-      "id": "concept:phase:validating-milestone",
-      "label": "Phase: validating-milestone",
+      "id": "concept:phase:planning",
+      "label": "Phase: planning",
       "type": "concept",
       "confidence": "EXTRACTED",
       "sourceFile": "STATE.md"
@@ -208,6 +208,13 @@
       "confidence": "EXTRACTED"
     },
     {
+      "id": "milestone:M004",
+      "label": "M004: Add integration test scaffold and CI surface",
+      "type": "milestone",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M004/M004-ROADMAP.md"
+    },
+    {
       "id": "slice:M004:S01",
       "label": "S01: Baseline existing tests and configure pytest",
       "type": "slice",
@@ -271,11 +278,42 @@
       "confidence": "EXTRACTED"
     },
     {
-      "id": "milestone:M005",
-      "label": "M005: Document architecture and compress flat actor API surface",
-      "type": "milestone",
+      "id": "slice:M005:S01",
+      "label": "S01: Write ARCHITECTURE.md and actors/README.md",
+      "type": "slice",
       "confidence": "EXTRACTED",
-      "sourceFile": "milestones/M005/M005-ROADMAP.md"
+      "sourceFile": "milestones/M005/slices/S01/S01-PLAN.md"
+    },
+    {
+      "id": "task:M005:S01:T01",
+      "label": "T01: Rewrite docs/ARCHITECTURE.md with current package paths and structure",
+      "type": "task",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "id": "task:M005:S01:T02",
+      "label": "T02: Create docs/actors/README.md with practical agent creation guide",
+      "type": "task",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "id": "slice:M005:S02",
+      "label": "S02: Consolidate structlog configuration",
+      "type": "slice",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M005/slices/S02/S02-PLAN.md"
+    },
+    {
+      "id": "task:M005:S02:T01",
+      "label": "T01: Remove duplicate `structlog.configure()` from actors/base/core.py, use canonical logger",
+      "type": "task",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "id": "task:M005:S02:T02",
+      "label": "T02: Make infrastructure/otel/logging.py init_logging() delegate to canonical config",
+      "type": "task",
+      "confidence": "EXTRACTED"
     },
     {
       "id": "milestone:M006",
@@ -713,6 +751,142 @@
       "description": "Source: S01-SUMMARY.md/What Happened",
       "confidence": "EXTRACTED",
       "sourceFile": "milestones/M002/M002-LEARNINGS.md"
+    },
+    {
+      "id": "decision:M004:1",
+      "label": "**Coverage source path and ruff src roots correction**: Fixed coverage source from nonexistent `src/` to `heretek-swarm` and ruff src roots from `[\"src\", \"tests\"]` to `[\"heretek-swarm\", \"tests\"]` to match actual package layout. The `src/` path collected nothing.",
+      "type": "decision",
+      "description": "Source: S03-SUMMARY.md/Key Decisions",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M004/M004-LEARNINGS.md"
+    },
+    {
+      "id": "decision:M004:2",
+      "label": "**Unit-only CI with pass/fail gating**: CI test-python job runs `pytest -m \"not integration\"` with no external services (Postgres/Redis/Qdrant removed) and proper exit-code-based pass/fail — no `|| true` swallows. Spinning up services for every push was slow and flaky for unit-only changes.",
+      "type": "decision",
+      "description": "Source: S03-SUMMARY.md/Key Decisions",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M004/M004-LEARNINGS.md"
+    },
+    {
+      "id": "decision:M004:3",
+      "label": "**Parameterized tests organized by constructor pattern**: 26 lifecycle tests in four groups (simple **kwargs, explicit stubs, config-based, special constructors) instead of one monolithic test per agent. Reduces boilerplate and makes adding new agents trivial.",
+      "type": "decision",
+      "description": "Source: S02-SUMMARY.md/Key Decisions",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M004/M004-LEARNINGS.md"
+    },
+    {
+      "id": "decision:M004:4",
+      "label": "**6 dedicated stubs instead of monkey-patch mocking**: StubAccessAnalyzer, StubPatternExtractor, StubTribunal, StubDeliberationEngine, StubLLMProvider, StubEventMesh in conftest.py enable infrastructure-free testing with zero NATS/DB/Redis imports. Keeps tests readable and decoupled from implementation internals.",
+      "type": "decision",
+      "description": "Source: S02-SUMMARY.md/Key Decisions",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M004/M004-LEARNINGS.md"
+    },
+    {
+      "id": "decision:M004:5",
+      "label": "**Dev dependency installation bypass**: Installed test packages directly (pytest 9.0.3, etc.) rather than via `[dev]` extras when nats-server in the `[full]` transitive dependency chain is incompatible with Python 3.14.",
+      "type": "decision",
+      "description": "Source: S01-SUMMARY.md/Key Decisions",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M004/M004-LEARNINGS.md"
+    },
+    {
+      "id": "decision:M004:6",
+      "label": "**Hard Ruff warning gate**: CI fails if `ruff check` reports 50 or more findings. Prevents gradual style debt accumulation while the threshold is generous enough for current codebase state.",
+      "type": "decision",
+      "description": "Source: S03-SUMMARY.md/Patterns Established",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M004/M004-LEARNINGS.md"
+    },
+    {
+      "id": "lesson:M004:1",
+      "label": "**`[dev]` extras broken on Python 3.14 via `[full]`**: The `[dev]` extras definition in pyproject.toml depends on `[full]` which declares nats-server — this transitive dependency chain fails on Python 3.14 regardless. Workaround: install test packages directly.",
+      "type": "lesson",
+      "description": "Source: S01-SUMMARY.md/Known Limitations",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M004/M004-LEARNINGS.md"
+    },
+    {
+      "id": "lesson:M004:2",
+      "label": "**Test count was overestimated**: Pre-milestone estimate was ~1004 tests across 59 files; actual baseline was 658 tests across 43 files (35% overestimate). The milestone correctly scoped to what existed.",
+      "type": "lesson",
+      "description": "Source: S01-SUMMARY.md/Verification",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M004/M004-LEARNINGS.md"
+    },
+    {
+      "id": "lesson:M004:3",
+      "label": "**coverage/ruff source paths were silently broken**: `[tool.coverage.run] source = [\"src\"]` and `[tool.ruff] src = [\"src\", \"tests\"]` pointed at a nonexistent `src/` directory. Ruff was scanning the wrong path and coverage reporting collected nothing.",
+      "type": "lesson",
+      "description": "Source: S03-SUMMARY.md/Key Decisions",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M004/M004-LEARNINGS.md"
+    },
+    {
+      "id": "lesson:M004:4",
+      "label": "**CI test-python and mypy steps had `|| true` swallowing failures**: The existing CI workflow used `|| true` on both pytest and mypy commands, meaning CI always reported pass regardless of actual test results.",
+      "type": "lesson",
+      "description": "Source: S03-SUMMARY.md/Key Decisions",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M004/M004-LEARNINGS.md"
+    },
+    {
+      "id": "pattern:M004:1",
+      "label": "**Lifecycle smoke test pattern**: construct with minimal stubs → spawn → assert ACTIVE → send health_check via mailbox → terminate → assert TERMINATED + error_count == 0. Reusable for any AgentActor subclass.",
+      "type": "pattern",
+      "description": "Source: S02-SUMMARY.md/Patterns Established",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M004/M004-LEARNINGS.md"
+    },
+    {
+      "id": "pattern:M004:2",
+      "label": "**CI Ruff warning gate pattern**: Count-based threshold with exit 1 when findings >= 50. Prevents unlimited style debt accumulation while accepting initial baseline.",
+      "type": "pattern",
+      "description": "Source: S03-SUMMARY.md/Patterns Established",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M004/M004-LEARNINGS.md"
+    },
+    {
+      "id": "pattern:M004:3",
+      "label": "**Coverage source path convention**: Point to the actual package root directory (e.g. `heretek-swarm/`) rather than a nonexistent `src/` shim.",
+      "type": "pattern",
+      "description": "Source: S03-SUMMARY.md/Patterns Established",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M004/M004-LEARNINGS.md"
+    },
+    {
+      "id": "pattern:M004:4",
+      "label": "**Dev dependency installation for Python 3.14**: Install test packages directly when the `[full]` extras chain has incompatible transitive dependencies.",
+      "type": "pattern",
+      "description": "Source: S01-SUMMARY.md/Patterns Established",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M004/M004-LEARNINGS.md"
+    },
+    {
+      "id": "surprise:M004:1",
+      "label": "**Agent subclass count exceeded estimate**: 24 AgentActor subclasses were discovered vs the pre-milestone estimate of 16+. S02 covered all 24 plus BehaviorProfiler and ActorSupervisor (26 total tests).",
+      "type": "lesson",
+      "description": "Source: S02-SUMMARY.md/Verification",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M004/M004-LEARNINGS.md"
+    },
+    {
+      "id": "surprise:M004:2",
+      "label": "**CI was running full infrastructure stack on every push**: The test-python job had Postgres/Redis/Qdrant services configured even for unit-only changes — adding ~30-60s per run and introducing flaky failure modes for PRs that only touched Python logic.",
+      "type": "lesson",
+      "description": "Source: S03-SUMMARY.md/Key Decisions",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M004/M004-LEARNINGS.md"
+    },
+    {
+      "id": "surprise:M004:3",
+      "label": "**Existing test baseline was 35% lower than estimated**: Pre-milestone M004-CONTEXT.md estimated ~1004 tests across 59 files. Actual: 658 tests across 43 files. The overestimate was due to organic growth assumptions that didn't match reality.",
+      "type": "lesson",
+      "description": "Source: S01-SUMMARY.md/Verification",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M004/M004-LEARNINGS.md"
     }
   ],
   "edges": [
@@ -935,6 +1109,42 @@
     {
       "from": "slice:M004:S03",
       "to": "task:M004:S03:T02",
+      "type": "contains",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M005",
+      "to": "slice:M005:S01",
+      "type": "contains",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "slice:M005:S01",
+      "to": "task:M005:S01:T01",
+      "type": "contains",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "slice:M005:S01",
+      "to": "task:M005:S01:T02",
+      "type": "contains",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M005",
+      "to": "slice:M005:S02",
+      "type": "contains",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "slice:M005:S02",
+      "to": "task:M005:S02:T01",
+      "type": "contains",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "slice:M005:S02",
+      "to": "task:M005:S02:T02",
       "type": "contains",
       "confidence": "EXTRACTED"
     },
@@ -1267,7 +1477,109 @@
       "to": "surprise:M002:1",
       "type": "relates_to",
       "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M004",
+      "to": "decision:M004:1",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M004",
+      "to": "decision:M004:2",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M004",
+      "to": "decision:M004:3",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M004",
+      "to": "decision:M004:4",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M004",
+      "to": "decision:M004:5",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M004",
+      "to": "decision:M004:6",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M004",
+      "to": "lesson:M004:1",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M004",
+      "to": "lesson:M004:2",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M004",
+      "to": "lesson:M004:3",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M004",
+      "to": "lesson:M004:4",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M004",
+      "to": "pattern:M004:1",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M004",
+      "to": "pattern:M004:2",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M004",
+      "to": "pattern:M004:3",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M004",
+      "to": "pattern:M004:4",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M004",
+      "to": "surprise:M004:1",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M004",
+      "to": "surprise:M004:2",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M004",
+      "to": "surprise:M004:3",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
     }
   ],
-  "builtAt": "2026-05-10T20:54:19.028Z"
+  "builtAt": "2026-05-11T01:31:29.659Z"
 }

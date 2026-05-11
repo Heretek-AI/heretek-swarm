@@ -1,152 +1,96 @@
 {
-  "compiledAt": "2026-05-10T22:10:16.486Z",
-  "milestoneId": "M004",
+  "compiledAt": "2026-05-11T01:24:57.147Z",
+  "milestoneId": "M005",
   "pipeline": {
     "clarifyRoundLimit": 3,
     "researchSynthesized": false,
     "draftContextIncluded": false,
     "finalizedContextIncluded": true,
-    "sourcePhase": "completing-milestone"
+    "sourcePhase": "summarizing"
   },
   "nodes": [
     {
-      "id": "execute-task:M004:S01:T01",
+      "id": "execute-task:M005:S01:T01",
       "kind": "unit",
       "dependsOn": [],
-      "writes": [
-        "pyproject.toml"
-      ],
-      "metadata": {
-        "unitType": "execute-task",
-        "unitId": "M004.S01.T01",
-        "title": "Installed dev dependencies (pytest 9.0.3, pytest-asyncio 1.3.0, coverage 7.13.5, ruff 0.15.12, mypy 2.0.0, hypothesis 6.152.4, faker 40.15.0, and more) into .venv and verified pytest discovers all 43 test files",
-        "status": "complete"
-      }
-    },
-    {
-      "id": "execute-task:M004:S01:T02",
-      "kind": "unit",
-      "dependsOn": [
-        "execute-task:M004:S01:T01"
-      ],
       "writes": [],
       "metadata": {
         "unitType": "execute-task",
-        "unitId": "M004.S01.T02",
-        "title": "Verified pytest collects all 44 test files (658 test functions) without collection errors",
+        "unitId": "M005.S01.T01",
+        "title": "Rewrote docs/ARCHITECTURE.md with current heretek-swarm/heretek_swarm/ package paths, added Package Structure and Actor Base Class & Mixins sections, updated all stale path references and removed stale health score dashboard table.",
         "status": "complete"
       }
     },
     {
-      "id": "execute-task:M004:S01:T03",
+      "id": "execute-task:M005:S01:T02",
       "kind": "unit",
       "dependsOn": [
-        "execute-task:M004:S01:T02"
+        "execute-task:M005:S01:T01"
       ],
       "writes": [
-        "pyproject.toml"
+        "heretek-swarm/docs/actors/README.md"
       ],
       "metadata": {
         "unitType": "execute-task",
-        "unitId": "M004.S01.T03",
-        "title": "Verified all marker registrations match test usage — already aligned; conftest asyncio_mode is covered by pyproject.toml global config; --strict-markers passes cleanly.",
+        "unitId": "M005.S01.T02",
+        "title": "Created docs/actors/README.md with practical agent creation guide covering the two actor conventions, architecture, walkthrough code example, 23-agent reference table, local run instructions, and testing guide",
         "status": "complete"
       }
     },
     {
-      "id": "complete-slice:M004:S01",
+      "id": "complete-slice:M005:S01",
       "kind": "verification",
       "dependsOn": [
-        "execute-task:M004:S01:T03"
+        "execute-task:M005:S01:T02"
       ],
       "metadata": {
         "unitType": "complete-slice",
-        "unitId": "M004.S01",
+        "unitId": "M005.S01",
         "title": "S01",
         "status": "complete"
       }
     },
     {
-      "id": "execute-task:M004:S02:T01",
+      "id": "execute-task:M005:S02:T01",
       "kind": "unit",
       "dependsOn": [],
-      "writes": [],
+      "writes": [
+        "heretek-swarm/heretek_swarm/actors/base/core.py"
+      ],
       "metadata": {
         "unitType": "execute-task",
-        "unitId": "M004.S02.T01",
-        "title": "Created parameterized lifecycle smoke tests for all 23 canonical AgentActor subclasses plus the base AgentActor",
+        "unitId": "M005.S02.T01",
+        "title": "Removed duplicate `structlog.configure()` from actors/base/core.py; logger now uses canonical `get_logger()` from logging/config.py",
         "status": "complete"
       }
     },
     {
-      "id": "execute-task:M004:S02:T02",
+      "id": "execute-task:M005:S02:T02",
       "kind": "unit",
       "dependsOn": [
-        "execute-task:M004:S02:T01"
+        "execute-task:M005:S02:T01"
       ],
       "writes": [
-        "tests/test_actor_lifecycle.py",
-        "tests/conftest.py"
+        "heretek-swarm/heretek_swarm/infrastructure/otel/logging.py"
       ],
       "metadata": {
         "unitType": "execute-task",
-        "unitId": "M004.S02.T02",
-        "title": "Verified lifecycle smoke tests pass and cover all 24 canonical agents",
+        "unitId": "M005.S02.T02",
+        "title": "Made infrastructure/otel/logging.py init_logging() delegate to canonical setup_logging() from logging/config.py, removing the duplicate structlog.configure() code path",
         "status": "complete"
       }
     },
     {
-      "id": "complete-slice:M004:S02",
+      "id": "complete-slice:M005:S02",
       "kind": "verification",
       "dependsOn": [
-        "execute-task:M004:S02:T02"
+        "execute-task:M005:S02:T02"
       ],
       "metadata": {
         "unitType": "complete-slice",
-        "unitId": "M004.S02",
+        "unitId": "M005.S02",
         "title": "S02",
-        "status": "complete"
-      }
-    },
-    {
-      "id": "execute-task:M004:S03:T01",
-      "kind": "unit",
-      "dependsOn": [],
-      "writes": [],
-      "metadata": {
-        "unitType": "execute-task",
-        "unitId": "M004.S03.T01",
-        "title": "Fixed coverage source path from `src` to `heretek-swarm`, coverage paths prefix from `src/` to `heretek-swarm/`, and ruff src roots from `[\"src\", \"tests\"]` to `[\"heretek-swarm\", \"tests\"]` in pyproject.toml",
-        "status": "complete"
-      }
-    },
-    {
-      "id": "execute-task:M004:S03:T02",
-      "kind": "unit",
-      "dependsOn": [
-        "execute-task:M004:S03:T01"
-      ],
-      "writes": [
-        ".github/workflows/ci.yml"
-      ],
-      "metadata": {
-        "unitType": "execute-task",
-        "unitId": "M004.S03.T02",
-        "title": "Rewrote CI workflow: removed Postgres/Redis/Qdrant services from test-python, switched to unit-only test execution with proper pass/fail gating, added Ruff warning gate, removed || true from mypy",
-        "status": "complete"
-      }
-    },
-    {
-      "id": "complete-slice:M004:S03",
-      "kind": "verification",
-      "dependsOn": [
-        "execute-task:M004:S03:T02"
-      ],
-      "metadata": {
-        "unitType": "complete-slice",
-        "unitId": "M004.S03",
-        "title": "S03",
-        "status": "complete"
+        "status": "pending"
       }
     }
   ]

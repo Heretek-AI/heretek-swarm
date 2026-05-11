@@ -1,7 +1,7 @@
 # GSD State
 
 **Active Milestone:** M005: Document architecture and compress flat actor API surface
-**Active Slice:** S01: Write ARCHITECTURE.md and actors/README.md
+**Active Slice:** S03: Convert surviving flat actors to thin re-exports
 **Phase:** planning
 **Requirements Status:** 0 active · 0 validated · 0 deferred · 0 out of scope
 
@@ -22,4 +22,4 @@
 - None
 
 ## Next Action
-Slice S01 has no DB tasks. Plan slice tasks before execution.
+Slice S03 has no DB tasks. Plan slice tasks before execution.
