@@ -1,0 +1,8 @@
+=== api/main.py: checking for path references ===
+425:    # Calculate project root: backend/heretek_swarm/api/main.py -> project root (4 levels up)
+1245:    # Calculate project root: backend/heretek_swarm/api/main.py -> project root (4 levels up)
+1277:    # Calculate project root: backend/heretek_swarm/api/main.py -> project root (4 levels up)
+
+=== memory/__init__.py: checking for path references ===
+
+=== Also check for 'legacy' references in memory/__init__.py ===

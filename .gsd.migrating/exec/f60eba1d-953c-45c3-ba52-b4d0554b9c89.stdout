@@ -1,0 +1,18 @@
+triage_classifier.py
+=== Git ls-files for audit/cli.py ===
+audit/cli.py
+=== Git ls-files for audit-report.md ===
+audit-report.md
+=== Git ls-files for triage_data.json ===
+triage_data.json
+=== Existence on disk ===
+-rwxrwxrwx 1 john john  71161 Apr 29 10:03 audit-report.md
+-rwxrwxrwx 1 john john   3339 Apr 29 10:03 audit/cli.py
+-rwxrwxrwx 1 john john  16377 Apr 29 10:03 triage_classifier.py
+-rwxrwxrwx 1 john john 173206 Apr 29 10:03 triage_data.json
+=== audit/ dir ===
+total 4
+drwxrwxrwx 1 john john  512 Apr 29 10:03 .
+drwxrwxrwx 1 john john  512 May 12 17:16 ..
+-rwxrwxrwx 1 john john 3339 Apr 29 10:03 cli.py
+---EXIT:0

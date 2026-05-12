@@ -1,0 +1,21 @@
+=== git ls-files ===
+: fatal: empty string is not a valid pathspec. please use . instead if you meant to match all paths
+NOT_TRACKED
+: fatal: empty string is not a valid pathspec. please use . instead if you meant to match all paths
+NOT_TRACKED
+: fatal: empty string is not a valid pathspec. please use . instead if you meant to match all paths
+NOT_TRACKED
+: fatal: empty string is not a valid pathspec. please use . instead if you meant to match all paths
+NOT_TRACKED
+=== git status ===
+ M audit-report.md
+ M audit/cli.py
+ M triage_classifier.py
+ M triage_data.json
+=== git diff --stat ===
+ audit-report.md      | 1028 ++++----
+ audit/cli.py         |  224 +-
+ triage_classifier.py |  940 +++----
+ triage_data.json     | 6860 +++++++++++++++++++++++++-------------------------
+ 4 files changed, 4526 insertions(+), 4526 deletions(-)
+DONE

@@ -1,0 +1,24 @@
+=== GATE 1: heretek-swarm/ refs remaining in docs (should only be CLI/PyPI/project-name) ===
+docs/architecture/EXTERNAL_PATTERNS_ANALYSIS.md:| Reference | - | [`gateway/event_mesh.py`](https://github.com/HeretekAI/heretek-swarm/blob/main/backend/heretek_swarm/gateway/event_mesh.py) |
+docs/BETA_AGENT_README.md:**Location:** `~/.heretek-swarm/`
+docs/BETA_AGENT_README.md:~/.heretek-swarm/config.json
+docs/BETA_AGENT_README.md:~/.heretek-swarm/config.ts
+docs/DEPLOYMENT.md:aws ssm put-parameter --name /heretek-swarm/dev/database-url --value "postgresql://..." --type SecureString
+docs/DEPLOYMENT.md:aws ssm put-parameter --name /heretek-swarm/dev/redis-url --value "redis://..." --type SecureString
+docs/DEPLOYMENT.md:aws ssm put-parameter --name /heretek-swarm/dev/qdrant-host --value "qdrant.example.com" --type SecureString
+docs/DEPLOYMENT.md:aws ssm put-parameter --name /heretek-swarm/dev/qdrant-port --value "6333" --type SecureString
+docs/DEPLOYMENT.md:aws ssm put-parameter --name /heretek-swarm/dev/api-key --value "your-api-key" --type SecureString
+docs/DEPLOYMENT.md:aws ssm put-parameter --name /heretek-swarm/dev/secret-key --value "your-secret-key" --type SecureString
+docs/DEPLOYMENT.md:aws ssm put-parameter --name /heretek-swarm/dev/openai-api-key --value "sk-..." --type SecureString
+docs/DEPLOYMENT.md:- GitHub Issues: https://github.com/Heretek-AI/heretek-swarm/issues
+docs/DEPLOYMENT.md:- Documentation: https://github.com/Heretek-AI/heretek-swarm/docs
+docs/MONITORING.md:          __path__: /var/log/heretek-swarm/*.log
+
+=== GATE 2: src/heretek_swarm refs in docs (must be zero) ===
+(no matches — PASS)
+
+=== GATE 3: src/ in CLAUDE.md (must be absent) ===
+PASS — src/ not in CLAUDE.md
+
+=== GATE 4: ^backend/ in README.md (must exist) ===
+PASS — backend/ found as root dir in README.md

@@ -1,0 +1,18 @@
+{
+  "id": "8a6bffc9-a43c-42d8-a0a4-83722130ef51",
+  "runtime": "bash",
+  "purpose": "S04 primary verification: grep for stale src/ references",
+  "script_chars": 77,
+  "started_at": "2026-05-12T23:30:30.726Z",
+  "finished_at": "2026-05-12T23:30:35.527Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 4801,
+  "stdout_bytes": 12,
+  "stderr_bytes": 0,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\8a6bffc9-a43c-42d8-a0a4-83722130ef51.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\8a6bffc9-a43c-42d8-a0a4-83722130ef51.stderr"
+}

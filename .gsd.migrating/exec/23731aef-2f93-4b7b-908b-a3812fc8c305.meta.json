@@ -1,0 +1,18 @@
+{
+  "id": "23731aef-2f93-4b7b-908b-a3812fc8c305",
+  "runtime": "bash",
+  "purpose": "Check what imports the audit module",
+  "script_chars": 200,
+  "started_at": "2026-05-12T21:17:52.332Z",
+  "finished_at": "2026-05-12T21:17:56.132Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 3800,
+  "stdout_bytes": 10,
+  "stderr_bytes": 87,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\23731aef-2f93-4b7b-908b-a3812fc8c305.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\23731aef-2f93-4b7b-908b-a3812fc8c305.stderr"
+}

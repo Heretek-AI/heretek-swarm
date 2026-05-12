@@ -1,0 +1,22 @@
+=== git diff summary ===
+ triage_classifier.py | 940 +++++++++++++++++++++++++--------------------------
+ 1 file changed, 470 insertions(+), 470 deletions(-)
+===
+ audit/cli.py | 224 +++++++++++++++++++++++++++++------------------------------
+ 1 file changed, 112 insertions(+), 112 deletions(-)
+=== any backend/ script with 'classifier'? ===
+backend/heretek_swarm/collective/pattern_validation.py
+backend/heretek_swarm/memory/access_patterns.py
+backend/heretek_swarm/rag/hybrid_retriever.py
+backend/heretek_swarm/rag/strategies.py
+backend/heretek_swarm/runtime/main_loop.py
+=== git log -1 for each stale file ===
+---  ---
+fatal: empty string is not a valid pathspec. please use . instead if you meant to match all paths
+---  ---
+fatal: empty string is not a valid pathspec. please use . instead if you meant to match all paths
+---  ---
+fatal: empty string is not a valid pathspec. please use . instead if you meant to match all paths
+---  ---
+fatal: empty string is not a valid pathspec. please use . instead if you meant to match all paths
+DONE

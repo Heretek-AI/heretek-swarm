@@ -1,8 +1,8 @@
 # GSD State
 
 **Active Milestone:** M008: Post-Restructure Cleanup & Hardening
-**Active Slice:** S02: Resolve stale root files
-**Phase:** planning
+**Active Slice:** S05: Final validation pass
+**Phase:** evaluating-gates
 **Requirements Status:** 0 active · 0 validated · 0 deferred · 0 out of scope
 
 ## Milestone Registry
@@ -14,6 +14,7 @@
 - ✅ **M006:** Audit and plan repository restructure
 - ✅ **M007:** Execute repository restructure
 - 🔄 **M008:** Post-Restructure Cleanup & Hardening
+- ⬜ **M009:** M009
 
 ## Recent Decisions
 - None recorded
@@ -22,4 +23,4 @@
 - None
 
 ## Next Action
-Slice S02 has no DB tasks. Plan slice tasks before execution.
+Evaluate 2 quality gate(s) for S05 before execution.

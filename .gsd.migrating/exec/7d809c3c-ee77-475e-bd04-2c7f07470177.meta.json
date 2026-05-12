@@ -1,0 +1,18 @@
+{
+  "id": "7d809c3c-ee77-475e-bd04-2c7f07470177",
+  "runtime": "bash",
+  "purpose": "Search for audit-report references across the codebase",
+  "script_chars": 208,
+  "started_at": "2026-05-12T21:17:52.328Z",
+  "finished_at": "2026-05-12T21:17:56.136Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 3808,
+  "stdout_bytes": 10,
+  "stderr_bytes": 87,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\7d809c3c-ee77-475e-bd04-2c7f07470177.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\7d809c3c-ee77-475e-bd04-2c7f07470177.stderr"
+}

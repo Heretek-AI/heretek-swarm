@@ -1,0 +1,8 @@
+=== Check 1: Files removed from git tracking ===
+PASS: git no longer tracks any of the four files
+
+=== Check 2: Files removed from disk ===
+PASS:  not found on disk
+PASS:  not found on disk
+PASS:  not found on disk
+PASS:  not found on disk

@@ -1,0 +1,18 @@
+{
+  "id": "6796bd70-5757-4572-97ea-af21308c644c",
+  "runtime": "bash",
+  "purpose": "S04 final broad sweep: any src/ references remaining",
+  "script_chars": 446,
+  "started_at": "2026-05-12T23:31:56.547Z",
+  "finished_at": "2026-05-12T23:31:57.100Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 553,
+  "stdout_bytes": 88,
+  "stderr_bytes": 0,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\6796bd70-5757-4572-97ea-af21308c644c.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\6796bd70-5757-4572-97ea-af21308c644c.stderr"
+}

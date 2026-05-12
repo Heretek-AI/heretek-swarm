@@ -1,0 +1,18 @@
+{
+  "id": "51f1ce1e-d0a3-4479-81c7-8fcf1e59f80b",
+  "runtime": "bash",
+  "purpose": "Git log for stale files",
+  "script_chars": 329,
+  "started_at": "2026-05-12T21:22:04.270Z",
+  "finished_at": "2026-05-12T21:22:07.191Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 2921,
+  "stdout_bytes": 439,
+  "stderr_bytes": 0,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\51f1ce1e-d0a3-4479-81c7-8fcf1e59f80b.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\51f1ce1e-d0a3-4479-81c7-8fcf1e59f80b.stderr"
+}

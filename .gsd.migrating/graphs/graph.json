@@ -481,6 +481,70 @@
       "confidence": "EXTRACTED"
     },
     {
+      "id": "slice:M008:S02",
+      "label": "S02: Resolve stale root files",
+      "type": "slice",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M008/slices/S02/S02-PLAN.md"
+    },
+    {
+      "id": "task:M008:S02:T01",
+      "label": "T01: git rm stale root files and remove empty audit/ directory",
+      "type": "task",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "id": "task:M008:S02:T02",
+      "label": "T02: Post-deletion verification and state persistence",
+      "type": "task",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "id": "slice:M008:S03",
+      "label": "S03: Update documentation path references",
+      "type": "slice",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M008/slices/S03/S03-PLAN.md"
+    },
+    {
+      "id": "task:M008:S03:T01",
+      "label": "T01: Update docs/ARCHITECTURE.md — replace stale heretek-swarm/heretek_swarm/ directory refs with backend/heretek_swarm/",
+      "type": "task",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "id": "task:M008:S03:T02",
+      "label": "T02: Update remaining doc files — replace stale src/heretek_swarm directory refs with backend/heretek_swarm/",
+      "type": "task",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "id": "task:M008:S03:T03",
+      "label": "T03: Update README.md directory tree and CLAUDE.md; run full slice verification",
+      "type": "task",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "id": "slice:M008:S04",
+      "label": "S04: Update code string-literal path references",
+      "type": "slice",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M008/slices/S04/S04-PLAN.md"
+    },
+    {
+      "id": "task:M008:S04:T01",
+      "label": "T01: Replace stale src/ path references in Python source comments and docstrings",
+      "type": "task",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "id": "milestone:M009",
+      "label": "M009: M009",
+      "type": "milestone",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M009/M009-ROADMAP.md"
+    },
+    {
       "id": "decision:M001:1",
       "label": "**Preserve standalone actors even if name matches a subpackage** explorer.py shares a name with the explorer/ subpackage but is a 1318-line standalone implementation. Only delete true shims (files that re-export from subpackages), never standalone implementations.",
       "type": "decision",
@@ -2031,6 +2095,60 @@
       "confidence": "EXTRACTED"
     },
     {
+      "from": "milestone:M008",
+      "to": "slice:M008:S02",
+      "type": "contains",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "slice:M008:S02",
+      "to": "task:M008:S02:T01",
+      "type": "contains",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "slice:M008:S02",
+      "to": "task:M008:S02:T02",
+      "type": "contains",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M008",
+      "to": "slice:M008:S03",
+      "type": "contains",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "slice:M008:S03",
+      "to": "task:M008:S03:T01",
+      "type": "contains",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "slice:M008:S03",
+      "to": "task:M008:S03:T02",
+      "type": "contains",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "slice:M008:S03",
+      "to": "task:M008:S03:T03",
+      "type": "contains",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M008",
+      "to": "slice:M008:S04",
+      "type": "contains",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "slice:M008:S04",
+      "to": "task:M008:S04:T01",
+      "type": "contains",
+      "confidence": "EXTRACTED"
+    },
+    {
       "from": "milestone:M001",
       "to": "decision:M001:1",
       "type": "relates_to",
@@ -2895,5 +3013,5 @@
       "confidence": "EXTRACTED"
     }
   ],
-  "builtAt": "2026-05-12T20:58:37.598Z"
+  "builtAt": "2026-05-12T23:32:47.375Z"
 }

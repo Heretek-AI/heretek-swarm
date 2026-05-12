@@ -1,0 +1,18 @@
+{
+  "id": "a99658a5-756f-4d2a-8bd5-52bd7ed11a6f",
+  "runtime": "bash",
+  "purpose": "T02 verification timing",
+  "script_chars": 676,
+  "started_at": "2026-05-12T21:32:04.899Z",
+  "finished_at": "2026-05-12T21:32:08.976Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 4077,
+  "stdout_bytes": 157,
+  "stderr_bytes": 87,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\a99658a5-756f-4d2a-8bd5-52bd7ed11a6f.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\a99658a5-756f-4d2a-8bd5-52bd7ed11a6f.stderr"
+}

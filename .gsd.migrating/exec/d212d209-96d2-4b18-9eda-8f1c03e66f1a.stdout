@@ -1,0 +1,22 @@
+=== Checking specific stale patterns ===
+1. src/heretek_swarm/api/main.py in api/main.py:
+0
+0 (no match, good)
+
+2. 'not legacy src/' in memory/__init__.py:
+0
+0 (no match, good)
+
+3. 'Dynamic agent discovery from src/' in registry_enhanced.py:
+0
+0 (no match, good)
+
+4. 'Defaults to src/' in registry_enhanced.py:
+0
+0 (no match, good)
+
+5. 'Re-exports tools from src/' in tools/__init__.py:
+0
+0 (no match, good)
+
+=== All per-pattern checks done ===

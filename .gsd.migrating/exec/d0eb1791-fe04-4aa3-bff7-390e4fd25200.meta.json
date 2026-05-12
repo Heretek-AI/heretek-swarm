@@ -1,0 +1,18 @@
+{
+  "id": "d0eb1791-fe04-4aa3-bff7-390e4fd25200",
+  "runtime": "bash",
+  "purpose": "Check if stale audit dir has __init__.py",
+  "script_chars": 352,
+  "started_at": "2026-05-12T21:19:28.902Z",
+  "finished_at": "2026-05-12T21:19:37.957Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 9055,
+  "stdout_bytes": 310,
+  "stderr_bytes": 0,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\d0eb1791-fe04-4aa3-bff7-390e4fd25200.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\d0eb1791-fe04-4aa3-bff7-390e4fd25200.stderr"
+}

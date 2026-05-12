@@ -1,0 +1,18 @@
+{
+  "id": "29a7152a-6bbd-40da-82d2-e35c99c3207e",
+  "runtime": "bash",
+  "purpose": "Git tracking and disk status for stale files",
+  "script_chars": 620,
+  "started_at": "2026-05-12T21:19:01.129Z",
+  "finished_at": "2026-05-12T21:19:01.210Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 81,
+  "stdout_bytes": 182,
+  "stderr_bytes": 49,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\29a7152a-6bbd-40da-82d2-e35c99c3207e.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\29a7152a-6bbd-40da-82d2-e35c99c3207e.stderr"
+}
