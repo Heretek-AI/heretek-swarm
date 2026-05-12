@@ -1,0 +1,18 @@
+{
+  "id": "e3d2c150-a7fa-4270-8ac9-9a660b72e49e",
+  "runtime": "bash",
+  "purpose": "List files with correct paths - package is under heretek-swarm/",
+  "script_chars": 170,
+  "started_at": "2026-05-10T22:29:42.687Z",
+  "finished_at": "2026-05-10T22:29:42.786Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 99,
+  "stdout_bytes": 6,
+  "stderr_bytes": 128,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\e3d2c150-a7fa-4270-8ac9-9a660b72e49e.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\e3d2c150-a7fa-4270-8ac9-9a660b72e49e.stderr"
+}

@@ -1,0 +1,18 @@
+{
+  "id": "16c7fc64-b057-4612-b656-029202c92030",
+  "runtime": "python",
+  "purpose": "Find structlog references in source",
+  "script_chars": 879,
+  "started_at": "2026-05-11T00:51:42.854Z",
+  "finished_at": "2026-05-11T00:51:43.152Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 298,
+  "stdout_bytes": 42803,
+  "stderr_bytes": 0,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\16c7fc64-b057-4612-b656-029202c92030.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\16c7fc64-b057-4612-b656-029202c92030.stderr"
+}

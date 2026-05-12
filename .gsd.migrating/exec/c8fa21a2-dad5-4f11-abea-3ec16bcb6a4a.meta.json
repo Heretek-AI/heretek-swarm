@@ -1,0 +1,18 @@
+{
+  "id": "c8fa21a2-dad5-4f11-abea-3ec16bcb6a4a",
+  "runtime": "bash",
+  "purpose": "Find nested project structure and list actors",
+  "script_chars": 135,
+  "started_at": "2026-05-11T02:22:43.039Z",
+  "finished_at": "2026-05-11T02:22:55.980Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 12941,
+  "stdout_bytes": 2634,
+  "stderr_bytes": 0,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\c8fa21a2-dad5-4f11-abea-3ec16bcb6a4a.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\c8fa21a2-dad5-4f11-abea-3ec16bcb6a4a.stderr"
+}

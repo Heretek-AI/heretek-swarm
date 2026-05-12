@@ -1,0 +1,18 @@
+{
+  "id": "0305c68a-0ec3-4187-93cd-a6c19d95cdb9",
+  "runtime": "bash",
+  "purpose": "Full actors __init__.py to see re-exports vs implementations",
+  "script_chars": 114,
+  "started_at": "2026-05-10T22:28:22.215Z",
+  "finished_at": "2026-05-10T22:28:24.087Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 1872,
+  "stdout_bytes": 1399,
+  "stderr_bytes": 79,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\0305c68a-0ec3-4187-93cd-a6c19d95cdb9.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\0305c68a-0ec3-4187-93cd-a6c19d95cdb9.stderr"
+}

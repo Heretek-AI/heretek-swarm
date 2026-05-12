@@ -1,0 +1,18 @@
+{
+  "id": "472fe4ca-ec90-4636-a56c-a5ed4a2891c8",
+  "runtime": "bash",
+  "purpose": "Find AgentActor base class",
+  "script_chars": 64,
+  "started_at": "2026-05-11T00:06:43.019Z",
+  "finished_at": "2026-05-11T00:06:45.242Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 2223,
+  "stdout_bytes": 55,
+  "stderr_bytes": 0,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\472fe4ca-ec90-4636-a56c-a5ed4a2891c8.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\472fe4ca-ec90-4636-a56c-a5ed4a2891c8.stderr"
+}

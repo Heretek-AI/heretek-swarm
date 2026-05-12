@@ -1,0 +1,18 @@
+{
+  "id": "55d8339d-b772-4998-b812-06ff7993cc6e",
+  "runtime": "bash",
+  "purpose": "Verify ARCHITECTURE.md has no stale paths",
+  "script_chars": 137,
+  "started_at": "2026-05-11T00:12:44.750Z",
+  "finished_at": "2026-05-11T00:12:46.722Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 1972,
+  "stdout_bytes": 8,
+  "stderr_bytes": 0,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\55d8339d-b772-4998-b812-06ff7993cc6e.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\55d8339d-b772-4998-b812-06ff7993cc6e.stderr"
+}

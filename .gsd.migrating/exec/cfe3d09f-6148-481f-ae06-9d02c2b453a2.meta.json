@@ -1,0 +1,18 @@
+{
+  "id": "cfe3d09f-6148-481f-ae06-9d02c2b453a2",
+  "runtime": "bash",
+  "purpose": "Check pwd and find docs",
+  "script_chars": 39,
+  "started_at": "2026-05-11T00:05:50.927Z",
+  "finished_at": "2026-05-11T00:05:53.238Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 2311,
+  "stdout_bytes": 101,
+  "stderr_bytes": 0,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\cfe3d09f-6148-481f-ae06-9d02c2b453a2.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\cfe3d09f-6148-481f-ae06-9d02c2b453a2.stderr"
+}

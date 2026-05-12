@@ -1,0 +1,18 @@
+{
+  "id": "50b83296-52b0-4c77-93f3-38758c76cfaa",
+  "runtime": "bash",
+  "purpose": "Find actual project directory layout",
+  "script_chars": 248,
+  "started_at": "2026-05-11T02:21:17.754Z",
+  "finished_at": "2026-05-11T02:21:17.823Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 69,
+  "stdout_bytes": 4,
+  "stderr_bytes": 173,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\50b83296-52b0-4c77-93f3-38758c76cfaa.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\50b83296-52b0-4c77-93f3-38758c76cfaa.stderr"
+}

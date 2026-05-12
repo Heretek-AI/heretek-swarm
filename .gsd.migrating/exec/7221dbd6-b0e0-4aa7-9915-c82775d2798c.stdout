@@ -1,0 +1,100 @@
+"""
+Core module for AgentActor base class.
+
+This module contains:
+- ActorState enum
+- ActorMessage dataclass (internal, not the Pydantic model)
+- ActorStatus dataclass
+- AgentActor core initialization and lifecycle methods
+
+The Pydantic models for inter-actor messaging are in heretek_swarm.schemas.actors.
+Import from there for validated message types::
+
+    from heretek_swarm.schemas.actors import ActorMessage as PydanticActorMessage
+"""
+
+import asyncio
+import uuid
+from collections.abc import Callable
+from dataclasses import dataclass, field
+from datetime import UTC, datetime
+from enum import Enum
+from typing import Any
+
+import structlog
+from pydantic import ValidationError
+from swarms import Agent
+
+import heretek_swarm.actors.stubs as _actor_stubs
+from heretek_swarm.actors.stubs import get_db_pool  # noqa: F401 - imported for test patching
+from heretek_swarm.actors.validation import (
+    validate_message,
+)
+from heretek_swarm.agents.skills import SkillCategory, SkillMetadata
+from heretek_swarm.routing import (
+    AgentModelRouter,
+    get_router,
+)
+from heretek_swarm.state.repository import (
+    AgentStateRecord,
+    StateRepository,
+)
+
+
+def _make_skill_metadata(capability: str) -> SkillMetadata:
+    """Create skill metadata from a capability string."""
+    return SkillMetadata(
+        name=capability,
+        description=f"Agent capability: {capability}",
+        category=SkillCategory.CUSTOM,
+        tags=[capability],
+        source="runtime",
+    )
+
+
+structlog.configure(
+    processors=[
+        structlog.stdlib.filter_by_level,
+        structlog.stdlib.add_logger_name,
+        structlog.stdlib.add_log_level,
+        structlog.stdlib.PositionalArgumentsFormatter(),
+        structlog.processors.TimeStamper(fmt="iso"),
+        structlog.processors.StackInfoRenderer(),
+        structlog.processors.format_exc_info,
+        structlog.processors.UnicodeDecoder(),
+        structlog.processors.JSONRenderer(),
+    ],
+    context_class=dict,
+    logger_factory=structlog.stdlib.LoggerFactory(),
+    wrapper_class=structlog.stdlib.BoundLogger,
+    cache_logger_on_first_use=True,
+)
+
+logger = structlog.get_logger("AgentActor")
+
+
+class ActorState(Enum):
+    """Actor lifecycle states."""
+
+    SPAWNING = "spawning"
+    ACTIVE = "active"
+    SUSPENDED = "suspended"
+    TERMINATED = "terminated"
+    ERROR = "error"
+
+
+@dataclass
+class ActorMessage:
+    """
+    Internal message structure for actor mailbox.
+
+    Attributes:
+        sender: ID of the sending actor
+        message_type: Type identifier for the message
+        content: Message payload
+        timestamp: ISO8601 timestamp
+        correlation_id: Optional correlation ID for request-response patterns
+        reply_to: Optional topic for responses
+        metadata: Additional metadata
+    """
+

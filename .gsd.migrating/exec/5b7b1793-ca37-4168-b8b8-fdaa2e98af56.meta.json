@@ -1,0 +1,18 @@
+{
+  "id": "5b7b1793-ca37-4168-b8b8-fdaa2e98af56",
+  "runtime": "bash",
+  "purpose": "List subpackage init files for existing subpackages without flat file equivalents",
+  "script_chars": 128,
+  "started_at": "2026-05-11T01:45:30.293Z",
+  "finished_at": "2026-05-11T01:45:42.265Z",
+  "exit_code": 1,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 11972,
+  "stdout_bytes": 153,
+  "stderr_bytes": 0,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\5b7b1793-ca37-4168-b8b8-fdaa2e98af56.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\5b7b1793-ca37-4168-b8b8-fdaa2e98af56.stderr"
+}

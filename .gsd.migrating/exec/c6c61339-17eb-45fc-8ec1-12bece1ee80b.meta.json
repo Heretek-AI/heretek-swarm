@@ -1,0 +1,18 @@
+{
+  "id": "c6c61339-17eb-45fc-8ec1-12bece1ee80b",
+  "runtime": "bash",
+  "purpose": "Check if tests import any flat actor files directly",
+  "script_chars": 271,
+  "started_at": "2026-05-11T02:00:30.588Z",
+  "finished_at": "2026-05-11T02:00:34.891Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 4303,
+  "stdout_bytes": 3187,
+  "stderr_bytes": 0,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\c6c61339-17eb-45fc-8ec1-12bece1ee80b.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\c6c61339-17eb-45fc-8ec1-12bece1ee80b.stderr"
+}

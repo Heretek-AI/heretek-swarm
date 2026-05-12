@@ -1,0 +1,50 @@
+"""
+Empath Agent - Emotional Intelligence & Sentiment Analysis.
+
+The Empath agent provides:
+- Sentiment analysis on inputs and communications
+- Agent mood tracking and emotional state monitoring
+- Conflict de-escalation and emotional mediation
+- Emotional context for decision-making
+- Stress detection and burnout prevention
+
+Named for the ability to understand and share the feelings of others.
+"""
+
+import asyncio
+from datetime import UTC, datetime
+from typing import Any
+
+import structlog
+from pydantic import ValidationError
+from swarms import Agent
+
+from heretek_swarm.actors.base import ActorMessage, AgentActor
+from heretek_swarm.actors.mixins import (
+    DeliberationMixin,
+    HealthReportingMixin,
+    LearningMixin,
+    MemoryMixin,
+    PatternMixin,
+    ValidationMixin,
+)
+
+# Session 44: Zero-Trust Validation
+from heretek_swarm.security.zero_trust import ZeroTrustValidator
+from heretek_swarm.validation import validate_message
+
+logger = structlog.get_logger("EmpathAgent")
+
+
+class EmpathAgent(
+    HealthReportingMixin,
+    ValidationMixin,
+    DeliberationMixin,
+    PatternMixin,
+    MemoryMixin,
+    LearningMixin,
+    AgentActor,
+):
+    """
+    Empath Agent - Emotional Intelligence Specialist.
+

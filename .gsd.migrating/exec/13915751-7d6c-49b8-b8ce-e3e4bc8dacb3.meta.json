@@ -1,0 +1,18 @@
+{
+  "id": "13915751-7d6c-49b8-b8ce-e3e4bc8dacb3",
+  "runtime": "bash",
+  "purpose": "Check explorer.py vs explorer/ overlap",
+  "script_chars": 438,
+  "started_at": "2026-05-11T01:55:42.509Z",
+  "finished_at": "2026-05-11T01:55:54.399Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 11890,
+  "stdout_bytes": 873,
+  "stderr_bytes": 0,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\13915751-7d6c-49b8-b8ce-e3e4bc8dacb3.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\13915751-7d6c-49b8-b8ce-e3e4bc8dacb3.stderr"
+}

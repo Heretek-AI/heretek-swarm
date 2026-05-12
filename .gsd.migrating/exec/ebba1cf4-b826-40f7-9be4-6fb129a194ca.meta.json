@@ -1,0 +1,18 @@
+{
+  "id": "ebba1cf4-b826-40f7-9be4-6fb129a194ca",
+  "runtime": "bash",
+  "purpose": "Read BETA_AGENT_README",
+  "script_chars": 39,
+  "started_at": "2026-05-11T00:07:47.849Z",
+  "finished_at": "2026-05-11T00:07:47.931Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 82,
+  "stdout_bytes": 2510,
+  "stderr_bytes": 0,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\ebba1cf4-b826-40f7-9be4-6fb129a194ca.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\ebba1cf4-b826-40f7-9be4-6fb129a194ca.stderr"
+}

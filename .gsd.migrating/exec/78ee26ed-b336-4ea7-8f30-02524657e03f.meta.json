@@ -1,0 +1,18 @@
+{
+  "id": "78ee26ed-b336-4ea7-8f30-02524657e03f",
+  "runtime": "bash",
+  "purpose": "Search for actors README anywhere",
+  "script_chars": 103,
+  "started_at": "2026-05-11T00:06:10.510Z",
+  "finished_at": "2026-05-11T00:06:12.599Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 2089,
+  "stdout_bytes": 1219,
+  "stderr_bytes": 0,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\78ee26ed-b336-4ea7-8f30-02524657e03f.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\78ee26ed-b336-4ea7-8f30-02524657e03f.stderr"
+}

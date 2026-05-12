@@ -1,0 +1,18 @@
+{
+  "id": "803fc30a-b0da-4c6a-93f0-6e23c20fb6b8",
+  "runtime": "bash",
+  "purpose": "README.md content",
+  "script_chars": 60,
+  "started_at": "2026-05-10T22:25:40.476Z",
+  "finished_at": "2026-05-10T22:25:40.557Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 81,
+  "stdout_bytes": 2711,
+  "stderr_bytes": 87,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\803fc30a-b0da-4c6a-93f0-6e23c20fb6b8.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\803fc30a-b0da-4c6a-93f0-6e23c20fb6b8.stderr"
+}

@@ -1,0 +1,18 @@
+{
+  "id": "6c05d5f1-a352-4209-bec3-cd1b31e82b03",
+  "runtime": "bash",
+  "purpose": "Find source and actors structure",
+  "script_chars": 280,
+  "started_at": "2026-05-11T00:07:16.166Z",
+  "finished_at": "2026-05-11T00:07:35.864Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 19698,
+  "stdout_bytes": 773,
+  "stderr_bytes": 0,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\6c05d5f1-a352-4209-bec3-cd1b31e82b03.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\6c05d5f1-a352-4209-bec3-cd1b31e82b03.stderr"
+}

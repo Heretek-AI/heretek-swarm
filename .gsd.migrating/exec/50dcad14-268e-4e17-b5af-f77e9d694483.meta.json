@@ -1,0 +1,18 @@
+{
+  "id": "50dcad14-268e-4e17-b5af-f77e9d694483",
+  "runtime": "bash",
+  "purpose": "Full source tree including agent_workspace",
+  "script_chars": 64,
+  "started_at": "2026-05-10T22:25:40.463Z",
+  "finished_at": "2026-05-10T22:25:40.544Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 81,
+  "stdout_bytes": 57,
+  "stderr_bytes": 87,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\50dcad14-268e-4e17-b5af-f77e9d694483.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\50dcad14-268e-4e17-b5af-f77e9d694483.stderr"
+}

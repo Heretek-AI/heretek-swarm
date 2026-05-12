@@ -1,0 +1,5 @@
+class TriadAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, AgentActor):
+class StewardAgent(TriadAgent):
+class AlphaAgent(TriadAgent):
+class BetaAgent(TriadAgent):
+class CharlieAgent(TriadAgent):

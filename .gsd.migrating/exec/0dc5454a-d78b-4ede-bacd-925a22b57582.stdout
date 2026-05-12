@@ -1,0 +1,28 @@
+total 288
+drwxrwxrwx 1 john john   512 Apr 29 10:03 .
+drwxrwxrwx 1 john john   512 May 10 18:24 ..
+-rwxrwxrwx 1 john john 22771 Apr 29 10:03 AGENTS.md
+-rwxrwxrwx 1 john john 30473 Apr 29 10:03 AGENT_ARCHITECTURE.md
+-rwxrwxrwx 1 john john 17304 Apr 29 10:03 AGENT_REFERENCE.md
+-rwxrwxrwx 1 john john 16868 Apr 29 10:03 API_ENDPOINTS.md
+-rwxrwxrwx 1 john john  2830 Apr 29 10:03 API_REFERENCE.md
+-rwxrwxrwx 1 john john 27812 Apr 29 10:03 ARCHITECTURE.md
+-rwxrwxrwx 1 john john 23403 Apr 29 10:03 AUTONOMOUS_WORKFLOW.md
+-rwxrwxrwx 1 john john  8074 Apr 29 10:03 BETA_AGENT_README.md
+-rwxrwxrwx 1 john john  9329 Apr 29 10:03 CODEBASE_AUDIT.md
+-rwxrwxrwx 1 john john  6226 Apr 29 10:03 CORE_ACTORS.md
+-rwxrwxrwx 1 john john 22980 Apr 29 10:03 DEPLOYMENT.md
+-rwxrwxrwx 1 john john  4330 Apr 29 10:03 INDEX.md
+-rwxrwxrwx 1 john john 14939 Apr 29 10:03 MAIN_PROMPT.md
+-rwxrwxrwx 1 john john  8831 Apr 29 10:03 MEMORY_SYSTEM.md
+-rwxrwxrwx 1 john john 13262 Apr 29 10:03 MONITORING.md
+-rwxrwxrwx 1 john john  9495 Apr 29 10:03 PROMETHEUS_METRICS.md
+-rwxrwxrwx 1 john john 16643 Apr 29 10:03 PROTOCOL_SPEC.md
+drwxrwxrwx 1 john john   512 Apr 29 10:03 architecture
+===
+97 PRIME_DIRECTIVE.md
+# PRIME DIRECTIVE
+## The Collective - 23-Agent Autonomous AI Cluster
+
+**Status:** Immutable Vision  
+**Doctrine:** The Third Path  

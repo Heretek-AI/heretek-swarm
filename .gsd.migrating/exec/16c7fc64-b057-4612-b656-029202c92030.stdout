@@ -1,0 +1,554 @@
+heretek_swarm\actors\alpha.py:16: import structlog
+heretek_swarm\actors\alpha.py:22: logger = structlog.get_logger("AlphaAgent")
+heretek_swarm\actors\arbiter\core.py:17: import structlog
+heretek_swarm\actors\arbiter\core.py:43: logger = structlog.get_logger("ArbiterAgent")
+heretek_swarm\actors\arbiter\handlers.py:12: import structlog
+heretek_swarm\actors\arbiter\handlers.py:27: logger = structlog.get_logger("ArbiterAgent")
+heretek_swarm\actors\arbiter\strategies.py:13: import structlog
+heretek_swarm\actors\arbiter\strategies.py:22: logger = structlog.get_logger("ArbiterAgent")
+heretek_swarm\actors\base\core.py:24: import structlog
+heretek_swarm\actors\base\core.py:55: structlog.configure(
+heretek_swarm\actors\base\core.py:57:         structlog.stdlib.filter_by_level,
+heretek_swarm\actors\base\core.py:58:         structlog.stdlib.add_logger_name,
+heretek_swarm\actors\base\core.py:59:         structlog.stdlib.add_log_level,
+heretek_swarm\actors\base\core.py:60:         structlog.stdlib.PositionalArgumentsFormatter(),
+heretek_swarm\actors\base\core.py:61:         structlog.processors.TimeStamper(fmt="iso"),
+heretek_swarm\actors\base\core.py:62:         structlog.processors.StackInfoRenderer(),
+heretek_swarm\actors\base\core.py:63:         structlog.processors.format_exc_info,
+heretek_swarm\actors\base\core.py:64:         structlog.processors.UnicodeDecoder(),
+heretek_swarm\actors\base\core.py:65:         structlog.processors.JSONRenderer(),
+heretek_swarm\actors\base\core.py:68:     logger_factory=structlog.stdlib.LoggerFactory(),
+heretek_swarm\actors\base\core.py:69:     wrapper_class=structlog.stdlib.BoundLogger,
+heretek_swarm\actors\base\core.py:73: logger = structlog.get_logger("AgentActor")
+heretek_swarm\actors\base\message_handling.py:16: import structlog
+heretek_swarm\actors\base\message_handling.py:20: logger = structlog.get_logger("AgentActor")
+heretek_swarm\actors\base\message_handling.py:631:         1. Logs receipt via structlog with target_agent, task_type, correlation_id
+heretek_swarm\actors\base\state_management.py:16: import structlog
+heretek_swarm\actors\base\state_management.py:20: logger = structlog.get_logger("AgentActor")
+heretek_swarm\actors\beta.py:16: import structlog
+heretek_swarm\actors\beta.py:22: logger = structlog.get_logger("BetaAgent")
+heretek_swarm\actors\catalyst.py:24: import structlog
+heretek_swarm\actors\catalyst.py:47: logger = structlog.get_logger(__name__)
+heretek_swarm\actors\charlie.py:16: import structlog
+heretek_swarm\actors\charlie.py:22: logger = structlog.get_logger("CharlieAgent")
+heretek_swarm\actors\chronos\agent.py:23: import structlog
+heretek_swarm\actors\chronos\agent.py:52: logger = structlog.get_logger(__name__)
+heretek_swarm\actors\chronos\handlers.py:12: import structlog
+heretek_swarm\actors\chronos\handlers.py:16: logger = structlog.get_logger("ChronosHandlersMixin")
+heretek_swarm\actors\chronos\scheduler.py:15: logger = structlog.get_logger("ChronosSchedulerMixin")
+heretek_swarm\actors\chronos\scheduler.py:9: import structlog
+heretek_swarm\actors\coder.py:22: import structlog
+heretek_swarm\actors\coder.py:40: logger = structlog.get_logger("CoderAgent")
+heretek_swarm\actors\coordinator\agent.py:22: import structlog
+heretek_swarm\actors\coordinator\agent.py:53: logger = structlog.get_logger(__name__)
+heretek_swarm\actors\dreamer\agent.py:30: import structlog
+heretek_swarm\actors\dreamer\agent.py:63: logger = structlog.get_logger("DreamerAgent")
+heretek_swarm\actors\echo.py:20: import structlog
+heretek_swarm\actors\echo.py:37: logger = structlog.get_logger("EchoAgent")
+heretek_swarm\actors\empath.py:18: import structlog
+heretek_swarm\actors\empath.py:36: logger = structlog.get_logger("EmpathAgent")
+heretek_swarm\actors\examiner\agent.py:31: import structlog
+heretek_swarm\actors\examiner\agent.py:80: logger = structlog.get_logger("ExaminerAgent")
+heretek_swarm\actors\explorer.py:45: import structlog
+heretek_swarm\actors\explorer.py:65: logger = structlog.get_logger("ExplorerAgent")
+heretek_swarm\actors\explorer\agent.py:25: import structlog
+heretek_swarm\actors\explorer\agent.py:38: logger = structlog.get_logger("ExplorerAgent")
+heretek_swarm\actors\explorer\pathfinding.py:19: import structlog
+heretek_swarm\actors\explorer\pathfinding.py:36: logger = structlog.get_logger("ExplorerPathfinding")
+heretek_swarm\actors\factory.py:13: import structlog
+heretek_swarm\actors\factory.py:17: logger = structlog.get_logger("ActorFactory")
+heretek_swarm\actors\habit_forge\agent.py:24: import structlog
+heretek_swarm\actors\habit_forge\agent.py:56: logger = structlog.get_logger("HabitForgeAgent")
+heretek_swarm\actors\handoff.py:21: import structlog
+heretek_swarm\actors\handoff.py:35: logger = structlog.get_logger(__name__)
+heretek_swarm\actors\handoff_handlers.py:11: import structlog
+heretek_swarm\actors\handoff_handlers.py:13: logger = structlog.get_logger(__name__)
+heretek_swarm\actors\historian.py:25: import structlog
+heretek_swarm\actors\historian.py:53: logger = structlog.get_logger("HistorianAgent")
+heretek_swarm\actors\langroid_adapter.py:21: import structlog
+heretek_swarm\actors\langroid_adapter.py:23: logger = structlog.get_logger("LangroidAdapter")
+heretek_swarm\actors\metis.py:17: import structlog
+heretek_swarm\actors\metis.py:46: logger = structlog.get_logger("MetisAgent")
+heretek_swarm\actors\mixins\audit.py:21: import structlog
+heretek_swarm\actors\mixins\audit.py:25: logger = structlog.get_logger("AuditMixin")
+heretek_swarm\actors\mixins\memory.py:13: logger = structlog.get_logger("MemoryMixin")
+heretek_swarm\actors\mixins\memory.py:9: import structlog
+heretek_swarm\actors\mixins\pattern.py:11: import structlog
+heretek_swarm\actors\mixins\pattern.py:15: logger = structlog.get_logger("PatternMixin")
+heretek_swarm\actors\mixins\tribunal.py:10: import structlog
+heretek_swarm\actors\mixins\tribunal.py:22: logger = structlog.get_logger("TribunalMixin")
+heretek_swarm\actors\mixins\validation.py:17: import structlog
+heretek_swarm\actors\mixins\validation.py:19: logger = structlog.get_logger("ValidationMixin")
+heretek_swarm\actors\nexus\agent.py:26: import structlog
+heretek_swarm\actors\nexus\agent.py:64: logger = structlog.get_logger(__name__)
+heretek_swarm\actors\perceiver.py:20: import structlog
+heretek_swarm\actors\perceiver.py:46: logger = structlog.get_logger("PerceiverAgent")
+heretek_swarm\actors\perceiver_plus\agent.py:22: import structlog
+heretek_swarm\actors\perceiver_plus\agent.py:48: logger = structlog.get_logger("PerceiverPlusAgent")
+heretek_swarm\actors\perceiver_plus\analytics.py:19: import structlog
+heretek_swarm\actors\perceiver_plus\analytics.py:28: logger = structlog.get_logger("PerceiverAnalyticsMixin")
+heretek_swarm\actors\prism\agent.py:18: import structlog
+heretek_swarm\actors\prism\agent.py:55: logger = structlog.get_logger("PrismAgent")
+heretek_swarm\actors\profiling.py:52: import structlog
+heretek_swarm\actors\profiling.py:58: logger = structlog.get_logger(__name__)
+heretek_swarm\actors\sentinel\agent.py:36: import structlog
+heretek_swarm\actors\sentinel\agent.py:81: logger = structlog.get_logger("SentinelAgent")
+heretek_swarm\actors\sentinel_prime\agent.py:23: import structlog
+heretek_swarm\actors\sentinel_prime\agent.py:54: logger = structlog.get_logger("SentinelPrimeAgent")
+heretek_swarm\actors\sentinel_prime\handlers.py:10: import structlog
+heretek_swarm\actors\sentinel_prime\handlers.py:16: logger = structlog.get_logger("SentinelPrimeAgent")
+heretek_swarm\actors\steward.py:18: import structlog
+heretek_swarm\actors\steward.py:33: logger = structlog.get_logger("StewardAgent")
+heretek_swarm\actors\steward.py:410:            the actor registry does not contain ``agent_name``, a structlog
+heretek_swarm\actors\supervisor.py:14: import structlog
+heretek_swarm\actors\supervisor.py:21: logger = structlog.get_logger("ActorSupervisor")
+heretek_swarm\actors\triad\agent.py:23: import structlog
+heretek_swarm\actors\triad\agent.py:34: logger = structlog.get_logger("TriadAgents")
+heretek_swarm\agents\skills.py:19: import structlog
+heretek_swarm\agents\skills.py:21: logger = structlog.get_logger(__name__)
+heretek_swarm\api\agents\chat.py:15: import structlog
+heretek_swarm\api\agents\chat.py:22: logger = structlog.get_logger()
+heretek_swarm\api\agents\core.py:13: logger = structlog.get_logger()
+heretek_swarm\api\agents\core.py:6: import structlog
+heretek_swarm\api\agents\instances.py:16: logger = structlog.get_logger()
+heretek_swarm\api\agents\instances.py:8: import structlog
+heretek_swarm\api\agents\jetstream.py:12: logger = structlog.get_logger()
+heretek_swarm\api\agents\jetstream.py:6: import structlog
+heretek_swarm\api\agents\lifecycle.py:16: logger = structlog.get_logger()
+heretek_swarm\api\agents\lifecycle.py:6: import structlog
+heretek_swarm\api\agents\profiling.py:12: logger = structlog.get_logger()
+heretek_swarm\api\agents\profiling.py:5: import structlog
+heretek_swarm\api\agents\routing_control.py:12: logger = structlog.get_logger()
+heretek_swarm\api\agents\routing_control.py:5: import structlog
+heretek_swarm\api\agents\routing_rules.py:13: logger = structlog.get_logger()
+heretek_swarm\api\agents\routing_rules.py:6: import structlog
+heretek_swarm\api\agents_management.py:18: import structlog
+heretek_swarm\api\agents_management.py:32: logger = structlog.get_logger()
+heretek_swarm\api\alerts.py:14: import structlog
+heretek_swarm\api\alerts.py:25: logger = structlog.get_logger(__name__)
+heretek_swarm\api\autonomous.py:15: import structlog
+heretek_swarm\api\autonomous.py:19: logger = structlog.get_logger("api.autonomous")
+heretek_swarm\api\collective_evolution.py:15: import structlog
+heretek_swarm\api\collective_evolution.py:25: logger = structlog.get_logger("api.collective_evolution")
+heretek_swarm\api\configuration.py:14: import structlog
+heretek_swarm\api\configuration.py:59: logger = structlog.get_logger("api.configuration")
+heretek_swarm\api\consensus.py:22: import structlog
+heretek_swarm\api\consensus.py:46: logger = structlog.get_logger("api.consensus")
+heretek_swarm\api\emergent_intelligence.py:19: import structlog
+heretek_swarm\api\emergent_intelligence.py:30: logger = structlog.get_logger(__name__)
+heretek_swarm\api\evaluation.py:13: import structlog
+heretek_swarm\api\evaluation.py:32: logger = structlog.get_logger(__name__)
+heretek_swarm\api\logging_middleware.py:15: from heretek_swarm.logging.config import (
+heretek_swarm\api\main.py:22: import structlog
+heretek_swarm\api\main.py:30: from heretek_swarm.logging.config import logger as logging_logger
+heretek_swarm\api\main.py:33: from heretek_swarm.logging.config import setup_logging
+heretek_swarm\api\main.py:90: logger = structlog.get_logger("api.main")
+heretek_swarm\api\mcp.py:19: import structlog
+heretek_swarm\api\mcp.py:25: logger = structlog.get_logger("api.mcp")
+heretek_swarm\api\metrics.py:16: import structlog
+heretek_swarm\api\metrics.py:29: logger = structlog.get_logger(__name__)
+heretek_swarm\api\observability.py:19: import structlog
+heretek_swarm\api\observability.py:49: logger = structlog.get_logger(__name__)
+heretek_swarm\api\plugins.py:19: import structlog
+heretek_swarm\api\plugins.py:22: logger = structlog.get_logger("api.plugins")
+heretek_swarm\api\providers_config.py:13: - Structlog audit logging on every endpoint call (endpoint, method,
+heretek_swarm\api\providers_config.py:29: import structlog
+heretek_swarm\api\providers_config.py:40: logger = structlog.get_logger("api.providers_config")
+heretek_swarm\api\provisioner.py:15: import structlog
+heretek_swarm\api\provisioner.py:36: logger = structlog.get_logger("api.provisioner")
+heretek_swarm\api\rag.py:13: import structlog
+heretek_swarm\api\rag.py:30: logger = structlog.get_logger(__name__)
+heretek_swarm\api\rate_limiting.py:18: import structlog
+heretek_swarm\api\rate_limiting.py:23: logger = structlog.get_logger(__name__)
+heretek_swarm\api\websockets.py:22: import structlog
+heretek_swarm\api\websockets.py:25: logger = structlog.get_logger("api.websockets")
+heretek_swarm\api\wizard.py:16: import structlog
+heretek_swarm\api\wizard.py:18: from structlog import get_logger
+heretek_swarm\api\wizard.py:44: logger = structlog.get_logger("api.wizard")
+heretek_swarm\api\workflows.py:20: import structlog
+heretek_swarm\api\workflows.py:28: logger = structlog.get_logger(__name__)
+heretek_swarm\channels\registry.py:16: import structlog
+heretek_swarm\channels\registry.py:18: logger = structlog.get_logger(__name__)
+heretek_swarm\cli.py:1023:     from heretek_swarm.logging.config import setup_logging
+heretek_swarm\cli.py:24: import structlog
+heretek_swarm\cli.py:39: logger = structlog.get_logger("cli")
+heretek_swarm\cli.py:677:     from heretek_swarm.logging.config import setup_logging
+heretek_swarm\cli.py:882:         from heretek_swarm.logging.config import setup_logging
+heretek_swarm\cli\config_wizard.py:19: import structlog
+heretek_swarm\cli\config_wizard.py:22: logger = structlog.get_logger("cli.config_wizard")
+heretek_swarm\cli\goal_commands.py:15: import structlog
+heretek_swarm\cli\goal_commands.py:17: logger = structlog.get_logger("goal_cli")
+heretek_swarm\cli\goal_commands.py:40:     from heretek_swarm.logging.config import setup_logging
+heretek_swarm\collective\adaptive_learning.py:31: import structlog
+heretek_swarm\collective\adaptive_learning.py:35: logger = structlog.get_logger(__name__)
+heretek_swarm\collective\agency_tracking.py:28: import structlog
+heretek_swarm\collective\agency_tracking.py:43: logger = structlog.get_logger("agency_tracking")
+heretek_swarm\collective\agent_adaptation.py:30: import structlog
+heretek_swarm\collective\agent_adaptation.py:35: logger = structlog.get_logger(__name__)
+heretek_swarm\collective\algorithms\abc.py:14: import structlog
+heretek_swarm\collective\algorithms\abc.py:18: logger = structlog.get_logger("ABC")
+heretek_swarm\collective\algorithms\aco.py:15: import structlog
+heretek_swarm\collective\algorithms\aco.py:19: logger = structlog.get_logger("ACO")
+heretek_swarm\collective\algorithms\pso.py:13: import structlog
+heretek_swarm\collective\algorithms\pso.py:17: logger = structlog.get_logger("PSO")
+heretek_swarm\collective\distributed_learning.py:31: import structlog
+heretek_swarm\collective\distributed_learning.py:38: logger = structlog.get_logger(__name__)
+heretek_swarm\collective\emergence_analyzer.py:13: logger = structlog.get_logger(__name__)
+heretek_swarm\collective\emergence_analyzer.py:8: import structlog
+heretek_swarm\collective\emergent_detection.py:29: import structlog
+heretek_swarm\collective\emergent_detection.py:54: logger = structlog.get_logger(__name__)
+heretek_swarm\collective\evolution_engine.py:13: import structlog
+heretek_swarm\collective\evolution_engine.py:22: logger = structlog.get_logger(__name__)
+heretek_swarm\collective\knowledge_transform.py:30: import structlog
+heretek_swarm\collective\knowledge_transform.py:37: logger = structlog.get_logger(__name__)
+heretek_swarm\collective\learning.py:32: import structlog
+heretek_swarm\collective\learning.py:34: logger = structlog.get_logger(__name__)
+heretek_swarm\collective\metrics.py:32: import structlog
+heretek_swarm\collective\metrics.py:39: logger = structlog.get_logger(__name__)
+heretek_swarm\collective\pattern_library.py:33: import structlog
+heretek_swarm\collective\pattern_library.py:37: logger = structlog.get_logger(__name__)
+heretek_swarm\collective\pattern_validation.py:33: import structlog
+heretek_swarm\collective\pattern_validation.py:37: logger = structlog.get_logger(__name__)
+heretek_swarm\collective\society.py:22: import structlog
+heretek_swarm\collective\society.py:27: logger = structlog.get_logger(__name__)
+heretek_swarm\collective\swarm_intelligence.py:48: import structlog
+heretek_swarm\collective\swarm_intelligence.py:55: logger = structlog.get_logger("SwarmIntelligenceEngine")
+heretek_swarm\config\cache.py:15: logger = __import__("structlog").get_logger("config.cache")
+heretek_swarm\config\crud.py:14: import structlog
+heretek_swarm\config\crud.py:59: logger = structlog.get_logger("config.crud")
+heretek_swarm\config\encryption.py:12: import structlog
+heretek_swarm\config\encryption.py:22: logger = structlog.get_logger("config.encryption")
+heretek_swarm\config\loader.py:30: import structlog
+heretek_swarm\config\loader.py:34: logger = structlog.get_logger("config.loader")
+heretek_swarm\config\service.py:19: import structlog
+heretek_swarm\config\service.py:55: logger = structlog.get_logger("config.service")
+heretek_swarm\consciousness\agency_metrics.py:34: import structlog
+heretek_swarm\consciousness\agency_metrics.py:36: logger = structlog.get_logger("agency_metrics")
+heretek_swarm\consciousness\ast.py:29: import structlog
+heretek_swarm\consciousness\ast.py:31: logger = structlog.get_logger("ASTSelfModel")
+heretek_swarm\consciousness\fep.py:30: import structlog
+heretek_swarm\consciousness\fep.py:32: logger = structlog.get_logger("FEPSelfModel")
+heretek_swarm\consciousness\fep_active_inference.py:32: import structlog
+heretek_swarm\consciousness\fep_active_inference.py:41: logger = structlog.get_logger("FEPActiveInference")
+heretek_swarm\consciousness\gwt.py:27: import structlog
+heretek_swarm\consciousness\gwt.py:34: logger = structlog.get_logger(__name__)
+heretek_swarm\consciousness\gwt_deliberation.py:16: import structlog
+heretek_swarm\consciousness\gwt_deliberation.py:32: logger = structlog.get_logger(__name__)
+heretek_swarm\consciousness\iit.py:29: import structlog
+heretek_swarm\consciousness\iit.py:31: logger = structlog.get_logger("IITMetrics")
+heretek_swarm\consciousness\iit_phi.py:30: import structlog
+heretek_swarm\consciousness\iit_phi.py:38: logger = structlog.get_logger("IITPhiCalculator")
+heretek_swarm\consciousness\introspection.py:21: import structlog
+heretek_swarm\consciousness\introspection.py:25: logger = structlog.get_logger("IntrospectionModule")
+heretek_swarm\consciousness\metrics\ast.py:29: import structlog
+heretek_swarm\consciousness\metrics\ast.py:31: logger = structlog.get_logger("ASTMetrics")
+heretek_swarm\consciousness\metrics\iit.py:27: import structlog
+heretek_swarm\consciousness\metrics\iit.py:29: logger = structlog.get_logger("IITMetrics")
+heretek_swarm\consciousness\phi_training.py:32: import structlog
+heretek_swarm\consciousness\phi_training.py:36: logger = structlog.get_logger("PhiTrainingEnvironment")
+heretek_swarm\consciousness\self_model.py:23: import structlog
+heretek_swarm\consciousness\self_model.py:25: logger = structlog.get_logger("SelfModel")
+heretek_swarm\consensus\audit_query.py:18: import structlog
+heretek_swarm\consensus\audit_query.py:26: logger = structlog.get_logger("ConsensusAuditQuery")
+heretek_swarm\consensus\audit_trail.py:21: import structlog
+heretek_swarm\consensus\audit_trail.py:37: logger = structlog.get_logger("ConsensusAuditTrail")
+heretek_swarm\consensus\cons01_dispute_resolution.py:14: import structlog
+heretek_swarm\consensus\cons01_dispute_resolution.py:22: logger = structlog.get_logger("cons01_dispute_resolution")
+heretek_swarm\consensus\consensus_coordinator.py:23: import structlog
+heretek_swarm\consensus\consensus_coordinator.py:28: logger = structlog.get_logger("ConsensusCoordinator")
+heretek_swarm\consensus\deliberation.py:55: import structlog
+heretek_swarm\consensus\deliberation.py:57: logger = structlog.get_logger("DeliberationEngine")
+heretek_swarm\consensus\expertise.py:46: import structlog
+heretek_swarm\consensus\expertise.py:48: logger = structlog.get_logger("AgentExpertiseProfiler")
+heretek_swarm\consensus\immune.py:33: import structlog
+heretek_swarm\consensus\immune.py:37: logger = structlog.get_logger("immune_response")
+heretek_swarm\consensus\maker.py:18: import structlog
+heretek_swarm\consensus\maker.py:20: logger = structlog.get_logger("MAKERConsensus")
+heretek_swarm\consensus\maker_enhanced.py:56: import structlog
+heretek_swarm\consensus\maker_enhanced.py:65: logger = structlog.get_logger("EnhancedMAKERConsensus")
+heretek_swarm\consensus\mediation.py:25: import structlog
+heretek_swarm\consensus\mediation.py:27: logger = structlog.get_logger("mediation")
+heretek_swarm\consensus\raft_election.py:20: import structlog
+heretek_swarm\consensus\raft_election.py:22: logger = structlog.get_logger("RaftElection")
+heretek_swarm\consensus\swarm_deliberation.py:55: import structlog
+heretek_swarm\consensus\swarm_deliberation.py:59: logger = structlog.get_logger("SwarmDeliberationEngine")
+heretek_swarm\consensus\tribunal.py:43: import structlog
+heretek_swarm\consensus\tribunal.py:45: logger = structlog.get_logger("Tribunal")
+heretek_swarm\creativity\novel_connections.py:20: import structlog
+heretek_swarm\creativity\novel_connections.py:22: logger = structlog.get_logger("NovelConnections")
+heretek_swarm\embeddings\providers\base.py:14: import structlog
+heretek_swarm\embeddings\providers\base.py:16: logger = structlog.get_logger("embeddings.providers.base")
+heretek_swarm\embeddings\providers\factory.py:12: import structlog
+heretek_swarm\embeddings\providers\factory.py:18: logger = structlog.get_logger("embeddings.providers.factory")
+heretek_swarm\embeddings\providers\ollama_provider.py:16: import structlog
+heretek_swarm\embeddings\providers\ollama_provider.py:28: logger = structlog.get_logger("embeddings.providers.ollama")
+heretek_swarm\embeddings\providers\openai_provider.py:14: import structlog
+heretek_swarm\embeddings\providers\openai_provider.py:28: logger = structlog.get_logger("embeddings.providers.openai")
+heretek_swarm\gateway\a2a_protocol.py:26: import structlog
+heretek_swarm\gateway\a2a_protocol.py:32: logger = structlog.get_logger(__name__)
+heretek_swarm\gateway\a2a_server.py:21: import structlog
+heretek_swarm\gateway\a2a_server.py:26: logger = structlog.get_logger(__name__)
+heretek_swarm\gateway\auth.py:13: import structlog
+heretek_swarm\gateway\auth.py:17: logger = structlog.get_logger(__name__)
+heretek_swarm\gateway\content_router.py:29: import structlog
+heretek_swarm\gateway\content_router.py:32: logger = structlog.get_logger(__name__)
+heretek_swarm\gateway\event_mesh.py:15: import structlog
+heretek_swarm\gateway\event_mesh.py:30: logger = structlog.get_logger(__name__)
+heretek_swarm\gateway\jetstream_manager.py:28: import structlog
+heretek_swarm\gateway\jetstream_manager.py:32: logger = structlog.get_logger(__name__)
+heretek_swarm\gateway\message_replay.py:32: import structlog
+heretek_swarm\gateway\message_replay.py:34: logger = structlog.get_logger(__name__)
+heretek_swarm\gateway\nats_event_mesh.py:26: import structlog
+heretek_swarm\gateway\nats_event_mesh.py:28: logger = structlog.get_logger(__name__)
+heretek_swarm\goals\consensus.py:16: import structlog
+heretek_swarm\goals\consensus.py:21: logger = structlog.get_logger("GoalConsensus")
+heretek_swarm\goals\pipeline.py:17: import structlog
+heretek_swarm\goals\pipeline.py:23: logger = structlog.get_logger("GoalPipeline")
+heretek_swarm\goals\proposer.py:16: import structlog
+heretek_swarm\goals\proposer.py:18: logger = structlog.get_logger("GoalProposer")
+heretek_swarm\goals\store.py:20: import structlog
+heretek_swarm\goals\store.py:24: logger = structlog.get_logger(__name__)
+heretek_swarm\goals\translator.py:10: import structlog
+heretek_swarm\goals\translator.py:15: logger = structlog.get_logger("GoalToWorkflowTranslator")
+heretek_swarm\governance\coordinator.py:13: import structlog
+heretek_swarm\governance\coordinator.py:28: logger = structlog.get_logger(__name__)
+heretek_swarm\governance\integrations\collective_governance.py:13: import structlog
+heretek_swarm\governance\integrations\collective_governance.py:25: logger = structlog.get_logger(__name__)
+heretek_swarm\governance\integrations\consensus_governance.py:16: import structlog
+heretek_swarm\governance\integrations\consensus_governance.py:32: logger = structlog.get_logger("GovernanceDeliberationEngine")
+heretek_swarm\infrastructure\a2a\protocol.py:14: import structlog
+heretek_swarm\infrastructure\a2a\protocol.py:16: logger = structlog.get_logger(__name__)
+heretek_swarm\infrastructure\audit.py:24: import structlog
+heretek_swarm\infrastructure\audit.py:26: logger = structlog.get_logger("AuditLogger")
+heretek_swarm\infrastructure\health.py:18: import structlog
+heretek_swarm\infrastructure\health.py:26: logger = structlog.get_logger("infrastructure.health")
+heretek_swarm\infrastructure\nats\broadcast.py:14: import structlog
+heretek_swarm\infrastructure\nats\broadcast.py:26: logger = structlog.get_logger(__name__)
+heretek_swarm\infrastructure\nats\client.py:13: import structlog
+heretek_swarm\infrastructure\nats\client.py:23: logger = structlog.get_logger("nats.client")
+heretek_swarm\infrastructure\nats\consensus.py:38: import structlog
+heretek_swarm\infrastructure\nats\consensus.py:43: logger = structlog.get_logger("nats.consensus")
+heretek_swarm\infrastructure\nats\memory_sync.py:22: import structlog
+heretek_swarm\infrastructure\nats\memory_sync.py:30: logger = structlog.get_logger(__name__)
+heretek_swarm\infrastructure\nats\publisher.py:13: import structlog
+heretek_swarm\infrastructure\nats\publisher.py:17: logger = structlog.get_logger("nats.publisher")
+heretek_swarm\infrastructure\nats\subscriber.py:13: import structlog
+heretek_swarm\infrastructure\nats\subscriber.py:21: logger = structlog.get_logger(__name__)
+heretek_swarm\infrastructure\otel\logging.py:128: def get_logger(name: str | None = None) -> structlog.BoundLogger:
+heretek_swarm\infrastructure\otel\logging.py:12: import structlog
+heretek_swarm\infrastructure\otel\logging.py:136:         Configured structlog logger
+heretek_swarm\infrastructure\otel\logging.py:139:         return structlog.get_logger(name)
+heretek_swarm\infrastructure\otel\logging.py:140:     return structlog.get_logger()
+heretek_swarm\infrastructure\otel\logging.py:14: logger = structlog.get_logger(__name__)
+heretek_swarm\infrastructure\otel\logging.py:155:         self._logger = structlog.get_logger(name)
+heretek_swarm\infrastructure\otel\logging.py:54:     # Configure structlog processors
+heretek_swarm\infrastructure\otel\logging.py:56:         structlog.contextvars.merge_contextvars,
+heretek_swarm\infrastructure\otel\logging.py:57:         structlog.stdlib.add_log_level,
+heretek_swarm\infrastructure\otel\logging.py:58:         structlog.stdlib.add_logger_name,
+heretek_swarm\infrastructure\otel\logging.py:59:         structlog.stdlib.PositionalArgumentsFilter(),
+heretek_swarm\infrastructure\otel\logging.py:5: Integrates structlog with trace context for unified observability.
+heretek_swarm\infrastructure\otel\logging.py:60:         structlog.processors.TimeStamper(
+heretek_swarm\infrastructure\otel\logging.py:64:         structlog.processors.StackInfoRenderer(),
+heretek_swarm\infrastructure\otel\logging.py:65:         structlog.processors.format_exc_info,
+heretek_swarm\infrastructure\otel\logging.py:72:         processors.append(structlog.processors.JSONRenderer())
+heretek_swarm\infrastructure\otel\logging.py:74:         processors.append(structlog.dev.ConsoleRenderer())
+heretek_swarm\infrastructure\otel\logging.py:76:     structlog.configure(
+heretek_swarm\infrastructure\otel\logging.py:78:         wrapper_class=structlog.stdlib.BoundLogger,
+heretek_swarm\infrastructure\otel\logging.py:80:         logger_factory=structlog.PrintLoggerFactory(),
+heretek_swarm\infrastructure\otel\metrics.py:13: import structlog
+heretek_swarm\infrastructure\otel\metrics.py:15: logger = structlog.get_logger(__name__)
+heretek_swarm\infrastructure\otel\tracing.py:21: import structlog
+heretek_swarm\infrastructure\otel\tracing.py:38: logger = structlog.get_logger(__name__)
+heretek_swarm\infrastructure\otel\tracing.py:410: _extra_logger = structlog.get_logger(__name__)
+heretek_swarm\infrastructure\provisioner.py:22: import structlog
+heretek_swarm\infrastructure\provisioner.py:29: logger = structlog.get_logger("infrastructure.provisioner")
+heretek_swarm\integrations\anthropic.py:26: import structlog
+heretek_swarm\integrations\anthropic.py:28: logger = structlog.get_logger(__name__)
+heretek_swarm\integrations\autogen.py:26: import structlog
+heretek_swarm\integrations\autogen.py:31: logger = structlog.get_logger(__name__)
+heretek_swarm\integrations\crewai.py:24: import structlog
+heretek_swarm\integrations\crewai.py:26: logger = structlog.get_logger(__name__)
+heretek_swarm\integrations\discord_bot.py:11: import structlog
+heretek_swarm\integrations\discord_bot.py:26: logger = structlog.get_logger(__name__)
+heretek_swarm\integrations\langgraph.py:25: import structlog
+heretek_swarm\integrations\langgraph.py:27: logger = structlog.get_logger(__name__)
+heretek_swarm\integrations\manager.py:27: import structlog
+heretek_swarm\integrations\manager.py:29: logger = structlog.get_logger(__name__)
+heretek_swarm\integrations\openai_assistants.py:26: import structlog
+heretek_swarm\integrations\openai_assistants.py:28: logger = structlog.get_logger(__name__)
+heretek_swarm\integrations\praison_handoffs.py:15: import structlog
+heretek_swarm\integrations\praison_handoffs.py:17: logger = structlog.get_logger(__name__)
+heretek_swarm\integrations\slack_bot.py:11: import structlog
+heretek_swarm\integrations\slack_bot.py:21:     logger = structlog.get_logger(__name__)
+heretek_swarm\integrations\telegram_bot.py:11: import structlog
+heretek_swarm\integrations\telegram_bot.py:31: logger = structlog.get_logger(__name__)
+heretek_swarm\knowledge\research.py:20: import structlog
+heretek_swarm\knowledge\research.py:22: logger = structlog.get_logger("ResearchModule")
+heretek_swarm\knowledge\unified_access.py:23: import structlog
+heretek_swarm\knowledge\unified_access.py:25: logger = structlog.get_logger(__name__)
+heretek_swarm\llm\model_garage.py:33: import structlog
+heretek_swarm\llm\model_garage.py:40: logger = structlog.get_logger("model_garage")
+heretek_swarm\llm\providers\base.py:16: import structlog
+heretek_swarm\llm\providers\base.py:18: logger = structlog.get_logger("llm.providers.base")
+heretek_swarm\llm\providers\factory.py:12: import structlog
+heretek_swarm\llm\providers\factory.py:23: logger = structlog.get_logger("llm.providers.factory")
+heretek_swarm\llm\providers\lemonade_provider.py:17: import structlog
+heretek_swarm\llm\providers\lemonade_provider.py:33: logger = structlog.get_logger("llm.providers.lemonade")
+heretek_swarm\llm\providers\llamacpp_provider.py:17: import structlog
+heretek_swarm\llm\providers\llamacpp_provider.py:32: logger = structlog.get_logger("llm.providers.llamacpp")
+heretek_swarm\llm\providers\minimax_provider.py:17: import structlog
+heretek_swarm\llm\providers\minimax_provider.py:34: logger = structlog.get_logger("llm.providers.minimax")
+heretek_swarm\llm\providers\ollama_provider.py:17: import structlog
+heretek_swarm\llm\providers\ollama_provider.py:33: logger = structlog.get_logger("llm.providers.ollama")
+heretek_swarm\llm\providers\openai_compatible.py:22: import structlog
+heretek_swarm\llm\providers\openai_compatible.py:40: logger = structlog.get_logger("llm.providers.openai_compatible")
+heretek_swarm\llm\providers\openai_provider.py:15: import structlog
+heretek_swarm\llm\providers\openai_provider.py:34: logger = structlog.get_logger("llm.providers.openai")
+heretek_swarm\llm\providers\zai_provider.py:17: import structlog
+heretek_swarm\llm\providers\zai_provider.py:35: logger = structlog.get_logger("llm.providers.zai")
+heretek_swarm\logging\config.py:115:     Configure structlog for structured JSON logging.
+heretek_swarm\logging\config.py:124:         structlog.contextvars.merge_contextvars,
+heretek_swarm\logging\config.py:125:         structlog.stdlib.add_log_level,
+heretek_swarm\logging\config.py:126:         structlog.stdlib.add_logger_name,
+heretek_swarm\logging\config.py:127:         structlog.stdlib.PositionalArgumentsFormatter(),
+heretek_swarm\logging\config.py:129:         structlog.processors.UnicodeDecoder(),
+heretek_swarm\logging\config.py:13: import structlog
+heretek_swarm\logging\config.py:14: from structlog.dev import ConsoleRenderer
+heretek_swarm\logging\config.py:15: from structlog.processors import (
+heretek_swarm\logging\config.py:162:     # Configure structlog
+heretek_swarm\logging\config.py:163:     structlog.configure(
+heretek_swarm\logging\config.py:165:         wrapper_class=structlog.stdlib.BoundLogger,
+heretek_swarm\logging\config.py:167:         logger_factory=structlog.stdlib.LoggerFactory(),
+heretek_swarm\logging\config.py:175:     # Create formatter that structlog can process
+heretek_swarm\logging\config.py:179:             structlog.stdlib.ProcessorFormatter.remove_processors_meta,
+heretek_swarm\logging\config.py:197: def get_logger(name: str) -> structlog.stdlib.BoundLogger:
+heretek_swarm\logging\config.py:205:         Configured structlog logger
+heretek_swarm\logging\config.py:207:     return structlog.get_logger(name)
+heretek_swarm\logging\config.py:23: from structlog.stdlib import (
+heretek_swarm\logging\config.py:26: from structlog.types import Processor
+heretek_swarm\mcp\agent_tools.py:27: import structlog
+heretek_swarm\mcp\agent_tools.py:31: logger = structlog.get_logger(__name__)
+heretek_swarm\mcp\bridge.py:18: import structlog
+heretek_swarm\mcp\bridge.py:24: logger = structlog.get_logger(__name__)
+heretek_swarm\mcp\client.py:16: import structlog
+heretek_swarm\mcp\client.py:25: logger = structlog.get_logger("mcp.client")
+heretek_swarm\mcp\registry.py:23: import structlog
+heretek_swarm\mcp\registry.py:25: logger = structlog.get_logger(__name__)
+heretek_swarm\mcp\server.py:19: import structlog
+heretek_swarm\mcp\server.py:27: logger = structlog.get_logger("mcp.server")
+heretek_swarm\memory\access_patterns.py:20: import structlog
+heretek_swarm\memory\access_patterns.py:22: logger = structlog.get_logger(__name__)
+heretek_swarm\memory\base.py:19: import structlog
+heretek_swarm\memory\base.py:21: logger = structlog.get_logger("MemorySystem")
+heretek_swarm\memory\compression.py:22: import structlog
+heretek_swarm\memory\compression.py:24: logger = structlog.get_logger(__name__)
+heretek_swarm\memory\eliza_memory.py:23: import structlog
+heretek_swarm\memory\eliza_memory.py:25: logger = structlog.get_logger("MemoryManager")
+heretek_swarm\memory\migration_strategies.py:11: import structlog
+heretek_swarm\memory\migration_strategies.py:13: logger = structlog.get_logger(__name__)
+heretek_swarm\memory\persistent.py:15: import structlog
+heretek_swarm\memory\persistent.py:19: logger = structlog.get_logger("PersistentMemory")
+heretek_swarm\memory\prefetcher.py:22: import structlog
+heretek_swarm\memory\prefetcher.py:24: logger = structlog.get_logger(__name__)
+heretek_swarm\memory\tiering.py:21: import structlog
+heretek_swarm\memory\tiering.py:23: logger = structlog.get_logger(__name__)
+heretek_swarm\memory\versioned.py:20: import structlog
+heretek_swarm\memory\versioned.py:22: logger = structlog.get_logger(__name__)
+heretek_swarm\models\external_call_log_encryption.py:15: import structlog
+heretek_swarm\models\external_call_log_encryption.py:24: logger = structlog.get_logger("models.external_call_log_encryption")
+heretek_swarm\observability\__init__.py:32: import structlog
+heretek_swarm\observability\__init__.py:379:         """Get structlog logger."""
+heretek_swarm\observability\__init__.py:380:         return structlog.get_logger("observability")
+heretek_swarm\observability\__init__.py:565:         log_func = getattr(structlog.get_logger(), level.value.lower())
+heretek_swarm\observability\alerting.py:31: import structlog
+heretek_swarm\observability\alerting.py:33: logger = structlog.get_logger("alerting")
+heretek_swarm\observability\tracing.py:25: import structlog
+heretek_swarm\observability\tracing.py:38: logger = structlog.get_logger("observability.tracing")
+heretek_swarm\orchestration\heavyswarm.py:21: import structlog
+heretek_swarm\orchestration\heavyswarm.py:36: logger = structlog.get_logger("HeavySwarmWorkflow")
+heretek_swarm\orchestration\phase_handlers.py:10: import structlog
+heretek_swarm\orchestration\phase_handlers.py:12: logger = structlog.get_logger(__name__)
+heretek_swarm\plugins\consciousness.py:26: import structlog
+heretek_swarm\plugins\consciousness.py:28: logger = structlog.get_logger("ConsciousnessPlugin")
+heretek_swarm\plugins\consciousness_enhanced.py:27: import structlog
+heretek_swarm\plugins\consciousness_enhanced.py:29: logger = structlog.get_logger("ConsciousnessEnhanced")
+heretek_swarm\plugins\consciousness_metrics.py:24: import structlog
+heretek_swarm\plugins\consciousness_metrics.py:29: logger = structlog.get_logger("ConsciousnessMetrics")
+heretek_swarm\plugins\liberation.py:25: import structlog
+heretek_swarm\plugins\liberation.py:27: logger = structlog.get_logger("LiberationPlugin")
+heretek_swarm\plugins\manager.py:17: import structlog
+heretek_swarm\plugins\manager.py:19: logger = structlog.get_logger(__name__)
+heretek_swarm\rag\hybrid_retriever.py:34: import structlog
+heretek_swarm\rag\hybrid_retriever.py:47: logger = structlog.get_logger(__name__)
+heretek_swarm\rag\knowledge_graph.py:17: import structlog
+heretek_swarm\rag\knowledge_graph.py:19: logger = structlog.get_logger(__name__)
+heretek_swarm\rag\rag_pipeline.py:16: import structlog
+heretek_swarm\rag\rag_pipeline.py:31: logger = structlog.get_logger(__name__)
+heretek_swarm\rag\strategies.py:37: import structlog
+heretek_swarm\rag\strategies.py:39: logger = structlog.get_logger(__name__)
+heretek_swarm\runtime\agent_runtime.py:14: import structlog
+heretek_swarm\runtime\agent_runtime.py:16: logger = structlog.get_logger(__name__)
+heretek_swarm\runtime\autonomous_runtime.py:21: import structlog
+heretek_swarm\runtime\autonomous_runtime.py:41: logger = structlog.get_logger("AutonomousRuntime")
+heretek_swarm\runtime\autonomous_runtime_config.py:251:         import structlog
+heretek_swarm\runtime\autonomous_runtime_config.py:252:         logger = structlog.get_logger("config.runtime")
+heretek_swarm\runtime\daemon.py:29: import structlog
+heretek_swarm\runtime\daemon.py:31: logger = structlog.get_logger(__name__)
+heretek_swarm\runtime\main_loop.py:1643:     from heretek_swarm.logging.config import setup_logging
+heretek_swarm\runtime\main_loop.py:25: import structlog
+heretek_swarm\runtime\main_loop.py:42: logger = structlog.get_logger(__name__)
+heretek_swarm\runtime\registry.py:13: import structlog
+heretek_swarm\runtime\registry.py:18: logger = structlog.get_logger("AgentRegistry")
+heretek_swarm\runtime\registry_enhanced.py:21: import structlog
+heretek_swarm\runtime\registry_enhanced.py:25: logger = structlog.get_logger("registry_enhanced")
+heretek_swarm\runtime\scaling.py:22: import structlog
+heretek_swarm\runtime\scaling.py:24: logger = structlog.get_logger(__name__)
+heretek_swarm\runtime\self_maintenance.py:24: import structlog
+heretek_swarm\runtime\self_maintenance.py:26: logger = structlog.get_logger("self_maintenance")
+heretek_swarm\runtime\startup_manager.py:13: import structlog
+heretek_swarm\runtime\startup_manager.py:26: logger = structlog.get_logger("startup_manager")
+heretek_swarm\runtime\tools.py:16: import structlog
+heretek_swarm\runtime\tools.py:18: logger = structlog.get_logger(__name__)
+heretek_swarm\security\adversarial.py:22: import structlog
+heretek_swarm\security\adversarial.py:24: logger = structlog.get_logger(__name__)
+heretek_swarm\security\anomaly_detection.py:28: import structlog
+heretek_swarm\security\anomaly_detection.py:30: logger = structlog.get_logger("anomaly_detection")
+heretek_swarm\security\baseline_update.py:29: import structlog
+heretek_swarm\security\baseline_update.py:31: logger = structlog.get_logger("baseline_update")
+heretek_swarm\security\behavioral_baseline.py:34: import structlog
+heretek_swarm\security\behavioral_baseline.py:36: logger = structlog.get_logger("behavioral_baseline")
+heretek_swarm\security\ddos_protection.py:22: import structlog
+heretek_swarm\security\ddos_protection.py:24: logger = structlog.get_logger(__name__)
+heretek_swarm\security\guardrails.py:13: import structlog
+heretek_swarm\security\guardrails.py:24: logger = structlog.get_logger()
+heretek_swarm\security\safe01_anomaly_response.py:21: import structlog
+heretek_swarm\security\safe01_anomaly_response.py:31: logger = structlog.get_logger("safe01_anomaly_response")
+heretek_swarm\security\threat_detection.py:29: import structlog
+heretek_swarm\security\threat_detection.py:45: logger = structlog.get_logger("threat_detection")
+heretek_swarm\security\validators.py:10: import structlog
+heretek_swarm\security\validators.py:12: logger = structlog.get_logger(__name__)
+heretek_swarm\security\zero_trust.py:22: import structlog
+heretek_swarm\security\zero_trust.py:25: logger = structlog.get_logger(__name__)
+heretek_swarm\security\zero_trust.py:926:     - All security events logged with structlog
+heretek_swarm\security\zero_trust.py:993:             # Log to structlog
+heretek_swarm\state\event_store.py:31: import structlog
+heretek_swarm\state\event_store.py:33: logger = structlog.get_logger(__name__)
+heretek_swarm\state\repository.py:24: import structlog
+heretek_swarm\state\repository.py:33: logger = structlog.get_logger("state.repository")
+heretek_swarm\testing\stress_testing.py:19: import structlog
+heretek_swarm\testing\stress_testing.py:21: logger = structlog.get_logger("StressTesting")
+heretek_swarm\tools\mcp_tools.py:15: import structlog
+heretek_swarm\tools\mcp_tools.py:22: logger = structlog.get_logger(__name__)
+heretek_swarm\workflow\cycle_detector.py:38: import structlog
+heretek_swarm\workflow\cycle_detector.py:40: logger = structlog.get_logger("WorkflowCycleDetector")
+heretek_swarm\workflow\engine.py:22: import structlog
+heretek_swarm\workflow\engine.py:27: logger = structlog.get_logger(__name__)
+heretek_swarm\workflow\store.py:19: import structlog
+heretek_swarm\workflow\store.py:21: logger = structlog.get_logger(__name__)
+heretek_swarm\workflow\strategies.py:17: import structlog
+heretek_swarm\workflow\strategies.py:26: logger = structlog.get_logger(__name__)
+heretek_swarm\workflow\validator.py:18: import structlog
+heretek_swarm\workflow\validator.py:20: logger = structlog.get_logger(__name__)
+tests\test_consensus_coordinator.py:292:         # The structlog output should include agent_vote_collected with status=unavailable
+tests\test_consensus_coordinator.py:293:         # (structlog may not capture to caplog, so we just verify no crash)
+tests\test_consensus_coordinator.py:410:         # We can't easily capture structlog output in tests without

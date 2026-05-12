@@ -15,7 +15,7 @@ from pydantic import ValidationError
 from heretek_swarm.actors.base import ActorMessage
 from heretek_swarm.actors.validation import validate_message
 
-from .core import (
+from .agent import (
     ArbiterAgent,
     Conflict,
     ConflictSeverity,

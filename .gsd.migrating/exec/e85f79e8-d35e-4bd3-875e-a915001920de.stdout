@@ -1,0 +1,38 @@
+
+=== C:\Users\Derek\Desktop\heretek-swarm\src ===
+  [FILE] __init__.py
+  [DIR] agent_workspace
+  [FILE] cli.py
+
+=== C:\Users\Derek\Desktop\heretek-swarm\heretek-swarm ===
+  [FILE] Dockerfile
+  [FILE] LICENSE
+  [DIR] agent_workspace
+  [DIR] docs
+  [DIR] heretek_swarm
+  [FILE] heretek_swarm.db
+  [DIR] heretek_swarm.egg-info
+  [FILE] test_ws_integration.db
+  [DIR] tests
+
+Found actors/base/ at: C:\Users\Derek\Desktop\heretek-swarm\heretek-swarm\heretek_swarm\actors\base
+  core.py
+  message_handling.py
+  state_management.py
+  __init__.py
+
+Found logging/ at: C:\Users\Derek\Desktop\heretek-swarm\heretek-swarm\heretek_swarm\logging
+  config.py
+    (294 lines)
+    """
+    Logging Configuration for Heretek Swarm
+    
+    Provides structured JSON logging with request tracing capabilities.
+    Configured for Loki + Promtail log aggregation.
+  __init__.py
+    (43 lines)
+    """
+    Logging package for Heretek Swarm.
+    """
+    
+    from .config import (

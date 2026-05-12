@@ -1,0 +1,9 @@
+CHECK_1: file exists
+PASS
+CHECK_2: section headings >= 6
+found  headings
+FAIL
+CHECK_3: contains AgentActor
+PASS
+CHECK_4: contains __init__
+FAIL

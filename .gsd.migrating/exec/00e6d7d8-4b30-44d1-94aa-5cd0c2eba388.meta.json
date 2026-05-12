@@ -1,0 +1,18 @@
+{
+  "id": "00e6d7d8-4b30-44d1-94aa-5cd0c2eba388",
+  "runtime": "bash",
+  "purpose": "Check for existing ARCHITECTURE.md and actors/README.md",
+  "script_chars": 238,
+  "started_at": "2026-05-10T22:28:22.220Z",
+  "finished_at": "2026-05-10T22:28:24.117Z",
+  "exit_code": 2,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 1897,
+  "stdout_bytes": 112,
+  "stderr_bytes": 79,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\00e6d7d8-4b30-44d1-94aa-5cd0c2eba388.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\00e6d7d8-4b30-44d1-94aa-5cd0c2eba388.stderr"
+}

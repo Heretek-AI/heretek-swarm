@@ -1,0 +1,18 @@
+{
+  "id": "7ccbab26-0383-431c-b2c0-ac25a6d2e6b8",
+  "runtime": "bash",
+  "purpose": "List all actors files with sizes",
+  "script_chars": 165,
+  "started_at": "2026-05-10T22:29:42.693Z",
+  "finished_at": "2026-05-10T22:29:42.830Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 137,
+  "stdout_bytes": 184,
+  "stderr_bytes": 128,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\7ccbab26-0383-431c-b2c0-ac25a6d2e6b8.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\7ccbab26-0383-431c-b2c0-ac25a6d2e6b8.stderr"
+}

@@ -1,0 +1,74 @@
+
+=== C:\Users\Derek\Desktop\heretek-swarm\heretek-swarm ===
+Found logging/ at: C:\Users\Derek\Desktop\heretek-swarm\heretek-swarm\heretek_swarm\logging
+  config.py
+  __init__.py
+  __pycache__
+  actors/base/: core.py
+  actors/base/: message_handling.py
+  actors/base/: state_management.py
+  actors/base/: __init__.py
+
+Top-level:
+  [FILE] Dockerfile
+  [FILE] LICENSE
+  [DIR] agent_workspace
+  [DIR] docs
+  [DIR] heretek_swarm
+  [FILE] heretek_swarm.db
+  [DIR] heretek_swarm.egg-info
+  [FILE] test_ws_integration.db
+  [DIR] tests
+
+=== C:\Users\Derek\Desktop\heretek-swarm ===
+Found logging/ at: C:\Users\Derek\Desktop\heretek-swarm\heretek-swarm\heretek_swarm\logging
+  config.py
+  __init__.py
+  __pycache__
+  actors/base/: core.py
+  actors/base/: message_handling.py
+  actors/base/: state_management.py
+  actors/base/: __init__.py
+
+Top-level:
+  [FILE] =0.2.0
+  [FILE] =0.23.0
+  [FILE] =1.1.0
+  [FILE] =1.8.0
+  [FILE] =2.3.0
+  [FILE] =24.0.0
+  [FILE] =3.12.0
+  [FILE] =3.5.0
+  [FILE] =4.0.0
+  [FILE] =4.1.0
+  [FILE] =6.98.0
+  [FILE] =8.0.0
+  [FILE] CLAUDE.md
+  [FILE] LICENSE
+  [FILE] PATH_TO_EMERGENCE.md
+  [FILE] PRIME_DIRECTIVE.md
+  [FILE] RALPH.md
+  [FILE] README.md
+  [FILE] RESEARCH.md
+  [FILE] SWARM_STATE.md
+  [DIR] agent_workspace
+  [DIR] audit
+  [FILE] audit-report-template.md
+  [FILE] audit-report.md
+  [FILE] docker-compose.yml
+  [DIR] docs
+  [DIR] heretek-swarm
+  [DIR] migrations
+  [DIR] node_modules
+  [FILE] package-lock.json
+  [FILE] pyproject.toml
+  [FILE] pytest_stderr.txt
+  [FILE] pytest_stdout.txt
+  [DIR] src
+  [DIR] swarm-dashboard
+  [DIR] test-results
+  [DIR] tests
+  [FILE] tmpku_9ys71.env
+  [FILE] triage_classifier.py
+  [FILE] triage_data.json
+  [FILE] uv.lock

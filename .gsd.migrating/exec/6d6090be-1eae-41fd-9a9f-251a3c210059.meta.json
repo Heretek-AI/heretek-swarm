@@ -1,0 +1,18 @@
+{
+  "id": "6d6090be-1eae-41fd-9a9f-251a3c210059",
+  "runtime": "bash",
+  "purpose": "Check triad subpackage agent.py has alpha/beta/charlie/steward classes",
+  "script_chars": 81,
+  "started_at": "2026-05-11T01:50:23.103Z",
+  "finished_at": "2026-05-11T01:50:26.713Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 3610,
+  "stdout_bytes": 219,
+  "stderr_bytes": 0,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\6d6090be-1eae-41fd-9a9f-251a3c210059.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\6d6090be-1eae-41fd-9a9f-251a3c210059.stderr"
+}

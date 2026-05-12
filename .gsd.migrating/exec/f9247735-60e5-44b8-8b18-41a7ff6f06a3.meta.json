@@ -1,0 +1,18 @@
+{
+  "id": "f9247735-60e5-44b8-8b18-41a7ff6f06a3",
+  "runtime": "bash",
+  "purpose": "Check full file content for __init__",
+  "script_chars": 163,
+  "started_at": "2026-05-11T00:31:09.306Z",
+  "finished_at": "2026-05-11T00:31:09.378Z",
+  "exit_code": 1,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 72,
+  "stdout_bytes": 0,
+  "stderr_bytes": 0,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\f9247735-60e5-44b8-8b18-41a7ff6f06a3.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\f9247735-60e5-44b8-8b18-41a7ff6f06a3.stderr"
+}

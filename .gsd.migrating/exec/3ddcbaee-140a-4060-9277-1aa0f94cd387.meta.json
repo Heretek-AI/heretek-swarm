@@ -1,0 +1,18 @@
+{
+  "id": "3ddcbaee-140a-4060-9277-1aa0f94cd387",
+  "runtime": "bash",
+  "purpose": "Check what imports flat triad files to assess dead code risk",
+  "script_chars": 566,
+  "started_at": "2026-05-11T01:50:23.108Z",
+  "finished_at": "2026-05-11T01:50:27.221Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 4113,
+  "stdout_bytes": 2585,
+  "stderr_bytes": 0,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\3ddcbaee-140a-4060-9277-1aa0f94cd387.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\3ddcbaee-140a-4060-9277-1aa0f94cd387.stderr"
+}

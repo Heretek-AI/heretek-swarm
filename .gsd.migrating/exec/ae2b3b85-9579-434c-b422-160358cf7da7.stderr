@@ -1,0 +1,2 @@
+/bin/bash: -c: line 1: syntax error near unexpected token `('
+/bin/bash: -c: line 1: `cd /d "C:\Users\Derek\Desktop\heretek-swarm" && if exist docs\actors\README.md (echo "EXISTS in docs/actors/README.md") else (echo "NOT FOUND in docs/actors/README.md") && if exist docs\actors (dir /b docs\actors 2>nul || echo "empty") else (echo "docs\actors dir missing")'

@@ -1,0 +1,18 @@
+{
+  "id": "be482a2e-d524-40e3-9bec-ca7aa19208b9",
+  "runtime": "bash",
+  "purpose": "Find actual package location and list all Python files",
+  "script_chars": 160,
+  "started_at": "2026-05-10T22:26:46.200Z",
+  "finished_at": "2026-05-10T22:26:54.844Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 8644,
+  "stdout_bytes": 598871,
+  "stderr_bytes": 87,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\be482a2e-d524-40e3-9bec-ca7aa19208b9.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\be482a2e-d524-40e3-9bec-ca7aa19208b9.stderr"
+}

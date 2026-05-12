@@ -1,0 +1,18 @@
+{
+  "id": "442a065d-2d82-4371-9e9c-8e8ef4d1b129",
+  "runtime": "bash",
+  "purpose": "Audit flat actor files with class definitions and existing subpackages",
+  "script_chars": 834,
+  "started_at": "2026-05-11T02:20:49.689Z",
+  "finished_at": "2026-05-11T02:20:51.607Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 1918,
+  "stdout_bytes": 320,
+  "stderr_bytes": 136,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\442a065d-2d82-4371-9e9c-8e8ef4d1b129.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\442a065d-2d82-4371-9e9c-8e8ef4d1b129.stderr"
+}

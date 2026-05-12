@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "unitType": "plan-slice",
+  "unitId": "M005/S03",
+  "startedAt": 1778465972450,
+  "updatedAt": 1778467173337,
+  "phase": "wrapup-warning-sent",
+  "wrapupWarningSent": true,
+  "continueHereFired": false,
+  "timeoutAt": 1778464933001,
+  "lastProgressAt": 1778467173336,
+  "progressCount": 0,
+  "lastProgressKind": "filesystem-activity",
+  "recoveryAttempts": 0,
+  "lastRecoveryReason": "hard"
+}

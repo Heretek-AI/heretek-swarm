@@ -1,0 +1,18 @@
+{
+  "id": "0dc5454a-d78b-4ede-bacd-925a22b57582",
+  "runtime": "bash",
+  "purpose": "Check existing docs directory and PRIME_DIRECTIVE",
+  "script_chars": 177,
+  "started_at": "2026-05-10T22:26:37.409Z",
+  "finished_at": "2026-05-10T22:26:37.506Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 97,
+  "stdout_bytes": 1317,
+  "stderr_bytes": 87,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\0dc5454a-d78b-4ede-bacd-925a22b57582.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\0dc5454a-d78b-4ede-bacd-925a22b57582.stderr"
+}

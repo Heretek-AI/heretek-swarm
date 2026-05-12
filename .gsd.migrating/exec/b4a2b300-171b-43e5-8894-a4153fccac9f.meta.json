@@ -1,0 +1,18 @@
+{
+  "id": "b4a2b300-171b-43e5-8894-a4153fccac9f",
+  "runtime": "bash",
+  "purpose": "Check ARCHITECTURE.md headings",
+  "script_chars": 323,
+  "started_at": "2026-05-11T00:04:47.868Z",
+  "finished_at": "2026-05-11T00:04:47.961Z",
+  "exit_code": 1,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 93,
+  "stdout_bytes": 0,
+  "stderr_bytes": 87,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\b4a2b300-171b-43e5-8894-a4153fccac9f.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\b4a2b300-171b-43e5-8894-a4153fccac9f.stderr"
+}

@@ -1,0 +1,18 @@
+{
+  "id": "bebdd3a1-3c40-434a-9268-0094df25e422",
+  "runtime": "bash",
+  "purpose": "Explore repo structure - top level and src",
+  "script_chars": 202,
+  "started_at": "2026-05-10T22:25:12.385Z",
+  "finished_at": "2026-05-10T22:25:14.449Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 2064,
+  "stdout_bytes": 534,
+  "stderr_bytes": 0,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\bebdd3a1-3c40-434a-9268-0094df25e422.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\bebdd3a1-3c40-434a-9268-0094df25e422.stderr"
+}

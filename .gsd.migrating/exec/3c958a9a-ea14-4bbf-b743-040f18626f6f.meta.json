@@ -1,0 +1,18 @@
+{
+  "id": "3c958a9a-ea14-4bbf-b743-040f18626f6f",
+  "runtime": "bash",
+  "purpose": "Check triad agent.py method signatures for alpha comparison",
+  "script_chars": 135,
+  "started_at": "2026-05-11T01:55:42.522Z",
+  "finished_at": "2026-05-11T01:55:54.373Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 11851,
+  "stdout_bytes": 219,
+  "stderr_bytes": 0,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\3c958a9a-ea14-4bbf-b743-040f18626f6f.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\3c958a9a-ea14-4bbf-b743-040f18626f6f.stderr"
+}

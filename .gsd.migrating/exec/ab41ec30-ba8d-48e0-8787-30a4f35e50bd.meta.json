@@ -1,0 +1,18 @@
+{
+  "id": "ab41ec30-ba8d-48e0-8787-30a4f35e50bd",
+  "runtime": "bash",
+  "purpose": "List all flat actor files under actors/",
+  "script_chars": 104,
+  "started_at": "2026-05-10T22:28:56.897Z",
+  "finished_at": "2026-05-10T22:28:59.232Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 2335,
+  "stdout_bytes": 984,
+  "stderr_bytes": 79,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\ab41ec30-ba8d-48e0-8787-30a4f35e50bd.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\ab41ec30-ba8d-48e0-8787-30a4f35e50bd.stderr"
+}

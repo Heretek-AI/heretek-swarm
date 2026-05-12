@@ -1,0 +1,18 @@
+{
+  "id": "80285106-c8ff-4a53-ab3b-7228680c7da0",
+  "runtime": "bash",
+  "purpose": "Scan test files for flat actor imports",
+  "script_chars": 204,
+  "started_at": "2026-05-11T01:50:23.133Z",
+  "finished_at": "2026-05-11T01:50:26.745Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 3612,
+  "stdout_bytes": 0,
+  "stderr_bytes": 0,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\80285106-c8ff-4a53-ab3b-7228680c7da0.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\80285106-c8ff-4a53-ab3b-7228680c7da0.stderr"
+}

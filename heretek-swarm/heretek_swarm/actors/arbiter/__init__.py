@@ -2,13 +2,13 @@
 Arbiter subpackage - Split module for arbiter agent.
 
 Modules:
-- core: Core arbitration logic, conflict detection, enums, dataclasses
+- agent: Core arbitration logic, conflict detection, enums, dataclasses
 - handlers: Event handlers and responses
 - strategies: Resolution strategies
 - constants: Constants for the arbiter
 """
 
-from .core import (
+from .agent import (
     ArbiterAgent,
     ArbitrationReport,
     Conflict,

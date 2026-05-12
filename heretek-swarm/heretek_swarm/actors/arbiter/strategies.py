@@ -12,7 +12,7 @@ from typing import Any
 
 import structlog
 
-from .core import (
+from .agent import (
     ArbiterAgent,
     Conflict,
     ResolutionStatus,

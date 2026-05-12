@@ -1,0 +1,18 @@
+{
+  "id": "04d3440c-c19f-46b7-b836-3749e6e02867",
+  "runtime": "bash",
+  "purpose": "Get full list of actor directories",
+  "script_chars": 97,
+  "started_at": "2026-05-11T00:08:05.324Z",
+  "finished_at": "2026-05-11T00:08:07.359Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 2035,
+  "stdout_bytes": 1688,
+  "stderr_bytes": 0,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\04d3440c-c19f-46b7-b836-3749e6e02867.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\04d3440c-c19f-46b7-b836-3749e6e02867.stderr"
+}

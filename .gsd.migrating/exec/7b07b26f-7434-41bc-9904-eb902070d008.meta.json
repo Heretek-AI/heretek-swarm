@@ -1,0 +1,18 @@
+{
+  "id": "7b07b26f-7434-41bc-9904-eb902070d008",
+  "runtime": "bash",
+  "purpose": "Read factory.py for agent registration patterns",
+  "script_chars": 158,
+  "started_at": "2026-05-11T00:11:20.080Z",
+  "finished_at": "2026-05-11T00:11:21.476Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 1396,
+  "stdout_bytes": 125,
+  "stderr_bytes": 0,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\7b07b26f-7434-41bc-9904-eb902070d008.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\7b07b26f-7434-41bc-9904-eb902070d008.stderr"
+}

@@ -1,0 +1,18 @@
+{
+  "id": "4ee9cb9c-8ba7-4e05-ad02-d1998210d312",
+  "runtime": "bash",
+  "purpose": "UAT S02: re-run smoke tests with corrected shell",
+  "script_chars": 1070,
+  "started_at": "2026-05-11T20:38:48.678Z",
+  "finished_at": "2026-05-11T20:38:52.630Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 3952,
+  "stdout_bytes": 509,
+  "stderr_bytes": 0,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\4ee9cb9c-8ba7-4e05-ad02-d1998210d312.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\4ee9cb9c-8ba7-4e05-ad02-d1998210d312.stderr"
+}

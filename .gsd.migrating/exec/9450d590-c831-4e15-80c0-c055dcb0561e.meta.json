@@ -1,0 +1,18 @@
+{
+  "id": "9450d590-c831-4e15-80c0-c055dcb0561e",
+  "runtime": "bash",
+  "purpose": "Check if logging/config.py exists",
+  "script_chars": 124,
+  "started_at": "2026-05-11T00:51:10.492Z",
+  "finished_at": "2026-05-11T00:51:22.611Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 12119,
+  "stdout_bytes": 21,
+  "stderr_bytes": 42,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\9450d590-c831-4e15-80c0-c055dcb0561e.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\9450d590-c831-4e15-80c0-c055dcb0561e.stderr"
+}

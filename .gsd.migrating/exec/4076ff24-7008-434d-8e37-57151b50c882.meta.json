@@ -1,0 +1,18 @@
+{
+  "id": "4076ff24-7008-434d-8e37-57151b50c882",
+  "runtime": "bash",
+  "purpose": "Check key architecture files",
+  "script_chars": 184,
+  "started_at": "2026-05-10T22:29:26.345Z",
+  "finished_at": "2026-05-10T22:29:28.260Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 1915,
+  "stdout_bytes": 1462,
+  "stderr_bytes": 79,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\4076ff24-7008-434d-8e37-57151b50c882.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\4076ff24-7008-434d-8e37-57151b50c882.stderr"
+}

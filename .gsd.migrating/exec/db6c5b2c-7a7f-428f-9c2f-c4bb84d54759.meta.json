@@ -1,0 +1,18 @@
+{
+  "id": "db6c5b2c-7a7f-428f-9c2f-c4bb84d54759",
+  "runtime": "bash",
+  "purpose": "Check if heretek-swarm dir exists for package",
+  "script_chars": 195,
+  "started_at": "2026-05-10T22:26:13.556Z",
+  "finished_at": "2026-05-10T22:26:16.397Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 2841,
+  "stdout_bytes": 1249,
+  "stderr_bytes": 87,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\db6c5b2c-7a7f-428f-9c2f-c4bb84d54759.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\db6c5b2c-7a7f-428f-9c2f-c4bb84d54759.stderr"
+}

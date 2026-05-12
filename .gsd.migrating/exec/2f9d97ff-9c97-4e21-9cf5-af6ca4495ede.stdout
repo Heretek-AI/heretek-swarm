@@ -1,0 +1,10 @@
+class OpportunityType(StrEnum):
+class ThreatLevel(StrEnum):
+class AnomalyType(StrEnum):
+class Opportunity:
+class Anomaly:
+class IntelligenceReport:
+class ResearchState(StrEnum):
+class ResearchProgress:
+class Pattern:
+class ExplorerAgent(

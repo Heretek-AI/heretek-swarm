@@ -1,0 +1,18 @@
+{
+  "id": "7a2c8a0c-e81e-452a-9088-0e7b2f13c5e4",
+  "runtime": "bash",
+  "purpose": "Check perceiver_plus has PerceiverPlusAgent not PerceiverAgent",
+  "script_chars": 127,
+  "started_at": "2026-05-11T01:50:23.138Z",
+  "finished_at": "2026-05-11T01:50:26.719Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 3581,
+  "stdout_bytes": 72,
+  "stderr_bytes": 0,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\7a2c8a0c-e81e-452a-9088-0e7b2f13c5e4.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\7a2c8a0c-e81e-452a-9088-0e7b2f13c5e4.stderr"
+}

@@ -1,0 +1,18 @@
+{
+  "id": "7beaab1f-13ec-49b0-a5df-f77da8422f06",
+  "runtime": "bash",
+  "purpose": "Find all structlog/logging configuration references",
+  "script_chars": 230,
+  "started_at": "2026-05-11T00:51:10.477Z",
+  "finished_at": "2026-05-11T00:51:22.604Z",
+  "exit_code": 1,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 12127,
+  "stdout_bytes": 0,
+  "stderr_bytes": 42,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\7beaab1f-13ec-49b0-a5df-f77da8422f06.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\7beaab1f-13ec-49b0-a5df-f77da8422f06.stderr"
+}
