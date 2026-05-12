@@ -10,7 +10,7 @@
 
 ## Slices
 
-- [ ] **S01: Audit file inventory and plan** `risk:low` `depends:[]`
+- [x] **S01: S01** `risk:low` `depends:[]`
   > After this: After this: a written plan with exact file moves, import rewrites, and CI fixes ready to execute.
 
 ## Boundary Map

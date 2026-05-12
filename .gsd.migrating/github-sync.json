@@ -3,43 +3,33 @@
   "repo": "Heretek-AI/heretek-swarm",
   "milestones": {},
   "slices": {
-    "M005/S03": {
+    "M006/S01": {
       "issueNumber": 0,
       "prNumber": 0,
-      "branch": "milestone/M005/S03",
-      "lastSyncedAt": "2026-05-11T23:48:15.940Z",
+      "branch": "milestone/M006/S01",
+      "lastSyncedAt": "2026-05-12T03:25:03.746Z",
       "state": "open"
     }
   },
   "tasks": {
-    "M005/S03/T01": {
-      "issueNumber": 9,
-      "lastSyncedAt": "2026-05-12T00:03:56.322Z",
+    "M006/S01/T01": {
+      "issueNumber": 15,
+      "lastSyncedAt": "2026-05-12T03:25:01.892Z",
       "state": "open"
     },
-    "M005/S03/T02": {
-      "issueNumber": 10,
-      "lastSyncedAt": "2026-05-12T00:24:17.939Z",
+    "M006/S01/T02": {
+      "issueNumber": 16,
+      "lastSyncedAt": "2026-05-12T03:25:02.553Z",
       "state": "open"
     },
-    "M005/S03/T03": {
-      "issueNumber": 11,
-      "lastSyncedAt": "2026-05-12T00:28:27.039Z",
+    "M006/S01/T03": {
+      "issueNumber": 17,
+      "lastSyncedAt": "2026-05-12T03:25:03.162Z",
       "state": "open"
     },
-    "M005/S03/T04": {
-      "issueNumber": 12,
-      "lastSyncedAt": "2026-05-12T00:38:48.270Z",
-      "state": "open"
-    },
-    "M005/S03/T05": {
-      "issueNumber": 13,
-      "lastSyncedAt": "2026-05-12T00:49:43.986Z",
-      "state": "open"
-    },
-    "M005/S03/T06": {
-      "issueNumber": 14,
-      "lastSyncedAt": "2026-05-12T00:59:31.149Z",
+    "M006/S01/T04": {
+      "issueNumber": 18,
+      "lastSyncedAt": "2026-05-12T03:25:03.746Z",
       "state": "open"
     }
   }
