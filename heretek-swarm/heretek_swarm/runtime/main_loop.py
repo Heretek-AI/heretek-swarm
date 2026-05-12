@@ -739,7 +739,7 @@ class AutonomousSwarm:
         # Tier 5: Coordination Agents (Integration)
         from heretek_swarm.actors.coordinator import CoordinatorAgent
         from heretek_swarm.actors.dreamer import DreamerAgent
-        from heretek_swarm.actors.echo import EchoActor
+        from heretek_swarm.actors.echo import EchoAgent
         from heretek_swarm.actors.empath import EmpathAgent
         from heretek_swarm.actors.examiner import ExaminerAgent
 
@@ -775,7 +775,7 @@ class AutonomousSwarm:
             (MetisAgent, "metis", ["planning", "strategy", "coordination"]),
             (EmpathAgent, "empath", ["sentiment", "mediation", "perception"]),
             (PerceiverAgent, "perceiver", ["input", "sensory", "perception"]),
-            (EchoActor, "echo", ["communication", "broadcast", "perception"]),
+            (EchoAgent, "echo", ["communication", "broadcast", "perception"]),
 
             # Tier 3: Exploration
             (ExplorerAgent, "explorer", ["discovery", "monitoring", "exploration"]),

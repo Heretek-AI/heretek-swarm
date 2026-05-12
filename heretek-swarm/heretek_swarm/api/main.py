@@ -210,7 +210,7 @@ async def _spawn_all_agents() -> None:
     # Tier 5: Coordination Agents (Integration)
     from heretek_swarm.actors.coordinator import CoordinatorAgent
     from heretek_swarm.actors.dreamer import DreamerAgent
-    from heretek_swarm.actors.echo import EchoActor
+    from heretek_swarm.actors.echo import EchoAgent
     from heretek_swarm.actors.empath import EmpathAgent
     from heretek_swarm.actors.examiner import ExaminerAgent
 
@@ -244,7 +244,7 @@ async def _spawn_all_agents() -> None:
         (MetisAgent, "metis"),
         (EmpathAgent, "empath"),
         (PerceiverAgent, "perceiver"),
-        (EchoActor, "echo"),
+        (EchoAgent, "echo"),
         # Tier 3: Exploration
         (ExplorerAgent, "explorer"),
         (ExaminerAgent, "examiner"),

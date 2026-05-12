@@ -20,7 +20,7 @@ from heretek_swarm.actors.chronos import ChronosAgent
 from heretek_swarm.actors.coder import CoderAgent
 from heretek_swarm.actors.coordinator import CoordinatorAgent
 from heretek_swarm.actors.dreamer import DreamerAgent
-from heretek_swarm.actors.echo import EchoActor
+from heretek_swarm.actors.echo import EchoAgent
 from heretek_swarm.actors.empath import EmpathAgent
 from heretek_swarm.actors.examiner import ExaminerAgent
 from heretek_swarm.actors.explorer import ExplorerAgent
@@ -63,7 +63,7 @@ __all__ = [
     "CoderAgent",
     "CoordinatorAgent",
     "DreamerAgent",
-    "EchoActor",
+    "EchoAgent",
     "EmpathAgent",
     "ExaminerAgent",
     "ExplorerAgent",
