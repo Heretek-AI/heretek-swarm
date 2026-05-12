@@ -17,7 +17,7 @@ Simple, self-contained agents live as single `.py` files directly in `actors/`:
 | `steward.py` | StewardAgent | ~900 |
 | `charlie.py` | CharlieAgent | ~400 |
 | `coder.py` | CoderAgent | ~1000 |
-| `echo.py` | EchoActor | ~700 |
+| `echo/agent.py` | EchoAgent | ~700 |
 | `empath.py` | EmpathAgent | ~1100 |
 | `historian.py` | HistorianAgent | ~1300 |
 | `metis.py` | MetisAgent | ~1100 |
@@ -341,7 +341,7 @@ asyncio.run(main())
 | Metis | 2 (Support) | Flat | `metis.py` | H, V, D, L, M, P |
 | Empath | 2 (Support) | Flat | `empath.py` | H, V, D, P, M, L |
 | Perceiver | 2 (Support) | Flat | `perceiver.py` | H, V, D, P, M, L |
-| Echo | 2 (Support) | Flat | `echo.py` | H, V, P, D, M, L |
+| Echo | 2 (Support) | Subpackage | `echo/agent.py` | H, V, P, D, M, L |
 | Explorer | 3 (Exploration) | Subpackage | `explorer/agent.py` | EP, V, D, P, M, L |
 | Examiner | 3 (Exploration) | Subpackage | `examiner/agent.py` | ET, EV, V, D, P, M, L |
 | Dreamer | 3 (Exploration) | Subpackage | `dreamer/agent.py` | V, D, P, M, L, DG |

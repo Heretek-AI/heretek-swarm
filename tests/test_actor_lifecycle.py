@@ -28,7 +28,7 @@ from heretek_swarm.actors import (
     CoderAgent,
     CoordinatorAgent,
     DreamerAgent,
-    EchoActor,
+    EchoAgent,
     EmpathAgent,
     ExaminerAgent,
     ExplorerAgent,
@@ -192,8 +192,8 @@ async def test_config_agent_lifecycle(
 
 @pytest.mark.asyncio
 async def test_echo_actor_lifecycle() -> None:
-    """EchoActor has a unique constructor; test it separately."""
-    agent = EchoActor(
+    """EchoAgent has a unique constructor; test it separately."""
+    agent = EchoAgent(
         agent_id="lc-echo",
         config={},
         _pattern_extractor=StubPatternExtractor(),

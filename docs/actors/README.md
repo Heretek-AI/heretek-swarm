@@ -111,7 +111,7 @@ When composing mixins:
 | MetisAgent | 2 | flat |  | Validation, Deliberation, Pattern, Memory, Learning |
 | EmpathAgent | 2 | flat |  | Health, Validation, Deliberation, Pattern, Memory, Learning |
 | PerceiverAgent | 2 | flat |  | Validation, Pattern, Memory |
-| EchoActor | 2 | flat |  | Health, Validation |
+| EchoAgent | 2 | subpackage | echo/ | Health, Validation |
 | ExplorerAgent | 3 (Exploration) | subpackage |  | Validation, Pattern, Memory, Learning |
 | ExaminerAgent | 3 | subpackage |  | Validation, Pattern, Memory |
 | DreamerAgent | 3 | subpackage |  | Validation, Pattern, Memory |
