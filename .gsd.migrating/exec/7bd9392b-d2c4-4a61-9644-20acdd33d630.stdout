@@ -1,0 +1,13 @@
+=== UAT S02: Smoke Test ===
+--- Check 1: No heretek-swarm/ in Dockerfile or docker-compose.yml ---
+PASS
+--- Check 2: No stale heretek-swarm in pyproject.toml where/source/src directives ---
+PASS
+--- Check 3: No bandit/ruff/mypy referencing src/ in CI workflows ---
+PASS
+--- Check 4: No heretek-swarm/ in ci.yml ---
+PASS
+--- Check 5: No --cov=src in CI workflows ---
+PASS
+=== Summary ===
+ CHECK(S) FAILED

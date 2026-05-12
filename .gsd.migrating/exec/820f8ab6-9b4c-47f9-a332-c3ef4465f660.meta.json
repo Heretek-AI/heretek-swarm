@@ -1,0 +1,18 @@
+{
+  "id": "820f8ab6-9b4c-47f9-a332-c3ef4465f660",
+  "runtime": "bash",
+  "purpose": "Check test consolidation and stale cleanup status",
+  "script_chars": 762,
+  "started_at": "2026-05-12T15:13:13.446Z",
+  "finished_at": "2026-05-12T15:13:17.836Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 4390,
+  "stdout_bytes": 2640,
+  "stderr_bytes": 87,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\820f8ab6-9b4c-47f9-a332-c3ef4465f660.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\820f8ab6-9b4c-47f9-a332-c3ef4465f660.stderr"
+}

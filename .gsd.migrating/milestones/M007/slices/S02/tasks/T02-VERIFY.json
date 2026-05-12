@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "taskId": "T02",
+  "unitId": "M007/S02/T02",
+  "timestamp": 1778592836684,
+  "passed": false,
+  "discoverySource": "task-plan",
+  "checks": [
+    {
+      "command": "! grep -q \"heretek-swarm/\" .github/workflows/ci.yml",
+      "exitCode": 1,
+      "durationMs": 67,
+      "verdict": "fail"
+    },
+    {
+      "command": "! grep -qE \"--cov=src\" .github/workflows/ci-cd.yml .github/workflows/ci.yml'",
+      "exitCode": 1,
+      "durationMs": 57,
+      "verdict": "fail"
+    }
+  ],
+  "retryAttempt": 1,
+  "maxRetries": 10
+}

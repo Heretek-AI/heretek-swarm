@@ -1,0 +1,18 @@
+{
+  "id": "7bd9392b-d2c4-4a61-9644-20acdd33d630",
+  "runtime": "bash",
+  "purpose": "UAT-S02-smoke-test",
+  "script_chars": 2212,
+  "started_at": "2026-05-12T13:46:48.572Z",
+  "finished_at": "2026-05-12T13:46:50.957Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 2385,
+  "stdout_bytes": 404,
+  "stderr_bytes": 53,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\7bd9392b-d2c4-4a61-9644-20acdd33d630.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\7bd9392b-d2c4-4a61-9644-20acdd33d630.stderr"
+}

@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "taskId": "T01",
+  "unitId": "M007/S02/T01",
+  "timestamp": 1778591910618,
+  "passed": false,
+  "discoverySource": "task-plan",
+  "checks": [
+    {
+      "command": "bash -c '! grep -q \"heretek-swarm/\" backend/Dockerfile docker-compose.yml",
+      "exitCode": 2,
+      "durationMs": 4241,
+      "verdict": "fail"
+    }
+  ],
+  "retryAttempt": 1,
+  "maxRetries": 10
+}
