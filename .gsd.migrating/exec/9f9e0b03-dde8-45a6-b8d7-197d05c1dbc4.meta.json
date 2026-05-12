@@ -1,0 +1,18 @@
+{
+  "id": "9f9e0b03-dde8-45a6-b8d7-197d05c1dbc4",
+  "runtime": "bash",
+  "purpose": "Verify all task artifacts exist",
+  "script_chars": 249,
+  "started_at": "2026-05-12T03:23:50.665Z",
+  "finished_at": "2026-05-12T03:23:50.755Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 90,
+  "stdout_bytes": 68,
+  "stderr_bytes": 98,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\9f9e0b03-dde8-45a6-b8d7-197d05c1dbc4.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\9f9e0b03-dde8-45a6-b8d7-197d05c1dbc4.stderr"
+}

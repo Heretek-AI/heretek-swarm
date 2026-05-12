@@ -1,59 +1,33 @@
 # S01: Rename heretek-swarm/ to backend/ via git mv
 
-**Goal:** Use git mv to rename heretek-swarm/ → backend/. This preserves full git history for the Python package. No import rewrites yet.
+**Goal:** Rename heretek-swarm/ to backend/ via git mv, preserving full git history for the Python package with zero code changes.
 **Demo:** Repo at new path with no code changes; only directory moves via git mv.
 
 ## Must-Haves
 
-- `heretek-swarm/` renamed to `backend/` via `git mv`
-- Git history preserved for the Python package
-- All other files untouched at their current locations
+- `heretek-swarm/` directory no longer exists in git's tracked files\n- `backend/` directory exists containing `heretek_swarm/`, `tests/`, `docs/`, `Dockerfile`, and all other previously tracked content\n- `git log --follow backend/heretek_swarm/__init__.py` shows the full commit history (history preserved)\n- `git status` shows no untracked file loss — only the rename and pre-existing dirty `.gsd.migrating/` changes\n- All non-backend files (root configs, swarm-dashboard/, docs/, .github/, etc.) are untouched
 
 ## Proof Level
 
-- This slice proves: mechanical
-- Real runtime required: no
-- Human/UAT required: no
-
-## Verification
-
-```bash
-# backend/ directory exists, heretek-swarm/ does not
-test -d backend/heretek_swarm && echo "backend/ exists" || echo "FAIL: backend/ missing"
-
-# Git history preserved
-git log --follow backend/heretek_swarm/__init__.py | head -5
-
-# No untracked files lost
-git status --short
-```
-
-## Tasks
-
-- [ ] **T01: Rename heretek-swarm/ to backend/** `est:10m`
-  - Why: The core directory rename — must use git mv to preserve history
-  - Files: `heretek-swarm/` (directory)
-  - Do: Run `git mv heretek-swarm/ backend/` from the repo root. Verify `backend/` exists with expected contents and `heretek-swarm/` is gone from git's view.
-  - Verify: `test -d backend/heretek_swarm && echo "OK"`
-  - Done when: `git status` shows `heretek-swarm/` as deleted, `backend/` as added
-
-## Files Likely Touched
-
-- `heretek-swarm/` → `backend/` (renamed)
+- This slice proves: mechanical — no runtime required
 
 ## Integration Closure
 
-`backend/heretek_swarm/` still imports from `heretek_swarm.*` — unchanged at this stage. All import rewrites happen in S02.
+After this slice, `backend/heretek_swarm/` imports use `heretek_swarm.*` (unchanged package name). All config/CI path updates (pyproject.toml, CI workflows, Dockerfile) are deferred to S02. swarm-dashboard/ is unaffected.
 
----
-id: M007-S01
-provides:
-  - Directory renamed, git history preserved
-key_decisions:
-  - Using `git mv` not `rm` + `git add` to preserve history
-patterns_established: []
-observability_surfaces: []
-requirement_outcomes: []
-duration: ~10m
-verification_result: pending
-completed_at: pending
+## Verification
+
+- None — purely mechanical filesystem rename with no runtime component.
+
+## Tasks
+
+- [ ] **T01: Rename heretek-swarm/ to backend/ via git mv** `est:10m`
+  Execute the single `git mv heretek-swarm/ backend/` command from the repo root to rename the project subdirectory while preserving full git history. This moves 463 tracked files (Python package `heretek_swarm/`, tests/, docs/, Dockerfile, etc.) to their new location under `backend/`.
+  - Files: `heretek-swarm/ (→ backend/)`
+  - Verify: test -d backend/heretek_swarm && echo 'OK: backend/heretek_swarm exists'
+test ! -e heretek-swarm && echo 'OK: old path gone'
+git log --oneline -3 backend/heretek_swarm/__init__.py 2>/dev/null | head -5
+
+## Files Likely Touched
+
+- heretek-swarm/ (→ backend/)

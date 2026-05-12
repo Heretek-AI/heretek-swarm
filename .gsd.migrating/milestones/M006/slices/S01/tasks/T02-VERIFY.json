@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "taskId": "T02",
+  "unitId": "M006/S01/T02",
+  "timestamp": 1778555490571,
+  "passed": false,
+  "discoverySource": "task-plan",
+  "checks": [
+    {
+      "command": "test -f .gsd/milestones/M006/slices/S01/IMPORT_MAP.md",
+      "exitCode": 1,
+      "durationMs": 57,
+      "verdict": "fail"
+    },
+    {
+      "command": "grep -c \"depends_on:\" .gsd/milestones/M006/slices/S01/IMPORT_MAP.md > 0",
+      "exitCode": 1,
+      "durationMs": 122,
+      "verdict": "fail"
+    }
+  ],
+  "retryAttempt": 1,
+  "maxRetries": 10
+}

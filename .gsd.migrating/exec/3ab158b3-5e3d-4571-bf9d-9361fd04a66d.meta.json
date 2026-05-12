@@ -1,0 +1,18 @@
+{
+  "id": "3ab158b3-5e3d-4571-bf9d-9361fd04a66d",
+  "runtime": "bash",
+  "purpose": "Check prerequisite analysis files exist",
+  "script_chars": 1271,
+  "started_at": "2026-05-12T03:23:00.693Z",
+  "finished_at": "2026-05-12T03:23:02.828Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 2135,
+  "stdout_bytes": 264,
+  "stderr_bytes": 0,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\3ab158b3-5e3d-4571-bf9d-9361fd04a66d.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\3ab158b3-5e3d-4571-bf9d-9361fd04a66d.stderr"
+}

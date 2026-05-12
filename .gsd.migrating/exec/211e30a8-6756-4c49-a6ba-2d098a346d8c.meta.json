@@ -1,0 +1,18 @@
+{
+  "id": "211e30a8-6756-4c49-a6ba-2d098a346d8c",
+  "runtime": "bash",
+  "purpose": "Verify M006-PLAN.md content with direct paths",
+  "script_chars": 349,
+  "started_at": "2026-05-12T03:23:38.860Z",
+  "finished_at": "2026-05-12T03:23:41.341Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 2481,
+  "stdout_bytes": 49,
+  "stderr_bytes": 0,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\211e30a8-6756-4c49-a6ba-2d098a346d8c.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\211e30a8-6756-4c49-a6ba-2d098a346d8c.stderr"
+}

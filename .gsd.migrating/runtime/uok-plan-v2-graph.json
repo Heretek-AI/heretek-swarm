@@ -1,216 +1,84 @@
 {
-  "compiledAt": "2026-05-12T01:20:12.516Z",
-  "milestoneId": "M005",
+  "compiledAt": "2026-05-12T03:29:02.523Z",
+  "milestoneId": "M006",
   "pipeline": {
     "clarifyRoundLimit": 3,
-    "researchSynthesized": true,
+    "researchSynthesized": false,
     "draftContextIncluded": false,
     "finalizedContextIncluded": true,
     "sourcePhase": "completing-milestone"
   },
   "nodes": [
     {
-      "id": "execute-task:M005:S01:T01",
+      "id": "execute-task:M006:S01:T01",
       "kind": "unit",
       "dependsOn": [],
+      "writes": [
+        ".gsd/milestones/M006/slices/S01/FILE_INVENTORY.md"
+      ],
+      "metadata": {
+        "unitType": "execute-task",
+        "unitId": "M006.S01.T01",
+        "title": "Generated complete 856-file inventory catalog at FILE_INVENTORY.md with path, type, size, purpose, and category for every file across all 9 repository zones",
+        "status": "complete"
+      }
+    },
+    {
+      "id": "execute-task:M006:S01:T02",
+      "kind": "unit",
+      "dependsOn": [
+        "execute-task:M006:S01:T01"
+      ],
+      "writes": [
+        ".gsd/milestones/M006/slices/S01/IMPORT_MAP.md"
+      ],
+      "metadata": {
+        "unitType": "execute-task",
+        "unitId": "M006.S01.T02",
+        "title": "Generated complete import dependency map at IMPORT_MAP.md covering all 429 Python files: subpackage dependency graph, per-file import catalog for key files, test import analysis, relative import patterns, external dependency breakdown, dead/redundant import path identification, cycle detection, CI/workflow impact list, and leaf package enumeration for safe extraction ordering.",
+        "status": "complete"
+      }
+    },
+    {
+      "id": "execute-task:M006:S01:T03",
+      "kind": "unit",
+      "dependsOn": [
+        "execute-task:M006:S01:T02"
+      ],
       "writes": [],
       "metadata": {
         "unitType": "execute-task",
-        "unitId": "M005.S01.T01",
-        "title": "Rewrote docs/ARCHITECTURE.md with current heretek-swarm/heretek_swarm/ package paths, added Package Structure and Actor Base Class & Mixins sections, updated all stale path references and removed stale health score dashboard table.",
+        "unitId": "M006.S01.T03",
+        "title": "Cataloged 22 path-change sites across 8 CI/config files with per-line before/after diffs, severity classification, and ordered execution phases for M007.",
         "status": "complete"
       }
     },
     {
-      "id": "execute-task:M005:S01:T02",
+      "id": "execute-task:M006:S01:T04",
       "kind": "unit",
       "dependsOn": [
-        "execute-task:M005:S01:T01"
+        "execute-task:M006:S01:T03"
       ],
       "writes": [
-        "heretek-swarm/docs/actors/README.md"
+        ".gsd/milestones/M006/M006-PLAN.md"
       ],
       "metadata": {
         "unitType": "execute-task",
-        "unitId": "M005.S01.T02",
-        "title": "Created docs/actors/README.md with practical agent creation guide covering the two actor conventions, architecture, walkthrough code example, 23-agent reference table, local run instructions, and testing guide",
+        "unitId": "M006.S01.T04",
+        "title": "Synthesized FILE_INVENTORY.md, IMPORT_MAP.md, and CI_IMPACT.md into a comprehensive 10-section M006-PLAN.md with exact file moves, import rewrites, CI diffs, execution order, rollback plan, and verification checklist for M007 execution.",
         "status": "complete"
       }
     },
     {
-      "id": "complete-slice:M005:S01",
+      "id": "complete-slice:M006:S01",
       "kind": "verification",
       "dependsOn": [
-        "execute-task:M005:S01:T02"
+        "execute-task:M006:S01:T04"
       ],
       "metadata": {
         "unitType": "complete-slice",
-        "unitId": "M005.S01",
+        "unitId": "M006.S01",
         "title": "S01",
-        "status": "complete"
-      }
-    },
-    {
-      "id": "execute-task:M005:S02:T01",
-      "kind": "unit",
-      "dependsOn": [],
-      "writes": [
-        "heretek-swarm/heretek_swarm/actors/base/core.py"
-      ],
-      "metadata": {
-        "unitType": "execute-task",
-        "unitId": "M005.S02.T01",
-        "title": "Removed duplicate `structlog.configure()` from actors/base/core.py; logger now uses canonical `get_logger()` from logging/config.py",
-        "status": "complete"
-      }
-    },
-    {
-      "id": "execute-task:M005:S02:T02",
-      "kind": "unit",
-      "dependsOn": [
-        "execute-task:M005:S02:T01"
-      ],
-      "writes": [
-        "heretek-swarm/heretek_swarm/infrastructure/otel/logging.py"
-      ],
-      "metadata": {
-        "unitType": "execute-task",
-        "unitId": "M005.S02.T02",
-        "title": "Made infrastructure/otel/logging.py init_logging() delegate to canonical setup_logging() from logging/config.py, removing the duplicate structlog.configure() code path",
-        "status": "complete"
-      }
-    },
-    {
-      "id": "complete-slice:M005:S02",
-      "kind": "verification",
-      "dependsOn": [
-        "execute-task:M005:S02:T02"
-      ],
-      "metadata": {
-        "unitType": "complete-slice",
-        "unitId": "M005.S02",
-        "title": "S02",
-        "status": "complete"
-      }
-    },
-    {
-      "id": "execute-task:M005:S03:T01",
-      "kind": "unit",
-      "dependsOn": [],
-      "writes": [],
-      "metadata": {
-        "unitType": "execute-task",
-        "unitId": "M005.S03.T01",
-        "title": "Renamed arbiter/core.py → arbiter/agent.py, updated all 3 internal imports (__init__.py, strategies.py, handlers.py), and created metis/empath subpackages with agent.py + __init__.py following absolute-import convention",
-        "status": "complete"
-      }
-    },
-    {
-      "id": "execute-task:M005:S03:T02",
-      "kind": "unit",
-      "dependsOn": [
-        "execute-task:M005:S03:T01"
-      ],
-      "writes": [],
-      "metadata": {
-        "unitType": "execute-task",
-        "unitId": "M005.S03.T02",
-        "title": "Created split subpackages for historian, coder, catalyst, and perceiver — each with types.py, agent.py, and __init__.py using absolute re-exports",
-        "status": "complete"
-      }
-    },
-    {
-      "id": "execute-task:M005:S03:T03",
-      "kind": "unit",
-      "dependsOn": [
-        "execute-task:M005:S03:T02"
-      ],
-      "writes": [],
-      "metadata": {
-        "unitType": "execute-task",
-        "unitId": "M005.S03.T03",
-        "title": "Created handoff subpackage with deduplicated types (types.py), strategy-based orchestrator (orchestrator.py), and phased handler chain (handlers.py) — 14 names re-exported via __init__.py",
-        "status": "complete"
-      }
-    },
-    {
-      "id": "execute-task:M005:S03:T04",
-      "kind": "unit",
-      "dependsOn": [
-        "execute-task:M005:S03:T03"
-      ],
-      "writes": [
-        "heretek_swarm/actors/echo/types.py",
-        "heretek_swarm/actors/echo/agent.py",
-        "heretek_swarm/actors/echo/__init__.py",
-        "heretek_swarm/actors/__init__.py",
-        "heretek_swarm/api/main.py",
-        "heretek_swarm/runtime/main_loop.py",
-        "tests/test_actor_lifecycle.py",
-        "docs/actors/README.md",
-        "heretek-swarm/docs/actors/README.md"
-      ],
-      "metadata": {
-        "unitType": "execute-task",
-        "unitId": "M005.S03.T04",
-        "title": "Created echo subpackage with EchoActor→EchoAgent rename — types.py, agent.py, __init__.py created; 6 call sites updated across __init__.py, api/main.py, runtime/main_loop.py, tests, and 2 README copies",
-        "status": "complete"
-      }
-    },
-    {
-      "id": "execute-task:M005:S03:T05",
-      "kind": "unit",
-      "dependsOn": [
-        "execute-task:M005:S03:T04"
-      ],
-      "writes": [
-        "heretek_swarm/actors/alpha.py",
-        "heretek_swarm/actors/beta.py",
-        "heretek_swarm/actors/charlie.py",
-        "heretek_swarm/actors/steward.py",
-        "heretek_swarm/actors/explorer.py",
-        "heretek_swarm/actors/historian.py",
-        "heretek_swarm/actors/metis.py",
-        "heretek_swarm/actors/empath.py",
-        "heretek_swarm/actors/echo.py",
-        "heretek_swarm/actors/coder.py",
-        "heretek_swarm/actors/catalyst.py",
-        "heretek_swarm/actors/perceiver.py",
-        "heretek_swarm/actors/handoff.py",
-        "heretek_swarm/actors/handoff_handlers.py",
-        "heretek_swarm/actors/triad/agent.py"
-      ],
-      "metadata": {
-        "unitType": "execute-task",
-        "unitId": "M005.S03.T05",
-        "title": "Converted all 14 flat actor files to thin re-export stubs; fixed pre-existing migration gap by adding route_to_agent to StewardAgent in triad/agent.py",
-        "status": "complete"
-      }
-    },
-    {
-      "id": "execute-task:M005:S03:T06",
-      "kind": "unit",
-      "dependsOn": [
-        "execute-task:M005:S03:T05"
-      ],
-      "writes": [],
-      "metadata": {
-        "unitType": "execute-task",
-        "unitId": "M005.S03.T06",
-        "title": "Final verification confirmed all 26 agents import, 370 tests pass, no class definitions in flat files, and _HISTORIAN_FILE preserved",
-        "status": "complete"
-      }
-    },
-    {
-      "id": "complete-slice:M005:S03",
-      "kind": "verification",
-      "dependsOn": [
-        "execute-task:M005:S03:T06"
-      ],
-      "metadata": {
-        "unitType": "complete-slice",
-        "unitId": "M005.S03",
-        "title": "S03",
         "status": "complete"
       }
     }

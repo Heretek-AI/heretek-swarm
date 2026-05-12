@@ -1,0 +1,18 @@
+{
+  "id": "290fc02e-ccf6-461d-9384-7dd0afb70ee7",
+  "runtime": "bash",
+  "purpose": "Verify M006-PLAN.md exists and has required content",
+  "script_chars": 370,
+  "started_at": "2026-05-12T03:22:21.333Z",
+  "finished_at": "2026-05-12T03:22:25.725Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 4392,
+  "stdout_bytes": 10,
+  "stderr_bytes": 49,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\290fc02e-ccf6-461d-9384-7dd0afb70ee7.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\290fc02e-ccf6-461d-9384-7dd0afb70ee7.stderr"
+}

@@ -2,13 +2,7 @@
 
 ## Active Milestone
 
-**M003: Type-seal Mixin contracts and make stub injection first-class** (in progress)
-
-| Slice | Status | Title |
-|-------|--------|-------|
-| S01 | ✅ Complete | Add __init__ exports and fail-fast type guards to all mixin methods |
-| S02 | ✅ Complete | Make stubs first-class constructor arguments |
-| S03 | Pending | Add mixin __init__.py exports and smoke test for stub injection |
+**None** — M007 awaits planning.
 
 ## Completed Milestones
 
@@ -16,11 +10,14 @@
 |----|-------|-----------|---------|
 | M001 | Collapse dual actors/ directory into one canonical location | 2025-05-07 | ✅ Canonical `heretek_swarm/actors/__init__.py` established; shim files deleted |
 | M002 | Unify validation into a single entry point | 2026-05-07 | ✅ ValidationMixin is single source of truth; backward-compat shims in place |
+| M003 | Type-seal Mixin contracts and make stub injection first-class | 2026-05-10 | ✅ 6 mixin classes with fail-fast __init__ guards; 6 protocol stub classes as first-class kwargs; 14 tests |
 | M004 | Add integration test scaffold and CI surface | 2026-05-10 | ✅ 658-test baseline verified, 26 lifecycle smoke tests for all 24 AgentActor subclasses, pass/fail-gated CI with Ruff quality gate |
 | M005 | Document architecture and compress flat actor API surface | 2026-05-12 | ✅ ARCHITECTURE.md (12 sections, all 10 mixins), actors/README.md (6 sections, 23-agent table), structlog consolidated to single entry point, 14 flat files converted to thin re-exports, uniform subpackage convention for all 24 agents |
+| M006 | Audit and plan repository restructure | 2026-05-12 | ✅ 4-document migration blueprint (FILE_INVENTORY.md, IMPORT_MAP.md, CI_IMPACT.md, M006-PLAN.md) covering 856 files, 429 Python imports, 22 config change sites; M007-ready with 9-task decomposition |
 
 ## Current State
 
+- **Repository structure**: `heretek-swarm/` project subdirectory contains the Python package `heretek_swarm/`. M006 produced a complete migration plan to rename `heretek-swarm/` → `backend/` via a single `git mv` + 22 config line edits with zero Python code changes. Execution deferred to M007.
 - **Test infrastructure**: pytest 9.0.3 collects ~370 unit tests (all passing). 26 parameterized lifecycle smoke tests cover all 24 AgentActor subclasses plus BehaviorProfiler and ActorSupervisor, using 6 infrastructure-free stubs (StubAccessAnalyzer, StubPatternExtractor, StubTribunal, StubDeliberationEngine, StubLLMProvider, StubEventMesh). Integration tests run separately.
 - **CI pipeline**: GitHub Actions runs unit-only pytest (`-m "not integration"`) and ruff check on push/PR to main/develop. Proper pass/fail gating (no `|| true`). Ruff warning gate fails CI at 50+ findings.
 - **Validation architecture**: Unified. `ValidationMixin` in `actors/mixins/validation.py` is the single source of truth for `IMMUTABLE_RULES` (8 security patterns) and `BASELINE_CONFIG` (9 configuration keys). `actors/validation.py` provides backward-compat shims with deprecation notes.
@@ -42,3 +39,5 @@
 - CI uses unit-only test selection with marker-based isolation (`@pytest.mark.integration`); full-service tests run separately.
 - `logging/config.py` is the single source of truth for structlog configuration; all other modules delegate via `setup_logging()`.
 - All 24 agents follow uniform subpackage convention: split pattern (types.py + agent.py) for complex actors, simple pattern (agent.py only) for straightforward ones.
+- Python resolves modules by package name (`heretek_swarm`), not filesystem directory name (`heretek-swarm`). Directory renames are transparent to Python imports as long as pyproject.toml `where`/`source` directives are updated.
+- `swarm-dashboard/` has zero filesystem-level dependencies on the backend directory — fully decoupled.

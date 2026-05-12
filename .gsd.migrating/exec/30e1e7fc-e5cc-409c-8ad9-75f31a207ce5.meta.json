@@ -1,0 +1,18 @@
+{
+  "id": "30e1e7fc-e5cc-409c-8ad9-75f31a207ce5",
+  "runtime": "bash",
+  "purpose": "Find all files referencing heretek-swarm/ (dash, filesystem path)",
+  "script_chars": 862,
+  "started_at": "2026-05-12T11:00:50.363Z",
+  "finished_at": "2026-05-12T11:00:54.593Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 4230,
+  "stdout_bytes": 4524,
+  "stderr_bytes": 87,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\30e1e7fc-e5cc-409c-8ad9-75f31a207ce5.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\30e1e7fc-e5cc-409c-8ad9-75f31a207ce5.stderr"
+}

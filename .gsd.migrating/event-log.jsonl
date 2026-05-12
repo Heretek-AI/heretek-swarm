@@ -1,1 +1,1 @@
-{"v":2,"cmd":"plan-slice","params":{"milestoneId":"M006","sliceId":"S01"},"ts":"2026-05-12T01:43:19.867Z","actor":"agent","actor_name":"planner","trigger_reason":"gsd-run auto-dispatch — plan S01 for M006 audit milestone","hash":"53e13651ee21608e","session_id":"fa9e9849-7054-45c9-871e-6c33f9d32bb6"}
+{"v":2,"cmd":"plan-slice","params":{"milestoneId":"M007","sliceId":"S01"},"ts":"2026-05-12T11:05:44.972Z","actor":"agent","actor_name":"agent","trigger_reason":"plan-phase dispatch for S01","hash":"b2f58284294a3ef8","session_id":"fa9e9849-7054-45c9-871e-6c33f9d32bb6"}

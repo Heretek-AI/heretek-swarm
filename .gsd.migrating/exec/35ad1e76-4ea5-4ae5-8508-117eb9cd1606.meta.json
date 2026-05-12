@@ -1,0 +1,18 @@
+{
+  "id": "35ad1e76-4ea5-4ae5-8508-117eb9cd1606",
+  "runtime": "python",
+  "purpose": "deep-import-analysis-phase2",
+  "script_chars": 6897,
+  "started_at": "2026-05-12T03:00:20.301Z",
+  "finished_at": "2026-05-12T03:00:21.493Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 1192,
+  "stdout_bytes": 46427,
+  "stderr_bytes": 0,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\35ad1e76-4ea5-4ae5-8508-117eb9cd1606.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\35ad1e76-4ea5-4ae5-8508-117eb9cd1606.stderr"
+}

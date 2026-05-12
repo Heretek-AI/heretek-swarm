@@ -1,0 +1,176 @@
+=== DETAILED PER-FILE IMPORTS (key files) ===
+
+## heretek_swarm/__init__.py
+  Internal:
+    from heretek_swarm.actors.base import AgentActor
+    from heretek_swarm.actors.supervisor import ActorSupervisor
+    from heretek_swarm.consensus.maker import MAKERConsensus
+    from heretek_swarm.memory.base import MemorySystem
+    from heretek_swarm.orchestration.heavyswarm import HeavySwarmWorkflow
+    from heretek_swarm.plugins.consciousness import ConsciousnessPlugin
+    from heretek_swarm.plugins.liberation import LiberationPlugin
+
+## heretek_swarm/__main__.py
+  Internal:
+    from heretek_swarm.cli import cli
+
+## heretek_swarm/actors\__init__.py
+  Internal:
+    from heretek_swarm.actors.arbiter import ArbiterAgent
+    from heretek_swarm.actors.base import ActorMessage, ActorState, ActorStatus, AgentActor
+    from heretek_swarm.actors.catalyst import CatalystAgent
+    from heretek_swarm.actors.chronos import ChronosAgent
+    from heretek_swarm.actors.coder import CoderAgent
+    from heretek_swarm.actors.coordinator import CoordinatorAgent
+    from heretek_swarm.actors.dreamer import DreamerAgent
+    from heretek_swarm.actors.echo import EchoAgent
+    from heretek_swarm.actors.empath import EmpathAgent
+    from heretek_swarm.actors.examiner import ExaminerAgent
+    from heretek_swarm.actors.explorer import ExplorerAgent
+    from heretek_swarm.actors.factory import ActorConfig, ActorFactory, get_factory
+    from heretek_swarm.actors.habit_forge import HabitForgeAgent
+    from heretek_swarm.actors.historian import HistorianAgent
+    from heretek_swarm.actors.metis import MetisAgent
+    from heretek_swarm.actors.nexus import NexusAgent
+    from heretek_swarm.actors.perceiver import PerceiverAgent
+    from heretek_swarm.actors.perceiver_plus import PerceiverPlusAgent
+    from heretek_swarm.actors.prism import PrismAgent
+    from heretek_swarm.actors.sentinel import SentinelAgent
+    from heretek_swarm.actors.sentinel_prime import SentinelPrimeAgent
+    from heretek_swarm.actors.supervisor import ActorSupervisor
+    from heretek_swarm.actors.triad import AlphaAgent, BetaAgent, CharlieAgent, StewardAgent
+
+## heretek_swarm/actors\factory.py
+  Internal:
+    from heretek_swarm.actors.base import AgentActor
+  External packages: ['dataclasses', 'structlog', 'typing']
+
+## heretek_swarm/actors\handoff_handlers.py
+  Internal:
+    from heretek_swarm.actors.handoff import *
+
+## heretek_swarm/actors\mixins\validation.py
+  External packages: ['asyncio', 'copy', 'hashlib', 'json', 'statistics', 'structlog', 'time', 'typing']
+
+## heretek_swarm/actors\stubs.py
+  Internal:
+    from heretek_swarm.gateway.nats_event_mesh import get_nats_bridge
+  External packages: ['__future__', 'dataclasses', 'datetime', 'typing']
+
+## heretek_swarm/actors\supervisor.py
+  Internal:
+    from heretek_swarm.actors.base import ActorState, ActorStatus, AgentActor
+    from heretek_swarm.actors.factory import ActorConfig
+    from heretek_swarm.actors.mixins import AuditMixin, HealthReportingMixin, ValidationMixin, PatternMixin
+    from heretek_swarm.collective.learning import PatternExtractor
+  External packages: ['asyncio', 'structlog', 'typing']
+
+## heretek_swarm/actors\validation.py
+  Internal:
+    from heretek_swarm.actors.mixins.validation import ValidationMixin
+  External packages: ['datetime', 'pydantic', 're', 'typing', 'uuid']
+
+## heretek_swarm/api\main.py
+  Internal:
+    from heretek_swarm.actors.arbiter import ArbiterAgent
+    from heretek_swarm.actors.catalyst import CatalystAgent
+    from heretek_swarm.actors.chronos import ChronosAgent
+    from heretek_swarm.actors.coder import CoderAgent
+    from heretek_swarm.actors.coordinator import CoordinatorAgent
+    from heretek_swarm.actors.dreamer import DreamerAgent
+    from heretek_swarm.actors.echo import EchoAgent
+    from heretek_swarm.actors.empath import EmpathAgent
+    from heretek_swarm.actors.examiner import ExaminerAgent
+    from heretek_swarm.actors.explorer import ExplorerAgent
+    from heretek_swarm.actors.habit_forge import HabitForgeAgent
+    from heretek_swarm.actors.historian import HistorianAgent
+    from heretek_swarm.actors.metis import MetisAgent
+    from heretek_swarm.actors.nexus import NexusAgent
+    from heretek_swarm.actors.perceiver import PerceiverAgent
+    from heretek_swarm.actors.perceiver_plus import PerceiverPlusAgent
+    from heretek_swarm.actors.prism import PrismAgent
+    from heretek_swarm.actors.sentinel import SentinelAgent
+    from heretek_swarm.actors.sentinel_prime import SentinelPrimeAgent
+    from heretek_swarm.actors.supervisor import ActorSupervisor
+    from heretek_swarm.actors.triad import AlphaAgent, BetaAgent, CharlieAgent, StewardAgent
+    from heretek_swarm.agents.agent_factory import build_agent_for
+    from heretek_swarm.api import agents_management, autonomous, collective_evolution, configuration, consciousness ... (+15)
+    from heretek_swarm.api import websockets
+    from heretek_swarm.api.logging_middleware import setup_logging_middleware
+    from heretek_swarm.api.rate_limiting import setup_rate_limiting
+    from heretek_swarm.api.websockets import send_agent_status_update
+    from heretek_swarm.config.loader import get_config, initialize_config_loader
+    from heretek_swarm.config.service import get_config_service, initialize_config_service, shutdown_config_service
+    from heretek_swarm.gateway.auth import verify_auth
+    from heretek_swarm.gateway.nats_event_mesh import NATSEventMesh
+    from heretek_swarm.logging.config import logger
+    from heretek_swarm.logging.config import setup_logging
+    from heretek_swarm.mcp.server import router
+    from heretek_swarm.memory.persistent import PersistentMemory
+    from heretek_swarm.memory.persistent import MemoryEntryModel
+    from heretek_swarm.observability.prometheus_metrics import setup_metrics_middleware
+    from heretek_swarm.observability.tracing import setup_telemetry_middleware
+    from heretek_swarm.state.repository import StateRepository
+  External packages: ['asyncio', 'contextlib', 'datetime', 'fastapi', 'httpx', 'json', 'memory', 'os', 'redis', 'sqlalchemy', 'structlog', 'typing']
+
+## heretek_swarm/cli.py
+  Internal:
+    from heretek_swarm.cli.config_loader import load_infrastructure_config
+    from heretek_swarm.cli.config_wizard import AVAILABLE_PROVIDERS, list_configured_providers, add_provider, remove_provider, run_wizard ... (+3)
+    from heretek_swarm.cli.goal_commands import goal
+    from heretek_swarm.config.models import HealthStatus, InfrastructureService
+    from heretek_swarm.consensus.complexity import ComplexityHeuristic
+    from heretek_swarm.logging.config import setup_logging
+    from heretek_swarm.logging.config import setup_logging
+    from heretek_swarm.logging.config import setup_logging
+    from heretek_swarm.runtime.daemon import DEFAULT_PID_FILE, DEFAULT_SOCKET_PATH, read_pid_file
+    from heretek_swarm.runtime.daemon import DEFAULT_PID_FILE, DEFAULT_SOCKET_PATH, cleanup_daemon, read_pid_file, send_stop
+    from heretek_swarm.runtime.daemon import DEFAULT_SOCKET_PATH
+    from heretek_swarm.runtime.daemon import daemonize
+    from heretek_swarm.runtime.main_loop import AutonomousSwarm
+    from heretek_swarm.runtime.main_loop import AutonomousSwarm
+    from heretek_swarm.runtime.main_loop import AutonomousSwarm
+  External packages: ['__future__', 'asyncio', 'click', 'difflib', 'httpx', 'importlib', 'json', 'os', 'pathlib', 'redis', 'shutil', 'signal', 'socket', 'structlog', 'subprocess', 'sys', 'threading', 'time', 'typing', 'uvicorn', 'webbrowser']
+
+## heretek_swarm/cli\__init__.py
+  Internal:
+    from heretek_swarm._cli_module import cli, config, config_wizard, config_list, config_remove ... (+23)
+    from heretek_swarm.cli.config_loader import load_infrastructure_config
+    from heretek_swarm.cli.config_wizard import AVAILABLE_PROVIDERS, add_provider, list_configured_providers, prompt_for_provider, remove_provider ... (+3)
+  External packages: ['importlib', 'pathlib', 'sys']
+
+## heretek_swarm/consensus\maker.py
+  External packages: ['asyncio', 'dataclasses', 'datetime', 'enum', 'statistics', 'structlog', 'typing']
+
+## heretek_swarm/orchestration\heavyswarm.py
+  Internal:
+    from heretek_swarm.actors.base import AgentActor
+    from heretek_swarm.consensus.maker import ConsensusResult, MAKERConsensus
+  Relative:
+    from .phase_handlers import AlternativesPhaseHandler, AnalysisPhaseHandler, DecisionPhaseHandler, PhaseHandler, PhaseHandlerRegistry
+  External packages: ['asyncio', 'collections', 'dataclasses', 'datetime', 'enum', 'structlog', 'typing', 'uuid']
+
+## heretek_swarm/runtime\autonomous_runtime.py
+  Internal:
+    from heretek_swarm.actors.base import ActorState
+    from heretek_swarm.actors.supervisor import ActorSupervisor
+    from heretek_swarm.collective.agency_tracking import AgencyMetricsTracker
+    from heretek_swarm.consciousness.agency_metrics import AgentAgencyMetrics
+    from heretek_swarm.consciousness.agency_metrics import ActionOrigin
+    from heretek_swarm.infrastructure.nats.publisher import EventPriority, SwarmEvent
+    from heretek_swarm.integrations.discord_bot import DiscordBot
+    from heretek_swarm.integrations.slack_bot import SlackBot
+    from heretek_swarm.plugins.consciousness_enhanced import EnhancedConsciousnessPlugin
+  Relative:
+    from .agent_runtime import AgentRuntime
+    from .autonomous_runtime_config import AutonomousRuntimeConfig
+    from .scaling import AgentPoolManager, ScalingAction, ScalingConfig, ScalingResult
+    from .self_maintenance import SelfMaintenanceConfig, SelfMaintenanceScheduler
+  External packages: ['asyncio', 'dataclasses', 'datetime', 'email', 'httpx', 'json', 'os', 'pathlib', 'psutil', 'signal', 'smtplib', 'structlog', 'time', 'typing', 'uuid']
+
+## src\cli.py
+  Internal:
+    from heretek_swarm.config.models import HealthStatus, InfrastructureService
+  External packages: ['__future__', 'asyncio', 'click', 'httpx', 'pathlib', 'redis', 'shutil', 'structlog', 'subprocess', 'sys', 'time', 'typing']
+
+=== FILES WITH CROSS-CUTTING IMPORT PATTERNS ===

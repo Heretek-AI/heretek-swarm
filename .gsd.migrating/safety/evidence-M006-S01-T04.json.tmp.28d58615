@@ -1,0 +1,18 @@
+[
+  {
+    "kind": "bash",
+    "toolCallId": "call_628yih0t",
+    "command": "ls -la .gsd/milestones/M006/slices/S01/CI_IMPACT.md 2>&1; echo \"---\"; ls -la .gsd/milestones/M006/slices/S01/*.md 2>&1",
+    "exitCode": -1,
+    "outputSnippet": "",
+    "timestamp": 1778555866451
+  },
+  {
+    "kind": "bash",
+    "toolCallId": "call_p2iqa342",
+    "command": "ls -la .gsd/milestones/M006/slices/S01/tasks/ 2>&1",
+    "exitCode": -1,
+    "outputSnippet": "",
+    "timestamp": 1778555866452
+  }
+]

@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "taskId": "T03",
+  "unitId": "M006/S01/T03",
+  "timestamp": 1778555849867,
+  "passed": false,
+  "discoverySource": "task-plan",
+  "checks": [
+    {
+      "command": "test -f .gsd/milestones/M006/slices/S01/CI_IMPACT.md",
+      "exitCode": 1,
+      "durationMs": 57,
+      "verdict": "fail"
+    },
+    {
+      "command": "grep -c \"workflow\" .gsd/milestones/M006/slices/S01/CI_IMPACT.md > 0",
+      "exitCode": 1,
+      "durationMs": 105,
+      "verdict": "fail"
+    },
+    {
+      "command": "grep -c \"path\" .gsd/milestones/M006/slices/S01/CI_IMPACT.md > 0",
+      "exitCode": 1,
+      "durationMs": 121,
+      "verdict": "fail"
+    }
+  ],
+  "retryAttempt": 1,
+  "maxRetries": 10
+}

@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "taskId": "T01",
+  "unitId": "M006/S01/T01",
+  "timestamp": 1778554651517,
+  "passed": false,
+  "discoverySource": "task-plan",
+  "checks": [
+    {
+      "command": "test -f .gsd/milestones/M006/slices/S01/FILE_INVENTORY.md",
+      "exitCode": 1,
+      "durationMs": 78,
+      "verdict": "fail"
+    },
+    {
+      "command": "grep -c \"type:\" .gsd/milestones/M006/slices/S01/FILE_INVENTORY.md > 0",
+      "exitCode": 1,
+      "durationMs": 282,
+      "verdict": "fail"
+    },
+    {
+      "command": "grep -c \"path:\" .gsd/milestones/M006/slices/S01/FILE_INVENTORY.md > 0",
+      "exitCode": 1,
+      "durationMs": 110,
+      "verdict": "fail"
+    }
+  ],
+  "retryAttempt": 1,
+  "maxRetries": 10
+}
