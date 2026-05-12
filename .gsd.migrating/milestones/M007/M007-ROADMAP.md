@@ -18,7 +18,7 @@
 - [x] **S02: S02** `risk:medium` `depends:[]`
   > After this: All Python imports use the new backend/ path; CI passes.
 
-- [ ] **S03: Verify clean clone and full integration** `risk:low` `depends:[S02]`
+- [ ] **S03: S03** `risk:low` `depends:[]`
   > After this: Fresh clone of the repo works perfectly at new paths.
 
 ## Boundary Map
