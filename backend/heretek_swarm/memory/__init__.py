@@ -22,7 +22,7 @@ from heretek_swarm.memory.access_patterns import (
     MemoryAccessProfile,
 )
 
-# Core type definitions (from base module - local, not legacy src/)
+# Core type definitions (local import)
 from heretek_swarm.memory.base import (
     DualTierMemory,
     DualTierMemorySystem,

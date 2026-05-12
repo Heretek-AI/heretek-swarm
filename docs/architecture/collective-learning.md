@@ -451,15 +451,15 @@ pytest tests/collective/ --cov=heretek_swarm.collective --cov-report=html
 
 ```bash
 # Verify no datetime.utcnow
-grep -r "datetime.utcnow" --include="*.py" src/heretek_swarm/collective/ | wc -l
+grep -r "datetime.utcnow" --include="*.py" backend/heretek_swarm/collective/ | wc -l
 # Expected: 0
 
 # Verify no TODO/FIXME/XXX/HACK
-grep -rn "TODO\|FIXME\|XXX\|HACK" --include="*.py" src/heretek_swarm/collective/ | wc -l
+grep -rn "TODO\|FIXME\|XXX\|HACK" --include="*.py" backend/heretek_swarm/collective/ | wc -l
 # Expected: 0
 
 # Verify no hardcoded secrets
-grep -rn "password\s*=\s*['\"]" --include="*.py" src/heretek_swarm/collective/ | wc -l
+grep -rn "password\s*=\s*['\"]" --include="*.py" backend/heretek_swarm/collective/ | wc -l
 # Expected: 0
 
 # Verify imports
@@ -516,10 +516,10 @@ python3 -c "from heretek_swarm.collective import *; print('OK')"
 
 ## References
 
-- [`src/heretek_swarm/collective/learning.py`](../../src/heretek_swarm/collective/learning.py) - Pattern extraction
-- [`src/heretek_swarm/collective/knowledge_transform.py`](../../src/heretek_swarm/collective/knowledge_transform.py) - Knowledge transformation
-- [`src/heretek_swarm/collective/distributed_learning.py`](../../src/heretek_swarm/collective/distributed_learning.py) - Distributed learning
-- [`src/heretek_swarm/collective/pattern_library.py`](../../src/heretek_swarm/collective/pattern_library.py) - Pattern library
+- [`backend/heretek_swarm/collective/learning.py`](../../backend/heretek_swarm/collective/learning.py) - Pattern extraction
+- [`backend/heretek_swarm/collective/knowledge_transform.py`](../../backend/heretek_swarm/collective/knowledge_transform.py) - Knowledge transformation
+- [`backend/heretek_swarm/collective/distributed_learning.py`](../../backend/heretek_swarm/collective/distributed_learning.py) - Distributed learning
+- [`backend/heretek_swarm/collective/pattern_library.py`](../../backend/heretek_swarm/collective/pattern_library.py) - Pattern library
 - [`tests/collective/test_collective_learning.py`](../../tests/collective/test_collective_learning.py) - Test suite
 
 > **Note:** Session completion tracking has been migrated to GSD milestone summaries.

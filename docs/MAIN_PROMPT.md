@@ -176,7 +176,7 @@ You operate in a continuous 5-phase loop. Complete each phase before advancing.
 
 ## Bug 1: Empath Agent NameError
 
-**File:** `src/heretek_swarm/actors/empath.py`
+**File:** `backend/heretek_swarm/actors/empath.py`
 **Error:** `NameError: name 'validate_message' is not defined`
 **Location:** Line ~213 in `_validate_message_content()` method
 **Root Cause:** Missing import from `heretek_swarm.validation`
@@ -251,7 +251,7 @@ Agents MUST route between providers natively:
 # CODEBASE STRUCTURE
 
 ```
-src/heretek_swarm/
+backend/heretek_swarm/
 ├── actors/              # 23 agent implementations
 │   ├── mixins/         # Shared behavior (deliberation, memory, etc.)
 │   ├── base.py         # ActorMessage, AgentActor base class
@@ -299,11 +299,11 @@ pytest --cov=src --cov-report=term-missing
 
 ## Priority Order
 
-1. **FIX: State test APIs** - `src/heretek_swarm/state/models.py`
-2. **WIRE: NATS to Actors** - `src/heretek_swarm/infrastructure/nats/actor_bridge.py`
-3. **IMPL: Steward heartbeat** - `src/heretek_swarm/actors/steward.py`
-4. **IMPL: Global Workspace** - `src/heretek_swarm/collective/global_workspace.py`
-5. **FIX: Silent exception swallowing** - `src/heretek_swarm/api/observability.py`
+1. **FIX: State test APIs** - `backend/heretek_swarm/state/models.py`
+2. **WIRE: NATS to Actors** - `backend/heretek_swarm/infrastructure/nats/actor_bridge.py`
+3. **IMPL: Steward heartbeat** - `backend/heretek_swarm/actors/steward.py`
+4. **IMPL: Global Workspace** - `backend/heretek_swarm/collective/global_workspace.py`
+5. **FIX: Silent exception swallowing** - `backend/heretek_swarm/api/observability.py`
 6. **FIX: RAG module stub** - Add fallback or implement properly
 
 ## COMPLETED (2026-04-13)

@@ -19,9 +19,9 @@ The actor model provides:
 
 #### 1. AgentActor (Base Class)
 
-**Location**: [`src/heretek_swarm/actors/base.py`](../src/heretek_swarm/actors/base.py)
+**Location**: [`backend/heretek_swarm/actors/base.py`](../backend/heretek_swarm/actors/base.py)
 
-The [`AgentActor`](../src/heretek_swarm/actors/base.py:109) class is the abstract base for all actors in the system.
+The [`AgentActor`](../backend/heretek_swarm/actors/base.py:109) class is the abstract base for all actors in the system.
 
 **Features**:
 - Asynchronous mailbox for message processing
@@ -45,14 +45,14 @@ class ActorState(Enum):
 
 **Core Methods**:
 
-- [`spawn()`](../src/heretek_swarm/actors/base.py:221): Initialize and start the actor
-- [`terminate()`](../src/heretek_swarm/actors/base.py:251): Gracefully shutdown the actor
-- [`send()`](../src/heretek_swarm/actors/base.py:295): Send a message to a topic
-- [`send_to_actor()`](../src/heretek_swarm/actors/base.py:339): Send a message directly to another actor
-- [`process_message()`](../src/heretek_swarm/actors/base.py:426): Abstract method for handling messages (must be implemented)
-- [`initialize()`](../src/heretek_swarm/actors/base.py:438): Hook for custom initialization
-- [`cleanup()`](../src/heretek_swarm/actors/base.py:446): Hook for custom cleanup
-- [`get_status()`](../src/heretek_swarm/actors/base.py:497): Get current actor status
+- [`spawn()`](../backend/heretek_swarm/actors/base.py:221): Initialize and start the actor
+- [`terminate()`](../backend/heretek_swarm/actors/base.py:251): Gracefully shutdown the actor
+- [`send()`](../backend/heretek_swarm/actors/base.py:295): Send a message to a topic
+- [`send_to_actor()`](../backend/heretek_swarm/actors/base.py:339): Send a message directly to another actor
+- [`process_message()`](../backend/heretek_swarm/actors/base.py:426): Abstract method for handling messages (must be implemented)
+- [`initialize()`](../backend/heretek_swarm/actors/base.py:438): Hook for custom initialization
+- [`cleanup()`](../backend/heretek_swarm/actors/base.py:446): Hook for custom cleanup
+- [`get_status()`](../backend/heretek_swarm/actors/base.py:497): Get current actor status
 
 **Message Structure**:
 
@@ -94,9 +94,9 @@ await actor.spawn()
 
 #### 2. ActorSupervisor
 
-**Location**: [`src/heretek_swarm/actors/supervisor.py`](../src/heretek_swarm/actors/supervisor.py)
+**Location**: [`backend/heretek_swarm/actors/supervisor.py`](../backend/heretek_swarm/actors/supervisor.py)
 
-The [`ActorSupervisor`](../src/heretek_swarm/actors/supervisor.py) manages multiple actors with health monitoring and auto-restart capabilities.
+The [`ActorSupervisor`](../backend/heretek_swarm/actors/supervisor.py) manages multiple actors with health monitoring and auto-restart capabilities.
 
 **Features**:
 - Centralized actor management
@@ -133,7 +133,7 @@ The Triad is a specialized set of four agents that work together for deliberatio
 
 ### 1. StewardAgent
 
-**Location**: [`src/heretek_swarm/actors/triad.py`](../src/heretek_swarm/actors/triad.py:27)
+**Location**: [`backend/heretek_swarm/actors/triad.py`](../backend/heretek_swarm/actors/triad.py:27)
 
 **Role**: Overall coordination and governance
 
@@ -156,7 +156,7 @@ The Triad is a specialized set of four agents that work together for deliberatio
 
 ### 2. AlphaAgent
 
-**Location**: [`src/heretek_swarm/actors/triad.py`](../src/heretek_swarm/actors/triad.py)
+**Location**: [`backend/heretek_swarm/actors/triad.py`](../backend/heretek_swarm/actors/triad.py)
 
 **Role**: Primary decision maker and analyst
 
@@ -172,7 +172,7 @@ The Triad is a specialized set of four agents that work together for deliberatio
 
 ### 3. BetaAgent
 
-**Location**: [`src/heretek_swarm/actors/triad.py`](../src/heretek_swarm/actors/triad.py)
+**Location**: [`backend/heretek_swarm/actors/triad.py`](../backend/heretek_swarm/actors/triad.py)
 
 **Role**: Secondary analyst and validator
 
@@ -188,7 +188,7 @@ The Triad is a specialized set of four agents that work together for deliberatio
 
 ### 4. CharlieAgent
 
-**Location**: [`src/heretek_swarm/actors/triad.py`](../src/heretek_swarm/actors/triad.py)
+**Location**: [`backend/heretek_swarm/actors/triad.py`](../backend/heretek_swarm/actors/triad.py)
 
 **Role**: Tertiary perspective and challenger
 
@@ -204,7 +204,7 @@ The Triad is a specialized set of four agents that work together for deliberatio
 
 ### 5. HistorianAgent
 
-**Location**: [`src/heretek_swarm/actors/historian.py`](../src/heretek_swarm/actors/historian.py)
+**Location**: [`backend/heretek_swarm/actors/historian.py`](../backend/heretek_swarm/actors/historian.py)
 
 **Role**: Memory and context provider
 
@@ -254,7 +254,7 @@ The Triad is a specialized set of four agents that work together for deliberatio
 
 1. Message arrives in actor's mailbox
 2. Actor retrieves message (FIFO order)
-3. Actor processes message via [`process_message()`](../src/heretek_swarm/actors/base.py:426)
+3. Actor processes message via [`process_message()`](../backend/heretek_swarm/actors/base.py:426)
 4. Handler is invoked based on message type
 5. Optional response is sent back
 6. Message is marked as done
@@ -300,7 +300,7 @@ ActorSupervisor
 
 - Set appropriate mailbox sizes
 - Configure heartbeat intervals
-- Implement proper cleanup in [`cleanup()`](../src/heretek_swarm/actors/base.py:446)
+- Implement proper cleanup in [`cleanup()`](../backend/heretek_swarm/actors/base.py:446)
 - Use timeouts for blocking operations
 
 ### 4. Testing
@@ -338,12 +338,12 @@ ActorSupervisor
 ### Common Issues
 
 1. **Mailbox Full**: Messages being dropped
-   - Increase [`max_mailbox_size`](../src/heretek_swarm/actors/base.py:149)
+   - Increase [`max_mailbox_size`](../backend/heretek_swarm/actors/base.py:149)
    - Optimize message processing
    - Implement backpressure
 
 2. **Actor Not Responding**: No messages processed
-   - Check actor state with [`get_status()`](../src/heretek_swarm/actors/base.py:497)
+   - Check actor state with [`get_status()`](../backend/heretek_swarm/actors/base.py:497)
    - Review message handler logic
    - Check for blocking operations
 
@@ -361,15 +361,15 @@ ActorSupervisor
 
 ### AgentActor
 
-See [`src/heretek_swarm/actors/base.py`](../src/heretek_swarm/actors/base.py) for complete API documentation.
+See [`backend/heretek_swarm/actors/base.py`](../backend/heretek_swarm/actors/base.py) for complete API documentation.
 
 ### ActorSupervisor
 
-See [`src/heretek_swarm/actors/supervisor.py`](../src/heretek_swarm/actors/supervisor.py) for complete API documentation.
+See [`backend/heretek_swarm/actors/supervisor.py`](../backend/heretek_swarm/actors/supervisor.py) for complete API documentation.
 
 ### Triad Agents
 
-See [`src/heretek_swarm/actors/triad.py`](../src/heretek_swarm/actors/triad.py) for complete API documentation.
+See [`backend/heretek_swarm/actors/triad.py`](../backend/heretek_swarm/actors/triad.py) for complete API documentation.
 
 ## See Also
 

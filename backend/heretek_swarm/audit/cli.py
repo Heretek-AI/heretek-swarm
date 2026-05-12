@@ -62,9 +62,9 @@ def cli(
 
     Examples:
 
-        python audit/cli.py --directory heretek-swarm/heretek_swarm --output audit-report.md
+        python -m heretek_swarm.audit.cli -d backend/heretek_swarm
 
-        python -m heretek_swarm.audit.cli -d heretek-swarm/heretek_swarm -o report.md
+        python -m heretek_swarm.audit.cli -d backend/heretek_swarm -o report.md
 
         python -m heretek_swarm.audit.cli --severity CRITICAL -f json
     """

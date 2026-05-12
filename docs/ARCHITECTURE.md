@@ -53,10 +53,10 @@ The Heretek Swarm is a self-governing swarm of 23 specialized AI agents that ope
 
 ## Package Structure
 
-All source code lives under `heretek-swarm/heretek_swarm/`. There is no `src/` prefix.
+All source code lives under `backend/heretek_swarm/`. There is no `src/` prefix.
 
 ```
-heretek-swarm/
+backend/
 ├── heretek_swarm/
 │   ├── __init__.py
 │   ├── __main__.py
@@ -264,7 +264,7 @@ heretek-swarm/
 
 ### Overview
 
-The Heretek Swarm implements 23 autonomous agents organized into 6 tiers, each with specific capabilities and responsibilities. All agents inherit from the [`AgentActor`](heretek-swarm/heretek_swarm/actors/base/core.py) base class which provides:
+The Heretek Swarm implements 23 autonomous agents organized into 6 tiers, each with specific capabilities and responsibilities. All agents inherit from the [`AgentActor`](backend/heretek_swarm/actors/base/core.py) base class which provides:
 
 - Async message handling via mailbox pattern
 - State management with PostgreSQL persistence
@@ -305,60 +305,60 @@ The Heretek Swarm implements 23 autonomous agents organized into 6 tiers, each w
 
 | Agent   | Role                      | File                                                                   | Capabilities                             |
 |---------|---------------------------|------------------------------------------------------------------------|------------------------------------------|
-| Steward | Governance & Orchestration | [`heretek-swarm/heretek_swarm/actors/steward.py`](heretek-swarm/heretek_swarm/actors/steward.py) | Deliberation orchestration, decision collection |
-| Alpha   | Deep Analysis             | [`heretek-swarm/heretek_swarm/actors/alpha.py`](heretek-swarm/heretek_swarm/actors/alpha.py)       | Deep analysis, proposal generation       |
-| Beta    | Validation                | [`heretek-swarm/heretek_swarm/actors/beta.py`](heretek-swarm/heretek_swarm/actors/beta.py)          | Validation, verification                 |
-| Charlie | Challenge                 | [`heretek-swarm/heretek_swarm/actors/charlie.py`](heretek-swarm/heretek_swarm/actors/charlie.py)    | Challenge, stress-testing                |
+| Steward | Governance & Orchestration | [`backend/heretek_swarm/actors/steward.py`](backend/heretek_swarm/actors/steward.py) | Deliberation orchestration, decision collection |
+| Alpha   | Deep Analysis             | [`backend/heretek_swarm/actors/alpha.py`](backend/heretek_swarm/actors/alpha.py)       | Deep analysis, proposal generation       |
+| Beta    | Validation                | [`backend/heretek_swarm/actors/beta.py`](backend/heretek_swarm/actors/beta.py)          | Validation, verification                 |
+| Charlie | Challenge                 | [`backend/heretek_swarm/actors/charlie.py`](backend/heretek_swarm/actors/charlie.py)    | Challenge, stress-testing                |
 
-The Triad agents were originally in a single `triad.py` file. They have been extracted: Steward is now its own flat file; Alpha, Beta, and Charlie remain flat files. The Triad-specific logic (balancing, types) lives in `heretek-swarm/heretek_swarm/actors/triad/` subpackage, with `triad/agent.py` providing the `TriadAgent` base class and backward-compatible re-exports.
+The Triad agents were originally in a single `triad.py` file. They have been extracted: Steward is now its own flat file; Alpha, Beta, and Charlie remain flat files. The Triad-specific logic (balancing, types) lives in `backend/heretek_swarm/actors/triad/` subpackage, with `triad/agent.py` providing the `TriadAgent` base class and backward-compatible re-exports.
 
 ### Tier 2: Support Agents (5 Agents)
 
 | Agent     | Role                     | File                                                                              | Capabilities                                    |
 |-----------|--------------------------|-----------------------------------------------------------------------------------|-------------------------------------------------|
-| Historian | Memory & Knowledge       | [`heretek-swarm/heretek_swarm/actors/historian.py`](heretek-swarm/heretek_swarm/actors/historian.py) | Memory storage, search, lineage tracking        |
-| Metis     | Strategic Planning       | [`heretek-swarm/heretek_swarm/actors/metis.py`](heretek-swarm/heretek_swarm/actors/metis.py)             | Strategic planning, resource allocation         |
-| Empath    | Emotional Intelligence   | [`heretek-swarm/heretek_swarm/actors/empath.py`](heretek-swarm/heretek_swarm/actors/empath.py)           | Sentiment analysis, conflict mediation          |
-| Perceiver | Multi-Modal Input        | [`heretek-swarm/heretek_swarm/actors/perceiver.py`](heretek-swarm/heretek_swarm/actors/perceiver.py)     | Multi-modal input processing                    |
-| Echo      | Communication            | [`heretek-swarm/heretek_swarm/actors/echo.py`](heretek-swarm/heretek_swarm/actors/echo.py)               | Multi-channel communication, protocol translation|
+| Historian | Memory & Knowledge       | [`backend/heretek_swarm/actors/historian.py`](backend/heretek_swarm/actors/historian.py) | Memory storage, search, lineage tracking        |
+| Metis     | Strategic Planning       | [`backend/heretek_swarm/actors/metis.py`](backend/heretek_swarm/actors/metis.py)             | Strategic planning, resource allocation         |
+| Empath    | Emotional Intelligence   | [`backend/heretek_swarm/actors/empath.py`](backend/heretek_swarm/actors/empath.py)           | Sentiment analysis, conflict mediation          |
+| Perceiver | Multi-Modal Input        | [`backend/heretek_swarm/actors/perceiver.py`](backend/heretek_swarm/actors/perceiver.py)     | Multi-modal input processing                    |
+| Echo      | Communication            | [`backend/heretek_swarm/actors/echo.py`](backend/heretek_swarm/actors/echo.py)               | Multi-channel communication, protocol translation|
 
 ### Tier 3: Exploration Agents (4 Agents)
 
 | Agent    | Role                    | File                                                                            | Capabilities                               |
 |----------|-------------------------|---------------------------------------------------------------------------------|--------------------------------------------|
-| Explorer | Intelligence Gathering  | [`heretek-swarm/heretek_swarm/actors/explorer/agent.py`](heretek-swarm/heretek_swarm/actors/explorer/agent.py) (subpackage) | Source monitoring, anomaly detection     |
-| Examiner | Quality Assurance       | [`heretek-swarm/heretek_swarm/actors/examiner/agent.py`](heretek-swarm/heretek_swarm/actors/examiner/agent.py) (subpackage) | Test plan generation, code analysis      |
-| Dreamer  | Creative Generation     | [`heretek-swarm/heretek_swarm/actors/dreamer/agent.py`](heretek-swarm/heretek_swarm/actors/dreamer/agent.py) (subpackage)   | Creative solutions, alternative exploration|
-| Coder    | Implementation          | [`heretek-swarm/heretek_swarm/actors/coder.py`](heretek-swarm/heretek_swarm/actors/coder.py) (flat file) | Code generation, review, safe execution  |
+| Explorer | Intelligence Gathering  | [`backend/heretek_swarm/actors/explorer/agent.py`](backend/heretek_swarm/actors/explorer/agent.py) (subpackage) | Source monitoring, anomaly detection     |
+| Examiner | Quality Assurance       | [`backend/heretek_swarm/actors/examiner/agent.py`](backend/heretek_swarm/actors/examiner/agent.py) (subpackage) | Test plan generation, code analysis      |
+| Dreamer  | Creative Generation     | [`backend/heretek_swarm/actors/dreamer/agent.py`](backend/heretek_swarm/actors/dreamer/agent.py) (subpackage)   | Creative solutions, alternative exploration|
+| Coder    | Implementation          | [`backend/heretek_swarm/actors/coder.py`](backend/heretek_swarm/actors/coder.py) (flat file) | Code generation, review, safe execution  |
 
 ### Tier 4: Safety & Security (3 Agents)
 
 | Agent          | Role                    | File                                                                                                | Capabilities                              |
 |----------------|-------------------------|-----------------------------------------------------------------------------------------------------|-------------------------------------------|
-| Sentinel       | Safety Guardian         | [`heretek-swarm/heretek_swarm/actors/sentinel/agent.py`](heretek-swarm/heretek_swarm/actors/sentinel/agent.py) (subpackage) | Input validation, safety checks         |
-| Sentinel-Prime | Security Commander      | [`heretek-swarm/heretek_swarm/actors/sentinel_prime/agent.py`](heretek-swarm/heretek_swarm/actors/sentinel_prime/agent.py) (subpackage) | Threat detection, security response    |
-| Arbiter        | Conflict Resolution     | [`heretek-swarm/heretek_swarm/actors/arbiter/core.py`](heretek-swarm/heretek_swarm/actors/arbiter/core.py) (subpackage)   | Conflict mediation, decision arbitration |
+| Sentinel       | Safety Guardian         | [`backend/heretek_swarm/actors/sentinel/agent.py`](backend/heretek_swarm/actors/sentinel/agent.py) (subpackage) | Input validation, safety checks         |
+| Sentinel-Prime | Security Commander      | [`backend/heretek_swarm/actors/sentinel_prime/agent.py`](backend/heretek_swarm/actors/sentinel_prime/agent.py) (subpackage) | Threat detection, security response    |
+| Arbiter        | Conflict Resolution     | [`backend/heretek_swarm/actors/arbiter/core.py`](backend/heretek_swarm/actors/arbiter/core.py) (subpackage)   | Conflict mediation, decision arbitration |
 
 ### Tier 5: Coordination Agents (4 Agents)
 
 | Agent       | Role                  | File                                                                                  | Capabilities                                   |
 |-------------|-----------------------|---------------------------------------------------------------------------------------|------------------------------------------------|
-| Coordinator | Multi-Agent Sync      | [`heretek-swarm/heretek_swarm/actors/coordinator/agent.py`](heretek-swarm/heretek_swarm/actors/coordinator/agent.py) (subpackage) | Workflow coordination, dependency resolution |
-| Nexus       | External Integration  | [`heretek-swarm/heretek_swarm/actors/nexus/agent.py`](heretek-swarm/heretek_swarm/actors/nexus/agent.py) (subpackage)   | API integration, webhook management           |
-| Catalyst    | Change Management     | [`heretek-swarm/heretek_swarm/actors/catalyst.py`](heretek-swarm/heretek_swarm/actors/catalyst.py) (flat file) | Change requests, impact analysis, rollback    |
-| Chronos     | Scheduling            | [`heretek-swarm/heretek_swarm/actors/chronos/agent.py`](heretek-swarm/heretek_swarm/actors/chronos/agent.py) (subpackage)   | Task scheduling, deadline tracking            |
+| Coordinator | Multi-Agent Sync      | [`backend/heretek_swarm/actors/coordinator/agent.py`](backend/heretek_swarm/actors/coordinator/agent.py) (subpackage) | Workflow coordination, dependency resolution |
+| Nexus       | External Integration  | [`backend/heretek_swarm/actors/nexus/agent.py`](backend/heretek_swarm/actors/nexus/agent.py) (subpackage)   | API integration, webhook management           |
+| Catalyst    | Change Management     | [`backend/heretek_swarm/actors/catalyst.py`](backend/heretek_swarm/actors/catalyst.py) (flat file) | Change requests, impact analysis, rollback    |
+| Chronos     | Scheduling            | [`backend/heretek_swarm/actors/chronos/agent.py`](backend/heretek_swarm/actors/chronos/agent.py) (subpackage)   | Task scheduling, deadline tracking            |
 
 ### Tier 6: Enhancement Agents (3 Agents)
 
 | Agent       | Role                  | File                                                                                          | Capabilities                                 |
 |-------------|-----------------------|-----------------------------------------------------------------------------------------------|----------------------------------------------|
-| Prism       | Multi-Perspective     | [`heretek-swarm/heretek_swarm/actors/prism/agent.py`](heretek-swarm/heretek_swarm/actors/prism/agent.py) (subpackage) | Multi-perspective analysis, bias detection   |
-| Habit-Forge | Behavior Optimization | [`heretek-swarm/heretek_swarm/actors/habit_forge/agent.py`](heretek-swarm/heretek_swarm/actors/habit_forge/agent.py) (subpackage) | Habit creation, pattern analysis           |
-| Perceiver+  | Advanced Analytics    | [`heretek-swarm/heretek_swarm/actors/perceiver_plus/agent.py`](heretek-swarm/heretek_swarm/actors/perceiver_plus/agent.py) (subpackage) | Statistical analysis, forecasting          |
+| Prism       | Multi-Perspective     | [`backend/heretek_swarm/actors/prism/agent.py`](backend/heretek_swarm/actors/prism/agent.py) (subpackage) | Multi-perspective analysis, bias detection   |
+| Habit-Forge | Behavior Optimization | [`backend/heretek_swarm/actors/habit_forge/agent.py`](backend/heretek_swarm/actors/habit_forge/agent.py) (subpackage) | Habit creation, pattern analysis           |
+| Perceiver+  | Advanced Analytics    | [`backend/heretek_swarm/actors/perceiver_plus/agent.py`](backend/heretek_swarm/actors/perceiver_plus/agent.py) (subpackage) | Statistical analysis, forecasting          |
 
 ### Import Convention
 
-All agents are publicly exported from `heretek-swarm/heretek_swarm/actors/__init__.py`. Consumers should use:
+All agents are publicly exported from `backend/heretek_swarm/actors/__init__.py`. Consumers should use:
 
 ```python
 from heretek_swarm.actors import StewardAgent, HistorianAgent, ...
@@ -370,7 +370,7 @@ from heretek_swarm.actors import StewardAgent, HistorianAgent, ...
 
 ### AgentActor Hierarchy
 
-The [`AgentActor`](heretek-swarm/heretek_swarm/actors/base/core.py) class in `actors/base/core.py` provides the core lifecycle:
+The [`AgentActor`](backend/heretek_swarm/actors/base/core.py) class in `actors/base/core.py` provides the core lifecycle:
 
 - `spawn()` → initializes, starts mailbox processing & heartbeat loop
 - `process_message()` → dispatches messages to registered handlers
@@ -384,7 +384,7 @@ Two base mixins augment AgentActor via module-level import triggers:
 
 ### 10 Actor Mixins
 
-The 10 mixins in [`heretek-swarm/heretek_swarm/actors/mixins/`](heretek-swarm/heretek_swarm/actors/mixins/) provide reusable capabilities that agents can opt into:
+The 10 mixins in [`backend/heretek_swarm/actors/mixins/`](backend/heretek_swarm/actors/mixins/) provide reusable capabilities that agents can opt into:
 
 | Mixin                | File                                                 | Purpose                                                          | Used By                                                         |
 |----------------------|------------------------------------------------------|------------------------------------------------------------------|-----------------------------------------------------------------|
@@ -417,7 +417,7 @@ The Heretek Swarm implements a dual-tier memory architecture with PostgreSQL, Re
                            ▼
 ┌─────────────────────────────────────────────────────────┐
 │              Memory Backend (mem0-based)                 │
-│        (heretek-swarm/heretek_swarm/memory/)             │
+│        (backend/heretek_swarm/memory/)             │
 │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐     │
 │  │   Embed     │  │   Store     │  │   Search    │     │
 │  └─────────────┘  └─────────────┘  └─────────────┘     │
@@ -449,12 +449,12 @@ The Heretek Swarm implements a dual-tier memory architecture with PostgreSQL, Re
 
 ### Key Components
 
-- **MemoryEntry** ([`heretek-swarm/heretek_swarm/memory/base.py`](heretek-swarm/heretek_swarm/memory/base.py)) — Core memory data model
-- **Persistent Memory** ([`heretek-swarm/heretek_swarm/memory/persistent.py`](heretek-swarm/heretek_swarm/memory/persistent.py)) — PostgreSQL-backed storage
-- **MemoryTiering** ([`heretek-swarm/heretek_swarm/memory/tiering.py`](heretek-swarm/heretek_swarm/memory/tiering.py)) — Transactional tier migration with rollback
-- **Versioned Memory** ([`heretek-swarm/heretek_swarm/memory/versioned.py`](heretek-swarm/heretek_swarm/memory/versioned.py)) — Memory versioning and history
-- **Memory Compression** ([`heretek-swarm/heretek_swarm/memory/compression.py`](heretek-swarm/heretek_swarm/memory/compression.py)) — Compression strategies
-- **Prefetcher** ([`heretek-swarm/heretek_swarm/memory/prefetcher.py`](heretek-swarm/heretek_swarm/memory/prefetcher.py)) — Predictive memory loading
+- **MemoryEntry** ([`backend/heretek_swarm/memory/base.py`](backend/heretek_swarm/memory/base.py)) — Core memory data model
+- **Persistent Memory** ([`backend/heretek_swarm/memory/persistent.py`](backend/heretek_swarm/memory/persistent.py)) — PostgreSQL-backed storage
+- **MemoryTiering** ([`backend/heretek_swarm/memory/tiering.py`](backend/heretek_swarm/memory/tiering.py)) — Transactional tier migration with rollback
+- **Versioned Memory** ([`backend/heretek_swarm/memory/versioned.py`](backend/heretek_swarm/memory/versioned.py)) — Memory versioning and history
+- **Memory Compression** ([`backend/heretek_swarm/memory/compression.py`](backend/heretek_swarm/memory/compression.py)) — Compression strategies
+- **Prefetcher** ([`backend/heretek_swarm/memory/prefetcher.py`](backend/heretek_swarm/memory/prefetcher.py)) — Predictive memory loading
 
 ---
 
@@ -464,10 +464,10 @@ The Heretek Swarm implements a dual-tier memory architecture with PostgreSQL, Re
 
 The Heretek Swarm uses NATS JetStream for persistent event streaming. The primary implementation lives in:
 
-- [`heretek-swarm/heretek_swarm/gateway/nats_event_mesh.py`](heretek-swarm/heretek_swarm/gateway/nats_event_mesh.py) — NATS-backed event mesh
-- [`heretek-swarm/heretek_swarm/gateway/event_mesh.py`](heretek-swarm/heretek_swarm/gateway/event_mesh.py) — Abstract event mesh interface
-- [`heretek-swarm/heretek_swarm/gateway/jetstream_manager.py`](heretek-swarm/heretek_swarm/gateway/jetstream_manager.py) — JetStream connection/stream management
-- [`heretek-swarm/heretek_swarm/infrastructure/nats/`](heretek-swarm/heretek_swarm/infrastructure/nats/) — Low-level NATS client, publisher, subscriber, broadcast, consensus, discovery
+- [`backend/heretek_swarm/gateway/nats_event_mesh.py`](backend/heretek_swarm/gateway/nats_event_mesh.py) — NATS-backed event mesh
+- [`backend/heretek_swarm/gateway/event_mesh.py`](backend/heretek_swarm/gateway/event_mesh.py) — Abstract event mesh interface
+- [`backend/heretek_swarm/gateway/jetstream_manager.py`](backend/heretek_swarm/gateway/jetstream_manager.py) — JetStream connection/stream management
+- [`backend/heretek_swarm/infrastructure/nats/`](backend/heretek_swarm/infrastructure/nats/) — Low-level NATS client, publisher, subscriber, broadcast, consensus, discovery
 
 Key features:
 
@@ -521,7 +521,7 @@ class ChannelMessage:
 
 ### Database-Backed Configuration
 
-The Heretek Swarm uses a database-backed configuration system for all user-facing configurations, implemented in [`heretek-swarm/heretek_swarm/config/`](heretek-swarm/heretek_swarm/config/):
+The Heretek Swarm uses a database-backed configuration system for all user-facing configurations, implemented in [`backend/heretek_swarm/config/`](backend/heretek_swarm/config/):
 
 - **User Configurations** — System-wide settings stored in PostgreSQL
 - **LLM Providers** — Multi-provider LLM configurations (OpenAI, Ollama, llama.cpp, etc.)
@@ -559,7 +559,7 @@ The configuration system creates the following tables:
 
 ### Zero-Trust Architecture
 
-The Heretek Swarm implements a comprehensive Zero-Trust security architecture in [`heretek-swarm/heretek_swarm/security/`](heretek-swarm/heretek_swarm/security/):
+The Heretek Swarm implements a comprehensive Zero-Trust security architecture in [`backend/heretek_swarm/security/`](backend/heretek_swarm/security/):
 
 1. **Never Trust, Always Verify** — All inputs validated via Pydantic v2 models
 2. **Defense in Depth** — Multiple security layers (guardrails, rate limiting, auth)
@@ -570,13 +570,13 @@ The Heretek Swarm implements a comprehensive Zero-Trust security architecture in
 
 | Layer               | Component                                                         | Purpose                                                  | Status         |
 |---------------------|-------------------------------------------------------------------|----------------------------------------------------------|----------------|
-| Input Validation    | [`zero_trust.py`](heretek-swarm/heretek_swarm/security/zero_trust.py) | 4-layer validation (Input, Context, Output, Audit)      | ✅ Operational |
-| Adversarial Detection| [`adversarial.py`](heretek-swarm/heretek_swarm/security/adversarial.py) | Prompt injection, jailbreak detection                  | ✅ Operational |
-| Rate Limiting       | [`ddos_protection.py`](heretek-swarm/heretek_swarm/security/ddos_protection.py) | Token bucket algorithm, DDoS protection                | ✅ Operational |
-| Guardrails          | [`guardrails.py`](heretek-swarm/heretek_swarm/security/guardrails.py) | Content filtering, output validation                    | ✅ Operational |
-| Authentication      | [`gateway/auth.py`](heretek-swarm/heretek_swarm/gateway/auth.py) | Bearer token auth, race condition fixed                  | ✅ Operational |
-| Threat Detection    | [`threat_detection.py`](heretek-swarm/heretek_swarm/security/threat_detection.py) | Anomaly scanning, pattern matching                     | ✅ Operational |
-| Behavioral Baseline | [`behavioral_baseline.py`](heretek-swarm/heretek_swarm/security/behavioral_baseline.py) | Normal behavior modeling, drift detection              | ✅ Operational |
+| Input Validation    | [`zero_trust.py`](backend/heretek_swarm/security/zero_trust.py) | 4-layer validation (Input, Context, Output, Audit)      | ✅ Operational |
+| Adversarial Detection| [`adversarial.py`](backend/heretek_swarm/security/adversarial.py) | Prompt injection, jailbreak detection                  | ✅ Operational |
+| Rate Limiting       | [`ddos_protection.py`](backend/heretek_swarm/security/ddos_protection.py) | Token bucket algorithm, DDoS protection                | ✅ Operational |
+| Guardrails          | [`guardrails.py`](backend/heretek_swarm/security/guardrails.py) | Content filtering, output validation                    | ✅ Operational |
+| Authentication      | [`gateway/auth.py`](backend/heretek_swarm/gateway/auth.py) | Bearer token auth, race condition fixed                  | ✅ Operational |
+| Threat Detection    | [`threat_detection.py`](backend/heretek_swarm/security/threat_detection.py) | Anomaly scanning, pattern matching                     | ✅ Operational |
+| Behavioral Baseline | [`behavioral_baseline.py`](backend/heretek_swarm/security/behavioral_baseline.py) | Normal behavior modeling, drift detection              | ✅ Operational |
 
 ### Security Features
 
@@ -593,12 +593,12 @@ The Heretek Swarm implements a comprehensive Zero-Trust security architecture in
 
 The Heretek Swarm provides comprehensive observability through Prometheus metrics, distributed tracing, and structured logging. The implementation lives in:
 
-- [`heretek-swarm/heretek_swarm/observability/`](heretek-swarm/heretek_swarm/observability/) — Prometheus metrics, alerting, tracing
-- [`heretek-swarm/heretek_swarm/infrastructure/otel/`](heretek-swarm/heretek_swarm/infrastructure/otel/) — OpenTelemetry logging, metrics, tracing
+- [`backend/heretek_swarm/observability/`](backend/heretek_swarm/observability/) — Prometheus metrics, alerting, tracing
+- [`backend/heretek_swarm/infrastructure/otel/`](backend/heretek_swarm/infrastructure/otel/) — OpenTelemetry logging, metrics, tracing
 
 ### Metrics
 
-**File:** [`heretek-swarm/heretek_swarm/observability/prometheus_metrics.py`](heretek-swarm/heretek_swarm/observability/prometheus_metrics.py)
+**File:** [`backend/heretek_swarm/observability/prometheus_metrics.py`](backend/heretek_swarm/observability/prometheus_metrics.py)
 
 The system exposes Prometheus-compatible metrics for monitoring autonomous 24/7 operation.
 
@@ -706,7 +706,7 @@ Traces are stored in memory and can be exported to:
 - **Zipkin** — Alternative tracing backend
 - **OTLP** — OpenTelemetry Protocol
 
-The OpenTelemetry integration is configured in [`heretek-swarm/heretek_swarm/infrastructure/otel/tracing.py`](heretek-swarm/heretek_swarm/infrastructure/otel/tracing.py).
+The OpenTelemetry integration is configured in [`backend/heretek_swarm/infrastructure/otel/tracing.py`](backend/heretek_swarm/infrastructure/otel/tracing.py).
 
 ### Alerting
 

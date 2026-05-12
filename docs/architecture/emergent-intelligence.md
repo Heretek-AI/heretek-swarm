@@ -57,7 +57,7 @@ Session 46 implements a comprehensive emergent intelligence enhancement system t
 
 ### 1. Adaptive Learning Rate Controller
 
-**File:** [`src/heretek_swarm/collective/adaptive_learning.py`](../../src/heretek_swarm/collective/adaptive_learning.py)
+**File:** [`backend/heretek_swarm/collective/adaptive_learning.py`](../../backend/heretek_swarm/collective/adaptive_learning.py)
 
 **Purpose:** Dynamic learning rate adjustment per agent based on pattern success rates and convergence tracking.
 
@@ -89,7 +89,7 @@ Session 46 implements a comprehensive emergent intelligence enhancement system t
 
 ### 2. Pattern-Based Agent Adaptor
 
-**File:** [`src/heretek_swarm/collective/agent_adaptation.py`](../../src/heretek_swarm/collective/agent_adaptation.py)
+**File:** [`backend/heretek_swarm/collective/agent_adaptation.py`](../../backend/heretek_swarm/collective/agent_adaptation.py)
 
 **Purpose:** Modify agent behavior based on learned patterns from collective experience.
 
@@ -127,7 +127,7 @@ Session 46 implements a comprehensive emergent intelligence enhancement system t
 
 ### 3. Emergent Pattern Detector
 
-**File:** [`src/heretek_swarm/collective/emergent_detection.py`](../../src/heretek_swarm/collective/emergent_detection.py)
+**File:** [`backend/heretek_swarm/collective/emergent_detection.py`](../../backend/heretek_swarm/collective/emergent_detection.py)
 
 **Purpose:** Detect patterns emerging from swarm interactions that are not present in individual agents.
 
@@ -165,7 +165,7 @@ Session 46 implements a comprehensive emergent intelligence enhancement system t
 
 ### 4. Collective Intelligence Metrics
 
-**File:** [`src/heretek_swarm/collective/metrics.py`](../../src/heretek_swarm/collective/metrics.py)
+**File:** [`backend/heretek_swarm/collective/metrics.py`](../../backend/heretek_swarm/collective/metrics.py)
 
 **Purpose:** Comprehensive metrics for measuring collective intelligence in the agent swarm.
 
@@ -200,7 +200,7 @@ Session 46 implements a comprehensive emergent intelligence enhancement system t
 
 ## API Endpoints
 
-**File:** [`src/heretek_swarm/api/emergent_intelligence.py`](../../src/heretek_swarm/api/emergent_intelligence.py)
+**File:** [`backend/heretek_swarm/api/emergent_intelligence.py`](../../backend/heretek_swarm/api/emergent_intelligence.py)
 
 | Endpoint | Method | Description |
 |----------|--------|-------------|
@@ -360,9 +360,9 @@ All Session 46 modules follow zero-trust principles:
 
 ```bash
 # Zero-trust checks
-grep -r "datetime.utcnow" --include="*.py" src/heretek_swarm/collective/ | wc -l  # Expected: 0
-grep -rn "TODO\|FIXME\|XXX\|HACK" --include="*.py" src/heretek_swarm/collective/ | wc -l  # Expected: 0
-grep -rn "password\s*=\s*['\"]" --include="*.py" src/heretek_swarm/collective/ | wc -l  # Expected: 0
+grep -r "datetime.utcnow" --include="*.py" backend/heretek_swarm/collective/ | wc -l  # Expected: 0
+grep -rn "TODO\|FIXME\|XXX\|HACK" --include="*.py" backend/heretek_swarm/collective/ | wc -l  # Expected: 0
+grep -rn "password\s*=\s*['\"]" --include="*.py" backend/heretek_swarm/collective/ | wc -l  # Expected: 0
 
 # Run tests
 pytest tests/collective/test_session46_emergent_intelligence.py -v

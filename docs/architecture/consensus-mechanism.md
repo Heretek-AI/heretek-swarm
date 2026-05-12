@@ -12,9 +12,9 @@ The consensus system has been enhanced with the following advanced capabilities:
 
 ### 1. Swarm Deliberation Engine
 
-**Location**: [`src/heretek_swarm/consensus/swarm_deliberation.py`](../src/heretek_swarm/consensus/swarm_deliberation.py)
+**Location**: [`backend/heretek_swarm/consensus/swarm_deliberation.py`](../backend/heretek_swarm/consensus/swarm_deliberation.py)
 
-The [`SwarmDeliberationEngine`](../src/heretek_swarm/consensus/swarm_deliberation.py:381) provides multi-round voting with argument exchange:
+The [`SwarmDeliberationEngine`](../backend/heretek_swarm/consensus/swarm_deliberation.py:381) provides multi-round voting with argument exchange:
 
 - **Multi-round Voting**: Iterative position updates through deliberation rounds
 - **Argument Exchange**: Agents can submit arguments supporting their positions
@@ -42,9 +42,9 @@ result = engine.finalize_deliberation("deploy-1")
 
 ### 2. Enhanced MAKER Protocol
 
-**Location**: [`src/heretek_swarm/consensus/maker_enhanced.py`](../src/heretek_swarm/consensus/maker_enhanced.py)
+**Location**: [`backend/heretek_swarm/consensus/maker_enhanced.py`](../backend/heretek_swarm/consensus/maker_enhanced.py)
 
-The [`EnhancedMAKERConsensus`](../src/heretek_swarm/consensus/maker_enhanced.py:266) extends base MAKER with:
+The [`EnhancedMAKERConsensus`](../backend/heretek_swarm/consensus/maker_enhanced.py:266) extends base MAKER with:
 
 - **Reasoning Chains**: Structured reasoning with validation
 - **Cross-validation**: Verification of reasoning consistency
@@ -79,9 +79,9 @@ result = consensus.compute_consensus_with_validation("deploy-1", min_validation_
 
 ### 3. Agent Expertise Profiling
 
-**Location**: [`src/heretek_swarm/consensus/expertise.py`](../src/heretek_swarm/consensus/expertise.py)
+**Location**: [`backend/heretek_swarm/consensus/expertise.py`](../backend/heretek_swarm/consensus/expertise.py)
 
-The [`AgentExpertiseProfiler`](../src/heretek_swarm/consensus/expertise.py:234) provides:
+The [`AgentExpertiseProfiler`](../backend/heretek_swarm/consensus/expertise.py:234) provides:
 
 - **Dynamic Expertise Scoring**: Per-domain expertise tracking
 - **Historical Accuracy**: Outcome-based score adjustment
@@ -103,9 +103,9 @@ weighted = profiler.get_weighted_confidence("agent-1", "code_review", base_confi
 
 ### 4. Decision Audit Trail
 
-**Location**: [`src/heretek_swarm/consensus/audit.py`](../src/heretek_swarm/consensus/audit.py)
+**Location**: [`backend/heretek_swarm/consensus/audit.py`](../backend/heretek_swarm/consensus/audit.py)
 
-The [`ConsensusAuditTrail`](../src/heretek_swarm/consensus/audit.py:352) provides:
+The [`ConsensusAuditTrail`](../backend/heretek_swarm/consensus/audit.py:352) provides:
 
 - **Complete Decision History**: Full record of all decisions
 - **Vote Breakdowns**: Detailed vote analysis
@@ -139,9 +139,9 @@ export = audit.export_audit_data(consensus_id="consensus-1")
 
 ### MAKER Consensus Algorithm
 
-**Location**: [`src/heretek_swarm/consensus/maker.py`](../src/heretek_swarm/consensus/maker.py)
+**Location**: [`backend/heretek_swarm/consensus/maker.py`](../backend/heretek_swarm/consensus/maker.py)
 
-The [`MAKERConsensus`](../src/heretek_swarm/consensus/maker.py:78) class implements a sophisticated consensus mechanism designed for multi-agent systems.
+The [`MAKERConsensus`](../backend/heretek_swarm/consensus/maker.py:78) class implements a sophisticated consensus mechanism designed for multi-agent systems.
 
 ### Key Features
 
@@ -259,7 +259,7 @@ if result.state == ConsensusState.COMPLETED:
         print(f"Red Flags: {result.red_flags}")
 ```
 
-**Returns**: [`ConsensusResult`](../src/heretek_swarm/consensus/maker.py:55) or `None` if consensus not reached
+**Returns**: [`ConsensusResult`](../backend/heretek_swarm/consensus/maker.py:55) or `None` if consensus not reached
 
 ## Voting Algorithm
 
@@ -557,15 +557,15 @@ print(f"Confidence: {result.final_decision.confidence:.2f}")
 
 ### MAKERConsensus
 
-See [`src/heretek_swarm/consensus/maker.py`](../src/heretek_swarm/consensus/maker.py) for complete API documentation.
+See [`backend/heretek_swarm/consensus/maker.py`](../backend/heretek_swarm/consensus/maker.py) for complete API documentation.
 
 ### Key Methods
 
-- [`start_consensus()`](../src/heretek_swarm/consensus/maker.py:141): Start a new consensus process
-- [`add_vote()`](../src/heretek_swarm/consensus/maker.py:152): Add a vote to a consensus process
-- [`compute_consensus()`](../src/heretek_swarm/consensus/maker.py:193): Compute consensus from collected votes
-- [`get_vote_history()`](../src/heretek_swarm/consensus/maker.py): Get vote history for an agent
-- [`get_agent_reputation()`](../src/heretek_swarm/consensus/maker.py): Get agent reputation score
+- [`start_consensus()`](../backend/heretek_swarm/consensus/maker.py:141): Start a new consensus process
+- [`add_vote()`](../backend/heretek_swarm/consensus/maker.py:152): Add a vote to a consensus process
+- [`compute_consensus()`](../backend/heretek_swarm/consensus/maker.py:193): Compute consensus from collected votes
+- [`get_vote_history()`](../backend/heretek_swarm/consensus/maker.py): Get vote history for an agent
+- [`get_agent_reputation()`](../backend/heretek_swarm/consensus/maker.py): Get agent reputation score
 
 ## See Also
 

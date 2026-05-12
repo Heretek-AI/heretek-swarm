@@ -1,7 +1,7 @@
 """
 Heretek Swarm Tools Package
 
-Re-exports tools from src/tools for heretek_swarm namespace compatibility.
+Re-exports tools from backend/heretek_swarm/tools for heretek_swarm namespace compatibility.
 This module provides backward compatibility for imports referencing heretek_swarm.tools.
 """
 

@@ -19,7 +19,7 @@ For the main documentation index with quick navigation, see [INDEX.md](./INDEX.m
 |----------|-------------|
 | [Core Actors System](./CORE_ACTORS.md) | AgentActor base class, ActorMessage, ActorFactory, ActorSupervisor, validation models |
 | [Agent Reference](./AGENT_REFERENCE.md) | Complete reference for all 23 agents organized by tier |
-| Gateway Implementation | EventMesh, A2A protocol server, authentication in `src/heretek_swarm/gateway/` |
+| Gateway Implementation | EventMesh, A2A protocol server, authentication in `backend/heretek_swarm/gateway/` |
 | [Memory System](./MEMORY_SYSTEM.md) | Mem0Backend, memory models, dual-tier architecture, usage examples |
 | [Emergent Intelligence](./architecture/emergent-intelligence.md) | GWT, IIT, AST, FEP implementations and metrics |
 | [API Endpoints](./API_ENDPOINTS.md) | REST API endpoints, WebSocket, rate limiting, error responses |
@@ -30,7 +30,7 @@ For the main documentation index with quick navigation, see [INDEX.md](./INDEX.m
 
 ### Main API Entry Point
 
-**File:** [`src/heretek_swarm/api/main.py`](../src/heretek_swarm/api/main.py)
+**File:** [`backend/heretek_swarm/api/main.py`](../backend/heretek_swarm/api/main.py)
 
 ```python
 app = FastAPI(title="Heretek Swarm API", version="2.0.0")

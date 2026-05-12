@@ -25,7 +25,7 @@ Complete reference for all 23 agents in the Heretek Swarm system, organized by t
 
 ### StewardAgent
 
-**File:** [`src/heretek_swarm/actors/triad.py`](../src/heretek_swarm/actors/triad.py)
+**File:** [`backend/heretek_swarm/actors/triad.py`](../backend/heretek_swarm/actors/triad.py)
 
 Governance and orchestration agent that coordinates deliberations.
 
@@ -49,7 +49,7 @@ class StewardAgent(AgentActor):
 
 ### AlphaAgent
 
-**File:** [`src/heretek_swarm/actors/triad.py`](../src/heretek_swarm/actors/triad.py)
+**File:** [`backend/heretek_swarm/actors/triad.py`](../backend/heretek_swarm/actors/triad.py)
 
 Deep analysis and proposal generation.
 
@@ -70,7 +70,7 @@ class AlphaAgent(AgentActor):
 
 ### BetaAgent
 
-**File:** [`src/heretek_swarm/actors/triad.py`](../src/heretek_swarm/actors/triad.py)
+**File:** [`backend/heretek_swarm/actors/triad.py`](../backend/heretek_swarm/actors/triad.py)
 
 Validation and verification of proposals.
 
@@ -91,7 +91,7 @@ class BetaAgent(AgentActor):
 
 ### CharlieAgent
 
-**File:** [`src/heretek_swarm/actors/triad.py`](../src/heretek_swarm/actors/triad.py)
+**File:** [`backend/heretek_swarm/actors/triad.py`](../backend/heretek_swarm/actors/triad.py)
 
 Challenge agent that stress-tests proposals.
 
@@ -114,7 +114,7 @@ class CharlieAgent(AgentActor):
 
 ### HistorianAgent
 
-**File:** [`src/heretek_swarm/actors/historian.py`](../src/heretek_swarm/actors/historian.py)
+**File:** [`backend/heretek_swarm/actors/historian.py`](../backend/heretek_swarm/actors/historian.py)
 
 Memory and knowledge management with dual-tier storage.
 
@@ -141,7 +141,7 @@ class HistorianAgent(AgentActor):
 
 ### MetisAgent
 
-**File:** [`src/heretek_swarm/actors/metis.py`](../src/heretek_swarm/actors/metis.py)
+**File:** [`backend/heretek_swarm/actors/metis.py`](../backend/heretek_swarm/actors/metis.py)
 
 Strategic planning and resource allocation.
 
@@ -165,7 +165,7 @@ class MetisAgent(AgentActor):
 
 ### EmpathAgent
 
-**File:** [`src/heretek_swarm/actors/empath.py`](../src/heretek_swarm/actors/empath.py)
+**File:** [`backend/heretek_swarm/actors/empath.py`](../backend/heretek_swarm/actors/empath.py)
 
 Emotional intelligence and conflict mediation.
 
@@ -189,7 +189,7 @@ class EmpathAgent(AgentActor):
 
 ### PerceiverAgent
 
-**File:** [`src/heretek_swarm/actors/perceiver.py`](../src/heretek_swarm/actors/perceiver.py)
+**File:** [`backend/heretek_swarm/actors/perceiver.py`](../backend/heretek_swarm/actors/perceiver.py)
 
 Multi-modal sensory input processing.
 
@@ -213,7 +213,7 @@ class PerceiverAgent(AgentActor):
 
 ### EchoAgent
 
-**File:** [`src/heretek_swarm/actors/echo.py`](../src/heretek_swarm/actors/echo.py)
+**File:** [`backend/heretek_swarm/actors/echo.py`](../backend/heretek_swarm/actors/echo.py)
 
 Communication and protocol translation.
 
@@ -239,7 +239,7 @@ class EchoAgent(AgentActor):
 
 ### ExplorerAgent
 
-**File:** [`src/heretek_swarm/actors/explorer.py`](../src/heretek_swarm/actors/explorer.py)
+**File:** [`backend/heretek_swarm/actors/explorer.py`](../backend/heretek_swarm/actors/explorer.py)
 
 Intelligence gathering and opportunity discovery.
 
@@ -263,7 +263,7 @@ class ExplorerAgent(AgentActor):
 
 ### ExaminerAgent
 
-**File:** [`src/heretek_swarm/actors/examiner.py`](../src/heretek_swarm/actors/examiner.py)
+**File:** [`backend/heretek_swarm/actors/examiner.py`](../backend/heretek_swarm/actors/examiner.py)
 
 Quality assurance and testing.
 
@@ -287,7 +287,7 @@ class ExaminerAgent(AgentActor):
 
 ### DreamerAgent
 
-**File:** [`src/heretek_swarm/actors/dreamer.py`](../src/heretek_swarm/actors/dreamer.py)
+**File:** [`backend/heretek_swarm/actors/dreamer.py`](../backend/heretek_swarm/actors/dreamer.py)
 
 Creative solution generation.
 
@@ -311,7 +311,7 @@ class DreamerAgent(AgentActor):
 
 ### CoderAgent
 
-**File:** [`src/heretek_swarm/actors/coder.py`](../src/heretek_swarm/actors/coder.py)
+**File:** [`backend/heretek_swarm/actors/coder.py`](../backend/heretek_swarm/actors/coder.py)
 
 Code generation and implementation.
 
@@ -340,7 +340,7 @@ class CoderAgent(AgentActor):
 
 ### SentinelAgent
 
-**File:** [`src/heretek_swarm/actors/sentinel.py`](../src/heretek_swarm/actors/sentinel.py)
+**File:** [`backend/heretek_swarm/actors/sentinel.py`](../backend/heretek_swarm/actors/sentinel.py)
 
 Safety guardian for input/output validation.
 
@@ -364,7 +364,7 @@ class SentinelAgent(AgentActor):
 
 ### SentinelPrimeAgent
 
-**File:** [`src/heretek_swarm/actors/sentinel_prime.py`](../src/heretek_swarm/actors/sentinel_prime.py)
+**File:** [`backend/heretek_swarm/actors/sentinel_prime.py`](../backend/heretek_swarm/actors/sentinel_prime.py)
 
 Security commander for threat response.
 
@@ -388,7 +388,7 @@ class SentinelPrimeAgent(AgentActor):
 
 ### ArbiterAgent
 
-**File:** [`src/heretek_swarm/actors/arbiter.py`](../src/heretek_swarm/actors/arbiter.py)
+**File:** [`backend/heretek_swarm/actors/arbiter.py`](../backend/heretek_swarm/actors/arbiter.py)
 
 Conflict resolution between agents.
 
@@ -414,7 +414,7 @@ class ArbiterAgent(AgentActor):
 
 ### CoordinatorAgent
 
-**File:** [`src/heretek_swarm/actors/coordinator.py`](../src/heretek_swarm/actors/coordinator.py)
+**File:** [`backend/heretek_swarm/actors/coordinator.py`](../backend/heretek_swarm/actors/coordinator.py)
 
 Multi-agent task synchronization.
 
@@ -438,7 +438,7 @@ class CoordinatorAgent(AgentActor):
 
 ### NexusAgent
 
-**File:** [`src/heretek_swarm/actors/nexus.py`](../src/heretek_swarm/actors/nexus.py)
+**File:** [`backend/heretek_swarm/actors/nexus.py`](../backend/heretek_swarm/actors/nexus.py)
 
 External API integration.
 
@@ -462,7 +462,7 @@ class NexusAgent(AgentActor):
 
 ### CatalystAgent
 
-**File:** [`src/heretek_swarm/actors/catalyst.py`](../src/heretek_swarm/actors/catalyst.py)
+**File:** [`backend/heretek_swarm/actors/catalyst.py`](../backend/heretek_swarm/actors/catalyst.py)
 
 Change management.
 
@@ -486,7 +486,7 @@ class CatalystAgent(AgentActor):
 
 ### ChronosAgent
 
-**File:** [`src/heretek_swarm/actors/chronos.py`](../src/heretek_swarm/actors/chronos.py)
+**File:** [`backend/heretek_swarm/actors/chronos.py`](../backend/heretek_swarm/actors/chronos.py)
 
 Time-based scheduling.
 
@@ -512,7 +512,7 @@ class ChronosAgent(AgentActor):
 
 ### PrismAgent
 
-**File:** [`src/heretek_swarm/actors/prism.py`](../src/heretek_swarm/actors/prism.py)
+**File:** [`backend/heretek_swarm/actors/prism.py`](../backend/heretek_swarm/actors/prism.py)
 
 Multi-perspective analysis.
 
@@ -537,7 +537,7 @@ class PrismAgent(AgentActor):
 
 ### HabitForgeAgent
 
-**File:** [`src/heretek_swarm/actors/habit_forge.py`](../src/heretek_swarm/actors/habit_forge.py)
+**File:** [`backend/heretek_swarm/actors/habit_forge.py`](../backend/heretek_swarm/actors/habit_forge.py)
 
 Behavior optimization.
 
@@ -562,7 +562,7 @@ class HabitForgeAgent(AgentActor):
 
 ### PerceiverPlusAgent
 
-**File:** [`src/heretek_swarm/actors/perceiver_plus.py`](../src/heretek_swarm/actors/perceiver_plus.py)
+**File:** [`backend/heretek_swarm/actors/perceiver_plus.py`](../backend/heretek_swarm/actors/perceiver_plus.py)
 
 Advanced analytics.
 
@@ -620,5 +620,5 @@ class PerceiverPlusAgent(AgentActor):
 ## See Also
 
 - [Core Actors System](./CORE_ACTORS.md) - Base classes and validation
-- Gateway implementation in `src/heretek_swarm/gateway/` - A2A protocol
+- Gateway implementation in `backend/heretek_swarm/gateway/` - A2A protocol
 - [API Endpoints](./API_ENDPOINTS.md) - REST API reference

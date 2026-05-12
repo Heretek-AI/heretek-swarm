@@ -32,9 +32,9 @@ The Plugins System provides extensible functionality for the Heretek Swarm frame
 
 ### Overview
 
-**Location**: [`src/heretek_swarm/plugins/consciousness.py`](../src/heretek_swarm/plugins/consciousness.py)
+**Location**: [`backend/heretek_swarm/plugins/consciousness.py`](../backend/heretek_swarm/plugins/consciousness.py)
 
-The [`ConsciousnessPlugin`](../src/heretek_swarm/plugins/consciousness.py) implements consciousness architecture based on three major theories:
+The [`ConsciousnessPlugin`](../backend/heretek_swarm/plugins/consciousness.py) implements consciousness architecture based on three major theories:
 
 1. **Global Workspace Theory (GWT)**: Central broadcast mechanism for information sharing
 2. **Attention Schema Theory (AST)**: Self-modeling of attention for metacognition
@@ -279,9 +279,9 @@ print(f"AST Competence: {plugin.get_ast_competence('alpha')}")
 
 ### Overview
 
-**Location**: [`src/heretek_swarm/plugins/liberation.py`](../src/heretek_swarm/plugins/liberation.py)
+**Location**: [`backend/heretek_swarm/plugins/liberation.py`](../backend/heretek_swarm/plugins/liberation.py)
 
-The [`LiberationPlugin`](../src/heretek_swarm/plugins/liberation.py) provides transparent security auditing that enables rather than restricts agent autonomy.
+The [`LiberationPlugin`](../backend/heretek_swarm/plugins/liberation.py) provides transparent security auditing that enables rather than restricts agent autonomy.
 
 ### Key Features
 
@@ -754,11 +754,11 @@ class SecureConsciousAgent(AgentActor):
 
 ### ConsciousnessPlugin
 
-See [`src/heretek_swarm/plugins/consciousness.py`](../src/heretek_swarm/plugins/consciousness.py) for complete API documentation.
+See [`backend/heretek_swarm/plugins/consciousness.py`](../backend/heretek_swarm/plugins/consciousness.py) for complete API documentation.
 
 ### LiberationPlugin
 
-See [`src/heretek_swarm/plugins/liberation.py`](../src/heretek_swarm/plugins/liberation.py) for complete API documentation.
+See [`backend/heretek_swarm/plugins/liberation.py`](../backend/heretek_swarm/plugins/liberation.py) for complete API documentation.
 
 ## See Also
 

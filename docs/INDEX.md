@@ -22,7 +22,7 @@ Welcome to the Heretek Swarm documentation. This index provides navigation to al
 | [Deployment Guide](./DEPLOYMENT.md) | Setup and deployment instructions |
 | [Autonomous Workflow](./AUTONOMOUS_WORKFLOW.md) | 24/7 autonomous operation guide |
 
-> **Note:** Some legacy documents (Gateway Communication, Development Plan, Expansion Roadmap, Remediation Backlog) have been archived or migrated. Gateway communication is documented in `src/heretek_swarm/gateway/`. Development tracking is handled via GSD milestones.
+> **Note:** Some legacy documents (Gateway Communication, Development Plan, Expansion Roadmap, Remediation Backlog) have been archived or migrated. Gateway communication is documented in `backend/heretek_swarm/gateway/`. Development tracking is handled via GSD milestones.
 
 ---
 

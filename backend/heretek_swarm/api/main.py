@@ -422,7 +422,7 @@ async def _init_spa_mount(app: FastAPI) -> None:
     """Mount React dashboard static files if dist directory exists."""
     import os
 
-    # Calculate project root: src/heretek_swarm/api/main.py -> project root (4 levels up)
+    # Calculate project root: backend/heretek_swarm/api/main.py -> project root (4 levels up)
     project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
     dist_path = os.environ.get(
         "DASHBOARD_DIST_PATH",
@@ -1242,7 +1242,7 @@ async def root():
     """Root endpoint serving the React dashboard index.html."""
     import os
 
-    # Calculate project root: src/heretek_swarm/api/main.py -> project root (4 levels up)
+    # Calculate project root: backend/heretek_swarm/api/main.py -> project root (4 levels up)
     project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
     dist_path = os.environ.get(
         "DASHBOARD_DIST_PATH",
@@ -1274,7 +1274,7 @@ async def serve_spa(path: str):
     if path.startswith("api/") or path.startswith("metrics") or path.startswith("docs") or path.startswith("redoc") or path.startswith("openapi"):
         raise HTTPException(404, "Not found")
 
-    # Calculate project root: src/heretek_swarm/api/main.py -> project root (4 levels up)
+    # Calculate project root: backend/heretek_swarm/api/main.py -> project root (4 levels up)
     project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
     dist_path = os.environ.get(
         "DASHBOARD_DIST_PATH",

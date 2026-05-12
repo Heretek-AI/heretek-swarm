@@ -77,18 +77,18 @@ class MemoryQuery:
 
 ### MemorySystem (Abstract Base)
 
-**Location**: [`src/heretek_swarm/memory/base.py`](../src/heretek_swarm/memory/base.py)
+**Location**: [`backend/heretek_swarm/memory/base.py`](../backend/heretek_swarm/memory/base.py)
 
-The [`MemorySystem`](../src/heretek_swarm/memory/base.py:69) is the abstract base class for all memory implementations.
+The [`MemorySystem`](../backend/heretek_swarm/memory/base.py:69) is the abstract base class for all memory implementations.
 
 **Core Methods**:
 
-- [`initialize()`](../src/heretek_swarm/memory/base.py:89): Initialize the memory system
-- [`store()`](../src/heretek_swarm/memory/base.py:94): Store a memory entry
-- [`retrieve()`](../src/heretek_swarm/memory/base.py:116): Retrieve a memory by ID
-- [`query()`](../src/heretek_swarm/memory/base.py:129): Query memory entries
-- [`delete()`](../src/heretek_swarm/memory/base.py:142): Delete a memory entry
-- [`clear()`](../src/heretek_swarm/memory/base.py): Clear all memories
+- [`initialize()`](../backend/heretek_swarm/memory/base.py:89): Initialize the memory system
+- [`store()`](../backend/heretek_swarm/memory/base.py:94): Store a memory entry
+- [`retrieve()`](../backend/heretek_swarm/memory/base.py:116): Retrieve a memory by ID
+- [`query()`](../backend/heretek_swarm/memory/base.py:129): Query memory entries
+- [`delete()`](../backend/heretek_swarm/memory/base.py:142): Delete a memory entry
+- [`clear()`](../backend/heretek_swarm/memory/base.py): Clear all memories
 
 ### Ephemeral Memory
 
@@ -501,7 +501,7 @@ context = await historian.get_context("delib-1")
 
 ### MemorySystem
 
-See [`src/heretek_swarm/memory/base.py`](../src/heretek_swarm/memory/base.py) for complete API documentation.
+See [`backend/heretek_swarm/memory/base.py`](../backend/heretek_swarm/memory/base.py) for complete API documentation.
 
 ### EphemeralMemory
 
@@ -523,9 +523,9 @@ Session 43 introduces comprehensive memory optimization features for long-runnin
 
 ### Access Pattern Analyzer
 
-**Location**: [`src/heretek_swarm/memory/access_patterns.py`](../src/heretek_swarm/memory/access_patterns.py)
+**Location**: [`backend/heretek_swarm/memory/access_patterns.py`](../backend/heretek_swarm/memory/access_patterns.py)
 
-The [`AccessPatternAnalyzer`](../src/heretek_swarm/memory/access_patterns.py:250) provides:
+The [`AccessPatternAnalyzer`](../backend/heretek_swarm/memory/access_patterns.py:250) provides:
 
 - **Access Frequency Tracking**: Monitor how often memories are accessed
 - **Access Recency Tracking**: Track when memories were last accessed with exponential decay
@@ -554,9 +554,9 @@ report = analyzer.generate_report(analysis_window_hours=24)
 
 ### Intelligent Pre-fetcher
 
-**Location**: [`src/heretek_swarm/memory/prefetcher.py`](../src/heretek_swarm/memory/prefetcher.py)
+**Location**: [`backend/heretek_swarm/memory/prefetcher.py`](../backend/heretek_swarm/memory/prefetcher.py)
 
-The [`IntelligentPrefetcher`](../src/heretek_swarm/memory/prefetcher.py:550) provides:
+The [`IntelligentPrefetcher`](../backend/heretek_swarm/memory/prefetcher.py:550) provides:
 
 - **LRU Cache**: O(1) get/put with automatic eviction
 - **LFU Cache**: Frequency-based eviction for hybrid strategies
@@ -590,9 +590,9 @@ await prefetcher.shutdown()
 
 ### Cold Data Compressor
 
-**Location**: [`src/heretek_swarm/memory/compression.py`](../src/heretek_swarm/memory/compression.py)
+**Location**: [`backend/heretek_swarm/memory/compression.py`](../backend/heretek_swarm/memory/compression.py)
 
-The [`ColdDataCompressor`](../src/heretek_swarm/memory/compression.py:350) provides:
+The [`ColdDataCompressor`](../backend/heretek_swarm/memory/compression.py:350) provides:
 
 - **Multiple Algorithms**: Zlib (fast), Gzip (balanced), and more
 - **Compression Levels**: Fastest, Fast, Balanced, Good, Best
@@ -618,9 +618,9 @@ decompressed = compressor.decompress("cold_memory")
 
 ### Memory Tiering System
 
-**Location**: [`src/heretek_swarm/memory/tiering.py`](../src/heretek_swarm/memory/tiering.py)
+**Location**: [`backend/heretek_swarm/memory/tiering.py`](../backend/heretek_swarm/memory/tiering.py)
 
-The [`MemoryTieringSystem`](../src/heretek_swarm/memory/tiering.py:250) provides:
+The [`MemoryTieringSystem`](../backend/heretek_swarm/memory/tiering.py:250) provides:
 
 - **Multi-tier Storage**: L1 (Hot/Redis), L2 (Warm/PostgreSQL), L3 (Cold/Archive)
 - **Automatic Migration**: Policy-based tier migration

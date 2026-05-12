@@ -313,8 +313,8 @@ For more control, use the `_normalize_endpoint` method in `PrometheusMetrics`.
 
 ## Files
 
-- **Metrics Module:** `src/heretek_swarm/observability/prometheus_metrics.py`
-- **API Endpoint:** `src/heretek_swarm/api/metrics.py`
+- **Metrics Module:** `backend/heretek_swarm/observability/prometheus_metrics.py`
+- **API Endpoint:** `backend/heretek_swarm/api/metrics.py`
 - **Configuration:** `prometheus/prometheus.yml`
 - **Middleware:** Automatically records all API requests
 

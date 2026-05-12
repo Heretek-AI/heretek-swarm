@@ -237,7 +237,7 @@ Layer 4 (Audit): ✅ PASS - Comprehensive logging setup
 Overall: LOW RISK - Safe to reference for patterns
 ```
 
-**Reference:** [`zero_trust.py`](../src/heretek_swarm/security/zero_trust.py)
+**Reference:** [`zero_trust.py`](../backend/heretek_swarm/security/zero_trust.py)
 
 ---
 
@@ -277,7 +277,7 @@ class AgentNode:
 | Agent Model | Node-based | Actor-based |
 | Dependencies | Explicit graph | Topic subscriptions |
 | Configuration | External config | Character JSON files |
-| Reference | - | [`runtime/characters/`](../src/heretek_swarm/runtime/characters/) |
+| Reference | - | [`runtime/characters/`](../backend/heretek_swarm/runtime/characters/) |
 
 #### 2.2 Communication Pattern
 
@@ -506,7 +506,7 @@ roles:
 | Configuration | YAML files | JSON character files |
 | Routing | Subscription-based | Topic-based |
 | Discovery | Config-driven | Runtime registration |
-| Reference | - | Gateway implementation in `src/heretek_swarm/gateway/` |
+| Reference | - | Gateway implementation in `backend/heretek_swarm/gateway/` |
 
 #### 3.3 State Management
 
@@ -660,7 +660,7 @@ class Agent {
 | Language | TypeScript | Python |
 | Typing | TypeScript types | Pydantic v2 |
 | Agent Class | Explicit class | [`AgentActor`](actors-system.md:24) abstract |
-| Reference | - | [`actors/base.py`](../src/heretek_swarm/actors/base.py) |
+| Reference | - | [`actors/base.py`](../backend/heretek_swarm/actors/base.py) |
 
 #### 4.2 Communication Pattern
 
@@ -697,7 +697,7 @@ class EventMesh {
 | Transport | WebSocket | WebSocket + NATS |
 | Event Mesh | Custom implementation | EventMesh in gateway module |
 | Subscriptions | Topic-based | Channel subscriptions |
-| Reference | - | [`gateway/event_mesh.py`](https://github.com/HeretekAI/heretek-swarm/blob/main/src/heretek_swarm/gateway/event_mesh.py) |
+| Reference | - | [`gateway/event_mesh.py`](https://github.com/HeretekAI/heretek-swarm/blob/main/backend/heretek_swarm/gateway/event_mesh.py) |
 
 #### 4.3 State Management
 
@@ -848,7 +848,7 @@ class AgentProfile:
 ```
 
 **Integration Complexity:** Medium  
-**Files to Modify:** [`src/heretek_swarm/actors/base.py`](../src/heretek_swarm/actors/base.py), [`src/heretek_swarm/runtime/characters/`](../src/heretek_swarm/runtime/characters/)
+**Files to Modify:** [`backend/heretek_swarm/actors/base.py`](../backend/heretek_swarm/actors/base.py), [`backend/heretek_swarm/runtime/characters/`](../backend/heretek_swarm/runtime/characters/)
 
 **Benefits:**
 - Clearer agent purpose documentation
@@ -879,7 +879,7 @@ class EnhancedActorMessage:
 ```
 
 **Integration Complexity:** Low  
-**Files to Modify:** [`src/heretek_swarm/actors/base.py`](../src/heretek_swarm/actors/base.py:60)
+**Files to Modify:** [`backend/heretek_swarm/actors/base.py`](../backend/heretek_swarm/actors/base.py:60)
 
 **Benefits:**
 - Better workflow tracing
@@ -918,7 +918,7 @@ class VersionedAgentState:
 ```
 
 **Integration Complexity:** Medium  
-**Files to Modify:** [`src/heretek_swarm/state/repository.py`](../src/heretek_swarm/state/repository.py)
+**Files to Modify:** [`backend/heretek_swarm/state/repository.py`](../backend/heretek_swarm/state/repository.py)
 
 **Benefits:**
 - Conflict detection via versioning
@@ -948,7 +948,7 @@ class EnhancedHeavySwarmWorkflow:
 ```
 
 **Integration Complexity:** High  
-**Files to Modify:** [`src/heretek_swarm/orchestration/heavyswarm.py`](../src/heretek_swarm/orchestration/heavyswarm.py)
+**Files to Modify:** [`backend/heretek_swarm/orchestration/heavyswarm.py`](../backend/heretek_swarm/orchestration/heavyswarm.py)
 
 **Benefits:**
 - Automatic parallelization
@@ -977,7 +977,7 @@ class MCPToolDefinition:
 ```
 
 **Integration Complexity:** Low  
-**Files to Modify:** [`src/heretek_swarm/tools/mcp_tools.py`](../src/heretek_swarm/tools/mcp_tools.py)
+**Files to Modify:** [`backend/heretek_swarm/tools/mcp_tools.py`](../backend/heretek_swarm/tools/mcp_tools.py)
 
 **Benefits:**
 - MCP protocol compatibility
@@ -1031,7 +1031,7 @@ All 4 frameworks have passed zero-trust validation:
 ### Example 1: Enhanced Agent Profile
 
 ```python
-# src/heretek_swarm/actors/profile.py
+# backend/heretek_swarm/actors/profile.py
 
 from dataclasses import dataclass, field
 from typing import List, Optional
@@ -1089,7 +1089,7 @@ class AgentProfile:
 ### Example 2: Enhanced ActorMessage
 
 ```python
-# src/heretek_swarm/actors/base.py (enhanced)
+# backend/heretek_swarm/actors/base.py (enhanced)
 
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional
@@ -1144,7 +1144,7 @@ class ActorMessage:
 ### Example 3: Versioned State
 
 ```python
-# src/heretek_swarm/state/repository.py (enhanced)
+# backend/heretek_swarm/state/repository.py (enhanced)
 
 from typing import Any, Dict, Optional, Protocol
 from abc import ABC, abstractmethod
@@ -1230,7 +1230,7 @@ class VersionedAgentState:
 ## References
 
 - External framework documentation (see archived evaluation source)
-- [`zero_trust.py`](../src/heretek_swarm/security/zero_trust.py) - Zero-trust security module
+- [`zero_trust.py`](../backend/heretek_swarm/security/zero_trust.py) - Zero-trust security module
 - [`actors-system.md`](actors-system.md) - Heretek actors documentation
 - [`orchestration-system.md`](orchestration-system.md) - Heretek orchestration documentation
 - [`tools-system.md`](tools-system.md) - Heretek tools documentation

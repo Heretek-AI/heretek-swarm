@@ -7,7 +7,7 @@
 
 ### 1.1 Steward (Orchestrator)
 
-**File:** `src/heretek_swarm/actors/steward.py`
+**File:** `backend/heretek_swarm/actors/steward.py`
 **Inherits:** AgentActor
 **Mixin Pattern:** DeliberationMixin, HealthReportingMixin
 
@@ -50,7 +50,7 @@ async def _convene_triad(issue: SystemIssue) -> TribunalDecision:
 
 ### 1.2 Alpha (Deep Analysis)
 
-**File:** `src/heretek_swarm/actors/alpha.py`
+**File:** `backend/heretek_swarm/actors/alpha.py`
 **Inherits:** AgentActor
 **Mixin Pattern:** DeliberationMixin, MemoryMixin
 
@@ -92,7 +92,7 @@ async def _broadcast_to_workspace(insight: SynthesizedInsight) -> None:
 
 ### 1.3 Beta (Validation)
 
-**File:** `src/heretek_swarm/actors/beta.py`
+**File:** `backend/heretek_swarm/actors/beta.py`
 **Inherits:** AgentActor
 **Mixin Pattern:** DeliberationMixin, PatternMixin
 
@@ -134,7 +134,7 @@ async def _cross_validate(validation: ValidationResult) -> CrossValidation:
 
 ### 1.4 Charlie (Challenge)
 
-**File:** `src/heretek_swarm/actors/charlie.py`
+**File:** `backend/heretek_swarm/actors/charlie.py`
 **Inherits:** AgentActor
 **Mixin Pattern:** DeliberationMixin
 
@@ -178,7 +178,7 @@ async def _stress_test(solution: ProposedSolution) -> StressTestResult:
 
 ### 2.1 Historian (Memory & Knowledge)
 
-**File:** `src/heretek_swarm/actors/historian.py`
+**File:** `backend/heretek_swarm/actors/historian.py`
 **Inherits:** AgentActor
 **Mixin Pattern:** MemoryMixin, LearningMixin
 
@@ -220,7 +220,7 @@ async def _generate_report(span: TimeSpan) -> HistoricalReport:
 
 ### 2.2 Metis (Strategic Planning)
 
-**File:** `src/heretek_swarm/actors/metis.py`
+**File:** `backend/heretek_swarm/actors/metis.py`
 **Inherits:** AgentActor
 **Mixin Pattern:** DeliberationMixin, MemoryMixin
 
@@ -262,7 +262,7 @@ async def _project_consequences(action: Action) -> ConsequenceProjection:
 
 ### 2.3 Empath (Emotional Intelligence)
 
-**File:** `src/heretek_swarm/actors/empath.py`
+**File:** `backend/heretek_swarm/actors/empath.py`
 **Inherits:** AgentActor
 **Mixin Pattern:** DeliberationMixin, LearningMixin
 
@@ -304,7 +304,7 @@ async def _provide_emotional_context(situation: Situation) -> EmotionalContext:
 
 ### 2.4 Perceiver (Sensory Input)
 
-**File:** `src/heretek_swarm/actors/perceiver.py`
+**File:** `backend/heretek_swarm/actors/perceiver.py`
 **Inherits:** AgentActor
 **Mixin Pattern:** PatternMixin
 
@@ -346,7 +346,7 @@ async def _detect_anomalies(input: SensoryInput) -> list[Anomaly]:
 
 ### 2.5 Echo (Communication)
 
-**File:** `src/heretek_swarm/actors/echo.py`
+**File:** `backend/heretek_swarm/actors/echo.py`
 **Inherits:** AgentActor
 **Mixin Pattern:** DeliberationMixin
 
@@ -390,7 +390,7 @@ async def _ensure_consistency(message: Message) -> ConsistencyCheck:
 
 ### 3.1 Explorer (Discovery)
 
-**File:** `src/heretek_swarm/actors/explorer.py`
+**File:** `backend/heretek_swarm/actors/explorer.py`
 **Inherits:** AgentActor
 **Mixin Pattern:** DeliberationMixin, LearningMixin
 
@@ -432,7 +432,7 @@ async def _generate_insights(knowledge: Knowledge) -> list[Insight]:
 
 ### 3.2 Examiner (Quality Assurance)
 
-**File:** `src/heretek_swarm/actors/examiner.py`
+**File:** `backend/heretek_swarm/actors/examiner.py`
 **Inherits:** AgentActor
 **Mixin Pattern:** DeliberationMixin, PatternMixin
 
@@ -474,7 +474,7 @@ async def _generate_quality_report(system: System) -> QualityReport:
 
 ### 3.3 Dreamer (Creative Generation)
 
-**File:** `src/heretek_swarm/actors/dreamer.py`
+**File:** `backend/heretek_swarm/actors/dreamer.py`
 **Inherits:** AgentActor
 **Mixin Pattern:** DeliberationMixin, MemoryMixin
 
@@ -516,7 +516,7 @@ async def _synthesize_creativity(ideas: list[Idea]) -> CreativeSynthesis:
 
 ### 3.4 Coder (Implementation)
 
-**File:** `src/heretek_swarm/actors/coder.py`
+**File:** `backend/heretek_swarm/actors/coder.py`
 **Inherits:** AgentActor
 **Mixin Pattern:** DeliberationMixin, LearningMixin
 
@@ -561,7 +561,7 @@ async def _self_edit(current_code: Code, requirement: Requirement) -> RevisedCod
 
 ### 4.1 Sentinel (Safety Guardian)
 
-**File:** `src/heretek_swarm/actors/sentinel.py`
+**File:** `backend/heretek_swarm/actors/sentinel.py`
 **Inherits:** AgentActor
 **Mixin Pattern:** DeliberationMixin, HealthReportingMixin
 
@@ -604,7 +604,7 @@ async def _resolve_anomaly(anomaly: Anomaly, resolution: Resolution) -> None:
 
 ### 4.2 Sentinel-Prime (Security Commander)
 
-**File:** `src/heretek_swarm/actors/sentinel_prime.py`
+**File:** `backend/heretek_swarm/actors/sentinel_prime.py`
 **Inherits:** AgentActor
 **Mixin Pattern:** DeliberationMixin
 
@@ -646,7 +646,7 @@ async def _classify_threat(threat: Threat) -> ThreatClassification:
 
 ### 4.3 Arbiter (Conflict Resolution)
 
-**File:** `src/heretek_swarm/actors/arbiter.py`
+**File:** `backend/heretek_swarm/actors/arbiter.py`
 **Inherits:** AgentActor
 **Mixin Pattern:** DeliberationMixin
 
@@ -690,7 +690,7 @@ async def _appeal_decision(appeal: Appeal) -> AppealResult:
 
 ### 5.1 Coordinator (Multi-Agent Sync)
 
-**File:** `src/heretek_swarm/actors/coordinator.py`
+**File:** `backend/heretek_swarm/actors/coordinator.py`
 **Inherits:** AgentActor
 **Mixin Pattern:** DeliberationMixin
 
@@ -732,7 +732,7 @@ async def _resolve_blockers(blocker: Blocker) -> BlockerResolution:
 
 ### 5.2 Nexus (External Integration)
 
-**File:** `src/heretek_swarm/actors/nexus.py`
+**File:** `backend/heretek_swarm/actors/nexus.py`
 **Inherits:** AgentActor
 **Mixin Pattern:** DeliberationMixin, LearningMixin
 
@@ -774,7 +774,7 @@ async def _manage_webhooks(webhooks: list[Webhook]) -> WebhookState:
 
 ### 5.3 Catalyst (Change Management)
 
-**File:** `src/heretek_swarm/actors/catalyst.py`
+**File:** `backend/heretek_swarm/actors/catalyst.py`
 **Inherits:** AgentActor
 **Mixin Pattern:** DeliberationMixin
 
@@ -816,7 +816,7 @@ async def _implement_change(change: Change) -> ImplementationResult:
 
 ### 5.4 Chronos (Temporal/Scheduling)
 
-**File:** `src/heretek_swarm/actors/chronos.py`
+**File:** `backend/heretek_swarm/actors/chronos.py`
 **Inherits:** AgentActor
 **Mixin Pattern:** DeliberationMixin
 
@@ -860,7 +860,7 @@ async def _coordinate_timing(tasks: list[Task], timeline: Timeline) -> TimingCoo
 
 ### 6.1 Prism (Multi-Perspective)
 
-**File:** `src/heretek_swarm/actors/prism.py`
+**File:** `backend/heretek_swarm/actors/prism.py`
 **Inherits:** AgentActor
 **Mixin Pattern:** DeliberationMixin, PatternMixin
 
@@ -902,7 +902,7 @@ async def _challenge_consensus(consensus: Consensus) -> ConsensusChallenge:
 
 ### 6.2 Habit-Forge (Behavior Optimization)
 
-**File:** `src/heretek_swarm/actors/habit_forge.py`
+**File:** `backend/heretek_swarm/actors/habit_forge.py`
 **Inherits:** AgentActor
 **Mixin Pattern:** LearningMixin, MemoryMixin
 
@@ -944,7 +944,7 @@ async def _modify_behavior(agent: Agent, target: TargetBehavior) -> Modification
 
 ### 6.3 Perceiver+ (Advanced Analytics)
 
-**File:** `src/heretek_swarm/actors/perceiver_plus.py`
+**File:** `backend/heretek_swarm/actors/perceiver_plus.py`
 **Inherits:** AgentActor
 **Mixin Pattern:** PatternMixin, LearningMixin
 

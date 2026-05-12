@@ -5,7 +5,7 @@ This module provides dynamic agent discovery, metadata extraction, and lifecycle
 It extends the base registry with programmatic deployment capabilities.
 
 Features:
-- Dynamic agent discovery from src/heretek_swarm/actors/
+- Dynamic agent discovery from backend/heretek_swarm/actors/
 - Agent metadata extraction (name, description, capabilities)
 - Agent lifecycle management (spawn, terminate, suspend, resume)
 - Integration with existing wire_agents.py
@@ -96,7 +96,7 @@ class EnhancedAgentRegistry:
 
         Args:
             actors_dir: Directory containing agent actor files.
-                       Defaults to src/heretek_swarm/actors/
+                       Defaults to backend/heretek_swarm/actors/
         """
         if actors_dir is None:
             actors_dir = Path(__file__).parent.parent / "actors"
