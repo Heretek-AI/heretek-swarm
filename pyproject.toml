@@ -124,7 +124,7 @@ Repository = "https://github.com/heretek-ai/heretek-swarm"
 Issues = "https://github.com/heretek-ai/heretek-swarm/issues"
 
 [tool.setuptools.packages.find]
-where = ["heretek-swarm"]
+where = ["backend"]
 include = ["heretek_swarm*"]
 
 # ============== PYTEST CONFIGURATION ==============
@@ -166,7 +166,7 @@ markers = [
 # ============== COVERAGE CONFIGURATION ==============
 [tool.coverage.run]
 branch = true
-source = ["heretek-swarm"]
+source = ["backend"]
 omit = [
     "*/tests/*",
     "*/__pycache__/*",
@@ -178,7 +178,7 @@ sigterm = true
 
 [tool.coverage.paths]
 source = [
-    "heretek-swarm/",
+    "backend/",
 ]
 
 [tool.coverage.report]
@@ -216,7 +216,7 @@ pretty_print = true
 [tool.ruff]
 target-version = "py311"
 line-length = 100
-src = ["heretek-swarm", "tests"]
+src = ["backend", "tests"]
 
 [tool.ruff.lint]
 select = [

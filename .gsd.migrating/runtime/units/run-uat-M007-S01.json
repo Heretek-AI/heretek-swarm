@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "unitType": "run-uat",
+  "unitId": "M007/S01",
+  "startedAt": 1778588560288,
+  "updatedAt": 1778588901735,
+  "phase": "finalized",
+  "wrapupWarningSent": false,
+  "continueHereFired": false,
+  "timeoutAt": null,
+  "lastProgressAt": 1778588901735,
+  "progressCount": 0,
+  "lastProgressKind": "finalize-success",
+  "recoveryAttempts": 0
+}

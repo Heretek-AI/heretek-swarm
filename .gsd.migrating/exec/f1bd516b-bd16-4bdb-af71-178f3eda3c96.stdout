@@ -1,0 +1,9 @@
+=== CHECK 1: Smoke Test ===
+PASS: backend/heretek_swarm exists
+
+=== CHECK 2: Key paths exist ===
+FAIL:  is MISSING
+FAIL:  is MISSING
+FAIL:  is MISSING
+FAIL:  is MISSING
+FAIL:  is MISSING

@@ -1,0 +1,22 @@
+=== S01 Verification ===
+
+--- Directory Structure ---
+FAIL:  missing
+FAIL:  missing
+FAIL:  missing
+FAIL:  missing
+PASS: backend/Dockerfile exists
+PASS: old heretek-swarm/ path gone
+
+--- Git History ---
+FAIL: no git history found
+
+--- File Count ---
+INFO:  Python files in backend/heretek_swarm/
+
+--- Non-backend files intact ---
+INFO: / not present (may be expected)
+INFO: / not present (may be expected)
+INFO: / not present (may be expected)
+
+=== Result:  failures ===

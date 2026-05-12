@@ -1,83 +1,40 @@
 # S02: Rewrite imports and CI paths
 
-**Goal:** Update all Python imports referencing heretek_swarm to point to the new location. Update CI workflows to reference backend/ instead of heretek-swarm/. Update Docker and config files too.
+**Goal:** Rewrite all build configuration paths (pyproject.toml, Dockerfile, docker-compose.yml) and CI workflow paths (.github/workflows/) from the old `heretek-swarm/` directory name and stale `src/` references to the new `backend/` directory name, after S01's git mv.
 **Demo:** All Python imports use the new backend/ path; CI passes.
 
 ## Must-Haves
 
-- All Python imports updated from `heretek_swarm.` to `backend.heretek_swarm.` (or relative paths)
-- All GitHub workflow files updated to reference `backend/`
-- All Docker/config files updated
-- Tests pass with new paths
+- `git grep` shows no filesystem path references to `heretek-swarm/` in `backend/Dockerfile`, `docker-compose.yml`, `.github/workflows/ci.yml`, or `.github/workflows/ci-cd.yml` (GitHub URLs in pyproject.toml are excluded — they should remain as-is)\n- `git grep` shows no stale `src/` tooling paths (ruff, mypy, bandit, pytest --cov) remain in any `.github/workflows/` file\n- pyproject.toml `where`, `source`, and `src` directives point to `backend` not `heretek-swarm`\n- No changes to `heretek_swarm` Python package imports (they use package name, unchanged by directory rename)
 
 ## Proof Level
 
-- This slice proves: integration
-- Real runtime required: yes
-- Human/UAT required: no
-
-## Verification
-
-```bash
-# Python imports work at new path
-cd backend && python -c "from heretek_swarm.actors.base.core import AgentActor; print('OK')"
-
-# All Python files pass import check
-python -c "import heretek_swarm; print('heretek_swarm imports OK')"
-
-# pytest passes
-pytest tests/ -x -q
-
-# CI workflow syntax check
-python -c "import yaml; [yaml.safe_load(open(f)) for f in ['backend/.github/workflows/*.yml', 'swarm-dashboard/.github/workflows/*.yml']]"
-```
-
-## Tasks
-
-- [ ] **T01: Update Python imports in backend/** `est:30m`
-  - Why: Python files still import from `heretek_swarm.*` but the package is now under `backend/`
-  - Files: `backend/heretek_swarm/**/*.py`
-  - Do: Run the audit_imports.py script from M006-S01 to get the full list. Use sed or a Python script to update all `from heretek_swarm.` imports. For files INSIDE the backend/ package, prefer relative imports or `backend.heretek_swarm.` prefix. Be careful not to change import strings that are actual code (e.g., string literals in __all__).
-  - Verify: `cd backend && python -c "import heretek_swarm; print('OK')"`
-  - Done when: All Python imports resolve at new paths
-
-- [ ] **T02: Update CI workflow files** `est:20m`
-  - Why: GitHub workflows reference `heretek-swarm/` paths
-  - Files: `.github/workflows/*.yml`, `docker-compose.yml`, `Dockerfile`, `pyproject.toml`
-  - Do: Update all `heretek-swarm/` path references to `backend/`. Update `cd heretek-swarm/` to `cd backend/` in workflow steps. Update any `pip install -e heretek-swarm/` to `pip install -e backend/`.
-  - Verify: `grep -r "heretek-swarm" .github/workflows/ docker-compose.yml Dockerfile backend/.github/workflows/ | grep -v ".git" || echo "No old paths remaining"`
-  - Done when: No `heretek-swarm/` references remain in CI files
-
-- [ ] **T03: Update Docker/config files in backend/** `est:15m`
-  - Why: Docker and config files inside backend/ may reference paths that changed
-  - Files: `backend/docker-compose.yml`, `backend/Dockerfile`, `backend/pyproject.toml`, `backend/setup.py`, `backend/setup.cfg`
-  - Do: Check each config file for path references to `../` or old heretek-swarm paths. Update WORKDIR, COPY, and path references.
-  - Verify: All config files load without path errors
-  - Done when: Docker builds and config files reference correct paths
-
-## Files Likely Touched
-
-- `backend/heretek_swarm/**/*.py` (import rewrites)
-- `.github/workflows/*.yml` (path updates)
-- `docker-compose.yml` (path updates)
-- `Dockerfile` (path updates)
-- `pyproject.toml` (if it exists in root)
+- This slice proves: contract
 
 ## Integration Closure
 
-`backend/heretek_swarm/` imports resolve correctly. CI uses `backend/` paths. The npm frontend at `swarm-dashboard/` connects to `backend/heretek_swarm/`.
+Upstream surfaces consumed: S01's rename (backend/ directory is now in place). New wiring introduced: pyproject.toml where/source/src now point to backend/, Dockerfile COPY paths updated for the new directory. What remains before milestone usable end-to-end: S03 will verify fresh clone and full integration.
 
----
-id: M007-S02
-provides:
-  - All imports updated
-  - CI paths fixed
-key_decisions:
-  - For internal imports, prefer `from heretek_swarm.` (unchanged) since Python resolves relative to PYTHONPATH — only external callers need `backend.heretek_swarm.`
-  - Workflow files must use `backend/` since they're outside the package
-patterns_established: []
-observability_surfaces: []
-requirement_outcomes: []
-duration: ~1.5h
-verification_result: pending
-completed_at: pending
+## Verification
+
+- none — all changes are static config-file edits; no runtime behavior is modified
+
+## Tasks
+
+- [ ] **T01: Update pyproject.toml, Dockerfile, and docker-compose.yml build paths** `est:30m`
+  Update 8 path references across 3 build-configuration files that still reference the old `heretek-swarm/` directory name after S01's git mv.
+  - Files: `pyproject.toml`, `backend/Dockerfile`, `docker-compose.yml`
+  - Verify: bash -c '! grep -q "heretek-swarm/" backend/Dockerfile docker-compose.yml && ! grep -qE "^(where|source|src).*=.*\[.*heretek-swarm" pyproject.toml'
+
+- [ ] **T02: Update CI workflow tooling paths** `est:30m`
+  Update 10 path references across 2 CI workflow files that reference the old `heretek-swarm/` directory and stale `src/` paths (which was deleted in S01).
+  - Files: `.github/workflows/ci.yml`, `.github/workflows/ci-cd.yml`
+  - Verify: bash -c '! grep -qE "(bandit|ruff|mypy).*src/" .github/workflows/ci.yml .github/workflows/ci-cd.yml && ! grep -q "heretek-swarm/" .github/workflows/ci.yml && ! grep -qE "--cov=src" .github/workflows/ci-cd.yml .github/workflows/ci.yml'
+
+## Files Likely Touched
+
+- pyproject.toml
+- backend/Dockerfile
+- docker-compose.yml
+- .github/workflows/ci.yml
+- .github/workflows/ci-cd.yml

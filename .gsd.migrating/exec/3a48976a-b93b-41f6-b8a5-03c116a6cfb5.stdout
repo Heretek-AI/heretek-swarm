@@ -1,0 +1,8 @@
+=== SMOKE TEST ===
+PASS: backend/heretek_swarm exists
+=== KEY PATHS ===
+FAIL:  MISSING
+FAIL:  MISSING
+FAIL:  MISSING
+FAIL:  MISSING
+FAIL:  MISSING

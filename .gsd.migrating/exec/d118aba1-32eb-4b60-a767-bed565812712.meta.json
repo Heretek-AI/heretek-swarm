@@ -1,0 +1,18 @@
+{
+  "id": "d118aba1-32eb-4b60-a767-bed565812712",
+  "runtime": "bash",
+  "purpose": "M007-S01-UAT-non-backend-intact-v2",
+  "script_chars": 237,
+  "started_at": "2026-05-12T12:26:34.642Z",
+  "finished_at": "2026-05-12T12:26:38.288Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 3646,
+  "stdout_bytes": 68,
+  "stderr_bytes": 0,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\d118aba1-32eb-4b60-a767-bed565812712.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\d118aba1-32eb-4b60-a767-bed565812712.stderr"
+}

@@ -1,0 +1,18 @@
+{
+  "id": "89e25562-2b00-4d95-afe9-5cfad729db05",
+  "runtime": "bash",
+  "purpose": "M007-S01-UAT-zero-changes",
+  "script_chars": 414,
+  "started_at": "2026-05-12T12:24:25.320Z",
+  "finished_at": "2026-05-12T12:24:35.410Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 10090,
+  "stdout_bytes": 1170,
+  "stderr_bytes": 0,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\89e25562-2b00-4d95-afe9-5cfad729db05.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\89e25562-2b00-4d95-afe9-5cfad729db05.stderr"
+}

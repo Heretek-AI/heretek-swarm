@@ -1,0 +1,11 @@
+--- Direct checks ---
+backend/heretek_swarm
+backend/tests
+backend/docs
+backend/agent_workspace
+backend/Dockerfile
+ls: cannot access 'heretek-swarm': No such file or directory
+0
+2742c0a4 feat: Renamed heretek-swarm/ to backend/ via git mv, preserving full gi…
+e7acfdf4 gsd snapshot: pre-dispatch, uncommitted changes after 216m inactivity
+e8c07c64 fix: Moved Python source to heretek-swarm/ and npm package to swarm-das…

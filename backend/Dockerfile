@@ -5,7 +5,7 @@
 #   2. Production: slim runtime image with the installed package
 #
 # Build context: repo root (where pyproject.toml lives)
-# Usage: docker build -f heretek-swarm/Dockerfile -t heretek-swarm-api .
+# Usage: docker build -f backend/Dockerfile -t heretek-swarm-api .
 
 # =============================================================================
 # Stage 1: Builder
@@ -21,7 +21,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # Copy dependency manifests first for layer caching
 COPY pyproject.toml uv.lock ./
-COPY heretek-swarm ./heretek-swarm
+COPY backend ./backend
 
 # Install uv and project dependencies into a venv
 RUN pip install uv && \
@@ -47,7 +47,7 @@ WORKDIR /app
 COPY --from=builder --chown=appuser:appgroup /app/.venv /app/.venv
 
 # Copy the installed package
-COPY --from=builder --chown=appuser:appgroup /app/heretek-swarm /app/heretek-swarm
+COPY --from=builder --chown=appuser:appgroup /app/backend /app/backend
 
 # Copy migrations from build context root
 COPY --chown=appuser:appgroup migrations /app/migrations
@@ -69,3 +69,5 @@ HEALTHCHECK --interval=30s --timeout=10s --retries=3 --start-period=15s \
 
 # Default: run the API server via heretek-swarm serve
 CMD ["heretek-swarm", "serve", "--host", "0.0.0.0", "--port", "8000"]
+00"]
+00"]

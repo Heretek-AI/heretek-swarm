@@ -1,0 +1,18 @@
+{
+  "id": "f01d4f0f-48f1-4a97-9508-633c230343bb",
+  "runtime": "bash",
+  "purpose": "Audit CI workflows, Dockerfile, docker-compose, pyproject.toml for heretek-swarm/ references",
+  "script_chars": 1012,
+  "started_at": "2026-05-12T12:43:38.328Z",
+  "finished_at": "2026-05-12T12:43:43.749Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 5421,
+  "stdout_bytes": 1048576,
+  "stderr_bytes": 87,
+  "stdout_truncated": true,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\f01d4f0f-48f1-4a97-9508-633c230343bb.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\f01d4f0f-48f1-4a97-9508-633c230343bb.stderr"
+}

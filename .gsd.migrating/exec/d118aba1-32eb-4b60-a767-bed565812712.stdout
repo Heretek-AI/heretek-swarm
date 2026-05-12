@@ -1,0 +1,6 @@
+CHECK: swarm-dashboard/
+PASS
+CHECK: docs/
+PASS
+CHECK: .github/
+PASS

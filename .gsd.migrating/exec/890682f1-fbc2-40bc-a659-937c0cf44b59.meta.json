@@ -1,0 +1,18 @@
+{
+  "id": "890682f1-fbc2-40bc-a659-937c0cf44b59",
+  "runtime": "bash",
+  "purpose": "M007-S01-UAT-key-paths-individual",
+  "script_chars": 426,
+  "started_at": "2026-05-12T12:26:34.638Z",
+  "finished_at": "2026-05-12T12:26:38.292Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 3654,
+  "stdout_bytes": 113,
+  "stderr_bytes": 0,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\890682f1-fbc2-40bc-a659-937c0cf44b59.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\890682f1-fbc2-40bc-a659-937c0cf44b59.stderr"
+}

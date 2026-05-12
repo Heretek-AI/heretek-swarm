@@ -1,0 +1,18 @@
+=== S01 Slice Verification ===
+
+--- Directory Structure ---
+FAIL:  missing
+FAIL:  missing
+FAIL:  missing
+FAIL:  missing
+PASS: backend/Dockerfile exists
+PASS: old heretek-swarm/ path gone
+
+--- Git History ---
+FAIL: no git history
+
+--- Non-backend files ---
+
+INFO:  Python files under backend/
+
+=== Result:  failures ===

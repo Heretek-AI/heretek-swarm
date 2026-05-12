@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exported_at": "2026-05-12T12:21:48.309Z",
+  "exported_at": "2026-05-12T12:48:43.634Z",
   "milestones": [
     {
       "id": "M001",
@@ -702,11 +702,11 @@
       "completed_at": null,
       "full_summary_md": "",
       "full_uat_md": "",
-      "goal": "Update all Python imports referencing heretek_swarm to point to the new location. Update CI workflows to reference backend/ instead of heretek-swarm/.",
-      "success_criteria": "python -c 'from heretek_swarm.actors.base.core import AgentActor; print(\"OK\")' passes; pytest passes; all CI workflows pass",
-      "proof_level": "integration",
-      "integration_closure": "backend/heretek_swarm/ imports resolve correctly; CI uses backend/ paths",
-      "observability_impact": "N/A",
+      "goal": "Rewrite all build configuration paths (pyproject.toml, Dockerfile, docker-compose.yml) and CI workflow paths (.github/workflows/) from the old `heretek-swarm/` directory name and stale `src/` references to the new `backend/` directory name, after S01's git mv.",
+      "success_criteria": "- `git grep` shows no filesystem path references to `heretek-swarm/` in `backend/Dockerfile`, `docker-compose.yml`, `.github/workflows/ci.yml`, or `.github/workflows/ci-cd.yml` (GitHub URLs in pyproject.toml are excluded — they should remain as-is)\\n- `git grep` shows no stale `src/` tooling paths (ruff, mypy, bandit, pytest --cov) remain in any `.github/workflows/` file\\n- pyproject.toml `where`, `source`, and `src` directives point to `backend` not `heretek-swarm`\\n- No changes to `heretek_swarm` Python package imports (they use package name, unchanged by directory rename)",
+      "proof_level": "contract",
+      "integration_closure": "Upstream surfaces consumed: S01's rename (backend/ directory is now in place). New wiring introduced: pyproject.toml where/source/src now point to backend/, Dockerfile COPY paths updated for the new directory. What remains before milestone usable end-to-end: S03 will verify fresh clone and full integration.",
+      "observability_impact": "none — all changes are static config-file edits; no runtime behavior is modified",
       "sequence": 2,
       "replan_triggered_at": null,
       "is_sketch": 0,
@@ -2558,6 +2558,91 @@
         "backend/agent_workspace/"
       ],
       "observability_impact": "None — purely mechanical rename",
+      "full_plan_md": "",
+      "sequence": 0,
+      "blocker_source": "",
+      "escalation_pending": 0,
+      "escalation_awaiting_review": 0,
+      "escalation_artifact_path": null,
+      "escalation_override_applied_at": null
+    },
+    {
+      "milestone_id": "M007",
+      "slice_id": "S02",
+      "id": "T01",
+      "title": "Update pyproject.toml, Dockerfile, and docker-compose.yml build paths",
+      "status": "pending",
+      "one_liner": "",
+      "narrative": "",
+      "verification_result": "",
+      "duration": "",
+      "completed_at": null,
+      "blocker_discovered": false,
+      "deviations": "",
+      "known_issues": "",
+      "key_files": [],
+      "key_decisions": [],
+      "full_summary_md": "",
+      "description": "Update 8 path references across 3 build-configuration files that still reference the old `heretek-swarm/` directory name after S01's git mv.\n\n## Files touched\n- `pyproject.toml` — 4 changes: `where`, `source` (x2), `src`\n- `backend/Dockerfile` — 3 changes: usage comment, COPY source, COPY --from=builder\n- `docker-compose.yml` — 1 change: dockerfile path for api service\n\n## Changes\n### pyproject.toml\n1. Line 127: `where = [\"heretek-swarm\"]` → `where = [\"backend\"]`\n2. Line 169: `source = [\"heretek-swarm\"]` → `source = [\"backend\"]`\n3. Line 180-181: `source = [\"heretek-swarm/\",` → `source = [\"backend/\",`\n4. Line 219: `src = [\"heretek-swarm\", \"tests\"]` → `src = [\"backend\", \"tests\"]`\n\n### backend/Dockerfile\n1. Line 5 comment: `# Usage: docker build -f heretek-swarm/Dockerfile -t heretek-swarm-api .` → `# Usage: docker build -f backend/Dockerfile -t heretek-swarm-api .`\n2. Line 19: `COPY heretek-swarm ./heretek-swarm` → `COPY backend ./backend`\n3. Line 50: `COPY --from=builder --chown=appuser:appgroup /app/heretek-swarm /app/heretek-swarm` → `COPY --from=builder --chown=appuser:appgroup /app/backend /app/backend`\n\n### docker-compose.yml\n1. Line 77: `dockerfile: heretek-swarm/Dockerfile` → `dockerfile: backend/Dockerfile`\n\n## Important constraints\n- Do NOT change GitHub URL references in pyproject.toml (Homepage, Documentation, Repository, Issues — they point to `heretek-swarm` as the GitHub repo name, not a filesystem path)\n- Do NOT change the `name = \"heretek-swarm\"` in pyproject.toml (this is the PyPI package name, not a filesystem path)\n- Do NOT change the `heretek-swarm` console_scripts entry point (this is a pip-installed command, not a filesystem path)\n- Python imports (`heretek_swarm.*`) are unchanged — they resolve by package name",
+      "estimate": "30m",
+      "files": [
+        "pyproject.toml",
+        "backend/Dockerfile",
+        "docker-compose.yml"
+      ],
+      "verify": "bash -c '! grep -q \"heretek-swarm/\" backend/Dockerfile docker-compose.yml && ! grep -qE \"^(where|source|src).*=.*\\[.*heretek-swarm\" pyproject.toml'",
+      "inputs": [
+        "pyproject.toml",
+        "backend/Dockerfile",
+        "docker-compose.yml"
+      ],
+      "expected_output": [
+        "pyproject.toml",
+        "backend/Dockerfile",
+        "docker-compose.yml"
+      ],
+      "observability_impact": "none",
+      "full_plan_md": "",
+      "sequence": 0,
+      "blocker_source": "",
+      "escalation_pending": 0,
+      "escalation_awaiting_review": 0,
+      "escalation_artifact_path": null,
+      "escalation_override_applied_at": null
+    },
+    {
+      "milestone_id": "M007",
+      "slice_id": "S02",
+      "id": "T02",
+      "title": "Update CI workflow tooling paths",
+      "status": "pending",
+      "one_liner": "",
+      "narrative": "",
+      "verification_result": "",
+      "duration": "",
+      "completed_at": null,
+      "blocker_discovered": false,
+      "deviations": "",
+      "known_issues": "",
+      "key_files": [],
+      "key_decisions": [],
+      "full_summary_md": "",
+      "description": "Update 10 path references across 2 CI workflow files that reference the old `heretek-swarm/` directory and stale `src/` paths (which was deleted in S01).\n\n## Files touched\n- `.github/workflows/ci.yml` — 5 changes: bandit, ruff check, ruff gate, mypy, pytest --cov\n- `.github/workflows/ci-cd.yml` — 5 changes: ruff check, ruff format, mypy, bandit, pytest --cov\n\n## Changes\n### .github/workflows/ci.yml\n1. Line 23: `bandit -r src/ -f json -o bandit-report.json || true` → `bandit -r backend/ -f json -o bandit-report.json || true`\n2. Line 42: `ruff check src/ tests/` → `ruff check backend/ tests/`\n3. Line 46: `COUNT=$(ruff check heretek-swarm/ tests/ --quiet --output-format=concise 2>&1 | wc -l || true)` → `COUNT=$(ruff check backend/ tests/ --quiet --output-format=concise 2>&1 | wc -l || true)`\n4. Line 56: `mypy src/ --ignore-missing-imports` → `mypy backend/ --ignore-missing-imports`\n5. Line 102: `pytest -m \"not integration\" -x -q --cov=heretek-swarm --cov-report=xml --cov-report=term` → `pytest -m \"not integration\" -x -q --cov=backend --cov-report=xml --cov-report=term`\n\n### .github/workflows/ci-cd.yml\n1. Line 34: `ruff check src/ tests/` → `ruff check backend/ tests/`\n2. Line 37: `ruff format --check src/ tests/` → `ruff format --check backend/ tests/`\n3. Line 40: `mypy src/ --ignore-missing-imports || true` → `mypy backend/ --ignore-missing-imports || true`\n4. Line 43: `bandit -r src/ -f json -o bandit-report.json || true` → `bandit -r backend/ -f json -o bandit-report.json || true`\n5. Line 137: `pytest tests/ -v --cov=src --cov-report=xml --cov-report=html --cov-report=term || true` → `pytest tests/ -v --cov=backend --cov-report=xml --cov-report=html --cov-report=term || true`\n\n## Important constraints\n- Do NOT change frontend-related lines (test-frontend jobs reference swarm-dashboard, not affected)\n- Do NOT change load-test.yml (no stale path references found)\n- The security-scan job in ci.yml also uses `bandit -r src/` — change it too\n- ci-cd.yml has a separate lint-python and security-scan section with different path patterns",
+      "estimate": "30m",
+      "files": [
+        ".github/workflows/ci.yml",
+        ".github/workflows/ci-cd.yml"
+      ],
+      "verify": "bash -c '! grep -qE \"(bandit|ruff|mypy).*src/\" .github/workflows/ci.yml .github/workflows/ci-cd.yml && ! grep -q \"heretek-swarm/\" .github/workflows/ci.yml && ! grep -qE \"--cov=src\" .github/workflows/ci-cd.yml .github/workflows/ci.yml'",
+      "inputs": [
+        ".github/workflows/ci.yml",
+        ".github/workflows/ci-cd.yml"
+      ],
+      "expected_output": [
+        ".github/workflows/ci.yml",
+        ".github/workflows/ci-cd.yml"
+      ],
+      "observability_impact": "none",
       "full_plan_md": "",
       "sequence": 0,
       "blocker_source": "",

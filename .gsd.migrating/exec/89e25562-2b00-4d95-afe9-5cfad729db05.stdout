@@ -1,0 +1,20 @@
+=== ZERO CODE CHANGES ===
+Recent commits:
+2742c0a feat: Renamed heretek-swarm/ to backend/ via git mv, preserving full gi…
+cedeb38 merge with main
+8ed383d Merge branch 'main' of https://github.com/Heretek-AI/heretek-swarm
+c2c9131 feat: Rename heretek-swarm/ to backend/ via git mv
+cd14ac9 gsd snapshot: pre-dispatch, uncommitted changes after 443m inactivity
+
+Checking rename commit stats:
+Trying HEAD...
+ {heretek-swarm => backend}/tests/test_consensus_websocket.py              | 0
+ {heretek-swarm => backend}/tests/test_domain_selector.py                  | 0
+ {heretek-swarm => backend}/tests/test_goal_cli.py                         | 0
+ {heretek-swarm => backend}/tests/test_goal_consensus.py                   | 0
+ {heretek-swarm => backend}/tests/test_goal_pipeline.py                    | 0
+ {heretek-swarm => backend}/tests/test_goal_proposer.py                    | 0
+ {heretek-swarm => backend}/tests/test_goal_store.py                       | 0
+ {heretek-swarm => backend}/tests/test_goal_translator.py                  | 0
+ {heretek-swarm => backend}/tests/test_workflow_persistence.py             | 0
+ 463 files changed, 0 insertions(+), 0 deletions(-)
