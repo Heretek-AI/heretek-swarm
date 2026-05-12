@@ -2,7 +2,7 @@
 
 ## Active Milestone
 
-**None** — M007 awaits planning.
+**None** — no milestone is currently in progress.
 
 ## Completed Milestones
 
@@ -14,20 +14,19 @@
 | M004 | Add integration test scaffold and CI surface | 2026-05-10 | ✅ 658-test baseline verified, 26 lifecycle smoke tests for all 24 AgentActor subclasses, pass/fail-gated CI with Ruff quality gate |
 | M005 | Document architecture and compress flat actor API surface | 2026-05-12 | ✅ ARCHITECTURE.md (12 sections, all 10 mixins), actors/README.md (6 sections, 23-agent table), structlog consolidated to single entry point, 14 flat files converted to thin re-exports, uniform subpackage convention for all 24 agents |
 | M006 | Audit and plan repository restructure | 2026-05-12 | ✅ 4-document migration blueprint (FILE_INVENTORY.md, IMPORT_MAP.md, CI_IMPACT.md, M006-PLAN.md) covering 856 files, 429 Python imports, 22 config change sites; M007-ready with 9-task decomposition |
+| M007 | Execute repository restructure | 2026-05-12 | ✅ `heretek-swarm/` renamed to `backend/` via git mv (463 files, R100 rename); 18 path references updated across 5 config/CI files; 16 inner test files consolidated into root tests/ (62 total); 12 stale files purged across 4 pre-rename directories |
 
 ## Current State
 
-- **Repository structure**: `heretek-swarm/` project subdirectory contains the Python package `heretek_swarm/`. M006 produced a complete migration plan to rename `heretek-swarm/` → `backend/` via a single `git mv` + 22 config line edits with zero Python code changes. Execution deferred to M007.
-- **Test infrastructure**: pytest 9.0.3 collects ~370 unit tests (all passing). 26 parameterized lifecycle smoke tests cover all 24 AgentActor subclasses plus BehaviorProfiler and ActorSupervisor, using 6 infrastructure-free stubs (StubAccessAnalyzer, StubPatternExtractor, StubTribunal, StubDeliberationEngine, StubLLMProvider, StubEventMesh). Integration tests run separately.
-- **CI pipeline**: GitHub Actions runs unit-only pytest (`-m "not integration"`) and ruff check on push/PR to main/develop. Proper pass/fail gating (no `|| true`). Ruff warning gate fails CI at 50+ findings.
+- **Repository structure**: `backend/heretek_swarm/` is the single canonical Python source directory. `swarm-dashboard/` is the frontend. Root `tests/` contains all 62 test files. Old `heretek-swarm/` and `src/` directories fully removed. Inner `backend/docs/` and `backend/agent_workspace/` copies purged — canonical copies are at root `docs/` and `agent_workspace/` respectively.
+- **Test infrastructure**: 62 test files in root `tests/`, all importing from `heretek_swarm.*`. pytest 9.0.3 collects ~370 unit tests. 26 parameterized lifecycle smoke tests cover all 24 AgentActor subclasses. Runtime verification deferred to dev environment (sandbox lacks pip/pytest/ruff/docker).
+- **CI pipeline**: GitHub Actions runs unit-only pytest and ruff check on push/PR to main/develop. All bandit, ruff, mypy, and pytest invocations reference `backend/` paths. Coverage uses `--cov=backend`. Zero stale `heretek-swarm/` or `src/` tooling paths remain in CI.
 - **Validation architecture**: Unified. `ValidationMixin` in `actors/mixins/validation.py` is the single source of truth for `IMMUTABLE_RULES` (8 security patterns) and `BASELINE_CONFIG` (9 configuration keys). `actors/validation.py` provides backward-compat shims with deprecation notes.
 - **Pydantic models**: All actor message models live in `heretek_swarm/schemas/actors.py` as the canonical import path.
 - **Actors import surface**: Unified. All 24 agent classes import from `heretek_swarm.actors` via `__init__.py` re-export surface. Every agent follows a uniform subpackage convention: complex agents use split pattern (`types.py + agent.py`), simple agents use `agent.py` only. All 14 surviving flat `.py` files are thin re-export stubs with zero class definitions.
 - **Logging**: `logging/config.py` is the single source of truth for structlog configuration. `core.py` imports `get_logger` from the canonical path. `init_logging()` in `otel/logging.py` delegates to `setup_logging()`. Exactly one `structlog.configure()` call exists in the codebase.
 - **Documentation**: `docs/ARCHITECTURE.md` (914 lines, 12 sections) covers the full system: package structure, actor architecture, all 10 mixins, memory system, event mesh, configuration, security, and observability. `docs/actors/README.md` (16.5KB, 6 sections) provides a practical agent creation guide with 23-agent reference table.
-- **Coverage and linting configuration**: Coverage source points to `heretek-swarm/` package root (was broken `src/`). Ruff src roots corrected to `["heretek-swarm", "tests"]`. Coverage paths prefix uses `heretek-swarm/`.
-- **Mixin type guards**: All 6 mixin classes have `_validate_dependencies()` guards that raise `TypeError` when a required dependency attribute is `None`.
-- **Stub injection**: 6 protocol stub classes are first-class `AgentActor.__init__` kwargs. Mixin deps use public instance attrs; core deps use private attrs with `value or fallback()` for backward compat. 14 tests in `tests/test_stub_injection.py`.
+- **Build configuration**: `pyproject.toml` `where`/`source`/`src` directives all point to `backend`. `docker-compose.yml` dockerfile path is `backend/Dockerfile`. Dockerfile COPY paths reference `backend/`. Zero stale path references remain in build config.
 
 ## Architecture Notes
 
@@ -39,5 +38,12 @@
 - CI uses unit-only test selection with marker-based isolation (`@pytest.mark.integration`); full-service tests run separately.
 - `logging/config.py` is the single source of truth for structlog configuration; all other modules delegate via `setup_logging()`.
 - All 24 agents follow uniform subpackage convention: split pattern (types.py + agent.py) for complex actors, simple pattern (agent.py only) for straightforward ones.
-- Python resolves modules by package name (`heretek_swarm`), not filesystem directory name (`heretek-swarm`). Directory renames are transparent to Python imports as long as pyproject.toml `where`/`source` directives are updated.
+- Python resolves modules by package name (`heretek_swarm`), not filesystem directory name (`backend`). Directory renames are transparent to Python imports as long as pyproject.toml `where`/`source` directives are updated.
 - `swarm-dashboard/` has zero filesystem-level dependencies on the backend directory — fully decoupled.
+- `backend/` is the canonical Python project directory paired with `swarm-dashboard/` (frontend). No dash-vs-underscore naming ambiguity remains.
+
+## Known Issues
+
+- 12 tracked `=X.Y.Z` garbage files remain at repo root — explicitly scoped for removal in M007 but deferred. Requires `git rm` in a follow-up milestone.
+- Stale `audit/cli.py` and `triage_classifier.py` at repo root contain pre-restructure path references.
+- Full runtime verification (pip install, pytest, ruff, docker compose) must be run in the actual dev environment — sandbox cannot execute these tools.

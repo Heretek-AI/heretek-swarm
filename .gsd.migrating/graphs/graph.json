@@ -9,8 +9,8 @@
       "sourceFile": "STATE.md"
     },
     {
-      "id": "concept:phase:planning",
-      "label": "Phase: planning",
+      "id": "concept:phase:validating-milestone",
+      "label": "Phase: validating-milestone",
       "type": "concept",
       "confidence": "EXTRACTED",
       "sourceFile": "STATE.md"
@@ -444,19 +444,19 @@
     },
     {
       "id": "task:M007:S03:T01",
-      "label": "T01: Python package import check",
+      "label": "T01: Delete stale artifacts from pre-rename state",
       "type": "task",
       "confidence": "EXTRACTED"
     },
     {
       "id": "task:M007:S03:T02",
-      "label": "T02: Docker build check",
+      "label": "T02: Consolidate inner backend/tests/ into root tests/",
       "type": "task",
       "confidence": "EXTRACTED"
     },
     {
       "id": "task:M007:S03:T03",
-      "label": "T03: Frontend integration check",
+      "label": "T03: Run full integration verification suite",
       "type": "task",
       "confidence": "EXTRACTED"
     },
@@ -2506,5 +2506,5 @@
       "confidence": "EXTRACTED"
     }
   ],
-  "builtAt": "2026-05-12T13:43:11.622Z"
+  "builtAt": "2026-05-12T16:44:38.852Z"
 }

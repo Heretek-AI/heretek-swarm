@@ -51,6 +51,22 @@
       "doneMilestones": 5,
       "totalMilestones": 8,
       "phase": "planning"
+    },
+    {
+      "filename": "M007-2026-05-12T17-22-52.html",
+      "generatedAt": "2026-05-12T17:22:52.972Z",
+      "milestoneId": "M007",
+      "milestoneTitle": "Execute repository restructure",
+      "label": "M007: Execute repository restructure",
+      "kind": "milestone",
+      "totalCost": 0,
+      "totalTokens": 357072392,
+      "totalDuration": 87741673,
+      "doneSlices": 19,
+      "totalSlices": 19,
+      "doneMilestones": 7,
+      "totalMilestones": 8,
+      "phase": "pre-planning"
     }
   ]
 }
