@@ -1,5 +1,5 @@
 {
-  "compiledAt": "2026-05-12T12:06:02.322Z",
+  "compiledAt": "2026-05-12T13:33:59.559Z",
   "milestoneId": "M007",
   "pipeline": {
     "clarifyRoundLimit": 3,
@@ -37,6 +37,48 @@
         "unitType": "complete-slice",
         "unitId": "M007.S01",
         "title": "S01",
+        "status": "complete"
+      }
+    },
+    {
+      "id": "execute-task:M007:S02:T01",
+      "kind": "unit",
+      "dependsOn": [],
+      "writes": [],
+      "metadata": {
+        "unitType": "execute-task",
+        "unitId": "M007.S02.T01",
+        "title": "Updated 8 path references across pyproject.toml, backend/Dockerfile, and docker-compose.yml from heretek-swarm/ to backend/ after S01's git mv",
+        "status": "complete"
+      }
+    },
+    {
+      "id": "execute-task:M007:S02:T02",
+      "kind": "unit",
+      "dependsOn": [
+        "execute-task:M007:S02:T01"
+      ],
+      "writes": [
+        ".github/workflows/ci.yml",
+        ".github/workflows/ci-cd.yml"
+      ],
+      "metadata": {
+        "unitType": "execute-task",
+        "unitId": "M007.S02.T02",
+        "title": "Updated 10 path references across ci.yml and ci-cd.yml from stale src/ and heretek-swarm/ paths to backend/",
+        "status": "complete"
+      }
+    },
+    {
+      "id": "complete-slice:M007:S02",
+      "kind": "verification",
+      "dependsOn": [
+        "execute-task:M007:S02:T02"
+      ],
+      "metadata": {
+        "unitType": "complete-slice",
+        "unitId": "M007.S02",
+        "title": "S02",
         "status": "pending"
       }
     }

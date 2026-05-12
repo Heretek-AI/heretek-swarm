@@ -21,12 +21,12 @@ Upstream surfaces consumed: S01's rename (backend/ directory is now in place). N
 
 ## Tasks
 
-- [ ] **T01: Update pyproject.toml, Dockerfile, and docker-compose.yml build paths** `est:30m`
+- [x] **T01: Update pyproject.toml, Dockerfile, and docker-compose.yml build paths** `est:30m`
   Update 8 path references across 3 build-configuration files that still reference the old `heretek-swarm/` directory name after S01's git mv.
   - Files: `pyproject.toml`, `backend/Dockerfile`, `docker-compose.yml`
   - Verify: bash -c '! grep -q "heretek-swarm/" backend/Dockerfile docker-compose.yml && ! grep -qE "^(where|source|src).*=.*\[.*heretek-swarm" pyproject.toml'
 
-- [ ] **T02: Update CI workflow tooling paths** `est:30m`
+- [x] **T02: Update CI workflow tooling paths** `est:30m`
   Update 10 path references across 2 CI workflow files that reference the old `heretek-swarm/` directory and stale `src/` paths (which was deleted in S01).
   - Files: `.github/workflows/ci.yml`, `.github/workflows/ci-cd.yml`
   - Verify: bash -c '! grep -qE "(bandit|ruff|mypy).*src/" .github/workflows/ci.yml .github/workflows/ci-cd.yml && ! grep -q "heretek-swarm/" .github/workflows/ci.yml && ! grep -qE "--cov=src" .github/workflows/ci-cd.yml .github/workflows/ci.yml'

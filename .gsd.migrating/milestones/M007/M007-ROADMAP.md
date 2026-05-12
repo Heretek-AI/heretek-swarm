@@ -15,7 +15,7 @@
 - [x] **S01: S01** `risk:medium` `depends:[]`
   > After this: Repo at new path with no code changes; only directory moves via git mv.
 
-- [ ] **S02: Rewrite imports and CI paths** `risk:medium` `depends:[S01]`
+- [x] **S02: S02** `risk:medium` `depends:[]`
   > After this: All Python imports use the new backend/ path; CI passes.
 
 - [ ] **S03: Verify clean clone and full integration** `risk:low` `depends:[S02]`
