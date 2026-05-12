@@ -1,0 +1,18 @@
+{
+  "id": "bdf76105-560d-4ab1-86c8-433dc56a0a1d",
+  "runtime": "bash",
+  "purpose": "M008/S01 UAT - 7 verification checks",
+  "script_chars": 1759,
+  "started_at": "2026-05-12T20:59:48.534Z",
+  "finished_at": "2026-05-12T21:00:03.089Z",
+  "exit_code": 127,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 14555,
+  "stdout_bytes": 509,
+  "stderr_bytes": 238,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\bdf76105-560d-4ab1-86c8-433dc56a0a1d.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\bdf76105-560d-4ab1-86c8-433dc56a0a1d.stderr"
+}

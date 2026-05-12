@@ -1,0 +1,18 @@
+{
+  "id": "a5a3c063-ad29-40fb-aef1-dd6900f53769",
+  "runtime": "bash",
+  "purpose": "M007 cross-slice integration verification",
+  "script_chars": 2328,
+  "started_at": "2026-05-12T16:55:28.308Z",
+  "finished_at": "2026-05-12T16:55:36.342Z",
+  "exit_code": 1,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 8034,
+  "stdout_bytes": 825,
+  "stderr_bytes": 250,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\a5a3c063-ad29-40fb-aef1-dd6900f53769.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\a5a3c063-ad29-40fb-aef1-dd6900f53769.stderr"
+}

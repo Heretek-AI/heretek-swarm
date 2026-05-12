@@ -1,0 +1,41 @@
+=== Looking for garbage files ===
+./=0.2.0
+./=0.23.0
+./=1.1.0
+./=1.8.0
+./=2.3.0
+./=24.0.0
+./=3.12.0
+./=3.5.0
+./=4.0.0
+./=4.1.0
+./=6.98.0
+./=8.0.0
+
+=== File '0' ===
+0: ASCII text
+=1.8.0: ASCII text, with very long lines (2359), with CRLF line terminators
+
+=== swarm-dashboard ===
+total 1090
+drwxrwxrwx 1 john john    512 May  3 17:02 .
+drwxrwxrwx 1 john john    512 May 12 15:20 ..
+drwxrwxrwx 1 john john    512 Apr 29 10:03 .claude-flow
+-rwxrwxrwx 1 john john    230 Apr 29 10:03 .dockerignore
+-rwxrwxrwx 1 john john   5903 Apr 29 10:03 DEBUG_MODE.md
+-rwxrwxrwx 1 john john   1727 Apr 29 10:03 Dockerfile
+drwxrwxrwx 1 john john    512 May  3 16:31 dist
+-rwxrwxrwx 1 john john    385 Apr 29 10:03 index.html
+-rwxrwxrwx 1 john john   2065 Apr 29 10:03 nginx.conf
+drwxrwxrwx 1 john john    512 May  3 11:53 node_modules
+-rwxrwxrwx 1 john john 298952 May  1 15:32 package-lock.json
+-rwxrwxrwx 1 john john   1408 Apr 29 10:03 package.json
+drwxrwxrwx 1 john john    512 May  3 12:48 playwright-report
+-rwxrwxrwx 1 john john    712 Apr 29 10:03 playwright.config.ts
+-rwxrwxrwx 1 john john     86 Apr 29 10:03 postcss.config.js
+drwxrwxrwx 1 john john    512 Apr 29 10:03 public
+-rwxrwxrwx 1 john john   1428 Apr 29 10:03 regression.config.ts
+drwxrwxrwx 1 john john    512 May  1 18:13 src
+-rwxrwxrwx 1 john john   1410 Apr 29 10:03 tailwind.config.js
+
+=== backend/pyproject.toml ===

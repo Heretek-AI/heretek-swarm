@@ -1,0 +1,38 @@
+=== tests/test_model_garage_config.py ===
+tests/test_model_garage_config.py:51:        """Without env var, returns ~/.heretek-swarm/config.json."""
+
+=== triage_classifier.py ===
+triage_classifier.py:34:# Source root is the nested heretek-swarm/ directory
+
+=== swarm-dashboard/tests/e2e/m028 ===
+swarm-dashboard/tests/e2e/m028-runtime-stability.spec.ts:86:      `Install with: pip install -e heretek-swarm/ or ensure PATH contains the entry point.`
+
+=== swarm-dashboard/.claude-flow/data/pending-insights ===
+swarm-dashboard/.claude-flow/data/pending-insights.jsonl:1:{"type":"edit","file":"/home/john/Projects/heretek-swarm/dashboard/frontend/src/components/Canvas/EnhancedCanvas.tsx","timestamp":1776110242372,"sessionId":null}
+swarm-dashboard/.claude-flow/data/pending-insights.jsonl:2:{"type":"edit","file":"/home/john/Projects/heretek-swarm/dashboard/frontend/src/hooks/useAgentStatus.ts","timestamp":1776110275093,"sessionId":null}
+swarm-dashboard/.claude-flow/data/pending-insights.jsonl:3:{"type":"edit","file":"/home/john/Projects/heretek-swarm/dashboard/frontend/src/components/Canvas/index.ts","timestamp":1776110292726,"sessionId":null}
+swarm-dashboard/.claude-flow/data/pending-insights.jsonl:4:{"type":"edit","file":"/home/john/Projects/heretek-swarm/dashboard/frontend/src/components/Consciousness/RealTimeAgentPanel.tsx","timestamp":1776110334065,"sessionId":null}
+swarm-dashboard/.claude-flow/data/pending-insights.jsonl:5:{"type":"edit","file":"/home/john/Projects/heretek-swarm/dashboard/frontend/src/components/Observability/A2ATracker.tsx","timestamp":1776110334275,"sessionId":null}
+swarm-dashboard/.claude-flow/data/pending-insights.jsonl:6:{"type":"edit","file":"/home/john/Projects/heretek-swarm/dashboard/frontend/src/components/Observability/LLMTrace.tsx","timestamp":1776110334477,"sessionId":null}
+swarm-dashboard/.claude-flow/data/pending-insights.jsonl:7:{"type":"edit","file":"/home/john/Projects/heretek-swarm/dashboard/frontend/src/components/Canvas/index.ts","timestamp":1776110354266,"sessionId":null}
+swarm-dashboard/.claude-flow/data/pending-insights.jsonl:8:{"type":"edit","file":"/home/john/Projects/heretek-swarm/dashboard/frontend/src/components/Canvas/EnhancedCanvas.tsx","timestamp":1776110460699,"sessionId":null}
+swarm-dashboard/.claude-flow/data/pending-insights.jsonl:9:{"type":"edit","file":"/home/john/Projects/heretek-swarm/dashboard/frontend/src/components/Canvas/EnhancedCanvas.tsx","timestamp":1776110471225,"sessionId":null}
+swarm-dashboard/.claude-flow/data/pending-insights.jsonl:10:{"type":"edit","file":"/home/john/Projects/heretek-swarm/dashboard/frontend/src/components/Canvas/EnhancedCanvas.tsx","timestamp":1776110485306,"sessionId":null}
+swarm-dashboard/.claude-flow/data/pending-insights.jsonl:11:{"type":"edit","file":"/home/john/Projects/heretek-swarm/dashboard/frontend/src/components/Consciousness/RealTimeAgentPanel.tsx","timestamp":1776110518744,"sessionId":null}
+swarm-dashboard/.claude-flow/data/pending-insights.jsonl:12:{"type":"edit","file":"/home/john/Projects/heretek-swarm/dashboard/frontend/src/components/Canvas/EnhancedCanvas.tsx","timestamp":1776110545790,"sessionId":null}
+swarm-dashboard/.claude-flow/data/pending-insights.jsonl:13:{"type":"edit","file":"/home/john/Projects/heretek-swarm/dashboard/frontend/src/components/Canvas/EnhancedCanvas.tsx","timestamp":1776110551300,"sessionId":null}
+swarm-dashboard/.claude-flow/data/pending-insights.jsonl:14:{"type":"edit","file":"/home/john/Projects/heretek-swarm/dashboard/frontend/src/components/Setup/ConfigWizard.tsx","timestamp":1776110583202,"sessionId":null}
+swarm-dashboard/.claude-flow/data/pending-insights.jsonl:15:{"type":"edit","file":"/home/john/Projects/heretek-swarm/dashboard/frontend/src/components/Setup/ConfigWizard.tsx","timestamp":1776110594859,"sessionId":null}
+swarm-dashboard/.claude-flow/data/pending-insights.jsonl:16:{"type":"edit","file":"/home/john/Projects/heretek-swarm/dashboard/frontend/src/components/SwarmControlCenter.tsx","timestamp":1776110599260,"sessionId":null}
+swarm-dashboard/.claude-flow/data/pending-insights.jsonl:17:{"type":"edit","file":"/home/john/Projects/heretek-swarm/dashboard/frontend/src/components/Observability/A2ATracker.tsx","timestamp":1776110654633,"sessionId":null}
+swarm-dashboard/.claude-flow/data/pending-insights.jsonl:18:{"type":"edit","file":"/home/john/Projects/heretek-swarm/dashboard/frontend/src/components/Setup/SetupWizard.tsx","timestamp":1776110667711,"sessionId":null}
+swarm-dashboard/.claude-flow/data/pending-insights.jsonl:19:{"type":"edit","file":"/home/john/Projects/heretek-swarm/dashboard/frontend/src/components/Setup/SetupWizard.tsx","timestamp":1776110684419,"sessionId":null}
+swarm-dashboard/.claude-flow/data/pending-insights.jsonl:20:{"type":"edit","file":"/home/john/Projects/heretek-swarm/dashboard/frontend/src/components/Setup/SetupWizard.tsx","timestamp":1776110698074,"sessionId":null}
+swarm-dashboard/.claude-flow/data/pending-insights.jsonl:21:{"type":"edit","file":"/home/john/Projects/heretek-swarm/dashboard/frontend/src/components/Canvas/FlowCanvas.tsx","timestamp":1776110719698,"sessionId":null}
+swarm-dashboard/.claude-flow/data/pending-insights.jsonl:22:{"type":"edit","file":"/home/john/Projects/heretek-swarm/dashboard/frontend/src/components/Canvas/Canvas.tsx","timestamp":1776110727695,"sessionId":null}
+swarm-dashboard/.claude-flow/data/pending-insights.jsonl:23:{"type":"edit","file":"/home/john/Projects/heretek-swarm/dashboard/frontend/src/components/Canvas/EnhancedCanvas.tsx","timestamp":1776110737124,"sessionId":null}
+swarm-dashboard/.claude-flow/data/pending-insights.jsonl:24:{"type":"edit","file":"/home/john/Projects/heretek-swarm/dashboard/frontend/src/hooks/useDockerDetection.tsx","timestamp":1776110747102,"sessionId":null}
+swarm-dashboard/.claude-flow/data/pending-insights.jsonl:25:{"type":"edit","file":"/home/john/Projects/heretek-swarm/dashboard/frontend/src/components/Canvas/Canvas.tsx","timestamp":1776110761552,"sessionId":null}
+swarm-dashboard/.claude-flow/data/pending-insights.jsonl:26:{"type":"edit","file":"/home/john/Projects/heretek-swarm/dashboard/frontend/src/components/Canvas/EnhancedCanvas.tsx","timestamp":1776110807322,"sessionId":null}
+swarm-dashboard/.claude-flow/data/pending-insights.jsonl:27:{"type":"edit","file":"/home/john/Projects/heretek-swarm/src/heretek_swarm/config/service.py","timestamp":1776114000399,"sessionId":null}
+swarm-dashboard/.claude-flow/data/pending-insights.jsonl:28:{"type":"edit","file":"/home/john/Projects/heretek-swarm/src/heretek_swarm/config/service.py","timestamp":1776114006643,"sessionId":null}

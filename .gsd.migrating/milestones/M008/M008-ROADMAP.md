@@ -16,7 +16,7 @@
 
 ## Slices
 
-- [ ] **S01: Purge tracked garbage files** `risk:Low — pure file deletion, zero code impact` `depends:[]`
+- [x] **S01: S01** `risk:Low — pure file deletion, zero code impact` `depends:[]`
   > After this: git status shows no tracked =*.0 or 0 garbage files at repo root; ls returns 'No such file' for the glob pattern
 
 - [ ] **S02: Resolve stale root files** `risk:Medium — risk of losing unique logic from triage_classifier.py and audit/cli.py if they contain logic not duplicated in backend equivalents` `depends:[S01]`

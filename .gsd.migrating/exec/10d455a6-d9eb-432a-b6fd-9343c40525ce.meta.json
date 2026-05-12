@@ -1,0 +1,18 @@
+{
+  "id": "10d455a6-d9eb-432a-b6fd-9343c40525ce",
+  "runtime": "bash",
+  "purpose": "Research frontend and remaining structure",
+  "script_chars": 473,
+  "started_at": "2026-05-12T19:54:35.778Z",
+  "finished_at": "2026-05-12T19:54:38.187Z",
+  "exit_code": 1,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 2409,
+  "stdout_bytes": 576,
+  "stderr_bytes": 360,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\10d455a6-d9eb-432a-b6fd-9343c40525ce.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\10d455a6-d9eb-432a-b6fd-9343c40525ce.stderr"
+}

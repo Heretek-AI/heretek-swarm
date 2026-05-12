@@ -1,0 +1,24 @@
+=== CROSS-SLICE BOUNDARY 1: S01 -> S02 ===
+S01 provides: backend/ directory via git mv
+PASS: backend/ directory exists
+PASS: backend/heretek_swarm exists
+S02 consumes: backend/ in Dockerfile, docker-compose.yml, pyproject.toml, CI workflows
+PASS: backend/Dockerfile references backend/
+PASS: docker-compose.yml references backend/Dockerfile
+where = ["backend"]
+PASS: pyproject.toml where=backend
+PASS: ci.yml references backend/
+PASS: ci-cd.yml references backend/
+
+=== CROSS-SLICE BOUNDARY 2: S02 -> S03 ===
+S02 provides: all config/CI files updated with backend/ paths
+S03 checks: clean filesystem, tests consolidated
+PASS: pyproject.toml src=backend
+PASS: pyproject.toml source=backend
+FAIL
+FAIL
+
+=== S03 FINAL STATE VERIFICATION ===
+PASS: root tests/ exists
+INFO: backend/tests/ removed (consolidated)
+PASS: src/ deleted

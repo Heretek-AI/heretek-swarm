@@ -1,0 +1,18 @@
+{
+  "id": "c7a71f37-1049-4ca1-b0b1-cc7ddb4dd184",
+  "runtime": "bash",
+  "purpose": "Verify M008 research artifact on disk",
+  "script_chars": 410,
+  "started_at": "2026-05-12T20:04:17.012Z",
+  "finished_at": "2026-05-12T20:04:21.055Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 4043,
+  "stdout_bytes": 816,
+  "stderr_bytes": 0,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\c7a71f37-1049-4ca1-b0b1-cc7ddb4dd184.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\c7a71f37-1049-4ca1-b0b1-cc7ddb4dd184.stderr"
+}

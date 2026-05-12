@@ -1,0 +1,18 @@
+{
+  "id": "64324da7-bb44-4cae-bcd6-bb1321aabe3d",
+  "runtime": "bash",
+  "purpose": "Check for stale config references and CI gaps",
+  "script_chars": 587,
+  "started_at": "2026-05-12T19:24:36.628Z",
+  "finished_at": "2026-05-12T19:25:06.638Z",
+  "exit_code": null,
+  "signal": "SIGKILL",
+  "timed_out": true,
+  "duration_ms": 30010,
+  "stdout_bytes": 17,
+  "stderr_bytes": 0,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\64324da7-bb44-4cae-bcd6-bb1321aabe3d.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\64324da7-bb44-4cae-bcd6-bb1321aabe3d.stderr"
+}

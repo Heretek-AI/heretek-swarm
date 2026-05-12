@@ -1,0 +1,20 @@
+=== Verify M008-RESEARCH.md ===
+-rwxrwxrwx 1 john john 7021 May 12 16:03 .gsd/milestones/M008/M008-RESEARCH.md
+EXISTS
+
+=== File size ===
+7021 .gsd/milestones/M008/M008-RESEARCH.md
+
+=== First 5 lines ===
+# M008 — Research
+
+**Date:** 2026-05-12
+
+## Summary
+
+=== Last 5 lines ===
+## Sources
+
+- **PROJECT.md (inlined context)**: Known issues section explicitly documents 12 tracked `=X.Y.Z` garbage files, stale `audit/cli.py` and `triage_classifier.py`, and deferred cleanup.
+- **M007 completion state**: git log confirms `heretek-swarm/ → backend/` rename via git mv completed, with path reference updates in CI/config files.
+- **Filesystem survey**: 12 `=*.0` garbage files confirmed present at repo root via `ls`; `triage_classifier.py` and `audit/cli.py` confirmed present with pre-restructure path references.

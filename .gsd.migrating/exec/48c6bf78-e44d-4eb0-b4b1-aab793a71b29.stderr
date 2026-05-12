@@ -1,0 +1,2 @@
+/bin/bash: -c: line 2: syntax error near unexpected token `=0.23.0'
+/bin/bash: -c: line 2: `=0.23.0'

@@ -1,16 +1,16 @@
 {
   "nodes": [
     {
-      "id": "milestone:M007",
-      "label": "M007: Execute repository restructure",
+      "id": "milestone:M008",
+      "label": "M008: Post-Restructure Cleanup & Hardening",
       "type": "milestone",
-      "description": "Active milestone: M007",
+      "description": "Active milestone: M008",
       "confidence": "EXTRACTED",
       "sourceFile": "STATE.md"
     },
     {
-      "id": "concept:phase:validating-milestone",
-      "label": "Phase: validating-milestone",
+      "id": "concept:phase:planning",
+      "label": "Phase: planning",
       "type": "concept",
       "confidence": "EXTRACTED",
       "sourceFile": "STATE.md"
@@ -404,6 +404,13 @@
       "confidence": "EXTRACTED"
     },
     {
+      "id": "milestone:M007",
+      "label": "M007: Execute repository restructure",
+      "type": "milestone",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M007/M007-ROADMAP.md"
+    },
+    {
       "id": "slice:M007:S01",
       "label": "S01: Rename heretek-swarm/ to backend/ via git mv",
       "type": "slice",
@@ -461,11 +468,17 @@
       "confidence": "EXTRACTED"
     },
     {
-      "id": "milestone:M008",
-      "label": "M008: M008",
-      "type": "milestone",
+      "id": "slice:M008:S01",
+      "label": "S01: Purge tracked garbage files",
+      "type": "slice",
       "confidence": "EXTRACTED",
-      "sourceFile": "milestones/M008/M008-ROADMAP.md"
+      "sourceFile": "milestones/M008/slices/S01/S01-PLAN.md"
+    },
+    {
+      "id": "task:M008:S01:T02",
+      "label": "T02: Post-deletion verification: confirm clean index and filesystem",
+      "type": "task",
+      "confidence": "EXTRACTED"
     },
     {
       "id": "decision:M001:1",
@@ -1410,6 +1423,214 @@
       "description": "Source: S01-SUMMARY.md/Key decisions",
       "confidence": "EXTRACTED",
       "sourceFile": "milestones/M006/M006-LEARNINGS.md"
+    },
+    {
+      "id": "decision:M007:1",
+      "label": "**D001:** Executed directory rename via `git mv` with zero code changes rather than multi-phase consolidation. All 463 files moved as R100 renames preserving full history. Python imports are package-name-based and required zero changes.",
+      "type": "decision",
+      "description": "Source: M007-ROADMAP.md/Success Criteria, S01-SUMMARY.md/What Happened",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M007/M007-LEARNINGS.md"
+    },
+    {
+      "id": "decision:M007:2",
+      "label": "**D002:** GitHub URLs in pyproject.toml and user-home config paths (`~/.heretek-swarm/`) were intentionally excluded from path rewrites — they are remote repository references and application-level runtime paths respectively, not source-tree filesystem paths.",
+      "type": "decision",
+      "description": "Source: S02-SUMMARY.md/Key Decisions",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M007/M007-LEARNINGS.md"
+    },
+    {
+      "id": "decision:M007:3",
+      "label": "**L001:** Unmerged `UU` files in the git index silently block `git mv` — the command appears to hang or fail without a clear error. Resolution: run `git status` to detect unmerged state, then `git add <path>` to clear it before retrying the move.",
+      "type": "decision",
+      "description": "Source: S01-SUMMARY.md/Deviations",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M007/M007-LEARNINGS.md"
+    },
+    {
+      "id": "decision:M007:4",
+      "label": "**L002:** The `edit()` tool on Windows may not persist file changes to disk. When edits silently fail, fall back to full-file `write()` to finalize changes. This was the only reliable path for the Dockerfile and CI workflow edits in S02.",
+      "type": "decision",
+      "description": "Source: S02-SUMMARY.md/Patterns Established, S02-SUMMARY.md/What Happened",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M007/M007-LEARNINGS.md"
+    },
+    {
+      "id": "decision:M007:5",
+      "label": "**L003:** The gsd_exec sandbox environment lacks pip, pytest, ruff, and Docker — runtime verification suites that depend on these tools cannot execute during milestone closeout. Filesystem-level verification (directory existence, file counts, git grep audits) must substitute. Full runtime confidence requires the actual dev environment.",
+      "type": "decision",
+      "description": "Source: S03-SUMMARY.md/Deviations, S03-UAT.md/Not Proven By This UAT",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M007/M007-LEARNINGS.md"
+    },
+    {
+      "id": "decision:M007:6",
+      "label": "**P001:** When `edit()` tool calls don't persist to disk on Windows, fall back to full file `write()` to finalize changes. This is a tooling workaround for a known platform behavior.",
+      "type": "decision",
+      "description": "Source: S02-SUMMARY.md/Patterns Established",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M007/M007-LEARNINGS.md"
+    },
+    {
+      "id": "decision:M007:7",
+      "label": "**P002:** Directory renames via `git mv` are transparent to Python imports — Python resolves modules by package name (`heretek_swarm`), not filesystem directory name. Only pyproject.toml `where`/`source`/`src` directives and CI tool paths need updating after the rename. Zero import changes needed across 429+ Python files.",
+      "type": "decision",
+      "description": "Source: M007-CONTEXT.md/Architectural Decisions, S02-SUMMARY.md/What Happened",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M007/M007-LEARNINGS.md"
+    },
+    {
+      "id": "decision:M007:8",
+      "label": "**S001:** Six unmerged `UU` files in `.gsd.migrating/` silently blocked `git mv` — no clear error message, just a stalled index operation. Detected via `git status` showing `UU` markers.",
+      "type": "decision",
+      "description": "Source: S01-SUMMARY.md/Deviations",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M007/M007-LEARNINGS.md"
+    },
+    {
+      "id": "decision:M007:9",
+      "label": "**S002:** Twelve tracked `=X.Y.Z` garbage files at the repo root were explicitly listed in M007-CONTEXT.md scope for removal but were never removed across any of the three completed slices. These are tracked git files requiring `git rm`.",
+      "type": "decision",
+      "description": "Source: M007-VALIDATION.md/Acceptance Criteria, M007-CONTEXT.md/scope",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M007/M007-LEARNINGS.md"
+    },
+    {
+      "id": "decision:M007:10",
+      "label": "**S003:** S03 was exclusively a deletion and consolidation slice — zero Python code changes, no new files created. All tasks were `git rm` or `git mv` operations. This minimized risk compared to the import-rewrite work expected in pre-planning assumptions.",
+      "type": "decision",
+      "description": "Source: S03-SUMMARY.md/What Happened, S03-SUMMARY.md/Files Created/Modified",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M007/M007-LEARNINGS.md"
+    },
+    {
+      "id": "lesson:M007:1",
+      "label": "**L001:** Unmerged `UU` files in the git index silently block `git mv` — the command appears to hang or fail without a clear error. Resolution: run `git status` to detect unmerged state, then `git add <path>` to clear it before retrying the move.",
+      "type": "lesson",
+      "description": "Source: S01-SUMMARY.md/Deviations",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M007/M007-LEARNINGS.md"
+    },
+    {
+      "id": "lesson:M007:2",
+      "label": "**L002:** The `edit()` tool on Windows may not persist file changes to disk. When edits silently fail, fall back to full-file `write()` to finalize changes. This was the only reliable path for the Dockerfile and CI workflow edits in S02.",
+      "type": "lesson",
+      "description": "Source: S02-SUMMARY.md/Patterns Established, S02-SUMMARY.md/What Happened",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M007/M007-LEARNINGS.md"
+    },
+    {
+      "id": "lesson:M007:3",
+      "label": "**L003:** The gsd_exec sandbox environment lacks pip, pytest, ruff, and Docker — runtime verification suites that depend on these tools cannot execute during milestone closeout. Filesystem-level verification (directory existence, file counts, git grep audits) must substitute. Full runtime confidence requires the actual dev environment.",
+      "type": "lesson",
+      "description": "Source: S03-SUMMARY.md/Deviations, S03-UAT.md/Not Proven By This UAT",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M007/M007-LEARNINGS.md"
+    },
+    {
+      "id": "lesson:M007:4",
+      "label": "**P001:** When `edit()` tool calls don't persist to disk on Windows, fall back to full file `write()` to finalize changes. This is a tooling workaround for a known platform behavior.",
+      "type": "lesson",
+      "description": "Source: S02-SUMMARY.md/Patterns Established",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M007/M007-LEARNINGS.md"
+    },
+    {
+      "id": "lesson:M007:5",
+      "label": "**P002:** Directory renames via `git mv` are transparent to Python imports — Python resolves modules by package name (`heretek_swarm`), not filesystem directory name. Only pyproject.toml `where`/`source`/`src` directives and CI tool paths need updating after the rename. Zero import changes needed across 429+ Python files.",
+      "type": "lesson",
+      "description": "Source: M007-CONTEXT.md/Architectural Decisions, S02-SUMMARY.md/What Happened",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M007/M007-LEARNINGS.md"
+    },
+    {
+      "id": "lesson:M007:6",
+      "label": "**S001:** Six unmerged `UU` files in `.gsd.migrating/` silently blocked `git mv` — no clear error message, just a stalled index operation. Detected via `git status` showing `UU` markers.",
+      "type": "lesson",
+      "description": "Source: S01-SUMMARY.md/Deviations",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M007/M007-LEARNINGS.md"
+    },
+    {
+      "id": "lesson:M007:7",
+      "label": "**S002:** Twelve tracked `=X.Y.Z` garbage files at the repo root were explicitly listed in M007-CONTEXT.md scope for removal but were never removed across any of the three completed slices. These are tracked git files requiring `git rm`.",
+      "type": "lesson",
+      "description": "Source: M007-VALIDATION.md/Acceptance Criteria, M007-CONTEXT.md/scope",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M007/M007-LEARNINGS.md"
+    },
+    {
+      "id": "lesson:M007:8",
+      "label": "**S003:** S03 was exclusively a deletion and consolidation slice — zero Python code changes, no new files created. All tasks were `git rm` or `git mv` operations. This minimized risk compared to the import-rewrite work expected in pre-planning assumptions.",
+      "type": "lesson",
+      "description": "Source: S03-SUMMARY.md/What Happened, S03-SUMMARY.md/Files Created/Modified",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M007/M007-LEARNINGS.md"
+    },
+    {
+      "id": "pattern:M007:1",
+      "label": "**P001:** When `edit()` tool calls don't persist to disk on Windows, fall back to full file `write()` to finalize changes. This is a tooling workaround for a known platform behavior.",
+      "type": "pattern",
+      "description": "Source: S02-SUMMARY.md/Patterns Established",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M007/M007-LEARNINGS.md"
+    },
+    {
+      "id": "pattern:M007:2",
+      "label": "**P002:** Directory renames via `git mv` are transparent to Python imports — Python resolves modules by package name (`heretek_swarm`), not filesystem directory name. Only pyproject.toml `where`/`source`/`src` directives and CI tool paths need updating after the rename. Zero import changes needed across 429+ Python files.",
+      "type": "pattern",
+      "description": "Source: M007-CONTEXT.md/Architectural Decisions, S02-SUMMARY.md/What Happened",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M007/M007-LEARNINGS.md"
+    },
+    {
+      "id": "pattern:M007:3",
+      "label": "**S001:** Six unmerged `UU` files in `.gsd.migrating/` silently blocked `git mv` — no clear error message, just a stalled index operation. Detected via `git status` showing `UU` markers.",
+      "type": "pattern",
+      "description": "Source: S01-SUMMARY.md/Deviations",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M007/M007-LEARNINGS.md"
+    },
+    {
+      "id": "pattern:M007:4",
+      "label": "**S002:** Twelve tracked `=X.Y.Z` garbage files at the repo root were explicitly listed in M007-CONTEXT.md scope for removal but were never removed across any of the three completed slices. These are tracked git files requiring `git rm`.",
+      "type": "pattern",
+      "description": "Source: M007-VALIDATION.md/Acceptance Criteria, M007-CONTEXT.md/scope",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M007/M007-LEARNINGS.md"
+    },
+    {
+      "id": "pattern:M007:5",
+      "label": "**S003:** S03 was exclusively a deletion and consolidation slice — zero Python code changes, no new files created. All tasks were `git rm` or `git mv` operations. This minimized risk compared to the import-rewrite work expected in pre-planning assumptions.",
+      "type": "pattern",
+      "description": "Source: S03-SUMMARY.md/What Happened, S03-SUMMARY.md/Files Created/Modified",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M007/M007-LEARNINGS.md"
+    },
+    {
+      "id": "surprise:M007:1",
+      "label": "**S001:** Six unmerged `UU` files in `.gsd.migrating/` silently blocked `git mv` — no clear error message, just a stalled index operation. Detected via `git status` showing `UU` markers.",
+      "type": "lesson",
+      "description": "Source: S01-SUMMARY.md/Deviations",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M007/M007-LEARNINGS.md"
+    },
+    {
+      "id": "surprise:M007:2",
+      "label": "**S002:** Twelve tracked `=X.Y.Z` garbage files at the repo root were explicitly listed in M007-CONTEXT.md scope for removal but were never removed across any of the three completed slices. These are tracked git files requiring `git rm`.",
+      "type": "lesson",
+      "description": "Source: M007-VALIDATION.md/Acceptance Criteria, M007-CONTEXT.md/scope",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M007/M007-LEARNINGS.md"
+    },
+    {
+      "id": "surprise:M007:3",
+      "label": "**S003:** S03 was exclusively a deletion and consolidation slice — zero Python code changes, no new files created. All tasks were `git rm` or `git mv` operations. This minimized risk compared to the import-rewrite work expected in pre-planning assumptions.",
+      "type": "lesson",
+      "description": "Source: S03-SUMMARY.md/What Happened, S03-SUMMARY.md/Files Created/Modified",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M007/M007-LEARNINGS.md"
     }
   ],
   "edges": [
@@ -1794,6 +2015,18 @@
     {
       "from": "slice:M007:S03",
       "to": "task:M007:S03:T03",
+      "type": "contains",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M008",
+      "to": "slice:M008:S01",
+      "type": "contains",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "slice:M008:S01",
+      "to": "task:M008:S01:T02",
       "type": "contains",
       "confidence": "EXTRACTED"
     },
@@ -2504,7 +2737,163 @@
       "to": "surprise:M006:2",
       "type": "relates_to",
       "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M007",
+      "to": "decision:M007:1",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M007",
+      "to": "decision:M007:2",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M007",
+      "to": "decision:M007:3",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M007",
+      "to": "decision:M007:4",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M007",
+      "to": "decision:M007:5",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M007",
+      "to": "decision:M007:6",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M007",
+      "to": "decision:M007:7",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M007",
+      "to": "decision:M007:8",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M007",
+      "to": "decision:M007:9",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M007",
+      "to": "decision:M007:10",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M007",
+      "to": "lesson:M007:1",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M007",
+      "to": "lesson:M007:2",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M007",
+      "to": "lesson:M007:3",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M007",
+      "to": "lesson:M007:4",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M007",
+      "to": "lesson:M007:5",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M007",
+      "to": "lesson:M007:6",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M007",
+      "to": "lesson:M007:7",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M007",
+      "to": "lesson:M007:8",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M007",
+      "to": "pattern:M007:1",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M007",
+      "to": "pattern:M007:2",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M007",
+      "to": "pattern:M007:3",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M007",
+      "to": "pattern:M007:4",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M007",
+      "to": "pattern:M007:5",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M007",
+      "to": "surprise:M007:1",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M007",
+      "to": "surprise:M007:2",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M007",
+      "to": "surprise:M007:3",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
     }
   ],
-  "builtAt": "2026-05-12T16:44:38.852Z"
+  "builtAt": "2026-05-12T20:58:37.598Z"
 }

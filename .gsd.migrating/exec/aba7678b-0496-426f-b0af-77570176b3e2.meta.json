@@ -1,0 +1,18 @@
+{
+  "id": "aba7678b-0496-426f-b0af-77570176b3e2",
+  "runtime": "bash",
+  "purpose": "git grep for stale heretek-swarm/ references",
+  "script_chars": 64,
+  "started_at": "2026-05-12T16:37:09.447Z",
+  "finished_at": "2026-05-12T16:37:12.012Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 2565,
+  "stdout_bytes": 179137,
+  "stderr_bytes": 0,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\aba7678b-0496-426f-b0af-77570176b3e2.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\aba7678b-0496-426f-b0af-77570176b3e2.stderr"
+}

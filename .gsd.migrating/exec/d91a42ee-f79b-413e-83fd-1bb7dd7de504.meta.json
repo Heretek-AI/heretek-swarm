@@ -1,0 +1,18 @@
+{
+  "id": "d91a42ee-f79b-413e-83fd-1bb7dd7de504",
+  "runtime": "bash",
+  "purpose": "M007 verify cov=backend and grep failures",
+  "script_chars": 2392,
+  "started_at": "2026-05-12T16:56:56.024Z",
+  "finished_at": "2026-05-12T16:57:01.130Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 5106,
+  "stdout_bytes": 24764,
+  "stderr_bytes": 0,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\d91a42ee-f79b-413e-83fd-1bb7dd7de504.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\d91a42ee-f79b-413e-83fd-1bb7dd7de504.stderr"
+}

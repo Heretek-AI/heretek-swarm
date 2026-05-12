@@ -1,0 +1,18 @@
+{
+  "id": "3406b915-a604-4b56-b883-46868b9c8567",
+  "runtime": "bash",
+  "purpose": "Check stale files and known issues at root",
+  "script_chars": 521,
+  "started_at": "2026-05-12T19:54:02.764Z",
+  "finished_at": "2026-05-12T19:54:09.337Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 6573,
+  "stdout_bytes": 1952,
+  "stderr_bytes": 0,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\3406b915-a604-4b56-b883-46868b9c8567.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\3406b915-a604-4b56-b883-46868b9c8567.stderr"
+}

@@ -1,0 +1,54 @@
+=== Frontend structure ===
+App.tsx
+api
+components
+hooks
+index.css
+main.tsx
+store
+stores
+test
+types
+
+=== Frontend config files ===
+swarm-dashboard/postcss.config.js
+swarm-dashboard/tailwind.config.js
+swarm-dashboard/tsconfig.json
+swarm-dashboard/tsconfig.node.json
+swarm-dashboard/vite.config.ts
+
+=== dist/ (built output) ===
+assets
+index.html
+
+=== Frontend source files ===
+swarm-dashboard/src/api/agents.ts
+swarm-dashboard/src/api/client.ts
+swarm-dashboard/src/api/configuration.ts
+swarm-dashboard/src/api/consciousness.ts
+swarm-dashboard/src/api/consensus.ts
+swarm-dashboard/src/api/deliberation.ts
+swarm-dashboard/src/api/events.ts
+swarm-dashboard/src/api/mcp.ts
+swarm-dashboard/src/api/observability.ts
+swarm-dashboard/src/api/wizard.ts
+swarm-dashboard/src/App.tsx
+swarm-dashboard/src/components/AgentMetricsGrid.tsx
+swarm-dashboard/src/components/Agents/AgentCard.tsx
+swarm-dashboard/src/components/Agents/AgentConfigPanel.tsx
+swarm-dashboard/src/components/Agents/AgentControls.tsx
+swarm-dashboard/src/components/Agents/AgentsPage.tsx
+swarm-dashboard/src/components/Agents/DeployAgentModal.tsx
+swarm-dashboard/src/components/Agents/index.ts
+swarm-dashboard/src/components/Canvas/AgentDetailDrawer.tsx
+swarm-dashboard/src/components/Canvas/AgentNode.tsx
+swarm-dashboard/src/components/Canvas/Canvas.tsx
+swarm-dashboard/src/components/Canvas/CanvasToolbar.tsx
+swarm-dashboard/src/components/Canvas/ConnectionEdge.tsx
+swarm-dashboard/src/components/Canvas/EnhancedCanvas.tsx
+swarm-dashboard/src/components/Canvas/FlowCanvas.tsx
+swarm-dashboard/src/components/Canvas/index.ts
+swarm-dashboard/src/components/Canvas/MetricsOverlay.tsx
+swarm-dashboard/src/components/Canvas/NodeConfigPanel.tsx
+swarm-dashboard/src/components/Canvas/NodePalette.tsx
+swarm-dashboard/src/components/Canvas/useAgentDetail.ts

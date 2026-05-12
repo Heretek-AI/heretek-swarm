@@ -1,0 +1,17 @@
+=== 1. src/ directory check ===
+PASS: src/ gone
+
+=== 2. backend/docs/ check ===
+PASS: backend/docs/ gone
+
+=== 3. backend/agent_workspace/ check ===
+PASS: backend/agent_workspace/ gone
+
+=== 4. backend/.claude/ check ===
+PASS: backend/.claude/ gone
+
+=== 5. Test file count in tests/ ===
+62
+
+=== 6. backend/heretek_swarm/agent_workspace/ still exists ===
+PASS: still exists

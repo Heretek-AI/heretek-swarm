@@ -3,28 +3,23 @@
   "repo": "Heretek-AI/heretek-swarm",
   "milestones": {},
   "slices": {
-    "M007/S03": {
+    "M008/S01": {
       "issueNumber": 0,
       "prNumber": 0,
-      "branch": "milestone/M007/S03",
-      "lastSyncedAt": "2026-05-12T16:29:16.936Z",
+      "branch": "milestone/M008/S01",
+      "lastSyncedAt": "2026-05-12T20:54:25.172Z",
       "state": "open"
     }
   },
   "tasks": {
-    "M007/S03/T01": {
-      "issueNumber": 22,
-      "lastSyncedAt": "2026-05-12T16:29:15.354Z",
+    "M008/S01/T01": {
+      "issueNumber": 25,
+      "lastSyncedAt": "2026-05-12T20:58:48.869Z",
       "state": "open"
     },
-    "M007/S03/T02": {
-      "issueNumber": 23,
-      "lastSyncedAt": "2026-05-12T16:29:16.197Z",
-      "state": "open"
-    },
-    "M007/S03/T03": {
-      "issueNumber": 24,
-      "lastSyncedAt": "2026-05-12T16:29:16.936Z",
+    "M008/S01/T02": {
+      "issueNumber": 26,
+      "lastSyncedAt": "2026-05-12T20:54:25.172Z",
       "state": "open"
     }
   }

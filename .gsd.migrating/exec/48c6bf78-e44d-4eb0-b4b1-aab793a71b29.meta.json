@@ -1,0 +1,18 @@
+{
+  "id": "48c6bf78-e44d-4eb0-b4b1-aab793a71b29",
+  "runtime": "bash",
+  "purpose": "Check git index for tracked garbage files",
+  "script_chars": 511,
+  "started_at": "2026-05-12T20:52:39.964Z",
+  "finished_at": "2026-05-12T20:52:48.912Z",
+  "exit_code": 2,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 8948,
+  "stdout_bytes": 0,
+  "stderr_bytes": 101,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\48c6bf78-e44d-4eb0-b4b1-aab793a71b29.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\48c6bf78-e44d-4eb0-b4b1-aab793a71b29.stderr"
+}

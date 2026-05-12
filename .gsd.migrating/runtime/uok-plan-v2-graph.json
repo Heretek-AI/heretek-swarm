@@ -1,138 +1,51 @@
 {
-  "compiledAt": "2026-05-12T17:03:44.791Z",
-  "milestoneId": "M007",
+  "compiledAt": "2026-05-12T20:54:26.539Z",
+  "milestoneId": "M008",
   "pipeline": {
     "clarifyRoundLimit": 3,
-    "researchSynthesized": false,
+    "researchSynthesized": true,
     "draftContextIncluded": false,
     "finalizedContextIncluded": true,
-    "sourcePhase": "completing-milestone"
+    "sourcePhase": "executing"
   },
   "nodes": [
     {
-      "id": "execute-task:M007:S01:T01",
-      "kind": "unit",
-      "dependsOn": [],
-      "writes": [
-        "backend/heretek_swarm/",
-        "backend/tests/",
-        "backend/Dockerfile",
-        "backend/docs/",
-        "backend/agent_workspace/"
-      ],
-      "metadata": {
-        "unitType": "execute-task",
-        "unitId": "M007.S01.T01",
-        "title": "Renamed heretek-swarm/ to backend/ via git mv, preserving full git history for all 463 tracked files with zero code changes.",
-        "status": "complete"
-      }
-    },
-    {
-      "id": "complete-slice:M007:S01",
-      "kind": "verification",
-      "dependsOn": [
-        "execute-task:M007:S01:T01"
-      ],
-      "metadata": {
-        "unitType": "complete-slice",
-        "unitId": "M007.S01",
-        "title": "S01",
-        "status": "complete"
-      }
-    },
-    {
-      "id": "execute-task:M007:S02:T01",
+      "id": "execute-task:M008:S01:T01",
       "kind": "unit",
       "dependsOn": [],
       "writes": [],
       "metadata": {
         "unitType": "execute-task",
-        "unitId": "M007.S02.T01",
-        "title": "Updated 8 path references across pyproject.toml, backend/Dockerfile, and docker-compose.yml from heretek-swarm/ to backend/ after S01's git mv",
-        "status": "complete"
+        "unitId": "M008.S01.T01",
+        "title": "Git-rm tracked garbage files and add =* gitignore prevention rule",
+        "status": "pending"
       }
     },
     {
-      "id": "execute-task:M007:S02:T02",
+      "id": "execute-task:M008:S01:T02",
       "kind": "unit",
       "dependsOn": [
-        "execute-task:M007:S02:T01"
+        "execute-task:M008:S01:T01"
       ],
-      "writes": [
-        ".github/workflows/ci.yml",
-        ".github/workflows/ci-cd.yml"
-      ],
+      "writes": [],
       "metadata": {
         "unitType": "execute-task",
-        "unitId": "M007.S02.T02",
-        "title": "Updated 10 path references across ci.yml and ci-cd.yml from stale src/ and heretek-swarm/ paths to backend/",
-        "status": "complete"
+        "unitId": "M008.S01.T02",
+        "title": "Post-deletion verification: confirm clean index and filesystem",
+        "status": "pending"
       }
     },
     {
-      "id": "complete-slice:M007:S02",
+      "id": "complete-slice:M008:S01",
       "kind": "verification",
       "dependsOn": [
-        "execute-task:M007:S02:T02"
+        "execute-task:M008:S01:T02"
       ],
       "metadata": {
         "unitType": "complete-slice",
-        "unitId": "M007.S02",
-        "title": "S02",
-        "status": "complete"
-      }
-    },
-    {
-      "id": "execute-task:M007:S03:T01",
-      "kind": "unit",
-      "dependsOn": [],
-      "writes": [],
-      "metadata": {
-        "unitType": "execute-task",
-        "unitId": "M007.S03.T01",
-        "title": "Deleted four stale artifact directories (src, backend/docs, backend/agent_workspace, backend/.claude) containing 12 pre-rename files.",
-        "status": "complete"
-      }
-    },
-    {
-      "id": "execute-task:M007:S03:T02",
-      "kind": "unit",
-      "dependsOn": [
-        "execute-task:M007:S03:T01"
-      ],
-      "writes": [],
-      "metadata": {
-        "unitType": "execute-task",
-        "unitId": "M007.S03.T02",
-        "title": "Moved all 16 test files from backend/tests/ into root tests/ — no import changes needed, test count verified at 62",
-        "status": "complete"
-      }
-    },
-    {
-      "id": "execute-task:M007:S03:T03",
-      "kind": "unit",
-      "dependsOn": [
-        "execute-task:M007:S03:T02"
-      ],
-      "writes": [],
-      "metadata": {
-        "unitType": "execute-task",
-        "unitId": "M007.S03.T03",
-        "title": "Run full integration verification suite",
-        "status": "complete"
-      }
-    },
-    {
-      "id": "complete-slice:M007:S03",
-      "kind": "verification",
-      "dependsOn": [
-        "execute-task:M007:S03:T03"
-      ],
-      "metadata": {
-        "unitType": "complete-slice",
-        "unitId": "M007.S03",
-        "title": "S03",
-        "status": "complete"
+        "unitId": "M008.S01",
+        "title": "Purge tracked garbage files",
+        "status": "pending"
       }
     }
   ]

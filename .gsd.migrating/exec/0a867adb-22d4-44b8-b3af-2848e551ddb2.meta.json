@@ -1,0 +1,18 @@
+{
+  "id": "0a867adb-22d4-44b8-b3af-2848e551ddb2",
+  "runtime": "bash",
+  "purpose": "Check stale files at root and audit/",
+  "script_chars": 753,
+  "started_at": "2026-05-12T19:36:56.561Z",
+  "finished_at": "2026-05-12T19:37:00.316Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 3755,
+  "stdout_bytes": 2158,
+  "stderr_bytes": 0,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\0a867adb-22d4-44b8-b3af-2848e551ddb2.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\0a867adb-22d4-44b8-b3af-2848e551ddb2.stderr"
+}

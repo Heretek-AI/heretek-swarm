@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "sessions": {
+    "43ddcd65-d567-411a-bb6b-b07362e78123": {
+      "summary": {
+        "totalCommands": 15,
+        "totalInput": 63116,
+        "totalOutput": 318,
+        "totalSaved": 62946,
+        "avgSavingsPct": 99.73065466759617,
+        "totalTimeMs": 26190,
+        "avgTimeMs": 1746
+      },
+      "createdAt": "2026-05-12T17:55:27.965Z",
+      "updatedAt": "2026-05-12T18:02:39.323Z"
+    }
+  }
+}

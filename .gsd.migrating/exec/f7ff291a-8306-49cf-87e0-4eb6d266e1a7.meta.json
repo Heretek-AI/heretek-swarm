@@ -1,0 +1,18 @@
+{
+  "id": "f7ff291a-8306-49cf-87e0-4eb6d266e1a7",
+  "runtime": "bash",
+  "purpose": "pip install and import verification",
+  "script_chars": 380,
+  "started_at": "2026-05-12T16:31:13.969Z",
+  "finished_at": "2026-05-12T16:31:16.310Z",
+  "exit_code": 1,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 2341,
+  "stdout_bytes": 0,
+  "stderr_bytes": 87,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\f7ff291a-8306-49cf-87e0-4eb6d266e1a7.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\f7ff291a-8306-49cf-87e0-4eb6d266e1a7.stderr"
+}

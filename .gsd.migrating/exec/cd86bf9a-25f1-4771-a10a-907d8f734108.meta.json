@@ -1,0 +1,18 @@
+{
+  "id": "cd86bf9a-25f1-4771-a10a-907d8f734108",
+  "runtime": "bash",
+  "purpose": "Broad audit of root-level artifacts for suspicious files",
+  "script_chars": 321,
+  "started_at": "2026-05-12T20:53:06.498Z",
+  "finished_at": "2026-05-12T20:53:06.901Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 403,
+  "stdout_bytes": 8180,
+  "stderr_bytes": 0,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\cd86bf9a-25f1-4771-a10a-907d8f734108.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\cd86bf9a-25f1-4771-a10a-907d8f734108.stderr"
+}

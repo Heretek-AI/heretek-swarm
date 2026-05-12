@@ -1,0 +1,18 @@
+{
+  "id": "4552e05a-71c3-4c86-b9b2-060ef8213470",
+  "runtime": "bash",
+  "purpose": "check available python tooling",
+  "script_chars": 222,
+  "started_at": "2026-05-12T16:35:10.069Z",
+  "finished_at": "2026-05-12T16:35:12.368Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 2299,
+  "stdout_bytes": 68,
+  "stderr_bytes": 0,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\4552e05a-71c3-4c86-b9b2-060ef8213470.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\4552e05a-71c3-4c86-b9b2-060ef8213470.stderr"
+}

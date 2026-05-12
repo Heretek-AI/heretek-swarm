@@ -1,0 +1,60 @@
+=== CWD ===
+/mnt/c/Users/Derek/Desktop/heretek-swarm
+
+=== Top-level listing ===
+total 1572
+drwxrwxrwx 1 john john    512 May 12 15:20 .
+drwxrwxrwx 1 john john    512 May 11 18:48 ..
+drwxrwxrwx 1 john john    512 May 10 16:12 .actor_states
+drwxrwxrwx 1 john john    512 May 10 12:17 .benchmarks
+drwxrwxrwx 1 john john    512 May  6 23:05 .bg-shell
+-rwxrwxrwx 1 john john    210 May  2 22:38 .dockerignore
+-rwxrwxrwx 1 john john   5800 May  2 22:43 .env.example
+drwxrwxrwx 1 john john    512 May 12 15:40 .git
+drwxrwxrwx 1 john john    512 Apr 29 10:03 .github
+-rwxrwxrwx 1 john john   2009 May  7 08:39 .gitignore
+drwxrwxrwx 1 john john    512 May 12 15:40 .gsd
+-rwxrwxrwx 1 john john     13 May  6 23:12 .gsd-id
+drwxrwxrwx 1 john john    512 May 12 12:27 .gsd.migrating
+drwxrwxrwx 1 john john    512 Apr 29 10:03 .kilocode
+-rwxrwxrwx 1 john john      4 Apr 29 10:03 .nvmrc
+-rwxrwxrwx 1 john john   3789 Apr 29 10:03 .pre-commit-config.yaml
+drwxrwxrwx 1 john john    512 Apr 29 17:51 .pytest_cache
+drwxrwxrwx 1 john john    512 May 10 17:00 .ruff_cache
+drwxrwxrwx 1 john john    512 May 10 12:14 .venv
+-rwxrwxrwx 1 john john     25 May 11 23:21 0
+-rwxrwxrwx 1 john john      0 May 10 12:13 =0.2.0
+-rwxrwxrwx 1 john john      0 May 10 12:13 =0.23.0
+-rwxrwxrwx 1 john john      0 May 10 12:13 =1.1.0
+-rwxrwxrwx 1 john john  34253 May 10 12:16 =1.8.0
+-rwxrwxrwx 1 john john      0 May 10 12:13 =2.3.0
+-rwxrwxrwx 1 john john      0 May 10 12:13 =24.0.0
+-rwxrwxrwx 1 john john      0 May 10 12:13 =3.12.0
+-rwxrwxrwx 1 john john      0 May 10 12:13 =3.5.0
+-rwxrwxrwx 1 john john      0 May 10 12:13 =4.0.0
+-rwxrwxrwx 1 john john      0 May 10 12:13 =4.1.0
+-rwxrwxrwx 1 john john      0 May 10 12:13 =6.98.0
+-rwxrwxrwx 1 john john      0 May 10 12:13 =8.0.0
+-rwxrwxrwx 1 john john   1431 Apr 29 10:03 CLAUDE.md
+-rwxrwxrwx 1 john john   1088 Apr 29 10:03 LICENSE
+-rwxrwxrwx 1 john john   5391 Apr 29 10:03 PATH_TO_EMERGENCE.md
+-rwxrwxrwx 1 john john   6351 Apr 29 10:03 PRIME_DIRECTIVE.md
+-rwxrwxrwx 1 john john   5179 Apr 29 10:03 RALPH.md
+-rwxrwxrwx 1 john john   8277 May  3 09:13 README.md
+-rwxrwxrwx 1 john john  27008 Apr 29 10:03 RESEARCH.md
+
+=== backend/ ===
+Dockerfile
+LICENSE
+heretek_swarm
+heretek_swarm.egg-info
+
+=== .gsd/ milestones ===
+M001
+M002
+M003
+M004
+M005
+M006
+M007
+M008
