@@ -12,7 +12,7 @@
 
 ## Slices
 
-- [ ] **S01: Rename heretek-swarm/ to backend/ via git mv** `risk:medium` `depends:[]`
+- [x] **S01: S01** `risk:medium` `depends:[]`
   > After this: Repo at new path with no code changes; only directory moves via git mv.
 
 - [ ] **S02: Rewrite imports and CI paths** `risk:medium` `depends:[S01]`

@@ -1,85 +1,43 @@
 {
-  "compiledAt": "2026-05-12T03:29:02.523Z",
-  "milestoneId": "M006",
+  "compiledAt": "2026-05-12T12:06:02.322Z",
+  "milestoneId": "M007",
   "pipeline": {
     "clarifyRoundLimit": 3,
     "researchSynthesized": false,
     "draftContextIncluded": false,
     "finalizedContextIncluded": true,
-    "sourcePhase": "completing-milestone"
+    "sourcePhase": "summarizing"
   },
   "nodes": [
     {
-      "id": "execute-task:M006:S01:T01",
+      "id": "execute-task:M007:S01:T01",
       "kind": "unit",
       "dependsOn": [],
       "writes": [
-        ".gsd/milestones/M006/slices/S01/FILE_INVENTORY.md"
+        "backend/heretek_swarm/",
+        "backend/tests/",
+        "backend/Dockerfile",
+        "backend/docs/",
+        "backend/agent_workspace/"
       ],
       "metadata": {
         "unitType": "execute-task",
-        "unitId": "M006.S01.T01",
-        "title": "Generated complete 856-file inventory catalog at FILE_INVENTORY.md with path, type, size, purpose, and category for every file across all 9 repository zones",
+        "unitId": "M007.S01.T01",
+        "title": "Renamed heretek-swarm/ to backend/ via git mv, preserving full git history for all 463 tracked files with zero code changes.",
         "status": "complete"
       }
     },
     {
-      "id": "execute-task:M006:S01:T02",
-      "kind": "unit",
-      "dependsOn": [
-        "execute-task:M006:S01:T01"
-      ],
-      "writes": [
-        ".gsd/milestones/M006/slices/S01/IMPORT_MAP.md"
-      ],
-      "metadata": {
-        "unitType": "execute-task",
-        "unitId": "M006.S01.T02",
-        "title": "Generated complete import dependency map at IMPORT_MAP.md covering all 429 Python files: subpackage dependency graph, per-file import catalog for key files, test import analysis, relative import patterns, external dependency breakdown, dead/redundant import path identification, cycle detection, CI/workflow impact list, and leaf package enumeration for safe extraction ordering.",
-        "status": "complete"
-      }
-    },
-    {
-      "id": "execute-task:M006:S01:T03",
-      "kind": "unit",
-      "dependsOn": [
-        "execute-task:M006:S01:T02"
-      ],
-      "writes": [],
-      "metadata": {
-        "unitType": "execute-task",
-        "unitId": "M006.S01.T03",
-        "title": "Cataloged 22 path-change sites across 8 CI/config files with per-line before/after diffs, severity classification, and ordered execution phases for M007.",
-        "status": "complete"
-      }
-    },
-    {
-      "id": "execute-task:M006:S01:T04",
-      "kind": "unit",
-      "dependsOn": [
-        "execute-task:M006:S01:T03"
-      ],
-      "writes": [
-        ".gsd/milestones/M006/M006-PLAN.md"
-      ],
-      "metadata": {
-        "unitType": "execute-task",
-        "unitId": "M006.S01.T04",
-        "title": "Synthesized FILE_INVENTORY.md, IMPORT_MAP.md, and CI_IMPACT.md into a comprehensive 10-section M006-PLAN.md with exact file moves, import rewrites, CI diffs, execution order, rollback plan, and verification checklist for M007 execution.",
-        "status": "complete"
-      }
-    },
-    {
-      "id": "complete-slice:M006:S01",
+      "id": "complete-slice:M007:S01",
       "kind": "verification",
       "dependsOn": [
-        "execute-task:M006:S01:T04"
+        "execute-task:M007:S01:T01"
       ],
       "metadata": {
         "unitType": "complete-slice",
-        "unitId": "M006.S01",
+        "unitId": "M007.S01",
         "title": "S01",
-        "status": "complete"
+        "status": "pending"
       }
     }
   ]

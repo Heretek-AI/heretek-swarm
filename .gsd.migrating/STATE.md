@@ -1,8 +1,8 @@
 # GSD State
 
 **Active Milestone:** M007: Execute repository restructure
-**Active Slice:** S01: Rename heretek-swarm/ to backend/ via git mv
-**Phase:** evaluating-gates
+**Active Slice:** S02: Rewrite imports and CI paths
+**Phase:** planning
 **Requirements Status:** 0 active · 0 validated · 0 deferred · 0 out of scope
 
 ## Milestone Registry
@@ -22,4 +22,4 @@
 - None
 
 ## Next Action
-Slice S01 has no DB tasks. Plan slice tasks before execution.
+Slice S02 has no DB tasks. Plan slice tasks before execution.

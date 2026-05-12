@@ -1,16 +1,16 @@
 {
   "nodes": [
     {
-      "id": "milestone:M006",
-      "label": "M006: Audit and plan repository restructure",
+      "id": "milestone:M007",
+      "label": "M007: Execute repository restructure",
       "type": "milestone",
-      "description": "Active milestone: M006",
+      "description": "Active milestone: M007",
       "confidence": "EXTRACTED",
       "sourceFile": "STATE.md"
     },
     {
-      "id": "concept:phase:validating-milestone",
-      "label": "Phase: validating-milestone",
+      "id": "concept:phase:planning",
+      "label": "Phase: planning",
       "type": "concept",
       "confidence": "EXTRACTED",
       "sourceFile": "STATE.md"
@@ -366,6 +366,13 @@
       "confidence": "EXTRACTED"
     },
     {
+      "id": "milestone:M006",
+      "label": "M006: Audit and plan repository restructure",
+      "type": "milestone",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M006/M006-ROADMAP.md"
+    },
+    {
       "id": "slice:M006:S01",
       "label": "S01: Audit file inventory and plan",
       "type": "slice",
@@ -397,13 +404,6 @@
       "confidence": "EXTRACTED"
     },
     {
-      "id": "milestone:M007",
-      "label": "M007: Execute repository restructure",
-      "type": "milestone",
-      "confidence": "EXTRACTED",
-      "sourceFile": "milestones/M007/M007-ROADMAP.md"
-    },
-    {
       "id": "slice:M007:S01",
       "label": "S01: Rename heretek-swarm/ to backend/ via git mv",
       "type": "slice",
@@ -412,7 +412,7 @@
     },
     {
       "id": "task:M007:S01:T01",
-      "label": "T01: Rename heretek-swarm/ to backend/",
+      "label": "T01: Rename heretek-swarm/ to backend/ via git mv",
       "type": "task",
       "confidence": "EXTRACTED"
     },
@@ -1232,6 +1232,190 @@
       "description": "Source: M005-VALIDATION.md/Success Criteria Checklist",
       "confidence": "EXTRACTED",
       "sourceFile": "milestones/M005/M005-LEARNINGS.md"
+    },
+    {
+      "id": "decision:M006:1",
+      "label": "Chose `backend/` as target directory name over `python/` or `server/` because it is the conventional pairing with `swarm-dashboard/` (frontend), making the repo's two-tier structure self-documenting.",
+      "type": "decision",
+      "description": "Source: M006-CONTEXT.md/Architectural Decisions",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M006/M006-LEARNINGS.md"
+    },
+    {
+      "id": "decision:M006:2",
+      "label": "Chose to keep `tests/` and `src/` at repository root level (not consolidate into `backend/`) after the audit confirmed that all Python imports are package-based (`heretek_swarm.*`) and do not reference the filesystem directory name `heretek-swarm/`. Consolidation would have increased risk with no benefit.",
+      "type": "decision",
+      "description": "Source: M006-PLAN.md/§2.3 Root-Level Files",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M006/M006-LEARNINGS.md"
+    },
+    {
+      "id": "decision:M006:3",
+      "label": "Chose to simplify the migration to a single `git mv heretek-swarm/ backend/` + 22 line-level config edits (zero Python code changes) after discovering that Python resolves modules by package name, not directory path. This eliminated the need for import rewrites across 429 Python files.",
+      "type": "decision",
+      "description": "Source: M006-PLAN.md/§3 Import Rewrite Catalog",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M006/M006-LEARNINGS.md"
+    },
+    {
+      "id": "decision:M006:4",
+      "label": "Python resolves modules by package name (`heretek_swarm`), not by filesystem directory name (`heretek-swarm`). This means directory renames don't require import rewrites as long as `pyproject.toml` `where`/`source` directives are updated. The entire 429-file Python codebase needs zero changes.",
+      "type": "decision",
+      "description": "Source: S01-SUMMARY.md/What Happened (T02, T04)",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M006/M006-LEARNINGS.md"
+    },
+    {
+      "id": "decision:M006:5",
+      "label": "The dash-vs-underscore naming (`heretek-swarm/` directory vs `heretek_swarm` package) caused persistent cognitive overhead for contributors — the rename to `backend/` eliminates this ambiguity entirely without touching a single `.py` file.",
+      "type": "decision",
+      "description": "Source: M006-CONTEXT.md/Why This Milestone",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M006/M006-LEARNINGS.md"
+    },
+    {
+      "id": "decision:M006:6",
+      "label": "swarm-dashboard/ has zero filesystem-level dependencies on the backend directory. The frontend and backend are fully decoupled at the filesystem level, meaning the directory rename is transparent to the frontend build/test/deploy pipelines.",
+      "type": "decision",
+      "description": "Source: S01-SUMMARY.md/Key decisions",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M006/M006-LEARNINGS.md"
+    },
+    {
+      "id": "decision:M006:7",
+      "label": "Artifact-driven planning slices: produce machine-readable documents (YAML-in-Markdown tables with exact path/type/category fields) so that downstream automation — and M007 execution tasks — can consume them programmatically without re-auditing the repository.",
+      "type": "decision",
+      "description": "Source: S01-SUMMARY.md/Patterns established",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M006/M006-LEARNINGS.md"
+    },
+    {
+      "id": "decision:M006:8",
+      "label": "Cross-document consistency verification: every downstream synthesis document (M006-PLAN.md) must cross-reference its source analyses (FILE_INVENTORY.md, IMPORT_MAP.md, CI_IMPACT.md) at the field level. Numeric counts (856 files, 429 Python files, 22 change sites) must match across all four documents.",
+      "type": "decision",
+      "description": "Source: M006-VALIDATION.md/Cross-Slice Integration",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M006/M006-LEARNINGS.md"
+    },
+    {
+      "id": "decision:M006:9",
+      "label": "The migration is dramatically simpler than anticipated: one `git mv` + 22 line-level edits across 8 config files with zero Python code changes. Initial assumptions in M006-CONTEXT.md contemplated consolidating `tests/`, `src/`, and `agent_workspace/`, but the audit proved none of that is necessary.",
+      "type": "decision",
+      "description": "Source: M006-PLAN.md/Executive Summary",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M006/M006-LEARNINGS.md"
+    },
+    {
+      "id": "decision:M006:10",
+      "label": "swarm-dashboard/ was confirmed to have zero backend filesystem dependencies — completely decoupled from the Python backend at every level (import, config, build, test, deploy). This was assumed but not proven before T03's grep audit.",
+      "type": "decision",
+      "description": "Source: S01-SUMMARY.md/Key decisions",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M006/M006-LEARNINGS.md"
+    },
+    {
+      "id": "lesson:M006:1",
+      "label": "Python resolves modules by package name (`heretek_swarm`), not by filesystem directory name (`heretek-swarm`). This means directory renames don't require import rewrites as long as `pyproject.toml` `where`/`source` directives are updated. The entire 429-file Python codebase needs zero changes.",
+      "type": "lesson",
+      "description": "Source: S01-SUMMARY.md/What Happened (T02, T04)",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M006/M006-LEARNINGS.md"
+    },
+    {
+      "id": "lesson:M006:2",
+      "label": "The dash-vs-underscore naming (`heretek-swarm/` directory vs `heretek_swarm` package) caused persistent cognitive overhead for contributors — the rename to `backend/` eliminates this ambiguity entirely without touching a single `.py` file.",
+      "type": "lesson",
+      "description": "Source: M006-CONTEXT.md/Why This Milestone",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M006/M006-LEARNINGS.md"
+    },
+    {
+      "id": "lesson:M006:3",
+      "label": "swarm-dashboard/ has zero filesystem-level dependencies on the backend directory. The frontend and backend are fully decoupled at the filesystem level, meaning the directory rename is transparent to the frontend build/test/deploy pipelines.",
+      "type": "lesson",
+      "description": "Source: S01-SUMMARY.md/Key decisions",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M006/M006-LEARNINGS.md"
+    },
+    {
+      "id": "lesson:M006:4",
+      "label": "Artifact-driven planning slices: produce machine-readable documents (YAML-in-Markdown tables with exact path/type/category fields) so that downstream automation — and M007 execution tasks — can consume them programmatically without re-auditing the repository.",
+      "type": "lesson",
+      "description": "Source: S01-SUMMARY.md/Patterns established",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M006/M006-LEARNINGS.md"
+    },
+    {
+      "id": "lesson:M006:5",
+      "label": "Cross-document consistency verification: every downstream synthesis document (M006-PLAN.md) must cross-reference its source analyses (FILE_INVENTORY.md, IMPORT_MAP.md, CI_IMPACT.md) at the field level. Numeric counts (856 files, 429 Python files, 22 change sites) must match across all four documents.",
+      "type": "lesson",
+      "description": "Source: M006-VALIDATION.md/Cross-Slice Integration",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M006/M006-LEARNINGS.md"
+    },
+    {
+      "id": "lesson:M006:6",
+      "label": "The migration is dramatically simpler than anticipated: one `git mv` + 22 line-level edits across 8 config files with zero Python code changes. Initial assumptions in M006-CONTEXT.md contemplated consolidating `tests/`, `src/`, and `agent_workspace/`, but the audit proved none of that is necessary.",
+      "type": "lesson",
+      "description": "Source: M006-PLAN.md/Executive Summary",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M006/M006-LEARNINGS.md"
+    },
+    {
+      "id": "lesson:M006:7",
+      "label": "swarm-dashboard/ was confirmed to have zero backend filesystem dependencies — completely decoupled from the Python backend at every level (import, config, build, test, deploy). This was assumed but not proven before T03's grep audit.",
+      "type": "lesson",
+      "description": "Source: S01-SUMMARY.md/Key decisions",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M006/M006-LEARNINGS.md"
+    },
+    {
+      "id": "pattern:M006:1",
+      "label": "Artifact-driven planning slices: produce machine-readable documents (YAML-in-Markdown tables with exact path/type/category fields) so that downstream automation — and M007 execution tasks — can consume them programmatically without re-auditing the repository.",
+      "type": "pattern",
+      "description": "Source: S01-SUMMARY.md/Patterns established",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M006/M006-LEARNINGS.md"
+    },
+    {
+      "id": "pattern:M006:2",
+      "label": "Cross-document consistency verification: every downstream synthesis document (M006-PLAN.md) must cross-reference its source analyses (FILE_INVENTORY.md, IMPORT_MAP.md, CI_IMPACT.md) at the field level. Numeric counts (856 files, 429 Python files, 22 change sites) must match across all four documents.",
+      "type": "pattern",
+      "description": "Source: M006-VALIDATION.md/Cross-Slice Integration",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M006/M006-LEARNINGS.md"
+    },
+    {
+      "id": "pattern:M006:3",
+      "label": "The migration is dramatically simpler than anticipated: one `git mv` + 22 line-level edits across 8 config files with zero Python code changes. Initial assumptions in M006-CONTEXT.md contemplated consolidating `tests/`, `src/`, and `agent_workspace/`, but the audit proved none of that is necessary.",
+      "type": "pattern",
+      "description": "Source: M006-PLAN.md/Executive Summary",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M006/M006-LEARNINGS.md"
+    },
+    {
+      "id": "pattern:M006:4",
+      "label": "swarm-dashboard/ was confirmed to have zero backend filesystem dependencies — completely decoupled from the Python backend at every level (import, config, build, test, deploy). This was assumed but not proven before T03's grep audit.",
+      "type": "pattern",
+      "description": "Source: S01-SUMMARY.md/Key decisions",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M006/M006-LEARNINGS.md"
+    },
+    {
+      "id": "surprise:M006:1",
+      "label": "The migration is dramatically simpler than anticipated: one `git mv` + 22 line-level edits across 8 config files with zero Python code changes. Initial assumptions in M006-CONTEXT.md contemplated consolidating `tests/`, `src/`, and `agent_workspace/`, but the audit proved none of that is necessary.",
+      "type": "lesson",
+      "description": "Source: M006-PLAN.md/Executive Summary",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M006/M006-LEARNINGS.md"
+    },
+    {
+      "id": "surprise:M006:2",
+      "label": "swarm-dashboard/ was confirmed to have zero backend filesystem dependencies — completely decoupled from the Python backend at every level (import, config, build, test, deploy). This was assumed but not proven before T03's grep audit.",
+      "type": "lesson",
+      "description": "Source: S01-SUMMARY.md/Key decisions",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M006/M006-LEARNINGS.md"
     }
   ],
   "edges": [
@@ -2194,7 +2378,145 @@
       "to": "surprise:M005:3",
       "type": "relates_to",
       "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M006",
+      "to": "decision:M006:1",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M006",
+      "to": "decision:M006:2",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M006",
+      "to": "decision:M006:3",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M006",
+      "to": "decision:M006:4",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M006",
+      "to": "decision:M006:5",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M006",
+      "to": "decision:M006:6",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M006",
+      "to": "decision:M006:7",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M006",
+      "to": "decision:M006:8",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M006",
+      "to": "decision:M006:9",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M006",
+      "to": "decision:M006:10",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M006",
+      "to": "lesson:M006:1",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M006",
+      "to": "lesson:M006:2",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M006",
+      "to": "lesson:M006:3",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M006",
+      "to": "lesson:M006:4",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M006",
+      "to": "lesson:M006:5",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M006",
+      "to": "lesson:M006:6",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M006",
+      "to": "lesson:M006:7",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M006",
+      "to": "pattern:M006:1",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M006",
+      "to": "pattern:M006:2",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M006",
+      "to": "pattern:M006:3",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M006",
+      "to": "pattern:M006:4",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M006",
+      "to": "surprise:M006:1",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "milestone:M006",
+      "to": "surprise:M006:2",
+      "type": "relates_to",
+      "confidence": "EXTRACTED"
     }
   ],
-  "builtAt": "2026-05-12T03:24:54.986Z"
+  "builtAt": "2026-05-12T12:21:48.322Z"
 }

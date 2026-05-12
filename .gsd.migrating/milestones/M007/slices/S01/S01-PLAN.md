@@ -21,7 +21,7 @@ After this slice, `backend/heretek_swarm/` imports use `heretek_swarm.*` (unchan
 
 ## Tasks
 
-- [ ] **T01: Rename heretek-swarm/ to backend/ via git mv** `est:10m`
+- [x] **T01: Rename heretek-swarm/ to backend/ via git mv** `est:10m`
   Execute the single `git mv heretek-swarm/ backend/` command from the repo root to rename the project subdirectory while preserving full git history. This moves 463 tracked files (Python package `heretek_swarm/`, tests/, docs/, Dockerfile, etc.) to their new location under `backend/`.
   - Files: `heretek-swarm/ (→ backend/)`
   - Verify: test -d backend/heretek_swarm && echo 'OK: backend/heretek_swarm exists'
