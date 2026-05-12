@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "<string>", line 2, in <module>
+  File "/mnt/c/Users/Derek/Desktop/heretek-swarm/heretek-swarm/heretek_swarm/__init__.py", line 13, in <module>
+    from heretek_swarm.actors.base import AgentActor
+  File "/mnt/c/Users/Derek/Desktop/heretek-swarm/heretek-swarm/heretek_swarm/actors/__init__.py", line 16, in <module>
+    from heretek_swarm.actors.arbiter import ArbiterAgent
+  File "/mnt/c/Users/Derek/Desktop/heretek-swarm/heretek-swarm/heretek_swarm/actors/arbiter/__init__.py", line 11, in <module>
+    from .agent import (
+  File "/mnt/c/Users/Derek/Desktop/heretek-swarm/heretek-swarm/heretek_swarm/actors/arbiter/agent.py", line 17, in <module>
+    import structlog
+ModuleNotFoundError: No module named 'structlog'

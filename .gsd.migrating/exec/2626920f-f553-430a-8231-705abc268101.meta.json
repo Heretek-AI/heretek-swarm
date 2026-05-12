@@ -1,0 +1,18 @@
+{
+  "id": "2626920f-f553-430a-8231-705abc268101",
+  "runtime": "bash",
+  "purpose": "T06 full import check - all 25 agents",
+  "script_chars": 689,
+  "started_at": "2026-05-12T01:02:36.507Z",
+  "finished_at": "2026-05-12T01:02:44.854Z",
+  "exit_code": 127,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 8347,
+  "stdout_bytes": 0,
+  "stderr_bytes": 108,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\2626920f-f553-430a-8231-705abc268101.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\2626920f-f553-430a-8231-705abc268101.stderr"
+}

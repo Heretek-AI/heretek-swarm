@@ -18,7 +18,7 @@
 - [x] **S02: S02** `risk:low` `depends:[]`
   > After this: from heretek_swarm.logging.config import configure_logging
 
-- [ ] **S03: Convert surviving flat actors to thin re-exports** `risk:low` `depends:[]`
+- [x] **S03: S03** `risk:low` `depends:[]`
   > After this: actors/alpha.py contains only re-exports, no implementation
 
 ## Boundary Map

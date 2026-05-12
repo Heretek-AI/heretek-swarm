@@ -1,0 +1,18 @@
+{
+  "id": "c67c3955-0c58-4f10-9a67-fb21286fcf71",
+  "runtime": "bash",
+  "purpose": "Verify flat actor files still contain class definitions",
+  "script_chars": 667,
+  "started_at": "2026-05-11T23:40:56.546Z",
+  "finished_at": "2026-05-11T23:41:00.633Z",
+  "exit_code": 2,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 4087,
+  "stdout_bytes": 315,
+  "stderr_bytes": 136,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\c67c3955-0c58-4f10-9a67-fb21286fcf71.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\c67c3955-0c58-4f10-9a67-fb21286fcf71.stderr"
+}

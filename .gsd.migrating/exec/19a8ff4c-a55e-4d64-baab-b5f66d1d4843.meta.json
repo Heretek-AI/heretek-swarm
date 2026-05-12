@@ -1,0 +1,18 @@
+{
+  "id": "19a8ff4c-a55e-4d64-baab-b5f66d1d4843",
+  "runtime": "bash",
+  "purpose": "Check flat actor files existence and class counts",
+  "script_chars": 436,
+  "started_at": "2026-05-11T23:41:35.873Z",
+  "finished_at": "2026-05-11T23:41:37.953Z",
+  "exit_code": 1,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 2080,
+  "stdout_bytes": 0,
+  "stderr_bytes": 136,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\19a8ff4c-a55e-4d64-baab-b5f66d1d4843.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\19a8ff4c-a55e-4d64-baab-b5f66d1d4843.stderr"
+}

@@ -1,0 +1,3 @@
+2026-05-11 21:04:22 [info     ] plugin_runtime_initialized     plugins_dir=C:\Users\Derek\Desktop\heretek-swarm\heretek-swarm\heretek_swarm\plugins\plugins
+Arbiter, Metis, Empath imports OK
+Direct subpackage agent.py imports OK

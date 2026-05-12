@@ -2,7 +2,7 @@
   "version": 1,
   "projectName": "heretek-swarm",
   "projectPath": "C:\\Users\\Derek\\Desktop\\heretek-swarm",
-  "gsdVersion": "2.80.0",
+  "gsdVersion": "2.82.0",
   "entries": [
     {
       "filename": "M001-2026-05-07T12-44-17.html",
@@ -34,6 +34,22 @@
       "totalSlices": 19,
       "doneMilestones": 2,
       "totalMilestones": 7,
+      "phase": "planning"
+    },
+    {
+      "filename": "M005-2026-05-12T01-26-06.html",
+      "generatedAt": "2026-05-12T01:26:06.708Z",
+      "milestoneId": "M005",
+      "milestoneTitle": "Document architecture and compress flat actor API surface",
+      "label": "M005: Document architecture and compress flat actor API surface",
+      "kind": "milestone",
+      "totalCost": 0,
+      "totalTokens": 308802115,
+      "totalDuration": 67772089,
+      "doneSlices": 15,
+      "totalSlices": 19,
+      "doneMilestones": 5,
+      "totalMilestones": 8,
       "phase": "planning"
     }
   ]

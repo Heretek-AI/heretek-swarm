@@ -1,0 +1,18 @@
+{
+  "id": "9dbfa785-5437-4a7a-841d-a0ddbdca6897",
+  "runtime": "bash",
+  "purpose": "T05 flat files no class definitions",
+  "script_chars": 378,
+  "started_at": "2026-05-12T01:00:11.682Z",
+  "finished_at": "2026-05-12T01:00:13.780Z",
+  "exit_code": 1,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 2098,
+  "stdout_bytes": 0,
+  "stderr_bytes": 101,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\9dbfa785-5437-4a7a-841d-a0ddbdca6897.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\9dbfa785-5437-4a7a-841d-a0ddbdca6897.stderr"
+}

@@ -1,0 +1,18 @@
+{
+  "id": "32d1c1b7-d732-4fb5-ba72-5f3d26644d4f",
+  "runtime": "bash",
+  "purpose": "Check current state of 14 flat files",
+  "script_chars": 355,
+  "started_at": "2026-05-12T00:39:10.220Z",
+  "finished_at": "2026-05-12T00:39:13.297Z",
+  "exit_code": 1,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 3077,
+  "stdout_bytes": 0,
+  "stderr_bytes": 87,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\32d1c1b7-d732-4fb5-ba72-5f3d26644d4f.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\32d1c1b7-d732-4fb5-ba72-5f3d26644d4f.stderr"
+}

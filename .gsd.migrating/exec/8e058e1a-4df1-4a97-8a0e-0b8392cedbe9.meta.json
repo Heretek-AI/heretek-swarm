@@ -1,0 +1,18 @@
+{
+  "id": "8e058e1a-4df1-4a97-8a0e-0b8392cedbe9",
+  "runtime": "bash",
+  "purpose": "Audit 14 flat files for class defs and current content",
+  "script_chars": 402,
+  "started_at": "2026-05-12T00:39:27.653Z",
+  "finished_at": "2026-05-12T00:39:27.728Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 75,
+  "stdout_bytes": 324,
+  "stderr_bytes": 49,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\8e058e1a-4df1-4a97-8a0e-0b8392cedbe9.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\8e058e1a-4df1-4a97-8a0e-0b8392cedbe9.stderr"
+}
