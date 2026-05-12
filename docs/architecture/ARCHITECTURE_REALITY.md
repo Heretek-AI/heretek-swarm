@@ -79,7 +79,7 @@ The system demonstrates sophisticated architectural design with 23 autonomous ag
 | **Consensus** | MAKER with evidence weighting | 4-factor weighting (evidence, expertise, confidence, historical) | Evidence weighting IS implemented correctly | 🟢 FUNCTIONAL |
 | **Collective** | Cross-agent pattern extraction | Pattern extraction with Redis pub/sub | Redis connection needs verification | 🟡 PARTIAL |
 | **State** | Unified state management | In-memory with terminate() persistence | No continuous persistence layer | 🟡 IN-MEMORY |
-| **Security** | 4-layer zero-trust validation | Output layer skipped for requests | [`zero_trust.py:925`](src/heretek_swarm/security/zero_trust.py:925) - PII bypass | 🔴 PII BYPASS |
+| **Security** | 4-layer zero-trust validation | Output layer skipped for requests | [`zero_trust.py:925`](backend/heretek_swarm/security/zero_trust.py:925) - PII bypass | 🔴 PII BYPASS |
 | **Gateway** | NATS + A2A protocol | NATS functional, A2A state management | Auth middleware race condition | 🟡 PARTIAL |
 | **Plugins** | Consciousness + Liberation | Consciousness metrics partially implemented | FEP calculation incomplete | 🟡 PARTIAL |
 
@@ -145,7 +145,7 @@ CRITICAL GAP: Actor state stored in self.internal_state (line 210, base.py)
 │ (L3 Cold)    │
 └──────────────┘
 
-CRITICAL GAP: Tier migration in [`tiering.py:234`](src/heretek_swarm/memory/tiering.py:234):
+CRITICAL GAP: Tier migration in [`tiering.py:234`](backend/heretek_swarm/memory/tiering.py:234):
 ```python
 def migrate_to_cold(self, key):
     redis_data = self.redis.get(key)
@@ -180,7 +180,7 @@ def migrate_to_cold(self, key):
 │  weighting IGNORED) │
 └─────────────────────┘
 
-CRITICAL GAP: Evidence weighting in [`maker_enhanced.py:156`](src/heretek_swarm/consensus/maker_enhanced.py:156):
+CRITICAL GAP: Evidence weighting in [`maker_enhanced.py:156`](backend/heretek_swarm/consensus/maker_enhanced.py:156):
 ```python
 def calculate_vote_weight(self, evidence):
     return 1.0  # Always returns 1.0, quality parameter ignored
@@ -238,22 +238,22 @@ started_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
 
 ### GAP-1: Actor State Persistence Failure - LEGITIMATE ⚠️
 
-**Location:** [`src/heretek_swarm/actors/base.py`](src/heretek_swarm/actors/base.py)
+**Location:** [`backend/heretek_swarm/actors/base.py`](backend/heretek_swarm/actors/base.py)
 
 **Issue:** State stored in-memory, persistence only on clean terminate
 
 **Impact:** Any crash, kill signal, or unclean shutdown loses ALL agent state
 
 **Files Affected:**
-- [`src/heretek_swarm/actors/base.py:210`](src/heretek_swarm/actors/base.py:210) - In-memory state
-- [`src/heretek_swarm/actors/base.py:342`](src/heretek_swarm/actors/base.py:342) - save_state() only on terminate
+- [`backend/heretek_swarm/actors/base.py:210`](backend/heretek_swarm/actors/base.py:210) - In-memory state
+- [`backend/heretek_swarm/actors/base.py:342`](backend/heretek_swarm/actors/base.py:342) - save_state() only on terminate
 - All 22 agent files inherit this pattern
 
 ---
 
 ### GAP-5: Auth Middleware Race Condition - LEGITIMATE ⚠️
 
-**Location:** [`src/heretek_swarm/gateway/auth.py`](src/heretek_swarm/gateway/auth.py)
+**Location:** [`backend/heretek_swarm/gateway/auth.py`](backend/heretek_swarm/gateway/auth.py)
 
 **Issue:** Race condition in token validation
 
@@ -273,13 +273,13 @@ def validate_token(self, token: str):
 **Impact:** Tokens can be invalidated mid-request, causing intermittent auth failures
 
 **Files Affected:**
-- [`src/heretek_swarm/gateway/auth.py:59-77`](src/heretek_swarm/gateway/auth.py:59) - Token validation race
+- [`backend/heretek_swarm/gateway/auth.py:59-77`](backend/heretek_swarm/gateway/auth.py:59) - Token validation race
 
 ---
 
 ### GAP-6: Security PII Redaction Bypass - LEGITIMATE 🔴
 
-**Location:** [`src/heretek_swarm/security/zero_trust.py:925`](src/heretek_swarm/security/zero_trust.py:925)
+**Location:** [`backend/heretek_swarm/security/zero_trust.py:925`](backend/heretek_swarm/security/zero_trust.py:925)
 
 **Issue:** Output layer skipped for request validation
 
@@ -298,13 +298,13 @@ layer3 = LayerResult(
 **Impact:** PII in request data passes through without validation
 
 **Files Affected:**
-- [`src/heretek_swarm/security/zero_trust.py:925`](src/heretek_swarm/security/zero_trust.py:925) - Output layer bypass
+- [`backend/heretek_swarm/security/zero_trust.py:925`](backend/heretek_swarm/security/zero_trust.py:925) - Output layer bypass
 
 ---
 
 ### GAP-7: Consensus API In-Memory Store - LEGITIMATE ⚠️
 
-**Location:** [`src/heretek_swarm/api/consensus.py:131-133`](src/heretek_swarm/api/consensus.py:131)
+**Location:** [`backend/heretek_swarm/api/consensus.py:131-133`](backend/heretek_swarm/api/consensus.py:131)
 
 **Issue:** In-memory storage for consensus processes
 
@@ -319,7 +319,7 @@ _active_rounds: Dict[str, Dict[str, Any]] = {}
 **Impact:** All consensus rounds lost on API restart
 
 **Files Affected:**
-- [`src/heretek_swarm/api/consensus.py:131-133`](src/heretek_swarm/api/consensus.py:131) - In-memory store
+- [`backend/heretek_swarm/api/consensus.py:131-133`](backend/heretek_swarm/api/consensus.py:131) - In-memory store
 
 ---
 
@@ -352,10 +352,10 @@ _active_rounds: Dict[str, Dict[str, Any]] = {}
 **Actual:** In-memory state, dangerous eval() patterns, unvalidated LLM outputs
 
 **Critical Files:**
-- [`src/heretek_swarm/actors/base.py`](src/heretek_swarm/actors/base.py) - Base actor (in-memory state)
-- [`src/heretek_swarm/actors/coder.py:142`](src/heretek_swarm/actors/coder.py:142) - exec() vulnerability
-- [`src/heretek_swarm/actors/nexus.py:89`](src/heretek_swarm/actors/nexus.py:89) - Unvalidated state
-- [`src/heretek_swarm/actors/triad.py`](src/heretek_swarm/actors/triad.py) - Triad agents (2,900+ lines)
+- [`backend/heretek_swarm/actors/base.py`](backend/heretek_swarm/actors/base.py) - Base actor (in-memory state)
+- [`backend/heretek_swarm/actors/coder.py:142`](backend/heretek_swarm/actors/coder.py:142) - exec() vulnerability
+- [`backend/heretek_swarm/actors/nexus.py:89`](backend/heretek_swarm/actors/nexus.py:89) - Unvalidated state
+- [`backend/heretek_swarm/actors/triad.py`](backend/heretek_swarm/actors/triad.py) - Triad agents (2,900+ lines)
 
 **Status:** 🔴 CRITICAL FAILURE
 
@@ -367,9 +367,9 @@ _active_rounds: Dict[str, Dict[str, Any]] = {}
 **Actual:** Tier migration corrupts state, persistent layer is stub
 
 **Critical Files:**
-- [`src/heretek_swarm/memory/base.py`](src/heretek_swarm/memory/base.py) - Stub persistent implementation
-- [`src/heretek_swarm/memory/tiering.py:234`](src/heretek_swarm/memory/tiering.py:234) - Broken migration
-- [`src/heretek_swarm/memory/compression.py`](src/heretek_swarm/memory/compression.py) - Compression corrupts metadata
+- [`backend/heretek_swarm/memory/base.py`](backend/heretek_swarm/memory/base.py) - Stub persistent implementation
+- [`backend/heretek_swarm/memory/tiering.py:234`](backend/heretek_swarm/memory/tiering.py:234) - Broken migration
+- [`backend/heretek_swarm/memory/compression.py`](backend/heretek_swarm/memory/compression.py) - Compression corrupts metadata
 
 **Status:** 🔴 CRITICAL FAILURE
 
@@ -381,10 +381,10 @@ _active_rounds: Dict[str, Dict[str, Any]] = {}
 **Actual:** Evidence weighting broken, deliberation state lost
 
 **Critical Files:**
-- [`src/heretek_swarm/consensus/maker.py`](src/heretek_swarm/consensus/maker.py) - Base MAKER
-- [`src/heretek_swarm/consensus/maker_enhanced.py:156`](src/heretek_swarm/consensus/maker_enhanced.py:156) - Broken weighting
-- [`src/heretek_swarm/consensus/swarm_deliberation.py`](src/heretek_swarm/consensus/swarm_deliberation.py) - State lost
-- [`src/heretek_swarm/consensus/expertise.py`](src/heretek_swarm/consensus/expertise.py) - Stub implementation
+- [`backend/heretek_swarm/consensus/maker.py`](backend/heretek_swarm/consensus/maker.py) - Base MAKER
+- [`backend/heretek_swarm/consensus/maker_enhanced.py:156`](backend/heretek_swarm/consensus/maker_enhanced.py:156) - Broken weighting
+- [`backend/heretek_swarm/consensus/swarm_deliberation.py`](backend/heretek_swarm/consensus/swarm_deliberation.py) - State lost
+- [`backend/heretek_swarm/consensus/expertise.py`](backend/heretek_swarm/consensus/expertise.py) - Stub implementation
 
 **Status:** 🔴 CRITICAL FAILURE
 
@@ -396,10 +396,10 @@ _active_rounds: Dict[str, Dict[str, Any]] = {}
 **Actual:** Pattern extraction non-functional, Redis pub/sub not connected
 
 **Critical Files:**
-- [`src/heretek_swarm/collective/learning.py`](src/heretek_swarm/collective/learning.py) - Pattern extraction broken
-- [`src/heretek_swarm/collective/knowledge_transform.py`](src/heretek_swarm/collective/knowledge_transform.py) - Summary algorithms broken
-- [`src/heretek_swarm/collective/distributed_learning.py`](src/heretek_swarm/collective/distributed_learning.py) - Redis pub/sub stub
-- [`src/heretek_swarm/collective/pattern_library.py`](src/heretek_swarm/collective/pattern_library.py) - In-memory only
+- [`backend/heretek_swarm/collective/learning.py`](backend/heretek_swarm/collective/learning.py) - Pattern extraction broken
+- [`backend/heretek_swarm/collective/knowledge_transform.py`](backend/heretek_swarm/collective/knowledge_transform.py) - Summary algorithms broken
+- [`backend/heretek_swarm/collective/distributed_learning.py`](backend/heretek_swarm/collective/distributed_learning.py) - Redis pub/sub stub
+- [`backend/heretek_swarm/collective/pattern_library.py`](backend/heretek_swarm/collective/pattern_library.py) - In-memory only
 
 **Status:** 🔴 CRITICAL FAILURE
 
@@ -411,9 +411,9 @@ _active_rounds: Dict[str, Dict[str, Any]] = {}
 **Actual:** Complete in-memory state, no persistence layer
 
 **Critical Files:**
-- [`src/heretek_swarm/state/manager.py`](src/heretek_swarm/state/manager.py) - In-memory only
-- [`src/heretek_swarm/state/lineage.py`](src/heretek_swarm/state/lineage.py) - In-memory only
-- [`src/heretek_swarm/state/snapshots.py`](src/heretek_swarm/state/snapshots.py) - In-memory only
+- [`backend/heretek_swarm/state/manager.py`](backend/heretek_swarm/state/manager.py) - In-memory only
+- [`backend/heretek_swarm/state/lineage.py`](backend/heretek_swarm/state/lineage.py) - In-memory only
+- [`backend/heretek_swarm/state/snapshots.py`](backend/heretek_swarm/state/snapshots.py) - In-memory only
 
 **Status:** 🔴 CRITICAL FAILURE
 
@@ -425,9 +425,9 @@ _active_rounds: Dict[str, Dict[str, Any]] = {}
 **Actual:** Output layer bypassed, PII redaction skipped for requests
 
 **Critical Files:**
-- [`src/heretek_swarm/security/zero_trust.py:925`](src/heretek_swarm/security/zero_trust.py:925) - Output layer bypass
-- [`src/heretek_swarm/security/adversarial.py`](src/heretek_swarm/security/adversarial.py) - Functional
-- [`src/heretek_swarm/security/ddos_protection.py`](src/heretek_swarm/security/ddos_protection.py) - Functional
+- [`backend/heretek_swarm/security/zero_trust.py:925`](backend/heretek_swarm/security/zero_trust.py:925) - Output layer bypass
+- [`backend/heretek_swarm/security/adversarial.py`](backend/heretek_swarm/security/adversarial.py) - Functional
+- [`backend/heretek_swarm/security/ddos_protection.py`](backend/heretek_swarm/security/ddos_protection.py) - Functional
 
 **Status:** 🔴 CRITICAL FAILURE
 
@@ -439,9 +439,9 @@ _active_rounds: Dict[str, Dict[str, Any]] = {}
 **Actual:** NATS functional, A2A has state leaks, auth race condition
 
 **Critical Files:**
-- [`src/heretek_swarm/gateway/nats_event_mesh.py`](src/heretek_swarm/gateway/nats_event_mesh.py) - JetStream functional
-- [`src/heretek_swarm/gateway/auth.py:59-77`](src/heretek_swarm/gateway/auth.py:59) - Token validation race
-- [`src/heretek_swarm/gateway/a2a_server.py`](src/heretek_swarm/gateway/a2a_server.py) - State leaks
+- [`backend/heretek_swarm/gateway/nats_event_mesh.py`](backend/heretek_swarm/gateway/nats_event_mesh.py) - JetStream functional
+- [`backend/heretek_swarm/gateway/auth.py:59-77`](backend/heretek_swarm/gateway/auth.py:59) - Token validation race
+- [`backend/heretek_swarm/gateway/a2a_server.py`](backend/heretek_swarm/gateway/a2a_server.py) - State leaks
 
 **Status:** 🟡 PARTIAL
 
@@ -453,9 +453,9 @@ _active_rounds: Dict[str, Dict[str, Any]] = {}
 **Actual:** Consciousness metrics are stubs, FEP incomplete
 
 **Critical Files:**
-- [`src/heretek_swarm/plugins/consciousness.py`](src/heretek_swarm/plugins/consciousness.py) - IIT Phi stub
-- [`src/heretek_swarm/plugins/consciousness_metrics.py`](src/heretek_swarm/plugins/consciousness_metrics.py) - Stub implementations
-- [`src/heretek_swarm/plugins/liberation.py`](src/heretek_swarm/plugins/liberation.py) - Functional
+- [`backend/heretek_swarm/plugins/consciousness.py`](backend/heretek_swarm/plugins/consciousness.py) - IIT Phi stub
+- [`backend/heretek_swarm/plugins/consciousness_metrics.py`](backend/heretek_swarm/plugins/consciousness_metrics.py) - Stub implementations
+- [`backend/heretek_swarm/plugins/liberation.py`](backend/heretek_swarm/plugins/liberation.py) - Functional
 
 **Status:** 🟡 PARTIAL
 
@@ -465,15 +465,15 @@ _active_rounds: Dict[str, Dict[str, Any]] = {}
 
 | State Type | Location | Persistence | Lost On Restart |
 |------------|----------|-------------|-----------------|
-| Agent Internal State | [`base.py:210`](src/heretek_swarm/actors/base.py:210) | ❌ In-Memory | ✅ YES |
-| Agent Mailbox | [`base.py:209`](src/heretek_swarm/actors/base.py:209) | ❌ In-Memory | ✅ YES |
-| Consensus Rounds | [`consensus.py:131-133`](src/heretek_swarm/api/consensus.py:131) | ❌ In-Memory | ✅ YES |
-| Pattern Library | [`pattern_library.py`](src/heretek_swarm/collective/pattern_library.py) | ⚠️ Partial | ✅ YES |
-| Deliberation History | [`swarm_deliberation.py`](src/heretek_swarm/consensus/swarm_deliberation.py) | ❌ In-Memory | ✅ YES |
-| Agent Expertise Profiles | [`expertise.py`](src/heretek_swarm/consensus/expertise.py) | ❌ In-Memory | ✅ YES |
-| Access Pattern Baselines | [`access_patterns.py`](src/heretek_swarm/memory/access_patterns.py) | ❌ In-Memory | ✅ YES |
-| Prefetch Cache | [`prefetcher.py`](src/heretek_swarm/memory/prefetcher.py) | ❌ In-Memory | ✅ YES |
-| Behavioral Baselines | [`zero_trust.py:404`](src/heretek_swarm/security/zero_trust.py:404) | ❌ In-Memory | ✅ YES |
+| Agent Internal State | [`base.py:210`](backend/heretek_swarm/actors/base.py:210) | ❌ In-Memory | ✅ YES |
+| Agent Mailbox | [`base.py:209`](backend/heretek_swarm/actors/base.py:209) | ❌ In-Memory | ✅ YES |
+| Consensus Rounds | [`consensus.py:131-133`](backend/heretek_swarm/api/consensus.py:131) | ❌ In-Memory | ✅ YES |
+| Pattern Library | [`pattern_library.py`](backend/heretek_swarm/collective/pattern_library.py) | ⚠️ Partial | ✅ YES |
+| Deliberation History | [`swarm_deliberation.py`](backend/heretek_swarm/consensus/swarm_deliberation.py) | ❌ In-Memory | ✅ YES |
+| Agent Expertise Profiles | [`expertise.py`](backend/heretek_swarm/consensus/expertise.py) | ❌ In-Memory | ✅ YES |
+| Access Pattern Baselines | [`access_patterns.py`](backend/heretek_swarm/memory/access_patterns.py) | ❌ In-Memory | ✅ YES |
+| Prefetch Cache | [`prefetcher.py`](backend/heretek_swarm/memory/prefetcher.py) | ❌ In-Memory | ✅ YES |
+| Behavioral Baselines | [`zero_trust.py:404`](backend/heretek_swarm/security/zero_trust.py:404) | ❌ In-Memory | ✅ YES |
 
 ---
 
@@ -531,4 +531,4 @@ The system is suitable for development and testing. Production deployment requir
 - [`README.md`](../README.md) - Updated README with honest status
 - [`PRIME_DIRECTIVE.md`](../PRIME_DIRECTIVE.md) - Original vision and architecture
 
-> **Note:** The Zero-Trust Audit Phase 5 Master Report (REMEDIATION_BACKLOG.md) has been archived. Zero-trust implementation details are in `src/heretek_swarm/security/zero_trust.py`.
+> **Note:** The Zero-Trust Audit Phase 5 Master Report (REMEDIATION_BACKLOG.md) has been archived. Zero-trust implementation details are in `backend/heretek_swarm/security/zero_trust.py`.

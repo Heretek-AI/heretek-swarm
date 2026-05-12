@@ -25,7 +25,7 @@
 
 ## Main API
 
-**File:** [`src/heretek_swarm/api/main.py`](src/heretek_swarm/api/main.py)
+**File:** [`backend/heretek_swarm/api/main.py`](backend/heretek_swarm/api/main.py)
 
 FastAPI application with all endpoint routers.
 
@@ -43,23 +43,23 @@ app = FastAPI(
 
 | Router | Prefix | File |
 |--------|--------|------|
-| websockets | - | [`websockets.py`](src/heretek_swarm/api/websockets.py) |
-| consensus | /api/consensus | [`consensus.py`](src/heretek_swarm/api/consensus.py) |
-| plugins | /api/plugins | [`plugins.py`](src/heretek_swarm/api/plugins.py) |
-| workflows | /api/workflows | [`workflows.py`](src/heretek_swarm/api/workflows.py) |
-| observability | /api/v1/observability | [`observability.py`](src/heretek_swarm/api/observability.py) |
-| evaluation | /api/evaluation | [`evaluation.py`](src/heretek_swarm/api/evaluation.py) |
-| rag | /api/rag | [`rag.py`](src/heretek_swarm/api/rag.py) |
-| consciousness | /api/consciousness | [`consciousness.py`](src/heretek_swarm/api/consciousness.py) |
-| emergent_intelligence | /api/v1/emergent-intelligence | [`emergent_intelligence.py`](src/heretek_swarm/api/emergent_intelligence.py) |
-| agents_management | /api/agents | [`agents_management.py`](src/heretek_swarm/api/agents_management.py) |
-| autonomous | /autonomous | [`autonomous.py`](src/heretek_swarm/api/autonomous.py) |
-| configuration | /api/config | [`configuration.py`](src/heretek_swarm/api/configuration.py) |
-| wizard | /api/wizard | [`wizard.py`](src/heretek_swarm/api/wizard.py) |
-| metrics | /metrics | [`metrics.py`](src/heretek_swarm/api/metrics.py) |
-| collective_evolution | /api/collective | [`collective_evolution.py`](src/heretek_swarm/api/collective_evolution.py) |
-| alerts | /api/alerts | [`alerts.py`](src/heretek_swarm/api/alerts.py) |
-| mcp | /api/mcp | [`mcp.py`](src/heretek_swarm/api/mcp.py) |
+| websockets | - | [`websockets.py`](backend/heretek_swarm/api/websockets.py) |
+| consensus | /api/consensus | [`consensus.py`](backend/heretek_swarm/api/consensus.py) |
+| plugins | /api/plugins | [`plugins.py`](backend/heretek_swarm/api/plugins.py) |
+| workflows | /api/workflows | [`workflows.py`](backend/heretek_swarm/api/workflows.py) |
+| observability | /api/v1/observability | [`observability.py`](backend/heretek_swarm/api/observability.py) |
+| evaluation | /api/evaluation | [`evaluation.py`](backend/heretek_swarm/api/evaluation.py) |
+| rag | /api/rag | [`rag.py`](backend/heretek_swarm/api/rag.py) |
+| consciousness | /api/consciousness | [`consciousness.py`](backend/heretek_swarm/api/consciousness.py) |
+| emergent_intelligence | /api/v1/emergent-intelligence | [`emergent_intelligence.py`](backend/heretek_swarm/api/emergent_intelligence.py) |
+| agents_management | /api/agents | [`agents_management.py`](backend/heretek_swarm/api/agents_management.py) |
+| autonomous | /autonomous | [`autonomous.py`](backend/heretek_swarm/api/autonomous.py) |
+| configuration | /api/config | [`configuration.py`](backend/heretek_swarm/api/configuration.py) |
+| wizard | /api/wizard | [`wizard.py`](backend/heretek_swarm/api/wizard.py) |
+| metrics | /metrics | [`metrics.py`](backend/heretek_swarm/api/metrics.py) |
+| collective_evolution | /api/collective | [`collective_evolution.py`](backend/heretek_swarm/api/collective_evolution.py) |
+| alerts | /api/alerts | [`alerts.py`](backend/heretek_swarm/api/alerts.py) |
+| mcp | /api/mcp | [`mcp.py`](backend/heretek_swarm/api/mcp.py) |
 
 ---
 
@@ -110,7 +110,7 @@ GET /api/health/ready
 
 ## Agent Management Endpoints
 
-**File:** [`src/heretek_swarm/api/main.py`](src/heretek_swarm/api/main.py:327)
+**File:** [`backend/heretek_swarm/api/main.py`](backend/heretek_swarm/api/main.py:327)
 
 ### List All Agents
 
@@ -210,7 +210,7 @@ Authorization: Bearer {api_key}
 
 ## Workflow Endpoints
 
-**File:** [`src/heretek_swarm/api/workflows.py`](src/heretek_swarm/api/workflows.py)
+**File:** [`backend/heretek_swarm/api/workflows.py`](backend/heretek_swarm/api/workflows.py)
 
 ### Execute Workflow
 
@@ -275,7 +275,7 @@ Authorization: Bearer {api_key}
 
 ## Consciousness Endpoints
 
-**File:** [`src/heretek_swarm/api/consciousness.py`](src/heretek_swarm/api/consciousness.py)
+**File:** [`backend/heretek_swarm/api/consciousness.py`](backend/heretek_swarm/api/consciousness.py)
 
 ### Get Global Metrics
 
@@ -354,7 +354,7 @@ Authorization: Bearer {api_key}
 
 ## Observability Endpoints
 
-**File:** [`src/heretek_swarm/api/observability.py`](src/heretek_swarm/api/observability.py)
+**File:** [`backend/heretek_swarm/api/observability.py`](backend/heretek_swarm/api/observability.py)
 
 ### Get Traces
 
@@ -406,7 +406,7 @@ Authorization: Bearer {api_key}
 
 ## Plugin Endpoints
 
-**File:** [`src/heretek_swarm/api/plugins.py`](src/heretek_swarm/api/plugins.py)
+**File:** [`backend/heretek_swarm/api/plugins.py`](backend/heretek_swarm/api/plugins.py)
 
 ### List Plugins
 
@@ -458,7 +458,7 @@ Authorization: Bearer {api_key}
 
 ## Evaluation Endpoints
 
-**File:** [`src/heretek_swarm/api/evaluation.py`](src/heretek_swarm/api/evaluation.py)
+**File:** [`backend/heretek_swarm/api/evaluation.py`](backend/heretek_swarm/api/evaluation.py)
 
 ### Run Evaluation
 
@@ -509,7 +509,7 @@ Authorization: Bearer {api_key}
 
 ## RAG Endpoints
 
-**File:** [`src/heretek_swarm/api/rag.py`](src/heretek_swarm/api/rag.py)
+**File:** [`backend/heretek_swarm/api/rag.py`](backend/heretek_swarm/api/rag.py)
 
 ### Ingest Document
 
@@ -581,7 +581,7 @@ Authorization: Bearer {api_key}
 
 ## Configuration Endpoints
 
-**File:** [`src/heretek_swarm/api/configuration.py`](src/heretek_swarm/api/configuration.py)
+**File:** [`backend/heretek_swarm/api/configuration.py`](backend/heretek_swarm/api/configuration.py)
 
 ### List Configurations
 
@@ -654,7 +654,7 @@ POST /api/config/migrate-from-env
 
 ## Integration Endpoints
 
-**File:** [`src/heretek_swarm/integrations/manager.py`](src/heretek_swarm/integrations/manager.py)
+**File:** [`backend/heretek_swarm/integrations/manager.py`](backend/heretek_swarm/integrations/manager.py)
 
 ### List Integrations
 
@@ -747,7 +747,7 @@ GET /api/v1/integrations/anthropic/conversations
 
 ## Memory Endpoints
 
-**File:** [`src/heretek_swarm/api/main.py`](src/heretek_swarm/api/main.py:459)
+**File:** [`backend/heretek_swarm/api/main.py`](backend/heretek_swarm/api/main.py:459)
 
 ### Get Memory Stats
 
@@ -791,7 +791,7 @@ Authorization: Bearer {api_key}
 
 ## A2A Message Endpoints
 
-**File:** [`src/heretek_swarm/api/main.py`](src/heretek_swarm/api/main.py:670)
+**File:** [`backend/heretek_swarm/api/main.py`](backend/heretek_swarm/api/main.py:670)
 
 ### Get Recent Messages
 
@@ -810,7 +810,7 @@ GET /api/a2a/messages/{from_agent}/{to_agent}?limit=50
 
 ## Rate Limiting
 
-**File:** [`src/heretek_swarm/api/rate_limiting.py`](src/heretek_swarm/api/rate_limiting.py)
+**File:** [`backend/heretek_swarm/api/rate_limiting.py`](backend/heretek_swarm/api/rate_limiting.py)
 
 ### Rate Limit Tiers
 

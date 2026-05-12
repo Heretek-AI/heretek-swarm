@@ -29,7 +29,7 @@ The Heretek Swarm codebase is a sophisticated multi-agent autonomous system with
 ### Backend Critical Issues
 
 #### 1. Workflow Storage Inconsistency (CRITICAL)
-**File:** `src/heretek_swarm/api/workflows.py`
+**File:** `backend/heretek_swarm/api/workflows.py`
 
 ```python
 # Line 27: Stores workflows here
@@ -45,7 +45,7 @@ del _workflows[workflow_id]
 **Impact:** Created workflows don't appear in list. Deleted workflows reappear.
 
 #### 2. Workflow Malformed Execution ID (CRITICAL)
-**File:** `src/heretek_swarm/api/workflows.py`
+**File:** `backend/heretek_swarm/api/workflows.py`
 
 ```python
 # Lines 210, 250
@@ -55,7 +55,7 @@ execution_id = f"exec_{workflow_id}_{workflow_id}"  # Bug!
 **Impact:** Two different workflows can have conflicting execution IDs (`exec_abc_abc` vs `exec_xyz_xyz`).
 
 #### 3. Silent Exception Swallowing (CRITICAL)
-**File:** `src/heretek_swarm/api/observability.py:167-168`
+**File:** `backend/heretek_swarm/api/observability.py:167-168`
 
 ```python
 except Exception:
@@ -65,7 +65,7 @@ except Exception:
 **Impact:** Any import errors silently fail, making debugging impossible.
 
 #### 4. RAG API Stub with No Fallback (CRITICAL)
-**File:** `src/heretek_swarm/api/rag.py:18-26`
+**File:** `backend/heretek_swarm/api/rag.py:18-26`
 
 ```python
 try:
@@ -77,7 +77,7 @@ except ImportError:
 **Impact:** API endpoints will crash at runtime if `rag` module not installed.
 
 #### 5. Encryption Silently Disabled (CRITICAL)
-**File:** `src/heretek_swarm/config/encryption.py:48-64`
+**File:** `backend/heretek_swarm/config/encryption.py:48-64`
 
 **Impact:** If `cryptography` package missing or key init fails, API keys stored in plaintext without explicit error.
 
@@ -105,7 +105,7 @@ except ImportError:
 ### Backend High Issues
 
 #### 1. Consensus Vote Agent ID Mismatch
-**File:** `src/heretek_swarm/api/consensus.py:331-335`
+**File:** `backend/heretek_swarm/api/consensus.py:331-335`
 
 ```python
 agent_id = x_agent_id or authenticated_agent_id  # Uses one for vote
@@ -113,7 +113,7 @@ if not consensus_auth_manager.check_permission(authenticated_agent_id, "vote"): 
 ```
 
 #### 2. State Repository Silent ImportError
-**File:** `src/heretek_swarm/state/repository.py:28-30`
+**File:** `backend/heretek_swarm/state/repository.py:28-30`
 
 ```python
 except ImportError:
@@ -121,12 +121,12 @@ except ImportError:
 ```
 
 #### 3. Two Conflicting `get_config` Functions
-**File:** `src/heretek_swarm/config/loader.py`
+**File:** `backend/heretek_swarm/config/loader.py`
 - `ConfigLoader.get()` (line 305) - synchronous
 - Module-level `get_config()` (line 490) - async
 
 #### 4. Alerts API Missing Error Handling
-**File:** `src/heretek_swarm/api/alerts.py:86-91`
+**File:** `backend/heretek_swarm/api/alerts.py:86-91`
 Returns 200 OK with `success=false` but no error explanation.
 
 ---
@@ -196,7 +196,7 @@ const apiUrl = localStorage.getItem('api_url') || '';  // api_url is NEVER set a
 
 ## HALF-COMPLETED FEATURES REQUIRING DECISION
 
-### 1. RAG Module (`src/heretek_swarm/api/rag.py`)
+### 1. RAG Module (`backend/heretek_swarm/api/rag.py`)
 **Status:** Stub implementation - imports fail if `rag` package not installed.
 **Decision Needed:** Either install `rag` package or remove RAG endpoints entirely.
 
@@ -218,16 +218,16 @@ const apiUrl = localStorage.getItem('api_url') || '';  // api_url is NEVER set a
 
 ### Fix First (Priority 1)
 
-1. `src/heretek_swarm/api/workflows.py` - Storage inconsistency + malformed execution_id
-2. `src/heretek_swarm/api/observability.py` - Silent exception swallowing
-3. `src/heretek_swarm/api/rag.py` - Add RAG_AVAILABLE check before using imports
+1. `backend/heretek_swarm/api/workflows.py` - Storage inconsistency + malformed execution_id
+2. `backend/heretek_swarm/api/observability.py` - Silent exception swallowing
+3. `backend/heretek_swarm/api/rag.py` - Add RAG_AVAILABLE check before using imports
 4. `dashboard/frontend/src/components/Canvas/EnhancedCanvas.tsx` - Change `token` to `api_key`
 
 ### Fix Second (Priority 2)
 
-5. `src/heretek_swarm/config/encryption.py` - Fail explicitly if encryption disabled
-6. `src/heretek_swarm/state/repository.py` - Add warning if EVENT_SOURCING_AVAILABLE=False
-7. `src/heretek_swarm/api/consensus.py` - Fix agent_id mismatch in vote
+5. `backend/heretek_swarm/config/encryption.py` - Fail explicitly if encryption disabled
+6. `backend/heretek_swarm/state/repository.py` - Add warning if EVENT_SOURCING_AVAILABLE=False
+7. `backend/heretek_swarm/api/consensus.py` - Fix agent_id mismatch in vote
 8. `dashboard/frontend/src/` - Reduce `any` type usage
 
 ### Document Later (Priority 3)

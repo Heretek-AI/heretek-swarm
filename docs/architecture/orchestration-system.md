@@ -8,9 +8,9 @@ The Orchestration System implements the HeavySwarm 5-phase deliberation workflow
 
 ### HeavySwarm Workflow
 
-**Location**: [`src/heretek_swarm/orchestration/heavyswarm.py`](../src/heretek_swarm/orchestration/heavyswarm.py)
+**Location**: [`backend/heretek_swarm/orchestration/heavyswarm.py`](../backend/heretek_swarm/orchestration/heavyswarm.py)
 
-The [`HeavySwarmWorkflow`](../src/heretek_swarm/orchestration/heavyswarm.py:89) class provides comprehensive analysis through five distinct phases.
+The [`HeavySwarmWorkflow`](../backend/heretek_swarm/orchestration/heavyswarm.py:89) class provides comprehensive analysis through five distinct phases.
 
 ### 5-Phase Deliberation Pattern
 
@@ -569,14 +569,14 @@ result = await workflow.execute(
 
 ### HeavySwarmWorkflow
 
-See [`src/heretek_swarm/orchestration/heavyswarm.py`](../src/heretek_swarm/orchestration/heavyswarm.py) for complete API documentation.
+See [`backend/heretek_swarm/orchestration/heavyswarm.py`](../backend/heretek_swarm/orchestration/heavyswarm.py) for complete API documentation.
 
 ### Key Methods
 
-- [`execute()`](../src/heretek_swarm/orchestration/heavyswarm.py): Execute the workflow
-- [`register_agent()`](../src/heretek_swarm/orchestration/heavyswarm.py): Register an agent with the workflow
-- [`get_status()`](../src/heretek_swarm/orchestration/heavyswarm.py): Get workflow status
-- [`subscribe_to_events()`](../src/heretek_swarm/orchestration/heavyswarm.py): Subscribe to workflow events
+- [`execute()`](../backend/heretek_swarm/orchestration/heavyswarm.py): Execute the workflow
+- [`register_agent()`](../backend/heretek_swarm/orchestration/heavyswarm.py): Register an agent with the workflow
+- [`get_status()`](../backend/heretek_swarm/orchestration/heavyswarm.py): Get workflow status
+- [`subscribe_to_events()`](../backend/heretek_swarm/orchestration/heavyswarm.py): Subscribe to workflow events
 
 ## See Also
 

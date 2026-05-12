@@ -12,7 +12,7 @@
 
 ```bash
 # Editable install (development)
-pip install -e .
+pip install -e backend/
 
 # Or install from PyPI (when published)
 pip install heretek-swarm
@@ -25,7 +25,7 @@ This provides the `heretek-swarm` CLI command (see [Command Reference](#command-
 ```bash
 cp .env.example .env
 # Edit .env and set your OPENAI_API_KEY (and other values as needed)
-docker compose up
+cd backend && docker compose up
 ```
 
 Starts all 6 services with health checks: PostgreSQL, Redis, Qdrant, NATS, API server, and React dashboard. No profile flags needed — everything starts by default.
@@ -108,30 +108,31 @@ heretek-swarm status --json
 ## Package Structure
 
 ```
-heretek-swarm/                  # Repository root
+backend/                        # Python project root
 ├── pyproject.toml              # Package metadata & CLI entry point
 ├── docker-compose.yml          # All 6 services with health checks
 ├── .env.example                # Environment template with all vars
-├── README.md
 ├── docs/                       # Architecture & API documentation
 │   ├── ARCHITECTURE.md
 │   ├── API_ENDPOINTS.md
 │   ├── DEPLOYMENT.md
 │   └── AGENTS.md
-└── heretek-swarm/              # Python package (pip-installable)
-    └── heretek_swarm/          # Core library
-        ├── actors/             # 23 agent implementations
-        ├── api/                # FastAPI endpoints
-        ├── cli/                # CLI commands & config loader
-        ├── config/             # Pydantic config models
-        ├── consciousness/      # Consciousness metrics (GWT, IIT, FEP)
-        ├── consensus/          # MAKER protocol implementation
-        ├── gateway/            # NATS event mesh
-        ├── memory/             # Multi-tier memory system
-        ├── runtime/            # AutonomousSwarm main loop & daemon
-        ├── security/           # Zero-trust validation
-        └── state/              # PostgreSQL persistence
+├── README.md
+└── heretek_swarm/              # Core library
+    ├── actors/                 # 23 agent implementations
+    ├── api/                    # FastAPI endpoints
+    ├── cli/                    # CLI commands & config loader
+    ├── config/                 # Pydantic config models
+    ├── consciousness/          # Consciousness metrics (GWT, IIT, FEP)
+    ├── consensus/              # MAKER protocol implementation
+    ├── gateway/                # NATS event mesh
+    ├── memory/                 # Multi-tier memory system
+    ├── runtime/                # AutonomousSwarm main loop & daemon
+    ├── security/               # Zero-trust validation
+    └── state/                  # PostgreSQL persistence
 ```
+
+`swarm-dashboard/` at repo root contains the React frontend (fully decoupled).
 
 ---
 

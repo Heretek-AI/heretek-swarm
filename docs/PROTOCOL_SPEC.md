@@ -34,10 +34,10 @@ MCP enables tools and resources to be exposed to AI models in a standardized way
 
 | File | Purpose |
 |------|---------|
-| `src/heretek_swarm/mcp/server.py` | MCP server implementation |
-| `src/heretek_swarm/mcp/client.py` | MCP client implementation |
-| `src/heretek_swarm/mcp/registry.py` | Tool/resource registry |
-| `src/heretek_swarm/mcp/types.py` | MCP protocol types |
+| `backend/heretek_swarm/mcp/server.py` | MCP server implementation |
+| `backend/heretek_swarm/mcp/client.py` | MCP client implementation |
+| `backend/heretek_swarm/mcp/registry.py` | Tool/resource registry |
+| `backend/heretek_swarm/mcp/types.py` | MCP protocol types |
 
 ### 1.4 MCP Tool Definitions
 
@@ -235,7 +235,7 @@ heretek.swarm.
 
 ### 2.5 A2A Protocol Implementation
 
-**File:** `src/heretek_swarm/infrastructure/a2a/`
+**File:** `backend/heretek_swarm/infrastructure/a2a/`
 
 ```python
 # protocol.py
@@ -453,12 +453,12 @@ class TaskMessage(BaseModel):
 
 | Protocol | Status | Location |
 |----------|--------|----------|
-| MCP Server | ✅ IMPLEMENTED | `src/heretek_swarm/mcp/server.py` |
-| MCP Client | ✅ IMPLEMENTED | `src/heretek_swarm/mcp/client.py` |
-| MCP Registry | ✅ IMPLEMENTED | `src/heretek_swarm/mcp/registry.py` |
-| A2A Protocol | ✅ IMPLEMENTED | `src/heretek_swarm/infrastructure/a2a/protocol.py` |
-| NATS Bridge | ⚠️ PARTIAL | `src/heretek_swarm/infrastructure/nats/` (not wired) |
-| Consensus | ⚠️ EXISTS | `src/heretek_swarm/consensus/` (not integrated) |
+| MCP Server | ✅ IMPLEMENTED | `backend/heretek_swarm/mcp/server.py` |
+| MCP Client | ✅ IMPLEMENTED | `backend/heretek_swarm/mcp/client.py` |
+| MCP Registry | ✅ IMPLEMENTED | `backend/heretek_swarm/mcp/registry.py` |
+| A2A Protocol | ✅ IMPLEMENTED | `backend/heretek_swarm/infrastructure/a2a/protocol.py` |
+| NATS Bridge | ⚠️ PARTIAL | `backend/heretek_swarm/infrastructure/nats/` (not wired) |
+| Consensus | ⚠️ EXISTS | `backend/heretek_swarm/consensus/` (not integrated) |
 | Tribunal | ❌ INCOMPLETE | Not implemented |
 | Heartbeat | ❌ INCOMPLETE | Not implemented |
 

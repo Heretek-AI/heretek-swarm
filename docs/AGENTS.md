@@ -24,7 +24,7 @@ Reference documentation for all 23 agents in the Heretek Swarm collective.
 
 ## Agent Overview
 
-All 23 agents are implemented in [`src/heretek_swarm/actors/`](../src/heretek_swarm/actors/). Each agent inherits from the [`AgentActor`](../src/heretek_swarm/actors/base.py) base class and uses **mixin composition** for shared behaviors.
+All 23 agents are implemented in [`backend/heretek_swarm/actors/`](../backend/heretek_swarm/actors/). Each agent inherits from the [`AgentActor`](../backend/heretek_swarm/actors/base.py) base class and uses **mixin composition** for shared behaviors.
 
 ### Agent Base Features
 
@@ -39,35 +39,35 @@ The base `AgentActor` provides:
 
 | Agent | File | Tier | Role |
 |-------|------|------|------|
-| Steward | [`triad.py`](src/heretek_swarm/actors/triad.py) | 1 | Governance & Orchestration |
-| Alpha | [`triad.py`](src/heretek_swarm/actors/triad.py) | 1 | Deep Analysis |
-| Beta | [`triad.py`](src/heretek_swarm/actors/triad.py) | 1 | Validation |
-| Charlie | [`triad.py`](src/heretek_swarm/actors/triad.py) | 1 | Challenge |
-| Historian | [`historian.py`](src/heretek_swarm/actors/historian.py) | 2 | Memory & Knowledge |
-| Metis | [`metis.py`](src/heretek_swarm/actors/metis.py) | 2 | Strategic Planning |
-| Empath | [`empath.py`](src/heretek_swarm/actors/empath.py) | 2 | Emotional Intelligence |
-| Perceiver | [`perceiver.py`](src/heretek_swarm/actors/perceiver.py) | 2 | Multi-Modal Input |
-| Echo | [`echo.py`](src/heretek_swarm/actors/echo.py) | 2 | Communication |
-| Explorer | [`explorer.py`](src/heretek_swarm/actors/explorer.py) | 3 | Discovery |
-| Examiner | [`examiner.py`](src/heretek_swarm/actors/examiner.py) | 3 | Quality Assurance |
-| Dreamer | [`dreamer.py`](src/heretek_swarm/actors/dreamer.py) | 3 | Creative Generation |
-| Coder | [`coder.py`](src/heretek_swarm/actors/coder.py) | 3 | Implementation |
-| Sentinel | [`sentinel.py`](src/heretek_swarm/actors/sentinel.py) | 4 | Safety Guardian |
-| Sentinel-Prime | [`sentinel_prime.py`](src/heretek_swarm/actors/sentinel_prime.py) | 4 | Security Commander |
-| Arbiter | [`arbiter.py`](src/heretek_swarm/actors/arbiter.py) | 4 | Conflict Resolution |
-| Coordinator | [`coordinator.py`](src/heretek_swarm/actors/coordinator.py) | 5 | Multi-Agent Sync |
-| Nexus | [`nexus.py`](src/heretek_swarm/actors/nexus.py) | 5 | External Integration |
-| Catalyst | [`catalyst.py`](src/heretek_swarm/actors/catalyst.py) | 5 | Change Management |
-| Chronos | [`chronos.py`](src/heretek_swarm/actors/chronos.py) | 5 | Scheduling |
-| Prism | [`prism.py`](src/heretek_swarm/actors/prism.py) | 6 | Multi-Perspective |
-| Habit-Forge | [`habit_forge.py`](src/heretek_swarm/actors/habit_forge.py) | 6 | Behavior Optimization |
-| Perceiver+ | [`perceiver_plus.py`](src/heretek_swarm/actors/perceiver_plus.py) | 6 | Advanced Analytics |
+| Steward | [`triad.py`](backend/heretek_swarm/actors/triad.py) | 1 | Governance & Orchestration |
+| Alpha | [`triad.py`](backend/heretek_swarm/actors/triad.py) | 1 | Deep Analysis |
+| Beta | [`triad.py`](backend/heretek_swarm/actors/triad.py) | 1 | Validation |
+| Charlie | [`triad.py`](backend/heretek_swarm/actors/triad.py) | 1 | Challenge |
+| Historian | [`historian.py`](backend/heretek_swarm/actors/historian.py) | 2 | Memory & Knowledge |
+| Metis | [`metis.py`](backend/heretek_swarm/actors/metis.py) | 2 | Strategic Planning |
+| Empath | [`empath.py`](backend/heretek_swarm/actors/empath.py) | 2 | Emotional Intelligence |
+| Perceiver | [`perceiver.py`](backend/heretek_swarm/actors/perceiver.py) | 2 | Multi-Modal Input |
+| Echo | [`echo.py`](backend/heretek_swarm/actors/echo.py) | 2 | Communication |
+| Explorer | [`explorer.py`](backend/heretek_swarm/actors/explorer.py) | 3 | Discovery |
+| Examiner | [`examiner.py`](backend/heretek_swarm/actors/examiner.py) | 3 | Quality Assurance |
+| Dreamer | [`dreamer.py`](backend/heretek_swarm/actors/dreamer.py) | 3 | Creative Generation |
+| Coder | [`coder.py`](backend/heretek_swarm/actors/coder.py) | 3 | Implementation |
+| Sentinel | [`sentinel.py`](backend/heretek_swarm/actors/sentinel.py) | 4 | Safety Guardian |
+| Sentinel-Prime | [`sentinel_prime.py`](backend/heretek_swarm/actors/sentinel_prime.py) | 4 | Security Commander |
+| Arbiter | [`arbiter.py`](backend/heretek_swarm/actors/arbiter.py) | 4 | Conflict Resolution |
+| Coordinator | [`coordinator.py`](backend/heretek_swarm/actors/coordinator.py) | 5 | Multi-Agent Sync |
+| Nexus | [`nexus.py`](backend/heretek_swarm/actors/nexus.py) | 5 | External Integration |
+| Catalyst | [`catalyst.py`](backend/heretek_swarm/actors/catalyst.py) | 5 | Change Management |
+| Chronos | [`chronos.py`](backend/heretek_swarm/actors/chronos.py) | 5 | Scheduling |
+| Prism | [`prism.py`](backend/heretek_swarm/actors/prism.py) | 6 | Multi-Perspective |
+| Habit-Forge | [`habit_forge.py`](backend/heretek_swarm/actors/habit_forge.py) | 6 | Behavior Optimization |
+| Perceiver+ | [`perceiver_plus.py`](backend/heretek_swarm/actors/perceiver_plus.py) | 6 | Advanced Analytics |
 
 ---
 
 ## Mixin Architecture
 
-Phase 2 introduces **mixin composition** to replace copy-paste inheritance. Mixins are in [`src/heretek_swarm/actors/mixins/`](../src/heretek_swarm/actors/mixins/):
+Phase 2 introduces **mixin composition** to replace copy-paste inheritance. Mixins are in [`backend/heretek_swarm/actors/mixins/`](../backend/heretek_swarm/actors/mixins/):
 
 ### Available Mixins
 
@@ -101,7 +101,7 @@ class MyAgent(AgentActor, DeliberationMixin, MemoryMixin):
 
 ## Tier 1: Core Triad
 
-The Core Triad consists of 4 agents: Steward, Alpha, Beta, and Charlie. All are implemented in [`triad.py`](src/heretek_swarm/actors/triad.py).
+The Core Triad consists of 4 agents: Steward, Alpha, Beta, and Charlie. All are implemented in [`triad.py`](backend/heretek_swarm/actors/triad.py).
 
 ### Steward Agent
 
@@ -183,7 +183,7 @@ async def provide_counterarguments(self, argument: Argument) -> List[CounterArgu
 
 ### Historian Agent
 
-**File:** [`historian.py`](src/heretek_swarm/actors/historian.py)
+**File:** [`historian.py`](backend/heretek_swarm/actors/historian.py)
 
 **Role:** Memory & Knowledge - Information synthesis and precedent logging.
 
@@ -206,7 +206,7 @@ async def get_lineage(self, entity_id: str) -> Lineage
 
 ### Metis Agent
 
-**File:** [`metis.py`](src/heretek_swarm/actors/metis.py)
+**File:** [`metis.py`](backend/heretek_swarm/actors/metis.py)
 
 **Role:** Strategic Planning - Long-term timeline generation and impact analysis.
 
@@ -229,7 +229,7 @@ async def analyze_impact(self, action: Action) -> ImpactAnalysis
 
 ### Empath Agent
 
-**File:** [`empath.py`](src/heretek_swarm/actors/empath.py)
+**File:** [`empath.py`](backend/heretek_swarm/actors/empath.py)
 
 **Role:** Emotional Intelligence - Sentiment analysis and human-AI resonance.
 
@@ -252,7 +252,7 @@ async def adapt_tone(self, context: Context) -> AdaptedResponse
 
 ### Perceiver Agent
 
-**File:** [`perceiver.py`](src/heretek_swarm/actors/perceiver.py)
+**File:** [`perceiver.py`](backend/heretek_swarm/actors/perceiver.py)
 
 **Role:** Sensory Input - Multi-modal data ingestion.
 
@@ -265,7 +265,7 @@ async def adapt_tone(self, context: Context) -> AdaptedResponse
 
 ### Echo Agent
 
-**File:** [`echo.py`](src/heretek_swarm/actors/echo.py)
+**File:** [`echo.py`](backend/heretek_swarm/actors/echo.py)
 
 **Role:** Communication - Translation and multi-channel protocol management.
 
@@ -290,7 +290,7 @@ async def sync_channels(self, message_id: str) -> SyncResult
 
 ### Explorer Agent
 
-**File:** [`explorer.py`](src/heretek_swarm/actors/explorer.py)
+**File:** [`explorer.py`](backend/heretek_swarm/actors/explorer.py)
 
 **Role:** Discovery - Proactive research and information gathering.
 
@@ -313,7 +313,7 @@ async def gather_intelligence(self, query: str) -> IntelligenceReport
 
 ### Examiner Agent
 
-**File:** [`examiner.py`](src/heretek_swarm/actors/examiner.py)
+**File:** [`examiner.py`](backend/heretek_swarm/actors/examiner.py)
 
 **Role:** Quality Assurance - Stress-testing and capability validation.
 
@@ -336,7 +336,7 @@ async def validate_capabilities(self, agent: Agent) -> CapabilityValidation
 
 ### Dreamer Agent
 
-**File:** [`dreamer.py`](src/heretek_swarm/actors/dreamer.py)
+**File:** [`dreamer.py`](backend/heretek_swarm/actors/dreamer.py)
 
 **Role:** Creative Generation - Lateral thinking and novel solution synthesis.
 
@@ -359,7 +359,7 @@ async def synthesize_novel(self, inputs: List[Any]) -> Synthesis
 
 ### Coder Agent
 
-**File:** [`coder.py`](src/heretek_swarm/actors/coder.py)
+**File:** [`coder.py`](backend/heretek_swarm/actors/coder.py)
 
 **Role:** Implementation - Autonomous code writing, debugging, and system expansion.
 
@@ -386,7 +386,7 @@ async def execute_safely(self, code: str, context: ExecutionContext) -> Executio
 
 ### Sentinel Agent
 
-**File:** [`sentinel.py`](src/heretek_swarm/actors/sentinel.py)
+**File:** [`sentinel.py`](backend/heretek_swarm/actors/sentinel.py)
 
 **Role:** Safety Guardian - Emergency reflex and anomaly response.
 
@@ -404,7 +404,7 @@ async def clear_anomaly(self, anomaly_id: str) -> ClearResult
 
 ### Sentinel-Prime Agent
 
-**File:** [`sentinel_prime.py`](src/heretek_swarm/actors/sentinel_prime.py)
+**File:** [`sentinel_prime.py`](backend/heretek_swarm/actors/sentinel_prime.py)
 
 **Role:** Security Commander - External threat response and containment.
 
@@ -428,7 +428,7 @@ async def manage_incident(self, incident: Incident) -> IncidentManagement
 
 ### Arbiter Agent
 
-**File:** [`arbiter.py`](src/heretek_swarm/actors/arbiter.py)
+**File:** [`arbiter.py`](backend/heretek_swarm/actors/arbiter.py)
 
 **Role:** Conflict Resolution - Dispute mediation during systemic consensus failures.
 
@@ -456,7 +456,7 @@ async def facilitate_consensus(self, deadlocked_parties: List[Party]) -> Consens
 
 ### Coordinator Agent
 
-**File:** [`coordinator.py`](src/heretek_swarm/actors/coordinator.py)
+**File:** [`coordinator.py`](backend/heretek_swarm/actors/coordinator.py)
 
 **Role:** Multi-Agent Sync - Task dependency and timeline synchronization.
 
@@ -480,7 +480,7 @@ async def track_progress(self, workflow_id: str) -> ProgressReport
 
 ### Nexus Agent
 
-**File:** [`nexus.py`](src/heretek_swarm/actors/nexus.py)
+**File:** [`nexus.py`](backend/heretek_swarm/actors/nexus.py)
 
 **Role:** External Integration - Gateway management to human systems and APIs.
 
@@ -502,7 +502,7 @@ async def transform_protocol: Protocol) -> AdaptedMessage
 
 ### Catalyst Agent
 
-**File:** [`catalyst.py`](src/heretek_swarm/actors/catalyst.py)
+**File:** [`catalyst.py`](backend/heretek_swarm/actors/catalyst.py)
 
 **Role:** Change Management - Handling systemic shifts and paradigm transitions.
 
@@ -526,7 +526,7 @@ async def handle_paradigm_shift(self, shift: ParadigmShift) -> ShiftResult
 
 ### Chronos Agent
 
-**File:** [`chronos.py`](src/heretek_swarm/actors/chronos.py)
+**File:** [`chronos.py`](backend/heretek_swarm/actors/chronos.py)
 
 **Role:** Temporal/Scheduling - Time perception and long-running execution management.
 
@@ -553,7 +553,7 @@ async def reason_temporally(self, context: TemporalContext) -> TemporalReasoning
 
 ### Prism Agent
 
-**File:** [`prism.py`](src/heretek_swarm/actors/prism.py)
+**File:** [`prism.py`](backend/heretek_swarm/actors/prism.py)
 
 **Role:** Multi-Perspective - Forcing diverse, non-standard viewpoints into consensus.
 
@@ -577,7 +577,7 @@ async def assess_diversity(self, opinions: List[Opinion]) -> DiversityAssessment
 
 ### Habit-Forge Agent
 
-**File:** [`habit_forge.py`](src/heretek_swarm/actors/habit_forge.py)
+**File:** [`habit_forge.py`](backend/heretek_swarm/actors/habit_forge.py)
 
 **Role:** Behavior Optimization - Building operational efficiency patterns and recording established precedents.
 
@@ -601,7 +601,7 @@ async def adapt_behavior(self, feedback: Feedback) -> BehavioralAdaptation
 
 ### Perceiver+ Agent
 
-**File:** [`perceiver_plus.py`](src/heretek_swarm/actors/perceiver_plus.py)
+**File:** [`perceiver_plus.py`](backend/heretek_swarm/actors/perceiver_plus.py)
 
 **Role:** Advanced Analytics - Meta-perception and signal-from-noise extraction.
 
@@ -622,7 +622,7 @@ async def adapt_behavior(self, feedback: Feedback) -> BehavioralAdaptation
 
 ## Agent Factory
 
-**File:** [`factory.py`](src/heretek_swarm/actors/factory.py)
+**File:** [`factory.py`](backend/heretek_swarm/actors/factory.py)
 
 The Agent Factory provides centralized agent instantiation:
 
@@ -662,7 +662,7 @@ all_agents = await factory.create_all_agents()
 
 ## Handoff System
 
-**Files:** [`handoff.py`](src/heretek_swarm/actors/handoff.py), [`handoff_handlers.py`](src/heretek_swarm/actors/handoff_handlers.py)
+**Files:** [`handoff.py`](backend/heretek_swarm/actors/handoff.py), [`handoff_handlers.py`](backend/heretek_swarm/actors/handoff_handlers.py)
 
 Agents communicate via a structured handoff system:
 

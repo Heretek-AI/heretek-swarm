@@ -7,12 +7,12 @@ This file provides guidance to Claw Code (clawcode.dev) when working with code i
 - Frameworks/tooling markers: React, Vite.
 
 ## Verification
-- Run the Python project checks from `pyproject.toml`: `pytest tests/` for tests, `ruff check src tests` for linting, and `mypy src` for type checking.
+- Run the Python project checks from `pyproject.toml`: `cd backend && pytest` for tests, `ruff check heretek_swarm tests` for linting, and `mypy heretek_swarm` for type checking.
 - Run the JavaScript/TypeScript checks from `package.json` before shipping changes (`npm test`, `npm run lint`, `npm run build`, or the repo equivalent).
-- `src/` and `tests/` are both present; update both surfaces together when behavior changes.
+- `backend/heretek_swarm/` contains source files; `tests/` contains validation surfaces; update both together when behavior changes.
 
 ## Repository shape
-- `src/` contains source files that should stay consistent with generated guidance and tests.
+- `backend/heretek_swarm/` contains source files that should stay consistent with generated guidance and tests.
 - `tests/` contains validation surfaces that should be reviewed alongside code changes.
 
 ## Framework notes

@@ -19,7 +19,7 @@ The Actor Model implementation forms the foundation of the Heretek Swarm archite
 
 ## AgentActor Base Class
 
-**File:** [`src/heretek_swarm/actors/base.py`](../src/heretek_swarm/actors/base.py)
+**File:** [`backend/heretek_swarm/actors/base.py`](../backend/heretek_swarm/actors/base.py)
 
 The foundation for all agent implementations, providing:
 - Async message handling
@@ -58,7 +58,7 @@ class AgentActor:
 
 ## ActorMessage
 
-**File:** [`src/heretek_swarm/actors/base.py`](../src/heretek_swarm/actors/base.py)
+**File:** [`backend/heretek_swarm/actors/base.py`](../backend/heretek_swarm/actors/base.py)
 
 Message structure for inter-agent communication.
 
@@ -91,7 +91,7 @@ class ActorMessage:
 
 ## ActorFactory
 
-**File:** [`src/heretek_swarm/actors/factory.py`](../src/heretek_swarm/actors/factory.py)
+**File:** [`backend/heretek_swarm/actors/factory.py`](../backend/heretek_swarm/actors/factory.py)
 
 Creates and configures agent instances with proper initialization.
 
@@ -122,7 +122,7 @@ agents = ActorFactory.get_all_agent_classes()
 
 ## ActorSupervisor
 
-**File:** [`src/heretek_swarm/actors/supervisor.py`](../src/heretek_swarm/actors/supervisor.py)
+**File:** [`backend/heretek_swarm/actors/supervisor.py`](../backend/heretek_swarm/actors/supervisor.py)
 
 Manages agent lifecycle and coordination.
 
@@ -153,7 +153,7 @@ class ActorSupervisor:
 
 ## Validation Models
 
-**File:** [`src/heretek_swarm/actors/validation.py`](../src/heretek_swarm/actors/validation.py)
+**File:** [`backend/heretek_swarm/actors/validation.py`](../backend/heretek_swarm/actors/validation.py)
 
 Pydantic v2 validation models for Zero-Trust input validation.
 
@@ -201,5 +201,5 @@ class MessageContent(BaseModel):
 ## See Also
 
 - [Agent Reference](./AGENT_REFERENCE.md) - All 23 agent implementations
-- Gateway implementation in `src/heretek_swarm/gateway/` - A2A protocol and event mesh
+- Gateway implementation in `backend/heretek_swarm/gateway/` - A2A protocol and event mesh
 - [Memory System](./MEMORY_SYSTEM.md) - Memory storage and retrieval
