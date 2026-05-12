@@ -1,0 +1,255 @@
+{"event_id": "3dd6321ed963424a8329475cb18ea319", "type": "test_event", "timestamp": "2026-05-12T15:50:15.851213+00:00", "agent_id": "alpha", "payload": {"key": "value"}}
+{"event_id": "a383b2cd16b845ca95e00a45c6533152", "type": "schema_check", "timestamp": "2026-05-12T15:50:15.860642+00:00", "agent_id": "bravo", "payload": {"n": 42}}
+{"event_id": "51133b4d0f01451ab8596061432f6fd4", "type": "append_test", "timestamp": "2026-05-12T15:50:15.879467+00:00", "agent_id": "charlie", "payload": {"index": 0}}
+{"event_id": "e81cfbfe64824fcf9d2fa3b682c62710", "type": "append_test", "timestamp": "2026-05-12T15:50:15.879484+00:00", "agent_id": "charlie", "payload": {"index": 1}}
+{"event_id": "79e66776082446e19b0a0329a39ce131", "type": "append_test", "timestamp": "2026-05-12T15:50:15.879492+00:00", "agent_id": "charlie", "payload": {"index": 2}}
+{"event_id": "d36e56ae3cf7460985a9b57399e95409", "type": "append_test", "timestamp": "2026-05-12T15:50:15.879499+00:00", "agent_id": "charlie", "payload": {"index": 3}}
+{"event_id": "a45586465454481fa326c9c14631f212", "type": "append_test", "timestamp": "2026-05-12T15:50:15.879505+00:00", "agent_id": "charlie", "payload": {"index": 4}}
+{"event_id": "1282671a507b48b58b243c1607ce163f", "type": "cleanup_test", "timestamp": "2026-05-12T15:50:15.899997+00:00", "agent_id": "delta", "payload": {"flush": true}}
+{"event_id": "c7d08e25731f489f87c857e5c56be463", "type": "handler_test", "timestamp": "2026-05-12T15:50:15.920748+00:00", "agent_id": "echo", "payload": {"msg": "hello"}}
+{"event_id": "80f6fee1be55431d8986c46a27714255", "type": "cycle_scheduled_tasks", "timestamp": "2026-05-12T15:50:16.042671+00:00", "agent_id": "main_loop", "payload": {"tick_count": 1}}
+{"event_id": "5789071ec72f4d45a9231bab1820f53c", "type": "cycle_complete", "timestamp": "2026-05-12T15:50:16.042698+00:00", "agent_id": "main_loop", "payload": {}}
+{"event_id": "5daab51430c54bf48b9a7baddb3d4326", "type": "cycle_complete", "timestamp": "2026-05-12T15:50:16.159396+00:00", "agent_id": "main_loop", "payload": {}}
+{"event_id": "a51fc0374ca646c29e5052fb7023bce4", "type": "cycle_complete", "timestamp": "2026-05-12T15:50:16.182182+00:00", "agent_id": "main_loop", "payload": {}}
+{"event_id": "27fe3a70f8aa4f229035a526a917ba1c", "type": "steward_pulse", "timestamp": "2026-05-12T15:50:16.209355+00:00", "agent_id": "steward", "payload": {"timestamp": "2026-05-12T15:50:16.209315+00:00", "active_actors": 2, "deliberations_active": 0, "heartbeat_healthy": true}}
+{"event_id": "a4d959c5233d4456939ebf53849f842d", "type": "steward_pulse", "timestamp": "2026-05-12T15:50:16.612468+00:00", "agent_id": "steward", "payload": {"actors": 5}}
+{"event_id": "99ef306f9f644eb9be2eb2453db1042c", "type": "cycle_complete", "timestamp": "2026-05-12T15:50:16.612480+00:00", "agent_id": "main_loop", "payload": {"cycle": 1}}
+{"event_id": "3781ad19866f4454866130d879f7c9e1", "type": "pre_cleanup", "timestamp": "2026-05-12T15:50:16.637370+00:00", "agent_id": "test", "payload": {"flush": true}}
+{"event_id": "b0466c8609b7452592da859808f607ac", "type": "test_event", "timestamp": "2026-05-12T15:52:15.247707+00:00", "agent_id": "alpha", "payload": {"key": "value"}}
+{"event_id": "10deda97ad40465a84f76464cf364d0d", "type": "schema_check", "timestamp": "2026-05-12T15:52:15.261089+00:00", "agent_id": "bravo", "payload": {"n": 42}}
+{"event_id": "dd89138a72524b0aa2c8a6e1caaf76e8", "type": "append_test", "timestamp": "2026-05-12T15:52:15.273940+00:00", "agent_id": "charlie", "payload": {"index": 0}}
+{"event_id": "de931744588d46c8b0195f8cb4240816", "type": "append_test", "timestamp": "2026-05-12T15:52:15.273955+00:00", "agent_id": "charlie", "payload": {"index": 1}}
+{"event_id": "5589f106d53e48eda0224e18eff9b340", "type": "append_test", "timestamp": "2026-05-12T15:52:15.273963+00:00", "agent_id": "charlie", "payload": {"index": 2}}
+{"event_id": "677dde225c2d45dd8b6a9eb6cffbd0db", "type": "append_test", "timestamp": "2026-05-12T15:52:15.273970+00:00", "agent_id": "charlie", "payload": {"index": 3}}
+{"event_id": "2a7eb3e5778345cbb9d828ca503f34de", "type": "append_test", "timestamp": "2026-05-12T15:52:15.273976+00:00", "agent_id": "charlie", "payload": {"index": 4}}
+{"event_id": "85b29d5c81b24ffd92a77510deefb3ed", "type": "cleanup_test", "timestamp": "2026-05-12T15:52:15.291283+00:00", "agent_id": "delta", "payload": {"flush": true}}
+{"event_id": "5695a5c84845405faccad69a6db3fe51", "type": "handler_test", "timestamp": "2026-05-12T15:52:15.306864+00:00", "agent_id": "echo", "payload": {"msg": "hello"}}
+{"event_id": "323f1d77639b4011ad1fe78ed3c2aac5", "type": "cycle_scheduled_tasks", "timestamp": "2026-05-12T15:52:15.389121+00:00", "agent_id": "main_loop", "payload": {"tick_count": 1}}
+{"event_id": "b72389a2b6964f3197037900872153b2", "type": "cycle_complete", "timestamp": "2026-05-12T15:52:15.389145+00:00", "agent_id": "main_loop", "payload": {}}
+{"event_id": "89ddd77ef97a4d82936ac5a3e8dc2078", "type": "cycle_complete", "timestamp": "2026-05-12T15:52:15.508733+00:00", "agent_id": "main_loop", "payload": {}}
+{"event_id": "cf06d41d692d4ca1be29f004b1a87bd8", "type": "cycle_complete", "timestamp": "2026-05-12T15:52:15.535730+00:00", "agent_id": "main_loop", "payload": {}}
+{"event_id": "3ac0d9d17815442584159262c00fb614", "type": "steward_pulse", "timestamp": "2026-05-12T15:52:15.559927+00:00", "agent_id": "steward", "payload": {"timestamp": "2026-05-12T15:52:15.559888+00:00", "active_actors": 2, "deliberations_active": 0, "heartbeat_healthy": true}}
+{"event_id": "119df8d94ee84466a586d66c3cd83eb5", "type": "steward_pulse", "timestamp": "2026-05-12T15:52:15.941465+00:00", "agent_id": "steward", "payload": {"actors": 5}}
+{"event_id": "4f06242e0d104282bda3b3c26b4fe116", "type": "cycle_complete", "timestamp": "2026-05-12T15:52:15.941477+00:00", "agent_id": "main_loop", "payload": {"cycle": 1}}
+{"event_id": "f5a0c66d84ee4a1ea8f9047a7900df4b", "type": "pre_cleanup", "timestamp": "2026-05-12T15:52:15.955193+00:00", "agent_id": "test", "payload": {"flush": true}}
+{"event_id": "cfd414ce595e4713a235093bebb5412f", "type": "test_event", "timestamp": "2026-05-12T15:54:11.079724+00:00", "agent_id": "alpha", "payload": {"key": "value"}}
+{"event_id": "c3593acf37a04739af9559ef8555ad81", "type": "schema_check", "timestamp": "2026-05-12T15:54:11.094551+00:00", "agent_id": "bravo", "payload": {"n": 42}}
+{"event_id": "66d5501a97ec4b979c3a9f4cc13f62ff", "type": "append_test", "timestamp": "2026-05-12T15:54:11.111201+00:00", "agent_id": "charlie", "payload": {"index": 0}}
+{"event_id": "9c23c2b006404a93858db3cecde3b59e", "type": "append_test", "timestamp": "2026-05-12T15:54:11.111216+00:00", "agent_id": "charlie", "payload": {"index": 1}}
+{"event_id": "c4265c565cae4f7398ca29812f125da8", "type": "append_test", "timestamp": "2026-05-12T15:54:11.111223+00:00", "agent_id": "charlie", "payload": {"index": 2}}
+{"event_id": "1e934e2e42f344b788d35c851186ca2e", "type": "append_test", "timestamp": "2026-05-12T15:54:11.111230+00:00", "agent_id": "charlie", "payload": {"index": 3}}
+{"event_id": "c6104fb7a86a4336903aaab81f499c81", "type": "append_test", "timestamp": "2026-05-12T15:54:11.111236+00:00", "agent_id": "charlie", "payload": {"index": 4}}
+{"event_id": "873a10d9d5e24ce98938341450a26abf", "type": "cleanup_test", "timestamp": "2026-05-12T15:54:11.126974+00:00", "agent_id": "delta", "payload": {"flush": true}}
+{"event_id": "01d55f6d338e4fe0b9a6204a945d07b4", "type": "handler_test", "timestamp": "2026-05-12T15:54:11.141903+00:00", "agent_id": "echo", "payload": {"msg": "hello"}}
+{"event_id": "96b6bf2b366d4b8ca110f3456fc329f4", "type": "cycle_scheduled_tasks", "timestamp": "2026-05-12T15:54:11.245783+00:00", "agent_id": "main_loop", "payload": {"tick_count": 1}}
+{"event_id": "1b0d51ccd7d0487ab9b74dceefa72327", "type": "cycle_complete", "timestamp": "2026-05-12T15:54:11.245809+00:00", "agent_id": "main_loop", "payload": {}}
+{"event_id": "2823fa2e925d4b4692c3b1dc7841cc1d", "type": "cycle_complete", "timestamp": "2026-05-12T15:54:11.356549+00:00", "agent_id": "main_loop", "payload": {}}
+{"event_id": "0b48d31bce3646eebbd5c086bd231d87", "type": "cycle_complete", "timestamp": "2026-05-12T15:54:11.367367+00:00", "agent_id": "main_loop", "payload": {}}
+{"event_id": "7b82318314004c46a8091ffcee5206c2", "type": "steward_pulse", "timestamp": "2026-05-12T15:54:11.379114+00:00", "agent_id": "steward", "payload": {"timestamp": "2026-05-12T15:54:11.379090+00:00", "active_actors": 2, "deliberations_active": 0, "heartbeat_healthy": true}}
+{"event_id": "98b5556d968640ce9d87ad93519fa5cc", "type": "steward_pulse", "timestamp": "2026-05-12T15:54:11.778951+00:00", "agent_id": "steward", "payload": {"actors": 5}}
+{"event_id": "e278f6218c9e44a69a307a408bc9d785", "type": "cycle_complete", "timestamp": "2026-05-12T15:54:11.778962+00:00", "agent_id": "main_loop", "payload": {"cycle": 1}}
+{"event_id": "eeeb32b6bd274a3a8100fb0b4b4c784a", "type": "pre_cleanup", "timestamp": "2026-05-12T15:54:11.792296+00:00", "agent_id": "test", "payload": {"flush": true}}
+{"event_id": "13168136e2a945e8b1d887c8f1e10685", "type": "test_event", "timestamp": "2026-05-12T15:56:14.365862+00:00", "agent_id": "alpha", "payload": {"key": "value"}}
+{"event_id": "fff930c40c3e4ae2ba2908b71627c9c7", "type": "schema_check", "timestamp": "2026-05-12T15:56:14.379753+00:00", "agent_id": "bravo", "payload": {"n": 42}}
+{"event_id": "d71105a9918a444585466eb39a50ade7", "type": "append_test", "timestamp": "2026-05-12T15:56:14.394592+00:00", "agent_id": "charlie", "payload": {"index": 0}}
+{"event_id": "0e9b120cc1964b0b9ca56ee941b17241", "type": "append_test", "timestamp": "2026-05-12T15:56:14.394810+00:00", "agent_id": "charlie", "payload": {"index": 1}}
+{"event_id": "f259d7c9c67247e8a7fc3869e0f16edd", "type": "append_test", "timestamp": "2026-05-12T15:56:14.394823+00:00", "agent_id": "charlie", "payload": {"index": 2}}
+{"event_id": "9d92b7ad7b914e7a8f0d922045e81fb7", "type": "append_test", "timestamp": "2026-05-12T15:56:14.394830+00:00", "agent_id": "charlie", "payload": {"index": 3}}
+{"event_id": "d932419b3aa342eb90a48d0399804d06", "type": "append_test", "timestamp": "2026-05-12T15:56:14.394836+00:00", "agent_id": "charlie", "payload": {"index": 4}}
+{"event_id": "202af0bbe4904509b0f2698b44094be7", "type": "cleanup_test", "timestamp": "2026-05-12T15:56:14.417201+00:00", "agent_id": "delta", "payload": {"flush": true}}
+{"event_id": "dd36b60ba6e944eaafbc3268a5793e22", "type": "handler_test", "timestamp": "2026-05-12T15:56:14.432730+00:00", "agent_id": "echo", "payload": {"msg": "hello"}}
+{"event_id": "0a556f9afa764ace84842d71d8c2c02e", "type": "cycle_scheduled_tasks", "timestamp": "2026-05-12T15:56:14.525088+00:00", "agent_id": "main_loop", "payload": {"tick_count": 1}}
+{"event_id": "4b4cea7cf66f4b5fa6ea176350ef6a1d", "type": "cycle_complete", "timestamp": "2026-05-12T15:56:14.525125+00:00", "agent_id": "main_loop", "payload": {}}
+{"event_id": "00762a4b8bf543b48ccca616c2c18ff9", "type": "cycle_complete", "timestamp": "2026-05-12T15:56:14.638843+00:00", "agent_id": "main_loop", "payload": {}}
+{"event_id": "4343f14715fd4f688e9d74c430a72339", "type": "cycle_complete", "timestamp": "2026-05-12T15:56:14.651707+00:00", "agent_id": "main_loop", "payload": {}}
+{"event_id": "c51a050b6a8b4d43af3eb022e836870e", "type": "steward_pulse", "timestamp": "2026-05-12T15:56:14.671364+00:00", "agent_id": "steward", "payload": {"timestamp": "2026-05-12T15:56:14.671323+00:00", "active_actors": 2, "deliberations_active": 0, "heartbeat_healthy": true}}
+{"event_id": "db079c669c9049ea90a4091bcc40791b", "type": "steward_pulse", "timestamp": "2026-05-12T15:56:15.089142+00:00", "agent_id": "steward", "payload": {"actors": 5}}
+{"event_id": "bd77b07a4ecd4793b215bef1172e7a21", "type": "cycle_complete", "timestamp": "2026-05-12T15:56:15.089154+00:00", "agent_id": "main_loop", "payload": {"cycle": 1}}
+{"event_id": "a74fa45310524b8bbf5bdda2f323e28d", "type": "pre_cleanup", "timestamp": "2026-05-12T15:56:15.101849+00:00", "agent_id": "test", "payload": {"flush": true}}
+{"event_id": "51843f55d5294c209745173f8fe8c3bc", "type": "test_event", "timestamp": "2026-05-12T15:57:59.051157+00:00", "agent_id": "alpha", "payload": {"key": "value"}}
+{"event_id": "e32a26c0467a44ef8b68fa1672d824df", "type": "schema_check", "timestamp": "2026-05-12T15:57:59.064800+00:00", "agent_id": "bravo", "payload": {"n": 42}}
+{"event_id": "ff747143a81643fd9e5bcd9909466d7d", "type": "append_test", "timestamp": "2026-05-12T15:57:59.079880+00:00", "agent_id": "charlie", "payload": {"index": 0}}
+{"event_id": "6d2b4ec7630c44d3b460b0ee66b233b6", "type": "append_test", "timestamp": "2026-05-12T15:57:59.079897+00:00", "agent_id": "charlie", "payload": {"index": 1}}
+{"event_id": "0761c7bf539e4d05b2ceab48df590a77", "type": "append_test", "timestamp": "2026-05-12T15:57:59.079907+00:00", "agent_id": "charlie", "payload": {"index": 2}}
+{"event_id": "ccf9d4f34ef64e018326117507bb400a", "type": "append_test", "timestamp": "2026-05-12T15:57:59.079913+00:00", "agent_id": "charlie", "payload": {"index": 3}}
+{"event_id": "fe0b9247ef894dd88c9685f828af488d", "type": "append_test", "timestamp": "2026-05-12T15:57:59.079919+00:00", "agent_id": "charlie", "payload": {"index": 4}}
+{"event_id": "d88769e5c97c46ccb47d16fe80742628", "type": "cleanup_test", "timestamp": "2026-05-12T15:57:59.097433+00:00", "agent_id": "delta", "payload": {"flush": true}}
+{"event_id": "a5e2efc0c68043499909e6046abe2bb8", "type": "handler_test", "timestamp": "2026-05-12T15:57:59.111490+00:00", "agent_id": "echo", "payload": {"msg": "hello"}}
+{"event_id": "2c810257a2b4463c8858a4480e681c10", "type": "cycle_scheduled_tasks", "timestamp": "2026-05-12T15:57:59.199021+00:00", "agent_id": "main_loop", "payload": {"tick_count": 1}}
+{"event_id": "2aec6f32624f4bf39e5d2dd7b2705fef", "type": "cycle_complete", "timestamp": "2026-05-12T15:57:59.199048+00:00", "agent_id": "main_loop", "payload": {}}
+{"event_id": "92e1d83ed9824cc480e1baad03f97c50", "type": "cycle_complete", "timestamp": "2026-05-12T15:57:59.315780+00:00", "agent_id": "main_loop", "payload": {}}
+{"event_id": "a590ae17f57b4749868d232df7b70772", "type": "cycle_complete", "timestamp": "2026-05-12T15:57:59.330578+00:00", "agent_id": "main_loop", "payload": {}}
+{"event_id": "d3f8eb5689c64de49bb7d78ee17c5c45", "type": "steward_pulse", "timestamp": "2026-05-12T15:57:59.351509+00:00", "agent_id": "steward", "payload": {"timestamp": "2026-05-12T15:57:59.351469+00:00", "active_actors": 2, "deliberations_active": 0, "heartbeat_healthy": true}}
+{"event_id": "39dd5785b5bc451fab9bfc1cb943b3ce", "type": "steward_pulse", "timestamp": "2026-05-12T15:57:59.723267+00:00", "agent_id": "steward", "payload": {"actors": 5}}
+{"event_id": "a89dc495f3214930bce39b72a11463d5", "type": "cycle_complete", "timestamp": "2026-05-12T15:57:59.723279+00:00", "agent_id": "main_loop", "payload": {"cycle": 1}}
+{"event_id": "167cd277ff7e4173a86a60736d204b3b", "type": "pre_cleanup", "timestamp": "2026-05-12T15:57:59.735457+00:00", "agent_id": "test", "payload": {"flush": true}}
+{"event_id": "22045186f5ab4ad086be967a078cc296", "type": "test_event", "timestamp": "2026-05-12T15:59:45.182813+00:00", "agent_id": "alpha", "payload": {"key": "value"}}
+{"event_id": "9fd9cbfe878b4f27ad11141f55f9c2fc", "type": "schema_check", "timestamp": "2026-05-12T15:59:45.198808+00:00", "agent_id": "bravo", "payload": {"n": 42}}
+{"event_id": "c4f9af71c2a34f0fba94df24f826d668", "type": "append_test", "timestamp": "2026-05-12T15:59:45.213087+00:00", "agent_id": "charlie", "payload": {"index": 0}}
+{"event_id": "e3cf0c54151e40ffa456a0f1e879fb47", "type": "append_test", "timestamp": "2026-05-12T15:59:45.213102+00:00", "agent_id": "charlie", "payload": {"index": 1}}
+{"event_id": "78fc71d01a9144e3b38a4ab49882cfb5", "type": "append_test", "timestamp": "2026-05-12T15:59:45.213110+00:00", "agent_id": "charlie", "payload": {"index": 2}}
+{"event_id": "0244c73269794fc4be444955afab3118", "type": "append_test", "timestamp": "2026-05-12T15:59:45.213117+00:00", "agent_id": "charlie", "payload": {"index": 3}}
+{"event_id": "2c8e0121ea964e489059dc0279ea9797", "type": "append_test", "timestamp": "2026-05-12T15:59:45.213123+00:00", "agent_id": "charlie", "payload": {"index": 4}}
+{"event_id": "74a2687693e14e20bd0646dc3251ed5a", "type": "cleanup_test", "timestamp": "2026-05-12T15:59:45.230597+00:00", "agent_id": "delta", "payload": {"flush": true}}
+{"event_id": "e1ac8b07b7164e35bf5a3ae50b03a338", "type": "handler_test", "timestamp": "2026-05-12T15:59:45.245811+00:00", "agent_id": "echo", "payload": {"msg": "hello"}}
+{"event_id": "cced4f4b10724c6e92528343b165c13a", "type": "cycle_scheduled_tasks", "timestamp": "2026-05-12T15:59:45.321461+00:00", "agent_id": "main_loop", "payload": {"tick_count": 1}}
+{"event_id": "556486486a0244db8acf0122c625a239", "type": "cycle_complete", "timestamp": "2026-05-12T15:59:45.321486+00:00", "agent_id": "main_loop", "payload": {}}
+{"event_id": "7617e637e6684299bb2f69c85f8d0692", "type": "cycle_complete", "timestamp": "2026-05-12T15:59:45.437555+00:00", "agent_id": "main_loop", "payload": {}}
+{"event_id": "3dc27f92cc104ec4b446df34c98857fc", "type": "cycle_complete", "timestamp": "2026-05-12T15:59:45.450799+00:00", "agent_id": "main_loop", "payload": {}}
+{"event_id": "0784be62f36e4cc6a8516fad7242d708", "type": "steward_pulse", "timestamp": "2026-05-12T15:59:45.474830+00:00", "agent_id": "steward", "payload": {"timestamp": "2026-05-12T15:59:45.474793+00:00", "active_actors": 2, "deliberations_active": 0, "heartbeat_healthy": true}}
+{"event_id": "6a885961bdeb4e6daf5a8a77b23ecc0c", "type": "steward_pulse", "timestamp": "2026-05-12T15:59:45.858171+00:00", "agent_id": "steward", "payload": {"actors": 5}}
+{"event_id": "2a9c6017392c413f9f9e899fb79ab98b", "type": "cycle_complete", "timestamp": "2026-05-12T15:59:45.858183+00:00", "agent_id": "main_loop", "payload": {"cycle": 1}}
+{"event_id": "7550f4163e614ecfbf7f475f4e1cf545", "type": "pre_cleanup", "timestamp": "2026-05-12T15:59:45.883173+00:00", "agent_id": "test", "payload": {"flush": true}}
+{"event_id": "407eff4defe44138b719f563ceb0d303", "type": "test_event", "timestamp": "2026-05-12T16:01:22.448468+00:00", "agent_id": "alpha", "payload": {"key": "value"}}
+{"event_id": "a2195a105cc24df4ae019efe79ddfd73", "type": "schema_check", "timestamp": "2026-05-12T16:01:22.462122+00:00", "agent_id": "bravo", "payload": {"n": 42}}
+{"event_id": "b0988962e68f49049e53dbf949f38670", "type": "append_test", "timestamp": "2026-05-12T16:01:22.476756+00:00", "agent_id": "charlie", "payload": {"index": 0}}
+{"event_id": "6291e9bbae6c4e75adf9f0450f42b82f", "type": "append_test", "timestamp": "2026-05-12T16:01:22.476772+00:00", "agent_id": "charlie", "payload": {"index": 1}}
+{"event_id": "f650fe2f988645ceb3219d1ba3717de4", "type": "append_test", "timestamp": "2026-05-12T16:01:22.476781+00:00", "agent_id": "charlie", "payload": {"index": 2}}
+{"event_id": "4e8f1ffefd73496982645516e55b49f3", "type": "append_test", "timestamp": "2026-05-12T16:01:22.476788+00:00", "agent_id": "charlie", "payload": {"index": 3}}
+{"event_id": "c9206320ce134b879c975666b3acffc1", "type": "append_test", "timestamp": "2026-05-12T16:01:22.476796+00:00", "agent_id": "charlie", "payload": {"index": 4}}
+{"event_id": "79caf4857c1c40b2a5dfaf91950eca48", "type": "cleanup_test", "timestamp": "2026-05-12T16:01:22.494865+00:00", "agent_id": "delta", "payload": {"flush": true}}
+{"event_id": "1e368202ab6a4ac0bafb9a9cb323095b", "type": "handler_test", "timestamp": "2026-05-12T16:01:22.510847+00:00", "agent_id": "echo", "payload": {"msg": "hello"}}
+{"event_id": "9a0b676de4884c028cf84903e5e47e77", "type": "cycle_scheduled_tasks", "timestamp": "2026-05-12T16:01:22.601693+00:00", "agent_id": "main_loop", "payload": {"tick_count": 1}}
+{"event_id": "b15f7e3a489d4639b585752988e1dab3", "type": "cycle_complete", "timestamp": "2026-05-12T16:01:22.601718+00:00", "agent_id": "main_loop", "payload": {}}
+{"event_id": "72e8a0a714674521aab036a011d5bcb3", "type": "cycle_complete", "timestamp": "2026-05-12T16:01:22.712130+00:00", "agent_id": "main_loop", "payload": {}}
+{"event_id": "9ef05f97e01948689ab9d2ea5a20c27d", "type": "cycle_complete", "timestamp": "2026-05-12T16:01:22.724247+00:00", "agent_id": "main_loop", "payload": {}}
+{"event_id": "7302e579b06a4c03953b3fa258713d9b", "type": "steward_pulse", "timestamp": "2026-05-12T16:01:22.741223+00:00", "agent_id": "steward", "payload": {"timestamp": "2026-05-12T16:01:22.741183+00:00", "active_actors": 2, "deliberations_active": 0, "heartbeat_healthy": true}}
+{"event_id": "56a6d66b8a2f4bd689e778d84fc6582a", "type": "steward_pulse", "timestamp": "2026-05-12T16:01:23.134734+00:00", "agent_id": "steward", "payload": {"actors": 5}}
+{"event_id": "8473e51e71ee4af8a7668f93c6df2b49", "type": "cycle_complete", "timestamp": "2026-05-12T16:01:23.134746+00:00", "agent_id": "main_loop", "payload": {"cycle": 1}}
+{"event_id": "72bb366ba3734f9aa71eaabb52bd6927", "type": "pre_cleanup", "timestamp": "2026-05-12T16:01:23.147419+00:00", "agent_id": "test", "payload": {"flush": true}}
+{"event_id": "1fa35c2acd7e4c89a102180c3769d462", "type": "test_event", "timestamp": "2026-05-12T16:03:10.715618+00:00", "agent_id": "alpha", "payload": {"key": "value"}}
+{"event_id": "07d27511fe3c410f97951c028293f77c", "type": "schema_check", "timestamp": "2026-05-12T16:03:10.733056+00:00", "agent_id": "bravo", "payload": {"n": 42}}
+{"event_id": "1e4b179e4a79462dbe6c3af8422292b5", "type": "append_test", "timestamp": "2026-05-12T16:03:10.747268+00:00", "agent_id": "charlie", "payload": {"index": 0}}
+{"event_id": "84ee80465a9e402280ec341d67ebafb9", "type": "append_test", "timestamp": "2026-05-12T16:03:10.747283+00:00", "agent_id": "charlie", "payload": {"index": 1}}
+{"event_id": "41d3abe7dd044d14a17d984f84821e8b", "type": "append_test", "timestamp": "2026-05-12T16:03:10.747291+00:00", "agent_id": "charlie", "payload": {"index": 2}}
+{"event_id": "22918ce537e240ad95095f54e53833a2", "type": "append_test", "timestamp": "2026-05-12T16:03:10.747297+00:00", "agent_id": "charlie", "payload": {"index": 3}}
+{"event_id": "18754b8dc60a4d839a61baaf562d7640", "type": "append_test", "timestamp": "2026-05-12T16:03:10.747304+00:00", "agent_id": "charlie", "payload": {"index": 4}}
+{"event_id": "62015016d40d4937b62b92b0b6bb8234", "type": "cleanup_test", "timestamp": "2026-05-12T16:03:10.764705+00:00", "agent_id": "delta", "payload": {"flush": true}}
+{"event_id": "da7662ee43c14b74976b9b6215494328", "type": "handler_test", "timestamp": "2026-05-12T16:03:10.779673+00:00", "agent_id": "echo", "payload": {"msg": "hello"}}
+{"event_id": "f3e3e7ecb4fd4177904579d2c396672f", "type": "cycle_scheduled_tasks", "timestamp": "2026-05-12T16:03:10.877279+00:00", "agent_id": "main_loop", "payload": {"tick_count": 1}}
+{"event_id": "2cdbd79a45a4435585ac0ebf6e23f23b", "type": "cycle_complete", "timestamp": "2026-05-12T16:03:10.877304+00:00", "agent_id": "main_loop", "payload": {}}
+{"event_id": "375ea0f263ae4414bc825dc9eaab4cab", "type": "cycle_complete", "timestamp": "2026-05-12T16:03:10.990547+00:00", "agent_id": "main_loop", "payload": {}}
+{"event_id": "14c4233cf6cc48ae939fa5b7a8e87691", "type": "cycle_complete", "timestamp": "2026-05-12T16:03:11.003878+00:00", "agent_id": "main_loop", "payload": {}}
+{"event_id": "6566abe35f7c451180f76e27b2cb65c3", "type": "steward_pulse", "timestamp": "2026-05-12T16:03:11.031325+00:00", "agent_id": "steward", "payload": {"timestamp": "2026-05-12T16:03:11.031285+00:00", "active_actors": 2, "deliberations_active": 0, "heartbeat_healthy": true}}
+{"event_id": "a223b78b3bd44e3594307dbf71bc0bad", "type": "steward_pulse", "timestamp": "2026-05-12T16:03:11.443429+00:00", "agent_id": "steward", "payload": {"actors": 5}}
+{"event_id": "754911201e7f4199ab964bf1587de3d6", "type": "cycle_complete", "timestamp": "2026-05-12T16:03:11.443442+00:00", "agent_id": "main_loop", "payload": {"cycle": 1}}
+{"event_id": "52d5522365134f1fb7c50b0d79003234", "type": "pre_cleanup", "timestamp": "2026-05-12T16:03:11.457762+00:00", "agent_id": "test", "payload": {"flush": true}}
+{"event_id": "364e4c59b77d4f4498a1e9045b695d21", "type": "test_event", "timestamp": "2026-05-12T16:04:27.311615+00:00", "agent_id": "alpha", "payload": {"key": "value"}}
+{"event_id": "8fb22fd38a944352b3c200dcf51568e0", "type": "schema_check", "timestamp": "2026-05-12T16:04:27.325213+00:00", "agent_id": "bravo", "payload": {"n": 42}}
+{"event_id": "7ba065e02c66402b807d34fc4fe9375c", "type": "append_test", "timestamp": "2026-05-12T16:04:27.339927+00:00", "agent_id": "charlie", "payload": {"index": 0}}
+{"event_id": "2a331f92931e46978cba7c6f03d45580", "type": "append_test", "timestamp": "2026-05-12T16:04:27.339948+00:00", "agent_id": "charlie", "payload": {"index": 1}}
+{"event_id": "7d60d11f63cb4991b053fa89f6a5b988", "type": "append_test", "timestamp": "2026-05-12T16:04:27.339957+00:00", "agent_id": "charlie", "payload": {"index": 2}}
+{"event_id": "dd4ca4f79e354effa80ab3288c5b1c0b", "type": "append_test", "timestamp": "2026-05-12T16:04:27.339964+00:00", "agent_id": "charlie", "payload": {"index": 3}}
+{"event_id": "ad1db443749d47f4b1bc5ae288874d01", "type": "append_test", "timestamp": "2026-05-12T16:04:27.339970+00:00", "agent_id": "charlie", "payload": {"index": 4}}
+{"event_id": "c116f869b65047ca92d48d468b1167e1", "type": "cleanup_test", "timestamp": "2026-05-12T16:04:27.358382+00:00", "agent_id": "delta", "payload": {"flush": true}}
+{"event_id": "a65076d5afc54489b6a15afb6e82b1cd", "type": "handler_test", "timestamp": "2026-05-12T16:04:27.374203+00:00", "agent_id": "echo", "payload": {"msg": "hello"}}
+{"event_id": "685ed9a9ffc44d4d912205e5578b000b", "type": "cycle_scheduled_tasks", "timestamp": "2026-05-12T16:04:27.470031+00:00", "agent_id": "main_loop", "payload": {"tick_count": 1}}
+{"event_id": "5735f62dabc5408cb2596c7f5cd6ed3e", "type": "cycle_complete", "timestamp": "2026-05-12T16:04:27.470060+00:00", "agent_id": "main_loop", "payload": {}}
+{"event_id": "494e1f025868411f881d9e13cdc8cfd8", "type": "cycle_complete", "timestamp": "2026-05-12T16:04:27.580878+00:00", "agent_id": "main_loop", "payload": {}}
+{"event_id": "9971a83aab084f00b86c997420198030", "type": "cycle_complete", "timestamp": "2026-05-12T16:04:27.596967+00:00", "agent_id": "main_loop", "payload": {}}
+{"event_id": "b978ca0ff0cc41d0b14e06709ac09a37", "type": "steward_pulse", "timestamp": "2026-05-12T16:04:27.615978+00:00", "agent_id": "steward", "payload": {"timestamp": "2026-05-12T16:04:27.615938+00:00", "active_actors": 2, "deliberations_active": 0, "heartbeat_healthy": true}}
+{"event_id": "6ca90b3c8e9d41c7b8b77ad34fffd355", "type": "steward_pulse", "timestamp": "2026-05-12T16:04:28.029912+00:00", "agent_id": "steward", "payload": {"actors": 5}}
+{"event_id": "3625e064194342bf9888d17622c07c15", "type": "cycle_complete", "timestamp": "2026-05-12T16:04:28.029924+00:00", "agent_id": "main_loop", "payload": {"cycle": 1}}
+{"event_id": "df3bcaa0b28449d0b2b4a43998296526", "type": "pre_cleanup", "timestamp": "2026-05-12T16:04:28.044408+00:00", "agent_id": "test", "payload": {"flush": true}}
+{"event_id": "38f59c4a33224967b912d11f7707a1cd", "type": "test_event", "timestamp": "2026-05-12T16:05:43.582675+00:00", "agent_id": "alpha", "payload": {"key": "value"}}
+{"event_id": "4d418023ca054374bf2918a4780cdbce", "type": "schema_check", "timestamp": "2026-05-12T16:05:43.598155+00:00", "agent_id": "bravo", "payload": {"n": 42}}
+{"event_id": "0b124bcab17b4e4a9ebbcc34dce6b79c", "type": "append_test", "timestamp": "2026-05-12T16:05:43.613458+00:00", "agent_id": "charlie", "payload": {"index": 0}}
+{"event_id": "1ffb365087f046a4b067d42975399ebd", "type": "append_test", "timestamp": "2026-05-12T16:05:43.613475+00:00", "agent_id": "charlie", "payload": {"index": 1}}
+{"event_id": "6339f6a615074495b2617a5972a094c1", "type": "append_test", "timestamp": "2026-05-12T16:05:43.613483+00:00", "agent_id": "charlie", "payload": {"index": 2}}
+{"event_id": "2647f7ac7a124c07abcd80d8f21b6ff2", "type": "append_test", "timestamp": "2026-05-12T16:05:43.613490+00:00", "agent_id": "charlie", "payload": {"index": 3}}
+{"event_id": "7821c08208094cffbcaa91dc8de02535", "type": "append_test", "timestamp": "2026-05-12T16:05:43.613495+00:00", "agent_id": "charlie", "payload": {"index": 4}}
+{"event_id": "e09b06f45cf243c390ae8dabbc31c6c8", "type": "cleanup_test", "timestamp": "2026-05-12T16:05:43.630295+00:00", "agent_id": "delta", "payload": {"flush": true}}
+{"event_id": "474de78ab22f4dae9ec516ddf96383da", "type": "handler_test", "timestamp": "2026-05-12T16:05:43.644301+00:00", "agent_id": "echo", "payload": {"msg": "hello"}}
+{"event_id": "384794ead58c4e21b714c7fc0e2a0839", "type": "cycle_scheduled_tasks", "timestamp": "2026-05-12T16:05:43.737515+00:00", "agent_id": "main_loop", "payload": {"tick_count": 1}}
+{"event_id": "724c856f91f64a18b7a0f86f2cc7eb8b", "type": "cycle_complete", "timestamp": "2026-05-12T16:05:43.737540+00:00", "agent_id": "main_loop", "payload": {}}
+{"event_id": "3976a406502041678d4fc8b85f6f2f20", "type": "cycle_complete", "timestamp": "2026-05-12T16:05:43.862635+00:00", "agent_id": "main_loop", "payload": {}}
+{"event_id": "ac5ac1baa6144a77b28292eef5458d03", "type": "cycle_complete", "timestamp": "2026-05-12T16:05:43.875780+00:00", "agent_id": "main_loop", "payload": {}}
+{"event_id": "8be1676874c04be684759f6022bda783", "type": "steward_pulse", "timestamp": "2026-05-12T16:05:43.885560+00:00", "agent_id": "steward", "payload": {"timestamp": "2026-05-12T16:05:43.885537+00:00", "active_actors": 2, "deliberations_active": 0, "heartbeat_healthy": true}}
+{"event_id": "db6f4c495a8d493e9180ad899a4141a5", "type": "steward_pulse", "timestamp": "2026-05-12T16:05:44.303961+00:00", "agent_id": "steward", "payload": {"actors": 5}}
+{"event_id": "cae9c7c88dc348b690819f3a5f81a467", "type": "cycle_complete", "timestamp": "2026-05-12T16:05:44.303967+00:00", "agent_id": "main_loop", "payload": {"cycle": 1}}
+{"event_id": "191fa963b836431d84b4e74ccac3e24f", "type": "pre_cleanup", "timestamp": "2026-05-12T16:05:44.310533+00:00", "agent_id": "test", "payload": {"flush": true}}
+{"event_id": "db391618eb504fe9b2d72600fd4038fe", "type": "test_event", "timestamp": "2026-05-12T16:08:20.590359+00:00", "agent_id": "alpha", "payload": {"key": "value"}}
+{"event_id": "9490c7e1f8bf420583ed5822ff7e955d", "type": "schema_check", "timestamp": "2026-05-12T16:08:20.606589+00:00", "agent_id": "bravo", "payload": {"n": 42}}
+{"event_id": "6650f92e96884a078e604cb782ea138a", "type": "append_test", "timestamp": "2026-05-12T16:08:20.619429+00:00", "agent_id": "charlie", "payload": {"index": 0}}
+{"event_id": "ae8446badf1e4de78becab59b2d3d08c", "type": "append_test", "timestamp": "2026-05-12T16:08:20.619445+00:00", "agent_id": "charlie", "payload": {"index": 1}}
+{"event_id": "834d97be4b5c43b6aec6ee0e1fb5e0b9", "type": "append_test", "timestamp": "2026-05-12T16:08:20.619453+00:00", "agent_id": "charlie", "payload": {"index": 2}}
+{"event_id": "79d6a2b3609e475192d85a3a45d1ce88", "type": "append_test", "timestamp": "2026-05-12T16:08:20.619459+00:00", "agent_id": "charlie", "payload": {"index": 3}}
+{"event_id": "28949cee86144221a72d16e2f575c34a", "type": "append_test", "timestamp": "2026-05-12T16:08:20.619465+00:00", "agent_id": "charlie", "payload": {"index": 4}}
+{"event_id": "5efde415c4634ce99ffdae5db45acce5", "type": "cleanup_test", "timestamp": "2026-05-12T16:08:20.647131+00:00", "agent_id": "delta", "payload": {"flush": true}}
+{"event_id": "246316ef780145bca302ef87c876e408", "type": "handler_test", "timestamp": "2026-05-12T16:08:20.662627+00:00", "agent_id": "echo", "payload": {"msg": "hello"}}
+{"event_id": "458c9690211a47f29137c85ea482473c", "type": "cycle_scheduled_tasks", "timestamp": "2026-05-12T16:08:20.756965+00:00", "agent_id": "main_loop", "payload": {"tick_count": 1}}
+{"event_id": "cdb882251ac14c1bb7c0dc48c18ec9a7", "type": "cycle_complete", "timestamp": "2026-05-12T16:08:20.756997+00:00", "agent_id": "main_loop", "payload": {}}
+{"event_id": "e973952e78e049a18e5430db8b533ca2", "type": "cycle_complete", "timestamp": "2026-05-12T16:08:20.875676+00:00", "agent_id": "main_loop", "payload": {}}
+{"event_id": "d18c14bf8d664ef08269a0695c165af4", "type": "cycle_complete", "timestamp": "2026-05-12T16:08:20.885738+00:00", "agent_id": "main_loop", "payload": {}}
+{"event_id": "5f5c4e6d46944db29491b4914f7dd6b2", "type": "steward_pulse", "timestamp": "2026-05-12T16:08:20.897825+00:00", "agent_id": "steward", "payload": {"timestamp": "2026-05-12T16:08:20.897803+00:00", "active_actors": 2, "deliberations_active": 0, "heartbeat_healthy": true}}
+{"event_id": "7ebc46aab12a477ba294a011c55a23f3", "type": "steward_pulse", "timestamp": "2026-05-12T16:08:21.311681+00:00", "agent_id": "steward", "payload": {"actors": 5}}
+{"event_id": "a8d85bd058b34ba597f1c2962e918d59", "type": "cycle_complete", "timestamp": "2026-05-12T16:08:21.311693+00:00", "agent_id": "main_loop", "payload": {"cycle": 1}}
+{"event_id": "99b033ce35e745ee97d712b04f20f09d", "type": "pre_cleanup", "timestamp": "2026-05-12T16:08:21.324987+00:00", "agent_id": "test", "payload": {"flush": true}}
+{"event_id": "966828cfbcd84ef3a411f4ca8d81d186", "type": "test_event", "timestamp": "2026-05-12T16:10:08.671751+00:00", "agent_id": "alpha", "payload": {"key": "value"}}
+{"event_id": "e512259b8f1b47a7928868ec1c8efbfd", "type": "schema_check", "timestamp": "2026-05-12T16:10:08.686720+00:00", "agent_id": "bravo", "payload": {"n": 42}}
+{"event_id": "beba4f9be92c4c45ab626b53448e6fbb", "type": "append_test", "timestamp": "2026-05-12T16:10:08.700828+00:00", "agent_id": "charlie", "payload": {"index": 0}}
+{"event_id": "527578c42c48453c91094e379fdb70c9", "type": "append_test", "timestamp": "2026-05-12T16:10:08.700842+00:00", "agent_id": "charlie", "payload": {"index": 1}}
+{"event_id": "052c316292be4c0d822d43a8ac695a1f", "type": "append_test", "timestamp": "2026-05-12T16:10:08.700850+00:00", "agent_id": "charlie", "payload": {"index": 2}}
+{"event_id": "bb3ac57808a44efcb54d29b991ad83f4", "type": "append_test", "timestamp": "2026-05-12T16:10:08.700857+00:00", "agent_id": "charlie", "payload": {"index": 3}}
+{"event_id": "766ed66ba6bd4ae094971d0669880f77", "type": "append_test", "timestamp": "2026-05-12T16:10:08.700863+00:00", "agent_id": "charlie", "payload": {"index": 4}}
+{"event_id": "a9a3384a20494c9590e9bcfde573036d", "type": "cleanup_test", "timestamp": "2026-05-12T16:10:08.717815+00:00", "agent_id": "delta", "payload": {"flush": true}}
+{"event_id": "b83f53088a2340edbcaf4d54240b08fa", "type": "handler_test", "timestamp": "2026-05-12T16:10:08.733896+00:00", "agent_id": "echo", "payload": {"msg": "hello"}}
+{"event_id": "73b2e81e33ca49a190a97fcafbc2b5b7", "type": "cycle_scheduled_tasks", "timestamp": "2026-05-12T16:10:08.813368+00:00", "agent_id": "main_loop", "payload": {"tick_count": 1}}
+{"event_id": "9cfdb9204e4a4c96aceb3494ff51a7e2", "type": "cycle_complete", "timestamp": "2026-05-12T16:10:08.813395+00:00", "agent_id": "main_loop", "payload": {}}
+{"event_id": "6b491c861a6540cf9911ec55395d434e", "type": "cycle_complete", "timestamp": "2026-05-12T16:10:08.937963+00:00", "agent_id": "main_loop", "payload": {}}
+{"event_id": "465f05d5929242eda2dc7a078c62d3d4", "type": "cycle_complete", "timestamp": "2026-05-12T16:10:08.952890+00:00", "agent_id": "main_loop", "payload": {}}
+{"event_id": "1d34d8f75def42e1af4b9958b9cc68b8", "type": "steward_pulse", "timestamp": "2026-05-12T16:10:08.993134+00:00", "agent_id": "steward", "payload": {"timestamp": "2026-05-12T16:10:08.993096+00:00", "active_actors": 2, "deliberations_active": 0, "heartbeat_healthy": true}}
+{"event_id": "491f57af0bd44cd4a329be4f7486ed75", "type": "steward_pulse", "timestamp": "2026-05-12T16:10:09.395986+00:00", "agent_id": "steward", "payload": {"actors": 5}}
+{"event_id": "68aece1c5f3646b7a610b43cdee592f9", "type": "cycle_complete", "timestamp": "2026-05-12T16:10:09.395993+00:00", "agent_id": "main_loop", "payload": {"cycle": 1}}
+{"event_id": "d881ecabc3ed49d5933e6b474769b304", "type": "pre_cleanup", "timestamp": "2026-05-12T16:10:09.410393+00:00", "agent_id": "test", "payload": {"flush": true}}
+{"event_id": "038d3eefb76a44c9945f2d79536b5d89", "type": "test_event", "timestamp": "2026-05-12T16:12:07.458723+00:00", "agent_id": "alpha", "payload": {"key": "value"}}
+{"event_id": "b1572cd6de1044f7b77a111b788a498c", "type": "schema_check", "timestamp": "2026-05-12T16:12:07.473063+00:00", "agent_id": "bravo", "payload": {"n": 42}}
+{"event_id": "b1fdaefa797f4bc888e59f38f8ef24d0", "type": "append_test", "timestamp": "2026-05-12T16:12:07.486511+00:00", "agent_id": "charlie", "payload": {"index": 0}}
+{"event_id": "b8c12ddbe25c4fc38c71bc9b8dd0baec", "type": "append_test", "timestamp": "2026-05-12T16:12:07.486526+00:00", "agent_id": "charlie", "payload": {"index": 1}}
+{"event_id": "bbdaffd816794feeb13ae99850fb8890", "type": "append_test", "timestamp": "2026-05-12T16:12:07.486534+00:00", "agent_id": "charlie", "payload": {"index": 2}}
+{"event_id": "2d16ff41555748b4870cf52fe1ea5372", "type": "append_test", "timestamp": "2026-05-12T16:12:07.486540+00:00", "agent_id": "charlie", "payload": {"index": 3}}
+{"event_id": "66af54f9efd14a87b7b6c0c3a4c98029", "type": "append_test", "timestamp": "2026-05-12T16:12:07.486546+00:00", "agent_id": "charlie", "payload": {"index": 4}}
+{"event_id": "266289bfa9f147169c6a66c6ece1dfff", "type": "cleanup_test", "timestamp": "2026-05-12T16:12:07.505493+00:00", "agent_id": "delta", "payload": {"flush": true}}
+{"event_id": "ff26e8d25e9942768e0de3e9c49fa90a", "type": "handler_test", "timestamp": "2026-05-12T16:12:07.521753+00:00", "agent_id": "echo", "payload": {"msg": "hello"}}
+{"event_id": "7971b42e80224749b565d0be20b3c38e", "type": "cycle_scheduled_tasks", "timestamp": "2026-05-12T16:12:07.620365+00:00", "agent_id": "main_loop", "payload": {"tick_count": 1}}
+{"event_id": "57662ca3a8be42cd96acb8ef25f0dab4", "type": "cycle_complete", "timestamp": "2026-05-12T16:12:07.620392+00:00", "agent_id": "main_loop", "payload": {}}
+{"event_id": "358ef441b8c247248f61d4306af2e1cc", "type": "cycle_complete", "timestamp": "2026-05-12T16:12:07.739945+00:00", "agent_id": "main_loop", "payload": {}}
+{"event_id": "48158bb9545a4a88be1dbc1fc94bff3f", "type": "cycle_complete", "timestamp": "2026-05-12T16:12:07.754647+00:00", "agent_id": "main_loop", "payload": {}}
+{"event_id": "a845a90f30594eef99beb78c823f8db4", "type": "steward_pulse", "timestamp": "2026-05-12T16:12:07.775409+00:00", "agent_id": "steward", "payload": {"timestamp": "2026-05-12T16:12:07.775369+00:00", "active_actors": 2, "deliberations_active": 0, "heartbeat_healthy": true}}
+{"event_id": "eb1adb8b5c354be0a4f052e2e95c6d20", "type": "steward_pulse", "timestamp": "2026-05-12T16:12:08.183065+00:00", "agent_id": "steward", "payload": {"actors": 5}}
+{"event_id": "7c2e5ac42298419c8d7960fba5552a70", "type": "cycle_complete", "timestamp": "2026-05-12T16:12:08.183076+00:00", "agent_id": "main_loop", "payload": {"cycle": 1}}
+{"event_id": "426775dcc9d148f386be21c693ffcda9", "type": "pre_cleanup", "timestamp": "2026-05-12T16:12:08.197314+00:00", "agent_id": "test", "payload": {"flush": true}}
+{"event_id": "160c9f7f10fc4e4ab21b3ee0fc1ed9ff", "type": "test_event", "timestamp": "2026-05-12T16:14:27.181305+00:00", "agent_id": "alpha", "payload": {"key": "value"}}
+{"event_id": "7aecd7af36b34d55acd2f5abbf35cfea", "type": "schema_check", "timestamp": "2026-05-12T16:14:27.195675+00:00", "agent_id": "bravo", "payload": {"n": 42}}
+{"event_id": "c67ed00730d348db87905a22318f0b74", "type": "append_test", "timestamp": "2026-05-12T16:14:27.214196+00:00", "agent_id": "charlie", "payload": {"index": 0}}
+{"event_id": "e52845652019499a8297e1a48ade7bc2", "type": "append_test", "timestamp": "2026-05-12T16:14:27.214216+00:00", "agent_id": "charlie", "payload": {"index": 1}}
+{"event_id": "f2e50f96cebf40bda4474c24a931a4a5", "type": "append_test", "timestamp": "2026-05-12T16:14:27.214224+00:00", "agent_id": "charlie", "payload": {"index": 2}}
+{"event_id": "558d28f71260445b86129cb4f5db8497", "type": "append_test", "timestamp": "2026-05-12T16:14:27.214230+00:00", "agent_id": "charlie", "payload": {"index": 3}}
+{"event_id": "17dba4068d324a14a670937571a35b62", "type": "append_test", "timestamp": "2026-05-12T16:14:27.214236+00:00", "agent_id": "charlie", "payload": {"index": 4}}
+{"event_id": "94add48fa6754886be23a7f9398d3caf", "type": "cleanup_test", "timestamp": "2026-05-12T16:14:27.231784+00:00", "agent_id": "delta", "payload": {"flush": true}}
+{"event_id": "914c49f6e8404be98f90cf2464e471d4", "type": "handler_test", "timestamp": "2026-05-12T16:14:27.244031+00:00", "agent_id": "echo", "payload": {"msg": "hello"}}
+{"event_id": "738051423e9745f6b25dd4468d31ec4f", "type": "cycle_scheduled_tasks", "timestamp": "2026-05-12T16:14:27.346054+00:00", "agent_id": "main_loop", "payload": {"tick_count": 1}}
+{"event_id": "8d25765a0d174399a3a20642c2d38502", "type": "cycle_complete", "timestamp": "2026-05-12T16:14:27.346083+00:00", "agent_id": "main_loop", "payload": {}}
+{"event_id": "039776189aa749d68f62459e12531b79", "type": "cycle_complete", "timestamp": "2026-05-12T16:14:27.460746+00:00", "agent_id": "main_loop", "payload": {}}
+{"event_id": "2b3be6378d9b4573a1087a32ac3e521c", "type": "cycle_complete", "timestamp": "2026-05-12T16:14:27.475990+00:00", "agent_id": "main_loop", "payload": {}}
+{"event_id": "92150b89f6504b498d5ca1e8e4cc4c2a", "type": "steward_pulse", "timestamp": "2026-05-12T16:14:27.504383+00:00", "agent_id": "steward", "payload": {"timestamp": "2026-05-12T16:14:27.504343+00:00", "active_actors": 2, "deliberations_active": 0, "heartbeat_healthy": true}}
+{"event_id": "160b1e12bb944d86aaa33894b833dda8", "type": "steward_pulse", "timestamp": "2026-05-12T16:14:27.919665+00:00", "agent_id": "steward", "payload": {"actors": 5}}
+{"event_id": "00ba2b7ca8084748bbd4ed03776ba67e", "type": "cycle_complete", "timestamp": "2026-05-12T16:14:27.919679+00:00", "agent_id": "main_loop", "payload": {"cycle": 1}}
+{"event_id": "c9eda69fe4e343f1b512d79e5083d18c", "type": "pre_cleanup", "timestamp": "2026-05-12T16:14:27.932880+00:00", "agent_id": "test", "payload": {"flush": true}}
+{"event_id": "b146cbf80939434da67458669d644975", "type": "test_event", "timestamp": "2026-05-12T16:15:37.626249+00:00", "agent_id": "alpha", "payload": {"key": "value"}}
+{"event_id": "9db425d5ac144d76b00c803d9bec2037", "type": "schema_check", "timestamp": "2026-05-12T16:15:37.640664+00:00", "agent_id": "bravo", "payload": {"n": 42}}
+{"event_id": "ffa1d4d4796a4585a2623ba140bf9c36", "type": "append_test", "timestamp": "2026-05-12T16:15:37.654537+00:00", "agent_id": "charlie", "payload": {"index": 0}}
+{"event_id": "42b0fe12d09d459cb99dd77754ea1a6a", "type": "append_test", "timestamp": "2026-05-12T16:15:37.654552+00:00", "agent_id": "charlie", "payload": {"index": 1}}
+{"event_id": "6a7201febd4b4564b2b2ad298dd248f2", "type": "append_test", "timestamp": "2026-05-12T16:15:37.654560+00:00", "agent_id": "charlie", "payload": {"index": 2}}
+{"event_id": "e9fe2b47d39f4e519ad4d41b61c87c06", "type": "append_test", "timestamp": "2026-05-12T16:15:37.654566+00:00", "agent_id": "charlie", "payload": {"index": 3}}
+{"event_id": "7f6e5eb8a39842ac838400e9eb219f22", "type": "append_test", "timestamp": "2026-05-12T16:15:37.654572+00:00", "agent_id": "charlie", "payload": {"index": 4}}
+{"event_id": "859ab4472b9f418484e294110436f4b3", "type": "cleanup_test", "timestamp": "2026-05-12T16:15:37.671478+00:00", "agent_id": "delta", "payload": {"flush": true}}
+{"event_id": "7f00fdac012042108e4c46cb0f7851e8", "type": "handler_test", "timestamp": "2026-05-12T16:15:37.687053+00:00", "agent_id": "echo", "payload": {"msg": "hello"}}
+{"event_id": "e33f917b78154672b4fe250a56234826", "type": "cycle_scheduled_tasks", "timestamp": "2026-05-12T16:15:37.774576+00:00", "agent_id": "main_loop", "payload": {"tick_count": 1}}
+{"event_id": "38713406400c49f2a282a908aec527d6", "type": "cycle_complete", "timestamp": "2026-05-12T16:15:37.774601+00:00", "agent_id": "main_loop", "payload": {}}
+{"event_id": "60ba852ee0eb4a06a15adfd421a263a8", "type": "cycle_complete", "timestamp": "2026-05-12T16:15:37.897242+00:00", "agent_id": "main_loop", "payload": {}}
+{"event_id": "f9e98dd21d4341aa84b1fc74562567c8", "type": "cycle_complete", "timestamp": "2026-05-12T16:15:37.911454+00:00", "agent_id": "main_loop", "payload": {}}
+{"event_id": "2601795c4c4d4becb278a7a9023e5e71", "type": "steward_pulse", "timestamp": "2026-05-12T16:15:37.937561+00:00", "agent_id": "steward", "payload": {"timestamp": "2026-05-12T16:15:37.937507+00:00", "active_actors": 2, "deliberations_active": 0, "heartbeat_healthy": true}}
+{"event_id": "e2e044f819a74e84b7b2a96c187f7783", "type": "steward_pulse", "timestamp": "2026-05-12T16:15:38.311670+00:00", "agent_id": "steward", "payload": {"actors": 5}}
+{"event_id": "af2f3f5e223a4991baa675211e3bf4e7", "type": "cycle_complete", "timestamp": "2026-05-12T16:15:38.311691+00:00", "agent_id": "main_loop", "payload": {"cycle": 1}}
+{"event_id": "3e3c4d451326434fa9184aafb1a7cc95", "type": "pre_cleanup", "timestamp": "2026-05-12T16:15:38.324119+00:00", "agent_id": "test", "payload": {"flush": true}}

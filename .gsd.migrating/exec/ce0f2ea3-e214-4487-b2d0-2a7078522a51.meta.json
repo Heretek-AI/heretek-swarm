@@ -1,0 +1,18 @@
+{
+  "id": "ce0f2ea3-e214-4487-b2d0-2a7078522a51",
+  "runtime": "bash",
+  "purpose": "T03-verify-2: import heretek_swarm resolves to backend/",
+  "script_chars": 132,
+  "started_at": "2026-05-12T15:48:07.159Z",
+  "finished_at": "2026-05-12T15:48:09.522Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 2363,
+  "stdout_bytes": 12,
+  "stderr_bytes": 87,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\ce0f2ea3-e214-4487-b2d0-2a7078522a51.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\ce0f2ea3-e214-4487-b2d0-2a7078522a51.stderr"
+}

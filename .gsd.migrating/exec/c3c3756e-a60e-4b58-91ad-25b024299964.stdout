@@ -1,0 +1,19 @@
+=== MUST-HAVE 1: src/ directory gone ===
+PASS: src/ does not exist
+
+=== MUST-HAVE 2: backend/docs/ gone ===
+PASS: backend/docs/ does not exist
+
+=== MUST-HAVE 3: backend/agent_workspace/ gone ===
+PASS: backend/agent_workspace/ does not exist
+
+=== MUST-HAVE 4: 62 test files in root tests/ ===
+Test file count: 
+INFO:  test files (expected 62)
+
+=== MUST-HAVE 5: pip install -e . ===
+/bin/bash: line 22: pip: command not found
+Exit code: 0
+
+=== MUST-HAVE 6: import heretek_swarm resolves via backend/ ===
+/bin/bash: line 27: python: command not found

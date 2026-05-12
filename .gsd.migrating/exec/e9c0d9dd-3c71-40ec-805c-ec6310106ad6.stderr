@@ -1,0 +1,2 @@
+/bin/bash: -c: line 32: syntax error near unexpected token `heretek_swarm.__file__'
+/bin/bash: -c: line 32: `if echo \"$(python -c \"import heretek_swarm; print(heretek_swarm.__file__)\" 2>&1)\" | grep -q \"backend\"; then echo \"PASS: contains backend/\"; else echo \"INFO: check output\"; fi"'

@@ -1,0 +1,18 @@
+{
+  "id": "414297c4-1c98-41ad-bf29-e48d056ddeab",
+  "runtime": "bash",
+  "purpose": "T03-verify-6: git grep for stale paths",
+  "script_chars": 113,
+  "started_at": "2026-05-12T15:47:05.023Z",
+  "finished_at": "2026-05-12T15:47:08.836Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 3813,
+  "stdout_bytes": 12,
+  "stderr_bytes": 87,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\414297c4-1c98-41ad-bf29-e48d056ddeab.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\414297c4-1c98-41ad-bf29-e48d056ddeab.stderr"
+}

@@ -1,0 +1,18 @@
+{
+  "id": "5e1209e0-2211-4646-98ab-18b483c336dc",
+  "runtime": "bash",
+  "purpose": "Verify T02 test consolidation and pytest collection",
+  "script_chars": 692,
+  "started_at": "2026-05-12T15:42:38.542Z",
+  "finished_at": "2026-05-12T15:42:42.619Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 4077,
+  "stdout_bytes": 328,
+  "stderr_bytes": 0,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\5e1209e0-2211-4646-98ab-18b483c336dc.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\5e1209e0-2211-4646-98ab-18b483c336dc.stderr"
+}

@@ -1,0 +1,18 @@
+{
+  "id": "c3c3756e-a60e-4b58-91ad-25b024299964",
+  "runtime": "bash",
+  "purpose": "S03 slice verification - must-haves 1-4, 8-10",
+  "script_chars": 1615,
+  "started_at": "2026-05-12T16:19:00.291Z",
+  "finished_at": "2026-05-12T16:19:02.531Z",
+  "exit_code": 127,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 2240,
+  "stdout_bytes": 548,
+  "stderr_bytes": 53,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\c3c3756e-a60e-4b58-91ad-25b024299964.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\c3c3756e-a60e-4b58-91ad-25b024299964.stderr"
+}

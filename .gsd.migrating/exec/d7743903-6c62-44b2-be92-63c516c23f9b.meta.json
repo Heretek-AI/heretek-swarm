@@ -1,0 +1,18 @@
+{
+  "id": "d7743903-6c62-44b2-be92-63c516c23f9b",
+  "runtime": "bash",
+  "purpose": "T03-verify-3: pytest unit tests",
+  "script_chars": 131,
+  "started_at": "2026-05-12T15:48:34.793Z",
+  "finished_at": "2026-05-12T15:48:43.083Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 8290,
+  "stdout_bytes": 12,
+  "stderr_bytes": 87,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\d7743903-6c62-44b2-be92-63c516c23f9b.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\d7743903-6c62-44b2-be92-63c516c23f9b.stderr"
+}

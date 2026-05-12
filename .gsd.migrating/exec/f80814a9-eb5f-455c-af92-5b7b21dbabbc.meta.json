@@ -1,0 +1,18 @@
+{
+  "id": "f80814a9-eb5f-455c-af92-5b7b21dbabbc",
+  "runtime": "bash",
+  "purpose": "T03-verify-5: docker compose config",
+  "script_chars": 101,
+  "started_at": "2026-05-12T15:48:07.175Z",
+  "finished_at": "2026-05-12T15:48:09.542Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 2367,
+  "stdout_bytes": 12,
+  "stderr_bytes": 87,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\f80814a9-eb5f-455c-af92-5b7b21dbabbc.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\f80814a9-eb5f-455c-af92-5b7b21dbabbc.stderr"
+}

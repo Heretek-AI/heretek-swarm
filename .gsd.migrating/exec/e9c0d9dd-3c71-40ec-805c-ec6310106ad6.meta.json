@@ -1,0 +1,18 @@
+{
+  "id": "e9c0d9dd-3c71-40ec-805c-ec6310106ad6",
+  "runtime": "bash",
+  "purpose": "S03 full verification with correct PATH",
+  "script_chars": 1391,
+  "started_at": "2026-05-12T16:20:09.107Z",
+  "finished_at": "2026-05-12T16:20:11.691Z",
+  "exit_code": 127,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 2584,
+  "stdout_bytes": 0,
+  "stderr_bytes": 296,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\e9c0d9dd-3c71-40ec-805c-ec6310106ad6.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\e9c0d9dd-3c71-40ec-805c-ec6310106ad6.stderr"
+}

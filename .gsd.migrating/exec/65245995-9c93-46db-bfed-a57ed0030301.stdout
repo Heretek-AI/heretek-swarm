@@ -1,0 +1,42 @@
+=== src/ ===
+total 20
+drwxrwxrwx 1 john john   512 Apr 29 10:03 .
+drwxrwxrwx 1 john john   512 May 12 11:29 ..
+-rwxrwxrwx 1 john john   131 Apr 29 10:03 __init__.py
+drwxrwxrwx 1 john john   512 Apr 29 10:03 agent_workspace
+-rwxrwxrwx 1 john john 19290 Apr 29 10:03 cli.py
+=== backend/docs/ ===
+total 0
+drwxrwxrwx 1 john john 512 May 12 07:59 .
+drwxrwxrwx 1 john john 512 May 12 11:15 ..
+drwxrwxrwx 1 john john 512 May 12 07:59 actors
+=== backend/agent_workspace/ ===
+total 8352
+drwxrwxrwx 1 john john     512 May 12 07:59 .
+drwxrwxrwx 1 john john     512 May 12 11:15 ..
+drwxrwxrwx 1 john john     512 May 12 07:59 agents
+-rwxrwxrwx 1 john john 8550692 May 12 07:59 error.txt
+=== backend/.claude/ ===
+total 0
+drwxrwxrwx 1 john john 512 May 12 07:59 .
+drwxrwxrwx 1 john john 512 May 12 11:15 ..
+drwxrwxrwx 1 john john 512 May 12 07:59 tdd-guard
+=== backend/tests/ ===
+backend/tests/test_auto_routing_integration.py
+backend/tests/test_complexity_heuristic.py
+backend/tests/test_consciousness_api.py
+backend/tests/test_consensus_audit_jsonl.py
+backend/tests/test_consensus_cli.py
+backend/tests/test_consensus_coordinator.py
+backend/tests/test_consensus_runtime.py
+backend/tests/test_consensus_websocket.py
+backend/tests/test_domain_selector.py
+backend/tests/test_goal_cli.py
+backend/tests/test_goal_consensus.py
+backend/tests/test_goal_pipeline.py
+backend/tests/test_goal_proposer.py
+backend/tests/test_goal_store.py
+backend/tests/test_goal_translator.py
+backend/tests/test_workflow_persistence.py
+=== tests/*.py count ===
+46

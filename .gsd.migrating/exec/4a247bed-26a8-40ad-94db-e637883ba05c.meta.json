@@ -1,0 +1,18 @@
+{
+  "id": "4a247bed-26a8-40ad-94db-e637883ba05c",
+  "runtime": "bash",
+  "purpose": "T03-verify-1: pip install -e .",
+  "script_chars": 95,
+  "started_at": "2026-05-12T15:47:05.017Z",
+  "finished_at": "2026-05-12T15:47:08.820Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 3803,
+  "stdout_bytes": 12,
+  "stderr_bytes": 87,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\4a247bed-26a8-40ad-94db-e637883ba05c.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\4a247bed-26a8-40ad-94db-e637883ba05c.stderr"
+}

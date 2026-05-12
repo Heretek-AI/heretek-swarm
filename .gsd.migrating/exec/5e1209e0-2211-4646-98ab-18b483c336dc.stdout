@@ -1,0 +1,23 @@
+=== backend/tests exists? ===
+NO - properly removed
+
+=== tests/*.py count ===
+62
+
+=== Verify all 16 files in tests/ ===
+MISSING: .py
+MISSING: .py
+MISSING: .py
+MISSING: .py
+MISSING: .py
+MISSING: .py
+MISSING: .py
+MISSING: .py
+MISSING: .py
+MISSING: .py
+MISSING: .py
+MISSING: .py
+MISSING: .py
+MISSING: .py
+MISSING: .py
+MISSING: .py

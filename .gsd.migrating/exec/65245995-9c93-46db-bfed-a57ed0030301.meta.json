@@ -1,0 +1,18 @@
+{
+  "id": "65245995-9c93-46db-bfed-a57ed0030301",
+  "runtime": "bash",
+  "purpose": "Verify current state of directories to clean up and test files",
+  "script_chars": 478,
+  "started_at": "2026-05-12T15:31:29.447Z",
+  "finished_at": "2026-05-12T15:31:33.409Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 3962,
+  "stdout_bytes": 1523,
+  "stderr_bytes": 0,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\65245995-9c93-46db-bfed-a57ed0030301.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\65245995-9c93-46db-bfed-a57ed0030301.stderr"
+}
