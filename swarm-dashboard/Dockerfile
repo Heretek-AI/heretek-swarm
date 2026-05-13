@@ -8,8 +8,8 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Copy package files first for layer caching
-COPY package*.json ./
+# Copy package files and local tarballs first for layer caching
+COPY package*.json vite-*.tgz ./
 
 # Deterministic install using package-lock.json
 RUN npm ci
