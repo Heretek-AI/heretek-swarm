@@ -51,11 +51,11 @@ services:
       - qdrant_data:/qdrant/storage
     healthcheck:
       <<: *healthcheck-defaults
-      test: ["CMD-SHELL", "curl -sf http://localhost:6333/healthz || exit 1"]
+      test: ["CMD-SHELL", "bash -c 'exec 3<>/dev/tcp/localhost/6333; echo -e \"GET /healthz HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n\" >&3; grep -q \"200\" <&3'"]
     restart: unless-stopped
 
   nats:
-    image: nats:latest
+    image: nats:alpine
     ports:
       - "4222:4222"
       - "8222:8222"
@@ -64,7 +64,7 @@ services:
       - nats_data:/data
     healthcheck:
       <<: *healthcheck-defaults
-      test: ["CMD-SHELL", "wget --spider -q http://localhost:8222/ || nc -z localhost 4222 || exit 1"]
+      test: ["CMD-SHELL", "nc -z localhost 4222 || exit 1"]
     restart: unless-stopped
 
   # =============================================================================
