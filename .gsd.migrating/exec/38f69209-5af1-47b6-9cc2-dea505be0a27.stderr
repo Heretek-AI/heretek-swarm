@@ -1,2 +1,0 @@
-/bin/bash: -c: line 1: syntax error near unexpected token `('
-/bin/bash: -c: line 1: `cd /d "C:\Users\Derek\Desktop\heretek-swarm" && if exist docs\ARCHITECTURE.md (echo "ARCHITECTURE.md EXISTS" && findstr /c:"^## " docs\ARCHITECTURE.md | find /c /v "" && findstr /c:"heretek-swarm/heretek_swarm" docs\ARCHITECTURE.md | find /c /v "") else (echo "ARCHITECTURE.md NOT FOUND")'

@@ -1,9 +1,0 @@
----
--rwxrwxrwx 1 john john 255208 May  4 17:01 .venv/Scripts/python.exe
----
-C:\Python314\python.exe
-C:\Program Files\Python311\python.exe
-C:\Users\Derek\AppData\Local\Microsoft\WindowsApps\python.exe
----
----
-/bin/bash: line 11: /c/Python314/python.exe: No such file or directory

@@ -1,9 +1,0 @@
-=== tests/test_model_garage_config.py ===
-tests/test_model_garage_config.py:        """Without env var, returns ~/.heretek-swarm/config.json."""
-
-=== triage_classifier.py ===
-triage_classifier.py:# Source root is the nested heretek-swarm/ directory
-
-=== swarm-dashboard non-session files ===
-swarm-dashboard/.claude-flow/data/pending-insights.jsonl
-swarm-dashboard/tests/e2e/m028-runtime-stability.spec.ts

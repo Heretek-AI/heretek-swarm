@@ -1,2 +1,0 @@
-/bin/bash: -c: line 19: syntax error near unexpected token `('
-/bin/bash: -c: line 19: `if grep -qE "^(where|source|src).*=.*\[.*heretek-swarm" pyproject.toml 2>/dev/null; then'

@@ -1,4 +1,0 @@
-=== pip install -e . ===
-/bin/bash: line 1: pip: command not found
-
-=== import heretek_swarm check ===

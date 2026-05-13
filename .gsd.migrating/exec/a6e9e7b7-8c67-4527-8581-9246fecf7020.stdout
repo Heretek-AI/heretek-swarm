@@ -1,6 +1,0 @@
-2026-05-11 21:04:22 [info     ] plugin_runtime_initialized     plugins_dir=C:\Users\Derek\Desktop\heretek-swarm\heretek-swarm\heretek_swarm\plugins\plugins
-Handoff subpackage imports OK
-  HandoffContext=<class 'heretek_swarm.actors.handoff.types.HandoffContext'>
-  HandoffResult=<class 'heretek_swarm.actors.handoff.types.HandoffResult'>
-  HandoffOrchestrator=<class 'heretek_swarm.actors.handoff.orchestrator.HandoffOrchestrator'>
-  HandoffProcessor=<class 'heretek_swarm.actors.handoff.handlers.HandoffProcessor'>

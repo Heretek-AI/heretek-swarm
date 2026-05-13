@@ -1,7 +1,0 @@
----
-backend/heretek_swarm/audit/__init__.py
-backend/heretek_swarm/audit/cli.py
-backend/heretek_swarm/audit/report.py
-backend/heretek_swarm/audit/severity.py
-backend/heretek_swarm/audit/stub_patterns.py
----EXIT:0

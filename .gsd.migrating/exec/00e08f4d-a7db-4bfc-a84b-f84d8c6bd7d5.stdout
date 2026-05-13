@@ -1,8 +1,0 @@
-=== GIT HISTORY FOLLOW ===
-Commits following rename: 
-FAIL: fewer than 3 commits
-2742c0a4 feat: Renamed heretek-swarm/ to backend/ via git mv, preserving full gi…
-e7acfdf4 gsd snapshot: pre-dispatch, uncommitted changes after 216m inactivity
-e8c07c64 fix: Moved Python source to heretek-swarm/ and npm package to swarm-das…
-3f670b60 Comprehensive codebase refactoring and modernization across all modules
-c640b926 Initial commit: Heretek Swarm multi-agent orchestration system

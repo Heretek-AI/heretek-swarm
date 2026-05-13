@@ -1,2 +1,0 @@
-class ModalityType(StrEnum):
-class PerceiverAgent(

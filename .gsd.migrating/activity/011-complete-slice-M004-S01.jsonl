@@ -1,2 +1,0 @@
-{"type":"thinking_level_change","id":"0165bce0","parentId":null,"timestamp":"2026-05-10T16:41:07.684Z","thinkingLevel":"off"}
-{"type":"model_change","id":"188a11e6","parentId":"0165bce0","timestamp":"2026-05-10T16:41:07.705Z","provider":"ollama","modelId":"deepseek-v4-flash:cloud"}

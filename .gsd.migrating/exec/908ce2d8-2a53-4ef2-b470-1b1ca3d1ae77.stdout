@@ -1,8 +1,0 @@
-=== Edge Case: GitHub URLs in pyproject.toml ===
-121:Homepage = "https://github.com/heretek-ai/heretek-swarm"
-122:Documentation = "https://github.com/heretek-ai/heretek-swarm/tree/main/docs"
-123:Repository = "https://github.com/heretek-ai/heretek-swarm"
-124:Issues = "https://github.com/heretek-ai/heretek-swarm/issues"
-
-=== Edge Case: User-home config paths ===
-Searching for 'heretek-swarm/' in .py files...

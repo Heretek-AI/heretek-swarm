@@ -1,8 +1,0 @@
-Traceback (most recent call last):
-  File "<string>", line 11, in <module>
-    lines = len(f.readlines())
-                ~~~~~~~~~~~^^
-  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.13_3.13.3568.0_x64__qbz5n2kfra8p0\Lib\encodings\cp1252.py", line 23, in decode
-    return codecs.charmap_decode(input,self.errors,decoding_table)[0]
-           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-UnicodeDecodeError: 'charmap' codec can't decode byte 0x8f in position 4224: character maps to <undefined>
