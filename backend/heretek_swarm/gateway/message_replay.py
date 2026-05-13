@@ -419,7 +419,7 @@ class MessageReplayManager:
             self._stats["jobs_failed"] += 1
 
             logger.error(
-                f"Replay failed: {job.job_id}",
+                f"Replay failed: {job.job_id}",  # noqa: G004
                 error=str(e),
             )
             return False

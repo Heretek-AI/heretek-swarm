@@ -81,7 +81,7 @@ class Plugin:
         self.runtime = None
         logger.info("plugin_unloaded", plugin=self.metadata.name)
 
-    async def on_message(self, message: dict[str, Any]) -> dict[str, Any] | None:
+    async def on_message(self, _message: dict[str, Any]) -> dict[str, Any] | None:
         """
         Handle a message from the runtime.
 

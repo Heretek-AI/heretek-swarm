@@ -812,7 +812,7 @@ class AutonomousRuntime:
             # Get statistics and log
             stats = self._consciousness_plugin.get_statistics()
             logger.info(
-                "Consciousness stats: "
+                "Consciousness stats: "  # noqa: G004
                 f"agents={stats.get('total_agents', 0)}, "
                 f"avg_phi={stats.get('iit_average_phi', 0):.4f}, "
                 f"conscious={stats.get('conscious_agents', 0)}"

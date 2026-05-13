@@ -577,7 +577,7 @@ class CollectiveIntelligenceMetrics:
             siq_percentile=siq_percentile,
             component_weights=weights,
             component_contributions=contributions,
-            agent_count=len(self.learning_controller._agent_states),
+            agent_count=len(self.learning_controller._agent_states),  # noqa: SLF001
             observation_window_seconds=300.0,  # 5 minutes
             sample_size=len(self._siq_history) + 1,
         )
@@ -608,7 +608,7 @@ class CollectiveIntelligenceMetrics:
             CollectiveEfficiencyMetrics calculation result
         """
         # Get task statistics from agent states
-        agent_states = self.learning_controller._agent_states.values()
+        agent_states = self.learning_controller._agent_states.values()  # noqa: SLF001
 
         total_updates = sum(s.total_updates for s in agent_states)
         successful_updates = sum(s.successful_updates for s in agent_states)
@@ -621,7 +621,7 @@ class CollectiveIntelligenceMetrics:
         efficiency_ratio = avg_success_rate
 
         # Resource utilization (based on adaptation activity)
-        adaptation_states = self.agent_adaptor._agent_states.values()
+        adaptation_states = self.agent_adaptor._agent_states.values()  # noqa: SLF001
         total_adaptations = sum(s.adaptation_count for s in adaptation_states)
         resource_utilization = min(1.0, total_adaptations / max(len(adaptation_states) * 10, 1))
 
@@ -683,7 +683,7 @@ class CollectiveIntelligenceMetrics:
         one_hour_ago = datetime.now(UTC) - timedelta(hours=1)
         recent_adaptations = [
             e
-            for e in self.agent_adaptor._adaptation_events
+            for e in self.agent_adaptor._adaptation_events  # noqa: SLF001
             if datetime.fromisoformat(e.timestamp) > one_hour_ago
         ]
         transfer_rate_per_hour = len(recent_adaptations)
@@ -692,19 +692,19 @@ class CollectiveIntelligenceMetrics:
         # Inflow: patterns adopted from external sources
         # Outflow: patterns contributed to the swarm
         knowledge_inflow = patterns_adopted
-        knowledge_outflow = len(self.learning_controller._adaptation_events)
+        knowledge_outflow = len(self.learning_controller._adaptation_events)  # noqa: SLF001
         knowledge_balance = knowledge_inflow - knowledge_outflow
 
         # Network metrics (simplified)
         active_transmitters = sum(
-            1 for s in self.learning_controller._agent_states.values() if s.total_updates > 0
+            1 for s in self.learning_controller._agent_states.values() if s.total_updates > 0  # noqa: SLF001
         )
         active_receivers = sum(
-            1 for s in self.agent_adaptor._agent_states.values() if len(s.adopted_patterns) > 0
+            1 for s in self.agent_adaptor._agent_states.values() if len(s.adopted_patterns) > 0  # noqa: SLF001
         )
 
         # Network density (simplified)
-        total_agents = len(self.learning_controller._agent_states)
+        total_agents = len(self.learning_controller._agent_states)  # noqa: SLF001
         max_connections = total_agents * (total_agents - 1) / 2
         actual_connections = active_transmitters * active_receivers
         network_density = actual_connections / max(max_connections, 1)
@@ -768,7 +768,7 @@ class CollectiveIntelligenceMetrics:
         macro_patterns = len(
             [
                 p
-                for p in self.emergence_detector._emergent_patterns
+                for p in self.emergence_detector._emergent_patterns  # noqa: SLF001
                 if p.emergence_level in [EmergenceLevel.STRONG, EmergenceLevel.CRITICAL]
             ]
         )
@@ -779,7 +779,7 @@ class CollectiveIntelligenceMetrics:
 
         # Downward causation strength
         # How much collective patterns influence individual behavior
-        downward_causation = len(self.agent_adaptor._adaptation_events) / max(total_patterns, 1)
+        downward_causation = len(self.agent_adaptor._adaptation_events) / max(total_patterns, 1)  # noqa: SLF001
         downward_causation = min(1.0, downward_causation)
 
         # Novelty score
@@ -860,7 +860,7 @@ class CollectiveIntelligenceMetrics:
         current_emergence = emergence_history[-1] if emergence_history else 0.0
 
         # Agent metrics
-        agent_states = list(self.learning_controller._agent_states.values())
+        agent_states = list(self.learning_controller._agent_states.values())  # noqa: SLF001
         active_agents = sum(1 for s in agent_states if s.total_updates > 0)
         avg_performance = sum(s.success_rate for s in agent_states) / max(len(agent_states), 1)
 
@@ -953,7 +953,7 @@ class CollectiveIntelligenceMetrics:
     async def _calculate_coordination_score(self) -> float:
         """Calculate coordination score component."""
         # Based on collective behavior coherence
-        behaviors = self.emergence_detector._collective_behaviors
+        behaviors = self.emergence_detector._collective_behaviors  # noqa: SLF001
         if not behaviors:
             return 0.5  # Default
 
@@ -985,7 +985,7 @@ class CollectiveIntelligenceMetrics:
     async def _calculate_problem_solving_score(self) -> float:
         """Calculate problem solving score component."""
         # Based on agent success rates
-        agent_states = self.learning_controller._agent_states.values()
+        agent_states = self.learning_controller._agent_states.values()  # noqa: SLF001
         if not agent_states:
             return 0.5
 
@@ -999,7 +999,7 @@ class CollectiveIntelligenceMetrics:
     async def _calculate_resilience_score(self) -> float:
         """Calculate resilience score component."""
         # Based on recovery from failures
-        agent_states = self.learning_controller._agent_states.values()
+        agent_states = self.learning_controller._agent_states.values()  # noqa: SLF001
         if not agent_states:
             return 0.5
 
@@ -1282,7 +1282,7 @@ class MetricsExporter:
     def export_time_series(
         self,
         metric_ids: list[str] | None = None,
-        format: str = "dict",
+        format: str = "dict",  # noqa: ARG002
     ) -> dict[str, Any]:
         """
         Export time series data for metrics.
@@ -1295,7 +1295,7 @@ class MetricsExporter:
             Exported data
         """
         if metric_ids is None:
-            metric_ids = list(self.metrics._metric_values.keys())
+            metric_ids = list(self.metrics._metric_values.keys())  # noqa: SLF001
 
         data = {}
         for metric_id in metric_ids:

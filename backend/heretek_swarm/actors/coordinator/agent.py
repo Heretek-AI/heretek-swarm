@@ -944,16 +944,16 @@ class CoordinatorAgent(
             task_ids = content.get("task_ids")
             if task_ids:
                 {
-                    tid: self._task_graph._reverse_adjacency.get(tid, set())
+                    tid: self._task_graph._reverse_adjacency.get(tid, set())  # noqa: SLF001
                     for tid in task_ids
-                    if tid in self._task_graph._nodes
+                    if tid in self._task_graph._nodes  # noqa: SLF001
                 }
                 temp_graph = TaskGraph()
                 for tid in task_ids:
-                    if tid in self._task_graph._nodes:
+                    if tid in self._task_graph._nodes:  # noqa: SLF001
                         temp_graph.add_node(tid)
                 for tid in task_ids:
-                    for dep in self._task_graph._reverse_adjacency.get(tid, []):
+                    for dep in self._task_graph._reverse_adjacency.get(tid, []):  # noqa: SLF001
                         if dep in task_ids:
                             temp_graph.add_edge(dep, tid)
                 metrics = temp_graph.get_graph_metrics()

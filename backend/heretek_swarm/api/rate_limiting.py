@@ -338,7 +338,7 @@ def rate_limit(limit: str):
     """
 
     def decorator(func):
-        func._rate_limit = limit
+        func._rate_limit = limit  # noqa: SLF001
         return func
 
     return decorator

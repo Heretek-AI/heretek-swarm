@@ -715,13 +715,13 @@ class Tribunal:
         self._tiebreaker_reason = None
 
         logger.info(
-            f"Tribunal deliberation started: topic={topic}, max_rounds={self.max_rounds}, agents={list(agent_votes.keys())}"
+            f"Tribunal deliberation started: topic={topic}, max_rounds={self.max_rounds}, agents={list(agent_votes.keys())}"  # noqa: G004
         )
 
         while self.current_round < self.max_rounds:
             self.current_round += 1
             logger.debug(
-                f"Tribunal round {self.current_round}/{self.max_rounds} for topic: {topic}"
+                f"Tribunal round {self.current_round}/{self.max_rounds} for topic: {topic}"  # noqa: G004
             )
 
             if self._check_unanimous(agent_votes):

@@ -264,7 +264,7 @@ class LiberationShield:
         self.operation_history: list[dict[str, Any]] = []
 
         logger.info(
-            f"LiberationShield initialized in {mode} mode",
+            f"LiberationShield initialized in {mode} mode",  # noqa: G004
             extra={
                 "mode": mode,
                 "prompt_injection_detection": enable_prompt_injection_detection,
@@ -608,7 +608,7 @@ class LiberationShield:
             self.audit_log.pop(0)
 
         logger.debug(
-            f"Security event logged: {event_type.value}",
+            f"Security event logged: {event_type.value}",  # noqa: G004
             extra={"agent": event.agent, "severity": event.severity.value},
         )
 

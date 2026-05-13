@@ -188,9 +188,9 @@ class PrismAgent(
             try:
                 await handler(message)
             except Exception as e:
-                logger.error(
-                    f"[{self.agent_id}] Error processing message {message.message_type}: {e}",
-                    exc_info=True,
+                logger.exception(
+                    f"[{self.agent_id}] Error processing message {message.message_type}: {e}",  # noqa: G004
+
                 )
                 self.error_count += 1
                 if message.content.get("reply_to"):
@@ -279,11 +279,11 @@ class PrismAgent(
                 )
 
             logger.info(
-                f"[{self.agent_id}] Generated {len(perspectives)} perspectives for analysis: {analysis_id}"
+                f"[{self.agent_id}] Generated {len(perspectives)} perspectives for analysis: {analysis_id}"  # noqa: G004
             )
 
         except Exception:
-            logger.error("[{self.agent_id}] Error generating perspectives: {e}", exc_info=True)
+            logger.exception("[{self.agent_id}] Error generating perspectives: {e}")
 
     async def _generate_perspectives(
         self,
@@ -320,7 +320,7 @@ class PrismAgent(
                     perspectives.append(perspective)
             except Exception as e:
                 logger.warning(
-                    f"[{self.agent_id}] Failed to generate {ptype.value} perspective: {e}"
+                    f"[{self.agent_id}] Failed to generate {ptype.value} perspective: {e}"  # noqa: G004
                 )
 
         # Sort by confidence
@@ -399,7 +399,7 @@ Respond in JSON format:
 
         except Exception as e:
             logger.warning(
-                f"[{self.agent_id}] LLM perspective generation failed, using heuristic: {e}"
+                f"[{self.agent_id}] LLM perspective generation failed, using heuristic: {e}"  # noqa: G004
             )
             return self._heuristic_perspective(issue, perspective_type)
 
@@ -451,7 +451,7 @@ Respond in JSON format:
             logger.info("[{self.agent_id}] Detected {len(biases)} potential biases")
 
         except Exception:
-            logger.error("[{self.agent_id}] Error detecting biases: {e}", exc_info=True)
+            logger.exception("[{self.agent_id}] Error detecting biases: {e}")
 
     async def _detect_biases_in_content(self, content: str) -> list[BiasDetection]:
         """
@@ -609,7 +609,7 @@ Respond in JSON format:
             logger.info("[{self.agent_id}] Framework {framework.value} applied successfully")
 
         except Exception:
-            logger.error("[{self.agent_id}] Error applying framework: {e}", exc_info=True)
+            logger.exception("[{self.agent_id}] Error applying framework: {e}")
 
     async def _apply_framework_to_issue(
         self,
@@ -694,7 +694,7 @@ Respond in JSON format:
             logger.info("[{self.agent_id}] Stakeholder mapping complete")
 
         except Exception:
-            logger.error("[{self.agent_id}] Error mapping stakeholders: {e}", exc_info=True)
+            logger.exception("[{self.agent_id}] Error mapping stakeholders: {e}")
 
     async def _generate_stakeholder_map(self, issue: str) -> dict[str, Any]:
         """
@@ -793,7 +793,7 @@ Respond in JSON:
                 )
 
         except Exception:
-            logger.error("[{self.agent_id}] Error getting analysis summary: {e}", exc_info=True)
+            logger.exception("[{self.agent_id}] Error getting analysis summary: {e}")
 
     async def _handle_reframe_issue(self, message: ActorMessage) -> None:
         """
@@ -831,7 +831,7 @@ Respond in JSON:
             logger.info("[{self.agent_id}] Issue reframed into {len(reframes)} perspectives")
 
         except Exception:
-            logger.error("[{self.agent_id}] Error reframing issue: {e}", exc_info=True)
+            logger.exception("[{self.agent_id}] Error reframing issue: {e}")
 
     def get_learning_status(self) -> dict[str, Any]:
         """Get collective learning and memory optimization status with phi_training."""

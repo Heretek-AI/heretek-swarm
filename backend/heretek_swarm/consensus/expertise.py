@@ -238,7 +238,7 @@ class AgentExpertiseProfiler:
         self.calibration_window = calibration_window
 
         logger.info(
-            f"AgentExpertiseProfiler initialized with calibration_window={calibration_window}"
+            f"AgentExpertiseProfiler initialized with calibration_window={calibration_window}"  # noqa: G004
         )
 
     def register_agent(
@@ -347,7 +347,7 @@ class AgentExpertiseProfiler:
         self._update_domain_statistics(domain, was_correct, confidence)
 
         logger.debug(
-            f"Recorded outcome for {agent_id} in {domain}: "
+            f"Recorded outcome for {agent_id} in {domain}: "  # noqa: G004
             f"correct={was_correct}, confidence={confidence:.2f}, "
             f"new_expertise={domain_expertise.expertise_score:.2f}"
         )
@@ -378,14 +378,14 @@ class AgentExpertiseProfiler:
         domain_expertise.update_peer_trust(peer_id, trust_delta)
 
         logger.info(
-            f"Recorded peer trust for {agent_id} in {domain} from {peer_id}: {trust_delta:+.2f}"
+            f"Recorded peer trust for {agent_id} in {domain} from {peer_id}: {trust_delta:+.2f}"  # noqa: G004
         )
 
         # Update overall peer trust score
         self._update_peer_trust_score(profile)
 
         logger.debug(
-            f"Peer trust updated for {agent_id} from {peer_id} "
+            f"Peer trust updated for {agent_id} from {peer_id} "  # noqa: G004
             f"in {domain}: delta={trust_delta:+.3f}"
         )
 

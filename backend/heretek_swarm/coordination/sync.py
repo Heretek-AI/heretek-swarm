@@ -188,8 +188,8 @@ class TaskSynchronizer:
 
     async def escalate_to_arbiter(
         self,
-        deadlock_chain: list[str],
-        context: dict[str, Any],
+        deadlock_chain: list[str],  # noqa: ARG002
+        context: dict[str, Any],  # noqa: ARG002
     ) -> str:
         escalation_id = str(uuid.uuid4())
         await self.record_coordination_usage("arbiter_escalation", 0.05)
@@ -205,7 +205,7 @@ class TaskSynchronizer:
         if self._on_cycle_detected:
             await self._on_cycle_detected(cycle, graph_snapshot)
 
-    async def record_coordination_usage(self, operation_type: str, cost: float) -> None:
+    async def record_coordination_usage(self, _operation_type: str, cost: float) -> None:
         self._metrics.coordination_used += cost
         self._metrics.coordination_ratio = (
             self._metrics.coordination_used / self._metrics.total_capacity

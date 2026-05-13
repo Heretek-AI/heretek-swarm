@@ -445,7 +445,7 @@ class KnowledgeTransformer:
     def _transform_condensed(
         self,
         pattern: ExtractedPattern,
-        target_agent_type: AgentType,
+        target_agent_type: AgentType,  # noqa: ARG002
     ) -> dict[str, Any]:
         """Transform pattern into condensed/compressed format."""
         return {
@@ -541,7 +541,7 @@ class KnowledgeTransformer:
         self,
         pattern: ExtractedPattern,
         target_agent_type: AgentType,
-        agent_id: str | None,
+        agent_id: str | None,  # noqa: ARG002
     ) -> float:
         """
         Calculate how applicable a pattern is to an agent type.
@@ -719,7 +719,7 @@ class KnowledgeTransformer:
     def _predict_outcome(
         self,
         pattern: ExtractedPattern,
-        agent_type: AgentType,
+        agent_type: AgentType,  # noqa: ARG002
     ) -> str:
         """Predict outcome if pattern is applied."""
         if pattern.metadata.pattern_type == PatternType.SUCCESS:
@@ -1013,6 +1013,6 @@ class KnowledgeTransformationService:
             "total_transformations": len(self._transformation_history),
             "successful": sum(1 for r in self._transformation_history if r.success),
             "failed": sum(1 for r in self._transformation_history if not r.success),
-            "cache_size": len(self.transformer._transformed_cache),
-            "registered_agents": len(self.transformer._agent_profiles),
+            "cache_size": len(self.transformer._transformed_cache),  # noqa: SLF001
+            "registered_agents": len(self.transformer._agent_profiles),  # noqa: SLF001
         }

@@ -406,7 +406,7 @@ class DistributedLearningEngine:
 
             # Validate incoming pattern
             if self.config.validation_required:
-                is_valid = await self.local_learning.extractor._validate_pattern(pattern)
+                is_valid = await self.local_learning.extractor._validate_pattern(pattern)  # noqa: SLF001
                 if not is_valid:
                     return MergeResult(
                         success=False,
@@ -428,7 +428,7 @@ class DistributedLearningEngine:
                     )
 
             # Merge pattern into local storage
-            self.local_learning._patterns[pattern.metadata.pattern_id] = pattern
+            self.local_learning._patterns[pattern.metadata.pattern_id] = pattern  # noqa: SLF001
 
             # Call callbacks
             for callback in self._on_pattern_received:
@@ -487,7 +487,7 @@ class DistributedLearningEngine:
             )
 
             # Store locally
-            self.local_learning._learning_signals.append(signal)
+            self.local_learning._learning_signals.append(signal)  # noqa: SLF001
 
             # Call callbacks
             for callback in self._on_signal_received:
@@ -536,12 +536,12 @@ class DistributedLearningEngine:
 
         for pattern_id, remote_pattern in remote_patterns.items():
             # Check if pattern exists locally
-            local_pattern = self.local_learning._patterns.get(pattern_id)
+            local_pattern = self.local_learning._patterns.get(pattern_id)  # noqa: SLF001
 
             if local_pattern is None:
                 # New pattern - merge directly
-                if await self.local_learning.extractor._validate_pattern(remote_pattern):
-                    self.local_learning._patterns[pattern_id] = remote_pattern
+                if await self.local_learning.extractor._validate_pattern(remote_pattern):  # noqa: SLF001
+                    self.local_learning._patterns[pattern_id] = remote_pattern  # noqa: SLF001
                     merged.append(pattern_id)
                 else:
                     rejected.append(pattern_id)
@@ -551,7 +551,7 @@ class DistributedLearningEngine:
 
                 if should_merge:
                     # Update local pattern
-                    self.local_learning._patterns[pattern_id] = self._merge_patterns(
+                    self.local_learning._patterns[pattern_id] = self._merge_patterns(  # noqa: SLF001
                         local_pattern,
                         remote_pattern,
                         strategy,
@@ -676,7 +676,7 @@ class DistributedLearningEngine:
         """Check for conflicts between pattern and local knowledge."""
         conflicts = []
 
-        local_pattern = self.local_learning._patterns.get(pattern.metadata.pattern_id)
+        local_pattern = self.local_learning._patterns.get(pattern.metadata.pattern_id)  # noqa: SLF001
 
         if local_pattern:
             # Check for significant confidence difference
@@ -930,8 +930,8 @@ class DistributedLearningEngine:
             "agent_id": self.agent_id,
             "running": self._running,
             "redis_connected": self._redis is not None,
-            "local_patterns": len(self.local_learning._patterns),
-            "local_signals": len(self.local_learning._learning_signals),
+            "local_patterns": len(self.local_learning._patterns),  # noqa: SLF001
+            "local_signals": len(self.local_learning._learning_signals),  # noqa: SLF001
             "pending_messages": self._pending_messages.qsize(),
             "processed_ids": len(self._processed_ids),
             "pattern_callbacks": len(self._on_pattern_received),
@@ -971,8 +971,8 @@ class DistributedLearningCoordinator:
     async def broadcast_pattern(
         self,
         pattern: ExtractedPattern,
-        wait_for_ack: bool = False,
-        timeout: float = 5.0,
+        wait_for_ack: bool = False,  # noqa: ARG002
+        timeout: float = 5.0,  # noqa: ARG002
     ) -> dict[str, Any]:
         """
         Broadcast a pattern to the swarm.
@@ -1040,7 +1040,7 @@ class DistributedLearningCoordinator:
         # Wait for incoming patterns
         await asyncio.sleep(timeout)
 
-        return self.engine.local_learning._patterns.copy()
+        return self.engine.local_learning._patterns.copy()  # noqa: SLF001
 
     def get_swarm_status(self) -> dict[str, Any]:
         """
@@ -1053,7 +1053,7 @@ class DistributedLearningCoordinator:
 
         return {
             "local_status": engine_status,
-            "total_patterns": len(self.engine.local_learning._patterns),
-            "total_signals": len(self.engine.local_learning._learning_signals),
+            "total_patterns": len(self.engine.local_learning._patterns),  # noqa: SLF001
+            "total_signals": len(self.engine.local_learning._learning_signals),  # noqa: SLF001
             "coordination_active": True,
         }

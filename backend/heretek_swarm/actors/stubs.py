@@ -191,8 +191,8 @@ class StubAccessAnalyzer:
         access_type: str = "read",
         agent_id: str | None = None,
         session_id: str | None = None,
-        access_latency_ms: float = 0.0,
-        success: bool = True,
+        access_latency_ms: float = 0.0,  # noqa: ARG002
+        success: bool = True,  # noqa: ARG002
     ) -> _StubAccessProfile:
         """Record a memory access event.  Returns a stub profile."""
         now = datetime.now(UTC).isoformat()
@@ -217,7 +217,7 @@ class StubAccessAnalyzer:
         """Get the access profile for a memory, or None."""
         return self._profiles.get(memory_id)
 
-    def predict_agent_access(self, agent_id: str) -> list[str]:
+    def predict_agent_access(self, _agent_id: str) -> list[str]:
         """Predict future accesses for an agent.  Returns empty list."""
         return []
 
@@ -267,8 +267,8 @@ class StubPatternExtractor:
 
     async def extract_patterns(
         self,
-        time_window_hours: int = 24,
-        pattern_types: list[Any] | None = None,
+        time_window_hours: int = 24,  # noqa: ARG002
+        pattern_types: list[Any] | None = None,  # noqa: ARG002
     ) -> list[_StubExtractedPattern]:
         """Return validated patterns that meet confidence threshold."""
         return [p for p in self._validated_patterns.values() if p.confidence >= 0.7]
@@ -305,7 +305,7 @@ class StubTribunal:
         grounds: str,
         description: str,
         original_consensus_id: str | None = None,
-        metadata: dict[str, Any] | None = None,
+        metadata: dict[str, Any] | None = None,  # noqa: ARG002
     ) -> _StubTribunalCase:
         """Create and return a stub tribunal case."""
         now = datetime.now(UTC).isoformat()
@@ -331,7 +331,7 @@ class StubTribunal:
         evidence_type: Any = None,
         source: str | None = None,
         reliability_score: float = 0.5,
-        metadata: dict[str, Any] | None = None,
+        metadata: dict[str, Any] | None = None,  # noqa: ARG002
     ) -> _StubTribunalEvidence:
         """Submit and return a stub evidence record."""
         evidence_id = f"stub_ev_{len(self._evidence) + 1}"
@@ -361,7 +361,7 @@ class StubTribunal:
         issued_by: str = "tribunal",
         confidence: float = 1.0,
         precedent_id: str | None = None,
-        metadata: dict[str, Any] | None = None,
+        metadata: dict[str, Any] | None = None,  # noqa: ARG002
     ) -> _StubTribunalRuling:
         """Issue and return a stub ruling."""
         now = datetime.now(UTC).isoformat()
@@ -395,8 +395,8 @@ class StubTribunal:
 
     def find_similar_precedents(
         self,
-        grounds: str,
-        limit: int = 5,
+        grounds: str,  # noqa: ARG002
+        limit: int = 5,  # noqa: ARG002
     ) -> list[_StubTribunalRuling]:
         """Return stub similar precedents (empty)."""
         return []
@@ -496,10 +496,10 @@ class StubLLMProvider:
 
     async def generate(
         self,
-        prompt: str,
+        prompt: str,  # noqa: ARG002
         *,
-        timeout: float = 60.0,
-        **kwargs: Any,
+        timeout: float = 60.0,  # noqa: ARG002
+        **kwargs: Any,  # noqa: ARG002
     ) -> str:
         """Return the canned response string."""
         self.call_count += 1
@@ -507,16 +507,16 @@ class StubLLMProvider:
 
     async def generate_stream(
         self,
-        prompt: str,
+        prompt: str,  # noqa: ARG002
         *,
-        timeout: float = 60.0,
-        **kwargs: Any,
+        timeout: float = 60.0,  # noqa: ARG002
+        **kwargs: Any,  # noqa: ARG002
     ) -> Any:
         """Yield the canned response as a single chunk."""
         self.call_count += 1
         yield self._canned_response
 
-    def __call__(self, prompt: str, **kwargs: Any) -> str:
+    def __call__(self, _prompt: str, **_kwargs: Any) -> str:
         """Synchronous convenience call."""
         self.call_count += 1
         return self._canned_response
@@ -535,7 +535,7 @@ class StubEventMesh:
         self._published: list[dict[str, Any]] = []
         self._connected = True
 
-    async def connect(self, **kwargs: Any) -> None:
+    async def connect(self, **_kwargs: Any) -> None:
         """No-op connect."""
         self._connected = True
 
@@ -583,11 +583,11 @@ class StubEventMesh:
 
     async def request(
         self,
-        subject: str,
+        subject: str,  # noqa: ARG002
         data: dict[str, Any],
         *,
-        timeout: float = 5.0,
-        **kwargs: Any,
+        timeout: float = 5.0,  # noqa: ARG002
+        **kwargs: Any,  # noqa: ARG002
     ) -> dict[str, Any]:
         """Return a stub response for request-reply patterns."""
         return {"status": "ok", "data": data}

@@ -83,7 +83,7 @@ class DreamerAgent(
         agent_id: str = "dreamer",
         name: str = "Dreamer",
         description: str = "Creative Solution Generation Specialist",
-        swarms_agent=None,
+        swarms_agent=None,  # noqa: ARG002
         pattern_extractor=None,
         deliberation_engine=None,
         access_analyzer=None,
@@ -531,7 +531,7 @@ class DreamerAgent(
             session_id = content.get("session_id")
 
             if session_id:
-                metrics = self._metrics_tracker._session_metrics.get(session_id)
+                metrics = self._metrics_tracker._session_metrics.get(session_id)  # noqa: SLF001
                 if metrics:
                     return {
                         "status": "success",
@@ -554,7 +554,7 @@ class DreamerAgent(
                     "creativity_score": m.calculate_creativity_score(),
                     "total_connections": m.total_connections,
                 }
-                for m in self._metrics_tracker._session_metrics.values()
+                for m in self._metrics_tracker._session_metrics.values()  # noqa: SLF001
             ]
 
             return {

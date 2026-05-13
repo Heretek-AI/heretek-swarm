@@ -183,9 +183,9 @@ class HabitForgeAgent(
             try:
                 await handler(message)
             except Exception as e:
-                logger.error(
-                    f"[{self.agent_id}] Error processing message {message.message_type}: {e}",
-                    exc_info=True,
+                logger.exception(
+                    f"[{self.agent_id}] Error processing message {message.message_type}: {e}",  # noqa: G004
+
                 )
                 self.error_count += 1
                 if message.content.get("reply_to"):
@@ -275,7 +275,7 @@ class HabitForgeAgent(
                 )
 
         except Exception:
-            logger.error("[{self.agent_id}] Error creating habit: {e}", exc_info=True)
+            logger.exception("[{self.agent_id}] Error creating habit: {e}")
 
     async def _handle_track_habit(self, message: ActorMessage) -> None:
         """
@@ -302,7 +302,7 @@ class HabitForgeAgent(
                 habit.record_completion(context)
 
                 logger.info(
-                    f"[{self.agent_id}] Recorded completion for habit: {habit.name} "
+                    f"[{self.agent_id}] Recorded completion for habit: {habit.name} "  # noqa: G004
                     f"(streak: {habit.streak_current}, adherence: {habit.adherence_rate:.1%})"
                 )
 
@@ -329,7 +329,7 @@ class HabitForgeAgent(
                 )
 
         except Exception:
-            logger.error("[{self.agent_id}] Error tracking habit: {e}", exc_info=True)
+            logger.exception("[{self.agent_id}] Error tracking habit: {e}")
 
     async def _check_stage_progression(self, habit: Habit) -> None:
         """
@@ -357,7 +357,7 @@ class HabitForgeAgent(
         # Log stage change
         if habit.stage != old_stage:
             logger.info(
-                f"[{self.agent_id}] Habit '{habit.name}' progressed from "
+                f"[{self.agent_id}] Habit '{habit.name}' progressed from "  # noqa: G004
                 f"{old_stage.value} to {habit.stage.value}"
             )
 
@@ -413,7 +413,7 @@ class HabitForgeAgent(
             logger.info("[{self.agent_id}] Detected {len(patterns)} behavioral patterns")
 
         except Exception:
-            logger.error("[{self.agent_id}] Error analyzing patterns: {e}", exc_info=True)
+            logger.exception("[{self.agent_id}] Error analyzing patterns: {e}")
 
     async def _analyze_behavior_patterns(
         self,
@@ -646,7 +646,7 @@ Respond in JSON format:
                 )
 
         except Exception:
-            logger.error("[{self.agent_id}] Error getting habit progress: {e}", exc_info=True)
+            logger.exception("[{self.agent_id}] Error getting habit progress: {e}")
 
     def _calculate_collective_adherence(self) -> float:
         """Calculate collective adherence rate across all active habits."""
@@ -699,13 +699,13 @@ Respond in JSON format:
                 )
 
         except Exception:
-            logger.error("[{self.agent_id}] Error modifying pattern: {e}", exc_info=True)
+            logger.exception("[{self.agent_id}] Error modifying pattern: {e}")
 
     async def _generate_modification_plan(
         self,
         pattern: BehavioralPattern,
         modification_type: str,
-        request_content: dict[str, Any],
+        request_content: dict[str, Any],  # noqa: ARG002
     ) -> dict[str, Any]:
         """
         Generate a plan for modifying a behavioral pattern.
@@ -823,7 +823,7 @@ Respond in JSON:
                 )
 
         except Exception:
-            logger.error("[{self.agent_id}] Error generating behavior report: {e}", exc_info=True)
+            logger.exception("[{self.agent_id}] Error generating behavior report: {e}")
 
     async def _handle_design_reinforcement(self, message: ActorMessage) -> None:
         """
@@ -863,7 +863,7 @@ Respond in JSON:
                 )
 
         except Exception:
-            logger.error("[{self.agent_id}] Error designing reinforcement: {e}", exc_info=True)
+            logger.exception("[{self.agent_id}] Error designing reinforcement: {e}")
 
     # =========================================================================
     # Session 44: Collective Learning Integration Methods
@@ -1026,7 +1026,7 @@ Respond in JSON:
                 )
                 self.habit_forge = habit_forge
 
-            async def act(self, observation: dict[str, Any]) -> dict[str, Any]:
+            async def act(self, _observation: dict[str, Any]) -> dict[str, Any]:
                 """Take action based on observation for Phi training."""
                 # Use habit formation logic to determine action
                 habits = self.habit_forge.active_habits
@@ -1048,8 +1048,8 @@ Respond in JSON:
                 return {
                     "active_habits": len(self.habit_forge.active_habits),
                     "completed_habits": len(self.habit_forge.completed_habits),
-                    "collective_adherence": self.habit_forge._calculate_collective_adherence(),
-                    "activation": self.habit_forge._calculate_collective_adherence(),
+                    "collective_adherence": self.habit_forge._calculate_collective_adherence(),  # noqa: SLF001
+                    "activation": self.habit_forge._calculate_collective_adherence(),  # noqa: SLF001
                 }
 
         return HabitForgeAgentActor(self)

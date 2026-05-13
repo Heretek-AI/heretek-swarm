@@ -730,7 +730,7 @@ class JetStreamManager:
         self,
         consumer: Any,
         callback: Callable[[str, dict[str, Any]], None],
-        consumer_id: str,
+        consumer_id: str,  # noqa: ARG002
     ) -> None:
         """Process messages from a consumer."""
         while True:

@@ -268,12 +268,12 @@ class A2AServer:
         else:
             logger.warning("a2a_unknown_message_type", type=msg_type)
 
-    async def _handle_handshake(self, agent_id: str, data: dict) -> None:
+    async def _handle_handshake(self, agent_id: str, _data: dict) -> None:
         """Handle handshake message."""
         logger.info("a2a_handshake", agent_id=agent_id)
         # Already handled in connection setup
 
-    async def _handle_discovery(self, agent_id: str, data: dict) -> None:
+    async def _handle_discovery(self, agent_id: str, _data: dict) -> None:
         """
         Handle discovery request - return list of all agents.
 
@@ -432,7 +432,7 @@ class A2AServer:
             "agent_ids": list(self.agents.keys()),
             "message_log_size": len(self._message_log),
             "uptime": "active",
-            "active_tokens": len(token_manager._valid_tokens),
+            "active_tokens": len(token_manager._valid_tokens),  # noqa: SLF001
         }
 
     @staticmethod

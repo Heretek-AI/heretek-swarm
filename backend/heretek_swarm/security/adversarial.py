@@ -882,7 +882,7 @@ class AdversarialDetector:
         return list(mappings)
 
     def _generate_recommendation(
-        self, threat_level: ThreatLevel, categories: set[AttackCategory]
+        self, threat_level: ThreatLevel, categories: set[AttackCategory]  # noqa: ARG002
     ) -> str:
         """Generate action recommendation based on threat."""
         if threat_level == ThreatLevel.CRITICAL:

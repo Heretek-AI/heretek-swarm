@@ -85,7 +85,7 @@ async def get_routing_stats(
         stats = router.get_stats()
         return RoutingStatsResponse(**stats)
     except Exception as e:
-        logger.error("Failed to get routing stats: {e}", exc_info=True)
+        logger.exception("Failed to get routing stats: {e}")
         raise HTTPException(500, f"Failed to get routing stats: {e!s}")
 
 
@@ -131,7 +131,7 @@ async def evaluate_routing(
             "filters_matched": decision.filters_matched,
         }
     except Exception as e:
-        logger.error("Failed to evaluate routing: {e}", exc_info=True)
+        logger.exception("Failed to evaluate routing: {e}")
         raise HTTPException(500, f"Failed to evaluate routing: {e!s}")
 
 

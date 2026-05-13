@@ -472,7 +472,7 @@ class EnhancedMAKERConsensus(MAKERConsensus):
         self.evidence_cache: dict[str, EvidenceQuality] = {}
 
         logger.info(
-            f"EnhancedMAKERConsensus initialized with "
+            f"EnhancedMAKERConsensus initialized with "  # noqa: G004
             f"pattern_library={enable_pattern_library}, "
             f"rollback={enable_rollback}, "
             f"cross_validation={enable_cross_validation}"
@@ -522,7 +522,7 @@ class EnhancedMAKERConsensus(MAKERConsensus):
             }
 
         logger.info(
-            f"Enhanced consensus started: {consensus_id} "
+            f"Enhanced consensus started: {consensus_id} "  # noqa: G004
             f"(proposal: {proposal or 'none'}, domain: {domain or 'general'})"
         )
 
@@ -633,7 +633,7 @@ class EnhancedMAKERConsensus(MAKERConsensus):
                 )
 
             logger.info(
-                f"Vote with reasoning added: {agent_id} -> {decision} "
+                f"Vote with reasoning added: {agent_id} -> {decision} "  # noqa: G004
                 f"(chain: {chain.chain_id}, status: {chain.status.value})"
             )
 
@@ -698,7 +698,7 @@ class EnhancedMAKERConsensus(MAKERConsensus):
         enhanced_vote.vote_weight = vote_weight
 
         logger.debug(
-            f"Vote weight calculated for {agent_id}: "
+            f"Vote weight calculated for {agent_id}: "  # noqa: G004
             f"evidence={evidence_score:.2f}, expertise={expertise_score:.2f}, "
             f"confidence={confidence_score:.2f}, historical={historical_score:.2f} "
             f"-> weight={vote_weight:.2f}"
@@ -992,7 +992,7 @@ class EnhancedMAKERConsensus(MAKERConsensus):
 
         if avg_validation_score < min_validation_score:
             logger.warning(
-                f"Validation score {avg_validation_score:.2f} below threshold "
+                f"Validation score {avg_validation_score:.2f} below threshold "  # noqa: G004
                 f"{min_validation_score:.2f} for {consensus_id}"
             )
             self.process_states[consensus_id] = ConsensusState.FAILED
@@ -1054,7 +1054,7 @@ class EnhancedMAKERConsensus(MAKERConsensus):
             self.decision_provenance[consensus_id].validation_results = validation_results
 
         logger.info(
-            f"Cross-validation complete for {consensus_id}: "
+            f"Cross-validation complete for {consensus_id}: "  # noqa: G004
             f"{validation_results['valid_chains']}/{validation_results['total_chains']} "
             f"valid chains"
         )

@@ -197,9 +197,9 @@ class PerceiverAgent(
             try:
                 await handler(message)
             except Exception as e:
-                logger.error(
-                    f"[{self.agent_id}] Error processing message {message.message_type}: {e}",
-                    exc_info=True,
+                logger.exception(
+                    f"[{self.agent_id}] Error processing message {message.message_type}: {e}",  # noqa: G004
+
                 )
                 self.error_count += 1
                 if message.content.get("reply_to"):
@@ -221,7 +221,7 @@ class PerceiverAgent(
             return validate_message(message_type, content)
         except ValidationError as e:
             logger.warning(
-                f"[{self.agent_id}] Message validation failed for {message_type}: {e}",
+                f"[{self.agent_id}] Message validation failed for {message_type}: {e}",  # noqa: G004
                 extra={"validation_errors": e.errors()},
             )
             raise ValueError(f"Invalid message format: {e.errors()}")
@@ -306,12 +306,12 @@ class PerceiverAgent(
             )
 
             logger.info(
-                f"[{self.agent_id}] Input processed: {input_id[:8]}...",
+                f"[{self.agent_id}] Input processed: {input_id[:8]}...",  # noqa: G004
                 extra={"modality": modality, "quality": quality_score},
             )
 
         except Exception as e:
-            logger.error("[{self.agent_id}] Input processing failed: {e}", exc_info=True)
+            logger.exception("[{self.agent_id}] Input processing failed: {e}")
             await self._send_error_response(message, f"Input processing failed: {e}")
 
     def _validate_input_size(self, input_data: Any) -> bool:
@@ -506,7 +506,7 @@ class PerceiverAgent(
             "analyzed_by": "metadata",
         }
 
-    async def _describe_image_llm(self, image_data: str) -> str:
+    async def _describe_image_llm(self, _image_data: str) -> str:
         """Use LLM to describe an image."""
         prompt = "Describe this image in detail, including any text, objects, people, colors, and the overall scene."
         # Note: Actual implementation would depend on LLM capabilities
@@ -619,7 +619,7 @@ class PerceiverAgent(
         }
 
     def _assess_input_quality(
-        self, input_data: Any, modality: str, features: dict[str, Any]
+        self, input_data: Any, modality: str, features: dict[str, Any]  # noqa: ARG002
     ) -> float:
         """Assess input quality (0-1 score)."""
         quality_score = 1.0
@@ -727,7 +727,7 @@ class PerceiverAgent(
             )
 
         except Exception as e:
-            logger.error("[{self.agent_id}] Feature extraction failed: {e}", exc_info=True)
+            logger.exception("[{self.agent_id}] Feature extraction failed: {e}")
             await self._send_error_response(message, f"Feature extraction failed: {e}")
 
     async def _handle_classify_modality(self, message: ActorMessage) -> None:
@@ -761,7 +761,7 @@ class PerceiverAgent(
             )
 
         except Exception as e:
-            logger.error("[{self.agent_id}] Modality classification failed: {e}", exc_info=True)
+            logger.exception("[{self.agent_id}] Modality classification failed: {e}")
             await self._send_error_response(message, f"Classification failed: {e}")
 
     async def _handle_assess_quality(self, message: ActorMessage) -> None:
@@ -798,7 +798,7 @@ class PerceiverAgent(
             )
 
         except Exception as e:
-            logger.error("[{self.agent_id}] Quality assessment failed: {e}", exc_info=True)
+            logger.exception("[{self.agent_id}] Quality assessment failed: {e}")
             await self._send_error_response(message, f"Quality assessment failed: {e}")
 
     async def _handle_get_processing_stats(self, message: ActorMessage) -> None:
@@ -828,7 +828,7 @@ class PerceiverAgent(
             )
 
         except Exception as e:
-            logger.error("[{self.agent_id}] Stats retrieval failed: {e}", exc_info=True)
+            logger.exception("[{self.agent_id}] Stats retrieval failed: {e}")
             await self._send_error_response(message, f"Stats retrieval failed: {e}")
 
     async def _handle_correlate_modalities(self, message: ActorMessage) -> None:
@@ -880,7 +880,7 @@ class PerceiverAgent(
             )
 
         except Exception as e:
-            logger.error("[{self.agent_id}] Correlation analysis failed: {e}", exc_info=True)
+            logger.exception("[{self.agent_id}] Correlation analysis failed: {e}")
             await self._send_error_response(message, f"Correlation failed: {e}")
 
     # Session 44: Collective Learning, Consensus Deliberation, and Memory Optimization

@@ -550,7 +550,7 @@ class UnifiedKnowledgeAccess:
             return str(content)
         return str(content)
 
-    def _track_query_stats(self, query: str, result: KnowledgeQueryResult) -> None:
+    def _track_query_stats(self, _query: str, result: KnowledgeQueryResult) -> None:
         """Track query statistics for monitoring."""
         # Simple stats tracking
         key = f"{result.sources_queried}"

@@ -691,7 +691,7 @@ class ExternalThreatDetector:
 
     async def get_threat_intelligence(
         self,
-        time_range: str = "24h",
+        time_range: str = "24h",  # noqa: ARG002
     ) -> ThreatIntelligence:
         """
         Get aggregated threat intelligence.

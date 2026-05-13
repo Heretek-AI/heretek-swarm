@@ -197,9 +197,9 @@ class PerceiverPlusAgent(
             try:
                 await handler(message)
             except Exception as e:
-                logger.error(
-                    f"[{self.agent_id}] Error processing message {message.message_type}: {e}",
-                    exc_info=True,
+                logger.exception(
+                    f"[{self.agent_id}] Error processing message {message.message_type}: {e}",  # noqa: G004
+
                 )
                 self.error_count += 1
                 if message.content.get("reply_to"):
@@ -273,7 +273,7 @@ class PerceiverPlusAgent(
             logger.info("[{self.agent_id}] Completed {len(results)} analyses")
 
         except Exception:
-            logger.error("[{self.agent_id}] Error analyzing data: {e}", exc_info=True)
+            logger.exception("[{self.agent_id}] Error analyzing data: {e}")
 
     async def _handle_detect_trends(self, message: ActorMessage) -> None:
         """
@@ -312,7 +312,7 @@ class PerceiverPlusAgent(
                 )
 
         except Exception:
-            logger.error("[{self.agent_id}] Error detecting trends: {e}", exc_info=True)
+            logger.exception("[{self.agent_id}] Error detecting trends: {e}")
 
     async def _handle_compute_correlations(self, message: ActorMessage) -> None:
         """
@@ -348,7 +348,7 @@ class PerceiverPlusAgent(
                 )
 
         except Exception:
-            logger.error("[{self.agent_id}] Error computing correlations: {e}", exc_info=True)
+            logger.exception("[{self.agent_id}] Error computing correlations: {e}")
 
     async def _handle_run_statistical_test(self, message: ActorMessage) -> None:
         """
@@ -380,7 +380,7 @@ class PerceiverPlusAgent(
                 )
 
         except Exception:
-            logger.error("[{self.agent_id}] Error running statistical test: {e}", exc_info=True)
+            logger.exception("[{self.agent_id}] Error running statistical test: {e}")
 
     async def _handle_extract_features(self, message: ActorMessage) -> None:
         """
@@ -422,7 +422,7 @@ class PerceiverPlusAgent(
                 )
 
         except Exception:
-            logger.error("[{self.agent_id}] Error extracting features: {e}", exc_info=True)
+            logger.exception("[{self.agent_id}] Error extracting features: {e}")
 
     async def _handle_forecast_values(self, message: ActorMessage) -> None:
         """
@@ -455,7 +455,7 @@ class PerceiverPlusAgent(
                 )
 
         except Exception:
-            logger.error("[{self.agent_id}] Error forecasting: {e}", exc_info=True)
+            logger.exception("[{self.agent_id}] Error forecasting: {e}")
 
     async def _handle_get_analytics_summary(self, message: ActorMessage) -> None:
         """
@@ -486,7 +486,7 @@ class PerceiverPlusAgent(
                 )
 
         except Exception:
-            logger.error("[{self.agent_id}] Error getting analytics summary: {e}", exc_info=True)
+            logger.exception("[{self.agent_id}] Error getting analytics summary: {e}")
 
     async def _handle_signal_processing(self, message: ActorMessage) -> None:
         """
@@ -522,7 +522,7 @@ class PerceiverPlusAgent(
                 )
 
         except Exception:
-            logger.error("[{self.agent_id}] Error processing signal: {e}", exc_info=True)
+            logger.exception("[{self.agent_id}] Error processing signal: {e}")
 
     async def _handle_knowledge_enhanced_analysis(self, message: ActorMessage) -> None:
         """
@@ -590,8 +590,8 @@ class PerceiverPlusAgent(
                 logger.warning("[{self.agent_id}] Knowledge access not initialized")
 
         except Exception as e:
-            logger.error(
-                f"[{self.agent_id}] Error in knowledge enhanced analysis: {e}", exc_info=True
+            logger.exception(
+                f"[{self.agent_id}] Error in knowledge enhanced analysis: {e}"  # noqa: G004
             )
 
     async def knowledge_enhanced_query(

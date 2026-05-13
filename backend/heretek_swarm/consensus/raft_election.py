@@ -236,7 +236,7 @@ class RaftElection:
         self._on_log_append: callable | None = None
 
         logger.info(
-            f"RaftElection initialized for {node_id}",
+            f"RaftElection initialized for {node_id}",  # noqa: G004
             extra={
                 "node_id": node_id,
                 "peers": peers,
@@ -793,7 +793,7 @@ class MAKERConsensusWithRaft:
             timeout=timeout,
         )
 
-    async def _on_leader_change(self, new_leader_id: str) -> None:
+    async def _on_leader_change(self, _new_leader_id: str) -> None:
         """Handle leader change."""
         logger.info("Leader changed to {new_leader_id}")
 

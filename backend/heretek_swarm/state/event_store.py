@@ -488,7 +488,7 @@ class EventStore:
                 state = await self.reconstruct_state(aggregate_id, self._default_applier)
                 await self.create_snapshot(aggregate_id, aggregate_type, state, row)
 
-    def _check_snapshot_memory(self, aggregate_id: str, aggregate_type: str) -> None:
+    def _check_snapshot_memory(self, aggregate_id: str, _aggregate_type: str) -> None:
         """Check if snapshot should be created in memory."""
         count = sum(1 for e in self._memory_events if e.aggregate_id == aggregate_id)
 

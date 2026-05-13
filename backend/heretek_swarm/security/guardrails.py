@@ -330,7 +330,7 @@ class GuardrailsSystem:
             for bp in self.config.blocked_patterns
         ]
 
-    async def check_agent_rate_limit(self, agent_id: str, action: str) -> bool:
+    async def check_agent_rate_limit(self, agent_id: str, _action: str) -> bool:
         """
         Check if agent has exceeded its rate limit.
 

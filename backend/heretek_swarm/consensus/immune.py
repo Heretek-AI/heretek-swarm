@@ -411,7 +411,7 @@ class ImmuneResponseBuilding:
     def learn_from_response(
         self,
         response: ImmuneResponse,
-        pattern_content: dict[str, Any],
+        pattern_content: dict[str, Any],  # noqa: ARG002
         pattern_type: str,
         severity: str,
     ) -> bool:

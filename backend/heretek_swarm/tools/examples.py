@@ -29,7 +29,7 @@ class HealthCheckTool(BaseTool):
             ),
         )
 
-    async def execute(self, context: ToolContext, **kwargs) -> ToolExecutionResult:
+    async def execute(self, context: ToolContext, **_kwargs) -> ToolExecutionResult:
         """Execute health check."""
         return ToolExecutionResult(
             tool_name=self.name,
@@ -52,7 +52,7 @@ class MemorySearchTool(BaseTool):
             ),
         )
 
-    async def execute(self, context: ToolContext, **kwargs) -> ToolExecutionResult:
+    async def execute(self, _context: ToolContext, **kwargs) -> ToolExecutionResult:
         """Execute memory search."""
         query = kwargs.get("query", "")
         return ToolExecutionResult(
@@ -76,7 +76,7 @@ class ConsensusVoteTool(BaseTool):
             ),
         )
 
-    async def execute(self, context: ToolContext, **kwargs) -> ToolExecutionResult:
+    async def execute(self, _context: ToolContext, **_kwargs) -> ToolExecutionResult:
         """Execute consensus vote."""
         return ToolExecutionResult(
             tool_name=self.name,
@@ -100,7 +100,7 @@ class LegacyWrapperTool(BaseTool):
             ),
         )
 
-    async def execute(self, context: ToolContext, **kwargs) -> ToolExecutionResult:
+    async def execute(self, _context: ToolContext, **_kwargs) -> ToolExecutionResult:
         """Execute legacy tool."""
         if self.legacy_tool:
             return ToolExecutionResult(

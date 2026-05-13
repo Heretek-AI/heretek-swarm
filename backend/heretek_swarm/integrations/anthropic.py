@@ -648,7 +648,7 @@ class AnthropicAdapter:
     async def _execute_tool(
         self,
         request: ToolUseRequest,
-        context: ConversationContext,
+        context: ConversationContext,  # noqa: ARG002
     ) -> Any:
         """Execute a tool request."""
         tool = self.tools.get(request.tool_name)

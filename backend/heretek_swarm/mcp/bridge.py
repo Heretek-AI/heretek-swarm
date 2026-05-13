@@ -117,11 +117,11 @@ def sync_mcp_registries(core_tools: CoreMCPTools | None) -> int:
     # dashboard survive daemon restarts — the bridge never overwrites a
     # user-disabled tool back to enabled.
     # ------------------------------------------------------------------
-    persisted_states = mcp_registry._load_tool_states()
+    persisted_states = mcp_registry._load_tool_states()  # noqa: SLF001
     applied_count = 0
     orphan_count = 0
     for tool_name, persisted_enabled in persisted_states.items():
-        tool = mcp_registry._tools.get(tool_name)
+        tool = mcp_registry._tools.get(tool_name)  # noqa: SLF001
         if tool is not None:
             tool.enabled = persisted_enabled
             applied_count += 1

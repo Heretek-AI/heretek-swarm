@@ -192,7 +192,7 @@ class DenseRetrievalStrategy(BaseRetrievalStrategy):
         return RetrievalStrategyType.DENSE
 
     async def retrieve(
-        self, query: str, top_k: int = 5, filters: dict[str, Any] | None = None, **kwargs
+        self, query: str, top_k: int = 5, filters: dict[str, Any] | None = None, **kwargs  # noqa: ARG002
     ) -> list[RetrievalResult]:
         """
         Retrieve using dense vector similarity.
@@ -303,7 +303,7 @@ class SparseRetrievalStrategy(BaseRetrievalStrategy):
     def _calculate_bm25_score(
         self,
         term: str,
-        doc_id: str,
+        doc_id: str,  # noqa: ARG002
         term_frequency: int,
         doc_length: int,
     ) -> float:
@@ -341,7 +341,7 @@ class SparseRetrievalStrategy(BaseRetrievalStrategy):
         return idf * (numerator / denominator) if denominator > 0 else 0.0
 
     async def retrieve(
-        self, query: str, top_k: int = 5, filters: dict[str, Any] | None = None, **kwargs
+        self, query: str, top_k: int = 5, filters: dict[str, Any] | None = None, **kwargs  # noqa: ARG002
     ) -> list[RetrievalResult]:
         """
         Retrieve using BM25 sparse retrieval.
@@ -569,7 +569,7 @@ class HybridRetrievalStrategy(BaseRetrievalStrategy):
         return combined_results
 
     async def retrieve(
-        self, query: str, top_k: int = 5, filters: dict[str, Any] | None = None, **kwargs
+        self, query: str, top_k: int = 5, filters: dict[str, Any] | None = None, **kwargs  # noqa: ARG002
     ) -> list[RetrievalResult]:
         """
         Retrieve using hybrid dense + sparse combination.
@@ -702,7 +702,7 @@ class MultiHopRetrievalStrategy(BaseRetrievalStrategy):
         return templates[hop_number % len(templates)]
 
     async def retrieve(
-        self, query: str, top_k: int = 5, filters: dict[str, Any] | None = None, **kwargs
+        self, query: str, top_k: int = 5, filters: dict[str, Any] | None = None, **kwargs  # noqa: ARG002
     ) -> list[RetrievalResult]:
         """
         Retrieve using multi-hop chained queries.
@@ -827,7 +827,7 @@ class ReRankingStrategy(BaseRetrievalStrategy):
         query: str,
         top_k: int = 5,
         initial_results: list[RetrievalResult] | None = None,
-        **kwargs,
+        **kwargs,  # noqa: ARG002
     ) -> list[RetrievalResult]:
         """
         Re-rank initial retrieval results using cross-encoder.

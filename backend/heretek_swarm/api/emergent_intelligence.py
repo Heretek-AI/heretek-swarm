@@ -109,7 +109,7 @@ async def get_siq(
 
         if include_history:
             limit = int(history_limit)
-            result["history"] = [s.to_dict() for s in metrics._siq_history[-limit:]]
+            result["history"] = [s.to_dict() for s in metrics._siq_history[-limit:]]  # noqa: SLF001
 
         return {
             "success": True,
@@ -147,7 +147,7 @@ async def get_collective_efficiency(
 
         if include_history:
             limit = int(history_limit)
-            result["history"] = [e.to_dict() for e in metrics._efficiency_history[-limit:]]
+            result["history"] = [e.to_dict() for e in metrics._efficiency_history[-limit:]]  # noqa: SLF001
 
         return {
             "success": True,
@@ -185,7 +185,7 @@ async def get_knowledge_transfer_metrics(
 
         if include_history:
             limit = int(history_limit)
-            result["history"] = [t.to_dict() for t in metrics._transfer_history[-limit:]]
+            result["history"] = [t.to_dict() for t in metrics._transfer_history[-limit:]]  # noqa: SLF001
 
         return {
             "success": True,
@@ -223,7 +223,7 @@ async def get_emergence_coefficient(
 
         if include_history:
             limit = int(history_limit)
-            result["history"] = [e.to_dict() for e in metrics._emergence_history[-limit:]]
+            result["history"] = [e.to_dict() for e in metrics._emergence_history[-limit:]]  # noqa: SLF001
 
         return {
             "success": True,
@@ -359,7 +359,7 @@ async def get_agent_adaptation(
         else:
             data = {
                 "swarm_statistics": adaptor.get_swarm_adaptation_stats(),
-                "total_agents": len(adaptor._agent_states),
+                "total_agents": len(adaptor._agent_states),  # noqa: SLF001
             }
 
         return {

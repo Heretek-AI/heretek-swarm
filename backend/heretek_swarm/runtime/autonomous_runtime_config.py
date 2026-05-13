@@ -167,7 +167,7 @@ async def load_config_from_env() -> AutonomousRuntimeConfig:
 
         loader = get_config_loader()
 
-        if loader._initialized:
+        if loader._initialized:  # noqa: SLF001
             # Load from database with environment fallback
             monitoring_enabled = await loader.get_async(
                 "runtime.monitoring_enabled",

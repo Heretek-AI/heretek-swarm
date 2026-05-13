@@ -21,7 +21,7 @@ class EmergenceAnalyzer:
         logger.info("emergence_analyzer_initialized")
 
     def analyze_emergence_trends(self) -> dict[str, Any]:
-        patterns = self.detector._emergent_patterns
+        patterns = self.detector._emergent_patterns  # noqa: SLF001
 
         if len(patterns) < 5:
             return {"trend": "insufficient_data"}
@@ -48,7 +48,7 @@ class EmergenceAnalyzer:
     def identify_key_contributors(self) -> list[dict[str, Any]]:
         agent_contributions: dict[str, int] = defaultdict(int)
 
-        for pattern in self.detector._emergent_patterns:
+        for pattern in self.detector._emergent_patterns:  # noqa: SLF001
             for agent_id in pattern.participating_agents:
                 agent_contributions[agent_id] += 1
 
@@ -60,7 +60,7 @@ class EmergenceAnalyzer:
         return contributors[:10]
 
     def analyze_pattern_correlations(self) -> dict[str, Any]:
-        patterns = self.detector._emergent_patterns
+        patterns = self.detector._emergent_patterns  # noqa: SLF001
 
         if len(patterns) < 10:
             return {"correlations": "insufficient_data"}
@@ -85,7 +85,7 @@ class EmergenceAnalyzer:
     def get_emergence_timeline(self) -> list[dict[str, Any]]:
         timeline = []
 
-        for pattern in sorted(self.detector._emergent_patterns, key=lambda p: p.timestamp):
+        for pattern in sorted(self.detector._emergent_patterns, key=lambda p: p.timestamp):  # noqa: SLF001
             timeline.append(
                 {
                     "timestamp": pattern.timestamp,

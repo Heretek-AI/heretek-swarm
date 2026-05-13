@@ -1672,10 +1672,10 @@ async def main():
         await swarm.initialize()
         await swarm.run()
     except Exception as exc:
-        logger.error(
+        logger.exception(
             "autonomous_swarm_main_failed",
             error=str(exc),
-            exc_info=True,
+
         )
         raise
 

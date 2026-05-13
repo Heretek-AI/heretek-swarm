@@ -241,7 +241,7 @@ class GoalConsensus:
     async def _collect_goal_votes(
         self,
         goal: Goal,
-        actors: dict[str, Any],
+        actors: dict[str, Any],  # noqa: ARG002
         prompt: str,
         timeout: float,
     ) -> list[Vote]:

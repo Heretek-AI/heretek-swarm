@@ -118,7 +118,7 @@ class ActorSupervisor(AuditMixin, ValidationMixin, HealthReportingMixin, Pattern
         # P2-5 fix: Removed unused _factory - dead code removal
 
         logger.info(
-            f"[{self.name}] Supervisor initialized",
+            f"[{self.name}] Supervisor initialized",  # noqa: G004
             extra={
                 "health_check_interval": health_check_interval,
                 "auto_restart": auto_restart,
@@ -190,7 +190,7 @@ class ActorSupervisor(AuditMixin, ValidationMixin, HealthReportingMixin, Pattern
             self.actor_configs[actor_id] = config
 
             logger.info(
-                f"[{self.name}] Actor {actor_id} spawned",
+                f"[{self.name}] Actor {actor_id} spawned",  # noqa: G004
                 extra={"actor_class": actor_class.__name__, "actor_type": actor_type},
             )
 
@@ -200,9 +200,9 @@ class ActorSupervisor(AuditMixin, ValidationMixin, HealthReportingMixin, Pattern
             raise
         except Exception as e:
             # P1-10f fix: Comprehensive exception handling for spawn failures
-            logger.error(
-                f"[{self.name}] Failed to spawn actor {actor_id}: {e}",
-                exc_info=True,
+            logger.exception(
+                f"[{self.name}] Failed to spawn actor {actor_id}: {e}",  # noqa: G004
+
             )
             # Clean up partial state if actor was partially registered
             self.actors.pop(actor_id, None)
@@ -228,9 +228,9 @@ class ActorSupervisor(AuditMixin, ValidationMixin, HealthReportingMixin, Pattern
             # P1-10g fix: Add exception handling around terminate()
             await actor.terminate()
         except Exception as e:
-            logger.error(
-                f"[{self.name}] Error terminating actor {actor_id}: {e}",
-                exc_info=True,
+            logger.exception(
+                f"[{self.name}] Error terminating actor {actor_id}: {e}",  # noqa: G004
+
             )
             # Still attempt cleanup even if terminate failed
             actor.state = ActorState.ERROR
@@ -318,7 +318,7 @@ class ActorSupervisor(AuditMixin, ValidationMixin, HealthReportingMixin, Pattern
                     # Check for terminated actors - CLEAN UP
                     if status.state == ActorState.TERMINATED:
                         logger.warning(
-                            f"[{self.name}] Actor {actor_id} is terminated - cleaning up",
+                            f"[{self.name}] Actor {actor_id} is terminated - cleaning up",  # noqa: G004
                         )
                         await self.terminate_actor(actor_id)
                         continue
@@ -326,7 +326,7 @@ class ActorSupervisor(AuditMixin, ValidationMixin, HealthReportingMixin, Pattern
                     # Check for error state
                     if status.state == ActorState.ERROR:
                         logger.error(
-                            f"[{self.name}] Actor {actor_id} in error state",
+                            f"[{self.name}] Actor {actor_id} in error state",  # noqa: G004
                         )
                         if self.auto_restart:
                             await self._attempt_restart(actor_id)
@@ -334,7 +334,7 @@ class ActorSupervisor(AuditMixin, ValidationMixin, HealthReportingMixin, Pattern
                     # Check for high error count - TAKE ACTION
                     if status.error_count > 10:
                         logger.warning(
-                            f"[{self.name}] Actor {actor_id} has high error count: {status.error_count}",
+                            f"[{self.name}] Actor {actor_id} has high error count: {status.error_count}",  # noqa: G004
                         )
                         if self.auto_restart and status.state != ActorState.ERROR:
                             # Set error state and attempt restart
@@ -346,7 +346,7 @@ class ActorSupervisor(AuditMixin, ValidationMixin, HealthReportingMixin, Pattern
             except asyncio.CancelledError:
                 break
             except Exception:
-                logger.error("[{self.name}] Monitor error: {e}", exc_info=True)
+                logger.exception("[{self.name}] Monitor error: {e}")
                 await asyncio.sleep(5.0)
 
     async def _attempt_restart(self, actor_id: str) -> None:
@@ -363,13 +363,13 @@ class ActorSupervisor(AuditMixin, ValidationMixin, HealthReportingMixin, Pattern
 
         if restart_count >= self.max_restarts:
             logger.error(
-                f"[{self.name}] Actor {actor_id} exceeded max restarts ({self.max_restarts})",
+                f"[{self.name}] Actor {actor_id} exceeded max restarts ({self.max_restarts})",  # noqa: G004
             )
             await self.terminate_actor(actor_id)
             return
 
         logger.info(
-            f"[{self.name}] Attempting restart {restart_count + 1}/{self.max_restarts} for {actor_id}",
+            f"[{self.name}] Attempting restart {restart_count + 1}/{self.max_restarts} for {actor_id}",  # noqa: G004
         )
 
         try:
@@ -377,7 +377,7 @@ class ActorSupervisor(AuditMixin, ValidationMixin, HealthReportingMixin, Pattern
             config = self.actor_configs.get(actor_id)
             if config is None:
                 logger.error(
-                    f"[{self.name}] No configuration found for actor {actor_id}",
+                    f"[{self.name}] No configuration found for actor {actor_id}",  # noqa: G004
                 )
                 return
 
@@ -400,12 +400,12 @@ class ActorSupervisor(AuditMixin, ValidationMixin, HealthReportingMixin, Pattern
             self.restart_counts[actor_id] = restart_count + 1
 
             logger.info(
-                f"[{self.name}] Actor {actor_id} successfully restarted",
+                f"[{self.name}] Actor {actor_id} successfully restarted",  # noqa: G004
                 extra={"restart_count": self.restart_counts[actor_id]},
             )
 
         except Exception:
-            logger.error("[{self.name}] Restart failed for {actor_id}: {e}", exc_info=True)
+            logger.exception("[{self.name}] Restart failed for {actor_id}: {e}")
             self.restart_counts[actor_id] = restart_count + 1
 
     async def respawn_actor(self, actor_id: str) -> bool:
@@ -454,7 +454,7 @@ class ActorSupervisor(AuditMixin, ValidationMixin, HealthReportingMixin, Pattern
             return True
 
         except Exception:
-            logger.error("[{self.name}] Respawn failed for {actor_id}: {e}", exc_info=True)
+            logger.exception("[{self.name}] Respawn failed for {actor_id}: {e}")
             return False
 
     async def save_all_states(self) -> None:
@@ -510,7 +510,7 @@ class ActorSupervisor(AuditMixin, ValidationMixin, HealthReportingMixin, Pattern
             message_type: Message type identifier
         """
         logger.info(
-            f"[{self.name}] Broadcasting to {len(self.actors)} actors",
+            f"[{self.name}] Broadcasting to {len(self.actors)} actors",  # noqa: G004
         )
 
         tasks = [actor.broadcast(content, message_type) for actor in self.actors.values()]

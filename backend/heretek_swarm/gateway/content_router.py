@@ -527,7 +527,7 @@ class ContentRouter:
                 if not isinstance(value, str):
                     return False, value
                 # Use pre-compiled regex from filter
-                return bool(filter._compiled_regex.search(value)), value
+                return bool(filter._compiled_regex.search(value)), value  # noqa: SLF001
 
             if filter.operator == FilterOperator.GT:
                 return value > filter.value, value

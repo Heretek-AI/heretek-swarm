@@ -168,7 +168,7 @@ class SwarmIntelligenceEngine:
         self.decision_history: list[SwarmDecision] = []
 
         logger.info(
-            f"SwarmIntelligenceEngine initialized with max_iterations={self.config.max_iterations}"
+            f"SwarmIntelligenceEngine initialized with max_iterations={self.config.max_iterations}"  # noqa: G004
         )
 
     # =========================================================================
@@ -205,7 +205,7 @@ class SwarmIntelligenceEngine:
 
         self.decision_history.append(decision)
         logger.info(
-            f"PSO completed: {decision.convergence_iterations} iterations, "
+            f"PSO completed: {decision.convergence_iterations} iterations, "  # noqa: G004
             f"confidence={decision.confidence:.2f}"
         )
 
@@ -644,7 +644,7 @@ class SwarmIntelligenceEngine:
 
     def _stigmergic_movement(
         self,
-        agent_id: str,
+        agent_id: str,  # noqa: ARG002
         current_pos: tuple[int, int],
         environment_size: tuple[int, int],
     ) -> tuple[int, int]:

@@ -396,10 +396,10 @@ class IntrospectionModule:
 
         # Check for conflicts if confidence changed significantly
         if abs(new_confidence - old_confidence) > 0.2:
-            self.self_model._detect_belief_conflict(belief, old_confidence)
+            self.self_model._detect_belief_conflict(belief, old_confidence)  # noqa: SLF001
 
-        self.self_model._update_count += 1
-        self.self_model._maybe_take_snapshot()
+        self.self_model._update_count += 1  # noqa: SLF001
+        self.self_model._maybe_take_snapshot()  # noqa: SLF001
 
         logger.info(
             "Belief updated from outcome",
@@ -618,10 +618,10 @@ class IntrospectionModule:
 
             # Update parent goal progress if applicable
             if goal.parent_goal_id and goal.parent_goal_id in self.self_model.goals:
-                self.self_model._update_parent_progress(goal.parent_goal_id)
+                self.self_model._update_parent_progress(goal.parent_goal_id)  # noqa: SLF001
 
             # Unblock dependent goals
-            self.self_model._unblock_dependent_goals(goal_id)
+            self.self_model._unblock_dependent_goals(goal_id)  # noqa: SLF001
 
         # Handle success/failure
         success = outcome.get("success")
@@ -656,8 +656,8 @@ class IntrospectionModule:
         self._goal_evolution_history.append(evolution_record)
         self._trim_evolution_history()
 
-        self.self_model._update_count += 1
-        self.self_model._maybe_take_snapshot()
+        self.self_model._update_count += 1  # noqa: SLF001
+        self.self_model._maybe_take_snapshot()  # noqa: SLF001
 
         logger.info(
             "Goal progress tracked",
@@ -789,8 +789,8 @@ class IntrospectionModule:
         self._trim_evolution_history()
 
         if changes:
-            self.self_model._update_count += 1
-            self.self_model._maybe_take_snapshot()
+            self.self_model._update_count += 1  # noqa: SLF001
+            self.self_model._maybe_take_snapshot()  # noqa: SLF001
 
         logger.debug("Confidence decay applied", extra={"affected_beliefs": len(changes)})
 
@@ -881,7 +881,7 @@ class IntrospectionModule:
             True if beliefs are in conflict.
         """
         # Use existing method from SelfModel
-        return self.self_model._are_beliefs_conflicting(b1, b2)
+        return self.self_model._are_beliefs_conflicting(b1, b2)  # noqa: SLF001
 
     def _suggest_resolution(
         self,

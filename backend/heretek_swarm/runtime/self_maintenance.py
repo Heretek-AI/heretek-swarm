@@ -188,7 +188,7 @@ class LogRotator:
 
             if self.config.dry_run:
                 logger.info(
-                    f"[DRY RUN] Would compress {file_path} "
+                    f"[DRY RUN] Would compress {file_path} "  # noqa: G004
                     f"({file_path.stat().st_size / 1024 / 1024:.1f}MB)"
                 )
             else:
@@ -203,7 +203,7 @@ class LogRotator:
                     self._stats["files_compressed"] += 1
                     self._stats["bytes_freed"] += original_size - compressed_size
                     logger.info(
-                        f"Compressed log file: {file_path.name} "
+                        f"Compressed log file: {file_path.name} "  # noqa: G004
                         f"({original_size / 1024 / 1024:.1f}MB -> "
                         f"{compressed_size / 1024 / 1024:.1f}MB)"
                     )

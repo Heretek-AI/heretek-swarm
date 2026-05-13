@@ -193,7 +193,7 @@ class SwarmMetricsCollector:
         # Update health score
         self._update_health_score(metrics)
 
-    def record_agent_error(self, agent_id: str, error_type: str = "general") -> None:
+    def record_agent_error(self, agent_id: str, _error_type: str = "general") -> None:
         """Record an error for an agent.
 
         Args:

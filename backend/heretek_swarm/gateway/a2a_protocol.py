@@ -144,7 +144,7 @@ class A2AProtocol:
             self._server.should_exit = True
         logger.info("a2a_server_stopped")
 
-    async def _health_check(self, request: Request) -> JSONResponse:
+    async def _health_check(self, _request: Request) -> JSONResponse:
         """Health check endpoint."""
         return JSONResponse(
             {
@@ -275,7 +275,7 @@ class A2AProtocol:
         await self.event_mesh.broadcast(discovery_msg, exclude=[client_id])
 
     async def _route_message(
-        self, websocket: WebSocket, client_id: str, message: dict[str, Any]
+        self, websocket: WebSocket, client_id: str, message: dict[str, Any]  # noqa: ARG002
     ) -> None:
         """Route message to appropriate handler."""
         msg_type = message.get("type", "unknown")

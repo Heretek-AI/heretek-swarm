@@ -346,7 +346,7 @@ class GroupedGroup(click.Group):
         "Monitoring": ["status", "stop"],
     }
 
-    def format_commands(self, ctx: click.Context, formatter: click.HelpFormatter) -> None:
+    def format_commands(self, _ctx: click.Context, formatter: click.HelpFormatter) -> None:
         """Write command groups with separator lines to *formatter*."""
         # Collect all registered commands (excluding hidden)
         commands = {

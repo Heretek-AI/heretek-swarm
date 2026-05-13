@@ -110,7 +110,7 @@ class TelegramBot:
     async def _handle_start(
         self,
         update: Update,
-        context: "ContextTypes.DEFAULT_TYPE",
+        context: "ContextTypes.DEFAULT_TYPE",  # noqa: ARG002
     ) -> None:
         """Handle /start command."""
         welcome_message = """
@@ -136,7 +136,7 @@ I'm your Telegram assistant for interacting with the AI agent collective.
     async def _handle_help(
         self,
         update: Update,
-        context: "ContextTypes.DEFAULT_TYPE",
+        context: "ContextTypes.DEFAULT_TYPE",  # noqa: ARG002
     ) -> None:
         """Handle /help command."""
         help_text = """
@@ -173,7 +173,7 @@ Just type your message and I'll route it to the appropriate agent.
     async def _handle_status(
         self,
         update: Update,
-        context: "ContextTypes.DEFAULT_TYPE",
+        context: "ContextTypes.DEFAULT_TYPE",  # noqa: ARG002
     ) -> None:
         """Handle /status command."""
         # Get swarm status from API
@@ -197,7 +197,7 @@ Just type your message and I'll route it to the appropriate agent.
     async def _handle_agents(
         self,
         update: Update,
-        context: "ContextTypes.DEFAULT_TYPE",
+        context: "ContextTypes.DEFAULT_TYPE",  # noqa: ARG002
     ) -> None:
         """Handle /agents command."""
         agents_text = """
@@ -230,7 +230,7 @@ Just type your message and I'll route it to the appropriate agent.
     async def _handle_message(
         self,
         update: Update,
-        context: "ContextTypes.DEFAULT_TYPE",
+        context: "ContextTypes.DEFAULT_TYPE",  # noqa: ARG002
     ) -> None:
         """Handle regular messages."""
         user_message = update.message.text

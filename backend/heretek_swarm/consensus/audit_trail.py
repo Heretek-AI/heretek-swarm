@@ -317,7 +317,7 @@ class ConsensusAuditTrail:
             )
 
         logger.info(
-            f"Decision recorded: {decision_id} -> {decision} (confidence: {confidence:.2f})"
+            f"Decision recorded: {decision_id} -> {decision} (confidence: {confidence:.2f})"  # noqa: G004
         )
         return record
 
@@ -577,7 +577,7 @@ class ConsensusAuditTrail:
         self.decision_audits[decision_id] = audit
 
         logger.info(
-            f"Decision audit created: {decision_id} with {len(rounds)} rounds, {len(votes)} votes"
+            f"Decision audit created: {decision_id} with {len(rounds)} rounds, {len(votes)} votes"  # noqa: G004
         )
         return audit
 
@@ -717,7 +717,7 @@ class ConsensusAuditTrail:
 
         previous_hash = None
         for i, event in enumerate(self.events):
-            expected_hash = event._generate_hash()
+            expected_hash = event._generate_hash()  # noqa: SLF001
             if event.hash != expected_hash:
                 results["failed_events"] += 1
                 results["errors"].append(f"Event {event.event_id}: hash mismatch")
@@ -735,7 +735,7 @@ class ConsensusAuditTrail:
         )
 
         logger.info(
-            f"Integrity verification: {results['status']} "
+            f"Integrity verification: {results['status']} "  # noqa: G004
             f"({results['verified_events']}/{results['total_events']} verified)"
         )
         return results

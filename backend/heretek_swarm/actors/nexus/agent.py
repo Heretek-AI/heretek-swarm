@@ -990,7 +990,7 @@ class NexusAgent(
                 jitter=content.get("jitter", True),
             )
             if self._api_client:
-                self._api_client._retry_config = self._retry_config
+                self._api_client._retry_config = self._retry_config  # noqa: SLF001
             await self.send(
                 message.sender_id,
                 ActorMessage(
@@ -1017,7 +1017,7 @@ class NexusAgent(
                 max_backoff_ms=content.get("max_backoff_ms", 60000),
             )
             if self._api_client:
-                self._api_client._rate_limiter._config = self._rate_limit_config
+                self._api_client._rate_limiter._config = self._rate_limit_config  # noqa: SLF001
             await self.send(
                 message.sender_id,
                 ActorMessage(
@@ -1043,7 +1043,7 @@ class NexusAgent(
                 excluded_status_codes=content.get("excluded_status_codes", [400, 401, 403, 404]),
             )
             if self._api_client:
-                self._api_client._circuit_breaker._config = self._circuit_breaker_config
+                self._api_client._circuit_breaker._config = self._circuit_breaker_config  # noqa: SLF001
             await self.send(
                 message.sender_id,
                 ActorMessage(
@@ -1095,15 +1095,15 @@ class NexusAgent(
         try:
             circuit_breakers = {}
             if self._api_client:
-                for endpoint in self._api_client._circuit_breaker._states:
-                    circuit_breakers[endpoint] = self._api_client._circuit_breaker.get_metrics(
+                for endpoint in self._api_client._circuit_breaker._states:  # noqa: SLF001
+                    circuit_breakers[endpoint] = self._api_client._circuit_breaker.get_metrics(  # noqa: SLF001
                         endpoint
                     )
             rate_limiter_metrics = (
-                self._api_client._rate_limiter.get_metrics() if self._api_client else {}
+                self._api_client._rate_limiter.get_metrics() if self._api_client else {}  # noqa: SLF001
             )
             fallback_health = (
-                self._api_client._fallback_manager.get_health_status() if self._api_client else {}
+                self._api_client._fallback_manager.get_health_status() if self._api_client else {}  # noqa: SLF001
             )
             await self.send(
                 message.sender_id,
@@ -1130,12 +1130,12 @@ class NexusAgent(
             endpoint = content.get("endpoint")
             if self._api_client:
                 if endpoint:
-                    self._api_client._circuit_breaker._states[endpoint] = CircuitState.CLOSED
-                    self._api_client._circuit_breaker._failure_counts[endpoint] = 0
+                    self._api_client._circuit_breaker._states[endpoint] = CircuitState.CLOSED  # noqa: SLF001
+                    self._api_client._circuit_breaker._failure_counts[endpoint] = 0  # noqa: SLF001
                 else:
-                    for ep in self._api_client._circuit_breaker._states:
-                        self._api_client._circuit_breaker._states[ep] = CircuitState.CLOSED
-                        self._api_client._circuit_breaker._failure_counts[ep] = 0
+                    for ep in self._api_client._circuit_breaker._states:  # noqa: SLF001
+                        self._api_client._circuit_breaker._states[ep] = CircuitState.CLOSED  # noqa: SLF001
+                        self._api_client._circuit_breaker._failure_counts[ep] = 0  # noqa: SLF001
             await self.send(
                 message.sender_id,
                 ActorMessage(
@@ -1153,10 +1153,10 @@ class NexusAgent(
     def _record_api_metrics(
         self,
         request_id: str,
-        connection_id: str,
-        method: str,
+        connection_id: str,  # noqa: ARG002
+        method: str,  # noqa: ARG002
         latency_ms: int,
-        success: bool,
+        success: bool,  # noqa: ARG002
         status_code: int,
         error: str | None,
     ) -> None:

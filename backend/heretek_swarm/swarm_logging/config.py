@@ -82,7 +82,7 @@ def clear_context() -> None:
 class ContextAdder(Processor):
     """Processor that adds context variables to log entries."""
 
-    def __call__(self, logger, method_name, event_dict):
+    def __call__(self, _logger, _method_name, event_dict):
         # Add request tracing context
         if request_id := get_request_id():
             event_dict["request_id"] = request_id

@@ -619,7 +619,7 @@ Return JSON with keys: valid (bool), confidence (0-1), issues (list), recommenda
             }
 
     async def _analyze_quality_metrics(
-        self, target: str, target_type: str, metrics: list[QualityMetric]
+        self, target: str, target_type: str, metrics: list[QualityMetric]  # noqa: ARG002
     ) -> dict[QualityMetric, float]:
         """Analyze quality metrics for target."""
         results = {}
@@ -642,19 +642,19 @@ Return JSON with keys: valid (bool), confidence (0-1), issues (list), recommenda
 
         return results
 
-    async def _measure_coverage(self, target: str) -> float:
+    async def _measure_coverage(self, _target: str) -> float:
         """Measure code coverage."""
         return 85.0
 
-    async def _measure_complexity(self, target: str) -> float:
+    async def _measure_complexity(self, _target: str) -> float:
         """Measure cyclomatic complexity (inverted score)."""
         return 75.0
 
-    async def _measure_security(self, target: str) -> float:
+    async def _measure_security(self, _target: str) -> float:
         """Measure security score (inverted - lower vulnerabilities = higher score)."""
         return 90.0
 
-    async def _measure_performance(self, target: str) -> float:
+    async def _measure_performance(self, _target: str) -> float:
         """Measure performance score."""
         return 80.0
 

@@ -477,8 +477,8 @@ class RateLimiter:
 
         # Reset token bucket
         bucket = self._token_buckets[tier]
-        async with bucket._lock:
-            bucket._tokens.pop(key, None)
+        async with bucket._lock:  # noqa: SLF001
+            bucket._tokens.pop(key, None)  # noqa: SLF001
 
     def get_metrics(self) -> dict[str, Any]:
         """Get rate limiter metrics."""
@@ -892,7 +892,7 @@ class DDoSProtection:
 
         # Run DDoS detection periodically
         ddos_result = None
-        if self.detector._detection_count % 100 == 0:  # Every 100 requests
+        if self.detector._detection_count % 100 == 0:  # Every 100 requests  # noqa: SLF001
             ddos_result = self.detector.detect()
             if ddos_result.is_attack:
                 self.mitigator.apply_mitigation(ddos_result)
@@ -905,7 +905,7 @@ class DDoSProtection:
 
         # Apply throttle factor if active
         # NOTE: random for emergency throttle decision - not security-critical (rate limit, not crypto)
-        if self.mitigator._emergency_throttle_active:
+        if self.mitigator._emergency_throttle_active:  # noqa: SLF001
             import random
 
             if random.random() > self.mitigator.get_throttle_factor():

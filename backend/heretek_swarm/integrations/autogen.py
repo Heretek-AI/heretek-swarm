@@ -422,8 +422,8 @@ class AutoGenAdapter:
         self,
         recipient: ConversableAgent,
         messages: list[dict] | None = None,
-        sender: ConversableAgent | None = None,
-        config: Any | None = None,
+        sender: ConversableAgent | None = None,  # noqa: ARG002
+        config: Any | None = None,  # noqa: ARG002
     ) -> tuple[bool, dict | None]:
         """
         Reply callback for Heretek bridge agents.
@@ -654,7 +654,7 @@ class AutoGenAdapter:
         sender_id: str,
         recipient_id: str,
         content: str,
-        metadata: dict[str, Any] | None = None,
+        metadata: dict[str, Any] | None = None,  # noqa: ARG002
     ) -> dict[str, Any] | None:
         """
         Send a message between agents.

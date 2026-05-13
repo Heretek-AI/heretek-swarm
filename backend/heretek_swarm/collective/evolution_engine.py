@@ -159,7 +159,7 @@ class EvolutionEngine:
 
     def assess_fitness(
         self,
-        agent_id: str,
+        agent_id: str,  # noqa: ARG002
         performance_history: list[float],
         capability_levels: dict[str, float],
         environment_demand: dict[str, float] | None = None,
@@ -236,8 +236,8 @@ class EvolutionEngine:
     def _update_agent_capabilities(
         self,
         agent_id: str,
-        capability_type: str,
-        capability_name: str,
+        capability_type: str,  # noqa: ARG002
+        capability_name: str,  # noqa: ARG002
     ) -> None:
         if agent_id not in self._agent_snapshots:
             self._agent_snapshots[agent_id] = []

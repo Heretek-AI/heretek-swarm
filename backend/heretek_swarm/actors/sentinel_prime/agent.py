@@ -212,9 +212,9 @@ class SentinelPrimeAgent(
                     sender=message.sender_id,
                 )
         except Exception as e:
-            logger.error(
+            logger.exception(
                 "Error processing message",
                 message_type=message.message_type,
                 error=str(e),
-                exc_info=True,
+
             )

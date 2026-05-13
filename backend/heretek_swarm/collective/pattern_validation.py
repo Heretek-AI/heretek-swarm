@@ -605,7 +605,7 @@ class PatternValidator:
     def get_proven_patterns(
         self,
         min_impact: float = 0.0,
-        pattern_class: EmergentPatternClass | None = None,
+        pattern_class: EmergentPatternClass | None = None,  # noqa: ARG002
     ) -> list[str]:
         """
         Get IDs of proven patterns.

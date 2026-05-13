@@ -197,9 +197,9 @@ class EmpathAgent(
             try:
                 await handler(message)
             except Exception as e:
-                logger.error(
-                    f"[{self.agent_id}] Error processing message {message.message_type}: {e}",
-                    exc_info=True,
+                logger.exception(
+                    f"[{self.agent_id}] Error processing message {message.message_type}: {e}",  # noqa: G004
+
                 )
                 self.error_count += 1
                 # Send error response if reply_to is specified
@@ -231,7 +231,7 @@ class EmpathAgent(
             return validate_message(message_type, content)
         except ValidationError as e:
             logger.warning(
-                f"[{self.agent_id}] Message validation failed for {message_type}: {e}",
+                f"[{self.agent_id}] Message validation failed for {message_type}: {e}",  # noqa: G004
                 extra={"validation_errors": e.errors()},
             )
             raise ValueError(f"Invalid message format: {e.errors()}")
@@ -302,16 +302,16 @@ class EmpathAgent(
             )
 
             logger.debug(
-                f"[{self.agent_id}] Sentiment analyzed for {source_agent}",
+                f"[{self.agent_id}] Sentiment analyzed for {source_agent}",  # noqa: G004
                 extra={"sentiment": sentiment_result["sentiment"]},
             )
 
         except Exception as e:
-            logger.error("[{self.agent_id}] Sentiment analysis failed: {e}", exc_info=True)
+            logger.exception("[{self.agent_id}] Sentiment analysis failed: {e}")
             await self._send_error_response(message, f"Sentiment analysis failed: {e}")
 
     async def _analyze_sentiment_llm(
-        self, text: str, source_agent: str | None = None, context: dict[str, Any] | None = None
+        self, text: str, source_agent: str | None = None, context: dict[str, Any] | None = None  # noqa: ARG002
     ) -> dict[str, Any]:
         context = context or {}
         """
@@ -552,7 +552,7 @@ Provide your analysis in this exact JSON format:
         # Check for high stress alert
         if stress_level > self.stress_threshold:
             logger.warning(
-                f"[{self.agent_id}] High stress detected for agent {agent_id}",
+                f"[{self.agent_id}] High stress detected for agent {agent_id}",  # noqa: G004
                 extra={"stress_level": stress_level},
             )
 
@@ -611,7 +611,7 @@ Provide your analysis in this exact JSON format:
             logger.debug("[{self.agent_id}] Emotion tracked for {agent_id}: {emotion}")
 
         except Exception as e:
-            logger.error("[{self.agent_id}] Emotion tracking failed: {e}", exc_info=True)
+            logger.exception("[{self.agent_id}] Emotion tracking failed: {e}")
             await self._send_error_response(message, f"Emotion tracking failed: {e}")
 
     async def _handle_detect_conflict(self, message: ActorMessage) -> None:
@@ -670,7 +670,7 @@ Provide your analysis in this exact JSON format:
             )
 
         except Exception as e:
-            logger.error("[{self.agent_id}] Conflict detection failed: {e}", exc_info=True)
+            logger.exception("[{self.agent_id}] Conflict detection failed: {e}")
             await self._send_error_response(message, f"Conflict detection failed: {e}")
 
     def _analyze_conflict_potential(self, agents: list[str]) -> bool:
@@ -747,7 +747,7 @@ Provide your analysis in this exact JSON format:
             )
 
         except Exception as e:
-            logger.error("[{self.agent_id}] Emotional state query failed: {e}", exc_info=True)
+            logger.exception("[{self.agent_id}] Emotional state query failed: {e}")
             await self._send_error_response(message, f"Emotional state query failed: {e}")
 
     async def _handle_mediate_conflict(self, message: ActorMessage) -> None:
@@ -804,7 +804,7 @@ Provide your analysis in this exact JSON format:
             )
 
         except Exception as e:
-            logger.error("[{self.agent_id}] Conflict mediation failed: {e}", exc_info=True)
+            logger.exception("[{self.agent_id}] Conflict mediation failed: {e}")
             await self._send_error_response(message, f"Mediation failed: {e}")
 
     async def _generate_mediation(
@@ -864,7 +864,7 @@ Return as JSON: {{"resolution": "...", "reasoning": "..."}}
             )
 
         except Exception as e:
-            logger.error("[{self.agent_id}] Collective mood query failed: {e}", exc_info=True)
+            logger.exception("[{self.agent_id}] Collective mood query failed: {e}")
             await self._send_error_response(message, f"Collective mood query failed: {e}")
 
     def _update_collective_mood(self) -> None:
@@ -985,7 +985,7 @@ Format your response as a clear analysis with these three elements.
 
         except TimeoutError:
             logger.warning(
-                f"[{self.agent_id}] On-demand sentiment analysis timed out",
+                f"[{self.agent_id}] On-demand sentiment analysis timed out",  # noqa: G004
                 extra={"text_preview": text[:60]},
             )
             return {
@@ -995,9 +995,9 @@ Format your response as a clear analysis with these three elements.
             }
 
         except Exception as e:
-            logger.error(
-                f"[{self.agent_id}] On-demand sentiment analysis failed: {e}",
-                exc_info=True,
+            logger.exception(
+                f"[{self.agent_id}] On-demand sentiment analysis failed: {e}",  # noqa: G004
+
             )
             return {
                 "sentiment": "neutral",
@@ -1037,7 +1037,7 @@ Format your response as a clear analysis with these three elements.
             return
 
         logger.info(
-            f"[{self.agent_id}] Performing on-demand sentiment analysis",
+            f"[{self.agent_id}] Performing on-demand sentiment analysis",  # noqa: G004
             extra={
                 "text_preview": text[:80],
                 "source_agent": source_agent,
@@ -1062,7 +1062,7 @@ Format your response as a clear analysis with these three elements.
             )
 
         logger.info(
-            f"[{self.agent_id}] On-demand sentiment analysis complete",
+            f"[{self.agent_id}] On-demand sentiment analysis complete",  # noqa: G004
             extra={
                 "sentiment": result["sentiment"],
                 "confidence": result["confidence"],

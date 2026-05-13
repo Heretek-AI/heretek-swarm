@@ -251,7 +251,7 @@ class BehavioralBaseline:
         quorum_size: int = 3,
         quorum_threshold: float = 0.66,
         quorum_timeout_seconds: float = 300.0,
-        max_baseline_age_days: int = 90,
+        max_baseline_age_days: int = 90,  # noqa: ARG002
     ):
         """
         Initialize the behavioral baseline.

@@ -596,7 +596,7 @@ class PhiCalculator:
 
         return repertoire
 
-    def calculate_cause_info(self, state: dict[str, Any], element: str) -> float:
+    def calculate_cause_info(self, state: dict[str, Any], _element: str) -> float:
         """
         Calculate cause information (phi_cause) for an element.
 
@@ -643,7 +643,7 @@ class PhiCalculator:
 
         return min(1.0, max(0.0, cause_info))
 
-    def calculate_effect_info(self, state: dict[str, Any], element: str) -> float:
+    def calculate_effect_info(self, state: dict[str, Any], _element: str) -> float:
         """
         Calculate effect information (phi_effect) for an element.
 

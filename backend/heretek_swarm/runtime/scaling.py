@@ -951,7 +951,7 @@ class StateSynchronizer:
         # Simulated persistence
         # In real implementation, would use asyncpg or similar
 
-    async def _fetch_state(self, key: str) -> Any | None:
+    async def _fetch_state(self, _key: str) -> Any | None:
         """Fetch state from PostgreSQL."""
         # Simulated fetch
         return None

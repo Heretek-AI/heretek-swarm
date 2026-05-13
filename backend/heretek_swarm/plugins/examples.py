@@ -32,7 +32,7 @@ class LoggingPlugin(Plugin):
         """Called when plugin is loaded."""
         await super().on_load(runtime)
 
-    async def on_message(self, message: dict[str, Any]) -> dict[str, Any] | None:
+    async def on_message(self, _message: dict[str, Any]) -> dict[str, Any] | None:
         """
         Handle incoming messages.
 

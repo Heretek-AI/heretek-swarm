@@ -154,7 +154,7 @@ class StartupManager:
     def _build_agent_configs(
         self,
         agents: list[str],
-        tier_id: str,
+        tier_id: str,  # noqa: ARG002
     ) -> dict[str, Path]:
         """
         Build agent configuration paths from tier agents list.
@@ -250,7 +250,7 @@ async def run_startup_manager() -> None:
 
     try:
         # Keep running until stopped
-        while manager._running:
+        while manager._running:  # noqa: SLF001
             await asyncio.sleep(1)
     except asyncio.CancelledError:
         pass

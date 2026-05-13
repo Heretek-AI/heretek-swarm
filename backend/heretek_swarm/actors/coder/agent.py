@@ -171,7 +171,7 @@ class CoderAgent(
         handler_key = type_to_handler.get(task_type)
         if handler_key is None:
             logger.warning(
-                f"[{self.agent_id}] Unsupported route task type: {task_type}",
+                f"[{self.agent_id}] Unsupported route task type: {task_type}",  # noqa: G004
                 extra={
                     "task_type": task_type,
                     "correlation_id": payload.get("correlation_id"),
@@ -182,13 +182,13 @@ class CoderAgent(
         handler = self.get_handlers().get(handler_key)
         if handler is None:
             logger.error(
-                f"[{self.agent_id}] Handler {handler_key} not registered",
+                f"[{self.agent_id}] Handler {handler_key} not registered",  # noqa: G004
                 extra={"task_type": task_type},
             )
             return {"status": "error", "error": f"Handler {handler_key} not available"}
 
         logger.info(
-            f"[{self.agent_id}] Processing route task {task_type} via {handler_key}",
+            f"[{self.agent_id}] Processing route task {task_type} via {handler_key}",  # noqa: G004
             extra={
                 "task_type": task_type,
                 "handler_key": handler_key,
@@ -212,7 +212,7 @@ class CoderAgent(
             return {"status": "success", "result": result}
         except Exception as e:
             logger.error(
-                f"[{self.agent_id}] Route task handler failed",
+                f"[{self.agent_id}] Route task handler failed",  # noqa: G004
                 extra={
                     "task_type": task_type,
                     "handler_key": handler_key,

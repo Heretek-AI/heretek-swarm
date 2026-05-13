@@ -109,7 +109,7 @@ async def list_jetstream_streams(
             total=len(streams),
         )
     except Exception as e:
-        logger.error("Failed to list streams: {e}", exc_info=True)
+        logger.exception("Failed to list streams: {e}")
         raise HTTPException(500, f"Failed to list streams: {e!s}")
 
 
@@ -150,7 +150,7 @@ async def get_jetstream_stream(
     except HTTPException:
         raise
     except Exception as e:
-        logger.error("Failed to get stream info: {e}", exc_info=True)
+        logger.exception("Failed to get stream info: {e}")
         raise HTTPException(500, f"Failed to get stream info: {e!s}")
 
 
@@ -207,7 +207,7 @@ async def create_jetstream_stream(
     except HTTPException:
         raise
     except Exception as e:
-        logger.error("Failed to create stream: {e}", exc_info=True)
+        logger.exception("Failed to create stream: {e}")
         raise HTTPException(500, f"Failed to create stream: {e!s}")
 
 
@@ -238,7 +238,7 @@ async def delete_jetstream_stream(
     except HTTPException:
         raise
     except Exception as e:
-        logger.error("Failed to delete stream: {e}", exc_info=True)
+        logger.exception("Failed to delete stream: {e}")
         raise HTTPException(500, f"Failed to delete stream: {e!s}")
 
 
@@ -277,7 +277,7 @@ async def replay_stream_messages(
             "messages": messages[:100],  # Limit response size
         }
     except Exception as e:
-        logger.error("Failed to replay messages: {e}", exc_info=True)
+        logger.exception("Failed to replay messages: {e}")
         raise HTTPException(500, f"Failed to replay messages: {e!s}")
 
 
@@ -298,7 +298,7 @@ async def get_jetstream_stats(
     try:
         return await js_manager.get_stats()
     except Exception as e:
-        logger.error("Failed to get JetStream stats: {e}", exc_info=True)
+        logger.exception("Failed to get JetStream stats: {e}")
         raise HTTPException(500, f"Failed to get JetStream stats: {e!s}")
 
 
@@ -331,5 +331,5 @@ async def initialize_jetstream(
             "total_created": sum(1 for v in results.values() if v),
         }
     except Exception as e:
-        logger.error("Failed to initialize JetStream: {e}", exc_info=True)
+        logger.exception("Failed to initialize JetStream: {e}")
         raise HTTPException(500, f"Failed to initialize JetStream: {e!s}")

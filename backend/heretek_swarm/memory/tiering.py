@@ -658,7 +658,7 @@ class MemoryTieringSystem:
 
     def _determine_initial_tier(
         self,
-        data: Any,
+        data: Any,  # noqa: ARG002
         metadata: dict[str, Any] | None,
     ) -> MemoryTier:
         """Determine initial tier for new memory."""

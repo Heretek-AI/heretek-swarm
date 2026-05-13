@@ -87,24 +87,24 @@ class AgentActorStateManagement(AgentActor):
                 version=version,
             )
             logger.info(
-                f"[{self.agent_id}] State persisted via StateRepository",
+                f"[{self.agent_id}] State persisted via StateRepository",  # noqa: G004
                 extra={"state": self.state.value, "version": self._state_record.version},
             )
             return True
         except Exception as e:
-            logger.error(
-                f"[{self.agent_id}] StateRepository persistence failed: {e}",
-                exc_info=True,
+            logger.exception(
+                f"[{self.agent_id}] StateRepository persistence failed: {e}",  # noqa: G004
+
             )
             return False
 
     async def _persist_to_mock_db(self, db_pool: Any, state_data: dict[str, Any]) -> bool:
         """Persist to mock database with in-memory tables."""
-        if "agent_states" not in db_pool._tables:
-            db_pool._tables["agent_states"] = []
-        db_pool._tables["agent_states"].append(
+        if "agent_states" not in db_pool._tables:  # noqa: SLF001
+            db_pool._tables["agent_states"] = []  # noqa: SLF001
+        db_pool._tables["agent_states"].append(  # noqa: SLF001
             {
-                "id": len(db_pool._tables["agent_states"]) + 1,
+                "id": len(db_pool._tables["agent_states"]) + 1,  # noqa: SLF001
                 "agent_id": self.agent_id,
                 "agent_type": self.actor_type,
                 "state": json.dumps(state_data),
@@ -156,9 +156,9 @@ class AgentActorStateManagement(AgentActor):
                 return await self._persist_to_generic_db(db_pool, state_data)
             return await self._persist_to_connection_pool_db(db_pool, state_data)
         except Exception as e:
-            logger.error(
-                f"[{self.agent_id}] Database persistence failed: {e}",
-                exc_info=True,
+            logger.exception(
+                f"[{self.agent_id}] Database persistence failed: {e}",  # noqa: G004
+
             )
             return False
 
@@ -180,13 +180,13 @@ class AgentActorStateManagement(AgentActor):
                 json.dump(state_data, f, indent=2)
 
             logger.info(
-                f"[{self.agent_id}] State persisted to file system",
+                f"[{self.agent_id}] State persisted to file system",  # noqa: G004
                 extra={"path": state_file},
             )
         except Exception as e:
-            logger.error(
-                f"[{self.agent_id}] File system persistence failed: {e}",
-                exc_info=True,
+            logger.exception(
+                f"[{self.agent_id}] File system persistence failed: {e}",  # noqa: G004
+
             )
 
     async def load_state(self) -> None:
@@ -213,14 +213,14 @@ class AgentActorStateManagement(AgentActor):
                     self.capabilities = loaded_state.get("capabilities", self.capabilities)
 
                     logger.info(
-                        f"[{self.agent_id}] State loaded from StateRepository",
+                        f"[{self.agent_id}] State loaded from StateRepository",  # noqa: G004
                         extra={"state": self.state.value, "version": record.version},
                     )
                     return
             except Exception as e:
-                logger.error(
-                    f"[{self.agent_id}] StateRepository load failed: {e}",
-                    exc_info=True,
+                logger.exception(
+                    f"[{self.agent_id}] StateRepository load failed: {e}",  # noqa: G004
+
                 )
 
         # Legacy fallback: try direct db_pool access
@@ -244,14 +244,14 @@ class AgentActorStateManagement(AgentActor):
                         self.capabilities = loaded_state.get("capabilities", self.capabilities)
 
                         logger.info(
-                            f"[{self.agent_id}] State loaded from PostgreSQL (legacy)",
+                            f"[{self.agent_id}] State loaded from PostgreSQL (legacy)",  # noqa: G004
                             extra={"state": self.state.value},
                         )
                         return
             except Exception as e:
-                logger.error(
-                    f"[{self.agent_id}] PostgreSQL load failed: {e}",
-                    exc_info=True,
+                logger.exception(
+                    f"[{self.agent_id}] PostgreSQL load failed: {e}",  # noqa: G004
+
                 )
 
         # Final fallback: load from file system
@@ -274,12 +274,12 @@ class AgentActorStateManagement(AgentActor):
                 self.capabilities = loaded_state.get("capabilities", self.capabilities)
 
                 logger.info(
-                    f"[{self.agent_id}] State loaded from file system",
+                    f"[{self.agent_id}] State loaded from file system",  # noqa: G004
                     extra={"path": state_file},
                 )
                 return
         except Exception:
-            logger.error("[{self.agent_id}] File system load failed: {e}", exc_info=True)
+            logger.exception("[{self.agent_id}] File system load failed: {e}")
 
         # No state found - actor is starting fresh
         logger.info("[{self.agent_id}] No previous state found, starting fresh")
@@ -326,14 +326,14 @@ class AgentActorStateManagement(AgentActor):
                 metadata=metadata,
             )
             logger.info(
-                f"[{self.agent_id}] Checkpoint saved",
+                f"[{self.agent_id}] Checkpoint saved",  # noqa: G004
                 extra={"version": version, "checkpoint_id": str(checkpoint.checkpoint_id)},
             )
             return checkpoint
         except Exception as e:
-            logger.error(
-                f"[{self.agent_id}] Checkpoint save failed: {e}",
-                exc_info=True,
+            logger.exception(
+                f"[{self.agent_id}] Checkpoint save failed: {e}",  # noqa: G004
+
             )
             return None
 
@@ -364,15 +364,15 @@ class AgentActorStateManagement(AgentActor):
                 # Reload the state
                 await self.load_state()
                 logger.info(
-                    f"[{self.agent_id}] State restored from checkpoint",
+                    f"[{self.agent_id}] State restored from checkpoint",  # noqa: G004
                     extra={"checkpoint_id": str(checkpoint_id)},
                 )
 
             return success
         except Exception as e:
-            logger.error(
-                f"[{self.agent_id}] Checkpoint restore failed: {e}",
-                exc_info=True,
+            logger.exception(
+                f"[{self.agent_id}] Checkpoint restore failed: {e}",  # noqa: G004
+
             )
             return False
 
@@ -398,9 +398,9 @@ class AgentActorStateManagement(AgentActor):
                 limit=limit,
             )
         except Exception as e:
-            logger.error(
-                f"[{self.agent_id}] Failed to get checkpoints: {e}",
-                exc_info=True,
+            logger.exception(
+                f"[{self.agent_id}] Failed to get checkpoints: {e}",  # noqa: G004
+
             )
             return []
 
@@ -466,10 +466,10 @@ class AgentActorStateManagement(AgentActor):
 
 # Bind state management methods to AgentActor
 AgentActor.save_state = AgentActorStateManagement.save_state
-AgentActor._build_state_data = AgentActorStateManagement._build_state_data
-AgentActor._persist_via_repository = AgentActorStateManagement._persist_via_repository
-AgentActor._persist_via_db_pool = AgentActorStateManagement._persist_via_db_pool
-AgentActor._persist_via_filesystem = AgentActorStateManagement._persist_via_filesystem
+AgentActor._build_state_data = AgentActorStateManagement._build_state_data  # noqa: SLF001
+AgentActor._persist_via_repository = AgentActorStateManagement._persist_via_repository  # noqa: SLF001
+AgentActor._persist_via_db_pool = AgentActorStateManagement._persist_via_db_pool  # noqa: SLF001
+AgentActor._persist_via_filesystem = AgentActorStateManagement._persist_via_filesystem  # noqa: SLF001
 AgentActor.load_state = AgentActorStateManagement.load_state
 AgentActor.save_checkpoint = AgentActorStateManagement.save_checkpoint
 AgentActor.restore_from_checkpoint = AgentActorStateManagement.restore_from_checkpoint

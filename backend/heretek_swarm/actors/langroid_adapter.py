@@ -482,7 +482,7 @@ class ConversationHandlerMixin:
         ```
     """
 
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, *_args, **kwargs) -> None:
         """Initialize mixin."""
         self._conversations: dict[str, AgentConversation] = {}
         self._active_conversation: str | None = None
@@ -490,7 +490,7 @@ class ConversationHandlerMixin:
 
     async def start_conversation(
         self,
-        user_id: str,
+        user_id: str,  # noqa: ARG002
         initial_message: str | None = None,
     ) -> str:
         """
@@ -518,7 +518,7 @@ class ConversationHandlerMixin:
         self._active_conversation = conversation_id
 
         logger.debug(
-            f"[{self.agent_id}] Started conversation",
+            f"[{self.agent_id}] Started conversation",  # noqa: G004
             extra={"conversation_id": conversation_id},
         )
 

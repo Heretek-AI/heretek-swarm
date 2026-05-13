@@ -22,7 +22,7 @@ class DeliberationMixin:
     async def _initiate_deliberation(
         self,
         topic: str,
-        options: list[str],
+        options: list[str],  # noqa: ARG002
     ) -> str:
         """Initiate a new deliberation.
 
@@ -42,7 +42,7 @@ class DeliberationMixin:
         self,
         deliberation_id: str,
         position: dict[str, Any],
-        rationale: str = "",
+        rationale: str = "",  # noqa: ARG002
         timeout: float = 30.0,
     ) -> dict[str, Any] | None:
         """Submit position to consensus deliberation.
@@ -69,19 +69,19 @@ class DeliberationMixin:
             return result
         except TimeoutError:
             self.logger.warning(
-                f"Consensus timeout for round {deliberation_id}",
+                f"Consensus timeout for round {deliberation_id}",  # noqa: G004
                 extra={"deliberation_id": deliberation_id},
             )
             return None
         except Exception as e:
             self.logger.error(
-                f"Error submitting deliberation position: {e}",
+                f"Error submitting deliberation position: {e}",  # noqa: G004
                 extra={"deliberation_id": deliberation_id},
             )
             return None
 
     async def _finalize_deliberation(
-        self, deliberation_id: str, binding: bool = True
+        self, deliberation_id: str, binding: bool = True  # noqa: ARG002
     ) -> dict[str, Any]:
         """Finalize deliberation and apply consensus.
 

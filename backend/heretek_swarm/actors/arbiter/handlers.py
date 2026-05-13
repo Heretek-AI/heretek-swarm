@@ -29,20 +29,20 @@ logger = structlog.get_logger("ArbiterAgent")
 
 def register_handlers(agent: ArbiterAgent) -> None:
     """Register message handlers on an ArbiterAgent instance."""
-    agent._message_handlers = {
-        "report_conflict": agent._handle_report_conflict,
-        "request_arbitration": agent._handle_request_arbitration,
-        "mediate_dispute": agent._handle_mediate_dispute,
-        "resolve_contention": agent._handle_resolve_contention,
-        "get_conflict_details": agent._handle_get_conflict_details,
-        "get_active_conflicts": agent._handle_get_active_conflicts,
-        "propose_resolution": agent._handle_propose_resolution,
-        "accept_resolution": agent._handle_accept_resolution,
-        "get_relationship_status": agent._handle_get_relationship_status,
-        "get_relationship_health": agent._handle_get_relationship_health,
-        "update_relationship": agent._handle_update_relationship,
-        "get_arbitration_report": agent._handle_get_arbitration_report,
-        "register_interaction": agent._handle_register_interaction,
+    agent._message_handlers = {  # noqa: SLF001
+        "report_conflict": agent._handle_report_conflict,  # noqa: SLF001
+        "request_arbitration": agent._handle_request_arbitration,  # noqa: SLF001
+        "mediate_dispute": agent._handle_mediate_dispute,  # noqa: SLF001
+        "resolve_contention": agent._handle_resolve_contention,  # noqa: SLF001
+        "get_conflict_details": agent._handle_get_conflict_details,  # noqa: SLF001
+        "get_active_conflicts": agent._handle_get_active_conflicts,  # noqa: SLF001
+        "propose_resolution": agent._handle_propose_resolution,  # noqa: SLF001
+        "accept_resolution": agent._handle_accept_resolution,  # noqa: SLF001
+        "get_relationship_status": agent._handle_get_relationship_status,  # noqa: SLF001
+        "get_relationship_health": agent._handle_get_relationship_health,  # noqa: SLF001
+        "update_relationship": agent._handle_update_relationship,  # noqa: SLF001
+        "get_arbitration_report": agent._handle_get_arbitration_report,  # noqa: SLF001
+        "register_interaction": agent._handle_register_interaction,  # noqa: SLF001
     }
 
 
@@ -95,7 +95,7 @@ async def _handle_report_conflict(agent: ArbiterAgent, message: ActorMessage) ->
             severity = ConflictSeverity.MEDIUM
 
         # Create conflict record
-        conflict_id = agent._create_conflict_id()
+        conflict_id = agent._create_conflict_id()  # noqa: SLF001
         conflict = Conflict(
             conflict_id=conflict_id,
             conflict_type=conflict_type,
@@ -109,26 +109,26 @@ async def _handle_report_conflict(agent: ArbiterAgent, message: ActorMessage) ->
         )
 
         # Store conflict
-        agent._conflicts[conflict_id] = conflict
-        agent._conflict_history.append(conflict_id)
+        agent._conflicts[conflict_id] = conflict  # noqa: SLF001
+        agent._conflict_history.append(conflict_id)  # noqa: SLF001
 
         # Update statistic
-        agent._stats["total_conflicts"] += 1
-        agent._stats["conflicts_by_type"][conflict_type.value] += 1
-        agent._stats["conflicts_by_severity"][severity.value] += 1
+        agent._stats["total_conflicts"] += 1  # noqa: SLF001
+        agent._stats["conflicts_by_type"][conflict_type.value] += 1  # noqa: SLF001
+        agent._stats["conflicts_by_severity"][severity.value] += 1  # noqa: SLF001
 
         # Update relationships
-        agent._update_relationships_for_conflict(conflict)
+        agent._update_relationships_for_conflict(conflict)  # noqa: SLF001
 
         # Auto-resolution if enabled
         resolution_result = None
-        if agent._auto_resolution:
-            resolution_result = await agent._attempt_auto_resolution(conflict)
+        if agent._auto_resolution:  # noqa: SLF001
+            resolution_result = await agent._attempt_auto_resolution(conflict)  # noqa: SLF001
 
         # LRU cleanup
-        if len(agent._conflict_history) > agent._max_conflicts:
-            oldest = agent._conflict_history.pop(0)
-            agent._conflicts.pop(oldest, None)
+        if len(agent._conflict_history) > agent._max_conflicts:  # noqa: SLF001
+            oldest = agent._conflict_history.pop(0)  # noqa: SLF001
+            agent._conflicts.pop(oldest, None)  # noqa: SLF001
 
         logger.warning(
             "Conflict reported",
@@ -145,17 +145,17 @@ async def _handle_report_conflict(agent: ArbiterAgent, message: ActorMessage) ->
             "severity": severity.value,
             "auto_resolution_attempted": resolution_result is not None,
             "resolution_status": resolution_result.get("status") if resolution_result else None,
-            "next_steps": agent._get_next_steps(conflict),
+            "next_steps": agent._get_next_steps(conflict),  # noqa: SLF001
         }
 
-        await agent._send_response(message, response_content)
+        await agent._send_response(message, response_content)  # noqa: SLF001
 
     except ValidationError as ve:
         logger.warning(VALIDATION_ERROR, error=str(ve))
-        await agent._send_error(message, VALIDATION_ERROR, str(ve))
+        await agent._send_error(message, VALIDATION_ERROR, str(ve))  # noqa: SLF001
     except Exception as e:
-        logger.error("Error reporting conflict", error=str(e), exc_info=True)
-        await agent._send_error(message, "Conflict report failed", str(e))
+        logger.exception("Error reporting conflict", error=str(e))
+        await agent._send_error(message, "Conflict report failed", str(e))  # noqa: SLF001
 
 
 async def _handle_request_arbitration(agent: ArbiterAgent, message: ActorMessage) -> None:
@@ -189,11 +189,11 @@ async def _handle_request_arbitration(agent: ArbiterAgent, message: ActorMessage
         )
 
         # Get or create conflict
-        if conflict_id and conflict_id in agent._conflicts:
-            conflict = agent._conflicts[conflict_id]
+        if conflict_id and conflict_id in agent._conflicts:  # noqa: SLF001
+            conflict = agent._conflicts[conflict_id]  # noqa: SLF001
         else:
             # Create new conflict for arbitration
-            conflict_id = agent._create_conflict_id()
+            conflict_id = agent._create_conflict_id()  # noqa: SLF001
             conflict = Conflict(
                 conflict_id=conflict_id,
                 conflict_type=ConflictType.AUTHORITY_CONFLICT,
@@ -204,22 +204,22 @@ async def _handle_request_arbitration(agent: ArbiterAgent, message: ActorMessage
                 description=dispute,
                 context={"desired_outcome": desired_outcome, "urgency": urgency},
             )
-            agent._conflicts[conflict_id] = conflict
-            agent._conflict_history.append(conflict_id)
+            agent._conflicts[conflict_id] = conflict  # noqa: SLF001
+            agent._conflict_history.append(conflict_id)  # noqa: SLF001
 
         # Register for arbitration
-        agent._pending_arbitrations[conflict_id] = agent._pending_arbitrations.get(conflict_id, [])
-        agent._pending_arbitrations[conflict_id].append(message.sender_id)
+        agent._pending_arbitrations[conflict_id] = agent._pending_arbitrations.get(conflict_id, [])  # noqa: SLF001
+        agent._pending_arbitrations[conflict_id].append(message.sender_id)  # noqa: SLF001
 
         # Check if all parties are present
         all_parties_present = all(
-            p in agent._pending_arbitrations[conflict_id] for p in conflict.parties
+            p in agent._pending_arbitrations[conflict_id] for p in conflict.parties  # noqa: SLF001
         )
 
         response_content = {
             "conflict_id": conflict_id,
             "arbitration_status": "in_progress",
-            "parties_registered": len(agent._pending_arbitrations[conflict_id]),
+            "parties_registered": len(agent._pending_arbitrations[conflict_id]),  # noqa: SLF001
             "total_parties": len(set(conflict.parties)),
             "all_parties_present": all_parties_present,
             "next_step": "waiting_for_parties"
@@ -227,14 +227,14 @@ async def _handle_request_arbitration(agent: ArbiterAgent, message: ActorMessage
             else "arbitration_scheduled",
         }
 
-        await agent._send_response(message, response_content)
+        await agent._send_response(message, response_content)  # noqa: SLF001
 
     except ValidationError as ve:
         logger.warning(VALIDATION_ERROR, error=str(ve))
-        await agent._send_error(message, "Invalid arbitration request", str(ve))
+        await agent._send_error(message, "Invalid arbitration request", str(ve))  # noqa: SLF001
     except Exception as e:
-        logger.error("Error requesting arbitration", error=str(e), exc_info=True)
-        await agent._send_error(message, "Arbitration request failed", str(e))
+        logger.exception("Error requesting arbitration", error=str(e))
+        await agent._send_error(message, "Arbitration request failed", str(e))  # noqa: SLF001
 
 
 async def _handle_mediate_dispute(agent: ArbiterAgent, message: ActorMessage) -> None:
@@ -266,7 +266,7 @@ async def _handle_mediate_dispute(agent: ArbiterAgent, message: ActorMessage) ->
         )
 
         # Perform mediation
-        mediation_result = await agent._conduct_mediation(
+        mediation_result = await agent._conduct_mediation(  # noqa: SLF001
             sender=message.sender_id,
             other_party=other_party,
             dispute=dispute_description,
@@ -280,14 +280,14 @@ async def _handle_mediate_dispute(agent: ArbiterAgent, message: ActorMessage) ->
             "follow_up_actions": mediation_result.get("actions", []),
         }
 
-        await agent._send_response(message, response_content)
+        await agent._send_response(message, response_content)  # noqa: SLF001
 
     except ValidationError as ve:
         logger.warning(VALIDATION_ERROR, error=str(ve))
-        await agent._send_error(message, "Invalid mediation request", str(ve))
+        await agent._send_error(message, "Invalid mediation request", str(ve))  # noqa: SLF001
     except Exception as e:
-        logger.error("Error mediating dispute", error=str(e), exc_info=True)
-        await agent._send_error(message, "Mediation failed", str(e))
+        logger.exception("Error mediating dispute", error=str(e))
+        await agent._send_error(message, "Mediation failed", str(e))  # noqa: SLF001
 
 
 async def _handle_resolve_contention(agent: ArbiterAgent, message: ActorMessage) -> None:
@@ -320,18 +320,18 @@ async def _handle_resolve_contention(agent: ArbiterAgent, message: ActorMessage)
 
         # Resolve based on contention type
         if contention_type == "resource":
-            resolution = await agent._resolve_resource_contention(
+            resolution = await agent._resolve_resource_contention(  # noqa: SLF001
                 resource=resource,
                 competing_agents=competing_agents,
                 priority_override=priority_override,
             )
         elif contention_type == "task":
-            resolution = await agent._resolve_task_contention(
+            resolution = await agent._resolve_task_contention(  # noqa: SLF001
                 competing_agents=competing_agents,
                 priority_override=priority_override,
             )
         else:
-            resolution = await agent._resolve_generic_contention(
+            resolution = await agent._resolve_generic_contention(  # noqa: SLF001
                 contention_type=contention_type,
                 competing_agents=competing_agents,
             )
@@ -343,14 +343,14 @@ async def _handle_resolve_contention(agent: ArbiterAgent, message: ActorMessage)
             "alternatives": resolution.get("alternatives"),
         }
 
-        await agent._send_response(message, response_content)
+        await agent._send_response(message, response_content)  # noqa: SLF001
 
     except ValidationError as ve:
         logger.warning(VALIDATION_ERROR, error=str(ve))
-        await agent._send_error(message, "Invalid contention resolution", str(ve))
+        await agent._send_error(message, "Invalid contention resolution", str(ve))  # noqa: SLF001
     except Exception as e:
-        logger.error("Error resolving contention", error=str(e), exc_info=True)
-        await agent._send_error(message, "Contention resolution failed", str(e))
+        logger.exception("Error resolving contention", error=str(e))
+        await agent._send_error(message, "Contention resolution failed", str(e))  # noqa: SLF001
 
 
 async def _handle_get_conflict_details(agent: ArbiterAgent, message: ActorMessage) -> None:
@@ -366,12 +366,12 @@ async def _handle_get_conflict_details(agent: ArbiterAgent, message: ActorMessag
         conflict_id = content.get("conflict_id")
 
         if not conflict_id:
-            await agent._send_error(message, MISSING_CONFLICT_ID)
+            await agent._send_error(message, MISSING_CONFLICT_ID)  # noqa: SLF001
             return
 
-        conflict = agent._conflicts.get(conflict_id)
+        conflict = agent._conflicts.get(conflict_id)  # noqa: SLF001
         if not conflict:
-            await agent._send_error(message, CONFLICT_NOT_FOUND, conflict_id)
+            await agent._send_error(message, CONFLICT_NOT_FOUND, conflict_id)  # noqa: SLF001
             return
 
         response_content = {
@@ -390,14 +390,14 @@ async def _handle_get_conflict_details(agent: ArbiterAgent, message: ActorMessag
             "resolution_notes": conflict.resolution_notes,
         }
 
-        await agent._send_response(message, response_content)
+        await agent._send_response(message, response_content)  # noqa: SLF001
 
     except ValidationError as ve:
         logger.warning(VALIDATION_ERROR, error=str(ve))
-        await agent._send_error(message, "Invalid request", str(ve))
+        await agent._send_error(message, "Invalid request", str(ve))  # noqa: SLF001
     except Exception as e:
-        logger.error("Error getting conflict details", error=str(e), exc_info=True)
-        await agent._send_error(message, "Failed to get conflict details", str(e))
+        logger.exception("Error getting conflict details", error=str(e))
+        await agent._send_error(message, "Failed to get conflict details", str(e))  # noqa: SLF001
 
 
 async def _handle_get_active_conflicts(agent: ArbiterAgent, message: ActorMessage) -> None:
@@ -418,7 +418,7 @@ async def _handle_get_active_conflicts(agent: ArbiterAgent, message: ActorMessag
 
         active_conflicts = [
             c
-            for c in agent._conflicts.values()
+            for c in agent._conflicts.values()  # noqa: SLF001
             if c.status not in [ResolutionStatus.RESOLVED, ResolutionStatus.FAILED]
         ]
 
@@ -472,11 +472,11 @@ async def _handle_get_active_conflicts(agent: ArbiterAgent, message: ActorMessag
             ],
         }
 
-        await agent._send_response(message, response_content)
+        await agent._send_response(message, response_content)  # noqa: SLF001
 
     except Exception as e:
-        logger.error("Error getting active conflicts", error=str(e), exc_info=True)
-        await agent._send_error(message, "Failed to get active conflicts", str(e))
+        logger.exception("Error getting active conflicts", error=str(e))
+        await agent._send_error(message, "Failed to get active conflicts", str(e))  # noqa: SLF001
 
 
 async def _handle_propose_resolution(agent: ArbiterAgent, message: ActorMessage) -> None:
@@ -498,12 +498,12 @@ async def _handle_propose_resolution(agent: ArbiterAgent, message: ActorMessage)
         rationale = content.get("rationale", "")
 
         if not conflict_id:
-            await agent._send_error(message, MISSING_CONFLICT_ID)
+            await agent._send_error(message, MISSING_CONFLICT_ID)  # noqa: SLF001
             return
 
-        conflict = agent._conflicts.get(conflict_id)
+        conflict = agent._conflicts.get(conflict_id)  # noqa: SLF001
         if not conflict:
-            await agent._send_error(message, CONFLICT_NOT_FOUND, conflict_id)
+            await agent._send_error(message, CONFLICT_NOT_FOUND, conflict_id)  # noqa: SLF001
             return
 
         # Add proposed resolution
@@ -524,14 +524,14 @@ async def _handle_propose_resolution(agent: ArbiterAgent, message: ActorMessage)
             "next_step": "waiting_for_acceptance",
         }
 
-        await agent._send_response(message, response_content)
+        await agent._send_response(message, response_content)  # noqa: SLF001
 
     except ValidationError as ve:
         logger.warning(VALIDATION_ERROR, error=str(ve))
-        await agent._send_error(message, "Invalid proposal", str(ve))
+        await agent._send_error(message, "Invalid proposal", str(ve))  # noqa: SLF001
     except Exception as e:
-        logger.error("Error proposing resolution", error=str(e), exc_info=True)
-        await agent._send_error(message, "Proposal failed", str(e))
+        logger.exception("Error proposing resolution", error=str(e))
+        await agent._send_error(message, "Proposal failed", str(e))  # noqa: SLF001
 
 
 async def _handle_accept_resolution(agent: ArbiterAgent, message: ActorMessage) -> None:
@@ -551,12 +551,12 @@ async def _handle_accept_resolution(agent: ArbiterAgent, message: ActorMessage) 
         resolution_data = content.get("resolution_data")
 
         if not conflict_id:
-            await agent._send_error(message, MISSING_CONFLICT_ID)
+            await agent._send_error(message, MISSING_CONFLICT_ID)  # noqa: SLF001
             return
 
-        conflict = agent._conflicts.get(conflict_id)
+        conflict = agent._conflicts.get(conflict_id)  # noqa: SLF001
         if not conflict:
-            await agent._send_error(message, CONFLICT_NOT_FOUND, conflict_id)
+            await agent._send_error(message, CONFLICT_NOT_FOUND, conflict_id)  # noqa: SLF001
             return
 
         # Select or create resolution
@@ -575,10 +575,10 @@ async def _handle_accept_resolution(agent: ArbiterAgent, message: ActorMessage) 
         conflict.resolved_at = datetime.now(UTC)
 
         # Update statistics
-        agent._stats["resolutions_successful"] += 1
+        agent._stats["resolutions_successful"] += 1  # noqa: SLF001
 
         # Update relationships
-        agent._update_relationships_for_resolution(conflict)
+        agent._update_relationships_for_resolution(conflict)  # noqa: SLF001
 
         response_content = {
             "conflict_id": conflict_id,
@@ -587,14 +587,14 @@ async def _handle_accept_resolution(agent: ArbiterAgent, message: ActorMessage) 
             "resolution": selected,
         }
 
-        await agent._send_response(message, response_content)
+        await agent._send_response(message, response_content)  # noqa: SLF001
 
     except ValidationError as ve:
         logger.warning(VALIDATION_ERROR, error=str(ve))
-        await agent._send_error(message, "Invalid acceptance", str(ve))
+        await agent._send_error(message, "Invalid acceptance", str(ve))  # noqa: SLF001
     except Exception as e:
-        logger.error("Error accepting resolution", error=str(e), exc_info=True)
-        await agent._send_error(message, "Acceptance failed", str(e))
+        logger.exception("Error accepting resolution", error=str(e))
+        await agent._send_error(message, "Acceptance failed", str(e))  # noqa: SLF001
 
 
 async def _handle_get_relationship_status(agent: ArbiterAgent, message: ActorMessage) -> None:
@@ -612,12 +612,12 @@ async def _handle_get_relationship_status(agent: ArbiterAgent, message: ActorMes
         agent_b = content.get("agent_b")
 
         if not agent_a or not agent_b:
-            await agent._send_error(message, "Missing agent_a or agent_b")
+            await agent._send_error(message, "Missing agent_a or agent_b")  # noqa: SLF001
             return
 
         # Normalize key (alphabetically ordered)
         key = tuple(sorted([agent_a, agent_b]))
-        relationship = agent._relationships.get(key)
+        relationship = agent._relationships.get(key)  # noqa: SLF001
 
         if not relationship:
             response_content = {
@@ -639,14 +639,14 @@ async def _handle_get_relationship_status(agent: ArbiterAgent, message: ActorMes
                 "tags": relationship.tags,
             }
 
-        await agent._send_response(message, response_content)
+        await agent._send_response(message, response_content)  # noqa: SLF001
 
     except ValidationError as ve:
         logger.warning(VALIDATION_ERROR, error=str(ve))
-        await agent._send_error(message, "Invalid request", str(ve))
+        await agent._send_error(message, "Invalid request", str(ve))  # noqa: SLF001
     except Exception as e:
-        logger.error("Error getting relationship status", error=str(e), exc_info=True)
-        await agent._send_error(message, "Failed to get relationship status", str(e))
+        logger.exception("Error getting relationship status", error=str(e))
+        await agent._send_error(message, "Failed to get relationship status", str(e))  # noqa: SLF001
 
 
 async def _handle_get_relationship_health(agent: ArbiterAgent, message: ActorMessage) -> None:
@@ -662,23 +662,23 @@ async def _handle_get_relationship_health(agent: ArbiterAgent, message: ActorMes
         include_details = content.get("include_details", False)
 
         # Calculate aggregate health
-        if agent._relationships:
-            avg_health = sum(r.health_score for r in agent._relationships.values()) / len(
-                agent._relationships
+        if agent._relationships:  # noqa: SLF001
+            avg_health = sum(r.health_score for r in agent._relationships.values()) / len(  # noqa: SLF001
+                agent._relationships  # noqa: SLF001
             )
-            avg_trust = sum(r.trust_level for r in agent._relationships.values()) / len(
-                agent._relationships
+            avg_trust = sum(r.trust_level for r in agent._relationships.values()) / len(  # noqa: SLF001
+                agent._relationships  # noqa: SLF001
             )
         else:
             avg_health = 1.0
             avg_trust = 1.0
 
         response_content = {
-            "total_relationships": len(agent._relationships),
+            "total_relationships": len(agent._relationships),  # noqa: SLF001
             "average_health_score": avg_health,
             "average_trust_level": avg_trust,
             "relationships_needing_attention": len(
-                [r for r in agent._relationships.values() if r.health_score < 0.5]
+                [r for r in agent._relationships.values() if r.health_score < 0.5]  # noqa: SLF001
             ),
         }
 
@@ -690,14 +690,14 @@ async def _handle_get_relationship_health(agent: ArbiterAgent, message: ActorMes
                     "trust_level": r.trust_level,
                     "conflict_count": r.conflict_count,
                 }
-                for r in agent._relationships.values()
+                for r in agent._relationships.values()  # noqa: SLF001
             ]
 
-        await agent._send_response(message, response_content)
+        await agent._send_response(message, response_content)  # noqa: SLF001
 
     except Exception as e:
-        logger.error("Error getting relationship health", error=str(e), exc_info=True)
-        await agent._send_error(message, "Relationship health check failed", str(e))
+        logger.exception("Error getting relationship health", error=str(e))
+        await agent._send_error(message, "Relationship health check failed", str(e))  # noqa: SLF001
 
 
 async def _handle_update_relationship(agent: ArbiterAgent, message: ActorMessage) -> None:
@@ -719,14 +719,14 @@ async def _handle_update_relationship(agent: ArbiterAgent, message: ActorMessage
         trust_delta = content.get("trust_delta", 0.0)
 
         if not other_agent:
-            await agent._send_error(message, "Missing other_agent")
+            await agent._send_error(message, "Missing other_agent")  # noqa: SLF001
             return
 
         # Get or create relationship
         key = tuple(sorted([message.sender_id, other_agent]))
 
-        if key not in agent._relationships:
-            agent._relationships[key] = Relationship(
+        if key not in agent._relationships:  # noqa: SLF001
+            agent._relationships[key] = Relationship(  # noqa: SLF001
                 agent_a=key[0],
                 agent_b=key[1],
                 health_score=0.7,  # Start slightly positive
@@ -737,7 +737,7 @@ async def _handle_update_relationship(agent: ArbiterAgent, message: ActorMessage
                 trust_level=0.5,  # Start neutral
             )
 
-        relationship = agent._relationships[key]
+        relationship = agent._relationships[key]  # noqa: SLF001
 
         # Update metrics
         relationship.interaction_count += 1
@@ -754,7 +754,7 @@ async def _handle_update_relationship(agent: ArbiterAgent, message: ActorMessage
         relationship.trust_level = max(0.0, min(1.0, relationship.trust_level + trust_delta))
 
         # Apply decay to health score
-        relationship.health_score = max(0.0, relationship.health_score - agent._relationship_decay)
+        relationship.health_score = max(0.0, relationship.health_score - agent._relationship_decay)  # noqa: SLF001
 
         response_content = {
             "relationship_updated": True,
@@ -763,14 +763,14 @@ async def _handle_update_relationship(agent: ArbiterAgent, message: ActorMessage
             "interaction_count": relationship.interaction_count,
         }
 
-        await agent._send_response(message, response_content)
+        await agent._send_response(message, response_content)  # noqa: SLF001
 
     except ValidationError as ve:
         logger.warning(VALIDATION_ERROR, error=str(ve))
-        await agent._send_error(message, "Invalid update", str(ve))
+        await agent._send_error(message, "Invalid update", str(ve))  # noqa: SLF001
     except Exception as e:
-        logger.error("Error updating relationship", error=str(e), exc_info=True)
-        await agent._send_error(message, "Relationship update failed", str(e))
+        logger.exception("Error updating relationship", error=str(e))
+        await agent._send_error(message, "Relationship update failed", str(e))  # noqa: SLF001
 
 
 async def _handle_get_arbitration_report(agent: ArbiterAgent, message: ActorMessage) -> None:
@@ -791,29 +791,29 @@ async def _handle_get_arbitration_report(agent: ArbiterAgent, message: ActorMess
         active_conflicts = len(
             [
                 c
-                for c in agent._conflicts.values()
+                for c in agent._conflicts.values()  # noqa: SLF001
                 if c.status not in [ResolutionStatus.RESOLVED, ResolutionStatus.FAILED]
             ]
         )
         resolved_conflicts = len(
-            [c for c in agent._conflicts.values() if c.status == ResolutionStatus.RESOLVED]
+            [c for c in agent._conflicts.values() if c.status == ResolutionStatus.RESOLVED]  # noqa: SLF001
         )
         failed_resolutions = len(
-            [c for c in agent._conflicts.values() if c.status == ResolutionStatus.FAILED]
+            [c for c in agent._conflicts.values() if c.status == ResolutionStatus.FAILED]  # noqa: SLF001
         )
 
-        conflicts_by_type = dict(agent._stats["conflicts_by_type"])
-        conflicts_by_severity = dict(agent._stats["conflicts_by_severity"])
+        conflicts_by_type = dict(agent._stats["conflicts_by_type"])  # noqa: SLF001
+        conflicts_by_severity = dict(agent._stats["conflicts_by_severity"])  # noqa: SLF001
 
         # Relationship health summary
         relationship_health = {
-            f"{r.agent_a}-{r.agent_b}": r.health_score for r in agent._relationships.values()
+            f"{r.agent_a}-{r.agent_b}": r.health_score for r in agent._relationships.values()  # noqa: SLF001
         }
 
         # Generate recommendations
         recommendations = []
         if include_recommendations:
-            recommendations = agent._generate_recommendations()
+            recommendations = agent._generate_recommendations()  # noqa: SLF001
 
         report = {
             "report_id": f"arb_report_{datetime.now(UTC).timestamp()}",
@@ -826,20 +826,20 @@ async def _handle_get_arbitration_report(agent: ArbiterAgent, message: ActorMess
             "conflicts_by_severity": conflicts_by_severity,
             "relationship_health": relationship_health,
             "statistics": {
-                "total_conflicts": agent._stats["total_conflicts"],
-                "resolutions_successful": agent._stats["resolutions_successful"],
-                "resolutions_failed": agent._stats["resolutions_failed"],
-                "resolutions_escalated": agent._stats["resolutions_escalated"],
-                "average_resolution_time": agent._stats["average_resolution_time"],
+                "total_conflicts": agent._stats["total_conflicts"],  # noqa: SLF001
+                "resolutions_successful": agent._stats["resolutions_successful"],  # noqa: SLF001
+                "resolutions_failed": agent._stats["resolutions_failed"],  # noqa: SLF001
+                "resolutions_escalated": agent._stats["resolutions_escalated"],  # noqa: SLF001
+                "average_resolution_time": agent._stats["average_resolution_time"],  # noqa: SLF001
             },
             "recommendations": recommendations,
         }
 
-        await agent._send_response(message, {"report": report})
+        await agent._send_response(message, {"report": report})  # noqa: SLF001
 
     except Exception as e:
-        logger.error("Error generating arbitration report", error=str(e), exc_info=True)
-        await agent._send_error(message, "Report generation failed", str(e))
+        logger.exception("Error generating arbitration report", error=str(e))
+        await agent._send_error(message, "Report generation failed", str(e))  # noqa: SLF001
 
 
 async def _handle_register_interaction(agent: ArbiterAgent, message: ActorMessage) -> None:
@@ -861,14 +861,14 @@ async def _handle_register_interaction(agent: ArbiterAgent, message: ActorMessag
         success = content.get("success", True)
 
         if not other_agent:
-            await agent._send_error(message, "Missing other_agent")
+            await agent._send_error(message, "Missing other_agent")  # noqa: SLF001
             return
 
         # Update relationship
         key = tuple(sorted([message.sender_id, other_agent]))
 
-        if key not in agent._relationships:
-            agent._relationships[key] = Relationship(
+        if key not in agent._relationships:  # noqa: SLF001
+            agent._relationships[key] = Relationship(  # noqa: SLF001
                 agent_a=key[0],
                 agent_b=key[1],
                 health_score=0.7,
@@ -879,7 +879,7 @@ async def _handle_register_interaction(agent: ArbiterAgent, message: ActorMessag
                 trust_level=0.5,
             )
 
-        relationship = agent._relationships[key]
+        relationship = agent._relationships[key]  # noqa: SLF001
         relationship.interaction_count += 1
         relationship.last_interaction = datetime.now(UTC)
 
@@ -894,11 +894,11 @@ async def _handle_register_interaction(agent: ArbiterAgent, message: ActorMessag
             "trust_level": relationship.trust_level,
         }
 
-        await agent._send_response(message, response_content)
+        await agent._send_response(message, response_content)  # noqa: SLF001
 
     except ValidationError as ve:
         logger.warning(VALIDATION_ERROR, error=str(ve))
-        await agent._send_error(message, "Invalid interaction", str(ve))
+        await agent._send_error(message, "Invalid interaction", str(ve))  # noqa: SLF001
     except Exception as e:
-        logger.error("Error registering interaction", error=str(e), exc_info=True)
-        await agent._send_error(message, "Interaction registration failed", str(e))
+        logger.exception("Error registering interaction", error=str(e))
+        await agent._send_error(message, "Interaction registration failed", str(e))  # noqa: SLF001

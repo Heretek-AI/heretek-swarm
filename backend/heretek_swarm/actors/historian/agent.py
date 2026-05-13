@@ -217,9 +217,9 @@ class HistorianAgent(
             try:
                 await handler(message)
             except Exception as e:
-                logger.error(
-                    f"[{self.agent_id}] Error processing message {message.message_type}: {e}",
-                    exc_info=True,
+                logger.exception(
+                    f"[{self.agent_id}] Error processing message {message.message_type}: {e}",  # noqa: G004
+
                 )
                 self.error_count += 1
                 # Send error response if reply_to is specified
@@ -477,7 +477,7 @@ class HistorianAgent(
             )
 
         except Exception as e:
-            logger.error("[{self.agent_id}] Unified query error: {e}", exc_info=True)
+            logger.exception("[{self.agent_id}] Unified query error: {e}")
             if message.content.get("reply_to"):
                 await self.send(
                     topic=message.content["reply_to"],
@@ -612,7 +612,7 @@ class HistorianAgent(
         self.context_cache.set(cache_key, context)
 
         logger.debug(
-            f"[{self.agent_id}] Retrieved {len(context)} context entries for: {topic} (cache size: {len(self.context_cache)})"
+            f"[{self.agent_id}] Retrieved {len(context)} context entries for: {topic} (cache size: {len(self.context_cache)})"  # noqa: G004
         )
 
         return context
@@ -738,7 +738,7 @@ class HistorianAgent(
         self.pattern_cache.set(situation, matched)
 
         logger.debug(
-            f"[{self.agent_id}] Matched {len(matched)} patterns for: {situation} (cache size: {len(self.pattern_cache)})"
+            f"[{self.agent_id}] Matched {len(matched)} patterns for: {situation} (cache size: {len(self.pattern_cache)})"  # noqa: G004
         )
 
         return matched
@@ -1029,7 +1029,7 @@ class HistorianAgent(
                 logger.debug("[{self.agent_id}] PG writer: inserted event {record['event_id']}")
             except Exception:
                 logger.exception(
-                    f"[{self.agent_id}] PG writer error for event {record.get('event_id', '?')}"
+                    f"[{self.agent_id}] PG writer error for event {record.get('event_id', '?')}"  # noqa: G004
                 )
             finally:
                 self._jsonl_queue.task_done()
@@ -1178,7 +1178,7 @@ class HistorianAgent(
 
         if not event_type or not agent_id:
             logger.error(
-                f"[{self.agent_id}] log_event missing required fields",
+                f"[{self.agent_id}] log_event missing required fields",  # noqa: G004
                 extra={"content_keys": list(message.content)},
             )
             return

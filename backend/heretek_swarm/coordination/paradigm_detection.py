@@ -340,7 +340,7 @@ class ParadigmDetector:
         agent_factor = len(self._get_impacted_agents(indicators)) * 0.03
         return min(1.0, base_score + component_factor + agent_factor)
 
-    async def _is_rate_limited(self, shift: ParadigmShift) -> bool:
+    async def _is_rate_limited(self, _shift: ParadigmShift) -> bool:
         """Check if a shift should be rate-limited."""
         now = datetime.now(UTC)
         if self._recent_shift_times:

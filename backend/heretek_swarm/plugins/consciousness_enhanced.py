@@ -496,7 +496,7 @@ class FEPTracker:
 
     def _calculate_free_energy(
         self,
-        agent_id: str,
+        agent_id: str,  # noqa: ARG002
         surprise: float,
         confidence: float,
     ) -> float:

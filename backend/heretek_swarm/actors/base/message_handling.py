@@ -85,7 +85,7 @@ class AgentActorMessageHandling(AgentActor):
 
         # Tier 3: Queue for later delivery (last resort)
         logger.warning(
-            f"[{self.agent_id}] Message {message_id} queued (no delivery mechanism available)",
+            f"[{self.agent_id}] Message {message_id} queued (no delivery mechanism available)",  # noqa: G004
             extra={"message_type": message_type, "topic": topic},
         )
         self._queue_message(message)
@@ -128,13 +128,13 @@ class AgentActorMessageHandling(AgentActor):
                 },
             )
             logger.info(
-                f"[{self.agent_id}] Message {message_id} sent via event mesh to {topic}",
+                f"[{self.agent_id}] Message {message_id} sent via event mesh to {topic}",  # noqa: G004
                 extra={"message_type": message_type},
             )
             return True
         except Exception as e:
             logger.error(
-                f"[{self.agent_id}] Event mesh send failed: {e}",
+                f"[{self.agent_id}] Event mesh send failed: {e}",  # noqa: G004
                 extra={"message_id": message_id, "topic": topic},
             )
             return False
@@ -174,14 +174,14 @@ class AgentActorMessageHandling(AgentActor):
                     delivered = True
             if delivered:
                 logger.info(
-                    f"[{self.agent_id}] Message {message_id} delivered directly to topic subscribers",
+                    f"[{self.agent_id}] Message {message_id} delivered directly to topic subscribers",  # noqa: G004
                     extra={"message_type": message_type},
                 )
                 return True
             return False
         except Exception as e:
             logger.error(
-                f"[{self.agent_id}] Direct delivery failed: {e}",
+                f"[{self.agent_id}] Direct delivery failed: {e}",  # noqa: G004
                 extra={"message_id": message_id, "topic": topic},
             )
             return False
@@ -192,7 +192,7 @@ class AgentActorMessageHandling(AgentActor):
         pending_messages.append(message)
         self.update_state("_pending_messages", pending_messages)
         logger.debug(
-            f"[{self.agent_id}] Message queued for later delivery",
+            f"[{self.agent_id}] Message queued for later delivery",  # noqa: G004
             extra={"message_type": message.message_type},
         )
 
@@ -237,13 +237,13 @@ class AgentActorMessageHandling(AgentActor):
                 # Wire consciousness: record this agent-to-agent interaction
                 self._record_agent_interaction(self.agent_id, target_actor_id)
                 logger.info(
-                    f"[{self.agent_id}] Direct message sent to {target_actor_id}",
+                    f"[{self.agent_id}] Direct message sent to {target_actor_id}",  # noqa: G004
                     extra={"message_type": message_type},
                 )
                 return message_id
             except Exception as e:
                 logger.error(
-                    f"[{self.agent_id}] Direct actor send failed: {e}",
+                    f"[{self.agent_id}] Direct actor send failed: {e}",  # noqa: G004
                     extra={"target": target_actor_id},
                 )
 
@@ -289,7 +289,7 @@ class AgentActorMessageHandling(AgentActor):
         reply_channel = f"reply_{self.agent_id}_{correlation_id}"
 
         logger.info(
-            f"[{self.agent_id}] Sending request to {recipient} with correlation_id={correlation_id}",
+            f"[{self.agent_id}] Sending request to {recipient} with correlation_id={correlation_id}",  # noqa: G004
             extra={"message_type": message_type, "timeout": timeout},
         )
 
@@ -322,7 +322,7 @@ class AgentActorMessageHandling(AgentActor):
                 )
 
                 logger.info(
-                    f"[{self.agent_id}] Reply received for correlation_id={correlation_id}",
+                    f"[{self.agent_id}] Reply received for correlation_id={correlation_id}",  # noqa: G004
                     extra={"message_type": reply_message.message_type},
                 )
 
@@ -330,7 +330,7 @@ class AgentActorMessageHandling(AgentActor):
 
             except TimeoutError:
                 logger.warning(
-                    f"[{self.agent_id}] Request timeout after {timeout}s for correlation_id={correlation_id}",
+                    f"[{self.agent_id}] Request timeout after {timeout}s for correlation_id={correlation_id}",  # noqa: G004
                     extra={"recipient": recipient, "message_type": message_type},
                 )
                 raise
@@ -357,7 +357,7 @@ class AgentActorMessageHandling(AgentActor):
                     timeout=5.0,
                 )
                 logger.debug(
-                    f"[{self.agent_id}] Message queued",
+                    f"[{self.agent_id}] Message queued",  # noqa: G004
                     extra={"message_type": message.message_type},
                 )
                 return  # Success, exit retry loop
@@ -365,14 +365,14 @@ class AgentActorMessageHandling(AgentActor):
                 if attempt < max_retries - 1:
                     # P1-10e fix: Retry with exponential backoff
                     logger.warning(
-                        f"[{self.agent_id}] Mailbox full, retrying ({attempt + 1}/{max_retries})",
+                        f"[{self.agent_id}] Mailbox full, retrying ({attempt + 1}/{max_retries})",  # noqa: G004
                         extra={"message_type": message.message_type},
                     )
                     await asyncio.sleep(retry_delay * (2**attempt))
                 else:
                     # P1-10e fix: Only drop after all retries exhausted
                     logger.error(
-                        f"[{self.agent_id}] Mailbox full after {max_retries} retries, message dropped",
+                        f"[{self.agent_id}] Mailbox full after {max_retries} retries, message dropped",  # noqa: G004
                         extra={"message_type": message.message_type},
                     )
                     self.error_count += 1
@@ -404,7 +404,7 @@ class AgentActorMessageHandling(AgentActor):
                     await self.save_state()
                     self._messages_since_persist = 0
                     logger.debug(
-                        f"[{self.agent_id}] State persisted after {self._persistence_interval} messages",
+                        f"[{self.agent_id}] State persisted after {self._persistence_interval} messages",  # noqa: G004
                         extra={"total_messages": self.message_count},
                     )
 
@@ -418,9 +418,9 @@ class AgentActorMessageHandling(AgentActor):
                 break
             except Exception as e:
                 self.error_count += 1
-                logger.error(
-                    f"[{self.agent_id}] Error processing message: {e}",
-                    exc_info=True,
+                logger.exception(
+                    f"[{self.agent_id}] Error processing message: {e}",  # noqa: G004
+
                 )
 
     async def _validate_and_prepare_message(self, message: ActorMessage) -> ActorMessage | None:
@@ -435,7 +435,7 @@ class AgentActorMessageHandling(AgentActor):
         )
         if not is_valid:
             logger.warning(
-                f"[{self.agent_id}] ZERO-02 validation rejected message",
+                f"[{self.agent_id}] ZERO-02 validation rejected message",  # noqa: G004
                 extra={
                     "message_type": message.message_type,
                     "sender": message.sender,
@@ -459,9 +459,9 @@ class AgentActorMessageHandling(AgentActor):
                     correlation_id=message.correlation_id,
                 )
         except Exception as e:
-            logger.error(
-                f"[{self.agent_id}] Error in handler for {message.message_type}: {e}",
-                exc_info=True,
+            logger.exception(
+                f"[{self.agent_id}] Error in handler for {message.message_type}: {e}",  # noqa: G004
+
             )
             self.error_count += 1
 
@@ -502,13 +502,13 @@ class AgentActorMessageHandling(AgentActor):
                     }
                 )
                 logger.info(
-                    f"[{self.agent_id}] Broadcast sent via event mesh",
+                    f"[{self.agent_id}] Broadcast sent via event mesh",  # noqa: G004
                     extra={"message_type": message_type},
                 )
                 return
             except Exception as e:
                 logger.error(
-                    f"[{self.agent_id}] Event mesh broadcast failed: {e}",
+                    f"[{self.agent_id}] Event mesh broadcast failed: {e}",  # noqa: G004
                     extra={"message_type": message_type},
                 )
 
@@ -535,11 +535,11 @@ class AgentActorMessageHandling(AgentActor):
                         sent_count += 1
                     except Exception as e:
                         logger.error(
-                            f"[{self.agent_id}] Broadcast to {reg_actor_id} failed: {e}",
+                            f"[{self.agent_id}] Broadcast to {reg_actor_id} failed: {e}",  # noqa: G004
                             extra={"message_type": message_type},
                         )
             logger.info(
-                f"[{self.agent_id}] Broadcast sent to {sent_count} actors via registry",
+                f"[{self.agent_id}] Broadcast sent to {sent_count} actors via registry",  # noqa: G004
                 extra={"message_type": message_type},
             )
             return
@@ -640,7 +640,7 @@ class AgentActorMessageHandling(AgentActor):
         correlation_id = payload.get("correlation_id", message.correlation_id)
 
         logger.info(
-            f"[{self.agent_id}] Received route_task",
+            f"[{self.agent_id}] Received route_task",  # noqa: G004
             extra={
                 "target_agent": target_agent,
                 "task_type": task_type,
@@ -689,7 +689,7 @@ class AgentActorMessageHandling(AgentActor):
         """
         task_type = payload.get("task_type", "unknown")
         logger.warning(
-            f"[{self.agent_id}] Route task not handled — no override for {task_type}",
+            f"[{self.agent_id}] Route task not handled — no override for {task_type}",  # noqa: G004
             extra={
                 "task_type": task_type,
                 "target_agent": payload.get("target_agent"),
@@ -731,7 +731,7 @@ class AgentActorMessageHandling(AgentActor):
             return
 
         logger.info(
-            f"[{self.agent_id}] Received collective task",
+            f"[{self.agent_id}] Received collective task",  # noqa: G004
             extra={
                 "task_id": task_id,
                 "task_type": task_type,
@@ -767,7 +767,7 @@ class AgentActorMessageHandling(AgentActor):
         task_type: str,
         description: str,
         input_data: dict[str, Any],
-        protocol: dict[str, Any],
+        protocol: dict[str, Any],  # noqa: ARG002
     ) -> dict[str, Any]:
         """
         Generate contribution for a collective task.
@@ -887,7 +887,7 @@ Please provide your analysis and recommendation for this collective task."""
                         provider_id=decision.provider_id,
                     )
                     logger.info(
-                        f"[{self.agent_id}] Routed via garage",
+                        f"[{self.agent_id}] Routed via garage",  # noqa: G004
                         extra={
                             "provider": decision.provider_id,
                             "model": decision.model,
@@ -902,7 +902,7 @@ Please provide your analysis and recommendation for this collective task."""
 
                 # Router exists but no garage — fall back to swarms_agent
                 logger.info(
-                    f"[{self.agent_id}] Router available, falling back to swarms_agent",
+                    f"[{self.agent_id}] Router available, falling back to swarms_agent",  # noqa: G004
                     extra={"provider": decision.provider_id, "model": decision.model},
                 )
             except RuntimeError:
@@ -930,7 +930,7 @@ Please provide your analysis and recommendation for this collective task."""
             logger.error("[{self.agent_id}] LLM call timed out after {timeout}s")
             raise
         except Exception:
-            logger.error("[{self.agent_id}] LLM call failed: {e}", exc_info=True)
+            logger.exception("[{self.agent_id}] LLM call failed: {e}")
             raise
 
     async def _heartbeat_loop(self) -> None:
@@ -955,7 +955,7 @@ Please provide your analysis and recommendation for this collective task."""
                             heartbeat_data,
                         )
                         logger.debug(
-                            f"[{self.agent_id}] Heartbeat published",
+                            f"[{self.agent_id}] Heartbeat published",  # noqa: G004
                             extra={"state": heartbeat_data["state"]},
                         )
                     except Exception:
@@ -970,27 +970,27 @@ Please provide your analysis and recommendation for this collective task."""
 
 # Bind message handling methods to AgentActor
 AgentActor.send = AgentActorMessageHandling.send
-AgentActor._send_via_event_mesh = AgentActorMessageHandling._send_via_event_mesh
-AgentActor._validate_and_prepare_message = AgentActorMessageHandling._validate_and_prepare_message
-AgentActor._execute_handler_and_publish = AgentActorMessageHandling._execute_handler_and_publish
-AgentActor._deliver_to_registry_actors = AgentActorMessageHandling._deliver_to_registry_actors
-AgentActor._queue_message = AgentActorMessageHandling._queue_message
+AgentActor._send_via_event_mesh = AgentActorMessageHandling._send_via_event_mesh  # noqa: SLF001
+AgentActor._validate_and_prepare_message = AgentActorMessageHandling._validate_and_prepare_message  # noqa: SLF001
+AgentActor._execute_handler_and_publish = AgentActorMessageHandling._execute_handler_and_publish  # noqa: SLF001
+AgentActor._deliver_to_registry_actors = AgentActorMessageHandling._deliver_to_registry_actors  # noqa: SLF001
+AgentActor._queue_message = AgentActorMessageHandling._queue_message  # noqa: SLF001
 AgentActor.send_to_actor = AgentActorMessageHandling.send_to_actor
 AgentActor.send_with_reply = AgentActorMessageHandling.send_with_reply
 AgentActor.put_message = AgentActorMessageHandling.put_message
-AgentActor._process_mailbox = AgentActorMessageHandling._process_mailbox
+AgentActor._process_mailbox = AgentActorMessageHandling._process_mailbox  # noqa: SLF001
 AgentActor.process_message = AgentActorMessageHandling.process_message
 AgentActor.broadcast = AgentActorMessageHandling.broadcast
-AgentActor._handle_health_check = AgentActorMessageHandling._handle_health_check
-AgentActor._handle_suspend = AgentActorMessageHandling._handle_suspend
-AgentActor._handle_resume = AgentActorMessageHandling._handle_resume
-AgentActor._handle_terminate = AgentActorMessageHandling._handle_terminate
-AgentActor._handle_route_task = AgentActorMessageHandling._handle_route_task
-AgentActor._process_route_task = AgentActorMessageHandling._process_route_task
-AgentActor._handle_collective_task = AgentActorMessageHandling._handle_collective_task
-AgentActor._generate_collective_contribution = (
-    AgentActorMessageHandling._generate_collective_contribution
+AgentActor._handle_health_check = AgentActorMessageHandling._handle_health_check  # noqa: SLF001
+AgentActor._handle_suspend = AgentActorMessageHandling._handle_suspend  # noqa: SLF001
+AgentActor._handle_resume = AgentActorMessageHandling._handle_resume  # noqa: SLF001
+AgentActor._handle_terminate = AgentActorMessageHandling._handle_terminate  # noqa: SLF001
+AgentActor._handle_route_task = AgentActorMessageHandling._handle_route_task  # noqa: SLF001
+AgentActor._process_route_task = AgentActorMessageHandling._process_route_task  # noqa: SLF001
+AgentActor._handle_collective_task = AgentActorMessageHandling._handle_collective_task  # noqa: SLF001
+AgentActor._generate_collective_contribution = (  # noqa: SLF001
+    AgentActorMessageHandling._generate_collective_contribution  # noqa: SLF001
 )
-AgentActor._get_actor_registry = AgentActorMessageHandling._get_actor_registry
+AgentActor._get_actor_registry = AgentActorMessageHandling._get_actor_registry  # noqa: SLF001
 AgentActor.run_with_llm = AgentActorMessageHandling.run_with_llm
-AgentActor._heartbeat_loop = AgentActorMessageHandling._heartbeat_loop
+AgentActor._heartbeat_loop = AgentActorMessageHandling._heartbeat_loop  # noqa: SLF001

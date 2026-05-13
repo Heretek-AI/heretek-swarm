@@ -285,7 +285,7 @@ class ResearchModule:
 
         return result
 
-    async def _gather_findings(self, query: ResearchQuery) -> list[ResearchFinding]:
+    async def _gather_findings(self, _query: ResearchQuery) -> list[ResearchFinding]:
         """
         Gather findings for a research query.
 

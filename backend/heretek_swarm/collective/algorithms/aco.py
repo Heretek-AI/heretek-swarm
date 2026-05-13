@@ -178,7 +178,7 @@ class ACO:
 
     def _construct_path(
         self,
-        nodes: list[str],
+        nodes: list[str],  # noqa: ARG002
         edges: list[tuple[str, str]],
         start_node: str,
         end_node: str,

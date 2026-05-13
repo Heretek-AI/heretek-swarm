@@ -75,7 +75,7 @@ class BaseTool(ABC):
         """
         ...
 
-    async def validate(self, **kwargs) -> bool:
+    async def validate(self, **_kwargs) -> bool:
         """Validate tool parameters."""
         return True
 
@@ -87,7 +87,7 @@ class SimpleTool(BaseTool):
         super().__init__(name, description, **kwargs)
         self.func = func
 
-    async def execute(self, context: ToolContext, **kwargs) -> ToolExecutionResult:
+    async def execute(self, _context: ToolContext, **kwargs) -> ToolExecutionResult:
         """Execute the wrapped function."""
         start = datetime.now(UTC)
         try:

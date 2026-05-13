@@ -169,7 +169,7 @@ class HeavySwarmWorkflow:
         self._phase_handlers = self._create_phase_handlers()
 
         logger.info(
-            f"[{self.name}] HeavySwarm workflow initialized",
+            f"[{self.name}] HeavySwarm workflow initialized",  # noqa: G004
             extra={
                 "triad_agents": self.triad_agents,
                 "historian": self.historian,
@@ -231,7 +231,7 @@ class HeavySwarmWorkflow:
         started_at = datetime.now(UTC)
 
         logger.info(
-            f"[{self.name}] Starting workflow {workflow_id}",
+            f"[{self.name}] Starting workflow {workflow_id}",  # noqa: G004
             extra={"topic": topic},
         )
 
@@ -330,7 +330,7 @@ class HeavySwarmWorkflow:
             result.errors = [str(e)]
 
         except Exception as e:
-            logger.error("[{self.name}] Workflow error: {e}", exc_info=True)
+            logger.exception("[{self.name}] Workflow error: {e}")
             result.state = WorkflowPhase.FAILED
             result.errors = [str(e)]
 
@@ -346,7 +346,7 @@ class HeavySwarmWorkflow:
             self.workflow_history.append(result)
 
             logger.info(
-                f"[{self.name}] Workflow {workflow_id} completed",
+                f"[{self.name}] Workflow {workflow_id} completed",  # noqa: G004
                 extra={
                     "state": result.state.value,
                     "duration_ms": result.total_duration_ms,
@@ -489,7 +489,7 @@ class HeavySwarmWorkflow:
             research_data["assumptions"] = context.get("assumptions", [])
 
         logger.info(
-            f"[{self.name}] Research phase complete",
+            f"[{self.name}] Research phase complete",  # noqa: G004
             extra={
                 "historical_context_count": len(research_data["historical_context"]),
                 "constraints_count": len(research_data["constraints"]),
@@ -506,7 +506,7 @@ class HeavySwarmWorkflow:
         self,
         workflow_id: str,
         topic: str,
-        context: dict[str, Any] | None = None,
+        context: dict[str, Any] | None = None,  # noqa: ARG002
         research_data: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
         """
@@ -568,7 +568,7 @@ class HeavySwarmWorkflow:
             )
 
         logger.info(
-            f"[{self.name}] Analysis phase complete",
+            f"[{self.name}] Analysis phase complete",  # noqa: G004
             extra={
                 "perspectives_count": len(analysis_data["perspectives"]),
                 "insights_count": len(analysis_data["key_insights"]),
@@ -650,9 +650,9 @@ class HeavySwarmWorkflow:
 
     async def _alternatives_phase(
         self,
-        workflow_id: str,
+        workflow_id: str,  # noqa: ARG002
         topic: str,
-        context: dict[str, Any] | None = None,
+        context: dict[str, Any] | None = None,  # noqa: ARG002
         analysis_data: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
         """
@@ -717,7 +717,7 @@ class HeavySwarmWorkflow:
         alternatives_data["trade_offs"] = await self._identify_trade_offs(ranked)
 
         logger.info(
-            f"[{self.name}] Alternatives phase complete",
+            f"[{self.name}] Alternatives phase complete",  # noqa: G004
             extra={
                 "alternatives_count": len(alternatives),
                 "recommended": alternatives_data["recommended_alternative"].get(
@@ -731,8 +731,8 @@ class HeavySwarmWorkflow:
 
     async def _generate_alternatives(
         self,
-        topic: str,
-        analysis_data: dict[str, Any],
+        topic: str,  # noqa: ARG002
+        analysis_data: dict[str, Any],  # noqa: ARG002
     ) -> list[dict[str, Any]]:
         """Generate alternative solutions."""
         # Placeholder - would use LLM in full implementation
@@ -759,8 +759,8 @@ class HeavySwarmWorkflow:
 
     async def _evaluate_alternative(
         self,
-        alternative: dict[str, Any],
-        analysis_data: dict[str, Any],
+        alternative: dict[str, Any],  # noqa: ARG002
+        analysis_data: dict[str, Any],  # noqa: ARG002
     ) -> dict[str, Any]:
         """Evaluate a single alternative."""
         # Placeholder scoring
@@ -800,9 +800,9 @@ class HeavySwarmWorkflow:
 
     async def _verification_phase(
         self,
-        workflow_id: str,
+        workflow_id: str,  # noqa: ARG002
         topic: str,
-        context: dict[str, Any] | None = None,
+        context: dict[str, Any] | None = None,  # noqa: ARG002
         alternatives_data: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
         """
@@ -848,7 +848,7 @@ class HeavySwarmWorkflow:
         if "beta" in self.agents:
             beta_agent = self.agents["beta"]
             try:
-                errors = await beta_agent._detect_errors(recommended)
+                errors = await beta_agent._detect_errors(recommended)  # noqa: SLF001
                 verification_data["error_checks"] = errors
                 if errors:
                     verification_data["overall_valid"] = False
@@ -859,7 +859,7 @@ class HeavySwarmWorkflow:
         if "charlie" in self.agents:
             charlie_agent = self.agents["charlie"]
             try:
-                risk_assessment = await charlie_agent._assess_risks(recommended)
+                risk_assessment = await charlie_agent._assess_risks(recommended)  # noqa: SLF001
                 verification_data["risk_assessments"] = risk_assessment.get("risks_identified", [])
                 verification_data["risk_level"] = risk_assessment.get("risk_level", "unknown")
             except Exception:
@@ -874,7 +874,7 @@ class HeavySwarmWorkflow:
         verification_data["confidence"] = max(0.0, base_confidence - penalty)
 
         logger.info(
-            f"[{self.name}] Verification phase complete",
+            f"[{self.name}] Verification phase complete",  # noqa: G004
             extra={
                 "overall_valid": verification_data["overall_valid"],
                 "confidence": verification_data["confidence"],
@@ -893,7 +893,7 @@ class HeavySwarmWorkflow:
         self,
         workflow_id: str,
         topic: str,
-        context: dict[str, Any] | None = None,
+        context: dict[str, Any] | None = None,  # noqa: ARG002
         verification_data: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
         """
@@ -950,7 +950,7 @@ class HeavySwarmWorkflow:
             decision_data["red_flags"] = consensus_result.red_flags
 
         logger.info(
-            f"[{self.name}] Decision phase complete",
+            f"[{self.name}] Decision phase complete",  # noqa: G004
             extra={
                 "decision": decision_data.get("recommended_action"),
                 "confidence": decision_data.get("confidence"),
@@ -963,7 +963,7 @@ class HeavySwarmWorkflow:
     async def _collect_triad_votes(
         self,
         consensus_id: str,
-        topic: str,
+        topic: str,  # noqa: ARG002
         verification_data: dict[str, Any],
     ) -> list[dict[str, Any]]:
         """

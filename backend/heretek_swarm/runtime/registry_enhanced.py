@@ -221,7 +221,7 @@ class EnhancedAgentRegistry:
             logger.warning("Failed to extract metadata from {module_name}: {e}")
             return None
 
-    def _generate_config_schema(self, agent_class: type[AgentActor]) -> dict[str, Any]:
+    def _generate_config_schema(self, _agent_class: type[AgentActor]) -> dict[str, Any]:
         """
         Generate a JSON schema for agent configuration.
 
@@ -400,7 +400,7 @@ class EnhancedAgentRegistry:
             return True
 
         except Exception:
-            logger.error("Failed to start agent {instance_id}: {e}", exc_info=True)
+            logger.exception("Failed to start agent {instance_id}: {e}")
             instance.state = AgentLifecycleState.ERROR
             return False
 
@@ -434,7 +434,7 @@ class EnhancedAgentRegistry:
             return True
 
         except Exception:
-            logger.error("Failed to stop agent {instance_id}: {e}", exc_info=True)
+            logger.exception("Failed to stop agent {instance_id}: {e}")
             return False
 
     async def suspend_agent(self, instance_id: str) -> bool:
@@ -466,7 +466,7 @@ class EnhancedAgentRegistry:
             return True
 
         except Exception:
-            logger.error("Failed to suspend agent {instance_id}: {e}", exc_info=True)
+            logger.exception("Failed to suspend agent {instance_id}: {e}")
             return False
 
     async def resume_agent(self, instance_id: str) -> bool:
@@ -498,7 +498,7 @@ class EnhancedAgentRegistry:
             return True
 
         except Exception:
-            logger.error("Failed to resume agent {instance_id}: {e}", exc_info=True)
+            logger.exception("Failed to resume agent {instance_id}: {e}")
             return False
 
     async def remove_agent(self, instance_id: str) -> bool:

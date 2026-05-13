@@ -748,7 +748,7 @@ class AccessPatternAnalyzer:
             recommendations=recommendations,
         )
 
-    def _generate_predictions(self, analysis_window_hours: int) -> dict[str, Any]:
+    def _generate_predictions(self, _analysis_window_hours: int) -> dict[str, Any]:
         """Generate access predictions for the analysis window."""
         high_confidence_predictions = [
             p

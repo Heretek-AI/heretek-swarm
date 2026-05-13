@@ -741,7 +741,7 @@ class TimePerceptionManager:
             "checkpoint_data": checkpoint,
         }
 
-    def should_delegate(self, context_id: str | None = None) -> tuple[bool, str]:
+    def should_delegate(self, _context_id: str | None = None) -> tuple[bool, str]:
         """
         Determine if delegation is needed.
 

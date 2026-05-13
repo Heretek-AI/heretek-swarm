@@ -1027,7 +1027,7 @@ class IntelligentPrefetcher:
     def clear(self) -> None:
         """Clear all caches and tracking."""
         self._lru_cache.clear()
-        self._lfu_cache._cache.clear()
+        self._lfu_cache._cache.clear()  # noqa: SLF001
         self._access_patterns.clear()
         self._prefetch_requests.clear()
         self._prefetch_results.clear()

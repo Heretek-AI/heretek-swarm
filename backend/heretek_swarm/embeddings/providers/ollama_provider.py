@@ -97,7 +97,7 @@ class OllamaEmbeddingProvider(EmbeddingProviderBase):
         self,
         texts: str | list[str],
         model: str | None = None,
-        dimensions: int | None = None,
+        dimensions: int | None = None,  # noqa: ARG002
     ) -> EmbeddingResponse:
         """
         Generate embeddings for texts.

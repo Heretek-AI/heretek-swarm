@@ -56,10 +56,10 @@ class LearningMixin:
             "agent_id": self.agent_id,
             "collective_learning": {
                 "patterns_extracted": (
-                    len(self.pattern_extractor._validated_patterns) if self.pattern_extractor else 0
+                    len(self.pattern_extractor._validated_patterns) if self.pattern_extractor else 0  # noqa: SLF001
                 ),
                 "message_cache_size": (
-                    len(self.pattern_extractor._message_cache) if self.pattern_extractor else 0
+                    len(self.pattern_extractor._message_cache) if self.pattern_extractor else 0  # noqa: SLF001
                 ),
             },
             "consensus": {

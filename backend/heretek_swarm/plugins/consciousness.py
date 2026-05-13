@@ -221,7 +221,7 @@ class GlobalWorkspace:
         # Check threshold
         if priority < self.competition_threshold:
             logger.debug(
-                f"Content rejected: priority {priority} below threshold {self.competition_threshold}"
+                f"Content rejected: priority {priority} below threshold {self.competition_threshold}"  # noqa: G004
             )
             return ""
 
@@ -439,7 +439,7 @@ class AttentionSchemaManager:
         schema.metacognitive_awareness = self._calculate_metacognitive_awareness(agent_id)
 
         logger.debug(
-            f"Updated attention for {agent_id}",
+            f"Updated attention for {agent_id}",  # noqa: G004
             extra={
                 "focus": focus_target,
                 "intensity": intensity,
@@ -775,7 +775,7 @@ class ConsciousnessPlugin:
             self.metrics_history = self.metrics_history[-1000:]
 
         logger.info(
-            f"Calculated consciousness metrics for {agent_id}",
+            f"Calculated consciousness metrics for {agent_id}",  # noqa: G004
             extra={
                 "composite_score": composite_score,
                 "state": state.value,
@@ -1069,7 +1069,7 @@ class ConsciousnessPlugin:
             logger.error("FEP calculation error: {e}")
             return 0.5
 
-    def _calculate_prediction_error(self, agent_id: str, history: list[dict[str, Any]]) -> float:
+    def _calculate_prediction_error(self, _agent_id: str, history: list[dict[str, Any]]) -> float:
         """
         Calculate prediction error from attention history.
 

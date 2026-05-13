@@ -181,7 +181,7 @@ class RAGPipeline:
         self,
         documents: list[str] | str,
         metadata: dict[str, Any] | None = None,
-        document_type: DocumentType = DocumentType.TEXT,
+        document_type: DocumentType = DocumentType.TEXT,  # noqa: ARG002
         chunk_strategy: ChunkStrategy | None = None,
     ) -> list[IngestedDocument]:
         """
@@ -312,7 +312,7 @@ class RAGPipeline:
         question: str,
         top_k: int | None = None,
         filters: dict[str, Any] | None = None,
-        conversation_id: str | None = None,
+        conversation_id: str | None = None,  # noqa: ARG002
     ) -> RAGResponse:
         """
         Query the RAG pipeline.
@@ -462,7 +462,7 @@ Answer based on the context provided above."""
         self,
         query: str,
         top_k: int | None = None,
-        filters: dict[str, Any] | None = None,
+        filters: dict[str, Any] | None = None,  # noqa: ARG002
     ) -> tuple[str, list[RetrievalResult]]:
         """
         Retrieve context without generating a response.

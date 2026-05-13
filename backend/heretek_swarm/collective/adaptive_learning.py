@@ -725,7 +725,7 @@ class AdaptiveLearningRateController:
             self.config.min_rate, min(state.current_rate, self.config.max_rate)
         )
 
-    async def _mutate_capabilities(self, agent_id: str, selection_pressure: float) -> list[str]:
+    async def _mutate_capabilities(self, agent_id: str, _selection_pressure: float) -> list[str]:
         state = self.get_or_create_state(agent_id)
         mutated_ids = []
 
@@ -901,7 +901,7 @@ class AdaptiveLearningRateController:
 
         return True
 
-    async def _validate_pattern_adoption(self, agent_id: str, pattern: ExtractedPattern) -> bool:
+    async def _validate_pattern_adoption(self, _agent_id: str, pattern: ExtractedPattern) -> bool:
         if pattern.metadata.confidence < 0.3:
             return False
         return pattern.metadata.source != PatternSource.UNKNOWN

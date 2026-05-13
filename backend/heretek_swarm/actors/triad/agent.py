@@ -104,7 +104,7 @@ class TriadAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, Ag
                 await handler(message)
             except Exception as e:
                 logger.exception(
-                    f"[{self.agent_id}] Error processing message {message.message_type}: {e}"
+                    f"[{self.agent_id}] Error processing message {message.message_type}: {e}"  # noqa: G004
                 )
                 self.error_count += 1
                 # Send error response if reply_to is specified
@@ -120,7 +120,7 @@ class TriadAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, Ag
                     )
         else:
             logger.warning(
-                f"[{self.agent_id}] Unhandled message type: {message.message_type}"
+                f"[{self.agent_id}] Unhandled message type: {message.message_type}"  # noqa: G004
             )
 
     def _triad_handlers(self) -> list[tuple[str, Any]]:
@@ -338,7 +338,7 @@ class StewardAgent(TriadAgent):
         }
 
         logger.info(
-            f"[{self.agent_id}] Started deliberation {deliberation_id} on topic: {topic}"
+            f"[{self.agent_id}] Started deliberation {deliberation_id} on topic: {topic}"  # noqa: G004
         )
 
         # Notify triad members
@@ -366,11 +366,11 @@ class StewardAgent(TriadAgent):
             next_phase = phase_progression.get(current_phase, current_phase)
             self._deliberations[session_id]["phase"] = next_phase
             logger.info(
-                f"[{self.agent_id}] Deliberation {session_id} phase: {current_phase} -> {next_phase}"
+                f"[{self.agent_id}] Deliberation {session_id} phase: {current_phase} -> {next_phase}"  # noqa: G004
             )
 
         logger.info(
-            f"[{self.agent_id}] Processing decision request: {request_id}"
+            f"[{self.agent_id}] Processing decision request: {request_id}"  # noqa: G004
         )
 
         # Make executive decision or delegate to triad
@@ -553,7 +553,7 @@ class StewardAgent(TriadAgent):
         registry = self._get_actor_registry()
         if registry is None or agent_name not in registry:
             logger.warning(
-                f"[{self.agent_id}] route_to_agent target not in registry",
+                f"[{self.agent_id}] route_to_agent target not in registry",  # noqa: G004
                 extra={"target_agent": agent_name, "task_type": task_type},
             )
             return ""
@@ -567,13 +567,13 @@ class StewardAgent(TriadAgent):
             )
             if not message_id:
                 logger.warning(
-                    f"[{self.agent_id}] route_to_agent send_to_actor returned empty",
+                    f"[{self.agent_id}] route_to_agent send_to_actor returned empty",  # noqa: G004
                     extra={"target_agent": agent_name, "task_type": task_type},
                 )
             return message_id
         except Exception as e:
             logger.warning(
-                f"[{self.agent_id}] route_to_agent send_to_actor failed: {e}",
+                f"[{self.agent_id}] route_to_agent send_to_actor failed: {e}",  # noqa: G004
                 extra={"target_agent": agent_name, "task_type": task_type},
             )
             return ""
@@ -661,7 +661,7 @@ class StewardAgent(TriadAgent):
         alerting — but for now it simply logs the event.
         """
         logger.warning(
-            f"[{self.agent_id}] Detected failed agent: {agent_id}",
+            f"[{self.agent_id}] Detected failed agent: {agent_id}",  # noqa: G004
             extra={"failed_agent_id": agent_id},
         )
 
@@ -745,7 +745,7 @@ class AlphaAgent(TriadAgent):
         topic = message.content.get("topic")
 
         logger.info(
-            f"[{self.agent_id}] Participating in deliberation {deliberation_id}: {topic}"
+            f"[{self.agent_id}] Participating in deliberation {deliberation_id}: {topic}"  # noqa: G004
         )
 
         # Perform analysis
@@ -959,7 +959,7 @@ class BetaAgent(TriadAgent):
         topic = message.content.get("topic") or message.content.get("problem")
 
         logger.info(
-            f"[{self.agent_id}] Participating in deliberation {deliberation_id}"
+            f"[{self.agent_id}] Participating in deliberation {deliberation_id}"  # noqa: G004
         )
 
         # Perform independent analysis
@@ -1057,8 +1057,8 @@ class BetaAgent(TriadAgent):
         self,
         decision: Any,
         original_analysis: dict[str, Any] | None = None,
-        criteria: list[str] | None = None,
-        alpha_findings: dict[str, Any] | None = None,
+        criteria: list[str] | None = None,  # noqa: ARG002
+        alpha_findings: dict[str, Any] | None = None,  # noqa: ARG002
     ) -> dict[str, Any]:
         """Validate a decision with Beta's perspective."""
         if self.swarms_agent:
@@ -1199,7 +1199,7 @@ class CharlieAgent(TriadAgent):
         topic = message.content.get("topic") or message.content.get("problem")
 
         logger.info(
-            f"[{self.agent_id}] Participating in deliberation {session_id}"
+            f"[{self.agent_id}] Participating in deliberation {session_id}"  # noqa: G004
         )
 
         # Perform challenging analysis
@@ -1292,8 +1292,8 @@ class CharlieAgent(TriadAgent):
     async def _generate_challenges(
         self,
         proposition: Any,
-        alpha_findings: dict[str, Any] | None = None,
-        beta_findings: dict[str, Any] | None = None,
+        alpha_findings: dict[str, Any] | None = None,  # noqa: ARG002
+        beta_findings: dict[str, Any] | None = None,  # noqa: ARG002
     ) -> list[dict[str, Any]]:
         """Generate challenges to a proposition."""
         challenges = []

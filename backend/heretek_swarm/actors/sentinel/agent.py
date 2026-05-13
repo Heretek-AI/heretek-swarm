@@ -293,7 +293,7 @@ class SentinelAgent(
     async def record_anomaly_response_outcome(
         self,
         anomaly_id: str,
-        response_id: str,
+        response_id: str,  # noqa: ARG002
         outcome: ResponseOutcome,
         pattern_content: dict[str, Any],
         pattern_type: str,
@@ -1132,11 +1132,11 @@ class SentinelAgent(
                     sender=message.sender_id,
                 )
         except Exception as e:
-            logger.error(
+            logger.exception(
                 "Error processing message",
                 message_type=message.message_type,
                 error=str(e),
-                exc_info=True,
+
             )
 
     def _register_handlers(self) -> None:
@@ -1203,7 +1203,7 @@ class SentinelAgent(
             await self._send_response(message, response_content)
 
         except Exception as e:
-            logger.error("Error reporting response outcome", error=str(e), exc_info=True)
+            logger.exception("Error reporting response outcome", error=str(e))
             await self._send_error(message, "Outcome report failed", str(e))
 
     async def _handle_check_pattern_immunity(self, message: ActorMessage) -> None:
@@ -1232,7 +1232,7 @@ class SentinelAgent(
             await self._send_response(message, response_content)
 
         except Exception as e:
-            logger.error("Error checking pattern immunity", error=str(e), exc_info=True)
+            logger.exception("Error checking pattern immunity", error=str(e))
             await self._send_error(message, "Pattern immunity check failed", str(e))
 
     async def _handle_get_novel_patterns(self, message: ActorMessage) -> None:
@@ -1257,7 +1257,7 @@ class SentinelAgent(
             await self._send_response(message, response_content)
 
         except Exception as e:
-            logger.error("Error getting novel patterns", error=str(e), exc_info=True)
+            logger.exception("Error getting novel patterns", error=str(e))
             await self._send_error(message, "Novel patterns retrieval failed", str(e))
 
     async def _handle_submit_human_review(self, message: ActorMessage) -> None:
@@ -1297,7 +1297,7 @@ class SentinelAgent(
             await self._send_response(message, response_content)
 
         except Exception as e:
-            logger.error("Error submitting human review", error=str(e), exc_info=True)
+            logger.exception("Error submitting human review", error=str(e))
             await self._send_error(message, "Human review submission failed", str(e))
 
     async def _handle_get_immune_statistics(self, message: ActorMessage) -> None:
@@ -1316,7 +1316,7 @@ class SentinelAgent(
             await self._send_response(message, response_content)
 
         except Exception as e:
-            logger.error("Error getting immune statistics", error=str(e), exc_info=True)
+            logger.exception("Error getting immune statistics", error=str(e))
             await self._send_error(message, _STAT_RETRIEVAL_FAILED, str(e))
 
     async def _handle_get_baseline_status(self, message: ActorMessage) -> None:
@@ -1335,7 +1335,7 @@ class SentinelAgent(
             await self._send_response(message, response_content)
 
         except Exception as e:
-            logger.error("Error getting baseline status", error=str(e), exc_info=True)
+            logger.exception("Error getting baseline status", error=str(e))
             await self._send_error(message, "Baseline status retrieval failed", str(e))
 
     async def _handle_submit_baseline_vote(self, message: ActorMessage) -> None:
@@ -1368,7 +1368,7 @@ class SentinelAgent(
             await self._send_response(message, response_content)
 
         except Exception as e:
-            logger.error("Error submitting baseline vote", error=str(e), exc_info=True)
+            logger.exception("Error submitting baseline vote", error=str(e))
             await self._send_error(message, "Baseline vote failed", str(e))
 
     # =====================================================================
@@ -1416,7 +1416,7 @@ class SentinelAgent(
             await self._send_response(message, response_content)
 
         except Exception as e:
-            logger.error("Error monitoring agent", error=str(e), exc_info=True)
+            logger.exception("Error monitoring agent", error=str(e))
             await self._send_error(message, "Agent monitoring failed", str(e))
 
     async def _handle_check_agent_rate(self, message: ActorMessage) -> None:
@@ -1458,7 +1458,7 @@ class SentinelAgent(
             await self._send_response(message, response_content)
 
         except Exception as e:
-            logger.error("Error checking agent rate", error=str(e), exc_info=True)
+            logger.exception("Error checking agent rate", error=str(e))
             await self._send_error(message, "Rate check failed", str(e))
 
     async def _handle_check_agent_response_time(self, message: ActorMessage) -> None:
@@ -1498,7 +1498,7 @@ class SentinelAgent(
             await self._send_response(message, response_content)
 
         except Exception as e:
-            logger.error("Error checking agent response time", error=str(e), exc_info=True)
+            logger.exception("Error checking agent response time", error=str(e))
             await self._send_error(message, "Response time check failed", str(e))
 
     async def _handle_check_agent_validation(self, message: ActorMessage) -> None:
@@ -1540,7 +1540,7 @@ class SentinelAgent(
             await self._send_response(message, response_content)
 
         except Exception as e:
-            logger.error("Error checking agent validation", error=str(e), exc_info=True)
+            logger.exception("Error checking agent validation", error=str(e))
             await self._send_error(message, "Validation check failed", str(e))
 
     async def _handle_report_false_positive(self, message: ActorMessage) -> None:
@@ -1569,7 +1569,7 @@ class SentinelAgent(
             await self._send_response(message, response_content)
 
         except Exception as e:
-            logger.error("Error reporting false positive", error=str(e), exc_info=True)
+            logger.exception("Error reporting false positive", error=str(e))
             await self._send_error(message, "False positive report failed", str(e))
 
     async def _handle_get_anomaly_statistics(self, message: ActorMessage) -> None:
@@ -1588,7 +1588,7 @@ class SentinelAgent(
             await self._send_response(message, response_content)
 
         except Exception as e:
-            logger.error("Error getting anomaly statistics", error=str(e), exc_info=True)
+            logger.exception("Error getting anomaly statistics", error=str(e))
             await self._send_error(message, _STAT_RETRIEVAL_FAILED, str(e))
 
     async def _handle_configure_sentinel_prime(self, message: ActorMessage) -> None:
@@ -1613,7 +1613,7 @@ class SentinelAgent(
             await self._send_response(message, response_content)
 
         except Exception as e:
-            logger.error("Error configuring Sentinel-Prime", error=str(e), exc_info=True)
+            logger.exception("Error configuring Sentinel-Prime", error=str(e))
             await self._send_error(message, "Sentinel-Prime configuration failed", str(e))
 
     # =====================================================================
@@ -1679,7 +1679,7 @@ class SentinelAgent(
             logger.warning("Validation error", error=str(ve))
             await self._send_error(message, "Invalid input format", str(ve))
         except Exception as e:
-            logger.error("Error validating input", error=str(e), exc_info=True)
+            logger.exception("Error validating input", error=str(e))
             await self._send_error(message, "Validation failed", str(e))
 
     async def _handle_validate_output(self, message: ActorMessage) -> None:
@@ -1739,7 +1739,7 @@ class SentinelAgent(
             logger.warning("Validation error", error=str(ve))
             await self._send_error(message, "Invalid output format", str(ve))
         except Exception as e:
-            logger.error("Error validating output", error=str(e), exc_info=True)
+            logger.exception("Error validating output", error=str(e))
             await self._send_error(message, "Validation failed", str(e))
 
     async def _handle_scan_content(self, message: ActorMessage) -> None:
@@ -1806,7 +1806,7 @@ class SentinelAgent(
             logger.warning("Validation error", error=str(ve))
             await self._send_error(message, "Invalid scan request", str(ve))
         except Exception as e:
-            logger.error("Error scanning content", error=str(e), exc_info=True)
+            logger.exception("Error scanning content", error=str(e))
             await self._send_error(message, "Scan failed", str(e))
 
     async def _handle_check_policy(self, message: ActorMessage) -> None:
@@ -1858,7 +1858,7 @@ class SentinelAgent(
             logger.warning("Validation error", error=str(ve))
             await self._send_error(message, "Invalid policy check", str(ve))
         except Exception as e:
-            logger.error("Error checking policy", error=str(e), exc_info=True)
+            logger.exception("Error checking policy", error=str(e))
             await self._send_error(message, "Policy check failed", str(e))
 
     async def _handle_get_safety_report(self, message: ActorMessage) -> None:
@@ -1908,7 +1908,7 @@ class SentinelAgent(
             logger.warning("Validation error", error=str(ve))
             await self._send_error(message, "Invalid report request", str(ve))
         except Exception as e:
-            logger.error("Error generating report", error=str(e), exc_info=True)
+            logger.exception("Error generating report", error=str(e))
             await self._send_error(message, "Report generation failed", str(e))
 
     async def _handle_get_violation_details(self, message: ActorMessage) -> None:
@@ -1961,7 +1961,7 @@ class SentinelAgent(
             logger.warning("Validation error", error=str(ve))
             await self._send_error(message, "Invalid request", str(ve))
         except Exception as e:
-            logger.error("Error getting violation details", error=str(e), exc_info=True)
+            logger.exception("Error getting violation details", error=str(e))
             await self._send_error(message, "Failed to get details", str(e))
 
     async def _handle_update_guardrails(self, message: ActorMessage) -> None:
@@ -2026,7 +2026,7 @@ class SentinelAgent(
             logger.warning("Validation error", error=str(ve))
             await self._send_error(message, "Invalid guardrail update", str(ve))
         except Exception as e:
-            logger.error("Error updating guardrails", error=str(e), exc_info=True)
+            logger.exception("Error updating guardrails", error=str(e))
             await self._send_error(message, "Guardrail update failed", str(e))
 
     async def _handle_get_statistics(self, message: ActorMessage) -> None:
@@ -2060,14 +2060,14 @@ class SentinelAgent(
             logger.warning("Validation error", error=str(ve))
             await self._send_error(message, "Invalid statistics request", str(ve))
         except Exception as e:
-            logger.error("Error getting statistics", error=str(e), exc_info=True)
+            logger.exception("Error getting statistics", error=str(e))
             await self._send_error(message, _STAT_RETRIEVAL_FAILED, str(e))
 
     async def _scan_content(
         self,
         content: str,
-        content_type: str = "text",
-        strict_mode: bool = False,
+        content_type: str = "text",  # noqa: ARG002
+        strict_mode: bool = False,  # noqa: ARG002
     ) -> dict[str, Any]:
         """
         Scan content for safety violations.
@@ -2164,9 +2164,9 @@ class SentinelAgent(
 
     async def _check_policy_rule(
         self,
-        content: str,
-        policy: str,
-        context: dict[str, Any],
+        content: str,  # noqa: ARG002
+        policy: str,  # noqa: ARG002
+        context: dict[str, Any],  # noqa: ARG002
     ) -> dict[str, Any] | None:
         """Check content against a specific policy rule."""
         # Policy rules can be extended with custom logic

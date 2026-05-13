@@ -417,7 +417,7 @@ def query_decisions(
 ) -> QueryResult:
     """Query decisions on a provided trail instance."""
     query = AuditQueryMixin()
-    query._trail = trail
+    query._trail = trail  # noqa: SLF001
     return query.query_decisions(
         start_date=start_date,
         end_date=end_date,
@@ -438,7 +438,7 @@ def export_audit_data(
 ) -> dict[str, Any]:
     """Export audit data from a provided trail instance."""
     query = AuditQueryMixin()
-    query._trail = trail
+    query._trail = trail  # noqa: SLF001
     return query.export_audit_data(
         format=format,
         consensus_id=consensus_id,
@@ -451,12 +451,12 @@ def export_audit_data(
 def get_vote_breakdown(trail: Any, consensus_id: str) -> dict[str, Any]:
     """Get vote breakdown from a provided trail instance."""
     query = AuditQueryMixin()
-    query._trail = trail
+    query._trail = trail  # noqa: SLF001
     return query.get_vote_breakdown(consensus_id)
 
 
 def get_decision_timeline(trail: Any, consensus_id: str) -> list[dict[str, Any]]:
     """Get decision timeline from a provided trail instance."""
     query = AuditQueryMixin()
-    query._trail = trail
+    query._trail = trail  # noqa: SLF001
     return query.get_decision_timeline(consensus_id)

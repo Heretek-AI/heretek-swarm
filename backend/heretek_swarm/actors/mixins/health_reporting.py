@@ -45,7 +45,7 @@ class HealthReportingMixin:
             "context": context or {},
         }
         self.logger.error(
-            f"Agent error: {error_data['error_type']} - {error_data['error_message']}",
+            f"Agent error: {error_data['error_type']} - {error_data['error_message']}",  # noqa: G004
             extra=error_data,
         )
 
@@ -100,7 +100,7 @@ class HealthReportingMixin:
             return False
         return True
 
-    def get_error_history(self, limit: int = 10) -> list[dict[str, Any]]:
+    def get_error_history(self, _limit: int = 10) -> list[dict[str, Any]]:
         """Get recent error history."""
         return [
             {

@@ -495,7 +495,7 @@ class PatternExtractor:
         content_str = str(sorted(content.items()))
         return hashlib.sha256(content_str.encode()).hexdigest()[:16]
 
-    def _analyze_sentiment(self, content: dict[str, Any]) -> float:
+    def _analyze_sentiment(self, _content: dict[str, Any]) -> float:
         """
         Analyze sentiment of message content.
 
@@ -534,7 +534,7 @@ class PatternExtractor:
             return content["task_type"]
         return None
 
-    def _infer_intent(self, message_type: str, content: dict[str, Any]) -> str | None:
+    def _infer_intent(self, message_type: str, _content: dict[str, Any]) -> str | None:
         """Infer intent from message type and content."""
         intent_map = {
             "request": "information_seeking",
@@ -1026,7 +1026,7 @@ class PatternExtractor:
 
         return sum(deltas) / len(deltas) if deltas else 0.0
 
-    def _calculate_avg_decision_time(self, decisions: list[MessageAnalysis]) -> float:
+    def _calculate_avg_decision_time(self, _decisions: list[MessageAnalysis]) -> float:
         """Calculate average decision time."""
         # Placeholder - would need correlation with decision outcomes
         return 0.0
@@ -1336,6 +1336,6 @@ class CollectiveLearning:
                 sum(p.metadata.confidence for p in patterns) / len(patterns) if patterns else 0.0
             ),
             "total_learning_signals": len(self._learning_signals),
-            "message_cache_size": len(self.extractor._message_cache),
-            "extraction_hooks": len(self.extractor._extraction_hooks),
+            "message_cache_size": len(self.extractor._message_cache),  # noqa: SLF001
+            "extraction_hooks": len(self.extractor._extraction_hooks),  # noqa: SLF001
         }

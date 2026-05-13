@@ -100,7 +100,7 @@ async def list_routing_rules(
             active=active_count,
         )
     except Exception as e:
-        logger.error("Failed to list routing rules: {e}", exc_info=True)
+        logger.exception("Failed to list routing rules: {e}")
         raise HTTPException(500, f"Failed to list routing rules: {e!s}")
 
 
@@ -208,7 +208,7 @@ async def create_routing_rule(
     except ValueError as e:
         raise HTTPException(400, str(e))
     except Exception as e:
-        logger.error("Failed to create routing rule: {e}", exc_info=True)
+        logger.exception("Failed to create routing rule: {e}")
         raise HTTPException(500, f"Failed to create routing rule: {e!s}")
 
 
@@ -301,5 +301,5 @@ async def delete_routing_rule(
     except HTTPException:
         raise
     except Exception as e:
-        logger.error("Failed to delete routing rule: {e}", exc_info=True)
+        logger.exception("Failed to delete routing rule: {e}")
         raise HTTPException(500, f"Failed to delete routing rule: {e!s}")

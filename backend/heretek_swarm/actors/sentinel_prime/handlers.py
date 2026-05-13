@@ -152,7 +152,7 @@ class SentinelPrimeHandlers:
             await self._send_response(message, response_content)
 
         except Exception as e:
-            logger.error("Error detecting external threat", error=str(e), exc_info=True)
+            logger.exception("Error detecting external threat", error=str(e))
             await self._send_error(message, "External threat detection failed", str(e))
 
     async def _handle_get_threat_intelligence(self, message: ActorMessage) -> None:
@@ -181,7 +181,7 @@ class SentinelPrimeHandlers:
             await self._send_response(message, response_content)
 
         except Exception as e:
-            logger.error("Error getting threat intelligence", error=str(e), exc_info=True)
+            logger.exception("Error getting threat intelligence", error=str(e))
             await self._send_error(message, "Threat intelligence retrieval failed", str(e))
 
     async def _handle_configure_alert_priority(self, message: ActorMessage) -> None:
@@ -215,7 +215,7 @@ class SentinelPrimeHandlers:
             await self._send_response(message, response_content)
 
         except Exception as e:
-            logger.error("Error configuring alert priority", error=str(e), exc_info=True)
+            logger.exception("Error configuring alert priority", error=str(e))
             await self._send_error(message, "Priority configuration failed", str(e))
 
     async def _handle_suppress_alerts(self, message: ActorMessage) -> None:
@@ -243,7 +243,7 @@ class SentinelPrimeHandlers:
             await self._send_response(message, response_content)
 
         except Exception as e:
-            logger.error("Error suppressing alerts", error=str(e), exc_info=True)
+            logger.exception("Error suppressing alerts", error=str(e))
             await self._send_error(message, "Alert suppression failed", str(e))
 
     async def _handle_escalate_to_core_triad(self, message: ActorMessage) -> None:
@@ -281,7 +281,7 @@ class SentinelPrimeHandlers:
             await self._send_response(message, response_content)
 
         except Exception as e:
-            logger.error("Error escalating to Core Triad", error=str(e), exc_info=True)
+            logger.exception("Error escalating to Core Triad", error=str(e))
             await self._send_error(message, "Escalation failed", str(e))
 
     # =====================================================================
@@ -373,7 +373,7 @@ class SentinelPrimeHandlers:
             await self._send_response(message, response_content)
 
         except Exception as e:
-            logger.error("Error reporting threat", error=str(e), exc_info=True)
+            logger.exception("Error reporting threat", error=str(e))
             await self._send_error(message, "Threat report failed", str(e))
 
     async def _handle_analyze_threat(self, message: ActorMessage) -> None:
@@ -425,7 +425,7 @@ class SentinelPrimeHandlers:
             await self._send_response(message, response_content)
 
         except Exception as e:
-            logger.error("Error analyzing threat", error=str(e), exc_info=True)
+            logger.exception("Error analyzing threat", error=str(e))
             await self._send_error(message, "Threat analysis failed", str(e))
 
     async def _handle_get_incident_details(self, message: ActorMessage) -> None:
@@ -470,7 +470,7 @@ class SentinelPrimeHandlers:
             await self._send_response(message, response_content)
 
         except Exception as e:
-            logger.error("Error getting incident details", error=str(e), exc_info=True)
+            logger.exception("Error getting incident details", error=str(e))
             await self._send_error(message, "Failed to get incident details", str(e))
 
     async def _handle_get_active_incidents(self, message: ActorMessage) -> None:
@@ -539,7 +539,7 @@ class SentinelPrimeHandlers:
             await self._send_response(message, response_content)
 
         except Exception as e:
-            logger.error("Error getting active incidents", error=str(e), exc_info=True)
+            logger.exception("Error getting active incidents", error=str(e))
             await self._send_error(message, "Failed to get active incidents", str(e))
 
     async def _handle_respond_to_incident(self, message: ActorMessage) -> None:
@@ -585,7 +585,7 @@ class SentinelPrimeHandlers:
             await self._send_response(message, response_content)
 
         except Exception as e:
-            logger.error("Error responding to incident", error=str(e), exc_info=True)
+            logger.exception("Error responding to incident", error=str(e))
             await self._send_error(message, "Response execution failed", str(e))
 
     async def _handle_add_threat_indicator(self, message: ActorMessage) -> None:
@@ -624,7 +624,7 @@ class SentinelPrimeHandlers:
             await self._send_response(message, response_content)
 
         except Exception as e:
-            logger.error("Error adding threat indicator", error=str(e), exc_info=True)
+            logger.exception("Error adding threat indicator", error=str(e))
             await self._send_error(message, "Failed to add indicator", str(e))
 
     async def _handle_check_indicator(self, message: ActorMessage) -> None:
@@ -679,7 +679,7 @@ class SentinelPrimeHandlers:
             await self._send_response(message, response_content)
 
         except Exception as e:
-            logger.error("Error checking indicator", error=str(e), exc_info=True)
+            logger.exception("Error checking indicator", error=str(e))
             await self._send_error(message, "Indicator check failed", str(e))
 
     async def _handle_get_threat_report(self, message: ActorMessage) -> None:
@@ -748,7 +748,7 @@ class SentinelPrimeHandlers:
             await self._send_response(message, {"report": report})
 
         except Exception as e:
-            logger.error("Error generating threat report", error=str(e), exc_info=True)
+            logger.exception("Error generating threat report", error=str(e))
             await self._send_error(message, "Threat report generation failed", str(e))
 
     async def _handle_block_source(self, message: ActorMessage) -> None:
@@ -779,7 +779,7 @@ class SentinelPrimeHandlers:
             await self._send_response(message, response_content)
 
         except Exception as e:
-            logger.error("Error blocking source", error=str(e), exc_info=True)
+            logger.exception("Error blocking source", error=str(e))
             await self._send_error(message, "Block operation failed", str(e))
 
     async def _handle_isolate_actor(self, message: ActorMessage) -> None:
@@ -810,7 +810,7 @@ class SentinelPrimeHandlers:
             await self._send_response(message, response_content)
 
         except Exception as e:
-            logger.error("Error isolating actor", error=str(e), exc_info=True)
+            logger.exception("Error isolating actor", error=str(e))
             await self._send_error(message, "Isolation operation failed", str(e))
 
     async def _handle_get_statistics(self, message: ActorMessage) -> None:
@@ -851,7 +851,7 @@ class SentinelPrimeHandlers:
             await self._send_response(message, response_content)
 
         except Exception as e:
-            logger.error("Error getting statistics", error=str(e), exc_info=True)
+            logger.exception("Error getting statistics", error=str(e))
             await self._send_error(message, "Statistics retrieval failed", str(e))
 
     async def _handle_update_config(self, message: ActorMessage) -> None:
@@ -881,7 +881,7 @@ class SentinelPrimeHandlers:
             await self._send_response(message, response_content)
 
         except Exception as e:
-            logger.error("Error updating config", error=str(e), exc_info=True)
+            logger.exception("Error updating config", error=str(e))
             await self._send_error(message, "Config update failed", str(e))
 
 

@@ -625,10 +625,10 @@ async def check_postgres() -> dict[str, Any]:
                 "status": "healthy",
                 "database": "heretek_swarm",
             }
-        if memory_store and memory_store._engine:
+        if memory_store and memory_store._engine:  # noqa: SLF001
             from sqlalchemy import text
 
-            async with memory_store._engine.connect() as conn:
+            async with memory_store._engine.connect() as conn:  # noqa: SLF001
                 await conn.execute(text("SELECT 1"))
             return {
                 "status": "healthy",
@@ -771,12 +771,12 @@ async def get_historian_events(
         mode = "postgres" if getattr(historian, "_using_pg", False) else "jsonl"
         return {"events": events, "mode": mode}
     except Exception as e:
-        logger.error(
+        logger.exception(
             "historian_events_error",
             agent_id=agent_id,
             event_type=event_type,
             error=str(e),
-            exc_info=True,
+
         )
         return {"events": [], "mode": "error", "detail": str(e)}
 
@@ -950,7 +950,7 @@ async def get_memory_stats(authenticated: str = Depends(verify_auth)):
 
         from heretek_swarm.memory.persistent import MemoryEntryModel
 
-        async with memory_store._session_factory() as session:
+        async with memory_store._session_factory() as session:  # noqa: SLF001
             # Total count
             stmt = select(func.count()).select_from(MemoryEntryModel)
             result = await session.execute(stmt)

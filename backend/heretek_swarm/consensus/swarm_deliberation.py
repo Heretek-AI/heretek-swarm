@@ -249,7 +249,7 @@ class SwarmDeliberationEngine:
         self.round_results: dict[str, list[DeliberationRound]] = {}
 
         logger.info(
-            f"SwarmDeliberationEngine initialized with max_rounds={max_rounds}, "
+            f"SwarmDeliberationEngine initialized with max_rounds={max_rounds}, "  # noqa: G004
             f"consensus_threshold={consensus_threshold:.2f}"
         )
 
@@ -271,7 +271,7 @@ class SwarmDeliberationEngine:
         """
         if len(participants) < self.min_participants:
             logger.warning(
-                f"Insufficient participants: {len(participants)} < {self.min_participants}"
+                f"Insufficient participants: {len(participants)} < {self.min_participants}"  # noqa: G004
             )
 
         self.active_deliberations[deliberation_id] = {
@@ -294,7 +294,7 @@ class SwarmDeliberationEngine:
         self.round_results[deliberation_id] = []
 
         logger.info(
-            f"Started deliberation {deliberation_id}: '{proposal}' "
+            f"Started deliberation {deliberation_id}: '{proposal}' "  # noqa: G004
             f"with {len(participants)} participants"
         )
 
@@ -373,7 +373,7 @@ class SwarmDeliberationEngine:
             )
 
         logger.debug(
-            f"Position submitted by {agent_id} in {deliberation_id}: "
+            f"Position submitted by {agent_id} in {deliberation_id}: "  # noqa: G004
             f"{position.value} (confidence: {confidence:.2f})"
         )
         return True
@@ -435,7 +435,7 @@ class SwarmDeliberationEngine:
         )
 
         logger.debug(
-            f"Argument submitted in {deliberation_id}: {argument_id} "
+            f"Argument submitted in {deliberation_id}: {argument_id} "  # noqa: G004
             f"by {agent_id} ({position.value})"
         )
         return argument_id
@@ -509,7 +509,7 @@ class SwarmDeliberationEngine:
         )
 
         logger.info(
-            f"Round {current_round} complete for {deliberation_id}: "
+            f"Round {current_round} complete for {deliberation_id}: "  # noqa: G004
             f"consensus={consensus_score:.2f}, changes={position_changes}"
         )
 
@@ -778,7 +778,7 @@ class SwarmDeliberationEngine:
         )
 
         logger.info(
-            f"Deliberation {deliberation_id} finalized: "
+            f"Deliberation {deliberation_id} finalized: "  # noqa: G004
             f"{final_position.value} (consensus: {consensus_score:.2f})"
         )
 

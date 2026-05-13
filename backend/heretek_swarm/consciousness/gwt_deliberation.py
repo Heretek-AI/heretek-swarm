@@ -231,7 +231,7 @@ async def integrate_gwt_with_agent(
     """
     subscriptions = {}
 
-    agent._gwt_broadcast = gwt_broadcast
+    agent._gwt_broadcast = gwt_broadcast  # noqa: SLF001
 
     if subscribe_to_deliberations:
 

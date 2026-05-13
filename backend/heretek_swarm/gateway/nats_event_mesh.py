@@ -263,7 +263,7 @@ class NATSEventMesh:
                 except Exception as e:
                     last_error = e
                     logger.warning(
-                        f"Failed to connect to {server}",
+                        f"Failed to connect to {server}",  # noqa: G004
                         error=str(e),
                         attempt=attempt + 1,
                     )
@@ -486,8 +486,8 @@ class NATSEventMesh:
     async def _process_durable_messages(
         self,
         consumer: Any,
-        stream_name: str,
-        durable_name: str,
+        stream_name: str,  # noqa: ARG002
+        durable_name: str,  # noqa: ARG002
         callback: Callable[[str, dict[str, Any]], None],
     ) -> None:
         """
@@ -880,7 +880,7 @@ class _InMemoryFallback:
 
         return sid
 
-    async def unsubscribe(self, sid: str) -> bool:
+    async def unsubscribe(self, _sid: str) -> bool:
         """Unsubscribe in-memory."""
         return True
 
@@ -888,7 +888,7 @@ class _InMemoryFallback:
         self,
         subject: str,
         data: dict[str, Any],
-        timeout: float,
+        timeout: float,  # noqa: ARG002
     ) -> dict[str, Any] | None:
         """Request in-memory (no response by default)."""
         await self.publish(subject, data)
@@ -909,7 +909,7 @@ class NATSEventMeshMixin:
         ```
     """
 
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, *_args, **kwargs) -> None:
         """Initialize mixin."""
         self._nats_mesh: NATSEventMesh | None = None
         self._nats_enabled = False
@@ -1605,7 +1605,7 @@ async def shutdown_nats_bridge() -> None:
     """Shutdown global NATS-to-Actor bridge."""
     global _bridge
     if _bridge is not None:
-        for agent_id in list(_bridge._actor_subscriptions.keys()):
+        for agent_id in list(_bridge._actor_subscriptions.keys()):  # noqa: SLF001
             await _bridge.unregister_actor(agent_id)
         await _bridge.mesh.disconnect()
         _bridge = None

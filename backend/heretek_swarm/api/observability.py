@@ -293,7 +293,7 @@ async def get_all_agents(request: Request) -> dict[str, Any]:
     try:
         from heretek_swarm.api import autonomous as autonomous_module
 
-        auto_agents = autonomous_module._autonomous_agents
+        auto_agents = autonomous_module._autonomous_agents  # noqa: SLF001
         # Convert autonomous agents to agent metrics format
         for agent_id, agent_data in auto_agents.items():
             if agent_id not in agents:
@@ -494,10 +494,10 @@ async def websocket_metrics(websocket: WebSocket, interval: int = 5):
         while True:
             try:
                 # Collect and send metrics
-                swarm = stream._collector.collect_swarm_metrics()
-                consciousness = stream._collector.collect_consciousness_metrics()
-                agents = stream._collector.get_all_agent_metrics()
-                health = stream._collector.calculate_health_score()
+                swarm = stream._collector.collect_swarm_metrics()  # noqa: SLF001
+                consciousness = stream._collector.collect_consciousness_metrics()  # noqa: SLF001
+                agents = stream._collector.get_all_agent_metrics()  # noqa: SLF001
+                health = stream._collector.calculate_health_score()  # noqa: SLF001
 
                 await websocket.send_json(
                     {
@@ -1100,7 +1100,7 @@ async def get_external_calls(
             )
 
         except Exception as e:
-            logger.error("external_calls_query_error", error=str(e), exc_info=True)
+            logger.exception("external_calls_query_error", error=str(e))
             raise HTTPException(status_code=500, detail="Failed to query external call logs")
 
 
@@ -1230,7 +1230,7 @@ async def create_external_call(
             }
 
         except Exception as e:
-            logger.error("external_call_create_error", error=str(e), exc_info=True)
+            logger.exception("external_call_create_error", error=str(e))
             await session.rollback()
             raise HTTPException(status_code=500, detail="Failed to create external call log")
 
@@ -1390,7 +1390,7 @@ async def get_external_call(
         except HTTPException:
             raise
         except Exception as e:
-            logger.error("external_call_get_error", error=str(e), exc_info=True)
+            logger.exception("external_call_get_error", error=str(e))
             raise HTTPException(status_code=500, detail="Failed to retrieve external call log")
 
 
@@ -1438,7 +1438,7 @@ class ConnectionManager:
         self.active_connections[agent_id] = websocket
         logger.info("websocket_connected", agent_id=agent_id)
 
-    async def disconnect(self, websocket: WebSocket, agent_id: str):
+    async def disconnect(self, _websocket: WebSocket, agent_id: str):
         """Handle WebSocket disconnection."""
         if agent_id in self.active_connections:
             del self.active_connections[agent_id]
@@ -1499,8 +1499,8 @@ def get_replay_manager() -> Any | None:
             _replay_manager = get_rm()
 
             # Setup with dependencies
-            _replay_manager._js_manager = js_manager
-            _replay_manager._event_store = event_store
+            _replay_manager._js_manager = js_manager  # noqa: SLF001
+            _replay_manager._event_store = event_store  # noqa: SLF001
 
         except ImportError:
             return None
@@ -1634,7 +1634,7 @@ async def create_replay_job(
             error=job.error,
         )
     except Exception as e:
-        logger.error("Failed to create replay job: {e}", exc_info=True)
+        logger.exception("Failed to create replay job: {e}")
         raise HTTPException(500, f"Failed to create replay job: {e!s}")
 
 
@@ -1667,7 +1667,7 @@ async def execute_replay_job(
             "message": "Replay job started",
         }
     except Exception as e:
-        logger.error("Failed to execute replay job: {e}", exc_info=True)
+        logger.exception("Failed to execute replay job: {e}")
         raise HTTPException(500, f"Failed to execute replay job: {e!s}")
 
 
@@ -1766,7 +1766,7 @@ async def list_replay_jobs(
             active=active_count,
         )
     except Exception as e:
-        logger.error("Failed to list replay jobs: {e}", exc_info=True)
+        logger.exception("Failed to list replay jobs: {e}")
         raise HTTPException(500, f"Failed to list replay jobs: {e!s}")
 
 
@@ -1839,7 +1839,7 @@ async def create_time_travel_request(
             "status": "created",
         }
     except Exception as e:
-        logger.error("Failed to create time travel request: {e}", exc_info=True)
+        logger.exception("Failed to create time travel request: {e}")
         raise HTTPException(500, f"Failed to create time travel request: {e!s}")
 
 
@@ -1858,7 +1858,7 @@ async def execute_time_travel(
     if not replay_manager:
         raise HTTPException(503, "Replay manager not available")
 
-    request = replay_manager._time_travel_requests.get(request_id)
+    request = replay_manager._time_travel_requests.get(request_id)  # noqa: SLF001
     if not request:
         raise HTTPException(404, f"Time travel request '{request_id}' not found")
 
@@ -1890,7 +1890,7 @@ async def execute_time_travel(
             snapshot_used=snapshot_used,
         )
     except Exception as e:
-        logger.error("Failed to execute time travel: {e}", exc_info=True)
+        logger.exception("Failed to execute time travel: {e}")
         raise HTTPException(500, f"Failed to execute time travel: {e!s}")
 
 
@@ -1911,5 +1911,5 @@ async def get_event_stats(
     try:
         return await replay_manager.get_stats()
     except Exception as e:
-        logger.error("Failed to get event stats: {e}", exc_info=True)
+        logger.exception("Failed to get event stats: {e}")
         raise HTTPException(500, f"Failed to get event stats: {e!s}")

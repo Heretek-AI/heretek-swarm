@@ -915,7 +915,7 @@ class PatternLibraryService:
 
     async def get_best_practices(
         self,
-        agent_type: str | None = None,
+        agent_type: str | None = None,  # noqa: ARG002
         limit: int = 10,
     ) -> QueryResult:
         """
@@ -955,7 +955,7 @@ class PatternLibraryService:
 
     async def search_patterns(
         self,
-        query: str,
+        query: str,  # noqa: ARG002
         limit: int = 20,
     ) -> QueryResult:
         """
