@@ -124,9 +124,9 @@ class BiasDetection:
 
 
 __all__ = [
-    "PerspectiveType",
-    "BiasType",
     "AnalyticalFramework",
-    "Perspective",
     "BiasDetection",
+    "BiasType",
+    "Perspective",
+    "PerspectiveType",
 ]

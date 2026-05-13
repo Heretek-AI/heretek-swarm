@@ -12,15 +12,16 @@ Covers five scenarios:
 from __future__ import annotations
 
 import asyncio
+import contextlib
 import json
-import os
-from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import pytest
 
-from heretek_swarm.actors.historian import _HISTORIAN_FILE, HistorianAgent
+from heretek_swarm.actors.historian import HistorianAgent
 
+if TYPE_CHECKING:
+    from pathlib import Path
 
 # ---------------------------------------------------------------------------
 # Fixtures
@@ -36,16 +37,16 @@ def tmp_jsonl_path(tmp_path: Path) -> Path:
 
 @pytest.fixture
 async def historian(tmp_jsonl_path: Path) -> HistorianAgent:
-    """Build a ``HistorianAgent`` with a patched ``_HISTORIAN_FILE``
-    constant and an ``initialize()`` that writes to the temp path."""
-    from heretek_swarm.actors.historian import _HISTORIAN_FILE as _orig_file
-
-    # Monkey-patch the module constant
+    """Build a ``HistorianAgent`` that writes JSONL events to *tmp_jsonl_path*."""
+    # Keep module constant patched for any direct references, but the writer
+    # uses the instance attribute `_jsonl_path`.
     import heretek_swarm.actors.historian as _h_mod
+    from heretek_swarm.actors.historian import _HISTORIAN_FILE as _orig_file
 
     _h_mod._HISTORIAN_FILE = tmp_jsonl_path
 
     agent = HistorianAgent()
+    agent._jsonl_path = tmp_jsonl_path
     await agent.initialize()
 
     yield agent
@@ -54,10 +55,8 @@ async def historian(tmp_jsonl_path: Path) -> HistorianAgent:
     if agent._writer_task is not None and not agent._writer_task.done():
         await agent._jsonl_queue.join()
         agent._writer_task.cancel()
-        try:
+        with contextlib.suppress(asyncio.CancelledError):
             await agent._writer_task
-        except asyncio.CancelledError:
-            pass
 
     # Restore the original constant
     _h_mod._HISTORIAN_FILE = _orig_file
@@ -211,8 +210,9 @@ class TestMessageHandler:
     async def test_handler_responds_with_event_id(
         historian: HistorianAgent,
     ) -> None:
-        from heretek_swarm.actors.base import ActorMessage
         from datetime import UTC, datetime
+
+        from heretek_swarm.actors.base import ActorMessage
 
         msg = ActorMessage(
             sender="test-sender",

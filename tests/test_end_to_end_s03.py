@@ -21,13 +21,12 @@ Test classes:
 
 from __future__ import annotations
 
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
 from heretek_swarm.actors.supervisor import get_supervisor
 from heretek_swarm.runtime.main_loop import AutonomousSwarm
-
 
 # ---------------------------------------------------------------------------
 # Helpers

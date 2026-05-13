@@ -116,5 +116,5 @@ class AgentIdentity(BaseModel):
             "agent_id": self.agent_id,
             "role": self.role.value,
             "trust_level": self.trust_level.value,
-            "capabilities": sorted(list(self.capabilities)),
+            "capabilities": sorted(self.capabilities),
         }

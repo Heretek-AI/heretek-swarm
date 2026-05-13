@@ -11,19 +11,18 @@ Verifies:
 
 from __future__ import annotations
 
-import json
-import tempfile
-from pathlib import Path
-from unittest.mock import AsyncMock, patch
+from typing import TYPE_CHECKING
 
 import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
 from heretek_swarm.api.workflows import router
-from heretek_swarm.workflow.engine import WorkflowEngine, _global_engine
+from heretek_swarm.workflow.engine import WorkflowEngine
 from heretek_swarm.workflow.store import FileWorkflowStore
 
+if TYPE_CHECKING:
+    from pathlib import Path
 
 # ---------------------------------------------------------------------------
 # Fixtures
@@ -40,25 +39,25 @@ def _reset_global_engine():
     engine_mod._global_engine = None
 
 
-@pytest.fixture()
+@pytest.fixture
 def store_path(tmp_path: Path) -> Path:
     """Provide a temporary store file path."""
     return tmp_path / "workflows.json"
 
 
-@pytest.fixture()
+@pytest.fixture
 def store(store_path: Path) -> FileWorkflowStore:
     """Provide a FileWorkflowStore backed by a temp file."""
     return FileWorkflowStore(store_path)
 
 
-@pytest.fixture()
+@pytest.fixture
 def engine(store: FileWorkflowStore) -> WorkflowEngine:
     """Provide a fresh WorkflowEngine with a temp store."""
     return WorkflowEngine(store=store)
 
 
-@pytest.fixture()
+@pytest.fixture
 def app(engine: WorkflowEngine):
     """Create a FastAPI app with the workflow router and mocked auth."""
     _app = FastAPI()
@@ -81,7 +80,7 @@ def app(engine: WorkflowEngine):
     return _app
 
 
-@pytest.fixture()
+@pytest.fixture
 def client(app: FastAPI) -> TestClient:
     """Synchronous test client."""
     return TestClient(app, raise_server_exceptions=False)

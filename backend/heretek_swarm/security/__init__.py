@@ -93,6 +93,9 @@ from heretek_swarm.security.zero_trust import (
     ContextValidationConfig,
     # Layer 2: Context Validation
     ContextValidator,
+    # External threat detection
+    ExternalInputValidator,
+    ExternalThreatConfig,
     InputValidationConfig,
     # Layer 1: Input Validation
     InputValidator,
@@ -108,24 +111,21 @@ from heretek_swarm.security.zero_trust import (
     ZeroTrustValidator,
     # Convenience functions
     create_default_validator,
-    create_strict_validator,
     create_external_validator,
-    # External threat detection
-    ExternalInputValidator,
-    ExternalThreatConfig,
+    create_strict_validator,
 )
 
 __all__ = [
     "AdversarialDetectionResult",
     # Adversarial Detection (SH-2)
     "AdversarialDetector",
-    "AttackCategory",
+    "AgentBehaviorProfile",
     "AnomalyDetectionConfig",
     "AnomalyDetectionResult",
     "AnomalyResponse",
     "AnomalySeverity",
     "AnomalyType",
-    "AgentBehaviorProfile",
+    "AttackCategory",
     "AuditLogConfig",
     "AuditLogger",
     "BaselineChangeRequest",

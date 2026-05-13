@@ -82,4 +82,4 @@ def aggregate_votes(
     }
 
 
-__all__ = ["calculate_deliberation_weight", "aggregate_votes"]
+__all__ = ["aggregate_votes", "calculate_deliberation_weight"]

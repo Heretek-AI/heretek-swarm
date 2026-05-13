@@ -8,14 +8,19 @@ Provides REST API for:
 - Document management
 """
 
-from typing import Any
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any
 
 import structlog
 from fastapi import APIRouter, Depends, HTTPException, UploadFile
 
+if TYPE_CHECKING:
+    from heretek_swarm.rag.knowledge_graph import KnowledgeGraphRetriever
+
 from heretek_swarm.gateway.auth import verify_auth
-from heretek_swarm.rag.rag_pipeline import RAGPipeline
 from heretek_swarm.rag.document_processor import DocumentType
+from heretek_swarm.rag.rag_pipeline import RAGPipeline
 
 # Stub imports - rag module is Phase 1 infrastructure
 try:
@@ -489,10 +494,11 @@ def _update_storage_config(pipeline: RAGPipeline, storage: dict[str, Any] | None
 # Knowledge Graph Retrieval Endpoints (RAGFlow pattern)
 # =============================================================================
 
-_knowledge_graph_retriever: "KnowledgeGraphRetriever | None" = None  # type: ignore
+_knowledge_graph_retriever: KnowledgeGraphRetriever | None = None
 
 
-def get_knowledge_graph_retriever() -> "KnowledgeGraphRetriever":  # type: ignore
+
+def get_knowledge_graph_retriever() -> KnowledgeGraphRetriever:
     """Get or initialize the knowledge graph retriever."""
     global _knowledge_graph_retriever
     if _knowledge_graph_retriever is None:

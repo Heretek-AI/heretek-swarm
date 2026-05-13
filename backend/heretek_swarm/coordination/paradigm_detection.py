@@ -1,11 +1,11 @@
 """Paradigm shift detection for change management."""
 
+import uuid
 from collections import defaultdict
 from dataclasses import dataclass, field
 from datetime import UTC, datetime, timedelta
 from enum import Enum
 from typing import Any
-import uuid
 
 
 class ShiftType(Enum):
@@ -305,33 +305,33 @@ class ParadigmDetector:
         confidence_score = min(1.0, total_boost + recurrence_factor + diversity_factor)
         if confidence_score < 0.50:
             return ShiftConfidence.SPECULATIVE
-        elif confidence_score < 0.70:
+        if confidence_score < 0.70:
             return ShiftConfidence.POSSIBLE
-        elif confidence_score < 0.85:
+        if confidence_score < 0.85:
             return ShiftConfidence.LIKELY
-        elif confidence_score < 0.95:
+        if confidence_score < 0.95:
             return ShiftConfidence.PROBABLE
         return ShiftConfidence.CONFIRMED
 
     def _calculate_shift_magnitude(self, indicators: list[ShiftIndicator]) -> ShiftMagnitude:
         """Calculate magnitude based on indicators."""
         total_occurrences = sum(i.occurrences for i in indicators)
-        affected_count = len(set(c for i in indicators for c in i.affected_components))
+        affected_count = len({c for i in indicators for c in i.affected_components})
         if total_occurrences >= 10 and affected_count >= 10:
             return ShiftMagnitude.CRITICAL
-        elif total_occurrences >= 5 and affected_count >= 5:
+        if total_occurrences >= 5 and affected_count >= 5:
             return ShiftMagnitude.MAJOR
-        elif total_occurrences >= 3:
+        if total_occurrences >= 3:
             return ShiftMagnitude.MODERATE
         return ShiftMagnitude.MINOR
 
     def _get_affected_components(self, indicators: list[ShiftIndicator]) -> list[str]:
         """Get all affected components from indicators."""
-        return list(set(c for i in indicators for c in i.affected_components))
+        return list({c for i in indicators for c in i.affected_components})
 
     def _get_impacted_agents(self, indicators: list[ShiftIndicator]) -> set[str]:
         """Get all impacted agents from indicators."""
-        return set(a for i in indicators for a in i.agents_involved)
+        return {a for i in indicators for a in i.agents_involved}
 
     def _calculate_impact_score(self, indicators: list[ShiftIndicator]) -> float:
         """Calculate impact score based on indicators."""
@@ -391,8 +391,7 @@ class ParadigmDetector:
         """Trigger Beta validation for a detected shift."""
         shift.status = ShiftStatus.VALIDATING
         shift.validation_beta = self._beta_agent_id
-        validation_id = f"val_{uuid.uuid4().hex[:12]}"
-        return validation_id
+        return f"val_{uuid.uuid4().hex[:12]}"
 
     async def handle_validation_result(
         self,

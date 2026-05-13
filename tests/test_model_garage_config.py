@@ -12,7 +12,7 @@ from __future__ import annotations
 
 import json
 import os
-from pathlib import Path
+from typing import TYPE_CHECKING
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -22,9 +22,10 @@ from heretek_swarm.llm.model_garage import (
     ModelGarage,
     ProviderConfig,
     ProviderType,
-    register_provider_class,
 )
 
+if TYPE_CHECKING:
+    from pathlib import Path
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -122,7 +123,7 @@ class TestAtomicWrite:
 
         # Monkey-patch open to raise OSError during write
         original_open = open
-        def _failing_open(*args, **kwargs):  # noqa: ANN002,ANN003
+        def _failing_open(*args, **kwargs):
             if str(args[0]).endswith(".json.tmp"):
                 raise OSError("disk full")
             return original_open(*args, **kwargs)
@@ -145,9 +146,9 @@ class TestAtomicWrite:
         )
 
         original_open = open
-        def _failing_os_replace(*args, **kwargs):  # noqa: ANN002,ANN003
+        def _failing_os_replace(*args, **kwargs):
             raise OSError("atomic replace failed")
-        def _real_open(*args, **kwargs):  # noqa: ANN002,ANN003
+        def _real_open(*args, **kwargs):
             return original_open(*args, **kwargs)
 
         with patch("os.replace", side_effect=_failing_os_replace):

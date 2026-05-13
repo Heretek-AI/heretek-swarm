@@ -41,7 +41,7 @@ class PerceiverAnalyticsMixin:
     """
 
     # Placeholder - actual mixin methods will be added by the agent
-    pass  # Methods are provided via cooperative inheritance with the actual mixin
+    # Methods are provided via cooperative inheritance with the actual mixin
 
 
 class PerceiverAnalyticsMixinImpl:

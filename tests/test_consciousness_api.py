@@ -27,8 +27,6 @@ os.environ["HERETEK_API_KEY"] = _TEST_API_KEY
 
 from heretek_swarm.api import consciousness as consciousness_module
 from heretek_swarm.api.consciousness import (
-    _agency_tracker,
-    _consciousness_plugin,
     router,
 )
 from heretek_swarm.runtime.registry_enhanced import (
@@ -36,7 +34,6 @@ from heretek_swarm.runtime.registry_enhanced import (
     AgentLifecycleState,
     AgentTypeMetadata,
 )
-
 
 # ---------------------------------------------------------------------------
 # Fixtures
@@ -53,7 +50,7 @@ def _reset_singletons():
     consciousness_module._agency_tracker = None
 
 
-@pytest.fixture()
+@pytest.fixture
 def app():
     """Create a minimal FastAPI app with the consciousness router."""
     _app = FastAPI()
@@ -61,13 +58,13 @@ def app():
     return _app
 
 
-@pytest.fixture()
+@pytest.fixture
 def client(app):
     """Synchronous test client."""
     return TestClient(app, raise_server_exceptions=False)
 
 
-@pytest.fixture()
+@pytest.fixture
 def auth_headers():
     """Return headers with the fixed test Bearer token."""
     return {"Authorization": f"Bearer {_TEST_API_KEY}"}

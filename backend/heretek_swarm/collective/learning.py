@@ -59,6 +59,17 @@ class PatternSource(StrEnum):
     CONSENSUS_VOTES = "consensus_votes"
     TASK_OUTCOMES = "task_outcomes"
     AGENT_STATE = "agent_state"
+    UNKNOWN = "unknown"
+
+
+class PatternStatus(StrEnum):
+    """Status of a learned pattern."""
+
+    PROVISIONAL = "provisional"
+    CONFIRMED = "confirmed"
+    PROVEN = "proven"
+    REJECTED = "rejected"
+    SUPERSEDED = "superseded"
 
 
 @dataclass
@@ -136,7 +147,7 @@ class PatternMetadata:
 
     def to_dict(self) -> dict[str, Any]:
         """Convert pattern metadata to dictionary for serialization."""
-        base = {
+        return {
             "pattern_id": self.pattern_id,
             "pattern_type": self.pattern_type.value,
             "source": self.source.value,
@@ -163,7 +174,6 @@ class PatternMetadata:
                 "trend_direction": self.evolution.trend_direction,
             },
         }
-        return base
 
 
 @dataclass

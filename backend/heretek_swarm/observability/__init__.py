@@ -32,6 +32,8 @@ from typing import TYPE_CHECKING, Any
 import structlog
 from prometheus_client import CONTENT_TYPE_LATEST, generate_latest
 
+logger = structlog.get_logger("observability")
+
 from .prometheus_metrics import PrometheusMetrics
 from .tracing import initialize_tracing, span_context
 

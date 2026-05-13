@@ -11,10 +11,11 @@ Provides:
 - Safety bounds proof generation
 """
 
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from enum import StrEnum
-from typing import Any, Callable
+from typing import Any
 
 import structlog
 
@@ -390,8 +391,8 @@ class StressTestExecutor:
         config: StressTestConfig,
     ) -> StressTestResult:
         """Execute comprehensive stress test suite."""
-        import uuid
         import time
+        import uuid
 
         start_time = time.time()
         suite_id = f"stress-{uuid.uuid4().hex[:8]}"

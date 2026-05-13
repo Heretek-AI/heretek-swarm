@@ -11,15 +11,17 @@ Verifies that:
 
 from __future__ import annotations
 
-from pathlib import Path
-from unittest.mock import MagicMock, patch
+from typing import TYPE_CHECKING
+from unittest.mock import patch
 
 import pytest
 
 from heretek_swarm.mcp.bridge import sync_mcp_registries
-from heretek_swarm.mcp.registry import MCPToolMetadata, MCPToolRegistry
+from heretek_swarm.mcp.registry import MCPToolRegistry
 from heretek_swarm.tools.mcp_tools import CoreMCPTools
 
+if TYPE_CHECKING:
+    from pathlib import Path
 
 # ---------------------------------------------------------------------------
 # Helpers

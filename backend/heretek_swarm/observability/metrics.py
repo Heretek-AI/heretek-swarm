@@ -15,7 +15,7 @@ Features:
 
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
-from typing import Any, Dict
+from typing import Any
 
 # Import cycle detector and phi training for metrics integration
 try:
@@ -284,7 +284,7 @@ class SwarmMetricsCollector:
                     idle_agents += 1
             else:
                 metrics = self._agent_metrics[agent_id]
-                inactive_seconds = (now - metrics.last_activity).total_seconds() if metrics.last_activity else float('inf')
+                inactive_seconds = (now - metrics.last_activity).total_seconds() if metrics.last_activity else float("inf")
                 if inactive_seconds < 60:
                     active_agents += 1
                 else:
@@ -363,14 +363,13 @@ class SwarmMetricsCollector:
         avg = sum(values) / len(values)
         if avg >= 0.9:
             return "very_high"
-        elif avg >= 0.75:
+        if avg >= 0.75:
             return "high"
-        elif avg >= 0.5:
+        if avg >= 0.5:
             return "moderate"
-        elif avg >= 0.25:
+        if avg >= 0.25:
             return "low"
-        else:
-            return "minimal"
+        return "minimal"
 
     def _determine_differentiation_level(self, phi_scores: dict[str, float]) -> str:
         """Determine differentiation level from phi variance."""
@@ -382,12 +381,11 @@ class SwarmMetricsCollector:
         std_dev = variance ** 0.5
         if std_dev > 0.3:
             return "high"
-        elif std_dev > 0.2:
+        if std_dev > 0.2:
             return "moderate"
-        elif std_dev > 0.1:
+        if std_dev > 0.1:
             return "low"
-        else:
-            return "minimal"
+        return "minimal"
 
     def collect_agent_metrics(self, agent_id: str) -> AgentMetrics:
         """Get metrics for a specific agent."""
@@ -687,10 +685,10 @@ class MetricsSnapshot:
     """Snapshot of metrics at a point in time."""
     swarm_metrics: SwarmMetricsData = field(default_factory=lambda: SwarmMetricsData())
     consciousness_metrics: ConsciousnessMetricsData = field(default_factory=lambda: ConsciousnessMetricsData())
-    agent_metrics: Dict[str, AgentMetrics] = field(default_factory=dict)
+    agent_metrics: dict[str, AgentMetrics] = field(default_factory=dict)
     health_score: float = 0.0
-    timestamp: float = field(default_factory=lambda: __import__('time').time())
-    metadata: Dict[str, Any] = field(default_factory=dict)
+    timestamp: float = field(default_factory=lambda: __import__("time").time())
+    metadata: dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -703,21 +701,21 @@ class MetricsSnapshot:
         }
 
 
-async def record_consensus_round(round_id: str, result: Dict[str, Any]) -> None:
+async def record_consensus_round(round_id: str, result: dict[str, Any]) -> None:
     """Record consensus round metrics."""
     from heretek_swarm.infrastructure.otel.logging import get_logger
     logger = get_logger(__name__)
     logger.debug("consensus_round_recorded", round_id=round_id, result=result)
 
 
-async def record_message_sent(message_id: str, agent_id: str, metadata: Dict[str, Any]) -> None:
+async def record_message_sent(message_id: str, agent_id: str, metadata: dict[str, Any]) -> None:
     """Record message sent metrics."""
     from heretek_swarm.infrastructure.otel.logging import get_logger
     logger = get_logger(__name__)
     logger.debug("message_sent_recorded", message_id=message_id, agent_id=agent_id)
 
 
-async def record_task_completion(task_id: str, agent_id: str, success: bool, metadata: Dict[str, Any]) -> None:
+async def record_task_completion(task_id: str, agent_id: str, success: bool, metadata: dict[str, Any]) -> None:
     """Record task completion metrics."""
     from heretek_swarm.infrastructure.otel.logging import get_logger
     logger = get_logger(__name__)

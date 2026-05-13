@@ -7,19 +7,18 @@ Command-line interface for Heretek Swarm deployment and management.
 from __future__ import annotations
 
 import asyncio
+import difflib
 import os
-import signal
 import shutil
+import signal
 import subprocess
 import sys
-import threading
 import time
 import webbrowser
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import click
-import difflib
 import httpx
 import structlog
 
@@ -27,14 +26,15 @@ from heretek_swarm.cli.config_loader import load_infrastructure_config
 from heretek_swarm.cli.config_wizard import (
     AVAILABLE_PROVIDERS,
     list_configured_providers,
-    add_provider,
     remove_provider,
     run_wizard,
     set_default_provider,
     validate_provider,
-    prompt_for_provider,
 )
 from heretek_swarm.config.models import HealthStatus, InfrastructureService
+
+if TYPE_CHECKING:
+    from heretek_swarm.runtime.main_loop import AutonomousSwarm
 
 logger = structlog.get_logger("cli")
 
@@ -43,7 +43,7 @@ DEFAULT_API_BASE = "http://localhost:8000"
 
 # Global shutdown flag for signal handlers
 _shutdown_event: asyncio.Event | None = None
-_swarm_instance: "AutonomousSwarm | None" = None
+_swarm_instance: AutonomousSwarm | None = None
 
 
 # =============================================================================
@@ -116,16 +116,15 @@ async def _check_service_health(
     try:
         if service == InfrastructureService.POSTGRES:
             return await _check_postgres(host, port, timeout, start)
-        elif service == InfrastructureService.REDIS:
+        if service == InfrastructureService.REDIS:
             return await _check_redis(host, port, timeout, start)
-        elif service == InfrastructureService.QDRANT:
+        if service == InfrastructureService.QDRANT:
             return await _check_qdrant(host, port, timeout, start)
-        elif service == InfrastructureService.NATS:
+        if service == InfrastructureService.NATS:
             return await _check_nats(host, port, timeout, start)
-        elif service == InfrastructureService.MEM0:
+        if service == InfrastructureService.MEM0:
             return await _check_mem0(host, port, timeout, start)
-        else:
-            return _make_result(service, HealthStatus.UNKNOWN, start, f"Unknown service: {service}")
+        return _make_result(service, HealthStatus.UNKNOWN, start, f"Unknown service: {service}")
     except Exception as e:
         logger.warning("health_check_error", service=service.value, error=str(e))
         return _make_result(service, HealthStatus.UNHEALTHY, start, str(e))
@@ -150,11 +149,11 @@ def _make_result(
 async def _check_postgres(host: str, port: int, timeout: float, start: float) -> dict[str, Any]:
     """Check PostgreSQL health via TCP socket."""
     try:
-        reader, writer = await asyncio.wait_for(asyncio.open_connection(host, port), timeout=timeout)
+        _reader, writer = await asyncio.wait_for(asyncio.open_connection(host, port), timeout=timeout)
         writer.close()
         await writer.wait_closed()
         return _make_result(InfrastructureService.POSTGRES, HealthStatus.HEALTHY, start)
-    except asyncio.TimeoutError:
+    except TimeoutError:
         return _make_result(InfrastructureService.POSTGRES, HealthStatus.UNHEALTHY, start, "Connection timed out")
     except Exception as e:
         return _make_result(InfrastructureService.POSTGRES, HealthStatus.UNHEALTHY, start, str(e))
@@ -162,8 +161,8 @@ async def _check_postgres(host: str, port: int, timeout: float, start: float) ->
 
 async def _check_redis(host: str, port: int, timeout: float, start: float) -> dict[str, Any]:
     """Check Redis health via PING."""
+
     import redis.asyncio as redis
-    import time
 
     try:
         client = redis.Redis(host=host, port=port, socket_timeout=timeout)
@@ -176,8 +175,8 @@ async def _check_redis(host: str, port: int, timeout: float, start: float) -> di
 
 async def _check_qdrant(host: str, port: int, timeout: float, start: float) -> dict[str, Any]:
     """Check Qdrant health via /healthz endpoint."""
+
     import httpx
-    import time
 
     try:
         async with httpx.AsyncClient() as client:
@@ -193,7 +192,6 @@ async def _check_qdrant(host: str, port: int, timeout: float, start: float) -> d
 
 async def _check_nats(host: str, port: int, timeout: float, start: float) -> dict[str, Any]:
     """Check NATS health via CONNECT/PING exchange."""
-    import time
 
     try:
         reader, writer = await asyncio.wait_for(asyncio.open_connection(host, port), timeout=timeout)
@@ -221,7 +219,7 @@ async def _check_nats(host: str, port: int, timeout: float, start: float) -> dic
         if pong_response and b"PONG" in pong_response:
             return _make_result(InfrastructureService.NATS, HealthStatus.HEALTHY, start)
         return _make_result(InfrastructureService.NATS, HealthStatus.UNHEALTHY, start, "No PONG response")
-    except asyncio.TimeoutError:
+    except TimeoutError:
         return _make_result(InfrastructureService.NATS, HealthStatus.UNHEALTHY, start, "Connection timed out")
     except Exception as e:
         return _make_result(InfrastructureService.NATS, HealthStatus.UNHEALTHY, start, str(e))
@@ -229,8 +227,8 @@ async def _check_nats(host: str, port: int, timeout: float, start: float) -> dic
 
 async def _check_mem0(host: str, port: int, timeout: float, start: float) -> dict[str, Any]:
     """Check Mem0 health via /health endpoint."""
+
     import httpx
-    import time
 
     try:
         async with httpx.AsyncClient() as client:
@@ -300,7 +298,8 @@ def check_compose_plugin(runtime: str) -> bool:
 # CLI Commands
 # =============================================================================
 
-from importlib.metadata import version as _get_version, PackageNotFoundError
+from importlib.metadata import PackageNotFoundError
+from importlib.metadata import version as _get_version
 
 try:
     __version__ = _get_version("heretek-swarm")
@@ -393,7 +392,7 @@ class GroupedGroup(click.Group):
         "Examples:\n"
         "  pip install heretek-swarm\n"
         "  heretek-swarm run\n"
-        "  heretek-swarm run --no-infra --prompt \"Analyze threat model\"\n"
+        '  heretek-swarm run --no-infra --prompt "Analyze threat model"\n'
         "  heretek-swarm serve --host 127.0.0.1 --port 9000\n"
         "  heretek-swarm config wizard"
     ),
@@ -498,7 +497,7 @@ def deploy(production: bool, scale: int, nats_url: str, api_base: str, check_run
 # Run Command - Autonomous Swarm
 # =============================================================================
 
-def _print_startup_banner(swarm: "AutonomousSwarm") -> None:
+def _print_startup_banner(swarm: AutonomousSwarm) -> None:
     """Print a formatted startup status table showing component health."""
     status = swarm.get_startup_status()
     click.echo("")
@@ -805,8 +804,8 @@ def _handle_signal(signum: int, frame) -> None:
         "  heretek-swarm run\n"
         "  heretek-swarm run --detach\n"
         "  heretek-swarm run --no-infra\n"
-        "  heretek-swarm run --no-infra --prompt \"Analyze the strategic implications of X\"\n"
-        "  heretek-swarm run --prompt \"analyze tradeoffs of Redis\" --consensus\n"
+        '  heretek-swarm run --no-infra --prompt "Analyze the strategic implications of X"\n'
+        '  heretek-swarm run --prompt "analyze tradeoffs of Redis" --consensus\n'
         "  HERETEK_NATS_URL=nats://cluster1:4222,nats://cluster2:4222 heretek-swarm run"
     ),
 )
@@ -876,10 +875,9 @@ def run(detach: bool, nats_url: str, no_infra: bool, prompt: str | None = None, 
     if detach:
         click.echo("\nStarting in detached mode...")
         # Use the daemon module — handles fork, PID file, Unix socket, signal handling.
+        from heretek_swarm.logging.config import setup_logging
         from heretek_swarm.runtime.daemon import daemonize
         from heretek_swarm.runtime.main_loop import AutonomousSwarm
-
-        from heretek_swarm.logging.config import setup_logging
         setup_logging(json_output=False, include_caller_info=False)
 
         nats_servers = [s.strip() for s in nats_url.split(",")]
@@ -961,10 +959,10 @@ def run(detach: bool, nats_url: str, no_infra: bool, prompt: str | None = None, 
     epilog=(
         "\b\n"
         "Examples:\n"
-        "  heretek-swarm consensus \"should we add rate limiting?\"\n"
-        "  heretek-swarm consensus \"should we refactor the auth module?\" --timeout 180\n"
-        "  heretek-swarm consensus \"what database should we use?\" --participants 5\n"
-        "  heretek-swarm consensus \"analyze the tradeoffs of caching\" --rounds 3"
+        '  heretek-swarm consensus "should we add rate limiting?"\n'
+        '  heretek-swarm consensus "should we refactor the auth module?" --timeout 180\n'
+        '  heretek-swarm consensus "what database should we use?" --participants 5\n'
+        '  heretek-swarm consensus "analyze the tradeoffs of caching" --rounds 3'
     ),
 )
 @click.argument("question")
@@ -1068,8 +1066,7 @@ async def _run_consensus(question: str, timeout: float, max_rounds: int = 1) -> 
     click.echo("\nRunning consensus...")
     click.echo("  " + "-" * 50)
 
-    results = await swarm.run_consensus(question, timeout=timeout, max_rounds=max_rounds)
-    return results
+    return await swarm.run_consensus(question, timeout=timeout, max_rounds=max_rounds)
 
 
 @cli.command(
@@ -1105,7 +1102,6 @@ def serve(host: str, port: int, workers: int) -> None:
     Starts uvicorn with the FastAPI application on the specified host and port.
     Uses structured logging via uvicorn's built-in configuration.
     """
-    import os
 
     logger.info("serve_command", host=host, port=port, workers=workers)
 
@@ -1229,7 +1225,7 @@ def status(api_base: str, timeout: int, output_json: bool) -> None:
     logger.info("status_command", api_base=api_base, timeout=timeout)
 
     # --- Try daemon socket first --------------------------------------------
-    from heretek_swarm.runtime.daemon import DEFAULT_PID_FILE, DEFAULT_SOCKET_PATH, read_pid_file
+    from heretek_swarm.runtime.daemon import DEFAULT_PID_FILE, read_pid_file
 
     pid = read_pid_file(DEFAULT_PID_FILE)
     if pid is not None:
@@ -1376,10 +1372,7 @@ def status(api_base: str, timeout: int, output_json: bool) -> None:
             icon = "?"
 
         # Format latency
-        if latency < 1000:
-            latency_str = f"{latency:.1f}ms"
-        else:
-            latency_str = f"{latency/1000:.2f}s"
+        latency_str = f"{latency:.1f}ms" if latency < 1000 else f"{latency / 1000:.2f}s"
 
         # Display row
         status_display = f"{icon} {status_val.upper()}"
@@ -1456,9 +1449,9 @@ def _query_daemon_socket() -> dict | None:
     Returns the parsed JSON response dict, or ``None`` if the socket is
     unreachable or the exchange fails.
     """
-    from heretek_swarm.runtime.daemon import DEFAULT_SOCKET_PATH
-
     import json
+
+    from heretek_swarm.runtime.daemon import DEFAULT_SOCKET_PATH
 
     socket_path = DEFAULT_SOCKET_PATH
     if not socket_path.exists():
@@ -1822,6 +1815,7 @@ def main() -> None:
 
 # Register the goal command group
 from heretek_swarm.cli.goal_commands import goal
+
 cli.add_command(goal)
 
 main = cli

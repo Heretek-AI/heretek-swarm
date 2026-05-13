@@ -945,7 +945,7 @@ class CoordinatorAgent(
             content = message.content or {}
             task_ids = content.get("task_ids")
             if task_ids:
-                subgraph = {
+                {
                     tid: self._task_graph._reverse_adjacency.get(tid, set())
                     for tid in task_ids
                     if tid in self._task_graph._nodes

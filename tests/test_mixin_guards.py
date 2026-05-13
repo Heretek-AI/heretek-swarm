@@ -11,12 +11,12 @@ as those check for optional subsystems, not required dependencies.
 from __future__ import annotations
 
 from typing import Any
-from unittest.mock import AsyncMock, MagicMock
+from unittest.mock import MagicMock
 
 import pytest
 
 from heretek_swarm.actors.mixins.learning import LearningMixin
-from heretek_swarm.actors.mixins.memory import MemoryMixin, AccessTier
+from heretek_swarm.actors.mixins.memory import MemoryMixin
 from heretek_swarm.actors.mixins.pattern import PatternMixin
 from heretek_swarm.actors.mixins.tribunal import TribunalMixin
 

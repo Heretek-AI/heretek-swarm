@@ -17,8 +17,8 @@ daemon pattern assumes Unix PID semantics.
 from __future__ import annotations
 
 import asyncio
+import contextlib
 import json
-import logging
 import os
 import signal
 import sys
@@ -83,11 +83,6 @@ def daemonize(swarm: Any, pid_file: Path | None = None, socket_path: Path | None
     """
     # --- Windows guard --------------------------------------------------------
     if sys.platform == "win32":
-        print(
-            "ERROR: Detach mode is not supported on Windows. "
-            "Use background terminal instead.",
-            flush=True,
-        )
         sys.exit(1)
 
     pid_file = pid_file or DEFAULT_PID_FILE
@@ -98,13 +93,11 @@ def daemonize(swarm: Any, pid_file: Path | None = None, socket_path: Path | None
     # --- First fork: detach from terminal ------------------------------------
     try:
         pid = os.fork()
-    except OSError as exc:
-        print(f"ERROR: Fork failed: {exc}", flush=True)
+    except OSError:
         sys.exit(1)
 
     if pid > 0:
         # Parent — print PID and exit immediately.
-        print(f"  ✓ Process started in background (PID: {pid})", flush=True)
         sys.exit(0)
 
     # --- Child continues ------------------------------------------------------
@@ -114,8 +107,7 @@ def daemonize(swarm: Any, pid_file: Path | None = None, socket_path: Path | None
     # Second fork to ensure the daemon cannot re-acquire a controlling terminal.
     try:
         pid2 = os.fork()
-    except OSError as exc:
-        print(f"ERROR: Second fork failed: {exc}", flush=True)
+    except OSError:
         sys.exit(1)
 
     if pid2 > 0:
@@ -163,11 +155,6 @@ def _write_pid_file(pid_file: Path) -> None:
         # Another daemon appears to be running — check if it's alive.
         existing = read_pid_file(pid_file)
         if existing is not None and _is_pid_alive(existing):
-            print(
-                f"ERROR: Daemon already running (PID {existing}). "
-                f"PID file: {pid_file}",
-                flush=True,
-            )
             sys.exit(1)
         # Stale PID — overwrite.
         pid_file.write_text(str(os.getpid()))
@@ -305,10 +292,8 @@ async def _run_daemon_loop(ctx: DaemonContext) -> None:
 
     # --- Graceful shutdown ---------------------------------------------------
     swarm_task.cancel()
-    try:
+    with contextlib.suppress(asyncio.CancelledError):
         await swarm_task
-    except asyncio.CancelledError:
-        pass
 
     # Stop the swarm (calls terminate_all, disconnect event mesh, etc.)
     try:
@@ -350,7 +335,7 @@ async def handle_daemon_connection(
     peer = writer.get_extra_info("peername", "unknown")
     try:
         raw = await asyncio.wait_for(reader.readline(), timeout=10.0)
-    except asyncio.TimeoutError:
+    except TimeoutError:
         logger.warning("daemon_socket_read_timeout", peer=peer)
         return
     except ConnectionResetError:

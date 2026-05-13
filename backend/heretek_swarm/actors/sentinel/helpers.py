@@ -15,13 +15,15 @@ from datetime import UTC, datetime
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
-    from heretek_swarm.actors.sentinel.types import SafetyLevel, SafetyReport, SafetyViolation, ViolationType
+    from heretek_swarm.actors.sentinel.types import (
+        SafetyReport,
+    )
 
 
 class SentinelHelpers:
     """
     Helper methods for Sentinel safety operations.
-    
+
     These methods provide pattern checking, violation recording,
     and report generation functionality extracted from the main
     SentinelAgent class.
@@ -79,15 +81,15 @@ class SentinelHelpers:
     def _check_injection_patterns(self, content: str) -> list[dict[str, str]]:
         """
         Check content for injection attack patterns.
-        
+
         Args:
             content: The content to scan
-            
+
         Returns:
             List of violation dictionaries
         """
         violations = []
-        
+
         self._compile_patterns()
 
         for pattern in self._compiled_injection:
@@ -107,15 +109,15 @@ class SentinelHelpers:
     def _check_pii_patterns(self, content: str) -> list[dict[str, str]]:
         """
         Check content for personally identifiable information.
-        
+
         Args:
             content: The content to scan
-            
+
         Returns:
             List of violation dictionaries
         """
         violations = []
-        
+
         self._compile_patterns()
 
         for pattern in self._compiled_pii:
@@ -234,17 +236,17 @@ class SentinelHelpers:
 def check_injection_patterns(content: str, patterns: list[str] | None = None) -> list[dict[str, str]]:
     """
     Check content for injection attack patterns using provided or default patterns.
-    
+
     Args:
         content: The content to scan
         patterns: Optional list of regex patterns (uses defaults if not provided)
-        
+
     Returns:
         List of violation dictionaries
     """
     patterns = patterns or SentinelHelpers.DEFAULT_INJECTION_PATTERNS
     compiled = [re.compile(p, re.IGNORECASE) for p in patterns]
-    
+
     violations = []
     for pattern in compiled:
         matches = pattern.findall(content)
@@ -264,17 +266,17 @@ def check_injection_patterns(content: str, patterns: list[str] | None = None) ->
 def check_pii_patterns(content: str, patterns: list[str] | None = None) -> list[dict[str, str]]:
     """
     Check content for personally identifiable information using provided or default patterns.
-    
+
     Args:
         content: The content to scan
         patterns: Optional list of regex patterns (uses defaults if not provided)
-        
+
     Returns:
         List of violation dictionaries
     """
     patterns = patterns or SentinelHelpers.DEFAULT_PII_PATTERNS
     compiled = [re.compile(p) for p in patterns]
-    
+
     violations = []
     for pattern in compiled:
         matches = pattern.findall(content)
@@ -302,7 +304,7 @@ def generate_safety_report(
 ) -> dict[str, Any]:
     """
     Generate a safety report dictionary.
-    
+
     Args:
         total_scans: Total number of scans performed
         violations_detected: Number of violations detected
@@ -311,7 +313,7 @@ def generate_safety_report(
         violations_by_severity: Dictionary of severity levels and counts
         _time_range: Time range for the report (unused, kept for API compat)
         include_recommendations: Whether to include recommendations
-        
+
     Returns:
         Report dictionary
     """

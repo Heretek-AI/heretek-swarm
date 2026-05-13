@@ -618,9 +618,8 @@ class BaselineTribunal:
         if decision == VoteDecision.APPROVE:
             if agent_id not in proposal.approvers:
                 proposal.approvers.append(agent_id)
-        elif decision == VoteDecision.REJECT:
-            if agent_id not in proposal.rejectors:
-                proposal.rejectors.append(agent_id)
+        elif decision == VoteDecision.REJECT and agent_id not in proposal.rejectors:
+            proposal.rejectors.append(agent_id)
 
         proposal.status = BaselineChangeStatus.VOTING
 

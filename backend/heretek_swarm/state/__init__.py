@@ -32,6 +32,9 @@ from heretek_swarm.state.repository import (
 __all__ = [
     # Legacy models (from models.py)
     "AgentState",
+    # Repository (from repository.py)
+    "AgentStateRecord",
+    "ConcurrencyError",
     "ConversationState",
     "LineageConfig",
     "LineageNode",
@@ -40,16 +43,13 @@ __all__ = [
     "MessageType",
     "SnapshotConfig",
     "SnapshotManager",
+    "StateCheckpoint",
     "StateConfig",
     "StateManager",
+    "StateRepository",
     "StateSnapshot",
     "StateStatus",
     "StateTransition",
     "SystemState",
     "TransitionType",
-    # Repository (from repository.py)
-    "AgentStateRecord",
-    "ConcurrencyError",
-    "StateCheckpoint",
-    "StateRepository",
 ]

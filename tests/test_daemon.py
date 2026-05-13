@@ -14,14 +14,11 @@ the daemonisation path itself is gated on ``sys.platform != "win32"``.
 from __future__ import annotations
 
 import json
-import os
 import signal
 from pathlib import Path
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import MagicMock, patch
 
-import pytest
-
-from heretek_swarm.actors.base import ActorStatus, ActorState
+from heretek_swarm.actors.base import ActorState, ActorStatus
 from heretek_swarm.runtime.daemon import (
     DEFAULT_PID_FILE,
     DEFAULT_SOCKET_PATH,
@@ -30,7 +27,6 @@ from heretek_swarm.runtime.daemon import (
     read_pid_file,
     send_stop,
 )
-
 
 # =========================================================================
 # read_pid_file
@@ -254,8 +250,8 @@ class TestDefaults:
 
     @staticmethod
     def test_default_pid_file() -> None:
-        assert DEFAULT_PID_FILE == Path("/var/run/heretek-swarm.pid")
+        assert Path("/var/run/heretek-swarm.pid") == DEFAULT_PID_FILE
 
     @staticmethod
     def test_default_socket_path() -> None:
-        assert DEFAULT_SOCKET_PATH == Path("/tmp/heretek-swarm.sock")
+        assert Path("/tmp/heretek-swarm.sock") == DEFAULT_SOCKET_PATH

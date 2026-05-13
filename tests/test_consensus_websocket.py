@@ -11,6 +11,7 @@ dashboard WebSocket channel at the correct lifecycle points:
 
 from __future__ import annotations
 
+import contextlib
 from unittest.mock import AsyncMock, patch
 
 import pytest
@@ -23,7 +24,6 @@ from heretek_swarm.api.consensus import (
     consensus_auth_manager,
     router,
 )
-
 
 # ---------------------------------------------------------------------------
 # Fixtures
@@ -43,7 +43,7 @@ def _clear_state():
     _consensus_store.clear()
 
 
-@pytest.fixture()
+@pytest.fixture
 def app():
     """Create a minimal FastAPI app with the consensus router."""
     _app = FastAPI()
@@ -51,13 +51,13 @@ def app():
     return _app
 
 
-@pytest.fixture()
+@pytest.fixture
 def client(app):
     """Synchronous test client."""
     return TestClient(app, raise_server_exceptions=False)
 
 
-@pytest.fixture()
+@pytest.fixture
 def auth_headers():
     """Generate a valid auth token and return headers."""
     token = consensus_auth_manager.generate_token("test-agent", ["vote", "create", "view"])
@@ -131,17 +131,15 @@ class TestConsensusCreatedBroadcast:
         # The broadcast exception is caught by the try/except in the endpoint,
         # but TestClient may still surface it. Verify the round was created
         # by checking the in-memory store directly after the request.
-        try:
-            resp = client.post(
+        with contextlib.suppress(Exception):
+            client.post(
                 "/api/consensus",
                 params={"topic": "resilient-topic"},
                 headers=auth_headers,
             )
-        except Exception:
-            pass
         # Even if the response errored, the round should exist in the store
         assert len(_active_rounds) == 1
-        topic = list(_active_rounds.values())[0]["topic"]
+        topic = next(iter(_active_rounds.values()))["topic"]
         assert topic == "resilient-topic"
 
 
@@ -196,14 +194,12 @@ class TestConsensusVoteBroadcast:
         mock_broadcast.reset_mock()
         mock_broadcast.side_effect = RuntimeError("WS down")
 
-        try:
-            resp = client.post(
+        with contextlib.suppress(Exception):
+            client.post(
                 f"/api/consensus/{round_id}/vote",
                 params={"decision": "approve", "confidence": 0.8},
                 headers=auth_headers,
             )
-        except Exception:
-            pass
         # Verify the vote was recorded even if broadcast failed
         assert len(_active_rounds[round_id]["votes"]) == 1
         assert _active_rounds[round_id]["votes"][0]["decision"] == "approve"
@@ -282,13 +278,11 @@ class TestConsensusCompleteBroadcast:
         mock_broadcast.reset_mock()
         mock_broadcast.side_effect = RuntimeError("WS down")
 
-        try:
-            resp = client.post(
+        with contextlib.suppress(Exception):
+            client.post(
                 f"/api/consensus/{round_id}/aggregate",
                 headers=auth_headers,
             )
-        except Exception:
-            pass
         # Verify the aggregation happened even if broadcast failed
         assert _active_rounds[round_id]["state"] == "completed"
         assert _active_rounds[round_id]["decision"] == "approve"
@@ -325,7 +319,7 @@ class TestDeliberationRoundBroadcast:
         # Use actual DeliberationRound attributes
         # (positions dict from the active_deliberations store, not the round result)
         positions = deliberation_engine.active_deliberations.get(delib_id, {}).get("positions", {})
-        positions_dict = {k: v for k, v in positions.items()}
+        positions_dict = dict(positions.items())
 
         # Simulate the broadcast that happens in the endpoint
         async def _do_broadcast():
@@ -337,7 +331,7 @@ class TestDeliberationRoundBroadcast:
                 "arguments_submitted": len(round_result.arguments),
                 "positions": positions_dict,
                 "consensus_score": round_result.consensus_score,
-                "summary": round_result.outcome.value if hasattr(round_result, 'outcome') else "",
+                "summary": round_result.outcome.value if hasattr(round_result, "outcome") else "",
                 "timestamp": datetime.now(UTC).isoformat(),
             })
 

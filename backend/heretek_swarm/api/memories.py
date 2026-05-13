@@ -11,7 +11,7 @@ import os
 import secrets
 from typing import Annotated, Any
 
-from fastapi import APIRouter, Depends, HTTPException, Header
+from fastapi import APIRouter, Depends, Header, HTTPException
 from fastapi.responses import RedirectResponse
 from pydantic import BaseModel, Field
 
@@ -99,7 +99,7 @@ def _require_mem0():
         HTTPException: 503 if mem0 is not installed or not initialized
     """
     # Import lazily to avoid circular import at module level
-    from heretek_swarm.api.main import mem0_backend, MEM0_AVAILABLE
+    from heretek_swarm.api.main import MEM0_AVAILABLE, mem0_backend
 
     if not MEM0_AVAILABLE or not mem0_backend:
         raise HTTPException(503, "mem0 not available")

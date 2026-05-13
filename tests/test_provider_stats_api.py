@@ -7,17 +7,15 @@ zero-trust patterns as every other observability endpoint.
 """
 from __future__ import annotations
 
-from typing import Any, Dict
-
 import pytest
 
+from heretek_swarm.llm.model_garage import LLMResponse, ProviderType
 from heretek_swarm.routing.model_router import (
     AgentModelRouter,
     RouterProviderConfig,
     _router_registry,
     get_all_provider_stats,
 )
-from heretek_swarm.llm.model_garage import LLMResponse, ProviderType
 
 
 def _make_response(
@@ -61,7 +59,7 @@ def _register_provider(
 def _cleanup_router_registry() -> None:
     """Clear the global router registry between tests to isolate state."""
     _router_registry.clear()
-    yield
+    return
 
 
 @pytest.fixture

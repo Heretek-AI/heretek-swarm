@@ -15,13 +15,15 @@ import asyncio
 import importlib.util
 import json
 import os
-from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
-from typing import Any
+from typing import TYPE_CHECKING, Any
 from uuid import UUID, uuid4
 
 import structlog
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 ASYNCPG_AVAILABLE = importlib.util.find_spec("asyncpg") is not None
 if ASYNCPG_AVAILABLE:
@@ -81,7 +83,7 @@ class AgentStateRecord:
         }
 
     @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> "AgentStateRecord":
+    def from_dict(cls, data: dict[str, Any]) -> AgentStateRecord:
         """Create from dictionary."""
         return cls(
             id=UUID(data["id"]) if isinstance(data["id"], str) else data["id"],
@@ -387,7 +389,7 @@ class StateRepository:
             }
 
     @classmethod
-    async def initialize(cls, database_url: str | None = None, **kwargs) -> "StateRepository":
+    async def initialize(cls, database_url: str | None = None, **kwargs) -> StateRepository:
         """
         Factory method to create and initialize a repository with pool.
 

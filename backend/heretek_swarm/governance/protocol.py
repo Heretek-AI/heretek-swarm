@@ -57,7 +57,7 @@ class GovernanceProtocol:
             "protocol_id": self.protocol_id,
             "name": self.name,
             "description": self.description,
-            "required_roles": sorted(list(self.required_roles)),
+            "required_roles": sorted(self.required_roles),
             "zero_trust_required": self.zero_trust_required,
             "max_deliberation_rounds": self.max_deliberation_rounds,
         }

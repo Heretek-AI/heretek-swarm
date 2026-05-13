@@ -1460,11 +1460,10 @@ class NATStoActorBridge:
             if expect_reply and success:
                 # Wait for response with timeout
                 try:
-                    response = await asyncio.wait_for(
+                    return await asyncio.wait_for(
                         future,
                         timeout=self.config.reply_timeout,
                     )
-                    return response
                 except TimeoutError:
                     logger.warning(
                         "Request to actor timed out",

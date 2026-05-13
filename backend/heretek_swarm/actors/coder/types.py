@@ -1,6 +1,5 @@
 """Coder types — Code language, task, and review data structures."""
 
-import uuid
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from enum import StrEnum

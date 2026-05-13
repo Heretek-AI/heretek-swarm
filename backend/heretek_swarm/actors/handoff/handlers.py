@@ -6,13 +6,12 @@ HandoffContext and HandoffResult definitions which now live in
 heretek_swarm.actors.handoff.types.
 """
 
-from dataclasses import dataclass
 from datetime import UTC, datetime
 from typing import Any
 
 import structlog
 
-from heretek_swarm.actors.handoff.types import HandoffContext, HandoffResult
+from heretek_swarm.actors.handoff.types import HandoffResult
 
 logger = structlog.get_logger(__name__)
 

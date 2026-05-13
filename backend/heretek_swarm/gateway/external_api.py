@@ -1,12 +1,12 @@
 """External API client with automatic backoff, circuit breaker, and fallback support."""
 
+import asyncio
+import random
+import uuid
 from dataclasses import dataclass, field
 from datetime import UTC, datetime, timedelta
 from enum import Enum
 from typing import Any
-import asyncio
-import random
-import uuid
 
 import aiohttp
 
@@ -390,7 +390,7 @@ class ResilientAPIClient:
     ) -> ApiResponse:
         """Execute HTTP request with full resilience."""
         req_id = request_id or str(uuid.uuid4())
-        can_exec, circuit_state = self._circuit_breaker.can_execute(url)
+        can_exec, _circuit_state = self._circuit_breaker.can_execute(url)
         if not can_exec:
             self._total_circuit_breaks += 1
             return ApiResponse(

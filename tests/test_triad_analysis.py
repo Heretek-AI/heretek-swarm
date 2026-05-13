@@ -22,11 +22,8 @@ from __future__ import annotations
 
 from unittest.mock import AsyncMock
 
-import pytest
-
 from heretek_swarm.actors.base.core import ActorMessage
 from heretek_swarm.actors.triad.agent import AlphaAgent, BetaAgent, CharlieAgent
-
 
 # ---------------------------------------------------------------------------
 # Helpers

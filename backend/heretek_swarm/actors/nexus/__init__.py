@@ -14,6 +14,12 @@ Version: 1.0.0
 
 from __future__ import annotations
 
+# Re-export agent class for backward compatibility
+from heretek_swarm.actors.nexus.agent import NexusAgent
+
+# Re-export routing helpers
+from heretek_swarm.actors.nexus.routing import NexusRoutingHelpers
+
 # Re-export types for backward compatibility
 from heretek_swarm.actors.nexus.types import (
     ApiResponse,
@@ -23,20 +29,14 @@ from heretek_swarm.actors.nexus.types import (
     WebhookConfig,
 )
 
-# Re-export agent class for backward compatibility
-from heretek_swarm.actors.nexus.agent import NexusAgent
-
-# Re-export routing helpers
-from heretek_swarm.actors.nexus.routing import NexusRoutingHelpers
-
 __all__ = [
     # Types
     "ApiResponse",
     "ConnectionStatus",
     "ExternalConnection",
-    "ProtocolType",
-    "WebhookConfig",
     # Classes
     "NexusAgent",
     "NexusRoutingHelpers",
+    "ProtocolType",
+    "WebhookConfig",
 ]

@@ -28,10 +28,10 @@ from heretek_swarm.actors.explorer.types import (
     ResearchState,
     ThreatLevel,
 )
-from heretek_swarm.knowledge.research import ResearchFinding, ResearchQuery, ResearchResult
 
 if TYPE_CHECKING:
     from heretek_swarm.actors.base import ActorMessage
+    from heretek_swarm.knowledge.research import ResearchFinding, ResearchQuery, ResearchResult
 
 logger = structlog.get_logger("ExplorerPathfinding")
 

@@ -20,11 +20,13 @@ Verifies that:
 
 from __future__ import annotations
 
-import asyncio
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
+from heretek_swarm.consensus.consensus_coordinator import ConsensusCoordinator
+from heretek_swarm.consensus.maker import ConsensusResult, ConsensusState
+from heretek_swarm.consensus.maker import Vote as MAKERVote
 from heretek_swarm.goals.consensus import (
     GoalConsensus,
     _build_goal_vote_prompt,
@@ -32,9 +34,6 @@ from heretek_swarm.goals.consensus import (
     _normalise_decision,
 )
 from heretek_swarm.goals.models import Goal, Vote
-from heretek_swarm.consensus.consensus_coordinator import ConsensusCoordinator
-from heretek_swarm.consensus.maker import ConsensusResult, ConsensusState, Vote as MAKERVote
-
 
 # ---------------------------------------------------------------------------
 # Fixtures
@@ -114,7 +113,7 @@ def _make_result(votes: list[MAKERVote], decision: str = "approve") -> Consensus
 class TestNormaliseDecision:
     """Tests for _normalise_decision()."""
 
-    @pytest.mark.parametrize("raw,expected", [
+    @pytest.mark.parametrize(("raw", "expected"), [
         ("approve", "approve"),
         ("yes", "approve"),
         ("support", "approve"),
@@ -342,7 +341,7 @@ class TestRunGoalConsensus:
         ])
 
         gc = GoalConsensus(coordinator=mock_coordinator)
-        accepted, votes, rounds = await gc.run_goal_consensus(
+        accepted, _votes, rounds = await gc.run_goal_consensus(
             sample_goal, basic_actors, timeout=60
         )
 
@@ -399,7 +398,7 @@ class TestRunGoalConsensus:
         ]
 
         gc = GoalConsensus(coordinator=mock_coordinator)
-        accepted, votes, rounds = await gc.run_goal_consensus(
+        accepted, _votes, rounds = await gc.run_goal_consensus(
             sample_goal, basic_actors, timeout=60
         )
 
@@ -474,7 +473,7 @@ class TestRunGoalConsensus:
         ]
 
         gc = GoalConsensus(coordinator=mock_coordinator)
-        accepted, votes, rounds = await gc.run_goal_consensus(
+        _accepted, _votes, rounds = await gc.run_goal_consensus(
             sample_goal, actors, timeout=60
         )
 
@@ -524,7 +523,7 @@ class TestRunGoalConsensus:
         mock_coordinator.run_consensus.return_value = None
 
         gc = GoalConsensus(coordinator=mock_coordinator)
-        accepted, votes, rounds = await gc.run_goal_consensus(
+        accepted, votes, _rounds = await gc.run_goal_consensus(
             sample_goal, basic_actors, timeout=60
         )
 
@@ -539,7 +538,7 @@ class TestRunGoalConsensus:
         mock_coordinator.run_consensus.return_value = _make_result([])
 
         gc = GoalConsensus(coordinator=mock_coordinator)
-        accepted, votes, rounds = await gc.run_goal_consensus(
+        accepted, votes, _rounds = await gc.run_goal_consensus(
             sample_goal, basic_actors, timeout=60
         )
 
@@ -563,7 +562,7 @@ class TestRunGoalConsensus:
         ])
 
         gc = GoalConsensus(coordinator=mock_coordinator)
-        accepted, votes, rounds = await gc.run_goal_consensus(
+        accepted, _votes, rounds = await gc.run_goal_consensus(
             sample_goal, basic_actors, timeout=60
         )
 
@@ -586,7 +585,7 @@ class TestRunGoalConsensus:
         ])
 
         gc = GoalConsensus(coordinator=mock_coordinator)
-        accepted, votes, rounds = await gc.run_goal_consensus(
+        accepted, votes, _rounds = await gc.run_goal_consensus(
             sample_goal, basic_actors, timeout=60
         )
 

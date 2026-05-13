@@ -17,13 +17,9 @@ Key test surfaces (mapped from MEM034/T01 constraints):
 from __future__ import annotations
 
 from datetime import UTC, datetime, timedelta
-from typing import Any
-from unittest.mock import MagicMock, PropertyMock
-
-import pytest
+from unittest.mock import MagicMock
 
 from heretek_swarm.actors.steward import StewardAgent
-
 
 # ---------------------------------------------------------------------------
 # Helpers

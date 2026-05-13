@@ -12,8 +12,8 @@ ProviderConfig = RouterProviderConfig
 
 __all__ = [
     "AgentModelRouter",
-    "RouterProviderConfig",
     "ProviderConfig",
+    "RouterProviderConfig",
     "RoutingDecision",
     "TaskComplexity",
     "get_router",

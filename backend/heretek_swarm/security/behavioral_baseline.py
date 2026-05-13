@@ -67,7 +67,7 @@ class QuorumStatus(StrEnum):
 class BaselinePattern:
     """
     A pattern in the behavioral baseline.
-    
+
     Attributes:
         pattern_id: Unique identifier
         pattern_hash: Hash for integrity verification
@@ -116,7 +116,7 @@ class BaselinePattern:
 class BaselineMetrics:
     """
     Metrics that define a behavioral baseline.
-    
+
     Attributes:
         metric_name: Name of the metric
         mean: Mean value
@@ -149,7 +149,7 @@ class BaselineMetrics:
 class BaselineChangeRequest:
     """
     A request to change the behavioral baseline.
-    
+
     Attributes:
         request_id: Unique identifier
         change_type: Type of change
@@ -198,7 +198,7 @@ class BaselineChangeRequest:
 class BaselineAuditEntry:
     """
     An immutable audit trail entry for baseline changes.
-    
+
     Attributes:
         entry_id: Unique identifier
         timestamp: When the entry was created
@@ -222,14 +222,14 @@ class BaselineAuditEntry:
 class BehavioralBaseline:
     """
     Behavioral Baseline management system.
-    
+
     This class provides:
     - Baseline establishment and maintenance
     - Statistical anomaly detection
     - Quorum-based baseline changes
     - Immutable audit trail
     - Novel pattern detection
-    
+
     The baseline is critical infrastructure - corruption of the baseline
     could allow attacks to go undetected. Therefore:
     - All changes require quorum approval
@@ -248,7 +248,7 @@ class BehavioralBaseline:
     ):
         """
         Initialize the behavioral baseline.
-        
+
         Args:
             min_samples_for_baseline: Min samples before baseline is valid
             z_score_threshold: Z-score for anomaly detection
@@ -317,13 +317,13 @@ class BehavioralBaseline:
     ) -> BaselineAuditEntry:
         """
         Record an immutable audit trail entry.
-        
+
         Args:
             event_type: Type of event
             pattern_id: Related pattern ID
             agent_id: Agent that triggered event
             details: Event details
-            
+
         Returns:
             Created audit entry
         """
@@ -376,12 +376,12 @@ class BehavioralBaseline:
     ) -> bool:
         """
         Establish a behavioral baseline for an agent's metric.
-        
+
         Args:
             agent_id: ID of the agent
             metric_name: Name of the metric
             values: Historical values to establish baseline from
-            
+
         Returns:
             True if baseline was established
         """
@@ -456,9 +456,9 @@ class BehavioralBaseline:
     ) -> None:
         """
         Update baseline with a new observation.
-        
+
         Uses Welford's online algorithm for incremental statistics.
-        
+
         Args:
             agent_id: ID of the agent
             metric_name: Name of the metric
@@ -510,12 +510,12 @@ class BehavioralBaseline:
     ) -> tuple[bool, float]:
         """
         Check if a value is anomalous given the baseline.
-        
+
         Args:
             agent_id: ID of the agent
             metric_name: Name of the metric
             value: Value to check
-            
+
         Returns:
             Tuple of (is_anomaly, z_score)
         """
@@ -545,16 +545,16 @@ class BehavioralBaseline:
     ) -> str:
         """
         Add a new pattern to the baseline.
-        
+
         Patterns require quorum approval before being considered trusted.
-        
+
         Args:
             pattern_type: Type of pattern
             description: Human-readable description
             content: Pattern content
             confidence: Initial confidence level
             requester_id: Agent requesting the addition
-            
+
         Returns:
             Pattern ID
         """
@@ -604,17 +604,17 @@ class BehavioralBaseline:
     ) -> str:
         """
         Request a change to the baseline with quorum approval.
-        
+
         This prevents baseline corruption by requiring multiple agents
         to approve changes.
-        
+
         Args:
             change_type: Type of change
             pattern_id: ID of pattern being changed
             proposed_value: New value being proposed
             reasoning: Why this change is needed
             requester_id: Agent requesting the change
-            
+
         Returns:
             Request ID
         """
@@ -663,12 +663,12 @@ class BehavioralBaseline:
     ) -> bool:
         """
         Submit a vote for a baseline change request.
-        
+
         Args:
             request_id: ID of the change request
             agent_id: ID of voting agent
             approve: True to approve, False to reject
-            
+
         Returns:
             True if vote was recorded
         """
@@ -723,7 +723,7 @@ class BehavioralBaseline:
     def _apply_change(self, request: BaselineChangeRequest) -> None:
         """
         Apply an approved baseline change.
-        
+
         Args:
             request: The approved change request
         """
@@ -764,10 +764,10 @@ class BehavioralBaseline:
     def get_baseline_status(self, agent_id: str) -> BaselineStatus:
         """
         Get the baseline status for an agent.
-        
+
         Args:
             agent_id: ID of the agent
-            
+
         Returns:
             Current baseline status
         """
@@ -776,10 +776,10 @@ class BehavioralBaseline:
     def get_agent_baseline(self, agent_id: str) -> dict[str, dict[str, Any]]:
         """
         Get the complete baseline for an agent.
-        
+
         Args:
             agent_id: ID of the agent
-            
+
         Returns:
             Dictionary of metric baselines
         """
@@ -805,11 +805,11 @@ class BehavioralBaseline:
     ) -> list[dict[str, Any]]:
         """
         Get baseline patterns.
-        
+
         Args:
             approved_only: If True, only return approved patterns
             enabled_only: If True, only return enabled patterns
-            
+
         Returns:
             List of pattern dictionaries
         """
@@ -825,7 +825,7 @@ class BehavioralBaseline:
     def verify_baseline_integrity(self) -> dict[str, Any]:
         """
         Verify the integrity of the baseline and audit trail.
-        
+
         Returns:
             Verification results
         """
@@ -863,11 +863,11 @@ class BehavioralBaseline:
     ) -> list[dict[str, Any]]:
         """
         Get audit trail entries.
-        
+
         Args:
             limit: Maximum entries to return
             pattern_id: Filter by pattern ID
-            
+
         Returns:
             List of audit entries
         """
@@ -892,7 +892,7 @@ class BehavioralBaseline:
     def get_statistics(self) -> dict[str, Any]:
         """
         Get baseline statistics.
-        
+
         Returns:
             Statistics dictionary
         """
@@ -914,10 +914,10 @@ def create_behavioral_baseline(
 ) -> BehavioralBaseline:
     """
     Create a configured behavioral baseline.
-    
+
     Args:
         config: Optional configuration dictionary
-        
+
     Returns:
         Configured BehavioralBaseline instance
     """

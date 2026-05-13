@@ -12,12 +12,12 @@ from __future__ import annotations
 
 import json
 import uuid
-from pathlib import Path
 from typing import Any
 
 import httpx
 import structlog
-from click import echo, prompt as cli_prompt, style
+from click import echo, style
+from click import prompt as cli_prompt
 
 logger = structlog.get_logger("cli.config_wizard")
 

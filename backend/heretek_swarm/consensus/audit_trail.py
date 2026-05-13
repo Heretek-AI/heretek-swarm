@@ -11,12 +11,12 @@ Reading/querying is handled by audit_query.py.
 The audit_models.py module contains shared dataclass definitions.
 """
 
-from datetime import UTC, datetime
-from pathlib import Path
-from typing import Any
 import json
 import queue
 import threading
+from datetime import UTC, datetime
+from pathlib import Path
+from typing import Any
 
 import structlog
 

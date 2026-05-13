@@ -13,7 +13,7 @@ revealing hidden facets and ensuring comprehensive analysis.
 """
 
 from datetime import UTC, datetime
-from typing import Any, Set
+from typing import Any
 
 import structlog
 from swarms import Agent
@@ -26,12 +26,14 @@ from heretek_swarm.actors.mixins import (
     PatternMixin,
     ValidationMixin,
 )
-
-# Session 44: Collective Learning Integration
-from heretek_swarm.consciousness.phi_training import (
-    DecisionCoherenceTrainingScenario,
-    PhiTrainingEnvironment,
-    TrainingScenario,
+from heretek_swarm.actors.prism.transforms import (
+    PrismTransforms,
+    apply_framework_fallback,
+    detect_biases_heuristic,
+    generate_heuristic_perspective,
+    generate_reframe_fallback,
+    generate_stakeholder_map_fallback,
+    get_framework_prompt,
 )
 
 # Import types and transforms from sibling modules
@@ -42,14 +44,12 @@ from heretek_swarm.actors.prism.types import (
     Perspective,
     PerspectiveType,
 )
-from heretek_swarm.actors.prism.transforms import (
-    PrismTransforms,
-    apply_framework_fallback,
-    detect_biases_heuristic,
-    generate_heuristic_perspective,
-    generate_reframe_fallback,
-    generate_stakeholder_map_fallback,
-    get_framework_prompt,
+
+# Session 44: Collective Learning Integration
+from heretek_swarm.consciousness.phi_training import (
+    DecisionCoherenceTrainingScenario,
+    PhiTrainingEnvironment,
+    TrainingScenario,
 )
 
 logger = structlog.get_logger("PrismAgent")
@@ -154,7 +154,7 @@ class PrismAgent(
 
         # Session 44: Integration state
         self._active_deliberations: dict[str, str] = {}
-        self._pattern_emitted: Set[str] = set()
+        self._pattern_emitted: set[str] = set()
 
         logger.info(f"[{self.agent_id}] Prism agent initialized")
 

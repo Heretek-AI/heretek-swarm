@@ -7,8 +7,9 @@ Not used for security-critical operations (IDs use uuid, not random).
 
 import random
 import uuid
+from collections.abc import Callable
 from dataclasses import dataclass, field
-from typing import Any, Callable
+from typing import Any
 
 import structlog
 

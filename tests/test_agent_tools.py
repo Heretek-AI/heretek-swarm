@@ -12,16 +12,11 @@ Verifies that:
 
 from __future__ import annotations
 
-from unittest.mock import MagicMock, patch
-
-import pytest
-
 from heretek_swarm.mcp.agent_tools import (
     build_tool_handlers,
     build_tools_list_dictionary,
 )
 from heretek_swarm.tools.mcp_tools import CoreMCPTools, MCPToolDefinition
-
 
 # ---------------------------------------------------------------------------
 # Helpers

@@ -15,13 +15,15 @@ from __future__ import annotations
 import json
 import threading
 import time
-from pathlib import Path
+from typing import TYPE_CHECKING
 
 import pytest
 
 from heretek_swarm.goals.models import Goal, Vote
 from heretek_swarm.goals.store import FileGoalStore
 
+if TYPE_CHECKING:
+    from pathlib import Path
 
 # ---------------------------------------------------------------------------
 # Fixtures

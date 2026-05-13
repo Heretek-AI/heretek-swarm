@@ -19,10 +19,9 @@ from __future__ import annotations
 
 import uuid
 from datetime import UTC, datetime
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import structlog
-from swarms import Agent
 
 from heretek_swarm.actors.base import ActorMessage, AgentActor
 from heretek_swarm.actors.mixins import (
@@ -31,6 +30,9 @@ from heretek_swarm.actors.mixins import (
     MemoryMixin,
     PatternMixin,
 )
+
+if TYPE_CHECKING:
+    from swarms import Agent
 
 logger = structlog.get_logger("TriadAgents")
 
@@ -570,6 +572,93 @@ class StewardAgent(TriadAgent):
                 extra={"target_agent": agent_name, "task_type": task_type},
             )
             return ""
+
+    # ------------------------------------------------------------------
+    # Heartbeat / agent health monitoring
+    # ------------------------------------------------------------------
+
+    # Default heartbeat timeout: if an agent hasn't been seen for >15 s
+    # it is considered stale.  Tunable via internal_state / constructor.
+    _heartbeat_timeout: float = 15.0
+
+    # Internal set of agent IDs that have already been flagged as failed.
+    # The monitor loop skips these to avoid repeated notifications.
+    _failed_agents: set[str] = set()
+
+    def _check_registry_heartbeats(self) -> list[str]:
+        """Scan the actor registry for stale agents.
+
+        An agent is stale when its ``last_activity`` timestamp is older
+        than *now* minus ``_heartbeat_timeout``.  The steward itself is
+        always excluded from results.
+
+        Returns:
+            List of stale agent IDs, sorted for determinism.
+        """
+        registry = self._get_actor_registry()
+        if not registry:
+            return []
+
+        now = datetime.now(UTC)
+        stale: list[str] = []
+
+        for agent_id, actor in registry.items():
+            if agent_id == self.agent_id:  # exclude self
+                continue
+
+            last_activity_str = getattr(actor, "last_activity", None)
+            if last_activity_str is None:
+                continue  # pre-first-heartbeat — treat as initialising
+
+            try:
+                last_activity = datetime.fromisoformat(last_activity_str)
+            except (ValueError, TypeError):
+                # Malformed timestamp — treat as stale so it gets reaped
+                stale.append(agent_id)
+                continue
+
+            if (now - last_activity).total_seconds() > self._heartbeat_timeout:
+                stale.append(agent_id)
+
+        stale.sort()
+        return stale
+
+    def detect_heartbeat_failure(self) -> list[str]:
+        """Detect heartbeat failure via the NATS heartbeat bus.
+
+        Returns *heartbeats* where the last-seen timestamp has not
+        changed within ``_heartbeat_timeout`` seconds.
+
+        Returns:
+            List of agent IDs whose heartbeats appear to have stalled.
+        """
+        # In a full deployment this would query the NATS heartbeat subject.
+        # For no-infra / local testing, delegate to registry-based detection.
+        return self._check_registry_heartbeats()
+
+    async def _monitor_loop(self) -> None:
+        """Periodic coroutine that checks heartbeats and handles failures.
+
+        Called by the main actor loop.  Stale agents discovered via the
+        registry are handed to ``_handle_agent_failure()`` unless they
+        already appear in ``_failed_agents``.
+        """
+        stale = self._check_registry_heartbeats()
+        new_stale = [a for a in stale if a not in self._failed_agents]
+        for agent_id in new_stale:
+            self._failed_agents.add(agent_id)
+            await self._handle_agent_failure(agent_id)
+
+    async def _handle_agent_failure(self, agent_id: str) -> None:
+        """Handle a detected agent failure.
+
+        This is a hook for downstream policy — reaping, reassignment,
+        alerting — but for now it simply logs the event.
+        """
+        logger.warning(
+            f"[{self.agent_id}] Detected failed agent: {agent_id}",
+            extra={"failed_agent_id": agent_id},
+        )
 
     # StewardAgent intentionally does NOT override _perform_analysis.
     # hasattr(agent, '_perform_analysis') will be False for StewardAgent instances,

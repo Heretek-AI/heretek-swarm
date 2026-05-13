@@ -27,7 +27,7 @@ import structlog
 
 logger = structlog.get_logger(__name__)
 
-# Try to import Anthropic components
+from heretek_swarm.integrations.openai_assistants import MessageRole
 try:
     from anthropic import Anthropic, AsyncAnthropic
     from anthropic.types import ContentBlock, Message, TextBlock, ToolUseBlock

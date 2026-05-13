@@ -25,14 +25,17 @@ Reference: Phase 2 Plan Task 2 (CONS-02)
 """
 
 import hashlib
+import uuid
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from enum import StrEnum
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import structlog
 
-from heretek_swarm.security.behavioral_baseline import BaselineChangeType
+if TYPE_CHECKING:
+    from heretek_swarm.collective.learning import PatternStatus
+    from heretek_swarm.security.behavioral_baseline import BaselineChangeType
 
 logger = structlog.get_logger("immune_response")
 
@@ -219,9 +222,7 @@ class ImmuneQuorum:
         if self.started_at is None:
             return False
         elapsed = (datetime.now(UTC) - self.started_at).total_seconds()
-        if elapsed > self.timeout_seconds:
-            return True
-        return False
+        return elapsed > self.timeout_seconds
 
     def is_approved(self) -> bool | None:
         """Check if quorum approved. Returns None if incomplete or inconclusive."""
@@ -602,7 +603,7 @@ class ImmuneResponseBuilding:
                     pattern_id = pattern_id_with_ts
             else:
                 pattern_id = None
-            
+
             if pattern_id and pattern_id in self._immune_memory:
                 immune_pattern = self._immune_memory[pattern_id]
 
@@ -1360,7 +1361,7 @@ class ImmuneResponseEngine:
         first_response = responses[0]
         correct_count = sum(1 for r in responses if r.was_correct)
 
-        pattern = ImmunePattern(
+        return ImmunePattern(
             pattern_id=f"pattern-{pattern_key}",
             pattern_hash="",  # Required field
             pattern_type=first_response.anomaly_type,  # Required field
@@ -1372,7 +1373,6 @@ class ImmuneResponseEngine:
             source="immune_response",
         )
 
-        return pattern
 
     def get_response_history(
         self,

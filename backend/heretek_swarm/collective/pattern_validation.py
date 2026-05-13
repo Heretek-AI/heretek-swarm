@@ -404,8 +404,8 @@ class PatternValidator:
         factors = ImpactScoreFactors()
 
         # Extract information from pattern evidence/metadata
-        evidence = getattr(pattern, "evidence", {})
-        metadata = getattr(pattern, "metadata", {})
+        getattr(pattern, "evidence", {})
+        getattr(pattern, "metadata", {})
 
         # Set factors based on pattern class
         if hasattr(pattern, "pattern_class"):

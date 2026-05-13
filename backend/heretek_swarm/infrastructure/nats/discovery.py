@@ -6,14 +6,14 @@ Uses heartbeat mechanism to track agent liveness.
 """
 
 import asyncio
+import contextlib
 from dataclasses import dataclass, field
 from datetime import UTC, datetime, timedelta
 from enum import Enum
-from typing import Optional
 
 from heretek_swarm.infrastructure.nats.client import get_nats_client
 
-logger = __import__('logging').getLogger(__name__)
+logger = __import__("logging").getLogger(__name__)
 
 
 class AgentStatus(Enum):
@@ -321,7 +321,7 @@ class AgentRegistry:
         )
         await self._nats.publish(self.HEARTBEAT_TOPIC, heartbeat.to_dict())
 
-    def get_agent(self, agent_id: str) -> Optional[AgentInfo]:
+    def get_agent(self, agent_id: str) -> AgentInfo | None:
         """Get information about a specific agent."""
         return self._agents.get(agent_id)
 
@@ -384,10 +384,8 @@ class AgentRegistry:
 
         # Unsubscribe from topics
         for sub in self._subscriptions:
-            try:
+            with contextlib.suppress(Exception):
                 await sub.unsubscribe()
-            except Exception:
-                pass
         self._subscriptions.clear()
 
         # Clear agents
@@ -397,7 +395,7 @@ class AgentRegistry:
 
 
 # Global registry instance
-_registry: Optional[AgentRegistry] = None
+_registry: AgentRegistry | None = None
 
 
 async def get_discovery_registry() -> AgentRegistry:

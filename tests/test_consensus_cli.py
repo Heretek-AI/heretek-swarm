@@ -1,12 +1,11 @@
 """Tests for the `heretek-swarm consensus` CLI command."""
 
-import pytest
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, patch
 
+import pytest
 from click.testing import CliRunner
 
-from heretek_swarm.cli import cli, _display_consensus_results
-
+from heretek_swarm.cli import _display_consensus_results, cli
 
 # ------------------------------------------------------------------
 # Fixtures
@@ -177,12 +176,11 @@ class TestConsensusCLI:
             else:
                 mock_run_consensus.return_value = result
 
-            result_obj = runner.invoke(
+            return runner.invoke(
                 cli,
                 ["consensus", "should we add rate limiting?"],
             )
 
-        return result_obj
 
     def test_consensus_command_exists(self):
         """consensus command is registered in the CLI."""
@@ -384,7 +382,6 @@ class TestRoundHistoryDisplay:
             {"round_number": 2, "consensus_score": 0.87, "decision": "yes", "vote_count": 5},
         ]
         _display_consensus_results(result)
-        import sys
         # capsys doesn't work outside pytest, use a captured approach
         # This test verifies the function doesn't crash with round_history
 

@@ -15,11 +15,12 @@ Features:
 """
 
 import asyncio
+import contextlib
 import json
 import uuid
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, Optional, Set
+from typing import Any
 
 import structlog
 from swarms import Agent
@@ -150,10 +151,13 @@ class HistorianAgent(
 
         # Session 44: Integration state
         self._active_deliberations: dict[str, str] = {}
-        self._pattern_emitted: Set[str] = set()
+        self._pattern_emitted: set[str] = set()
 
         # Optional asyncpg connection pool for Postgres-backed event store
         self._db_pool: Any | None = db_pool  # may be injected later via internal_state
+
+        # JSONL event log path — read from module constant, overridable for tests
+        self._jsonl_path: Path = _HISTORIAN_FILE
 
         # Event log infrastructure — shared queue, one writer at a time
         self._jsonl_queue: asyncio.Queue[dict[str, Any]] = asyncio.Queue()
@@ -962,7 +966,7 @@ class HistorianAgent(
                 # Use asyncio.to_thread so file I/O does not block the
                 # event loop — stdlib only, no aiofiles dependency.
                 await asyncio.to_thread(
-                    self._write_jsonl_line, _HISTORIAN_FILE, line
+                    self._write_jsonl_line, self._jsonl_path, line
                 )
             except Exception:
                 logger.exception(
@@ -1217,10 +1221,8 @@ class HistorianAgent(
         if self._writer_task is not None and not self._writer_task.done():
             await self._jsonl_queue.join()
             self._writer_task.cancel()
-            try:
+            with contextlib.suppress(asyncio.CancelledError):
                 await self._writer_task
-            except asyncio.CancelledError:
-                pass
 
         # If PG mode was active, close the pool
         if self._using_pg:

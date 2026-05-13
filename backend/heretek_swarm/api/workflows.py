@@ -14,8 +14,9 @@ Provides REST API for:
 import asyncio
 import json
 import uuid
+from collections.abc import AsyncGenerator
 from datetime import UTC, datetime
-from typing import Any, AsyncGenerator
+from typing import Any
 
 import structlog
 from fastapi import APIRouter, Depends, HTTPException, Query
@@ -33,7 +34,7 @@ router = APIRouter(prefix="/api/workflows", tags=["workflows"])
 def _serialize_node_results(node_results: dict[str, Any]) -> dict[str, Any]:
     """
     Serialize node_results dict for JSON response.
-    
+
     NodeResult dataclass contains Exception objects which Pydantic cannot serialize.
     Converts to JSON-safe dict with error as string.
     """
@@ -203,7 +204,7 @@ async def execute_workflow(
     return {
         "execution_id": result.execution_id,
         "workflow_id": workflow_id,
-        "status": result.status.value if hasattr(result.status, 'value') else str(result.status),
+        "status": result.status.value if hasattr(result.status, "value") else str(result.status),
         "node_results": _serialize_node_results(result.node_results),
         "variables": result.variables,
         "start_time": result.start_time.isoformat(),
@@ -480,18 +481,18 @@ async def workflow_events_stream(
 
         # Send initial connection event
         initial_event = {
-            'status': 'connected',
-            'execution_id': execution_id,
-            'workflow_id': workflow_id,
-            'message': 'SSE connection established',
-            'timestamp': datetime.now(UTC).isoformat(),
+            "status": "connected",
+            "execution_id": execution_id,
+            "workflow_id": workflow_id,
+            "message": "SSE connection established",
+            "timestamp": datetime.now(UTC).isoformat(),
         }
         yield f"data: {json.dumps(initial_event)}\n\n"
 
         try:
             # Simulate workflow execution events for demo purposes
             # In production, this would integrate with actual workflow engine
-            for i in range(10):
+            for _i in range(10):
                 await asyncio.sleep(0.5)  # Simulate work
                 event_count += 1
 
@@ -500,15 +501,15 @@ async def workflow_events_stream(
                 message = f"Executing step {event_count}/10" if progress < 100 else "Workflow completed"
 
                 event_data = {
-                    'status': status,
-                    'currentNode': f'node-{event_count}' if event_count <= 5 else None,
-                    'progress': progress,
-                    'message': message,
-                    'timestamp': datetime.now(UTC).isoformat(),
-                    'workflow_id': workflow_id,
-                    'execution_id': execution_id,
-                    'node_results': {
-                        f'node-{j}': {'status': 'completed', 'duration_ms': 100 * j}
+                    "status": status,
+                    "currentNode": f"node-{event_count}" if event_count <= 5 else None,
+                    "progress": progress,
+                    "message": message,
+                    "timestamp": datetime.now(UTC).isoformat(),
+                    "workflow_id": workflow_id,
+                    "execution_id": execution_id,
+                    "node_results": {
+                        f"node-{j}": {"status": "completed", "duration_ms": 100 * j}
                         for j in range(1, event_count)
                     } if event_count > 1 else {},
                 }
@@ -521,19 +522,19 @@ async def workflow_events_stream(
         except asyncio.CancelledError:
             logger.info("sse_connection_cancelled", execution_id=execution_id)
             cancelled_event = {
-                'status': 'cancelled',
-                'execution_id': execution_id,
-                'message': 'SSE connection closed by client',
-                'timestamp': datetime.now(UTC).isoformat(),
+                "status": "cancelled",
+                "execution_id": execution_id,
+                "message": "SSE connection closed by client",
+                "timestamp": datetime.now(UTC).isoformat(),
             }
             yield f"data: {json.dumps(cancelled_event)}\n\n"
         except Exception as e:
             logger.error("sse_connection_error", execution_id=execution_id, error=str(e))
             error_event = {
-                'status': 'failed',
-                'execution_id': execution_id,
-                'message': f'Stream error: {str(e)}',
-                'timestamp': datetime.now(UTC).isoformat(),
+                "status": "failed",
+                "execution_id": execution_id,
+                "message": f"Stream error: {e!s}",
+                "timestamp": datetime.now(UTC).isoformat(),
             }
             yield f"data: {json.dumps(error_event)}\n\n"
         finally:
@@ -588,17 +589,17 @@ async def workflow_specific_events_stream(
 
         # Send initial connection event
         connected_event = {
-            'status': 'connected',
-            'execution_id': execution_id,
-            'workflow_id': workflow_id,
-            'message': f'Watching workflow {workflow_id}',
-            'timestamp': datetime.now(UTC).isoformat(),
+            "status": "connected",
+            "execution_id": execution_id,
+            "workflow_id": workflow_id,
+            "message": f"Watching workflow {workflow_id}",
+            "timestamp": datetime.now(UTC).isoformat(),
         }
         yield f"data: {json.dumps(connected_event)}\n\n"
 
         try:
             workflow = engine.workflows[workflow_id]
-            node_count = len(workflow.nodes) if hasattr(workflow, 'nodes') else 5
+            node_count = len(workflow.nodes) if hasattr(workflow, "nodes") else 5
 
             # Simulate workflow execution events
             for i in range(node_count):
@@ -610,15 +611,15 @@ async def workflow_specific_events_stream(
                 node_id = workflow.nodes[i].id if i < len(workflow.nodes) else f"node-{i}"
 
                 event_data = {
-                    'status': status,
-                    'currentNode': node_id,
-                    'progress': progress,
-                    'message': f"Executing {node_id}" if progress < 100 else "Workflow completed",
-                    'timestamp': datetime.now(UTC).isoformat(),
-                    'workflow_id': workflow_id,
-                    'execution_id': execution_id,
-                    'total_nodes': node_count,
-                    'completed_nodes': event_count,
+                    "status": status,
+                    "currentNode": node_id,
+                    "progress": progress,
+                    "message": f"Executing {node_id}" if progress < 100 else "Workflow completed",
+                    "timestamp": datetime.now(UTC).isoformat(),
+                    "workflow_id": workflow_id,
+                    "execution_id": execution_id,
+                    "total_nodes": node_count,
+                    "completed_nodes": event_count,
                 }
 
                 yield f"data: {json.dumps(event_data)}\n\n"
@@ -629,21 +630,21 @@ async def workflow_specific_events_stream(
         except asyncio.CancelledError:
             logger.info("workflow_sse_cancelled", execution_id=execution_id)
             cancelled_event = {
-                'status': 'cancelled',
-                'execution_id': execution_id,
-                'workflow_id': workflow_id,
-                'message': 'SSE connection closed by client',
-                'timestamp': datetime.now(UTC).isoformat(),
+                "status": "cancelled",
+                "execution_id": execution_id,
+                "workflow_id": workflow_id,
+                "message": "SSE connection closed by client",
+                "timestamp": datetime.now(UTC).isoformat(),
             }
             yield f"data: {json.dumps(cancelled_event)}\n\n"
         except Exception as e:
             logger.error("workflow_sse_error", execution_id=execution_id, error=str(e))
             error_event = {
-                'status': 'failed',
-                'execution_id': execution_id,
-                'workflow_id': workflow_id,
-                'message': f'Stream error: {str(e)}',
-                'timestamp': datetime.now(UTC).isoformat(),
+                "status": "failed",
+                "execution_id": execution_id,
+                "workflow_id": workflow_id,
+                "message": f"Stream error: {e!s}",
+                "timestamp": datetime.now(UTC).isoformat(),
             }
             yield f"data: {json.dumps(error_event)}\n\n"
         finally:

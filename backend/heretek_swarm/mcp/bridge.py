@@ -13,13 +13,15 @@ API can serve them.
 
 from __future__ import annotations
 
-from typing import Any
+from typing import TYPE_CHECKING
 
 import structlog
 
 from heretek_swarm.mcp.registry import MCPToolMetadata, ToolProviderType
 from heretek_swarm.mcp.server import get_registry, set_registry
-from heretek_swarm.tools.mcp_tools import CoreMCPTools
+
+if TYPE_CHECKING:
+    from heretek_swarm.tools.mcp_tools import CoreMCPTools
 
 logger = structlog.get_logger(__name__)
 

@@ -66,7 +66,7 @@ def build_agent_for(
     ValueError
         If ``OPENAI_API_KEY`` is not set in the environment.
     """
-    from swarms import Agent  # noqa: PLC0415 — deferred so module load stays fast
+    from swarms import Agent
 
     api_key = os.environ.get("OPENAI_API_KEY")
     if not api_key:

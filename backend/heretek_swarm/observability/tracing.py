@@ -369,11 +369,11 @@ class TelemetryMiddleware(BaseHTTPMiddleware):
                 "http.target": request.url.path,
             },
         ) as span:
-            # Add trace ID to request state for correlation
-            if span.is_recording():
-                request.state.trace_id = format(span.get_span_context().trace_id, "032x")
-
             start_time = time.perf_counter()
+            # Always set trace_id on request state for correlation (even if span
+            # is not recording, e.g. when OTLP exporter is disabled).
+            trace_id_value = format(span.get_span_context().trace_id, "032x")
+            request.state.trace_id = trace_id_value
 
             try:
                 response = await call_next(request)

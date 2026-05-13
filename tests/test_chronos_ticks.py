@@ -15,14 +15,11 @@ Covers five scenarios:
 from __future__ import annotations
 
 from datetime import UTC, datetime, timedelta
-from unittest.mock import AsyncMock, MagicMock
-
-import pytest
 
 from heretek_swarm.actors.chronos.scheduler import ChronosSchedulerMixin
 from heretek_swarm.actors.chronos.types import (
-    ScheduleStatus,
     ScheduledTask,
+    ScheduleStatus,
     Tick,
 )
 

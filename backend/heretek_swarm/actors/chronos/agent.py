@@ -18,7 +18,7 @@ import asyncio
 import contextlib
 import uuid
 from datetime import UTC, datetime, timedelta
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import structlog
 
@@ -47,7 +47,9 @@ from heretek_swarm.coordination.time_dilation import (
 
 from .handlers import ChronosHandlersMixin
 from .scheduler import ChronosSchedulerMixin
-from .types import Deadline, ScheduledTask
+
+if TYPE_CHECKING:
+    from .types import Deadline, ScheduledTask
 
 logger = structlog.get_logger(__name__)
 

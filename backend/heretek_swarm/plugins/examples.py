@@ -178,7 +178,6 @@ class HealthMonitorPlugin(Plugin):
 
     def _start_health_checks(self) -> None:
         """Start periodic health checks."""
-        import asyncio
         asyncio.create_task(self._health_check_loop())
 
     async def _health_check_loop(self) -> None:

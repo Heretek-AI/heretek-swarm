@@ -11,12 +11,14 @@ argument exchange. After 2 rounds, Steward + Arbiter serve as tie-breakers.
 from __future__ import annotations
 
 import asyncio
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import structlog
 
-from heretek_swarm.consensus.consensus_coordinator import ConsensusCoordinator
 from heretek_swarm.goals.models import Goal, Vote
+
+if TYPE_CHECKING:
+    from heretek_swarm.consensus.consensus_coordinator import ConsensusCoordinator
 
 logger = structlog.get_logger("GoalConsensus")
 
@@ -236,8 +238,7 @@ class GoalConsensus:
             return True, r2_votes, 2
 
         # --- Tie-break via Steward + Arbiter -------------------------------
-        tie_result = await self._tie_break(goal, actors, r2_votes, per_round_timeout)
-        return tie_result
+        return await self._tie_break(goal, actors, r2_votes, per_round_timeout)
 
     # ------------------------------------------------------------------
     # Vote collection
@@ -426,7 +427,8 @@ class GoalConsensus:
                     actor.run_with_llm(prompt, timeout=30),
                     timeout=min(timeout, 30),
                 )
-                import json, re
+                import json
+                import re
 
                 decision = "abstain"
                 confidence = 0.5

@@ -17,11 +17,6 @@ import structlog
 from fastapi import APIRouter, HTTPException, Response
 from structlog import get_logger
 
-from heretek_swarm.infrastructure.nats.publisher import (
-    SwarmEvent,
-    get_nats_publisher,
-)
-
 from heretek_swarm.config.models import (
     InfrastructureConfigCreate,
     InfrastructureConfigUpdate,
@@ -37,6 +32,10 @@ from heretek_swarm.config.service import (
 from heretek_swarm.infrastructure.health import (
     check_all_infrastructure,
     check_infrastructure_health,
+)
+from heretek_swarm.infrastructure.nats.publisher import (
+    SwarmEvent,
+    get_nats_publisher,
 )
 
 logger = get_logger("api.wizard")
@@ -1162,25 +1161,24 @@ async def create_infrastructure_config(
                 "is_enabled": updated.is_enabled,
                 "message": "Configuration updated",
             }
-        else:
-            # Create new config
-            created = await service.create_infrastructure_config(config)
+        # Create new config
+        created = await service.create_infrastructure_config(config)
 
-            logger.info(
-                "infrastructure_config_created",
-                service=config.service.value,
-                id=str(created.id),
-            )
+        logger.info(
+            "infrastructure_config_created",
+            service=config.service.value,
+            id=str(created.id),
+        )
 
-            return {
-                "id": str(created.id),
-                "service": created.service,
-                "host": created.host,
-                "port": created.port,
-                "connection_url": created.connection_url,
-                "is_enabled": created.is_enabled,
-                "message": "Configuration created",
-            }
+        return {
+            "id": str(created.id),
+            "service": created.service,
+            "host": created.host,
+            "port": created.port,
+            "connection_url": created.connection_url,
+            "is_enabled": created.is_enabled,
+            "message": "Configuration created",
+        }
     except Exception as e:
         logger.error("Failed to create/update infrastructure config", service=config.service.value, error=str(e))
         raise HTTPException(500, f"Failed to create/update infrastructure config: {e!s}")

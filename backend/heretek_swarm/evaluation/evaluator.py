@@ -3,7 +3,7 @@ import asyncio
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Any, Optional
 
 
 class EvaluationStatus(Enum):
@@ -19,10 +19,10 @@ class EvaluationStatus(Enum):
 class OutputConstraints:
     max_tokens: int = 1000
     format: str = "text"
-    max_length: Optional[int] = None
-    required_keys: Optional[List[str]] = None
-    forbidden_patterns: Optional[List[str]] = None
-    schema: Optional[Dict[str, Any]] = None
+    max_length: int | None = None
+    required_keys: list[str] | None = None
+    forbidden_patterns: list[str] | None = None
+    schema: dict[str, Any] | None = None
 
 
 @dataclass
@@ -30,10 +30,10 @@ class TestCase:
     id: str
     name: str
     description: str = ""
-    input_data: Dict[str, Any] = field(default_factory=dict)
-    expected_output: Optional[Dict[str, Any]] = None
-    constraints: Optional[OutputConstraints] = None
-    metadata: Dict[str, Any] = field(default_factory=dict)
+    input_data: dict[str, Any] = field(default_factory=dict)
+    expected_output: dict[str, Any] | None = None
+    constraints: OutputConstraints | None = None
+    metadata: dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass
@@ -41,11 +41,11 @@ class EvaluationResult:
     evaluation_id: str
     agent_id: str
     status: EvaluationStatus
-    started_at: Optional[str] = None
-    completed_at: Optional[str] = None
+    started_at: str | None = None
+    completed_at: str | None = None
     total_time: float = 0.0
     metrics: Optional["EvaluationMetrics"] = None
-    test_results: Optional[List["TestResult"]] = None
+    test_results: list["TestResult"] | None = None
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -59,7 +59,7 @@ class EvaluationResult:
         }
 
 
-@dataclass 
+@dataclass
 class EvaluationMetrics:
     success_rate: float = 0.0
     constraint_compliance: float = 0.0
@@ -79,8 +79,8 @@ class EvaluationMetrics:
 class TestResult:
     test_id: str
     success: bool
-    error: Optional[Any] = None
-    validation_errors: Optional[List[str]] = None
+    error: Any | None = None
+    validation_errors: list[str] | None = None
     execution_time_ms: float = 0.0
 
     def to_dict(self) -> dict[str, Any]:
@@ -99,8 +99,8 @@ class AgentEvaluator:
     def __init__(self, timeout: float = 30.0, parallel: bool = True):
         self.timeout = timeout
         self.parallel = parallel
-        self.results: List[EvaluationResult] = []
-        self._evaluations: Dict[str, EvaluationResult] = {}
+        self.results: list[EvaluationResult] = []
+        self._evaluations: dict[str, EvaluationResult] = {}
 
     async def _run_single_test_case(
         self,
@@ -110,7 +110,7 @@ class AgentEvaluator:
         """Run a single test case and return result plus success flag."""
         start = datetime.now()
         error = None
-        validation_errors: List[str] = []
+        validation_errors: list[str] = []
 
         try:
             input_data = tc.input_data if isinstance(tc.input_data, dict) else {"query": tc.input_data}
@@ -122,7 +122,7 @@ class AgentEvaluator:
                 validation_errors.extend(self._validate_constraints(output, tc.constraints))
 
             success = len(validation_errors) == 0
-        except asyncio.TimeoutError as e:
+        except TimeoutError as e:
             error = e
             validation_errors = [f"Execution timeout after {self.timeout}s"]
             success = False
@@ -145,8 +145,8 @@ class AgentEvaluator:
         self,
         agent_id: str,
         agent: Any,
-        test_cases: List[TestCase],
-        evaluation_id: Optional[str] = None,
+        test_cases: list[TestCase],
+        evaluation_id: str | None = None,
     ) -> EvaluationResult:
         """Evaluate an agent against test cases."""
         eval_id = evaluation_id or f"eval_{agent_id}_{datetime.now().timestamp()}"
@@ -186,7 +186,7 @@ class AgentEvaluator:
         self._evaluations[eval_id] = result
         return result
 
-    def _validate_expected_output(self, output: Any, expected: Dict[str, Any]) -> List[str]:
+    def _validate_expected_output(self, output: Any, expected: dict[str, Any]) -> list[str]:
         """Validate output against expected output."""
         errors = []
         if isinstance(expected, dict) and isinstance(output, dict):
@@ -197,52 +197,52 @@ class AgentEvaluator:
                     errors.append(f"Expected {key}={value}, got {output[key]}")
         return errors
 
-    def _validate_constraints(self, output: Any, constraints: OutputConstraints) -> List[str]:
+    def _validate_constraints(self, output: Any, constraints: OutputConstraints) -> list[str]:
         """Validate output against constraints."""
         errors = []
-        
+
         # Check required keys
         if constraints.required_keys and isinstance(output, dict):
             for key in constraints.required_keys:
                 if key not in output:
                     errors.append(f"Missing required key: {key}")
-        
+
         # Check max length
-        if hasattr(constraints, 'max_length') and constraints.max_length:
+        if hasattr(constraints, "max_length") and constraints.max_length:
             output_str = str(output)
             if len(output_str) > constraints.max_length:
                 errors.append(f"Output exceeds max length: {len(output_str)} > {constraints.max_length}")
-        
+
         # Check forbidden patterns
         if constraints.forbidden_patterns and isinstance(output, str):
             import re
             for pattern in constraints.forbidden_patterns:
                 if re.search(pattern, output):
                     errors.append("forbidden pattern detected in output")
-        
+
         return errors
 
-    def _validate_output(self, output: Any, test_case: TestCase) -> List[str]:
+    def _validate_output(self, output: Any, test_case: TestCase) -> list[str]:
         """Validate agent output against test case constraints."""
         errors = []
-        
+
         if test_case.constraints is None:
             return errors
-            
+
         return self._validate_constraints(output, test_case.constraints)
 
-    def get_evaluation(self, evaluation_id: str) -> Optional[EvaluationResult]:
+    def get_evaluation(self, evaluation_id: str) -> EvaluationResult | None:
         """Get evaluation by ID."""
         return self._evaluations.get(evaluation_id)
 
-    def list_evaluations(self) -> List[EvaluationResult]:
+    def list_evaluations(self) -> list[EvaluationResult]:
         """List all evaluations."""
         return list(self._evaluations.values())
 
     def compare_agents(
         self,
-        results: Dict[str, EvaluationResult]
-    ) -> Dict[str, EvaluationMetrics]:
+        results: dict[str, EvaluationResult]
+    ) -> dict[str, EvaluationMetrics]:
         """Compare evaluation results across agents."""
         comparison = {}
         for agent_id, result in results.items():
@@ -250,7 +250,7 @@ class AgentEvaluator:
                 comparison[agent_id] = result.metrics
         return comparison
 
-    def get_stats(self) -> Dict[str, Any]:
+    def get_stats(self) -> dict[str, Any]:
         """Get evaluation statistics."""
         total = len(self.results)
         passed = sum(1 for r in self.results if r.status == EvaluationStatus.PASSED)

@@ -9,6 +9,7 @@ Workflows are stored as a dict keyed by workflow ID, each entry containing
 the full workflow definition plus metadata (created_at, updated_at, name).
 """
 
+import contextlib
 import json
 import os
 import threading
@@ -139,8 +140,6 @@ class FileWorkflowStore:
                 error=str(exc),
             )
             # Clean up partial tmp file
-            try:
+            with contextlib.suppress(OSError):
                 tmp.unlink(missing_ok=True)
-            except OSError:
-                pass
             raise

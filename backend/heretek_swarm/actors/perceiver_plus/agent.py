@@ -15,12 +15,10 @@ Version: 1.0.0
 
 from __future__ import annotations
 
-import math
 from datetime import UTC, datetime
-from typing import Any, Set
+from typing import TYPE_CHECKING, Any
 
 import structlog
-from swarms import Agent
 
 from heretek_swarm.actors.base import ActorMessage, AgentActor
 from heretek_swarm.actors.mixins import (
@@ -42,8 +40,12 @@ from heretek_swarm.actors.perceiver_plus.types import (
 from heretek_swarm.collective.learning import PatternType
 
 # Session 44: Consensus Integration
-from heretek_swarm.consensus.swarm_deliberation import Position
 from heretek_swarm.knowledge.unified_access import KnowledgeQueryResult, UnifiedKnowledgeAccess
+
+if TYPE_CHECKING:
+    from swarms import Agent
+
+    from heretek_swarm.consensus.swarm_deliberation import Position
 
 logger = structlog.get_logger("PerceiverPlusAgent")
 
@@ -152,7 +154,7 @@ class PerceiverPlusAgent(
 
         # Session 44: Integration state
         self._active_deliberations: dict[str, str] = {}
-        self._pattern_emitted: Set[str] = set()
+        self._pattern_emitted: set[str] = set()
 
         logger.info(f"[{self.agent_id}] Perceiver+ agent initialized")
 

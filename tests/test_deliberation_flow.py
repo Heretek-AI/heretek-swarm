@@ -21,7 +21,7 @@ and their ``aiohttp.ClientSession`` objects are properly closed.
 
 from __future__ import annotations
 
-from unittest.mock import AsyncMock, MagicMock, PropertyMock
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 

@@ -149,6 +149,26 @@ async def delete_config(
 
 
 # =============================================================================
+# LLM Provider Type Helpers
+# =============================================================================
+
+def _list_llm_provider_types() -> list[str]:
+    """List available LLM provider type identifiers."""
+    return ["openai", "anthropic", "google", "azure", "ollama", "local"]
+
+def _get_llm_provider_info(provider_type: str) -> dict[str, Any]:
+    """Get information about a specific LLM provider type."""
+    info_map: dict[str, dict[str, Any]] = {
+        "openai": {"type": "openai", "name": "OpenAI", "models": ["gpt-4o", "gpt-4o-mini"]},
+        "anthropic": {"type": "anthropic", "name": "Anthropic", "models": ["claude-sonnet-4-6"]},
+        "google": {"type": "google", "name": "Google AI", "models": ["gemini-2.5-pro"]},
+        "azure": {"type": "azure", "name": "Azure OpenAI", "models": ["gpt-4o"]},
+        "ollama": {"type": "ollama", "name": "Ollama", "models": ["llama3.1"]},
+        "local": {"type": "local", "name": "Local", "models": ["local"]},
+    }
+    return info_map.get(provider_type, {"type": provider_type, "name": provider_type, "models": []})
+
+# =============================================================================
 # LLM Provider Endpoints
 # =============================================================================
 
@@ -156,8 +176,8 @@ async def delete_config(
 @router.get("/llm/types")
 async def list_llm_provider_types() -> dict[str, Any]:
     """List available LLM provider types."""
-    types = list_llm_provider_types()
-    info = [get_llm_provider_info(t) for t in types]
+    types = _list_llm_provider_types()
+    info = [_get_llm_provider_info(t) for t in types]
     return {"provider_types": info}
 
 
@@ -286,8 +306,8 @@ async def test_llm_provider(
 @router.get("/embedding/types")
 async def list_embedding_provider_types() -> dict[str, Any]:
     """List available embedding provider types."""
-    types = list_embedding_provider_types()
-    info = [get_embedding_provider_info(t) for t in types]
+    types = _list_embedding_provider_types()
+    info = [_get_embedding_provider_info(t) for t in types]
     return {"provider_types": info}
 
 

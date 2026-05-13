@@ -30,19 +30,19 @@ from heretek_swarm.actors.dreamer.generators import (
 
 # Re-export types from types.py
 from heretek_swarm.actors.dreamer.types import (
-    CreativityTechnique,
     CreativeIdea,
     CreativeSession,
+    CreativityTechnique,
     IdeaCategory,
     InnovationReport,
     NoveltyLevel,
 )
 
 __all__ = [
-    # Types (enums and data classes)
-    "CreativityTechnique",
     "CreativeIdea",
     "CreativeSession",
+    # Types (enums and data classes)
+    "CreativityTechnique",
     "DreamerAgent",
     "DreamerGeneratorsMixin",
     "IdeaCategory",

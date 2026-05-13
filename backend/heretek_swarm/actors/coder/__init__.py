@@ -16,12 +16,12 @@ from heretek_swarm.actors.coder.types import (
 
 __all__ = [
     "CodeLanguage",
-    "CodeTask",
-    "ReviewSeverity",
-    "CodeSnippet",
-    "ReviewIssue",
     "CodeReview",
+    "CodeSnippet",
+    "CodeTask",
+    "CoderAgent",
     "DebugSession",
     "ImplementationTask",
-    "CoderAgent",
+    "ReviewIssue",
+    "ReviewSeverity",
 ]

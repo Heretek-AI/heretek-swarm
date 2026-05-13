@@ -149,6 +149,6 @@ class TestReadmeDockerComposeNaming:
             if v1_command_pattern.search(line)
         ]
         assert not violations, (
-            f"Found 'docker-compose <cmd>' (V1 command) in README on line(s): "
+            "Found 'docker-compose <cmd>' (V1 command) in README on line(s): "
             + ", ".join(str(ln) for ln, _ in violations)
         )

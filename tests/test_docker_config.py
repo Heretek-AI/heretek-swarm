@@ -2,8 +2,6 @@
 import json
 import subprocess
 
-import pytest
-
 
 def test_docker_compose_config_validates():
     """docker compose config should parse without errors."""

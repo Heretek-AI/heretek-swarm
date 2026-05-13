@@ -707,7 +707,7 @@ class SelfMaintenanceScheduler:
                 # If we get here without timeout, shutdown was requested
                 break
 
-            except asyncio.TimeoutError:
+            except TimeoutError:
                 # Normal interval elapsed, loop continues
                 pass
             except asyncio.CancelledError:
@@ -759,7 +759,7 @@ class SelfMaintenanceScheduler:
                     timeout=self.config.log_rotation_interval_seconds,
                 )
                 break
-            except asyncio.TimeoutError:
+            except TimeoutError:
                 now = datetime.now(UTC)
                 if (
                     self._last_log_rotation is None
@@ -779,7 +779,7 @@ class SelfMaintenanceScheduler:
                     timeout=self.config.db_maintenance_interval_seconds,
                 )
                 break
-            except asyncio.TimeoutError:
+            except TimeoutError:
                 now = datetime.now(UTC)
                 if (
                     self._last_db_maintenance is None
@@ -799,7 +799,7 @@ class SelfMaintenanceScheduler:
                     timeout=self.config.config_drift_interval_seconds,
                 )
                 break
-            except asyncio.TimeoutError:
+            except TimeoutError:
                 now = datetime.now(UTC)
                 if (
                     self._last_drift_check is None

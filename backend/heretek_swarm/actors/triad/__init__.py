@@ -22,9 +22,9 @@ from heretek_swarm.actors.triad.agent import (
 )
 
 __all__ = [
-    "TriadAgent",
-    "StewardAgent",
     "AlphaAgent",
     "BetaAgent",
     "CharlieAgent",
+    "StewardAgent",
+    "TriadAgent",
 ]

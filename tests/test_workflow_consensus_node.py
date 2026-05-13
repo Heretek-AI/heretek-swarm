@@ -13,26 +13,21 @@ Verifies that:
 
 from __future__ import annotations
 
-import asyncio
 from dataclasses import dataclass, field
+from datetime import UTC, datetime
 from typing import Any
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
-from datetime import UTC, datetime
-
 from heretek_swarm.consensus.maker import ConsensusResult, ConsensusState, Vote
 from heretek_swarm.workflow.engine import (
-    NodeResult,
     NodeStatus,
     Workflow,
     WorkflowContext,
     WorkflowEngine,
     WorkflowNode,
-    WorkflowState,
 )
-
 
 # ── Fixtures ─────────────────────────────────────────────────────────────────
 

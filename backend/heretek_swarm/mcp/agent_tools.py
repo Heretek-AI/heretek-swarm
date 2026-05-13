@@ -22,11 +22,14 @@ Usage (post-spawn injection)::
 from __future__ import annotations
 
 import asyncio
-from typing import Any, Callable
+from typing import TYPE_CHECKING, Any
 
 import structlog
 
-from heretek_swarm.tools.mcp_tools import MCPToolRegistry as ToolsMCPToolRegistry
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
+    from heretek_swarm.tools.mcp_tools import MCPToolRegistry as ToolsMCPToolRegistry
 
 logger = structlog.get_logger(__name__)
 

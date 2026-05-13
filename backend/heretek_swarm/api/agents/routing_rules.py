@@ -8,7 +8,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 
 from heretek_swarm.gateway.auth import verify_auth
-from heretek_swarm.gateway.content_router import ContentRouter, get_content_router
+from heretek_swarm.gateway.content_router import ContentFilter, ContentRouter, FilterOperator, RoutingRule, get_content_router
 
 logger = structlog.get_logger()
 router = APIRouter()
@@ -291,8 +291,7 @@ async def delete_routing_rule(
         if router.remove_rule(rule_id):
             logger.info("routing_rule_deleted", rule_id=rule_id)
             return {"message": f"Rule {rule_id} deleted successfully"}
-        else:
-            raise HTTPException(404, f"Rule {rule_id} not found")
+        raise HTTPException(404, f"Rule {rule_id} not found")
     except HTTPException:
         raise
     except Exception as e:

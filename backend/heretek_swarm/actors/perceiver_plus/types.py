@@ -157,10 +157,10 @@ class CorrelationMatrix:
 
 
 __all__ = [
+    "AnalyticsResult",
     "AnalyticsType",
+    "CorrelationMatrix",
     "DataModality",
     "StatisticalTest",
-    "AnalyticsResult",
     "TrendAnalysis",
-    "CorrelationMatrix",
 ]

@@ -13,7 +13,7 @@ detect patterns across sources, and identify contradictions.
 """
 
 from dataclasses import dataclass, field
-from datetime import UTC, datetime
+from datetime import datetime
 from enum import StrEnum
 from typing import Any
 
@@ -436,10 +436,7 @@ class ResearchModule:
             return True
 
         # Same source type
-        if finding1.source.source_type == finding2.source.source_type:
-            return True
-
-        return False
+        return finding1.source.source_type == finding2.source.source_type
 
     def _content_similarity(self, content1: str, content2: str) -> float:
         """

@@ -1,13 +1,8 @@
 """Tests for AutonomousSwarm.run_consensus() runtime integration."""
 
-import asyncio
-import json
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
-
-from heretek_swarm.consensus.maker import ConsensusResult, ConsensusState, Vote
-
 
 # ------------------------------------------------------------------
 # Helpers
@@ -59,7 +54,7 @@ def _all_mock_actors() -> dict[str, AsyncMock]:
     }
 
 
-@pytest.fixture()
+@pytest.fixture
 def mock_swarm():
     """Create a minimal AutonomousSwarm with mocked internals for testing run_consensus."""
     # Patch at import level to avoid NATS/infra dependencies

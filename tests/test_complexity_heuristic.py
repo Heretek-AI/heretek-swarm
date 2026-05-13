@@ -12,7 +12,6 @@ from heretek_swarm.consensus.complexity import (
     ComplexityResult,
 )
 
-
 # ── Fixtures ───────────────────────────────────────────────────────────
 
 @pytest.fixture

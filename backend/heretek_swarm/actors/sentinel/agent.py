@@ -48,9 +48,7 @@ from heretek_swarm.actors.mixins import (
 from heretek_swarm.actors.sentinel.helpers import SentinelHelpers
 from heretek_swarm.actors.sentinel.types import (
     AnomalyAlert,
-    ContentCategory,
     SafetyLevel,
-    SafetyReport,
     SafetyViolation,
     ViolationType,
 )

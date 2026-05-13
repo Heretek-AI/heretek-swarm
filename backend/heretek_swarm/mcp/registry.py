@@ -11,6 +11,7 @@ Provides centralized tool management for MCP protocol:
 from __future__ import annotations
 
 import asyncio
+import contextlib
 import json
 import os
 from dataclasses import dataclass, field
@@ -201,10 +202,8 @@ class MCPToolRegistry:
                 path=str(TOOLS_STATE_FILE),
             )
             # Best-effort cleanup of the temp file.
-            try:
+            with contextlib.suppress(OSError):
                 tmp_path.unlink(missing_ok=True)
-            except OSError:
-                pass
 
     def set_tool_enabled(self, name: str, enabled: bool) -> bool:
         """Enable or disable a registered tool by name.
@@ -518,10 +517,7 @@ class MCPToolRegistry:
     ) -> bool:
         """Check that all required fields are present."""
         required = schema.get("required", [])
-        for field_name in required:
-            if field_name not in arguments:
-                return False
-        return True
+        return all(field_name in arguments for field_name in required)
 
     def _validate_all_properties(
         self,
@@ -549,9 +545,7 @@ class MCPToolRegistry:
             return False
         if not self._check_numeric_bounds(value, prop_schema):
             return False
-        if not self._check_string_length(value, prop_schema):
-            return False
-        return True
+        return self._check_string_length(value, prop_schema)
 
     def _check_type_constraint(
         self,
@@ -596,9 +590,7 @@ class MCPToolRegistry:
             return True
         if "minimum" in prop_schema and value < prop_schema["minimum"]:
             return False
-        if "maximum" in prop_schema and value > prop_schema["maximum"]:
-            return False
-        return True
+        return not ("maximum" in prop_schema and value > prop_schema["maximum"])
 
     def _check_string_length(
         self,
@@ -610,9 +602,7 @@ class MCPToolRegistry:
             return True
         if "minLength" in prop_schema and len(value) < prop_schema["minLength"]:
             return False
-        if "maxLength" in prop_schema and len(value) > prop_schema["maxLength"]:
-            return False
-        return True
+        return not ("maxLength" in prop_schema and len(value) > prop_schema["maxLength"])
 
 
 class MCPServerRegistry:

@@ -10,15 +10,12 @@ a GovernanceSecurityError is raised and the input is NOT recorded.
 
 import asyncio
 from concurrent.futures import ThreadPoolExecutor
-from functools import partial
-from typing import Any, Optional
+from typing import Any
 
 import structlog
 
 from heretek_swarm.consensus.deliberation import (
-    Argument,
     ArgumentType,
-    CounterArgument,
     DeliberationEngine,
     DeliberationResult,
     DeliberationRound,

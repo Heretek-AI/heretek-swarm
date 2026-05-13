@@ -30,15 +30,15 @@ from heretek_swarm.actors.coordinator.types import (
 )
 
 __all__ = [
+    "AgentState",
+    "CoordinatedTask",
     # Main agent class
     "CoordinatorAgent",
-    # Types (enums and dataclasses)
-    "TaskStatus",
-    "DependencyType",
-    "CoordinatedTask",
-    "AgentState",
     # Strategy classes
     "DependencyResolutionStrategy",
+    "DependencyType",
     "ParallelExecutionStrategy",
     "ResourceAllocationStrategy",
+    # Types (enums and dataclasses)
+    "TaskStatus",
 ]

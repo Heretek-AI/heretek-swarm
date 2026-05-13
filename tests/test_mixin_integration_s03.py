@@ -14,9 +14,7 @@ from __future__ import annotations
 
 from typing import Any
 
-import pytest
-
-from heretek_swarm.actors import AlphaAgent, AgentActor
+from heretek_swarm.actors import AgentActor, AlphaAgent
 from heretek_swarm.actors.mixins import (
     AuditMixin,
     DeliberationMixin,
@@ -28,6 +26,8 @@ from heretek_swarm.actors.mixins import (
     PatternMixin,
     TribunalMixin,
     ValidationMixin,
+)
+from heretek_swarm.actors.mixins import (
     __all__ as mixins_all,
 )
 from heretek_swarm.actors.mixins.memory import AccessTier
@@ -35,7 +35,6 @@ from heretek_swarm.actors.stubs import (
     StubAccessAnalyzer,
     StubDeliberationEngine,
     StubPatternExtractor,
-    StubTribunal,
 )
 
 # ===================================================================

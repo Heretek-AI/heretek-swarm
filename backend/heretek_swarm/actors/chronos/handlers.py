@@ -7,7 +7,6 @@ Contains 10 handlers organized as a mixin for cooperative MRO.
 
 import uuid
 from datetime import UTC, datetime, timedelta
-from typing import Any
 
 import structlog
 
@@ -72,7 +71,7 @@ class ChronosHandlersMixin:
                 datetime.fromisoformat(scheduled_at_str) if scheduled_at_str else datetime.now(UTC)
             )
 
-            from .types import RecurrenceType, Priority, ScheduledTask
+            from .types import Priority, RecurrenceType, ScheduledTask
 
             recurrence_str = content.get("recurrence")
             recurrence = RecurrenceType(recurrence_str) if recurrence_str else RecurrenceType.ONCE

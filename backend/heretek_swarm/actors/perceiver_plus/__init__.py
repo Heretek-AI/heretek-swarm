@@ -38,16 +38,16 @@ from heretek_swarm.actors.perceiver_plus.types import (
 )
 
 __all__ = [
-    # Agent
-    "PerceiverPlusAgent",
     # Types (enums and data classes)
     "AnalyticsResult",
     "AnalyticsType",
     "CorrelationMatrix",
     "DataModality",
-    "StatisticalTest",
-    "TrendAnalysis",
     # Mixins
     "PerceiverAnalyticsMixin",
     "PerceiverAnalyticsMixinImpl",
+    # Agent
+    "PerceiverPlusAgent",
+    "StatisticalTest",
+    "TrendAnalysis",
 ]

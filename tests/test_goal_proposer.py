@@ -20,7 +20,6 @@ import pytest
 from heretek_swarm.goals.models import Goal
 from heretek_swarm.goals.proposer import GoalProposer
 
-
 # ---------------------------------------------------------------------------
 # Fixtures
 # ---------------------------------------------------------------------------

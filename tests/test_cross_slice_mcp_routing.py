@@ -7,7 +7,7 @@ Key question: does an agent with complexity-based routing ALSO have MCP tools
 available on its swarms_agent after both slices' code paths execute?
 
 The answer is structural: run_with_llm() routes through ModelGarage when
-available, and MCP tools are injected onto swarms_agent.tools / 
+available, and MCP tools are injected onto swarms_agent.tools /
 swarms_agent.tools_list_dictionary post-spawn. The test below proves
 both code paths execute correctly on the same agent.
 """
@@ -15,8 +15,6 @@ both code paths execute correctly on the same agent.
 from __future__ import annotations
 
 from unittest.mock import AsyncMock, MagicMock
-
-import pytest
 
 from heretek_swarm.actors.base import AgentActor
 from heretek_swarm.llm.model_garage import LLMResponse
@@ -26,7 +24,6 @@ from heretek_swarm.mcp.agent_tools import (
 )
 from heretek_swarm.routing.model_router import AgentModelRouter
 from heretek_swarm.tools.mcp_tools import CoreMCPTools, MCPToolDefinition
-
 
 # ---------------------------------------------------------------------------
 # Helpers

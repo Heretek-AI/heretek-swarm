@@ -10,6 +10,7 @@ Goal.to_dict() representation for lossless round-trip serialization.
 
 from __future__ import annotations
 
+import contextlib
 import json
 import os
 import threading
@@ -192,8 +193,6 @@ class FileGoalStore:
                 path=str(self._path),
                 error=str(exc),
             )
-            try:
+            with contextlib.suppress(OSError):
                 tmp.unlink(missing_ok=True)
-            except OSError:
-                pass
             raise

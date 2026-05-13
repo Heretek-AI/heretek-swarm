@@ -25,7 +25,6 @@ from heretek_swarm.actors.base import AgentActor
 from heretek_swarm.llm.model_garage import LLMResponse
 from heretek_swarm.routing.model_router import AgentModelRouter
 
-
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------

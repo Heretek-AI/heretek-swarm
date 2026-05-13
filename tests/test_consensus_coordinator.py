@@ -1,9 +1,9 @@
 """Tests for ConsensusCoordinator — bridge between agents and MAKER voting."""
 
 import asyncio
-import json
 import os
-from unittest.mock import AsyncMock, MagicMock, patch
+from typing import Any
+from unittest.mock import AsyncMock
 
 import pytest
 
@@ -55,12 +55,12 @@ def _make_mock_actor(responses: dict[str, str | Exception] | None = None):
     return actor
 
 
-@pytest.fixture()
+@pytest.fixture
 def maker() -> MAKERConsensus:
     return MAKERConsensus(ahead_by_k=2, min_votes=3)
 
 
-@pytest.fixture()
+@pytest.fixture
 def ds() -> DomainSelector:
     return DomainSelector(characters_dir=_CHARACTERS_DIR)
 
@@ -89,7 +89,7 @@ def _all_agents_mock() -> dict[str, Any]:
     }
 
 
-@pytest.fixture()
+@pytest.fixture
 def coordinator(maker, ds) -> ConsensusCoordinator:
     """Coordinator with mock actors for all agents DomainSelector might pick."""
     return ConsensusCoordinator(maker=maker, domain_selector=ds, actors=_all_agents_mock())
@@ -325,7 +325,7 @@ class TestLLMFailureHandling:
         maker.add_vote(consensus_id, "examiner", "yes", 0.9)
 
         votes = maker.active_processes[consensus_id]
-        sentinel_vote = [v for v in votes if v.agent_id == "sentinel"][0]
+        sentinel_vote = next(v for v in votes if v.agent_id == "sentinel")
         assert sentinel_vote.decision == "abstain"
         assert sentinel_vote.confidence == 0.0
         assert sentinel_vote.metadata["status"] == "llm_failure"
@@ -396,7 +396,7 @@ class TestTimeoutHandling:
             actor.run_with_llm = AsyncMock(side_effect=_slow)
 
         coord = ConsensusCoordinator(maker=maker, domain_selector=ds, actors=actors)
-        result = await coord.run_consensus("test question", timeout=0.01)
+        await coord.run_consensus("test question", timeout=0.01)
         # Should return None (not enough votes collected) or abstain
         # Just verify it doesn't hang
 
@@ -743,7 +743,7 @@ class TestRoundPromptContent:
             actor.run_with_llm = AsyncMock(side_effect=_capture)
 
         coord = ConsensusCoordinator(maker=maker, domain_selector=ds, actors=actors)
-        result = await coord.run_consensus("security analysis", max_rounds=3)
+        await coord.run_consensus("security analysis", max_rounds=3)
 
         # Check if round 2 prompt was sent
         round_2_prompts = [

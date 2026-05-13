@@ -1,10 +1,10 @@
 """Synchronization mechanisms with deadlock detection and coordination ratio tracking."""
 
+import uuid
 from dataclasses import dataclass, field
 from datetime import UTC, datetime, timedelta
 from enum import Enum
 from typing import Any
-import uuid
 
 
 class DeadlockState(Enum):
@@ -239,8 +239,8 @@ class TaskSynchronizer:
         WHITE = 0
         GRAY = 1
         BLACK = 2
-        color: dict[str, int] = {agent: WHITE for agent in self._wait_for_graph}
-        parent: dict[str, str | None] = {agent: None for agent in self._wait_for_graph}
+        color: dict[str, int] = dict.fromkeys(self._wait_for_graph, WHITE)
+        parent: dict[str, str | None] = dict.fromkeys(self._wait_for_graph)
         cycle_path: list[str] | None = None
 
         def dfs(agent: str) -> bool:
@@ -258,7 +258,7 @@ class TaskSynchronizer:
                     if cycle_path is None or len(path) < len(cycle_path):
                         cycle_path = path
                     return True
-                elif color[neighbor] == WHITE:
+                if color[neighbor] == WHITE:
                     parent[neighbor] = agent
                     if dfs(neighbor):
                         return True
@@ -266,7 +266,6 @@ class TaskSynchronizer:
             return False
 
         for agent in self._wait_for_graph:
-            if color[agent] == WHITE:
-                if dfs(agent):
-                    return cycle_path
+            if color[agent] == WHITE and dfs(agent):
+                return cycle_path
         return None

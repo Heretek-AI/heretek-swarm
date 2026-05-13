@@ -15,12 +15,9 @@ from __future__ import annotations
 
 from unittest.mock import AsyncMock, MagicMock
 
-import pytest
-
 from heretek_swarm.actors.base.core import ActorMessage
 from heretek_swarm.actors.empath import EmpathAgent
 from heretek_swarm.actors.metis import MetisAgent
-
 
 # ---------------------------------------------------------------------------
 # Helpers

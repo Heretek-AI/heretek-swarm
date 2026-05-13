@@ -26,7 +26,7 @@ import asyncio
 import json
 import re
 from datetime import UTC, datetime
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import structlog
 
@@ -56,13 +56,10 @@ from heretek_swarm.collective.learning import PatternExtractor, PatternType
 validate_message = validate_message_schema
 
 # Session 44: Consensus Integration
-from heretek_swarm.consensus.swarm_deliberation import Position, SwarmDeliberationEngine
 
 # Session 44: Memory Optimization Integration
-from heretek_swarm.memory.access_patterns import AccessPatternAnalyzer
 
 # Session 44: Zero-Trust Validation
-from heretek_swarm.security.zero_trust import ZeroTrustValidator
 
 # DISC-02: Stress Testing Module
 from heretek_swarm.testing.stress_testing import (
@@ -76,6 +73,11 @@ from heretek_swarm.testing.stress_testing import (
     StressTestResult,
     StressTestType,
 )
+
+if TYPE_CHECKING:
+    from heretek_swarm.consensus.swarm_deliberation import Position, SwarmDeliberationEngine
+    from heretek_swarm.memory.access_patterns import AccessPatternAnalyzer
+    from heretek_swarm.security.zero_trust import ZeroTrustValidator
 
 logger = structlog.get_logger("ExaminerAgent")
 

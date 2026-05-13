@@ -20,19 +20,22 @@ import asyncio
 import contextlib
 import os
 from datetime import UTC, datetime
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import structlog
 
-from heretek_swarm.agents.agent_factory import build_agent_for
+if TYPE_CHECKING:
+    from heretek_swarm.goals.store import FileGoalStore
+
 from heretek_swarm.actors.supervisor import ActorSupervisor
+from heretek_swarm.agents.agent_factory import build_agent_for
 from heretek_swarm.api.consciousness import get_consciousness_plugin
 from heretek_swarm.channels.registry import ChannelRegistry, GroupRegistry
 from heretek_swarm.consensus.consensus_coordinator import ConsensusCoordinator
 from heretek_swarm.consensus.domain_selector import DomainSelector
 from heretek_swarm.consensus.maker import MAKERConsensus
 from heretek_swarm.gateway.nats_event_mesh import NATSEventMeshWithJetStream
-from heretek_swarm.llm.model_garage import ModelGarage, initialize_model_garage
+from heretek_swarm.llm.model_garage import ModelGarage
 from heretek_swarm.memory.base import DualTierMemory
 from heretek_swarm.rag.rag_pipeline import RAGPipeline
 from heretek_swarm.routing.model_router import set_global_model_garage
@@ -91,7 +94,7 @@ class AutonomousSwarm:
         self._analysis_cycle_count = 0
 
         # M011: Goal pipeline store (initialized on first use in --no-infra path)
-        self._goal_store: "FileGoalStore | None" = None
+        self._goal_store: FileGoalStore | None = None
 
     def _default_config(self) -> dict[str, Any]:
         """Default configuration for autonomous swarm."""
@@ -409,7 +412,7 @@ class AutonomousSwarm:
             sleep_time = min(timeout, 120)
             await asyncio.sleep(sleep_time)
 
-        except asyncio.TimeoutError:
+        except TimeoutError:
             logger.warning("deliberation_timeout", prompt=prompt)
         except Exception as exc:
             logger.error(
@@ -974,7 +977,7 @@ class AutonomousSwarm:
             "perceiver-plus": _PERCEIVER_PLUS_SYSTEM_PROMPT,
         }
 
-        for agent_class, agent_id, topics in actors:
+        for agent_class, agent_id, _topics in actors:
             try:
                 actor = await self.supervisor.spawn_actor(agent_class, agent_id)
                 # Inject a swarms.Agent so the actor can produce real LLM output
@@ -1344,7 +1347,7 @@ class AutonomousSwarm:
                     "timestamp": datetime.now(UTC).isoformat(),
                     "active_actors": len(self.supervisor.actors),
                     "mailbox_sizes": {
-                        agent_id: getattr(actor, 'mailbox', asyncio.Queue()).qsize()
+                        agent_id: getattr(actor, "mailbox", asyncio.Queue()).qsize()
                         for agent_id, actor in self.supervisor.actors.items()
                     },
                     "system_status": "healthy",
@@ -1465,7 +1468,6 @@ class AutonomousSwarm:
 
     async def _report_agents_loop(self) -> None:
         """Report agent statuses to the API server periodically."""
-        import httpx
         import os
 
         api_host = os.getenv("HERETEK_API_HOST", "heretek-api")
@@ -1482,7 +1484,7 @@ class AutonomousSwarm:
         api_port: int
     ) -> None:
         """Collect and report agent statuses to the API server.
-        
+
         Extracts the agent collection and reporting logic to reduce
         cognitive complexity of the parent loop.
         """
@@ -1511,7 +1513,7 @@ class AutonomousSwarm:
         actor: Any
     ) -> dict[str, Any] | None:
         """Extract status dictionary for a single agent.
-        
+
         Returns None if status cannot be extracted (agent not ready).
         """
         try:
@@ -1675,7 +1677,6 @@ async def main():
             error=str(exc),
             exc_info=True,
         )
-        print(f"ERROR: Swarm initialization failed: {exc}", flush=True)
         raise
 
 

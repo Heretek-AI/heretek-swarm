@@ -140,9 +140,8 @@ class HabitForgeStreaksMixin:
 
         # Calculate consistency score
         consistency = 1.0 - (min(avg_gap - 1, 2) / 3)  # Penalize gaps > 1 day
-        consistency = max(0.0, min(1.0, consistency))
+        return max(0.0, min(1.0, consistency))
 
-        return consistency
 
 
 # Standalone utility functions for use without a class instance

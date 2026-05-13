@@ -13,16 +13,13 @@ from __future__ import annotations
 
 import asyncio
 import json
-import multiprocessing
 import os
-import signal
 import subprocess
 import sys
 import time
 from pathlib import Path
 
 import pytest
-import structlog
 
 # This integration test requires a running infrastructure stack (Postgres,
 # Redis, etc.) and a real API server.  Skip unconditionally unless the
@@ -126,7 +123,7 @@ async def test_agent_status_messages_received(api_server):
                 raw = await asyncio.wait_for(ws.recv(), timeout=2)
                 msg = json.loads(raw)
                 messages.append(msg)
-            except asyncio.TimeoutError:
+            except TimeoutError:
                 continue
 
     # --- Assertions ---

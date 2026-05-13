@@ -11,15 +11,12 @@ Covers three scenarios:
 from __future__ import annotations
 
 import asyncio
-import json
 from datetime import UTC, datetime
-from typing import Any
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
 from heretek_swarm.actors.historian import HistorianAgent
-
 
 # ---------------------------------------------------------------------------
 # Fixtures
@@ -223,14 +220,14 @@ class TestReadEvents:
                     "event_type": "test_event",
                     "timestamp": now,
                     "agent_id": "alice",
-                    'payload': {"n": 1},
+                    "payload": {"n": 1},
                 },
                 {
                     "event_id": "def456",
                     "event_type": "other_event",
                     "timestamp": now,
                     "agent_id": "bob",
-                    'payload': {"n": 2},
+                    "payload": {"n": 2},
                 },
             ])
 

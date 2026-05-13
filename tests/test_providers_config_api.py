@@ -20,19 +20,19 @@ from __future__ import annotations
 
 import json
 import os
-from pathlib import Path
+from typing import TYPE_CHECKING
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 from fastapi.testclient import TestClient
 
+from heretek_swarm.api.main import app
 from heretek_swarm.llm.model_garage import (
     ModelGarage,
-    _model_garage,
 )
 
-from heretek_swarm.api.main import app
-
+if TYPE_CHECKING:
+    from pathlib import Path
 
 # ---------------------------------------------------------------------------
 # Helpers

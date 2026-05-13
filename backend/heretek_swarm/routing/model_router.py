@@ -7,10 +7,9 @@ its own standalone configs when no garage is available.
 """
 from __future__ import annotations
 
-from collections import defaultdict
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Dict, List, Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from heretek_swarm.llm.model_garage import LLMResponse, ModelGarage
@@ -33,7 +32,7 @@ class RouterProviderConfig:
     provider_id: str
     base_url: str
     api_key: str
-    models: List[str]
+    models: list[str]
     priority: int
     max_rpm: int = 100
     health_status: bool = True
@@ -44,7 +43,7 @@ class RoutingDecision:
     provider_id: str
     model: str
     complexity: TaskComplexity
-    fallback_chain: List[str] = field(default_factory=list)
+    fallback_chain: list[str] = field(default_factory=list)
     confidence: float = 1.0
 
 
@@ -59,25 +58,25 @@ class AgentModelRouter:
     def __init__(
         self,
         agent_id: str,
-        providers: Optional[List[RouterProviderConfig]] = None,
-        model_garage: Optional["ModelGarage"] = None,
+        providers: list[RouterProviderConfig] | None = None,
+        model_garage: ModelGarage | None = None,
     ):
         self.agent_id = agent_id
-        self._providers: Dict[str, RouterProviderConfig] = {
+        self._providers: dict[str, RouterProviderConfig] = {
             p.provider_id: p for p in (providers or [])
         }
         self._model_garage = model_garage
-        self._request_counts: Dict[str, int] = {}
-        self._cost_tracking: Dict[str, float] = {}
-        self._token_tracking: Dict[str, int] = {}
-        self._models_used: Dict[str, Dict[str, int]] = {}
+        self._request_counts: dict[str, int] = {}
+        self._cost_tracking: dict[str, float] = {}
+        self._token_tracking: dict[str, int] = {}
+        self._models_used: dict[str, dict[str, int]] = {}
 
     def register_provider(self, config: RouterProviderConfig) -> None:
         """Register a standalone provider config (garage-independent path)."""
         self._providers[config.provider_id] = config
 
     def record_usage(
-        self, provider_id: str, response: "LLMResponse"
+        self, provider_id: str, response: LLMResponse
     ) -> None:
         """Record token usage, request count, and cost for a provider after an LLM call.
 
@@ -105,7 +104,7 @@ class AgentModelRouter:
             self._models_used[provider_id].get(model_name, 0) + 1
         )
 
-    def _get_providers(self) -> Dict[str, RouterProviderConfig]:
+    def _get_providers(self) -> dict[str, RouterProviderConfig]:
         """Get provider configs, preferring ModelGarage when available.
 
         When a ModelGarage is wired, converts its ProviderConfig objects
@@ -134,7 +133,7 @@ class AgentModelRouter:
     def classify_complexity(
         self,
         task: str,
-        tokens_estimate: Optional[int] = None,
+        tokens_estimate: int | None = None,
         requires_reasoning: bool = False
     ) -> TaskComplexity:
         score = 0
@@ -156,7 +155,7 @@ class AgentModelRouter:
                 score -= 1
         if score <= 0:
             return TaskComplexity.SIMPLE
-        elif score <= 2:
+        if score <= 2:
             return TaskComplexity.STANDARD
         return TaskComplexity.COMPLEX
 
@@ -246,7 +245,7 @@ class AgentModelRouter:
 
         raise RuntimeError("No healthy model providers available")
 
-    def get_stats(self) -> Dict[str, Any]:
+    def get_stats(self) -> dict[str, Any]:
         providers = self._get_providers()
         return {
             "agent_id": self.agent_id,
@@ -260,11 +259,11 @@ class AgentModelRouter:
         }
 
 
-_router_registry: Dict[str, AgentModelRouter] = {}
-_global_model_garage: "ModelGarage | None" = None
+_router_registry: dict[str, AgentModelRouter] = {}
+_global_model_garage: ModelGarage | None = None
 
 
-def set_global_model_garage(garage: "ModelGarage | None") -> None:
+def set_global_model_garage(garage: ModelGarage | None) -> None:
     """Set the global ModelGarage instance used by all new AgentModelRouter instances.
 
     When a ModelGarage is wired, every AgentModelRouter created via

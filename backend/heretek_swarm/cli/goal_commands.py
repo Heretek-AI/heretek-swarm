@@ -17,12 +17,16 @@ import structlog
 logger = structlog.get_logger("goal_cli")
 
 
+from heretek_swarm.goals.models import Goal
+
+
+
 def _goal_table_header() -> str:
     """Return the formatted column header for the goal list table."""
     return f"{'GOAL ID':<38} {'TITLE':<40} {'STATUS':<12} {'VOTES':<6} {'CREATED':<20}"
 
 
-def _format_goal_row(goal: "Goal") -> str:
+def _format_goal_row(goal: Goal) -> str:
     """Format a single Goal as a table row."""
     vote_count = len(goal.votes) if goal.votes else 0
     created = goal.created_at[:19].replace("T", " ") if goal.created_at else "-"
@@ -35,7 +39,6 @@ def _format_goal_row(goal: "Goal") -> str:
 async def _run_goal_propose() -> None:
     """Async helper: spin up swarm, propose a goal via Metis, persist, and display."""
     from heretek_swarm.goals.models import Goal
-    from heretek_swarm.goals.proposer import GoalProposer
     from heretek_swarm.goals.store import FileGoalStore
     from heretek_swarm.logging.config import setup_logging
     from heretek_swarm.runtime.main_loop import AutonomousSwarm
@@ -133,7 +136,7 @@ async def _run_goal_propose() -> None:
     click.echo(click.style(f"  Goal ID:     {goal_id}", fg="cyan"))
     click.echo(click.style(f"  Title:       {title}", bold=True))
     click.echo(f"  Description: {description}")
-    click.echo(f"  Success Criteria:")
+    click.echo("  Success Criteria:")
     for i, sc in enumerate(success_criteria, 1):
         click.echo(f"    {i}. {sc}")
     if estimated_node_types:
@@ -157,7 +160,7 @@ async def _run_goal_propose() -> None:
     store = FileGoalStore()
     store.save(goal)
 
-    click.echo(click.style(f"  \u2713 Goal persisted to goals.json", fg="green"))
+    click.echo(click.style("  \u2713 Goal persisted to goals.json", fg="green"))
     click.echo("")
 
 

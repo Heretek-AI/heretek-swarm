@@ -47,10 +47,10 @@ from typing import Any
 
 import structlog
 
-from heretek_swarm.collective.algorithms.abc import ABC, BeeAgent, SwarmDecision as ABCSwarmDecision
-from heretek_swarm.collective.algorithms.aco import ACO, PheromoneTrail, SwarmDecision as ACOSwarmDecision
-from heretek_swarm.collective.algorithms.pso import PSO, Particle, SwarmDecision as PSOSwarmDecision
-from heretek_swarm.collective.swarm_patterns import FlockingRule, SwarmPattern
+from heretek_swarm.collective.algorithms.abc import ABC
+from heretek_swarm.collective.algorithms.aco import ACO
+from heretek_swarm.collective.algorithms.pso import PSO
+from heretek_swarm.collective.swarm_patterns import SwarmPattern
 
 logger = structlog.get_logger("SwarmIntelligenceEngine")
 

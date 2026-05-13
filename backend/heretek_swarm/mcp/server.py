@@ -13,12 +13,11 @@ async support and structured logging.
 
 from __future__ import annotations
 
+import time as _time_module
 from datetime import UTC, datetime
 from typing import Any
 
 import structlog
-import time as _time_module
-
 from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel, Field
 

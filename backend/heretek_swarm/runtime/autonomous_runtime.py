@@ -824,8 +824,9 @@ class AutonomousRuntime:
                     # Get metrics from consciousness plugin for this agent
                     agent_data = self._consciousness_plugin.get_agent_metrics(agent_id)
                     if agent_data:
-                        from heretek_swarm.consciousness.agency_metrics import AgentAgencyMetrics
-                        from heretek_swarm.consciousness.agency_metrics import ActionOrigin
+                        from heretek_swarm.consciousness.agency_metrics import (
+                            AgentAgencyMetrics,
+                        )
                         # Map consciousness metrics to agency metrics
                         agency_metrics = AgentAgencyMetrics(
                             agent_id=agent_id,
@@ -860,13 +861,13 @@ class AutonomousRuntime:
             reason: The reason for the restart
             alert_type: Optional alert type for failure events (e.g., "agent.failure")
         """
+        # Generate or use existing correlation_id for tracing
+        import uuid
+
         from heretek_swarm.infrastructure.nats.publisher import (
             EventPriority,
             SwarmEvent,
         )
-
-        # Generate or use existing correlation_id for tracing
-        import uuid
         correlation_id = str(uuid.uuid4())
 
         # Determine event type based on context

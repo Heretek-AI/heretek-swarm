@@ -20,14 +20,11 @@ and clear both the swarm-local and global supervisor actor registries.
 from __future__ import annotations
 
 import asyncio
+import contextlib
 import json
-import os
 from datetime import UTC, datetime, timedelta
-from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 from unittest.mock import AsyncMock, MagicMock, patch
-
-import pytest
 
 from heretek_swarm.actors.chronos.types import ScheduleStatus, Tick
 from heretek_swarm.actors.historian import HistorianAgent
@@ -36,6 +33,8 @@ from heretek_swarm.actors.supervisor import get_supervisor
 from heretek_swarm.runtime.daemon import _build_status_response
 from heretek_swarm.runtime.main_loop import AutonomousSwarm
 
+if TYPE_CHECKING:
+    from pathlib import Path
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -74,16 +73,14 @@ def _make_historian(tmp_path: Path, jsonl_name: str = "test.jsonl") -> Historian
     The agent is initialised but its ``_jsonl_writer_task`` is exposed so
     the caller can ``join()`` the queue before reading the file.
     """
-    from heretek_swarm.actors.historian import _HISTORIAN_FILE as _orig
 
     import heretek_swarm.actors.historian as _h_mod
 
     jsonl_path = tmp_path / jsonl_name
     _h_mod._HISTORIAN_FILE = jsonl_path
 
-    agent = HistorianAgent()
+    return HistorianAgent()
     # Inject jsonl_path before initialize() reads _HISTORIAN_FILE
-    return agent
 
 
 async def _drain_and_cleanup_historian(agent: HistorianAgent) -> None:
@@ -91,10 +88,8 @@ async def _drain_and_cleanup_historian(agent: HistorianAgent) -> None:
     if agent._writer_task is not None and not agent._writer_task.done():
         await agent._jsonl_queue.join()
         agent._writer_task.cancel()
-        try:
+        with contextlib.suppress(asyncio.CancelledError):
             await agent._writer_task
-        except asyncio.CancelledError:
-            pass
 
 
 def _read_jsonl(path: Path) -> list[dict[str, Any]]:
@@ -166,7 +161,7 @@ class TestFullProcessCycle:
             await chronos.initialize()
 
             # Seed a PENDING task on Chronos that targets "alpha"
-            tick = _make_tick(agent_id="alpha", action="do_work")
+            _make_tick(agent_id="alpha", action="do_work")
             # The schedule is managed via _tasks and _task_queue on ChronosAgent
             from heretek_swarm.actors.chronos.types import ScheduledTask
             task = ScheduledTask(
@@ -556,7 +551,7 @@ class TestStatusResponseWithRealAgents:
 
                     # _build_status_response calls get_all_status() without await
                     # (daemon code quirk). We patch it to return a plain dict.
-                    from heretek_swarm.actors.base import ActorStatus, ActorState
+                    from heretek_swarm.actors.base import ActorState, ActorStatus
 
                     # Build fake status dict for spawned actors
                     fake_status = {}
@@ -602,7 +597,7 @@ class TestStatusResponseWithRealAgents:
                 try:
                     await swarm.initialize()
 
-                    from heretek_swarm.actors.base import ActorStatus, ActorState
+                    from heretek_swarm.actors.base import ActorState, ActorStatus
 
                     fake_status = {}
                     for aid in swarm.supervisor.actors:
@@ -654,8 +649,8 @@ class TestDaemonSocketIPC:
         """Start a TCP server with ``handle_daemon_connection`` handler.
         Connect a client, send ``{"type": "status"}``, verify response
         contains ``"agents"`` key with correct fields."""
+        from heretek_swarm.actors.base import ActorState, ActorStatus
         from heretek_swarm.runtime.daemon import handle_daemon_connection
-        from heretek_swarm.actors.base import ActorStatus, ActorState
 
         # Build a mock swarm with known agent status data
         swarm = MagicMock()

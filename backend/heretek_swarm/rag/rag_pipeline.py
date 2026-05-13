@@ -205,7 +205,7 @@ class RAGPipeline:
             await self.initialize()
 
         metadata = metadata or {}
-        chunk_strat = chunk_strategy or ChunkStrategy(self.config.chunk_strategy)
+        chunk_strategy or ChunkStrategy(self.config.chunk_strategy)
 
         if isinstance(documents, str):
             documents = [documents]

@@ -16,7 +16,6 @@ import pytest
 
 from heretek_swarm.actors.base.core import ActorState, ActorStatus
 
-
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------

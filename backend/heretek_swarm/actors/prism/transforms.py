@@ -13,7 +13,7 @@ Version: 1.0.0
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
 from heretek_swarm.actors.prism.types import (
     AnalyticalFramework,
@@ -22,10 +22,6 @@ from heretek_swarm.actors.prism.types import (
     Perspective,
     PerspectiveType,
 )
-
-if TYPE_CHECKING:
-    from heretek_swarm.actors.prism.agent import PrismAgent
-
 
 # Perspective-specific heuristic templates
 VIEWPOINT_TEMPLATES: dict[PerspectiveType, str] = {
@@ -340,14 +336,14 @@ class PrismTransforms:
 
 
 __all__ = [
-    "PrismTransforms",
-    "VIEWPOINT_TEMPLATES",
-    "FRAMEWORK_PROMPTS",
     "BIAS_PATTERNS",
-    "generate_heuristic_perspective",
-    "detect_biases_heuristic",
-    "get_framework_prompt",
+    "FRAMEWORK_PROMPTS",
+    "VIEWPOINT_TEMPLATES",
+    "PrismTransforms",
     "apply_framework_fallback",
-    "generate_stakeholder_map_fallback",
+    "detect_biases_heuristic",
+    "generate_heuristic_perspective",
     "generate_reframe_fallback",
+    "generate_stakeholder_map_fallback",
+    "get_framework_prompt",
 ]

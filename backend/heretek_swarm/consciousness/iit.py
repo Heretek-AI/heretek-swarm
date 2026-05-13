@@ -20,11 +20,11 @@ Date: 2026-04-15
 Version: 1.0.0
 """
 
+import math
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from enum import Enum
 from typing import Any
-import math
 
 import structlog
 

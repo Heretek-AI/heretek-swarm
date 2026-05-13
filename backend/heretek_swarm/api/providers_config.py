@@ -19,11 +19,11 @@ Cross-cutting concerns:
 
 from __future__ import annotations
 
+import contextlib
 import json
 import os as _os
 import time
 import uuid
-from pathlib import Path
 from typing import Any
 
 import structlog
@@ -188,10 +188,8 @@ def _write_embedding_providers(full_config: dict, embedding_list: list[dict]) ->
             error=e.__class__.__name__,
             detail=str(e),
         )
-        try:
+        with contextlib.suppress(FileNotFoundError):
             tmp.unlink()
-        except FileNotFoundError:
-            pass
         raise HTTPException(
             status_code=500,
             detail="Failed to persist embedding provider config",
@@ -269,7 +267,7 @@ async def update_llm_provider(
 
     # Merge: use existing values for fields not in the update
     provider_type = _validate_provider_type(body.type) if body.type else existing.provider_type
-    
+
     updated = ProviderConfig(
         id=provider_id,
         name=body.name if body.name is not None else existing.name,
@@ -409,11 +407,9 @@ async def update_embedding_provider(
     _normalise_id(provider_id, "embedding")
 
     full_cfg, providers = _read_embedding_providers()
-    idx: int | None = None
     existing: dict | None = None
-    for i, p in enumerate(providers):
+    for _i, p in enumerate(providers):
         if p.get("id") == provider_id:
-            idx = i
             existing = p
             break
 

@@ -21,8 +21,6 @@ from heretek_swarm.workflow.engine import (
     WorkflowNode,
 )
 
-
-
 logger = structlog.get_logger(__name__)
 
 
@@ -119,7 +117,7 @@ class DAGStrategy(ExecutionStrategy):
         failed_nodes: list[str] = []
 
         # Build dependency map: node_id -> list of input node ids
-        node_inputs: dict[str, list[str]] = {
+        {
             node.id: node.inputs for node in workflow.nodes
         }
 
@@ -147,7 +145,7 @@ class DAGStrategy(ExecutionStrategy):
                         timeout=self.timeout_seconds,
                     )
                     return node_id, result, None
-                except asyncio.TimeoutError:
+                except TimeoutError:
                     return node_id, None, f"Timeout after {self.timeout_seconds}s"
                 except Exception as e:
                     return node_id, None, str(e)
@@ -187,7 +185,7 @@ class DAGStrategy(ExecutionStrategy):
                 execution_time=0.0,
                 node_results=node_results,
                 error_message=f"Cycle detected in DAG workflow: nodes {remaining} form a cycle",
-                node_status={nid: "failed" for nid in remaining},
+                node_status=dict.fromkeys(remaining, "failed"),
             )
 
         success = len(failed_nodes) == 0 and len(remaining) == 0
@@ -315,7 +313,7 @@ class CycleStrategy(ExecutionStrategy):
             execution_time=context.get("elapsed", 0.0),
             node_results=node_results,
             error_message=None if success else f"Status: {status} at iteration {iteration_count}",
-            node_status={nid: status for nid in node_results},
+            node_status=dict.fromkeys(node_results, status),
         )
 
     def _find_cycle_edges(self, workflow: Workflow) -> set[str]:
@@ -380,7 +378,7 @@ class MajorityVoteStrategy(ExecutionStrategy):
                         timeout=self.timeout_seconds,
                     )
                     return node.id, result, None
-                except asyncio.TimeoutError:
+                except TimeoutError:
                     return node.id, None, f"Timeout after {self.timeout_seconds}s"
                 except Exception as e:
                     return node.id, None, str(e)
@@ -412,7 +410,7 @@ class MajorityVoteStrategy(ExecutionStrategy):
                 execution_time=context.get("elapsed", 0.0),
                 node_results=node_results,
                 error_message=f"Too many failures: {failed_nodes}",
-                node_status={nid: "failed" for nid in failed_nodes},
+                node_status=dict.fromkeys(failed_nodes, "failed"),
             )
 
         return WorkflowExecutionResult(
@@ -424,7 +422,7 @@ class MajorityVoteStrategy(ExecutionStrategy):
                 "aggregated": aggregated,
             },
             error_message=None,
-            node_status={nid: "completed" for nid in node_results},
+            node_status=dict.fromkeys(node_results, "completed"),
         )
 
     def _majority_vote(

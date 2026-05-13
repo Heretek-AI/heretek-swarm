@@ -17,12 +17,15 @@ import operator
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from enum import Enum
-from typing import Annotated, Any, TypeVar
+from typing import Annotated, TYPE_CHECKING, Any, TypeVar
 
 import structlog
 from typing_extensions import TypedDict
 
 from heretek_swarm.workflow.store import FileWorkflowStore
+
+if TYPE_CHECKING:
+    from heretek_swarm.workflow.strategies import WorkflowExecutionResult
 
 logger = structlog.get_logger(__name__)
 
@@ -714,7 +717,7 @@ class WorkflowEngine:
                 )
                 # Convert strategy result to WorkflowResult
                 return self._strategy_result_to_result(strat_result, context)
-            elif strategy == "cycle":
+            if strategy == "cycle":
                 from heretek_swarm.workflow.strategies import CycleStrategy
 
                 strat = CycleStrategy(max_iterations=self.max_iterations, timeout_seconds=self.timeout_seconds)
@@ -904,23 +907,22 @@ class WorkflowEngine:
         Returns the output directly for strategy aggregation.
         """
         input_data = self._get_node_input(workflow, node, context)
-        start_time = datetime.now(UTC)
+        datetime.now(UTC)
 
         try:
             if node.type == "agent":
                 return await self._execute_agent_node(node, input_data, context)
-            elif node.type == "tool":
+            if node.type == "tool":
                 return await self._execute_tool_node(node, input_data, context)
-            elif node.type == "chain":
+            if node.type == "chain":
                 return await self._execute_chain_node(node, input_data, context)
-            elif node.type == "memory":
+            if node.type == "memory":
                 return await self._execute_memory_node(node, input_data, context)
-            elif node.type == "consensus":
+            if node.type == "consensus":
                 return await self._execute_consensus_node(node, input_data, context)
-            elif node.type == "llm":
+            if node.type == "llm":
                 return await self._execute_llm_node(node, input_data, context)
-            else:
-                return {"error": f"Unknown node type: {node.type}"}
+            return {"error": f"Unknown node type: {node.type}"}
         except Exception as e:
             logger.error("node_execution_failed", node_id=node_id, error=str(e))
             return {"error": str(e)}

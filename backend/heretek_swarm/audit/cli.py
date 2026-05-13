@@ -17,10 +17,8 @@ if str(_REPO_ROOT) not in sys.path:
 from heretek_swarm.audit import (
     AuditFinding,
     generate_report,
-    group_by_severity,
     scan_directory,
 )
-from heretek_swarm.audit.stub_patterns import DEFAULT_EXTENSIONS
 
 
 @click.command()

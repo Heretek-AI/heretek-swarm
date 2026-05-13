@@ -24,7 +24,6 @@ from heretek_swarm.actors.coder.types import (
     CodeLanguage,
     CodeReview,
     CodeSnippet,
-    CodeTask,
     DebugSession,
     ImplementationTask,
     ReviewIssue,

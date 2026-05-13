@@ -5,12 +5,13 @@ Translates strategic goals into executable workflows using the Metis agent.
 from __future__ import annotations
 
 import json
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import structlog
 
-from heretek_swarm.actors.metis import MetisAgent
-from heretek_swarm.goals.models import Goal
+if TYPE_CHECKING:
+    from heretek_swarm.actors.metis import MetisAgent
+    from heretek_swarm.goals.models import Goal
 
 logger = structlog.get_logger("GoalToWorkflowTranslator")
 
@@ -55,7 +56,7 @@ Do NOT wrap the JSON in markdown code blocks. Output ONLY valid JSON.
                 ),
                 timeout=60,
             )
-            
+
             # Clean up potential markdown formatting
             text = response.strip()
             if text.startswith("```json"):
@@ -67,13 +68,13 @@ Do NOT wrap the JSON in markdown code blocks. Output ONLY valid JSON.
             text = text.strip()
 
             workflow_def = json.loads(text)
-            
+
             if "nodes" not in workflow_def or "edges" not in workflow_def:
                 raise ValueError("Missing required keys 'nodes' or 'edges'")
-                
+
             logger.info("goal_translated_successfully", goal_id=goal.id)
             return workflow_def
-            
+
         except Exception as exc:
             logger.error("goal_translation_failed", goal_id=goal.id, error=str(exc))
             return self._fallback_workflow(goal)

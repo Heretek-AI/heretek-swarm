@@ -7,6 +7,7 @@ Contains 17 handlers organized as a mixin for cooperative MRO.
 
 import asyncio
 import contextlib
+
 import structlog
 
 from heretek_swarm.actors.base import ActorMessage
@@ -878,7 +879,6 @@ class SentinelPrimeHandlers:
 
 # Import types needed by handlers (for type hints)
 from datetime import UTC, datetime
-from typing import Any
 
 from heretek_swarm.actors.sentinel_prime.types import (
     IncidentStatus,

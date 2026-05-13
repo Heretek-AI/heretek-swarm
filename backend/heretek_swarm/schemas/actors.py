@@ -15,6 +15,7 @@ from __future__ import annotations
 from typing import Any
 
 from heretek_swarm.validation.agent_messages import (
+    MESSAGE_TYPES,
     ActorMessage,
     AgentMessageBase,
     CodeExecutionRequest,
@@ -22,7 +23,6 @@ from heretek_swarm.validation.agent_messages import (
     ConsensusVote,
     CoordinationRequest,
     ErrorMessage,
-    MESSAGE_TYPES,
     MessagePriority,
     MessageType,
     StateUpdate,
@@ -38,30 +38,30 @@ from heretek_swarm.validation.agent_messages import (
 
 # Re-export everything for external callers.
 __all__ = [
-    # Enums
-    "MessageType",
-    "MessagePriority",
-    # Base
-    "AgentMessageBase",
+    # Registry
+    "MESSAGE_TYPES",
     # Message models
     "ActorMessage",
-    "StateUpdate",
-    "ToolRequest",
-    "ToolResponse",
-    "CoordinationRequest",
+    # Base
+    "AgentMessageBase",
+    "CodeExecutionRequest",
     "ConsensusProposal",
     "ConsensusVote",
+    "CoordinationRequest",
     "ErrorMessage",
+    "MessagePriority",
+    # Enums
+    "MessageType",
+    "StateUpdate",
     "TaskMessage",
-    "CodeExecutionRequest",
-    # Factory / helpers
-    "validate_message",
+    "ToolRequest",
+    "ToolResponse",
     "create_actor_message",
     "create_state_update",
     "create_tool_request",
     "create_tool_response",
-    # Registry
-    "MESSAGE_TYPES",
+    # Factory / helpers
+    "validate_message",
 ]
 
 # Names listed in the task plan that do not yet exist in agent_messages.py.

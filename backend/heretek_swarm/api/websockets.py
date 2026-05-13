@@ -835,7 +835,7 @@ async def agent_status_websocket(
         token: Authentication token (required)
     """
     # SECURITY: Authenticate connection
-    authenticated, user_id = await _ws_authenticate_and_accept(websocket, token, "agent_status")
+    authenticated, _user_id = await _ws_authenticate_and_accept(websocket, token, "agent_status")
     if not authenticated:
         return
 
@@ -908,7 +908,7 @@ async def workflow_progress_websocket(
         token: Authentication token (required)
     """
     # SECURITY: Authenticate connection
-    authenticated, user_id = await _ws_authenticate_and_accept(websocket, token, "workflow_progress")
+    authenticated, _user_id = await _ws_authenticate_and_accept(websocket, token, "workflow_progress")
     if not authenticated:
         return
 
@@ -985,7 +985,7 @@ async def agent_metrics_websocket(
         token: Authentication token (required)
     """
     # SECURITY: Authenticate connection
-    authenticated, user_id = await _ws_authenticate_and_accept(websocket, token, "agent_metrics")
+    authenticated, _user_id = await _ws_authenticate_and_accept(websocket, token, "agent_metrics")
     if not authenticated:
         return
 
@@ -1052,7 +1052,7 @@ async def dashboard_websocket(
     }
     """
     # SECURITY: Authenticate connection
-    authenticated, user_id = await _ws_authenticate_and_accept(websocket, token, "dashboard")
+    authenticated, _user_id = await _ws_authenticate_and_accept(websocket, token, "dashboard")
     if not authenticated:
         return
 
@@ -1072,7 +1072,7 @@ async def dashboard_websocket(
             data = await asyncio.wait_for(websocket.receive_text(), timeout=5.0)
             message = json.loads(data)
             await _ws_handle_dashboard_message(websocket, message, subscriptions)
-        except asyncio.TimeoutError:
+        except TimeoutError:
             # Normal: client didn't send anything immediately — that's fine
             logger.debug("Dashboard WS: client sent no initial message (heartbeat mode)")
 

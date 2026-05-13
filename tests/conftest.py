@@ -19,14 +19,12 @@ Provides:
 
 import logging
 import warnings
-
 from collections.abc import Generator
 from unittest.mock import MagicMock
 
 import pytest
 
 from heretek_swarm.actors.supervisor import get_supervisor
-
 
 # Ignore ResourceWarning from unclosed aiohttp.ClientSession objects —
 # these are created by AgentActor heartbeat background tasks in integration

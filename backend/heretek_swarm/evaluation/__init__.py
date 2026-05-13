@@ -6,4 +6,4 @@ from .evaluator import (
     TestCase,
 )
 
-__all__ = ["AgentEvaluator", "EvaluationStatus", "TestCase", "OutputConstraints"]
+__all__ = ["AgentEvaluator", "EvaluationStatus", "OutputConstraints", "TestCase"]

@@ -13,7 +13,6 @@ from typing import Any
 import structlog
 
 from heretek_swarm.infrastructure.nats.publisher import (
-    EventPriority,
     SwarmEvent,
 )
 from heretek_swarm.infrastructure.nats.subscriber import (

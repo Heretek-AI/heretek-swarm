@@ -12,20 +12,17 @@ Verifies that:
 from __future__ import annotations
 
 from typing import Any
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
 from heretek_swarm.workflow.engine import (
-    NodeResult,
     NodeStatus,
     Workflow,
     WorkflowContext,
     WorkflowEngine,
     WorkflowNode,
-    WorkflowStatus,
 )
-
 
 # ── Helpers ──────────────────────────────────────────────────────────────────
 

@@ -13,11 +13,7 @@ Verifies that:
 from __future__ import annotations
 
 import json
-import os
-import shutil
-import tempfile
-from pathlib import Path
-from unittest.mock import patch
+from typing import TYPE_CHECKING
 
 import pytest
 from fastapi import FastAPI
@@ -25,25 +21,27 @@ from fastapi.testclient import TestClient
 
 from heretek_swarm.workflow.store import FileWorkflowStore
 
+if TYPE_CHECKING:
+    from pathlib import Path
 
 # ---------------------------------------------------------------------------
 # Fixtures
 # ---------------------------------------------------------------------------
 
 
-@pytest.fixture()
+@pytest.fixture
 def tmp_store_path(tmp_path: Path) -> Path:
     """Provide a fresh temp file path for each test."""
     return tmp_path / "workflows.json"
 
 
-@pytest.fixture()
+@pytest.fixture
 def store(tmp_store_path: Path) -> FileWorkflowStore:
     """Create a FileWorkflowStore backed by a temp file."""
     return FileWorkflowStore(store_path=tmp_store_path)
 
 
-@pytest.fixture()
+@pytest.fixture
 def sample_definition() -> dict:
     """A minimal but valid workflow definition."""
     return {
@@ -60,7 +58,7 @@ def sample_definition() -> dict:
     }
 
 
-@pytest.fixture()
+@pytest.fixture
 def sample_definition_2() -> dict:
     """A second workflow definition for multi-workflow tests."""
     return {
@@ -103,7 +101,8 @@ class TestFileWorkflowStore:
         first = store.load("wf-1")
         store.save("wf-1", {**sample_definition, "name": "Renamed"})
         second = store.load("wf-1")
-        assert first is not None and second is not None
+        assert first is not None
+        assert second is not None
         assert first["created_at"] == second["created_at"]
         assert second["name"] == "Renamed"
 
@@ -168,14 +167,13 @@ class TestFileWorkflowStore:
 class TestWorkflowEnginePersistence:
     """Integration tests for engine ↔ store wiring."""
 
-    @pytest.fixture()
+    @pytest.fixture
     def engine_with_store(self, tmp_store_path: Path):
         """Create a WorkflowEngine with a temp-backed store."""
         from heretek_swarm.workflow.engine import WorkflowEngine
 
         store = FileWorkflowStore(store_path=tmp_store_path)
-        engine = WorkflowEngine(store=store)
-        return engine
+        return WorkflowEngine(store=store)
 
     @pytest.mark.asyncio
     async def test_load_workflow_persists(
@@ -247,11 +245,11 @@ class TestWorkflowEnginePersistence:
 # ---------------------------------------------------------------------------
 
 
-@pytest.fixture()
+@pytest.fixture
 def api_client(tmp_path: Path):
     """Create a TestClient with a temp-backed workflow engine."""
     from heretek_swarm.api.workflows import router
-    from heretek_swarm.workflow.engine import WorkflowEngine, get_workflow_engine
+    from heretek_swarm.workflow.engine import WorkflowEngine
     from heretek_swarm.workflow.store import FileWorkflowStore
 
     store_path = tmp_path / "api_workflows.json"

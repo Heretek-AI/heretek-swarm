@@ -32,6 +32,14 @@ Module structure:
 # Import from agent.py (the main SentinelAgent class)
 from heretek_swarm.actors.sentinel.agent import SentinelAgent
 
+# Re-export helpers from sentinel.helpers
+from heretek_swarm.actors.sentinel.helpers import (
+    SentinelHelpers,
+    check_injection_patterns,
+    check_pii_patterns,
+    generate_safety_report,
+)
+
 # Re-export types from sentinel.types
 from heretek_swarm.actors.sentinel.types import (
     AnomalyAlert,
@@ -42,26 +50,18 @@ from heretek_swarm.actors.sentinel.types import (
     ViolationType,
 )
 
-# Re-export helpers from sentinel.helpers
-from heretek_swarm.actors.sentinel.helpers import (
-    SentinelHelpers,
-    check_injection_patterns,
-    check_pii_patterns,
-    generate_safety_report,
-)
-
 __all__ = [
-    # Main class
-    "SentinelAgent",
+    "AnomalyAlert",
+    "ContentCategory",
     # Types
     "SafetyLevel",
-    "ViolationType",
-    "ContentCategory",
-    "SafetyViolation",
     "SafetyReport",
-    "AnomalyAlert",
+    "SafetyViolation",
+    # Main class
+    "SentinelAgent",
     # Helpers
     "SentinelHelpers",
+    "ViolationType",
     "check_injection_patterns",
     "check_pii_patterns",
     "generate_safety_report",

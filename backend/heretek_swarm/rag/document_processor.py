@@ -1,10 +1,10 @@
 """Document processing and chunking for RAG pipeline."""
 
+import hashlib
+import re
 from dataclasses import dataclass, field
 from enum import Enum
-import re
-import hashlib
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 
 class DocumentType(Enum):
@@ -44,30 +44,30 @@ class ProcessedDocument:
     """Processed document with chunks and metadata."""
     id: str
     content: str
-    chunks: List[str] = field(default_factory=list)
-    metadata: Dict[str, Any] = field(default_factory=dict)
+    chunks: list[str] = field(default_factory=list)
+    metadata: dict[str, Any] = field(default_factory=dict)
     document_type: DocumentType = DocumentType.TEXT
 
 
 class DocumentProcessor:
     """Document processing and chunking."""
 
-    def __init__(self, config: Optional[ProcessingConfig] = None):
+    def __init__(self, config: ProcessingConfig | None = None):
         self.config = config or ProcessingConfig()
 
     def detect_type(self, filename: str) -> DocumentType:
         """Detect document type from filename."""
         if filename.endswith((".md", ".markdown")):
             return DocumentType.MARKDOWN
-        elif filename.endswith(".pdf"):
+        if filename.endswith(".pdf"):
             return DocumentType.PDF
-        elif filename.endswith((".html", ".htm")):
+        if filename.endswith((".html", ".htm")):
             return DocumentType.HTML
-        elif filename.endswith(".json"):
+        if filename.endswith(".json"):
             return DocumentType.JSON
-        elif filename.endswith((".py", ".js", ".ts", ".rs", ".java", ".cpp", ".c", ".go")):
+        if filename.endswith((".py", ".js", ".ts", ".rs", ".java", ".cpp", ".c", ".go")):
             return DocumentType.CODE
-        elif filename.endswith((".txt", ".text")):
+        if filename.endswith((".txt", ".text")):
             return DocumentType.TEXT
         return DocumentType.UNKNOWN
 
@@ -76,41 +76,40 @@ class DocumentProcessor:
         hash_obj = hashlib.sha256((content + source).encode())
         return f"doc_{hash_obj.hexdigest()[:16]}"
 
-    def _extract_metadata(self, content: str, doc_type: DocumentType) -> Dict[str, Any]:
+    def _extract_metadata(self, content: str, doc_type: DocumentType) -> dict[str, Any]:
         """Extract metadata from content."""
         metadata = {
-            'type': doc_type.value,
-            'length': len(content),
+            "type": doc_type.value,
+            "length": len(content),
         }
         if doc_type == DocumentType.MARKDOWN:
-            lines = content.split('\n')
+            lines = content.split("\n")
             for line in lines:
                 line = line.strip()
-                if line.startswith('#'):
-                    metadata['title'] = line.lstrip('#').strip()
+                if line.startswith("#"):
+                    metadata["title"] = line.lstrip("#").strip()
                     break
         urls = re.findall(r'https?://[^\s<>"{}|\\^`\[\]]+', content)
         if urls:
-            metadata['url_count'] = len(urls)
-        code_blocks = re.findall(r'```[\s\S]*?```|`[^`]+`', content)
+            metadata["url_count"] = len(urls)
+        code_blocks = re.findall(r"```[\s\S]*?```|`[^`]+`", content)
         if code_blocks:
-            metadata['code_snippets'] = len(code_blocks)
+            metadata["code_snippets"] = len(code_blocks)
         return metadata
 
-    def _extract_keywords(self, content: str) -> List[str]:
+    def _extract_keywords(self, content: str) -> list[str]:
         """Extract keywords from content."""
-        words = re.findall(r'\b[a-z]{4,}\b', content.lower())
-        stop_words = {'this', 'that', 'with', 'from', 'have', 'they', 'will', 'been', 'were', 'when'}
+        words = re.findall(r"\b[a-z]{4,}\b", content.lower())
+        stop_words = {"this", "that", "with", "from", "have", "they", "will", "been", "were", "when"}
         keywords = [w for w in words if w not in stop_words]
         return list(set(keywords))[:10]
 
     def _clean_content(self, content: str, doc_type: DocumentType) -> str:
         """Clean content based on document type."""
         if doc_type == DocumentType.HTML:
-            content = re.sub(r'<[^>]+>', '', content)
-        content = re.sub(r'https?://\S+', '', content)
-        content = re.sub(r'\s+', ' ', content).strip()
-        return content
+            content = re.sub(r"<[^>]+>", "", content)
+        content = re.sub(r"https?://\S+", "", content)
+        return re.sub(r"\s+", " ", content).strip()
 
     def _chunk_fixed_size(
         self,
@@ -118,7 +117,7 @@ class DocumentProcessor:
         doc_id: str,
         filename: str,
         doc_type: DocumentType,
-    ) -> List[ProcessedDocument]:
+    ) -> list[ProcessedDocument]:
         """Fixed-size chunking with proper overlap."""
         chunks = []
         content = self._clean_content(text, doc_type)
@@ -135,8 +134,8 @@ class DocumentProcessor:
                 content=chunk_text,
                 chunks=[chunk_text],
                 metadata={
-                    'source': filename,
-                    'chunk_index': len(chunks),
+                    "source": filename,
+                    "chunk_index": len(chunks),
                 },
                 document_type=doc_type,
             )
@@ -153,11 +152,11 @@ class DocumentProcessor:
         doc_id: str,
         filename: str,
         doc_type: DocumentType,
-    ) -> List[ProcessedDocument]:
+    ) -> list[ProcessedDocument]:
         """Recursive chunking by sentences/paragraphs."""
         chunks = []
         # Split by sentence-ending punctuation first, then group
-        sentences = re.split(r'(?<=[.!?])\s+', text)
+        sentences = re.split(r"(?<=[.!?])\s+", text)
         current_chunk = ""
         chunk_index = 0
 
@@ -166,8 +165,8 @@ class DocumentProcessor:
             if not sentence:
                 continue
             # Add period if missing
-            if not sentence[-1] in '.!?':
-                sentence += '.'
+            if sentence[-1] not in ".!?":
+                sentence += "."
             if len(current_chunk) + len(sentence) <= self.config.chunk_size:
                 current_chunk += sentence + " "
             else:
@@ -177,7 +176,7 @@ class DocumentProcessor:
                         id=chunk_id,
                         content=current_chunk.strip(),
                         chunks=[current_chunk.strip()],
-                        metadata={'source': filename, 'chunk_index': chunk_index},
+                        metadata={"source": filename, "chunk_index": chunk_index},
                         document_type=doc_type,
                     ))
                     chunk_index += 1
@@ -190,7 +189,7 @@ class DocumentProcessor:
                 id=chunk_id,
                 content=current_chunk.strip(),
                 chunks=[current_chunk.strip()],
-                metadata={'source': filename, 'chunk_index': chunk_index},
+                metadata={"source": filename, "chunk_index": chunk_index},
                 document_type=doc_type,
             ))
 
@@ -201,21 +200,21 @@ class DocumentProcessor:
                 id=chunk_id,
                 content=text,
                 chunks=[text],
-                metadata={'source': filename, 'chunk_index': 0},
+                metadata={"source": filename, "chunk_index": 0},
                 document_type=doc_type,
             ))
 
         return chunks
 
-    def _chunk(self, content: str) -> List[str]:
+    def _chunk(self, content: str) -> list[str]:
         """Split content into chunks."""
         if self.config.strategy in (ChunkStrategy.FIXED, ChunkStrategy.FIXED_SIZE):
             return self._fixed_chunk(content)
-        elif self.config.strategy == ChunkStrategy.RECURSIVE:
+        if self.config.strategy == ChunkStrategy.RECURSIVE:
             return self._recursive_chunk(content)
         return [content]
 
-    def _fixed_chunk(self, content: str) -> List[str]:
+    def _fixed_chunk(self, content: str) -> list[str]:
         """Fixed-size chunking."""
         chunks = []
         chunk_size = self.config.chunk_size
@@ -226,9 +225,9 @@ class DocumentProcessor:
                 chunks.append(chunk)
         return chunks if chunks else [content]
 
-    def _recursive_chunk(self, content: str) -> List[str]:
+    def _recursive_chunk(self, content: str) -> list[str]:
         """Recursive chunking."""
-        sentences = re.split(r'(?<=[.!?])\s+', content)
+        sentences = re.split(r"(?<=[.!?])\s+", content)
         chunks = []
         current = ""
         for sentence in sentences:
@@ -245,8 +244,8 @@ class DocumentProcessor:
     async def process_content(
         self,
         content: str,
-        source_path: Optional[str] = None,
-        metadata: Optional[Dict[str, Any]] = None,
+        source_path: str | None = None,
+        metadata: dict[str, Any] | None = None,
     ) -> ProcessedDocument:
         """Process content for RAG pipeline."""
         doc_type = self.detect_type(source_path or "unknown.txt")

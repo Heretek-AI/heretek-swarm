@@ -24,11 +24,11 @@ class DeliberationMixin:
         options: list[str],
     ) -> str:
         """Initiate a new deliberation.
-        
+
         Args:
             topic: The topic to deliberate
             options: List of options to choose from
-            
+
         Returns:
             deliberation_id: Unique ID for this deliberation
         """

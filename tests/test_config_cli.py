@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import json
 import uuid
-from pathlib import Path
+from typing import TYPE_CHECKING
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -17,7 +17,6 @@ from click.testing import CliRunner
 
 from heretek_swarm.cli import cli
 from heretek_swarm.cli.config_wizard import (
-    AVAILABLE_PROVIDERS,
     HERETEK_CONFIG_FILE,
     _load_config,
     _save_config,
@@ -33,6 +32,8 @@ from heretek_swarm.routing.model_router import (
     set_global_model_garage,
 )
 
+if TYPE_CHECKING:
+    from pathlib import Path
 
 # ---------------------------------------------------------------------------
 # Fixtures
@@ -52,7 +53,7 @@ def _cleanup_router_registry() -> None:
 
     mr._router_registry.clear()
     mr._global_model_garage = None
-    yield
+    return
 
 
 @pytest.fixture
@@ -714,13 +715,24 @@ class TestConfigEdgeCases:
     def test_cli_re_exports_config_wizard_symbols(self) -> None:
         """All public config_wizard symbols are re-exported from cli."""
         from heretek_swarm.cli import (
-            AVAILABLE_PROVIDERS as cli_ap,
             add_provider as cli_add,
+        )
+        from heretek_swarm.cli import (
             list_configured_providers as cli_lcp,
+        )
+        from heretek_swarm.cli import (
             prompt_for_provider as cli_pfp,
+        )
+        from heretek_swarm.cli import (
             remove_provider as cli_rp,
+        )
+        from heretek_swarm.cli import (
             run_wizard as cli_rw,
+        )
+        from heretek_swarm.cli import (
             set_default_provider as cli_sdp,
+        )
+        from heretek_swarm.cli import (
             validate_provider as cli_vp,
         )
         # Smoke test — all imports resolved

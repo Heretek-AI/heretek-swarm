@@ -34,18 +34,18 @@ from heretek_swarm.actors.explorer.types import (
 )
 
 __all__ = [
+    "Anomaly",
+    "AnomalyType",
     # Main agent class
     "ExplorerAgent",
-    # Types (enums and dataclasses)
-    "OpportunityType",
-    "ThreatLevel",
-    "AnomalyType",
-    "ResearchState",
-    "Opportunity",
-    "Anomaly",
-    "IntelligenceReport",
-    "ResearchProgress",
-    "Pattern",
     # Mixin for pathfinding
     "ExplorerPathfindingMixins",
+    "IntelligenceReport",
+    "Opportunity",
+    # Types (enums and dataclasses)
+    "OpportunityType",
+    "Pattern",
+    "ResearchProgress",
+    "ResearchState",
+    "ThreatLevel",
 ]

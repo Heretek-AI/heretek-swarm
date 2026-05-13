@@ -11,11 +11,9 @@ actually called — S01 covers that path).
 
 from __future__ import annotations
 
-from typing import Any
-
 import pytest
 
-from heretek_swarm.actors import AlphaAgent, AgentActor
+from heretek_swarm.actors import AgentActor, AlphaAgent
 from heretek_swarm.actors.stubs import (
     StubAccessAnalyzer,
     StubDeliberationEngine,
@@ -24,7 +22,6 @@ from heretek_swarm.actors.stubs import (
     StubPatternExtractor,
     StubTribunal,
 )
-
 
 # ===================================================================
 # AgentActor direct construction tests

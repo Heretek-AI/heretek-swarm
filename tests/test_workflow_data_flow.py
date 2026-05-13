@@ -23,12 +23,11 @@ from heretek_swarm.workflow.engine import (
     NodeStatus,
     Workflow,
     WorkflowContext,
-    WorkflowEngine,
     WorkflowEdge,
+    WorkflowEngine,
     WorkflowNode,
     WorkflowStatus,
 )
-
 
 # ── Shared helpers ───────────────────────────────────────────────────────────
 

@@ -13,7 +13,7 @@ Provides:
 
 from collections import deque
 from dataclasses import dataclass, field
-from datetime import UTC, datetime
+from datetime import datetime
 from enum import StrEnum
 from typing import Any
 
@@ -228,7 +228,7 @@ class NovelConnectionEngine:
 
         connections = []
         for i, source in enumerate(concepts):
-            for j, target in enumerate(concepts[i + 1 :], start=i + 1):
+            for _j, target in enumerate(concepts[i + 1 :], start=i + 1):
                 if len(connections) >= target_count:
                     break
 
@@ -331,9 +331,8 @@ class NovelConnectionEngine:
 
         combined = "".join(sorted(source_concepts + target_concepts))
         hash_value = int(hashlib.sha256(combined.encode()).hexdigest()[:8], 16)
-        distance = 0.3 + (hash_value % 70) / 100.0
+        return 0.3 + (hash_value % 70) / 100.0
 
-        return distance
 
 
 class LateralThinkingMetricsTracker:

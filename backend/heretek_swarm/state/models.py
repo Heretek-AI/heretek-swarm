@@ -296,7 +296,7 @@ class LineageTracker:
             if parent:
                 depth = parent.depth + 1
                 root_id = parent.root_message_id
-                ancestor_ids = list(parent.ancestor_ids) + [parent_message_id]
+                ancestor_ids = [*list(parent.ancestor_ids), parent_message_id]
             else:
                 depth = 0
                 root_id = message_id
@@ -435,7 +435,6 @@ class SnapshotManager:
         Returns:
             None
         """
-        pass
 
     async def shutdown(self) -> None:
         """Shutdown the snapshot manager.
@@ -450,7 +449,6 @@ class SnapshotManager:
         Returns:
             None
         """
-        pass
 
     async def create_snapshot(
         self,
@@ -555,7 +553,6 @@ class StateManager:
 
         State is managed in-memory via _states dict. No external storage to initialize.
         """
-        pass
 
     async def shutdown(self) -> None:
         """Shutdown the state manager."""
@@ -597,14 +594,13 @@ class StateManager:
         parent_message_id: UUID | None = None,
     ) -> MessageLineage:
         """Record a message in a conversation."""
-        lineage = await self._lineage_tracker.record_message(
+        return await self._lineage_tracker.record_message(
             content=content,
             conversation_id=conversation_id,
             sender_agent_id=sender_agent_id,
             receiver_agent_id=receiver_agent_id,
             parent_message_id=parent_message_id,
         )
-        return lineage
 
     async def create_snapshot(self, trigger: str = "manual", description: str = "") -> StateSnapshot:
         """Create a snapshot of current state."""

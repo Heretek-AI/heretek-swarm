@@ -5,12 +5,16 @@ Extracted from chronos.py (INTG-04).
 Contains scheduling loop and task execution methods as a mixin for cooperative MRO.
 """
 
+from __future__ import annotations
+
 import asyncio
+from datetime import datetime
+
 import structlog
 
 from heretek_swarm.actors.base import ActorMessage
 
-from .types import Deadline, RecurrenceType, ScheduleStatus, ScheduledTask
+from .types import Deadline, RecurrenceType, ScheduledTask, ScheduleStatus
 
 logger = structlog.get_logger("ChronosSchedulerMixin")
 
@@ -201,7 +205,7 @@ class ChronosSchedulerMixin:
                 ),
             )
 
-    async def generate_ticks(self) -> list["Tick"]:
+    async def generate_ticks(self) -> list["Tick"]:  # noqa: F821
         """Generate ticks from due PENDING tasks.
 
         Iterates ``_task_queue``, finds tasks whose ``scheduled_at`` ≤ now

@@ -261,7 +261,7 @@ class ValidationMixin:
             return False, None
 
         # Behavioral baseline check
-        baseline_valid, anomaly_score = self._check_behavioral_baseline(input_data, operation)
+        _baseline_valid, anomaly_score = self._check_behavioral_baseline(input_data, operation)
 
         if anomaly_score >= self._anomaly_threshold_std_dev:
             self._validation_stats["anomalies_detected"] += 1

@@ -17,9 +17,11 @@ Version: 1.0.0
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from datetime import UTC, datetime
 from enum import StrEnum
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from datetime import datetime
 
 
 class CreativityTechnique(StrEnum):

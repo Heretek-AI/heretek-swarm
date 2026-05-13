@@ -1,10 +1,10 @@
 """Task dependency graph with cycle detection and graph algorithms."""
 
+import uuid
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from enum import Enum
 from typing import Any
-import uuid
 
 
 class GraphNodeType(Enum):
@@ -181,7 +181,7 @@ class TaskGraph:
         strategy = strategy or self._cycle_resolution_strategy
         if strategy == "notify":
             return {"resolved": False, "action": "notify", "details": "Steward notified of cycle"}
-        elif strategy == "remove":
+        if strategy == "remove":
             if len(cycle) >= 2:
                 source, target = cycle[0], cycle[1]
                 for edge_id, edge in list(self._edges.items()):
@@ -193,7 +193,7 @@ class TaskGraph:
                             "details": f"Removed edge {edge_id}",
                         }
             return {"resolved": False, "action": "remove", "details": "No edge to remove"}
-        elif strategy == "break":
+        if strategy == "break":
             if cycle:
                 self.remove_node(cycle[0])
                 return {"resolved": True, "action": "break", "details": f"Removed node {cycle[0]}"}
@@ -229,8 +229,8 @@ class TaskGraph:
     def calculate_critical_path(self) -> dict[str, Any]:
         if not self._nodes:
             return {"critical_path": [], "path_length": 0.0, "estimated_duration": 0.0}
-        dist: dict[str, float] = {n: 0.0 for n in self._nodes}
-        prev: dict[str, str | None] = {n: None for n in self._nodes}
+        dist: dict[str, float] = dict.fromkeys(self._nodes, 0.0)
+        prev: dict[str, str | None] = dict.fromkeys(self._nodes)
         for node_id in self.get_topological_order():
             for edge in self.get_outgoing_edges(node_id):
                 weight = edge.weight

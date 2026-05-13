@@ -19,12 +19,12 @@ from heretek_swarm.creativity.novel_connections import (
 )
 
 __all__ = [
-    "NovelConnection",
     "AssociationDistance",
-    "LateralThinkingMetrics",
     "ConnectionTechnique",
-    "NoveltyLevel",
     "HarmfulContentFilter",
-    "NovelConnectionEngine",
+    "LateralThinkingMetrics",
     "LateralThinkingMetricsTracker",
+    "NovelConnection",
+    "NovelConnectionEngine",
+    "NoveltyLevel",
 ]

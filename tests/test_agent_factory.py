@@ -9,7 +9,6 @@ module level), we patch ``"swarms.Agent"`` directly rather than trying to
 patch the module-level reference which does not exist until the function runs.
 """
 
-import ast
 import inspect
 import textwrap
 from unittest.mock import MagicMock, patch
@@ -17,7 +16,6 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from heretek_swarm.runtime.main_loop import AutonomousSwarm
-
 
 # ---------------------------------------------------------------------------
 # Helper

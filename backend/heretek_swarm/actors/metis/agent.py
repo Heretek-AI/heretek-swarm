@@ -30,12 +30,12 @@ from heretek_swarm.actors.mixins import (
 # Session 44: Collective Learning Integration
 from heretek_swarm.collective.learning import PatternExtractor
 
+# Session 44: Consensus Integration
+from heretek_swarm.consensus.swarm_deliberation import SwarmDeliberationEngine
+
 # Goal proposal generation
 from heretek_swarm.goals.models import Goal
 from heretek_swarm.goals.proposer import GoalProposer
-
-# Session 44: Consensus Integration
-from heretek_swarm.consensus.swarm_deliberation import SwarmDeliberationEngine
 
 # Session 44: Memory Optimization Integration
 from heretek_swarm.memory.access_patterns import AccessPatternAnalyzer
@@ -148,7 +148,7 @@ class MetisAgent(
 
         # Session 44: Integration state
         self._active_deliberations: dict[str, str] = {}
-        self._pattern_emitted: Set[str] = set()
+        self._pattern_emitted: set[str] = set()
 
         logger.info(f"[{self.agent_id}] Metis agent initialized")
 

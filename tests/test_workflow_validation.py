@@ -14,7 +14,7 @@ Covers the validator's handling of real-world Canvas errors:
 
 from __future__ import annotations
 
-from pathlib import Path
+from typing import TYPE_CHECKING
 
 import pytest
 from fastapi import FastAPI
@@ -25,10 +25,11 @@ from heretek_swarm.workflow.engine import WorkflowEngine
 from heretek_swarm.workflow.store import FileWorkflowStore
 from heretek_swarm.workflow.validator import (
     ErrorCodes,
-    WorkflowValidator,
     validate_workflow,
 )
 
+if TYPE_CHECKING:
+    from pathlib import Path
 
 # ---------------------------------------------------------------------------
 # Fixtures
@@ -45,22 +46,22 @@ def _reset_global_engine():
     engine_mod._global_engine = None
 
 
-@pytest.fixture()
+@pytest.fixture
 def store_path(tmp_path: Path) -> Path:
     return tmp_path / "workflows.json"
 
 
-@pytest.fixture()
+@pytest.fixture
 def store(store_path: Path) -> FileWorkflowStore:
     return FileWorkflowStore(store_path)
 
 
-@pytest.fixture()
+@pytest.fixture
 def engine(store: FileWorkflowStore) -> WorkflowEngine:
     return WorkflowEngine(store=store)
 
 
-@pytest.fixture()
+@pytest.fixture
 def app(engine: WorkflowEngine):
     _app = FastAPI()
     _app.include_router(router)
@@ -79,7 +80,7 @@ def app(engine: WorkflowEngine):
     return _app
 
 
-@pytest.fixture()
+@pytest.fixture
 def client(app: FastAPI) -> TestClient:
     return TestClient(app, raise_server_exceptions=False)
 

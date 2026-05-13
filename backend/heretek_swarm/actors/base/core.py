@@ -24,13 +24,13 @@ from typing import Any
 from pydantic import ValidationError
 from swarms import Agent
 
-from heretek_swarm.logging.config import get_logger
 import heretek_swarm.actors.stubs as _actor_stubs
 from heretek_swarm.actors.stubs import get_db_pool  # noqa: F401 - imported for test patching
 from heretek_swarm.actors.validation import (
     validate_message,
 )
 from heretek_swarm.agents.skills import SkillCategory, SkillMetadata
+from heretek_swarm.logging.config import get_logger
 from heretek_swarm.routing import (
     AgentModelRouter,
     get_router,
@@ -532,7 +532,6 @@ from heretek_swarm.actors.base.message_handling import (
 from heretek_swarm.actors.base.state_management import (
     AgentActorStateManagement,  # noqa: F401 - triggers state management bindings
 )
-from heretek_swarm.schemas.actors import ActorMessage as PydanticActorMessage
 
 # Backward-compat: existing code that imports ActorMessage from actors.base.core
 # gets the internal dataclass ActorMessage (defined above), not the Pydantic one.

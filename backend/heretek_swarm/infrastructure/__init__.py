@@ -52,9 +52,9 @@ from heretek_swarm.infrastructure.otel import (
     with_span,
 )
 from heretek_swarm.infrastructure.provisioner import (
+    ConnectionStringResult,
     ContainerConfig,
     ContainerRuntime,
-    ConnectionStringResult,
     detect_runtime,
     provision_all,
     provision_all_sync,
@@ -70,6 +70,12 @@ __all__ = [
     "A2AMessageType",
     "A2AProtocol",
     "AgentCapability",
+    "ConnectionStringResult",
+    # Provisioner
+    "ContainerConfig",
+    "ContainerRuntime",
+    # Health Checks
+    "HealthCheckResult",
     "LoggingConfig",
     "MessagePriority",
     "MetricsCollector",
@@ -78,8 +84,8 @@ __all__ = [
     "NATSClient",
     "NATSPublisher",
     "NATSSubscriber",
-    # Health Checks
-    "HealthCheckResult",
+    # OpenTelemetry
+    "TracingConfig",
     "check_all_infrastructure",
     "check_infrastructure_health",
     "check_mem0_health",
@@ -87,13 +93,12 @@ __all__ = [
     "check_postgres_health",
     "check_qdrant_health",
     "check_redis_health",
-    # OpenTelemetry
-    "TracingConfig",
     "create_consensus_message",
     "create_delegation_message",
     "create_span",
     "create_task_request",
     "create_task_response",
+    "detect_runtime",
     "get_log_config",
     "get_meter",
     "get_nats_client",
@@ -101,17 +106,12 @@ __all__ = [
     "init_logging",
     "init_metrics",
     "init_tracing",
-    "record_metric",
-    "with_span",
-    # Provisioner
-    "ContainerConfig",
-    "ContainerRuntime",
-    "ConnectionStringResult",
-    "detect_runtime",
     "provision_all",
     "provision_all_sync",
     "provision_infrastructure",
     "provision_infrastructure_sync",
     "provision_service",
     "provision_service_sync",
+    "record_metric",
+    "with_span",
 ]

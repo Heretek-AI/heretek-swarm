@@ -14,15 +14,6 @@ re-exported from this module.
 
 from __future__ import annotations
 
-# Re-export types from types.py
-from heretek_swarm.actors.prism.types import (
-    AnalyticalFramework,
-    BiasDetection,
-    BiasType,
-    Perspective,
-    PerspectiveType,
-)
-
 # Re-export agent from agent.py
 from heretek_swarm.actors.prism.agent import PrismAgent
 
@@ -37,21 +28,30 @@ from heretek_swarm.actors.prism.transforms import (
     get_framework_prompt,
 )
 
+# Re-export types from types.py
+from heretek_swarm.actors.prism.types import (
+    AnalyticalFramework,
+    BiasDetection,
+    BiasType,
+    Perspective,
+    PerspectiveType,
+)
+
 __all__ = [
+    "AnalyticalFramework",
+    "BiasDetection",
+    "BiasType",
+    "Perspective",
     # Types
     "PerspectiveType",
-    "BiasType",
-    "AnalyticalFramework",
-    "Perspective",
-    "BiasDetection",
     # Agent
     "PrismAgent",
     # Transforms
     "PrismTransforms",
-    "generate_heuristic_perspective",
-    "detect_biases_heuristic",
-    "get_framework_prompt",
     "apply_framework_fallback",
-    "generate_stakeholder_map_fallback",
+    "detect_biases_heuristic",
+    "generate_heuristic_perspective",
     "generate_reframe_fallback",
+    "generate_stakeholder_map_fallback",
+    "get_framework_prompt",
 ]

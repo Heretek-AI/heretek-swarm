@@ -1,15 +1,13 @@
 """Tests for AgentModelRouter usage recording."""
 from __future__ import annotations
 
-from unittest.mock import MagicMock, Mock
-
 import pytest
 
+from heretek_swarm.llm.model_garage import LLMResponse, ProviderType
 from heretek_swarm.routing.model_router import (
     AgentModelRouter,
     RouterProviderConfig,
 )
-from heretek_swarm.llm.model_garage import LLMResponse, ProviderType
 
 
 def _make_response(

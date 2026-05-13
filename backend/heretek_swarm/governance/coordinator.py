@@ -14,12 +14,9 @@ import structlog
 
 from heretek_swarm.governance.agent_identity import AgentIdentity
 from heretek_swarm.governance.protocol import (
-    GovernanceContext,
     GovernanceProtocol,
-    ValidationStatus,
 )
 from heretek_swarm.security.zero_trust import (
-    LayerResult,
     Severity,
     ZeroTrustResult,
     ZeroTrustValidator,

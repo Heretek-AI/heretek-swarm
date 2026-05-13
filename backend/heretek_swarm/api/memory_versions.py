@@ -18,7 +18,6 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 
 from heretek_swarm.gateway.auth import verify_auth
 from heretek_swarm.memory.versioned import (
-    VersionedMemoryStore,
     get_versioned_store,
 )
 
@@ -218,7 +217,7 @@ async def diff_versions(
     if diff is None:
         raise HTTPException(
             status_code=404,
-            detail=f"Could not diff: one or both versions not found",
+            detail="Could not diff: one or both versions not found",
         )
 
     return {

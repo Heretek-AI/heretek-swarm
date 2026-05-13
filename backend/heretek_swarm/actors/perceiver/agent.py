@@ -20,7 +20,6 @@ import structlog
 from swarms import Agent
 
 from heretek_swarm.actors.base import ActorMessage, AgentActor
-from heretek_swarm.actors.perceiver.types import ModalityType
 
 # Session 44: Collective Learning Integration
 from heretek_swarm.actors.mixins import (
@@ -31,8 +30,10 @@ from heretek_swarm.actors.mixins import (
     PatternMixin,
     ValidationMixin,
 )
+from heretek_swarm.actors.perceiver.types import ModalityType
 from heretek_swarm.actors.validation import validate_message
 from heretek_swarm.collective.learning import PatternExtractor
+from heretek_swarm.workflow.validator import ValidationError
 
 # Session 44: Consensus Integration
 from heretek_swarm.consensus.swarm_deliberation import SwarmDeliberationEngine
@@ -168,7 +169,7 @@ class PerceiverAgent(
 
         # Session 44: Integration state
         self._active_deliberations: dict[str, str] = {}
-        self._pattern_emitted: Set[str] = set()
+        self._pattern_emitted: set[str] = set()
 
         logger.info(f"[{self.agent_id}] Perceiver agent initialized")
 

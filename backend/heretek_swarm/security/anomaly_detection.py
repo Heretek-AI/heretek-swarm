@@ -749,10 +749,7 @@ class BehavioralAnomalyDetector:
             return None
 
         # Calculate z-score
-        if std > 0:
-            z_score = abs(value - mean) / std
-        else:
-            z_score = 0.0
+        z_score = abs(value - mean) / std if std > 0 else 0.0
 
         if z_score >= self.config.z_score_threshold:
             return AnomalyDetectionResult(

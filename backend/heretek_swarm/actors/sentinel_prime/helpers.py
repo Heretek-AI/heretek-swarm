@@ -7,7 +7,6 @@ Contains 16 helper methods as a mixin for cooperative MRO.
 
 import asyncio
 import hashlib
-import re
 from datetime import UTC, datetime
 from typing import Any
 
@@ -93,6 +92,8 @@ class SentinelPrimeHelpers:
         """Create a SecurityIncident from ThreatDetectionResult."""
         from heretek_swarm.security.threat_detection import (
             ExternalThreatType,
+        )
+        from heretek_swarm.security.threat_detection import (
             ThreatLevel as ExtThreatLevel,
         )
 
@@ -295,10 +296,7 @@ class SentinelPrimeHelpers:
             if action == ResponseAction.NOTIFY:
                 return True
 
-            if action == ResponseAction.LOG_ONLY:
-                return True
-
-            return False
+            return action == ResponseAction.LOG_ONLY
 
         except Exception:
             return False

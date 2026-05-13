@@ -15,8 +15,8 @@ Reference: MiniMax Audit Lines 585-725
 
 import asyncio
 import os
-from contextlib import asynccontextmanager
-from datetime import UTC, datetime
+from contextlib import asynccontextmanager, suppress
+from datetime import datetime
 from typing import Any
 
 import structlog
@@ -26,7 +26,6 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from heretek_swarm.agents.agent_factory import build_agent_for
-
 from heretek_swarm.logging.config import logger as logging_logger
 
 # Initialize logging with JSON output for Loki/Promtail
@@ -47,9 +46,9 @@ from heretek_swarm.api import (
     consensus,
     emergent_intelligence,
     evaluation,
+    memories,
     memory_versions,
     metrics,
-    memories,
     observability,
     plugins,
     providers_config,
@@ -57,8 +56,8 @@ from heretek_swarm.api import (
     rag,
     skills,
     websockets,
-    workflows,
     wizard,
+    workflows,
 )
 from heretek_swarm.api.rate_limiting import setup_rate_limiting
 from heretek_swarm.config.loader import (
@@ -126,10 +125,8 @@ async def lifespan(app: FastAPI):
     # Cancel the WebSocket status pump first
     if _ws_pump_task and not _ws_pump_task.done():
         _ws_pump_task.cancel()
-        try:
+        with suppress(asyncio.CancelledError):
             await _ws_pump_task
-        except asyncio.CancelledError:
-            pass
         logger.info("ws_status_pump_task_cancelled")
 
     if supervisor:
@@ -153,7 +150,6 @@ async def _init_config_service() -> None:
     """Initialize ConfigurationService and loader."""
     global mem0_backend
 
-    config_source = "environment"
     try:
         await initialize_config_service()
         await initialize_config_loader()
@@ -161,7 +157,6 @@ async def _init_config_service() -> None:
         config_service = get_config_service()
         rate_limit_config = await config_service.get_config("rate_limit.enabled")
         if rate_limit_config is not None:
-            config_source = "database"
             logger.info("Configuration loaded from database")
         else:
             logger.info("Configuration falling back to environment variables")
@@ -1252,9 +1247,8 @@ async def root():
 
     if os.path.isfile(index_path):
         return FileResponse(index_path)
-    else:
-        logger.warning("dashboard_dist_not_found", dist_path=dist_path)
-        raise HTTPException(404, "Dashboard not available")
+    logger.warning("dashboard_dist_not_found", dist_path=dist_path)
+    raise HTTPException(404, "Dashboard not available")
 
 
 # =============================================================================
@@ -1271,7 +1265,7 @@ async def serve_spa(path: str):
     import os
 
     # Skip API routes and metrics endpoint
-    if path.startswith("api/") or path.startswith("metrics") or path.startswith("docs") or path.startswith("redoc") or path.startswith("openapi"):
+    if path.startswith(("api/", "metrics", "docs", "redoc", "openapi")):
         raise HTTPException(404, "Not found")
 
     # Calculate project root: backend/heretek_swarm/api/main.py -> project root (4 levels up)
@@ -1285,6 +1279,5 @@ async def serve_spa(path: str):
     if os.path.isfile(index_path):
         logger.debug("spa_fallback", path=path)
         return FileResponse(index_path)
-    else:
-        logger.warning("dashboard_dist_not_found", dist_path=dist_path)
-        raise HTTPException(404, "Dashboard not available")
+    logger.warning("dashboard_dist_not_found", dist_path=dist_path)
+    raise HTTPException(404, "Dashboard not available")

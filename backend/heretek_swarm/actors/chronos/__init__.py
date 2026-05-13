@@ -17,16 +17,6 @@ INTG-04: Time perception & dilation integration included.
 
 from __future__ import annotations
 
-# Re-export types from types.py
-from heretek_swarm.actors.chronos.types import (
-    Deadline,
-    Priority,
-    RecurrenceType,
-    ScheduleStatus,
-    ScheduledTask,
-    Tick,
-)
-
 # Re-export agent from agent.py
 from heretek_swarm.actors.chronos.agent import ChronosAgent
 
@@ -34,18 +24,28 @@ from heretek_swarm.actors.chronos.agent import ChronosAgent
 from heretek_swarm.actors.chronos.handlers import ChronosHandlersMixin
 from heretek_swarm.actors.chronos.scheduler import ChronosSchedulerMixin
 
+# Re-export types from types.py
+from heretek_swarm.actors.chronos.types import (
+    Deadline,
+    Priority,
+    RecurrenceType,
+    ScheduledTask,
+    ScheduleStatus,
+    Tick,
+)
+
 __all__ = [
-    # Enums
-    "ScheduleStatus",
-    "RecurrenceType",
-    "Priority",
-    # Dataclasses
-    "ScheduledTask",
-    "Deadline",
-    "Tick",
     # Agent
     "ChronosAgent",
+    "ChronosHandlersMixin",
     # Mixins
     "ChronosSchedulerMixin",
-    "ChronosHandlersMixin",
+    "Deadline",
+    "Priority",
+    "RecurrenceType",
+    # Enums
+    "ScheduleStatus",
+    # Dataclasses
+    "ScheduledTask",
+    "Tick",
 ]

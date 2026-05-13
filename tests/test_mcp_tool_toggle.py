@@ -13,10 +13,8 @@ Verifies:
 from __future__ import annotations
 
 import json
-import os
-import tempfile
 from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
 
@@ -24,9 +22,7 @@ from heretek_swarm.mcp.bridge import sync_mcp_registries
 from heretek_swarm.mcp.registry import (
     MCPToolMetadata,
     MCPToolRegistry,
-    TOOLS_STATE_FILE,
 )
-
 
 # ---------------------------------------------------------------------------
 # Module-level autouse fixture: reset global mcp registry before each test
@@ -42,7 +38,7 @@ def _reset_mcp_registry() -> None:
     state into subsequent tests.
     """
     set_registry(MCPToolRegistry())
-    yield
+    return
 
 
 # ---------------------------------------------------------------------------
@@ -50,6 +46,7 @@ def _reset_mcp_registry() -> None:
 # ---------------------------------------------------------------------------
 
 from fastapi.testclient import TestClient
+
 from heretek_swarm.mcp.server import get_registry, router, set_registry
 
 
@@ -87,7 +84,8 @@ def _make_registry_with_tools(count: int = 3) -> MCPToolRegistry:
             },
             category="test",
         )
-        handler = lambda args, ctx, n=f"test_tool_{i}": {"ok": True, "tool": n}
+        def handler(args, ctx, n=f"test_tool_{i}"):
+            return {"ok": True, "tool": n}
         registry.register_tool(meta, handler)
     return registry
 
@@ -577,8 +575,8 @@ class TestBridgePersistsToolStates:
         disabled tools stay disabled."""
         state_file = tmp_path / "tools_state.json"
 
-        from tests.test_mcp_bridge import _make_core_mcp_with_tools
         from heretek_swarm.mcp.server import get_registry
+        from tests.test_mcp_bridge import _make_core_mcp_with_tools
 
         with patch("heretek_swarm.mcp.registry.TOOLS_STATE_FILE", state_file):
             core = _make_core_mcp_with_tools(tool_count=3)
@@ -663,7 +661,7 @@ class TestBridgePersistsToolStates:
 
     def test_bridge_no_state_file_leaves_all_enabled(self, tmp_path: Path) -> None:
         """When no tools_state.json exists, all tools remain enabled (default)."""
-        reg = self._bridge_with_states(
+        self._bridge_with_states(
             tmp_path, tool_count=3, states=None  # no file written
         )
 

@@ -11,7 +11,7 @@ This module contains the type definitions extracted from sentinel.py:
 """
 
 from dataclasses import dataclass
-from datetime import UTC, datetime
+from datetime import datetime
 from enum import StrEnum
 
 from heretek_swarm.security.anomaly_detection import (

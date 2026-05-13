@@ -33,7 +33,7 @@ import structlog
 from .knowledge_transform import (
     KnowledgeTransformer,
 )
-from .learning import CollectiveLearning, ExtractedPattern, LearningSignal, PatternType
+from .learning import CollectiveLearning, ExtractedPattern, LearningSignal, PatternMetadata, PatternType
 
 logger = structlog.get_logger(__name__)
 

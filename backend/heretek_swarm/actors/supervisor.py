@@ -15,7 +15,12 @@ import structlog
 
 from heretek_swarm.actors.base import ActorState, ActorStatus, AgentActor
 from heretek_swarm.actors.factory import ActorConfig
-from heretek_swarm.actors.mixins import AuditMixin, HealthReportingMixin, ValidationMixin, PatternMixin
+from heretek_swarm.actors.mixins import (
+    AuditMixin,
+    HealthReportingMixin,
+    PatternMixin,
+    ValidationMixin,
+)
 from heretek_swarm.collective.learning import PatternExtractor
 
 logger = structlog.get_logger("ActorSupervisor")

@@ -524,9 +524,8 @@ class Tribunal:
         precedents = []
         for ruling_id in self._precedents:
             ruling = self._rulings.get(ruling_id)
-            if ruling:
-                if ruling_type is None or ruling.ruling_type == ruling_type:
-                    precedents.append(ruling)
+            if ruling and (ruling_type is None or ruling.ruling_type == ruling_type):
+                precedents.append(ruling)
 
         return sorted(
             precedents,

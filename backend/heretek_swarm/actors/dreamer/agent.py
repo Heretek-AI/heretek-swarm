@@ -32,9 +32,9 @@ import structlog
 from heretek_swarm.actors.base import ActorMessage, AgentActor
 from heretek_swarm.actors.dreamer.generators import DreamerGeneratorsMixin
 from heretek_swarm.actors.dreamer.types import (
-    CreativityTechnique,
     CreativeIdea,
     CreativeSession,
+    CreativityTechnique,
     IdeaCategory,
     NoveltyLevel,
 )
@@ -51,7 +51,6 @@ from heretek_swarm.actors.validation import validate_message
 from heretek_swarm.creativity.novel_connections import (
     ConnectionTechnique,
     HarmfulContentFilter,
-    LateralThinkingMetrics,
     LateralThinkingMetricsTracker,
     NovelConnection,
     NovelConnectionEngine,
@@ -353,7 +352,7 @@ class DreamerAgent(
 
             sessions = list(self._sessions.values()) if include_sessions else []
 
-            innovation_score = _calculate_innovation_score(ideas, sessions)
+            innovation_score = self._calculate_innovation_score(ideas, sessions)
 
             report_content = await self._generate_innovation_report(
                 ideas=ideas,

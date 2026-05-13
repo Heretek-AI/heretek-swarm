@@ -25,15 +25,15 @@ from heretek_swarm.infrastructure.nats.publisher import NATSPublisher
 from heretek_swarm.infrastructure.nats.subscriber import NATSSubscriber
 
 __all__ = [
+    "AgentInfo",
+    "AgentRegistry",
+    "AgentStatus",
+    "HeartbeatMessage",
     "NATSClient",
     "NATSPublisher",
     "NATSSubscriber",
-    "get_nats_client",
-    "AgentRegistry",
-    "AgentInfo",
-    "AgentStatus",
-    "HeartbeatMessage",
     "PresenceAnnouncement",
     "get_discovery_registry",
+    "get_nats_client",
     "shutdown_discovery_registry",
 ]

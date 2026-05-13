@@ -851,7 +851,7 @@ class EventStore:
                     await handler(event)
                 else:
                     handler(event)
-            except (Exception,) as e:
+            except Exception as e:
                 logger.error(f"Event handler error for {event.event_type}: {e}")
 
     async def get_stats(self) -> dict[str, Any]:

@@ -20,14 +20,14 @@ def test_version_accessible() -> None:
 
 def test_cli_importable() -> None:
     """The CLI click group is importable from heretek_swarm.cli."""
-    from heretek_swarm.cli import cli  # noqa: F401
+    from heretek_swarm.cli import cli
 
     assert callable(cli)
 
 
 def test_main_module_importable() -> None:
     """The __main__ module exposes cli_main for `python -m heretek_swarm`."""
-    from heretek_swarm.__main__ import cli_main  # noqa: F401
+    from heretek_swarm.__main__ import cli_main
 
     assert callable(cli_main)
 

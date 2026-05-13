@@ -9,12 +9,12 @@ Verifies that the autonomous goal cycle correctly:
 
 from __future__ import annotations
 
-import asyncio
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, patch
+
 import pytest
 
-from heretek_swarm.goals.pipeline import run_goal_cycle
 from heretek_swarm.goals.models import Goal, Vote
+from heretek_swarm.goals.pipeline import run_goal_cycle
 from heretek_swarm.goals.store import FileGoalStore
 
 
@@ -68,12 +68,12 @@ async def test_propose_new_goal(store, mock_metis, mock_coordinator, mock_histor
         actors={},
         historian=mock_historian,
     )
-    
+
     assert goal is not None
     assert goal.id == "goal-metis"
     assert goal.status == "proposed"
     mock_metis.generate_goal_proposal.assert_called_once()
-    
+
     saved = store.load("goal-metis")
     assert saved is not None
     mock_historian.log_event.assert_called_with(
@@ -91,7 +91,7 @@ async def test_propose_new_goal(store, mock_metis, mock_coordinator, mock_histor
 async def test_vote_proposed_goal_accepted(store, mock_metis, mock_coordinator, mock_historian, sample_goal):
     """When a proposed goal exists, it should run consensus and transition to accepted."""
     store.save(sample_goal)
-    
+
     # Mock GoalConsensus.run_goal_consensus to return accepted=True
     with patch("heretek_swarm.goals.pipeline.GoalConsensus") as mock_consensus_cls:
         mock_consensus = AsyncMock()
@@ -101,7 +101,7 @@ async def test_vote_proposed_goal_accepted(store, mock_metis, mock_coordinator, 
             1      # rounds
         )
         mock_consensus_cls.return_value = mock_consensus
-        
+
         goal = await run_goal_cycle(
             store=store,
             metis=mock_metis,
@@ -109,15 +109,15 @@ async def test_vote_proposed_goal_accepted(store, mock_metis, mock_coordinator, 
             actors={"alpha": {}},
             historian=mock_historian,
         )
-        
+
         assert goal is not None
         assert goal.id == "goal-001"
         assert goal.status == "accepted"
         assert len(goal.votes) == 1
-        
+
         mock_consensus.run_goal_consensus.assert_called_once()
         mock_metis.generate_goal_proposal.assert_not_called()
-        
+
         saved = store.load("goal-001")
         assert saved.status == "accepted"
 
@@ -126,7 +126,7 @@ async def test_vote_proposed_goal_accepted(store, mock_metis, mock_coordinator, 
 async def test_vote_proposed_goal_rejected(store, mock_metis, mock_coordinator, mock_historian, sample_goal):
     """When a proposed goal fails consensus, it should transition to rejected."""
     store.save(sample_goal)
-    
+
     # Mock GoalConsensus.run_goal_consensus to return accepted=False
     with patch("heretek_swarm.goals.pipeline.GoalConsensus") as mock_consensus_cls:
         mock_consensus = AsyncMock()
@@ -136,7 +136,7 @@ async def test_vote_proposed_goal_rejected(store, mock_metis, mock_coordinator, 
             1      # rounds
         )
         mock_consensus_cls.return_value = mock_consensus
-        
+
         goal = await run_goal_cycle(
             store=store,
             metis=mock_metis,
@@ -144,14 +144,14 @@ async def test_vote_proposed_goal_rejected(store, mock_metis, mock_coordinator, 
             actors={"alpha": {}},
             historian=mock_historian,
         )
-        
+
         assert goal is not None
         assert goal.id == "goal-001"
         assert goal.status == "rejected"
         assert len(goal.votes) == 1
-        
+
         mock_consensus.run_goal_consensus.assert_called_once()
         mock_metis.generate_goal_proposal.assert_not_called()
-        
+
         saved = store.load("goal-001")
         assert saved.status == "rejected"

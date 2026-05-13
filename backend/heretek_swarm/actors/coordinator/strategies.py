@@ -19,7 +19,7 @@ if TYPE_CHECKING:
 class DependencyResolutionStrategy:
     """Strategy for resolving task dependencies and determining execution order."""
 
-    def __init__(self, tasks: dict[str, "CoordinatedTask"], dependency_graph: dict[str, set[str]]):
+    def __init__(self, tasks: dict[str, CoordinatedTask], dependency_graph: dict[str, set[str]]):
         self._tasks = tasks
         self._dependency_graph = dependency_graph
 
@@ -110,7 +110,6 @@ class ParallelExecutionStrategy:
             return []
 
         groups = []
-        ready: set[str] = set()
         remaining = set(tasks)
 
         while remaining:
@@ -124,7 +123,7 @@ class ParallelExecutionStrategy:
             if not current_batch:
                 # Circular dependency or error - take one anyway
                 if remaining:
-                    current_batch = [list(remaining)[0]]
+                    current_batch = [next(iter(remaining))]
                 else:
                     break
 

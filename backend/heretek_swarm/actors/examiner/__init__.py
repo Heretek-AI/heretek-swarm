@@ -40,10 +40,13 @@ from heretek_swarm.actors.examiner.types import (
 )
 
 __all__ = [
-    # Agent
-    "ExaminerAgent",
     # Types (enums and data classes)
     "Bug",
+    # Agent
+    "ExaminerAgent",
+    # Mixins
+    "ExaminingTestingMixin",
+    "ExaminingValidationMixin",
     "QualityMetric",
     "QualityReport",
     "SeverityLevel",
@@ -51,7 +54,4 @@ __all__ = [
     "TestStatus",
     "TestSuite",
     "TestType",
-    # Mixins
-    "ExaminingTestingMixin",
-    "ExaminingValidationMixin",
 ]

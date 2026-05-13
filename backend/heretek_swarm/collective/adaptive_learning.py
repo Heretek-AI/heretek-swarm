@@ -30,7 +30,7 @@ from typing import Any
 
 import structlog
 
-from .learning import ExtractedPattern, LearningSignal, PatternType
+from .learning import ExtractedPattern, LearningSignal, PatternSource, PatternType
 
 logger = structlog.get_logger(__name__)
 

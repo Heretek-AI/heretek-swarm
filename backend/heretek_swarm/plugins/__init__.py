@@ -11,6 +11,8 @@ Components:
 - Plugin execution and message handling
 """
 
+from .consciousness import ConsciousnessPlugin
+from .liberation import LiberationPlugin
 from .manager import (
     Plugin,
     PluginMetadata,
@@ -19,16 +21,14 @@ from .manager import (
     get_plugin_runtime,
     load_plugin_from_file,
 )
-from .consciousness import ConsciousnessPlugin
-from .liberation import LiberationPlugin
 
 __all__ = [
+    "ConsciousnessPlugin",
+    "LiberationPlugin",
     "Plugin",
     "PluginMetadata",
     "PluginRuntime",
     "PluginState",
     "get_plugin_runtime",
     "load_plugin_from_file",
-    "ConsciousnessPlugin",
-    "LiberationPlugin",
 ]

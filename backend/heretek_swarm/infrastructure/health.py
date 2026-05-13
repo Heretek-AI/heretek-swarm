@@ -15,6 +15,7 @@ import asyncio
 import time
 from typing import NamedTuple
 
+import httpx
 import structlog
 
 from heretek_swarm.config.models import (
@@ -70,7 +71,7 @@ async def check_postgres_health(host: str, port: int, timeout: float = 5.0) -> H
             status=HealthStatus.HEALTHY,
             latency_ms=round(latency_ms, 2),
         )
-    except asyncio.TimeoutError:
+    except TimeoutError:
         latency_ms = (time.perf_counter() - start) * 1000
         error = f"Connection timed out after {timeout}s"
         logger.warning(
@@ -139,14 +140,13 @@ async def check_redis_health(host: str, port: int, timeout: float = 5.0) -> Heal
                 status=HealthStatus.HEALTHY,
                 latency_ms=round(latency_ms, 2),
             )
-        else:
-            error = "PING returned unexpected response"
-            return HealthCheckResult(
-                service=InfrastructureService.REDIS,
-                status=HealthStatus.UNHEALTHY,
-                latency_ms=round(latency_ms, 2),
-                error=error,
-            )
+        error = "PING returned unexpected response"
+        return HealthCheckResult(
+            service=InfrastructureService.REDIS,
+            status=HealthStatus.UNHEALTHY,
+            latency_ms=round(latency_ms, 2),
+            error=error,
+        )
     except Exception as e:
         latency_ms = (time.perf_counter() - start) * 1000
         error = str(e)
@@ -202,14 +202,13 @@ async def check_qdrant_health(host: str, port: int, timeout: float = 5.0) -> Hea
                     status=HealthStatus.HEALTHY,
                     latency_ms=round(latency_ms, 2),
                 )
-            else:
-                error = f"HTTP {response.status_code}"
-                return HealthCheckResult(
-                    service=InfrastructureService.QDRANT,
-                    status=HealthStatus.UNHEALTHY,
-                    latency_ms=round(latency_ms, 2),
-                    error=error,
-                )
+            error = f"HTTP {response.status_code}"
+            return HealthCheckResult(
+                service=InfrastructureService.QDRANT,
+                status=HealthStatus.UNHEALTHY,
+                latency_ms=round(latency_ms, 2),
+                error=error,
+            )
     except httpx.TimeoutException:
         latency_ms = (time.perf_counter() - start) * 1000
         error = f"Request timed out after {timeout}s"
@@ -308,7 +307,7 @@ async def check_nats_health(host: str, port: int, timeout: float = 5.0) -> Healt
                 error=error,
             )
 
-        except asyncio.TimeoutError:
+        except TimeoutError:
             writer.close()
             await writer.wait_closed()
             latency_ms = (time.perf_counter() - start) * 1000
@@ -320,7 +319,7 @@ async def check_nats_health(host: str, port: int, timeout: float = 5.0) -> Healt
                 error=error,
             )
 
-    except asyncio.TimeoutError:
+    except TimeoutError:
         latency_ms = (time.perf_counter() - start) * 1000
         error = f"Connection timed out after {timeout}s"
         logger.warning(
@@ -390,14 +389,13 @@ async def check_mem0_health(host: str, port: int, timeout: float = 5.0) -> Healt
                     status=HealthStatus.HEALTHY,
                     latency_ms=round(latency_ms, 2),
                 )
-            else:
-                error = f"HTTP {response.status_code}"
-                return HealthCheckResult(
-                    service=InfrastructureService.MEM0,
-                    status=HealthStatus.UNHEALTHY,
-                    latency_ms=round(latency_ms, 2),
-                    error=error,
-                )
+            error = f"HTTP {response.status_code}"
+            return HealthCheckResult(
+                service=InfrastructureService.MEM0,
+                status=HealthStatus.UNHEALTHY,
+                latency_ms=round(latency_ms, 2),
+                error=error,
+            )
     except httpx.TimeoutException:
         latency_ms = (time.perf_counter() - start) * 1000
         error = f"Request timed out after {timeout}s"

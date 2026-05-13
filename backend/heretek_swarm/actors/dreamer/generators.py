@@ -11,12 +11,10 @@ Version: 1.0.0
 
 from __future__ import annotations
 
-from typing import Any
-
 from heretek_swarm.actors.dreamer.types import (
-    CreativityTechnique,
     CreativeIdea,
     CreativeSession,
+    CreativityTechnique,
     NoveltyLevel,
 )
 

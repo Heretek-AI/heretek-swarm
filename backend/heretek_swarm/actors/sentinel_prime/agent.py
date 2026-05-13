@@ -15,11 +15,10 @@ This module contains the SentinelPrimeAgent class which inherits from:
 SAFE-02: External threat detection integration included.
 """
 
-from collections import defaultdict
-from datetime import UTC, datetime
-from typing import Any
-
 import re
+from collections import defaultdict
+from typing import TYPE_CHECKING, Any
+
 import structlog
 
 from heretek_swarm.actors.base import ActorMessage, AgentActor
@@ -33,23 +32,21 @@ from heretek_swarm.actors.mixins import (
 )
 from heretek_swarm.security.threat_detection import (
     AlertPriority,
-    ExternalThreatType,
     ThreatDetectionConfig,
-    ThreatDetectionResult,
     create_default_detector,
 )
 
 from .handlers import SentinelPrimeHandlers
 from .helpers import SentinelPrimeHelpers
 from .types import (
-    IncidentStatus,
-    ResponseAction,
     SecurityIncident,
     ThreatIndicator,
     ThreatLevel,
-    ThreatReport,
     ThreatType,
 )
+
+if TYPE_CHECKING:
+    from datetime import datetime
 
 logger = structlog.get_logger("SentinelPrimeAgent")
 

@@ -7,25 +7,16 @@ queue.Queue for non-blocking writes.
 """
 
 import json
-import os
-import tempfile
-import threading
-import time
 from pathlib import Path
 
 import pytest
 
-from heretek_swarm.consensus.audit_models import (
-    AuditEventType,
-    DecisionOutcome,
-)
 from heretek_swarm.consensus.audit_trail import (
     ConsensusAuditTrail,
-    _CONSENSUS_AUDIT_FILE,
 )
 
 
-@pytest.fixture()
+@pytest.fixture
 def tmp_jsonl_path(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     """Redirect the JSONL file constant to a temp directory."""
     test_path = tmp_path / "consensus_audit.jsonl"
@@ -36,7 +27,7 @@ def tmp_jsonl_path(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     return test_path
 
 
-@pytest.fixture()
+@pytest.fixture
 def jsonl_trail(tmp_jsonl_path: Path) -> ConsensusAuditTrail:
     """Create a ConsensusAuditTrail in jsonl mode with writer started."""
     trail = ConsensusAuditTrail(storage_backend="jsonl")

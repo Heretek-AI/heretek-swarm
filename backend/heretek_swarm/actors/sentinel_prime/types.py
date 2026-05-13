@@ -4,9 +4,8 @@ Sentinel-Prime types - Enums and dataclasses for security threat management.
 Extracted from sentinel_prime.py (SAFE-02).
 """
 
-from collections import defaultdict
 from dataclasses import dataclass, field
-from datetime import UTC, datetime
+from datetime import datetime
 from enum import StrEnum
 from typing import Any
 

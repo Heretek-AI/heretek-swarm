@@ -248,7 +248,7 @@ class StubPatternExtractor:
         timestamp: str | None = None,
     ) -> _StubMessageAnalysis:
         """Analyze a message and cache the analysis."""
-        ts = timestamp or datetime.now(UTC).isoformat()
+        timestamp or datetime.now(UTC).isoformat()
         analysis = _StubMessageAnalysis(
             message_id=message_id,
             sender=sender,

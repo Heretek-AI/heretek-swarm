@@ -41,22 +41,19 @@ from heretek_swarm.actors.nexus.types import (
     WebhookConfig,
 )
 from heretek_swarm.actors.validation import validate_message
-from heretek_swarm.validation import LLMOutputValidator
 
 # INTG-02: External API Resilience
 from heretek_swarm.gateway.external_api import (
     APIRequestMetrics,
-    CircuitBreaker,
     CircuitBreakerConfig,
     CircuitState,
     FallbackConfig,
-    FallbackManager,
     RateLimitConfig,
-    RateLimitHandler,
     ResilientAPIClient,
     RetryConfig,
     RetryStrategy,
 )
+from heretek_swarm.validation import LLMOutputValidator
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -1098,7 +1095,7 @@ class NexusAgent(
         try:
             circuit_breakers = {}
             if self._api_client:
-                for endpoint in self._api_client._circuit_breaker._states.keys():
+                for endpoint in self._api_client._circuit_breaker._states:
                     circuit_breakers[endpoint] = self._api_client._circuit_breaker.get_metrics(
                         endpoint
                     )
@@ -1187,4 +1184,4 @@ class NexusAgent(
 
 
 # Import datetime for timestamp in _translate_data and other methods
-from datetime import UTC, datetime  # noqa: E402, F401
+from datetime import UTC, datetime  # noqa: E402

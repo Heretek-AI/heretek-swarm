@@ -1173,7 +1173,7 @@ class ExternalInputValidator:
                         severity = Severity.WARNING
 
         if self.config.enable_reputation_check:
-            rep_passed, score, rep_reason = self.check_reputation(source)
+            rep_passed, _score, _rep_reason = self.check_reputation(source)
             if not rep_passed:
                 threat_indicators.append("low_reputation")
                 severity = Severity.HIGH
@@ -1435,7 +1435,7 @@ class ZeroTrustValidator:
             self.external_validator.validate_external_input(data, source, source_type)
         )
 
-        layer2_external = LayerResult(
+        LayerResult(
             layer="context_external",
             passed=external_passed,
             reason=external_reason,

@@ -12,22 +12,20 @@ These tests mock the swarm (ConsensusCoordinator, AutonomousSwarm) but test
 the full CLI → heuristic → coordinator → MAKER pipeline.
 """
 
-import asyncio
-import pytest
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, patch
 
+import pytest
 from click.testing import CliRunner
 
-from heretek_swarm.cli import cli, _display_consensus_results
+from heretek_swarm.cli import _display_consensus_results, cli
 from heretek_swarm.consensus.complexity import ComplexityHeuristic
-
 
 # ── Fixtures ───────────────────────────────────────────────────────────
 
 
 def _consensus_result(decision="yes", confidence=0.87, total_rounds=1, round_history=None):
     """Return a realistic consensus result dict matching run_consensus output."""
-    result = {
+    return {
         "decision": decision,
         "confidence": confidence,
         "votes": [
@@ -58,7 +56,6 @@ def _consensus_result(decision="yes", confidence=0.87, total_rounds=1, round_his
             {"round_number": 1, "consensus_score": confidence, "decision": decision, "vote_count": 3}
         ],
     }
-    return result
 
 
 def _triad_result():
@@ -94,7 +91,7 @@ class TestComplexPromptAutoRoutesToConsensus:
         """run --prompt with a complex question routes through consensus, not triad."""
         runner = CliRunner()
         mock_consensus = AsyncMock(return_value=_consensus_result())
-        mock_deliberation = AsyncMock(return_value=_triad_result())
+        AsyncMock(return_value=_triad_result())
 
         with (
             patch("heretek_swarm._cli_module._run_consensus", mock_consensus),
@@ -103,7 +100,7 @@ class TestComplexPromptAutoRoutesToConsensus:
             # Patch inside _start_autonomous_swarm's scope
             mock_start.side_effect = RuntimeError("stop")
 
-            result = runner.invoke(
+            runner.invoke(
                 cli,
                 ["run", "--no-infra", "--prompt", "analyze the tradeoffs of adding Redis caching"],
             )
@@ -237,7 +234,7 @@ class TestMultiRoundConsensusWithArgumentExchange:
         mock_run = AsyncMock(return_value=_multi_round_consensus_result())
 
         with patch("heretek_swarm._cli_module._run_consensus", mock_run):
-            result = runner.invoke(cli, ["consensus", "complex question", "--rounds", "3"])
+            runner.invoke(cli, ["consensus", "complex question", "--rounds", "3"])
 
         mock_run.assert_called_once()
         call_kwargs = mock_run.call_args
@@ -349,11 +346,11 @@ class TestRunConsensusSingleRound:
     @pytest.mark.asyncio
     async def test_single_round_returns_round_history(self):
         """ConsensusCoordinator.run_consensus with max_rounds=1 returns single round history."""
+        import os
+
         from heretek_swarm.consensus.consensus_coordinator import ConsensusCoordinator
         from heretek_swarm.consensus.domain_selector import DomainSelector
         from heretek_swarm.consensus.maker import MAKERConsensus
-
-        import os
         characters_dir = os.path.join(
             os.path.dirname(os.path.dirname(__file__)),
             "heretek_swarm",
@@ -390,11 +387,11 @@ class TestRunConsensusSingleRound:
     @pytest.mark.asyncio
     async def test_single_round_no_argument_exchange(self):
         """With max_rounds=1, no argument exchange prompt is sent."""
+        import os
+
         from heretek_swarm.consensus.consensus_coordinator import ConsensusCoordinator
         from heretek_swarm.consensus.domain_selector import DomainSelector
         from heretek_swarm.consensus.maker import MAKERConsensus
-
-        import os
         characters_dir = os.path.join(
             os.path.dirname(os.path.dirname(__file__)),
             "heretek_swarm",
@@ -425,7 +422,7 @@ class TestRunConsensusSingleRound:
         ]}
 
         coord = ConsensusCoordinator(maker=maker, domain_selector=ds, actors=actors)
-        result = await coord.run_consensus("security analysis", max_rounds=1)
+        await coord.run_consensus("security analysis", max_rounds=1)
 
         # All captured prompts should be the initial vote prompt, not multi-round
         for prompt in captured_prompts:
@@ -439,7 +436,7 @@ class TestRunConsensusSingleRound:
         mock_run = AsyncMock(return_value=_consensus_result(total_rounds=1))
 
         with patch("heretek_swarm._cli_module._run_consensus", mock_run):
-            result = runner.invoke(cli, ["consensus", "test question"])
+            runner.invoke(cli, ["consensus", "test question"])
 
         mock_run.assert_called_once()
         # Default rounds should be 1

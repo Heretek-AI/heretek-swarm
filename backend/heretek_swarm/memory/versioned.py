@@ -264,7 +264,7 @@ class VersionedMemoryStore:
             # Try the Mem0Backend interface
             if hasattr(self._backend, "get_all"):
                 return await self._backend.get_all()
-            elif hasattr(self._backend, "search"):
+            if hasattr(self._backend, "search"):
                 # Get all by searching with empty query
                 result = await self._backend.search("", limit=10000)
                 return result.get("results", [])

@@ -17,11 +17,17 @@ from __future__ import annotations
 
 import uuid
 from datetime import UTC, datetime
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import structlog
 
 from heretek_swarm.actors.base import ActorMessage, AgentActor
+
+if TYPE_CHECKING:
+    from heretek_swarm.collective.learning import PatternExtractor
+    from heretek_swarm.consensus.swarm_deliberation import SwarmDeliberationEngine
+    from heretek_swarm.memory.access_patterns import AccessPatternAnalyzer
+    from heretek_swarm.security.zero_trust import ZeroTrustValidator
 from heretek_swarm.actors.catalyst.types import (
     ChangeNotification,
     ChangeRequest,
@@ -39,14 +45,14 @@ from heretek_swarm.actors.mixins import (
 from heretek_swarm.actors.validation import validate_message
 from heretek_swarm.coordination.paradigm_detection import (
     ChangeRequest as PDChangeRequest,
+)
+from heretek_swarm.coordination.paradigm_detection import (
     ChangeType as PDChangeType,
+)
+from heretek_swarm.coordination.paradigm_detection import (
     ParadigmDetector,
     ParadigmShift,
-    ShiftConfidence,
-    ShiftIndicator,
-    ShiftMagnitude,
     ShiftStatus,
-    ShiftType,
 )
 
 logger = structlog.get_logger(__name__)

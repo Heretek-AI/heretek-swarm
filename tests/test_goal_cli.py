@@ -7,9 +7,8 @@ are wired into the Click CLI and that the CLI runner can invoke them.
 
 from __future__ import annotations
 
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
-import pytest
 from click.testing import CliRunner
 
 from heretek_swarm.cli import cli

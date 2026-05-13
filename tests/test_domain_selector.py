@@ -19,7 +19,7 @@ _CHARACTERS_DIR = os.path.join(
 )
 
 
-@pytest.fixture()
+@pytest.fixture
 def ds() -> DomainSelector:
     return DomainSelector(characters_dir=_CHARACTERS_DIR)
 

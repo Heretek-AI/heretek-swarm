@@ -19,10 +19,9 @@ Version: 1.0.0
 from __future__ import annotations
 
 from datetime import UTC, datetime
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import structlog
-from swarms import Agent
 
 from heretek_swarm.actors.base import ActorMessage, AgentActor
 from heretek_swarm.actors.habit_forge.streaks import HabitForgeStreaksMixin
@@ -45,13 +44,16 @@ from heretek_swarm.consciousness.phi_training import (
 )
 
 # Session 44: Consensus Integration
-from heretek_swarm.consensus.swarm_deliberation import Position, SwarmDeliberationEngine
 
 # Session 44: Memory Optimization Integration
-from heretek_swarm.memory.access_patterns import AccessPatternAnalyzer
-
 # Session 44: Zero-Trust Validation
-from heretek_swarm.security.zero_trust import ZeroTrustValidator
+
+if TYPE_CHECKING:
+    from swarms import Agent
+
+    from heretek_swarm.consensus.swarm_deliberation import Position, SwarmDeliberationEngine
+    from heretek_swarm.memory.access_patterns import AccessPatternAnalyzer
+    from heretek_swarm.security.zero_trust import ZeroTrustValidator
 
 logger = structlog.get_logger("HabitForgeAgent")
 

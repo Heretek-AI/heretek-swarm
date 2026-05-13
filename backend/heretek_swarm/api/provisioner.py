@@ -28,9 +28,11 @@ from heretek_swarm.infrastructure.nats.publisher import (
 )
 from heretek_swarm.infrastructure.provisioner import (
     ContainerRuntime,
-    InfrastructureService as InfraService,
     detect_runtime,
     provision_all,
+)
+from heretek_swarm.infrastructure.provisioner import (
+    InfrastructureService as InfraService,
 )
 
 logger = structlog.get_logger("api.provisioner")
@@ -340,7 +342,6 @@ async def provision_services(request: ProvisionRequest) -> ProvisionResponse:
 
         for infra_svc, result in results.items():
             service_key = infra_svc.value
-            is_mem0 = infra_svc == InfraService.MEM0
 
             if not result.success:
                 error_msg = result.error or "Unknown error"

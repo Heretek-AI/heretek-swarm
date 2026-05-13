@@ -51,6 +51,8 @@ HEREKET_LOGS_DIR.mkdir(parents=True, exist_ok=True)
 
 # Import shared config-path after module constants to avoid circular reference.
 # This is always safe because config.__init__ only depends on its sub-modules.
+import contextlib
+
 from heretek_swarm.config import get_config_path  # noqa: E402
 
 
@@ -467,7 +469,7 @@ class MiniMaxProvider(LLMProvider):
         async with self._rate_limiter:
             client = await self._get_client()
             model = request.model or self.config.default_model or "abab6.5s"
-            
+
             # Convert messages to MiniMax format
             messages = []
             for msg in request.messages:
@@ -602,12 +604,7 @@ class AnthropicProvider(LLMProvider):
                                 try:
                                     chunk = json.loads(data_str)
                                     # Handle message delta events
-                                    if current_event == "message_delta" and "delta" in chunk:
-                                        delta = chunk["delta"]
-                                        if "text" in delta:
-                                            yield delta["text"]
-                                    # Handle content block delta events
-                                    elif current_event == "content_block_delta" and "delta" in chunk:
+                                    if (current_event == "message_delta" and "delta" in chunk) or (current_event == "content_block_delta" and "delta" in chunk):
                                         delta = chunk["delta"]
                                         if "text" in delta:
                                             yield delta["text"]
@@ -669,7 +666,7 @@ class OpenAICompatibleProvider(LLMProvider):
             model = request.model or self.config.default_model
             if not model:
                 raise ValueError("Model must be specified for OpenAI-compatible providers")
-            
+
             payload = request.to_dict()
             payload["model"] = model
             payload["stream"] = True
@@ -894,10 +891,8 @@ class ModelGarage:
                          error=e.__class__.__name__,
                          detail=str(e))
             # Best-effort cleanup of the temp file
-            try:
+            with contextlib.suppress(FileNotFoundError):
                 tmp.unlink()
-            except FileNotFoundError:
-                pass
 
     async def initialize(self) -> None:
         """Initialize all enabled providers."""

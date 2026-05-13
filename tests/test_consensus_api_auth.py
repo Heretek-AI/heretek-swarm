@@ -22,10 +22,8 @@ from heretek_swarm.api.consensus import (
     _active_rounds,
     _consensus_store,
     consensus_auth_manager,
-    deliberation_engine,
     router,
 )
-
 
 # ---------------------------------------------------------------------------
 # Fixtures
@@ -44,7 +42,7 @@ def _clear_state():
     _consensus_store.clear()
 
 
-@pytest.fixture()
+@pytest.fixture
 def app():
     """Create a minimal FastAPI app with the consensus router."""
     _app = FastAPI()
@@ -52,13 +50,13 @@ def app():
     return _app
 
 
-@pytest.fixture()
+@pytest.fixture
 def client(app):
     """Synchronous test client."""
     return TestClient(app, raise_server_exceptions=False)
 
 
-@pytest.fixture()
+@pytest.fixture
 def auth_headers():
     """Generate valid auth headers for test-agent."""
     token = consensus_auth_manager.generate_token("test-agent", ["vote", "create", "view"])

@@ -23,6 +23,14 @@ Core Features:
 - Quorum-based baseline updates to prevent corruption
 """
 
+from heretek_swarm.consensus.audit import (
+    ArgumentRecord,
+    ConsensusAuditTrail,
+    DecisionOutcome,
+    DecisionRecord,
+    QueryResult,
+    VoteRecord,
+)
 from heretek_swarm.consensus.complexity import (
     ComplexityHeuristic,
     ComplexityResult,
@@ -33,14 +41,6 @@ from heretek_swarm.consensus.consensus_coordinator import (
 from heretek_swarm.consensus.domain_selector import (
     DEFAULT_FALLBACK_AGENTS,
     DomainSelector,
-)
-from heretek_swarm.consensus.audit import (
-    ArgumentRecord,
-    ConsensusAuditTrail,
-    DecisionOutcome,
-    DecisionRecord,
-    QueryResult,
-    VoteRecord,
 )
 from heretek_swarm.consensus.expertise import (
     AgentExpertiseProfile,
@@ -103,6 +103,8 @@ from heretek_swarm.consensus.tribunal import (
 )
 
 __all__ = [
+    # Domain Selection
+    "DEFAULT_FALLBACK_AGENTS",
     "AgentExpertiseProfile",
     # Expertise Profiling
     "AgentExpertiseProfiler",
@@ -111,6 +113,11 @@ __all__ = [
     "AppendEntriesResponse",
     "Argument",
     "ArgumentRecord",
+    # Tribunal
+    "CaseStatus",
+    # Complexity Heuristic
+    "ComplexityHeuristic",
+    "ComplexityResult",
     # Audit Trail
     "ConsensusAuditTrail",
     "ConsensusCoordinator",
@@ -119,8 +126,6 @@ __all__ = [
     "DecisionOutcome",
     "DecisionProvenance",
     "DecisionRecord",
-    # Domain Selection
-    "DEFAULT_FALLBACK_AGENTS",
     "DeliberationResult",
     "DeliberationRound",
     "DeliberationState",
@@ -129,6 +134,7 @@ __all__ = [
     # Enhanced MAKER
     "EnhancedMAKERConsensus",
     "EnhancedVote",
+    "EvidenceType",
     "ExpertiseLevel",
     # Immune Response Building (CONS-02)
     "ImmunePattern",
@@ -154,15 +160,9 @@ __all__ = [
     "RequestVoteResponse",
     "ResponseOutcome",
     "RollbackResult",
+    "RulingType",
     # Swarm Deliberation
     "SwarmDeliberationEngine",
-    # Tribunal
-    "CaseStatus",
-    # Complexity Heuristic
-    "ComplexityHeuristic",
-    "ComplexityResult",
-    "EvidenceType",
-    "RulingType",
     "Tribunal",
     "TribunalCase",
     "TribunalEvidence",

@@ -154,10 +154,9 @@ class AgentActorStateManagement(AgentActor):
         try:
             if hasattr(db_pool, "execute") and hasattr(db_pool, "_tables"):
                 return await self._persist_to_mock_db(db_pool, state_data)
-            elif not hasattr(db_pool, "acquire"):
+            if not hasattr(db_pool, "acquire"):
                 return await self._persist_to_generic_db(db_pool, state_data)
-            else:
-                return await self._persist_to_connection_pool_db(db_pool, state_data)
+            return await self._persist_to_connection_pool_db(db_pool, state_data)
         except Exception as e:
             logger.error(
                 f"[{self.agent_id}] Database persistence failed: {e}",

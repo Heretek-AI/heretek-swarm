@@ -8,9 +8,8 @@ correctly.
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
 from unittest.mock import MagicMock, patch
-
-import pytest
 
 from heretek_swarm.cli import (
     _display_daemon_status,
@@ -19,6 +18,8 @@ from heretek_swarm.cli import (
     _query_daemon_socket,
 )
 
+if TYPE_CHECKING:
+    import pytest
 
 # ---------------------------------------------------------------------------
 # Test helpers

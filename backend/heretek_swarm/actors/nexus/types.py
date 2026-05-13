@@ -13,11 +13,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from enum import Enum
-from typing import TYPE_CHECKING, Any
-
-if TYPE_CHECKING:
-    # Type-only imports used to avoid circular dependencies at runtime
-    pass
+from typing import Any
 
 
 class ConnectionStatus(Enum):
@@ -119,7 +115,7 @@ class ApiResponse:
     data: Any
     headers: dict[str, str] = field(default_factory=dict)
     error: str | None = None
-    request_id: str = field(default_factory=lambda: str(uuid.uuid4()))  # noqa: N806
+    request_id: str = field(default_factory=lambda: str(uuid.uuid4()))
     latency_ms: int = 0
 
     def to_dict(self) -> dict[str, Any]:
@@ -136,4 +132,4 @@ class ApiResponse:
 
 
 # Import uuid only for ApiResponse.request_id default factory
-import uuid  # noqa: E402, F401
+import uuid  # noqa: E402

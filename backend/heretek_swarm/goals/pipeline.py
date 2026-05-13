@@ -11,14 +11,15 @@ Public entry points:
 
 from __future__ import annotations
 
-from datetime import UTC, datetime
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import structlog
 
 from heretek_swarm.goals.consensus import GoalConsensus
-from heretek_swarm.goals.models import Goal, Vote
-from heretek_swarm.goals.store import FileGoalStore
+
+if TYPE_CHECKING:
+    from heretek_swarm.goals.models import Goal
+    from heretek_swarm.goals.store import FileGoalStore
 
 logger = structlog.get_logger("GoalPipeline")
 
@@ -102,21 +103,20 @@ async def run_goal_cycle(
             )
             logger.info("goal_accepted", goal_id=goal.id, rounds=rounds)
             return updated
-        else:
-            store.update_status(goal.id, "rejected")
-            updated = store.load(goal.id)
-            await _log_historian(
-                historian,
-                "goal_rejected",
-                {
-                    "goal_id": goal.id,
-                    "title": goal.title,
-                    "vote_count": len(votes),
-                    "rounds": rounds,
-                },
-            )
-            logger.info("goal_rejected", goal_id=goal.id, rounds=rounds)
-            return updated
+        store.update_status(goal.id, "rejected")
+        updated = store.load(goal.id)
+        await _log_historian(
+            historian,
+            "goal_rejected",
+            {
+                "goal_id": goal.id,
+                "title": goal.title,
+                "vote_count": len(votes),
+                "rounds": rounds,
+            },
+        )
+        logger.info("goal_rejected", goal_id=goal.id, rounds=rounds)
+        return updated
 
     # --- No proposed goals — generate a new proposal --------------------------
     if metis is None:

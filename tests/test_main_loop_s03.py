@@ -18,11 +18,8 @@ from __future__ import annotations
 from datetime import UTC, datetime
 from unittest.mock import AsyncMock, MagicMock
 
-import pytest
-
 from heretek_swarm.actors.chronos.types import ScheduleStatus, Tick
 from heretek_swarm.runtime.main_loop import AutonomousSwarm
-
 
 # ---------------------------------------------------------------------------
 # Helpers

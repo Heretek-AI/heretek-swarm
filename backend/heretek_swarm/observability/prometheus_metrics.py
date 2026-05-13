@@ -19,6 +19,11 @@ Metrics:
 - heretek_swarm_encryption_latency_seconds (Histogram): Encryption/decryption latency
 
 Usage:
+"""
+
+import structlog
+
+logger = structlog.get_logger("prometheus_metrics")
     from heretek_swarm.observability.prometheus_metrics import (
         PrometheusMetrics,
         get_metrics,

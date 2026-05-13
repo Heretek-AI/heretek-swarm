@@ -20,10 +20,9 @@ from __future__ import annotations
 
 import asyncio
 import contextlib
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import structlog
-from swarms import Agent
 
 from heretek_swarm.actors.base import AgentActor
 from heretek_swarm.actors.explorer.pathfinding import ExplorerPathfindingMixins
@@ -34,6 +33,9 @@ from heretek_swarm.actors.mixins import (
     PatternMixin,
     ValidationMixin,
 )
+
+if TYPE_CHECKING:
+    from swarms import Agent
 
 logger = structlog.get_logger("ExplorerAgent")
 
@@ -188,18 +190,18 @@ from heretek_swarm.actors.explorer.types import (  # noqa: E402
 )
 
 __all__ = [
+    "Anomaly",
+    "AnomalyType",
     # Main agent class
     "ExplorerAgent",
-    # Types (enums and dataclasses)
-    "OpportunityType",
-    "ThreatLevel",
-    "AnomalyType",
-    "ResearchState",
-    "Opportunity",
-    "Anomaly",
-    "IntelligenceReport",
-    "ResearchProgress",
-    "Pattern",
     # Mixin for pathfinding
     "ExplorerPathfindingMixins",
+    "IntelligenceReport",
+    "Opportunity",
+    # Types (enums and dataclasses)
+    "OpportunityType",
+    "Pattern",
+    "ResearchProgress",
+    "ResearchState",
+    "ThreatLevel",
 ]
