@@ -335,7 +335,7 @@ class AutonomousRuntime:
             start_time = time.time()
             async with httpx.AsyncClient() as client:
                 await client.get(
-                    f"http://{self.config.api_host}:{self.config.api_port}/api/health/live",  # Local health check
+                    f"http://{self.config.api_host}:{self.config.api_port}/api/health/live",  # Local health check  # noqa: E501
                     timeout=5.0,
                 )
             latency_ms = (time.time() - start_time) * 1000
@@ -638,7 +638,7 @@ class AutonomousRuntime:
 
         try:
             state_file.parent.mkdir(parents=True, exist_ok=True)
-            with open(state_file, "w") as f:
+            with open(state_file, "w") as f:  # noqa: ASYNC230,PTH123
                 import json
 
                 json.dump(state_data, f, indent=2)
@@ -653,7 +653,7 @@ class AutonomousRuntime:
             return
 
         try:
-            with open(state_file) as f:
+            with open(state_file) as f:  # noqa: ASYNC230,PTH123
                 import json
 
                 state_data = json.load(f)
@@ -1054,7 +1054,7 @@ async def start_autonomous_runtime(config: AutonomousRuntimeConfig) -> Autonomou
     # Setup signal handlers
     def signal_handler(signum, frame):
         logger.info("Received signal {signum}, shutting down...")
-        asyncio.create_task(runtime.stop())
+        asyncio.create_task(runtime.stop())  # noqa: RUF006
 
     signal.signal(signal.SIGINT, signal_handler)
     signal.signal(signal.SIGTERM, signal_handler)

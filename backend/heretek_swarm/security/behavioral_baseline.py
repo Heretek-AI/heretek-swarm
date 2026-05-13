@@ -638,7 +638,7 @@ class BehavioralBaseline:
         Returns:
             Request ID
         """
-        request_id = f"REQ_{int(datetime.now(UTC).timestamp())}_{hashlib.sha256(str(datetime.now(UTC).timestamp()).encode()).hexdigest()[:8]}"
+        request_id = f"REQ_{int(datetime.now(UTC).timestamp())}_{hashlib.sha256(str(datetime.now(UTC).timestamp()).encode()).hexdigest()[:8]}"  # noqa: E501
 
         request = BaselineChangeRequest(
             request_id=request_id,

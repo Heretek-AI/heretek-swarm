@@ -366,7 +366,7 @@ class StewardAgent(TriadAgent):
             next_phase = phase_progression.get(current_phase, current_phase)
             self._deliberations[session_id]["phase"] = next_phase
             logger.info(
-                f"[{self.agent_id}] Deliberation {session_id} phase: {current_phase} -> {next_phase}"  # noqa: G004
+                f"[{self.agent_id}] Deliberation {session_id} phase: {current_phase} -> {next_phase}"  # noqa: G004,E501
             )
 
         logger.info(
@@ -588,7 +588,7 @@ class StewardAgent(TriadAgent):
 
     # Internal set of agent IDs that have already been flagged as failed.
     # The monitor loop skips these to avoid repeated notifications.
-    _failed_agents: set[str] = set()
+    _failed_agents: set[str] = set()  # noqa: RUF012
 
     def _check_registry_heartbeats(self) -> list[str]:
         """Scan the actor registry for stale agents.
@@ -640,7 +640,7 @@ class StewardAgent(TriadAgent):
         Returns:
             List of agent IDs whose heartbeats appear to have stalled.
         """
-        hb = getattr(self, '_agent_heartbeats', None)
+        hb = getattr(self, "_agent_heartbeats", None)
         if hb:
             now = datetime.now(UTC)
             stale: list[str] = []
@@ -1198,7 +1198,7 @@ class CharlieAgent(TriadAgent):
 
     def _get_analysis_prompt(self, problem: str) -> str:
         """Build Charlie's analysis prompt."""
-        return f"Analyze with critical perspective (Charlie): {problem}. Identify risks and alternatives."
+        return f"Analyze with critical perspective (Charlie): {problem}. Identify risks and alternatives."  # noqa: E501
 
     def _get_analysis_extras(self) -> dict[str, Any]:
         """Return Charlie-specific extras."""

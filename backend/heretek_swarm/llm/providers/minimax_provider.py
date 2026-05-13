@@ -136,7 +136,7 @@ class MiniMaxProvider(LLMProviderBase):
         # Convert messages to MiniMax format
         messages = []
         for msg in request.messages:
-            messages.append(
+            messages.append(  # noqa: PERF401
                 {
                     "sender_type": msg.role,
                     "text": msg.content,
@@ -223,7 +223,7 @@ class MiniMaxProvider(LLMProviderBase):
                 f"Request failed: {e}",
                 provider="minimax",
                 cause=e,
-            )
+            ) from e
 
     async def stream(self, request: LLMRequest) -> AsyncIterator[str]:
         """
@@ -242,7 +242,7 @@ class MiniMaxProvider(LLMProviderBase):
         # Convert messages to MiniMax format
         messages = []
         for msg in request.messages:
-            messages.append(
+            messages.append(  # noqa: PERF401
                 {
                     "sender_type": msg.role,
                     "text": msg.content,
@@ -305,7 +305,7 @@ class MiniMaxProvider(LLMProviderBase):
                 f"Stream request failed: {e}",
                 provider="minimax",
                 cause=e,
-            )
+            ) from e
 
     async def list_models(self) -> list[str]:
         """List available MiniMax models."""
@@ -323,4 +323,4 @@ class MiniMaxProvider(LLMProviderBase):
 
 
 # Import at module level for type annotation
-from heretek_swarm.infrastructure.otel import InstrumentedAsyncClient
+from heretek_swarm.infrastructure.otel import InstrumentedAsyncClient  # noqa: E402

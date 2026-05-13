@@ -23,7 +23,7 @@ class Vote:
     Attributes:
         agent_id: The voting agent's identifier.
         decision: The vote choice — ``"approve"``, ``"reject"``, or ``"abstain"``.
-        confidence: Agent's confidence in their vote (0.0 – 1.0).
+        confidence: Agent's confidence in their vote (0.0 – 1.0).  # noqa: RUF002
         rationale: Brief reason for the vote (optional).
         timestamp: ISO-8601 timestamp of when the vote was cast.
     """
@@ -44,7 +44,7 @@ class Goal:
     """A strategic goal proposed by the swarm.
 
     Goals move through a lifecycle:
-    ``proposed`` → ``voting`` → ``accepted`` / ``rejected`` → ``executing`` → ``completed`` / ``error``.
+    ``proposed`` → ``voting`` → ``accepted`` / ``rejected`` → ``executing`` → ``completed`` / ``error``.  # noqa: E501
 
     Attributes:
         id: Unique goal identifier (generated at proposal time).

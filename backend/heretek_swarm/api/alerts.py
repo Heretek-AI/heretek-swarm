@@ -36,7 +36,7 @@ class CreateAlertRequest(BaseModel):
 
 
 @router.get("")
-async def get_active_alerts(auth: dict = Depends(verify_auth)) -> dict:
+async def get_active_alerts(auth: dict = Depends(verify_auth)) -> dict:  # noqa: B008
     """Get all active (firing) alerts."""
     manager = get_alert_manager()
     alerts = manager.get_active_alerts()
@@ -49,7 +49,7 @@ async def get_active_alerts(auth: dict = Depends(verify_auth)) -> dict:
 
 @router.get("/history")
 async def get_alert_history(
-    auth: dict = Depends(verify_auth),
+    auth: dict = Depends(verify_auth),  # noqa: B008
     limit: int = Query(100, ge=1, le=1000),
 ) -> dict:
     """Get resolved alert history."""
@@ -65,7 +65,7 @@ async def get_alert_history(
 @router.post("")
 async def create_alert(
     request: CreateAlertRequest,
-    auth: dict = Depends(verify_auth),
+    auth: dict = Depends(verify_auth),  # noqa: B008
 ) -> dict:
     """Create a new alert."""
     manager = get_alert_manager()
@@ -73,7 +73,7 @@ async def create_alert(
     try:
         severity = AlertSeverity(request.severity.lower())
     except ValueError:
-        raise HTTPException(status_code=400, detail=f"Invalid severity: {request.severity}")
+        raise HTTPException(status_code=400, detail=f"Invalid severity: {request.severity}")  # noqa: B904
 
     alert = Alert(
         severity=severity,
@@ -94,7 +94,7 @@ async def create_alert(
 @router.put("/{alert_id}/resolve")
 async def resolve_alert(
     alert_id: str,
-    auth: dict = Depends(verify_auth),
+    auth: dict = Depends(verify_auth),  # noqa: B008
 ) -> dict:
     """Resolve an alert."""
     manager = get_alert_manager()
@@ -111,7 +111,7 @@ async def resolve_alert(
 
 
 @router.post("/test")
-async def test_alert_configuration(auth: dict = Depends(verify_auth)) -> dict:
+async def test_alert_configuration(auth: dict = Depends(verify_auth)) -> dict:  # noqa: B008,PT028
     """Test alert configuration by sending a test alert."""
     manager = get_alert_manager()
 

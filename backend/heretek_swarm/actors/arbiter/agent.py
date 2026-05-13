@@ -385,7 +385,7 @@ class ArbiterAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, 
         # Check conflict volume
         if self._stats["total_conflicts"] > 50:
             recommendations.append(
-                f"High conflict volume ({self._stats['total_conflicts']}) - review agent coordination protocols"
+                f"High conflict volume ({self._stats['total_conflicts']}) - review agent coordination protocols"  # noqa: E501
             )
 
         # Check resolution success rate
@@ -409,7 +409,7 @@ class ArbiterAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, 
             )
             if validated_patterns:
                 recommendations.append(
-                    f"Collective learning identified {len(validated_patterns)} failure patterns - review for systemic issues"
+                    f"Collective learning identified {len(validated_patterns)} failure patterns - review for systemic issues"  # noqa: E501
                 )
 
         # Session 44: Add memory optimization insights
@@ -417,7 +417,7 @@ class ArbiterAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, 
             stats = self.access_analyzer.get_statistics()
             if stats.frozen_count > stats.unique_memories * 0.5:
                 recommendations.append(
-                    f"High frozen memory ratio ({stats.frozen_count}/{stats.unique_memories}) - consider archive cleanup"
+                    f"High frozen memory ratio ({stats.frozen_count}/{stats.unique_memories}) - consider archive cleanup"  # noqa: E501
                 )
 
         if not recommendations:
@@ -592,7 +592,7 @@ class ArbiterAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, 
                 argument=argument,
             )
 
-            if success:
+            if success:  # noqa: SIM102
                 # Track memory access for deliberation
                 if self.access_analyzer:
                     self.access_analyzer.record_access(

@@ -329,7 +329,7 @@ class UnifiedKnowledgeAccess:
             # Convert RetrievalResult to KnowledgeEntry
             entries = []
             for result in results:
-                entries.append(
+                entries.append(  # noqa: PERF401
                     KnowledgeEntry(
                         content=result.content,
                         source=f"rag_{result.strategy.value}",
@@ -393,7 +393,7 @@ class UnifiedKnowledgeAccess:
         memory_entries = results.entries if hasattr(results, "entries") else results
 
         for entry in memory_entries:
-            entries.append(
+            entries.append(  # noqa: PERF401
                 KnowledgeEntry(
                     content=entry.content if hasattr(entry, "content") else entry,
                     source="memory",
@@ -425,7 +425,7 @@ class UnifiedKnowledgeAccess:
         documents = result.documents if hasattr(result, "documents") else result
 
         for doc in documents:
-            entries.append(
+            entries.append(  # noqa: PERF401
                 KnowledgeEntry(
                     content=doc.content if hasattr(doc, "content") else doc,
                     source="rag",
@@ -612,13 +612,13 @@ class UnifiedKnowledgeAccess:
         for source_key, source_stats in self._query_stats.items():
             lines.extend(
                 [
-                    f"# HELP heretek_knowledge_queries_total Total knowledge queries for {source_key}",
+                    f"# HELP heretek_knowledge_queries_total Total knowledge queries for {source_key}",  # noqa: E501
                     "# TYPE heretek_knowledge_queries_total counter",
-                    f'heretek_knowledge_queries_total{{sources="{source_key}"}} {source_stats["count"]}',
+                    f'heretek_knowledge_queries_total{{sources="{source_key}"}} {source_stats["count"]}',  # noqa: E501
                     "",
-                    f"# HELP heretek_knowledge_query_time_ms_total Total query time for {source_key}",
+                    f"# HELP heretek_knowledge_query_time_ms_total Total query time for {source_key}",  # noqa: E501
                     "# TYPE heretek_knowledge_query_time_ms_total counter",
-                    f'heretek_knowledge_query_time_ms_total{{sources="{source_key}"}} {source_stats["total_time_ms"]}',
+                    f'heretek_knowledge_query_time_ms_total{{sources="{source_key}"}} {source_stats["total_time_ms"]}',  # noqa: E501
                     "",
                 ]
             )

@@ -177,7 +177,7 @@ class ExplorerAgent(
 
 
 # Backward-compatible module-level imports
-from heretek_swarm.actors.explorer.types import (
+from heretek_swarm.actors.explorer.types import (  # noqa: E402
     Anomaly,
     AnomalyType,
     IntelligenceReport,
@@ -198,7 +198,7 @@ __all__ = [
     "ExplorerPathfindingMixins",
     "IntelligenceReport",
     "Opportunity",
-    # Types (enums and dataclasses)
+
     "OpportunityType",
     "Pattern",
     "ResearchProgress",

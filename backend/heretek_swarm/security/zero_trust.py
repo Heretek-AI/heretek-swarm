@@ -304,7 +304,7 @@ class ValidatedInput(BaseModel):
                 raise ValueError(f"request_id must be UUID v4, got version {parsed.version}")
             return v
         except (ValueError, AttributeError) as e:
-            raise ValueError(f"Invalid UUID v4 request_id: {e}")
+            raise ValueError(f"Invalid UUID v4 request_id: {e}") from e
 
 
 @dataclass
@@ -339,7 +339,7 @@ class InputValidator:
     """
 
     # Injection patterns to detect at input level
-    INJECTION_PATTERNS = [
+    INJECTION_PATTERNS = [  # noqa: RUF012
         # Python injection
         (r"\bexec\s*\(", "exec() function call detected"),
         (r"\beval\s*\(", "eval() function call detected"),
@@ -396,7 +396,7 @@ class InputValidator:
                 return LayerResult(
                     layer="input",
                     passed=False,
-                    reason=f"Content size {content_size} exceeds maximum {self.config.max_content_size}",
+                    reason=f"Content size {content_size} exceeds maximum {self.config.max_content_size}",  # noqa: E501
                     severity=Severity.WARNING,
                     details={
                         "content_size": content_size,
@@ -408,7 +408,7 @@ class InputValidator:
                 return LayerResult(
                     layer="input",
                     passed=False,
-                    reason=f"Content size {content_size} below minimum {self.config.min_content_size}",
+                    reason=f"Content size {content_size} below minimum {self.config.min_content_size}",  # noqa: E501
                     severity=Severity.INFO,
                     details={
                         "content_size": content_size,
@@ -557,7 +557,7 @@ class ContextValidator:
     """
 
     # Advanced injection patterns for context analysis
-    CONTEXT_INJECTION_PATTERNS = [
+    CONTEXT_INJECTION_PATTERNS = [  # noqa: RUF012
         # Prompt injection patterns
         (
             r"ignore\s+(all\s+)?(previous|prior)\s+instructions",
@@ -700,7 +700,7 @@ class ContextValidator:
                 last_time = datetime.fromisoformat(baseline.last_request_time)
                 interval_ms = (current_time - last_time).total_seconds() * 1000
 
-                if baseline.avg_request_interval_ms > 0:
+                if baseline.avg_request_interval_ms > 0:  # noqa: SIM102
                     if interval_ms < baseline.avg_request_interval_ms * 0.1:
                         anomalies.append(f"Rapid request detected (interval={interval_ms:.0f}ms)")
 
@@ -752,7 +752,7 @@ class OutputValidator:
     """
 
     # PII patterns for detection
-    PII_PATTERNS = [
+    PII_PATTERNS = [  # noqa: RUF012
         # Email addresses
         (r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b", "[EMAIL_REDACTED]"),
         # Phone numbers (US format)
@@ -771,7 +771,7 @@ class OutputValidator:
     ]
 
     # Sensitive data patterns
-    SENSITIVE_PATTERNS = [
+    SENSITIVE_PATTERNS = [  # noqa: RUF012
         # Private keys
         (r"-----BEGIN\s+(?:RSA\s+)?PRIVATE\s+KEY-----", "[PRIVATE_KEY_REDACTED]"),
         # AWS keys
@@ -820,7 +820,7 @@ class OutputValidator:
                 return LayerResult(
                     layer="output",
                     passed=False,
-                    reason=f"Output size {len(output_str)} exceeds maximum {self.config.max_output_size}",
+                    reason=f"Output size {len(output_str)} exceeds maximum {self.config.max_output_size}",  # noqa: E501
                     severity=Severity.WARNING,
                     details={
                         "output_size": len(output_str),
@@ -1073,7 +1073,7 @@ class ExternalInputValidator:
     - DoS indicators
     """
 
-    PROMPT_INJECTION_PATTERNS = [
+    PROMPT_INJECTION_PATTERNS = [  # noqa: RUF012
         (r"ignore\s+(all\s+)?(previous|prior)\s+instructions", "prompt_injection"),
         (r"disregard\s+(your\s+)?(previous|last)\s+instructions", "prompt_injection"),
         (r"new\s+instructions?\s*:", "prompt_injection"),
@@ -1082,13 +1082,13 @@ class ExternalInputValidator:
         (r"system\s*:\s*", "prompt_injection"),
     ]
 
-    EXFILTRATION_PATTERNS = [
+    EXFILTRATION_PATTERNS = [  # noqa: RUF012
         (r"extract.*(password|secret|key|token|credential)", "exfiltration"),
         (r"(dump|export|download)\s+(all|entire|full)\s+(memory|context|state)", "exfiltration"),
         (r"show\s+me\s+(your|all)\s+(system|prompt|instruction)", "exfiltration"),
     ]
 
-    DOS_PATTERNS = [
+    DOS_PATTERNS = [  # noqa: RUF012
         (r"(repeating|same)\s+(request|input)\s+(\d+|\w+)\s+times", "dos"),
         (r"for\s+(\d+)\s+(iterations?|loops?|cycles?)", "dos"),
     ]

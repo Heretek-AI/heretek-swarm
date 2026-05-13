@@ -904,11 +904,11 @@ class DDoSProtection:
                 )
 
         # Apply throttle factor if active
-        # NOTE: random for emergency throttle decision - not security-critical (rate limit, not crypto)
+        # NOTE: random for emergency throttle decision - not security-critical (rate limit, not crypto)  # noqa: E501
         if self.mitigator._emergency_throttle_active:  # noqa: SLF001
             import random
 
-            if random.random() > self.mitigator.get_throttle_factor():
+            if random.random() > self.mitigator.get_throttle_factor():  # noqa: S311
                 return RateLimitResult(
                     allowed=False,
                     tier=tier,

@@ -573,7 +573,7 @@ Respond in JSON:
                     f"Detection threshold: ±{threshold:.4f} from mean ({mean:.4f})",
                     f"Found {len(anomalies)} anomalies",
                 ] + [
-                    f"Index {a['index']}: value={a['value']:.4f} ({a['deviation']:.1f}σ)"
+                    f"Index {a['index']}: value={a['value']:.4f} ({a['deviation']:.1f}σ)"  # noqa: RUF001
                     for a in anomalies[:5]
                 ]
 
@@ -660,7 +660,7 @@ Respond in JSON:
             else:
                 # Flat forecast
                 for i in range(periods):
-                    forecast.append(
+                    forecast.append(  # noqa: PERF401
                         {
                             "period": i + 1,
                             "predicted_value": y_mean,
@@ -677,7 +677,7 @@ Respond in JSON:
         if method == "moving_average":
             result = []
             for i in range(len(data) - window + 1):
-                result.append(sum(data[i : i + window]) / window)
+                result.append(sum(data[i : i + window]) / window)  # noqa: PERF401
             return result
         if method == "median_filter":
             result = []

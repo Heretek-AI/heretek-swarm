@@ -493,7 +493,7 @@ class AgencyMetricsTracker:
         Get temporal evolution of a metric.
 
         Args:
-            metric_name: Name of the metric ("autonomy", "agency", "self_determination", "compliance")
+            metric_name: Name of the metric ("autonomy", "agency", "self_determination", "compliance")  # noqa: E501
             window_seconds: Optional time window to filter
 
         Returns:

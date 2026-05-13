@@ -179,7 +179,7 @@ class LlamaCppProvider(LLMProviderBase):
                 f"Request failed: {e}. Is llama.cpp server running?",
                 provider="llamacpp",
                 cause=e,
-            )
+            ) from e
 
     async def stream(self, request: LLMRequest) -> AsyncIterator[str]:
         """
@@ -248,7 +248,7 @@ class LlamaCppProvider(LLMProviderBase):
                 f"Stream request failed: {e}",
                 provider="llamacpp",
                 cause=e,
-            )
+            ) from e
 
     def _format_prompt(self, messages: list[Message]) -> str:
         """

@@ -109,7 +109,7 @@ class FileWorkflowStore:
         if not self._path.exists():
             return {}
         try:
-            with open(self._path, encoding="utf-8") as f:
+            with open(self._path, encoding="utf-8") as f:  # noqa: PTH123
                 return json.load(f)
         except (json.JSONDecodeError, OSError) as exc:
             logger.warning(
@@ -128,7 +128,7 @@ class FileWorkflowStore:
         self._path.parent.mkdir(parents=True, exist_ok=True)
         tmp = self._path.with_suffix(self._path.suffix + ".tmp")
         try:
-            with open(tmp, "w", encoding="utf-8") as f:
+            with open(tmp, "w", encoding="utf-8") as f:  # noqa: PTH123
                 json.dump(data, f, indent=2)
                 f.flush()
                 os.fsync(f.fileno())

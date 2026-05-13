@@ -36,7 +36,7 @@ def valid_llm_response() -> str:
 def fenced_llm_response() -> str:
     """LLM response wrapped in ```json ... ``` fences."""
     return """```json
-{"title": "Add Real-Time Monitoring", "description": "Build a dashboard showing agent health and message latency in real time.", "success_criteria": ["Dashboard renders within 1s", "All agents report health every 5s"], "estimated_node_types": ["agent", "tool"]}
+{"title": "Add Real-Time Monitoring", "description": "Build a dashboard showing agent health and message latency in real time.", "success_criteria": ["Dashboard renders within 1s", "All agents report health every 5s"], "estimated_node_types": ["agent", "tool"]}  # noqa: E501
 ```"""
 
 
@@ -45,7 +45,7 @@ def verbose_llm_response() -> str:
     """LLM response with commentary before and after the JSON."""
     return """Here is a strategic goal for the swarm:
 
-{"title": "Decentralize Decision Making", "description": "Gradually distribute authority so that routine decisions no longer require Steward approval, increasing throughput and reducing bottleneck risk.", "success_criteria": ["50% of decisions are autonomous after 2 days", "No increase in error rate after delegation", "Steward approval queue drops below 10 items"], "estimated_node_types": ["decision", "agent", "parallel"]}
+{"title": "Decentralize Decision Making", "description": "Gradually distribute authority so that routine decisions no longer require Steward approval, increasing throughput and reducing bottleneck risk.", "success_criteria": ["50% of decisions are autonomous after 2 days", "No increase in error rate after delegation", "Steward approval queue drops below 10 items"], "estimated_node_types": ["decision", "agent", "parallel"]}  # noqa: E501
 
 I hope this aligns with the swarm's current priorities!"""
 

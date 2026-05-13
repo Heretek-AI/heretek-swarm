@@ -416,7 +416,7 @@ class SentinelAgent(
             change_type=BaselineChangeType.PATTERN_ADDED,
             pattern_id=baseline_pattern_id,
             proposed_value={"pattern_content": pattern_content, "confidence": confidence},
-            reasoning=f"Pattern learned from {self._immune_system.min_occurrences_for_immunity}+ successful anomaly responses",
+            reasoning=f"Pattern learned from {self._immune_system.min_occurrences_for_immunity}+ successful anomaly responses",  # noqa: E501
             requester_id=self.agent_id,
         )
 
@@ -2090,7 +2090,7 @@ class SentinelAgent(
                 {
                     "type": ViolationType.POLICY_VIOLATION.value,
                     "severity": SafetyLevel.MEDIUM_RISK.value,
-                    "description": f"Content exceeds max size ({len(content)}/{self._max_content_size} chars)",
+                    "description": f"Content exceeds max size ({len(content)}/{self._max_content_size} chars)",  # noqa: E501
                 }
             )
 

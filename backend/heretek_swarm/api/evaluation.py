@@ -176,7 +176,7 @@ async def evaluate_agent(
                 "output": exec.output,
                 "error": exec.error,
             }
-            for exec in executions
+            for exec in executions  # noqa: A001
         ],
     }
 

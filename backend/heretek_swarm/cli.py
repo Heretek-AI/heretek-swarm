@@ -99,7 +99,7 @@ async def _check_service_health(
     service: InfrastructureService,
     host: str,
     port: int,
-    timeout: float = 5.0,
+    timeout: float = 5.0,  # noqa: ASYNC109
 ) -> dict[str, Any]:
     """
     Perform health check for a single service.
@@ -148,7 +148,7 @@ def _make_result(
     }
 
 
-async def _check_postgres(host: str, port: int, timeout: float, start: float) -> dict[str, Any]:
+async def _check_postgres(host: str, port: int, timeout: float, start: float) -> dict[str, Any]:  # noqa: ASYNC109
     """Check PostgreSQL health via TCP socket."""
     try:
         _reader, writer = await asyncio.wait_for(
@@ -165,7 +165,7 @@ async def _check_postgres(host: str, port: int, timeout: float, start: float) ->
         return _make_result(InfrastructureService.POSTGRES, HealthStatus.UNHEALTHY, start, str(e))
 
 
-async def _check_redis(host: str, port: int, timeout: float, start: float) -> dict[str, Any]:
+async def _check_redis(host: str, port: int, timeout: float, start: float) -> dict[str, Any]:  # noqa: ASYNC109
     """Check Redis health via PING."""
 
     import redis.asyncio as redis
@@ -179,7 +179,7 @@ async def _check_redis(host: str, port: int, timeout: float, start: float) -> di
         return _make_result(InfrastructureService.REDIS, HealthStatus.UNHEALTHY, start, str(e))
 
 
-async def _check_qdrant(host: str, port: int, timeout: float, start: float) -> dict[str, Any]:
+async def _check_qdrant(host: str, port: int, timeout: float, start: float) -> dict[str, Any]:  # noqa: ASYNC109
     """Check Qdrant health via /healthz endpoint."""
 
     import httpx
@@ -203,7 +203,7 @@ async def _check_qdrant(host: str, port: int, timeout: float, start: float) -> d
         return _make_result(InfrastructureService.QDRANT, HealthStatus.UNHEALTHY, start, str(e))
 
 
-async def _check_nats(host: str, port: int, timeout: float, start: float) -> dict[str, Any]:
+async def _check_nats(host: str, port: int, timeout: float, start: float) -> dict[str, Any]:  # noqa: ASYNC109
     """Check NATS health via CONNECT/PING exchange."""
 
     try:
@@ -246,7 +246,7 @@ async def _check_nats(host: str, port: int, timeout: float, start: float) -> dic
         return _make_result(InfrastructureService.NATS, HealthStatus.UNHEALTHY, start, str(e))
 
 
-async def _check_mem0(host: str, port: int, timeout: float, start: float) -> dict[str, Any]:
+async def _check_mem0(host: str, port: int, timeout: float, start: float) -> dict[str, Any]:  # noqa: ASYNC109
     """Check Mem0 health via /health endpoint."""
 
     import httpx
@@ -284,7 +284,7 @@ def check_container_runtime() -> tuple[str | None, str]:
     """
     for runtime in ["docker", "podman"]:
         try:
-            result = subprocess.run(
+            result = subprocess.run(  # noqa: S603
                 [runtime, "--version"],
                 capture_output=True,
                 text=True,
@@ -312,7 +312,7 @@ def check_compose_plugin(runtime: str) -> bool:
         True if compose plugin is available
     """
     try:
-        result = subprocess.run(
+        result = subprocess.run(  # noqa: S603
             [runtime, "compose", "version"],
             capture_output=True,
             text=True,
@@ -327,8 +327,8 @@ def check_compose_plugin(runtime: str) -> bool:
 # CLI Commands
 # =============================================================================
 
-from importlib.metadata import PackageNotFoundError
-from importlib.metadata import version as _get_version
+from importlib.metadata import PackageNotFoundError  # noqa: E402
+from importlib.metadata import version as _get_version  # noqa: E402
 
 try:
     __version__ = _get_version("heretek-swarm")
@@ -340,7 +340,7 @@ class GroupedGroup(click.Group):
     """Custom Click group that organizes commands into labeled sections."""
 
     #: Mapping of group label → list of command names in display order.
-    COMMAND_GROUPS: dict[str, list[str]] = {
+    COMMAND_GROUPS: dict[str, list[str]] = {  # noqa: RUF012
         "Core Operations": ["run", "serve", "deploy", "wizard", "consensus"],
         "Configuration": ["config", "init"],
         "Monitoring": ["status", "stop"],
@@ -844,7 +844,7 @@ def _handle_signal(signum: int, frame) -> None:
 @click.option(
     "--no-infra",
     is_flag=True,
-    help="Skip external infrastructure connections (Postgres, Redis, Qdrant, NATS); use in-memory state only",
+    help="Skip external infrastructure connections (Postgres, Redis, Qdrant, NATS); use in-memory state only",  # noqa: E501
 )
 @click.option(
     "--prompt",
@@ -1057,7 +1057,7 @@ def consensus(question: str, timeout: float, participants: int | None, max_round
         sys.exit(1)
 
 
-async def _run_consensus(question: str, timeout: float, max_rounds: int = 1) -> dict[str, Any]:
+async def _run_consensus(question: str, timeout: float, max_rounds: int = 1) -> dict[str, Any]:  # noqa: ASYNC109
     """Async helper for the consensus CLI command."""
     from heretek_swarm.runtime.main_loop import AutonomousSwarm
     from heretek_swarm.swarm_logging.config import setup_logging
@@ -1120,7 +1120,7 @@ async def _run_consensus(question: str, timeout: float, max_rounds: int = 1) -> 
 )
 @click.option(
     "--host",
-    default="0.0.0.0",
+    default="0.0.0.0",  # noqa: S104
     help="Host to bind to (default: 0.0.0.0)",
 )
 @click.option(
@@ -1876,11 +1876,11 @@ def main() -> None:
 
 
 # Register the goal command group
-from heretek_swarm.cli.goal_commands import goal
+from heretek_swarm.cli.goal_commands import goal  # noqa: E402
 
 cli.add_command(goal)
 
-main = cli
+main = cli  # noqa: F811
 
 
 if __name__ == "__main__":

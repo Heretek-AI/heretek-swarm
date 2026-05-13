@@ -69,7 +69,7 @@ def temp_config_dir(tmp_path: Path) -> Path:
     config_file.write_text(json.dumps(seed))
 
     # Patch the config file path
-    with patch.object(HERETEK_CONFIG_FILE.__class__, "parent", new_callable=lambda: tmp_path):
+    with patch.object(HERETEK_CONFIG_FILE.__class__, "parent", new_callable=lambda: tmp_path):  # noqa: SIM117
         with patch("heretek_swarm.cli.config_wizard.HERETEK_CONFIG_FILE", config_file):
             yield config_file
 

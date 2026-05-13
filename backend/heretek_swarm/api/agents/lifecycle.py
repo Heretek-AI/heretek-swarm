@@ -53,7 +53,7 @@ async def start_agent(
         raise
     except Exception as e:
         logger.exception("Failed to start agent: {e}")
-        raise HTTPException(500, f"Failed to start agent: {e!s}")
+        raise HTTPException(500, f"Failed to start agent: {e!s}") from e
 
 
 @router.post("/{instance_id}/stop")
@@ -87,7 +87,7 @@ async def stop_agent(
         raise
     except Exception as e:
         logger.exception("Failed to stop agent: {e}")
-        raise HTTPException(500, f"Failed to stop agent: {e!s}")
+        raise HTTPException(500, f"Failed to stop agent: {e!s}") from e
 
 
 @router.post("/{instance_id}/suspend")
@@ -121,7 +121,7 @@ async def suspend_agent(
         raise
     except Exception as e:
         logger.exception("Failed to suspend agent: {e}")
-        raise HTTPException(500, f"Failed to suspend agent: {e!s}")
+        raise HTTPException(500, f"Failed to suspend agent: {e!s}") from e
 
 
 @router.post("/{instance_id}/resume")
@@ -155,7 +155,7 @@ async def resume_agent(
         raise
     except Exception as e:
         logger.exception("Failed to resume agent: {e}")
-        raise HTTPException(500, f"Failed to resume agent: {e!s}")
+        raise HTTPException(500, f"Failed to resume agent: {e!s}") from e
 
 
 # =============================================================================
@@ -196,7 +196,7 @@ async def update_agent_config(
         raise
     except Exception as e:
         logger.exception("Failed to update config: {e}")
-        raise HTTPException(500, f"Failed to update configuration: {e!s}")
+        raise HTTPException(500, f"Failed to update configuration: {e!s}") from e
 
 
 # =============================================================================

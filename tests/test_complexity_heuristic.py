@@ -173,7 +173,7 @@ class TestCombinedScoring:
         assert r2.score >= r1.score
 
     def test_long_plus_keyword(self, heuristic: ComplexityHeuristic):
-        q = "Should we evaluate the tradeoffs of using a service mesh for our microservices architecture deployment strategy?"
+        q = "Should we evaluate the tradeoffs of using a service mesh for our microservices architecture deployment strategy?"  # noqa: E501
         result = heuristic.assess(q)
         assert result.length_trigger is True
         assert result.keyword_trigger is True
@@ -194,7 +194,7 @@ class TestCombinedScoring:
     def test_keyword_weight_configuration(self):
         """Custom keyword weight changes scoring."""
         h = ComplexityHeuristic(keyword_weight=0.3, max_keyword_score=1.0)
-        # Two categories × 0.3 = 0.6 → complex (>=0.5)
+        # Two categories × 0.3 = 0.6 → complex (>=0.5)  # noqa: RUF003
         result = h.assess("Compare and evaluate this")  # short, 2 categories
         assert result.is_complex
         assert result.score >= 0.5
@@ -215,7 +215,7 @@ class TestThresholdConfiguration:
 
     def test_strict_threshold_accepts_heavy(self, strict_heuristic: ComplexityHeuristic):
         """With threshold=0.9, many keywords can still trigger."""
-        q = "Analyze and evaluate the tradeoffs, risks, and implications of comparing Redis vs Memcached"
+        q = "Analyze and evaluate the tradeoffs, risks, and implications of comparing Redis vs Memcached"  # noqa: E501
         result = strict_heuristic.assess(q)
         # Many categories → score should exceed 0.9
         assert result.is_complex
@@ -243,7 +243,7 @@ class TestThresholdConfiguration:
         assert not h.is_complex("Should we evaluate the tradeoffs?")
         # Max possible: 0.4 (length) + 0.9 (max keywords) = 1.3 clamped to 1.0
         # Need many categories + length
-        q = "Analyze and evaluate the tradeoffs, risks, implications, and consequences of comparing and weighing the pros and cons of A vs B for our production system architecture design decision strategy planning document review process"
+        q = "Analyze and evaluate the tradeoffs, risks, implications, and consequences of comparing and weighing the pros and cons of A vs B for our production system architecture design decision strategy planning document review process"  # noqa: E501
         assert h.is_complex(q)
 
 
@@ -305,7 +305,7 @@ class TestEdgeCases:
         assert not result.is_complex
 
     def test_unicode_question(self, heuristic: ComplexityHeuristic):
-        result = heuristic.assess("我们应该使用Redis缓存吗？分析一下利弊")
+        result = heuristic.assess("我们应该使用Redis缓存吗？分析一下利弊")  # noqa: RUF001
         # Unicode chars don't match English keywords
         assert not result.is_complex
 

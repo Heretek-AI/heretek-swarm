@@ -472,7 +472,7 @@ class NATSEventMesh:
             self._consumers[consumer_id] = consumer_info
 
             # Start message processing loop
-            asyncio.create_task(
+            asyncio.create_task(  # noqa: RUF006
                 self._process_durable_messages(consumer_info, stream_name, durable_name, callback)
             )
 
@@ -765,7 +765,7 @@ class NATSEventMesh:
         self,
         subject: str,
         data: dict[str, Any],
-        timeout: float = 5.0,
+        timeout: float = 5.0,  # noqa: ASYNC109
     ) -> dict[str, Any] | None:
         """
         Request-reply pattern.
@@ -888,7 +888,7 @@ class _InMemoryFallback:
         self,
         subject: str,
         data: dict[str, Any],
-        timeout: float,  # noqa: ARG002
+        timeout: float,  # noqa: ARG002,ASYNC109
     ) -> dict[str, Any] | None:
         """Request in-memory (no response by default)."""
         await self.publish(subject, data)

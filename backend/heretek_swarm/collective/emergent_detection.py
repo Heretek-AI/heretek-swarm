@@ -321,7 +321,7 @@ class EmergentPatternDetector:
 
         for agent_id in agent_ids:
             if agent_id in self._individual_baselines:
-                baselines.append(self._individual_baselines[agent_id].get("success_rate", 0.5))
+                baselines.append(self._individual_baselines[agent_id].get("success_rate", 0.5))  # noqa: PERF401
 
         return sum(baselines) / len(baselines) if baselines else 0.5
 
@@ -568,7 +568,7 @@ class EmergenceAnalyzer:
         timeline = []
 
         for pattern in sorted(self.detector._emergent_patterns, key=lambda p: p.timestamp):  # noqa: SLF001
-            timeline.append(
+            timeline.append(  # noqa: PERF401
                 {
                     "timestamp": pattern.timestamp,
                     "pattern_class": pattern.pattern_class.value,

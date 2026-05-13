@@ -1,8 +1,8 @@
 """
 Anthropic Claude Integration Module for Heretek Swarm
 
-This module provides bi-directional integration between Heretek Swarm agents and Anthropic's Claude API.
-It enables Messages API compatibility, tool use handling, multi-turn conversations, and context management.
+This module provides bi-directional integration between Heretek Swarm agents and Anthropic's Claude API.  # noqa: E501
+It enables Messages API compatibility, tool use handling, multi-turn conversations, and context management.  # noqa: E501
 
 Features:
 - Messages API compatibility layer
@@ -27,7 +27,7 @@ import structlog
 
 logger = structlog.get_logger(__name__)
 
-from heretek_swarm.integrations.openai_assistants import MessageRole
+from heretek_swarm.integrations.openai_assistants import MessageRole  # noqa: E402
 
 try:
     from anthropic import Anthropic, AsyncAnthropic
@@ -152,7 +152,7 @@ class ConversationMessage:
                 content.append({"type": "text", "text": self.content})
 
             for tool_call in self.tool_calls:
-                content.append(
+                content.append(  # noqa: PERF401
                     {
                         "type": "tool_use",
                         "id": tool_call.get("id", str(uuid.uuid4())),
@@ -451,7 +451,7 @@ class AnthropicAdapter:
         if tools:
             for tool_name in tools:
                 if tool_name in self.tools:
-                    selected_tools.append(self.tools[tool_name])
+                    selected_tools.append(self.tools[tool_name])  # noqa: PERF401
 
         context = ConversationContext(
             conversation_id=conversation_id,

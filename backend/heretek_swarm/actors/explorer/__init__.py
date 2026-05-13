@@ -42,7 +42,7 @@ __all__ = [
     "ExplorerPathfindingMixins",
     "IntelligenceReport",
     "Opportunity",
-    # Types (enums and dataclasses)
+
     "OpportunityType",
     "Pattern",
     "ResearchProgress",

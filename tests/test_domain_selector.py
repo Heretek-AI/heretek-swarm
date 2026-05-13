@@ -11,8 +11,8 @@ from heretek_swarm.consensus.domain_selector import (
 )
 
 # Resolve characters directory relative to the package
-_CHARACTERS_DIR = os.path.join(
-    os.path.dirname(os.path.dirname(__file__)),
+_CHARACTERS_DIR = os.path.join(  # noqa: PTH118
+    os.path.dirname(os.path.dirname(__file__)),  # noqa: PTH120
     "backend",
     "heretek_swarm",
     "runtime",

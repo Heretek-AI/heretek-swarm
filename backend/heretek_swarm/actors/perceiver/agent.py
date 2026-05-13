@@ -224,7 +224,7 @@ class PerceiverAgent(
                 f"[{self.agent_id}] Message validation failed for {message_type}: {e}",  # noqa: G004
                 extra={"validation_errors": e.errors()},
             )
-            raise ValueError(f"Invalid message format: {e.errors()}")
+            raise ValueError(f"Invalid message format: {e.errors()}") from e
         except KeyError:
             logger.debug("[{self.agent_id}] No validator for message type: {message_type}")
             return None
@@ -508,7 +508,7 @@ class PerceiverAgent(
 
     async def _describe_image_llm(self, _image_data: str) -> str:
         """Use LLM to describe an image."""
-        prompt = "Describe this image in detail, including any text, objects, people, colors, and the overall scene."
+        prompt = "Describe this image in detail, including any text, objects, people, colors, and the overall scene."  # noqa: E501
         # Note: Actual implementation would depend on LLM capabilities
         # This is a placeholder for vision-capable LLM integration
         return f"Image analysis requested with prompt: {prompt}"
@@ -601,7 +601,7 @@ class PerceiverAgent(
         numeric_values = []
         for value in sensor_data.values():
             if isinstance(value, (int, float)):
-                numeric_values.append(value)
+                numeric_values.append(value)  # noqa: PERF401
 
         stats = {}
         if numeric_values:

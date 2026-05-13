@@ -498,7 +498,7 @@ class StubLLMProvider:
         self,
         prompt: str,  # noqa: ARG002
         *,
-        timeout: float = 60.0,  # noqa: ARG002
+        timeout: float = 60.0,  # noqa: ARG002,ASYNC109
         **kwargs: Any,  # noqa: ARG002
     ) -> str:
         """Return the canned response string."""
@@ -509,7 +509,7 @@ class StubLLMProvider:
         self,
         prompt: str,  # noqa: ARG002
         *,
-        timeout: float = 60.0,  # noqa: ARG002
+        timeout: float = 60.0,  # noqa: ARG002,ASYNC109
         **kwargs: Any,  # noqa: ARG002
     ) -> Any:
         """Yield the canned response as a single chunk."""
@@ -586,7 +586,7 @@ class StubEventMesh:
         subject: str,  # noqa: ARG002
         data: dict[str, Any],
         *,
-        timeout: float = 5.0,  # noqa: ARG002
+        timeout: float = 5.0,  # noqa: ARG002,ASYNC109
         **kwargs: Any,  # noqa: ARG002
     ) -> dict[str, Any]:
         """Return a stub response for request-reply patterns."""

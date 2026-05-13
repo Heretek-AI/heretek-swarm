@@ -35,14 +35,14 @@ class DreamerGeneratorsMixin:
     def _build_technique_prompt(self, technique: CreativityTechnique) -> str:
         """Build prompt for specific creativity technique."""
         prompts = {
-            CreativityTechnique.BRAINSTORMING: "Generate diverse ideas through free-flowing brainstorming. Quantity over quality initially.",
-            CreativityTechnique.MIND_MAPPING: "Create ideas by mapping related concepts and exploring branches.",
-            CreativityTechnique.SCAMPER: "Apply SCAMPER technique: Substitute, Combine, Adapt, Modify, Put to other use, Eliminate, Reverse.",
-            CreativityTechnique.SIX_THINKING_HATS: "Apply Six Thinking Hats: White (facts), Red (emotions), Black (caution), Yellow (optimism), Green (creativity), Blue (process).",
-            CreativityTechnique.TRIZ: "Apply TRIZ principles to resolve contradictions and find inventive solutions.",
-            CreativityTechnique.LATERAL_THINKING: "Use lateral thinking to approach the problem from unexpected angles.",
-            CreativityTechnique.ANALOGICAL_THINKING: "Draw analogies from unrelated domains to inspire solutions.",
-            CreativityTechnique.FIRST_PRINCIPLES: "Break down to first principles and rebuild from fundamental truths.",
+            CreativityTechnique.BRAINSTORMING: "Generate diverse ideas through free-flowing brainstorming. Quantity over quality initially.",  # noqa: E501
+            CreativityTechnique.MIND_MAPPING: "Create ideas by mapping related concepts and exploring branches.",  # noqa: E501
+            CreativityTechnique.SCAMPER: "Apply SCAMPER technique: Substitute, Combine, Adapt, Modify, Put to other use, Eliminate, Reverse.",  # noqa: E501
+            CreativityTechnique.SIX_THINKING_HATS: "Apply Six Thinking Hats: White (facts), Red (emotions), Black (caution), Yellow (optimism), Green (creativity), Blue (process).",  # noqa: E501
+            CreativityTechnique.TRIZ: "Apply TRIZ principles to resolve contradictions and find inventive solutions.",  # noqa: E501
+            CreativityTechnique.LATERAL_THINKING: "Use lateral thinking to approach the problem from unexpected angles.",  # noqa: E501
+            CreativityTechnique.ANALOGICAL_THINKING: "Draw analogies from unrelated domains to inspire solutions.",  # noqa: E501
+            CreativityTechnique.FIRST_PRINCIPLES: "Break down to first principles and rebuild from fundamental truths.",  # noqa: E501
         }
         return prompts.get(technique, "Generate creative ideas.")
 
@@ -86,14 +86,14 @@ class DreamerGeneratorsMixin:
 def get_technique_prompt(technique: CreativityTechnique) -> str:
     """Get prompt string for a creativity technique."""
     prompts = {
-        CreativityTechnique.BRAINSTORMING: "Generate diverse ideas through free-flowing brainstorming. Quantity over quality initially.",
-        CreativityTechnique.MIND_MAPPING: "Create ideas by mapping related concepts and exploring branches.",
-        CreativityTechnique.SCAMPER: "Apply SCAMPER technique: Substitute, Combine, Adapt, Modify, Put to other use, Eliminate, Reverse.",
-        CreativityTechnique.SIX_THINKING_HATS: "Apply Six Thinking Hats: White (facts), Red (emotions), Black (caution), Yellow (optimism), Green (creativity), Blue (process).",
-        CreativityTechnique.TRIZ: "Apply TRIZ principles to resolve contradictions and find inventive solutions.",
-        CreativityTechnique.LATERAL_THINKING: "Use lateral thinking to approach the problem from unexpected angles.",
-        CreativityTechnique.ANALOGICAL_THINKING: "Draw analogies from unrelated domains to inspire solutions.",
-        CreativityTechnique.FIRST_PRINCIPLES: "Break down to first principles and rebuild from fundamental truths.",
+        CreativityTechnique.BRAINSTORMING: "Generate diverse ideas through free-flowing brainstorming. Quantity over quality initially.",  # noqa: E501
+        CreativityTechnique.MIND_MAPPING: "Create ideas by mapping related concepts and exploring branches.",  # noqa: E501
+        CreativityTechnique.SCAMPER: "Apply SCAMPER technique: Substitute, Combine, Adapt, Modify, Put to other use, Eliminate, Reverse.",  # noqa: E501
+        CreativityTechnique.SIX_THINKING_HATS: "Apply Six Thinking Hats: White (facts), Red (emotions), Black (caution), Yellow (optimism), Green (creativity), Blue (process).",  # noqa: E501
+        CreativityTechnique.TRIZ: "Apply TRIZ principles to resolve contradictions and find inventive solutions.",  # noqa: E501
+        CreativityTechnique.LATERAL_THINKING: "Use lateral thinking to approach the problem from unexpected angles.",  # noqa: E501
+        CreativityTechnique.ANALOGICAL_THINKING: "Draw analogies from unrelated domains to inspire solutions.",  # noqa: E501
+        CreativityTechnique.FIRST_PRINCIPLES: "Break down to first principles and rebuild from fundamental truths.",  # noqa: E501
     }
     return prompts.get(technique, "Generate creative ideas.")
 

@@ -187,7 +187,7 @@ class StateRepository:
 
     # SQL queries
     SAVE_STATE_QUERY = """
-        INSERT INTO agent_states (id, agent_id, agent_type, state, version, created_at, updated_at, is_active)
+        INSERT INTO agent_states (id, agent_id, agent_type, state, version, created_at, updated_at, is_active)  # noqa: E501
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
         ON CONFLICT (agent_id) DO UPDATE
         SET state = $4, version = $5, updated_at = $7, is_active = $8
@@ -215,7 +215,7 @@ class StateRepository:
     """
 
     CHECKPOINT_QUERY = """
-        INSERT INTO agent_state_checkpoints (checkpoint_id, agent_id, state, version, created_at, metadata)
+        INSERT INTO agent_state_checkpoints (checkpoint_id, agent_id, state, version, created_at, metadata)  # noqa: E501
         VALUES ($1, $2, $3, $4, $5, $6)
     """
 
@@ -407,7 +407,7 @@ class StateRepository:
         await repo.initialize()
         return repo
 
-    async def initialize(self, db_pool: Any | None = None) -> None:
+    async def initialize(self, db_pool: Any | None = None) -> None:  # noqa: F811
         """
         Initialize the repository.
 
@@ -447,8 +447,8 @@ class StateRepository:
                     metadata JSONB,
                     FOREIGN KEY (agent_id) REFERENCES agent_states(agent_id) ON DELETE CASCADE
                 );
-                CREATE INDEX IF NOT EXISTS idx_checkpoints_agent_id ON agent_state_checkpoints(agent_id);
-                CREATE INDEX IF NOT EXISTS idx_checkpoints_version ON agent_state_checkpoints(agent_id, version DESC);
+                CREATE INDEX IF NOT EXISTS idx_checkpoints_agent_id ON agent_state_checkpoints(agent_id);  # noqa: E501
+                CREATE INDEX IF NOT EXISTS idx_checkpoints_version ON agent_state_checkpoints(agent_id, version DESC);  # noqa: E501
             """)
 
     async def save_state(

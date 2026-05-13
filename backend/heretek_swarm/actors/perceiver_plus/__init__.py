@@ -4,7 +4,7 @@ PerceiverPlus Module - Advanced Analytics Specialist.
 This module provides the PerceiverPlusAgent for advanced multi-modal analytics
 and pattern recognition. The module has been refactored into separate components:
 
-- types.py: Type definitions (AnalyticsType, DataModality, StatisticalTest, AnalyticsResult, TrendAnalysis, CorrelationMatrix)
+- types.py: Type definitions (AnalyticsType, DataModality, StatisticalTest, AnalyticsResult, TrendAnalysis, CorrelationMatrix)  # noqa: E501
 - analytics.py: Analytics mixin with helper methods (PerceiverAnalyticsMixinImpl)
 - agent.py: Main PerceiverPlusAgent class
 

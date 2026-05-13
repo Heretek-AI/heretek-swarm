@@ -897,7 +897,7 @@ class PatternBasedAgentAdaptor:
                 # NOTE: random for probabilistic adaptation - not security-critical
                 import random
 
-                if random.random() < confidence:
+                if random.random() < confidence:  # noqa: S311
                     weight.current_value = target_value
 
             weight.last_updated = datetime.now(UTC).isoformat()
@@ -1082,7 +1082,7 @@ class PatternBasedAgentAdaptor:
             agent_id=event.agent_id,
             action=f"apply_pattern_{event.target.value}",
             actor="pattern_based_adaptor",
-            justification=f"Pattern {pattern.metadata.pattern_id} applied with confidence {pattern.metadata.confidence}",
+            justification=f"Pattern {pattern.metadata.pattern_id} applied with confidence {pattern.metadata.confidence}",  # noqa: E501
             risk_assessment=min(risk, 1.0),
             rollback_available=True,
             rollback_data=event.old_values,

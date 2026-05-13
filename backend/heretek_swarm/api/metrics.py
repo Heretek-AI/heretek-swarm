@@ -115,7 +115,7 @@ def sync_with_swarm_collector(collector: SwarmMetricsCollector) -> None:
 heretek_swarm_agents_total{agent_type="executor"} 5
 # HELP heretek_swarm_api_request_duration_seconds API request latency
 # TYPE heretek_swarm_api_request_duration_seconds histogram
-heretek_swarm_api_request_duration_seconds_bucket{method="GET",endpoint="/api/agents",status="200",le="0.1"} 42
+heretek_swarm_api_request_duration_seconds_bucket{method="GET",endpoint="/api/agents",status="200",le="0.1"} 42  # noqa: E501
 """
                 }
             },

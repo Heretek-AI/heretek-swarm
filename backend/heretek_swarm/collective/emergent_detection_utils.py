@@ -192,13 +192,13 @@ def generate_recommended_action(pattern: EmergentPattern) -> str | None:
     impact_score = calculate_impact_score(pattern)
 
     if impact_score >= 0.7:
-        return "REINFORCE: High-value emergent pattern detected. Consider reinforcing conditions that enabled this behavior."
+        return "REINFORCE: High-value emergent pattern detected. Consider reinforcing conditions that enabled this behavior."  # noqa: E501
     if impact_score >= 0.3:
         return "MONITOR: Beneficial pattern detected. Document conditions for future replication."
     if impact_score >= -0.3:
         return "OBSERVE: Neutral emergence. Continue monitoring for changes."
     if impact_score >= -0.7:
-        return "INVESTIGATE: Potentially harmful pattern. Analyze root causes and consider intervention."
+        return "INVESTIGATE: Potentially harmful pattern. Analyze root causes and consider intervention."  # noqa: E501
     return "ALERT: Harmful emergent pattern detected. Immediate intervention recommended."
 
 

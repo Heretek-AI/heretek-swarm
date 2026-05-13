@@ -192,7 +192,7 @@ class TestMetisPerformAnalysis:
         agent.swarms_agent = AsyncMock()
         agent.swarms_agent.agent_name = "test-agent"
         agent.run_with_llm = AsyncMock(
-            return_value="1. Assess current resource allocation\n2. Identify bottlenecks\n3. Optimize workflow"
+            return_value="1. Assess current resource allocation\n2. Identify bottlenecks\n3. Optimize workflow"  # noqa: E501
         )
 
         result = await agent._perform_analysis(
@@ -229,7 +229,7 @@ class TestMetisPerformAnalysis:
         response."""
         agent = _make_metis()
         agent.run_with_llm = AsyncMock(
-            return_value="1. Shift resources to high-priority projects\n2. Reduce allocation to low-impact areas\n3. Set quarterly review cadence"
+            return_value="1. Shift resources to high-priority projects\n2. Reduce allocation to low-impact areas\n3. Set quarterly review cadence"  # noqa: E501
         )
 
         result = await agent._perform_analysis("resource allocation")

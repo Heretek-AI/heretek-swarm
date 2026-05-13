@@ -484,7 +484,7 @@ class ConsensusVoting:
             """Wrapper that parses vote and calls callback."""
             try:
                 payload = json.loads(msg.data.decode()) if isinstance(msg.data, bytes) else msg.data
-                asyncio.create_task(callback(payload))
+                asyncio.create_task(callback(payload))  # noqa: RUF006
             except Exception as e:
                 logger.error("vote_callback_error", error=str(e))
 

@@ -31,7 +31,7 @@ class MemoryToolsRegistrar(BaseToolRegistrar):
         self._registry.register(
             MCPToolDefinition(
                 name="memory_store",
-                description="Store information in collective memory with optional metadata and importance weighting",
+                description="Store information in collective memory with optional metadata and importance weighting",  # noqa: E501
                 input_schema={
                     "type": "object",
                     "properties": {

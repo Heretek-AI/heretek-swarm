@@ -234,7 +234,7 @@ class EmpathAgent(
                 f"[{self.agent_id}] Message validation failed for {message_type}: {e}",  # noqa: G004
                 extra={"validation_errors": e.errors()},
             )
-            raise ValueError(f"Invalid message format: {e.errors()}")
+            raise ValueError(f"Invalid message format: {e.errors()}") from e
         except KeyError:
             # Unknown message type - skip validation
             logger.debug("[{self.agent_id}] No validator for message type: {message_type}")
@@ -837,7 +837,7 @@ Return as JSON: {{"resolution": "...", "reasoning": "..."}}
         # Fallback mediation
         return {
             "resolution": "Consider taking a break and revisiting this discussion later.",
-            "reasoning": "High stress or conflicting sentiments detected. Cooling-off period recommended.",
+            "reasoning": "High stress or conflicting sentiments detected. Cooling-off period recommended.",  # noqa: E501
         }
 
     async def _handle_get_collective_mood(self, message: ActorMessage) -> None:

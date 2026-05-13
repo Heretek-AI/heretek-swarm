@@ -101,7 +101,7 @@ class EventMesh:
         try:
             import asyncio
 
-            asyncio.create_task(self._nats_publisher.publish_event(event))
+            asyncio.create_task(self._nats_publisher.publish_event(event))  # noqa: RUF006
             logger.info(
                 "a2a_nats_publish_success", event_type=event_type, source=source_agent, topic=topic
             )

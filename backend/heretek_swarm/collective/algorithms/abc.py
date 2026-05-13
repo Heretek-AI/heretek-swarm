@@ -118,7 +118,7 @@ class ABC:
         best_allocation: dict[str, list[str]] = {}
         best_allocation_score = 0.0
 
-        for iteration in range(iterations):
+        for iteration in range(iterations):  # noqa: B007
             self._scout_phase()
             self._forager_phase()
             self._dance_phase()
@@ -186,8 +186,8 @@ class ABC:
             ]
 
             if available_tasks:
-                discovered = random.choice(available_tasks)
-                self.task_pool[discovered]["quality"] = random.uniform(
+                discovered = random.choice(available_tasks)  # noqa: S311
+                self.task_pool[discovered]["quality"] = random.uniform(  # noqa: S311
                     ABC_SCOUT_MIN_QUALITY, ABC_SCOUT_MAX_QUALITY
                 )
 
@@ -211,7 +211,7 @@ class ABC:
                 if task_dances:
                     total = sum(d[1] for d in task_dances)
                     weights = [d[1] / total for d in task_dances]
-                    selected = random.choices([d[0] for d in task_dances], weights=weights, k=1)[0]
+                    selected = random.choices([d[0] for d in task_dances], weights=weights, k=1)[0]  # noqa: S311
                     forager.current_task = selected
                     forager.task_quality = self.task_pool[selected]["quality"]
                     self.task_pool[selected]["assigned_foragers"].append(forager.agent_id)

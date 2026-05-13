@@ -91,7 +91,7 @@ class AgentRegistry:
     """
 
     # Agent name to role mapping
-    AGENT_ROLES: dict[str, AgentRole] = {
+    AGENT_ROLES: dict[str, AgentRole] = {  # noqa: RUF012
         # Core Orchestration
         "Steward": AgentRole.ORCHESTRATOR,
         "Coordinator": AgentRole.ORCHESTRATOR_SUPPORT,
@@ -125,7 +125,7 @@ class AgentRegistry:
     }
 
     # Agent dependencies (who they need to work with)
-    AGENT_DEPENDENCIES: dict[str, list[str]] = {
+    AGENT_DEPENDENCIES: dict[str, list[str]] = {  # noqa: RUF012
         "Steward": ["Coordinator", "Chronos"],
         "Coordinator": ["Steward", "Chronos"],
         "Alpha": ["Beta", "Charlie", "Historian"],
@@ -151,7 +151,7 @@ class AgentRegistry:
     }
 
     # Agent capabilities
-    AGENT_CAPABILITIES: dict[str, list[str]] = {
+    AGENT_CAPABILITIES: dict[str, list[str]] = {  # noqa: RUF012
         "Steward": ["orchestration", "task_routing", "agent_coordination"],
         "Coordinator": ["workflow_management", "task_tracking", "dependency_management"],
         "Alpha": ["deliberation", "synthesis", "consensus"],
@@ -247,7 +247,7 @@ class AgentRegistry:
 
         # Add capability-based topics
         for cap in capabilities:
-            topics.append(f"capability.{cap}")
+            topics.append(f"capability.{cap}")  # noqa: PERF401
 
         return list(set(topics))
 

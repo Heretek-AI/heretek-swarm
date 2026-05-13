@@ -56,7 +56,7 @@ def _make_core_mcp_with_tools(tool_count: int = 3) -> CoreMCPTools:
                 },
                 "required": ["x"],
             },
-            handler=lambda args, ctx: {"result": args.get("x", 0) * 2},
+            handler=lambda args, ctx: {"result": args.get("x", 0) * 2},  # noqa: ARG005
             category="test",
         )
         core.registry.register(defn)

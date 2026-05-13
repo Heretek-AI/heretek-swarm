@@ -112,7 +112,7 @@ class EvolutionEngine:
         self._update_agent_capabilities(agent_id, capability_type, capability_name)
         self._update_evolution_metrics()
 
-        asyncio.create_task(self._call_capability_emerged_callbacks(record))
+        asyncio.create_task(self._call_capability_emerged_callbacks(record))  # noqa: RUF006
 
         logger.info(
             "capability_recorded",
@@ -259,7 +259,7 @@ class EvolutionEngine:
         if prev_snapshot:
             for cap_type in current_caps:
                 if cap_type not in prev_snapshot.capability_levels:
-                    newly_acquired.append(cap_type)
+                    newly_acquired.append(cap_type)  # noqa: PERF401
 
         snapshot = AgentCapabilitySnapshot(
             agent_id=agent_id,
@@ -317,7 +317,7 @@ class EvolutionEngine:
         all_fitness = []
         for snapshots in self._agent_snapshots.values():
             if snapshots:
-                all_fitness.append(snapshots[-1].fitness_score)
+                all_fitness.append(snapshots[-1].fitness_score)  # noqa: PERF401
 
         if all_fitness:
             metrics.avg_fitness = sum(all_fitness) / len(all_fitness)
@@ -341,7 +341,7 @@ class EvolutionEngine:
         if new_phase != metrics.current_phase:
             old_phase = metrics.current_phase
             metrics.current_phase = new_phase
-            asyncio.create_task(self._call_phase_changed_callbacks(old_phase, new_phase))
+            asyncio.create_task(self._call_phase_changed_callbacks(old_phase, new_phase))  # noqa: RUF006
 
         metrics.generations = self._generation_counter
         metrics.selection_fidelity = self._calculate_selection_fidelity()

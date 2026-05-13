@@ -216,7 +216,7 @@ def create_llm_provider(
         )
 
     except TypeError as e:
-        raise ProviderConfigurationError(f"Invalid configuration for {provider_type}: {e}")
+        raise ProviderConfigurationError(f"Invalid configuration for {provider_type}: {e}") from e
 
 
 def create_llm_provider_from_db_config(

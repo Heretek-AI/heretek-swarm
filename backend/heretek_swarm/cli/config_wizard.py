@@ -91,7 +91,7 @@ AVAILABLE_PROVIDERS: dict[str, dict[str, Any]] = {
     },
 }
 
-import heretek_swarm.config as _config_mod  # shared config-path constants
+import heretek_swarm.config as _config_mod  # shared config-path constants  # noqa: E402
 
 HERETEK_CONFIG_FILE = _config_mod.get_config_path()  # single source of truth
 
@@ -105,7 +105,7 @@ def _load_config() -> dict[str, Any]:
     """Load the full config file, returning an empty dict if missing."""
     if HERETEK_CONFIG_FILE.exists():
         try:
-            with open(HERETEK_CONFIG_FILE) as f:
+            with open(HERETEK_CONFIG_FILE) as f:  # noqa: PTH123
                 return dict(json.load(f))
         except (json.JSONDecodeError, OSError) as e:
             logger.warning("config_load_failed", error=str(e))
@@ -115,7 +115,7 @@ def _load_config() -> dict[str, Any]:
 def _save_config(config: dict[str, Any]) -> None:
     """Write config to disk, creating parent directories if needed."""
     HERETEK_CONFIG_FILE.parent.mkdir(parents=True, exist_ok=True)
-    with open(HERETEK_CONFIG_FILE, "w") as f:
+    with open(HERETEK_CONFIG_FILE, "w") as f:  # noqa: PTH123
         json.dump(config, f, indent=2)
     logger.info("config_saved", path=str(HERETEK_CONFIG_FILE))
 
@@ -266,7 +266,7 @@ _VALIDATORS: dict[str, Any] = {
     "anthropic": lambda ak, bu, _m: _validate_anthropic_sync(ak, bu),
     "ollama": lambda ak, bu, _m: _validate_ollama_sync(ak, bu),
     "openai_compatible": lambda ak, bu, m: _validate_openai_compatible_sync(ak, bu, m),
-    "local": lambda ak, bu, m: _validate_local_sync(ak, bu),
+    "local": lambda ak, bu, m: _validate_local_sync(ak, bu),  # noqa: ARG005
 }
 
 

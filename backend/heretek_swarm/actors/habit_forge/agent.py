@@ -495,7 +495,7 @@ Respond in JSON format:
                                 impact_score=float(item.get("impact_score", 0.5)),
                             )
                             patterns.append(pattern)
-                except Exception:
+                except Exception:  # noqa: S110
                     pass  # Fall through to heuristic
 
             # Fallback: Heuristic pattern detection
@@ -572,15 +572,15 @@ Respond in JSON format:
 
         # Recommendations for counterproductive patterns
         for pattern in counterproductive:
-            recommendations.append(
+            recommendations.append(  # noqa: PERF401
                 f"Address counterproductive pattern '{pattern.description}': "
-                f"Consider modifying trigger '{pattern.triggers[0] if pattern.triggers else 'unknown'}' "
+                f"Consider modifying trigger '{pattern.triggers[0] if pattern.triggers else 'unknown'}' "  # noqa: E501
                 f"or replacing behavior with alternative."
             )
 
         # Reinforcement for productive patterns
         for pattern in productive:
-            recommendations.append(
+            recommendations.append(  # noqa: PERF401
                 f"Reinforce productive pattern '{pattern.description}': "
                 f"Ensure consistent rewards and consider adding social accountability."
             )
@@ -759,7 +759,7 @@ Respond in JSON:
                     end_idx = result.rfind("}") + 1
                     if start_idx >= 0 and end_idx > start_idx:
                         return json.loads(result[start_idx:end_idx])
-                except Exception:
+                except Exception:  # noqa: S110
                     pass  # Fall through to fallback
 
             # Fallback
@@ -1157,7 +1157,7 @@ Respond in JSON:
                     end_idx = result.rfind("}") + 1
                     if start_idx >= 0 and end_idx > start_idx:
                         return json.loads(result[start_idx:end_idx])
-                except Exception:
+                except Exception:  # noqa: S110
                     pass  # Fall through to fallback
 
             # Fallback

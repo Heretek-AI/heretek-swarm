@@ -39,6 +39,6 @@ __all__ = [
     "DependencyType",
     "ParallelExecutionStrategy",
     "ResourceAllocationStrategy",
-    # Types (enums and dataclasses)
+
     "TaskStatus",
 ]

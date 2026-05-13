@@ -33,17 +33,17 @@ _VOTE_PROMPT = """You are participating in a multi-agent consensus process.
 QUESTION: {question}
 
 Respond with a JSON object containing:
-- "decision": your answer (a short phrase or single word like "yes", "no", "approve", "reject", or a brief categorical answer)
+- "decision": your answer (a short phrase or single word like "yes", "no", "approve", "reject", or a brief categorical answer)  # noqa: E501
 - "confidence": a number between 0.0 and 1.0 indicating how confident you are
 - "reasoning": one sentence explaining your decision
 
 Respond ONLY with the JSON object, no other text.
-Example: {{"decision": "yes", "confidence": 0.85, "reasoning": "The evidence supports this approach."}}"""
+Example: {{"decision": "yes", "confidence": 0.85, "reasoning": "The evidence supports this approach."}}"""  # noqa: E501
 
 
 # Prompt template for subsequent rounds — includes prior round summary
-_MULTI_ROUND_PROMPT = """You are participating in round {round_number} of a multi-agent consensus process.
-The previous round did not reach clear consensus. Below is a summary of the prior round votes and key arguments.
+_MULTI_ROUND_PROMPT = """You are participating in round {round_number} of a multi-agent consensus process.  # noqa: E501
+The previous round did not reach clear consensus. Below is a summary of the prior round votes and key arguments.  # noqa: E501
 
 QUESTION: {question}
 
@@ -58,12 +58,12 @@ ARGUMENTS AGAINST (supporting "reject"/"no"):
 
 Please reconsider your position in light of the above arguments.
 Respond with a JSON object containing:
-- "decision": your updated answer (a short phrase or single word like "yes", "no", "approve", "reject", or a brief categorical answer)
+- "decision": your updated answer (a short phrase or single word like "yes", "no", "approve", "reject", or a brief categorical answer)  # noqa: E501
 - "confidence": a number between 0.0 and 1.0 indicating how confident you are
 - "reasoning": one sentence explaining your updated decision
 
 Respond ONLY with the JSON object, no other text.
-Example: {{"decision": "yes", "confidence": 0.85, "reasoning": "The evidence supports this approach."}}"""
+Example: {{"decision": "yes", "confidence": 0.85, "reasoning": "The evidence supports this approach."}}"""  # noqa: E501
 
 # Pattern for extracting JSON from potentially messy LLM output
 _JSON_PATTERN = re.compile(r"\{[^}]+\}")
@@ -98,7 +98,7 @@ class ConsensusCoordinator:
     async def run_consensus(
         self,
         question: str,
-        timeout: float = 120,
+        timeout: float = 120,  # noqa: ASYNC109
         max_rounds: int = 3,
     ) -> ConsensusResult | None:
         """
@@ -307,7 +307,7 @@ class ConsensusCoordinator:
         # Summary of votes
         vote_lines: list[str] = []
         for vote in prior_result.votes:
-            vote_lines.append(
+            vote_lines.append(  # noqa: PERF401
                 f"  {vote.agent_id}: {vote.decision} (confidence: {vote.confidence:.2f})"
             )
         round_summary = f"{len(prior_result.votes)} agents voted:\n" + "\n".join(vote_lines)

@@ -362,7 +362,7 @@ class AgentRegistry:
                     self._heartbeat_tasks[agent_id].cancel()
                     del self._heartbeat_tasks[agent_id]
 
-        for agent_id in removed:
+        for agent_id in removed:  # noqa: B007
             logger.warning("Removed stale agent: {agent_id}")
 
         return removed

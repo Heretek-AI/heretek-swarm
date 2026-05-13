@@ -86,7 +86,7 @@ async def get_routing_stats(
         return RoutingStatsResponse(**stats)
     except Exception as e:
         logger.exception("Failed to get routing stats: {e}")
-        raise HTTPException(500, f"Failed to get routing stats: {e!s}")
+        raise HTTPException(500, f"Failed to get routing stats: {e!s}") from e
 
 
 @router.post("/routing/evaluate")
@@ -132,7 +132,7 @@ async def evaluate_routing(
         }
     except Exception as e:
         logger.exception("Failed to evaluate routing: {e}")
-        raise HTTPException(500, f"Failed to evaluate routing: {e!s}")
+        raise HTTPException(500, f"Failed to evaluate routing: {e!s}") from e
 
 
 # =============================================================================

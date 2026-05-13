@@ -417,7 +417,7 @@ class AdaptiveLearningRateController:
         mutated_ids = []
 
         if mutation_type == MutationType.EXPLORATION:
-            if random.random() < self.config.mutation_rate:
+            if random.random() < self.config.mutation_rate:  # noqa: S311
                 new_behavior = BehaviorFitness(
                     behavior_id=str(uuid.uuid4()),
                     behavior_type="exploration",
@@ -429,7 +429,7 @@ class AdaptiveLearningRateController:
 
         elif mutation_type == MutationType.EXPLOITATION:
             for behavior in state.behavior_pool.values():
-                if behavior.fitness > 0.6 and random.random() < self.config.mutation_rate:
+                if behavior.fitness > 0.6 and random.random() < self.config.mutation_rate:  # noqa: S311
                     variant = BehaviorFitness(
                         behavior_id=str(uuid.uuid4()),
                         behavior_type=f"{behavior.behavior_type}_variant",
@@ -729,7 +729,7 @@ class AdaptiveLearningRateController:
         state = self.get_or_create_state(agent_id)
         mutated_ids = []
 
-        if random.random() < self.config.mutation_rate:
+        if random.random() < self.config.mutation_rate:  # noqa: S311
             new_behavior = BehaviorFitness(
                 behavior_id=str(uuid.uuid4()),
                 behavior_type="exploration",
@@ -739,9 +739,9 @@ class AdaptiveLearningRateController:
             mutated_ids.append(new_behavior.behavior_id)
 
         for cap_type in list(state.capability_levels.keys()):
-            if random.random() < self.config.mutation_rate * 0.5:
+            if random.random() < self.config.mutation_rate * 0.5:  # noqa: S311
                 current = state.capability_levels[cap_type]
-                mutation = random.uniform(-0.1, 0.1)
+                mutation = random.uniform(-0.1, 0.1)  # noqa: S311
                 state.capability_levels[cap_type] = max(0.0, min(1.0, current + mutation))
 
         return mutated_ids
@@ -978,14 +978,14 @@ class LearningRateOptimizer:
 
         for i in range(self.population_size):
             config = LearningRateConfig(
-                initial_rate=0.05 + random.random() * 0.15,
+                initial_rate=0.05 + random.random() * 0.15,  # noqa: S311
                 strategy=strategies[i % len(strategies)],
                 mutation_rate=self.mutation_rate,
             )
             self.population.append(config)
 
     def get_config(self) -> LearningRateConfig:
-        return random.choice(self.population)
+        return random.choice(self.population)  # noqa: S311
 
     def update_population(self, fitness_scores: dict[int, float]) -> None:
         sorted_indices = sorted(
@@ -996,7 +996,7 @@ class LearningRateOptimizer:
         new_population = survivors.copy()
 
         while len(new_population) < self.population_size:
-            parent = random.choice(survivors)
+            parent = random.choice(survivors)  # noqa: S311
             child = self._mutate_config(parent)
             new_population.append(child)
 
@@ -1004,12 +1004,12 @@ class LearningRateOptimizer:
 
     def _mutate_config(self, config: LearningRateConfig) -> LearningRateConfig:
         return LearningRateConfig(
-            initial_rate=config.initial_rate + random.uniform(-0.02, 0.02),
+            initial_rate=config.initial_rate + random.uniform(-0.02, 0.02),  # noqa: S311
             min_rate=config.min_rate,
             max_rate=config.max_rate,
             strategy=config.strategy,
-            decay_factor=config.decay_factor + random.uniform(-0.05, 0.05),
-            success_boost=config.success_boost + random.uniform(-0.02, 0.02),
-            failure_penalty=config.failure_penalty + random.uniform(-0.05, 0.05),
-            mutation_rate=config.mutation_rate + random.uniform(-0.02, 0.02),
+            decay_factor=config.decay_factor + random.uniform(-0.05, 0.05),  # noqa: S311
+            success_boost=config.success_boost + random.uniform(-0.02, 0.02),  # noqa: S311
+            failure_penalty=config.failure_penalty + random.uniform(-0.05, 0.05),  # noqa: S311
+            mutation_rate=config.mutation_rate + random.uniform(-0.02, 0.02),  # noqa: S311
         )

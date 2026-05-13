@@ -382,7 +382,7 @@ class MAKERConsensus:
         consensus_id: str,  # noqa: ARG002
     ) -> list[tuple[str, float]]:
         """
-        Apply enhanced vote weights using evidence quality, expertise, confidence, and historical accuracy.
+        Apply enhanced vote weights using evidence quality, expertise, confidence, and historical accuracy.  # noqa: E501
 
         This method is designed to be called by EnhancedMAKERConsensus which overrides
         the vote weighting logic. The base implementation falls back to reputation weighting.
@@ -462,7 +462,7 @@ class MAKERConsensus:
         consensus_id: str,
         agents: list[str],
         decision_func: callable,
-        timeout: float = 30.0,
+        timeout: float = 30.0,  # noqa: ASYNC109
     ) -> ConsensusResult | None:
         """
         Run a complete consensus process with timeout.

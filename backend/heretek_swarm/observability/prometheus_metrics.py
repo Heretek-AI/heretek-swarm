@@ -52,9 +52,9 @@ import structlog
 
 logger = structlog.get_logger("prometheus_metrics")
 
-import time
+import time  # noqa: E402
 
-from prometheus_client import (
+from prometheus_client import (  # noqa: E402
     CONTENT_TYPE_LATEST,
     REGISTRY,
     CollectorRegistry,

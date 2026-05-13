@@ -75,7 +75,7 @@ class StartupManager:
         # Setup signal handlers for graceful shutdown
         loop = asyncio.get_event_loop()
         for sig in (signal.SIGINT, signal.SIGTERM):
-            try:
+            try:  # noqa: SIM105
                 loop.add_signal_handler(
                     sig, lambda s=sig: asyncio.create_task(self._handle_signal(s))
                 )
@@ -250,7 +250,7 @@ async def run_startup_manager() -> None:
 
     try:
         # Keep running until stopped
-        while manager._running:  # noqa: SLF001
+        while manager._running:  # noqa: SLF001,ASYNC110
             await asyncio.sleep(1)
     except asyncio.CancelledError:
         pass

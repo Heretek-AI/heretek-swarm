@@ -488,7 +488,7 @@ class CrewAIAdapter:
         if context:
             for ctx_task_id in context:
                 if ctx_task_id in self.tasks:
-                    context_tasks.append(self.tasks[ctx_task_id])
+                    context_tasks.append(self.tasks[ctx_task_id])  # noqa: PERF401
 
         # Get agent if specified
         agent = None
@@ -740,7 +740,7 @@ class CrewAIAdapter:
             # Collect task results
             for task_id in config.get("task_ids", []):
                 if task_id in self.task_results:
-                    task_results.append(self.task_results[task_id])
+                    task_results.append(self.task_results[task_id])  # noqa: PERF401
 
             status = "completed"
 
@@ -799,7 +799,7 @@ class CrewAIAdapter:
                 if agent_id in self._agent_runtime:
                     runtime = self._agent_runtime[agent_id]
                     if hasattr(runtime, "update_context"):
-                        asyncio.create_task(runtime.update_context({f"crewai_{key}": value}))
+                        asyncio.create_task(runtime.update_context({f"crewai_{key}": value}))  # noqa: RUF006
 
         logger.info("memory_shared", key=key, heretek_agents=heretek_agents)
 

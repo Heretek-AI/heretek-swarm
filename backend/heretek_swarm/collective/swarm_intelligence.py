@@ -353,16 +353,16 @@ class SwarmIntelligenceEngine:
             position = initial_positions.get(
                 agent_id,
                 (
-                    random.uniform(-10, 10),
-                    random.uniform(-10, 10),
-                    random.uniform(-10, 10),
+                    random.uniform(-10, 10),  # noqa: S311
+                    random.uniform(-10, 10),  # noqa: S311
+                    random.uniform(-10, 10),  # noqa: S311
                 ),
             )
 
             velocity = (
-                random.uniform(-1, 1),
-                random.uniform(-1, 1),
-                random.uniform(-1, 1),
+                random.uniform(-1, 1),  # noqa: S311
+                random.uniform(-1, 1),  # noqa: S311
+                random.uniform(-1, 1),  # noqa: S311
             )
 
             agent = FlockingAgent(
@@ -589,8 +589,8 @@ class SwarmIntelligenceEngine:
 
         agent_positions = {
             agent_id: (
-                random.randint(0, environment_size[0] - 1),
-                random.randint(0, environment_size[1] - 1),
+                random.randint(0, environment_size[0] - 1),  # noqa: S311
+                random.randint(0, environment_size[1] - 1),  # noqa: S311
             )
             for agent_id in agents
         }
@@ -657,11 +657,11 @@ class SwarmIntelligenceEngine:
         for dx in range(-search_radius, search_radius + 1):
             for dy in range(-search_radius, search_radius + 1):
                 nx, ny = x + dx, y + dy
-                if 0 <= nx < environment_size[0] and 0 <= ny < environment_size[1]:
+                if 0 <= nx < environment_size[0] and 0 <= ny < environment_size[1]:  # noqa: SIM102
                     if nx in self.traces:
                         for trace in self.traces[nx]:
                             if abs(trace.content.get("position", (0, 0))[1] - ny) <= search_radius:
-                                nearby_traces.append(trace)
+                                nearby_traces.append(trace)  # noqa: PERF401
 
         if nearby_traces:
             strongest = max(nearby_traces, key=lambda t: t.strength)
@@ -672,8 +672,8 @@ class SwarmIntelligenceEngine:
 
             return (new_x, new_y)
 
-        new_x = max(0, min(environment_size[0] - 1, x + random.randint(-1, 1)))
-        new_y = max(0, min(environment_size[1] - 1, y + random.randint(-1, 1)))
+        new_x = max(0, min(environment_size[0] - 1, x + random.randint(-1, 1)))  # noqa: S311
+        new_y = max(0, min(environment_size[1] - 1, y + random.randint(-1, 1)))  # noqa: S311
 
         return (new_x, new_y)
 

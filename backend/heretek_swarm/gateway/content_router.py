@@ -84,14 +84,14 @@ class ContentFilter:
             try:
                 self.operator = FilterOperator(self.operator)
             except ValueError:
-                raise ValueError(f"Invalid operator: {self.operator}")
+                raise ValueError(f"Invalid operator: {self.operator}")  # noqa: B904
 
         # Pre-compile regex for regex operator
         if self.operator == FilterOperator.REGEX:
             try:
                 self._compiled_regex = re.compile(str(self.value))
             except re.error as e:
-                raise ValueError(f"Invalid regex pattern: {self.value}. Error: {e}")
+                raise ValueError(f"Invalid regex pattern: {self.value}. Error: {e}") from e
 
 
 @dataclass
@@ -493,7 +493,7 @@ class ContentRouter:
         self._rate_window.append(now)
         return True
 
-    def _evaluate_filter(self, filter: ContentFilter, payload: dict[str, Any]) -> tuple[bool, Any]:
+    def _evaluate_filter(self, filter: ContentFilter, payload: dict[str, Any]) -> tuple[bool, Any]:  # noqa: A002
         """
         Evaluate a single content filter against payload.
 
@@ -614,7 +614,7 @@ class ContentRouter:
             filters_matched = 0
             all_matched = True
 
-            for filter in rule.content_filters:
+            for filter in rule.content_filters:  # noqa: A001
                 filters_evaluated += 1
                 matched, _ = self._evaluate_filter(filter, payload)
 

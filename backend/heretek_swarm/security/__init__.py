@@ -89,7 +89,7 @@ from heretek_swarm.security.zero_trust import (
     AuditLogConfig,
     # Layer 4: Audit Logging
     AuditLogger,
-    BehavioralBaseline,
+    BehavioralBaseline,  # noqa: F811
     ContextValidationConfig,
     # Layer 2: Context Validation
     ContextValidator,
@@ -177,7 +177,7 @@ __all__ = [
     "ValidatedInput",
     "ValidationResult",
     "ZeroTrustResult",
-    # Zero-trust (SH-1)
+
     "ZeroTrustValidator",
     "create_anomaly_detector",
     "create_behavioral_baseline",
@@ -189,4 +189,4 @@ __all__ = [
     "create_strict_protection",
     "create_strict_validator",
 ]
-from heretek_swarm.security.threat_detection import ThreatLevel
+from heretek_swarm.security.threat_detection import ThreatLevel  # noqa: F811

@@ -166,7 +166,7 @@ class OllamaEmbeddingProvider(EmbeddingProviderBase):
                     f"Request failed: {e}. Is Ollama running? (ollama serve)",
                     provider="ollama",
                     cause=e,
-                )
+                ) from e
 
         latency_ms = (time.time() - start_time) * 1000
 
@@ -213,4 +213,4 @@ class OllamaEmbeddingProvider(EmbeddingProviderBase):
 
 
 # Import at module level for type annotation
-from heretek_swarm.infrastructure.otel import InstrumentedAsyncClient
+from heretek_swarm.infrastructure.otel import InstrumentedAsyncClient  # noqa: E402

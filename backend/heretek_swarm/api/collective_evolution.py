@@ -152,7 +152,7 @@ async def get_evolution_status() -> dict[str, Any]:
 
     except Exception as e:
         logger.error("evolution_status_error", error=str(e))
-        raise HTTPException(500, f"Failed to get evolution status: {e!s}")
+        raise HTTPException(500, f"Failed to get evolution status: {e!s}") from e
 
 
 @router.get("/capabilities")
@@ -211,7 +211,7 @@ async def get_capabilities(
 
     except Exception as e:
         logger.error("get_capabilities_error", error=str(e))
-        raise HTTPException(500, f"Failed to get capabilities: {e!s}")
+        raise HTTPException(500, f"Failed to get capabilities: {e!s}") from e
 
 
 @router.get("/capabilities/{capability_id}")
@@ -258,7 +258,7 @@ async def get_capability(capability_id: str) -> dict[str, Any]:
         raise
     except Exception as e:
         logger.error("get_capability_error", error=str(e))
-        raise HTTPException(500, f"Failed to get capability: {e!s}")
+        raise HTTPException(500, f"Failed to get capability: {e!s}") from e
 
 
 @router.get("/agent/{agent_id}/evolution")
@@ -322,7 +322,7 @@ async def get_agent_evolution(agent_id: str) -> dict[str, Any]:
 
     except Exception as e:
         logger.error("agent_evolution_error", error=str(e))
-        raise HTTPException(500, f"Failed to get agent evolution: {e!s}")
+        raise HTTPException(500, f"Failed to get agent evolution: {e!s}") from e
 
 
 @router.get("/fitness-landscape")
@@ -384,7 +384,7 @@ async def get_fitness_landscape() -> dict[str, Any]:
 
     except Exception as e:
         logger.error("fitness_landscape_error", error=str(e))
-        raise HTTPException(500, f"Failed to get fitness landscape: {e!s}")
+        raise HTTPException(500, f"Failed to get fitness landscape: {e!s}") from e
 
 
 def _get_phase_description(phase) -> str:
@@ -447,7 +447,7 @@ async def get_adaptability_metrics() -> dict[str, Any]:
 
     except Exception as e:
         logger.error("adaptability_metrics_error", error=str(e))
-        raise HTTPException(500, f"Failed to get adaptability metrics: {e!s}")
+        raise HTTPException(500, f"Failed to get adaptability metrics: {e!s}") from e
 
 
 @router.post("/agent/{agent_id}/evolve")
@@ -484,7 +484,7 @@ async def evolve_agent_behaviors(
 
     except Exception as e:
         logger.error("evolve_agent_error", error=str(e))
-        raise HTTPException(500, f"Failed to evolve agent: {e!s}")
+        raise HTTPException(500, f"Failed to evolve agent: {e!s}") from e
 
 
 @router.post("/record-capability")
@@ -536,7 +536,7 @@ async def record_capability(
 
     except Exception as e:
         logger.error("record_capability_error", error=str(e))
-        raise HTTPException(500, f"Failed to record capability: {e!s}")
+        raise HTTPException(500, f"Failed to record capability: {e!s}") from e
 
 
 @router.post("/detect-evolution")
@@ -572,4 +572,4 @@ async def detect_evolution(
 
     except Exception as e:
         logger.error("detect_evolution_error", error=str(e))
-        raise HTTPException(500, f"Failed to detect evolution: {e!s}")
+        raise HTTPException(500, f"Failed to detect evolution: {e!s}") from e

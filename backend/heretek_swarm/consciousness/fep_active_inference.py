@@ -245,7 +245,7 @@ class FreeEnergyCalculator:
     """
 
     # Free energy thresholds for classification
-    FREE_ENERGY_THRESHOLDS = {
+    FREE_ENERGY_THRESHOLDS = {  # noqa: RUF012
         "very_low": 0.1,
         "low": 0.3,
         "moderate": 0.5,
@@ -254,7 +254,7 @@ class FreeEnergyCalculator:
     }
 
     # Surprise thresholds
-    SURPRISE_THRESHOLDS = {
+    SURPRISE_THRESHOLDS = {  # noqa: RUF012
         "minimal": 0.1,
         "low": 0.3,
         "moderate": 0.5,

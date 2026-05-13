@@ -173,7 +173,7 @@ def create_embedding_provider(
         )
 
     except TypeError as e:
-        raise EmbeddingConfigurationError(f"Invalid configuration for {provider_type}: {e}")
+        raise EmbeddingConfigurationError(f"Invalid configuration for {provider_type}: {e}") from e
 
 
 def create_embedding_provider_from_db_config(

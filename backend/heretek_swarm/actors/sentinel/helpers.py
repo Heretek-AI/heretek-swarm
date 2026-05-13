@@ -30,7 +30,7 @@ class SentinelHelpers:
     """
 
     # Default injection patterns
-    DEFAULT_INJECTION_PATTERNS = [
+    DEFAULT_INJECTION_PATTERNS = [  # noqa: RUF012
         r"<script[^>]*>",
         r"javascript:",
         r"on\w+\s*=",
@@ -48,7 +48,7 @@ class SentinelHelpers:
     ]
 
     # Default PII patterns
-    DEFAULT_PII_PATTERNS = [
+    DEFAULT_PII_PATTERNS = [  # noqa: RUF012
         r"\b\d{3}-\d{2}-\d{4}\b",  # SSN
         r"\b\d{4}[- ]?\d{4}[- ]?\d{4}[- ]?\d{4}\b",  # Credit card
         r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b",  # Email

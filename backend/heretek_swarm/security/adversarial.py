@@ -762,7 +762,7 @@ class AdversarialDetector:
 
         for pattern, description, category, confidence in patterns:
             for match in pattern.finditer(text):
-                matches.append(
+                matches.append(  # noqa: PERF401
                     DetectionMatch(
                         pattern=pattern.pattern,
                         description=description,
@@ -924,7 +924,7 @@ class OWASPComplianceReporter:
     compliance status and remediation recommendations.
     """
 
-    OWASP_DESCRIPTIONS = {
+    OWASP_DESCRIPTIONS = {  # noqa: RUF012
         OWASPCategory.LLM01_PROMPT_INJECTION: {
             "name": "Prompt Injection",
             "description": "Attackers manipulate LLM inputs to execute unintended actions",

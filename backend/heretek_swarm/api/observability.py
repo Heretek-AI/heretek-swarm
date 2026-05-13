@@ -301,7 +301,7 @@ async def get_all_agents(request: Request) -> dict[str, Any]:
                     "AutoAgentMetrics",
                     (),
                     {
-                        "to_dict": lambda self, a=agent_data: {
+                        "to_dict": lambda self, a=agent_data: {  # noqa: ARG005
                             "agent_id": a["agent_id"],
                             "agent_type": a["agent_type"],
                             "tasks_completed": 0,
@@ -879,7 +879,7 @@ async def websocket_traces(websocket: WebSocket, agent_id: str):
             try:
                 _message = await websocket.receive_json()
                 # Echo back for demo (in production, don't echo)
-                # # await websocket.send_json(_message)
+
             except WebSocketDisconnect:
                 logger.info("websocket_disconnected", agent_id=agent_id)
                 break
@@ -959,8 +959,8 @@ async def get_external_calls(
     agent_id: str | None = Query(None, description="Filter by agent ID"),
     call_type: str | None = Query(None, description="Filter by call type (http/mcp)"),
     status: str = Query("all", description="Filter by status: success, error, or all"),
-    start_time: datetime | None = Query(None, description="Filter by start time (ISO format)"),
-    end_time: datetime | None = Query(None, description="Filter by end time (ISO format)"),
+    start_time: datetime | None = Query(None, description="Filter by start time (ISO format)"),  # noqa: B008
+    end_time: datetime | None = Query(None, description="Filter by end time (ISO format)"),  # noqa: B008
     limit: int = Query(default=100, ge=1, le=1000, description="Maximum records to return"),
     offset: int = Query(default=0, ge=0, description="Number of records to skip"),
 ) -> ExternalCallLogListResponse:
@@ -995,7 +995,7 @@ async def get_external_calls(
         raise
     except Exception as e:
         logger.error("external_calls_db_error", error=str(e))
-        raise HTTPException(status_code=503, detail="External call log database unavailable")
+        raise HTTPException(status_code=503, detail="External call log database unavailable") from e
 
     async with session_factory() as session:
         try:
@@ -1101,7 +1101,7 @@ async def get_external_calls(
 
         except Exception as e:
             logger.exception("external_calls_query_error", error=str(e))
-            raise HTTPException(status_code=500, detail="Failed to query external call logs")
+            raise HTTPException(status_code=500, detail="Failed to query external call logs") from e
 
 
 @router.post("/external-calls", status_code=201)
@@ -1139,7 +1139,7 @@ async def create_external_call(
         raise
     except Exception as e:
         logger.error("external_calls_db_error", error=str(e))
-        raise HTTPException(status_code=503, detail="External call log database unavailable")
+        raise HTTPException(status_code=503, detail="External call log database unavailable") from e
 
     # Get encryptor
     encryptor = get_encryptor()
@@ -1232,7 +1232,7 @@ async def create_external_call(
         except Exception as e:
             logger.exception("external_call_create_error", error=str(e))
             await session.rollback()
-            raise HTTPException(status_code=500, detail="Failed to create external call log")
+            raise HTTPException(status_code=500, detail="Failed to create external call log") from e
 
 
 @router.get("/external-calls/{call_id}", response_model=ExternalCallLogResponse)
@@ -1272,7 +1272,7 @@ async def get_external_call(
 
         call_uuid = uuid_module.UUID(call_id)
     except ValueError:
-        raise HTTPException(status_code=400, detail="Invalid call ID format")
+        raise HTTPException(status_code=400, detail="Invalid call ID format")  # noqa: B904
 
     try:
         session_factory = _get_external_call_log_session_factory()
@@ -1280,7 +1280,7 @@ async def get_external_call(
         raise
     except Exception as e:
         logger.error("external_calls_db_error", error=str(e))
-        raise HTTPException(status_code=503, detail="External call log database unavailable")
+        raise HTTPException(status_code=503, detail="External call log database unavailable") from e
 
     async with session_factory() as session:
         try:
@@ -1391,7 +1391,7 @@ async def get_external_call(
             raise
         except Exception as e:
             logger.exception("external_call_get_error", error=str(e))
-            raise HTTPException(status_code=500, detail="Failed to retrieve external call log")
+            raise HTTPException(status_code=500, detail="Failed to retrieve external call log") from e  # noqa: E501
 
 
 # ============== HELPER CLASSES ==============
@@ -1476,7 +1476,7 @@ class ConnectionManager:
 connection_manager = ConnectionManager()
 
 # Import asyncio for timeout
-import asyncio
+import asyncio  # noqa: E402
 
 # =============================================================================
 # Message Replay & Time Travel Debugging Endpoints
@@ -1574,7 +1574,7 @@ class TimeTravelResponse(BaseModel):
 @router.post("/events/replay")
 async def create_replay_job(
     job_data: ReplayJobCreate,
-    replay_manager: Any | None = Depends(get_replay_manager),
+    replay_manager: Any | None = Depends(get_replay_manager),  # noqa: B008
     authenticated: str = Depends(verify_auth),
 ) -> ReplayJobResponse:
     """
@@ -1635,13 +1635,13 @@ async def create_replay_job(
         )
     except Exception as e:
         logger.exception("Failed to create replay job: {e}")
-        raise HTTPException(500, f"Failed to create replay job: {e!s}")
+        raise HTTPException(500, f"Failed to create replay job: {e!s}") from e
 
 
 @router.post("/events/replay/{job_id}/execute")
 async def execute_replay_job(
     job_id: str,
-    replay_manager: Any | None = Depends(get_replay_manager),
+    replay_manager: Any | None = Depends(get_replay_manager),  # noqa: B008
     authenticated: str = Depends(verify_auth),
 ) -> dict[str, Any]:
     """
@@ -1659,7 +1659,7 @@ async def execute_replay_job(
 
     try:
         # Execute in background
-        asyncio.create_task(replay_manager.execute_replay(job))
+        asyncio.create_task(replay_manager.execute_replay(job))  # noqa: RUF006
 
         return {
             "status": "started",
@@ -1668,13 +1668,13 @@ async def execute_replay_job(
         }
     except Exception as e:
         logger.exception("Failed to execute replay job: {e}")
-        raise HTTPException(500, f"Failed to execute replay job: {e!s}")
+        raise HTTPException(500, f"Failed to execute replay job: {e!s}") from e
 
 
 @router.post("/events/replay/{job_id}/pause")
 async def pause_replay_job(
     job_id: str,
-    replay_manager: Any | None = Depends(get_replay_manager),
+    replay_manager: Any | None = Depends(get_replay_manager),  # noqa: B008
     authenticated: str = Depends(verify_auth),
 ) -> dict[str, str]:
     """Pause a replay job."""
@@ -1690,7 +1690,7 @@ async def pause_replay_job(
 @router.post("/events/replay/{job_id}/resume")
 async def resume_replay_job(
     job_id: str,
-    replay_manager: Any | None = Depends(get_replay_manager),
+    replay_manager: Any | None = Depends(get_replay_manager),  # noqa: B008
     authenticated: str = Depends(verify_auth),
 ) -> dict[str, str]:
     """Resume a paused replay job."""
@@ -1706,7 +1706,7 @@ async def resume_replay_job(
 @router.post("/events/replay/{job_id}/cancel")
 async def cancel_replay_job(
     job_id: str,
-    replay_manager: Any | None = Depends(get_replay_manager),
+    replay_manager: Any | None = Depends(get_replay_manager),  # noqa: B008
     authenticated: str = Depends(verify_auth),
 ) -> dict[str, str]:
     """Cancel a replay job."""
@@ -1722,7 +1722,7 @@ async def cancel_replay_job(
 @router.get("/events/replay")
 async def list_replay_jobs(
     active_only: bool = False,
-    replay_manager: Any | None = Depends(get_replay_manager),
+    replay_manager: Any | None = Depends(get_replay_manager),  # noqa: B008
     authenticated: str = Depends(verify_auth),
 ) -> ReplayJobListResponse:
     """
@@ -1767,13 +1767,13 @@ async def list_replay_jobs(
         )
     except Exception as e:
         logger.exception("Failed to list replay jobs: {e}")
-        raise HTTPException(500, f"Failed to list replay jobs: {e!s}")
+        raise HTTPException(500, f"Failed to list replay jobs: {e!s}") from e
 
 
 @router.get("/events/replay/{job_id}")
 async def get_replay_job(
     job_id: str,
-    replay_manager: Any | None = Depends(get_replay_manager),
+    replay_manager: Any | None = Depends(get_replay_manager),  # noqa: B008
     authenticated: str = Depends(verify_auth),
 ) -> ReplayJobResponse:
     """Get details of a specific replay job."""
@@ -1805,7 +1805,7 @@ async def get_replay_job(
 @router.post("/events/time-travel")
 async def create_time_travel_request(
     request_data: TimeTravelRequestCreate,
-    replay_manager: Any | None = Depends(get_replay_manager),
+    replay_manager: Any | None = Depends(get_replay_manager),  # noqa: B008
     authenticated: str = Depends(verify_auth),
 ) -> dict[str, Any]:
     """
@@ -1840,13 +1840,13 @@ async def create_time_travel_request(
         }
     except Exception as e:
         logger.exception("Failed to create time travel request: {e}")
-        raise HTTPException(500, f"Failed to create time travel request: {e!s}")
+        raise HTTPException(500, f"Failed to create time travel request: {e!s}") from e
 
 
 @router.post("/events/time-travel/{request_id}/execute")
 async def execute_time_travel(
     request_id: str,
-    replay_manager: Any | None = Depends(get_replay_manager),
+    replay_manager: Any | None = Depends(get_replay_manager),  # noqa: B008
     authenticated: str = Depends(verify_auth),
 ) -> TimeTravelResponse:
     """
@@ -1891,12 +1891,12 @@ async def execute_time_travel(
         )
     except Exception as e:
         logger.exception("Failed to execute time travel: {e}")
-        raise HTTPException(500, f"Failed to execute time travel: {e!s}")
+        raise HTTPException(500, f"Failed to execute time travel: {e!s}") from e
 
 
 @router.get("/events/stats")
 async def get_event_stats(
-    replay_manager: Any | None = Depends(get_replay_manager),
+    replay_manager: Any | None = Depends(get_replay_manager),  # noqa: B008
     authenticated: str = Depends(verify_auth),
 ) -> dict[str, Any]:
     """
@@ -1912,4 +1912,4 @@ async def get_event_stats(
         return await replay_manager.get_stats()
     except Exception as e:
         logger.exception("Failed to get event stats: {e}")
-        raise HTTPException(500, f"Failed to get event stats: {e!s}")
+        raise HTTPException(500, f"Failed to get event stats: {e!s}") from e

@@ -43,7 +43,7 @@ class DeliberationMixin:
         deliberation_id: str,
         position: dict[str, Any],
         rationale: str = "",  # noqa: ARG002
-        timeout: float = 30.0,
+        timeout: float = 30.0,  # noqa: ASYNC109
     ) -> dict[str, Any] | None:
         """Submit position to consensus deliberation.
 

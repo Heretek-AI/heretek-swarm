@@ -1,10 +1,10 @@
 """Tests for workflow CRUD API and execution (M010/S01/T02).
 
 Verifies:
-- Full CRUD cycle: POST creates, GET by id returns, GET list includes, DELETE removes, GET returns 404 after delete
+- Full CRUD cycle: POST creates, GET by id returns, GET list includes, DELETE removes, GET returns 404 after delete  # noqa: E501
 - PUT updates an existing workflow
 - POST /api/workflows/{id}/execute runs workflow through the engine and returns node_results
-- POST /api/workflows/validate with valid DAG returns valid=true; with cycle returns valid=false with CIRCULAR_DEPENDENCY
+- POST /api/workflows/validate with valid DAG returns valid=true; with cycle returns valid=false with CIRCULAR_DEPENDENCY  # noqa: E501
 - Error paths: 404 for nonexistent workflow, 422 for invalid definition, execution failure handling
 - Persistence: create workflow → reset engine → verify workflow still accessible
 """

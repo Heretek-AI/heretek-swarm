@@ -622,7 +622,7 @@ Format as JSON with keys: summary, phases, resources, risks, metrics
         try:
             response = await self.run_with_llm(
                 prompt=prompt,
-                system_prompt="You are Metis, a strategic planning specialist AI. Create detailed, actionable strategic plans.",
+                system_prompt="You are Metis, a strategic planning specialist AI. Create detailed, actionable strategic plans.",  # noqa: E501
                 timeout=60,
             )
 
@@ -739,7 +739,7 @@ Format each risk as JSON object.
         try:
             await self.run_with_llm(
                 prompt=prompt,
-                system_prompt="You are Metis, a strategic risk assessment specialist. Identify and analyze potential risks.",
+                system_prompt="You are Metis, a strategic risk assessment specialist. Identify and analyze potential risks.",  # noqa: E501
                 timeout=60,
             )
 

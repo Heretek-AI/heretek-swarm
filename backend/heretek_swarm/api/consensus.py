@@ -142,7 +142,7 @@ consensus_auth_manager = ConsensusAuthManager()
 
 
 async def get_authenticated_agent(
-    credentials: HTTPAuthorizationCredentials | None = Depends(security),
+    credentials: HTTPAuthorizationCredentials | None = Depends(security),  # noqa: B008
     x_agent_id: str | None = Header(None, description="Agent ID header"),
 ) -> str:
     """
@@ -752,7 +752,7 @@ async def submit_deliberation_position(
     try:
         position_enum = Position(position.lower())
     except ValueError:
-        raise HTTPException(
+        raise HTTPException(  # noqa: B904
             status_code=400,
             detail=f"Invalid position. Must be one of: {[p.value for p in Position]}",
         )
@@ -804,7 +804,7 @@ async def submit_deliberation_argument(
     try:
         position_enum = Position(position.lower())
     except ValueError:
-        raise HTTPException(
+        raise HTTPException(  # noqa: B904
             status_code=400,
             detail=f"Invalid position. Must be one of: {[p.value for p in Position]}",
         )
@@ -905,7 +905,7 @@ async def run_deliberation_round(
 
     # Fire-and-forget: create memory version snapshot after deliberation round
     # Snapshot must not block the deliberation response
-    asyncio.create_task(
+    asyncio.create_task(  # noqa: RUF006
         _snapshot_after_round(
             deliberation_id=deliberation_id,
             round_number=round_result.round_number,
@@ -1113,7 +1113,7 @@ async def export_decision_audit(decision_id: str, agent_id: str = Depends(get_au
             "data": export_data,
         }
     except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        raise HTTPException(status_code=404, detail=str(e)) from e
 
 
 @router.get("/audit/decision/{decision_id}/verify")
@@ -1257,7 +1257,7 @@ async def create_tribunal_case(
         return {"case": case}
     except Exception as e:
         logger.error("tribunal_case_creation_failed", error=str(e))
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
 
 @router.get("/tribunal/cases/{case_id}", responses={503: {"description": "Tribunal not available"}})
@@ -1322,7 +1322,7 @@ async def submit_tribunal_evidence(
         return {"evidence": evidence}
     except Exception as e:
         logger.error("tribunal_evidence_submission_failed", error=str(e))
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
 
 @router.post("/tribunal/cases/{case_id}/rule")
@@ -1360,7 +1360,7 @@ async def issue_tribunal_ruling(
         return {"ruling": ruling}
     except Exception as e:
         logger.error("tribunal_ruling_failed", error=str(e))
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
 
 @router.get("/tribunal/precedents")

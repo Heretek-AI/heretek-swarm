@@ -1,7 +1,7 @@
 """
 LangGraph Integration Module for Heretek Swarm
 
-This module provides bi-directional integration between Heretek Swarm agents and LangGraph workflows.
+This module provides bi-directional integration between Heretek Swarm agents and LangGraph workflows.  # noqa: E501
 It enables graph-based workflow orchestration, state synchronization, and checkpoint persistence.
 
 Features:

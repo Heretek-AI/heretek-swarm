@@ -194,7 +194,7 @@ class OpenAIEmbeddingProvider(EmbeddingProviderBase):
                 f"Request failed: {e}",
                 provider="openai",
                 cause=e,
-            )
+            ) from e
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         """Cleanup HTTP client."""
@@ -203,4 +203,4 @@ class OpenAIEmbeddingProvider(EmbeddingProviderBase):
 
 
 # Import at module level for type annotation
-from heretek_swarm.infrastructure.otel import InstrumentedAsyncClient
+from heretek_swarm.infrastructure.otel import InstrumentedAsyncClient  # noqa: E402

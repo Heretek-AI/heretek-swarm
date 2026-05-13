@@ -613,7 +613,7 @@ class PatternExtractor:
                         },
                         applicability_conditions=[
                             f"sender_type={sender.split('_')[0] if '_' in sender else sender}",
-                            f"recipient_type={recipient.split('_')[0] if '_' in recipient else recipient}",
+                            f"recipient_type={recipient.split('_')[0] if '_' in recipient else recipient}",  # noqa: E501
                         ],
                     )
                     patterns.append(pattern)
@@ -649,9 +649,9 @@ class PatternExtractor:
                                 pattern_type=PatternType.OPTIMIZATION,
                                 source=PatternSource.MESSAGE_HISTORY,
                                 confidence=0.8,
-                                description=f"High latency detected in {interaction_type} interactions",
+                                description=f"High latency detected in {interaction_type} interactions",  # noqa: E501
                             ),
-                            content=f"Average latency: {avg_latency:.2f}ms across {len(group)} interactions",
+                            content=f"Average latency: {avg_latency:.2f}ms across {len(group)} interactions",  # noqa: E501
                             agents_involved=list(
                                 set([m.sender for m in group] + [m.recipient for m in group])
                             ),

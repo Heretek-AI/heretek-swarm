@@ -183,7 +183,7 @@ class OpenAICompatibleProvider(LLMProviderBase):
             tool_calls = []
             if "tool_calls" in message_data:
                 for tc in message_data["tool_calls"]:
-                    tool_calls.append(
+                    tool_calls.append(  # noqa: PERF401
                         ToolCall(
                             id=tc.get("id", ""),
                             name=tc.get("function", {}).get("name", ""),
@@ -206,7 +206,7 @@ class OpenAICompatibleProvider(LLMProviderBase):
                 f"Request failed: {e}",
                 provider="openai_compatible",
                 cause=e,
-            )
+            ) from e
 
     async def stream(self, request: LLMRequest) -> AsyncIterator[str]:
         """
@@ -271,7 +271,7 @@ class OpenAICompatibleProvider(LLMProviderBase):
                 f"Stream request failed: {e}",
                 provider="openai_compatible",
                 cause=e,
-            )
+            ) from e
 
     async def list_models(self) -> list[str]:
         """List available models from the compatible API."""
@@ -294,4 +294,4 @@ class OpenAICompatibleProvider(LLMProviderBase):
 
 
 # Import at module level for type annotation
-from heretek_swarm.infrastructure.otel import InstrumentedAsyncClient
+from heretek_swarm.infrastructure.otel import InstrumentedAsyncClient  # noqa: E402

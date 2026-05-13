@@ -53,7 +53,7 @@ def get_api_key_from_env() -> str:
                 "Generate with: export HERETEK_API_KEY=$(openssl rand -hex 32)"
             )
 
-        # Development: generate and warn
+
         key = generate_api_key()
         logger.warning(
             "api_key_generated_development",
@@ -64,7 +64,7 @@ def get_api_key_from_env() -> str:
     return key
 
 
-async def verify_auth(credentials: HTTPAuthorizationCredentials | None = Security(security)) -> str:
+async def verify_auth(credentials: HTTPAuthorizationCredentials | None = Security(security)) -> str:  # noqa: B008
     """
     Verify Bearer token authentication.
 
@@ -103,7 +103,7 @@ async def verify_auth(credentials: HTTPAuthorizationCredentials | None = Securit
 
 
 async def optional_auth(
-    credentials: HTTPAuthorizationCredentials | None = Security(security),
+    credentials: HTTPAuthorizationCredentials | None = Security(security),  # noqa: B008
 ) -> str | None:
     """
     Optional authentication - returns None if no credentials.

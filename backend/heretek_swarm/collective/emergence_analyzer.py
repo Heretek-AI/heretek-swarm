@@ -86,7 +86,7 @@ class EmergenceAnalyzer:
         timeline = []
 
         for pattern in sorted(self.detector._emergent_patterns, key=lambda p: p.timestamp):  # noqa: SLF001
-            timeline.append(
+            timeline.append(  # noqa: PERF401
                 {
                     "timestamp": pattern.timestamp,
                     "pattern_class": pattern.pattern_class.value,

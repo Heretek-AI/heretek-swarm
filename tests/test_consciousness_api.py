@@ -25,11 +25,11 @@ from fastapi.testclient import TestClient
 _TEST_API_KEY = "htsk_test_consciousness_api_key_000000000000"
 os.environ["HERETEK_API_KEY"] = _TEST_API_KEY
 
-from heretek_swarm.api import consciousness as consciousness_module
-from heretek_swarm.api.consciousness import (
+from heretek_swarm.api import consciousness as consciousness_module  # noqa: E402
+from heretek_swarm.api.consciousness import (  # noqa: E402
     router,
 )
-from heretek_swarm.runtime.registry_enhanced import (
+from heretek_swarm.runtime.registry_enhanced import (  # noqa: E402
     AgentInstance,
     AgentLifecycleState,
     AgentTypeMetadata,

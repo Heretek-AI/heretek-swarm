@@ -1,7 +1,7 @@
 """
 OpenAI Assistants API Integration Module for Heretek Swarm
 
-This module provides bi-directional integration between Heretek Swarm agents and OpenAI Assistants API.
+This module provides bi-directional integration between Heretek Swarm agents and OpenAI Assistants API.  # noqa: E501
 It enables assistant creation, thread management, run handling, and tool function calling.
 
 Features:
@@ -593,7 +593,7 @@ class OpenAIAssistantsAdapter:
         self,
         run_id: str,
         poll_interval: float = 1.0,
-        timeout: float = 60.0,
+        timeout: float = 60.0,  # noqa: ASYNC109
     ) -> RunContext:
         """
         Poll a run until completion.
@@ -826,7 +826,7 @@ class OpenAIAssistantsAdapter:
                     {
                         "role": msg.role,
                         "content": content,
-                        "created_at": datetime.fromtimestamp(msg.created_at).isoformat(),
+                        "created_at": datetime.fromtimestamp(msg.created_at).isoformat(),  # noqa: DTZ006
                     }
                 )
 

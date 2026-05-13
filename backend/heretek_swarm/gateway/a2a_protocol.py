@@ -124,7 +124,7 @@ class A2AProtocol:
 
         import uvicorn
 
-        config = uvicorn.Config(app, host="0.0.0.0", port=self.port, log_level="info")
+        config = uvicorn.Config(app, host="0.0.0.0", port=self.port, log_level="info")  # noqa: S104
         self._server = uvicorn.Server(config)
 
         logger.info("a2a_server_starting", port=self.port)
@@ -133,7 +133,7 @@ class A2AProtocol:
         self._running = True
 
         # Run server
-        asyncio.create_task(self._server.serve())
+        asyncio.create_task(self._server.serve())  # noqa: RUF006
 
         logger.info("a2a_server_started", port=self.port)
 

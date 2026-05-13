@@ -185,7 +185,7 @@ class TestWorkflowEnginePersistence:
     ):
         """load_workflow writes to disk."""
         await engine_with_store.load_workflow(sample_definition)
-        raw = json.loads(tmp_store_path.read_text(encoding="utf-8"))
+        raw = json.loads(tmp_store_path.read_text(encoding="utf-8"))  # noqa: ASYNC240
         assert "wf-test-001" in raw
 
     @pytest.mark.asyncio
@@ -222,7 +222,7 @@ class TestWorkflowEnginePersistence:
         await engine_with_store.load_workflow(sample_definition)
         assert engine_with_store.delete_workflow("wf-test-001") is True
         assert "wf-test-001" not in engine_with_store.workflows
-        raw = json.loads(tmp_store_path.read_text(encoding="utf-8"))
+        raw = json.loads(tmp_store_path.read_text(encoding="utf-8"))  # noqa: ASYNC240
         assert "wf-test-001" not in raw
 
     @pytest.mark.asyncio

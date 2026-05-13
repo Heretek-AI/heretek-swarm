@@ -15,8 +15,8 @@ from heretek_swarm.consensus.domain_selector import DomainSelector
 from heretek_swarm.consensus.maker import ConsensusResult, ConsensusState, MAKERConsensus
 
 # Resolve characters directory relative to the test file
-_CHARACTERS_DIR = os.path.join(
-    os.path.dirname(os.path.dirname(__file__)),
+_CHARACTERS_DIR = os.path.join(  # noqa: PTH118
+    os.path.dirname(os.path.dirname(__file__)),  # noqa: PTH120
     "backend",
     "heretek_swarm",
     "runtime",
@@ -231,7 +231,7 @@ class TestConsensusCoordinator:
         actors = _all_agents_mock()
         # 3 agents say "yes" with high confidence, 1 says "no"
         # With reputation weight 0.5 and conf 0.99: weight = 0.495 each
-        # 3 × 0.495 = 1.485 vs 0.495 → ahead by 0.99, needs 2.0 → no consensus
+        # 3 × 0.495 = 1.485 vs 0.495 → ahead by 0.99, needs 2.0 → no consensus  # noqa: RUF003
         # Increase yes agents' confidence to 1.0 for weight = 0.5 each
         for aid in ["alpha", "examiner", "prism"]:
             actors[aid].run_with_llm = AsyncMock(
@@ -243,7 +243,7 @@ class TestConsensusCoordinator:
 
         coord = ConsensusCoordinator(maker=maker, domain_selector=ds, actors=actors)
         result = await coord.run_consensus("security analysis")
-        # yes: 3 × (1.0 × 0.5) = 1.5, no: 1 × (0.9 × 0.5) = 0.45
+        # yes: 3 × (1.0 × 0.5) = 1.5, no: 1 × (0.9 × 0.5) = 0.45  # noqa: RUF003
         # ahead by 1.05 < 2.0 → MAKER returns None (no clear winner)
         assert result is None
 
@@ -548,7 +548,7 @@ class TestMultiRoundDeliberation:
                 return '{"decision": "yes", "confidence": 0.95, "reasoning": "Changed my mind."}'
             # Round 1: mixed results to prevent consensus
             # With 4 agents, 2 yes (conf 0.9) and 2 no (conf 0.9):
-            # weight yes = 2×(0.9×0.5) = 0.9, weight no = 2×(0.9×0.5) = 0.9
+            # weight yes = 2×(0.9×0.5) = 0.9, weight no = 2×(0.9×0.5) = 0.9  # noqa: RUF003
             # equal → no consensus
             return '{"decision": "no", "confidence": 0.9, "reasoning": "Disagree."}'
 
@@ -716,7 +716,7 @@ class TestReasoningInVoteMetadata:
         actors = _all_agents_mock()
         for actor in actors.values():
             actor.run_with_llm = AsyncMock(
-                return_value='{"decision": "yes", "confidence": 0.85, "reasoning": "Solid approach."}'
+                return_value='{"decision": "yes", "confidence": 0.85, "reasoning": "Solid approach."}'  # noqa: E501
             )
 
         coord = ConsensusCoordinator(maker=maker, domain_selector=ds, actors=actors)

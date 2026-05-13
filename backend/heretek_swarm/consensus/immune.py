@@ -331,7 +331,7 @@ class ImmuneResponseBuilding:
     def _generate_response_id(self) -> str:
         """Generate unique response ID."""
         timestamp = datetime.now(UTC).timestamp()
-        return f"IMMUNE_RESP_{int(timestamp)}_{hashlib.sha256(str(timestamp).encode()).hexdigest()[:8]}"
+        return f"IMMUNE_RESP_{int(timestamp)}_{hashlib.sha256(str(timestamp).encode()).hexdigest()[:8]}"  # noqa: E501
 
     def _generate_pattern_id(self, pattern_hash: str) -> str:
         """Generate pattern ID from hash."""
@@ -593,7 +593,7 @@ class ImmuneResponseBuilding:
             # Use maxsplit=1 to get everything after "QUORUM" as the pattern_id_timestamp
             parts = quorum_id.split("_", 1)
             if len(parts) > 1:
-                # parts[1] is "<pattern_id>_<timestamp>"
+
                 # Extract pattern_id by removing the trailing timestamp
                 pattern_id_with_ts = parts[1]
                 # Find the last underscore and use everything before it as pattern_id
@@ -1261,7 +1261,7 @@ class ImmuneResponseEngine:
         all_patterns = self._baseline_store.get_all_patterns()
 
         for pattern in all_patterns:
-            if pattern.status == PatternStatus.PROVISIONAL:
+            if pattern.status == PatternStatus.PROVISIONAL:  # noqa: SIM102
                 if pattern.confirmation_count >= self._confirmation_threshold:
                     recommendations.append(
                         {

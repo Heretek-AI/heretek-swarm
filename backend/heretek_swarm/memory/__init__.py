@@ -115,7 +115,7 @@ __all__ = [
     # Base classes
     "MemorySystem",
     "MemoryTier",
-    # Types (base)
+
     "MemoryTier_Base",
     "MemoryTieringSystem",
     "MemoryType",

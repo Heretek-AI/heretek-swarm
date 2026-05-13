@@ -276,7 +276,7 @@ class RaftElection:
 
     def _reset_election_timeout(self) -> None:
         """Reset election timeout to random value."""
-        self._election_timeout = random.uniform(
+        self._election_timeout = random.uniform(  # noqa: S311
             self.election_timeout_min,
             self.election_timeout_max,
         )
@@ -472,8 +472,8 @@ class RaftElection:
         # 3. Candidate's log is at least as up-to-date
         vote_granted = False
 
-        if request.term >= self._current_term:
-            if self._voted_for is None or self._voted_for == request.candidate_id:
+        if request.term >= self._current_term:  # noqa: SIM102
+            if self._voted_for is None or self._voted_for == request.candidate_id:  # noqa: SIM102
                 if self._is_log_up_to_date(request.last_log_index, request.last_log_term):
                     self._voted_for = request.candidate_id
                     vote_granted = True
@@ -768,7 +768,7 @@ class MAKERConsensusWithRaft:
         consensus_id: str,
         agents: list[str],
         decision_func: callable,
-        timeout: float = 30.0,
+        timeout: float = 30.0,  # noqa: ASYNC109
     ) -> Any:
         """
         Run MAKER consensus (only on leader).

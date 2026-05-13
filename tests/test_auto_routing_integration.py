@@ -49,7 +49,7 @@ def _consensus_result(decision="yes", confidence=0.87, total_rounds=1, round_his
             },
         ],
         "red_flags": [],
-        "reasoning": "arbiter: Rate limiting prevents abuse.; sentinel: Security implications favor this.",
+        "reasoning": "arbiter: Rate limiting prevents abuse.; sentinel: Security implications favor this.",  # noqa: E501
         "consensus_id": "test-abc123",
         "total_rounds": total_rounds,
         "round_history": round_history
@@ -301,8 +301,8 @@ class TestMultiRoundConsensusWithArgumentExchange:
         maker = MAKERConsensus(ahead_by_k=2, min_votes=3)
         import os
 
-        characters_dir = os.path.join(
-            os.path.dirname(os.path.dirname(__file__)),
+        characters_dir = os.path.join(  # noqa: PTH118
+            os.path.dirname(os.path.dirname(__file__)),  # noqa: PTH120
             "heretek_swarm",
             "runtime",
             "characters",
@@ -360,8 +360,8 @@ class TestRunConsensusSingleRound:
         from heretek_swarm.consensus.domain_selector import DomainSelector
         from heretek_swarm.consensus.maker import MAKERConsensus
 
-        characters_dir = os.path.join(
-            os.path.dirname(os.path.dirname(__file__)),
+        characters_dir = os.path.join(  # noqa: PTH118
+            os.path.dirname(os.path.dirname(__file__)),  # noqa: PTH120
             "heretek_swarm",
             "runtime",
             "characters",
@@ -419,8 +419,8 @@ class TestRunConsensusSingleRound:
         from heretek_swarm.consensus.domain_selector import DomainSelector
         from heretek_swarm.consensus.maker import MAKERConsensus
 
-        characters_dir = os.path.join(
-            os.path.dirname(os.path.dirname(__file__)),
+        characters_dir = os.path.join(  # noqa: PTH118
+            os.path.dirname(os.path.dirname(__file__)),  # noqa: PTH120
             "heretek_swarm",
             "runtime",
             "characters",

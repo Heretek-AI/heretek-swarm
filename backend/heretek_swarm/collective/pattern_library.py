@@ -665,15 +665,15 @@ class PatternLibrary:
     async def _persist_to_filesystem(self, entry: PatternEntry) -> None:
         """Persist entry to file system."""
         try:
-            os.makedirs(self.storage_path, exist_ok=True)
+            os.makedirs(self.storage_path, exist_ok=True)  # noqa: PTH103
 
             # Create category subdirectory
-            category_path = os.path.join(self.storage_path, entry.category.value)
-            os.makedirs(category_path, exist_ok=True)
+            category_path = os.path.join(self.storage_path, entry.category.value)  # noqa: PTH118
+            os.makedirs(category_path, exist_ok=True)  # noqa: PTH103
 
             # Write entry file
-            file_path = os.path.join(category_path, f"{entry.entry_id}.json")
-            with open(file_path, "w") as f:
+            file_path = os.path.join(category_path, f"{entry.entry_id}.json")  # noqa: PTH118
+            with open(file_path, "w") as f:  # noqa: ASYNC230,PTH123
                 json.dump(entry.to_dict(), f, indent=2)
 
             logger.debug(
@@ -731,13 +731,13 @@ class PatternLibrary:
         if self.backend == StorageBackend.FILE_SYSTEM:
             # Find and delete file
             for category in PatternCategory:
-                file_path = os.path.join(
+                file_path = os.path.join(  # noqa: PTH118
                     self.storage_path,
                     category.value,
                     f"{entry_id}.json",
                 )
-                if os.path.exists(file_path):
-                    os.remove(file_path)
+                if os.path.exists(file_path):  # noqa: PTH110,ASYNC240
+                    os.remove(file_path)  # noqa: PTH107
                     break
 
         elif self.backend == StorageBackend.REDIS and self._redis:

@@ -21,7 +21,7 @@ _cli_module = importlib.util.module_from_spec(_spec)
 sys.modules["heretek_swarm._cli_module"] = _cli_module
 _spec.loader.exec_module(_cli_module)
 
-from heretek_swarm._cli_module import (
+from heretek_swarm._cli_module import (  # noqa: E402
     _check_service_health,
     _display_consensus_results,
     _display_daemon_status,
@@ -50,7 +50,7 @@ from heretek_swarm._cli_module import (
     stop,
     wizard,
 )
-from heretek_swarm.cli.config_wizard import (
+from heretek_swarm.cli.config_wizard import (  # noqa: E402
     AVAILABLE_PROVIDERS,
     add_provider,
     list_configured_providers,

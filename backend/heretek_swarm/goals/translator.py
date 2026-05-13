@@ -42,7 +42,7 @@ Success Criteria: {", ".join(goal.success_criteria)}
 
 Convert this goal into a valid JSON workflow definition for our execution engine.
 The output MUST be a JSON object with two keys:
-1. "nodes": A list of node objects. Each node must have "id" (string), "type" (string), and "config" (object).
+1. "nodes": A list of node objects. Each node must have "id" (string), "type" (string), and "config" (object).  # noqa: E501
 2. "edges": A list of edge objects. Each edge must have "source" (string) and "target" (string).
 
 Do NOT wrap the JSON in markdown code blocks. Output ONLY valid JSON.

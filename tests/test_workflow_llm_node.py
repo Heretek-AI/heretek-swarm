@@ -3,7 +3,7 @@ Tests for LLM node type and fixed agent node in WorkflowEngine.
 
 Verifies that:
 - LLM node handler executes prompts through an active actor's run_with_llm()
-- Agent node handler is fixed to use actor.run_with_llm() instead of nonexistent supervisor.send_message()
+- Agent node handler is fixed to use actor.run_with_llm() instead of nonexistent supervisor.send_message()  # noqa: E501
 - Both node types integrate into _execute_node() and _execute_and_capture()
 - Error paths are handled correctly (missing prompt, no active actor, inactive agent)
 - Boundary conditions (empty prompt, special characters, timeouts)

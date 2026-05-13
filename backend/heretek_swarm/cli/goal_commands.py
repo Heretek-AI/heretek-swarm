@@ -17,7 +17,7 @@ import structlog
 logger = structlog.get_logger("goal_cli")
 
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING  # noqa: E402
 
 if TYPE_CHECKING:
     from heretek_swarm.goals.models import Goal

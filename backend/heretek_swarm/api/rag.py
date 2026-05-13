@@ -114,7 +114,7 @@ async def ingest_document(
 
     except Exception as e:
         logger.error("ingest_failed", error=str(e))
-        raise HTTPException(status_code=500, detail=f"Failed to ingest document: {e!s}")
+        raise HTTPException(status_code=500, detail=f"Failed to ingest document: {e!s}") from e
 
 
 @router.post("/ingest/batch", status_code=201)
@@ -237,7 +237,7 @@ async def query_rag(
 
     except Exception as e:
         logger.error("rag_query_failed", query=query, error=str(e))
-        raise HTTPException(status_code=500, detail=f"Failed to execute RAG query: {e!s}")
+        raise HTTPException(status_code=500, detail=f"Failed to execute RAG query: {e!s}") from e
 
 
 @router.get("/documents", status_code=200)
@@ -275,7 +275,7 @@ async def list_documents(
 
     except Exception as e:
         logger.error("list_documents_failed", error=str(e))
-        raise HTTPException(status_code=500, detail=f"Failed to list documents: {e!s}")
+        raise HTTPException(status_code=500, detail=f"Failed to list documents: {e!s}") from e
 
 
 @router.get("/documents/{document_id}", status_code=200)
@@ -318,7 +318,7 @@ async def get_document(
 
     except Exception as e:
         logger.error("get_document_failed", document_id=document_id, error=str(e))
-        raise HTTPException(status_code=500, detail=f"Failed to get document: {e!s}")
+        raise HTTPException(status_code=500, detail=f"Failed to get document: {e!s}") from e
 
 
 @router.delete("/documents/{document_id}", status_code=204)
@@ -347,7 +347,7 @@ async def delete_document(document_id: str, authenticated: str = Depends(verify_
 
     except Exception as e:
         logger.error("delete_document_failed", document_id=document_id, error=str(e))
-        raise HTTPException(status_code=500, detail=f"Failed to delete document: {e!s}")
+        raise HTTPException(status_code=500, detail=f"Failed to delete document: {e!s}") from e
 
 
 # =============================================================================
@@ -443,7 +443,7 @@ async def update_rag_config(
 
     except Exception as e:
         logger.error("update_rag_config_failed", error=str(e))
-        raise HTTPException(status_code=500, detail=f"Failed to update RAG config: {e!s}")
+        raise HTTPException(status_code=500, detail=f"Failed to update RAG config: {e!s}") from e
 
 
 def _update_chunking_config(pipeline: RAGPipeline, chunking: dict[str, Any] | None) -> None:

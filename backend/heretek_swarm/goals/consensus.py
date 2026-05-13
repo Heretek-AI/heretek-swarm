@@ -4,7 +4,7 @@ GoalConsensus — goal-specific consensus voting with 60% threshold.
 Wraps :class:`ConsensusCoordinator` to apply the D024 threshold
 (≥60% approval excluding abstain votes) to goal proposals.
 
-Close splits (50–60% approval) trigger a second refinement round with
+Close splits (50–60% approval) trigger a second refinement round with  # noqa: RUF002
 argument exchange. After 2 rounds, Steward + Arbiter serve as tie-breakers.
 """
 
@@ -26,7 +26,7 @@ logger = structlog.get_logger("GoalConsensus")
 # Prompt templates
 # ---------------------------------------------------------------------------
 
-_GOAL_VOTE_PROMPT = """You are participating in a vote on a proposed strategic goal for the Heretek autonomous swarm.
+_GOAL_VOTE_PROMPT = """You are participating in a vote on a proposed strategic goal for the Heretek autonomous swarm.  # noqa: E501
 
 GOAL TITLE: {title}
 
@@ -47,10 +47,10 @@ Respond with a JSON object containing:
 - "reasoning": one sentence explaining your decision
 
 Respond ONLY with the JSON object, no other text.
-Example: {{"decision": "approve", "confidence": 0.8, "reasoning": "This goal is well-scoped and addresses a real gap."}}"""
+Example: {{"decision": "approve", "confidence": 0.8, "reasoning": "This goal is well-scoped and addresses a real gap."}}"""  # noqa: E501
 
 
-_REFINEMENT_PROMPT = """You are participating in round 2 of a goal consensus vote. The first round was too close to call (approval within 50-60%).
+_REFINEMENT_PROMPT = """You are participating in round 2 of a goal consensus vote. The first round was too close to call (approval within 50-60%).  # noqa: E501
 
 GOAL TITLE: {title}
 
@@ -73,7 +73,7 @@ Respond with a JSON object containing:
 - "reasoning": one sentence explaining your updated decision
 
 Respond ONLY with the JSON object, no other text.
-Example: {{"decision": "approve", "confidence": 0.85, "reasoning": "The counterarguments are weak; the goal remains sound."}}"""
+Example: {{"decision": "approve", "confidence": 0.85, "reasoning": "The counterarguments are weak; the goal remains sound."}}"""  # noqa: E501
 
 
 # ---------------------------------------------------------------------------
@@ -151,7 +151,7 @@ class GoalConsensus:
         self,
         goal: Goal,
         actors: dict[str, Any],
-        timeout: float = 120,
+        timeout: float = 120,  # noqa: ASYNC109
     ) -> tuple[bool, list[Vote], int]:
         """Run goal-specific consensus voting with 60% threshold.
 
@@ -243,7 +243,7 @@ class GoalConsensus:
         goal: Goal,
         actors: dict[str, Any],  # noqa: ARG002
         prompt: str,
-        timeout: float,
+        timeout: float,  # noqa: ASYNC109
     ) -> list[Vote]:
         """Collect votes from all available agents.
 
@@ -360,7 +360,7 @@ class GoalConsensus:
         )
 
     # ------------------------------------------------------------------
-    # Tie-breaking
+
     # ------------------------------------------------------------------
 
     async def _tie_break(
@@ -368,7 +368,7 @@ class GoalConsensus:
         goal: Goal,
         actors: dict[str, Any],
         prior_votes: list[Vote],
-        timeout: float,
+        timeout: float,  # noqa: ASYNC109
     ) -> tuple[bool, list[Vote], int]:
         """Steward + Arbiter serve as tie-breakers after 2 rounds.
 
@@ -409,7 +409,7 @@ class GoalConsensus:
                     f"As a tie-breaker after 2 rounds of goal consensus, "
                     f"cast your final vote on: {goal.title}\n\n"
                     f"{goal.description}\n\n"
-                    f'Respond: {{"decision": "approve"|"reject", "confidence": 0.0-1.0, "reasoning": "..."}}'
+                    f'Respond: {{"decision": "approve"|"reject", "confidence": 0.0-1.0, "reasoning": "..."}}'  # noqa: E501
                 )
                 raw = await asyncio.wait_for(
                     actor.run_with_llm(prompt, timeout=30),

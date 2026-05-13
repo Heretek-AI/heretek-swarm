@@ -248,7 +248,7 @@ def _scan_ast(
                             line=node.lineno or 0,
                             pattern_name="DuplicateClassDefinition",
                             severity="INFO",
-                            description=f"Class `{node.name}` defined multiple times at module scope.",
+                            description=f"Class `{node.name}` defined multiple times at module scope.",  # noqa: E501
                         )
                     )
 

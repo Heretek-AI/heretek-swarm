@@ -125,7 +125,7 @@ def pull_image(runtime: ContainerRuntime, image: str) -> bool:
     logger.info("pulling_image", runtime=runtime.value, image=image)
 
     try:
-        result = subprocess.run(
+        result = subprocess.run(  # noqa: S603
             cmd,
             capture_output=True,
             text=True,
@@ -166,7 +166,7 @@ def stop_container(runtime: ContainerRuntime, name: str) -> None:
     logger.debug("stopping_container", runtime=runtime.value, container=name)
 
     try:
-        subprocess.run(
+        subprocess.run(  # noqa: S603
             cmd,
             capture_output=True,
             text=True,
@@ -176,13 +176,13 @@ def stop_container(runtime: ContainerRuntime, name: str) -> None:
     except subprocess.TimeoutExpired:
         # Force kill if stop times out
         try:
-            subprocess.run(
+            subprocess.run(  # noqa: S603
                 [runtime.value, "kill", name],
                 capture_output=True,
                 timeout=10,
             )
             logger.warning("container_force_killed", container=name)
-        except Exception:
+        except Exception:  # noqa: S110
             # Intentionally ignored - idempotent operation
             pass
     except Exception as e:
@@ -234,7 +234,7 @@ def start_container(runtime: ContainerRuntime, config: ContainerConfig) -> bool:
     )
 
     try:
-        result = subprocess.run(
+        result = subprocess.run(  # noqa: S603
             cmd,
             capture_output=True,
             text=True,
@@ -269,7 +269,7 @@ async def wait_for_health(
     service: InfrastructureService,
     host: str,
     port: int,
-    timeout: float = 60.0,
+    timeout: float = 60.0,  # noqa: ASYNC109
     poll_interval: float = 2.0,
 ) -> tuple[bool, float]:
     """

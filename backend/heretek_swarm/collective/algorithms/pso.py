@@ -179,7 +179,7 @@ class PSO:
         for i, agent_id in enumerate(participants):
             position = {}
             for key, weight in decision_space.items():
-                position[key] = weight + random.uniform(
+                position[key] = weight + random.uniform(  # noqa: S311
                     -PSO_INITIAL_POSITION_VARIANCE, PSO_INITIAL_POSITION_VARIANCE
                 )
 
@@ -188,7 +188,7 @@ class PSO:
                 position = {k: v / total for k, v in position.items()}
 
             velocity = {
-                k: random.uniform(-PSO_INITIAL_VELOCITY_RANGE, PSO_INITIAL_VELOCITY_RANGE)
+                k: random.uniform(-PSO_INITIAL_VELOCITY_RANGE, PSO_INITIAL_VELOCITY_RANGE)  # noqa: S311
                 for k in position
             }
 
@@ -206,12 +206,12 @@ class PSO:
         for key in particle.position:
             cognitive = (
                 self.cognitive
-                * random.random()
+                * random.random()  # noqa: S311
                 * (particle.best_position.get(key, 0) - particle.position[key])
             )
             social = (
                 self.social
-                * random.random()
+                * random.random()  # noqa: S311
                 * (self.global_best_position.get(key, 0) - particle.position[key])
             )
 

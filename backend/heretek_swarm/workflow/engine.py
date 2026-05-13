@@ -129,7 +129,7 @@ class SafeExpressionEvaluator:
     )
 
     # Safe binary operators
-    SAFE_BIN_OPS = {
+    SAFE_BIN_OPS = {  # noqa: RUF012
         ast.Add: operator.add,
         ast.Sub: operator.sub,
         ast.Mult: operator.mul,
@@ -167,7 +167,7 @@ class SafeExpressionEvaluator:
         try:
             tree = ast.parse(expr, mode="eval")
         except SyntaxError as e:
-            raise ValueError(f"Invalid expression syntax: {e}")
+            raise ValueError(f"Invalid expression syntax: {e}") from e
 
         # Validate the AST contains only safe nodes
         self._validate_ast(tree)
@@ -428,7 +428,7 @@ def _merge_state_field(current: Any, update: Any, annotation: str) -> Any:
         if isinstance(current, dict) and isinstance(update, dict):
             return {**current, **update}
         return update
-    # Default: replace
+
     return update
 
 
@@ -741,7 +741,7 @@ class WorkflowEngine:
 
             for node_id in execution_order:
                 # Check for cycles before executing node
-                if self.cycle_detector.detect_cycle(execution_id, node_id):
+                if self.cycle_detector.detect_cycle(execution_id, node_id):  # noqa: SIM102
                     if self.cycle_detector.should_break_cycle(execution_id):
                         # Break cycle and log event
                         event = self.cycle_detector.break_cycle(
@@ -973,7 +973,7 @@ class WorkflowEngine:
         """
         # Check incoming edges for conditions
         for edge in workflow.edges:
-            if edge.target == node.id and edge.condition:
+            if edge.target == node.id and edge.condition:  # noqa: SIM102
                 if not self._evaluate_condition(edge.condition, context):
                     return False
 

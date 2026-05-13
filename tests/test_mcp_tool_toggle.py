@@ -45,9 +45,9 @@ def _reset_mcp_registry() -> None:
 # TestClient plumbing for endpoint tests
 # ---------------------------------------------------------------------------
 
-from fastapi.testclient import TestClient
+from fastapi.testclient import TestClient  # noqa: E402
 
-from heretek_swarm.mcp.server import get_registry, router, set_registry
+from heretek_swarm.mcp.server import get_registry, router, set_registry  # noqa: E402
 
 
 @pytest.fixture
@@ -94,7 +94,7 @@ def _make_registry_with_tools(count: int = 3) -> MCPToolRegistry:
 
 
 # ---------------------------------------------------------------------------
-# Tests: _load_tool_states
+
 # ---------------------------------------------------------------------------
 
 
@@ -232,7 +232,7 @@ class TestSaveToolStates:
 
 
 # ---------------------------------------------------------------------------
-# Tests: set_tool_enabled
+
 # ---------------------------------------------------------------------------
 
 
@@ -632,7 +632,7 @@ class TestBridgePersistsToolStates:
 
         core = _make_core_mcp_with_tools(tool_count=1)
 
-        with patch("heretek_swarm.mcp.registry.TOOLS_STATE_FILE", state_file):
+        with patch("heretek_swarm.mcp.registry.TOOLS_STATE_FILE", state_file):  # noqa: SIM117
             with patch("heretek_swarm.mcp.bridge.logger") as mock_logger:
                 sync_mcp_registries(core)
 
@@ -658,7 +658,7 @@ class TestBridgePersistsToolStates:
 
         core = _make_core_mcp_with_tools(tool_count=3)
 
-        with patch("heretek_swarm.mcp.registry.TOOLS_STATE_FILE", state_file):
+        with patch("heretek_swarm.mcp.registry.TOOLS_STATE_FILE", state_file):  # noqa: SIM117
             with patch("heretek_swarm.mcp.bridge.logger") as mock_logger:
                 sync_mcp_registries(core)
 

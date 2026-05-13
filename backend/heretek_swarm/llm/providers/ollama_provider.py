@@ -116,7 +116,7 @@ class OllamaProvider(LLMProviderBase):
         # Convert messages to Ollama format
         messages = []
         for msg in request.messages:
-            messages.append(
+            messages.append(  # noqa: PERF401
                 {
                     "role": msg.role,
                     "content": msg.content,
@@ -201,7 +201,7 @@ class OllamaProvider(LLMProviderBase):
                 f"Request failed: {e}. Is Ollama running? (ollama serve)",
                 provider="ollama",
                 cause=e,
-            )
+            ) from e
 
     async def stream(self, request: LLMRequest) -> AsyncIterator[str]:
         """
@@ -220,7 +220,7 @@ class OllamaProvider(LLMProviderBase):
         # Convert messages to Ollama format
         messages = []
         for msg in request.messages:
-            messages.append(
+            messages.append(  # noqa: PERF401
                 {
                     "role": msg.role,
                     "content": msg.content,
@@ -280,7 +280,7 @@ class OllamaProvider(LLMProviderBase):
                 f"Stream request failed: {e}",
                 provider="ollama",
                 cause=e,
-            )
+            ) from e
 
     async def list_models(self) -> list[str]:
         """List available Ollama models."""
@@ -309,4 +309,4 @@ class OllamaProvider(LLMProviderBase):
 
 
 # Import at module level for type annotation
-from heretek_swarm.infrastructure.otel import InstrumentedAsyncClient
+from heretek_swarm.infrastructure.otel import InstrumentedAsyncClient  # noqa: E402

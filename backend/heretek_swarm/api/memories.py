@@ -80,7 +80,7 @@ async def verify_mem0_api_key(x_api_key: str | None = Header(None)) -> str | Non
     Raises:
         HTTPException: 401 if key is missing or invalid
     """
-    if ADMIN_API_KEY:
+    if ADMIN_API_KEY:  # noqa: SIM102
         if x_api_key is None or not secrets.compare_digest(x_api_key, ADMIN_API_KEY):
             raise HTTPException(401, "Invalid API key.")
     return x_api_key

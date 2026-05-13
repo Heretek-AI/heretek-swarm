@@ -53,7 +53,7 @@ def get_exporter_instance() -> MetricsExporter:
 
 
 @router.get("/dashboard")
-async def get_dashboard_data(auth: dict = Depends(verify_auth)):
+async def get_dashboard_data(auth: dict = Depends(verify_auth)):  # noqa: B008
     """
     Get real-time metrics dashboard data.
 
@@ -81,12 +81,12 @@ async def get_dashboard_data(auth: dict = Depends(verify_auth)):
         }
     except Exception as e:
         logger.error("dashboard_data_error", error=str(e))
-        raise HTTPException(status_code=500, detail=f"Failed to get dashboard data: {e!s}")
+        raise HTTPException(status_code=500, detail=f"Failed to get dashboard data: {e!s}") from e
 
 
 @router.get("/siq")
 async def get_siq(
-    auth: dict = Depends(verify_auth),
+    auth: dict = Depends(verify_auth),  # noqa: B008
     include_history: bool = Query(False, description="Include historical SIQ data"),
     history_limit: int = Query(20, ge=1, le=100, description="Number of history items"),
 ):
@@ -118,12 +118,12 @@ async def get_siq(
         }
     except Exception as e:
         logger.error("siq_calculation_error", error=str(e))
-        raise HTTPException(status_code=500, detail=f"Failed to calculate SIQ: {e!s}")
+        raise HTTPException(status_code=500, detail=f"Failed to calculate SIQ: {e!s}") from e
 
 
 @router.get("/efficiency")
 async def get_collective_efficiency(
-    auth: dict = Depends(verify_auth),
+    auth: dict = Depends(verify_auth),  # noqa: B008
     include_history: bool = Query(False, description="Include historical efficiency data"),
     history_limit: int = Query(20, ge=1, le=100, description="Number of history items"),
 ):
@@ -156,12 +156,12 @@ async def get_collective_efficiency(
         }
     except Exception as e:
         logger.error("efficiency_calculation_error", error=str(e))
-        raise HTTPException(status_code=500, detail=f"Failed to calculate efficiency: {e!s}")
+        raise HTTPException(status_code=500, detail=f"Failed to calculate efficiency: {e!s}") from e
 
 
 @router.get("/knowledge-transfer")
 async def get_knowledge_transfer_metrics(
-    auth: dict = Depends(verify_auth),
+    auth: dict = Depends(verify_auth),  # noqa: B008
     include_history: bool = Query(False, description="Include historical transfer data"),
     history_limit: int = Query(20, ge=1, le=100, description="Number of history items"),
 ):
@@ -196,12 +196,12 @@ async def get_knowledge_transfer_metrics(
         logger.error("knowledge_transfer_error", error=str(e))
         raise HTTPException(
             status_code=500, detail=f"Failed to calculate knowledge transfer: {e!s}"
-        )
+        ) from e
 
 
 @router.get("/emergence-coefficient")
 async def get_emergence_coefficient(
-    auth: dict = Depends(verify_auth),
+    auth: dict = Depends(verify_auth),  # noqa: B008
     include_history: bool = Query(False, description="Include historical emergence data"),
     history_limit: int = Query(20, ge=1, le=100, description="Number of history items"),
 ):
@@ -234,14 +234,14 @@ async def get_emergence_coefficient(
         logger.error("emergence_coefficient_error", error=str(e))
         raise HTTPException(
             status_code=500, detail=f"Failed to calculate emergence coefficient: {e!s}"
-        )
+        ) from e
 
 
 @router.get("/emergent-patterns")
 async def get_emergent_patterns(
-    auth: dict = Depends(verify_auth),
-    pattern_class: EmergentPatternClass | None = Query(None, description="Filter by pattern class"),
-    min_level: EmergenceLevel | None = Query(None, description="Minimum emergence level"),
+    auth: dict = Depends(verify_auth),  # noqa: B008
+    pattern_class: EmergentPatternClass | None = Query(None, description="Filter by pattern class"),  # noqa: B008
+    min_level: EmergenceLevel | None = Query(None, description="Minimum emergence level"),  # noqa: B008
     limit: int = Query(100, ge=1, le=500, description="Maximum patterns to return"),
 ):
     """
@@ -277,12 +277,12 @@ async def get_emergent_patterns(
         }
     except Exception as e:
         logger.error("emergent_patterns_error", error=str(e))
-        raise HTTPException(status_code=500, detail=f"Failed to get emergent patterns: {e!s}")
+        raise HTTPException(status_code=500, detail=f"Failed to get emergent patterns: {e!s}") from e  # noqa: E501
 
 
 @router.get("/learning-rates")
 async def get_learning_rates(
-    auth: dict = Depends(verify_auth),
+    auth: dict = Depends(verify_auth),  # noqa: B008
     agent_id: str | None = Query(None, description="Filter by specific agent ID"),
 ):
     """
@@ -322,12 +322,12 @@ async def get_learning_rates(
         }
     except Exception as e:
         logger.error("learning_rates_error", error=str(e))
-        raise HTTPException(status_code=500, detail=f"Failed to get learning rates: {e!s}")
+        raise HTTPException(status_code=500, detail=f"Failed to get learning rates: {e!s}") from e
 
 
 @router.get("/agent-adaptation")
 async def get_agent_adaptation(
-    auth: dict = Depends(verify_auth),
+    auth: dict = Depends(verify_auth),  # noqa: B008
     agent_id: str | None = Query(None, description="Filter by specific agent ID"),
 ):
     """
@@ -369,11 +369,11 @@ async def get_agent_adaptation(
         }
     except Exception as e:
         logger.error("agent_adaptation_error", error=str(e))
-        raise HTTPException(status_code=500, detail=f"Failed to get agent adaptation: {e!s}")
+        raise HTTPException(status_code=500, detail=f"Failed to get agent adaptation: {e!s}") from e
 
 
 @router.get("/metrics-definitions")
-async def get_metric_definitions(auth: dict = Depends(verify_auth)):
+async def get_metric_definitions(auth: dict = Depends(verify_auth)):  # noqa: B008
     """
     Get all registered metric definitions.
 
@@ -400,13 +400,13 @@ async def get_metric_definitions(auth: dict = Depends(verify_auth)):
         }
     except Exception as e:
         logger.error("metric_definitions_error", error=str(e))
-        raise HTTPException(status_code=500, detail=f"Failed to get metric definitions: {e!s}")
+        raise HTTPException(status_code=500, detail=f"Failed to get metric definitions: {e!s}") from e  # noqa: E501
 
 
 @router.get("/metrics/{metric_id}/timeseries")
 async def get_metric_timeseries(
     metric_id: str,
-    auth: dict = Depends(verify_auth),
+    auth: dict = Depends(verify_auth),  # noqa: B008
     start_time: str | None = Query(None, description="Start time (ISO 8601)"),
     end_time: str | None = Query(None, description="End time (ISO 8601)"),
 ):
@@ -433,14 +433,14 @@ async def get_metric_timeseries(
             "timestamp": datetime.now(UTC).isoformat(),
         }
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=f"Invalid time format: {e!s}")
+        raise HTTPException(status_code=400, detail=f"Invalid time format: {e!s}") from e
     except Exception as e:
         logger.error("metric_timeseries_error", error=str(e))
-        raise HTTPException(status_code=500, detail=f"Failed to get metric time series: {e!s}")
+        raise HTTPException(status_code=500, detail=f"Failed to get metric time series: {e!s}") from e  # noqa: E501
 
 
 @router.get("/export/summary")
-async def export_summary(auth: dict = Depends(verify_auth)):
+async def export_summary(auth: dict = Depends(verify_auth)):  # noqa: B008
     """
     Export metrics summary.
 
@@ -460,11 +460,11 @@ async def export_summary(auth: dict = Depends(verify_auth)):
         }
     except Exception as e:
         logger.error("export_summary_error", error=str(e))
-        raise HTTPException(status_code=500, detail=f"Failed to export summary: {e!s}")
+        raise HTTPException(status_code=500, detail=f"Failed to export summary: {e!s}") from e
 
 
 @router.get("/status")
-async def get_emergent_intelligence_status(auth: dict = Depends(verify_auth)):
+async def get_emergent_intelligence_status(auth: dict = Depends(verify_auth)):  # noqa: B008
     """
     Get emergent intelligence system status.
 
@@ -496,4 +496,4 @@ async def get_emergent_intelligence_status(auth: dict = Depends(verify_auth)):
         }
     except Exception as e:
         logger.error("status_error", error=str(e))
-        raise HTTPException(status_code=500, detail=f"Failed to get status: {e!s}")
+        raise HTTPException(status_code=500, detail=f"Failed to get status: {e!s}") from e

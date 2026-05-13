@@ -183,7 +183,7 @@ class RateLimiter:
 
             return False
 
-    async def wait_for_token(self, timeout: float = 60.0) -> bool:
+    async def wait_for_token(self, timeout: float = 60.0) -> bool:  # noqa: ASYNC109
         """
         Wait for a rate limit token with timeout.
 
@@ -706,7 +706,7 @@ class HybridRetriever:
                 query=query[:50] if len(query) > 50 else query,
                 error=str(e),
             )
-            raise RetrieverError(f"Retrieval failed: {e!s}")
+            raise RetrieverError(f"Retrieval failed: {e!s}") from e
 
     async def retrieve_with_context(
         self, query: str, context: str | None = None, top_k: int = 5, **kwargs

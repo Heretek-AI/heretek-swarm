@@ -767,7 +767,7 @@ class SentinelPrimeHandlers:
 
             # Schedule unblock if duration specified
             if duration:
-                asyncio.create_task(self._schedule_unblock(source, duration))
+                asyncio.create_task(self._schedule_unblock(source, duration))  # noqa: RUF006
 
             response_content = {
                 "source": source,
@@ -798,7 +798,7 @@ class SentinelPrimeHandlers:
 
             # Schedule un-isolate if duration specified
             if duration:
-                asyncio.create_task(self._schedule_unisolate(actor_id, duration))
+                asyncio.create_task(self._schedule_unisolate(actor_id, duration))  # noqa: RUF006
 
             response_content = {
                 "actor_id": actor_id,
@@ -886,9 +886,9 @@ class SentinelPrimeHandlers:
 
 
 # Import types needed by handlers (for type hints)
-from datetime import UTC, datetime
+from datetime import UTC, datetime  # noqa: E402
 
-from heretek_swarm.actors.sentinel_prime.types import (
+from heretek_swarm.actors.sentinel_prime.types import (  # noqa: E402
     IncidentStatus,
     ResponseAction,
     SecurityIncident,

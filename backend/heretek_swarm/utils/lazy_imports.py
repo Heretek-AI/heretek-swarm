@@ -80,8 +80,8 @@ class LazyModule(dict[str, Any]):
 
         # Use:
         factory = LazyModule({
-            'create_llm_provider': LazyImport('heretek_swarm.llm.providers.factory', 'create_llm_provider'),
-            'get_provider_class': LazyImport('heretek_swarm.llm.providers.factory', 'get_provider_class'),
+            'create_llm_provider': LazyImport('heretek_swarm.llm.providers.factory', 'create_llm_provider'),  # noqa: E501
+            'get_provider_class': LazyImport('heretek_swarm.llm.providers.factory', 'get_provider_class'),  # noqa: E501
         })
 
         # Then use: factory.create_llm_provider(...)

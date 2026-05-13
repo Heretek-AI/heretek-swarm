@@ -721,14 +721,14 @@ class ExplorerPathfindingMixins:
         """Build LLM prompt for summary generation."""
         opp_lines = []
         for opp in opportunities[:10]:
-            opp_lines.append(
+            opp_lines.append(  # noqa: PERF401
                 f"- [{opp.type.value}] {opp.title} "
                 f"(confidence: {opp.confidence:.2f}, impact: {opp.impact_score:.2f})"
             )
         opp_summary = "\n".join(opp_lines)
         anom_lines = []
         for anom in anomalies[:10]:
-            anom_lines.append(
+            anom_lines.append(  # noqa: PERF401
                 f"- [{anom.severity.value}] {anom.description[:50]}... (source: {anom.source})"
             )
         anom_summary = "\n".join(anom_lines)
@@ -871,7 +871,7 @@ the most significant findings and recommended focus areas."""
         try:
             active_list = []
             for progress in self._active_research.values():
-                active_list.append(
+                active_list.append(  # noqa: PERF401
                     {
                         "query_id": progress.query_id,
                         "topic": progress.topic,

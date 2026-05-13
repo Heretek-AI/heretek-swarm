@@ -50,7 +50,7 @@ def _sample_consensus_result() -> dict:
             },
         ],
         "red_flags": [],
-        "reasoning": "arbiter: Rate limiting prevents abuse and improves stability.; sentinel: Security implications strongly favor rate limiting.",
+        "reasoning": "arbiter: Rate limiting prevents abuse and improves stability.; sentinel: Security implications strongly favor rate limiting.",  # noqa: E501
         "consensus_id": "consensus-abc123",
     }
 

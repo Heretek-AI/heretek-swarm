@@ -100,7 +100,7 @@ async def _emit_consensus_result(result: ConsensusResult, consensus_id: str) -> 
             # Use a fire-and-forget task
             import asyncio
 
-            asyncio.create_task(
+            asyncio.create_task(  # noqa: RUF006
                 publisher.emit_agent_event(
                     agent_id="maker",
                     event_type="consensus.result",
@@ -648,7 +648,7 @@ class EnhancedMAKERConsensus(MAKERConsensus):
         domain: str | None = None,
     ) -> float:
         """
-        Calculate vote weight based on evidence quality, expertise, confidence, and historical accuracy.
+        Calculate vote weight based on evidence quality, expertise, confidence, and historical accuracy.  # noqa: E501
 
         This is the core weighting method that was previously returning constant 1.0.
 
@@ -712,7 +712,7 @@ class EnhancedMAKERConsensus(MAKERConsensus):
         consensus_id: str,
     ) -> list[tuple[str, float]]:
         """
-        Apply enhanced vote weights using evidence quality, expertise, confidence, and historical accuracy.
+        Apply enhanced vote weights using evidence quality, expertise, confidence, and historical accuracy.  # noqa: E501
 
         This method overrides the base implementation to use the enhanced weighting system.
 
@@ -957,7 +957,7 @@ class EnhancedMAKERConsensus(MAKERConsensus):
             # Emit consensus result event (fire-and-forget)
             import asyncio
 
-            asyncio.create_task(_emit_consensus_result(result, consensus_id))
+            asyncio.create_task(_emit_consensus_result(result, consensus_id))  # noqa: RUF006
 
         return result
 
@@ -1464,7 +1464,7 @@ class EnhancedMAKERConsensus(MAKERConsensus):
                 cid: self.export_provenance(cid) for cid in self.decision_provenance
             },
         }
-        with open(filepath, "w") as f:
+        with open(filepath, "w") as f:  # noqa: PTH123
             json.dump(state, f, indent=2)
         logger.info("Saved consensus state to {filepath}")
 
@@ -1475,7 +1475,7 @@ class EnhancedMAKERConsensus(MAKERConsensus):
         Args:
             filepath: Path to load file
         """
-        with open(filepath) as f:
+        with open(filepath) as f:  # noqa: PTH123
             state = json.load(f)
 
         if "expertise_profiler" in state:

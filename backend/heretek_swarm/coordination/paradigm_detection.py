@@ -153,7 +153,7 @@ class ParadigmDetector:
         config: dict[str, Any] | None = None,
         beta_agent_id: str = "beta",
         steward_agent_id: str = "steward",
-        min_shift_interval: timedelta = field(default_factory=lambda: timedelta(minutes=5)),
+        min_shift_interval: timedelta = field(default_factory=lambda: timedelta(minutes=5)),  # noqa: B008
         max_shifts_per_hour: int = 10,
         indicator_threshold: int = 3,
         velocity_threshold: float = 2.0,
@@ -231,7 +231,7 @@ class ParadigmDetector:
         indicator = ShiftIndicator(
             indicator_id=f"ind_{uuid.uuid4().hex[:12]}",
             shift_type=shift_type,
-            description=f"Change pattern: {change.change_type.value} on {change.affected_components}",
+            description=f"Change pattern: {change.change_type.value} on {change.affected_components}",  # noqa: E501
             occurrences=1,
             agents_involved={change.requested_by},
             affected_components=change.affected_components,

@@ -34,8 +34,8 @@ from prometheus_client import CONTENT_TYPE_LATEST, generate_latest
 
 logger = structlog.get_logger("observability")
 
-from .prometheus_metrics import PrometheusMetrics
-from .tracing import initialize_tracing, span_context
+from .prometheus_metrics import PrometheusMetrics  # noqa: E402
+from .tracing import initialize_tracing, span_context  # noqa: E402
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -142,7 +142,7 @@ class LokiHandler(logging.Handler):
 
         # Create current log file
         self._current_file = (
-            self.log_dir / f"{service_name}-{datetime.now().strftime('%Y%m%d')}.jsonl"
+            self.log_dir / f"{service_name}-{datetime.now().strftime('%Y%m%d')}.jsonl"  # noqa: DTZ005
         )
 
     async def _get_client(self):
@@ -165,7 +165,7 @@ class LokiHandler(logging.Handler):
 
         # Write to local JSON file
         try:
-            with open(self._current_file, "a") as f:
+            with open(self._current_file, "a") as f:  # noqa: ASYNC230,PTH123
                 for log_entry in logs_to_send:
                     f.write(json.dumps(log_entry) + "\n")
         except Exception as e:
@@ -215,7 +215,7 @@ class LokiHandler(logging.Handler):
             log_entry = self._format_record(record)
 
             # Add to buffer
-            asyncio.create_task(self._add_to_buffer(log_entry))
+            asyncio.create_task(self._add_to_buffer(log_entry))  # noqa: RUF006
 
         except Exception as e:
             logger.debug("observability_emit_failed", error=str(e))

@@ -177,7 +177,7 @@ class HistorianAgent(
         # so tests can patch it before calling initialize().
         import heretek_swarm.actors.historian as _h_mod
 
-        self._jsonl_path = _h_mod._HISTORIAN_FILE
+        self._jsonl_path = _h_mod._HISTORIAN_FILE  # noqa: SLF001
 
         # Initialize unified knowledge access layer
         if self.rag_pipeline:
@@ -620,7 +620,7 @@ class HistorianAgent(
         self.context_cache.set(cache_key, context)
 
         logger.debug(
-            f"[{self.agent_id}] Retrieved {len(context)} context entries for: {topic} (cache size: {len(self.context_cache)})"  # noqa: G004
+            f"[{self.agent_id}] Retrieved {len(context)} context entries for: {topic} (cache size: {len(self.context_cache)})"  # noqa: G004,E501
         )
 
         return context
@@ -746,7 +746,7 @@ class HistorianAgent(
         self.pattern_cache.set(situation, matched)
 
         logger.debug(
-            f"[{self.agent_id}] Matched {len(matched)} patterns for: {situation} (cache size: {len(self.pattern_cache)})"  # noqa: G004
+            f"[{self.agent_id}] Matched {len(matched)} patterns for: {situation} (cache size: {len(self.pattern_cache)})"  # noqa: G004,E501
         )
 
         return matched
@@ -860,7 +860,7 @@ class HistorianAgent(
         self,
         topic: str,
         limit: int = 20,
-        timeout: int = 60,
+        timeout: int = 60,  # noqa: ASYNC109
     ) -> dict[str, Any]:
         """
         Synthesize knowledge from historical executions.
@@ -941,7 +941,7 @@ class HistorianAgent(
         }
 
     # Session 44: Collective Learning, Consensus Deliberation, and Memory Optimization
-    # integration methods now provided by DeliberationMixin, LearningMixin, MemoryMixin, and PatternMixin.
+    # integration methods now provided by DeliberationMixin, LearningMixin, MemoryMixin, and PatternMixin.  # noqa: E501
 
     # ------------------------------------------------------------------
     # JSONL event log
@@ -979,7 +979,7 @@ class HistorianAgent(
     def _write_jsonl_line(path: Path, line: str) -> None:
         """Synchronous file-write helper called from ``asyncio.to_thread``."""
         path.parent.mkdir(parents=True, exist_ok=True)
-        with open(str(path), "a", encoding="utf-8") as f:
+        with open(str(path), "a", encoding="utf-8") as f:  # noqa: PTH123
             f.write(line)
             f.write("\n")
 

@@ -380,7 +380,7 @@ class SparseRetrievalStrategy(BaseRetrievalStrategy):
             # Convert to RetrievalResult
             retrieval_results = []
             for doc in results:
-                retrieval_results.append(
+                retrieval_results.append(  # noqa: PERF401
                     RetrievalResult(
                         content=doc.get("content", ""),
                         score=doc.get("bm25_score", doc.get("score", 0.5)),
@@ -904,11 +904,11 @@ class QueryClassifier:
     """
 
     # Query type indicators
-    FACTUAL_INDICATORS = ["who", "what", "when", "where", "define", "meaning of"]
-    EXPLANATORY_INDICATORS = ["how", "why", "explain", "reason", "cause"]
-    COMPARATIVE_INDICATORS = ["compare", "difference", "better", "vs", "versus"]
-    PROCEDURAL_INDICATORS = ["how to", "steps", "guide", "tutorial", "process"]
-    MULTI_STEP_INDICATORS = ["first", "then", "after", "before", "relationship between"]
+    FACTUAL_INDICATORS = ["who", "what", "when", "where", "define", "meaning of"]  # noqa: RUF012
+    EXPLANATORY_INDICATORS = ["how", "why", "explain", "reason", "cause"]  # noqa: RUF012
+    COMPARATIVE_INDICATORS = ["compare", "difference", "better", "vs", "versus"]  # noqa: RUF012
+    PROCEDURAL_INDICATORS = ["how to", "steps", "guide", "tutorial", "process"]  # noqa: RUF012
+    MULTI_STEP_INDICATORS = ["first", "then", "after", "before", "relationship between"]  # noqa: RUF012
 
     def classify(self, query: str) -> QueryType:
         """

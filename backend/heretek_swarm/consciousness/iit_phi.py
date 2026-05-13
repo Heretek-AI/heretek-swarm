@@ -14,7 +14,7 @@ Key Concepts:
 
 References:
 - Tononi, G. (2008). Consciousness as integrated information: a provisional manifesto.
-- Oizumi, M., Albantakis, L., & Tononi, G. (2014). From the phenomenology to the mechanisms of consciousness.
+- Oizumi, M., Albantakis, L., & Tononi, G. (2014). From the phenomenology to the mechanisms of consciousness.  # noqa: E501
 
 Author: Heretek Swarm Collective
 Date: 2026-04-07
@@ -186,7 +186,7 @@ class PhiCalculator:
     """
 
     # Integration level thresholds
-    INTEGRATION_THRESHOLDS = {
+    INTEGRATION_THRESHOLDS = {  # noqa: RUF012
         "minimal": 0.1,
         "low": 0.3,
         "moderate": 0.5,
@@ -195,7 +195,7 @@ class PhiCalculator:
     }
 
     # Differentiation level thresholds
-    DIFFERENTIATION_THRESHOLDS = {
+    DIFFERENTIATION_THRESHOLDS = {  # noqa: RUF012
         "minimal": 0.1,
         "low": 0.3,
         "moderate": 0.5,
@@ -816,8 +816,8 @@ class PhiCalculator:
         total_weight = 0.0
 
         # Sum all connection weights
-        for source, targets in connectivity.items():
-            for target, weight in targets.items():
+        for source, targets in connectivity.items():  # noqa: B007
+            for target, weight in targets.items():  # noqa: B007
                 total_weight += weight
 
         # Sum severed connection weights (cross-partition connections)

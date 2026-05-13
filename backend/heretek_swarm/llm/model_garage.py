@@ -1,4 +1,4 @@
-"""
+"""  # noqa: INP001
 Heretek Swarm - Model Garage
 
 LiteLLM Integration for unified LLM API across all 23 agents.
@@ -51,9 +51,9 @@ HEREKET_LOGS_DIR.mkdir(parents=True, exist_ok=True)
 
 # Import shared config-path after module constants to avoid circular reference.
 # This is always safe because config.__init__ only depends on its sub-modules.
-import contextlib
+import contextlib  # noqa: E402
 
-from heretek_swarm.config import get_config_path
+from heretek_swarm.config import get_config_path  # noqa: E402
 
 
 class ProviderType(StrEnum):
@@ -483,7 +483,7 @@ class MiniMaxProvider(LLMProvider):
             # Convert messages to MiniMax format
             messages = []
             for msg in request.messages:
-                messages.append(
+                messages.append(  # noqa: PERF401
                     {
                         "sender_type": msg.role,
                         "text": msg.content,
@@ -749,7 +749,7 @@ class ModelGarage:
     # Pricing per 1K tokens: {model_substring: (input_cost, output_cost)}
     # Ordered from most-specific to least-specific for safe substring matching.
     # The first matching key wins, so longer/more specific keys must come first.
-    _PRICING_TABLE: dict[str, tuple[float, float]] = {
+    _PRICING_TABLE: dict[str, tuple[float, float]] = {  # noqa: RUF012
         "gpt-4o-mini": (0.15, 0.60),
         "gpt-4-turbo": (10.0, 30.0),
         "gpt-4o": (2.50, 10.0),
@@ -781,7 +781,7 @@ class ModelGarage:
         """Load provider configuration from file."""
         try:
             if self.config_file.exists():
-                with open(self.config_file) as f:
+                with open(self.config_file) as f:  # noqa: PTH123
                     config_data = json.load(f)
 
                 providers = config_data.get("modelProviders", [])
@@ -830,7 +830,7 @@ class ModelGarage:
 
         try:
             self.config_file.parent.mkdir(parents=True, exist_ok=True)
-            with open(self.config_file, "w") as f:
+            with open(self.config_file, "w") as f:  # noqa: PTH123
                 json.dump(default_config, f, indent=2)
             logger.info("Created default configuration", path=str(self.config_file))
             self._load_config()
@@ -896,7 +896,7 @@ class ModelGarage:
             # Ensure parent dir exists
             target.parent.mkdir(parents=True, exist_ok=True)
 
-            with open(tmp, "w", encoding="utf-8") as f:
+            with open(tmp, "w", encoding="utf-8") as f:  # noqa: PTH123
                 json.dump(config_data, f, indent=2)
                 f.flush()
                 _os.fsync(f.fileno())
@@ -992,7 +992,7 @@ class ModelGarage:
             # Schedule close without awaiting (fire-and-forget cleanup)
             try:
                 loop = asyncio.get_running_loop()
-                loop.create_task(old_provider.close())
+                loop.create_task(old_provider.close())  # noqa: RUF006
             except RuntimeError:
                 pass  # no event loop in this thread — close on next initialization
             del self._providers[provider_id]
@@ -1051,9 +1051,9 @@ class ModelGarage:
                 "provider_test_failed", provider_id=provider_id, name=config.name, error=str(e)
             )
         finally:
-            try:
+            try:  # noqa: SIM105
                 await provider.close()
-            except Exception:
+            except Exception:  # noqa: S110
                 pass  # best-effort cleanup
 
         logger.info(

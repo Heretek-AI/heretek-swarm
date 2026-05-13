@@ -285,7 +285,7 @@ async def get_profiling_alerts(
         try:
             severity_filter = AlertSeverity(severity.lower())
         except ValueError:
-            raise HTTPException(400, f"Invalid severity: {severity}")
+            raise HTTPException(400, f"Invalid severity: {severity}")  # noqa: B904
 
     # Get alerts
     alerts = profiler.get_alerts(

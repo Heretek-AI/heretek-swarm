@@ -47,7 +47,7 @@ class GovernanceSecurityError(Exception):
             self.result.layer4,
         ]:
             if not layer.passed:
-                failed.append(layer.layer)
+                failed.append(layer.layer)  # noqa: PERF401
         return failed
 
     def get_failure_reasons(self) -> list[str]:
@@ -60,7 +60,7 @@ class GovernanceSecurityError(Exception):
             self.result.layer4,
         ]:
             if not layer.passed and layer.reason:
-                reasons.append(f"{layer.layer}: {layer.reason}")
+                reasons.append(f"{layer.layer}: {layer.reason}")  # noqa: PERF401
         return reasons
 
 

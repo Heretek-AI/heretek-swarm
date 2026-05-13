@@ -230,7 +230,7 @@ class TestRunConsensus:
         assert isinstance(result, dict)
         assert "decision" in result
         # With 2 failures and 2 successes, MAKER may not reach consensus
-        # (2 yes × 0.45 weighted = 0.9 < ahead_by_k=2.0 threshold)
+        # (2 yes × 0.45 weighted = 0.9 < ahead_by_k=2.0 threshold)  # noqa: RUF003
         # Result is either "yes" (if MAKER aggregates) or "no_consensus"
         assert result["decision"] in ("yes", "no", "no_consensus", "abstain")
 

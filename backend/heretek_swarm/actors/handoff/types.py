@@ -86,7 +86,7 @@ class HandoffValidator:
         context_size = sys.getsizeof(str(context))
         if context_size > cls.MAX_CONTEXT_SIZE:
             raise ValueError(
-                f"Context size ({context_size} bytes) exceeds maximum allowed ({cls.MAX_CONTEXT_SIZE} bytes)"
+                f"Context size ({context_size} bytes) exceeds maximum allowed ({cls.MAX_CONTEXT_SIZE} bytes)"  # noqa: E501
             )
 
     @classmethod
@@ -262,7 +262,7 @@ class AgentHandoff:
         # Check if limit exceeded
         if len(self._handoff_timestamps) >= HandoffValidator.MAX_HANDOFFS_PER_MINUTE:
             raise ValueError(
-                f"Rate limit exceeded: maximum {HandoffValidator.MAX_HANDOFFS_PER_MINUTE} handoffs per minute"
+                f"Rate limit exceeded: maximum {HandoffValidator.MAX_HANDOFFS_PER_MINUTE} handoffs per minute"  # noqa: E501
             )
 
         # Record this handoff

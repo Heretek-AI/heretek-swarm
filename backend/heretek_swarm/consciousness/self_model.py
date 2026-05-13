@@ -583,7 +583,7 @@ class SelfModel:
                 self.capabilities.values(), key=lambda c: c.level * c.experience_count, reverse=True
             )[:3]
             for cap in sorted_caps:
-                lines.append(f"    - {cap.name}: {cap.level:.2f} (exp: {cap.experience_count})")
+                lines.append(f"    - {cap.name}: {cap.level:.2f} (exp: {cap.experience_count})")  # noqa: PERF401
 
         lines.extend(
             [
@@ -594,11 +594,11 @@ class SelfModel:
         )
 
         if self.limitations:
-            critical_limits = [l for l in self.limitations.values() if l.severity > 0.7]
+            critical_limits = [l for l in self.limitations.values() if l.severity > 0.7]  # noqa: E741
             if critical_limits:
                 lines.append("  Critical Limitations:")
                 for lim in critical_limits[:3]:
-                    lines.append(f"    - {lim.description} (severity: {lim.severity:.2f})")
+                    lines.append(f"    - {lim.description} (severity: {lim.severity:.2f})")  # noqa: PERF401
 
         lines.extend(
             [

@@ -147,7 +147,7 @@ class MemoryManager:
         self._working: dict[str, ElizaMemoryEntry] = {}  # id -> entry
         self._short_term: dict[str, ElizaMemoryEntry] = {}  # id -> entry
 
-        # Long-term (mem0)
+
         self._mem0 = None
         self._mem0_initialized = False
 

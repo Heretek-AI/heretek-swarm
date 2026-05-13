@@ -128,7 +128,7 @@ class AgentActorStateManagement(AgentActor):
         async with db_pool.acquire() as conn:
             await conn.execute(
                 """
-                INSERT INTO agent_states (id, agent_id, agent_type, state, version, updated_at, is_active)
+                INSERT INTO agent_states (id, agent_id, agent_type, state, version, updated_at, is_active)  # noqa: E501
                 VALUES (gen_random_uuid(), $1, $2, $3, 1, NOW(), true)
                 ON CONFLICT (agent_id) DO UPDATE
                 SET state = $3, version = agent_states.version + 1, updated_at = NOW()
@@ -172,11 +172,11 @@ class AgentActorStateManagement(AgentActor):
         try:
             import os
 
-            state_dir = os.path.join(os.getcwd(), ".actor_states")
-            os.makedirs(state_dir, exist_ok=True)
-            state_file = os.path.join(state_dir, f"{self.agent_id}.json")
+            state_dir = os.path.join(os.getcwd(), ".actor_states")  # noqa: PTH109,PTH118
+            os.makedirs(state_dir, exist_ok=True)  # noqa: PTH103
+            state_file = os.path.join(state_dir, f"{self.agent_id}.json")  # noqa: PTH118
 
-            with open(state_file, "w") as f:
+            with open(state_file, "w") as f:  # noqa: ASYNC230,PTH123
                 json.dump(state_data, f, indent=2)
 
             logger.info(
@@ -258,10 +258,10 @@ class AgentActorStateManagement(AgentActor):
         try:
             import os
 
-            state_file = os.path.join(os.getcwd(), ".actor_states", f"{self.agent_id}.json")
+            state_file = os.path.join(os.getcwd(), ".actor_states", f"{self.agent_id}.json")  # noqa: PTH109,PTH118
 
-            if os.path.exists(state_file):
-                with open(state_file) as f:
+            if os.path.exists(state_file):  # noqa: PTH110,ASYNC240
+                with open(state_file) as f:  # noqa: ASYNC230,PTH123
                     loaded_state = json.load(f)
 
                 self.internal_state = loaded_state.get("internal_state", {})

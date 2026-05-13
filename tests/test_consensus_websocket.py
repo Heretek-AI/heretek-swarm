@@ -237,7 +237,7 @@ class TestConsensusCompleteBroadcast:
                 "timestamp": "2026-01-01T00:00:00Z",
             },
         )()
-        _consensus_store[round_id].aggregate_consensus = lambda cid: mock_result
+        _consensus_store[round_id].aggregate_consensus = lambda cid: mock_result  # noqa: ARG005
 
         # Reset mock to isolate aggregate broadcast
         mock_broadcast.reset_mock()
@@ -281,7 +281,7 @@ class TestConsensusCompleteBroadcast:
                 "timestamp": "2026-01-01T00:00:00Z",
             },
         )()
-        _consensus_store[round_id].aggregate_consensus = lambda cid: mock_result
+        _consensus_store[round_id].aggregate_consensus = lambda cid: mock_result  # noqa: ARG005
 
         mock_broadcast.reset_mock()
         mock_broadcast.side_effect = RuntimeError("WS down")
@@ -421,7 +421,7 @@ class TestBroadcastIsolation:
                 "timestamp": "2026-01-01T00:00:00Z",
             },
         )()
-        _consensus_store[round_id].aggregate_consensus = lambda cid: mock_result
+        _consensus_store[round_id].aggregate_consensus = lambda cid: mock_result  # noqa: ARG005
 
         resp = client.post(
             f"/api/consensus/{round_id}/aggregate",

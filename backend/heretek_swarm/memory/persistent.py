@@ -535,7 +535,7 @@ class Mem0Backend:
 
             # Build filters dict - mem0 uses "agent_id" at top level for filtering
             filters = {}
-            if query.filters:
+            if query.filters:  # noqa: SIM102
                 # Extract agent_id from filters if present
                 if "agent_id" in query.filters:
                     filters["agent_id"] = query.filters["agent_id"]
@@ -550,7 +550,7 @@ class Mem0Backend:
 
             entries = []
             for r in results:
-                entries.append(
+                entries.append(  # noqa: PERF401
                     MemoryEntry(
                         id=r.get("id", ""),
                         content=r.get("content", ""),
@@ -712,7 +712,7 @@ class Mem0Backend:
         }
         return self._memory.add(messages=messages, **params)
 
-    def search(
+    def search(  # noqa: F811
         self,
         query: str,
         user_id: str | None = None,
@@ -786,7 +786,7 @@ class Mem0Backend:
 
         return self._memory.get(memory_id)
 
-    def get_all(
+    def get_all(  # noqa: F811
         self,
         user_id: str | None = None,
         run_id: str | None = None,

@@ -333,7 +333,7 @@ class LangroidAgent:
     async def receive_message(
         self,
         conversation_id: str,
-        timeout: float | None = None,
+        timeout: float | None = None,  # noqa: ASYNC109
     ) -> str | None:
         """
         Receive a message from conversation queue.

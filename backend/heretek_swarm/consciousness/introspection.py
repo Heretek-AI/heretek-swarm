@@ -711,9 +711,9 @@ class IntrospectionModule:
         # Build evolution history
         evolution_history = []
         for record in self._belief_evolution_history[-50:]:
-            evolution_history.append(record.to_dict())
+            evolution_history.append(record.to_dict())  # noqa: PERF401
         for record in self._goal_evolution_history[-50:]:
-            evolution_history.append(record.to_dict())
+            evolution_history.append(record.to_dict())  # noqa: PERF401
 
         # Sort by timestamp
         evolution_history.sort(key=lambda x: x.get("timestamp", ""), reverse=True)
@@ -951,7 +951,7 @@ class IntrospectionModule:
         else:  # AVERAGE
             avg_confidence = (b1.confidence + b2.confidence) / 2
             return (
-                f"Consider averaging confidence values: ({b1.confidence:.2f} + {b2.confidence:.2f}) / 2 = {avg_confidence:.2f}",
+                f"Consider averaging confidence values: ({b1.confidence:.2f} + {b2.confidence:.2f}) / 2 = {avg_confidence:.2f}",  # noqa: E501
                 ConflictResolutionStrategy.AVERAGE,
             )
 

@@ -55,7 +55,7 @@ these exact keys:
   "llm", "agent", "decision", "parallel", "sequential", "transform", "io"
 
 Example of expected output:
-{"title": "Implement cross-agent knowledge sharing", "description": "Enable agents to query and contribute to a shared knowledge base...", "success_criteria": ["Agents can publish observations", "Queries return relevant results within 2s"], "estimated_node_types": ["llm", "agent", "io"]}
+{"title": "Implement cross-agent knowledge sharing", "description": "Enable agents to query and contribute to a shared knowledge base...", "success_criteria": ["Agents can publish observations", "Queries return relevant results within 2s"], "estimated_node_types": ["llm", "agent", "io"]}  # noqa: E501
 """
 
 # ---------------------------------------------------------------------------

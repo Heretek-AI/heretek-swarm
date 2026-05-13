@@ -1282,7 +1282,7 @@ class MetricsExporter:
     def export_time_series(
         self,
         metric_ids: list[str] | None = None,
-        format: str = "dict",  # noqa: ARG002
+        format: str = "dict",  # noqa: ARG002,A002
     ) -> dict[str, Any]:
         """
         Export time series data for metrics.

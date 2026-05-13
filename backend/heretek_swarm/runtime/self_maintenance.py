@@ -131,7 +131,7 @@ class LogRotator:
         files_to_compress: list[Path] = []
 
         try:
-            for file_path in log_dir.iterdir():
+            for file_path in log_dir.iterdir():  # noqa: ASYNC240
                 if not file_path.is_file():
                     continue
                 if not file_path.name.endswith(self.config.file_extensions):
@@ -194,7 +194,7 @@ class LogRotator:
             else:
                 try:
                     original_size = file_path.stat().st_size
-                    with open(file_path, "rb") as f_in:
+                    with open(file_path, "rb") as f_in:  # noqa: ASYNC230,PTH123,SIM117
                         with gzip.open(compressed, "wb", compresslevel=6) as f_out:
                             shutil.copyfileobj(f_in, f_out)
                     # Remove original after successful compression
@@ -226,7 +226,7 @@ class LogRotator:
         }
 
         log_dir = Path(self.config.log_directory)
-        if not log_dir.exists():
+        if not log_dir.exists():  # noqa: ASYNC240
             logger.info("Log directory does not exist, skipping rotation", path=str(log_dir))
             return self._stats
 
@@ -517,7 +517,7 @@ class ConfigDriftDetector:
         # Check for removed keys
         for key in baseline_keys:
             if key not in current_config:
-                removed_keys.append(key)
+                removed_keys.append(key)  # noqa: PERF401
 
         return changed_keys, added_keys, removed_keys
 

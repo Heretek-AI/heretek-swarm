@@ -221,7 +221,7 @@ class GlobalWorkspace:
         # Check threshold
         if priority < self.competition_threshold:
             logger.debug(
-                f"Content rejected: priority {priority} below threshold {self.competition_threshold}"  # noqa: G004
+                f"Content rejected: priority {priority} below threshold {self.competition_threshold}"  # noqa: G004,E501
             )
             return ""
 
@@ -566,7 +566,7 @@ class ConsciousnessPlugin:
         self.running = True
 
         # Start background cleanup task
-        asyncio.create_task(self._cleanup_loop())
+        asyncio.create_task(self._cleanup_loop())  # noqa: RUF006
 
         logger.info("Consciousness Plugin started")
 

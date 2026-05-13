@@ -795,7 +795,7 @@ class AgentExpertiseProfiler:
         # Calculate average expertise across all agents
         all_expertise = []
         for profile in self.profiles.values():
-            all_expertise.append(profile.overall_reputation)
+            all_expertise.append(profile.overall_reputation)  # noqa: PERF401
 
         avg_expertise = statistics.mean(all_expertise) if all_expertise else 0.5
 
@@ -946,7 +946,7 @@ class AgentExpertiseProfiler:
         """
         import json
 
-        with open(filepath, "w") as f:
+        with open(filepath, "w") as f:  # noqa: PTH123
             json.dump(self.export_profiles(), f, indent=2)
         logger.info("Saved expertise profiles to {filepath}")
 
@@ -959,7 +959,7 @@ class AgentExpertiseProfiler:
         """
         import json
 
-        with open(filepath) as f:
+        with open(filepath) as f:  # noqa: PTH123
             data = json.load(f)
         self.import_profiles(data)
         logger.info("Loaded expertise profiles from {filepath}")

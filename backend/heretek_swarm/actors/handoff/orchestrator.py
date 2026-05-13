@@ -37,7 +37,7 @@ class HandoffStrategy(ABC):
 class TaskTypeStrategy(HandoffStrategy):
     """Handoff based on task type"""
 
-    TASK_AGENTS = {
+    TASK_AGENTS = {  # noqa: RUF012
         "code_generation": "coder",
         "analysis": "alpha",
         "validation": "beta",

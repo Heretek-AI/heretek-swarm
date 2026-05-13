@@ -247,7 +247,7 @@ class TestFullProcessCycle:
             await historian._jsonl_queue.join()
 
             lines = _read_jsonl(jsonl_path)
-            events = [l for l in lines if l.get("type") == "cycle_complete"]
+            events = [l for l in lines if l.get("type") == "cycle_complete"]  # noqa: E741
             assert len(events) >= 1, f"No cycle_complete events in {lines}"
 
         finally:
@@ -288,7 +288,7 @@ class TestFullProcessCycle:
             await historian._jsonl_queue.join()
 
             lines = _read_jsonl(jsonl_path)
-            events = [l for l in lines if l.get("type") == "cycle_complete"]
+            events = [l for l in lines if l.get("type") == "cycle_complete"]  # noqa: E741
             assert len(events) >= 1
 
         finally:
@@ -386,7 +386,7 @@ class TestStewardPulseIntegration:
             await historian._jsonl_queue.join()
 
             lines = _read_jsonl(jsonl_path)
-            pulse_events = [l for l in lines if l.get("type") == "steward_pulse"]
+            pulse_events = [l for l in lines if l.get("type") == "steward_pulse"]  # noqa: E741
             assert len(pulse_events) >= 1
 
             event = pulse_events[0]
@@ -803,10 +803,10 @@ class TestJsonlEndToEnd:
             lines = _read_jsonl(jsonl_path)
             assert len(lines) == 2
 
-            types = {l["agent_id"] for l in lines}
+            types = {l["agent_id"] for l in lines}  # noqa: E741
             assert types == {"steward", "main_loop"}
 
-            ids = {l["event_id"] for l in lines}
+            ids = {l["event_id"] for l in lines}  # noqa: E741
             assert eid1 in ids
             assert eid2 in ids
         finally:

@@ -26,7 +26,7 @@ import pytest
 # HERETEK_RUN_INTEGRATION env-var is set.
 pytestmark = pytest.mark.skipif(
     not os.environ.get("HERETEK_RUN_INTEGRATION"),
-    reason="Integration test requires running infrastructure (set HERETEK_RUN_INTEGRATION=1 to enable)",
+    reason="Integration test requires running infrastructure (set HERETEK_RUN_INTEGRATION=1 to enable)",  # noqa: E501
 )
 
 # ---------------------------------------------------------------------------
@@ -58,14 +58,14 @@ def api_server():
         }
     )
 
-    proc = subprocess.Popen(
+    proc = subprocess.Popen(  # noqa: S603
         [
             sys.executable,
             "-m",
             "uvicorn",
             "heretek_swarm.api.main:app",
             "--host",
-            "0.0.0.0",
+            "0.0.0.0",  # noqa: S104
             "--port",
             str(API_PORT),
             "--log-level",

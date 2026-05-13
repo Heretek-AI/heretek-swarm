@@ -235,7 +235,7 @@ class GuardrailsSystem:
         if self.config.block_code_execution:
             # Shell command patterns
             if re.search(r"\b(sh|bash|cmd|powershell|exec)\s+[^\s]", filtered, re.IGNORECASE):
-                filtered = re.sub(
+                filtered = re.sub(  # noqa: B034
                     r"\b(sh|bash|cmd|powershell|exec)\s+[^\s]", "[BLOCKED]", filtered, re.IGNORECASE
                 )
                 blocked_content = "Shell commands"
@@ -243,7 +243,7 @@ class GuardrailsSystem:
 
             # Python exec patterns
             if re.search(r'\b(exec|eval|__import__|open\()[\'"]\s*\(', filtered, re.IGNORECASE):
-                filtered = re.sub(
+                filtered = re.sub(  # noqa: B034
                     r'\b(exec|eval|__import__|open\()[\'"]\s*\(',
                     "[BLOCKED]",
                     filtered,

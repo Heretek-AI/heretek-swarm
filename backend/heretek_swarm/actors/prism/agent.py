@@ -279,7 +279,7 @@ class PrismAgent(
                 )
 
             logger.info(
-                f"[{self.agent_id}] Generated {len(perspectives)} perspectives for analysis: {analysis_id}"  # noqa: G004
+                f"[{self.agent_id}] Generated {len(perspectives)} perspectives for analysis: {analysis_id}"  # noqa: G004,E501
             )
 
         except Exception:

@@ -412,7 +412,7 @@ class SwarmDeliberationEngine:
         if self.expertise_profiler and domain:
             expertise_weight = self.expertise_profiler.get_expertise_score(agent_id, domain)
 
-        argument_id = f"arg-{deliberation_id}-{len(self.active_deliberations[deliberation_id]['arguments']) + 1}"
+        argument_id = f"arg-{deliberation_id}-{len(self.active_deliberations[deliberation_id]['arguments']) + 1}"  # noqa: E501
         argument = Argument(
             argument_id=argument_id,
             agent_id=agent_id,
@@ -913,7 +913,7 @@ class SwarmDeliberationEngine:
         self,
         deliberation_id: str,
         round_interval: float = 10.0,
-        timeout: float | None = None,
+        timeout: float | None = None,  # noqa: ASYNC109
     ) -> DeliberationResult | None:
         """
         Run deliberation with automatic round progression and timeout.

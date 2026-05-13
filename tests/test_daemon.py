@@ -258,4 +258,4 @@ class TestDefaults:
 
     @staticmethod
     def test_default_socket_path() -> None:
-        assert Path("/tmp/heretek-swarm.sock") == DEFAULT_SOCKET_PATH
+        assert Path("/tmp/heretek-swarm.sock") == DEFAULT_SOCKET_PATH  # noqa: S108

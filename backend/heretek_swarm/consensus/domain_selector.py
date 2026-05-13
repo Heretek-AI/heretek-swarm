@@ -19,8 +19,8 @@ logger = logging.getLogger("domain_selector")
 DEFAULT_FALLBACK_AGENTS = ["alpha", "beta", "charlie", "arbiter"]
 
 # Characters directory — relative to this file's package root
-_CHARACTERS_DIR = os.path.join(
-    os.path.dirname(os.path.dirname(__file__)),
+_CHARACTERS_DIR = os.path.join(  # noqa: PTH118
+    os.path.dirname(os.path.dirname(__file__)),  # noqa: PTH120
     "runtime",
     "characters",
 )
@@ -110,7 +110,7 @@ class DomainSelector:
         for path in sorted(char_dir.glob("*.json")):
             agent_id = path.stem
             try:
-                with open(path, encoding="utf-8") as fh:
+                with open(path, encoding="utf-8") as fh:  # noqa: PTH123
                     data = json.load(fh)
             except (json.JSONDecodeError, OSError) as exc:
                 logger.warning("Failed to load %s: %s", path.name, exc)

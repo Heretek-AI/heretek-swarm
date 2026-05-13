@@ -101,7 +101,7 @@ async def list_routing_rules(
         )
     except Exception as e:
         logger.exception("Failed to list routing rules: {e}")
-        raise HTTPException(500, f"Failed to list routing rules: {e!s}")
+        raise HTTPException(500, f"Failed to list routing rules: {e!s}") from e
 
 
 @router.get("/routing/rules/{rule_id}")
@@ -159,7 +159,7 @@ async def create_routing_rule(
         # Convert content filters
         content_filters = []
         for cf in rule_data.content_filters:
-            content_filters.append(
+            content_filters.append(  # noqa: PERF401
                 ContentFilter(
                     field=cf["field"],
                     operator=FilterOperator(cf["operator"]),
@@ -206,10 +206,10 @@ async def create_routing_rule(
             description=rule.description,
         )
     except ValueError as e:
-        raise HTTPException(400, str(e))
+        raise HTTPException(400, str(e)) from e
     except Exception as e:
         logger.exception("Failed to create routing rule: {e}")
-        raise HTTPException(500, f"Failed to create routing rule: {e!s}")
+        raise HTTPException(500, f"Failed to create routing rule: {e!s}") from e
 
 
 @router.put("/routing/rules/{rule_id}")
@@ -235,7 +235,7 @@ async def update_routing_rule(
     # Convert content filters
     content_filters = []
     for cf in rule_data.content_filters:
-        content_filters.append(
+        content_filters.append(  # noqa: PERF401
             ContentFilter(
                 field=cf["field"],
                 operator=FilterOperator(cf["operator"]),
@@ -302,4 +302,4 @@ async def delete_routing_rule(
         raise
     except Exception as e:
         logger.exception("Failed to delete routing rule: {e}")
-        raise HTTPException(500, f"Failed to delete routing rule: {e!s}")
+        raise HTTPException(500, f"Failed to delete routing rule: {e!s}") from e

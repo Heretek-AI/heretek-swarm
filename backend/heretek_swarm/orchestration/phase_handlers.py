@@ -178,7 +178,7 @@ class AnalysisPhaseHandler(PhaseHandler):
         analysis_data["perspectives"] = list(triad_analyses.values())
 
         # Identify key insights
-        for agent_id, analysis in triad_analyses.items():
+        for agent_id, analysis in triad_analyses.items():  # noqa: B007
             if analysis:
                 insights = analysis.get("insights", [])
                 analysis_data["key_insights"].extend(insights)

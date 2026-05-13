@@ -387,7 +387,7 @@ class MessageReplayManager:
 
                 if job.status == ReplayStatus.PAUSED:
                     # Wait while paused
-                    while job.status == ReplayStatus.PAUSED:
+                    while job.status == ReplayStatus.PAUSED:  # noqa: ASYNC110
                         await asyncio.sleep(0.5)
 
                 # Process message

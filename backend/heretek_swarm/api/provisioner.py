@@ -274,7 +274,7 @@ async def provision_services(request: ProvisionRequest) -> ProvisionResponse:
     try:
         services = [_map_service_name(name) for name in request.services]
     except ValueError as e:
-        raise HTTPException(400, str(e))
+        raise HTTPException(400, str(e)) from e
 
     # Remove duplicates while preserving order
     seen: set[InfrastructureService] = set()
@@ -310,7 +310,7 @@ async def provision_services(request: ProvisionRequest) -> ProvisionResponse:
 
     except RuntimeError as e:
         logger.error("runtime_detection_failed", error=str(e))
-        raise HTTPException(500, f"Container runtime not available: {e}")
+        raise HTTPException(500, f"Container runtime not available: {e}") from e
 
     # Emit status for each pending service
     for svc in unique_services:
@@ -440,7 +440,7 @@ async def provision_services(request: ProvisionRequest) -> ProvisionResponse:
                 error=str(e),
             )
 
-        raise HTTPException(500, f"Provisioning failed: {e}")
+        raise HTTPException(500, f"Provisioning failed: {e}") from e
 
 
 @router.get("/status")
@@ -466,7 +466,7 @@ async def get_provision_status() -> dict[str, Any]:
     import subprocess
 
     try:
-        result = subprocess.run(
+        result = subprocess.run(  # noqa: S603,ASYNC221
             [runtime.value, "ps", "--filter", "name=heretek-", "--format", "{{.Names}}"],
             capture_output=True,
             text=True,
@@ -522,13 +522,13 @@ async def stop_infrastructure() -> dict[str, Any]:
     try:
         runtime = detect_runtime()
     except RuntimeError as e:
-        raise HTTPException(500, f"No container runtime available: {e}")
+        raise HTTPException(500, f"No container runtime available: {e}") from e
 
     # Find all heretek-* containers
     import subprocess
 
     try:
-        result = subprocess.run(
+        result = subprocess.run(  # noqa: S603,ASYNC221
             [runtime.value, "ps", "--filter", "name=heretek-", "--format", "{{.Names}}"],
             capture_output=True,
             text=True,
@@ -536,7 +536,7 @@ async def stop_infrastructure() -> dict[str, Any]:
         )
         containers = [c.strip() for c in result.stdout.strip().split("\n") if c.strip()]
     except Exception as e:
-        raise HTTPException(500, f"Failed to list containers: {e}")
+        raise HTTPException(500, f"Failed to list containers: {e}") from e
 
     if not containers:
         return {
@@ -551,7 +551,7 @@ async def stop_infrastructure() -> dict[str, Any]:
 
     for container in containers:
         try:
-            subprocess.run(
+            subprocess.run(  # noqa: S603,ASYNC221
                 [runtime.value, "stop", container],
                 capture_output=True,
                 timeout=30,
@@ -566,7 +566,7 @@ async def stop_infrastructure() -> dict[str, Any]:
         "success": len(failed) == 0,
         "stopped": stopped,
         "failed": failed,
-        "message": f"Stopped {len(stopped)} containers"
+        "message": f"Stopped {len(stopped)} containers"  # noqa: RUF034
         if failed
         else f"Stopped {len(stopped)} containers",
     }

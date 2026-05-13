@@ -181,7 +181,7 @@ class LemonadeProvider(LLMProviderBase):
                 f"Request failed: {e}. Is lemonade-server running?",
                 provider="lemonade",
                 cause=e,
-            )
+            ) from e
 
     async def stream(self, request: LLMRequest) -> AsyncIterator[str]:
         """
@@ -251,7 +251,7 @@ class LemonadeProvider(LLMProviderBase):
                 f"Stream request failed: {e}",
                 provider="lemonade",
                 cause=e,
-            )
+            ) from e
 
     async def list_models(self) -> list[str]:
         """List available models from lemonade-server."""
@@ -276,4 +276,4 @@ class LemonadeProvider(LLMProviderBase):
 
 
 # Import at module level for type annotation
-from heretek_swarm.infrastructure.otel import InstrumentedAsyncClient
+from heretek_swarm.infrastructure.otel import InstrumentedAsyncClient  # noqa: E402

@@ -972,7 +972,7 @@ class DistributedLearningCoordinator:
         self,
         pattern: ExtractedPattern,
         wait_for_ack: bool = False,  # noqa: ARG002
-        timeout: float = 5.0,  # noqa: ARG002
+        timeout: float = 5.0,  # noqa: ARG002,ASYNC109
     ) -> dict[str, Any]:
         """
         Broadcast a pattern to the swarm.
@@ -1026,7 +1026,7 @@ class DistributedLearningCoordinator:
 
     async def collect_swarm_knowledge(
         self,
-        timeout: float = 10.0,
+        timeout: float = 10.0,  # noqa: ASYNC109
     ) -> dict[str, ExtractedPattern]:
         """
         Collect knowledge from across the swarm.

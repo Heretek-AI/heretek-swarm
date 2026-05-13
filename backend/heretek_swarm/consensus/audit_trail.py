@@ -23,7 +23,7 @@ import structlog
 # JSONL file for --no-infra mode audit trail
 _CONSENSUS_AUDIT_FILE = Path(".heretek/consensus_audit.jsonl")
 
-from .audit_models import (
+from .audit_models import (  # noqa: E402
     ArgumentRecord,
     AuditEvent,
     AuditEventType,
@@ -166,7 +166,7 @@ class ConsensusAuditTrail:
     def _write_jsonl_line(path: Path, line: str) -> None:
         """Synchronous file-write helper for JSONL audit records."""
         path.parent.mkdir(parents=True, exist_ok=True)
-        with open(str(path), "a", encoding="utf-8") as f:
+        with open(str(path), "a", encoding="utf-8") as f:  # noqa: PTH123
             f.write(line)
             f.write("\n")
 

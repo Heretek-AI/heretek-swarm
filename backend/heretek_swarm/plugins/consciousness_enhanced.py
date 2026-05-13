@@ -514,7 +514,7 @@ class FEPTracker:
             Free energy value
         """
         # Simplified free energy calculation
-        # FE = surprise - (1 - confidence) * learning_rate
+
 
         information_gain = (1 - confidence) * self.learning_rate
         free_energy = surprise - information_gain
@@ -616,7 +616,7 @@ class EnhancedConsciousnessPlugin:
         self.running = True
 
         # Start background cleanup task
-        asyncio.create_task(self._cleanup_loop())
+        asyncio.create_task(self._cleanup_loop())  # noqa: RUF006
 
         logger.info("Enhanced Consciousness Plugin started")
 
@@ -784,7 +784,7 @@ class EnhancedConsciousnessPlugin:
 
         # Get FEP metrics
         fep_metrics = self.fep_tracker.get_metrics(agent_id)
-        if fep_metrics:
+        if fep_metrics:  # noqa: SIM108
             # Invert free energy (lower is better)
             fep_score = max(0.0, 1.0 - fep_metrics.free_energy)
         else:

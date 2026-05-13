@@ -109,7 +109,7 @@ class AgentEvaluator:
         tc: TestCase,
     ) -> tuple[TestResult, bool]:
         """Run a single test case and return result plus success flag."""
-        start = datetime.now()
+        start = datetime.now()  # noqa: DTZ005
         error = None
         validation_errors: list[str] = []
 
@@ -134,7 +134,7 @@ class AgentEvaluator:
             validation_errors = [str(e)]
             success = False
 
-        end = datetime.now()
+        end = datetime.now()  # noqa: DTZ005
         execution_time = (end - start).total_seconds() * 1000
         return TestResult(
             test_id=tc.id,
@@ -152,8 +152,8 @@ class AgentEvaluator:
         evaluation_id: str | None = None,
     ) -> EvaluationResult:
         """Evaluate an agent against test cases."""
-        eval_id = evaluation_id or f"eval_{agent_id}_{datetime.now().timestamp()}"
-        started = datetime.now().isoformat()
+        eval_id = evaluation_id or f"eval_{agent_id}_{datetime.now().timestamp()}"  # noqa: DTZ005
+        started = datetime.now().isoformat()  # noqa: DTZ005
 
         test_results = []
         passed_count = 0
@@ -173,7 +173,7 @@ class AgentEvaluator:
             output_quality=success_rate,
         )
 
-        completed = datetime.now().isoformat()
+        completed = datetime.now().isoformat()  # noqa: DTZ005
         return EvaluationResult(
             evaluation_id=eval_id,
             agent_id=agent_id,
@@ -210,7 +210,7 @@ class AgentEvaluator:
         if constraints.required_keys and isinstance(output, dict):
             for key in constraints.required_keys:
                 if key not in output:
-                    errors.append(f"Missing required key: {key}")
+                    errors.append(f"Missing required key: {key}")  # noqa: PERF401
 
         # Check max length
         if hasattr(constraints, "max_length") and constraints.max_length:
@@ -226,7 +226,7 @@ class AgentEvaluator:
 
             for pattern in constraints.forbidden_patterns:
                 if re.search(pattern, output):
-                    errors.append("forbidden pattern detected in output")
+                    errors.append("forbidden pattern detected in output")  # noqa: PERF401
 
         return errors
 

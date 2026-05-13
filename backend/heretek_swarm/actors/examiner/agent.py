@@ -31,7 +31,10 @@ from typing import TYPE_CHECKING, Any
 import structlog
 
 from heretek_swarm.actors.base import ActorMessage, AgentActor
-from heretek_swarm.actors.examiner.testing import ExaminingTestingMixin, ExaminingValidationMixin
+from heretek_swarm.actors.examiner.testing import (
+    ExaminingTestingMixin,
+    ExaminingValidationMixin,
+)
 from heretek_swarm.actors.examiner.types import (
     Bug,
     QualityMetric,
@@ -47,10 +50,15 @@ from heretek_swarm.actors.mixins.learning import LearningMixin
 from heretek_swarm.actors.mixins.memory import MemoryMixin
 from heretek_swarm.actors.mixins.pattern import PatternMixin
 from heretek_swarm.actors.mixins.validation import ValidationMixin
-from heretek_swarm.actors.validation import validate_message as validate_message_schema
+from heretek_swarm.actors.validation import (
+    validate_message as validate_message_schema,
+)
 
 # Session 44: Collective Learning Integration
-from heretek_swarm.collective.learning import PatternExtractor, PatternType
+from heretek_swarm.collective.learning import (
+    PatternExtractor,
+    PatternType,
+)
 
 # Alias for use in handlers
 validate_message = validate_message_schema
@@ -519,7 +527,7 @@ Format as JSON with keys: objectives, test_cases, success_criteria, risks"""
                 "risks": [str(e)],
             }
 
-    async def _execute_test_case(self, test_case: dict[str, Any], timeout: int) -> TestCase:
+    async def _execute_test_case(self, test_case: dict[str, Any], timeout: int) -> TestCase:  # noqa: ASYNC109
         """Execute a single test case."""
         start_time = datetime.now(UTC)
 
@@ -900,7 +908,7 @@ Return a score from 0-100."""
             prompt = f"""Generate a quality summary:
 
 Overall Score: {overall_score:.1f}/100
-Test Suites: {len(test_suites)} ({sum(s.passed for s in test_suites)} passed, {sum(s.failed for s in test_suites)} failed)
+Test Suites: {len(test_suites)} ({sum(s.passed for s in test_suites)} passed, {sum(s.failed for s in test_suites)} failed)  # noqa: E501
 Bugs: {len(bugs)} ({len([b for b in bugs if b.severity == SeverityLevel.CRITICAL])} critical)
 Metrics: {len(metrics)} measured
 

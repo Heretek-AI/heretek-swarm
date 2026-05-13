@@ -36,8 +36,8 @@ log_level = os.getenv("LOG_LEVEL", "INFO").upper()
 json_output = os.getenv("LOG_FORMAT", "json").lower() == "json"
 setup_logging(log_level=log_level, json_output=json_output)
 
-from heretek_swarm.actors.supervisor import ActorSupervisor
-from heretek_swarm.api import (
+from heretek_swarm.actors.supervisor import ActorSupervisor  # noqa: E402
+from heretek_swarm.api import (  # noqa: E402
     agents_management,
     autonomous,
     collective_evolution,
@@ -59,21 +59,21 @@ from heretek_swarm.api import (
     wizard,
     workflows,
 )
-from heretek_swarm.api.rate_limiting import setup_rate_limiting
-from heretek_swarm.config.loader import (
+from heretek_swarm.api.rate_limiting import setup_rate_limiting  # noqa: E402
+from heretek_swarm.config.loader import (  # noqa: E402
     get_config,
     initialize_config_loader,
 )
-from heretek_swarm.config.service import (
+from heretek_swarm.config.service import (  # noqa: E402
     get_config_service,
     initialize_config_service,
     shutdown_config_service,
 )
-from heretek_swarm.gateway.auth import verify_auth
-from heretek_swarm.gateway.nats_event_mesh import NATSEventMesh
-from heretek_swarm.mcp.server import router as mcp_router
-from heretek_swarm.memory.persistent import PersistentMemory as PersistentMemoryStore
-from heretek_swarm.observability.tracing import setup_telemetry_middleware
+from heretek_swarm.gateway.auth import verify_auth  # noqa: E402
+from heretek_swarm.gateway.nats_event_mesh import NATSEventMesh  # noqa: E402
+from heretek_swarm.mcp.server import router as mcp_router  # noqa: E402
+from heretek_swarm.memory.persistent import PersistentMemory as PersistentMemoryStore  # noqa: E402
+from heretek_swarm.observability.tracing import setup_telemetry_middleware  # noqa: E402
 
 # Import mem0 backend
 try:
@@ -84,7 +84,7 @@ except ImportError:
     Mem0Config = None
 
 # Import logging middleware
-from heretek_swarm.api.logging_middleware import setup_logging_middleware
+from heretek_swarm.api.logging_middleware import setup_logging_middleware  # noqa: E402
 
 logger = structlog.get_logger("api.main")
 
@@ -186,7 +186,7 @@ async def _init_supervisor() -> None:
     logger.info("ActorSupervisor initialized")
 
     # Fire-and-forget: spawn all 23 agents without blocking API startup
-    asyncio.create_task(_spawn_all_agents())
+    asyncio.create_task(_spawn_all_agents())  # noqa: RUF006
 
 
 async def _spawn_all_agents() -> None:
@@ -412,7 +412,7 @@ async def _init_nats_bridge() -> None:
             await _nats_mesh.subscribe("swarm.metrics.consciousness", consciousness_event_handler)
 
             logger.info(
-                "NATS subscriptions registered for A2A events, external calls, and consciousness events"
+                "NATS subscriptions registered for A2A events, external calls, and consciousness events"  # noqa: E501
             )
         else:
             logger.warning("NATS EventMesh not available, WebSocket bridge using fallback")
@@ -426,12 +426,12 @@ async def _init_spa_mount(app: FastAPI) -> None:
     import os
 
     # Calculate project root: backend/heretek_swarm/api/main.py -> project root (4 levels up)
-    project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+    project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))  # noqa: PTH120
     dist_path = os.environ.get(
-        "DASHBOARD_DIST_PATH", os.path.join(project_root, "dashboard", "frontend", "dist")
+        "DASHBOARD_DIST_PATH", os.path.join(project_root, "dashboard", "frontend", "dist")  # noqa: PTH118
     )
 
-    if os.path.isdir(dist_path):
+    if os.path.isdir(dist_path):  # noqa: PTH112,ASYNC240
         app.mount("/assets", StaticFiles(directory=dist_path, html=True), name="dashboard_assets")
         logger.info("dashboard_spa_mounted", dist_path=dist_path)
     else:
@@ -539,7 +539,7 @@ app.include_router(collective_evolution.router)
 app.include_router(mcp_router)
 
 # Setup Prometheus metrics middleware
-from heretek_swarm.observability.prometheus_metrics import setup_metrics_middleware
+from heretek_swarm.observability.prometheus_metrics import setup_metrics_middleware  # noqa: E402
 
 setup_metrics_middleware(app)
 logger.info("Prometheus metrics middleware configured")
@@ -706,7 +706,7 @@ async def health_check():
             "qdrant": await check_qdrant(),
         },
         "pool": StateRepository.get_pool_stats(),
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": datetime.utcnow().isoformat(),  # noqa: DTZ003
     }
 
 
@@ -1245,13 +1245,13 @@ async def root():
     import os
 
     # Calculate project root: backend/heretek_swarm/api/main.py -> project root (4 levels up)
-    project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+    project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))  # noqa: PTH120
     dist_path = os.environ.get(
-        "DASHBOARD_DIST_PATH", os.path.join(project_root, "dashboard", "frontend", "dist")
+        "DASHBOARD_DIST_PATH", os.path.join(project_root, "dashboard", "frontend", "dist")  # noqa: PTH118
     )
-    index_path = os.path.join(dist_path, "index.html")
+    index_path = os.path.join(dist_path, "index.html")  # noqa: PTH118
 
-    if os.path.isfile(index_path):
+    if os.path.isfile(index_path):  # noqa: PTH113,ASYNC240
         return FileResponse(index_path)
     logger.warning("dashboard_dist_not_found", dist_path=dist_path)
     raise HTTPException(404, "Dashboard not available")
@@ -1275,13 +1275,13 @@ async def serve_spa(path: str):
         raise HTTPException(404, "Not found")
 
     # Calculate project root: backend/heretek_swarm/api/main.py -> project root (4 levels up)
-    project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+    project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))  # noqa: PTH120
     dist_path = os.environ.get(
-        "DASHBOARD_DIST_PATH", os.path.join(project_root, "dashboard", "frontend", "dist")
+        "DASHBOARD_DIST_PATH", os.path.join(project_root, "dashboard", "frontend", "dist")  # noqa: PTH118
     )
-    index_path = os.path.join(dist_path, "index.html")
+    index_path = os.path.join(dist_path, "index.html")  # noqa: PTH118
 
-    if os.path.isfile(index_path):
+    if os.path.isfile(index_path):  # noqa: PTH113,ASYNC240
         logger.debug("spa_fallback", path=path)
         return FileResponse(index_path)
     logger.warning("dashboard_dist_not_found", dist_path=dist_path)

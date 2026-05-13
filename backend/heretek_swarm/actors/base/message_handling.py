@@ -36,7 +36,7 @@ class AgentActorMessageHandling(AgentActor):
 
             plugin = get_consciousness_plugin()
             plugin.record_interaction(from_agent, to_agent)
-        except Exception:
+        except Exception:  # noqa: S110
             # Consciousness tracking is non-fatal — do not break message delivery
             pass
 
@@ -174,7 +174,7 @@ class AgentActorMessageHandling(AgentActor):
                     delivered = True
             if delivered:
                 logger.info(
-                    f"[{self.agent_id}] Message {message_id} delivered directly to topic subscribers",  # noqa: G004
+                    f"[{self.agent_id}] Message {message_id} delivered directly to topic subscribers",  # noqa: G004,E501
                     extra={"message_type": message_type},
                 )
                 return True
@@ -264,7 +264,7 @@ class AgentActorMessageHandling(AgentActor):
         recipient: str,
         message_type: str,
         content: dict[str, Any],
-        timeout: int = 30,
+        timeout: int = 30,  # noqa: ASYNC109
     ) -> dict[str, Any] | None:
         """
         Send message and wait for reply with correlation tracking.
@@ -289,7 +289,7 @@ class AgentActorMessageHandling(AgentActor):
         reply_channel = f"reply_{self.agent_id}_{correlation_id}"
 
         logger.info(
-            f"[{self.agent_id}] Sending request to {recipient} with correlation_id={correlation_id}",  # noqa: G004
+            f"[{self.agent_id}] Sending request to {recipient} with correlation_id={correlation_id}",  # noqa: G004,E501
             extra={"message_type": message_type, "timeout": timeout},
         )
 
@@ -330,7 +330,7 @@ class AgentActorMessageHandling(AgentActor):
 
             except TimeoutError:
                 logger.warning(
-                    f"[{self.agent_id}] Request timeout after {timeout}s for correlation_id={correlation_id}",  # noqa: G004
+                    f"[{self.agent_id}] Request timeout after {timeout}s for correlation_id={correlation_id}",  # noqa: G004,E501
                     extra={"recipient": recipient, "message_type": message_type},
                 )
                 raise
@@ -372,7 +372,7 @@ class AgentActorMessageHandling(AgentActor):
                 else:
                     # P1-10e fix: Only drop after all retries exhausted
                     logger.error(
-                        f"[{self.agent_id}] Mailbox full after {max_retries} retries, message dropped",  # noqa: G004
+                        f"[{self.agent_id}] Mailbox full after {max_retries} retries, message dropped",  # noqa: G004,E501
                         extra={"message_type": message.message_type},
                     )
                     self.error_count += 1
@@ -404,7 +404,7 @@ class AgentActorMessageHandling(AgentActor):
                     await self.save_state()
                     self._messages_since_persist = 0
                     logger.debug(
-                        f"[{self.agent_id}] State persisted after {self._persistence_interval} messages",  # noqa: G004
+                        f"[{self.agent_id}] State persisted after {self._persistence_interval} messages",  # noqa: G004,E501
                         extra={"total_messages": self.message_count},
                     )
 
@@ -839,7 +839,7 @@ Please provide your analysis and recommendation for this collective task."""
             logger.warning("Failed to retrieve supervisor actors", exc_info=True)
         return None
 
-    async def run_with_llm(self, prompt: str, timeout: int = 60, **kwargs) -> str:
+    async def run_with_llm(self, prompt: str, timeout: int = 60, **kwargs) -> str:  # noqa: ASYNC109
         """
         Run a prompt through the best available LLM provider.
 

@@ -193,7 +193,7 @@ class Argument:
         evidence_scores = []
         for ref in self.evidence_refs:
             if ref in evidence_dict:
-                evidence_scores.append(evidence_dict[ref].calculate_quality())
+                evidence_scores.append(evidence_dict[ref].calculate_quality())  # noqa: PERF401
 
         evidence_contribution = (
             sum(evidence_scores) / len(evidence_scores) if evidence_scores else 0.0
@@ -249,7 +249,7 @@ class CounterArgument:
         evidence_scores = []
         for ref in self.evidence_refs:
             if ref in evidence_dict:
-                evidence_scores.append(evidence_dict[ref].calculate_quality())
+                evidence_scores.append(evidence_dict[ref].calculate_quality())  # noqa: PERF401
 
         evidence_contribution = (
             sum(evidence_scores) / len(evidence_scores) if evidence_scores else 0.0
@@ -629,7 +629,7 @@ class DeliberationEngine:
             expertise_weight = self.expertise_profiler.get_expertise_score(agent_id, domain)
 
         argument = Argument(
-            argument_id=f"arg-{deliberation_id}-{len(self.active_deliberations[deliberation_id]['arguments']) + 1}",
+            argument_id=f"arg-{deliberation_id}-{len(self.active_deliberations[deliberation_id]['arguments']) + 1}",  # noqa: E501
             agent_id=agent_id,
             position=position,
             reasoning=reasoning,
@@ -703,7 +703,7 @@ class DeliberationEngine:
             expertise_weight = self.expertise_profiler.get_expertise_score(agent_id, domain)
 
         counter = CounterArgument(
-            counter_id=f"counter-{deliberation_id}-{len(self.active_deliberations[deliberation_id]['counter_arguments']) + 1}",
+            counter_id=f"counter-{deliberation_id}-{len(self.active_deliberations[deliberation_id]['counter_arguments']) + 1}",  # noqa: E501
             original_argument_id=original_argument_id,
             agent_id=agent_id,
             counter_reasoning=counter_reasoning,
@@ -894,7 +894,7 @@ class DeliberationEngine:
         for round_result in rounds:
             for arg in round_result.arguments:
                 agent_id = arg.agent_id
-                if agent_id in prev_positions:
+                if agent_id in prev_positions:  # noqa: SIM102
                     if prev_positions[agent_id] != arg.position:
                         changes += 1
                 prev_positions[agent_id] = arg.position

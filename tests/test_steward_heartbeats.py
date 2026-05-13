@@ -295,7 +295,7 @@ class TestMonitorLoopRegistryIntegration:
         steward = StewardAgent(agent_id="steward")
         steward._heartbeat_timeout = 15.0
 
-        # Simulate: alpha is already in failed_agents
+
         steward._failed_agents.add("alpha")
         steward._agent_heartbeats = {"alpha": _stale_timestamp(seconds_ago=30)}
         registry = {"alpha": _make_mock_actor(last_activity=_stale_timestamp(seconds_ago=30))}

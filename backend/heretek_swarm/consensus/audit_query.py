@@ -212,7 +212,7 @@ class AuditQueryMixin:
         consensus_events = [e for e in trail.events if e.consensus_id == consensus_id]
 
         for event in consensus_events:
-            timeline.append(
+            timeline.append(  # noqa: PERF401
                 {
                     "event_id": event.event_id,
                     "event_type": event.event_type.value,
@@ -228,7 +228,7 @@ class AuditQueryMixin:
 
     def export_audit_data(
         self,
-        format: str = "json",
+        format: str = "json",  # noqa: A002
         consensus_id: str | None = None,
         include_events: bool = True,
         include_votes: bool = True,
@@ -359,7 +359,7 @@ class AuditQueryMixin:
         logger.info("Audit data exported: {len(export_data.get('decisions', []))} decisions")
         return export_data
 
-    def export_decision_audit(self, decision_id: str, format: str = "json") -> str:
+    def export_decision_audit(self, decision_id: str, format: str = "json") -> str:  # noqa: A002
         """
         Export a complete decision audit record.
 
@@ -384,7 +384,7 @@ class AuditQueryMixin:
             return __import__("json").dumps(audit.to_dict(), indent=2, sort_keys=True)
         raise ValueError(f"Unsupported export format: {format}")
 
-    def export_all_audits(self, format: str = "json") -> str:
+    def export_all_audits(self, format: str = "json") -> str:  # noqa: A002
         """
         Export all decision audit records.
 
@@ -430,7 +430,7 @@ def query_decisions(
 
 def export_audit_data(
     trail: Any,
-    format: str = "json",
+    format: str = "json",  # noqa: A002
     consensus_id: str | None = None,
     include_events: bool = True,
     include_votes: bool = True,

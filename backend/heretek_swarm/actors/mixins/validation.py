@@ -31,7 +31,7 @@ class ValidationMixin:
     # These were originally defined in actors/validation.py and are consolidated
     # here as the single source of truth.
 
-    IMMUTABLE_RULES: list[dict[str, str]] = [
+    IMMUTABLE_RULES: list[dict[str, str]] = [  # noqa: RUF012
         {
             "pattern": r"eval\s*\(",
             "severity": "CRITICAL",
@@ -82,7 +82,7 @@ class ValidationMixin:
         },
     ]
 
-    BASELINE_CONFIG: dict[str, object] = {
+    BASELINE_CONFIG: dict[str, object] = {  # noqa: RUF012
         "initialization_mode": "static_rules_bootstrap",
         "learning_period": 100,
         "anomaly_threshold": 3.0,

@@ -334,7 +334,7 @@ class ActorSupervisor(AuditMixin, ValidationMixin, HealthReportingMixin, Pattern
                     # Check for high error count - TAKE ACTION
                     if status.error_count > 10:
                         logger.warning(
-                            f"[{self.name}] Actor {actor_id} has high error count: {status.error_count}",  # noqa: G004
+                            f"[{self.name}] Actor {actor_id} has high error count: {status.error_count}",  # noqa: G004,E501
                         )
                         if self.auto_restart and status.state != ActorState.ERROR:
                             # Set error state and attempt restart
@@ -369,7 +369,7 @@ class ActorSupervisor(AuditMixin, ValidationMixin, HealthReportingMixin, Pattern
             return
 
         logger.info(
-            f"[{self.name}] Attempting restart {restart_count + 1}/{self.max_restarts} for {actor_id}",  # noqa: G004
+            f"[{self.name}] Attempting restart {restart_count + 1}/{self.max_restarts} for {actor_id}",  # noqa: G004,E501
         )
 
         try:

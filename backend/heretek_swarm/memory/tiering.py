@@ -539,7 +539,7 @@ class MemoryTieringSystem:
 
         for memory in self._memories_by_tier[current_tier].values():
             if self._matches_policy(memory, policy):
-                candidates.append(memory)
+                candidates.append(memory)  # noqa: PERF401
 
         return candidates
 
@@ -870,7 +870,7 @@ class MemoryTieringSystem:
             # Check 2: Memory tier is correctly set
             if memory.current_tier != expected_tier:
                 result["errors"].append(
-                    f"Memory tier mismatch: expected {expected_tier.value}, got {memory.current_tier.value}"
+                    f"Memory tier mismatch: expected {expected_tier.value}, got {memory.current_tier.value}"  # noqa: E501
                 )
                 result["checks_performed"].append("tier_field_correct")
                 return result

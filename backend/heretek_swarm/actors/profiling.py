@@ -661,7 +661,7 @@ class BehaviorProfiler(ValidationMixin, PatternMixin, HealthReportingMixin, Agen
         super().__init__(
             agent_id=agent_id or "BehaviorProfiler",
             name=name or "BehaviorProfiler",
-            *remaining_args,
+            *remaining_args,  # noqa: B026
             **kwargs,
         )
 
@@ -1049,7 +1049,7 @@ class BehaviorProfiler(ValidationMixin, PatternMixin, HealthReportingMixin, Agen
             "",
             "# HELP heretek_profiler_unacknowledged_alerts Unacknowledged alerts count",
             "# TYPE heretek_profiler_unacknowledged_alerts gauge",
-            f"heretek_profiler_unacknowledged_alerts {len([a for a in self._alerts if not a.acknowledged])}",
+            f"heretek_profiler_unacknowledged_alerts {len([a for a in self._alerts if not a.acknowledged])}",  # noqa: E501
             "",
         ]
 
@@ -1061,7 +1061,7 @@ class BehaviorProfiler(ValidationMixin, PatternMixin, HealthReportingMixin, Agen
                 [
                     f"# HELP heretek_agent_{safe_agent_id}_actions_per_minute Actions per minute",
                     f"# TYPE heretek_agent_{safe_agent_id}_actions_per_minute gauge",
-                    f"heretek_agent_{safe_agent_id}_actions_per_minute {metrics.actions_per_minute}",
+                    f"heretek_agent_{safe_agent_id}_actions_per_minute {metrics.actions_per_minute}",  # noqa: E501
                     "",
                     f"# HELP heretek_agent_{safe_agent_id}_error_rate Error rate",
                     f"# TYPE heretek_agent_{safe_agent_id}_error_rate gauge",
@@ -1071,9 +1071,9 @@ class BehaviorProfiler(ValidationMixin, PatternMixin, HealthReportingMixin, Agen
                     f"# TYPE heretek_agent_{safe_agent_id}_task_success_rate gauge",
                     f"heretek_agent_{safe_agent_id}_task_success_rate {metrics.task_success_rate}",
                     "",
-                    f"# HELP heretek_agent_{safe_agent_id}_avg_response_time_ms Average response time",
+                    f"# HELP heretek_agent_{safe_agent_id}_avg_response_time_ms Average response time",  # noqa: E501
                     f"# TYPE heretek_agent_{safe_agent_id}_avg_response_time_ms gauge",
-                    f"heretek_agent_{safe_agent_id}_avg_response_time_ms {metrics.avg_response_time_ms}",
+                    f"heretek_agent_{safe_agent_id}_avg_response_time_ms {metrics.avg_response_time_ms}",  # noqa: E501
                     "",
                 ]
             )
@@ -1084,13 +1084,13 @@ class BehaviorProfiler(ValidationMixin, PatternMixin, HealthReportingMixin, Agen
 
             lines.extend(
                 [
-                    f"# HELP heretek_profile_{safe_type}_baseline_actions_per_minute Baseline actions per minute",
+                    f"# HELP heretek_profile_{safe_type}_baseline_actions_per_minute Baseline actions per minute",  # noqa: E501
                     f"# TYPE heretek_profile_{safe_type}_baseline_actions_per_minute gauge",
-                    f"heretek_profile_{safe_type}_baseline_actions_per_minute {profile.baseline_actions_per_minute}",
+                    f"heretek_profile_{safe_type}_baseline_actions_per_minute {profile.baseline_actions_per_minute}",  # noqa: E501
                     "",
                     f"# HELP heretek_profile_{safe_type}_baseline_error_rate Baseline error rate",
                     f"# TYPE heretek_profile_{safe_type}_baseline_error_rate gauge",
-                    f"heretek_profile_{safe_type}_baseline_error_rate {profile.baseline_error_rate}",
+                    f"heretek_profile_{safe_type}_baseline_error_rate {profile.baseline_error_rate}",  # noqa: E501
                     "",
                     f"# HELP heretek_profile_{safe_type}_sample_count Profile sample count",
                     f"# TYPE heretek_profile_{safe_type}_sample_count gauge",

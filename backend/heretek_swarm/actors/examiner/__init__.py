@@ -4,7 +4,7 @@ Examiner Module - Quality Assurance & Testing Specialist.
 This module provides the ExaminerAgent for quality assurance and testing.
 The module has been refactored into separate components:
 
-- types.py: Type definitions (TestType, TestStatus, QualityMetric, SeverityLevel, TestCase, TestSuite, Bug, QualityReport)
+- types.py: Type definitions (TestType, TestStatus, QualityMetric, SeverityLevel, TestCase, TestSuite, Bug, QualityReport)  # noqa: E501
 - testing.py: Testing mixins (ExaminingTestingMixin, ExaminingValidationMixin)
 - agent.py: Main ExaminerAgent class
 

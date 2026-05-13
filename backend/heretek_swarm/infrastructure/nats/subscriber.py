@@ -189,12 +189,12 @@ class NATSSubscriber:
             if subscription.callback:
                 import asyncio
 
-                asyncio.create_task(subscription.callback(event))
+                asyncio.create_task(subscription.callback(event))  # noqa: RUF006
 
             # Check auto-unsubscribe
-            if subscription.config.max_messages > 0:
+            if subscription.config.max_messages > 0:  # noqa: SIM102
                 if subscription.message_count >= subscription.config.max_messages:
-                    asyncio.create_task(self.unsubscribe(sub_id))
+                    asyncio.create_task(self.unsubscribe(sub_id))  # noqa: RUF006
 
         except Exception as e:
             logger.error(
@@ -212,7 +212,7 @@ class NATSSubscriber:
                     return False
 
         # Priority filter
-        if subscription.config.priority_filter:
+        if subscription.config.priority_filter:  # noqa: SIM102
             if event.priority.value < subscription.config.priority_filter.value:
                 return False
 

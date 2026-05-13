@@ -21,7 +21,7 @@ import structlog
 logger = structlog.get_logger("MemorySystem")
 
 
-@dataclass
+@dataclass  # noqa: RUF049
 class MemoryTier(StrEnum):
     """Memory tier classification."""
 
@@ -279,7 +279,7 @@ class EphemeralMemory(MemorySystem):
         """Retrieve a memory entry by ID."""
         entry = self._storage.get(memory_id)
 
-        if entry:
+        if entry:  # noqa: SIM102
             # Check expiration
             if self._is_expired(entry):
                 await self.delete(memory_id)
@@ -632,10 +632,10 @@ class DualTierMemory:
         Initialize dual-tier memory.
 
         Args:
-            ephemeral: Ephemeral memory instance (takes precedence if both ephemer* and config provided)
-            persistent: Persistent memory instance (takes precedence if both persistent and config provided)
-            ephemeral_config: Config dict with keys like ttl_seconds for constructing EphemeralMemory
-            persistent_config: Config dict with keys like connection_string for constructing PersistentMemory
+            ephemeral: Ephemeral memory instance (takes precedence if both ephemer* and config provided)  # noqa: E501
+            persistent: Persistent memory instance (takes precedence if both persistent and config provided)  # noqa: E501
+            ephemeral_config: Config dict with keys like ttl_seconds for constructing EphemeralMemory  # noqa: E501
+            persistent_config: Config dict with keys like connection_string for constructing PersistentMemory  # noqa: E501
         """
         if ephemeral is not None:
             self.ephemeral = ephemeral

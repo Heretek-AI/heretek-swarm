@@ -562,7 +562,7 @@ class ExternalThreatDetector:
             self._escalation_count[source] = 0
 
             # In production, this would send a message to Core Triad via NATS
-            # await self._send_to_core_triad(threat)
+
 
     def _calculate_threat_level(
         self,
@@ -651,7 +651,7 @@ class ExternalThreatDetector:
     ) -> ThreatDetectionResult:
         """Create a threat detection result."""
         timestamp = datetime.now(UTC)
-        threat_id = f"THREAT_{int(timestamp.timestamp())}_{hashlib.sha256(str(timestamp).encode()).hexdigest()[:8]}"
+        threat_id = f"THREAT_{int(timestamp.timestamp())}_{hashlib.sha256(str(timestamp).encode()).hexdigest()[:8]}"  # noqa: E501
 
         # Determine containment actions
         containment_actions = []

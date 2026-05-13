@@ -178,7 +178,7 @@ class TestAgentRoutingIntegration:
         )
 
         # COMPLEX task: preferred models are ["opus", "claude-opus", "o1-preview"]
-        # powerful-provider has "claude-opus-4-20250514" → "claude-opus" matches → routes to powerful-provider
+        # powerful-provider has "claude-opus-4-20250514" → "claude-opus" matches → routes to powerful-provider  # noqa: E501
         complex_task = "design and analyze and evaluate the tradeoffs"
         complex_resp = await actor.run_with_llm(complex_task)
         assert "powerful-provider" in complex_resp, (

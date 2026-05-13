@@ -387,7 +387,7 @@ class AgentActor:
                 f"[{self.agent_id}] Message validation failed for {message_type}: {e}",  # noqa: G004
                 extra={"validation_errors": e.errors()},
             )
-            raise ValueError(f"Invalid message format: {e.errors()}")
+            raise ValueError(f"Invalid message format: {e.errors()}") from e
         except KeyError:
             # Unknown message type - skip validation
             logger.debug("[{self.agent_id}] No validator for message type: {message_type}")

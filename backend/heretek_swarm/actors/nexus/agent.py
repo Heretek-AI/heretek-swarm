@@ -511,7 +511,7 @@ class NexusAgent(
             if connection.auth_type == "bearer" and connection.auth_config.get("token"):
                 headers["Authorization"] = f"Bearer {connection.auth_config['token']}"
             elif connection.auth_type == "basic":
-                creds = f"{connection.auth_config.get('username', '')}:{connection.auth_config.get('password', '')}"
+                creds = f"{connection.auth_config.get('username', '')}:{connection.auth_config.get('password', '')}"  # noqa: E501
                 headers["Authorization"] = f"Basic {base64.b64encode(creds.encode()).decode()}"
             elif connection.auth_type == "api_key":
                 headers[connection.auth_config.get("header", "X-API-Key")] = (
@@ -1184,4 +1184,4 @@ class NexusAgent(
 
 
 # Import datetime for timestamp in _translate_data and other methods
-from datetime import UTC, datetime
+from datetime import UTC, datetime  # noqa: E402

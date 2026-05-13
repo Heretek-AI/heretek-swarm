@@ -366,7 +366,7 @@ class AutonomousSwarm:
     async def run_deliberation(
         self,
         prompt: str,
-        timeout: int = 120,
+        timeout: int = 120,  # noqa: ASYNC109
     ) -> dict[str, Any]:
         """
         Run a triad deliberation: route a prompt through Steward → Alpha → Beta → Charlie.
@@ -466,7 +466,7 @@ class AutonomousSwarm:
     async def run_consensus(
         self,
         question: str,
-        timeout: float = 120,
+        timeout: float = 120,  # noqa: ASYNC109
         max_rounds: int = 3,
     ) -> dict[str, Any]:
         """
@@ -564,7 +564,7 @@ class AutonomousSwarm:
         reasoning_parts = []
         for v in result.votes:
             if v.decision != "abstain" and v.metadata.get("reasoning"):
-                reasoning_parts.append(f"{v.agent_id}: {v.metadata['reasoning']}")
+                reasoning_parts.append(f"{v.agent_id}: {v.metadata['reasoning']}")  # noqa: PERF401
 
         response = {
             "decision": result.decision,
@@ -592,7 +592,7 @@ class AutonomousSwarm:
         agent_name: str,
         task_type: str,
         task_data: dict[str, Any],
-        timeout: int = 30,
+        timeout: int = 30,  # noqa: ASYNC109
     ) -> dict[str, Any]:
         """
         Route a task to a specific agent using Steward's ``route_to_agent()``

@@ -43,7 +43,7 @@ def _make_core_mcp_with_tools(tool_count: int = 3) -> CoreMCPTools:
                 },
                 "required": ["x"],
             },
-            handler=lambda args, ctx, _i=i: {"result": args.get("x", 0) * (_i + 1)},
+            handler=lambda args, ctx, _i=i: {"result": args.get("x", 0) * (_i + 1)},  # noqa: ARG005
             category="test",
         )
         core.registry.register(defn)
@@ -51,7 +51,7 @@ def _make_core_mcp_with_tools(tool_count: int = 3) -> CoreMCPTools:
 
 
 # ---------------------------------------------------------------------------
-# Tests: build_tools_list_dictionary
+
 # ---------------------------------------------------------------------------
 
 
@@ -105,7 +105,7 @@ class TestBuildToolsListDictionary:
 
 
 # ---------------------------------------------------------------------------
-# Tests: build_tool_handlers
+
 # ---------------------------------------------------------------------------
 
 

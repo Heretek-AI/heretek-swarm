@@ -110,7 +110,7 @@ async def list_jetstream_streams(
         )
     except Exception as e:
         logger.exception("Failed to list streams: {e}")
-        raise HTTPException(500, f"Failed to list streams: {e!s}")
+        raise HTTPException(500, f"Failed to list streams: {e!s}") from e
 
 
 @router.get("/jetstream/streams/{stream_name}")
@@ -151,7 +151,7 @@ async def get_jetstream_stream(
         raise
     except Exception as e:
         logger.exception("Failed to get stream info: {e}")
-        raise HTTPException(500, f"Failed to get stream info: {e!s}")
+        raise HTTPException(500, f"Failed to get stream info: {e!s}") from e
 
 
 @router.post("/jetstream/streams")
@@ -208,7 +208,7 @@ async def create_jetstream_stream(
         raise
     except Exception as e:
         logger.exception("Failed to create stream: {e}")
-        raise HTTPException(500, f"Failed to create stream: {e!s}")
+        raise HTTPException(500, f"Failed to create stream: {e!s}") from e
 
 
 @router.delete("/jetstream/streams/{stream_name}")
@@ -239,7 +239,7 @@ async def delete_jetstream_stream(
         raise
     except Exception as e:
         logger.exception("Failed to delete stream: {e}")
-        raise HTTPException(500, f"Failed to delete stream: {e!s}")
+        raise HTTPException(500, f"Failed to delete stream: {e!s}") from e
 
 
 @router.post("/jetstream/streams/{stream_name}/replay")
@@ -278,7 +278,7 @@ async def replay_stream_messages(
         }
     except Exception as e:
         logger.exception("Failed to replay messages: {e}")
-        raise HTTPException(500, f"Failed to replay messages: {e!s}")
+        raise HTTPException(500, f"Failed to replay messages: {e!s}") from e
 
 
 @router.get("/jetstream/stats")
@@ -299,7 +299,7 @@ async def get_jetstream_stats(
         return await js_manager.get_stats()
     except Exception as e:
         logger.exception("Failed to get JetStream stats: {e}")
-        raise HTTPException(500, f"Failed to get JetStream stats: {e!s}")
+        raise HTTPException(500, f"Failed to get JetStream stats: {e!s}") from e
 
 
 @router.post("/jetstream/initialize")
@@ -332,4 +332,4 @@ async def initialize_jetstream(
         }
     except Exception as e:
         logger.exception("Failed to initialize JetStream: {e}")
-        raise HTTPException(500, f"Failed to initialize JetStream: {e!s}")
+        raise HTTPException(500, f"Failed to initialize JetStream: {e!s}") from e

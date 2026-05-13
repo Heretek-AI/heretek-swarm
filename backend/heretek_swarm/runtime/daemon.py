@@ -261,7 +261,7 @@ async def _run_daemon_loop(ctx: DaemonContext) -> None:
         server = await asyncio.start_unix_server(_client_handler, path=str(socket_path))
         ctx._server = server  # noqa: SLF001
         # Make socket accessible to other processes (umask may restrict this).
-        os.chmod(str(socket_path), 0o666)
+        os.chmod(str(socket_path), 0o666)  # noqa: S103,PTH101
 
         logger.info(
             "daemon_socket_listening",

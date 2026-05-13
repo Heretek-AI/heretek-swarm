@@ -227,7 +227,7 @@ class EmbeddingProviderBase(ABC):
         """Async context manager entry."""
         return self
 
-    async def __aexit__(self, exc_type, exc_val, exc_tb):
+    async def __aexit__(self, exc_type, exc_val, exc_tb):  # noqa: B027
         """Async context manager exit."""
 
 

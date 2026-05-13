@@ -201,7 +201,7 @@ class WorkflowCycleDetector:
     """
 
     # 5-Phase workflow definition
-    FIVE_PHASES = ["plan", "analyze", "execute", "validate", "report"]
+    FIVE_PHASES = ["plan", "analyze", "execute", "validate", "report"]  # noqa: RUF012
 
     def __init__(
         self,
@@ -599,9 +599,9 @@ class WorkflowCycleDetector:
             "# TYPE heretek_workflow_cycles_broken_total counter",
             f"heretek_workflow_cycles_broken_total {self.metrics['total_cycles_broken']}",
             "",
-            "# HELP heretek_workflow_avg_iterations_before_cycle Average iterations before cycle detection",
+            "# HELP heretek_workflow_avg_iterations_before_cycle Average iterations before cycle detection",  # noqa: E501
             "# TYPE heretek_workflow_avg_iterations_before_cycle gauge",
-            f"heretek_workflow_avg_iterations_before_cycle {self.metrics['avg_iterations_before_cycle']}",
+            f"heretek_workflow_avg_iterations_before_cycle {self.metrics['avg_iterations_before_cycle']}",  # noqa: E501
             "",
         ]
 

@@ -784,7 +784,7 @@ class HeavySwarmWorkflow:
         trade_offs = []
         for i, alt1 in enumerate(alternatives[:-1]):
             for alt2 in alternatives[i + 1 :]:
-                trade_offs.append(
+                trade_offs.append(  # noqa: PERF401
                     {
                         "alternative_1": alt1.get("name", "unknown"),
                         "alternative_2": alt2.get("name", "unknown"),

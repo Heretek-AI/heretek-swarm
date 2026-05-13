@@ -370,7 +370,7 @@ async def update_provider(
     try:
         provider_uuid = UUID(provider_id)
     except ValueError:
-        raise HTTPException(400, f"Invalid provider ID format: '{provider_id}'")
+        raise HTTPException(400, f"Invalid provider ID format: '{provider_id}'")  # noqa: B904
 
     # Get existing provider
     existing = await service.get_llm_provider(provider_uuid)
@@ -443,7 +443,7 @@ async def delete_provider(provider_id: str) -> Response:
     try:
         provider_uuid = UUID(provider_id)
     except ValueError:
-        raise HTTPException(400, f"Invalid provider ID format: '{provider_id}'")
+        raise HTTPException(400, f"Invalid provider ID format: '{provider_id}'")  # noqa: B904
 
     # Check if provider exists
     existing = await service.get_llm_provider(provider_uuid)
@@ -1104,7 +1104,7 @@ async def submit_config(config: dict[str, Any]) -> dict[str, Any]:
 
     # Emit wizard.completed event for autonomous runtime startup (fire-and-forget)
     # This triggers the runtime to begin agent spawning without requiring user action
-    asyncio.create_task(_emit_wizard_completed_event(tier_config))
+    asyncio.create_task(_emit_wizard_completed_event(tier_config))  # noqa: RUF006
 
     result["success"] = len(result["errors"]) == 0
 
@@ -1153,7 +1153,7 @@ async def list_infrastructure_configs() -> dict[str, Any]:
         }
     except Exception as e:
         logger.error("Failed to list infrastructure configs", error=str(e))
-        raise HTTPException(500, f"Failed to list infrastructure configs: {e!s}")
+        raise HTTPException(500, f"Failed to list infrastructure configs: {e!s}") from e
 
 
 @router.post("/infrastructure")
@@ -1228,7 +1228,7 @@ async def create_infrastructure_config(
             service=config.service.value,
             error=str(e),
         )
-        raise HTTPException(500, f"Failed to create/update infrastructure config: {e!s}")
+        raise HTTPException(500, f"Failed to create/update infrastructure config: {e!s}") from e
 
 
 @router.get("/infrastructure/{service}")
@@ -1247,7 +1247,7 @@ async def get_infrastructure_config(service: str) -> dict[str, Any]:
     try:
         infra_service = InfrastructureService(service.lower())
     except ValueError:
-        raise HTTPException(
+        raise HTTPException(  # noqa: B904
             400,
             f"Invalid service type: {service}. Valid types: postgres, redis, qdrant, nats, mem0",
         )
@@ -1276,7 +1276,7 @@ async def get_infrastructure_config(service: str) -> dict[str, Any]:
         raise
     except Exception as e:
         logger.error("Failed to get infrastructure config", service=service, error=str(e))
-        raise HTTPException(500, f"Failed to get infrastructure config: {e!s}")
+        raise HTTPException(500, f"Failed to get infrastructure config: {e!s}") from e
 
 
 @router.post("/infrastructure/{service}/health-check")
@@ -1295,7 +1295,7 @@ async def check_service_health(service: str) -> dict[str, Any]:
     try:
         infra_service = InfrastructureService(service.lower())
     except ValueError:
-        raise HTTPException(
+        raise HTTPException(  # noqa: B904
             400,
             f"Invalid service type: {service}. Valid types: postgres, redis, qdrant, nats, mem0",
         )
@@ -1340,7 +1340,7 @@ async def check_service_health(service: str) -> dict[str, Any]:
         raise
     except Exception as e:
         logger.error("Health check failed", service=service, error=str(e))
-        raise HTTPException(500, f"Health check failed: {e!s}")
+        raise HTTPException(500, f"Health check failed: {e!s}") from e
 
 
 @router.post("/infrastructure/health-check-all")
@@ -1416,7 +1416,7 @@ async def check_all_services_health() -> dict[str, Any]:
         }
     except Exception as e:
         logger.error("Failed to run health checks", error=str(e))
-        raise HTTPException(500, f"Failed to run health checks: {e!s}")
+        raise HTTPException(500, f"Failed to run health checks: {e!s}") from e
 
 
 @router.delete("/infrastructure/{service}")
@@ -1435,7 +1435,7 @@ async def delete_infrastructure_config(service: str) -> Response:
     try:
         infra_service = InfrastructureService(service.lower())
     except ValueError:
-        raise HTTPException(400, f"Invalid service type: {service}")
+        raise HTTPException(400, f"Invalid service type: {service}")  # noqa: B904
 
     try:
         config = await service.get_infrastructure_config_by_service(infra_service.value)
@@ -1452,7 +1452,7 @@ async def delete_infrastructure_config(service: str) -> Response:
         raise
     except Exception as e:
         logger.error("Failed to delete infrastructure config", service=service, error=str(e))
-        raise HTTPException(500, f"Failed to delete infrastructure config: {e!s}")
+        raise HTTPException(500, f"Failed to delete infrastructure config: {e!s}") from e
 
 
 # =============================================================================

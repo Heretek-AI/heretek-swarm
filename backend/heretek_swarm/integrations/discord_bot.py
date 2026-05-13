@@ -84,7 +84,7 @@ class DiscordBot:
             """Welcome message."""
             embed = discord.Embed(
                 title="🤖 Welcome to Heretek Swarm!",
-                description="I'm your Discord assistant for interacting with the AI agent collective.",
+                description="I'm your Discord assistant for interacting with the AI agent collective.",  # noqa: E501
                 color=discord.Color.blue(),
             )
             embed.add_field(
@@ -113,7 +113,7 @@ class DiscordBot:
             )
             embed.add_field(
                 name="Chat with Agents",
-                value="Just type your message in #agent-chat or DM me, and I'll route it to the appropriate agent.",
+                value="Just type your message in #agent-chat or DM me, and I'll route it to the appropriate agent.",  # noqa: E501
                 inline=False,
             )
             embed.add_field(

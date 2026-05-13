@@ -396,8 +396,8 @@ class EventStore:
                 CREATE INDEX IF NOT EXISTS idx_events_aggregate ON domain_events(aggregate_id);
                 CREATE INDEX IF NOT EXISTS idx_events_type ON domain_events(event_type);
                 CREATE INDEX IF NOT EXISTS idx_events_timestamp ON domain_events(timestamp);
-                CREATE INDEX IF NOT EXISTS idx_events_aggregate_type ON domain_events(aggregate_type);
-                CREATE INDEX IF NOT EXISTS idx_events_version ON domain_events(aggregate_id, version);
+                CREATE INDEX IF NOT EXISTS idx_events_aggregate_type ON domain_events(aggregate_type);  # noqa: E501
+                CREATE INDEX IF NOT EXISTS idx_events_version ON domain_events(aggregate_id, version);  # noqa: E501
             """)
 
             # Snapshots table
@@ -469,7 +469,7 @@ class EventStore:
         self._check_snapshot_memory(event.aggregate_id, event.aggregate_type)
 
         # Notify handlers
-        asyncio.create_task(self._notify_handlers(event))
+        asyncio.create_task(self._notify_handlers(event))  # noqa: RUF006
 
         logger.debug("Event appended to memory: {event.event_id}")
         return True
