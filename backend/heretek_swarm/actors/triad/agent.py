@@ -634,11 +634,27 @@ class StewardAgent(TriadAgent):
         Returns *heartbeats* where the last-seen timestamp has not
         changed within ``_heartbeat_timeout`` seconds.
 
+        If ``_agent_heartbeats`` is populated (NATS path), use it directly.
+        Otherwise delegate to registry-based detection (no-infra mode).
+
         Returns:
             List of agent IDs whose heartbeats appear to have stalled.
         """
-        # In a full deployment this would query the NATS heartbeat subject.
-        # For no-infra / local testing, delegate to registry-based detection.
+        hb = getattr(self, '_agent_heartbeats', None)
+        if hb:
+            now = datetime.now(UTC)
+            stale: list[str] = []
+            for agent_id, last_seen in hb.items():
+                try:
+                    last_dt = datetime.fromisoformat(last_seen).replace(tzinfo=UTC)
+                    if (now - last_dt).total_seconds() > self._heartbeat_timeout:
+                        stale.append(agent_id)
+                except (ValueError, TypeError):
+                    stale.append(agent_id)
+            stale.sort()
+            return stale
+
+        # Fallback: delegate to registry-based detection
         return self._check_registry_heartbeats()
 
     async def _monitor_loop(self) -> None:

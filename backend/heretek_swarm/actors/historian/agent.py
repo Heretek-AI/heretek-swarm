@@ -156,8 +156,10 @@ class HistorianAgent(
         # Optional asyncpg connection pool for Postgres-backed event store
         self._db_pool: Any | None = db_pool  # may be injected later via internal_state
 
-        # JSONL event log path — read from module constant, overridable for tests
-        self._jsonl_path: Path = _HISTORIAN_FILE
+        # JSONL event log path — read from package-level _HISTORIAN_FILE
+        # so tests can patch heretek_swarm.actors.historian._HISTORIAN_FILE
+        # and have it picked up during initialize().
+        self._jsonl_path: Path | None = None
 
         # Event log infrastructure — shared queue, one writer at a time
         self._jsonl_queue: asyncio.Queue[dict[str, Any]] = asyncio.Queue()
@@ -170,6 +172,12 @@ class HistorianAgent(
         """Initialize the Historian agent."""
         # Initialize memory system
         await self.memory_system.initialize()
+
+        # Re-read _HISTORIAN_FILE from the package module at init time
+        # so tests can patch it before calling initialize().
+        import heretek_swarm.actors.historian as _h_mod
+
+        self._jsonl_path = _h_mod._HISTORIAN_FILE
 
         # Initialize unified knowledge access layer
         if self.rag_pipeline:
