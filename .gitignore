@@ -150,6 +150,7 @@ vendor/
 .cache/
 tmp/
 swarm-dashboard/playwright-report/data/*
+.gsd.migrating
 
 # Garbage build artifacts (pip install logs, grep redirects)
 =*
