@@ -65,7 +65,7 @@ USER appuser
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --retries=3 --start-period=15s \
-    CMD curl -sf http://localhost:8000/health || exit 1
+    CMD curl -sf http://localhost:8000/api/health || exit 1
 
 # Default: run the API server via heretek-swarm serve
 CMD ["heretek-swarm", "serve", "--host", "0.0.0.0", "--port", "8000"]
