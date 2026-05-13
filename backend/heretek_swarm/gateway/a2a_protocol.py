@@ -35,6 +35,7 @@ logger = structlog.get_logger(__name__)
 # Message type constants
 class MessageType(StrEnum):
     """A2A Protocol message types."""
+
     HANDSHAKE = "handshake"
     DISCOVERY = "discovery"
     MESSAGE = "message"
@@ -54,6 +55,7 @@ REDIS_CHANNEL_PREFIX = "a2a:messages"
 @dataclass
 class A2AMessage:
     """Structured A2A message."""
+
     msg_type: str
     sender_id: str
     sender_type: str
@@ -72,11 +74,7 @@ class A2AProtocol:
     """
 
     def __init__(
-        self,
-        event_mesh,
-        port: int = DEFAULT_PORT,
-        redis_client=None,
-        auth_required: bool = True
+        self, event_mesh, port: int = DEFAULT_PORT, redis_client=None, auth_required: bool = True
     ):
         """
         Initialize A2A Protocol.
@@ -105,7 +103,7 @@ class A2AProtocol:
             "a2a_protocol_initialized",
             port=port,
             redis_enabled=redis_client is not None,
-            auth_required=auth_required
+            auth_required=auth_required,
         )
 
     # ============== WebSocket Server ==============
@@ -125,12 +123,8 @@ class A2AProtocol:
         app = Starlette(routes=routes)
 
         import uvicorn
-        config = uvicorn.Config(
-            app,
-            host="0.0.0.0",
-            port=self.port,
-            log_level="info"
-        )
+
+        config = uvicorn.Config(app, host="0.0.0.0", port=self.port, log_level="info")
         self._server = uvicorn.Server(config)
 
         logger.info("a2a_server_starting", port=self.port)
@@ -152,13 +146,15 @@ class A2AProtocol:
 
     async def _health_check(self, request: Request) -> JSONResponse:
         """Health check endpoint."""
-        return JSONResponse({
-            "status": "healthy",
-            "protocol": "A2A",
-            "version": PROTOCOL_VERSION,
-            "connections": len(self._connections),
-            "agents": len(self._agent_registry)
-        })
+        return JSONResponse(
+            {
+                "status": "healthy",
+                "protocol": "A2A",
+                "version": PROTOCOL_VERSION,
+                "connections": len(self._connections),
+                "agents": len(self._agent_registry),
+            }
+        )
 
     # ============== Connection Handling ==============
 
@@ -176,7 +172,10 @@ class A2AProtocol:
 
         try:
             await websocket.accept()
-            logger.info("a2a_connection_accepted", remote=websocket.client.host if websocket.client else "unknown")
+            logger.info(
+                "a2a_connection_accepted",
+                remote=websocket.client.host if websocket.client else "unknown",
+            )
 
             # Message loop
             async for raw_message in websocket.iter_json():
@@ -193,8 +192,7 @@ class A2AProtocol:
                 # Check authentication for other messages
                 if self.auth_required and client_id not in self._authenticated:
                     await self._send_error(
-                        websocket,
-                        "Not authenticated - complete handshake first"
+                        websocket, "Not authenticated - complete handshake first"
                     )
                     continue
 
@@ -209,11 +207,7 @@ class A2AProtocol:
             if client_id:
                 await self._cleanup_connection(client_id)
 
-    async def _handle_handshake(
-        self,
-        websocket: WebSocket,
-        message: dict[str, Any]
-    ) -> str:
+    async def _handle_handshake(self, websocket: WebSocket, message: dict[str, Any]) -> str:
         """
         Handle handshake message.
 
@@ -228,10 +222,7 @@ class A2AProtocol:
 
         # Register with EventMesh
         client_id = await self.event_mesh.register(
-            websocket=websocket,
-            agent_type=agent_type,
-            capabilities=capabilities,
-            metadata=metadata
+            websocket=websocket, agent_type=agent_type, capabilities=capabilities, metadata=metadata
         )
 
         # Track connection
@@ -244,7 +235,7 @@ class A2AProtocol:
             "agent_type": agent_type,
             "capabilities": capabilities,
             "metadata": metadata,
-            "connected_at": datetime.now(UTC).isoformat()
+            "connected_at": datetime.now(UTC).isoformat(),
         }
 
         # Send handshake response
@@ -254,24 +245,17 @@ class A2AProtocol:
             "agent_id": client_id,
             "agent_type": agent_type,
             "protocol_version": PROTOCOL_VERSION,
-            "capabilities": ["broadcast", "discovery", "messaging"]
+            "capabilities": ["broadcast", "discovery", "messaging"],
         }
 
         await websocket.send_json(response)
 
         # Log to Redis
         await self._log_message(
-            MessageType.HANDSHAKE.value,
-            client_id,
-            agent_type,
-            {"status": "connected"}
+            MessageType.HANDSHAKE.value, client_id, agent_type, {"status": "connected"}
         )
 
-        logger.info(
-            "a2a_handshake_completed",
-            client_id=client_id,
-            agent_type=agent_type
-        )
+        logger.info("a2a_handshake_completed", client_id=client_id, agent_type=agent_type)
 
         # Broadcast discovery to other agents
         await self._broadcast_discovery(client_id, agent_type)
@@ -285,19 +269,13 @@ class A2AProtocol:
             "action": "agent_joined",
             "agent_id": client_id,
             "agent_type": agent_type,
-            "timestamp": datetime.now(UTC).isoformat()
+            "timestamp": datetime.now(UTC).isoformat(),
         }
 
-        await self.event_mesh.broadcast(
-            discovery_msg,
-            exclude=[client_id]
-        )
+        await self.event_mesh.broadcast(discovery_msg, exclude=[client_id])
 
     async def _route_message(
-        self,
-        websocket: WebSocket,
-        client_id: str,
-        message: dict[str, Any]
+        self, websocket: WebSocket, client_id: str, message: dict[str, Any]
     ) -> None:
         """Route message to appropriate handler."""
         msg_type = message.get("type", "unknown")
@@ -319,11 +297,7 @@ class A2AProtocol:
 
     # ============== Message Handlers ==============
 
-    async def _handle_discovery(
-        self,
-        client_id: str,
-        message: dict[str, Any]
-    ) -> None:
+    async def _handle_discovery(self, client_id: str, message: dict[str, Any]) -> None:
         """Handle discovery request - return list of all agents."""
         action = message.get("action", "list_agents")
 
@@ -333,38 +307,28 @@ class A2AProtocol:
                 "type": "discovery",
                 "action": "agent_list",
                 "agents": list(self._agent_registry.values()),
-                "count": len(self._agent_registry)
+                "count": len(self._agent_registry),
             }
             await self.event_mesh.send_to(client_id, response)
 
         elif action == "by_type":
             # Filter by agent type
             agent_type = message.get("agent_type")
-            filtered = [
-                a for a in self._agent_registry.values()
-                if a["agent_type"] == agent_type
-            ]
+            filtered = [a for a in self._agent_registry.values() if a["agent_type"] == agent_type]
             response = {
                 "type": "discovery",
                 "action": "agent_list",
                 "agents": filtered,
-                "count": len(filtered)
+                "count": len(filtered),
             }
             await self.event_mesh.send_to(client_id, response)
 
         # Log to Redis
         await self._log_message(
-            MessageType.DISCOVERY.value,
-            client_id,
-            self._get_agent_type(client_id),
-            message
+            MessageType.DISCOVERY.value, client_id, self._get_agent_type(client_id), message
         )
 
-    async def _handle_agent_message(
-        self,
-        client_id: str,
-        message: dict[str, Any]
-    ) -> None:
+    async def _handle_agent_message(self, client_id: str, message: dict[str, Any]) -> None:
         """Handle standard agent-to-agent message."""
         target_id = message.get("target")
         content = message.get("content", {})
@@ -378,17 +342,10 @@ class A2AProtocol:
 
         # Log to Redis
         await self._log_message(
-            MessageType.MESSAGE.value,
-            client_id,
-            self._get_agent_type(client_id),
-            content
+            MessageType.MESSAGE.value, client_id, self._get_agent_type(client_id), content
         )
 
-    async def _handle_status(
-        self,
-        client_id: str,
-        message: dict[str, Any]
-    ) -> None:
+    async def _handle_status(self, client_id: str, message: dict[str, Any]) -> None:
         """Handle status update message."""
         status = message.get("status", {})
 
@@ -400,66 +357,36 @@ class A2AProtocol:
         await self.event_mesh.broadcast(message, exclude=[client_id])
 
         await self._log_message(
-            MessageType.STATUS.value,
-            client_id,
-            self._get_agent_type(client_id),
-            status
+            MessageType.STATUS.value, client_id, self._get_agent_type(client_id), status
         )
 
-    async def _handle_proposal(
-        self,
-        client_id: str,
-        message: dict[str, Any]
-    ) -> None:
+    async def _handle_proposal(self, client_id: str, message: dict[str, Any]) -> None:
         """Handle triad proposal message."""
         proposal_id = message.get("proposal_id")
 
         # Broadcast proposal to all agents
         await self.event_mesh.broadcast(message, exclude=[client_id])
 
-        logger.info(
-            "a2a_proposal_received",
-            client_id=client_id,
-            proposal_id=proposal_id
-        )
+        logger.info("a2a_proposal_received", client_id=client_id, proposal_id=proposal_id)
 
         await self._log_message(
-            MessageType.PROPOSAL.value,
-            client_id,
-            self._get_agent_type(client_id),
-            message
+            MessageType.PROPOSAL.value, client_id, self._get_agent_type(client_id), message
         )
 
-    async def _handle_vote(
-        self,
-        client_id: str,
-        message: dict[str, Any]
-    ) -> None:
+    async def _handle_vote(self, client_id: str, message: dict[str, Any]) -> None:
         """Handle triad vote message."""
         vote = message.get("vote")
         proposal_id = message.get("proposal_id")
 
         await self.event_mesh.broadcast(message, exclude=[client_id])
 
-        logger.info(
-            "a2a_vote_received",
-            client_id=client_id,
-            proposal_id=proposal_id,
-            vote=vote
-        )
+        logger.info("a2a_vote_received", client_id=client_id, proposal_id=proposal_id, vote=vote)
 
         await self._log_message(
-            MessageType.VOTE.value,
-            client_id,
-            self._get_agent_type(client_id),
-            message
+            MessageType.VOTE.value, client_id, self._get_agent_type(client_id), message
         )
 
-    async def _handle_decision(
-        self,
-        client_id: str,
-        message: dict[str, Any]
-    ) -> None:
+    async def _handle_decision(self, client_id: str, message: dict[str, Any]) -> None:
         """Handle final decision message."""
         decision = message.get("decision")
         proposal_id = message.get("proposal_id")
@@ -467,26 +394,18 @@ class A2AProtocol:
         await self.event_mesh.broadcast(message)
 
         logger.info(
-            "a2a_decision_made",
-            client_id=client_id,
-            proposal_id=proposal_id,
-            decision=decision
+            "a2a_decision_made", client_id=client_id, proposal_id=proposal_id, decision=decision
         )
 
         await self._log_message(
-            MessageType.DECISION.value,
-            client_id,
-            self._get_agent_type(client_id),
-            message
+            MessageType.DECISION.value, client_id, self._get_agent_type(client_id), message
         )
 
     async def _send_error(self, websocket: WebSocket, error_msg: str) -> None:
         """Send error message to client."""
-        await websocket.send_json({
-            "type": "error",
-            "message": error_msg,
-            "timestamp": datetime.now(UTC).isoformat()
-        })
+        await websocket.send_json(
+            {"type": "error", "message": error_msg, "timestamp": datetime.now(UTC).isoformat()}
+        )
 
     async def _cleanup_connection(self, client_id: str) -> None:
         """Clean up connection state on disconnect."""
@@ -505,7 +424,7 @@ class A2AProtocol:
         logger.info(
             "a2a_connection_cleaned",
             client_id=client_id,
-            agent_type=agent_info.get("agent_type", "unknown")
+            agent_type=agent_info.get("agent_type", "unknown"),
         )
 
         # Broadcast disconnect
@@ -514,18 +433,14 @@ class A2AProtocol:
             "action": "agent_left",
             "agent_id": client_id,
             "agent_type": agent_info.get("agent_type", "unknown"),
-            "timestamp": datetime.now(UTC).isoformat()
+            "timestamp": datetime.now(UTC).isoformat(),
         }
         await self.event_mesh.broadcast(discovery_msg)
 
     # ============== Redis Logging ==============
 
     async def _log_message(
-        self,
-        msg_type: str,
-        sender_id: str,
-        sender_type: str,
-        payload: dict[str, Any]
+        self, msg_type: str, sender_id: str, sender_type: str, payload: dict[str, Any]
     ) -> None:
         """Log message to Redis pub/sub if available."""
         if not self.redis_client:
@@ -538,7 +453,7 @@ class A2AProtocol:
                 "sender_id": sender_id,
                 "sender_type": sender_type,
                 "payload": payload,
-                "timestamp": datetime.now(UTC).isoformat()
+                "timestamp": datetime.now(UTC).isoformat(),
             }
 
             await self.redis_client.publish(channel, json.dumps(message_data))
@@ -561,7 +476,7 @@ class A2AProtocol:
             "registered_agents": len(self._agent_registry),
             "agent_types": self._count_agent_types(),
             "port": self.port,
-            "running": self._running
+            "running": self._running,
         }
 
     def _count_agent_types(self) -> dict[str, int]:
@@ -583,5 +498,5 @@ MESSAGE_TYPES = {
     "PROPOSAL": "proposal",
     "VOTE": "vote",
     "DECISION": "decision",
-    "ERROR": "error"
+    "ERROR": "error",
 }

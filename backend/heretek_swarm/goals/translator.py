@@ -89,9 +89,9 @@ Do NOT wrap the JSON in markdown code blocks. Output ONLY valid JSON.
                     "config": {
                         "agent_id": "coder",
                         "instruction": f"Execute fallback plan for goal: {goal.title}",
-                        "context": goal.description
-                    }
+                        "context": goal.description,
+                    },
                 }
             ],
-            "edges": []
+            "edges": [],
         }

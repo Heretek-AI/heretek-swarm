@@ -1,0 +1,75 @@
+=== All API files ===
+backend/heretek_swarm/api/__init__.py
+backend/heretek_swarm/api/agents/__init__.py
+backend/heretek_swarm/api/agents/chat.py
+backend/heretek_swarm/api/agents/core.py
+backend/heretek_swarm/api/agents/instances.py
+backend/heretek_swarm/api/agents/jetstream.py
+backend/heretek_swarm/api/agents/lifecycle.py
+backend/heretek_swarm/api/agents/profiling.py
+backend/heretek_swarm/api/agents/routing_control.py
+backend/heretek_swarm/api/agents/routing_rules.py
+backend/heretek_swarm/api/agents_management.py
+backend/heretek_swarm/api/alerts.py
+backend/heretek_swarm/api/autonomous.py
+backend/heretek_swarm/api/collective_evolution.py
+backend/heretek_swarm/api/configuration.py
+backend/heretek_swarm/api/consciousness.py
+backend/heretek_swarm/api/consensus.py
+backend/heretek_swarm/api/emergent_intelligence.py
+backend/heretek_swarm/api/evaluation.py
+backend/heretek_swarm/api/logging_middleware.py
+backend/heretek_swarm/api/main.py
+backend/heretek_swarm/api/mcp.py
+backend/heretek_swarm/api/memories.py
+backend/heretek_swarm/api/memory_versions.py
+backend/heretek_swarm/api/metrics.py
+backend/heretek_swarm/api/observability.py
+backend/heretek_swarm/api/plugins.py
+backend/heretek_swarm/api/providers_config.py
+backend/heretek_swarm/api/provisioner.py
+backend/heretek_swarm/api/rag.py
+backend/heretek_swarm/api/rate_limiting.py
+backend/heretek_swarm/api/skills.py
+backend/heretek_swarm/api/websockets.py
+backend/heretek_swarm/api/wizard.py
+backend/heretek_swarm/api/workflows.py
+
+=== Main app creation ===
+
+=== Prompt routes ===
+
+=== Health route ===
+No health.py
+
+=== Router includes ===
+backend/heretek_swarm/api/agents_management.py:37:router.include_router(chat.router, tags=["chat"])
+backend/heretek_swarm/api/agents_management.py:38:router.include_router(core.router, tags=["core"])
+backend/heretek_swarm/api/agents_management.py:39:router.include_router(lifecycle.router, tags=["lifecycle"])
+backend/heretek_swarm/api/agents_management.py:40:router.include_router(instances.router, tags=["instances"])
+backend/heretek_swarm/api/agents_management.py:41:router.include_router(jetstream.router, tags=["jetstream"])
+backend/heretek_swarm/api/agents_management.py:42:router.include_router(profiling.router, tags=["profiling"])
+backend/heretek_swarm/api/agents_management.py:43:router.include_router(routing_rules.router, tags=["routing_rules"])
+backend/heretek_swarm/api/agents_management.py:44:router.include_router(routing_control.router, tags=["routing_control"])
+backend/heretek_swarm/api/main.py:433:        app.mount("/assets", StaticFiles(directory=dist_path, html=True), name="dashboard_assets")
+backend/heretek_swarm/api/main.py:517:app.include_router(websockets.router)
+backend/heretek_swarm/api/main.py:518:app.include_router(consensus.router)
+backend/heretek_swarm/api/main.py:519:app.include_router(plugins.router)
+backend/heretek_swarm/api/main.py:520:app.include_router(workflows.router)
+backend/heretek_swarm/api/main.py:521:app.include_router(observability.router)
+backend/heretek_swarm/api/main.py:522:app.include_router(evaluation.router)
+backend/heretek_swarm/api/main.py:523:app.include_router(rag.router)
+backend/heretek_swarm/api/main.py:524:app.include_router(consciousness.router)
+backend/heretek_swarm/api/main.py:525:app.include_router(skills.router)
+backend/heretek_swarm/api/main.py:526:app.include_router(emergent_intelligence.router)
+backend/heretek_swarm/api/main.py:527:app.include_router(agents_management.router)
+backend/heretek_swarm/api/main.py:528:app.include_router(autonomous.router)
+backend/heretek_swarm/api/main.py:529:app.include_router(configuration.router)
+backend/heretek_swarm/api/main.py:530:app.include_router(providers_config.router)
+backend/heretek_swarm/api/main.py:531:app.include_router(wizard.router)
+backend/heretek_swarm/api/main.py:532:app.include_router(provisioner.router)
+backend/heretek_swarm/api/main.py:533:app.include_router(metrics.router)
+backend/heretek_swarm/api/main.py:534:app.include_router(memories.router)
+backend/heretek_swarm/api/main.py:535:app.include_router(memory_versions.router)
+backend/heretek_swarm/api/main.py:536:app.include_router(collective_evolution.router)
+backend/heretek_swarm/api/main.py:537:app.include_router(mcp_router)

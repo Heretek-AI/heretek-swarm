@@ -106,7 +106,9 @@ class TestFileWorkflowStore:
         assert first["created_at"] == second["created_at"]
         assert second["name"] == "Renamed"
 
-    def test_load_all(self, store: FileWorkflowStore, sample_definition: dict, sample_definition_2: dict):
+    def test_load_all(
+        self, store: FileWorkflowStore, sample_definition: dict, sample_definition_2: dict
+    ):
         """load_all() returns every persisted workflow."""
         store.save("wf-1", sample_definition)
         store.save("wf-2", sample_definition_2)
@@ -131,7 +133,9 @@ class TestFileWorkflowStore:
         store.save("wf-1", sample_definition)
         assert store.exists("wf-1") is True
 
-    def test_atomic_write_produces_valid_json(self, store: FileWorkflowStore, sample_definition: dict):
+    def test_atomic_write_produces_valid_json(
+        self, store: FileWorkflowStore, sample_definition: dict
+    ):
         """The on-disk file is valid JSON after save."""
         store.save("wf-1", sample_definition)
         raw = store._path.read_text(encoding="utf-8")
@@ -185,9 +189,7 @@ class TestWorkflowEnginePersistence:
         assert "wf-test-001" in raw
 
     @pytest.mark.asyncio
-    async def test_get_workflow_reads_from_disk(
-        self, engine_with_store, sample_definition: dict
-    ):
+    async def test_get_workflow_reads_from_disk(self, engine_with_store, sample_definition: dict):
         """get_workflow falls back to disk when not in memory."""
         await engine_with_store.load_workflow(sample_definition)
         # Clear in-memory cache
@@ -224,9 +226,7 @@ class TestWorkflowEnginePersistence:
         assert "wf-test-001" not in raw
 
     @pytest.mark.asyncio
-    async def test_update_workflow(
-        self, engine_with_store, sample_definition: dict
-    ):
+    async def test_update_workflow(self, engine_with_store, sample_definition: dict):
         """update_workflow replaces the definition."""
         await engine_with_store.load_workflow(sample_definition)
         updated = await engine_with_store.update_workflow(

@@ -107,9 +107,7 @@ def _build_goal_vote_prompt(goal: Goal) -> str:
     )
 
 
-def _build_refinement_prompt(
-    goal: Goal, args_for: str, args_against: str
-) -> str:
+def _build_refinement_prompt(goal: Goal, args_for: str, args_against: str) -> str:
     """Build the round-2 refinement prompt."""
     criteria_lines = "\n".join(f"- {c}" for c in goal.success_criteria)
     return _REFINEMENT_PROMPT.format(
@@ -184,9 +182,7 @@ class GoalConsensus:
             goal_title=goal.title[:100],
         )
 
-        r1_votes = await self._collect_goal_votes(
-            goal, actors, prompt, per_round_timeout
-        )
+        r1_votes = await self._collect_goal_votes(goal, actors, prompt, per_round_timeout)
 
         approved, close = self._evaluate_threshold(r1_votes)
 
@@ -219,9 +215,7 @@ class GoalConsensus:
             reason="close_split_refinement",
         )
 
-        r2_votes = await self._collect_goal_votes(
-            goal, actors, r2_prompt, per_round_timeout
-        )
+        r2_votes = await self._collect_goal_votes(goal, actors, r2_prompt, per_round_timeout)
 
         approved, _ = self._evaluate_threshold(r2_votes)
 
@@ -314,9 +308,7 @@ class GoalConsensus:
             return 0.0
         return approve_count / total
 
-    def _evaluate_threshold(
-        self, votes: list[Vote]
-    ) -> tuple[bool, bool]:
+    def _evaluate_threshold(self, votes: list[Vote]) -> tuple[bool, bool]:
         """Evaluate votes against the 60% threshold.
 
         Returns:
@@ -391,12 +383,8 @@ class GoalConsensus:
         )
 
         # Check if Steward/Arbiter already voted in prior rounds
-        steward_vote = next(
-            (v for v in prior_votes if v.agent_id == self.steward_agent_id), None
-        )
-        arbiter_vote = next(
-            (v for v in prior_votes if v.agent_id == self.arbiter_agent_id), None
-        )
+        steward_vote = next((v for v in prior_votes if v.agent_id == self.steward_agent_id), None)
+        arbiter_vote = next((v for v in prior_votes if v.agent_id == self.arbiter_agent_id), None)
 
         tie_votes: list[Vote] = []
         for agent_id, existing in [

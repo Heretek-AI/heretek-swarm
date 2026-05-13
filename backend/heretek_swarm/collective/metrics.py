@@ -531,12 +531,12 @@ class CollectiveIntelligenceMetrics:
 
         # Calculate weighted overall score (0.0 to 1.0)
         raw_score = (
-            coordination_score * weights["coordination"] +
-            adaptation_score * weights["adaptation"] +
-            knowledge_sharing_score * weights["knowledge_sharing"] +
-            problem_solving_score * weights["problem_solving"] +
-            emergence_score * weights["emergence"] +
-            resilience_score * weights["resilience"]
+            coordination_score * weights["coordination"]
+            + adaptation_score * weights["adaptation"]
+            + knowledge_sharing_score * weights["knowledge_sharing"]
+            + problem_solving_score * weights["problem_solving"]
+            + emergence_score * weights["emergence"]
+            + resilience_score * weights["resilience"]
         )
 
         # Normalize to SIQ scale (50-150, with 100 as average)
@@ -548,12 +548,22 @@ class CollectiveIntelligenceMetrics:
 
         # Calculate component contributions
         contributions = {
-            "coordination": coordination_score * weights["coordination"] / raw_score if raw_score > 0 else 0,
-            "adaptation": adaptation_score * weights["adaptation"] / raw_score if raw_score > 0 else 0,
-            "knowledge_sharing": knowledge_sharing_score * weights["knowledge_sharing"] / raw_score if raw_score > 0 else 0,
-            "problem_solving": problem_solving_score * weights["problem_solving"] / raw_score if raw_score > 0 else 0,
+            "coordination": coordination_score * weights["coordination"] / raw_score
+            if raw_score > 0
+            else 0,
+            "adaptation": adaptation_score * weights["adaptation"] / raw_score
+            if raw_score > 0
+            else 0,
+            "knowledge_sharing": knowledge_sharing_score * weights["knowledge_sharing"] / raw_score
+            if raw_score > 0
+            else 0,
+            "problem_solving": problem_solving_score * weights["problem_solving"] / raw_score
+            if raw_score > 0
+            else 0,
             "emergence": emergence_score * weights["emergence"] / raw_score if raw_score > 0 else 0,
-            "resilience": resilience_score * weights["resilience"] / raw_score if raw_score > 0 else 0,
+            "resilience": resilience_score * weights["resilience"] / raw_score
+            if raw_score > 0
+            else 0,
         }
 
         siq = SwarmIntelligenceQuotient(
@@ -661,7 +671,9 @@ class CollectiveIntelligenceMetrics:
         # Get pattern statistics
         adaptor_stats = self.agent_adaptor.get_swarm_adaptation_stats()
 
-        patterns_shared = adaptor_stats.get("total_patterns_adopted", 0) + adaptor_stats.get("total_patterns_rejected", 0)
+        patterns_shared = adaptor_stats.get("total_patterns_adopted", 0) + adaptor_stats.get(
+            "total_patterns_rejected", 0
+        )
         patterns_adopted = adaptor_stats.get("total_patterns_adopted", 0)
 
         adoption_rate = patterns_adopted / max(patterns_shared, 1)
@@ -670,7 +682,8 @@ class CollectiveIntelligenceMetrics:
         # Based on adaptation events in the last hour
         one_hour_ago = datetime.now(UTC) - timedelta(hours=1)
         recent_adaptations = [
-            e for e in self.agent_adaptor._adaptation_events
+            e
+            for e in self.agent_adaptor._adaptation_events
             if datetime.fromisoformat(e.timestamp) > one_hour_ago
         ]
         transfer_rate_per_hour = len(recent_adaptations)
@@ -684,12 +697,10 @@ class CollectiveIntelligenceMetrics:
 
         # Network metrics (simplified)
         active_transmitters = sum(
-            1 for s in self.learning_controller._agent_states.values()
-            if s.total_updates > 0
+            1 for s in self.learning_controller._agent_states.values() if s.total_updates > 0
         )
         active_receivers = sum(
-            1 for s in self.agent_adaptor._agent_states.values()
-            if len(s.adopted_patterns) > 0
+            1 for s in self.agent_adaptor._agent_states.values() if len(s.adopted_patterns) > 0
         )
 
         # Network density (simplified)
@@ -754,10 +765,13 @@ class CollectiveIntelligenceMetrics:
         cognitive_emergence = emergence_coefficient
 
         # Emergence indicators
-        macro_patterns = len([
-            p for p in self.emergence_detector._emergent_patterns
-            if p.emergence_level in [EmergenceLevel.STRONG, EmergenceLevel.CRITICAL]
-        ])
+        macro_patterns = len(
+            [
+                p
+                for p in self.emergence_detector._emergent_patterns
+                if p.emergence_level in [EmergenceLevel.STRONG, EmergenceLevel.CRITICAL]
+            ]
+        )
 
         # Micro-macro link strength
         # How well individual behaviors predict collective patterns
@@ -836,7 +850,9 @@ class CollectiveIntelligenceMetrics:
         if emergence_history:
             health_components.append(emergence_history[-1])
 
-        swarm_health_score = (sum(health_components) / len(health_components)) * 100.0 if health_components else 0.0
+        swarm_health_score = (
+            (sum(health_components) / len(health_components)) * 100.0 if health_components else 0.0
+        )
 
         # Get current metrics
         current_siq = self._siq_history[-1].overall_siq if self._siq_history else 100.0
@@ -909,16 +925,10 @@ class CollectiveIntelligenceMetrics:
 
         # Apply time filters
         if start_time:
-            values = [
-                v for v in values
-                if datetime.fromisoformat(v.timestamp) >= start_time
-            ]
+            values = [v for v in values if datetime.fromisoformat(v.timestamp) >= start_time]
 
         if end_time:
-            values = [
-                v for v in values
-                if datetime.fromisoformat(v.timestamp) <= end_time
-            ]
+            values = [v for v in values if datetime.fromisoformat(v.timestamp) <= end_time]
 
         start = values[0].timestamp if values else None
         end = values[-1].timestamp if values else None
@@ -1017,7 +1027,7 @@ class CollectiveIntelligenceMetrics:
             return 100.0
 
         # Linear approximation
-        return (siq - 50)  # 50-150 maps to 0-100 percentile
+        return siq - 50  # 50-150 maps to 0-100 percentile
 
     def _register_default_metrics(self) -> None:
         """Register default metric definitions."""
@@ -1163,34 +1173,40 @@ class CollectiveIntelligenceMetrics:
         if self._siq_history:
             current_siq = self._siq_history[-1].overall_siq
             if current_siq < 70:
-                alerts.append({
-                    "severity": "warning",
-                    "type": "low_siq",
-                    "message": f"Low SIQ detected: {current_siq:.1f}",
-                    "timestamp": datetime.now(UTC).isoformat(),
-                })
+                alerts.append(
+                    {
+                        "severity": "warning",
+                        "type": "low_siq",
+                        "message": f"Low SIQ detected: {current_siq:.1f}",
+                        "timestamp": datetime.now(UTC).isoformat(),
+                    }
+                )
 
         # Check efficiency
         if self._efficiency_history:
             current_eff = self._efficiency_history[-1].efficiency_ratio
             if current_eff < 0.3:
-                alerts.append({
-                    "severity": "warning",
-                    "type": "low_efficiency",
-                    "message": f"Low efficiency detected: {current_eff:.2f}",
-                    "timestamp": datetime.now(UTC).isoformat(),
-                })
+                alerts.append(
+                    {
+                        "severity": "warning",
+                        "type": "low_efficiency",
+                        "message": f"Low efficiency detected: {current_eff:.2f}",
+                        "timestamp": datetime.now(UTC).isoformat(),
+                    }
+                )
 
         # Check emergence
         if self._emergence_history:
             current_emerg = self._emergence_history[-1].emergence_coefficient
             if current_emerg > 0.8:
-                alerts.append({
-                    "severity": "info",
-                    "type": "high_emergence",
-                    "message": f"High emergence detected: {current_emerg:.2f}",
-                    "timestamp": datetime.now(UTC).isoformat(),
-                })
+                alerts.append(
+                    {
+                        "severity": "info",
+                        "type": "high_emergence",
+                        "message": f"High emergence detected: {current_emerg:.2f}",
+                        "timestamp": datetime.now(UTC).isoformat(),
+                    }
+                )
 
         return alerts
 

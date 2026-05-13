@@ -138,9 +138,7 @@ class TestContractTicksRoutedToTargetAgents:
         tick_a = _make_tick(agent_id="alpha", action="task_a")
         tick_b = _make_tick(agent_id="beta", action="task_b")
         chronos = _make_chronos_mock(ticks=[tick_a, tick_b])
-        swarm = _make_swarm_with_actors(
-            {"chronos": chronos, "alpha": alpha, "beta": beta}
-        )
+        swarm = _make_swarm_with_actors({"chronos": chronos, "alpha": alpha, "beta": beta})
 
         await swarm._process_scheduled_tasks()
 
@@ -184,9 +182,7 @@ class TestContractHistorianLogEvents:
         processing scheduled tasks."""
         chronos = _make_chronos_mock()
         historian = _make_historian_mock()
-        swarm = _make_swarm_with_actors(
-            {"chronos": chronos, "historian": historian}
-        )
+        swarm = _make_swarm_with_actors({"chronos": chronos, "historian": historian})
 
         await swarm._process_cycle()
 
@@ -197,9 +193,7 @@ class TestContractHistorianLogEvents:
         """Historian is notified even when no ticks are due."""
         chronos = _make_chronos_mock(ticks=[])
         historian = _make_historian_mock()
-        swarm = _make_swarm_with_actors(
-            {"chronos": chronos, "historian": historian}
-        )
+        swarm = _make_swarm_with_actors({"chronos": chronos, "historian": historian})
 
         await swarm._process_scheduled_tasks()
 
@@ -284,9 +278,7 @@ class TestContractHandlesMissingTargetAgent:
         historian = _make_historian_mock()
         tick = _make_tick(agent_id="ghost")
         chronos = _make_chronos_mock(ticks=[tick])
-        swarm = _make_swarm_with_actors(
-            {"chronos": chronos, "historian": historian}
-        )
+        swarm = _make_swarm_with_actors({"chronos": chronos, "historian": historian})
 
         await swarm._process_scheduled_tasks()
 

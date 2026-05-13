@@ -161,8 +161,7 @@ class GovernanceAgentSociety(AgentSociety):
             )
             raise GovernanceSecurityError(
                 message=(
-                    f"Governance validation failed for collective task {task.id}: "
-                    f" {failed_layers}"
+                    f"Governance validation failed for collective task {task.id}:  {failed_layers}"
                 ),
                 result=result,
             )

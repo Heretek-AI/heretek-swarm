@@ -70,6 +70,7 @@ def endpoint_client() -> TestClient:
 # Helpers
 # ---------------------------------------------------------------------------
 
+
 def _make_registry_with_tools(count: int = 3) -> MCPToolRegistry:
     """Return a fresh ``MCPToolRegistry`` with *count* test tools registered."""
     registry = MCPToolRegistry()
@@ -84,8 +85,10 @@ def _make_registry_with_tools(count: int = 3) -> MCPToolRegistry:
             },
             category="test",
         )
+
         def handler(args, ctx, n=f"test_tool_{i}"):
             return {"ok": True, "tool": n}
+
         registry.register_tool(meta, handler)
     return registry
 
@@ -94,13 +97,16 @@ def _make_registry_with_tools(count: int = 3) -> MCPToolRegistry:
 # Tests: _load_tool_states
 # ---------------------------------------------------------------------------
 
+
 class TestLoadToolStates:
     """Suite for ``_load_tool_states()``."""
 
     def test_load_returns_empty_for_missing_file(self, tmp_path: Path) -> None:
         """When no state file exists, _load_tool_states returns an empty dict."""
-        with patch("heretek_swarm.mcp.registry.TOOLS_STATE_FILE",
-                   tmp_path / "nonexistent" / "tools_state.json"):
+        with patch(
+            "heretek_swarm.mcp.registry.TOOLS_STATE_FILE",
+            tmp_path / "nonexistent" / "tools_state.json",
+        ):
             registry = MCPToolRegistry()
             result = registry._load_tool_states()
             assert result == {}
@@ -148,7 +154,7 @@ class TestLoadToolStates:
             "tool_states": {
                 "valid_tool": True,
                 "bad_tool": "yes",  # string, not bool
-                "also_bad": 123,    # int, not bool
+                "also_bad": 123,  # int, not bool
             },
         }
         state_file.write_text(json.dumps(payload), encoding="utf-8")
@@ -162,6 +168,7 @@ class TestLoadToolStates:
 # ---------------------------------------------------------------------------
 # Tests: _save_tool_states (atomic write)
 # ---------------------------------------------------------------------------
+
 
 class TestSaveToolStates:
     """Suite for ``_save_tool_states()``."""
@@ -228,6 +235,7 @@ class TestSaveToolStates:
 # Tests: set_tool_enabled
 # ---------------------------------------------------------------------------
 
+
 class TestSetToolEnabled:
     """Suite for ``set_tool_enabled()``."""
 
@@ -285,6 +293,7 @@ class TestSetToolEnabled:
 # Tests: list_tool_summaries with enabled_only
 # ---------------------------------------------------------------------------
 
+
 class TestListToolSummaries:
     """Suite for ``list_tool_summaries(enabled_only=...)``."""
 
@@ -334,6 +343,7 @@ class TestListToolSummaries:
 # ---------------------------------------------------------------------------
 # Tests: persistence round-trip
 # ---------------------------------------------------------------------------
+
 
 class TestPersistenceRoundTrip:
     """Integration-style tests for the full persist/toggle/load cycle."""
@@ -391,6 +401,7 @@ class TestPersistenceRoundTrip:
 # ---------------------------------------------------------------------------
 # Tests: PUT /mcp/tools/toggle/{name} endpoint
 # ---------------------------------------------------------------------------
+
 
 class TestToggleEndpoint:
     """Suite for the ``PUT /mcp/tools/toggle/{name}`` endpoint."""
@@ -539,6 +550,7 @@ class TestBridgePersistsToolStates:
 
         # Build CoreMCPTools with controlled tool definitions.
         from tests.test_mcp_bridge import _make_core_mcp_with_tools
+
         core = _make_core_mcp_with_tools(tool_count=tool_count)
 
         # Patch the state file path so the bridge reads from tmp.
@@ -551,7 +563,7 @@ class TestBridgePersistsToolStates:
         """Tools disabled in tools_state.json come up disabled after bridge."""
         states = {
             "test_tool_0": False,  # disabled
-            "test_tool_1": True,   # enabled
+            "test_tool_1": True,  # enabled
             "test_tool_2": False,  # disabled
         }
         reg = self._bridge_with_states(tmp_path, tool_count=3, states=states)
@@ -626,7 +638,8 @@ class TestBridgePersistsToolStates:
 
         # Find the orphan warning.
         orphan_calls = [
-            call for call in mock_logger.warning.call_args_list
+            call
+            for call in mock_logger.warning.call_args_list
             if call[0][0] == "mcp_bridge_orphan_state"
         ]
         assert len(orphan_calls) == 1
@@ -651,8 +664,7 @@ class TestBridgePersistsToolStates:
 
         # Find the bridge_complete log call.
         complete_calls = [
-            call for call in mock_logger.info.call_args_list
-            if call[0][0] == "mcp_bridge_complete"
+            call for call in mock_logger.info.call_args_list if call[0][0] == "mcp_bridge_complete"
         ]
         assert len(complete_calls) == 1
         kwargs = complete_calls[0].kwargs
@@ -662,7 +674,9 @@ class TestBridgePersistsToolStates:
     def test_bridge_no_state_file_leaves_all_enabled(self, tmp_path: Path) -> None:
         """When no tools_state.json exists, all tools remain enabled (default)."""
         self._bridge_with_states(
-            tmp_path, tool_count=3, states=None  # no file written
+            tmp_path,
+            tool_count=3,
+            states=None,  # no file written
         )
 
         # Delete the state file if it got created by mkdir.
@@ -671,6 +685,7 @@ class TestBridgePersistsToolStates:
 
         # Re-bridge without a state file.
         from tests.test_mcp_bridge import _make_core_mcp_with_tools
+
         core = _make_core_mcp_with_tools(tool_count=3)
         set_registry(MCPToolRegistry())
 

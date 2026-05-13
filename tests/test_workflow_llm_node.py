@@ -350,7 +350,7 @@ class TestLLMNodeBoundaryConditions:
             active_agent_ids=["a1"],
         )
         engine = _make_engine(supervisor=supervisor)
-        prompt = 'Is value > 100 && < 200? "test" \'quote\' \\n\\t'
+        prompt = "Is value > 100 && < 200? \"test\" 'quote' \\n\\t"
         node = _make_llm_node(prompt=prompt)
         context = _make_context()
 

@@ -52,8 +52,14 @@ def _consensus_result(decision="yes", confidence=0.87, total_rounds=1, round_his
         "reasoning": "arbiter: Rate limiting prevents abuse.; sentinel: Security implications favor this.",
         "consensus_id": "test-abc123",
         "total_rounds": total_rounds,
-        "round_history": round_history or [
-            {"round_number": 1, "consensus_score": confidence, "decision": decision, "vote_count": 3}
+        "round_history": round_history
+        or [
+            {
+                "round_number": 1,
+                "consensus_score": confidence,
+                "decision": decision,
+                "vote_count": 3,
+            }
         ],
     }
 
@@ -265,6 +271,7 @@ class TestMultiRoundConsensusWithArgumentExchange:
         # Use _display_consensus_results to verify rendering
         import io
         import sys
+
         old_stdout = sys.stdout
         sys.stdout = buffer = io.StringIO()
         try:
@@ -293,6 +300,7 @@ class TestMultiRoundConsensusWithArgumentExchange:
 
         maker = MAKERConsensus(ahead_by_k=2, min_votes=3)
         import os
+
         characters_dir = os.path.join(
             os.path.dirname(os.path.dirname(__file__)),
             "heretek_swarm",
@@ -351,6 +359,7 @@ class TestRunConsensusSingleRound:
         from heretek_swarm.consensus.consensus_coordinator import ConsensusCoordinator
         from heretek_swarm.consensus.domain_selector import DomainSelector
         from heretek_swarm.consensus.maker import MAKERConsensus
+
         characters_dir = os.path.join(
             os.path.dirname(os.path.dirname(__file__)),
             "heretek_swarm",
@@ -369,12 +378,29 @@ class TestRunConsensusSingleRound:
             )
             return actor
 
-        actors = {aid: _make_actor() for aid in [
-            "alpha", "beta", "charlie", "arbiter", "sentinel",
-            "sentinel-prime", "coder", "examiner", "prism", "empath",
-            "habit-forge", "explorer", "guardian", "librarian", "logic",
-            "metis", "oracle", "scribe",
-        ]}
+        actors = {
+            aid: _make_actor()
+            for aid in [
+                "alpha",
+                "beta",
+                "charlie",
+                "arbiter",
+                "sentinel",
+                "sentinel-prime",
+                "coder",
+                "examiner",
+                "prism",
+                "empath",
+                "habit-forge",
+                "explorer",
+                "guardian",
+                "librarian",
+                "logic",
+                "metis",
+                "oracle",
+                "scribe",
+            ]
+        }
 
         coord = ConsensusCoordinator(maker=maker, domain_selector=ds, actors=actors)
         result = await coord.run_consensus("security analysis", max_rounds=1)
@@ -392,6 +418,7 @@ class TestRunConsensusSingleRound:
         from heretek_swarm.consensus.consensus_coordinator import ConsensusCoordinator
         from heretek_swarm.consensus.domain_selector import DomainSelector
         from heretek_swarm.consensus.maker import MAKERConsensus
+
         characters_dir = os.path.join(
             os.path.dirname(os.path.dirname(__file__)),
             "heretek_swarm",
@@ -414,12 +441,29 @@ class TestRunConsensusSingleRound:
             actor.run_with_llm = AsyncMock(side_effect=_capture)
             return actor
 
-        actors = {aid: _make_actor() for aid in [
-            "alpha", "beta", "charlie", "arbiter", "sentinel",
-            "sentinel-prime", "coder", "examiner", "prism", "empath",
-            "habit-forge", "explorer", "guardian", "librarian", "logic",
-            "metis", "oracle", "scribe",
-        ]}
+        actors = {
+            aid: _make_actor()
+            for aid in [
+                "alpha",
+                "beta",
+                "charlie",
+                "arbiter",
+                "sentinel",
+                "sentinel-prime",
+                "coder",
+                "examiner",
+                "prism",
+                "empath",
+                "habit-forge",
+                "explorer",
+                "guardian",
+                "librarian",
+                "logic",
+                "metis",
+                "oracle",
+                "scribe",
+            ]
+        }
 
         coord = ConsensusCoordinator(maker=maker, domain_selector=ds, actors=actors)
         await coord.run_consensus("security analysis", max_rounds=1)

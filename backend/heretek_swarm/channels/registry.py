@@ -20,18 +20,20 @@ logger = structlog.get_logger(__name__)
 
 class ChannelType(StrEnum):
     """Channel types for different communication patterns."""
-    INTERNAL = "internal"       # Agent-to-agent within swarm
-    EXTERNAL = "external"       # External system integration
-    SYSTEM = "system"           # System-wide broadcasts
-    CONSENSUS = "consensus"     # MAKER consensus voting
-    HEALTH = "health"           # Health monitoring
+
+    INTERNAL = "internal"  # Agent-to-agent within swarm
+    EXTERNAL = "external"  # External system integration
+    SYSTEM = "system"  # System-wide broadcasts
+    CONSENSUS = "consensus"  # MAKER consensus voting
+    HEALTH = "health"  # Health monitoring
 
 
 class QoSLevel(StrEnum):
     """Quality of Service levels for message delivery."""
-    AT_MOST_ONCE = "at-most-once"    # Fire and forget
+
+    AT_MOST_ONCE = "at-most-once"  # Fire and forget
     AT_LEAST_ONCE = "at-least-once"  # Guaranteed delivery with possible duplicates
-    EXACTLY_ONCE = "exactly-once"    # Guaranteed single delivery
+    EXACTLY_ONCE = "exactly-once"  # Guaranteed single delivery
 
 
 @dataclass
@@ -49,6 +51,7 @@ class ChannelDefinition:
         retention: Message retention period (e.g., "24h", "7d")
         priority: Channel priority (low, normal, high, critical)
     """
+
     name: str
     description: str
     channel_type: ChannelType
@@ -67,32 +70,33 @@ class ChannelMessage:
 
     Follows the SwarmMessage pattern from the proposal documents.
     """
+
     # Routing
-    subject: str                    # NATS subject / channel
-    correlation_id: str             # Unique message ID
-    reply_to: str | None         # Response subject (for request-reply)
+    subject: str  # NATS subject / channel
+    correlation_id: str  # Unique message ID
+    reply_to: str | None  # Response subject (for request-reply)
 
     # Sender/Receiver
-    sender_agent: str               # Sending agent ID
-    target_agents: list[str]        # Target agent IDs (or ["*"] for broadcast)
+    sender_agent: str  # Sending agent ID
+    target_agents: list[str]  # Target agent IDs (or ["*"] for broadcast)
 
     # Content
-    message_type: str               # Type identifier
-    content: dict[str, Any]         # Message payload
-    metadata: dict[str, Any]        # Additional context
+    message_type: str  # Type identifier
+    content: dict[str, Any]  # Message payload
+    metadata: dict[str, Any]  # Additional context
 
     # Timing
-    timestamp: str                  # ISO8601 timestamp
-    ttl_seconds: int | None      # Time-to-live (optional)
+    timestamp: str  # ISO8601 timestamp
+    ttl_seconds: int | None  # Time-to-live (optional)
 
     # Priority
-    priority: str = "normal"        # low, normal, high, critical
-    requires_ack: bool = False      # Require acknowledgment
+    priority: str = "normal"  # low, normal, high, critical
+    requires_ack: bool = False  # Require acknowledgment
 
     # Context
-    workflow_id: str | None = None      # Associated workflow
-    task_id: str | None = None          # Associated task
-    session_id: str | None = None       # User/session context
+    workflow_id: str | None = None  # Associated workflow
+    task_id: str | None = None  # Associated task
+    session_id: str | None = None  # User/session context
 
     @classmethod
     def create(
@@ -237,7 +241,8 @@ class ChannelRegistry:
                 "priority": c.priority,
                 "enabled": c.enabled,
             }
-            for c in channels if c.enabled
+            for c in channels
+            if c.enabled
         ]
 
     def get_subscriptions(self, agent_id: str) -> list[str]:
@@ -373,6 +378,7 @@ class ChannelRegistry:
 # Agent Communication Groups
 # ============================================================================
 
+
 class CommunicationGroup:
     """
     Communication group for organizing agent collaboration patterns.
@@ -424,52 +430,62 @@ class GroupRegistry:
         """Set up default communication groups from proposal documents."""
 
         # Governance Group
-        self.register(CommunicationGroup(
-            name="governance",
-            members=["steward", "alpha", "beta", "charlie", "historian"],
-            primary_channel="swarm.internal.triad",
-            topics=["decisions", "deliberations", "governance"],
-            description="Core governance and decision making",
-            consensus_enabled=True,
-        ))
+        self.register(
+            CommunicationGroup(
+                name="governance",
+                members=["steward", "alpha", "beta", "charlie", "historian"],
+                primary_channel="swarm.internal.triad",
+                topics=["decisions", "deliberations", "governance"],
+                description="Core governance and decision making",
+                consensus_enabled=True,
+            )
+        )
 
         # Execution Group
-        self.register(CommunicationGroup(
-            name="execution",
-            members=["coordinator", "coder", "explorer", "examiner"],
-            primary_channel="swarm.internal.coordination",
-            topics=["tasks", "execution", "results"],
-            description="Task planning and execution",
-        ))
+        self.register(
+            CommunicationGroup(
+                name="execution",
+                members=["coordinator", "coder", "explorer", "examiner"],
+                primary_channel="swarm.internal.coordination",
+                topics=["tasks", "execution", "results"],
+                description="Task planning and execution",
+            )
+        )
 
         # Safety Group
-        self.register(CommunicationGroup(
-            name="safety",
-            members=["sentinel", "sentinel-prime", "arbiter", "beta"],
-            primary_channel="swarm.internal.safety",
-            topics=["security", "validation", "alerts"],
-            description="Security and validation",
-            consensus_enabled=True,
-        ))
+        self.register(
+            CommunicationGroup(
+                name="safety",
+                members=["sentinel", "sentinel-prime", "arbiter", "beta"],
+                primary_channel="swarm.internal.safety",
+                topics=["security", "validation", "alerts"],
+                description="Security and validation",
+                consensus_enabled=True,
+            )
+        )
 
         # Memory Group
-        self.register(CommunicationGroup(
-            name="memory",
-            members=["historian", "metis", "perceiver", "perceiver-plus"],
-            primary_channel="swarm.internal.memory",
-            topics=["memory", "context", "retrieval"],
-            description="Knowledge management and RAG",
-            rag_enabled=True,
-        ))
+        self.register(
+            CommunicationGroup(
+                name="memory",
+                members=["historian", "metis", "perceiver", "perceiver-plus"],
+                primary_channel="swarm.internal.memory",
+                topics=["memory", "context", "retrieval"],
+                description="Knowledge management and RAG",
+                rag_enabled=True,
+            )
+        )
 
         # External Integration Group
-        self.register(CommunicationGroup(
-            name="external",
-            members=["nexus", "echo", "catalyst"],
-            primary_channel="swarm.external.api",
-            topics=["external", "webhooks", "events"],
-            description="External system integration",
-        ))
+        self.register(
+            CommunicationGroup(
+                name="external",
+                members=["nexus", "echo", "catalyst"],
+                primary_channel="swarm.external.api",
+                topics=["external", "webhooks", "events"],
+                description="External system integration",
+            )
+        )
 
     def register(self, group: CommunicationGroup) -> None:
         """Register a communication group."""

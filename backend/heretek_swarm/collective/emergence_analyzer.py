@@ -77,19 +77,23 @@ class EmergenceAnalyzer:
 
         return {
             "cooccurrences": dict(class_cooccurrences),
-            "most_correlated": max(class_cooccurrences.items(), key=lambda x: x[1])[0] if class_cooccurrences else None,
+            "most_correlated": max(class_cooccurrences.items(), key=lambda x: x[1])[0]
+            if class_cooccurrences
+            else None,
         }
 
     def get_emergence_timeline(self) -> list[dict[str, Any]]:
         timeline = []
 
         for pattern in sorted(self.detector._emergent_patterns, key=lambda p: p.timestamp):
-            timeline.append({
-                "timestamp": pattern.timestamp,
-                "pattern_class": pattern.pattern_class.value,
-                "emergence_level": pattern.emergence_level.value,
-                "emergence_score": pattern.emergence_score,
-                "agent_count": len(pattern.participating_agents),
-            })
+            timeline.append(
+                {
+                    "timestamp": pattern.timestamp,
+                    "pattern_class": pattern.pattern_class.value,
+                    "emergence_level": pattern.emergence_level.value,
+                    "emergence_score": pattern.emergence_score,
+                    "agent_count": len(pattern.participating_agents),
+                }
+            )
 
         return timeline

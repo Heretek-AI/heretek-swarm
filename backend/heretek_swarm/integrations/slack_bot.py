@@ -13,12 +13,14 @@ import structlog
 try:
     from slack_sdk import WebClient
     from slack_sdk.errors import SlackApiError
+
     SLACK_AVAILABLE = True
 except ImportError:
     SLACK_AVAILABLE = False
     WebClient = None
     SlackApiError = None
     logger = structlog.get_logger(__name__)
+
 
 class SlackBot:
     """
@@ -106,16 +108,9 @@ class SlackBot:
         """
         try:
             if blocks:
-                result = await self._bot.chat_postMessage(
-                    channel=channel,
-                    blocks=blocks,
-                    text=""
-                )
+                result = await self._bot.chat_postMessage(channel=channel, blocks=blocks, text="")
             else:
-                result = await self._bot.chat_postMessage(
-                    channel=channel,
-                    text=message
-                )
+                result = await self._bot.chat_postMessage(channel=channel, text=message)
 
             if not result["ok"]:
                 logger.error("slack_notification_failed", channel=channel)
@@ -148,22 +143,11 @@ class SlackBot:
         """
         try:
             blocks = [
-                {
-                    "type": "section",
-                    "text": {
-                        "type": "mrkdwn",
-                        "text": f"Agent Status: {status}"
-                    }
-                },
+                {"type": "section", "text": {"type": "mrkdwn", "text": f"Agent Status: {status}"}},
                 {
                     "type": "context",
-                    "elements": [
-                        {
-                            "type": "mrkdwn",
-                            "text": f"Agent ID: {agent_id}"
-                        }
-                    ]
-                }
+                    "elements": [{"type": "mrkdwn", "text": f"Agent ID: {agent_id}"}],
+                },
             ]
 
             if details:
@@ -172,25 +156,21 @@ class SlackBot:
                         "type": "mrkdwn",
                         "text": "Details:",
                         "fields": [
+                            {"type": "plain_text", "text": f"Type: {details.get('type', 'N/A')}"},
                             {
                                 "type": "plain_text",
-                                "text": f"Type: {details.get('type', 'N/A')}"
+                                "text": f"Runtime: {details.get('runtime', 'N/A')}",
                             },
                             {
                                 "type": "plain_text",
-                                "text": f"Runtime: {details.get('runtime', 'N/A')}"
+                                "text": f"Last Activity: {details.get('last_activity', 'N/A')}",
                             },
-                            {
-                                "type": "plain_text",
-                                "text": f"Last Activity: {details.get('last_activity', 'N/A')}"
-                            },
-                        ]
+                        ],
                     }
                 ]
 
             result = await self._bot.chat_postMessage(
-                channel=self._get_status_channel(),
-                blocks=blocks
+                channel=self._get_status_channel(), blocks=blocks
             )
 
             return result["ok"]
@@ -221,45 +201,28 @@ class SlackBot:
         """
         try:
             blocks = [
-                {
-                    "type": "section",
-                    "text": {
-                        "type": "mrkdwn",
-                        "text": "Agent Handoff"
-                    }
-                },
+                {"type": "section", "text": {"type": "mrkdwn", "text": "Agent Handoff"}},
                 {
                     "type": "context",
                     "elements": [
-                        {
-                            "type": "mrkdwn",
-                            "text": f"From: {from_agent}"
-                        },
-                        {
-                            "type": "mrkdwn",
-                            "text": f"To: {to_agent}"
-                        },
-                        {
-                            "type": "mrkdwn",
-                            "text": f"Reason: {reason}"
-                        },
-                        {
-                            "type": "plain_text",
-                            "text": context if context else ""
-                        }
-                    ]
-                }
+                        {"type": "mrkdwn", "text": f"From: {from_agent}"},
+                        {"type": "mrkdwn", "text": f"To: {to_agent}"},
+                        {"type": "mrkdwn", "text": f"Reason: {reason}"},
+                        {"type": "plain_text", "text": context if context else ""},
+                    ],
+                },
             ]
 
             result = await self._bot.chat_postMessage(
-                channel=self._get_status_channel(),
-                blocks=blocks
+                channel=self._get_status_channel(), blocks=blocks
             )
 
             return result["ok"]
 
         except Exception as e:
-            logger.error("slack_handoff_failed", from_agent=from_agent, to_agent=to_agent, error=str(e))
+            logger.error(
+                "slack_handoff_failed", from_agent=from_agent, to_agent=to_agent, error=str(e)
+            )
             return False
 
     async def _get_status_channel(self) -> str:
@@ -288,47 +251,20 @@ class SlackBot:
         """Handle !help command."""
 
         blocks = [
+            {"type": "section", "text": {"type": "mrkdwn", "text": "🤖 Heretek Swarm Commands"}},
+            {"type": "section", "text": {"type": "mrkdwn", "text": "Chat Commands"}},
+            {"type": "section", "text": {"type": "mrkdwn", "text": "Status Commands"}},
+            {"type": "section", "text": {"type": "mrdwn", "text": "Handoff Commands"}},
             {
                 "type": "section",
                 "text": {
                     "type": "mrkdwn",
-                    "text": "🤖 Heretek Swarm Commands"
-                }
-            },
-            {
-                "type": "section",
-                "text": {
-                    "type": "mrkdwn",
-                    "text": "Chat Commands"
-                }
-            },
-            {
-                "type": "section",
-                "text": {
-                    "type": "mrkdwn",
-                    "text": "Status Commands"
-                }
-            },
-            {
-                "type": "section",
-                "text": {
-                    "type": "mrdwn",
-                    "text": "Handoff Commands"
-                }
-            },
-            {
-                "type": "section",
-                "text": {
-                    "type": "mrkdwn",
-                    "text": "Example: `!chat steward Analyze this codebase`"
-                }
+                    "text": "Example: `!chat steward Analyze this codebase`",
+                },
             },
         ]
 
-        await self._bot.chat_postMessage(
-            channel=event["channel"],
-            blocks=blocks
-        )
+        await self._bot.chat_postMessage(channel=event["channel"], blocks=blocks)
 
     async def _handle_status_request(self, event) -> None:
         """Handle !status command."""
@@ -337,48 +273,38 @@ class SlackBot:
             status = await self.agent_runtime.get_swarm_status()
 
             blocks = [
+                {"type": "section", "text": {"type": "mrkdwn", "text": "📊 Swarm Status"}},
                 {
                     "type": "section",
                     "text": {
                         "type": "mrkdwn",
-                        "text": "📊 Swarm Status"
-                    }
+                        "text": f"Active Agents: {status.get('active_agents', 0)}",
+                    },
                 },
                 {
                     "type": "section",
                     "text": {
                         "type": "mrkdwn",
-                        "text": f"Active Agents: {status.get('active_agents', 0)}"
-                    }
+                        "text": f"Total Tasks: {status.get('total_tasks', 0)}",
+                    },
                 },
                 {
                     "type": "section",
                     "text": {
                         "type": "mrkdwn",
-                        "text": f"Total Tasks: {status.get('total_tasks', 0)}"
-                    }
-                },
-                {
-                    "type": "section",
-                    "text": {
-                        "type": "mrkdwn",
-                        "text": f"Error Rate: {status.get('error_rate', '0/min')}"
-                    }
+                        "text": f"Error Rate: {status.get('error_rate', '0/min')}",
+                    },
                 },
             ]
 
-            result = await self._bot.chat_postMessage(
-                channel=event["channel"],
-                blocks=blocks
-            )
+            result = await self._bot.chat_postMessage(channel=event["channel"], blocks=blocks)
 
             return result["ok"]
 
         except Exception as e:
             logger.error("slack_status_failed", error=str(e))
             await self._bot.chat_postMessage(
-                channel=event["channel"],
-                text=f"Failed to get status: {e!s}"
+                channel=event["channel"], text=f"Failed to get status: {e!s}"
             )
 
     async def _handle_agents_list(self, event) -> None:
@@ -389,36 +315,28 @@ class SlackBot:
 
             if not agents:
                 blocks = [
-                    {
-                        "type": "section",
-                        "text": {
-                            "type": "mrkdwn",
-                            "text": "📋 No Active Agents"
-                        }
-                    }
+                    {"type": "section", "text": {"type": "mrkdwn", "text": "📋 No Active Agents"}}
                 ]
 
                 for agent in agents:
                     status_emoji = "🟢" if agent.get("status") == "active" else "⚪"
 
-                    blocks.append({
-                        "type": "section",
-                        "text": {
-                            "type": "mrkdwn",
-                            "text": f"{status_emoji} {agent.get('id', 'Unknown')}"
+                    blocks.append(
+                        {
+                            "type": "section",
+                            "text": {
+                                "type": "mrkdwn",
+                                "text": f"{status_emoji} {agent.get('id', 'Unknown')}",
+                            },
                         }
-                    })
+                    )
 
-            await self._bot.chat_postMessage(
-                channel=event["channel"],
-                blocks=blocks
-            )
+            await self._bot.chat_postMessage(channel=event["channel"], blocks=blocks)
 
         except Exception as e:
             logger.error("slack_agents_list_failed", error=str(e))
             await self._bot.chat_postMessage(
-                channel=event["channel"],
-                text=f"Failed to list agents: {e!s}"
+                channel=event["channel"], text=f"Failed to list agents: {e!s}"
             )
 
     async def _handle_chat_command(self, event) -> None:
@@ -432,14 +350,11 @@ class SlackBot:
                     "type": "section",
                     "text": {
                         "type": "mrkdwn",
-                        "text": "❌ Invalid format. Use: `!chat <agent> <message>`"
-                    }
+                        "text": "❌ Invalid format. Use: `!chat <agent> <message>`",
+                    },
                 }
             ]
-            await self._bot.chat_postMessage(
-                channel=event["channel"],
-                blocks=blocks
-            )
+            await self._bot.chat_postMessage(channel=event["channel"], blocks=blocks)
             return
 
         agent_id = parts[0].strip()
@@ -447,45 +362,23 @@ class SlackBot:
 
         try:
             # Send message to agent
-            await self.agent_runtime.send_message_to_agent(
-                agent_id=agent_id,
-                message=message
-            )
+            await self.agent_runtime.send_message_to_agent(agent_id=agent_id, message=message)
 
             blocks = [
+                {"type": "section", "text": {"type": "mrkdwn", "text": "💬 Message Sent"}},
+                {"type": "section", "text": {"type": "mrkdwn", "text": f"To: {agent_id}"}},
                 {
                     "type": "section",
-                    "text": {
-                        "type": "mrkdwn",
-                        "text": "💬 Message Sent"
-                    }
+                    "text": {"type": "mrkdwn", "text": f"Message: {message[:100]}..."},
                 },
-                {
-                    "type": "section",
-                    "text": {
-                        "type": "mrkdwn",
-                        "text": f"To: {agent_id}"
-                    }
-                },
-                {
-                    "type": "section",
-                    "text": {
-                        "type": "mrkdwn",
-                        "text": f"Message: {message[:100]}..."
-                    }
-                }
             ]
 
-            await self._bot.chat_postMessage(
-                channel=event["channel"],
-                blocks=blocks
-            )
+            await self._bot.chat_postMessage(channel=event["channel"], blocks=blocks)
 
         except Exception as e:
             logger.error("slack_chat_failed", agent_id=agent_id, message=str(e))
             await self._bot.chat_postMessage(
-                channel=event["channel"],
-                text=f"Failed to send message: {e!s}"
+                channel=event["channel"], text=f"Failed to send message: {e!s}"
             )
 
     async def _handle_handoff_command(self, event) -> None:
@@ -499,14 +392,11 @@ class SlackBot:
                     "type": "section",
                     "text": {
                         "type": "mrkdwn",
-                        "text": "❌ Invalid format. Use: `!handoff <from> <to> <reason>`"
-                    }
+                        "text": "❌ Invalid format. Use: `!handoff <from> <to> <reason>`",
+                    },
                 }
             ]
-            await self._bot.chat_postMessage(
-                channel=event["channel"],
-                blocks=blocks
-            )
+            await self._bot.chat_postMessage(channel=event["channel"], blocks=blocks)
             return
 
         from_agent = parts[1].strip()
@@ -516,54 +406,25 @@ class SlackBot:
         try:
             # Trigger handoff through runtime
             result = await self.agent_runtime.handoff(
-                from_agent=from_agent,
-                to_agent=to_agent,
-                reason=reason,
-                context=event
+                from_agent=from_agent, to_agent=to_agent, reason=reason, context=event
             )
 
             if result:
                 blocks = [
-                    {
-                        "type": "section",
-                        "text": {
-                            "type": "mrkdwn",
-                            "text": "🔄 Handoff Triggered"
-                        }
-                    },
-                    {
-                        "type": "section",
-                        "text": {
-                            "type": "mrkdwn",
-                            "text": f"From: {from_agent}"
-                        }
-                    },
-                    {
-                        "type": "section",
-                        "text": {
-                            "type": "mrkdwn",
-                            "text": f"To: {to_agent}"
-                        }
-                    },
-                    {
-                        "type": "section",
-                        "text": {
-                            "type": "mrkdwn",
-                            "text": f"Reason: {reason}"
-                        }
-                    },
+                    {"type": "section", "text": {"type": "mrkdwn", "text": "🔄 Handoff Triggered"}},
+                    {"type": "section", "text": {"type": "mrkdwn", "text": f"From: {from_agent}"}},
+                    {"type": "section", "text": {"type": "mrkdwn", "text": f"To: {to_agent}"}},
+                    {"type": "section", "text": {"type": "mrkdwn", "text": f"Reason: {reason}"}},
                 ]
 
-            await self._bot.chat_postMessage(
-                channel=event["channel"],
-                blocks=blocks
-            )
+            await self._bot.chat_postMessage(channel=event["channel"], blocks=blocks)
 
         except Exception as e:
-            logger.error("slack_handoff_failed", from_agent=from_agent, to_agent=to_agent, error=str(e))
+            logger.error(
+                "slack_handoff_failed", from_agent=from_agent, to_agent=to_agent, error=str(e)
+            )
             await self._bot.chat_postMessage(
-                channel=event["channel"],
-                text=f"Failed to trigger handoff: {e!s}"
+                channel=event["channel"], text=f"Failed to trigger handoff: {e!s}"
             )
 
     async def _handle_message(self, event) -> None:

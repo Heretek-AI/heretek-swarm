@@ -28,8 +28,10 @@ logger = structlog.get_logger(__name__)
 # Enums and Constants
 # =============================================================================
 
+
 class UserTier(StrEnum):
     """User tier for rate limiting."""
+
     ANONYMOUS = "anonymous"
     AUTHENTICATED = "authenticated"
     PREMIUM = "premium"
@@ -38,6 +40,7 @@ class UserTier(StrEnum):
 
 class DDoSSeverity(StrEnum):
     """DDoS attack severity levels."""
+
     NONE = "none"
     LOW = "low"
     MEDIUM = "medium"
@@ -47,6 +50,7 @@ class DDoSSeverity(StrEnum):
 
 class MitigationAction(StrEnum):
     """Mitigation actions for DDoS attacks."""
+
     NONE = "none"
     THROTTLE = "throttle"
     CHALLENGE = "challenge"  # CAPTCHA or similar
@@ -59,9 +63,11 @@ class MitigationAction(StrEnum):
 # Configuration Classes
 # =============================================================================
 
+
 @dataclass
 class TierConfig:
     """Rate limit configuration for a user tier."""
+
     requests_per_second: int
     requests_per_minute: int
     requests_per_hour: int
@@ -107,12 +113,15 @@ class TierConfig:
 @dataclass
 class RateLimitConfig:
     """Overall rate limiting configuration."""
-    tiers: dict[UserTier, TierConfig] = field(default_factory=lambda: {
-        UserTier.ANONYMOUS: TierConfig.anonymous(),
-        UserTier.AUTHENTICATED: TierConfig.authenticated(),
-        UserTier.PREMIUM: TierConfig.premium(),
-        UserTier.INTERNAL: TierConfig.internal(),
-    })
+
+    tiers: dict[UserTier, TierConfig] = field(
+        default_factory=lambda: {
+            UserTier.ANONYMOUS: TierConfig.anonymous(),
+            UserTier.AUTHENTICATED: TierConfig.authenticated(),
+            UserTier.PREMIUM: TierConfig.premium(),
+            UserTier.INTERNAL: TierConfig.internal(),
+        }
+    )
     enable_token_bucket: bool = True
     enable_sliding_window: bool = True
     enable_redis_backend: bool = True
@@ -124,6 +133,7 @@ class RateLimitConfig:
 @dataclass
 class DDoSDetectionConfig:
     """DDoS detection configuration."""
+
     enable_spike_detection: bool = True
     enable_geo_anomaly: bool = True
     enable_pattern_detection: bool = True
@@ -150,6 +160,7 @@ class DDoSDetectionConfig:
 @dataclass
 class MitigationConfig:
     """DDoS mitigation configuration."""
+
     enable_temp_blocks: bool = True
     enable_ip_blocklist: bool = True
     enable_geo_fencing: bool = False  # Disabled by default
@@ -170,9 +181,11 @@ class MitigationConfig:
 # Rate Limit Result
 # =============================================================================
 
+
 @dataclass
 class RateLimitResult:
     """Result of a rate limit check."""
+
     allowed: bool
     tier: UserTier
     remaining_tokens: int
@@ -197,6 +210,7 @@ class RateLimitResult:
 @dataclass
 class DDoSDetectionResult:
     """Result of DDoS detection analysis."""
+
     is_attack: bool
     severity: DDoSSeverity
     attack_type: list[str]
@@ -210,6 +224,7 @@ class DDoSDetectionResult:
 # =============================================================================
 # Token Bucket Implementation
 # =============================================================================
+
 
 class TokenBucket:
     """
@@ -282,6 +297,7 @@ class TokenBucket:
 # Rate Limiter Implementation
 # =============================================================================
 
+
 class RateLimiter:
     """
     Comprehensive rate limiter with tiered limits and token bucket.
@@ -331,7 +347,8 @@ class RateLimiter:
     def _init_redis(self):
         """Initialize Redis connection."""
         try:
-            import redis.asyncio  # noqa: F401 - availability check only
+            import redis.asyncio
+
             # Will be initialized on first use
             self._redis = None  # Lazy init
             self._redis_available = True
@@ -433,10 +450,7 @@ class RateLimiter:
         window_start = now - window_seconds
 
         # Clean old requests
-        self._request_counts[key] = [
-            t for t in self._request_counts[key]
-            if t > window_start
-        ]
+        self._request_counts[key] = [t for t in self._request_counts[key] if t > window_start]
 
         current_count = len(self._request_counts[key])
 
@@ -468,20 +482,12 @@ class RateLimiter:
 
     def get_metrics(self) -> dict[str, Any]:
         """Get rate limiter metrics."""
-        avg_latency = (
-            self._total_latency_ms / self._check_count
-            if self._check_count > 0
-            else 0
-        )
+        avg_latency = self._total_latency_ms / self._check_count if self._check_count > 0 else 0
 
         return {
             "total_checks": self._check_count,
             "blocked_requests": self._blocked_count,
-            "block_rate": (
-                self._blocked_count / self._check_count
-                if self._check_count > 0
-                else 0
-            ),
+            "block_rate": (self._blocked_count / self._check_count if self._check_count > 0 else 0),
             "avg_latency_ms": avg_latency,
             "active_keys": len(self._request_counts),
         }
@@ -490,6 +496,7 @@ class RateLimiter:
 # =============================================================================
 # DDoS Detector Implementation
 # =============================================================================
+
 
 class DDoSDetector:
     """
@@ -666,6 +673,7 @@ class DDoSDetector:
 # DDoS Mitigator Implementation
 # =============================================================================
 
+
 class DDoSMitigator:
     """
     DDoS attack mitigation system.
@@ -819,6 +827,7 @@ class DDoSMitigator:
 # Unified DDoS Protection System
 # =============================================================================
 
+
 class DDoSProtection:
     """
     Unified DDoS protection system combining rate limiting, detection, and mitigation.
@@ -898,6 +907,7 @@ class DDoSProtection:
         # NOTE: random for emergency throttle decision - not security-critical (rate limit, not crypto)
         if self.mitigator._emergency_throttle_active:
             import random
+
             if random.random() > self.mitigator.get_throttle_factor():
                 return RateLimitResult(
                     allowed=False,
@@ -923,6 +933,7 @@ class DDoSProtection:
 # =============================================================================
 # Convenience Functions
 # =============================================================================
+
 
 def create_default_protection() -> DDoSProtection:
     """Create DDoS protection with default configuration."""

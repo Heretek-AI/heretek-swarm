@@ -125,9 +125,7 @@ def check_rate_limit(client_id: str) -> bool:
         _rate_limit_state[client_id] = []
 
     # Clean old entries
-    _rate_limit_state[client_id] = [
-        ts for ts in _rate_limit_state[client_id] if ts > window_start
-    ]
+    _rate_limit_state[client_id] = [ts for ts in _rate_limit_state[client_id] if ts > window_start]
 
     # Check limit
     if len(_rate_limit_state[client_id]) >= RATE_LIMIT_REQUESTS:
@@ -203,6 +201,7 @@ async def get_swarm_health(request: Request) -> dict[str, Any]:
     # Include autonomous runtime agents in total_agents count
     try:
         from heretek_swarm.api.autonomous import get_autonomous_agent_count_sync
+
         auto_agent_count = get_autonomous_agent_count_sync()
     except Exception as e:
         logger.warning("autonomous_agent_count_unavailable", error=str(e))
@@ -293,6 +292,7 @@ async def get_all_agents(request: Request) -> dict[str, Any]:
     # Include autonomous runtime agents if available
     try:
         from heretek_swarm.api import autonomous as autonomous_module
+
         auto_agents = autonomous_module._autonomous_agents
         # Convert autonomous agents to agent metrics format
         for agent_id, agent_data in auto_agents.items():
@@ -499,13 +499,15 @@ async def websocket_metrics(websocket: WebSocket, interval: int = 5):
                 agents = stream._collector.get_all_agent_metrics()
                 health = stream._collector.calculate_health_score()
 
-                await websocket.send_json({
-                    "swarm_metrics": swarm.to_dict(),
-                    "consciousness_metrics": consciousness.to_dict(),
-                    "agent_metrics": {k: v.to_dict() for k, v in agents.items()},
-                    "health_score": health,
-                    "timestamp": datetime.now(UTC).isoformat(),
-                })
+                await websocket.send_json(
+                    {
+                        "swarm_metrics": swarm.to_dict(),
+                        "consciousness_metrics": consciousness.to_dict(),
+                        "agent_metrics": {k: v.to_dict() for k, v in agents.items()},
+                        "health_score": health,
+                        "timestamp": datetime.now(UTC).isoformat(),
+                    }
+                )
 
                 # Wait for interval or client message
                 try:
@@ -594,54 +596,62 @@ async def get_alerts(request: Request) -> dict[str, Any]:
     agents = collector.get_all_agent_metrics()
     for agent_id, metrics in agents.items():
         if metrics.health_score < 50:
-            alerts.append({
-                "alert_id": f"health_{agent_id}",
-                "severity": "critical" if metrics.health_score < 30 else "warning",
-                "type": "low_health",
-                "agent_id": agent_id,
-                "message": f"Agent {agent_id} health score is {metrics.health_score:.1f}",
-                "value": metrics.health_score,
-                "threshold": 50,
-                "timestamp": datetime.now(UTC).isoformat(),
-            })
+            alerts.append(
+                {
+                    "alert_id": f"health_{agent_id}",
+                    "severity": "critical" if metrics.health_score < 30 else "warning",
+                    "type": "low_health",
+                    "agent_id": agent_id,
+                    "message": f"Agent {agent_id} health score is {metrics.health_score:.1f}",
+                    "value": metrics.health_score,
+                    "threshold": 50,
+                    "timestamp": datetime.now(UTC).isoformat(),
+                }
+            )
 
         if metrics.error_count > 10:
-            alerts.append({
-                "alert_id": f"errors_{agent_id}",
-                "severity": "warning",
-                "type": "high_errors",
-                "agent_id": agent_id,
-                "message": f"Agent {agent_id} has {metrics.error_count} errors",
-                "value": metrics.error_count,
-                "threshold": 10,
-                "timestamp": datetime.now(UTC).isoformat(),
-            })
+            alerts.append(
+                {
+                    "alert_id": f"errors_{agent_id}",
+                    "severity": "warning",
+                    "type": "high_errors",
+                    "agent_id": agent_id,
+                    "message": f"Agent {agent_id} has {metrics.error_count} errors",
+                    "value": metrics.error_count,
+                    "threshold": 10,
+                    "timestamp": datetime.now(UTC).isoformat(),
+                }
+            )
 
     # Check consciousness metrics
     consciousness = collector.collect_consciousness_metrics()
     if consciousness.phi_avg < 0.3:
-        alerts.append({
-            "alert_id": "low_phi",
-            "severity": "warning",
-            "type": "low_consciousness",
-            "message": f"Average Phi score is {consciousness.phi_avg:.3f}",
-            "value": consciousness.phi_avg,
-            "threshold": 0.3,
-            "timestamp": datetime.now(UTC).isoformat(),
-        })
+        alerts.append(
+            {
+                "alert_id": "low_phi",
+                "severity": "warning",
+                "type": "low_consciousness",
+                "message": f"Average Phi score is {consciousness.phi_avg:.3f}",
+                "value": consciousness.phi_avg,
+                "threshold": 0.3,
+                "timestamp": datetime.now(UTC).isoformat(),
+            }
+        )
 
     # Check overall health
     overall_health = collector.calculate_health_score()
     if overall_health < 60:
-        alerts.append({
-            "alert_id": "low_swarm_health",
-            "severity": "critical" if overall_health < 40 else "warning",
-            "type": "low_swarm_health",
-            "message": f"Swarm health score is {overall_health:.1f}",
-            "value": overall_health,
-            "threshold": 60,
-            "timestamp": datetime.now(UTC).isoformat(),
-        })
+        alerts.append(
+            {
+                "alert_id": "low_swarm_health",
+                "severity": "critical" if overall_health < 40 else "warning",
+                "type": "low_swarm_health",
+                "message": f"Swarm health score is {overall_health:.1f}",
+                "value": overall_health,
+                "threshold": 60,
+                "timestamp": datetime.now(UTC).isoformat(),
+            }
+        )
 
     return {
         "alerts": alerts,
@@ -816,7 +826,9 @@ async def create_trace(
     """
     # Input validation
     validator = get_zero_trust()
-    validate_input(validator, {"event_type": event_type, "agent_id": agent_id, "data": data}, "trace")
+    validate_input(
+        validator, {"event_type": event_type, "agent_id": agent_id, "data": data}, "trace"
+    )
 
     trace = TraceEvent(
         event_type=event_type,
@@ -1010,14 +1022,14 @@ async def get_external_calls(
             elif status == "error":
                 # Non-2xx status codes or error_message present
                 query = query.where(
-                    (ExternalCallLog.status_code < 200) |
-                    (ExternalCallLog.status_code >= 300) |
-                    (ExternalCallLog.error_message.isnot(None))
+                    (ExternalCallLog.status_code < 200)
+                    | (ExternalCallLog.status_code >= 300)
+                    | (ExternalCallLog.error_message.isnot(None))
                 )
                 count_query = count_query.where(
-                    (ExternalCallLog.status_code < 200) |
-                    (ExternalCallLog.status_code >= 300) |
-                    (ExternalCallLog.error_message.isnot(None))
+                    (ExternalCallLog.status_code < 200)
+                    | (ExternalCallLog.status_code >= 300)
+                    | (ExternalCallLog.error_message.isnot(None))
                 )
             # "all" returns everything - no filter applied
 
@@ -1141,11 +1153,15 @@ async def create_external_call(
 
     encrypted_request_body = None
     if log_data.request_body is not None:
-        encrypted_request_body = encryptor.encrypt({"body": log_data.request_body}).get("encrypted", "")
+        encrypted_request_body = encryptor.encrypt({"body": log_data.request_body}).get(
+            "encrypted", ""
+        )
 
     encrypted_response_body = None
     if log_data.response_body is not None:
-        encrypted_response_body = encryptor.encrypt({"body": log_data.response_body}).get("encrypted", "")
+        encrypted_response_body = encryptor.encrypt({"body": log_data.response_body}).get(
+            "encrypted", ""
+        )
 
     async with session_factory() as session:
         try:
@@ -1178,23 +1194,25 @@ async def create_external_call(
             )
 
             # Broadcast to WebSocket
-            await connection_manager.broadcast_observability({
-                "type": "external_call_created",
-                "data": {
-                    "id": str(log.id),
-                    "agent_id": log.agent_id,
-                    "agent_type": log.agent_type,
-                    "call_type": log.call_type,
-                    "url": log.url,
-                    "method": log.method,
-                    "status_code": log.status_code,
-                    "duration_ms": log.duration_ms,
-                    "tool_name": log.tool_name,
-                    "error_message": log.error_message,
-                    "created_at": log.created_at.isoformat() if log.created_at else None,
-                },
-                "timestamp": datetime.now(UTC).isoformat(),
-            })
+            await connection_manager.broadcast_observability(
+                {
+                    "type": "external_call_created",
+                    "data": {
+                        "id": str(log.id),
+                        "agent_id": log.agent_id,
+                        "agent_type": log.agent_type,
+                        "call_type": log.call_type,
+                        "url": log.url,
+                        "method": log.method,
+                        "status_code": log.status_code,
+                        "duration_ms": log.duration_ms,
+                        "tool_name": log.tool_name,
+                        "error_message": log.error_message,
+                        "created_at": log.created_at.isoformat() if log.created_at else None,
+                    },
+                    "timestamp": datetime.now(UTC).isoformat(),
+                }
+            )
 
             return {
                 "id": str(log.id),
@@ -1251,6 +1269,7 @@ async def get_external_call(
     # Parse UUID
     try:
         import uuid as uuid_module
+
         call_uuid = uuid_module.UUID(call_id)
     except ValueError:
         raise HTTPException(status_code=400, detail="Invalid call ID format")
@@ -1281,7 +1300,9 @@ async def get_external_call(
                 "agent_type": log.agent_type,
                 "call_type": log.call_type,
                 "url": log.url,
-                "url_domain": log.url.split("://", 1)[1].split("/")[0] if "://" in log.url else log.url.split("/")[0],
+                "url_domain": log.url.split("://", 1)[1].split("/")[0]
+                if "://" in log.url
+                else log.url.split("/")[0],
                 "url_full": log.url,
                 "method": log.method,
                 "status_code": log.status_code,
@@ -1305,6 +1326,7 @@ async def get_external_call(
                         elif isinstance(decrypted_data, str):
                             # Try parsing as JSON
                             import json
+
                             decrypted_headers = encryptor.sanitize(json.loads(decrypted_data))
                     except Exception as e:
                         logger.warning(
@@ -1442,9 +1464,7 @@ class ConnectionManager:
             try:
                 await websocket.send_json(data)
             except Exception as e:
-                logger.debug(
-                    "websocket_broadcast_disconnect", agent_id=agent_id, error=str(e)
-                )
+                logger.debug("websocket_broadcast_disconnect", agent_id=agent_id, error=str(e))
                 disconnected.add(websocket)
         # Clean up disconnected
         for ws in disconnected:
@@ -1489,6 +1509,7 @@ def get_replay_manager() -> Any | None:
 
 class ReplayJobCreate(BaseModel):
     """Request model for creating a replay job."""
+
     stream_name: str = Field(..., description="Source stream name")
     start_sequence: int | None = Field(None, description="Start sequence number")
     end_sequence: int | None = Field(None, description="End sequence number")
@@ -1496,11 +1517,14 @@ class ReplayJobCreate(BaseModel):
     end_time: str | None = Field(None, description="End timestamp (ISO format)")
     subject_filter: str | None = Field(None, description="Subject pattern filter")
     destination_stream: str | None = Field(None, description="Destination stream")
-    replay_speed: float = Field(default=1.0, ge=0.1, le=100.0, description="Replay speed multiplier")
+    replay_speed: float = Field(
+        default=1.0, ge=0.1, le=100.0, description="Replay speed multiplier"
+    )
 
 
 class ReplayJobResponse(BaseModel):
     """Response model for replay job."""
+
     job_id: str
     stream_name: str
     start_sequence: int | None
@@ -1519,6 +1543,7 @@ class ReplayJobResponse(BaseModel):
 
 class ReplayJobListResponse(BaseModel):
     """Response model for listing replay jobs."""
+
     jobs: list[ReplayJobResponse]
     total: int
     active: int
@@ -1526,6 +1551,7 @@ class ReplayJobListResponse(BaseModel):
 
 class TimeTravelRequestCreate(BaseModel):
     """Request model for time travel debugging."""
+
     entity_id: str = Field(..., description="Entity to reconstruct")
     entity_type: str = Field(..., description="Entity type (agent, workflow)")
     target_time: str = Field(..., description="Target timestamp (ISO format)")
@@ -1535,6 +1561,7 @@ class TimeTravelRequestCreate(BaseModel):
 
 class TimeTravelResponse(BaseModel):
     """Response model for time travel result."""
+
     request_id: str
     entity_id: str
     entity_type: str

@@ -86,8 +86,7 @@ async def test_pump_calls_send_for_each_actor():
 
     # Verify status values passed through
     status_by_agent = {
-        call.kwargs["agent_id"]: call.kwargs["status"]
-        for call in send_mock.call_args_list
+        call.kwargs["agent_id"]: call.kwargs["status"] for call in send_mock.call_args_list
     }
     assert status_by_agent["alpha"] == "active"
     assert status_by_agent["beta"] == "suspended"

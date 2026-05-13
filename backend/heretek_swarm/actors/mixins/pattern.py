@@ -91,16 +91,13 @@ class PatternMixin:
         try:
             patterns = await self.pattern_extractor.extract_patterns(
                 time_window_hours=24,
-                pattern_types=pattern_types or [
+                pattern_types=pattern_types
+                or [
                     PatternType.SUCCESS,
                     PatternType.DECISION,
                 ],
             )
-            return [
-                p.to_dict()
-                for p in patterns
-                if p.metadata.confidence >= 0.7
-            ]
+            return [p.to_dict() for p in patterns if p.metadata.confidence >= 0.7]
         except Exception as e:
             logger.warning("failed_to_consume_patterns", error=str(e))
             return []

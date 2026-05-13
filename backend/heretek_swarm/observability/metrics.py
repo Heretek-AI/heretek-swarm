@@ -23,6 +23,7 @@ try:
     from heretek_swarm.workflow.engine import (
         get_cycle_detector_metrics,
     )
+
     CYCLE_DETECTOR_AVAILABLE = True
 except ImportError:
     CYCLE_DETECTOR_AVAILABLE = False
@@ -32,6 +33,7 @@ except ImportError:
 @dataclass
 class AgentMetrics:
     """Metrics for an individual agent."""
+
     agent_id: str
     agent_type: str = "worker"
     tasks_completed: int = 0
@@ -65,6 +67,7 @@ class AgentMetrics:
 @dataclass
 class SwarmMetricsData:
     """Aggregate metrics for the entire swarm."""
+
     total_agents: int = 0
     active_agents: int = 0
     idle_agents: int = 0
@@ -94,6 +97,7 @@ class SwarmMetricsData:
 @dataclass
 class ConsciousnessMetricsData:
     """Consciousness metrics (IIT Phi and FEP)."""
+
     phi_score: float = 0.0
     phi_avg: float = 0.0
     phi_max: float = 0.0
@@ -284,7 +288,11 @@ class SwarmMetricsCollector:
                     idle_agents += 1
             else:
                 metrics = self._agent_metrics[agent_id]
-                inactive_seconds = (now - metrics.last_activity).total_seconds() if metrics.last_activity else float("inf")
+                inactive_seconds = (
+                    (now - metrics.last_activity).total_seconds()
+                    if metrics.last_activity
+                    else float("inf")
+                )
                 if inactive_seconds < 60:
                     active_agents += 1
                 else:
@@ -315,8 +323,16 @@ class SwarmMetricsCollector:
         active_agents, idle_agents = self._count_active_idle_agents()
         total_tasks, completed_tasks, failed_tasks, total_messages = self._calculate_task_metrics()
 
-        avg_latency = sum(self._message_latencies) / len(self._message_latencies) if self._message_latencies else 0
-        health_score = sum(m.health_score for m in self._agent_metrics.values()) / len(self._agent_metrics) if self._agent_metrics else 100.0
+        avg_latency = (
+            sum(self._message_latencies) / len(self._message_latencies)
+            if self._message_latencies
+            else 0
+        )
+        health_score = (
+            sum(m.health_score for m in self._agent_metrics.values()) / len(self._agent_metrics)
+            if self._agent_metrics
+            else 100.0
+        )
 
         result = SwarmMetricsData(
             total_agents=total_agents,
@@ -338,7 +354,11 @@ class SwarmMetricsCollector:
 
     def get_consciousness_metrics_history(self, limit: int = 10) -> list[ConsciousnessMetricsData]:
         """Get history of consciousness metrics."""
-        return self._consciousness_metrics_history[-limit:] if self._consciousness_metrics_history else []
+        return (
+            self._consciousness_metrics_history[-limit:]
+            if self._consciousness_metrics_history
+            else []
+        )
 
     def register_consciousness_callback(self, callback: callable) -> None:
         """Register a consciousness metrics callback."""
@@ -378,7 +398,7 @@ class SwarmMetricsCollector:
             return "minimal"
         mean = sum(values) / len(values)
         variance = sum((x - mean) ** 2 for x in values) / len(values)
-        std_dev = variance ** 0.5
+        std_dev = variance**0.5
         if std_dev > 0.3:
             return "high"
         if std_dev > 0.2:
@@ -421,7 +441,9 @@ class SwarmMetricsCollector:
         if not self._agent_metrics:
             return 0.0
 
-        avg_health = sum(m.health_score for m in self._agent_metrics.values()) / len(self._agent_metrics)
+        avg_health = sum(m.health_score for m in self._agent_metrics.values()) / len(
+            self._agent_metrics
+        )
 
         # Factor in error rates
         total_tasks = sum(m.tasks_completed + m.tasks_failed for m in self._agent_metrics.values())
@@ -472,7 +494,9 @@ class SwarmMetricsCollector:
             phi_min=min(phi_values) if phi_values else 0,
             integration_level=0.5,  # Placeholder
             differentiation_level=0.5,  # Placeholder
-            free_energy_avg=sum(agent_fep_scores.values()) / len(agent_fep_scores) if agent_fep_scores else 0,
+            free_energy_avg=sum(agent_fep_scores.values()) / len(agent_fep_scores)
+            if agent_fep_scores
+            else 0,
             free_energy_variance=0.1,  # Placeholder
             agent_phi_scores=agent_phi_scores,
             agent_fep_scores=agent_fep_scores,
@@ -537,9 +561,7 @@ class RealTimeMetricsStream:
             yield {
                 "swarm_metrics": snapshot.swarm_metrics.to_dict(),
                 "consciousness_metrics": snapshot.consciousness_metrics.to_dict(),
-                "agent_metrics": {
-                    aid: am.to_dict() for aid, am in snapshot.agent_metrics.items()
-                },
+                "agent_metrics": {aid: am.to_dict() for aid, am in snapshot.agent_metrics.items()},
                 "health_score": snapshot.health_score,
             }
             await asyncio.sleep(interval_seconds)
@@ -589,27 +611,31 @@ class RealTimeMetricsStream:
             try:
                 cycle_metrics = get_cycle_detector_metrics()
                 if cycle_metrics:
-                    lines.extend([
-                        "# HELP heretek_workflow_cycles_total Total number of workflow cycles detected",
-                        "# TYPE heretek_workflow_cycles_total counter",
-                        f"heretek_workflow_cycles_total {cycle_metrics.get('total_cycles_detected', 0)}",
-                        "",
-                        "# HELP heretek_workflow_cycles_broken_total Total number of workflow cycles broken",
-                        "# TYPE heretek_workflow_cycles_broken_total counter",
-                        f"heretek_workflow_cycles_broken_total {cycle_metrics.get('total_cycles_broken', 0)}",
-                        "",
-                        "# HELP heretek_workflow_avg_iterations_before_cycle Average iterations before cycle detection",
-                        "# TYPE heretek_workflow_avg_iterations_before_cycle gauge",
-                        f"heretek_workflow_avg_iterations_before_cycle {cycle_metrics.get('avg_iterations_before_cycle', 0)}",
-                        "",
-                    ])
-                    for strategy, count in cycle_metrics.get("cycles_by_strategy", {}).items():
-                        lines.extend([
-                            "# HELP heretek_workflow_cycles_by_strategy Cycles broken by strategy",
-                            "# TYPE heretek_workflow_cycles_by_strategy gauge",
-                            f'heretek_workflow_cycles_by_strategy{{strategy="{strategy}"}} {count}',
+                    lines.extend(
+                        [
+                            "# HELP heretek_workflow_cycles_total Total number of workflow cycles detected",
+                            "# TYPE heretek_workflow_cycles_total counter",
+                            f"heretek_workflow_cycles_total {cycle_metrics.get('total_cycles_detected', 0)}",
                             "",
-                        ])
+                            "# HELP heretek_workflow_cycles_broken_total Total number of workflow cycles broken",
+                            "# TYPE heretek_workflow_cycles_broken_total counter",
+                            f"heretek_workflow_cycles_broken_total {cycle_metrics.get('total_cycles_broken', 0)}",
+                            "",
+                            "# HELP heretek_workflow_avg_iterations_before_cycle Average iterations before cycle detection",
+                            "# TYPE heretek_workflow_avg_iterations_before_cycle gauge",
+                            f"heretek_workflow_avg_iterations_before_cycle {cycle_metrics.get('avg_iterations_before_cycle', 0)}",
+                            "",
+                        ]
+                    )
+                    for strategy, count in cycle_metrics.get("cycles_by_strategy", {}).items():
+                        lines.extend(
+                            [
+                                "# HELP heretek_workflow_cycles_by_strategy Cycles broken by strategy",
+                                "# TYPE heretek_workflow_cycles_by_strategy gauge",
+                                f'heretek_workflow_cycles_by_strategy{{strategy="{strategy}"}} {count}',
+                                "",
+                            ]
+                        )
             except Exception as e:
                 lines.append(f"# Cycle detection metrics unavailable: {e}")
                 lines.append("")
@@ -620,24 +646,26 @@ class RealTimeMetricsStream:
         lines = []
         if CYCLE_DETECTOR_AVAILABLE and PhiTrainingEnvironment:
             try:
-                lines.extend([
-                    "# HELP heretek_phi_training_episodes_total Total Phi training episodes",
-                    "# TYPE heretek_phi_training_episodes_total counter",
-                    "heretek_phi_training_episodes_total 0",
-                    "",
-                    "# HELP heretek_phi_training_success_total Successful Phi training episodes",
-                    "# TYPE heretek_phi_training_success_total counter",
-                    "heretek_phi_training_success_total 0",
-                    "",
-                    "# HELP heretek_phi_training_avg_improvement Average Phi improvement per episode",
-                    "# TYPE heretek_phi_training_avg_improvement gauge",
-                    "heretek_phi_training_avg_improvement 0",
-                    "",
-                    "# HELP heretek_phi_training_best_phi Best Phi achieved in training",
-                    "# TYPE heretek_phi_training_best_phi gauge",
-                    "heretek_phi_training_best_phi 0",
-                    "",
-                ])
+                lines.extend(
+                    [
+                        "# HELP heretek_phi_training_episodes_total Total Phi training episodes",
+                        "# TYPE heretek_phi_training_episodes_total counter",
+                        "heretek_phi_training_episodes_total 0",
+                        "",
+                        "# HELP heretek_phi_training_success_total Successful Phi training episodes",
+                        "# TYPE heretek_phi_training_success_total counter",
+                        "heretek_phi_training_success_total 0",
+                        "",
+                        "# HELP heretek_phi_training_avg_improvement Average Phi improvement per episode",
+                        "# TYPE heretek_phi_training_avg_improvement gauge",
+                        "heretek_phi_training_avg_improvement 0",
+                        "",
+                        "# HELP heretek_phi_training_best_phi Best Phi achieved in training",
+                        "# TYPE heretek_phi_training_best_phi gauge",
+                        "heretek_phi_training_best_phi 0",
+                        "",
+                    ]
+                )
             except Exception as e:
                 lines.append(f"# Phi training metrics unavailable: {e}")
         return lines
@@ -646,12 +674,14 @@ class RealTimeMetricsStream:
         """Export per-agent Phi scores."""
         lines = []
         for agent_id, phi_score in consciousness.agent_phi_scores.items():
-            lines.extend([
-                "# HELP heretek_agent_phi Agent Phi score",
-                "# TYPE heretek_agent_phi gauge",
-                f'heretek_agent_phi{{agent_id="{agent_id}"}} {phi_score}',
-                "",
-            ])
+            lines.extend(
+                [
+                    "# HELP heretek_agent_phi Agent Phi score",
+                    "# TYPE heretek_agent_phi gauge",
+                    f'heretek_agent_phi{{agent_id="{agent_id}"}} {phi_score}',
+                    "",
+                ]
+            )
         return lines
 
     def export_prometheus_format(self) -> str:
@@ -660,11 +690,11 @@ class RealTimeMetricsStream:
         consciousness = self._collector.collect_consciousness_metrics()
 
         lines = (
-            self._export_swarm_metrics(metrics) +
-            self._export_consciousness_metrics(consciousness) +
-            self._export_cycle_metrics() +
-            self._export_phi_training_metrics() +
-            self._export_agent_phi_scores(consciousness)
+            self._export_swarm_metrics(metrics)
+            + self._export_consciousness_metrics(consciousness)
+            + self._export_cycle_metrics()
+            + self._export_phi_training_metrics()
+            + self._export_agent_phi_scores(consciousness)
         )
         return "\n".join(lines)
 
@@ -683,8 +713,11 @@ def get_metrics_collector() -> SwarmMetricsCollector:
 @dataclass
 class MetricsSnapshot:
     """Snapshot of metrics at a point in time."""
+
     swarm_metrics: SwarmMetricsData = field(default_factory=lambda: SwarmMetricsData())
-    consciousness_metrics: ConsciousnessMetricsData = field(default_factory=lambda: ConsciousnessMetricsData())
+    consciousness_metrics: ConsciousnessMetricsData = field(
+        default_factory=lambda: ConsciousnessMetricsData()
+    )
     agent_metrics: dict[str, AgentMetrics] = field(default_factory=dict)
     health_score: float = 0.0
     timestamp: float = field(default_factory=lambda: __import__("time").time())
@@ -704,6 +737,7 @@ class MetricsSnapshot:
 async def record_consensus_round(round_id: str, result: dict[str, Any]) -> None:
     """Record consensus round metrics."""
     from heretek_swarm.infrastructure.otel.logging import get_logger
+
     logger = get_logger(__name__)
     logger.debug("consensus_round_recorded", round_id=round_id, result=result)
 
@@ -711,12 +745,16 @@ async def record_consensus_round(round_id: str, result: dict[str, Any]) -> None:
 async def record_message_sent(message_id: str, agent_id: str, metadata: dict[str, Any]) -> None:
     """Record message sent metrics."""
     from heretek_swarm.infrastructure.otel.logging import get_logger
+
     logger = get_logger(__name__)
     logger.debug("message_sent_recorded", message_id=message_id, agent_id=agent_id)
 
 
-async def record_task_completion(task_id: str, agent_id: str, success: bool, metadata: dict[str, Any]) -> None:
+async def record_task_completion(
+    task_id: str, agent_id: str, success: bool, metadata: dict[str, Any]
+) -> None:
     """Record task completion metrics."""
     from heretek_swarm.infrastructure.otel.logging import get_logger
+
     logger = get_logger(__name__)
     logger.debug("task_completion_recorded", task_id=task_id, success=success)

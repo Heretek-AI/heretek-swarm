@@ -64,6 +64,7 @@ class CycleDetectionEvent:
         resolution: How cycle was resolved
         metadata: Additional context
     """
+
     event_id: str
     workflow_id: str
     correlation_id: str
@@ -99,6 +100,7 @@ class ExecutionPath:
         state_hash: Hash of workflow state at path start
         visit_counts: Count of visits per node
     """
+
     path_id: str
     nodes: list[str] = field(default_factory=list)
     start_time: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
@@ -138,7 +140,7 @@ class ExecutionPath:
             if node in seen:
                 # Found a repeated node - cycle detected
                 # The cycle is from first occurrence to current position (exclusive)
-                cycle = self.nodes[seen[node]:i]
+                cycle = self.nodes[seen[node] : i]
                 if len(cycle) >= 1:
                     return cycle
             seen[node] = i
@@ -605,12 +607,14 @@ class WorkflowCycleDetector:
 
         # Add per-strategy metrics
         for strategy, count in self.metrics.get("cycles_by_strategy", {}).items():
-            lines.extend([
-                "# HELP heretek_workflow_cycles_by_strategy Cycles broken by strategy",
-                "# TYPE heretek_workflow_cycles_by_strategy gauge",
-                f'heretek_workflow_cycles_by_strategy{{strategy="{strategy}"}} {count}',
-                "",
-            ])
+            lines.extend(
+                [
+                    "# HELP heretek_workflow_cycles_by_strategy Cycles broken by strategy",
+                    "# TYPE heretek_workflow_cycles_by_strategy gauge",
+                    f'heretek_workflow_cycles_by_strategy{{strategy="{strategy}"}} {count}',
+                    "",
+                ]
+            )
 
         return "\n".join(lines)
 

@@ -1,0 +1,18 @@
+{
+  "id": "fece3031-d78f-4bae-9193-d0e6378f0394",
+  "runtime": "bash",
+  "purpose": "Count tests and check test structure",
+  "script_chars": 389,
+  "started_at": "2026-05-13T00:40:40.080Z",
+  "finished_at": "2026-05-13T00:40:43.150Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 3070,
+  "stdout_bytes": 6421,
+  "stderr_bytes": 95,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\fece3031-d78f-4bae-9193-d0e6378f0394.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\fece3031-d78f-4bae-9193-d0e6378f0394.stderr"
+}

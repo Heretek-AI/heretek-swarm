@@ -76,7 +76,9 @@ class StartupManager:
         loop = asyncio.get_event_loop()
         for sig in (signal.SIGINT, signal.SIGTERM):
             try:
-                loop.add_signal_handler(sig, lambda s=sig: asyncio.create_task(self._handle_signal(s)))
+                loop.add_signal_handler(
+                    sig, lambda s=sig: asyncio.create_task(self._handle_signal(s))
+                )
             except NotImplementedError:
                 # Windows doesn't support add_signal_handler
                 pass

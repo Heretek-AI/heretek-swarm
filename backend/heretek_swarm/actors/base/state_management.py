@@ -98,24 +98,22 @@ class AgentActorStateManagement(AgentActor):
             )
             return False
 
-    async def _persist_to_mock_db(
-        self, db_pool: Any, state_data: dict[str, Any]
-    ) -> bool:
+    async def _persist_to_mock_db(self, db_pool: Any, state_data: dict[str, Any]) -> bool:
         """Persist to mock database with in-memory tables."""
         if "agent_states" not in db_pool._tables:
             db_pool._tables["agent_states"] = []
-        db_pool._tables["agent_states"].append({
-            "id": len(db_pool._tables["agent_states"]) + 1,
-            "agent_id": self.agent_id,
-            "agent_type": self.actor_type,
-            "state": json.dumps(state_data),
-            "created_at": datetime.now(UTC).isoformat(),
-        })
+        db_pool._tables["agent_states"].append(
+            {
+                "id": len(db_pool._tables["agent_states"]) + 1,
+                "agent_id": self.agent_id,
+                "agent_type": self.actor_type,
+                "state": json.dumps(state_data),
+                "created_at": datetime.now(UTC).isoformat(),
+            }
+        )
         return True
 
-    async def _persist_to_generic_db(
-        self, db_pool: Any, state_data: dict[str, Any]
-    ) -> bool:
+    async def _persist_to_generic_db(self, db_pool: Any, state_data: dict[str, Any]) -> bool:
         """Persist to generic async database interface."""
         await db_pool.execute(
             "INSERT INTO agent_states (agent_id, agent_type, state) VALUES (%s, %s, %s)",
@@ -173,6 +171,7 @@ class AgentActorStateManagement(AgentActor):
         """
         try:
             import os
+
             state_dir = os.path.join(os.getcwd(), ".actor_states")
             os.makedirs(state_dir, exist_ok=True)
             state_file = os.path.join(state_dir, f"{self.agent_id}.json")
@@ -258,6 +257,7 @@ class AgentActorStateManagement(AgentActor):
         # Final fallback: load from file system
         try:
             import os
+
             state_file = os.path.join(os.getcwd(), ".actor_states", f"{self.agent_id}.json")
 
             if os.path.exists(state_file):

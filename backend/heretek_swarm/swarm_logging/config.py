@@ -103,6 +103,7 @@ def add_service_info(logger, method_name, event_dict):
 def get_environment() -> str:
     """Get the current environment."""
     import os
+
     return os.getenv("ENVIRONMENT", "development")
 
 
@@ -143,10 +144,12 @@ def setup_logging(
         )
 
     # Add stack info and exception formatting for errors
-    shared_processors.extend([
-        StackInfoRenderer(),
-        ExceptionRenderer(),
-    ])
+    shared_processors.extend(
+        [
+            StackInfoRenderer(),
+            ExceptionRenderer(),
+        ]
+    )
 
     # Configure renderer
     if json_output:

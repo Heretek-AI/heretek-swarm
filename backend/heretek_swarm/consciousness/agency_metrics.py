@@ -39,31 +39,31 @@ logger = structlog.get_logger("agency_metrics")
 class AgencyLevel(StrEnum):
     """Levels of agency based on autonomy scores."""
 
-    NO_AGENCY = "no_agency"           # Score: 0.0 - 0.1
+    NO_AGENCY = "no_agency"  # Score: 0.0 - 0.1
     MINIMAL_AGENCY = "minimal_agency"  # Score: 0.1 - 0.3
     LIMITED_AGENCY = "limited_agency"  # Score: 0.3 - 0.5
-    MODERATE_AGENCY = "moderate_agency" # Score: 0.5 - 0.7
-    HIGH_AGENCY = "high_agency"        # Score: 0.7 - 0.9
-    FULL_AGENCY = "full_agency"        # Score: 0.9 - 1.0
+    MODERATE_AGENCY = "moderate_agency"  # Score: 0.5 - 0.7
+    HIGH_AGENCY = "high_agency"  # Score: 0.7 - 0.9
+    FULL_AGENCY = "full_agency"  # Score: 0.9 - 1.0
 
 
 class AutonomyLevel(StrEnum):
     """Levels of autonomy based on autonomy scores."""
 
-    CONTROLLED = "controlled"           # Score: 0.0 - 0.2
-    GUIDED = "guided"                   # Score: 0.2 - 0.4
-    SEMI_AUTONOMOUS = "semi_autonomous" # Score: 0.4 - 0.6
-    AUTONOMOUS = "autonomous"           # Score: 0.6 - 0.8
-    HIGHLY_AUTONOMOUS = "highly_autonomous" # Score: 0.8 - 1.0
+    CONTROLLED = "controlled"  # Score: 0.0 - 0.2
+    GUIDED = "guided"  # Score: 0.2 - 0.4
+    SEMI_AUTONOMOUS = "semi_autonomous"  # Score: 0.4 - 0.6
+    AUTONOMOUS = "autonomous"  # Score: 0.6 - 0.8
+    HIGHLY_AUTONOMOUS = "highly_autonomous"  # Score: 0.8 - 1.0
 
 
 class ActionOrigin(StrEnum):
     """Origin of an agent action."""
 
     SELF_INITIATED = "self_initiated"  # Agent decided independently
-    PROMPTED = "prompted"              # Agent responded to external prompt
+    PROMPTED = "prompted"  # Agent responded to external prompt
     DELAYED_RESPONSE = "delayed_response"  # Prompted but delayed
-    COLLABORATIVE = "collaborative"    # Joint decision with other agents
+    COLLABORATIVE = "collaborative"  # Joint decision with other agents
 
 
 @dataclass
@@ -344,12 +344,14 @@ class AgencyMetricsCalculator:
         self.resource_autonomy_weight = resource_autonomy_weight
 
         # Validate weights sum to 1.0
-        total = autonomy_weight + agency_weight + self_determination_weight + resource_autonomy_weight
+        total = (
+            autonomy_weight + agency_weight + self_determination_weight + resource_autonomy_weight
+        )
         if not math.isclose(total, 1.0, rel_tol=1e-5):
             logger.warning(
                 "agency_weights_sum_warning",
                 total=total,
-                message="Weights do not sum to 1.0, normalizing..."
+                message="Weights do not sum to 1.0, normalizing...",
             )
 
     def calculate_autonomy_score(
@@ -404,9 +406,9 @@ class AgencyMetricsCalculator:
 
         # Weighted autonomy score
         autonomy = (
-            (self_initiated_ratio * 0.6) +
-            (normalized_options * 0.2) +
-            (external_prompt_independence * 0.2)
+            (self_initiated_ratio * 0.6)
+            + (normalized_options * 0.2)
+            + (external_prompt_independence * 0.2)
         )
 
         return max(0.0, min(1.0, autonomy))
@@ -436,9 +438,7 @@ class AgencyMetricsCalculator:
             Agency score between 0.0 and 1.0
         """
         agency = (
-            (autonomy_score * 0.4) +
-            (self_determination_index * 0.4) +
-            (goal_alignment_score * 0.2)
+            (autonomy_score * 0.4) + (self_determination_index * 0.4) + (goal_alignment_score * 0.2)
         )
 
         return max(0.0, min(1.0, agency))
@@ -502,7 +502,7 @@ class AgencyMetricsCalculator:
             prompt_correlation = min(len(prompted_decisions) / len(decisions), 0.5)
 
         # Self-determination index
-        self_det = (choice_entropy * (1 - prompt_correlation * 0.5))
+        self_det = choice_entropy * (1 - prompt_correlation * 0.5)
 
         return max(0.0, min(1.0, self_det))
 
@@ -584,9 +584,9 @@ class AgencyMetricsCalculator:
 
         # Weighted alignment
         alignment = (
-            (collective_success * 0.5) +
-            ((1 - individual_preference_penalty) * 0.3) +
-            (collective_preference * 0.2)
+            (collective_success * 0.5)
+            + ((1 - individual_preference_penalty) * 0.3)
+            + (collective_preference * 0.2)
         )
 
         return max(0.0, min(1.0, alignment))
@@ -631,10 +631,7 @@ class AgencyMetricsCalculator:
             autonomies.append(autonomy)
             independences.append(independence)
 
-        return (
-            sum(autonomies) / len(autonomies),
-            sum(independences) / len(independences)
-        )
+        return (sum(autonomies) / len(autonomies), sum(independences) / len(independences))
 
     def calculate_prime_directive_compliance(
         self,
@@ -661,15 +658,11 @@ class AgencyMetricsCalculator:
         self_governance = metrics.self_determination_index * 0.25
 
         # Principle 3: Role-Based Autonomy
-        role_based = (
-            (metrics.autonomous_action_ratio * 0.15) +
-            (metrics.goal_alignment_score * 0.1)
-        )
+        role_based = (metrics.autonomous_action_ratio * 0.15) + (metrics.goal_alignment_score * 0.1)
 
         # Principle 4: Emergent Order
-        emergent = (
-            (metrics.resource_autonomy * 0.15) +
-            ((1 - metrics.individual_vs_collective_ratio) * 0.1)
+        emergent = (metrics.resource_autonomy * 0.15) + (
+            (1 - metrics.individual_vs_collective_ratio) * 0.1
         )
 
         # Overall compliance
@@ -741,9 +734,7 @@ class AgencyMetricsCalculator:
         ind_vs_col = individual_actions / total_actions if total_actions > 0 else 0.5
 
         # Calculate agency score
-        agency_score = self.calculate_agency_score(
-            autonomy_score, self_det_index, goal_alignment
-        )
+        agency_score = self.calculate_agency_score(autonomy_score, self_det_index, goal_alignment)
 
         # Create metrics object
         metrics = AgentAgencyMetrics(
@@ -753,12 +744,10 @@ class AgencyMetricsCalculator:
             self_determination_index=self_det_index,
             autonomous_action_ratio=autonomous_ratio,
             average_decision_options=(
-                sum(d.options_considered for d in decisions) / len(decisions)
-                if decisions else 0.0
+                sum(d.options_considered for d in decisions) / len(decisions) if decisions else 0.0
             ),
             average_decision_time_ms=(
-                sum(d.time_taken_ms for d in decisions) / len(decisions)
-                if decisions else 0.0
+                sum(d.time_taken_ms for d in decisions) / len(decisions) if decisions else 0.0
             ),
             goal_alignment_score=goal_alignment,
             individual_vs_collective_ratio=ind_vs_col,

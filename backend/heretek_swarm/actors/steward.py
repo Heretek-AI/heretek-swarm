@@ -1,4 +1,3 @@
-# flake8: noqa: F403
 """Steward Agent — thin re-export stub.
 All implementation lives in the triad subpackage."""
 

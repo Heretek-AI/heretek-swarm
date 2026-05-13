@@ -896,6 +896,7 @@ class PatternBasedAgentAdaptor:
             elif strategy == AdaptationStrategy.PROBABILISTIC:
                 # NOTE: random for probabilistic adaptation - not security-critical
                 import random
+
                 if random.random() < confidence:
                     weight.current_value = target_value
 
@@ -1017,17 +1018,11 @@ class PatternBasedAgentAdaptor:
     ) -> dict[str, Any]:
         """Capture old values for rollback."""
         if target == AdaptationTarget.BEHAVIORAL_WEIGHTS:
-            return {
-                "weights": {
-                    k: v.current_value
-                    for k, v in state.behavioral_weights.items()
-                }
-            }
+            return {"weights": {k: v.current_value for k, v in state.behavioral_weights.items()}}
         if target == AdaptationTarget.STRATEGY_SELECTION:
             return {
                 "strategies": {
-                    k: {"priority": v.priority}
-                    for k, v in state.strategy_profiles.items()
+                    k: {"priority": v.priority} for k, v in state.strategy_profiles.items()
                 }
             }
         if target == AdaptationTarget.DECISION_THRESHOLDS:

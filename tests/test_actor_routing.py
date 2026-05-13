@@ -45,9 +45,7 @@ def _make_garage(providers: list[dict]) -> MagicMock:
     garage = MagicMock()
     garage.list_providers.return_value = providers
 
-    async def _complete(
-        messages, model, provider_id, **kwargs
-    ) -> LLMResponse:
+    async def _complete(messages, model, provider_id, **kwargs) -> LLMResponse:
         return LLMResponse(
             content=f"response from {provider_id} using {model}",
             model=model,
@@ -107,16 +105,18 @@ class TestAgentRoutingIntegration:
         through the router and delegates to ``garage.complete()`` with the
         chosen provider and model."""
         swarms_agent = _make_swarms_agent()
-        garage = _make_garage([
-            {
-                "id": "ollama-local",
-                "baseUrl": "http://localhost:11434",
-                "apiKey": "",
-                "models": ["llama3.1", "llama3.2"],
-                "priority": 1,
-                "health_status": "healthy",
-            },
-        ])
+        garage = _make_garage(
+            [
+                {
+                    "id": "ollama-local",
+                    "baseUrl": "http://localhost:11434",
+                    "apiKey": "",
+                    "models": ["llama3.1", "llama3.2"],
+                    "priority": 1,
+                    "health_status": "healthy",
+                },
+            ]
+        )
 
         router = AgentModelRouter(
             agent_id="garage-agent",
@@ -139,24 +139,26 @@ class TestAgentRoutingIntegration:
         """SIMPLE and COMPLEX tasks are routed to different providers when
         the preferred-model lists point to different match candidates."""
         swarms_agent = _make_swarms_agent()
-        garage = _make_garage([
-            {
-                "id": "fast-provider",
-                "baseUrl": "http://localhost:11434",
-                "apiKey": "",
-                "models": ["llama3.1", "gemini-flash"],
-                "priority": 1,
-                "health_status": "healthy",
-            },
-            {
-                "id": "powerful-provider",
-                "baseUrl": "https://api.anthropic.com",
-                "apiKey": "sk-test",
-                "models": ["claude-sonnet-4-20250514", "claude-opus-4-20250514"],
-                "priority": 10,
-                "health_status": "healthy",
-            },
-        ])
+        garage = _make_garage(
+            [
+                {
+                    "id": "fast-provider",
+                    "baseUrl": "http://localhost:11434",
+                    "apiKey": "",
+                    "models": ["llama3.1", "gemini-flash"],
+                    "priority": 1,
+                    "health_status": "healthy",
+                },
+                {
+                    "id": "powerful-provider",
+                    "baseUrl": "https://api.anthropic.com",
+                    "apiKey": "sk-test",
+                    "models": ["claude-sonnet-4-20250514", "claude-opus-4-20250514"],
+                    "priority": 10,
+                    "health_status": "healthy",
+                },
+            ]
+        )
 
         router = AgentModelRouter(
             agent_id="complexity-agent",
@@ -190,24 +192,26 @@ class TestAgentRoutingIntegration:
         """When the highest-priority provider is unhealthy, the router
         skips it and picks the next healthy one."""
         swarms_agent = _make_swarms_agent()
-        garage = _make_garage([
-            {
-                "id": "dead-provider",
-                "baseUrl": "http://localhost:9999",
-                "apiKey": "",
-                "models": ["llama3.1"],
-                "priority": 1,
-                "health_status": "unhealthy",
-            },
-            {
-                "id": "healthy-provider",
-                "baseUrl": "http://localhost:11434",
-                "apiKey": "",
-                "models": ["llama3.1"],
-                "priority": 10,
-                "health_status": "healthy",
-            },
-        ])
+        garage = _make_garage(
+            [
+                {
+                    "id": "dead-provider",
+                    "baseUrl": "http://localhost:9999",
+                    "apiKey": "",
+                    "models": ["llama3.1"],
+                    "priority": 1,
+                    "health_status": "unhealthy",
+                },
+                {
+                    "id": "healthy-provider",
+                    "baseUrl": "http://localhost:11434",
+                    "apiKey": "",
+                    "models": ["llama3.1"],
+                    "priority": 10,
+                    "health_status": "healthy",
+                },
+            ]
+        )
 
         router = AgentModelRouter(
             agent_id="fallback-agent",
@@ -231,16 +235,18 @@ class TestAgentRoutingIntegration:
         """When **every** provider is unhealthy, ``run_with_llm`` falls
         back to ``swarms_agent.run()``."""
         swarms_agent = _make_swarms_agent()
-        garage = _make_garage([
-            {
-                "id": "dead-1",
-                "baseUrl": "http://localhost:9999",
-                "apiKey": "",
-                "models": ["llama3.1"],
-                "priority": 1,
-                "health_status": "unhealthy",
-            },
-        ])
+        garage = _make_garage(
+            [
+                {
+                    "id": "dead-1",
+                    "baseUrl": "http://localhost:9999",
+                    "apiKey": "",
+                    "models": ["llama3.1"],
+                    "priority": 1,
+                    "health_status": "unhealthy",
+                },
+            ]
+        )
 
         router = AgentModelRouter(
             agent_id="all-dead-agent",

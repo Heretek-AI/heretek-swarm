@@ -114,17 +114,27 @@ class SentinelPrimeAgent(
             max_false_positive_rate=config.get("max_false_positive_rate", 0.01) if config else 0.01,
             default_alert_priority=AlertPriority.CRITICAL,
             auto_response_priorities={AlertPriority.CRITICAL},
-            prompt_injection_enabled=config.get("prompt_injection_enabled", True) if config else True,
-            exfiltration_detection_enabled=config.get("exfiltration_detection_enabled", True) if config else True,
+            prompt_injection_enabled=config.get("prompt_injection_enabled", True)
+            if config
+            else True,
+            exfiltration_detection_enabled=config.get("exfiltration_detection_enabled", True)
+            if config
+            else True,
             dos_detection_enabled=config.get("dos_detection_enabled", True) if config else True,
-            core_triad_escalation_enabled=config.get("core_triad_escalation_enabled", True) if config else True,
+            core_triad_escalation_enabled=config.get("core_triad_escalation_enabled", True)
+            if config
+            else True,
             escalation_threshold_count=config.get("escalation_threshold_count", 5) if config else 5,
         )
         self._external_threat_detector = create_default_detector(threat_config)
 
         # Core Triad escalation configuration
-        self._core_triad_escalation_enabled = config.get("core_triad_escalation_enabled", True) if config else True
-        self._escalation_cooldown_seconds = config.get("escalation_cooldown_seconds", 300) if config else 300
+        self._core_triad_escalation_enabled = (
+            config.get("core_triad_escalation_enabled", True) if config else True
+        )
+        self._escalation_cooldown_seconds = (
+            config.get("escalation_cooldown_seconds", 300) if config else 300
+        )
         self._last_escalation_time: dict[str, datetime] = {}
 
         # Alert priority filtering state

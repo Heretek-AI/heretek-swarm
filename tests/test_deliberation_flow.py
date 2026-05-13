@@ -70,10 +70,14 @@ class TestRunDeliberation:
             charlie = MagicMock()
             charlie._challenges = {"delib-001": {"challenges": ["red_flag_detected"]}}
 
-            swarm.supervisor.actors.update({
-                "steward": steward, "alpha": alpha,
-                "beta": beta, "charlie": charlie,
-            })
+            swarm.supervisor.actors.update(
+                {
+                    "steward": steward,
+                    "alpha": alpha,
+                    "beta": beta,
+                    "charlie": charlie,
+                }
+            )
 
             result = await swarm.run_deliberation("test prompt", timeout=0.01)
 
@@ -111,9 +115,13 @@ class TestRunDeliberation:
             charlie = MagicMock()
             charlie._challenges = {"delib-002": {"challenges": ["issue_found"]}}
 
-            swarm.supervisor.actors.update({
-                "steward": steward, "alpha": alpha, "charlie": charlie,
-            })
+            swarm.supervisor.actors.update(
+                {
+                    "steward": steward,
+                    "alpha": alpha,
+                    "charlie": charlie,
+                }
+            )
 
             result = await swarm.run_deliberation("test prompt", timeout=0.01)
 
@@ -142,9 +150,13 @@ class TestRunDeliberation:
             swarm.supervisor.actors.clear()
             _get_supervisor().actors.clear()
 
-            swarm.supervisor.actors.update({
-                "alpha": MagicMock(), "beta": MagicMock(), "charlie": MagicMock(),
-            })
+            swarm.supervisor.actors.update(
+                {
+                    "alpha": MagicMock(),
+                    "beta": MagicMock(),
+                    "charlie": MagicMock(),
+                }
+            )
 
             with pytest.raises(RuntimeError, match="Steward agent not found"):
                 await swarm.run_deliberation("test prompt")
@@ -177,10 +189,14 @@ class TestRunDeliberation:
             beta.swarms_agent = mock_swarms
             charlie.swarms_agent = mock_swarms
 
-            swarm.supervisor.actors.update({
-                "steward": steward, "alpha": alpha,
-                "beta": beta, "charlie": charlie,
-            })
+            swarm.supervisor.actors.update(
+                {
+                    "steward": steward,
+                    "alpha": alpha,
+                    "beta": beta,
+                    "charlie": charlie,
+                }
+            )
 
             result = await swarm.run_deliberation(
                 "test problem for full path",

@@ -13,6 +13,7 @@ Features:
 - Queryable by actor ID, time range, action type
 - Tamper detection via hash chain
 """
+
 import hashlib
 import json
 from collections import deque
@@ -207,7 +208,7 @@ class AuditLogger:
         if self._entries_since_flush == 0:
             return
 
-        entries_to_flush = list(self._log)[-self._entries_since_flush:]
+        entries_to_flush = list(self._log)[-self._entries_since_flush :]
 
         if self._persist_callback:
             try:

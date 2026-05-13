@@ -14,6 +14,7 @@ from heretek_swarm.consensus.complexity import (
 
 # ── Fixtures ───────────────────────────────────────────────────────────
 
+
 @pytest.fixture
 def heuristic() -> ComplexityHeuristic:
     """Default heuristic with production settings."""
@@ -33,6 +34,7 @@ def lenient_heuristic() -> ComplexityHeuristic:
 
 
 # ── Simple questions (should NOT trigger consensus) ────────────────────
+
 
 class TestSimpleQuestions:
     """Questions that are straightforward and should route to triad."""
@@ -83,6 +85,7 @@ class TestSimpleQuestions:
 
 
 # ── Complex questions (should trigger consensus) ───────────────────────
+
 
 class TestComplexQuestions:
     """Questions with analysis/tradeoff keywords that should route to MAKER."""
@@ -146,9 +149,7 @@ class TestComplexQuestions:
         assert result.is_complex
 
     def test_advantages_disadvantages(self, heuristic: ComplexityHeuristic):
-        result = heuristic.assess(
-            "What are the advantages and disadvantages of a monolith?"
-        )
+        result = heuristic.assess("What are the advantages and disadvantages of a monolith?")
         assert result.is_complex
         assert "pros/cons" in result.matched_keywords
 
@@ -158,6 +159,7 @@ class TestComplexQuestions:
 
 
 # ── Combined scoring ───────────────────────────────────────────────────
+
 
 class TestCombinedScoring:
     """Test score accumulation from length + keywords."""
@@ -199,6 +201,7 @@ class TestCombinedScoring:
 
 
 # ── Threshold configuration ───────────────────────────────────────────
+
 
 class TestThresholdConfiguration:
     """Verify threshold knobs work correctly."""
@@ -246,6 +249,7 @@ class TestThresholdConfiguration:
 
 # ── Convenience methods ────────────────────────────────────────────────
 
+
 class TestConvenienceMethods:
     """Test is_complex() and score() shorthand."""
 
@@ -264,6 +268,7 @@ class TestConvenienceMethods:
 
 
 # ── Edge cases ─────────────────────────────────────────────────────────
+
 
 class TestEdgeCases:
     """Boundary conditions and unusual inputs."""
@@ -311,6 +316,7 @@ class TestEdgeCases:
 
 # ── ComplexityResult dataclass ─────────────────────────────────────────
 
+
 class TestComplexityResult:
     """Test the result object's properties and formatting."""
 
@@ -350,6 +356,7 @@ class TestComplexityResult:
 
 # ── Determinism ────────────────────────────────────────────────────────
 
+
 class TestDeterminism:
     """Same input always produces same output."""
 
@@ -367,6 +374,7 @@ class TestDeterminism:
 
 
 # ── Integration: routing decision ─────────────────────────────────────
+
 
 class TestRoutingIntegration:
     """Simulate the routing decision flow described in the slice plan."""

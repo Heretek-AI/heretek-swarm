@@ -5,6 +5,7 @@ endpoint at /api/v1/observability/provider-stats is a thin wrapper that calls
 this function. The endpoint itself follows the same rate-limiting and
 zero-trust patterns as every other observability endpoint.
 """
+
 from __future__ import annotations
 
 import pytest
@@ -38,9 +39,7 @@ def _make_response(
     )
 
 
-def _register_provider(
-    router: AgentModelRouter, provider_id: str, models: list[str]
-) -> None:
+def _register_provider(router: AgentModelRouter, provider_id: str, models: list[str]) -> None:
     router.register_provider(
         RouterProviderConfig(
             provider_id=provider_id,
@@ -150,9 +149,7 @@ class TestGetAllProviderStatsMultiRouter:
     ) -> None:
         router_openai.record_usage("openai", _make_response(cost=1.0, total_tokens=100))
         router_anthropic.record_usage(
-            "anthropic", _make_response(
-                model="claude-3-5-sonnet", cost=3.0, total_tokens=500
-            )
+            "anthropic", _make_response(model="claude-3-5-sonnet", cost=3.0, total_tokens=500)
         )
 
         stats = get_all_provider_stats()

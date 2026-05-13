@@ -33,8 +33,9 @@ from typing import TYPE_CHECKING, Any
 
 import structlog
 
+from heretek_swarm.collective.learning import PatternStatus
+
 if TYPE_CHECKING:
-    from heretek_swarm.collective.learning import PatternStatus
     from heretek_swarm.security.behavioral_baseline import BaselineChangeType
 
 logger = structlog.get_logger("immune_response")
@@ -1157,9 +1158,7 @@ class ImmuneResponseEngine:
 
         # Classify each pattern and update baseline
         for pattern_key, responses in pattern_confirmations.items():
-            self._classify_pattern_confirmation(
-                pattern_key, responses, result
-            )
+            self._classify_pattern_confirmation(pattern_key, responses, result)
 
         logger.info(
             "immune_analysis_complete",
@@ -1217,10 +1216,7 @@ class ImmuneResponseEngine:
         self._stats["patterns_proposed"] += 1
 
         pattern_high_confidence = all(r.was_correct for r in responses[-3:])
-        if (
-            pattern_high_confidence
-            and pattern.confidence >= self._novel_attack_threshold
-        ):
+        if pattern_high_confidence and pattern.confidence >= self._novel_attack_threshold:
             self._baseline_store.request_human_review(pattern.pattern_id)
             result.novel_attacks_flagged += 1
             self._stats["novel_attacks_flagged"] += 1
@@ -1372,7 +1368,6 @@ class ImmuneResponseEngine:
             confidence=correct_count / len(responses) if responses else 0.5,
             source="immune_response",
         )
-
 
     def get_response_history(
         self,

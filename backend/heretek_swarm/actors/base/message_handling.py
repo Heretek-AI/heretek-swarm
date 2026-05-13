@@ -36,7 +36,7 @@ class AgentActorMessageHandling(AgentActor):
 
             plugin = get_consciousness_plugin()
             plugin.record_interaction(from_agent, to_agent)
-        except Exception:  # noqa: S110
+        except Exception:
             # Consciousness tracking is non-fatal — do not break message delivery
             pass
 
@@ -446,9 +446,7 @@ class AgentActorMessageHandling(AgentActor):
         message.content = sanitized_content
         return message
 
-    async def _execute_handler_and_publish(
-        self, message: ActorMessage, handler: callable
-    ) -> None:
+    async def _execute_handler_and_publish(self, message: ActorMessage, handler: callable) -> None:
         """Execute handler and publish result if successful."""
         try:
             result = await handler(message)
@@ -973,12 +971,8 @@ Please provide your analysis and recommendation for this collective task."""
 # Bind message handling methods to AgentActor
 AgentActor.send = AgentActorMessageHandling.send
 AgentActor._send_via_event_mesh = AgentActorMessageHandling._send_via_event_mesh
-AgentActor._validate_and_prepare_message = (
-    AgentActorMessageHandling._validate_and_prepare_message
-)
-AgentActor._execute_handler_and_publish = (
-    AgentActorMessageHandling._execute_handler_and_publish
-)
+AgentActor._validate_and_prepare_message = AgentActorMessageHandling._validate_and_prepare_message
+AgentActor._execute_handler_and_publish = AgentActorMessageHandling._execute_handler_and_publish
 AgentActor._deliver_to_registry_actors = AgentActorMessageHandling._deliver_to_registry_actors
 AgentActor._queue_message = AgentActorMessageHandling._queue_message
 AgentActor.send_to_actor = AgentActorMessageHandling.send_to_actor

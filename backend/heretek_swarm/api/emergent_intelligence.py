@@ -109,9 +109,7 @@ async def get_siq(
 
         if include_history:
             limit = int(history_limit)
-            result["history"] = [
-                s.to_dict() for s in metrics._siq_history[-limit:]
-            ]
+            result["history"] = [s.to_dict() for s in metrics._siq_history[-limit:]]
 
         return {
             "success": True,
@@ -149,9 +147,7 @@ async def get_collective_efficiency(
 
         if include_history:
             limit = int(history_limit)
-            result["history"] = [
-                e.to_dict() for e in metrics._efficiency_history[-limit:]
-            ]
+            result["history"] = [e.to_dict() for e in metrics._efficiency_history[-limit:]]
 
         return {
             "success": True,
@@ -189,9 +185,7 @@ async def get_knowledge_transfer_metrics(
 
         if include_history:
             limit = int(history_limit)
-            result["history"] = [
-                t.to_dict() for t in metrics._transfer_history[-limit:]
-            ]
+            result["history"] = [t.to_dict() for t in metrics._transfer_history[-limit:]]
 
         return {
             "success": True,
@@ -200,7 +194,9 @@ async def get_knowledge_transfer_metrics(
         }
     except Exception as e:
         logger.error("knowledge_transfer_error", error=str(e))
-        raise HTTPException(status_code=500, detail=f"Failed to calculate knowledge transfer: {e!s}")
+        raise HTTPException(
+            status_code=500, detail=f"Failed to calculate knowledge transfer: {e!s}"
+        )
 
 
 @router.get("/emergence-coefficient")
@@ -227,9 +223,7 @@ async def get_emergence_coefficient(
 
         if include_history:
             limit = int(history_limit)
-            result["history"] = [
-                e.to_dict() for e in metrics._emergence_history[-limit:]
-            ]
+            result["history"] = [e.to_dict() for e in metrics._emergence_history[-limit:]]
 
         return {
             "success": True,
@@ -238,7 +232,9 @@ async def get_emergence_coefficient(
         }
     except Exception as e:
         logger.error("emergence_coefficient_error", error=str(e))
-        raise HTTPException(status_code=500, detail=f"Failed to calculate emergence coefficient: {e!s}")
+        raise HTTPException(
+            status_code=500, detail=f"Failed to calculate emergence coefficient: {e!s}"
+        )
 
 
 @router.get("/emergent-patterns")
@@ -489,9 +485,7 @@ async def get_emergent_intelligence_status(auth: dict = Depends(verify_auth)):
             "agent_adaptor": metrics.agent_adaptor.get_status(),
             "emergence_detector": metrics.emergence_detector.get_status(),
             "pattern_library": (
-                metrics.pattern_library.get_library_status()
-                if metrics.pattern_library
-                else None
+                metrics.pattern_library.get_library_status() if metrics.pattern_library else None
             ),
         }
 

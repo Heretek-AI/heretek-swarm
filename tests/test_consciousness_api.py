@@ -103,9 +103,7 @@ def test_statistics_reads_live_registry(client, auth_headers):
         "agent-gamma": _make_instance("agent-gamma"),
     }
 
-    with patch(
-        "heretek_swarm.api.consciousness.get_enhanced_registry"
-    ) as mock_registry:
+    with patch("heretek_swarm.api.consciousness.get_enhanced_registry") as mock_registry:
         mock_registry.return_value.get_all_instances.return_value = fake_instances
         resp = client.get("/api/consciousness/statistics", headers=auth_headers)
 
@@ -168,9 +166,7 @@ def test_record_prediction_and_outcome_flows_to_fep(client, auth_headers):
     assert resp.status_code == 200
 
     # The FEP endpoint should now have metrics for this agent
-    resp = client.get(
-        "/api/consciousness/agents/agent-fep/fep", headers=auth_headers
-    )
+    resp = client.get("/api/consciousness/agents/agent-fep/fep", headers=auth_headers)
     assert resp.status_code == 200
     data = resp.json()
     metrics = data["metrics"]
@@ -190,9 +186,7 @@ def test_full_pipeline_register_interact_statistics(client, auth_headers):
         "agent-y": _make_instance("agent-y"),
     }
 
-    with patch(
-        "heretek_swarm.api.consciousness.get_enhanced_registry"
-    ) as mock_registry:
+    with patch("heretek_swarm.api.consciousness.get_enhanced_registry") as mock_registry:
         mock_registry.return_value.get_all_instances.return_value = fake_instances
 
         # Record cross-agent interactions (strengthens IIT connectivity)
@@ -210,9 +204,7 @@ def test_full_pipeline_register_interact_statistics(client, auth_headers):
 
         # Trigger IIT phi calculation via the connectivity matrix — this
         # calls plugin.iit_calculator.calculate_phi and populates history
-        resp_iit = client.get(
-            "/api/consciousness/agents/agent-x/iit", headers=auth_headers
-        )
+        resp_iit = client.get("/api/consciousness/agents/agent-x/iit", headers=auth_headers)
         assert resp_iit.status_code == 200
 
         # Calculate consciousness metrics for each agent

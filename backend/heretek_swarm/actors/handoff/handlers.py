@@ -23,10 +23,7 @@ class HandoffValidationHandler:
         self._validator = validator
 
     async def validate(
-        self,
-        from_agent_id: str,
-        to_agent_id: str,
-        context: dict[str, Any]
+        self, from_agent_id: str, to_agent_id: str, context: dict[str, Any]
     ) -> tuple[bool, str | None]:
         """Validate handoff request"""
         try:
@@ -50,10 +47,7 @@ class HandoffRateLimitHandler:
         one_minute_ago = now.replace(microsecond=0)
 
         # Remove old timestamps
-        self._handoff_timestamps[:] = [
-            ts for ts in self._handoff_timestamps
-            if ts > one_minute_ago
-        ]
+        self._handoff_timestamps[:] = [ts for ts in self._handoff_timestamps if ts > one_minute_ago]
 
         # Check limit
         if len(self._handoff_timestamps) >= self.MAX_HANDOFFS_PER_MINUTE:
@@ -80,7 +74,7 @@ class HandoffTransferHandler:
         to_agent_id: str,
         context: dict[str, Any],
         reason: str,
-        timestamp: str
+        timestamp: str,
     ) -> tuple[bool, str | None]:
         """Transfer context to destination agent"""
         supervisor = self._get_supervisor()
@@ -104,18 +98,10 @@ class HandoffTransferHandler:
                 )
             )
 
-            logger.info(
-                "handoff_context_transferred",
-                handoff_id=handoff_id,
-                to_agent=to_agent_id
-            )
+            logger.info("handoff_context_transferred", handoff_id=handoff_id, to_agent=to_agent_id)
             return True, None
 
-        logger.warning(
-            "handoff_destination_not_found",
-            handoff_id=handoff_id,
-            to_agent=to_agent_id
-        )
+        logger.warning("handoff_destination_not_found", handoff_id=handoff_id, to_agent=to_agent_id)
         return False, f"Destination agent {to_agent_id} not found"
 
 
@@ -132,7 +118,7 @@ class HandoffLoggingHandler:
         to_agent_id: str,
         reason: str,
         timestamp: str,
-        context: dict[str, Any]
+        context: dict[str, Any],
     ) -> None:
         """Log handoff to historian"""
         if self._historian and hasattr(self._historian, "log_event"):
@@ -144,8 +130,8 @@ class HandoffLoggingHandler:
                     "to_agent": to_agent_id,
                     "reason": reason,
                     "timestamp": timestamp,
-                    "context_keys": list(context.keys())
-                }
+                    "context_keys": list(context.keys()),
+                },
             )
 
 
@@ -159,7 +145,7 @@ class HandoffProcessor:
         supervisor_getter: Any,
         actor_message_class: Any,
         historian: Any | None = None,
-        max_active_handoffs: int = 100
+        max_active_handoffs: int = 100,
     ):
         self._validation_handler = HandoffValidationHandler(validator)
         self._rate_limit_handler = HandoffRateLimitHandler(handoff_timestamps)
@@ -173,7 +159,7 @@ class HandoffProcessor:
         to_agent_id: str,
         context: dict[str, Any],
         reason: str,
-        active_handoffs_count: int
+        active_handoffs_count: int,
     ) -> HandoffResult:
         """Process handoff through all phases"""
         import uuid
@@ -205,7 +191,7 @@ class HandoffProcessor:
             handoff_id=handoff_id,
             from_agent=from_agent_id,
             to_agent=to_agent_id,
-            reason=reason
+            reason=reason,
         )
 
         # Phase 4: Context transfer

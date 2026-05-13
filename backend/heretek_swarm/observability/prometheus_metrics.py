@@ -259,25 +259,21 @@ class PrometheusMetrics:
         """Record an agent unregistration."""
         agent_type = self._agent_types.pop(agent_id, "unknown")
         heretek_swarm_agents_total.labels(agent_type=agent_type).dec()
-        heretek_swarm_agents_active.labels(agent_type=agent_type).dec(max(
-            heretek_swarm_agents_active.labels(agent_type=agent_type)._value.get(), 0
-        ))
+        heretek_swarm_agents_active.labels(agent_type=agent_type).dec(
+            max(heretek_swarm_agents_active.labels(agent_type=agent_type)._value.get(), 0)
+        )
 
     def record_task_completed(
         self, agent_id: str, agent_type: str = "unknown", task_type: str = "general"
     ) -> None:
         """Record a task completion."""
-        heretek_swarm_tasks_completed_total.labels(
-            agent_id=agent_id, task_type=task_type
-        ).inc()
+        heretek_swarm_tasks_completed_total.labels(agent_id=agent_id, task_type=task_type).inc()
 
     def record_task_failed(
         self, agent_id: str, agent_type: str = "unknown", task_type: str = "general"
     ) -> None:
         """Record a task failure."""
-        heretek_swarm_tasks_failed_total.labels(
-            agent_id=agent_id, task_type=task_type
-        ).inc()
+        heretek_swarm_tasks_failed_total.labels(agent_id=agent_id, task_type=task_type).inc()
 
     def record_message_sent(self, message_type: str = "general") -> None:
         """Record a sent message."""
@@ -285,9 +281,7 @@ class PrometheusMetrics:
 
     def record_message_received(self, message_type: str = "general") -> None:
         """Record a received message."""
-        heretek_swarm_messages_total.labels(
-            direction="received", message_type=message_type
-        ).inc()
+        heretek_swarm_messages_total.labels(direction="received", message_type=message_type).inc()
 
     def record_consensus_round(
         self, consensus_type: str = "deliberation", outcome: str = "success"
@@ -305,9 +299,7 @@ class PrometheusMetrics:
         """Record a free energy level."""
         heretek_swarm_free_energy.labels(agent_id=agent_id).set(energy)
 
-    def record_api_request(
-        self, method: str, endpoint: str, status: int, duration: float
-    ) -> None:
+    def record_api_request(self, method: str, endpoint: str, status: int, duration: float) -> None:
         """Record an API request with latency."""
         # Normalize endpoint to avoid high cardinality
         normalized_endpoint = self._normalize_endpoint(endpoint)
@@ -398,7 +390,6 @@ class PrometheusMetrics:
         # Replace numeric IDs
         return re.sub(r"/\d+(?=/|$)", "/{id}", endpoint)
 
-
     def export_prometheus(self) -> bytes:
         """
         Export all metrics in Prometheus text format.
@@ -451,6 +442,7 @@ def reset_metrics() -> None:
 # Convenience Functions
 # ============================================================================
 
+
 def increment_tasks_completed(agent_id: str, task_type: str = "general") -> None:
     """Convenience function to increment completed tasks counter."""
     metrics = get_metrics()
@@ -475,7 +467,9 @@ def increment_messages_received(message_type: str = "general") -> None:
     get_metrics().record_message_received(message_type)
 
 
-def increment_consensus_rounds(consensus_type: str = "deliberation", outcome: str = "success") -> None:
+def increment_consensus_rounds(
+    consensus_type: str = "deliberation", outcome: str = "success"
+) -> None:
     """Convenience function to increment consensus rounds counter."""
     get_metrics().record_consensus_round(consensus_type, outcome)
 
@@ -546,6 +540,7 @@ def record_encryption_latency(
 # ============================================================================
 # FastAPI Middleware Helper
 # ============================================================================
+
 
 def setup_metrics_middleware(app) -> None:
     """

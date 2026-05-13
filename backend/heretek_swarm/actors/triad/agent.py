@@ -89,7 +89,7 @@ class TriadAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, Ag
         """Initialize the agent by registering message handlers."""
         for msg_type, handler in self._triad_handlers():
             self.register_handler(msg_type, handler)
-        logger.info(f"[{self.agent_id}] {self.__class__.__name__} initialization complete")  # noqa: G004
+        logger.info(f"[{self.agent_id}] {self.__class__.__name__} initialization complete")
 
     async def process_message(self, message: ActorMessage) -> None:
         """
@@ -104,7 +104,7 @@ class TriadAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, Ag
                 await handler(message)
             except Exception as e:
                 logger.exception(
-                    f"[{self.agent_id}] Error processing message {message.message_type}: {e}"  # noqa: G004
+                    f"[{self.agent_id}] Error processing message {message.message_type}: {e}"
                 )
                 self.error_count += 1
                 # Send error response if reply_to is specified
@@ -120,7 +120,7 @@ class TriadAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, Ag
                     )
         else:
             logger.warning(
-                f"[{self.agent_id}] Unhandled message type: {message.message_type}"  # noqa: G004
+                f"[{self.agent_id}] Unhandled message type: {message.message_type}"
             )
 
     def _triad_handlers(self) -> list[tuple[str, Any]]:
@@ -184,10 +184,7 @@ class TriadAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, Ag
 
         if self.swarms_agent:
             try:
-                analysis_result = await self.run_with_llm(
-                    prompt=prompt,
-                    timeout=60
-                )
+                analysis_result = await self.run_with_llm(prompt=prompt, timeout=60)
                 return {
                     "decision": analysis_result,
                     "confidence": extras.pop("confidence", 0.8),
@@ -195,7 +192,7 @@ class TriadAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, Ag
                     **extras,
                 }
             except Exception as e:
-                logger.error(f"[{self.agent_id}] Analysis error: {e}")  # noqa: G004
+                logger.error(f"[{self.agent_id}] Analysis error: {e}")
 
         # Fallback analysis
         return {
@@ -284,7 +281,7 @@ class StewardAgent(TriadAgent):
         self._policies = self.governance_policies  # alias for test compatibility
         self.resource_allocations: dict[str, float] = {}
 
-        logger.info(f"[{self.agent_id}] Steward agent initialized")  # noqa: G004
+        logger.info(f"[{self.agent_id}] Steward agent initialized")
 
     def _triad_handlers(self) -> list[tuple[str, Any]]:
         """Return Steward's message handlers."""
@@ -307,18 +304,26 @@ class StewardAgent(TriadAgent):
             else:
                 # Fallback to unvalidated access
                 # Support both deliberation_id/topic and session_id/problem field names
-                deliberation_id = message.content.get("deliberation_id") or message.content.get("session_id")  # noqa: E501
+                deliberation_id = message.content.get("deliberation_id") or message.content.get(
+                    "session_id"
+                )
                 topic = message.content.get("topic") or message.content.get("problem")
                 triad_members = message.content.get("triad_members", [])
 
                 if not deliberation_id or not topic:
                     # Auto-generate if missing
-                    deliberation_id = deliberation_id or f"del_{datetime.now(UTC).strftime('%Y%m%d_%H%M%S')}"  # noqa: E501
+                    deliberation_id = (
+                        deliberation_id or f"del_{datetime.now(UTC).strftime('%Y%m%d_%H%M%S')}"
+                    )
                     topic = topic or "unspecified"
         except (ValueError, Exception) as e:
-            logger.warning(f"[{self.agent_id}] Deliberation validation issue, using fallback: {e}")  # noqa: G004
+            logger.warning(f"[{self.agent_id}] Deliberation validation issue, using fallback: {e}")
             # Fallback: support both deliberation_id/topic and session_id/problem field names
-            deliberation_id = message.content.get("deliberation_id") or message.content.get("session_id") or f"del_{datetime.now(UTC).strftime('%Y%m%d_%H%M%S')}"  # noqa: E501
+            deliberation_id = (
+                message.content.get("deliberation_id")
+                or message.content.get("session_id")
+                or f"del_{datetime.now(UTC).strftime('%Y%m%d_%H%M%S')}"
+            )
             topic = message.content.get("topic") or message.content.get("problem") or "unspecified"
             triad_members = message.content.get("triad_members", [])
 
@@ -333,7 +338,7 @@ class StewardAgent(TriadAgent):
         }
 
         logger.info(
-            f"[{self.agent_id}] Started deliberation {deliberation_id} on topic: {topic}"  # noqa: G004
+            f"[{self.agent_id}] Started deliberation {deliberation_id} on topic: {topic}"
         )
 
         # Notify triad members
@@ -360,18 +365,19 @@ class StewardAgent(TriadAgent):
             phase_progression = {"alpha": "beta", "beta": "charlie", "charlie": "complete"}
             next_phase = phase_progression.get(current_phase, current_phase)
             self._deliberations[session_id]["phase"] = next_phase
-            logger.info(f"[{self.agent_id}] Deliberation {session_id} phase: {current_phase} -> {next_phase}")  # noqa: G004, E501
+            logger.info(
+                f"[{self.agent_id}] Deliberation {session_id} phase: {current_phase} -> {next_phase}"
+            )
 
         logger.info(
-            f"[{self.agent_id}] Processing decision request: {request_id}"  # noqa: G004
+            f"[{self.agent_id}] Processing decision request: {request_id}"
         )
 
         # Make executive decision or delegate to triad
         if self.swarms_agent:
             try:
                 decision = await self.run_with_llm(
-                    prompt=f"Make an executive decision on: {decision_context}",
-                    timeout=60
+                    prompt=f"Make an executive decision on: {decision_context}", timeout=60
                 )
                 await self.send(
                     topic="decisions",
@@ -384,7 +390,7 @@ class StewardAgent(TriadAgent):
                     correlation_id=message.correlation_id,
                 )
             except Exception as e:
-                logger.error(f"[{self.agent_id}] Decision error: {e}")  # noqa: G004
+                logger.error(f"[{self.agent_id}] Decision error: {e}")
         else:
             # Fallback logic
             await self.send(
@@ -404,7 +410,7 @@ class StewardAgent(TriadAgent):
         requester = message.content.get("requester", message.sender)
         status = message.content.get("status", {})
 
-        logger.debug(f"[{self.agent_id}] Status report from {reporter_id or requester}")  # noqa: G004
+        logger.debug(f"[{self.agent_id}] Status report from {reporter_id or requester}")
 
         # Update internal tracking
         if reporter_id:
@@ -428,8 +434,7 @@ class StewardAgent(TriadAgent):
         """Handle policy update requests."""
         policy_id = message.content.get("policy_id")
         policy_data = message.content.get("policy_data") or {
-            k: v for k, v in message.content.items()
-            if k not in ("policy_id", "reply_to")
+            k: v for k, v in message.content.items() if k not in ("policy_id", "reply_to")
         }
 
         if policy_id:
@@ -439,7 +444,7 @@ class StewardAgent(TriadAgent):
                 "updated_at": datetime.now(UTC).isoformat(),
                 "updated_by": message.sender,
             }
-            logger.info(f"[{self.agent_id}] Updated policy: {policy_id}")  # noqa: G004
+            logger.info(f"[{self.agent_id}] Updated policy: {policy_id}")
 
     async def coordinate_triad(
         self,
@@ -716,7 +721,7 @@ class AlphaAgent(TriadAgent):
         self.analysis_history: list[dict[str, Any]] = []
         self.decision_count = 0
 
-        logger.info(f"[{self.agent_id}] Alpha agent initialized")  # noqa: G004
+        logger.info(f"[{self.agent_id}] Alpha agent initialized")
 
     def _triad_handlers(self) -> list[tuple[str, Any]]:
         """Return Alpha's message handlers."""
@@ -740,7 +745,7 @@ class AlphaAgent(TriadAgent):
         topic = message.content.get("topic")
 
         logger.info(
-            f"[{self.agent_id}] Participating in deliberation {deliberation_id}: {topic}"  # noqa: G004
+            f"[{self.agent_id}] Participating in deliberation {deliberation_id}: {topic}"
         )
 
         # Perform analysis
@@ -774,10 +779,10 @@ class AlphaAgent(TriadAgent):
                 request_id = message.content.get("request_id")
                 problem = message.content.get("problem")
         except ValueError as e:
-            logger.error(f"[{self.agent_id}] Analysis validation failed: {e}")  # noqa: G004
+            logger.error(f"[{self.agent_id}] Analysis validation failed: {e}")
             return
 
-        logger.info(f"[{self.agent_id}] Analyzing: {request_id}")  # noqa: G004
+        logger.info(f"[{self.agent_id}] Analyzing: {request_id}")
 
         analysis = await self._perform_analysis(problem)
 
@@ -793,11 +798,13 @@ class AlphaAgent(TriadAgent):
         )
 
         # P2-1 fix: Use timezone-aware datetime
-        self.analysis_history.append({
-            "request_id": request_id,
-            "analysis": analysis,
-            "timestamp": datetime.now(UTC).isoformat(),
-        })
+        self.analysis_history.append(
+            {
+                "request_id": request_id,
+                "analysis": analysis,
+                "timestamp": datetime.now(UTC).isoformat(),
+            }
+        )
         # P1-3: Trim history if it exceeds max size
         self._trim_history(self.analysis_history)
 
@@ -815,10 +822,10 @@ class AlphaAgent(TriadAgent):
                 decision_to_validate = message.content.get("decision")
                 _original_analysis = message.content.get("original_analysis")
         except ValueError as e:
-            logger.error(f"[{self.agent_id}] Validation request validation failed: {e}")  # noqa: G004
+            logger.error(f"[{self.agent_id}] Validation request validation failed: {e}")
             return
 
-        logger.info(f"[{self.agent_id}] Validating: {request_id}")  # noqa: G004  # noqa: G004
+        logger.info(f"[{self.agent_id}] Validating: {request_id}")
 
         validation = await self._validate_decision(decision_to_validate)
 
@@ -846,8 +853,7 @@ class AlphaAgent(TriadAgent):
         if self.swarms_agent:
             try:
                 validation_result = await self.run_with_llm(
-                    prompt=f"Validate this decision: {decision}",
-                    timeout=60
+                    prompt=f"Validate this decision: {decision}", timeout=60
                 )
                 return {
                     "valid": True,
@@ -855,7 +861,7 @@ class AlphaAgent(TriadAgent):
                     "feedback": validation_result,
                 }
             except Exception as e:
-                logger.error(f"[{self.agent_id}] Validation error: {e}")  # noqa: G004  # noqa: G004
+                logger.error(f"[{self.agent_id}] Validation error: {e}")
 
         return {
             "valid": True,
@@ -927,7 +933,7 @@ class BetaAgent(TriadAgent):
         self._error_checks: dict[str, Any] = {}  # dict for error check records
         self.error_detections: list[dict[str, Any]] = []
 
-        logger.info(f"[{self.agent_id}] Beta agent initialized")  # noqa: G004
+        logger.info(f"[{self.agent_id}] Beta agent initialized")
 
     def _triad_handlers(self) -> list[tuple[str, Any]]:
         """Return Beta's message handlers."""
@@ -947,11 +953,13 @@ class BetaAgent(TriadAgent):
 
     async def _handle_deliberation_request(self, message: ActorMessage) -> None:
         """Handle deliberation requests."""
-        deliberation_id = message.content.get("deliberation_id") or message.content.get("session_id")  # noqa: E501
+        deliberation_id = message.content.get("deliberation_id") or message.content.get(
+            "session_id"
+        )
         topic = message.content.get("topic") or message.content.get("problem")
 
         logger.info(
-            f"[{self.agent_id}] Participating in deliberation {deliberation_id}"  # noqa: G004
+            f"[{self.agent_id}] Participating in deliberation {deliberation_id}"
         )
 
         # Perform independent analysis
@@ -983,7 +991,7 @@ class BetaAgent(TriadAgent):
         decision_to_validate = message.content.get("decision")
         original_analysis = message.content.get("original_analysis")
 
-        logger.info(f"[{self.agent_id}] Validating: {request_id}")  # noqa: G004
+        logger.info(f"[{self.agent_id}] Validating: {request_id}")
 
         validation = await self._validate_decision(
             decision_to_validate,
@@ -1032,7 +1040,7 @@ class BetaAgent(TriadAgent):
         # P1-3: Trim history if it exceeds max size
         self._trim_history(self.error_detections)
         if errors:
-            logger.warning(f"[{self.agent_id}] Detected {len(errors)} errors")  # noqa: G004
+            logger.warning(f"[{self.agent_id}] Detected {len(errors)} errors")
 
         reply_topic = message.content.get("reply_to", "errors")
         await self.send(
@@ -1049,15 +1057,15 @@ class BetaAgent(TriadAgent):
         self,
         decision: Any,
         original_analysis: dict[str, Any] | None = None,
-        criteria: list[str] | None = None,  # noqa: ARG002
-        alpha_findings: dict[str, Any] | None = None,  # noqa: ARG002
+        criteria: list[str] | None = None,
+        alpha_findings: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
         """Validate a decision with Beta's perspective."""
         if self.swarms_agent:
             try:
                 validation_result = await self.run_with_llm(
                     prompt=f"Beta validation of: {decision}. Original: {original_analysis}",
-                    timeout=60
+                    timeout=60,
                 )
                 return {
                     "valid": True,
@@ -1066,7 +1074,7 @@ class BetaAgent(TriadAgent):
                     "perspective": "secondary",
                 }
             except Exception as e:
-                logger.error(f"[{self.agent_id}] Validation error: {e}")  # noqa: G004
+                logger.error(f"[{self.agent_id}] Validation error: {e}")
 
         return {
             "valid": True,
@@ -1082,17 +1090,18 @@ class BetaAgent(TriadAgent):
         if self.swarms_agent:
             try:
                 error_check = await self.run_with_llm(
-                    prompt=f"Check for errors in: {content}",
-                    timeout=60
+                    prompt=f"Check for errors in: {content}", timeout=60
                 )
                 if "error" in error_check.lower():
-                    errors.append({
-                        "type": "logical_error",
-                        "description": error_check,
-                        "severity": "medium",
-                    })
+                    errors.append(
+                        {
+                            "type": "logical_error",
+                            "description": error_check,
+                            "severity": "medium",
+                        }
+                    )
             except Exception as e:
-                logger.error(f"[{self.agent_id}] Error detection error: {e}")  # noqa: G004
+                logger.error(f"[{self.agent_id}] Error detection error: {e}")
 
         return errors
 
@@ -1161,7 +1170,7 @@ class CharlieAgent(TriadAgent):
         self._challenges: dict[str, Any] = {}
         self._risk_assessments: dict[str, Any] = {}
 
-        logger.info(f"[{self.agent_id}] Charlie agent initialized")  # noqa: G004
+        logger.info(f"[{self.agent_id}] Charlie agent initialized")
 
     def _triad_handlers(self) -> list[tuple[str, Any]]:
         """Return Charlie's message handlers."""
@@ -1173,7 +1182,7 @@ class CharlieAgent(TriadAgent):
 
     def _get_analysis_prompt(self, problem: str) -> str:
         """Build Charlie's analysis prompt."""
-        return f"Analyze with critical perspective (Charlie): {problem}. Identify risks and alternatives."  # noqa: E501
+        return f"Analyze with critical perspective (Charlie): {problem}. Identify risks and alternatives."
 
     def _get_analysis_extras(self) -> dict[str, Any]:
         """Return Charlie-specific extras."""
@@ -1190,7 +1199,7 @@ class CharlieAgent(TriadAgent):
         topic = message.content.get("topic") or message.content.get("problem")
 
         logger.info(
-            f"[{self.agent_id}] Participating in deliberation {session_id}"  # noqa: G004
+            f"[{self.agent_id}] Participating in deliberation {session_id}"
         )
 
         # Perform challenging analysis
@@ -1222,7 +1231,7 @@ class CharlieAgent(TriadAgent):
         request_id = message.content.get("request_id") or str(len(self._challenges))
         proposition = message.content.get("proposition")
 
-        logger.info(f"[{self.agent_id}] Challenging: {request_id}")  # noqa: G004
+        logger.info(f"[{self.agent_id}] Challenging: {request_id}")
 
         challenges = await self._generate_challenges(proposition)
 
@@ -1254,7 +1263,7 @@ class CharlieAgent(TriadAgent):
         request_id = message.content.get("request_id") or str(len(self._risk_assessments))
         scenario = message.content.get("scenario")
 
-        logger.info(f"[{self.agent_id}] Assessing risks: {request_id}")  # noqa: G004
+        logger.info(f"[{self.agent_id}] Assessing risks: {request_id}")
 
         assessment = await self._assess_risks(scenario)
 
@@ -1283,8 +1292,8 @@ class CharlieAgent(TriadAgent):
     async def _generate_challenges(
         self,
         proposition: Any,
-        alpha_findings: dict[str, Any] | None = None,  # noqa: ARG002
-        beta_findings: dict[str, Any] | None = None,  # noqa: ARG002
+        alpha_findings: dict[str, Any] | None = None,
+        beta_findings: dict[str, Any] | None = None,
     ) -> list[dict[str, Any]]:
         """Generate challenges to a proposition."""
         challenges = []
@@ -1292,16 +1301,17 @@ class CharlieAgent(TriadAgent):
         if self.swarms_agent:
             try:
                 challenge_result = await self.run_with_llm(
-                    prompt=f"Challenge this proposition: {proposition}",
-                    timeout=60
+                    prompt=f"Challenge this proposition: {proposition}", timeout=60
                 )
-                challenges.append({
-                    "type": "logical_challenge",
-                    "description": challenge_result,
-                    "severity": "medium",
-                })
+                challenges.append(
+                    {
+                        "type": "logical_challenge",
+                        "description": challenge_result,
+                        "severity": "medium",
+                    }
+                )
             except Exception as e:
-                logger.error(f"[{self.agent_id}] Challenge error: {e}")  # noqa: G004
+                logger.error(f"[{self.agent_id}] Challenge error: {e}")
 
         return challenges
 
@@ -1310,8 +1320,7 @@ class CharlieAgent(TriadAgent):
         if self.swarms_agent:
             try:
                 risk_result = await self.run_with_llm(
-                    prompt=f"Assess risks: {scenario}",
-                    timeout=60
+                    prompt=f"Assess risks: {scenario}", timeout=60
                 )
                 return {
                     "risks_identified": [risk_result],
@@ -1319,7 +1328,7 @@ class CharlieAgent(TriadAgent):
                     "mitigations": ["Standard mitigations"],
                 }
             except Exception as e:
-                logger.error(f"[{self.agent_id}] Risk assessment error: {e}")  # noqa: G004
+                logger.error(f"[{self.agent_id}] Risk assessment error: {e}")
 
         return {
             "risks_identified": [],

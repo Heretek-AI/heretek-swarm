@@ -102,7 +102,9 @@ class OpenAIEmbeddingProvider(EmbeddingProviderBase):
                 headers=headers,
                 timeout=httpx.Timeout(60.0, connect=10.0),
             )
-            self._client = instrumented_httpx_client(client=base_client, call_type="embeddings_openai")
+            self._client = instrumented_httpx_client(
+                client=base_client, call_type="embeddings_openai"
+            )
         return self._client
 
     async def embed(
@@ -198,6 +200,7 @@ class OpenAIEmbeddingProvider(EmbeddingProviderBase):
         """Cleanup HTTP client."""
         if self._client and not self._client.is_closed:
             await self._client.aclose()
+
 
 # Import at module level for type annotation
 from heretek_swarm.infrastructure.otel import InstrumentedAsyncClient

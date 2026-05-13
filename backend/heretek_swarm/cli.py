@@ -50,6 +50,7 @@ _swarm_instance: AutonomousSwarm | None = None
 # Infrastructure Configuration Helpers
 # =============================================================================
 
+
 def _load_infrastructure_config_and_echo() -> dict[str, Any] | None:
     """
     Load infrastructure configuration from database.
@@ -92,6 +93,7 @@ def _print_infrastructure_config(result: dict[str, Any] | None) -> None:
 # =============================================================================
 # Health Check Functions
 # =============================================================================
+
 
 async def _check_service_health(
     service: InfrastructureService,
@@ -149,12 +151,16 @@ def _make_result(
 async def _check_postgres(host: str, port: int, timeout: float, start: float) -> dict[str, Any]:
     """Check PostgreSQL health via TCP socket."""
     try:
-        _reader, writer = await asyncio.wait_for(asyncio.open_connection(host, port), timeout=timeout)
+        _reader, writer = await asyncio.wait_for(
+            asyncio.open_connection(host, port), timeout=timeout
+        )
         writer.close()
         await writer.wait_closed()
         return _make_result(InfrastructureService.POSTGRES, HealthStatus.HEALTHY, start)
     except TimeoutError:
-        return _make_result(InfrastructureService.POSTGRES, HealthStatus.UNHEALTHY, start, "Connection timed out")
+        return _make_result(
+            InfrastructureService.POSTGRES, HealthStatus.UNHEALTHY, start, "Connection timed out"
+        )
     except Exception as e:
         return _make_result(InfrastructureService.POSTGRES, HealthStatus.UNHEALTHY, start, str(e))
 
@@ -183,9 +189,16 @@ async def _check_qdrant(host: str, port: int, timeout: float, start: float) -> d
             response = await client.get(f"http://{host}:{port}/healthz", timeout=timeout)
             if response.status_code == 200:
                 return _make_result(InfrastructureService.QDRANT, HealthStatus.HEALTHY, start)
-            return _make_result(InfrastructureService.QDRANT, HealthStatus.UNHEALTHY, start, f"HTTP {response.status_code}")
+            return _make_result(
+                InfrastructureService.QDRANT,
+                HealthStatus.UNHEALTHY,
+                start,
+                f"HTTP {response.status_code}",
+            )
     except httpx.TimeoutException:
-        return _make_result(InfrastructureService.QDRANT, HealthStatus.UNHEALTHY, start, "Request timed out")
+        return _make_result(
+            InfrastructureService.QDRANT, HealthStatus.UNHEALTHY, start, "Request timed out"
+        )
     except Exception as e:
         return _make_result(InfrastructureService.QDRANT, HealthStatus.UNHEALTHY, start, str(e))
 
@@ -194,7 +207,9 @@ async def _check_nats(host: str, port: int, timeout: float, start: float) -> dic
     """Check NATS health via CONNECT/PING exchange."""
 
     try:
-        reader, writer = await asyncio.wait_for(asyncio.open_connection(host, port), timeout=timeout)
+        reader, writer = await asyncio.wait_for(
+            asyncio.open_connection(host, port), timeout=timeout
+        )
 
         # Send CONNECT
         writer.write(b'CONNECT {"verbose":false,"ping":true}\r\n')
@@ -205,7 +220,9 @@ async def _check_nats(host: str, port: int, timeout: float, start: float) -> dic
         if not (info_response and b"INFO" in info_response):
             writer.close()
             await writer.wait_closed()
-            return _make_result(InfrastructureService.NATS, HealthStatus.UNHEALTHY, start, "No INFO response")
+            return _make_result(
+                InfrastructureService.NATS, HealthStatus.UNHEALTHY, start, "No INFO response"
+            )
 
         # Send PING
         writer.write(b"PING\r\n")
@@ -218,9 +235,13 @@ async def _check_nats(host: str, port: int, timeout: float, start: float) -> dic
 
         if pong_response and b"PONG" in pong_response:
             return _make_result(InfrastructureService.NATS, HealthStatus.HEALTHY, start)
-        return _make_result(InfrastructureService.NATS, HealthStatus.UNHEALTHY, start, "No PONG response")
+        return _make_result(
+            InfrastructureService.NATS, HealthStatus.UNHEALTHY, start, "No PONG response"
+        )
     except TimeoutError:
-        return _make_result(InfrastructureService.NATS, HealthStatus.UNHEALTHY, start, "Connection timed out")
+        return _make_result(
+            InfrastructureService.NATS, HealthStatus.UNHEALTHY, start, "Connection timed out"
+        )
     except Exception as e:
         return _make_result(InfrastructureService.NATS, HealthStatus.UNHEALTHY, start, str(e))
 
@@ -235,9 +256,16 @@ async def _check_mem0(host: str, port: int, timeout: float, start: float) -> dic
             response = await client.get(f"http://{host}:{port}/health", timeout=timeout)
             if response.status_code == 200:
                 return _make_result(InfrastructureService.MEM0, HealthStatus.HEALTHY, start)
-            return _make_result(InfrastructureService.MEM0, HealthStatus.UNHEALTHY, start, f"HTTP {response.status_code}")
+            return _make_result(
+                InfrastructureService.MEM0,
+                HealthStatus.UNHEALTHY,
+                start,
+                f"HTTP {response.status_code}",
+            )
     except httpx.TimeoutException:
-        return _make_result(InfrastructureService.MEM0, HealthStatus.UNHEALTHY, start, "Request timed out")
+        return _make_result(
+            InfrastructureService.MEM0, HealthStatus.UNHEALTHY, start, "Request timed out"
+        )
     except Exception as e:
         return _make_result(InfrastructureService.MEM0, HealthStatus.UNHEALTHY, start, str(e))
 
@@ -245,6 +273,7 @@ async def _check_mem0(host: str, port: int, timeout: float, start: float) -> dic
 # =============================================================================
 # Docker/Podman Detection
 # =============================================================================
+
 
 def check_container_runtime() -> tuple[str | None, str]:
     """
@@ -317,9 +346,7 @@ class GroupedGroup(click.Group):
         "Monitoring": ["status", "stop"],
     }
 
-    def format_commands(
-        self, ctx: click.Context, formatter: click.HelpFormatter
-    ) -> None:
+    def format_commands(self, ctx: click.Context, formatter: click.HelpFormatter) -> None:
         """Write command groups with separator lines to *formatter*."""
         # Collect all registered commands (excluding hidden)
         commands = {
@@ -349,15 +376,10 @@ class GroupedGroup(click.Group):
                     formatter.write_dl(rows)
 
         # Any commands not in a group go into "Other"
-        remaining = {
-            name: cmd
-            for name, cmd in commands.items()
-            if name not in placed
-        }
+        remaining = {name: cmd for name, cmd in commands.items() if name not in placed}
         if remaining:
             rows = [
-                (name, cmd.get_short_help_str(limit=50))
-                for name, cmd in sorted(remaining.items())
+                (name, cmd.get_short_help_str(limit=50)) for name, cmd in sorted(remaining.items())
             ]
             with formatter.section("Other"):
                 formatter.write_dl(rows)
@@ -369,9 +391,7 @@ class GroupedGroup(click.Group):
             return cmd
 
         # Suggest the closest valid command name
-        matches = difflib.get_close_matches(
-            cmd_name, self.list_commands(ctx), n=1, cutoff=0.6
-        )
+        matches = difflib.get_close_matches(cmd_name, self.list_commands(ctx), n=1, cutoff=0.6)
         if matches:
             raise click.UsageError(
                 f"No such command '{cmd_name}'. Did you mean '{matches[0]}'?",
@@ -418,7 +438,9 @@ def cli(ctx: click.Context) -> None:
 @click.option("--scale", default=1, type=int, help="Number of agent instances (default: 1)")
 @click.option("--nats-url", default="nats://localhost:4222", help="NATS server URL")
 @click.option("--api-base", default=DEFAULT_API_BASE, help="API base URL")
-@click.option("--check-runtime/--no-check-runtime", default=True, help="Check container runtime availability")
+@click.option(
+    "--check-runtime/--no-check-runtime", default=True, help="Check container runtime availability"
+)
 def deploy(production: bool, scale: int, nats_url: str, api_base: str, check_runtime: bool) -> None:
     """
     Deploy Heretek Swarm agents.
@@ -496,6 +518,7 @@ def deploy(production: bool, scale: int, nats_url: str, api_base: str, check_run
 # =============================================================================
 # Run Command - Autonomous Swarm
 # =============================================================================
+
 
 def _print_startup_banner(swarm: AutonomousSwarm) -> None:
     """Print a formatted startup status table showing component health."""
@@ -659,8 +682,7 @@ def _display_consensus_results(results: dict[str, Any]) -> None:
             r_decision = rh.get("decision", "none")
             r_votes = rh.get("vote_count", 0)
             click.echo(
-                f"    Round {r_num}: decision={r_decision}, "
-                f"score={r_score:.2f}, votes={r_votes}"
+                f"    Round {r_num}: decision={r_decision}, score={r_score:.2f}, votes={r_votes}"
             )
 
     click.echo("")
@@ -673,8 +695,8 @@ async def _start_autonomous_swarm(
     force_consensus: bool = False,
 ) -> None:
     """Start the AutonomousSwarm with signal handlers for graceful shutdown."""
-    from heretek_swarm.logging.config import setup_logging
     from heretek_swarm.runtime.main_loop import AutonomousSwarm
+    from heretek_swarm.swarm_logging.config import setup_logging
 
     # Set up structured logging
     setup_logging(json_output=False, include_caller_info=False)
@@ -693,8 +715,7 @@ async def _start_autonomous_swarm(
         "ephemeral": {"ttl_seconds": 3600},
         "persistent": {
             "connection_string": os.getenv(
-                "DATABASE_URL",
-                "postgresql://heretek:password@localhost/heretek_swarm"
+                "DATABASE_URL", "postgresql://heretek:password@localhost/heretek_swarm"
             ),
         },
         "rag": {
@@ -844,7 +865,14 @@ def _handle_signal(signum: int, frame) -> None:
     default=False,
     help="Force MAKER consensus routing (bypasses complexity heuristic)",
 )
-def run(detach: bool, nats_url: str, no_infra: bool, prompt: str | None = None, target_agent: str | None = None, force_consensus: bool = False) -> None:
+def run(
+    detach: bool,
+    nats_url: str,
+    no_infra: bool,
+    prompt: str | None = None,
+    target_agent: str | None = None,
+    force_consensus: bool = False,
+) -> None:
     """
     Start the Heretek Swarm autonomous runtime.
 
@@ -875,9 +903,10 @@ def run(detach: bool, nats_url: str, no_infra: bool, prompt: str | None = None, 
     if detach:
         click.echo("\nStarting in detached mode...")
         # Use the daemon module — handles fork, PID file, Unix socket, signal handling.
-        from heretek_swarm.logging.config import setup_logging
         from heretek_swarm.runtime.daemon import daemonize
         from heretek_swarm.runtime.main_loop import AutonomousSwarm
+        from heretek_swarm.swarm_logging.config import setup_logging
+
         setup_logging(json_output=False, include_caller_info=False)
 
         nats_servers = [s.strip() for s in nats_url.split(",")]
@@ -892,8 +921,7 @@ def run(detach: bool, nats_url: str, no_infra: bool, prompt: str | None = None, 
             "ephemeral": {"ttl_seconds": 3600},
             "persistent": {
                 "connection_string": os.getenv(
-                    "DATABASE_URL",
-                    "postgresql://heretek:password@localhost/heretek_swarm"
+                    "DATABASE_URL", "postgresql://heretek:password@localhost/heretek_swarm"
                 ),
             },
             "rag": {
@@ -928,7 +956,14 @@ def run(detach: bool, nats_url: str, no_infra: bool, prompt: str | None = None, 
     if prompt:
         # Prompt mode: no signal handlers needed, exit after deliberation
         try:
-            asyncio.run(_start_autonomous_swarm(no_infra=no_infra, prompt=prompt, target_agent=target_agent, force_consensus=force_consensus))
+            asyncio.run(
+                _start_autonomous_swarm(
+                    no_infra=no_infra,
+                    prompt=prompt,
+                    target_agent=target_agent,
+                    force_consensus=force_consensus,
+                )
+            )
         except Exception as e:
             logger.error("prompt_mode_failure", error=str(e))
             click.echo(f"\n✗ Failed to start: {e}")
@@ -994,7 +1029,13 @@ def consensus(question: str, timeout: float, participants: int | None, max_round
     when a clear winner emerges, and the result is displayed with winning
     decision, confidence score, vote breakdown, and red flags.
     """
-    logger.info("consensus_command", question=question[:200], timeout=timeout, participants=participants, max_rounds=max_rounds)
+    logger.info(
+        "consensus_command",
+        question=question[:200],
+        timeout=timeout,
+        participants=participants,
+        max_rounds=max_rounds,
+    )
 
     click.echo("Heretek Swarm Consensus")
     click.echo("=" * 40)
@@ -1018,8 +1059,8 @@ def consensus(question: str, timeout: float, participants: int | None, max_round
 
 async def _run_consensus(question: str, timeout: float, max_rounds: int = 1) -> dict[str, Any]:
     """Async helper for the consensus CLI command."""
-    from heretek_swarm.logging.config import setup_logging
     from heretek_swarm.runtime.main_loop import AutonomousSwarm
+    from heretek_swarm.swarm_logging.config import setup_logging
 
     setup_logging(json_output=False, include_caller_info=False)
 
@@ -1036,8 +1077,7 @@ async def _run_consensus(question: str, timeout: float, max_rounds: int = 1) -> 
         "ephemeral": {"ttl_seconds": 3600},
         "persistent": {
             "connection_string": os.getenv(
-                "DATABASE_URL",
-                "postgresql://heretek:password@localhost/heretek_swarm"
+                "DATABASE_URL", "postgresql://heretek:password@localhost/heretek_swarm"
             ),
         },
         "rag": {
@@ -1273,10 +1313,20 @@ def status(api_base: str, timeout: int, output_json: bool) -> None:
     if not configs:
         if output_json:
             import json
+
             result = {
                 "services": [],
-                "summary": {"total": 0, "healthy": 0, "unhealthy": 0, "unknown": 0, "duration_ms": round((time.perf_counter() - start_time) * 1000, 1)},
-                "timestamp": __import__("datetime").datetime.now(__import__("datetime").timezone.utc).isoformat().replace("+00:00", "Z"),
+                "summary": {
+                    "total": 0,
+                    "healthy": 0,
+                    "unhealthy": 0,
+                    "unknown": 0,
+                    "duration_ms": round((time.perf_counter() - start_time) * 1000, 1),
+                },
+                "timestamp": __import__("datetime")
+                .datetime.now(__import__("datetime").timezone.utc)
+                .isoformat()
+                .replace("+00:00", "Z"),
             }
             click.echo(json.dumps(result))
             sys.exit(0)
@@ -1329,6 +1379,7 @@ def status(api_base: str, timeout: int, output_json: bool) -> None:
 
     if output_json:
         import json
+
         total_time_ms = (time.perf_counter() - start_time) * 1000
         result = {
             "services": [
@@ -1347,7 +1398,10 @@ def status(api_base: str, timeout: int, output_json: bool) -> None:
                 "unknown": unknown_count,
                 "duration_ms": round(total_time_ms, 1),
             },
-            "timestamp": __import__("datetime").datetime.now(__import__("datetime").timezone.utc).isoformat().replace("+00:00", "Z"),
+            "timestamp": __import__("datetime")
+            .datetime.now(__import__("datetime").timezone.utc)
+            .isoformat()
+            .replace("+00:00", "Z"),
         }
         click.echo(json.dumps(result))
         sys.exit(1 if unhealthy_count > 0 else 0)
@@ -1391,12 +1445,16 @@ def status(api_base: str, timeout: int, output_json: bool) -> None:
 
     # Summary
     total_time = time.perf_counter() - start_time
-    click.echo(f"\nSummary: {healthy_count} healthy, {unhealthy_count} unhealthy, {unknown_count} unknown")
+    click.echo(
+        f"\nSummary: {healthy_count} healthy, {unhealthy_count} unhealthy, {unknown_count} unknown"
+    )
     click.echo(f"Total time: {total_time:.2f}s")
 
     # Exit code based on health
     if unhealthy_count > 0:
-        click.echo("\n⚠ Some services are unhealthy. Run 'heretek-swarm deploy' for setup instructions.")
+        click.echo(
+            "\n⚠ Some services are unhealthy. Run 'heretek-swarm deploy' for setup instructions."
+        )
         sys.exit(1)
     elif unknown_count > 0:
         click.echo("\n⚠ Some services have unknown status.")
@@ -1495,11 +1553,15 @@ def _display_daemon_status(agent_data: dict, pid: int, output_json: bool) -> Non
     agents = agent_data.get("agents", [])
 
     if output_json:
-        click.echo(json.dumps({
-            "daemon_pid": pid,
-            "agents": agents,
-            "agent_count": len(agents),
-        }))
+        click.echo(
+            json.dumps(
+                {
+                    "daemon_pid": pid,
+                    "agents": agents,
+                    "agent_count": len(agents),
+                }
+            )
+        )
         return
 
     click.echo("Heretek Swarm Status (daemon)")

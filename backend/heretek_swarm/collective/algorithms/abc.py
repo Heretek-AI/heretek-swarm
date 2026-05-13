@@ -42,6 +42,7 @@ class BeeAgent:
         dance_strength: Strength of waggle dance
         agent_id: Associated agent ID
     """
+
     bee_id: str = field(default_factory=lambda: str(uuid.uuid4()))
     role: str = "unemployed"
     current_task: str | None = None
@@ -53,6 +54,7 @@ class BeeAgent:
 @dataclass
 class SwarmDecision:
     """Result of a swarm intelligence decision process."""
+
     pattern: SwarmPattern = SwarmPattern.BEE_ALGORITHM
     participants: list[str] = field(default_factory=list)
     convergence_iterations: int = 0
@@ -141,7 +143,7 @@ class ABC:
             quality_metrics={
                 "tasks_allocated": len(best_allocation),
                 "allocation_efficiency": best_allocation_score,
-            }
+            },
         )
 
         self.decision_history.append(decision)
@@ -180,8 +182,7 @@ class ABC:
 
         for _scout in scouts:
             available_tasks = [
-                t for t, data in self.task_pool.items()
-                if not data["assigned_foragers"]
+                t for t, data in self.task_pool.items() if not data["assigned_foragers"]
             ]
 
             if available_tasks:
@@ -196,17 +197,13 @@ class ABC:
 
         for forager in foragers:
             if forager.current_task:
-                quality = self.task_pool.get(forager.current_task, {}).get(
-                    "quality", 0
-                )
+                quality = self.task_pool.get(forager.current_task, {}).get("quality", 0)
                 forager.task_quality = quality
             else:
                 task_dances = []
                 for task_id in self.task_pool:
                     dance_strength = sum(
-                        b.dance_strength
-                        for b in self.bee_colony
-                        if b.current_task == task_id
+                        b.dance_strength for b in self.bee_colony if b.current_task == task_id
                     )
                     if dance_strength > 0:
                         task_dances.append((task_id, dance_strength))
@@ -214,14 +211,10 @@ class ABC:
                 if task_dances:
                     total = sum(d[1] for d in task_dances)
                     weights = [d[1] / total for d in task_dances]
-                    selected = random.choices(
-                        [d[0] for d in task_dances], weights=weights, k=1
-                    )[0]
+                    selected = random.choices([d[0] for d in task_dances], weights=weights, k=1)[0]
                     forager.current_task = selected
                     forager.task_quality = self.task_pool[selected]["quality"]
-                    self.task_pool[selected]["assigned_foragers"].append(
-                        forager.agent_id
-                    )
+                    self.task_pool[selected]["assigned_foragers"].append(forager.agent_id)
 
     def _should_keep_dance(self, bee: BeeAgent) -> bool:
         """Check if bee should keep dancing based on task quality."""
@@ -264,17 +257,12 @@ class ABC:
         forager_counts = [len(agents) for agents in allocation.values() if agents]
         if forager_counts:
             avg_count = sum(forager_counts) / len(forager_counts)
-            variance = sum(
-                (c - avg_count) ** 2 for c in forager_counts
-            ) / len(forager_counts)
+            variance = sum((c - avg_count) ** 2 for c in forager_counts) / len(forager_counts)
             balance_score = 1.0 / (1.0 + variance)
         else:
             balance_score = 0
 
-        return (
-            ABC_COVERAGE_WEIGHT * coverage_score +
-            ABC_BALANCE_WEIGHT * balance_score
-        )
+        return ABC_COVERAGE_WEIGHT * coverage_score + ABC_BALANCE_WEIGHT * balance_score
 
     def _detect_emergence(self, allocation: dict[str, list[str]]) -> list[str]:
         """Detect emergence indicators in bee algorithm."""
@@ -286,9 +274,9 @@ class ABC:
                 indicators.append("complete_coverage")
 
         specialist_count = sum(
-            1 for bee in self.bee_colony
-            if bee.current_task is not None and
-            bee.dance_strength > ABC_SPECIALIST_THRESHOLD
+            1
+            for bee in self.bee_colony
+            if bee.current_task is not None and bee.dance_strength > ABC_SPECIALIST_THRESHOLD
         )
         if specialist_count > len(self.bee_colony) * ABC_SPECIALIST_FRACTION:
             indicators.append("task_specialization")

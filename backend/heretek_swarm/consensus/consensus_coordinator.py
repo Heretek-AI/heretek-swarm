@@ -161,9 +161,7 @@ class ConsensusCoordinator:
             else:
                 # Build argument exchange summary from prior round
                 prior_result = round_history[-1].get("result")
-                round_summary, args_for, args_against = (
-                    self._build_argument_exchange(prior_result)
-                )
+                round_summary, args_for, args_against = self._build_argument_exchange(prior_result)
                 prompt = _MULTI_ROUND_PROMPT.format(
                     round_number=round_num,
                     question=question,
@@ -183,9 +181,7 @@ class ConsensusCoordinator:
             # 4. Collect votes concurrently with timeout
             try:
                 await asyncio.wait_for(
-                    self._collect_all_votes(
-                        round_consensus_id, question, selected_ids, prompt
-                    ),
+                    self._collect_all_votes(round_consensus_id, question, selected_ids, prompt),
                     timeout=per_round_timeout,
                 )
             except TimeoutError:
@@ -210,9 +206,7 @@ class ConsensusCoordinator:
             round_record: dict[str, Any] = {
                 "round_number": round_num,
                 "consensus_id": round_consensus_id,
-                "vote_count": len(
-                    self.maker.active_processes.get(round_consensus_id, [])
-                ),
+                "vote_count": len(self.maker.active_processes.get(round_consensus_id, [])),
                 "result": result,
             }
 
@@ -316,9 +310,7 @@ class ConsensusCoordinator:
             vote_lines.append(
                 f"  {vote.agent_id}: {vote.decision} (confidence: {vote.confidence:.2f})"
             )
-        round_summary = f"{len(prior_result.votes)} agents voted:\n" + "\n".join(
-            vote_lines
-        )
+        round_summary = f"{len(prior_result.votes)} agents voted:\n" + "\n".join(vote_lines)
 
         # Arguments for/against
         args_for_lines: list[str] = []
@@ -357,8 +349,7 @@ class ConsensusCoordinator:
             prompt = _VOTE_PROMPT.format(question=question)
 
         tasks = [
-            self._collect_single_vote(consensus_id, agent_id, prompt)
-            for agent_id in agent_ids
+            self._collect_single_vote(consensus_id, agent_id, prompt) for agent_id in agent_ids
         ]
         await asyncio.gather(*tasks, return_exceptions=True)
 

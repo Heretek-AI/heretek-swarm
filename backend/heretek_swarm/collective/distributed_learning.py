@@ -33,7 +33,13 @@ import structlog
 from .knowledge_transform import (
     KnowledgeTransformer,
 )
-from .learning import CollectiveLearning, ExtractedPattern, LearningSignal, PatternMetadata, PatternType
+from .learning import (
+    CollectiveLearning,
+    ExtractedPattern,
+    LearningSignal,
+    PatternMetadata,
+    PatternType,
+)
 
 logger = structlog.get_logger(__name__)
 
@@ -74,16 +80,18 @@ class SyncMessage:
 
     def to_json(self) -> str:
         """Serialize to JSON string."""
-        return json.dumps({
-            "message_id": self.message_id,
-            "operation": self.operation.value,
-            "source_agent": self.source_agent,
-            "timestamp": self.timestamp,
-            "payload": self.payload,
-            "metadata": self.metadata,
-            "correlation_id": self.correlation_id,
-            "reply_to": self.reply_to,
-        })
+        return json.dumps(
+            {
+                "message_id": self.message_id,
+                "operation": self.operation.value,
+                "source_agent": self.source_agent,
+                "timestamp": self.timestamp,
+                "payload": self.payload,
+                "metadata": self.metadata,
+                "correlation_id": self.correlation_id,
+                "reply_to": self.reply_to,
+            }
+        )
 
     @classmethod
     def from_json(cls, json_str: str) -> "SyncMessage":
@@ -550,12 +558,14 @@ class DistributedLearningEngine:
                     )
                     merged.append(pattern_id)
                 else:
-                    conflicts.append({
-                        "pattern_id": pattern_id,
-                        "local_confidence": local_pattern.metadata.confidence,
-                        "remote_confidence": remote_pattern.metadata.confidence,
-                        "resolution": "kept_local",
-                    })
+                    conflicts.append(
+                        {
+                            "pattern_id": pattern_id,
+                            "local_confidence": local_pattern.metadata.confidence,
+                            "remote_confidence": remote_pattern.metadata.confidence,
+                            "resolution": "kept_local",
+                        }
+                    )
 
         result = MergeResult(
             success=len(errors) == 0,
@@ -629,14 +639,12 @@ class DistributedLearningEngine:
         merged.outcomes = local.outcomes + remote.outcomes
 
         # Combine agents involved
-        merged.metadata.agents_involved = list(set(
-            local.metadata.agents_involved + remote.metadata.agents_involved
-        ))
+        merged.metadata.agents_involved = list(
+            set(local.metadata.agents_involved + remote.metadata.agents_involved)
+        )
 
         # Combine topics
-        merged.metadata.topics = list(set(
-            local.metadata.topics + remote.metadata.topics
-        ))
+        merged.metadata.topics = list(set(local.metadata.topics + remote.metadata.topics))
 
         # Update timestamps
         merged.metadata.first_observed = min(
@@ -672,26 +680,28 @@ class DistributedLearningEngine:
 
         if local_pattern:
             # Check for significant confidence difference
-            confidence_diff = abs(
-                local_pattern.metadata.confidence - pattern.metadata.confidence
-            )
+            confidence_diff = abs(local_pattern.metadata.confidence - pattern.metadata.confidence)
 
             if confidence_diff > 0.3:  # Threshold for conflict
-                conflicts.append({
-                    "type": "confidence_mismatch",
-                    "pattern_id": pattern.metadata.pattern_id,
-                    "local_confidence": local_pattern.metadata.confidence,
-                    "remote_confidence": pattern.metadata.confidence,
-                })
+                conflicts.append(
+                    {
+                        "type": "confidence_mismatch",
+                        "pattern_id": pattern.metadata.pattern_id,
+                        "local_confidence": local_pattern.metadata.confidence,
+                        "remote_confidence": pattern.metadata.confidence,
+                    }
+                )
 
             # Check for different pattern types
             if local_pattern.metadata.pattern_type != pattern.metadata.pattern_type:
-                conflicts.append({
-                    "type": "type_mismatch",
-                    "pattern_id": pattern.metadata.pattern_id,
-                    "local_type": local_pattern.metadata.pattern_type.value,
-                    "remote_type": pattern.metadata.pattern_type.value,
-                })
+                conflicts.append(
+                    {
+                        "type": "type_mismatch",
+                        "pattern_id": pattern.metadata.pattern_id,
+                        "local_type": local_pattern.metadata.pattern_type.value,
+                        "remote_type": pattern.metadata.pattern_type.value,
+                    }
+                )
 
         return conflicts
 

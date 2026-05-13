@@ -242,9 +242,7 @@ class TestVoteRecordJSONL:
 class TestInMemoryPreservation:
     """Test that in-memory storage works alongside JSONL."""
 
-    def test_decisions_still_in_memory(
-        self, jsonl_trail: ConsensusAuditTrail
-    ) -> None:
+    def test_decisions_still_in_memory(self, jsonl_trail: ConsensusAuditTrail) -> None:
         """In-memory decisions dict should be populated in JSONL mode."""
         jsonl_trail.record_decision(
             decision_id="d1",
@@ -256,9 +254,7 @@ class TestInMemoryPreservation:
         assert "d1" in jsonl_trail.decisions
         assert jsonl_trail.decisions["d1"].decision == "Yes"
 
-    def test_votes_still_in_memory(
-        self, jsonl_trail: ConsensusAuditTrail
-    ) -> None:
+    def test_votes_still_in_memory(self, jsonl_trail: ConsensusAuditTrail) -> None:
         """In-memory votes dict should be populated in JSONL mode."""
         jsonl_trail.record_vote(
             consensus_id="c1",
@@ -269,9 +265,7 @@ class TestInMemoryPreservation:
         assert "c1" in jsonl_trail.votes
         assert len(jsonl_trail.votes["c1"]) == 1
 
-    def test_events_still_in_memory(
-        self, jsonl_trail: ConsensusAuditTrail
-    ) -> None:
+    def test_events_still_in_memory(self, jsonl_trail: ConsensusAuditTrail) -> None:
         """In-memory events list should be populated in JSONL mode."""
         jsonl_trail.record_decision(
             decision_id="d1",
@@ -292,9 +286,7 @@ class TestInMemoryPreservation:
 class TestCleanup:
     """Test that cleanup() flushes pending writes."""
 
-    def test_cleanup_flushes_pending(
-        self, tmp_jsonl_path: Path
-    ) -> None:
+    def test_cleanup_flushes_pending(self, tmp_jsonl_path: Path) -> None:
         """Cleanup should drain the queue before stopping the writer."""
         trail = ConsensusAuditTrail(storage_backend="jsonl")
         trail.initialize()
@@ -314,9 +306,7 @@ class TestCleanup:
         lines = tmp_jsonl_path.read_text(encoding="utf-8").strip().splitlines()
         assert len(lines) == 10
 
-    def test_cleanup_idempotent(
-        self, jsonl_trail: ConsensusAuditTrail
-    ) -> None:
+    def test_cleanup_idempotent(self, jsonl_trail: ConsensusAuditTrail) -> None:
         """Calling cleanup() multiple times should not raise."""
         jsonl_trail.record_decision(
             decision_id="d1",
@@ -343,10 +333,12 @@ class TestWriterErrorHandling:
         """A record with non-serializable fields should be logged, not crash."""
         # Inject a non-serializable object into metadata by calling
         # _record_to_jsonl directly with a bad record
-        jsonl_trail._record_to_jsonl({
-            "record_type": "test",
-            "bad_field": object(),  # Not JSON serializable
-        })
+        jsonl_trail._record_to_jsonl(
+            {
+                "record_type": "test",
+                "bad_field": object(),  # Not JSON serializable
+            }
+        )
         # Wait for the queue to drain
         jsonl_trail._jsonl_queue.join()
         # The writer should log the error but not crash
@@ -377,9 +369,7 @@ class TestWriterErrorHandling:
 class TestEmptyAuditTrail:
     """Test behavior with no records written."""
 
-    def test_empty_file_after_init_only(
-        self, tmp_jsonl_path: Path
-    ) -> None:
+    def test_empty_file_after_init_only(self, tmp_jsonl_path: Path) -> None:
         """No file should exist if initialize() is called but nothing recorded."""
         trail = ConsensusAuditTrail(storage_backend="jsonl")
         trail.initialize()
@@ -387,9 +377,7 @@ class TestEmptyAuditTrail:
         # File should not have been created since nothing was queued
         assert not tmp_jsonl_path.exists()
 
-    def test_cleanup_without_initialize(
-        self, tmp_jsonl_path: Path
-    ) -> None:
+    def test_cleanup_without_initialize(self, tmp_jsonl_path: Path) -> None:
         """cleanup() without initialize() should be a no-op."""
         trail = ConsensusAuditTrail(storage_backend="jsonl")
         trail.cleanup()  # Should not raise

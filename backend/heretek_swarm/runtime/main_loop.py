@@ -107,8 +107,10 @@ class AutonomousSwarm:
             "scaling_interval": 60,
             "ephemeral": {"ttl_seconds": 3600},
             "persistent": {
-                            "connection_string": os.getenv("DATABASE_URL", "postgresql://heretek:password@localhost/heretek_swarm"),
-                        },
+                "connection_string": os.getenv(
+                    "DATABASE_URL", "postgresql://heretek:password@localhost/heretek_swarm"
+                ),
+            },
             "rag": {
                 "embedding_provider": "openai",
                 "collection_name": "heretek_documents",
@@ -136,6 +138,7 @@ class AutonomousSwarm:
             self.channel_registry = ChannelRegistry()
             self.group_registry = GroupRegistry(self.channel_registry)
             from heretek_swarm.rag.rag_pipeline import RAGPipelineConfig
+
             rag_cfg = RAGPipelineConfig(
                 embedding_provider=self.config.get("rag", {}).get("embedding_provider", "openai"),
                 embedding_model="text-embedding-3-small",
@@ -150,10 +153,16 @@ class AutonomousSwarm:
                 min_votes=consensus_config.get("min_votes", 3),
                 confidence_threshold=consensus_config.get("red_flag_threshold", 0.3),
             )
-            self.mcp_tools = CoreMCPTools(memory_system=None, rag_pipeline=self.rag, consensus_engine=self.consensus, event_mesh=None)
+            self.mcp_tools = CoreMCPTools(
+                memory_system=None,
+                rag_pipeline=self.rag,
+                consensus_engine=self.consensus,
+                event_mesh=None,
+            )
             # Bridge CoreMCPTools into mcp/ server registry so the HTTP API
             # can serve these tool definitions.
             from heretek_swarm.mcp.bridge import sync_mcp_registries
+
             bridged = sync_mcp_registries(self.mcp_tools)
             logger.info("mcp_bridge_applied", tool_count=bridged)
             # Initialize ModelGarage and wire into global router registry
@@ -161,7 +170,9 @@ class AutonomousSwarm:
             await self.model_garage.initialize()
             set_global_model_garage(self.model_garage)
             logger.info("model_garage_initialized")
-            self.supervisor = ActorSupervisor(health_check_interval=self._health_check_interval, auto_restart=True, max_restarts=5)
+            self.supervisor = ActorSupervisor(
+                health_check_interval=self._health_check_interval, auto_restart=True, max_restarts=5
+            )
             await self._spawn_all_actors()
             logger.info("autonomous_swarm_fully_initialized")
             return
@@ -197,6 +208,7 @@ class AutonomousSwarm:
         # 3. Initialize RAG pipeline
         try:
             from heretek_swarm.rag.rag_pipeline import RAGPipelineConfig
+
             rag_config_dict = self.config.get("rag", {})
             rag_cfg = RAGPipelineConfig(
                 embedding_provider=rag_config_dict.get("embedding_provider", "openai"),
@@ -280,6 +292,7 @@ class AutonomousSwarm:
             # Bridge CoreMCPTools into mcp/ server registry so the HTTP API
             # can serve these tool definitions.
             from heretek_swarm.mcp.bridge import sync_mcp_registries
+
             bridged = sync_mcp_registries(self.mcp_tools)
             logger.info(
                 "mcp_tools_initialized",
@@ -329,6 +342,7 @@ class AutonomousSwarm:
             # into the global get_supervisor() singleton so send_to_actor()
             # (used by triad deliberation) can find them.
             from heretek_swarm.actors.supervisor import get_supervisor
+
             get_supervisor().actors.update(self.supervisor.actors)
             logger.info("actor_registry_bridged", total_actors=len(self.supervisor.actors))
         except Exception as exc:
@@ -434,9 +448,7 @@ class AutonomousSwarm:
                 results[agent_id] = {"analyses": history[-3:] if history else []}
             elif agent_id == "beta":
                 analyses = getattr(agent, "_analyses", {})
-                results[agent_id] = {
-                    "analyses": list(analyses.values())[-3:] if analyses else []
-                }
+                results[agent_id] = {"analyses": list(analyses.values())[-3:] if analyses else []}
             elif agent_id == "charlie":
                 challenges = getattr(agent, "_challenges", {})
                 results[agent_id] = {
@@ -772,31 +784,26 @@ class AutonomousSwarm:
             (AlphaAgent, "alpha", ["analysis", "decisions", "triad"]),
             (BetaAgent, "beta", ["validation", "quality", "triad"]),
             (CharlieAgent, "charlie", ["risk", "challenges", "triad"]),
-
             # Tier 2: Support
             (HistorianAgent, "historian", ["memory", "context", "triad"]),
             (MetisAgent, "metis", ["planning", "strategy", "coordination"]),
             (EmpathAgent, "empath", ["sentiment", "mediation", "perception"]),
             (PerceiverAgent, "perceiver", ["input", "sensory", "perception"]),
             (EchoAgent, "echo", ["communication", "broadcast", "perception"]),
-
             # Tier 3: Exploration
             (ExplorerAgent, "explorer", ["discovery", "monitoring", "exploration"]),
             (ExaminerAgent, "examiner", ["testing", "quality", "exploration"]),
             (DreamerAgent, "dreamer", ["creative", "alternatives", "exploration"]),
             (CoderAgent, "coder", ["code", "implementation", "exploration"]),
-
             # Tier 4: Safety
             (SentinelAgent, "sentinel", ["validation", "safety", "safety"]),
             (SentinelPrimeAgent, "sentinel-prime", ["threats", "security", "safety"]),
             (ArbiterAgent, "arbiter", ["conflict", "resolution", "safety"]),
-
             # Tier 5: Coordination
             (CoordinatorAgent, "coordinator", ["coordination", "tasks", "coordination"]),
             (NexusAgent, "nexus", ["external", "api", "external"]),
             (CatalystAgent, "catalyst", ["change", "transition", "coordination"]),
             (ChronosAgent, "chronos", ["scheduling", "temporal", "coordination"]),
-
             # Tier 6: Enhancement
             (PrismAgent, "prism", ["perspective", "viewpoints", "memory"]),
             (HabitForgeAgent, "habit-forge", ["patterns", "behavior", "memory"]),
@@ -983,7 +990,9 @@ class AutonomousSwarm:
                 # Inject a swarms.Agent so the actor can produce real LLM output
                 system_prompt = _SYSTEM_PROMPTS.get(agent_id)
                 actor.swarms_agent = build_agent_for(
-                    agent_id, agent_class.__name__, system_prompt=system_prompt,
+                    agent_id,
+                    agent_class.__name__,
+                    system_prompt=system_prompt,
                 )
                 # Inject MCP tools into every agent's swarms_agent post-spawn
                 if self.mcp_tools is not None:
@@ -991,6 +1000,7 @@ class AutonomousSwarm:
                         build_tool_handlers,
                         build_tools_list_dictionary,
                     )
+
                     mcp_registry = self.mcp_tools.get_registry()
                     tool_schemas = build_tools_list_dictionary(mcp_registry)
                     tool_handlers = build_tool_handlers(mcp_registry)
@@ -1089,6 +1099,7 @@ class AutonomousSwarm:
                 async def create_callback(aid: str, ch_name: str):
                     async def callback(mesh, subject, data):
                         await self._handle_channel_message(aid, ch_name, data)
+
                     return callback
 
                 await self.event_mesh.subscribe(
@@ -1103,10 +1114,7 @@ class AutonomousSwarm:
             )
 
     async def _handle_channel_message(
-        self,
-        agent_id: str,
-        channel_name: str,
-        message: dict[str, Any]
+        self, agent_id: str, channel_name: str, message: dict[str, Any]
     ) -> None:
         """Handle incoming channel message for an agent."""
         try:
@@ -1118,6 +1126,7 @@ class AutonomousSwarm:
 
             # Route message to actor mailbox
             from heretek_swarm.actors.base import ActorMessage
+
             actor_message = ActorMessage(
                 sender="channel",
                 message_type=message.get("type", "default"),
@@ -1269,6 +1278,7 @@ class AutonomousSwarm:
         metis = self.supervisor.actors.get("metis") if self.supervisor else None
         if metis is not None:
             from heretek_swarm.actors.base import ActorMessage
+
             msg = ActorMessage(
                 sender="main_loop",
                 message_type="on_demand_analysis",
@@ -1288,6 +1298,7 @@ class AutonomousSwarm:
         empath = self.supervisor.actors.get("empath") if self.supervisor else None
         if empath is not None:
             from heretek_swarm.actors.base import ActorMessage
+
             msg = ActorMessage(
                 sender="main_loop",
                 message_type="on_demand_sentiment",
@@ -1478,11 +1489,7 @@ class AutonomousSwarm:
             await self._report_agents_batch(api_host, api_port)
             await asyncio.sleep(report_interval)
 
-    async def _report_agents_batch(
-        self,
-        api_host: str,
-        api_port: int
-    ) -> None:
+    async def _report_agents_batch(self, api_host: str, api_port: int) -> None:
         """Collect and report agent statuses to the API server.
 
         Extracts the agent collection and reporting logic to reduce
@@ -1507,11 +1514,7 @@ class AutonomousSwarm:
                 agents.append(status_dict)
         return agents
 
-    def _extract_agent_status(
-        self,
-        agent_id: str,
-        actor: Any
-    ) -> dict[str, Any] | None:
+    def _extract_agent_status(self, agent_id: str, actor: Any) -> dict[str, Any] | None:
         """Extract status dictionary for a single agent.
 
         Returns None if status cannot be extracted (agent not ready).
@@ -1532,10 +1535,7 @@ class AutonomousSwarm:
             return None
 
     async def _post_agent_report(
-        self,
-        api_host: str,
-        api_port: int,
-        agents: list[dict[str, Any]]
+        self, api_host: str, api_port: int, agents: list[dict[str, Any]]
     ) -> None:
         """Post agent status report to the API server."""
         import httpx
@@ -1573,9 +1573,7 @@ class AutonomousSwarm:
                     pulse_data = {
                         "timestamp": datetime.now(UTC).isoformat(),
                         "active_actors": len(self.supervisor.actors) if self.supervisor else 0,
-                        "deliberations_active": len(
-                            getattr(steward, "active_deliberations", {})
-                        ),
+                        "deliberations_active": len(getattr(steward, "active_deliberations", {})),
                         "heartbeat_healthy": True,
                     }
 
@@ -1639,10 +1637,12 @@ class AutonomousSwarm:
 # Entry Point
 # ============================================================================
 
+
 async def main():
     """Main entry point for autonomous operation."""
     # Configure logging first, before any loggers are instantiated
-    from heretek_swarm.logging.config import setup_logging
+    from heretek_swarm.swarm_logging.config import setup_logging
+
     setup_logging(json_output=False, include_caller_info=False)
 
     config = {

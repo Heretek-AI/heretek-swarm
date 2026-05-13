@@ -6,7 +6,7 @@ Provides async NATS connection management with OTel distributed tracing.
 
 from collections.abc import Callable
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
 from typing import TYPE_CHECKING, Any
 
@@ -25,6 +25,7 @@ logger = structlog.get_logger("nats.client")
 
 class ConnectionState(Enum):
     """NATS connection states."""
+
     DISCONNECTED = "disconnected"
     CONNECTING = "connecting"
     CONNECTED = "connected"
@@ -35,6 +36,7 @@ class ConnectionState(Enum):
 @dataclass
 class NATSConfig:
     """Configuration for NATS connection."""
+
     url: str = "nats://localhost:4222"
     name: str = "heretek-swarm"
     max_reconnect_attempts: int = 60
@@ -53,6 +55,7 @@ class NATSClient:
     Provides connection management, topic subscription,
     and distributed tracing for the Heretek Swarm event mesh.
     """
+
     config: NATSConfig = field(default_factory=NATSConfig)
     _connection: Any = field(default=None, repr=False)
     _state: ConnectionState = field(default=ConnectionState.DISCONNECTED)
@@ -179,10 +182,12 @@ class NATSClient:
                 if trace_context:
                     headers["tracecontext"] = json.dumps(trace_context)
                 elif span.trace_id:
-                    headers["tracecontext"] = json.dumps({
-                        "trace_id": span.trace_id,
-                        "span_id": span.span_id,
-                    })
+                    headers["tracecontext"] = json.dumps(
+                        {
+                            "trace_id": span.trace_id,
+                            "span_id": span.span_id,
+                        }
+                    )
 
                 # Publish with optional headers
                 if headers:
@@ -238,7 +243,7 @@ class NATSClient:
                     cb=callback,
                     queue=queue,
                 )
-                sub_id = f"{subject}:{datetime.now(timezone.utc).timestamp()}"  # noqa: UP017
+                sub_id = f"{subject}:{datetime.now(UTC).timestamp()}"
                 self._subscriptions[sub_id] = sub
                 span.set_status(SpanStatus.OK)
                 logger.info("nats_subscribed", subject=subject, queue=queue)

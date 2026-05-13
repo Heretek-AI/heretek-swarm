@@ -301,8 +301,8 @@ class TestMalformedTokens:
         """Expired token returns 401."""
         token = consensus_auth_manager.generate_token("test-agent")
         # Manually expire the token
-        consensus_auth_manager._valid_tokens[token]["expires_at"] = (
-            datetime.now(UTC) - timedelta(hours=1)
+        consensus_auth_manager._valid_tokens[token]["expires_at"] = datetime.now(UTC) - timedelta(
+            hours=1
         )
         resp = client.get(
             "/api/consensus",

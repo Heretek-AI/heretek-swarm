@@ -21,6 +21,7 @@ logger = structlog.get_logger(__name__)
 @dataclass
 class HandoffContext:
     """Context package transferred during agent handoff"""
+
     source: str
     destination: str
     context: dict[str, Any]
@@ -31,6 +32,7 @@ class HandoffContext:
 @dataclass
 class HandoffResult:
     """Result of agent handoff operation"""
+
     success: bool
     handoff_id: str
     error: str | None = None
@@ -65,7 +67,9 @@ class HandoffValidator:
         cls._validate_agent_ids(from_agent_id, to_agent_id)
 
     @classmethod
-    def _validate_fields(cls, from_agent_id: str, to_agent_id: str, context: dict[str, Any]) -> None:
+    def _validate_fields(
+        cls, from_agent_id: str, to_agent_id: str, context: dict[str, Any]
+    ) -> None:
         """Validate required fields are present."""
         if not from_agent_id or not isinstance(from_agent_id, str):
             raise ValueError("from_agent_id must be a non-empty string")
@@ -118,7 +122,7 @@ class AgentHandoff:
         from_agent_id: str,
         to_agent_id: str,
         context: dict[str, Any],
-        reason: str = "task_specialization"
+        reason: str = "task_specialization",
     ) -> HandoffResult:
         """
         Execute handoff between two agents.
@@ -140,22 +144,14 @@ class AgentHandoff:
             self._validator.validate(from_agent_id, to_agent_id, context)
         except ValueError as e:
             logger.error("handoff_validation_failed", error=str(e))
-            return HandoffResult(
-                success=False,
-                handoff_id="",
-                error=f"Validation failed: {e!s}"
-            )
+            return HandoffResult(success=False, handoff_id="", error=f"Validation failed: {e!s}")
 
         # Rate limiting check
         try:
             self._check_rate_limit()
         except ValueError as e:
             logger.error("handoff_rate_limit_exceeded", error=str(e))
-            return HandoffResult(
-                success=False,
-                handoff_id="",
-                error=str(e)
-            )
+            return HandoffResult(success=False, handoff_id="", error=str(e))
 
         # P2-1 fix: Use timezone-aware datetime
         handoff_id = str(uuid.uuid4())
@@ -166,12 +162,12 @@ class AgentHandoff:
             logger.error(
                 "handoff_limit_exceeded",
                 active_count=len(self._active_handoffs),
-                max_allowed=self.MAX_ACTIVE_HANDOFFS
+                max_allowed=self.MAX_ACTIVE_HANDOFFS,
             )
             return HandoffResult(
                 success=False,
                 handoff_id="",
-                error=f"Maximum active handoffs exceeded ({self.MAX_ACTIVE_HANDOFFS})"
+                error=f"Maximum active handoffs exceeded ({self.MAX_ACTIVE_HANDOFFS})",
             )
 
         # Prepare context package
@@ -180,7 +176,7 @@ class AgentHandoff:
             destination=to_agent_id,
             context=context,
             timestamp=timestamp,
-            handoff_id=handoff_id
+            handoff_id=handoff_id,
         )
 
         logger.info(
@@ -188,7 +184,7 @@ class AgentHandoff:
             handoff_id=handoff_id,
             from_agent=from_agent_id,
             to_agent=to_agent_id,
-            reason=reason
+            reason=reason,
         )
 
         try:
@@ -198,6 +194,7 @@ class AgentHandoff:
             # CRITICAL FIX: Actually transfer context to destination agent
             # Get actor registry and send context to destination
             from heretek_swarm.actors.supervisor import get_supervisor
+
             supervisor = get_supervisor()
             if supervisor and to_agent_id in supervisor.actors:
                 destination_actor = supervisor.actors[to_agent_id]
@@ -218,15 +215,11 @@ class AgentHandoff:
                     )
                 )
                 logger.info(
-                    "handoff_context_transferred",
-                    handoff_id=handoff_id,
-                    to_agent=to_agent_id
+                    "handoff_context_transferred", handoff_id=handoff_id, to_agent=to_agent_id
                 )
             else:
                 logger.warning(
-                    "handoff_destination_not_found",
-                    handoff_id=handoff_id,
-                    to_agent=to_agent_id
+                    "handoff_destination_not_found", handoff_id=handoff_id, to_agent=to_agent_id
                 )
 
             # Log handoff to historian (P1-4: Check method existence)
@@ -239,34 +232,18 @@ class AgentHandoff:
                         "to_agent": to_agent_id,
                         "reason": reason,
                         "timestamp": timestamp,
-                        "context_keys": list(context.keys())
-                    }
+                        "context_keys": list(context.keys()),
+                    },
                 )
 
-            logger.info(
-                "handoff_completed",
-                handoff_id=handoff_id,
-                status="success"
-            )
+            logger.info("handoff_completed", handoff_id=handoff_id, status="success")
 
-            return HandoffResult(
-                success=True,
-                handoff_id=handoff_id,
-                error=None
-            )
+            return HandoffResult(success=True, handoff_id=handoff_id, error=None)
 
         except Exception as e:
-            logger.error(
-                "handoff_failed",
-                handoff_id=handoff_id,
-                error=str(e)
-            )
+            logger.error("handoff_failed", handoff_id=handoff_id, error=str(e))
 
-            return HandoffResult(
-                success=False,
-                handoff_id=handoff_id,
-                error=str(e)
-            )
+            return HandoffResult(success=False, handoff_id=handoff_id, error=str(e))
 
     def _check_rate_limit(self) -> None:
         """
@@ -280,10 +257,7 @@ class AgentHandoff:
         one_minute_ago = now.replace(microsecond=0)
 
         # Remove timestamps older than 1 minute
-        self._handoff_timestamps = [
-            ts for ts in self._handoff_timestamps
-            if ts > one_minute_ago
-        ]
+        self._handoff_timestamps = [ts for ts in self._handoff_timestamps if ts > one_minute_ago]
 
         # Check if limit exceeded
         if len(self._handoff_timestamps) >= HandoffValidator.MAX_HANDOFFS_PER_MINUTE:
@@ -294,11 +268,7 @@ class AgentHandoff:
         # Record this handoff
         self._handoff_timestamps.append(now)
 
-    async def complete_handoff(
-        self,
-        handoff_id: str,
-        result: dict[str, Any]
-    ) -> bool:
+    async def complete_handoff(self, handoff_id: str, result: dict[str, Any]) -> bool:
         """
         Complete an active handoff with results.
 
@@ -310,10 +280,7 @@ class AgentHandoff:
             True if handoff completed successfully
         """
         if handoff_id not in self._active_handoffs:
-            logger.warning(
-                "handoff_not_found",
-                handoff_id=handoff_id
-            )
+            logger.warning("handoff_not_found", handoff_id=handoff_id)
             return False
 
         self._active_handoffs[handoff_id]
@@ -327,18 +294,14 @@ class AgentHandoff:
                 data={
                     "handoff_id": handoff_id,
                     "result": result,
-                    "timestamp": datetime.now(UTC).isoformat()
-                }
+                    "timestamp": datetime.now(UTC).isoformat(),
+                },
             )
 
         # Remove from active handoffs
         del self._active_handoffs[handoff_id]
 
-        logger.info(
-            "handoff_completed",
-            handoff_id=handoff_id,
-            status="success"
-        )
+        logger.info("handoff_completed", handoff_id=handoff_id, status="success")
 
         return True
 
@@ -362,10 +325,7 @@ class AgentHandoff:
             True if handoff was cancelled
         """
         if handoff_id not in self._active_handoffs:
-            logger.warning(
-                "handoff_not_found",
-                handoff_id=handoff_id
-            )
+            logger.warning("handoff_not_found", handoff_id=handoff_id)
             return False
 
         # Log cancellation
@@ -374,19 +334,12 @@ class AgentHandoff:
             # P2-1 fix: Use timezone-aware datetime
             await self.historian.log_event(
                 event_type="handoff_cancelled",
-                data={
-                    "handoff_id": handoff_id,
-                    "timestamp": datetime.now(UTC).isoformat()
-                }
+                data={"handoff_id": handoff_id, "timestamp": datetime.now(UTC).isoformat()},
             )
 
         # Remove from active handoffs
         del self._active_handoffs[handoff_id]
 
-        logger.info(
-            "handoff_cancelled",
-            handoff_id=handoff_id,
-            status="success"
-        )
+        logger.info("handoff_cancelled", handoff_id=handoff_id, status="success")
 
         return True

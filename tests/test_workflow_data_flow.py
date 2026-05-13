@@ -361,9 +361,7 @@ class TestMultipleUpstreamMerge:
         )
         engine = _make_engine(supervisor=supervisor)
 
-        actor.run_with_llm = AsyncMock(
-            side_effect=["Alpha result", "Beta result", "Gamma result"]
-        )
+        actor.run_with_llm = AsyncMock(side_effect=["Alpha result", "Beta result", "Gamma result"])
 
         node_a = _make_llm_node(node_id="n1", prompt="Alpha")
         node_b = _make_llm_node(node_id="n2", prompt="Beta")
@@ -473,7 +471,8 @@ class TestExecuteWorkflowDataFlow:
         )
         coordinator = MockConsensusCoordinator()
         coordinator.run_consensus.return_value = _make_consensus_result(
-            decision="approve", confidence=0.8,
+            decision="approve",
+            confidence=0.8,
         )
         engine = _make_engine(supervisor=supervisor, consensus_coordinator=coordinator)
 
@@ -639,9 +638,7 @@ class TestExecuteWorkflowDataFlow:
         """When a node fails, downstream nodes still execute independently."""
         actor = _make_mock_actor(agent_id="worker")
         # First call (llm1) fails, second call (llm2) succeeds
-        actor.run_with_llm = AsyncMock(
-            side_effect=[RuntimeError("LLM down"), "Recovered output"]
-        )
+        actor.run_with_llm = AsyncMock(side_effect=[RuntimeError("LLM down"), "Recovered output"])
         supervisor = _make_mock_supervisor(
             actors={"worker": actor},
             active_agent_ids=["worker"],
@@ -707,19 +704,14 @@ class TestContextVariablesAccessibility:
     async def test_multiple_nodes_all_stored_in_variables(self):
         """Multiple node outputs are all stored in context.variables."""
         actor = _make_mock_actor(agent_id="worker")
-        actor.run_with_llm = AsyncMock(
-            side_effect=["Result A", "Result B", "Result C"]
-        )
+        actor.run_with_llm = AsyncMock(side_effect=["Result A", "Result B", "Result C"])
         supervisor = _make_mock_supervisor(
             actors={"worker": actor},
             active_agent_ids=["worker"],
         )
         engine = _make_engine(supervisor=supervisor)
 
-        nodes = [
-            _make_llm_node(node_id=f"n{i}", prompt=f"Task {i}")
-            for i in range(3)
-        ]
+        nodes = [_make_llm_node(node_id=f"n{i}", prompt=f"Task {i}") for i in range(3)]
         workflow = _make_workflow(nodes=nodes)
         context = _make_context()
 
@@ -798,7 +790,10 @@ class TestContextVariablesAccessibility:
 
         # Verify the LLM output was available in the consensus node's input_data
         # by checking context.node_results
-        assert context.node_results["llm1"].output == "Deployment analysis: low risk, 3 minor issues found."
+        assert (
+            context.node_results["llm1"].output
+            == "Deployment analysis: low risk, 3 minor issues found."
+        )
         assert context.node_results["c1"].status == NodeStatus.COMPLETED
 
     @pytest.mark.asyncio
@@ -862,10 +857,15 @@ class TestGetNodeInput:
         """Node with one input gets that upstream's output."""
         context = _make_context()
         context.node_results["up"] = NodeResult(
-            node_id="up", status=NodeStatus.COMPLETED, output="hello",
+            node_id="up",
+            status=NodeStatus.COMPLETED,
+            output="hello",
         )
         node = WorkflowNode(
-            id="down", type="llm", data={}, inputs=["up"],
+            id="down",
+            type="llm",
+            data={},
+            inputs=["up"],
         )
         workflow = _make_workflow(
             nodes=[
@@ -884,7 +884,10 @@ class TestGetNodeInput:
         """If an input ID has no result in context, it's silently skipped."""
         context = _make_context()
         node = WorkflowNode(
-            id="down", type="llm", data={}, inputs=["missing-node"],
+            id="down",
+            type="llm",
+            data={},
+            inputs=["missing-node"],
         )
         workflow = _make_workflow(nodes=[node])
         engine = _make_engine()
@@ -901,10 +904,15 @@ class TestGetNodeInput:
             variables={"prompt": "global prompt", "extra": 42},
         )
         context.node_results["up"] = NodeResult(
-            node_id="up", status=NodeStatus.COMPLETED, output="upstream val",
+            node_id="up",
+            status=NodeStatus.COMPLETED,
+            output="upstream val",
         )
         node = WorkflowNode(
-            id="down", type="llm", data={}, inputs=["up"],
+            id="down",
+            type="llm",
+            data={},
+            inputs=["up"],
         )
         workflow = _make_workflow(
             nodes=[
@@ -930,10 +938,15 @@ class TestGetNodeInput:
         }
         context = _make_context()
         context.node_results["c1"] = NodeResult(
-            node_id="c1", status=NodeStatus.COMPLETED, output=consensus_output,
+            node_id="c1",
+            status=NodeStatus.COMPLETED,
+            output=consensus_output,
         )
         node = WorkflowNode(
-            id="ds", type="llm", data={}, inputs=["c1"],
+            id="ds",
+            type="llm",
+            data={},
+            inputs=["c1"],
         )
         workflow = _make_workflow(
             nodes=[

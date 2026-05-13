@@ -8,7 +8,7 @@ using Fernet symmetric encryption.
 from __future__ import annotations
 
 import uuid
-from datetime import datetime  # noqa: TC003 -- Required at runtime for SQLAlchemy Mapped annotation
+from datetime import datetime
 from uuid import UUID
 
 from sqlalchemy import DateTime, Index, Integer, String, Text, func

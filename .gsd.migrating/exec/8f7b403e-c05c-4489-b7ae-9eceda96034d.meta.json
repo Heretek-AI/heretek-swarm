@@ -1,0 +1,18 @@
+{
+  "id": "8f7b403e-c05c-4489-b7ae-9eceda96034d",
+  "runtime": "bash",
+  "purpose": "Find health and prompt endpoints in API",
+  "script_chars": 338,
+  "started_at": "2026-05-13T00:46:03.455Z",
+  "finished_at": "2026-05-13T00:46:05.724Z",
+  "exit_code": 1,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 2269,
+  "stdout_bytes": 94,
+  "stderr_bytes": 0,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\8f7b403e-c05c-4489-b7ae-9eceda96034d.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\8f7b403e-c05c-4489-b7ae-9eceda96034d.stderr"
+}

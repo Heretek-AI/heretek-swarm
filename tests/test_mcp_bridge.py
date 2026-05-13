@@ -77,9 +77,11 @@ def _clear_mcp_registry(tmp_path: Path) -> None:
     from disk.
     """
     from heretek_swarm.mcp.server import set_registry
+
     set_registry(MCPToolRegistry())
-    with patch("heretek_swarm.mcp.registry.TOOLS_STATE_FILE",
-               tmp_path / "nonexistent" / "tools_state.json"):
+    with patch(
+        "heretek_swarm.mcp.registry.TOOLS_STATE_FILE", tmp_path / "nonexistent" / "tools_state.json"
+    ):
         yield
 
 
@@ -92,6 +94,7 @@ class TestMcpBridge:
 
         # Precondition: mcp registry starts empty.
         from heretek_swarm.mcp.server import get_registry
+
         mcp_reg = get_registry()
         old_all = mcp_reg.list_tools()
         assert len(old_all) == 0, "mcp/ registry should start empty"
@@ -114,6 +117,7 @@ class TestMcpBridge:
         sync_mcp_registries(core)
 
         from heretek_swarm.mcp.server import get_registry
+
         mcp_reg = get_registry()
 
         # Invoke the bridged tool via mcp/ registry.
@@ -135,6 +139,7 @@ class TestMcpBridge:
         assert first == 3
 
         from heretek_swarm.mcp.server import get_registry
+
         mcp_reg = get_registry()
         tools_first = mcp_reg.list_tools()
         assert len(tools_first) == 3
@@ -164,6 +169,7 @@ class TestMcpBridge:
         sync_mcp_registries(core)
 
         from heretek_swarm.mcp.server import get_registry
+
         mcp_reg = get_registry()
 
         # Tool names should be accessible via HTTP endpoints.
@@ -177,22 +183,19 @@ class TestMcpBridge:
         match the CoreMCPTools registry tool names."""
         core = _make_core_mcp_with_tools(tool_count=3)
         # Record the tool names from the tools-layer side.
-        tools_layer_names = {
-            t.get("name") for t in core.get_registry().list_tools()
-        }
+        tools_layer_names = {t.get("name") for t in core.get_registry().list_tools()}
 
         sync_mcp_registries(core)
 
         from heretek_swarm.mcp.server import get_registry
+
         mcp_reg = get_registry()
         summaries = mcp_reg.list_tool_summaries()
 
         # Every bridged tool appears in the summaries.
         summary_names = {s["name"] for s in summaries}
         for name in tools_layer_names:
-            assert name in summary_names, (
-                f"Tool {name!r} should appear in list_tool_summaries"
-            )
+            assert name in summary_names, f"Tool {name!r} should appear in list_tool_summaries"
 
         # Every summary has the required MCP protocol fields.
         for s in summaries:
@@ -209,10 +212,9 @@ class TestMcpBridge:
         sync_mcp_registries(core)
 
         from heretek_swarm.mcp.server import get_registry
+
         mcp_reg = get_registry()
         all_tools = mcp_reg.list_tools()
         health_count = len(all_tools)
 
-        assert health_count == 4, (
-            f"Expected 4 tools in health/total_tools, got {health_count}"
-        )
+        assert health_count == 4, f"Expected 4 tools in health/total_tools, got {health_count}"

@@ -38,6 +38,7 @@ logger = structlog.get_logger("behavioral_baseline")
 
 class BaselineStatus(StrEnum):
     """Status of a baseline entry."""
+
     ESTABLISHING = "establishing"  # Not enough data yet
     ACTIVE = "active"  # Normal operation
     DEGRADED = "degraded"  # Below quality threshold
@@ -47,6 +48,7 @@ class BaselineStatus(StrEnum):
 
 class BaselineChangeType(StrEnum):
     """Types of baseline changes."""
+
     PATTERN_ADDED = "pattern_added"
     PATTERN_REMOVED = "pattern_removed"
     THRESHOLD_ADJUSTED = "threshold_adjusted"
@@ -56,6 +58,7 @@ class BaselineChangeType(StrEnum):
 
 class QuorumStatus(StrEnum):
     """Status of a baseline change quorum."""
+
     PENDING = "pending"
     APPROVED = "approved"
     REJECTED = "rejected"
@@ -82,6 +85,7 @@ class BaselinePattern:
         false_positive_rate: Historical FP rate
         enabled: Whether pattern is active for detection
     """
+
     pattern_id: str
     pattern_hash: str
     pattern_type: str
@@ -126,6 +130,7 @@ class BaselineMetrics:
         max_value: Maximum observed
         percentiles: Dict of percentile values
     """
+
     metric_name: str
     mean: float = 0.0
     std: float = 0.0
@@ -164,6 +169,7 @@ class BaselineChangeRequest:
         votes_against: Agents that voted against
         completed_at: When quorum completed
     """
+
     request_id: str
     change_type: BaselineChangeType
     pattern_id: str
@@ -209,6 +215,7 @@ class BaselineAuditEntry:
         entry_hash: Hash of this entry
         details: Event-specific details
     """
+
     entry_id: str
     timestamp: datetime
     event_type: str
@@ -465,7 +472,10 @@ class BehavioralBaseline:
             value: New observation value
         """
         # Get or create baseline metrics
-        if agent_id not in self._agent_baselines or metric_name not in self._agent_baselines[agent_id]:
+        if (
+            agent_id not in self._agent_baselines
+            or metric_name not in self._agent_baselines[agent_id]
+        ):
             self._agent_baselines[agent_id][metric_name] = BaselineMetrics(metric_name=metric_name)
 
         metrics = self._agent_baselines[agent_id][metric_name]
@@ -480,7 +490,9 @@ class BehavioralBaseline:
 
         # Keep only last 1000 values
         if len(self._observed_values[agent_id][metric_name]) > 1000:
-            self._observed_values[agent_id][metric_name] = self._observed_values[agent_id][metric_name][-1000:]
+            self._observed_values[agent_id][metric_name] = self._observed_values[agent_id][
+                metric_name
+            ][-1000:]
 
         # Update statistics using Welford's online algorithm
         n = metrics.samples + 1
@@ -490,9 +502,17 @@ class BehavioralBaseline:
         else:
             old_mean = metrics.mean
             metrics.mean = old_mean + (value - old_mean) / n
-            metrics.std = math.sqrt(
-                max(0, ((n - 2) * metrics.std ** 2 + (value - old_mean) * (value - metrics.mean)) / (n - 1))
-            ) if n > 1 else 0.0
+            metrics.std = (
+                math.sqrt(
+                    max(
+                        0,
+                        ((n - 2) * metrics.std**2 + (value - old_mean) * (value - metrics.mean))
+                        / (n - 1),
+                    )
+                )
+                if n > 1
+                else 0.0
+            )
 
         metrics.samples = n
         metrics.min_value = min(metrics.min_value, value) if metrics.samples > 1 else value
@@ -832,7 +852,9 @@ class BehavioralBaseline:
         results = {
             "valid": True,
             "baseline_patterns_count": len(self._baseline_patterns),
-            "approved_patterns_count": sum(1 for p in self._baseline_patterns.values() if p.approved),
+            "approved_patterns_count": sum(
+                1 for p in self._baseline_patterns.values() if p.approved
+            ),
             "pending_requests": len(self._pending_requests),
             "audit_trail_entries": len(self._audit_trail),
             "errors": [],

@@ -46,6 +46,7 @@ class Particle:
         best_value: Best fitness value found
         agent_id: Associated agent ID
     """
+
     particle_id: str = field(default_factory=lambda: str(uuid.uuid4()))
     position: dict[str, float] = field(default_factory=dict)
     velocity: dict[str, float] = field(default_factory=dict)
@@ -68,6 +69,7 @@ class SwarmDecision:
         emergence_indicators: Indicators of emergent behavior
         quality_metrics: Quality metrics for the decision
     """
+
     pattern: SwarmPattern = SwarmPattern.PSO
     participants: list[str] = field(default_factory=list)
     convergence_iterations: int = 0
@@ -158,7 +160,7 @@ class PSO:
                 "convergence_rate": (iteration + 1) / iterations,
                 "final_fitness": self.global_best_value,
                 "particle_diversity": self._calculate_diversity(),
-            }
+            },
         )
 
         self.decision_history.append(decision)
@@ -203,22 +205,21 @@ class PSO:
         """Update particle velocity using PSO equations."""
         for key in particle.position:
             cognitive = (
-                self.cognitive *
-                random.random() *
-                (particle.best_position.get(key, 0) - particle.position[key])
+                self.cognitive
+                * random.random()
+                * (particle.best_position.get(key, 0) - particle.position[key])
             )
             social = (
-                self.social *
-                random.random() *
-                (self.global_best_position.get(key, 0) - particle.position[key])
+                self.social
+                * random.random()
+                * (self.global_best_position.get(key, 0) - particle.position[key])
             )
 
             particle.velocity[key] = (
                 self.inertia * particle.velocity.get(key, 0) + cognitive + social
             )
             particle.velocity[key] = max(
-                PSO_VELOCITY_CLAMP_MIN,
-                min(PSO_VELOCITY_CLAMP_MAX, particle.velocity[key])
+                PSO_VELOCITY_CLAMP_MIN, min(PSO_VELOCITY_CLAMP_MAX, particle.velocity[key])
             )
 
     def _update_position(self, particle: Particle) -> None:

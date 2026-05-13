@@ -71,11 +71,7 @@ class Plugin:
         """
         self.runtime = runtime
         self.state = PluginState.LOADED
-        logger.info(
-            "plugin_loaded",
-            plugin=self.metadata.name,
-            version=self.metadata.version
-        )
+        logger.info("plugin_loaded", plugin=self.metadata.name, version=self.metadata.version)
 
     async def on_unload(self) -> None:
         """
@@ -179,7 +175,7 @@ class PluginRuntime:
                         logger.info(
                             "plugin_discovered",
                             plugin=plugin.metadata.name,
-                            version=plugin.metadata.version
+                            version=plugin.metadata.version,
                         )
                         break
 
@@ -202,16 +198,14 @@ class PluginRuntime:
 
         if metadata_file.exists():
             import json
+
             with open(metadata_file) as f:
                 data = json.load(f)
             return PluginMetadata(**data)
 
         # Default metadata
         return PluginMetadata(
-            name=plugin_path.name,
-            version="0.1.0",
-            description="Plugin",
-            author="Unknown"
+            name=plugin_path.name, version="0.1.0", description="Plugin", author="Unknown"
         )
 
     async def load_plugin(self, plugin: Plugin) -> bool:
@@ -233,9 +227,7 @@ class PluginRuntime:
             for dep in plugin.metadata.dependencies:
                 if dep not in self.plugins:
                     logger.warning(
-                        "plugin_dependency_not_found",
-                        plugin=plugin.metadata.name,
-                        dependency=dep
+                        "plugin_dependency_not_found", plugin=plugin.metadata.name, dependency=dep
                     )
                     return False
 
@@ -308,12 +300,7 @@ class PluginRuntime:
         for plugin_name in plugin_names:
             await self.unload_plugin(plugin_name)
 
-    async def execute_plugin(
-        self,
-        plugin_name: str,
-        method: str,
-        **kwargs
-    ) -> Any:
+    async def execute_plugin(self, plugin_name: str, method: str, **kwargs) -> Any:
         """
         Execute a method on a plugin.
 
@@ -356,16 +343,9 @@ class PluginRuntime:
             try:
                 response = await handler(message)
                 if response:
-                    responses.append({
-                        "plugin": plugin_name,
-                        "response": response
-                    })
+                    responses.append({"plugin": plugin_name, "response": response})
             except Exception as e:
-                logger.error(
-                    "plugin_message_handler_failed",
-                    plugin=plugin_name,
-                    error=str(e)
-                )
+                logger.error("plugin_message_handler_failed", plugin=plugin_name, error=str(e))
 
         return responses
 
@@ -388,10 +368,7 @@ class PluginRuntime:
         Returns:
             List of plugin metadata
         """
-        return [
-            plugin.metadata
-            for plugin in self.plugins.values()
-        ]
+        return [plugin.metadata for plugin in self.plugins.values()]
 
     def get_plugin_count(self) -> int:
         """Get number of loaded plugins."""
@@ -446,7 +423,7 @@ async def load_plugin_from_file(plugin_path: Path) -> Plugin | None:
                     name=name,
                     version="0.1.0",
                     description="Plugin loaded from file",
-                    author="Unknown"
+                    author="Unknown",
                 )
                 return plugin
 

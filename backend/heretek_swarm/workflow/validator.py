@@ -22,6 +22,7 @@ logger = structlog.get_logger(__name__)
 
 class ValidationErrorSeverity(StrEnum):
     """Severity levels for validation errors."""
+
     ERROR = "error"
     WARNING = "warning"
     INFO = "info"
@@ -40,6 +41,7 @@ class ValidationError:
         edge_id: Optional edge ID associated with error
         suggestion: Optional suggestion for fixing the error
     """
+
     severity: Literal["error", "warning", "info"]
     code: str
     message: str
@@ -70,6 +72,7 @@ class ValidationResult:
         warnings: List of validation warnings
         info: List of informational messages
     """
+
     valid: bool
     errors: list[ValidationError] = field(default_factory=list)
     warnings: list[ValidationError] = field(default_factory=list)
@@ -89,8 +92,10 @@ class ValidationResult:
 # Error Codes
 # =============================================================================
 
+
 class ErrorCodes:
     """Standard error codes for workflow validation."""
+
     # Structure errors
     DISCONNECTED_NODE = "DISCONNECTED_NODE"
     CIRCULAR_DEPENDENCY = "CIRCULAR_DEPENDENCY"
@@ -124,23 +129,47 @@ class ErrorCodes:
 # =============================================================================
 
 REGISTERED_AGENT_TYPES = {
-    "steward", "alpha", "beta", "charlie",
-    "historian", "explorer", "examiner", "coder",
-    "dreamer", "empath", "sentinel", "sentinel-prime",
-    "metis", "nexus", "perceiver", "chronos",
-    "catalyst", "coordinator", "arbiter", "prism",
-    "habit-forge", "custom"
+    "steward",
+    "alpha",
+    "beta",
+    "charlie",
+    "historian",
+    "explorer",
+    "examiner",
+    "coder",
+    "dreamer",
+    "empath",
+    "sentinel",
+    "sentinel-prime",
+    "metis",
+    "nexus",
+    "perceiver",
+    "chronos",
+    "catalyst",
+    "coordinator",
+    "arbiter",
+    "prism",
+    "habit-forge",
+    "custom",
 }
 
 REGISTERED_NODE_TYPES = {
-    "agent", "tool", "memory", "decision",
-    "connector", "llm", "input", "output", "template"
+    "agent",
+    "tool",
+    "memory",
+    "decision",
+    "connector",
+    "llm",
+    "input",
+    "output",
+    "template",
 }
 
 
 # =============================================================================
 # Workflow Validator
 # =============================================================================
+
 
 class WorkflowValidator:
     """
@@ -154,7 +183,9 @@ class WorkflowValidator:
                 print(f"{error.code}: {error.message}")
     """
 
-    def __init__(self, allow_cycles: bool = False, max_in_degree: int = 10, max_out_degree: int = 10):
+    def __init__(
+        self, allow_cycles: bool = False, max_in_degree: int = 10, max_out_degree: int = 10
+    ):
         """
         Initialize workflow validator.
 
@@ -205,10 +236,7 @@ class WorkflowValidator:
         return result
 
     def _validate_duplicate_ids(
-        self,
-        nodes: list[dict],
-        edges: list[dict],
-        result: ValidationResult
+        self, nodes: list[dict], edges: list[dict], result: ValidationResult
     ) -> None:
         """Check for duplicate node and edge IDs."""
         node_ids = set()
@@ -217,49 +245,47 @@ class WorkflowValidator:
         for node in nodes:
             node_id = node.get("id")
             if node_id in node_ids:
-                result.errors.append(ValidationError(
-                    severity="error",
-                    code=ErrorCodes.DUPLICATE_NODE_ID,
-                    message=f"Duplicate node ID: {node_id}",
-                    node_id=node_id,
-                    suggestion="Ensure each node has a unique ID"
-                ))
+                result.errors.append(
+                    ValidationError(
+                        severity="error",
+                        code=ErrorCodes.DUPLICATE_NODE_ID,
+                        message=f"Duplicate node ID: {node_id}",
+                        node_id=node_id,
+                        suggestion="Ensure each node has a unique ID",
+                    )
+                )
             node_ids.add(node_id)
 
         for edge in edges:
             edge_id = edge.get("id")
             if edge_id in edge_ids:
-                result.errors.append(ValidationError(
-                    severity="error",
-                    code=ErrorCodes.DUPLICATE_EDGE_ID,
-                    message=f"Duplicate edge ID: {edge_id}",
-                    edge_id=edge_id,
-                    suggestion="Ensure each edge has a unique ID"
-                ))
+                result.errors.append(
+                    ValidationError(
+                        severity="error",
+                        code=ErrorCodes.DUPLICATE_EDGE_ID,
+                        message=f"Duplicate edge ID: {edge_id}",
+                        edge_id=edge_id,
+                        suggestion="Ensure each edge has a unique ID",
+                    )
+                )
             edge_ids.add(edge_id)
 
-    def _validate_node_types(
-        self,
-        nodes: list[dict],
-        result: ValidationResult
-    ) -> None:
+    def _validate_node_types(self, nodes: list[dict], result: ValidationResult) -> None:
         """Validate node types are registered."""
         for node in nodes:
             node_type = node.get("type")
             if node_type and node_type not in REGISTERED_NODE_TYPES:
-                result.errors.append(ValidationError(
-                    severity="error",
-                    code=ErrorCodes.INVALID_NODE_TYPE,
-                    message=f"Invalid node type: {node_type}",
-                    node_id=node.get("id"),
-                    suggestion=f"Valid node types are: {', '.join(REGISTERED_NODE_TYPES)}"
-                ))
+                result.errors.append(
+                    ValidationError(
+                        severity="error",
+                        code=ErrorCodes.INVALID_NODE_TYPE,
+                        message=f"Invalid node type: {node_type}",
+                        node_id=node.get("id"),
+                        suggestion=f"Valid node types are: {', '.join(REGISTERED_NODE_TYPES)}",
+                    )
+                )
 
-    def _validate_agent_types(
-        self,
-        nodes: list[dict],
-        result: ValidationResult
-    ) -> None:
+    def _validate_agent_types(self, nodes: list[dict], result: ValidationResult) -> None:
         """Validate agent types are registered."""
         for node in nodes:
             if node.get("type") == "agent":
@@ -267,19 +293,18 @@ class WorkflowValidator:
                 agent_type = data.get("agentType")
 
                 if agent_type and agent_type not in REGISTERED_AGENT_TYPES:
-                    result.errors.append(ValidationError(
-                        severity="error",
-                        code=ErrorCodes.INVALID_AGENT_TYPE,
-                        message=f"Invalid agent type: {agent_type}",
-                        node_id=node.get("id"),
-                        suggestion=f"Valid agent types are: {', '.join(REGISTERED_AGENT_TYPES)}"
-                    ))
+                    result.errors.append(
+                        ValidationError(
+                            severity="error",
+                            code=ErrorCodes.INVALID_AGENT_TYPE,
+                            message=f"Invalid agent type: {agent_type}",
+                            node_id=node.get("id"),
+                            suggestion=f"Valid agent types are: {', '.join(REGISTERED_AGENT_TYPES)}",
+                        )
+                    )
 
     def _validate_edge_connections(
-        self,
-        nodes: list[dict],
-        edges: list[dict],
-        result: ValidationResult
+        self, nodes: list[dict], edges: list[dict], result: ValidationResult
     ) -> None:
         """Validate edges connect existing nodes."""
         node_ids = {node.get("id") for node in nodes}
@@ -289,39 +314,42 @@ class WorkflowValidator:
             target = edge.get("target")
 
             if source not in node_ids:
-                result.errors.append(ValidationError(
-                    severity="error",
-                    code=ErrorCodes.INVALID_EDGE_CONNECTION,
-                    message=f"Edge source node does not exist: {source}",
-                    edge_id=edge.get("id"),
-                    suggestion="Connect edge to an existing node"
-                ))
+                result.errors.append(
+                    ValidationError(
+                        severity="error",
+                        code=ErrorCodes.INVALID_EDGE_CONNECTION,
+                        message=f"Edge source node does not exist: {source}",
+                        edge_id=edge.get("id"),
+                        suggestion="Connect edge to an existing node",
+                    )
+                )
 
             if target not in node_ids:
-                result.errors.append(ValidationError(
-                    severity="error",
-                    code=ErrorCodes.INVALID_EDGE_CONNECTION,
-                    message=f"Edge target node does not exist: {target}",
-                    edge_id=edge.get("id"),
-                    suggestion="Connect edge to an existing node"
-                ))
+                result.errors.append(
+                    ValidationError(
+                        severity="error",
+                        code=ErrorCodes.INVALID_EDGE_CONNECTION,
+                        message=f"Edge target node does not exist: {target}",
+                        edge_id=edge.get("id"),
+                        suggestion="Connect edge to an existing node",
+                    )
+                )
 
             # Self-loops are errors unless explicitly allowed
             if source == target:
-                result.errors.append(ValidationError(
-                    severity="error",
-                    code=ErrorCodes.INVALID_EDGE_CONNECTION,
-                    message=f"Self-loop detected: {source} -> {source}",
-                    edge_id=edge.get("id"),
-                    node_id=source,
-                    suggestion="Remove self-loop or use a proper cycle pattern"
-                ))
+                result.errors.append(
+                    ValidationError(
+                        severity="error",
+                        code=ErrorCodes.INVALID_EDGE_CONNECTION,
+                        message=f"Self-loop detected: {source} -> {source}",
+                        edge_id=edge.get("id"),
+                        node_id=source,
+                        suggestion="Remove self-loop or use a proper cycle pattern",
+                    )
+                )
 
     def _validate_disconnected_nodes(
-        self,
-        nodes: list[dict],
-        edges: list[dict],
-        result: ValidationResult
+        self, nodes: list[dict], edges: list[dict], result: ValidationResult
     ) -> None:
         """Check for nodes with no connections."""
         if len(nodes) <= 1:
@@ -336,19 +364,18 @@ class WorkflowValidator:
         for node in nodes:
             node_id = node.get("id")
             if node_id not in connected_nodes:
-                result.errors.append(ValidationError(
-                    severity="error",
-                    code=ErrorCodes.DISCONNECTED_NODE,
-                    message="Node has no input or output connections",
-                    node_id=node_id,
-                    suggestion="Connect the node to the workflow or remove it"
-                ))
+                result.errors.append(
+                    ValidationError(
+                        severity="error",
+                        code=ErrorCodes.DISCONNECTED_NODE,
+                        message="Node has no input or output connections",
+                        node_id=node_id,
+                        suggestion="Connect the node to the workflow or remove it",
+                    )
+                )
 
     def _validate_circular_dependencies(
-        self,
-        nodes: list[dict],
-        edges: list[dict],
-        result: ValidationResult
+        self, nodes: list[dict], edges: list[dict], result: ValidationResult
     ) -> None:
         """Detect circular dependencies in the workflow graph."""
         if self.allow_cycles:
@@ -390,20 +417,19 @@ class WorkflowValidator:
         for node in nodes:
             node_id = node.get("id")
             if node_id not in visited and has_cycle(node_id, []):
-                result.errors.append(ValidationError(
-                    severity="error",
-                    code=ErrorCodes.CIRCULAR_DEPENDENCY,
-                    message=f"Circular dependency detected: {' -> '.join(cycle_path)}",
-                    node_id=cycle_path[0] if cycle_path else None,
-                    suggestion="Remove or break the cycle by reordering nodes"
-                ))
+                result.errors.append(
+                    ValidationError(
+                        severity="error",
+                        code=ErrorCodes.CIRCULAR_DEPENDENCY,
+                        message=f"Circular dependency detected: {' -> '.join(cycle_path)}",
+                        node_id=cycle_path[0] if cycle_path else None,
+                        suggestion="Remove or break the cycle by reordering nodes",
+                    )
+                )
                 break
 
     def _validate_required_connections(
-        self,
-        nodes: list[dict],
-        edges: list[dict],
-        result: ValidationResult
+        self, nodes: list[dict], edges: list[dict], result: ValidationResult
     ) -> None:
         """Validate nodes have required inputs/outputs."""
         # Build connection maps
@@ -426,29 +452,29 @@ class WorkflowValidator:
 
             # Decision nodes require at least one input
             if node_type == "decision" and not incoming.get(node_id):
-                result.errors.append(ValidationError(
-                    severity="error",
-                    code=ErrorCodes.MISSING_REQUIRED_INPUT,
-                    message="Decision node requires at least one input connection",
-                    node_id=node_id,
-                    suggestion="Connect a previous node to this decision node"
-                ))
+                result.errors.append(
+                    ValidationError(
+                        severity="error",
+                        code=ErrorCodes.MISSING_REQUIRED_INPUT,
+                        message="Decision node requires at least one input connection",
+                        node_id=node_id,
+                        suggestion="Connect a previous node to this decision node",
+                    )
+                )
 
             # Tool nodes require input
             if node_type == "tool" and not incoming.get(node_id):
-                result.warnings.append(ValidationError(
-                    severity="warning",
-                    code=ErrorCodes.MISSING_REQUIRED_INPUT,
-                    message="Tool node has no input connection",
-                    node_id=node_id,
-                    suggestion="Connect a previous node to provide input"
-                ))
+                result.warnings.append(
+                    ValidationError(
+                        severity="warning",
+                        code=ErrorCodes.MISSING_REQUIRED_INPUT,
+                        message="Tool node has no input connection",
+                        node_id=node_id,
+                        suggestion="Connect a previous node to provide input",
+                    )
+                )
 
-    def _validate_resource_conflicts(
-        self,
-        nodes: list[dict],
-        result: ValidationResult
-    ) -> None:
+    def _validate_resource_conflicts(self, nodes: list[dict], result: ValidationResult) -> None:
         """Detect resource conflicts (e.g., multiple agents competing for same resource)."""
         # Track resources by type
         resources: dict[str, list[str]] = {}
@@ -465,19 +491,18 @@ class WorkflowValidator:
         # Check for conflicts
         for resource_id, node_ids in resources.items():
             if len(node_ids) > 1:
-                result.warnings.append(ValidationError(
-                    severity="warning",
-                    code=ErrorCodes.RESOURCE_CONFLICT,
-                    message=f"Multiple nodes competing for resource: {resource_id}",
-                    node_id=node_ids[0],
-                    suggestion=f"Nodes {', '.join(node_ids)} share the same resource. Ensure proper synchronization."
-                ))
+                result.warnings.append(
+                    ValidationError(
+                        severity="warning",
+                        code=ErrorCodes.RESOURCE_CONFLICT,
+                        message=f"Multiple nodes competing for resource: {resource_id}",
+                        node_id=node_ids[0],
+                        suggestion=f"Nodes {', '.join(node_ids)} share the same resource. Ensure proper synchronization.",
+                    )
+                )
 
     def _validate_degree_limits(
-        self,
-        nodes: list[dict],
-        edges: list[dict],
-        result: ValidationResult
+        self, nodes: list[dict], edges: list[dict], result: ValidationResult
     ) -> None:
         """Validate node connection limits."""
         in_degree: dict[str, int] = {node.get("id"): 0 for node in nodes}
@@ -495,28 +520,29 @@ class WorkflowValidator:
             node_id = node.get("id")
 
             if in_degree.get(node_id, 0) > self.max_in_degree:
-                result.errors.append(ValidationError(
-                    severity="error",
-                    code=ErrorCodes.INVALID_EDGE_CONNECTION,
-                    message=f"Node exceeds maximum input connections ({self.max_in_degree})",
-                    node_id=node_id,
-                    suggestion=f"Reduce input connections to {self.max_in_degree} or fewer"
-                ))
+                result.errors.append(
+                    ValidationError(
+                        severity="error",
+                        code=ErrorCodes.INVALID_EDGE_CONNECTION,
+                        message=f"Node exceeds maximum input connections ({self.max_in_degree})",
+                        node_id=node_id,
+                        suggestion=f"Reduce input connections to {self.max_in_degree} or fewer",
+                    )
+                )
 
             if out_degree.get(node_id, 0) > self.max_out_degree:
-                result.errors.append(ValidationError(
-                    severity="error",
-                    code=ErrorCodes.INVALID_EDGE_CONNECTION,
-                    message=f"Node exceeds maximum output connections ({self.max_out_degree})",
-                    node_id=node_id,
-                    suggestion=f"Reduce output connections to {self.max_out_degree} or fewer"
-                ))
+                result.errors.append(
+                    ValidationError(
+                        severity="error",
+                        code=ErrorCodes.INVALID_EDGE_CONNECTION,
+                        message=f"Node exceeds maximum output connections ({self.max_out_degree})",
+                        node_id=node_id,
+                        suggestion=f"Reduce output connections to {self.max_out_degree} or fewer",
+                    )
+                )
 
     def _validate_start_node(
-        self,
-        nodes: list[dict],
-        edges: list[dict],
-        result: ValidationResult
+        self, nodes: list[dict], edges: list[dict], result: ValidationResult
     ) -> None:
         """Validate workflow has a valid start node."""
         if not nodes:
@@ -527,18 +553,17 @@ class WorkflowValidator:
         start_candidates = [n for n in nodes if n.get("id") not in has_incoming]
 
         if not start_candidates:
-            result.errors.append(ValidationError(
-                severity="error",
-                code=ErrorCodes.INVALID_START_NODE,
-                message="No valid start node found (all nodes have incoming connections)",
-                suggestion="Add an input node or ensure at least one node has no incoming connections"
-            ))
+            result.errors.append(
+                ValidationError(
+                    severity="error",
+                    code=ErrorCodes.INVALID_START_NODE,
+                    message="No valid start node found (all nodes have incoming connections)",
+                    suggestion="Add an input node or ensure at least one node has no incoming connections",
+                )
+            )
 
     def _check_orphaned_nodes(
-        self,
-        nodes: list[dict],
-        edges: list[dict],
-        result: ValidationResult
+        self, nodes: list[dict], edges: list[dict], result: ValidationResult
     ) -> None:
         """Check for orphaned nodes (only warnings)."""
         if len(nodes) <= 1:
@@ -555,19 +580,18 @@ class WorkflowValidator:
             node_type = node.get("type")
 
             if node_type in ("input", "output") and node_id not in connected:
-                result.warnings.append(ValidationError(
-                    severity="warning",
-                    code=ErrorCodes.ORPHANED_NODE,
-                    message=f"{node_type.capitalize()} node is not connected",
-                    node_id=node_id,
-                    suggestion=f"Connect the {node_type} node to the workflow"
-                ))
+                result.warnings.append(
+                    ValidationError(
+                        severity="warning",
+                        code=ErrorCodes.ORPHANED_NODE,
+                        message=f"{node_type.capitalize()} node is not connected",
+                        node_id=node_id,
+                        suggestion=f"Connect the {node_type} node to the workflow",
+                    )
+                )
 
     def _check_unused_outputs(
-        self,
-        nodes: list[dict],
-        edges: list[dict],
-        result: ValidationResult
+        self, nodes: list[dict], edges: list[dict], result: ValidationResult
     ) -> None:
         """Check for nodes with outputs that aren't used."""
         sources = {edge.get("source") for edge in edges}
@@ -580,19 +604,18 @@ class WorkflowValidator:
             # Check if node has output but isn't connected to anything
             if node_id in sources and node_id not in targets:
                 if node_type in ("agent", "tool", "memory"):
-                    result.info.append(ValidationError(
-                        severity="info",
-                        code=ErrorCodes.UNUSED_OUTPUT,
-                        message="Node output is not consumed by any other node",
-                        node_id=node_id,
-                        suggestion="Consider connecting this node's output to another node"
-                    ))
+                    result.info.append(
+                        ValidationError(
+                            severity="info",
+                            code=ErrorCodes.UNUSED_OUTPUT,
+                            message="Node output is not consumed by any other node",
+                            node_id=node_id,
+                            suggestion="Consider connecting this node's output to another node",
+                        )
+                    )
 
     def _check_graph_complexity(
-        self,
-        nodes: list[dict],
-        edges: list[dict],
-        result: ValidationResult
+        self, nodes: list[dict], edges: list[dict], result: ValidationResult
     ) -> None:
         """Check for overly complex graphs."""
         node_count = len(nodes)
@@ -600,26 +623,31 @@ class WorkflowValidator:
 
         # Warn for very large graphs
         if node_count > 50:
-            result.info.append(ValidationError(
-                severity="info",
-                code=ErrorCodes.COMPLEX_GRAPH,
-                message=f"Workflow has {node_count} nodes",
-                suggestion="Consider breaking into smaller sub-workflows for better maintainability"
-            ))
+            result.info.append(
+                ValidationError(
+                    severity="info",
+                    code=ErrorCodes.COMPLEX_GRAPH,
+                    message=f"Workflow has {node_count} nodes",
+                    suggestion="Consider breaking into smaller sub-workflows for better maintainability",
+                )
+            )
 
         # Warn for dense graphs
         if node_count > 0 and edge_count / node_count > 3:
-            result.info.append(ValidationError(
-                severity="info",
-                code=ErrorCodes.COMPLEX_GRAPH,
-                message=f"Workflow is densely connected ({edge_count} edges for {node_count} nodes)",
-                suggestion="Consider simplifying the workflow structure"
-            ))
+            result.info.append(
+                ValidationError(
+                    severity="info",
+                    code=ErrorCodes.COMPLEX_GRAPH,
+                    message=f"Workflow is densely connected ({edge_count} edges for {node_count} nodes)",
+                    suggestion="Consider simplifying the workflow structure",
+                )
+            )
 
 
 # =============================================================================
 # Convenience Functions
 # =============================================================================
+
 
 def validate_workflow(workflow_definition: dict[str, Any]) -> ValidationResult:
     """

@@ -49,6 +49,7 @@ logger = structlog.get_logger(__name__)
 
 class FusionMethod(StrEnum):
     """Methods for fusing retrieval results."""
+
     RECIPROCAL_RANK = "reciprocal_rank"  # RRF
     WEIGHTED_SUM = "weighted_sum"
     NORMALIZED_SUM = "normalized_sum"
@@ -58,6 +59,7 @@ class FusionMethod(StrEnum):
 
 class RetrieverState(StrEnum):
     """Retriever lifecycle states."""
+
     UNINITIALIZED = "uninitialized"
     INITIALIZING = "initializing"
     READY = "ready"
@@ -86,6 +88,7 @@ class HybridRetrieverConfig:
         min_score_threshold: Minimum score threshold for results
         query_classification_enabled: Enable automatic query classification
     """
+
     dense_weight: float = 0.5
     sparse_weight: float = 0.5
     fusion_method: FusionMethod = FusionMethod.RECIPROCAL_RANK
@@ -105,6 +108,7 @@ class HybridRetrieverConfig:
 @dataclass
 class RetrievalMetrics:
     """Metrics for retrieval operations."""
+
     total_queries: int = 0
     successful_queries: int = 0
     failed_queries: int = 0
@@ -136,6 +140,7 @@ class RetrievalMetrics:
 @dataclass
 class QueryHistoryEntry:
     """Entry in query history for rate limiting and analytics."""
+
     query: str
     timestamp: datetime
     latency_ms: float
@@ -169,10 +174,7 @@ class RateLimiter:
             window_start = now.timestamp() - 60  # 1 minute window
 
             # Remove old queries outside the window
-            self._queries = [
-                q for q in self._queries
-                if q.timestamp() > window_start
-            ]
+            self._queries = [q for q in self._queries if q.timestamp() > window_start]
 
             # Check if under limit
             if len(self._queries) < self.queries_per_minute:
@@ -299,10 +301,12 @@ class HybridRetriever:
                 )
 
             self._state = RetrieverState.READY
-            logger.info("hybrid_retriever_initialized",
-                       dense_enabled=self.embedding_provider is not None,
-                       sparse_enabled=self.sparse_index is not None,
-                       reranking_enabled=self.config.enable_reranking)
+            logger.info(
+                "hybrid_retriever_initialized",
+                dense_enabled=self.embedding_provider is not None,
+                sparse_enabled=self.sparse_index is not None,
+                reranking_enabled=self.config.enable_reranking,
+            )
 
         except Exception as e:
             self._state = RetrieverState.ERROR
@@ -312,6 +316,7 @@ class HybridRetriever:
     def _hash_query(self, query: str) -> str:
         """Create hash of query for caching."""
         import hashlib
+
         return hashlib.md5(query.lower().strip().encode(), usedforsecurity=False).hexdigest()
 
     def _get_from_cache(self, query_hash: str) -> list[RetrievalResult] | None:
@@ -341,7 +346,8 @@ class HybridRetriever:
         if len(self._query_cache) > 1000:
             now = datetime.now(UTC)
             expired = [
-                k for k, (_, created_at) in self._query_cache.items()
+                k
+                for k, (_, created_at) in self._query_cache.items()
                 if (now - created_at).total_seconds() > self.config.cache_ttl_seconds
             ]
             for k in expired:
@@ -469,10 +475,9 @@ class HybridRetriever:
         source_to_result: dict[str, RetrievalResult] = {}
 
         for source in all_sources:
-            combined_score = (
-                self.config.dense_weight * dense_scores.get(source, 0) +
-                self.config.sparse_weight * sparse_scores.get(source, 0)
-            )
+            combined_score = self.config.dense_weight * dense_scores.get(
+                source, 0
+            ) + self.config.sparse_weight * sparse_scores.get(source, 0)
             combined_scores[source] = combined_score
 
             # Keep reference to result
@@ -483,7 +488,9 @@ class HybridRetriever:
                     break
 
         # Sort and build results
-        sorted_sources = sorted(combined_scores.keys(), key=lambda s: combined_scores[s], reverse=True)
+        sorted_sources = sorted(
+            combined_scores.keys(), key=lambda s: combined_scores[s], reverse=True
+        )
         fused_results = []
 
         for source in sorted_sources:
@@ -541,7 +548,6 @@ class HybridRetriever:
             initial_results=results,
         )
 
-
     def _record_query(
         self,
         query: str,
@@ -564,14 +570,12 @@ class HybridRetriever:
 
         # Update latency stats (simple moving average)
         n = self._metrics.total_queries
-        self._metrics.avg_latency_ms = (
-            (self._metrics.avg_latency_ms * (n - 1) + latency_ms) / n
-        )
+        self._metrics.avg_latency_ms = (self._metrics.avg_latency_ms * (n - 1) + latency_ms) / n
 
         # Update results count avg
         self._metrics.avg_results_count = (
-            (self._metrics.avg_results_count * (n - 1) + results_count) / n
-        )
+            self._metrics.avg_results_count * (n - 1) + results_count
+        ) / n
 
         # Record history entry
         entry = QueryHistoryEntry(
@@ -586,7 +590,7 @@ class HybridRetriever:
 
         # Trim history
         if len(self._query_history) > self._max_history:
-            self._query_history = self._query_history[-self._max_history:]
+            self._query_history = self._query_history[-self._max_history :]
 
     async def retrieve(
         self,
@@ -681,12 +685,14 @@ class HybridRetriever:
             self._metrics.successful_queries += 1
             self._record_query(query, latency_ms, len(results), strategy.value, cache_hit)
 
-            logger.debug("hybrid_retrieval_completed",
-                        query=query[:50] if len(query) > 50 else query,
-                        results_count=len(results),
-                        latency_ms=latency_ms,
-                        strategy=strategy.value,
-                        cache_hit=cache_hit)
+            logger.debug(
+                "hybrid_retrieval_completed",
+                query=query[:50] if len(query) > 50 else query,
+                results_count=len(results),
+                latency_ms=latency_ms,
+                strategy=strategy.value,
+                cache_hit=cache_hit,
+            )
 
             return results
 
@@ -695,17 +701,15 @@ class HybridRetriever:
             latency_ms = (time.time() - start_time) * 1000
             self._record_query(query, latency_ms, 0, "error", cache_hit)
 
-            logger.error("hybrid_retrieval_error",
-                        query=query[:50] if len(query) > 50 else query,
-                        error=str(e))
+            logger.error(
+                "hybrid_retrieval_error",
+                query=query[:50] if len(query) > 50 else query,
+                error=str(e),
+            )
             raise RetrieverError(f"Retrieval failed: {e!s}")
 
     async def retrieve_with_context(
-        self,
-        query: str,
-        context: str | None = None,
-        top_k: int = 5,
-        **kwargs
+        self, query: str, context: str | None = None, top_k: int = 5, **kwargs
     ) -> tuple[str, list[RetrievalResult]]:
         """
         Retrieve and format results with context.

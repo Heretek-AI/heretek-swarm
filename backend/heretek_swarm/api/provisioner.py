@@ -47,6 +47,7 @@ router = APIRouter(prefix="/api/wizard/provision", tags=["Provisioner"])
 
 class RuntimeChoice(StrEnum):
     """Container runtime choice."""
+
     AUTO = "auto"
     PODMAN = "podman"
     DOCKER = "docker"
@@ -54,12 +55,14 @@ class RuntimeChoice(StrEnum):
 
 class ProvisionRequest(BaseModel):
     """Request to provision infrastructure services."""
+
     services: list[str]  # e.g., ["postgres", "redis", "qdrant", "nats"]
     runtime: RuntimeChoice = RuntimeChoice.AUTO
 
 
 class ProvisionResponse(BaseModel):
     """Response from provision operation."""
+
     status: str  # "provisioning" | "completed" | "failed"
     results: dict[str, Any]
     connection_strings: dict[str, str]
@@ -70,6 +73,7 @@ class ProvisionResponse(BaseModel):
 
 class ServiceProgressEvent(BaseModel):
     """Progress event for a single service."""
+
     service: str
     status: str  # "pending" | "pulling" | "starting" | "healthy" | "failed"
     message: str | None = None
@@ -468,9 +472,7 @@ async def get_provision_status() -> dict[str, Any]:
             text=True,
             timeout=10,
         )
-        running_containers = [
-            c.strip() for c in result.stdout.strip().split("\n") if c.strip()
-        ]
+        running_containers = [c.strip() for c in result.stdout.strip().split("\n") if c.strip()]
     except Exception:
         running_containers = []
 
@@ -564,5 +566,7 @@ async def stop_infrastructure() -> dict[str, Any]:
         "success": len(failed) == 0,
         "stopped": stopped,
         "failed": failed,
-        "message": f"Stopped {len(stopped)} containers" if failed else f"Stopped {len(stopped)} containers",
+        "message": f"Stopped {len(stopped)} containers"
+        if failed
+        else f"Stopped {len(stopped)} containers",
     }

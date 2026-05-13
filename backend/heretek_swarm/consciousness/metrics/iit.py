@@ -41,6 +41,7 @@ class PhiResult:
         components: Breakdown of phi components
         timestamp: When the measurement was taken
     """
+
     phi: float
     phi_normalized: float
     consciousness_level: str
@@ -74,6 +75,7 @@ class ConsciousnessMetrics:
         phi_history: Historical phi values for trend analysis
         last_updated: Timestamp of last update
     """
+
     agent_id: str
     phi: float = 0.0
     phi_normalized: float = 0.0

@@ -334,7 +334,6 @@ class NovelConnectionEngine:
         return 0.3 + (hash_value % 70) / 100.0
 
 
-
 class LateralThinkingMetricsTracker:
     """Tracks lateral thinking metrics for Dreamer agent."""
 

@@ -13,6 +13,7 @@ import structlog
 try:
     import discord
     from discord.ext import commands
+
     DISCORD_AVAILABLE = True
 except ImportError:
     DISCORD_AVAILABLE = False
@@ -225,9 +226,9 @@ class DiscordBot:
             return
 
         # Route message in DMs or agent-chat channel
-        if isinstance(message.channel, discord.DMChannel) or \
-           (hasattr(message.channel, "name") and message.channel.name == "agent-chat"):
-
+        if isinstance(message.channel, discord.DMChannel) or (
+            hasattr(message.channel, "name") and message.channel.name == "agent-chat"
+        ):
             await message.channel.typing()
 
             user_id = str(message.author.id)

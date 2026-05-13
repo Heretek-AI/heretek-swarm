@@ -46,9 +46,7 @@ class SkillMetadata:
     author: str = "unknown"
     tags: list[str] = field(default_factory=list)
     agent_ids: list[str] = field(default_factory=list)  # Agents that implement this skill
-    registered_at: str = field(
-        default_factory=lambda: datetime.now(UTC).isoformat()
-    )
+    registered_at: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
     source: str = "runtime"  # "runtime" | "plugin" | "workspace"
     parameters: dict[str, Any] = field(default_factory=dict)
 
@@ -258,7 +256,8 @@ class AgentSkillRegistry:
         if query:
             query_lower = query.lower()
             filtered = {
-                name for name in all_skills
+                name
+                for name in all_skills
                 if query_lower in name.lower()
                 or query_lower in self._skills[name].description.lower()
             }

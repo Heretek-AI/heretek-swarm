@@ -62,9 +62,7 @@ Example of expected output:
 # Helpers
 # ---------------------------------------------------------------------------
 
-_JSON_BLOCK_RE = re.compile(
-    r"\{(?:[^{}]|\{(?:[^{}]|\{[^{}]*\})*\})*\}", re.DOTALL
-)
+_JSON_BLOCK_RE = re.compile(r"\{(?:[^{}]|\{(?:[^{}]|\{[^{}]*\})*\})*\}", re.DOTALL)
 
 
 def _extract_json_from_text(text: str) -> str | None:
@@ -185,10 +183,6 @@ class GoalProposer:
         return {
             "title": parsed["title"].strip(),
             "description": parsed["description"].strip(),
-            "success_criteria": [
-                str(s).strip() for s in parsed["success_criteria"]
-            ],
-            "estimated_node_types": [
-                str(n).strip() for n in parsed["estimated_node_types"]
-            ],
+            "success_criteria": [str(s).strip() for s in parsed["success_criteria"]],
+            "estimated_node_types": [str(n).strip() for n in parsed["estimated_node_types"]],
         }

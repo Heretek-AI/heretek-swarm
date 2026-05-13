@@ -729,8 +729,7 @@ class ExplorerPathfindingMixins:
         anom_lines = []
         for anom in anomalies[:10]:
             anom_lines.append(
-                f"- [{anom.severity.value}] {anom.description[:50]}... "
-                f"(source: {anom.source})"
+                f"- [{anom.severity.value}] {anom.description[:50]}... (source: {anom.source})"
             )
         anom_summary = "\n".join(anom_lines)
 

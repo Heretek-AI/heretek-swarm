@@ -95,35 +95,28 @@ class AgentRegistry:
         # Core Orchestration
         "Steward": AgentRole.ORCHESTRATOR,
         "Coordinator": AgentRole.ORCHESTRATOR_SUPPORT,
-
         # Triad
         "Alpha": AgentRole.TRIAD_NODE,
         "Beta": AgentRole.TRIAD_NODE,
         "Charlie": AgentRole.TRIAD_NODE,
-
         # Safety
         "Sentinel": AgentRole.SAFETY_REVIEWER,
         "Sentinel-Prime": AgentRole.GUARDIAN_PRIME,
-
         # Intelligence & Analysis
         "Explorer": AgentRole.INTELLIGENCE_GATHERER,
         "Examiner": AgentRole.QUESTIONER,
         "Perceiver": AgentRole.SENSOR,
         "Prism": AgentRole.PERSPECTIVE_ANALYST,
-
         # Implementation
         "Coder": AgentRole.IMPLEMENTER,
-
         # Communication
         "Echo": AgentRole.COMMUNICATOR,
         "Empath": AgentRole.RELATIONSHIP_MANAGER,
         "Nexus": AgentRole.INTEGRATOR,
-
         # Processing
         "Dreamer": AgentRole.SYNTHESIZER,
         "Metis": AgentRole.SAGE,
         "Arbiter": AgentRole.MEDIATOR,
-
         # Specialized
         "Chronos": AgentRole.TIMEKEEPER,
         "Habit-Forge": AgentRole.BEHAVIOR_ARCHITECT,
@@ -334,10 +327,7 @@ class AgentRegistry:
         """
         if not self._loaded:
             self.load_all()
-        return [
-            info for info in self._agents.values()
-            if capability in info.capabilities
-        ]
+        return [info for info in self._agents.values() if capability in info.capabilities]
 
     def get_agent_dependencies(self, name: str) -> list[AgentInfo]:
         """
@@ -356,11 +346,7 @@ class AgentRegistry:
         if not agent:
             return []
 
-        return [
-            self._agents[dep]
-            for dep in agent.dependencies
-            if dep in self._agents
-        ]
+        return [self._agents[dep] for dep in agent.dependencies if dep in self._agents]
 
     def get_agent_dependents(self, name: str) -> list[AgentInfo]:
         """
@@ -375,10 +361,7 @@ class AgentRegistry:
         if not self._loaded:
             self.load_all()
 
-        return [
-            info for info in self._agents.values()
-            if name in info.dependencies
-        ]
+        return [info for info in self._agents.values() if name in info.dependencies]
 
     def get_collective_roster(self) -> dict[str, dict[str, Any]]:
         """
@@ -393,7 +376,9 @@ class AgentRegistry:
         return {
             name: {
                 "role": info.role.value,
-                "bio": info.character.bio[:100] + "..." if len(info.character.bio) > 100 else info.character.bio,
+                "bio": info.character.bio[:100] + "..."
+                if len(info.character.bio) > 100
+                else info.character.bio,
                 "capabilities": info.capabilities,
                 "priority": info.priority,
                 "dependencies": info.dependencies,
@@ -424,8 +409,12 @@ class AgentRegistry:
         return {
             "total_agents": len(self._agents),
             "roles": roles,
-            "top_capabilities": dict(sorted(capabilities.items(), key=lambda x: x[1], reverse=True)[:10]),
-            "avg_priority": sum(info.priority for info in self._agents.values()) / len(self._agents) if self._agents else 0,
+            "top_capabilities": dict(
+                sorted(capabilities.items(), key=lambda x: x[1], reverse=True)[:10]
+            ),
+            "avg_priority": sum(info.priority for info in self._agents.values()) / len(self._agents)
+            if self._agents
+            else 0,
         }
 
 

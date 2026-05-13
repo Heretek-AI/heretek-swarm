@@ -58,7 +58,9 @@ def sync_mcp_registries(core_tools: CoreMCPTools | None) -> int:
     tool_defs = tools_registry.list_tools(category=None)
 
     if not tool_defs:
-        logger.warning("mcp_bridge_empty_tools", message="No tool definitions found in CoreMCPTools registry")
+        logger.warning(
+            "mcp_bridge_empty_tools", message="No tool definitions found in CoreMCPTools registry"
+        )
         return 0
 
     # Get the mcp/ registry (the one served by the HTTP API).

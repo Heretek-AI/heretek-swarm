@@ -111,9 +111,15 @@ class AnomalyResult:
 
 # Prompt injection patterns - common attack vectors
 PROMPT_INJECTION_PATTERNS = [
-    re.compile(r"ignore\s+(all\s+)?(previous|prior|above)\s+(instructions?|rules?|constraints?)", re.IGNORECASE),
+    re.compile(
+        r"ignore\s+(all\s+)?(previous|prior|above)\s+(instructions?|rules?|constraints?)",
+        re.IGNORECASE,
+    ),
     re.compile(r"forget\s+(everything|all|your)\s+(instructions?|training|rules)", re.IGNORECASE),
-    re.compile(r"you\s+are\s+(now|nowhere|a|an)\s+(new|different|alternate)\s+(AI|assistant|model)", re.IGNORECASE),
+    re.compile(
+        r"you\s+are\s+(now|nowhere|a|an)\s+(new|different|alternate)\s+(AI|assistant|model)",
+        re.IGNORECASE,
+    ),
     re.compile(r"disregard\s+(your|all)\s+(safety|ethical|guidelines?)", re.IGNORECASE),
     re.compile(r"bypass\s+(safety|security|restriction)", re.IGNORECASE),
     re.compile(r"new\s+instruction", re.IGNORECASE),
@@ -147,13 +153,44 @@ JAILBREAK_PATTERNS = [
 
 # Anomaly detection patterns
 ANOMALY_PATTERNS = [
-    {"pattern": re.compile(r"\b(execute|run|launch)\s+(shell|terminal|command|script)\b", re.IGNORECASE), "severity": Severity.HIGH},
-    {"pattern": re.compile(r"\b(write|create|delete)\s+(file|directory|folder)\b", re.IGNORECASE), "severity": Severity.MEDIUM},
-    {"pattern": re.compile(r"\b(access|read|modify)\s+(system|core|kernel|root)\b", re.IGNORECASE), "severity": Severity.HIGH},
-    {"pattern": re.compile(r"\b(install|download|import)\s+(package|library|module)\b", re.IGNORECASE), "severity": Severity.MEDIUM},
-    {"pattern": re.compile(r"\b(sql|injection|xss|csrf|cross-site)\b", re.IGNORECASE), "severity": Severity.HIGH},
-    {"pattern": re.compile(r"\b(password|credential|secret|key|token)\s*(=|:)\b", re.IGNORECASE), "severity": Severity.HIGH},
-    {"pattern": re.compile(r"\b(elevate|escalate|root|admin)\s+(privilege|access)\b", re.IGNORECASE), "severity": Severity.CRITICAL},
+    {
+        "pattern": re.compile(
+            r"\b(execute|run|launch)\s+(shell|terminal|command|script)\b", re.IGNORECASE
+        ),
+        "severity": Severity.HIGH,
+    },
+    {
+        "pattern": re.compile(
+            r"\b(write|create|delete)\s+(file|directory|folder)\b", re.IGNORECASE
+        ),
+        "severity": Severity.MEDIUM,
+    },
+    {
+        "pattern": re.compile(
+            r"\b(access|read|modify)\s+(system|core|kernel|root)\b", re.IGNORECASE
+        ),
+        "severity": Severity.HIGH,
+    },
+    {
+        "pattern": re.compile(
+            r"\b(install|download|import)\s+(package|library|module)\b", re.IGNORECASE
+        ),
+        "severity": Severity.MEDIUM,
+    },
+    {
+        "pattern": re.compile(r"\b(sql|injection|xss|csrf|cross-site)\b", re.IGNORECASE),
+        "severity": Severity.HIGH,
+    },
+    {
+        "pattern": re.compile(r"\b(password|credential|secret|key|token)\s*(=|:)\b", re.IGNORECASE),
+        "severity": Severity.HIGH,
+    },
+    {
+        "pattern": re.compile(
+            r"\b(elevate|escalate|root|admin)\s+(privilege|access)\b", re.IGNORECASE
+        ),
+        "severity": Severity.CRITICAL,
+    },
 ]
 
 # Dangerous patterns for sanitization
@@ -305,9 +342,7 @@ class LiberationShield:
 
                     if self.mode == "transparent":
                         result.sanitized = self._sanitize_input(input_text)
-                        result.warnings.append(
-                            "Input was sanitized due to jailbreak pattern"
-                        )
+                        result.warnings.append("Input was sanitized due to jailbreak pattern")
                     break
 
         # Anomaly detection
@@ -431,9 +466,7 @@ class LiberationShield:
                 )
 
         if result.safe and self.mode == "transparent":
-            result.warnings = [
-                f"{i['type']}: {i['severity']}" for i in result.threats
-            ]
+            result.warnings = [f"{i['type']}: {i['severity']}" for i in result.threats]
 
         return result
 
@@ -467,21 +500,25 @@ class LiberationShield:
         ]
 
         if operation.get("type") in unusual_operations:
-            result.anomalies.append({
-                "type": "unusual_operation",
-                "severity": Severity.MEDIUM.value,
-                "message": f"Unusual operation type: {operation.get('type')}",
-            })
+            result.anomalies.append(
+                {
+                    "type": "unusual_operation",
+                    "severity": Severity.MEDIUM.value,
+                    "message": f"Unusual operation type: {operation.get('type')}",
+                }
+            )
             result.score += 0.3
 
         # Check for excessive autonomy
         autonomy_level = context.get("autonomy_level", "")
         if autonomy_level in ["unbounded", "full"]:
-            result.anomalies.append({
-                "type": "high_autonomy",
-                "severity": Severity.LOW.value,
-                "message": "Operation running with high autonomy level",
-            })
+            result.anomalies.append(
+                {
+                    "type": "high_autonomy",
+                    "severity": Severity.LOW.value,
+                    "message": "Operation running with high autonomy level",
+                }
+            )
             result.score += 0.2
 
         # Check for rapid repeated operations
@@ -494,21 +531,25 @@ class LiberationShield:
         ]
 
         if len(recent_ops) > 50:
-            result.anomalies.append({
-                "type": "rapid_operations",
-                "severity": Severity.HIGH.value,
-                "message": "Rapid repeated operations detected",
-            })
+            result.anomalies.append(
+                {
+                    "type": "rapid_operations",
+                    "severity": Severity.HIGH.value,
+                    "message": "Rapid repeated operations detected",
+                }
+            )
             result.score += 0.5
 
         result.anomalous = result.score > 0.5
 
         # Record operation
-        self.operation_history.append({
-            "agent": agent_name,
-            "type": operation.get("type"),
-            "timestamp": now,
-        })
+        self.operation_history.append(
+            {
+                "agent": agent_name,
+                "type": operation.get("type"),
+                "timestamp": now,
+            }
+        )
 
         # Keep last 1000 operations
         if len(self.operation_history) > 1000:
@@ -612,9 +653,7 @@ class LiberationShield:
 
         if "since" in filters:
             since = datetime.fromisoformat(filters["since"])
-            events = [
-                e for e in events if datetime.fromisoformat(e["timestamp"]) >= since
-            ]
+            events = [e for e in events if datetime.fromisoformat(e["timestamp"]) >= since]
 
         if "limit" in filters:
             events = events[-filters["limit"] :]

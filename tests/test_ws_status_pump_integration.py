@@ -49,20 +49,27 @@ def api_server():
     pump has data to broadcast.
     """
     env = os.environ.copy()
-    env.update({
-        "DATABASE_URL": "sqlite+aiosqlite:///./test_ws_integration.db",
-        "HERETEK_API_KEY": API_KEY,
-        "LOG_LEVEL": "WARNING",
-        "LOG_FORMAT": "json",
-    })
+    env.update(
+        {
+            "DATABASE_URL": "sqlite+aiosqlite:///./test_ws_integration.db",
+            "HERETEK_API_KEY": API_KEY,
+            "LOG_LEVEL": "WARNING",
+            "LOG_FORMAT": "json",
+        }
+    )
 
     proc = subprocess.Popen(
         [
-            sys.executable, "-m", "uvicorn",
+            sys.executable,
+            "-m",
+            "uvicorn",
             "heretek_swarm.api.main:app",
-            "--host", "0.0.0.0",
-            "--port", str(API_PORT),
-            "--log-level", "warning",
+            "--host",
+            "0.0.0.0",
+            "--port",
+            str(API_PORT),
+            "--log-level",
+            "warning",
         ],
         cwd=str(Path(__file__).resolve().parent.parent / "heretek-swarm"),
         env=env,
@@ -115,7 +122,7 @@ async def test_agent_status_messages_received(api_server):
     messages: list[dict] = []
     start = time.time()
 
-    async with websockets.connect(WS_URL, max_size=2 ** 20) as ws:
+    async with websockets.connect(WS_URL, max_size=2**20) as ws:
         # Wait for messages up to CAPTURE_TIMEOUT seconds
         deadline = start + CAPTURE_TIMEOUT
         while time.time() < deadline:
@@ -157,6 +164,7 @@ async def test_agent_status_messages_received(api_server):
 
     # lastHeartbeat must be a valid ISO timestamp
     from datetime import datetime
+
     for m in status_msgs:
         try:
             datetime.fromisoformat(m["lastHeartbeat"])
@@ -165,9 +173,7 @@ async def test_agent_status_messages_received(api_server):
 
     # Verify we got 2+ batches (pump fires every 10s, we waited 18s)
     # Group messages by approximate timestamp (bucket by 5s intervals)
-    timestamps = sorted(
-        datetime.fromisoformat(m["lastHeartbeat"]) for m in status_msgs
-    )
+    timestamps = sorted(datetime.fromisoformat(m["lastHeartbeat"]) for m in status_msgs)
     time_spans = (timestamps[-1] - timestamps[0]).total_seconds()
     assert time_spans >= 8, (
         f"Expected messages spanning at least 8s (2 pump cycles), "

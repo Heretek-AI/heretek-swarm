@@ -98,9 +98,7 @@ async def _run_lifecycle(
         f"{label}: expected TERMINATED after terminate, got {agent.state}"
     )
 
-    assert agent.error_count == 0, (
-        f"{label}: expected 0 errors, got {agent.error_count}"
-    )
+    assert agent.error_count == 0, f"{label}: expected 0 errors, got {agent.error_count}"
 
 
 SIMPLE_AGENTS: list[tuple[type[AgentActor], dict[str, Any]]] = [

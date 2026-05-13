@@ -68,6 +68,7 @@ async def _snapshot_after_round(
     except Exception as e:
         logger.warning("memory_snapshot_failed", deliberation_id=deliberation_id, error=str(e))
 
+
 # =============================================================================
 # Error Messages (Constants)
 # =============================================================================
@@ -79,6 +80,7 @@ TRIBUNAL_NOT_AVAILABLE = "Tribunal not available"
 # =============================================================================
 
 security = HTTPBearer(auto_error=False)
+
 
 class ConsensusAuthManager:
     """Manages authentication for consensus operations."""
@@ -180,10 +182,9 @@ _active_rounds: dict[str, dict[str, Any]] = {}
 # Consensus Round Endpoints
 # =============================================================================
 
+
 @router.get("")
-async def get_active_consensus_rounds(
-    agent_id: str = Depends(get_authenticated_agent)
-):
+async def get_active_consensus_rounds(agent_id: str = Depends(get_authenticated_agent)):
     """
     Get all active consensus rounds.
 
@@ -195,23 +196,22 @@ async def get_active_consensus_rounds(
     active = []
     for round_id, data in _active_rounds.items():
         if data["state"] in [ConsensusState.GATHERING.value, ConsensusState.VOTING.value]:
-            active.append({
-                "id": round_id,
-                "state": data["state"],
-                "topic": data["topic"],
-                "vote_count": len(data["votes"]),
-                "created_at": data["created_at"],
-                "deadline": data.get("deadline"),
-            })
+            active.append(
+                {
+                    "id": round_id,
+                    "state": data["state"],
+                    "topic": data["topic"],
+                    "vote_count": len(data["votes"]),
+                    "created_at": data["created_at"],
+                    "deadline": data.get("deadline"),
+                }
+            )
 
     return {"consensus_rounds": active, "total": len(active)}
 
 
 @router.get("/history")
-async def get_consensus_history(
-    limit: int = 50,
-    agent_id: str = Depends(get_authenticated_agent)
-):
+async def get_consensus_history(limit: int = 50, agent_id: str = Depends(get_authenticated_agent)):
     """
     Get completed consensus rounds history.
 
@@ -226,15 +226,17 @@ async def get_consensus_history(
     completed = []
     for round_id, data in _active_rounds.items():
         if data["state"] == ConsensusState.COMPLETED.value:
-            completed.append({
-                "id": round_id,
-                "topic": data["topic"],
-                "decision": data.get("decision"),
-                "confidence": data.get("confidence"),
-                "vote_count": len(data["votes"]),
-                "completed_at": data.get("completed_at"),
-                "red_flags": data.get("red_flags", []),
-            })
+            completed.append(
+                {
+                    "id": round_id,
+                    "topic": data["topic"],
+                    "decision": data.get("decision"),
+                    "confidence": data.get("confidence"),
+                    "vote_count": len(data["votes"]),
+                    "completed_at": data.get("completed_at"),
+                    "red_flags": data.get("red_flags", []),
+                }
+            )
 
     # Sort by completion time, most recent first
     completed.sort(key=lambda x: x.get("completed_at", ""), reverse=True)
@@ -246,10 +248,7 @@ async def get_consensus_history(
 
 
 @router.get("/{consensus_id}")
-async def get_consensus_round(
-    consensus_id: str,
-    agent_id: str = Depends(get_authenticated_agent)
-):
+async def get_consensus_round(consensus_id: str, agent_id: str = Depends(get_authenticated_agent)):
     """
     Get details of a specific consensus round.
 
@@ -282,9 +281,7 @@ async def get_consensus_round(
 
 @router.post("")
 async def create_consensus_round(
-    topic: str,
-    description: str = "",
-    agent_id: str = Depends(get_authenticated_agent)
+    topic: str, description: str = "", agent_id: str = Depends(get_authenticated_agent)
 ):
     """
     Create a new consensus round.
@@ -330,15 +327,17 @@ async def create_consensus_round(
     try:
         from heretek_swarm.api.websockets import manager as ws_manager
 
-        await ws_manager.broadcast_dashboard({
-            "type": "consensus_created",
-            "consensus_id": consensus_id,
-            "topic": topic,
-            "description": description,
-            "state": ConsensusState.GATHERING.value,
-            "created_at": created_at,
-            "timestamp": datetime.now(UTC).isoformat(),
-        })
+        await ws_manager.broadcast_dashboard(
+            {
+                "type": "consensus_created",
+                "consensus_id": consensus_id,
+                "topic": topic,
+                "description": description,
+                "state": ConsensusState.GATHERING.value,
+                "created_at": created_at,
+                "timestamp": datetime.now(UTC).isoformat(),
+            }
+        )
     except Exception as e:
         logger.warning("consensus_ws_broadcast_failed", event="consensus_created", error=str(e))
 
@@ -410,13 +409,15 @@ async def submit_vote(
     )
 
     # Add to store
-    data["votes"].append({
-        "agent_id": vote.agent_id,
-        "decision": vote.decision,
-        "confidence": vote.confidence,
-        "timestamp": vote.timestamp,
-        "metadata": vote.metadata,
-    })
+    data["votes"].append(
+        {
+            "agent_id": vote.agent_id,
+            "decision": vote.decision,
+            "confidence": vote.confidence,
+            "timestamp": vote.timestamp,
+            "metadata": vote.metadata,
+        }
+    )
 
     # Get consensus and process vote
     consensus = _consensus_store.get(consensus_id)
@@ -439,16 +440,18 @@ async def submit_vote(
     try:
         from heretek_swarm.api.websockets import manager as ws_manager
 
-        await ws_manager.broadcast_dashboard({
-            "type": "consensus_vote",
-            "consensus_id": consensus_id,
-            "agent_id": agent_id,
-            "decision": decision,
-            "confidence": confidence,
-            "vote_count": len(data["votes"]),
-            "current_state": data["state"],
-            "timestamp": datetime.now(UTC).isoformat(),
-        })
+        await ws_manager.broadcast_dashboard(
+            {
+                "type": "consensus_vote",
+                "consensus_id": consensus_id,
+                "agent_id": agent_id,
+                "decision": decision,
+                "confidence": confidence,
+                "vote_count": len(data["votes"]),
+                "current_state": data["state"],
+                "timestamp": datetime.now(UTC).isoformat(),
+            }
+        )
     except Exception as e:
         logger.warning("consensus_ws_broadcast_failed", event="consensus_vote", error=str(e))
 
@@ -462,10 +465,7 @@ async def submit_vote(
 
 
 @router.post("/{consensus_id}/aggregate")
-async def aggregate_consensus(
-    consensus_id: str,
-    agent_id: str = Depends(get_authenticated_agent)
-):
+async def aggregate_consensus(consensus_id: str, agent_id: str = Depends(get_authenticated_agent)):
     """
     Aggregate votes and determine consensus decision.
 
@@ -514,17 +514,19 @@ async def aggregate_consensus(
     try:
         from heretek_swarm.api.websockets import manager as ws_manager
 
-        await ws_manager.broadcast_dashboard({
-            "type": "consensus_complete",
-            "consensus_id": consensus_id,
-            "decision": result.decision,
-            "confidence": result.confidence,
-            "state": result.state.value,
-            "vote_count": len(data["votes"]),
-            "red_flags": result.red_flags,
-            "completed_at": result.timestamp,
-            "timestamp": datetime.now(UTC).isoformat(),
-        })
+        await ws_manager.broadcast_dashboard(
+            {
+                "type": "consensus_complete",
+                "consensus_id": consensus_id,
+                "decision": result.decision,
+                "confidence": result.confidence,
+                "state": result.state.value,
+                "vote_count": len(data["votes"]),
+                "red_flags": result.red_flags,
+                "completed_at": result.timestamp,
+                "timestamp": datetime.now(UTC).isoformat(),
+            }
+        )
     except Exception as e:
         logger.warning("consensus_ws_broadcast_failed", event="consensus_aggregated", error=str(e))
 
@@ -540,7 +542,9 @@ async def aggregate_consensus(
 
 
 @router.get("/{consensus_id}/results")
-async def get_consensus_results(consensus_id: str, agent_id: str = Depends(get_authenticated_agent)):
+async def get_consensus_results(
+    consensus_id: str, agent_id: str = Depends(get_authenticated_agent)
+):
     """
     Get results of a completed consensus round.
 
@@ -579,10 +583,7 @@ async def get_consensus_results(consensus_id: str, agent_id: str = Depends(get_a
 
 
 @router.delete("/{consensus_id}")
-async def cancel_consensus(
-    consensus_id: str,
-    agent_id: str = Depends(get_authenticated_agent)
-):
+async def cancel_consensus(consensus_id: str, agent_id: str = Depends(get_authenticated_agent)):
     """
     Cancel an active consensus round.
 
@@ -618,10 +619,9 @@ async def cancel_consensus(
 # Consensus Configuration
 # =============================================================================
 
+
 @router.get("/config")
-async def get_consensus_config(
-    agent_id: str = Depends(get_authenticated_agent)
-):
+async def get_consensus_config(agent_id: str = Depends(get_authenticated_agent)):
     """
     Get current consensus configuration.
 
@@ -752,7 +752,10 @@ async def submit_deliberation_position(
     try:
         position_enum = Position(position.lower())
     except ValueError:
-        raise HTTPException(status_code=400, detail=f"Invalid position. Must be one of: {[p.value for p in Position]}")
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid position. Must be one of: {[p.value for p in Position]}",
+        )
 
     success = deliberation_engine.submit_position(
         deliberation_id=deliberation_id,
@@ -801,7 +804,10 @@ async def submit_deliberation_argument(
     try:
         position_enum = Position(position.lower())
     except ValueError:
-        raise HTTPException(status_code=400, detail=f"Invalid position. Must be one of: {[p.value for p in Position]}")
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid position. Must be one of: {[p.value for p in Position]}",
+        )
 
     argument = Argument(
         agent_id=agent_id,
@@ -878,7 +884,9 @@ async def submit_deliberation_evidence(
 
 
 @router.post("/deliberation/{deliberation_id}/run_round")
-async def run_deliberation_round(deliberation_id: str, agent_id: str = Depends(get_authenticated_agent)):
+async def run_deliberation_round(
+    deliberation_id: str, agent_id: str = Depends(get_authenticated_agent)
+):
     """
     Run a single deliberation round.
 
@@ -912,18 +920,22 @@ async def run_deliberation_round(deliberation_id: str, agent_id: str = Depends(g
     try:
         from heretek_swarm.api.websockets import manager as ws_manager
 
-        await ws_manager.broadcast_dashboard({
-            "type": "deliberation_round",
-            "deliberation_id": deliberation_id,
-            "round_number": round_result.round_number,
-            "arguments_submitted": len(round_result.arguments_submitted),
-            "positions": positions_dict,
-            "consensus_score": round_result.consensus_score,
-            "summary": round_result.summary,
-            "timestamp": datetime.now(UTC).isoformat(),
-        })
+        await ws_manager.broadcast_dashboard(
+            {
+                "type": "deliberation_round",
+                "deliberation_id": deliberation_id,
+                "round_number": round_result.round_number,
+                "arguments_submitted": len(round_result.arguments_submitted),
+                "positions": positions_dict,
+                "consensus_score": round_result.consensus_score,
+                "summary": round_result.summary,
+                "timestamp": datetime.now(UTC).isoformat(),
+            }
+        )
     except Exception as e:
-        logger.warning("consensus_ws_broadcast_failed", event="deliberation_round_complete", error=str(e))
+        logger.warning(
+            "consensus_ws_broadcast_failed", event="deliberation_round_complete", error=str(e)
+        )
 
     return {
         "deliberation_id": deliberation_id,
@@ -937,7 +949,9 @@ async def run_deliberation_round(deliberation_id: str, agent_id: str = Depends(g
 
 
 @router.get("/deliberation/{deliberation_id}/state")
-async def get_deliberation_state(deliberation_id: str, agent_id: str = Depends(get_authenticated_agent)):
+async def get_deliberation_state(
+    deliberation_id: str, agent_id: str = Depends(get_authenticated_agent)
+):
     """
     Get current deliberation state.
 
@@ -1000,7 +1014,9 @@ async def get_deliberation_history(
 
 
 @router.post("/deliberation/{deliberation_id}/finalize")
-async def finalize_deliberation(deliberation_id: str, agent_id: str = Depends(get_authenticated_agent)):
+async def finalize_deliberation(
+    deliberation_id: str, agent_id: str = Depends(get_authenticated_agent)
+):
     """
     Finalize a deliberation and return results.
 
@@ -1031,7 +1047,9 @@ async def finalize_deliberation(deliberation_id: str, agent_id: str = Depends(ge
 
 
 @router.delete("/deliberation/{deliberation_id}")
-async def cleanup_deliberation(deliberation_id: str, agent_id: str = Depends(get_authenticated_agent)):
+async def cleanup_deliberation(
+    deliberation_id: str, agent_id: str = Depends(get_authenticated_agent)
+):
     """
     Cleanup and remove a deliberation.
 
@@ -1163,7 +1181,9 @@ async def get_successful_audits(agent_id: str = Depends(get_authenticated_agent)
 
 
 @router.get("/audit/deliberation/{consensus_id}/history")
-async def get_deliberation_audit_history(consensus_id: str, agent_id: str = Depends(get_authenticated_agent)):
+async def get_deliberation_audit_history(
+    consensus_id: str, agent_id: str = Depends(get_authenticated_agent)
+):
     """
     Get deliberation history for audit.
 

@@ -169,19 +169,10 @@ class MemoryManager:
 
                 # Note: mem0 requires OpenAI API key, so we make it optional
                 # If no key, we'll fall back to in-memory storage
-                self._mem0 = PersistentMemory(
-                    user_id=self.agent_id
-                )
-                logger.info(
-                    "memory_manager_initialized",
-                    use_mem0=True,
-                    agent_id=self.agent_id
-                )
+                self._mem0 = PersistentMemory(user_id=self.agent_id)
+                logger.info("memory_manager_initialized", use_mem0=True, agent_id=self.agent_id)
             except Exception as e:
-                logger.warning(
-                    "mem0_init_failed_falling_back",
-                    error=str(e)
-                )
+                logger.warning("mem0_init_failed_falling_back", error=str(e))
                 self._mem0 = None
         else:
             self._mem0 = None
@@ -190,7 +181,7 @@ class MemoryManager:
         logger.info(
             "memory_manager_initialized",
             use_mem0=self.config.use_mem0 and self._mem0 is not None,
-            agent_id=self.agent_id
+            agent_id=self.agent_id,
         )
 
     async def remember(
@@ -369,10 +360,7 @@ class MemoryManager:
         """
         agent_id = agent_id or self.agent_id
 
-        working = [
-            e for e in self._working.values()
-            if e.agent_id == agent_id
-        ]
+        working = [e for e in self._working.values() if e.agent_id == agent_id]
 
         # Sort by effective importance
         working.sort(key=lambda e: e.effective_importance(), reverse=True)
@@ -459,14 +447,8 @@ class MemoryManager:
 
     def get_statistics(self) -> dict[str, Any]:
         """Get memory statistics."""
-        total_short_term = sum(
-            e.effective_importance()
-            for e in self._short_term.values()
-        )
-        total_working = sum(
-            e.effective_importance()
-            for e in self._working.values()
-        )
+        total_short_term = sum(e.effective_importance() for e in self._short_term.values())
+        total_working = sum(e.effective_importance() for e in self._working.values())
 
         return {
             "working_count": len(self._working),

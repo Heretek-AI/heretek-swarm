@@ -24,6 +24,7 @@ StreamingCallback = Callable[[str], None]
 @dataclass
 class Message:
     """A chat message for LLM interaction."""
+
     role: str  # "system", "user", "assistant", "tool"
     content: str
     name: str | None = None
@@ -45,6 +46,7 @@ class Message:
 @dataclass
 class LLMRequest:
     """Request parameters for LLM completion."""
+
     messages: list[Message]
     model: str | None = None
     temperature: float = 0.7
@@ -95,6 +97,7 @@ class LLMRequest:
 @dataclass
 class ToolCall:
     """A tool call from the LLM."""
+
     id: str
     name: str
     arguments: dict[str, Any]
@@ -103,6 +106,7 @@ class ToolCall:
 @dataclass
 class LLMResponse:
     """Response from an LLM completion."""
+
     content: str
     model: str
     usage: dict[str, int] = field(default_factory=dict)
@@ -130,6 +134,7 @@ class LLMResponse:
 @dataclass
 class ProviderCapabilities:
     """Capabilities of an LLM provider."""
+
     supports_streaming: bool = True
     supports_function_calling: bool = False
     supports_vision: bool = False
@@ -345,6 +350,7 @@ class LLMProviderBase(ABC):
 @dataclass
 class ConnectivityTestResult:
     """Result of a connectivity test."""
+
     success: bool
     provider_name: str
     model_used: str | None
@@ -387,6 +393,7 @@ class ProviderAuthenticationError(ProviderError):
 
 class ProviderRateLimitError(ProviderError):
     """Exception raised when rate limited."""
+
     def __init__(
         self,
         message: str,

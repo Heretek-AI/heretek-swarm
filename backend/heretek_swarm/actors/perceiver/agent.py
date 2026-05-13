@@ -33,7 +33,6 @@ from heretek_swarm.actors.mixins import (
 from heretek_swarm.actors.perceiver.types import ModalityType
 from heretek_swarm.actors.validation import validate_message
 from heretek_swarm.collective.learning import PatternExtractor
-from heretek_swarm.workflow.validator import ValidationError
 
 # Session 44: Consensus Integration
 from heretek_swarm.consensus.swarm_deliberation import SwarmDeliberationEngine
@@ -43,6 +42,7 @@ from heretek_swarm.memory.access_patterns import AccessPatternAnalyzer
 
 # Session 44: Zero-Trust Validation
 from heretek_swarm.security.zero_trust import ZeroTrustValidator
+from heretek_swarm.workflow.validator import ValidationError
 
 logger = structlog.get_logger("PerceiverAgent")
 

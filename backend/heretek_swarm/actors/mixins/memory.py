@@ -5,7 +5,6 @@ Provides methods for tracking memory access patterns,
 determining memory tiers, and prefetching relevant memories.
 """
 
-
 import structlog
 
 from heretek_swarm.memory.access_patterns import AccessPatternAnalyzer, AccessTier

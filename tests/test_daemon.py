@@ -167,8 +167,12 @@ class TestBuildStatusResponse:
     def test_returns_agent_list() -> None:
         swarm = MagicMock()
         swarm.supervisor.get_all_status.return_value = {
-            "alpha": TestBuildStatusResponse.make_mock_status("alpha", mailbox_size=2, message_count=10),
-            "beta": TestBuildStatusResponse.make_mock_status("beta", mailbox_size=0, message_count=5),
+            "alpha": TestBuildStatusResponse.make_mock_status(
+                "alpha", mailbox_size=2, message_count=10
+            ),
+            "beta": TestBuildStatusResponse.make_mock_status(
+                "beta", mailbox_size=0, message_count=5
+            ),
         }
 
         response = _build_status_response(swarm)

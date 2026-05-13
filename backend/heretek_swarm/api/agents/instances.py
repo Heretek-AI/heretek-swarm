@@ -100,7 +100,9 @@ async def get_agent_instance(
             "type_name": instance.metadata.type_name if instance.metadata else None,
             "description": instance.metadata.description if instance.metadata else None,
             "capabilities": instance.metadata.capabilities if instance.metadata else None,
-        } if instance.metadata else None,
+        }
+        if instance.metadata
+        else None,
         "actor_status": actor_status,
     }
 
@@ -131,23 +133,27 @@ async def get_agent_logs(
     logs = []
 
     # Add lifecycle events
-    logs.append({
-        "timestamp": instance.config.get("created_at", "unknown"),
-        "level": "info",
-        "message": f"Agent instance {instance_id} deployed",
-        "agent_type": instance.agent_type,
-    })
+    logs.append(
+        {
+            "timestamp": instance.config.get("created_at", "unknown"),
+            "level": "info",
+            "message": f"Agent instance {instance_id} deployed",
+            "agent_type": instance.agent_type,
+        }
+    )
 
     if instance.actor:
         try:
             status = instance.actor.get_status()
-            logs.append({
-                "timestamp": status.last_activity or "unknown",
-                "level": "info",
-                "message": f"Agent processed {status.message_count} messages",
-                "message_count": status.message_count,
-                "error_count": status.error_count,
-            })
+            logs.append(
+                {
+                    "timestamp": status.last_activity or "unknown",
+                    "level": "info",
+                    "message": f"Agent processed {status.message_count} messages",
+                    "message_count": status.message_count,
+                    "error_count": status.error_count,
+                }
+            )
         except Exception as e:
             logger.debug("agent_status_log_read_failed", error=str(e))
 
@@ -187,8 +193,10 @@ async def get_registry_stats(
 # Channel Subscription Models
 # =============================================================================
 
+
 class ChannelType(StrEnum):
     """Channel type enumeration."""
+
     EVENT = "event"
     COMMAND = "command"
     RESPONSE = "response"
@@ -197,6 +205,7 @@ class ChannelType(StrEnum):
 
 class ChannelDirection(StrEnum):
     """Channel direction enumeration."""
+
     INPUT = "input"
     OUTPUT = "output"
     BIDIRECTIONAL = "bidirectional"
@@ -204,6 +213,7 @@ class ChannelDirection(StrEnum):
 
 class ChannelSubscriptionCreate(BaseModel):
     """Request model for creating a channel subscription."""
+
     channelName: str = Field(..., description="Channel name")
     channelType: ChannelType = Field(..., description="Channel type")
     direction: ChannelDirection = Field(..., description="Channel direction")
@@ -213,6 +223,7 @@ class ChannelSubscriptionCreate(BaseModel):
 
 class ChannelSubscriptionResponse(BaseModel):
     """Response model for channel subscription."""
+
     channelName: str
     channelType: ChannelType
     direction: ChannelDirection
@@ -223,6 +234,7 @@ class ChannelSubscriptionResponse(BaseModel):
 
 class ChannelSubscriptionsListResponse(BaseModel):
     """Response model for listing channel subscriptions."""
+
     agentId: str
     subscriptions: list[ChannelSubscriptionResponse]
     total: int
@@ -231,6 +243,7 @@ class ChannelSubscriptionsListResponse(BaseModel):
 # =============================================================================
 # Channel Subscription Endpoints
 # =============================================================================
+
 
 def get_channel_registry_instance() -> ChannelRegistry:
     """Dependency to get the channel registry."""
@@ -268,16 +281,19 @@ async def get_agent_channels(
             # Get channel details
             channel = channel_registry.get_channel(sub)
             if channel:
-                subscription_list.append(ChannelSubscriptionResponse(
-                    channelName=channel.name,
-                    channelType=ChannelType.EVENT,  # Default type
-                    direction=ChannelDirection.BIDIRECTIONAL,  # Default direction
-                    description=channel.description,
-                    subscribedAt=(
-                        channel_registry.get_stats(channel.name).get("created_at", "")
-                        if channel_registry.get_stats(channel.name) else ""
-                    ),
-                ))
+                subscription_list.append(
+                    ChannelSubscriptionResponse(
+                        channelName=channel.name,
+                        channelType=ChannelType.EVENT,  # Default type
+                        direction=ChannelDirection.BIDIRECTIONAL,  # Default direction
+                        description=channel.description,
+                        subscribedAt=(
+                            channel_registry.get_stats(channel.name).get("created_at", "")
+                            if channel_registry.get_stats(channel.name)
+                            else ""
+                        ),
+                    )
+                )
 
         return ChannelSubscriptionsListResponse(
             agentId=instance_id,

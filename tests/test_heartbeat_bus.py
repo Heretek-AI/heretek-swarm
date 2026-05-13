@@ -209,10 +209,7 @@ class TestContractMonitorLoopCallsHandleFailure:
         steward._handle_agent_failure = AsyncMock()
 
         all_failed = sorted(
-            set(
-                steward.detect_heartbeat_failure()
-                + steward._check_registry_heartbeats()
-            )
+            set(steward.detect_heartbeat_failure() + steward._check_registry_heartbeats())
         )
         for agent_id in all_failed:
             if agent_id not in steward._failed_agents:
@@ -241,10 +238,7 @@ class TestContractAlreadyFailedSkipped:
         steward._handle_agent_failure = AsyncMock()
 
         all_failed = sorted(
-            set(
-                steward.detect_heartbeat_failure()
-                + steward._check_registry_heartbeats()
-            )
+            set(steward.detect_heartbeat_failure() + steward._check_registry_heartbeats())
         )
         for agent_id in all_failed:
             if agent_id not in steward._failed_agents:
@@ -268,10 +262,7 @@ class TestContractAlreadyFailedSkipped:
         steward._handle_agent_failure = AsyncMock()
 
         all_failed = sorted(
-            set(
-                steward.detect_heartbeat_failure()
-                + steward._check_registry_heartbeats()
-            )
+            set(steward.detect_heartbeat_failure() + steward._check_registry_heartbeats())
         )
         for agent_id in all_failed:
             if agent_id not in steward._failed_agents:

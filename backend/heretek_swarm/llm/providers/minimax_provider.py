@@ -136,10 +136,12 @@ class MiniMaxProvider(LLMProviderBase):
         # Convert messages to MiniMax format
         messages = []
         for msg in request.messages:
-            messages.append({
-                "sender_type": msg.role,
-                "text": msg.content,
-            })
+            messages.append(
+                {
+                    "sender_type": msg.role,
+                    "text": msg.content,
+                }
+            )
 
         # Build MiniMax-specific payload
         payload = {
@@ -183,7 +185,11 @@ class MiniMaxProvider(LLMProviderBase):
                     provider="minimax",
                 )
             if response.status_code != 200:
-                error_data = response.json() if response.headers.get("content-type", "").startswith("application/json") else {"text": response.text}
+                error_data = (
+                    response.json()
+                    if response.headers.get("content-type", "").startswith("application/json")
+                    else {"text": response.text}
+                )
                 raise ProviderError(
                     f"MiniMax API error: {response.status_code} - {error_data}",
                     provider="minimax",
@@ -236,10 +242,12 @@ class MiniMaxProvider(LLMProviderBase):
         # Convert messages to MiniMax format
         messages = []
         for msg in request.messages:
-            messages.append({
-                "sender_type": msg.role,
-                "text": msg.content,
-            })
+            messages.append(
+                {
+                    "sender_type": msg.role,
+                    "text": msg.content,
+                }
+            )
 
         payload = {
             "model": model,
@@ -312,6 +320,7 @@ class MiniMaxProvider(LLMProviderBase):
         """Cleanup HTTP client."""
         if self._client and not self._client.is_closed:
             await self._client.aclose()
+
 
 # Import at module level for type annotation
 from heretek_swarm.infrastructure.otel import InstrumentedAsyncClient

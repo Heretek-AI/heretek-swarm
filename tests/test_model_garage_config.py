@@ -83,13 +83,15 @@ class TestAtomicWrite:
         _seed_config_file(config_file)
 
         garage = ModelGarage(config_file=config_file)
-        garage.add_provider(ProviderConfig(
-            id="test-atomic",
-            name="Test Atomic",
-            provider_type=ProviderType.OLLAMA,
-            base_url="http://localhost:11434",
-            default_model="llama3.1",
-        ))
+        garage.add_provider(
+            ProviderConfig(
+                id="test-atomic",
+                name="Test Atomic",
+                provider_type=ProviderType.OLLAMA,
+                base_url="http://localhost:11434",
+                default_model="llama3.1",
+            )
+        )
 
         # Verify the file is valid JSON with the provider
         saved = json.loads(config_file.read_text())
@@ -100,15 +102,20 @@ class TestAtomicWrite:
     def test_partial_write_does_not_corrupt_original(self, tmp_path: Path) -> None:
         """If the write fails mid-flight, the original file stays intact."""
         config_file = tmp_path / ".heretek-swarm" / "config.json"
-        _seed_config_file(config_file, providers=[{
-            "id": "original-id",
-            "type": "ollama",
-            "name": "Original",
-            "baseUrl": "http://localhost:11434",
-            "isEnabled": True,
-            "isDefault": False,
-            "priority": 100,
-        }])
+        _seed_config_file(
+            config_file,
+            providers=[
+                {
+                    "id": "original-id",
+                    "type": "ollama",
+                    "name": "Original",
+                    "baseUrl": "http://localhost:11434",
+                    "isEnabled": True,
+                    "isDefault": False,
+                    "priority": 100,
+                }
+            ],
+        )
 
         original_text = config_file.read_text()
         garage = ModelGarage(config_file=config_file)
@@ -123,6 +130,7 @@ class TestAtomicWrite:
 
         # Monkey-patch open to raise OSError during write
         original_open = open
+
         def _failing_open(*args, **kwargs):
             if str(args[0]).endswith(".json.tmp"):
                 raise OSError("disk full")
@@ -141,13 +149,17 @@ class TestAtomicWrite:
 
         garage = ModelGarage(config_file=config_file)
         garage._provider_configs["x"] = ProviderConfig(
-            id="x", name="X", provider_type=ProviderType.OLLAMA,
+            id="x",
+            name="X",
+            provider_type=ProviderType.OLLAMA,
             base_url="http://localhost:11434",
         )
 
         original_open = open
+
         def _failing_os_replace(*args, **kwargs):
             raise OSError("atomic replace failed")
+
         def _real_open(*args, **kwargs):
             return original_open(*args, **kwargs)
 
@@ -169,15 +181,20 @@ class TestReloadConfig:
     def test_reload_picks_up_external_edits(self, tmp_path: Path) -> None:
         """Edits made directly to config.json are visible after reload."""
         config_file = tmp_path / ".heretek-swarm" / "config.json"
-        _seed_config_file(config_file, providers=[{
-            "id": "before-reload",
-            "type": "ollama",
-            "name": "Before Reload",
-            "baseUrl": "http://localhost:11434",
-            "isEnabled": True,
-            "isDefault": False,
-            "priority": 100,
-        }])
+        _seed_config_file(
+            config_file,
+            providers=[
+                {
+                    "id": "before-reload",
+                    "type": "ollama",
+                    "name": "Before Reload",
+                    "baseUrl": "http://localhost:11434",
+                    "isEnabled": True,
+                    "isDefault": False,
+                    "priority": 100,
+                }
+            ],
+        )
 
         garage = ModelGarage(config_file=config_file)
         initial = garage.list_providers()
@@ -186,15 +203,17 @@ class TestReloadConfig:
 
         # Simulate external edit: CLI wizard adds a provider
         existing = json.loads(config_file.read_text())
-        existing["modelProviders"].append({
-            "id": "after-reload",
-            "type": "ollama",
-            "name": "After Reload",
-            "baseUrl": "http://localhost:11434",
-            "isEnabled": True,
-            "isDefault": False,
-            "priority": 200,
-        })
+        existing["modelProviders"].append(
+            {
+                "id": "after-reload",
+                "type": "ollama",
+                "name": "After Reload",
+                "baseUrl": "http://localhost:11434",
+                "isEnabled": True,
+                "isDefault": False,
+                "priority": 200,
+            }
+        )
         config_file.write_text(json.dumps(existing, indent=2))
 
         garage.reload_config()
@@ -216,16 +235,21 @@ class TestUpdateProvider:
     def test_update_changes_list_providers_output(self, tmp_path: Path) -> None:
         """After update_provider, list_providers reflects the change."""
         config_file = tmp_path / ".heretek-swarm" / "config.json"
-        _seed_config_file(config_file, providers=[{
-            "id": "to-update",
-            "type": "ollama",
-            "name": "Original Name",
-            "baseUrl": "http://localhost:11434",
-            "defaultModel": "llama3.1",
-            "isEnabled": True,
-            "isDefault": False,
-            "priority": 100,
-        }])
+        _seed_config_file(
+            config_file,
+            providers=[
+                {
+                    "id": "to-update",
+                    "type": "ollama",
+                    "name": "Original Name",
+                    "baseUrl": "http://localhost:11434",
+                    "defaultModel": "llama3.1",
+                    "isEnabled": True,
+                    "isDefault": False,
+                    "priority": 100,
+                }
+            ],
+        )
 
         garage = ModelGarage(config_file=config_file)
         updated = ProviderConfig(
@@ -263,26 +287,34 @@ class TestUpdateProvider:
     def test_update_persists_to_file(self, tmp_path: Path) -> None:
         """update_provider writes the change to config.json on disk."""
         config_file = tmp_path / ".heretek-swarm" / "config.json"
-        _seed_config_file(config_file, providers=[{
-            "id": "disk-test",
-            "type": "ollama",
-            "name": "Disk Test",
-            "baseUrl": "http://localhost:11434",
-            "defaultModel": "llama3.1",
-            "isEnabled": True,
-            "isDefault": False,
-            "priority": 100,
-        }])
+        _seed_config_file(
+            config_file,
+            providers=[
+                {
+                    "id": "disk-test",
+                    "type": "ollama",
+                    "name": "Disk Test",
+                    "baseUrl": "http://localhost:11434",
+                    "defaultModel": "llama3.1",
+                    "isEnabled": True,
+                    "isDefault": False,
+                    "priority": 100,
+                }
+            ],
+        )
 
         garage = ModelGarage(config_file=config_file)
-        garage.update_provider("disk-test", ProviderConfig(
-            id="disk-test",
-            name="Disk Test Updated",
-            provider_type=ProviderType.OLLAMA,
-            base_url="http://localhost:11434",
-            default_model="llama3.2",
-            is_enabled=False,
-        ))
+        garage.update_provider(
+            "disk-test",
+            ProviderConfig(
+                id="disk-test",
+                name="Disk Test Updated",
+                provider_type=ProviderType.OLLAMA,
+                base_url="http://localhost:11434",
+                default_model="llama3.2",
+                is_enabled=False,
+            ),
+        )
 
         # Read the file fresh to confirm disk persistence
         saved = json.loads(config_file.read_text())
@@ -315,17 +347,22 @@ class TestTestProvider:
         config_file = tmp_path / ".heretek-swarm" / "config.json"
 
         # Use openai type which has a simpler health_check (just GET /)
-        _seed_config_file(config_file, providers=[{
-            "id": "test-openai",
-            "type": "openai",
-            "name": "Test OpenAI",
-            "baseUrl": "http://localhost:8080",
-            "apiKey": "sk-test",
-            "defaultModel": "gpt-4o",
-            "isEnabled": True,
-            "isDefault": False,
-            "priority": 100,
-        }])
+        _seed_config_file(
+            config_file,
+            providers=[
+                {
+                    "id": "test-openai",
+                    "type": "openai",
+                    "name": "Test OpenAI",
+                    "baseUrl": "http://localhost:8080",
+                    "apiKey": "sk-test",
+                    "defaultModel": "gpt-4o",
+                    "isEnabled": True,
+                    "isDefault": False,
+                    "priority": 100,
+                }
+            ],
+        )
 
         garage = ModelGarage(config_file=config_file)
 
@@ -336,7 +373,9 @@ class TestTestProvider:
             mock_client_cls.return_value = mock_client
 
             # Also mock instrumented_httpx_client to return mock_client directly
-            with patch("heretek_swarm.llm.model_garage.instrumented_httpx_client", return_value=mock_client):
+            with patch(
+                "heretek_swarm.llm.model_garage.instrumented_httpx_client", return_value=mock_client
+            ):
                 result = await garage.test_provider("test-openai")
 
         assert result["reachable"] is True
@@ -347,16 +386,21 @@ class TestTestProvider:
     async def test_failing_health_check_returns_unreachable(self, tmp_path: Path) -> None:
         """If health_check throws, result is reachable=False with error."""
         config_file = tmp_path / ".heretek-swarm" / "config.json"
-        _seed_config_file(config_file, providers=[{
-            "id": "bad-openai",
-            "type": "openai",
-            "name": "Bad OpenAI",
-            "baseUrl": "http://localhost:9999",
-            "apiKey": "sk-bad",
-            "isEnabled": True,
-            "isDefault": False,
-            "priority": 100,
-        }])
+        _seed_config_file(
+            config_file,
+            providers=[
+                {
+                    "id": "bad-openai",
+                    "type": "openai",
+                    "name": "Bad OpenAI",
+                    "baseUrl": "http://localhost:9999",
+                    "apiKey": "sk-bad",
+                    "isEnabled": True,
+                    "isDefault": False,
+                    "priority": 100,
+                }
+            ],
+        )
 
         garage = ModelGarage(config_file=config_file)
 
@@ -366,7 +410,9 @@ class TestTestProvider:
             mock_client.is_closed = False
             mock_client_cls.return_value = mock_client
 
-            with patch("heretek_swarm.llm.model_garage.instrumented_httpx_client", return_value=mock_client):
+            with patch(
+                "heretek_swarm.llm.model_garage.instrumented_httpx_client", return_value=mock_client
+            ):
                 result = await garage.test_provider("bad-openai")
 
         assert result["reachable"] is False
@@ -376,16 +422,21 @@ class TestTestProvider:
     async def test_test_provider_does_not_leave_stale_connection(self, tmp_path: Path) -> None:
         """After test_provider, the provider is NOT in the internal _providers dict."""
         config_file = tmp_path / ".heretek-swarm" / "config.json"
-        _seed_config_file(config_file, providers=[{
-            "id": "cleanup-test",
-            "type": "openai",
-            "name": "Cleanup Test",
-            "baseUrl": "http://localhost:8080",
-            "apiKey": "sk-test",
-            "isEnabled": True,
-            "isDefault": False,
-            "priority": 100,
-        }])
+        _seed_config_file(
+            config_file,
+            providers=[
+                {
+                    "id": "cleanup-test",
+                    "type": "openai",
+                    "name": "Cleanup Test",
+                    "baseUrl": "http://localhost:8080",
+                    "apiKey": "sk-test",
+                    "isEnabled": True,
+                    "isDefault": False,
+                    "priority": 100,
+                }
+            ],
+        )
 
         garage = ModelGarage(config_file=config_file)
 
@@ -395,7 +446,9 @@ class TestTestProvider:
             mock_client.is_closed = False
             mock_client_cls.return_value = mock_client
 
-            with patch("heretek_swarm.llm.model_garage.instrumented_httpx_client", return_value=mock_client):
+            with patch(
+                "heretek_swarm.llm.model_garage.instrumented_httpx_client", return_value=mock_client
+            ):
                 await garage.test_provider("cleanup-test")
 
         # Provider must NOT be in _providers after test

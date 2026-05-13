@@ -1,0 +1,117 @@
+=== API routes (FastAPI decorators) ===
+backend/heretek_swarm/api/agents/chat.py:197:@router.post(
+backend/heretek_swarm/api/agents/core.py:30:@router.get("/available")
+backend/heretek_swarm/api/agents/core.py:67:@router.get("/types/{agent_type}")
+backend/heretek_swarm/api/agents/core.py:100:@router.post("/deploy")
+backend/heretek_swarm/api/agents/core.py:147:@router.delete("/{instance_id}")
+backend/heretek_swarm/api/agents/instances.py:25:@router.get("/instances")
+backend/heretek_swarm/api/agents/instances.py:62:@router.get("/{instance_id}")
+backend/heretek_swarm/api/agents/instances.py:108:@router.get("/{instance_id}/logs")
+backend/heretek_swarm/api/agents/instances.py:169:@router.get("/stats")
+backend/heretek_swarm/api/agents/instances.py:240:@router.get("/{instance_id}/channels")
+backend/heretek_swarm/api/agents/instances.py:292:@router.post("/{instance_id}/channels")
+backend/heretek_swarm/api/agents/instances.py:344:@router.delete("/{instance_id}/channels/{channel_name}")
+backend/heretek_swarm/api/agents/jetstream.py:75:@router.get("/jetstream/streams")
+backend/heretek_swarm/api/agents/jetstream.py:116:@router.get("/jetstream/streams/{stream_name}")
+backend/heretek_swarm/api/agents/jetstream.py:157:@router.post("/jetstream/streams")
+backend/heretek_swarm/api/agents/jetstream.py:214:@router.delete("/jetstream/streams/{stream_name}")
+backend/heretek_swarm/api/agents/jetstream.py:245:@router.post("/jetstream/streams/{stream_name}/replay")
+backend/heretek_swarm/api/agents/jetstream.py:284:@router.get("/jetstream/stats")
+backend/heretek_swarm/api/agents/jetstream.py:305:@router.post("/jetstream/initialize")
+backend/heretek_swarm/api/agents/lifecycle.py:25:@router.post("/{instance_id}/start")
+backend/heretek_swarm/api/agents/lifecycle.py:59:@router.post("/{instance_id}/stop")
+backend/heretek_swarm/api/agents/lifecycle.py:93:@router.post("/{instance_id}/suspend")
+backend/heretek_swarm/api/agents/lifecycle.py:127:@router.post("/{instance_id}/resume")
+backend/heretek_swarm/api/agents/lifecycle.py:166:@router.put("/{instance_id}/config")
+backend/heretek_swarm/api/agents/profiling.py:120:@router.get("/{instance_id}/profiling/metrics")
+backend/heretek_swarm/api/agents/profiling.py:171:@router.get("/{instance_id}/profiling/profile")
+backend/heretek_swarm/api/agents/profiling.py:220:@router.get("/{instance_id}/profiling/anomalies")
+backend/heretek_swarm/api/agents/profiling.py:262:@router.get("/profiling/alerts")
+backend/heretek_swarm/api/agents/profiling.py:319:@router.post("/profiling/alerts/{index}/acknowledge")
+backend/heretek_swarm/api/agents/profiling.py:345:@router.get("/profiling/stats")
+backend/heretek_swarm/api/agents/profiling.py:372:@router.get("/profiling/prometheus")
+backend/heretek_swarm/api/agents/profiling.py:388:@router.post("/{instance_id}/profiling/record")
+backend/heretek_swarm/api/agents/routing_control.py:48:@router.post("/routing/rules/{rule_id}/enable")
+backend/heretek_swarm/api/agents/routing_control.py:61:@router.post("/routing/rules/{rule_id}/disable")
+backend/heretek_swarm/api/agents/routing_control.py:74:@router.get("/routing/stats")
+backend/heretek_swarm/api/agents/routing_control.py:92:@router.post("/routing/evaluate")
+backend/heretek_swarm/api/agents/routing_rules.py:72:@router.get("/routing/rules")
+backend/heretek_swarm/api/agents/routing_rules.py:101:@router.get("/routing/rules/{rule_id}")
+backend/heretek_swarm/api/agents/routing_rules.py:137:@router.post("/routing/rules")
+backend/heretek_swarm/api/agents/routing_rules.py:209:@router.put("/routing/rules/{rule_id}")
+backend/heretek_swarm/api/agents/routing_rules.py:275:@router.delete("/routing/rules/{rule_id}")
+backend/heretek_swarm/api/agents_management.py:37:router.include_router(chat.router, tags=["chat"])
+backend/heretek_swarm/api/agents_management.py:38:router.include_router(core.router, tags=["core"])
+backend/heretek_swarm/api/agents_management.py:39:router.include_router(lifecycle.router, tags=["lifecycle"])
+backend/heretek_swarm/api/agents_management.py:40:router.include_router(instances.router, tags=["instances"])
+backend/heretek_swarm/api/agents_management.py:41:router.include_router(jetstream.router, tags=["jetstream"])
+backend/heretek_swarm/api/agents_management.py:42:router.include_router(profiling.router, tags=["profiling"])
+backend/heretek_swarm/api/agents_management.py:43:router.include_router(routing_rules.router, tags=["routing_rules"])
+backend/heretek_swarm/api/agents_management.py:44:router.include_router(routing_control.router, tags=["routing_control"])
+backend/heretek_swarm/api/alerts.py:38:@router.get("")
+
+=== conftest fixtures ===
+
+=== Test file index ===
+tests/__init__.py
+tests/conftest.py
+tests/test_actor_lifecycle.py
+tests/test_actor_routing.py
+tests/test_agent_factory.py
+tests/test_agent_tools.py
+tests/test_auto_routing_integration.py
+tests/test_chronos_ticks.py
+tests/test_cli_help.py
+tests/test_cli_output.py
+tests/test_complexity_heuristic.py
+tests/test_config_cli.py
+tests/test_consciousness_api.py
+tests/test_consensus_api_auth.py
+tests/test_consensus_audit_jsonl.py
+tests/test_consensus_cli.py
+tests/test_consensus_coordinator.py
+tests/test_consensus_runtime.py
+tests/test_consensus_websocket.py
+tests/test_cost_calculation.py
+tests/test_cross_slice_mcp_routing.py
+tests/test_daemon.py
+tests/test_deliberation_flow.py
+tests/test_docker_config.py
+tests/test_domain_selector.py
+tests/test_end_to_end_s03.py
+tests/test_goal_cli.py
+tests/test_goal_consensus.py
+tests/test_goal_pipeline.py
+tests/test_goal_proposer.py
+tests/test_goal_store.py
+tests/test_goal_translator.py
+tests/test_heartbeat_bus.py
+tests/test_historian_jsonl.py
+tests/test_historian_pg.py
+tests/test_living_loop_integration.py
+tests/test_main_loop_s03.py
+tests/test_main_loop_s04.py
+tests/test_main_loop_s05.py
+tests/test_mcp_bridge.py
+tests/test_mcp_tool_toggle.py
+tests/test_mixin_guards.py
+tests/test_mixin_integration_s03.py
+tests/test_model_garage_config.py
+tests/test_packaging.py
+tests/test_provider_stats_api.py
+tests/test_providers_config_api.py
+tests/test_readme_accuracy.py
+tests/test_route_task.py
+tests/test_steward_heartbeats.py
+tests/test_stub_injection.py
+tests/test_triad_analysis.py
+tests/test_usage_recording.py
+tests/test_workflow_api.py
+tests/test_workflow_consensus_node.py
+tests/test_workflow_data_flow.py
+tests/test_workflow_e2e_nodes.py
+tests/test_workflow_llm_node.py
+tests/test_workflow_persistence.py
+tests/test_workflow_validation.py
+tests/test_ws_status_pump.py
+tests/test_ws_status_pump_integration.py

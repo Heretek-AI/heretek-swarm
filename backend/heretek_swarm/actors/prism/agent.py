@@ -56,7 +56,13 @@ logger = structlog.get_logger("PrismAgent")
 
 
 class PrismAgent(
-    ValidationMixin, DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, PrismTransforms, AgentActor
+    ValidationMixin,
+    DeliberationMixin,
+    PatternMixin,
+    MemoryMixin,
+    LearningMixin,
+    PrismTransforms,
+    AgentActor,
 ):
     """
     Prism Agent - Multi-Perspective Analysis Specialist.

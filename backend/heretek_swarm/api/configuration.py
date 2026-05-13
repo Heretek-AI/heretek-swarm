@@ -152,9 +152,11 @@ async def delete_config(
 # LLM Provider Type Helpers
 # =============================================================================
 
+
 def _list_llm_provider_types() -> list[str]:
     """List available LLM provider type identifiers."""
     return ["openai", "anthropic", "google", "azure", "ollama", "local"]
+
 
 def _get_llm_provider_info(provider_type: str) -> dict[str, Any]:
     """Get information about a specific LLM provider type."""
@@ -167,6 +169,7 @@ def _get_llm_provider_info(provider_type: str) -> dict[str, Any]:
         "local": {"type": "local", "name": "Local", "models": ["local"]},
     }
     return info_map.get(provider_type, {"type": provider_type, "name": provider_type, "models": []})
+
 
 # =============================================================================
 # LLM Provider Endpoints
@@ -303,6 +306,23 @@ async def test_llm_provider(
 # =============================================================================
 
 
+def _list_embedding_provider_types() -> list[str]:
+    """List available embedding provider type identifiers."""
+    return ["openai", "google", "huggingface", "ollama", "local"]
+
+
+def _get_embedding_provider_info(provider_type: str) -> dict[str, Any]:
+    """Get information about a specific embedding provider type."""
+    info_map: dict[str, dict[str, Any]] = {
+        "openai": {"type": "openai", "name": "OpenAI", "models": ["text-embedding-3-small"]},
+        "google": {"type": "google", "name": "Google AI", "models": ["text-embedding-004"]},
+        "huggingface": {"type": "huggingface", "name": "HuggingFace", "models": ["all-MiniLM-L6-v2"]},
+        "ollama": {"type": "ollama", "name": "Ollama", "models": ["nomic-embed-text"]},
+        "local": {"type": "local", "name": "Local", "models": ["local"]},
+    }
+    return info_map.get(provider_type, {"type": provider_type, "name": provider_type, "models": []})
+
+
 @router.get("/embedding/types")
 async def list_embedding_provider_types() -> dict[str, Any]:
     """List available embedding provider types."""
@@ -362,9 +382,7 @@ async def update_embedding_provider(
     service: ConfigurationService = Depends(get_service),
 ) -> dict[str, Any]:
     """Update an embedding provider."""
-    provider = await service.update_embedding_provider(
-        provider_id, update, user=authenticated
-    )
+    provider = await service.update_embedding_provider(provider_id, update, user=authenticated)
     if not provider:
         raise HTTPException(404, f"Embedding provider '{provider_id}' not found")
     return provider.model_dump()

@@ -80,10 +80,7 @@ def _make_consensus_node(
 
 def _make_edges(pairs: list[tuple[str, str]]) -> list[WorkflowEdge]:
     """Build WorkflowEdge list from (source, target) pairs."""
-    return [
-        WorkflowEdge(id=f"edge-{src}-{tgt}", source=src, target=tgt)
-        for src, tgt in pairs
-    ]
+    return [WorkflowEdge(id=f"edge-{src}-{tgt}", source=src, target=tgt) for src, tgt in pairs]
 
 
 def _make_mock_actor(
@@ -385,15 +382,15 @@ class TestE2ELLMToConsensus:
 
         # Verify outputs are real strings, not error dicts
         assert result.node_results["llm1"].output == "Step 1: Raw data processed"
-        assert result.node_results["llm2"].output == "Step 2: Analysis complete — deploy recommended"
+        assert (
+            result.node_results["llm2"].output == "Step 2: Analysis complete — deploy recommended"
+        )
 
     @pytest.mark.asyncio
     async def test_upstream_output_stored_in_context_variables(self):
         """LLM node output is available in context.variables for downstream consumption."""
         actor = _make_mock_actor(agent_id="worker")
-        actor.run_with_llm = AsyncMock(
-            side_effect=["Generate a summary", "Analysis: looking good"]
-        )
+        actor.run_with_llm = AsyncMock(side_effect=["Generate a summary", "Analysis: looking good"])
         supervisor = _make_mock_supervisor(
             actors={"worker": actor},
             active_agent_ids=["worker"],

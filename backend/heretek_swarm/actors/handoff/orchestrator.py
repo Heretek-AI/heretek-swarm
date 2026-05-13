@@ -21,6 +21,7 @@ logger = structlog.get_logger(__name__)
 # Handoff Strategies
 # =============================================================================
 
+
 class HandoffStrategy(ABC):
     """Base class for handoff strategies"""
 
@@ -77,10 +78,7 @@ class PerformanceStrategy(HandoffStrategy):
             return "steward"
 
         # Find agent with highest success rate
-        best_agent = max(
-            agent_performance.items(),
-            key=lambda x: x[1].get("success_rate", 0.0)
-        )
+        best_agent = max(agent_performance.items(), key=lambda x: x[1].get("success_rate", 0.0))
 
         return best_agent[0] if best_agent else "steward"
 
@@ -105,10 +103,7 @@ class LoadBalancingStrategy(HandoffStrategy):
             return "steward"
 
         # Find agent with lowest task count
-        least_loaded = min(
-            agent_load.items(),
-            key=lambda x: x[1].get("task_count", 0)
-        )
+        least_loaded = min(agent_load.items(), key=lambda x: x[1].get("task_count", 0))
 
         return least_loaded[0] if least_loaded else "steward"
 
@@ -149,23 +144,16 @@ class HandoffOrchestrator(PatternMixin, DeliberationMixin, MemoryMixin, Learning
             logger.warning(
                 "strategy_not_found",
                 strategy=strategy_name,
-                available=list(self._strategy_map.keys())
+                available=list(self._strategy_map.keys()),
             )
             return False
 
         self.strategy = self._strategy_map[strategy_name]
-        logger.info(
-            "strategy_set",
-            strategy=strategy_name
-        )
+        logger.info("strategy_set", strategy=strategy_name)
         return True
 
-
     async def evaluate_and_handoff(
-        self,
-        from_agent_id: str,
-        context: dict[str, Any],
-        reason: str = "automatic"
+        self, from_agent_id: str, context: dict[str, Any], reason: str = "automatic"
     ) -> HandoffResult | None:
         """
         Evaluate if handoff is needed and execute if so.
@@ -192,16 +180,10 @@ class HandoffOrchestrator(PatternMixin, DeliberationMixin, MemoryMixin, Learning
         to_agent_id = await self.strategy.select_destination(context)
 
         if to_agent_id == from_agent_id:
-            logger.warning(
-                "handoff_same_agent",
-                agent_id=from_agent_id
-            )
+            logger.warning("handoff_same_agent", agent_id=from_agent_id)
             return None
 
         # Execute handoff
         return await self.handoff.execute_handoff(
-            from_agent_id=from_agent_id,
-            to_agent_id=to_agent_id,
-            context=context,
-            reason=reason
+            from_agent_id=from_agent_id, to_agent_id=to_agent_id, context=context, reason=reason
         )

@@ -19,6 +19,7 @@ logger = structlog.get_logger("nats.publisher")
 
 class EventPriority(Enum):
     """Event priority levels."""
+
     LOW = "low"
     NORMAL = "normal"
     HIGH = "high"
@@ -28,6 +29,7 @@ class EventPriority(Enum):
 @dataclass
 class SwarmEvent:
     """Standardized event format for swarm communication."""
+
     event_type: str
     source_agent: str
     target_agent: str | None = None
@@ -67,6 +69,7 @@ class NATSPublisher:
     - consciousness.metrics
     - swarm.events
     """
+
     client: NATSClient = field(default=None)
     _default_source: str = "heretek-swarm"
 

@@ -388,9 +388,7 @@ class TestConsensusNodeBoundaryConditions:
             Vote(agent_id="a1", decision="abstain", confidence=0.0, timestamp=now, metadata={}),
             Vote(agent_id="a2", decision="abstain", confidence=0.0, timestamp=now, metadata={}),
         ]
-        result = _make_consensus_result(
-            decision="abstain", confidence=0.0, votes=votes
-        )
+        result = _make_consensus_result(decision="abstain", confidence=0.0, votes=votes)
         coordinator = MockConsensusCoordinator()
         coordinator.run_consensus.return_value = result
 

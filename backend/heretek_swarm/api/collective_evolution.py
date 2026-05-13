@@ -64,6 +64,7 @@ def get_adaptive_learning() -> AdaptiveLearningRateController:
 # Evolution Status Endpoint
 # =============================================================================
 
+
 @router.get("/evolution-status")
 async def get_evolution_status() -> dict[str, Any]:
     """

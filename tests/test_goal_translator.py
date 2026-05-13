@@ -20,6 +20,7 @@ from heretek_swarm.goals.translator import GoalToWorkflowTranslator
 def mock_metis() -> AsyncMock:
     return AsyncMock()
 
+
 @pytest.fixture
 def sample_goal() -> Goal:
     return Goal(
@@ -30,15 +31,14 @@ def sample_goal() -> Goal:
         status="accepted",
     )
 
+
 @pytest.mark.asyncio
 async def test_successful_translation(mock_metis, sample_goal):
     translator = GoalToWorkflowTranslator(mock_metis)
 
     mock_workflow = {
-        "nodes": [
-            {"id": "node_1", "type": "agent_task", "config": {"agent": "coder"}}
-        ],
-        "edges": []
+        "nodes": [{"id": "node_1", "type": "agent_task", "config": {"agent": "coder"}}],
+        "edges": [],
     }
 
     # Mock successful LLM response returning JSON string
@@ -50,6 +50,7 @@ async def test_successful_translation(mock_metis, sample_goal):
     assert "edges" in workflow
     assert len(workflow["nodes"]) == 1
     assert workflow["nodes"][0]["id"] == "node_1"
+
 
 @pytest.mark.asyncio
 async def test_translation_fallback_on_bad_json(mock_metis, sample_goal):
@@ -65,6 +66,7 @@ async def test_translation_fallback_on_bad_json(mock_metis, sample_goal):
     assert len(workflow["nodes"]) == 1
     assert workflow["nodes"][0]["id"] == "fallback_execution_node"
 
+
 @pytest.mark.asyncio
 async def test_translation_fallback_on_missing_keys(mock_metis, sample_goal):
     translator = GoalToWorkflowTranslator(mock_metis)
@@ -76,6 +78,7 @@ async def test_translation_fallback_on_missing_keys(mock_metis, sample_goal):
 
     assert len(workflow["nodes"]) == 1
     assert workflow["nodes"][0]["id"] == "fallback_execution_node"
+
 
 @pytest.mark.asyncio
 async def test_translation_fallback_on_exception(mock_metis, sample_goal):

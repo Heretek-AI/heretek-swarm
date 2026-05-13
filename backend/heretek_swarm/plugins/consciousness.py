@@ -273,9 +273,7 @@ class GlobalWorkspace:
             List of workspace items
         """
         # Filter and sort by priority
-        filtered = [
-            item for item in self.workspace if item.priority >= min_priority
-        ]
+        filtered = [item for item in self.workspace if item.priority >= min_priority]
         filtered.sort(key=lambda x: x.priority, reverse=True)
 
         return filtered[:limit]
@@ -419,12 +417,14 @@ class AttentionSchemaManager:
 
         # Record history
         if agent_id in self.attention_history:
-            self.attention_history[agent_id].append({
-                "previous_focus": schema.focus_target,
-                "new_focus": focus_target,
-                "intensity": intensity,
-                "timestamp": datetime.now(UTC).isoformat(),
-            })
+            self.attention_history[agent_id].append(
+                {
+                    "previous_focus": schema.focus_target,
+                    "new_focus": focus_target,
+                    "intensity": intensity,
+                    "timestamp": datetime.now(UTC).isoformat(),
+                }
+            )
 
             # Keep last 100 entries
             if len(self.attention_history[agent_id]) > 100:
@@ -436,9 +436,7 @@ class AttentionSchemaManager:
         schema.last_update = datetime.now(UTC).isoformat()
 
         # Update metacognitive awareness
-        schema.metacognitive_awareness = self._calculate_metacognitive_awareness(
-            agent_id
-        )
+        schema.metacognitive_awareness = self._calculate_metacognitive_awareness(agent_id)
 
         logger.debug(
             f"Updated attention for {agent_id}",
@@ -476,9 +474,7 @@ class AttentionSchemaManager:
 
         # Calculate attention stability
         recent = history[-10:]
-        intensity_variance = self._calculate_variance(
-            [h["intensity"] for h in recent]
-        )
+        intensity_variance = self._calculate_variance([h["intensity"] for h in recent])
 
         # Lower variance = higher stability = higher awareness
         stability = max(0.0, 1.0 - intensity_variance)
@@ -501,17 +497,13 @@ class AttentionSchemaManager:
         mean = sum(values) / len(values)
         return sum((x - mean) ** 2 for x in values) / len(values)
 
-
     def get_statistics(self) -> dict[str, Any]:
         """Get attention schema statistics."""
         return {
             "total_schemas": len(self.schemas),
-            "total_history_entries": sum(
-                len(h) for h in self.attention_history.values()
-            ),
+            "total_history_entries": sum(len(h) for h in self.attention_history.values()),
             "average_awareness": (
-                sum(s.metacognitive_awareness for s in self.schemas.values())
-                / len(self.schemas)
+                sum(s.metacognitive_awareness for s in self.schemas.values()) / len(self.schemas)
                 if self.schemas
                 else 0.0
             ),
@@ -748,9 +740,7 @@ class ConsciousnessPlugin:
         composite_score = (gwt_score + iit_phi + ast_competence + fep_score) / 4.0
 
         # Determine consciousness state including FEP
-        state = self._determine_consciousness_state(
-            gwt_score, iit_phi, ast_competence, fep_score
-        )
+        state = self._determine_consciousness_state(gwt_score, iit_phi, ast_competence, fep_score)
 
         metrics = ConsciousnessMetrics(
             gwt_score=gwt_score,
@@ -765,18 +755,20 @@ class ConsciousnessPlugin:
         self.agent_metrics[agent_id] = metrics
 
         # Record in history with FEP
-        self.metrics_history.append({
-            "agent_id": agent_id,
-            "metrics": {
-                "gwt_score": gwt_score,
-                "iit_phi": iit_phi,
-                "ast_competence": ast_competence,
-                "fep_score": fep_score,
-                "composite_score": composite_score,
-                "state": state.value,
-            },
-            "timestamp": metrics.timestamp,
-        })
+        self.metrics_history.append(
+            {
+                "agent_id": agent_id,
+                "metrics": {
+                    "gwt_score": gwt_score,
+                    "iit_phi": iit_phi,
+                    "ast_competence": ast_competence,
+                    "fep_score": fep_score,
+                    "composite_score": composite_score,
+                    "state": state.value,
+                },
+                "timestamp": metrics.timestamp,
+            }
+        )
 
         # Keep last 1000 entries
         if len(self.metrics_history) > 1000:
@@ -808,16 +800,13 @@ class ConsciousnessPlugin:
         """
         # Check workspace activity
         workspace_items = self.global_workspace.get_contents(limit=100)
-        agent_submissions = sum(
-            1 for item in workspace_items if item.source == agent_id
-        )
+        agent_submissions = sum(1 for item in workspace_items if item.source == agent_id)
 
         # Base score on participation
         if agent_submissions == 0:
             return 0.3
 
         return min(1.0, agent_submissions / 10.0)
-
 
     def _estimate_iit_phi(self, agent_id: str) -> float:
         """
@@ -869,7 +858,7 @@ class ConsciousnessPlugin:
                     "integration": integration,
                     "differentiation": differentiation,
                     "phi": phi,
-                }
+                },
             )
 
             return phi
@@ -1071,7 +1060,7 @@ class ConsciousnessPlugin:
                     "entropy": entropy,
                     "free_energy": free_energy,
                     "fep_score": fep_score,
-                }
+                },
             )
 
             return min(1.0, max(0.0, fep_score))
@@ -1080,11 +1069,7 @@ class ConsciousnessPlugin:
             logger.error(f"FEP calculation error: {e}")
             return 0.5
 
-    def _calculate_prediction_error(
-        self,
-        agent_id: str,
-        history: list[dict[str, Any]]
-    ) -> float:
+    def _calculate_prediction_error(self, agent_id: str, history: list[dict[str, Any]]) -> float:
         """
         Calculate prediction error from attention history.
 
@@ -1105,8 +1090,8 @@ class ConsciousnessPlugin:
 
         # Analyze transitions for predictability
         for i in range(2, len(history)):
-            history[i-2].get("focus_target", "")
-            curr_focus = history[i-1].get("focus_target", "")
+            history[i - 2].get("focus_target", "")
+            curr_focus = history[i - 1].get("focus_target", "")
             actual_next = history[i].get("focus_target", "")
 
             # Simple prediction: expect continuation of pattern
@@ -1123,8 +1108,7 @@ class ConsciousnessPlugin:
         intensities = [h.get("attention_intensity", 0.5) for h in history[-10:]]
         if len(intensities) >= 2:
             intensity_variance = sum(
-                (i - sum(intensities)/len(intensities)) ** 2
-                for i in intensities
+                (i - sum(intensities) / len(intensities)) ** 2 for i in intensities
             ) / len(intensities)
             # Higher variance = more surprise
             avg_error += intensity_variance * 0.5
@@ -1153,7 +1137,9 @@ class ConsciousnessPlugin:
             focus = h.get("focus_target", "unknown")
             intensity = h.get("attention_intensity", 0.5)
             # Bin intensity into categories
-            intensity_bin = "low" if intensity < 0.33 else ("medium" if intensity < 0.66 else "high")
+            intensity_bin = (
+                "low" if intensity < 0.33 else ("medium" if intensity < 0.66 else "high")
+            )
             states.append(f"{focus}_{intensity_bin}")
 
         unique_states = set(states)
@@ -1262,13 +1248,10 @@ class ConsciousnessPlugin:
 
         total_agents = len(self.agent_metrics)
         conscious_agents = sum(
-            1
-            for m in self.agent_metrics.values()
-            if m.state == ConsciousnessState.CONSCIOUS
+            1 for m in self.agent_metrics.values() if m.state == ConsciousnessState.CONSCIOUS
         )
         average_composite = (
-            sum(m.composite_score for m in self.agent_metrics.values())
-            / total_agents
+            sum(m.composite_score for m in self.agent_metrics.values()) / total_agents
         )
 
         # Determine collective state

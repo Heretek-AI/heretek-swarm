@@ -113,24 +113,27 @@ def _make_result(votes: list[MAKERVote], decision: str = "approve") -> Consensus
 class TestNormaliseDecision:
     """Tests for _normalise_decision()."""
 
-    @pytest.mark.parametrize(("raw", "expected"), [
-        ("approve", "approve"),
-        ("yes", "approve"),
-        ("support", "approve"),
-        ("agree", "approve"),
-        ("accept", "approve"),
-        ("APPROVE", "approve"),
-        ("  Yes  ", "approve"),
-        ("reject", "reject"),
-        ("no", "reject"),
-        ("oppose", "reject"),
-        ("disagree", "reject"),
-        ("decline", "reject"),
-        ("abstain", "abstain"),
-        ("garbage", "abstain"),
-        ("", "abstain"),
-        ("maybe later", "abstain"),
-    ])
+    @pytest.mark.parametrize(
+        ("raw", "expected"),
+        [
+            ("approve", "approve"),
+            ("yes", "approve"),
+            ("support", "approve"),
+            ("agree", "approve"),
+            ("accept", "approve"),
+            ("APPROVE", "approve"),
+            ("  Yes  ", "approve"),
+            ("reject", "reject"),
+            ("no", "reject"),
+            ("oppose", "reject"),
+            ("disagree", "reject"),
+            ("decline", "reject"),
+            ("abstain", "abstain"),
+            ("garbage", "abstain"),
+            ("", "abstain"),
+            ("maybe later", "abstain"),
+        ],
+    )
     def test_normalise(self, raw, expected):
         assert _normalise_decision(raw) == expected
 
@@ -153,15 +156,21 @@ class TestApprovalRatio:
 
     def test_three_approve_two_reject(self):
         votes = [
-            _v("a1", "approve"), _v("a2", "approve"), _v("a3", "approve"),
-            _v("a4", "reject"), _v("a5", "reject"),
+            _v("a1", "approve"),
+            _v("a2", "approve"),
+            _v("a3", "approve"),
+            _v("a4", "reject"),
+            _v("a5", "reject"),
         ]
         assert GoalConsensus._approval_ratio(votes) == 3 / 5  # 0.6
 
     def test_ignores_abstain(self):
         votes = [
-            _v("a1", "approve"), _v("a2", "approve"),
-            _v("a3", "reject"), _v("a4", "abstain"), _v("a5", "abstain"),
+            _v("a1", "approve"),
+            _v("a2", "approve"),
+            _v("a3", "reject"),
+            _v("a4", "abstain"),
+            _v("a5", "abstain"),
         ]
         # 2 approve / (2 approve + 1 reject) = 2/3 ≈ 0.667
         assert GoalConsensus._approval_ratio(votes) == pytest.approx(2 / 3)
@@ -197,8 +206,11 @@ class TestEvaluateThreshold:
 
     def test_three_of_five_approve_is_60_percent_passes(self):
         votes = [
-            _v("a1", "approve"), _v("a2", "approve"), _v("a3", "approve"),
-            _v("a4", "reject"), _v("a5", "reject"),
+            _v("a1", "approve"),
+            _v("a2", "approve"),
+            _v("a3", "approve"),
+            _v("a4", "reject"),
+            _v("a5", "reject"),
         ]
         accepted, close = self.gc()._evaluate_threshold(votes)
         assert accepted is True
@@ -207,8 +219,11 @@ class TestEvaluateThreshold:
     def test_two_of_five_approve_rejected_no_close(self):
         # 2/5 = 0.4 → <50%, no close
         votes = [
-            _v("a1", "approve"), _v("a2", "approve"),
-            _v("a3", "reject"), _v("a4", "reject"), _v("a5", "reject"),
+            _v("a1", "approve"),
+            _v("a2", "approve"),
+            _v("a3", "reject"),
+            _v("a4", "reject"),
+            _v("a5", "reject"),
         ]
         accepted, close = self.gc()._evaluate_threshold(votes)
         assert accepted is False
@@ -217,8 +232,10 @@ class TestEvaluateThreshold:
     def test_two_of_four_approve_is_50_percent_close(self):
         # 2/4 = 0.5 → close split
         votes = [
-            _v("a1", "approve"), _v("a2", "approve"),
-            _v("a3", "reject"), _v("a4", "reject"),
+            _v("a1", "approve"),
+            _v("a2", "approve"),
+            _v("a3", "reject"),
+            _v("a4", "reject"),
         ]
         accepted, close = self.gc()._evaluate_threshold(votes)
         assert accepted is False
@@ -226,8 +243,12 @@ class TestEvaluateThreshold:
 
     def test_three_of_six_approve_is_50_percent_close(self):
         votes = [
-            _v("a1", "approve"), _v("a2", "approve"), _v("a3", "approve"),
-            _v("a4", "reject"), _v("a5", "reject"), _v("a6", "reject"),
+            _v("a1", "approve"),
+            _v("a2", "approve"),
+            _v("a3", "approve"),
+            _v("a4", "reject"),
+            _v("a5", "reject"),
+            _v("a6", "reject"),
         ]
         accepted, close = self.gc()._evaluate_threshold(votes)
         assert accepted is False
@@ -311,16 +332,16 @@ class TestRunGoalConsensus:
         self, sample_goal, mock_coordinator, basic_actors
     ):
         """3/3 approve → accepted in 1 round."""
-        mock_coordinator.run_consensus.return_value = _make_result([
-            _mv("a1", "approve", 0.9, "Solid goal."),
-            _mv("a2", "approve", 0.85, "Agreed."),
-            _mv("a3", "approve", 0.8, "Yes."),
-        ])
+        mock_coordinator.run_consensus.return_value = _make_result(
+            [
+                _mv("a1", "approve", 0.9, "Solid goal."),
+                _mv("a2", "approve", 0.85, "Agreed."),
+                _mv("a3", "approve", 0.8, "Yes."),
+            ]
+        )
 
         gc = GoalConsensus(coordinator=mock_coordinator)
-        accepted, votes, rounds = await gc.run_goal_consensus(
-            sample_goal, basic_actors, timeout=60
-        )
+        accepted, votes, rounds = await gc.run_goal_consensus(sample_goal, basic_actors, timeout=60)
 
         assert accepted is True
         assert rounds == 1
@@ -332,13 +353,15 @@ class TestRunGoalConsensus:
         self, sample_goal, mock_coordinator, basic_actors
     ):
         """3/5 approve = 60% → accepted in 1 round."""
-        mock_coordinator.run_consensus.return_value = _make_result([
-            _mv("a1", "approve", 0.9),
-            _mv("a2", "approve", 0.8),
-            _mv("a3", "approve", 0.7),
-            _mv("a4", "reject", 0.6),
-            _mv("a5", "reject", 0.8),
-        ])
+        mock_coordinator.run_consensus.return_value = _make_result(
+            [
+                _mv("a1", "approve", 0.9),
+                _mv("a2", "approve", 0.8),
+                _mv("a3", "approve", 0.7),
+                _mv("a4", "reject", 0.6),
+                _mv("a5", "reject", 0.8),
+            ]
+        )
 
         gc = GoalConsensus(coordinator=mock_coordinator)
         accepted, _votes, rounds = await gc.run_goal_consensus(
@@ -355,16 +378,16 @@ class TestRunGoalConsensus:
         self, sample_goal, mock_coordinator, basic_actors
     ):
         """3/3 reject → rejected in 1 round."""
-        mock_coordinator.run_consensus.return_value = _make_result([
-            _mv("a1", "reject", 0.9, "Not now."),
-            _mv("a2", "reject", 0.8, "Skip."),
-            _mv("a3", "reject", 0.85, "Nope."),
-        ])
+        mock_coordinator.run_consensus.return_value = _make_result(
+            [
+                _mv("a1", "reject", 0.9, "Not now."),
+                _mv("a2", "reject", 0.8, "Skip."),
+                _mv("a3", "reject", 0.85, "Nope."),
+            ]
+        )
 
         gc = GoalConsensus(coordinator=mock_coordinator)
-        accepted, votes, rounds = await gc.run_goal_consensus(
-            sample_goal, basic_actors, timeout=60
-        )
+        accepted, votes, rounds = await gc.run_goal_consensus(sample_goal, basic_actors, timeout=60)
 
         assert accepted is False
         assert rounds == 1
@@ -373,9 +396,7 @@ class TestRunGoalConsensus:
     # -- Close split — round 2 refinement ------------------------------------
 
     @pytest.mark.asyncio
-    async def test_close_split_triggers_round2(
-        self, sample_goal, mock_coordinator, basic_actors
-    ):
+    async def test_close_split_triggers_round2(self, sample_goal, mock_coordinator, basic_actors):
         """2/4 approve = 50% → close split → round 2."""
         # Round 1: 2 approve, 2 reject
         r1_votes = [
@@ -433,9 +454,7 @@ class TestRunGoalConsensus:
         gc = GoalConsensus(coordinator=mock_coordinator)
         # Steward votes approve, Arbiter votes reject → 3-3 still no clear winner
         # So it resolves by evaluate_threshold on combined votes
-        accepted, votes, rounds = await gc.run_goal_consensus(
-            sample_goal, basic_actors, timeout=60
-        )
+        accepted, votes, rounds = await gc.run_goal_consensus(sample_goal, basic_actors, timeout=60)
 
         assert rounds == 3
         assert isinstance(accepted, bool)
@@ -444,9 +463,7 @@ class TestRunGoalConsensus:
     # -- Tie-breaking with prior votes ----------------------------------------
 
     @pytest.mark.asyncio
-    async def test_tie_break_when_steward_already_voted(
-        self, sample_goal, mock_coordinator
-    ):
+    async def test_tie_break_when_steward_already_voted(self, sample_goal, mock_coordinator):
         """When Steward already voted in round 2, don't re-query them."""
         r1_votes = [
             _mv("a1", "approve", 0.8),
@@ -473,9 +490,7 @@ class TestRunGoalConsensus:
         ]
 
         gc = GoalConsensus(coordinator=mock_coordinator)
-        _accepted, _votes, rounds = await gc.run_goal_consensus(
-            sample_goal, actors, timeout=60
-        )
+        _accepted, _votes, rounds = await gc.run_goal_consensus(sample_goal, actors, timeout=60)
 
         assert rounds == 3
         # Steward was NOT re-queried (her run_with_llm was never called)
@@ -491,9 +506,7 @@ class TestRunGoalConsensus:
         mock_coordinator.run_consensus.side_effect = TimeoutError()
 
         gc = GoalConsensus(coordinator=mock_coordinator)
-        accepted, votes, rounds = await gc.run_goal_consensus(
-            sample_goal, basic_actors, timeout=60
-        )
+        accepted, votes, rounds = await gc.run_goal_consensus(sample_goal, basic_actors, timeout=60)
 
         assert accepted is False
         assert rounds == 1
@@ -507,9 +520,7 @@ class TestRunGoalConsensus:
         mock_coordinator.run_consensus.side_effect = RuntimeError("Boom!")
 
         gc = GoalConsensus(coordinator=mock_coordinator)
-        accepted, votes, rounds = await gc.run_goal_consensus(
-            sample_goal, basic_actors, timeout=60
-        )
+        accepted, votes, rounds = await gc.run_goal_consensus(sample_goal, basic_actors, timeout=60)
 
         assert accepted is False
         assert rounds == 1
@@ -552,14 +563,16 @@ class TestRunGoalConsensus:
         self, sample_goal, mock_coordinator, basic_actors
     ):
         """3 approve, 1 reject, 2 abstain → 3/4 = 75% → accepted."""
-        mock_coordinator.run_consensus.return_value = _make_result([
-            _mv("a1", "approve", 0.8),
-            _mv("a2", "approve", 0.7),
-            _mv("a3", "approve", 0.9),
-            _mv("a4", "reject", 0.6),
-            _mv("a5", "abstain", 0.3),
-            _mv("a6", "abstain", 0.2),
-        ])
+        mock_coordinator.run_consensus.return_value = _make_result(
+            [
+                _mv("a1", "approve", 0.8),
+                _mv("a2", "approve", 0.7),
+                _mv("a3", "approve", 0.9),
+                _mv("a4", "reject", 0.6),
+                _mv("a5", "abstain", 0.3),
+                _mv("a6", "abstain", 0.2),
+            ]
+        )
 
         gc = GoalConsensus(coordinator=mock_coordinator)
         accepted, _votes, rounds = await gc.run_goal_consensus(
@@ -576,13 +589,15 @@ class TestRunGoalConsensus:
         self, sample_goal, mock_coordinator, basic_actors
     ):
         """Agents saying 'yes'/'no' are normalised to approve/reject."""
-        mock_coordinator.run_consensus.return_value = _make_result([
-            _mv("a1", "yes", 0.9, "Great!"),
-            _mv("a2", "support", 0.8, "Agreed."),
-            _mv("a3", "agree", 0.7, "Yep."),
-            _mv("a4", "no", 0.8, "Bad."),
-            _mv("a5", "oppose", 0.9, "Terrible."),
-        ])
+        mock_coordinator.run_consensus.return_value = _make_result(
+            [
+                _mv("a1", "yes", 0.9, "Great!"),
+                _mv("a2", "support", 0.8, "Agreed."),
+                _mv("a3", "agree", 0.7, "Yep."),
+                _mv("a4", "no", 0.8, "Bad."),
+                _mv("a5", "oppose", 0.9, "Terrible."),
+            ]
+        )
 
         gc = GoalConsensus(coordinator=mock_coordinator)
         accepted, votes, _rounds = await gc.run_goal_consensus(
@@ -630,7 +645,7 @@ class TestExtractArguments:
     def test_votes_without_rationale_skipped(self):
         votes = [
             _v("a1", "approve", rationale=""),  # no rationale
-            _v("a2", "reject", rationale=""),   # no rationale
+            _v("a2", "reject", rationale=""),  # no rationale
         ]
         args_for, args_against = GoalConsensus._extract_arguments(votes)
         assert args_for == "(none)"

@@ -70,15 +70,18 @@ class SentinelPrimeHandlers:
             threat_type_str = content.get("threat_type")
 
             # Validate
-            validate_message({
-                "sender_id": message.sender_id,
-                "message_type": "detect_external_threat",
-                "content": content,
-                "timestamp": message.timestamp,
-            })
+            validate_message(
+                {
+                    "sender_id": message.sender_id,
+                    "message_type": "detect_external_threat",
+                    "content": content,
+                    "timestamp": message.timestamp,
+                }
+            )
 
             # Convert threat type if specified
             from heretek_swarm.security.threat_detection import ExternalThreatType
+
             threat_type = None
             if threat_type_str:
                 with contextlib.suppress(ValueError):
@@ -119,7 +122,9 @@ class SentinelPrimeHandlers:
             # Execute containment if auto-response enabled
             containment_actions = []
             if self._auto_response_enabled:
-                containment_actions = await self._external_threat_detector.execute_containment(threat_result)
+                containment_actions = await self._external_threat_detector.execute_containment(
+                    threat_result
+                )
                 self._stats["external_threats_contained"] += len(containment_actions)
 
             # Create incident for tracking
@@ -225,6 +230,7 @@ class SentinelPrimeHandlers:
                 return
 
             import time
+
             self._suppressed_alerts[source] = time.time() + duration_seconds
             self._stats["alert_fatigue_suppressions"] += 1
 
@@ -295,12 +301,14 @@ class SentinelPrimeHandlers:
             indicators = content.get("indicators", [])
 
             # Validate
-            validate_message({
-                "sender_id": message.sender_id,
-                "message_type": "report_threat",
-                "content": content,
-                "timestamp": message.timestamp,
-            })
+            validate_message(
+                {
+                    "sender_id": message.sender_id,
+                    "message_type": "report_threat",
+                    "content": content,
+                    "timestamp": message.timestamp,
+                }
+            )
 
             # Convert enums
             with contextlib.suppress(ValueError):

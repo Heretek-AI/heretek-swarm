@@ -114,12 +114,11 @@ class EmergentPatternDetector:
 
         self._agent_snapshots[agent_id].append(snapshot)
 
-        cutoff = datetime.now(UTC) - timedelta(
-            seconds=self.config.baseline_window_seconds * 2
-        )
+        cutoff = datetime.now(UTC) - timedelta(seconds=self.config.baseline_window_seconds * 2)
 
         self._agent_snapshots[agent_id] = [
-            s for s in self._agent_snapshots[agent_id]
+            s
+            for s in self._agent_snapshots[agent_id]
             if datetime.fromisoformat(s.timestamp) > cutoff
         ]
 
@@ -136,13 +135,10 @@ class EmergentPatternDetector:
     def record_collective_behavior(self, behavior: CollectiveBehavior) -> None:
         self._collective_behaviors.append(behavior)
 
-        cutoff = datetime.now(UTC) - timedelta(
-            seconds=self.config.analysis_window_seconds * 2
-        )
+        cutoff = datetime.now(UTC) - timedelta(seconds=self.config.analysis_window_seconds * 2)
 
         self._collective_behaviors = [
-            b for b in self._collective_behaviors
-            if datetime.fromisoformat(b.start_time) > cutoff
+            b for b in self._collective_behaviors if datetime.fromisoformat(b.start_time) > cutoff
         ]
 
     def record_solution_outcome(
@@ -230,10 +226,7 @@ class EmergentPatternDetector:
                 EmergenceLevel.CRITICAL: 3,
             }
             min_level = level_order[min_emergence_level]
-            patterns = [
-                p for p in patterns
-                if level_order[p.emergence_level] >= min_level
-            ]
+            patterns = [p for p in patterns if level_order[p.emergence_level] >= min_level]
 
         return patterns[-limit:]
 
@@ -242,7 +235,9 @@ class EmergentPatternDetector:
             return self._evolution_engine.get_evolution_metrics().to_dict()
         return {}
 
-    def get_patterns_by_impact(self, min_impact: float = 0.0, limit: int = 100) -> list[EmergentPattern]:
+    def get_patterns_by_impact(
+        self, min_impact: float = 0.0, limit: int = 100
+    ) -> list[EmergentPattern]:
         filtered = [p for p in self._emergent_patterns if p.impact_score >= min_impact]
         return filtered[-limit:]
 
@@ -250,7 +245,9 @@ class EmergentPatternDetector:
         harmful = [p for p in self._emergent_patterns if p.impact_score < 0]
         return harmful[-limit:]
 
-    def get_beneficial_patterns(self, min_impact: float = 0.0, limit: int = 100) -> list[EmergentPattern]:
+    def get_beneficial_patterns(
+        self, min_impact: float = 0.0, limit: int = 100
+    ) -> list[EmergentPattern]:
         beneficial = [p for p in self._emergent_patterns if p.impact_score >= min_impact]
         return beneficial[-limit:]
 
@@ -260,7 +257,9 @@ class EmergentPatternDetector:
     def get_detection_history(self, limit: int = 100) -> list[DetectionEvent]:
         return self._detection_events[-limit:]
 
-    def _get_snapshot_windows(self, window_size_seconds: float = 60.0) -> list[list[AgentBehaviorSnapshot]]:
+    def _get_snapshot_windows(
+        self, window_size_seconds: float = 60.0
+    ) -> list[list[AgentBehaviorSnapshot]]:
         all_snapshots = []
         for snapshots in self._agent_snapshots.values():
             all_snapshots.extend(snapshots)
@@ -292,7 +291,9 @@ class EmergentPatternDetector:
     def _calculate_window_metrics(self, window: list[AgentBehaviorSnapshot]) -> dict[str, float]:
         return calculate_window_metrics(window)
 
-    def _calculate_shift_score(self, prev_metrics: dict[str, float], curr_metrics: dict[str, float]) -> float:
+    def _calculate_shift_score(
+        self, prev_metrics: dict[str, float], curr_metrics: dict[str, float]
+    ) -> float:
         return calculate_shift_score(prev_metrics, curr_metrics)
 
     def _get_active_agents(self, window: list[AgentBehaviorSnapshot]) -> list[str]:
@@ -373,7 +374,9 @@ class EmergentPatternDetector:
                         event.validation_details["reason"] = "validation_hook_rejected"
                         return event
                 except Exception as e:
-                    logger.error("validation_hook_error", pattern_id=pattern.pattern_id, error=str(e))
+                    logger.error(
+                        "validation_hook_error", pattern_id=pattern.pattern_id, error=str(e)
+                    )
 
         event.passed_validation = True
         pattern.is_validated = True
@@ -403,8 +406,9 @@ class EmergentPatternDetector:
 
     def _find_similar_pattern(self, pattern: EmergentPattern) -> EmergentPattern | None:
         for existing in self._emergent_patterns:
-            if (existing.pattern_class == pattern.pattern_class and
-                set(existing.participating_agents) == set(pattern.participating_agents)):
+            if existing.pattern_class == pattern.pattern_class and set(
+                existing.participating_agents
+            ) == set(pattern.participating_agents):
                 return existing
         return None
 
@@ -437,12 +441,22 @@ class EmergentPatternDetector:
         by_class: dict[str, int] = {}
         by_level: dict[str, int] = {}
         for p in self._emergent_patterns:
-            pc = p.pattern_class.value if hasattr(p.pattern_class, "value") else str(p.pattern_class)
-            pl = p.emergence_level.value if hasattr(p.emergence_level, "value") else str(p.emergence_level)
+            pc = (
+                p.pattern_class.value if hasattr(p.pattern_class, "value") else str(p.pattern_class)
+            )
+            pl = (
+                p.emergence_level.value
+                if hasattr(p.emergence_level, "value")
+                else str(p.emergence_level)
+            )
             by_class[pc] = by_class.get(pc, 0) + 1
             by_level[pl] = by_level.get(pl, 0) + 1
         validated = [p for p in self._emergent_patterns if p.is_validated]
-        avg_score = sum(p.emergence_score for p in self._emergent_patterns) / len(self._emergent_patterns) if self._emergent_patterns else 0.0
+        avg_score = (
+            sum(p.emergence_score for p in self._emergent_patterns) / len(self._emergent_patterns)
+            if self._emergent_patterns
+            else 0.0
+        )
         return {
             "total_patterns": len(self._emergent_patterns),
             "validated_patterns": len(validated),
@@ -466,7 +480,11 @@ class EmergentPatternDetector:
         validation_rate = sum(1 for p in patterns if p.is_validated) / len(patterns)
         unique_classes = len({p.pattern_class for p in patterns})
         pattern_diversity = unique_classes / max(len(EmergentPatternClass), 1)
-        coordination_patterns = [p for p in patterns if hasattr(p.pattern_class, "value") and "coord" in p.pattern_class.value.lower()]
+        coordination_patterns = [
+            p
+            for p in patterns
+            if hasattr(p.pattern_class, "value") and "coord" in p.pattern_class.value.lower()
+        ]
         coordination_level = len(coordination_patterns) / len(patterns) if patterns else 0.0
         return {
             "swarm_emergence_index": avg_score,
@@ -541,19 +559,23 @@ class EmergenceAnalyzer:
 
         return {
             "cooccurrences": dict(class_cooccurrences),
-            "most_correlated": max(class_cooccurrences.items(), key=lambda x: x[1])[0] if class_cooccurrences else None,
+            "most_correlated": max(class_cooccurrences.items(), key=lambda x: x[1])[0]
+            if class_cooccurrences
+            else None,
         }
 
     def get_emergence_timeline(self) -> list[dict[str, Any]]:
         timeline = []
 
         for pattern in sorted(self.detector._emergent_patterns, key=lambda p: p.timestamp):
-            timeline.append({
-                "timestamp": pattern.timestamp,
-                "pattern_class": pattern.pattern_class.value,
-                "emergence_level": pattern.emergence_level.value,
-                "emergence_score": pattern.emergence_score,
-                "agent_count": len(pattern.participating_agents),
-            })
+            timeline.append(
+                {
+                    "timestamp": pattern.timestamp,
+                    "pattern_class": pattern.pattern_class.value,
+                    "emergence_level": pattern.emergence_level.value,
+                    "emergence_score": pattern.emergence_score,
+                    "agent_count": len(pattern.participating_agents),
+                }
+            )
 
         return timeline

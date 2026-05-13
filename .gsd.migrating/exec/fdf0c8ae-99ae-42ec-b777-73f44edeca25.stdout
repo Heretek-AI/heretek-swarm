@@ -1,0 +1,144 @@
+=== API app creation ===
+backend/heretek_swarm/api/main.py:482:app = FastAPI(
+
+=== All API routes ===
+backend/heretek_swarm/api/agents/chat.py:197:@router.post(
+backend/heretek_swarm/api/agents/core.py:30:@router.get("/available")
+backend/heretek_swarm/api/agents/core.py:67:@router.get("/types/{agent_type}")
+backend/heretek_swarm/api/agents/core.py:100:@router.post("/deploy")
+backend/heretek_swarm/api/agents/core.py:147:@router.delete("/{instance_id}")
+backend/heretek_swarm/api/agents/instances.py:25:@router.get("/instances")
+backend/heretek_swarm/api/agents/instances.py:62:@router.get("/{instance_id}")
+backend/heretek_swarm/api/agents/instances.py:108:@router.get("/{instance_id}/logs")
+backend/heretek_swarm/api/agents/instances.py:169:@router.get("/stats")
+backend/heretek_swarm/api/agents/instances.py:240:@router.get("/{instance_id}/channels")
+backend/heretek_swarm/api/agents/instances.py:292:@router.post("/{instance_id}/channels")
+backend/heretek_swarm/api/agents/instances.py:344:@router.delete("/{instance_id}/channels/{channel_name}")
+backend/heretek_swarm/api/agents/jetstream.py:75:@router.get("/jetstream/streams")
+backend/heretek_swarm/api/agents/jetstream.py:116:@router.get("/jetstream/streams/{stream_name}")
+backend/heretek_swarm/api/agents/jetstream.py:157:@router.post("/jetstream/streams")
+backend/heretek_swarm/api/agents/jetstream.py:214:@router.delete("/jetstream/streams/{stream_name}")
+backend/heretek_swarm/api/agents/jetstream.py:245:@router.post("/jetstream/streams/{stream_name}/replay")
+backend/heretek_swarm/api/agents/jetstream.py:284:@router.get("/jetstream/stats")
+backend/heretek_swarm/api/agents/jetstream.py:305:@router.post("/jetstream/initialize")
+backend/heretek_swarm/api/agents/lifecycle.py:25:@router.post("/{instance_id}/start")
+backend/heretek_swarm/api/agents/lifecycle.py:59:@router.post("/{instance_id}/stop")
+backend/heretek_swarm/api/agents/lifecycle.py:93:@router.post("/{instance_id}/suspend")
+backend/heretek_swarm/api/agents/lifecycle.py:127:@router.post("/{instance_id}/resume")
+backend/heretek_swarm/api/agents/lifecycle.py:166:@router.put("/{instance_id}/config")
+backend/heretek_swarm/api/agents/profiling.py:120:@router.get("/{instance_id}/profiling/metrics")
+backend/heretek_swarm/api/agents/profiling.py:171:@router.get("/{instance_id}/profiling/profile")
+backend/heretek_swarm/api/agents/profiling.py:220:@router.get("/{instance_id}/profiling/anomalies")
+backend/heretek_swarm/api/agents/profiling.py:262:@router.get("/profiling/alerts")
+backend/heretek_swarm/api/agents/profiling.py:319:@router.post("/profiling/alerts/{index}/acknowledge")
+backend/heretek_swarm/api/agents/profiling.py:345:@router.get("/profiling/stats")
+backend/heretek_swarm/api/agents/profiling.py:372:@router.get("/profiling/prometheus")
+backend/heretek_swarm/api/agents/profiling.py:388:@router.post("/{instance_id}/profiling/record")
+backend/heretek_swarm/api/agents/routing_control.py:48:@router.post("/routing/rules/{rule_id}/enable")
+backend/heretek_swarm/api/agents/routing_control.py:61:@router.post("/routing/rules/{rule_id}/disable")
+backend/heretek_swarm/api/agents/routing_control.py:74:@router.get("/routing/stats")
+backend/heretek_swarm/api/agents/routing_control.py:92:@router.post("/routing/evaluate")
+backend/heretek_swarm/api/agents/routing_rules.py:72:@router.get("/routing/rules")
+backend/heretek_swarm/api/agents/routing_rules.py:101:@router.get("/routing/rules/{rule_id}")
+backend/heretek_swarm/api/agents/routing_rules.py:137:@router.post("/routing/rules")
+backend/heretek_swarm/api/agents/routing_rules.py:209:@router.put("/routing/rules/{rule_id}")
+backend/heretek_swarm/api/agents/routing_rules.py:275:@router.delete("/routing/rules/{rule_id}")
+backend/heretek_swarm/api/alerts.py:38:@router.get("")
+backend/heretek_swarm/api/alerts.py:50:@router.get("/history")
+backend/heretek_swarm/api/alerts.py:65:@router.post("")
+backend/heretek_swarm/api/alerts.py:94:@router.put("/{alert_id}/resolve")
+backend/heretek_swarm/api/alerts.py:113:@router.post("/test")
+backend/heretek_swarm/api/autonomous.py:66:@router.post("/agents", status_code=200)
+backend/heretek_swarm/api/autonomous.py:94:@router.get("/agents")
+backend/heretek_swarm/api/autonomous.py:123:@router.get("/status")
+backend/heretek_swarm/api/collective_evolution.py:67:@router.get("/evolution-status")
+
+=== nginx.conf ===
+server {
+    listen 80;
+    server_name localhost;
+    root /usr/share/nginx/html;
+    index index.html;
+
+    # Gzip compression
+    gzip on;
+    gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript;
+
+    # Handle SPA routing
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    # API proxy - use Docker service name
+    location /api {
+        proxy_pass http://api:8000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_pass_request_headers on;
+    }
+
+    # WebSocket support
+    location /ws {
+        proxy_pass http://api:8000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "Upgrade";
+        proxy_set_header Host $host;
+    }
+
+    # Explicit health endpoint for load balancer probes (no proxy)
+    location = /health {
+        access_log off;
+        return 200 "healthy\n";
+        add_header Content-Type text/plain;
+    }
+
+    # Don't cache index.html (contains cache-busted JS references)
+    location = /index.html {
+        add_header Cache-Control "no-cache, no-store, must-revalidate";
+        add_header Pragma "no-cache";
+        add_header Expires "0";
+    }
+
+    # Cache static assets (hashed filenames are safe to cache long-term)
+    location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$ {
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+    }
+
+    # Security headers
+    add_header X-Frame-Options "SAMEORIGIN" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header X-XSS-Protection "1; mode=block" always;
+}
+
+=== VITE_API_URL in dashboard ===
+swarm-dashboard/node_modules/vite/bin/vite.js:38:      process.env.VITE_DEBUG_FILTER = filter
+swarm-dashboard/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:13:import { CLIENT_ENTRY, OPTIMIZABLE_ENTRY_RE, wildcardHosts, loopbackHosts, FS_PREFIX, CLIENT_PUBLIC_PATH, ENV_PUBLIC_PATH, DEFAULT_ASSETS_INLINE_LIMIT, CSS_LANGS_RE, ESBUILD_MODULES_TARGET, SPECIAL_QUERY_RE, ENV_ENTRY, DEP_VERSION_RE, DEFAULT_MAIN_FIELDS, DEFAULT_EXTENSIONS, KNOWN_ASSET_TYPES, JS_TYPES_RE, METADATA_FILENAME, VITE_PACKAGE_DIR, defaultAllowedOrigins, DEFAULT_DEV_PORT, CLIENT_DIR, VERSION, DEFAULT_PREVIEW_PORT, DEFAULT_ASSETS_RE, DEFAULT_CONFIG_FILES } from '../constants.js';
+swarm-dashboard/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:253:const VITE_RUNTIME_SOURCEMAPPING_SOURCE = "//# sourceMappingSource=vite-runtime";
+swarm-dashboard/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:16767:const filter = process.env.VITE_DEBUG_FILTER;
+swarm-dashboard/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:20239:const assetUrlRE = /__VITE_ASSET__([\w$]+)__(?:\$_(.*?)__)?/g;
+swarm-dashboard/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:20397:const publicAssetUrlRE = /__VITE_PUBLIC_ASSET__([a-z\d]{8})__/g;
+swarm-dashboard/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:20411:  return `__VITE_PUBLIC_ASSET__${hash}__`;
+swarm-dashboard/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:20454:    url = `__VITE_ASSET__${referenceId}__${postfix ? `$_${postfix}__` : ``}`;
+swarm-dashboard/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:34896:function loadEnv(mode, envDir, prefixes = "VITE_") {
+swarm-dashboard/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:34911:  if (parsed.NODE_ENV && process.env.VITE_USER_NODE_ENV === void 0) {
+
+=== Frontend package.json scripts ===
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "build:skip-type-check": "vite build",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview",
+    "test": "NODE_ENV=test vitest run",
+    "test:watch": "NODE_ENV=test vitest"
+  },
+  "dependencies": {
+    "@types/jest": "^30.0.0",

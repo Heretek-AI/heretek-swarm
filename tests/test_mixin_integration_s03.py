@@ -78,9 +78,7 @@ class TestMixinIntegrationSmoke:
     def test_mixins_all_has_ten_names() -> None:
         """``from heretek_swarm.actors.mixins import *`` should expose
         exactly 10 names matching ``__all__``."""
-        assert len(mixins_all) == 10, (
-            f"Expected 10 mixin names in __all__, got {len(mixins_all)}"
-        )
+        assert len(mixins_all) == 10, f"Expected 10 mixin names in __all__, got {len(mixins_all)}"
 
     @staticmethod
     def test_audit_mixin_importable() -> None:
@@ -209,9 +207,7 @@ class TestMixinIntegrationSmoke:
         # The stub should have recorded the access
         profile = access_analyzer.get_profile("decision_item-001")
         assert profile is not None, "Expected a profile to exist"
-        assert profile.access_count == 1, (
-            f"Expected access_count=1, got {profile.access_count}"
-        )
+        assert profile.access_count == 1, f"Expected access_count=1, got {profile.access_count}"
         assert "read" in profile.access_types
 
     @staticmethod

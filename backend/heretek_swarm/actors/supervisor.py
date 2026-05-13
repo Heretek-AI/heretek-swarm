@@ -218,7 +218,9 @@ class ActorSupervisor(AuditMixin, ValidationMixin, HealthReportingMixin, Pattern
             actor_id: Actor identifier
         """
         if actor_id not in self.actors:
-            logger.warning("[%s] Actor not found: actor_id_hash=%s", self.name, hash(actor_id) % 10000)
+            logger.warning(
+                "[%s] Actor not found: actor_id_hash=%s", self.name, hash(actor_id) % 10000
+            )
             return
 
         actor = self.actors[actor_id]
@@ -275,10 +277,7 @@ class ActorSupervisor(AuditMixin, ValidationMixin, HealthReportingMixin, Pattern
         Returns:
             Dictionary of actor statuses
         """
-        return {
-            actor_id: actor.get_status()
-            for actor_id, actor in self.actors.items()
-        }
+        return {actor_id: actor.get_status() for actor_id, actor in self.actors.items()}
 
     async def start_monitoring(self) -> None:
         """Start monitoring actors."""
@@ -488,18 +487,10 @@ class ActorSupervisor(AuditMixin, ValidationMixin, HealthReportingMixin, Pattern
         return {
             "total_actors": len(self.actors),
             "total_configs": len(self.actor_configs),
-            "active_actors": sum(
-                1 for s in statuses if s.state == ActorState.ACTIVE
-            ),
-            "suspended_actors": sum(
-                1 for s in statuses if s.state == ActorState.SUSPENDED
-            ),
-            "terminated_actors": sum(
-                1 for s in statuses if s.state == ActorState.TERMINATED
-            ),
-            "error_actors": sum(
-                1 for s in statuses if s.state == ActorState.ERROR
-            ),
+            "active_actors": sum(1 for s in statuses if s.state == ActorState.ACTIVE),
+            "suspended_actors": sum(1 for s in statuses if s.state == ActorState.SUSPENDED),
+            "terminated_actors": sum(1 for s in statuses if s.state == ActorState.TERMINATED),
+            "error_actors": sum(1 for s in statuses if s.state == ActorState.ERROR),
             "total_messages": sum(s.message_count for s in statuses),
             "total_errors": sum(s.error_count for s in statuses),
             "total_restarts": sum(self.restart_counts.values()),
@@ -522,10 +513,7 @@ class ActorSupervisor(AuditMixin, ValidationMixin, HealthReportingMixin, Pattern
             f"[{self.name}] Broadcasting to {len(self.actors)} actors",
         )
 
-        tasks = [
-            actor.broadcast(content, message_type)
-            for actor in self.actors.values()
-        ]
+        tasks = [actor.broadcast(content, message_type) for actor in self.actors.values()]
         await asyncio.gather(*tasks, return_exceptions=True)
 
     def find_actors_by_capability(self, capability: str) -> list[str]:
@@ -539,9 +527,7 @@ class ActorSupervisor(AuditMixin, ValidationMixin, HealthReportingMixin, Pattern
             List of actor IDs
         """
         return [
-            actor_id
-            for actor_id, actor in self.actors.items()
-            if capability in actor.capabilities
+            actor_id for actor_id, actor in self.actors.items() if capability in actor.capabilities
         ]
 
     def find_actors_by_topic(self, topic: str) -> list[str]:
@@ -554,8 +540,4 @@ class ActorSupervisor(AuditMixin, ValidationMixin, HealthReportingMixin, Pattern
         Returns:
             List of actor IDs
         """
-        return [
-            actor_id
-            for actor_id, actor in self.actors.items()
-            if topic in actor.topics
-        ]
+        return [actor_id for actor_id, actor in self.actors.items() if topic in actor.topics]

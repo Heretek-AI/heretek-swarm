@@ -22,20 +22,21 @@ logger = structlog.get_logger("MemorySystem")
 
 
 @dataclass
-
-
 class MemoryTier(StrEnum):
     """Memory tier classification."""
-    EPHEMERAL = "ephemeral"   # Redis - short-term, TTL-based
+
+    EPHEMERAL = "ephemeral"  # Redis - short-term, TTL-based
     PERSISTENT = "persistent"  # PostgreSQL/PGVector - long-term
 
 
 class MemoryType(StrEnum):
     """Types of memory entries."""
-    EPISODIC = "episodic"      # Event-based memories
-    SEMANTIC = "semantic"      # Facts and knowledge
+
+    EPISODIC = "episodic"  # Event-based memories
+    SEMANTIC = "semantic"  # Facts and knowledge
     PROCEDURAL = "procedural"  # Skills and procedures
-    WORKING = "working"        # Current task context
+    WORKING = "working"  # Current task context
+
 
 @dataclass
 class MemoryEntry:
@@ -410,11 +411,7 @@ class EphemeralMemory(MemorySystem):
     def get_statistics(self) -> dict[str, Any]:
         """Get memory statistics."""
         datetime.now(UTC)
-        expired_count = sum(
-            1
-            for entry in self._storage.values()
-            if self._is_expired(entry)
-        )
+        expired_count = sum(1 for entry in self._storage.values() if self._is_expired(entry))
 
         return {
             "total_entries": len(self._storage),
@@ -691,12 +688,8 @@ class DualTierMemory:
             await self.initialize()
 
         if persistent or ttl is None:
-            return await self.persistent.store(
-                content, metadata, ttl, lineage
-            )
-        return await self.ephemeral.store(
-            content, metadata, ttl, lineage
-        )
+            return await self.persistent.store(content, metadata, ttl, lineage)
+        return await self.ephemeral.store(content, metadata, ttl, lineage)
 
     async def retrieve(self, memory_id: str) -> MemoryEntry | None:
         """
@@ -792,8 +785,7 @@ class DualTierMemory:
         # Evict expired entries from ephemeral
         ephemeral_storage = getattr(self.ephemeral, "_storage", {})
         expired_ids = [
-            mid for mid, entry in ephemeral_storage.items()
-            if self.ephemeral._is_expired(entry)
+            mid for mid, entry in ephemeral_storage.items() if self.ephemeral._is_expired(entry)
         ]
         for mid in expired_ids:
             await self.ephemeral.delete(mid)

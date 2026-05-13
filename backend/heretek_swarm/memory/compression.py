@@ -28,26 +28,30 @@ logger = structlog.get_logger(__name__)
 # Compression Types and Enums
 # =============================================================================
 
+
 class CompressionAlgorithm(StrEnum):
     """Supported compression algorithms."""
-    ZLIB = "zlib"           # Fast, general-purpose
-    GZIP = "gzip"           # Better compression, slightly slower
-    LZMA = "lzma"           # Best compression, slower
-    SNAPPY = "snappy"       # Very fast, lower compression
-    BROTLI = "brotli"       # Good balance
+
+    ZLIB = "zlib"  # Fast, general-purpose
+    GZIP = "gzip"  # Better compression, slightly slower
+    LZMA = "lzma"  # Best compression, slower
+    SNAPPY = "snappy"  # Very fast, lower compression
+    BROTLI = "brotli"  # Good balance
 
 
 class CompressionLevel(StrEnum):
     """Compression level presets."""
-    FASTEST = "fastest"     # Minimum compression, maximum speed
-    FAST = "fast"           # Low compression, high speed
-    BALANCED = "balanced"   # Medium compression and speed
-    GOOD = "good"           # Good compression, moderate speed
-    BEST = "best"           # Maximum compression, slower
+
+    FASTEST = "fastest"  # Minimum compression, maximum speed
+    FAST = "fast"  # Low compression, high speed
+    BALANCED = "balanced"  # Medium compression and speed
+    GOOD = "good"  # Good compression, moderate speed
+    BEST = "best"  # Maximum compression, slower
 
 
 class CompressionStatus(StrEnum):
     """Status of compressed data."""
+
     COMPRESSED = "compressed"
     DECOMPRESSED = "decompressed"
     COMPRESSING = "compressing"
@@ -74,6 +78,7 @@ class CompressedMemory:
         access_count: Number of times decompressed
         last_decompressed: Last decompression timestamp
     """
+
     memory_id: str
     compressed_data: str
     original_size: int
@@ -132,6 +137,7 @@ class CompressionResult:
         latency_ms: Time taken for compression
         error: Error message if failed
     """
+
     memory_id: str
     success: bool
     original_size: int = 0
@@ -172,6 +178,7 @@ class DecompressionResult:
         integrity_verified: Whether integrity check passed
         error: Error message if failed
     """
+
     memory_id: str
     success: bool
     data: Any | None = None
@@ -209,6 +216,7 @@ class CompressionStatistics:
         failed_compressions: Number of failed compressions
         failed_decompressions: Number of failed decompressions
     """
+
     total_compressed: int = 0
     total_original_size: int = 0
     total_compressed_size: int = 0
@@ -256,6 +264,7 @@ class CompressionConfig:
         enable_integrity_check: Enable hash-based integrity verification
         compression_threshold: Minimum ratio to keep compressed data
     """
+
     default_algorithm: CompressionAlgorithm = CompressionAlgorithm.ZLIB
     default_level: CompressionLevel = CompressionLevel.BALANCED
     min_size_for_compression: int = 256  # 256 bytes minimum
@@ -267,6 +276,7 @@ class CompressionConfig:
 # =============================================================================
 # Compression Engine
 # =============================================================================
+
 
 class CompressionEngine:
     """
@@ -362,7 +372,9 @@ class CompressionEngine:
             compressed = self._compress_algorithm(data_bytes, algorithm, level)
 
             compressed_size = len(compressed)
-            compression_ratio = 1.0 - (compressed_size / original_size) if original_size > 0 else 0.0
+            compression_ratio = (
+                1.0 - (compressed_size / original_size) if original_size > 0 else 0.0
+            )
 
             # Check if compression is worthwhile
             if compression_ratio < self.config.compression_threshold:
@@ -492,6 +504,7 @@ class CompressionEngine:
             return zlib.decompress(data)
         if algorithm == CompressionAlgorithm.GZIP:
             import gzip
+
             return gzip.decompress(data)
         # Default to zlib
         return zlib.decompress(data)
@@ -504,12 +517,14 @@ class CompressionEngine:
     def _compress_gzip(self, data: bytes, level: CompressionLevel) -> bytes:
         """Compress using gzip."""
         import gzip
+
         level_value = self.LEVEL_MAP.get(level, 6)
         return gzip.compress(data, compresslevel=level_value)
 
     def calculate_hash(self, data: bytes) -> str:
         """Calculate hash for integrity verification."""
         import hashlib
+
         return hashlib.sha256(data).hexdigest()
 
     def verify_integrity(self, data: bytes, expected_hash: str) -> bool:
@@ -532,11 +547,13 @@ class CompressionEngine:
 
         avg_compression_latency = (
             self._total_compression_time_ms / self._compression_count
-            if self._compression_count > 0 else 0.0
+            if self._compression_count > 0
+            else 0.0
         )
         avg_decompression_latency = (
             self._total_decompression_time_ms / self._decompression_count
-            if self._decompression_count > 0 else 0.0
+            if self._decompression_count > 0
+            else 0.0
         )
 
         return CompressionStatistics(
@@ -556,6 +573,7 @@ class CompressionEngine:
 # =============================================================================
 # Cold Data Compressor
 # =============================================================================
+
 
 class ColdDataCompressor:
     """
@@ -811,11 +829,13 @@ class ColdDataCompressor:
         uncompressed_candidates = []
         for entry in self._compressed_memories.values():
             if entry.compression_ratio < 0.3:  # Less than 30% savings
-                uncompressed_candidates.append({
-                    "memory_id": entry.memory_id,
-                    "ratio": entry.compression_ratio,
-                    "algorithm": entry.algorithm.value,
-                })
+                uncompressed_candidates.append(
+                    {
+                        "memory_id": entry.memory_id,
+                        "ratio": entry.compression_ratio,
+                        "algorithm": entry.algorithm.value,
+                    }
+                )
 
         return {
             "summary": stats,
@@ -839,7 +859,9 @@ class ColdDataCompressor:
 
         # Check for many small compressions
         if storage.get("compressed_count", 0) > 100:
-            avg_size = storage.get("total_original_size", 0) / max(storage.get("compressed_count", 1), 1)
+            avg_size = storage.get("total_original_size", 0) / max(
+                storage.get("compressed_count", 1), 1
+            )
             if avg_size < 2048:  # Less than 2KB average
                 recommendations.append(
                     "Many small compressions detected. Consider increasing min_size_for_compression."

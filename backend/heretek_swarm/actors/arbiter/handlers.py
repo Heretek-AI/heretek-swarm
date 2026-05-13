@@ -74,12 +74,14 @@ async def _handle_report_conflict(agent: ArbiterAgent, message: ActorMessage) ->
         evidence = content.get("evidence", [])
 
         # Validate
-        validate_message({
-            "sender_id": message.sender_id,
-            "message_type": "report_conflict",
-            "content": content,
-            "timestamp": message.timestamp,
-        })
+        validate_message(
+            {
+                "sender_id": message.sender_id,
+                "message_type": "report_conflict",
+                "content": content,
+                "timestamp": message.timestamp,
+            }
+        )
 
         # Convert enums
         try:
@@ -177,12 +179,14 @@ async def _handle_request_arbitration(agent: ArbiterAgent, message: ActorMessage
         urgency = content.get("urgency", "normal")
 
         # Validate
-        validate_message({
-            "sender_id": message.sender_id,
-            "message_type": "request_arbitration",
-            "content": content,
-            "timestamp": message.timestamp,
-        })
+        validate_message(
+            {
+                "sender_id": message.sender_id,
+                "message_type": "request_arbitration",
+                "content": content,
+                "timestamp": message.timestamp,
+            }
+        )
 
         # Get or create conflict
         if conflict_id and conflict_id in agent._conflicts:
@@ -208,7 +212,9 @@ async def _handle_request_arbitration(agent: ArbiterAgent, message: ActorMessage
         agent._pending_arbitrations[conflict_id].append(message.sender_id)
 
         # Check if all parties are present
-        all_parties_present = all(p in agent._pending_arbitrations[conflict_id] for p in conflict.parties)
+        all_parties_present = all(
+            p in agent._pending_arbitrations[conflict_id] for p in conflict.parties
+        )
 
         response_content = {
             "conflict_id": conflict_id,
@@ -216,7 +222,9 @@ async def _handle_request_arbitration(agent: ArbiterAgent, message: ActorMessage
             "parties_registered": len(agent._pending_arbitrations[conflict_id]),
             "total_parties": len(set(conflict.parties)),
             "all_parties_present": all_parties_present,
-            "next_step": "waiting_for_parties" if not all_parties_present else "arbitration_scheduled",
+            "next_step": "waiting_for_parties"
+            if not all_parties_present
+            else "arbitration_scheduled",
         }
 
         await agent._send_response(message, response_content)
@@ -248,12 +256,14 @@ async def _handle_mediate_dispute(agent: ArbiterAgent, message: ActorMessage) ->
         proposed_solution = content.get("proposed_solution")
 
         # Validate
-        validate_message({
-            "sender_id": message.sender_id,
-            "message_type": "mediate_dispute",
-            "content": content,
-            "timestamp": message.timestamp,
-        })
+        validate_message(
+            {
+                "sender_id": message.sender_id,
+                "message_type": "mediate_dispute",
+                "content": content,
+                "timestamp": message.timestamp,
+            }
+        )
 
         # Perform mediation
         mediation_result = await agent._conduct_mediation(
@@ -299,12 +309,14 @@ async def _handle_resolve_contention(agent: ArbiterAgent, message: ActorMessage)
         priority_override = content.get("priority_override", {})
 
         # Validate
-        validate_message({
-            "sender_id": message.sender_id,
-            "message_type": "resolve_contention",
-            "content": content,
-            "timestamp": message.timestamp,
-        })
+        validate_message(
+            {
+                "sender_id": message.sender_id,
+                "message_type": "resolve_contention",
+                "content": content,
+                "timestamp": message.timestamp,
+            }
+        )
 
         # Resolve based on contention type
         if contention_type == "resource":
@@ -405,7 +417,8 @@ async def _handle_get_active_conflicts(agent: ArbiterAgent, message: ActorMessag
         limit = content.get("limit", 100)
 
         active_conflicts = [
-            c for c in agent._conflicts.values()
+            c
+            for c in agent._conflicts.values()
             if c.status not in [ResolutionStatus.RESOLVED, ResolutionStatus.FAILED]
         ]
 
@@ -421,17 +434,13 @@ async def _handle_get_active_conflicts(agent: ArbiterAgent, message: ActorMessag
                 }
                 min_order = severity_order.get(min_severity, 0)
                 active_conflicts = [
-                    c for c in active_conflicts
-                    if severity_order.get(c.severity, 0) >= min_order
+                    c for c in active_conflicts if severity_order.get(c.severity, 0) >= min_order
                 ]
             except ValueError:
                 pass
 
         if party_filter:
-            active_conflicts = [
-                c for c in active_conflicts
-                if party_filter in c.parties
-            ]
+            active_conflicts = [c for c in active_conflicts if party_filter in c.parties]
 
         # Sort by severity
         severity_order = {
@@ -654,8 +663,12 @@ async def _handle_get_relationship_health(agent: ArbiterAgent, message: ActorMes
 
         # Calculate aggregate health
         if agent._relationships:
-            avg_health = sum(r.health_score for r in agent._relationships.values()) / len(agent._relationships)
-            avg_trust = sum(r.trust_level for r in agent._relationships.values()) / len(agent._relationships)
+            avg_health = sum(r.health_score for r in agent._relationships.values()) / len(
+                agent._relationships
+            )
+            avg_trust = sum(r.trust_level for r in agent._relationships.values()) / len(
+                agent._relationships
+            )
         else:
             avg_health = 1.0
             avg_trust = 1.0
@@ -664,10 +677,9 @@ async def _handle_get_relationship_health(agent: ArbiterAgent, message: ActorMes
             "total_relationships": len(agent._relationships),
             "average_health_score": avg_health,
             "average_trust_level": avg_trust,
-            "relationships_needing_attention": len([
-                r for r in agent._relationships.values()
-                if r.health_score < 0.5
-            ]),
+            "relationships_needing_attention": len(
+                [r for r in agent._relationships.values() if r.health_score < 0.5]
+            ),
         }
 
         if include_details:
@@ -776,26 +788,26 @@ async def _handle_get_arbitration_report(agent: ArbiterAgent, message: ActorMess
         include_recommendations = content.get("include_recommendations", True)
 
         # Calculate statistics
-        active_conflicts = len([
-            c for c in agent._conflicts.values()
-            if c.status not in [ResolutionStatus.RESOLVED, ResolutionStatus.FAILED]
-        ])
-        resolved_conflicts = len([
-            c for c in agent._conflicts.values()
-            if c.status == ResolutionStatus.RESOLVED
-        ])
-        failed_resolutions = len([
-            c for c in agent._conflicts.values()
-            if c.status == ResolutionStatus.FAILED
-        ])
+        active_conflicts = len(
+            [
+                c
+                for c in agent._conflicts.values()
+                if c.status not in [ResolutionStatus.RESOLVED, ResolutionStatus.FAILED]
+            ]
+        )
+        resolved_conflicts = len(
+            [c for c in agent._conflicts.values() if c.status == ResolutionStatus.RESOLVED]
+        )
+        failed_resolutions = len(
+            [c for c in agent._conflicts.values() if c.status == ResolutionStatus.FAILED]
+        )
 
         conflicts_by_type = dict(agent._stats["conflicts_by_type"])
         conflicts_by_severity = dict(agent._stats["conflicts_by_severity"])
 
         # Relationship health summary
         relationship_health = {
-            f"{r.agent_a}-{r.agent_b}": r.health_score
-            for r in agent._relationships.values()
+            f"{r.agent_a}-{r.agent_b}": r.health_score for r in agent._relationships.values()
         }
 
         # Generate recommendations

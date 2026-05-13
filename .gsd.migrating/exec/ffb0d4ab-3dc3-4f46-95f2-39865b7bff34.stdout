@@ -1,0 +1,21 @@
+=== prompt.py full content ===
+
+=== Check for startup/shutdown events ===
+backend/heretek_swarm/api/collective_evolution.py:30:# Global instances (will be initialized by lifespan or manually)
+backend/heretek_swarm/api/main.py:71:    shutdown_config_service,
+backend/heretek_swarm/api/main.py:101:async def lifespan(app: FastAPI):
+backend/heretek_swarm/api/main.py:102:    """Application lifespan handler for startup and shutdown."""
+backend/heretek_swarm/api/main.py:119:    await _log_startup_complete()
+backend/heretek_swarm/api/main.py:139:        await mem0_backend.shutdown()
+backend/heretek_swarm/api/main.py:148:    await shutdown_config_service()
+backend/heretek_swarm/api/main.py:149:    logger.info("ConfigurationService shutdown complete")
+backend/heretek_swarm/api/main.py:189:    # Fire-and-forget: spawn all 23 agents without blocking API startup
+backend/heretek_swarm/api/main.py:444:    Cancelled cleanly on API shutdown via asyncio.CancelledError.
+backend/heretek_swarm/api/main.py:473:async def _log_startup_complete() -> None:
+backend/heretek_swarm/api/main.py:474:    """Log application startup completion."""
+backend/heretek_swarm/api/main.py:476:        "Application startup complete",
+backend/heretek_swarm/api/main.py:488:    lifespan=lifespan,
+backend/heretek_swarm/api/main.py:550:# Note: Rate limiting is set up after lifespan starts, so we use environment variable here
+backend/heretek_swarm/api/websockets.py:705:    # NATS bridge handles event routing via main.py startup subscription
+backend/heretek_swarm/api/wizard.py:899:    Emit a wizard.completed SwarmEvent to trigger autonomous runtime startup.
+backend/heretek_swarm/api/wizard.py:1066:    # Emit wizard.completed event for autonomous runtime startup (fire-and-forget)

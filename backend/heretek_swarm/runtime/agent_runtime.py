@@ -18,6 +18,7 @@ logger = structlog.get_logger(__name__)
 
 class AgentState(Enum):
     """Agent execution states."""
+
     IDLE = "idle"
     THINKING = "thinking"
     ACTING = "acting"
@@ -28,6 +29,7 @@ class AgentState(Enum):
 @dataclass
 class AgentContext:
     """Runtime context for an agent."""
+
     agent_id: str
     state: AgentState = AgentState.IDLE
     working_memory: dict[str, Any] = field(default_factory=dict)
@@ -96,6 +98,7 @@ class AgentRuntime:
             if self._memory:
                 try:
                     from memory.base import MemoryQuery
+
                     query = MemoryQuery(
                         query_text=prompt,
                         agent_ids=[self.agent_id],
@@ -113,16 +116,16 @@ class AgentRuntime:
             response = await self._call_llm(context)
 
             # Store in conversation history
-            self.context.conversation_history.append({
-                "role": "user",
-                "content": prompt,
-                "timestamp": datetime.now(UTC).isoformat()
-            })
-            self.context.conversation_history.append({
-                "role": "assistant",
-                "content": response,
-                "timestamp": datetime.now(UTC).isoformat()
-            })
+            self.context.conversation_history.append(
+                {"role": "user", "content": prompt, "timestamp": datetime.now(UTC).isoformat()}
+            )
+            self.context.conversation_history.append(
+                {
+                    "role": "assistant",
+                    "content": response,
+                    "timestamp": datetime.now(UTC).isoformat(),
+                }
+            )
 
             return response
 
@@ -157,6 +160,7 @@ class AgentRuntime:
             if self._memory:
                 try:
                     from memory.base import MemoryEntry, MemoryTier, MemoryType
+
                     entry = MemoryEntry(
                         agent_id=self.agent_id,
                         content=f"Executed {action} with {params}",
@@ -228,6 +232,7 @@ class AgentRuntime:
         """
         try:
             import litellm
+
             litellm.api_key = __import__("os").getenv("OPENAI_API_KEY")
 
             response = await litellm.acompletion(

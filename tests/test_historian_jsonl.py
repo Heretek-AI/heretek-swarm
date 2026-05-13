@@ -111,7 +111,9 @@ class TestSchema:
     types."""
 
     @staticmethod
-    async def test_all_schema_fields_present(historian: HistorianAgent, tmp_jsonl_path: Path) -> None:
+    async def test_all_schema_fields_present(
+        historian: HistorianAgent, tmp_jsonl_path: Path
+    ) -> None:
         await historian.log_event(
             event_type="schema_check",
             agent_id="bravo",
@@ -145,7 +147,9 @@ class TestAppend:
     """Multiple ``log_event()`` calls produce multiple lines (append)."""
 
     @staticmethod
-    async def test_events_append_not_overwrite(historian: HistorianAgent, tmp_jsonl_path: Path) -> None:
+    async def test_events_append_not_overwrite(
+        historian: HistorianAgent, tmp_jsonl_path: Path
+    ) -> None:
         n_events = 5
         for i in range(n_events):
             await historian.log_event(

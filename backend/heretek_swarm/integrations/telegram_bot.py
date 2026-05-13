@@ -18,6 +18,7 @@ try:
         MessageHandler,
         filters,
     )
+
     TELEGRAM_AVAILABLE = True
 except ImportError:
     TELEGRAM_AVAILABLE = False
@@ -67,25 +68,13 @@ class TelegramBot:
             return False
 
         # Build application
-        self._application = (
-            Application.builder()
-            .token(self.token)
-            .build()
-        )
+        self._application = Application.builder().token(self.token).build()
 
         # Add handlers
-        self._application.add_handler(
-            CommandHandler("start", self._handle_start)
-        )
-        self._application.add_handler(
-            CommandHandler("help", self._handle_help)
-        )
-        self._application.add_handler(
-            CommandHandler("status", self._handle_status)
-        )
-        self._application.add_handler(
-            CommandHandler("agents", self._handle_agents)
-        )
+        self._application.add_handler(CommandHandler("start", self._handle_start))
+        self._application.add_handler(CommandHandler("help", self._handle_help))
+        self._application.add_handler(CommandHandler("status", self._handle_status))
+        self._application.add_handler(CommandHandler("agents", self._handle_agents))
         self._application.add_handler(
             MessageHandler(
                 filters.TEXT & ~filters.COMMAND,
@@ -359,10 +348,10 @@ Just type your message and I'll route it to the appropriate agent.
         message = f"""
 🔄 *Task Handoff*
 
-*From:* {handoff_context.get('source_agent')}
-*To:* {handoff_context.get('target_agent')}
-*Task:* {handoff_context.get('task_description')}
-*Priority:* {handoff_context.get('priority')}
+*From:* {handoff_context.get("source_agent")}
+*To:* {handoff_context.get("target_agent")}
+*Task:* {handoff_context.get("task_description")}
+*Priority:* {handoff_context.get("priority")}
         """
 
         await self.send_notification(chat_id, message)

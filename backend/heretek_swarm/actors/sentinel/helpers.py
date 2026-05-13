@@ -233,7 +233,9 @@ class SentinelHelpers:
 
 
 # Standalone helper functions for use without a class instance
-def check_injection_patterns(content: str, patterns: list[str] | None = None) -> list[dict[str, str]]:
+def check_injection_patterns(
+    content: str, patterns: list[str] | None = None
+) -> list[dict[str, str]]:
     """
     Check content for injection attack patterns using provided or default patterns.
 

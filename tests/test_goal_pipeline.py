@@ -83,12 +83,14 @@ async def test_propose_new_goal(store, mock_metis, mock_coordinator, mock_histor
             "goal_id": goal.id,
             "title": goal.title,
             "description_preview": goal.description[:200],
-        }
+        },
     )
 
 
 @pytest.mark.asyncio
-async def test_vote_proposed_goal_accepted(store, mock_metis, mock_coordinator, mock_historian, sample_goal):
+async def test_vote_proposed_goal_accepted(
+    store, mock_metis, mock_coordinator, mock_historian, sample_goal
+):
     """When a proposed goal exists, it should run consensus and transition to accepted."""
     store.save(sample_goal)
 
@@ -98,7 +100,7 @@ async def test_vote_proposed_goal_accepted(store, mock_metis, mock_coordinator, 
         mock_consensus.run_goal_consensus.return_value = (
             True,  # accepted
             [Vote(agent_id="alpha", decision="approve", confidence=0.9)],  # votes
-            1      # rounds
+            1,  # rounds
         )
         mock_consensus_cls.return_value = mock_consensus
 
@@ -123,7 +125,9 @@ async def test_vote_proposed_goal_accepted(store, mock_metis, mock_coordinator, 
 
 
 @pytest.mark.asyncio
-async def test_vote_proposed_goal_rejected(store, mock_metis, mock_coordinator, mock_historian, sample_goal):
+async def test_vote_proposed_goal_rejected(
+    store, mock_metis, mock_coordinator, mock_historian, sample_goal
+):
     """When a proposed goal fails consensus, it should transition to rejected."""
     store.save(sample_goal)
 
@@ -131,9 +135,9 @@ async def test_vote_proposed_goal_rejected(store, mock_metis, mock_coordinator, 
     with patch("heretek_swarm.goals.pipeline.GoalConsensus") as mock_consensus_cls:
         mock_consensus = AsyncMock()
         mock_consensus.run_goal_consensus.return_value = (
-            False, # accepted
+            False,  # accepted
             [Vote(agent_id="alpha", decision="reject", confidence=0.9)],  # votes
-            1      # rounds
+            1,  # rounds
         )
         mock_consensus_cls.return_value = mock_consensus
 

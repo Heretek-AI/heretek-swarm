@@ -1,0 +1,18 @@
+{
+  "id": "8e22ae41-9053-4aed-8a52-b8f84f970af3",
+  "runtime": "bash",
+  "purpose": "Check Python version and tool availability",
+  "script_chars": 595,
+  "started_at": "2026-05-13T00:40:58.185Z",
+  "finished_at": "2026-05-13T00:41:00.589Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 2404,
+  "stdout_bytes": 1000,
+  "stderr_bytes": 0,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\8e22ae41-9053-4aed-8a52-b8f84f970af3.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\8e22ae41-9053-4aed-8a52-b8f84f970af3.stderr"
+}

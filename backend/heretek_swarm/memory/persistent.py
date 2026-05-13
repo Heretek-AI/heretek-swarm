@@ -38,13 +38,17 @@ class Mem0Config:
 
     # Embedder configuration
     embedder_provider: str = "openai"
-    embedder_model: str = field(default_factory=lambda: os.getenv("EMBEDDER_MODEL", "text-embedding-3-small"))
+    embedder_model: str = field(
+        default_factory=lambda: os.getenv("EMBEDDER_MODEL", "text-embedding-3-small")
+    )
 
     # PostgreSQL fallback (if using pgvector)
     postgres_host: str = field(default_factory=lambda: os.getenv("POSTGRES_HOST", "localhost"))
     postgres_port: int = field(default_factory=lambda: int(os.getenv("POSTGRES_PORT", "5432")))
     postgres_user: str = field(default_factory=lambda: os.getenv("POSTGRES_USER", "heretek"))
-    postgres_password: str = field(default_factory=lambda: os.getenv("POSTGRES_PASSWORD", "heretek"))
+    postgres_password: str = field(
+        default_factory=lambda: os.getenv("POSTGRES_PASSWORD", "heretek")
+    )
     postgres_database: str = field(default_factory=lambda: os.getenv("POSTGRES_DB", "heretek"))
 
     def to_dict(self) -> dict[str, Any]:
@@ -60,21 +64,21 @@ class Mem0Config:
                     "host": self.qdrant_host,
                     "port": self.qdrant_port,
                     "collection_name": self.qdrant_collection,
-                }
+                },
             },
             "llm": {
                 "provider": self.llm_provider,
                 "config": {
                     "model": self.llm_model,
                     "api_key": self.openai_api_key,
-                }
+                },
             },
             "embedder": {
                 "provider": self.embedder_provider,
                 "config": {
                     "model": self.embedder_model,
-                }
-            }
+                },
+            },
         }
 
 
@@ -425,6 +429,7 @@ async def create_memory_store(
 @dataclass
 class MemoryResult:
     """Result wrapper for memory queries."""
+
     total_count: int = 0
     entries: list[MemoryEntry] = field(default_factory=list)
 
@@ -545,14 +550,16 @@ class Mem0Backend:
 
             entries = []
             for r in results:
-                entries.append(MemoryEntry(
-                    id=r.get("id", ""),
-                    content=r.get("content", ""),
-                    metadata=r.get("metadata", {}),
-                    agent_id=r.get("metadata", {}).get("agent_id"),
-                    memory_type=r.get("metadata", {}).get("memory_type"),
-                    tags=r.get("metadata", {}).get("tags", []),
-                ))
+                entries.append(
+                    MemoryEntry(
+                        id=r.get("id", ""),
+                        content=r.get("content", ""),
+                        metadata=r.get("metadata", {}),
+                        agent_id=r.get("metadata", {}).get("agent_id"),
+                        memory_type=r.get("metadata", {}).get("memory_type"),
+                        tags=r.get("metadata", {}).get("tags", []),
+                    )
+                )
 
             return MemoryResult(total_count=len(entries), entries=entries)
 
@@ -584,12 +591,14 @@ class Mem0Backend:
                 if not isinstance(r, dict):
                     continue
                 if r.get("metadata", {}).get("agent_id") == agent_id:
-                    entries.append(MemoryEntry(
-                        id=r.get("id", ""),
-                        content=r.get("content", ""),
-                        metadata=r.get("metadata", {}),
-                        agent_id=agent_id,
-                    ))
+                    entries.append(
+                        MemoryEntry(
+                            id=r.get("id", ""),
+                            content=r.get("content", ""),
+                            metadata=r.get("metadata", {}),
+                            agent_id=agent_id,
+                        )
+                    )
             return entries
         except Exception as e:
             logger.error("mem0_get_all_failed", error=str(e))

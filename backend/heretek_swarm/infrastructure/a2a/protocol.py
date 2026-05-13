@@ -18,6 +18,7 @@ logger = structlog.get_logger(__name__)
 
 class A2AMessageType(Enum):
     """A2A message types extending JSON-RPC 2.0."""
+
     # Core JSON-RPC
     REQUEST = "request"
     RESPONSE = "response"
@@ -53,6 +54,7 @@ class A2AMessageType(Enum):
 
 class MessagePriority(Enum):
     """Message priority levels."""
+
     LOW = 0
     NORMAL = 1
     HIGH = 2
@@ -63,6 +65,7 @@ class MessagePriority(Enum):
 @dataclass
 class AgentCapability:
     """Describes an agent capability."""
+
     name: str
     version: str = "1.0.0"
     description: str = ""
@@ -84,6 +87,7 @@ class A2AMessage:
         result: Response result (for response messages)
         error: Error info (for error messages)
     """
+
     jsonrpc: str = "2.0"
     id: str = field(default_factory=lambda: str(uuid4()))
     method: A2AMessageType = A2AMessageType.REQUEST
@@ -138,6 +142,7 @@ class A2AMessage:
 # =============================================================================
 # Message Factory Functions
 # =============================================================================
+
 
 def create_task_request(
     task_id: str,
@@ -233,6 +238,7 @@ def create_consensus_message(
 # A2A Protocol Handler
 # =============================================================================
 
+
 class A2AProtocol:
     """
     A2A Protocol handler for agent communication.
@@ -244,9 +250,7 @@ class A2AProtocol:
     - Error handling
     """
 
-    SUPPORTED_METHODS: ClassVar[set[str]] = {
-        method.value for method in A2AMessageType
-    }
+    SUPPORTED_METHODS: ClassVar[set[str]] = {method.value for method in A2AMessageType}
 
     def __init__(self):
         self._registered_agents: dict[str, list[AgentCapability]] = {}
@@ -294,11 +298,15 @@ class A2AProtocol:
             return False, f"Unsupported method: {message.method.value}"
 
         # Check required params for request messages
-        if message.method in {
-            A2AMessageType.TASK_PROPOSE,
-            A2AMessageType.DELEGATE,
-            A2AMessageType.CONSENSUS_PROPOSE,
-        } and not message.params:
+        if (
+            message.method
+            in {
+                A2AMessageType.TASK_PROPOSE,
+                A2AMessageType.DELEGATE,
+                A2AMessageType.CONSENSUS_PROPOSE,
+            }
+            and not message.params
+        ):
             return False, "Missing required params"
 
         return True, None
@@ -350,7 +358,7 @@ class A2AProtocol:
         # Store in history
         self._message_history.append(message)
         if len(self._message_history) > self._max_history:
-            self._message_history = self._message_history[-self._max_history:]
+            self._message_history = self._message_history[-self._max_history :]
 
         # Log message
         logger.debug(

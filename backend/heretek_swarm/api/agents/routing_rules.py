@@ -8,7 +8,13 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 
 from heretek_swarm.gateway.auth import verify_auth
-from heretek_swarm.gateway.content_router import ContentFilter, ContentRouter, FilterOperator, RoutingRule, get_content_router
+from heretek_swarm.gateway.content_router import (
+    ContentFilter,
+    ContentRouter,
+    FilterOperator,
+    RoutingRule,
+    get_content_router,
+)
 
 logger = structlog.get_logger()
 router = APIRouter()

@@ -246,7 +246,12 @@ class AutonomousRuntime:
                 status = actor.get_status()
                 # Fix: Use ActorState enum values for comparison (uppercase)
                 from heretek_swarm.actors.base import ActorState
-                if status and status.state in [ActorState.SUSPENDED, ActorState.TERMINATED, ActorState.ERROR]:
+
+                if status and status.state in [
+                    ActorState.SUSPENDED,
+                    ActorState.TERMINATED,
+                    ActorState.ERROR,
+                ]:
                     failed_agents.append(agent_id)
 
             # Auto-restart failed agents if enabled
@@ -373,7 +378,9 @@ class AutonomousRuntime:
         metrics = {
             "cpu_usage": load * 100,
             "memory_usage": load * 100,
-            "agent_pool_utilization": (current_agents / self.config.max_agents) * 100 if self.config.max_agents > 0 else 0,
+            "agent_pool_utilization": (current_agents / self.config.max_agents) * 100
+            if self.config.max_agents > 0
+            else 0,
         }
 
         # Evaluate scaling using pool manager
@@ -415,7 +422,8 @@ class AutonomousRuntime:
 
         # Add new agent
         available_agents = [
-            name for name in self.config.agent_configs
+            name
+            for name in self.config.agent_configs
             if name not in (self.supervisor.actors if self.supervisor else {})
         ]
 
@@ -475,7 +483,9 @@ class AutonomousRuntime:
         if self._last_scale_up_time:
             time_since = datetime.now(UTC) - self._last_scale_up_time
             if time_since.total_seconds() < self.config.scale_up_cooldown_minutes * 60:
-                logger.debug("scale_up_cooldown_active", time_since_seconds=time_since.total_seconds())
+                logger.debug(
+                    "scale_up_cooldown_active", time_since_seconds=time_since.total_seconds()
+                )
                 return
 
         current_agents = len(self.supervisor.actors) if self.supervisor else 0
@@ -487,7 +497,8 @@ class AutonomousRuntime:
 
             # Find available agent config
             available_agents = [
-                name for name in self.config.agent_configs
+                name
+                for name in self.config.agent_configs
                 if name not in (self.supervisor.actors if self.supervisor else {})
             ]
 
@@ -522,7 +533,9 @@ class AutonomousRuntime:
         if self._last_scale_down_time:
             time_since = datetime.now(UTC) - self._last_scale_down_time
             if time_since.total_seconds() < self.config.scale_down_cooldown_minutes * 60:
-                logger.debug("scale_down_cooldown_active", time_since_seconds=time_since.total_seconds())
+                logger.debug(
+                    "scale_down_cooldown_active", time_since_seconds=time_since.total_seconds()
+                )
                 return
 
         current_agents = len(self.supervisor.actors) if self.supervisor else 0
@@ -627,6 +640,7 @@ class AutonomousRuntime:
             state_file.parent.mkdir(parents=True, exist_ok=True)
             with open(state_file, "w") as f:
                 import json
+
                 json.dump(state_data, f, indent=2)
         except Exception as e:
             logger.error(f"Failed to save state: {e}")
@@ -641,6 +655,7 @@ class AutonomousRuntime:
         try:
             with open(state_file) as f:
                 import json
+
                 state_data = json.load(f)
 
             self.state.total_agent_restarts = state_data.get("total_agent_restarts", 0)
@@ -674,18 +689,18 @@ class AutonomousRuntime:
         for agent_id, actor in self.supervisor.actors.items():
             status = actor.get_status()
             if status:
-                agent_metrics.append({
-                    "agent_id": agent_id,
-                    "message_count": status.message_count,
-                    "error_count": status.error_count,
-                    "uptime_seconds": status.uptime_seconds,
-                })
+                agent_metrics.append(
+                    {
+                        "agent_id": agent_id,
+                        "message_count": status.message_count,
+                        "error_count": status.error_count,
+                        "uptime_seconds": status.uptime_seconds,
+                    }
+                )
 
         # Store metrics
         # P2-1 fix: Use timezone-aware datetime
-        self.state.uptime_seconds = (
-            datetime.now(UTC) - self.state.start_time
-        ).total_seconds()
+        self.state.uptime_seconds = (datetime.now(UTC) - self.state.start_time).total_seconds()
 
         logger.info(f"Collected metrics for {len(agent_metrics)} agents")
 
@@ -716,16 +731,18 @@ class AutonomousRuntime:
         for agent_id, actor in self.supervisor.actors.items():
             try:
                 status = actor.get_status()
-                agents.append({
-                    "agent_id": agent_id,
-                    "agent_type": getattr(actor, "actor_type", "unknown"),
-                    "state": status.state.value if status else "unknown",
-                    "message_count": status.message_count if status else 0,
-                    "error_count": status.error_count if status else 0,
-                    "mailbox_size": status.mailbox_size if status else 0,
-                    "last_activity": status.last_activity if status else None,
-                    "uptime_seconds": status.uptime_seconds if status else 0.0,
-                })
+                agents.append(
+                    {
+                        "agent_id": agent_id,
+                        "agent_type": getattr(actor, "actor_type", "unknown"),
+                        "state": status.state.value if status else "unknown",
+                        "message_count": status.message_count if status else 0,
+                        "error_count": status.error_count if status else 0,
+                        "mailbox_size": status.mailbox_size if status else 0,
+                        "last_activity": status.last_activity if status else None,
+                        "uptime_seconds": status.uptime_seconds if status else 0.0,
+                    }
+                )
             except Exception as e:
                 logger.debug(f"Failed to get status for agent {agent_id}: {e}")
 
@@ -733,9 +750,7 @@ class AutonomousRuntime:
             "runtime_id": "autonomous",
             "agents": agents,
             "total_agents": len(agents),
-            "uptime_seconds": (
-                datetime.now(UTC) - self.state.start_time
-            ).total_seconds(),
+            "uptime_seconds": (datetime.now(UTC) - self.state.start_time).total_seconds(),
         }
 
         try:
@@ -827,6 +842,7 @@ class AutonomousRuntime:
                         from heretek_swarm.consciousness.agency_metrics import (
                             AgentAgencyMetrics,
                         )
+
                         # Map consciousness metrics to agency metrics
                         agency_metrics = AgentAgencyMetrics(
                             agent_id=agent_id,
@@ -868,6 +884,7 @@ class AutonomousRuntime:
             EventPriority,
             SwarmEvent,
         )
+
         correlation_id = str(uuid.uuid4())
 
         # Determine event type based on context
@@ -1012,8 +1029,12 @@ class AutonomousRuntime:
             "total_agent_restarts": self.state.total_agent_restarts,
             "total_failures": self.state.total_failures,
             "current_agents": self.state.current_agents,
-            "last_health_check": self.state.last_health_check.isoformat() if self.state.last_health_check else None,
-            "last_scale_event": self.state.last_scale_event.isoformat() if self.state.last_scale_event else None,
+            "last_health_check": self.state.last_health_check.isoformat()
+            if self.state.last_health_check
+            else None,
+            "last_scale_event": self.state.last_scale_event.isoformat()
+            if self.state.last_scale_event
+            else None,
         }
 
 

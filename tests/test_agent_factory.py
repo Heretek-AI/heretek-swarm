@@ -131,17 +131,34 @@ class TestBuildAgentFor:
 
 _ALL_AGENT_IDS: list[str] = [
     # Tier 1: Core Triad (Governance)
-    "steward", "alpha", "beta", "charlie",
+    "steward",
+    "alpha",
+    "beta",
+    "charlie",
     # Tier 2: Support Agents (Knowledge & Memory)
-    "historian", "metis", "empath", "perceiver", "echo",
+    "historian",
+    "metis",
+    "empath",
+    "perceiver",
+    "echo",
     # Tier 3: Exploration Agents (Discovery & Creation)
-    "explorer", "examiner", "dreamer", "coder",
+    "explorer",
+    "examiner",
+    "dreamer",
+    "coder",
     # Tier 4: Safety & Security (Protection)
-    "sentinel", "sentinel-prime", "arbiter",
+    "sentinel",
+    "sentinel-prime",
+    "arbiter",
     # Tier 5: Coordination Agents (Integration)
-    "coordinator", "nexus", "catalyst", "chronos",
+    "coordinator",
+    "nexus",
+    "catalyst",
+    "chronos",
     # Tier 6: Enhancement Agents (Optimization)
-    "prism", "habit-forge", "perceiver-plus",
+    "prism",
+    "habit-forge",
+    "perceiver-plus",
 ]
 
 
@@ -157,7 +174,7 @@ def _extract_system_prompts_from_source() -> dict[str, str | None]:
     import re
 
     source = textwrap.dedent(
-        inspect.getsource(AutonomousSwarm._spawn_all_actors)  # noqa: SLF001
+        inspect.getsource(AutonomousSwarm._spawn_all_actors)
     )
 
     prompts: dict[str, str | None] = {}
@@ -190,24 +207,18 @@ def test_all_23_agent_ids_have_system_prompts() -> None:
 
     # Every expected ID must be present
     for agent_id in _ALL_AGENT_IDS:
-        assert agent_id in prompts, (
-            f"Agent {agent_id!r} is missing from _SYSTEM_PROMPTS"
-        )
+        assert agent_id in prompts, f"Agent {agent_id!r} is missing from _SYSTEM_PROMPTS"
 
     # Every entry must be a non-None string (not auto-generated default)
     for agent_id, prompt in prompts.items():
-        assert prompt is not None, (
-            f"Agent {agent_id!r} has None system_prompt"
-        )
+        assert prompt is not None, f"Agent {agent_id!r} has None system_prompt"
 
 
 def test_all_23_agent_ids_have_exactly_23_prompts() -> None:
     """The ``_SYSTEM_PROMPTS`` dict contains exactly 23 entries, one per
     agent."""
     prompts = _extract_system_prompts_from_source()
-    assert len(prompts) == 23, (
-        f"Expected exactly 23 system prompts, got {len(prompts)}"
-    )
+    assert len(prompts) == 23, f"Expected exactly 23 system prompts, got {len(prompts)}"
 
 
 def test_every_agent_gets_system_prompt_through_build(

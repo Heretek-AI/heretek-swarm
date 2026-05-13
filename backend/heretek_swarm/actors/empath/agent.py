@@ -1023,9 +1023,7 @@ Format your response as a clear analysis with these three elements.
         source_agent = message.content.get("source_agent", "unknown")
 
         if not text:
-            logger.warning(
-                f"[{self.agent_id}] on_demand_sentiment called with empty text"
-            )
+            logger.warning(f"[{self.agent_id}] on_demand_sentiment called with empty text")
             if message.content.get("reply_to"):
                 await self.send(
                     topic=message.content["reply_to"],

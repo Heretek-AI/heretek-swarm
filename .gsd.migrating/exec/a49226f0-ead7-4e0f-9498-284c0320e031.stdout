@@ -1,0 +1,46 @@
+=== Dockerfile COPY paths ===
+COPY pyproject.toml uv.lock ./
+COPY backend ./backend
+COPY --from=builder --chown=appuser:appgroup /app/.venv /app/.venv
+COPY --from=builder --chown=appuser:appgroup /app/backend /app/backend
+COPY --chown=appuser:appgroup migrations /app/migrations
+
+=== uv.lock line count ===
+4206 uv.lock
+
+=== Check for migrations/ directory ===
+total 164
+drwxrwxrwx 1 john john   512 Apr 29 10:03 .
+drwxrwxrwx 1 john john   512 May 12 19:48 ..
+-rwxrwxrwx 1 john john  4912 Apr 29 10:03 001_create_swarm_memories.sql
+-rwxrwxrwx 1 john john  3160 Apr 29 10:03 002_create_agent_states.sql
+
+=== What test files exist ===
+62
+
+=== Check __init__.py in heretek_swarm ===
+"""
+Heretek Swarm - OpenClaw v2.0 Multi-Agent Orchestration Framework
+
+
+=== Swarm-dashboard package.json ===
+{
+  "name": "@heretek-ai/swarm-dashboard",
+  "version": "0.1.1",
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "build:skip-type-check": "vite build",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview",
+    "test": "NODE_ENV=test vitest run",
+    "test:watch": "NODE_ENV=test vitest"
+  },
+  "dependencies": {
+    "@types/jest": "^30.0.0",
+    "@xyflow/react": "^12.10.2",
+    "axios": "^1.15.2",

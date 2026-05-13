@@ -161,8 +161,8 @@ class DomainExpertise:
         if total == 0:
             self.evidence_quality_avg = quality_score
         else:
-            self.evidence_quality_avg = (
-                (self.evidence_quality_avg * total + quality_score) / (total + 1)
+            self.evidence_quality_avg = (self.evidence_quality_avg * total + quality_score) / (
+                total + 1
             )
 
 
@@ -277,9 +277,7 @@ class AgentExpertiseProfiler:
                 )
 
         self.profiles[agent_id] = profile
-        logger.info(
-            f"Registered agent {agent_id} with domains: {domains or 'none'}"
-        )
+        logger.info(f"Registered agent {agent_id} with domains: {domains or 'none'}")
         return profile
 
     def record_outcome(
@@ -314,8 +312,8 @@ class AgentExpertiseProfiler:
         # Update average confidence
         n = domain_expertise.total_decisions
         domain_expertise.avg_confidence = (
-            (domain_expertise.avg_confidence * (n - 1) + confidence) / n
-        )
+            domain_expertise.avg_confidence * (n - 1) + confidence
+        ) / n
 
         # Record recent outcome for trend analysis
         outcome_record = {
@@ -333,13 +331,11 @@ class AgentExpertiseProfiler:
             ]
 
         # Update expertise score
-        domain_expertise.expertise_score = self._calculate_expertise_score(
-            domain_expertise
-        )
+        domain_expertise.expertise_score = self._calculate_expertise_score(domain_expertise)
 
         # Update confidence calibration
-        domain_expertise.confidence_calibration = (
-            self._calculate_confidence_calibration(domain_expertise)
+        domain_expertise.confidence_calibration = self._calculate_confidence_calibration(
+            domain_expertise
         )
 
         # Update overall reputation
@@ -458,9 +454,7 @@ class AgentExpertiseProfiler:
 
         return profile.peer_trust_score
 
-    def _calculate_expertise_score(
-        self, domain_expertise: DomainExpertise
-    ) -> float:
+    def _calculate_expertise_score(self, domain_expertise: DomainExpertise) -> float:
         """
         Calculate expertise score based on accuracy and recency.
 
@@ -479,25 +473,21 @@ class AgentExpertiseProfiler:
         # Recency weight - recent outcomes matter more
         recent_outcomes = domain_expertise.recent_outcomes
         if recent_outcomes:
-            recent_accuracy = sum(
-                1 for o in recent_outcomes if o["was_correct"]
-            ) / len(recent_outcomes)
+            recent_accuracy = sum(1 for o in recent_outcomes if o["was_correct"]) / len(
+                recent_outcomes
+            )
             # Weight recent performance 60%, historical 40%
             accuracy = 0.4 * accuracy + 0.6 * recent_accuracy
 
         # Experience bonus - more decisions increase confidence in score
-        experience_factor = min(
-            1.0, domain_expertise.total_decisions / self.calibration_window
-        )
+        experience_factor = min(1.0, domain_expertise.total_decisions / self.calibration_window)
 
         # Final score with experience factor
         score = 0.5 + (accuracy - 0.5) * experience_factor
 
         return max(0.0, min(1.0, score))
 
-    def _calculate_confidence_calibration(
-        self, domain_expertise: DomainExpertise
-    ) -> float:
+    def _calculate_confidence_calibration(self, domain_expertise: DomainExpertise) -> float:
         """
         Calculate how well agent's confidence matches actual accuracy.
 
@@ -516,9 +506,7 @@ class AgentExpertiseProfiler:
 
         # Calculate average confidence and accuracy for recent outcomes
         avg_confidence = statistics.mean(o["confidence"] for o in recent_outcomes)
-        recent_accuracy = sum(
-            1 for o in recent_outcomes if o["was_correct"]
-        ) / len(recent_outcomes)
+        recent_accuracy = sum(1 for o in recent_outcomes if o["was_correct"]) / len(recent_outcomes)
 
         # Calibration = 1 - |confidence - accuracy|
         # Perfect calibration when confidence equals accuracy
@@ -530,9 +518,7 @@ class AgentExpertiseProfiler:
             return calibration * 2 - 1.0
         return calibration * 2
 
-    def _calculate_overall_reputation(
-        self, profile: AgentExpertiseProfile
-    ) -> float:
+    def _calculate_overall_reputation(self, profile: AgentExpertiseProfile) -> float:
         """
         Calculate overall reputation from domain expertise.
 
@@ -557,9 +543,7 @@ class AgentExpertiseProfiler:
 
         return weighted_sum / total_weight if total_weight > 0 else 0.5
 
-    def _update_domain_statistics(
-        self, domain: str, was_correct: bool, confidence: float
-    ) -> None:
+    def _update_domain_statistics(self, domain: str, was_correct: bool, confidence: float) -> None:
         """
         Update global domain statistics.
 
@@ -813,9 +797,7 @@ class AgentExpertiseProfiler:
         for profile in self.profiles.values():
             all_expertise.append(profile.overall_reputation)
 
-        avg_expertise = (
-            statistics.mean(all_expertise) if all_expertise else 0.5
-        )
+        avg_expertise = statistics.mean(all_expertise) if all_expertise else 0.5
 
         return {
             "total_agents": total_agents,
@@ -897,10 +879,7 @@ class AgentExpertiseProfiler:
             Serializable dictionary of all profiles
         """
         return {
-            "profiles": {
-                agent_id: self.export_profile(agent_id)
-                for agent_id in self.profiles
-            },
+            "profiles": {agent_id: self.export_profile(agent_id) for agent_id in self.profiles},
             "domain_statistics": {
                 domain: {
                     "total_decisions": stats["total_decisions"],
@@ -966,6 +945,7 @@ class AgentExpertiseProfiler:
             filepath: Path to save file
         """
         import json
+
         with open(filepath, "w") as f:
             json.dump(self.export_profiles(), f, indent=2)
         logger.info(f"Saved expertise profiles to {filepath}")
@@ -978,6 +958,7 @@ class AgentExpertiseProfiler:
             filepath: Path to load file
         """
         import json
+
         with open(filepath) as f:
             data = json.load(f)
         self.import_profiles(data)

@@ -19,6 +19,7 @@ logger = structlog.get_logger(__name__)
 
 class HandoffStatus(Enum):
     """Status of agent handoff."""
+
     PENDING = "pending"
     IN_PROGRESS = "in_progress"
     COMPLETED = "completed"
@@ -29,6 +30,7 @@ class HandoffStatus(Enum):
 @dataclass
 class HandoffContext:
     """Context transferred during handoff."""
+
     task_id: str
     source_agent: str
     target_agent: str
@@ -66,11 +68,7 @@ class AgentHandoff:
         """Set A2A server for inter-agent communication."""
         self._a2a_server = server
 
-    def register_callback(
-        self,
-        event: str,
-        callback: Callable[[HandoffContext], Any]
-    ) -> None:
+    def register_callback(self, event: str, callback: Callable[[HandoffContext], Any]) -> None:
         """
         Register callback for handoff events.
 
@@ -268,21 +266,24 @@ class AgentHandoff:
     def get_pending_handoffs(self, agent_id: str) -> list[HandoffContext]:
         """Get pending handoffs for an agent."""
         return [
-            h for h in self._handoffs.values()
+            h
+            for h in self._handoffs.values()
             if h.target_agent == agent_id and h.status == HandoffStatus.PENDING
         ]
 
     def get_active_handoffs(self, agent_id: str) -> list[HandoffContext]:
         """Get active handoffs for an agent."""
         return [
-            h for h in self._handoffs.values()
+            h
+            for h in self._handoffs.values()
             if h.target_agent == agent_id and h.status == HandoffStatus.IN_PROGRESS
         ]
 
     def get_handoff_history(self, agent_id: str) -> list[HandoffContext]:
         """Get completed/failed handoff history."""
         return [
-            h for h in self._handoffs.values()
+            h
+            for h in self._handoffs.values()
             if (h.source_agent == agent_id or h.target_agent == agent_id)
             and h.status in [HandoffStatus.COMPLETED, HandoffStatus.FAILED]
         ]
@@ -359,17 +360,12 @@ class AgentHandoff:
             "total_handoffs": len(self._handoffs),
             "pending": len(self._pending_queue),
             "in_progress": sum(
-                1 for h in self._handoffs.values()
-                if h.status == HandoffStatus.IN_PROGRESS
+                1 for h in self._handoffs.values() if h.status == HandoffStatus.IN_PROGRESS
             ),
             "completed": sum(
-                1 for h in self._handoffs.values()
-                if h.status == HandoffStatus.COMPLETED
+                1 for h in self._handoffs.values() if h.status == HandoffStatus.COMPLETED
             ),
-            "failed": sum(
-                1 for h in self._handoffs.values()
-                if h.status == HandoffStatus.FAILED
-            ),
+            "failed": sum(1 for h in self._handoffs.values() if h.status == HandoffStatus.FAILED),
         }
 
 
@@ -386,6 +382,7 @@ def create_handoff_sync(
 ) -> str:
     """Synchronous wrapper for create_handoff."""
     import asyncio
+
     loop = asyncio.get_event_loop()
     return loop.run_until_complete(
         handoff_manager.create_handoff(

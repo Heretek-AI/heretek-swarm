@@ -1,0 +1,18 @@
+{
+  "id": "c797373b-e2c1-45b3-a068-3d925a1bf2e4",
+  "runtime": "bash",
+  "purpose": "List API files and check their route definitions",
+  "script_chars": 569,
+  "started_at": "2026-05-13T00:44:15.428Z",
+  "finished_at": "2026-05-13T00:44:17.672Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 2244,
+  "stdout_bytes": 4261,
+  "stderr_bytes": 0,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\c797373b-e2c1-45b3-a068-3d925a1bf2e4.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\c797373b-e2c1-45b3-a068-3d925a1bf2e4.stderr"
+}

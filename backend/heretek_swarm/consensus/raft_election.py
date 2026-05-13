@@ -24,6 +24,7 @@ logger = structlog.get_logger("RaftElection")
 
 class RaftState(Enum):
     """Raft node states."""
+
     FOLLOWER = "follower"
     CANDIDATE = "candidate"
     LEADER = "leader"
@@ -39,6 +40,7 @@ class Vote:
         candidate_id: ID of candidate requesting vote
         vote_granted: True if vote was granted
     """
+
     term: int
     candidate_id: str
     vote_granted: bool
@@ -55,6 +57,7 @@ class RequestVoteRequest:
         last_log_index: Index of candidate's last log entry
         last_log_term: Term of candidate's last log entry
     """
+
     term: int
     candidate_id: str
     last_log_index: int = 0
@@ -70,6 +73,7 @@ class RequestVoteResponse:
         term: Current term
         vote_granted: True if vote was granted
     """
+
     term: int
     vote_granted: bool
 
@@ -87,6 +91,7 @@ class AppendEntriesRequest:
         entries: Log entries to append
         leader_commit: Leader's commit index
     """
+
     term: int
     leader_id: str
     prev_log_index: int = 0
@@ -105,6 +110,7 @@ class AppendEntriesResponse:
         success: True if entries matched
         match_index: Highest index known to be matched
     """
+
     term: int
     success: bool
     match_index: int = 0
@@ -113,6 +119,7 @@ class AppendEntriesResponse:
 @dataclass
 class LogEntry:
     """Log entry for Raft log."""
+
     index: int
     term: int
     data: dict[str, Any]
@@ -130,6 +137,7 @@ class LeaderState:
         commit_index: Committed log index
         last_applied: Last applied index
     """
+
     leader_id: str | None = None
     term: int = 0
     commit_index: int = 0
@@ -531,7 +539,7 @@ class RaftElection:
                     success = False
                 else:
                     # Append new entries
-                    self._log = self._log[:request.prev_log_index + 1]
+                    self._log = self._log[: request.prev_log_index + 1]
                     self._log.extend(request.entries)
                     match_index = len(self._log) - 1
 
@@ -719,9 +727,7 @@ class MAKERConsensusWithRaft:
         self.peers = peers or []
 
         # MAKER consensus
-        self._maker = MAKERConsensus(
-            **(maker_config or {})
-        )
+        self._maker = MAKERConsensus(**(maker_config or {}))
 
         # Raft election
         raft_cfg = raft_config or {}

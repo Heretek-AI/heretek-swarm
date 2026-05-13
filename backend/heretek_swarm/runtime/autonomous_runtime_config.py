@@ -24,12 +24,14 @@ class AutonomousRuntimeConfig:
     """
 
     # Agent Configuration
-    agent_configs: dict[str, Path] = field(default_factory=lambda: {
-        "alpha": Path(__file__).parent / "characters" / "alpha.json",
-        "beta": Path(__file__).parent / "characters" / "beta.json",
-        "coordinator": Path(__file__).parent / "characters" / "coordinator.json",
-        "historian": Path(__file__).parent / "characters" / "historian.json",
-    })
+    agent_configs: dict[str, Path] = field(
+        default_factory=lambda: {
+            "alpha": Path(__file__).parent / "characters" / "alpha.json",
+            "beta": Path(__file__).parent / "characters" / "beta.json",
+            "coordinator": Path(__file__).parent / "characters" / "coordinator.json",
+            "historian": Path(__file__).parent / "characters" / "historian.json",
+        }
+    )
 
     # Workflow Configuration
     default_workflows: list[str] = field(default_factory=list)
@@ -162,6 +164,7 @@ async def load_config_from_env() -> AutonomousRuntimeConfig:
     # Try to load from ConfigLoader if available (database-backed)
     try:
         from heretek_swarm.config.loader import get_config_loader
+
         loader = get_config_loader()
 
         if loader._initialized:
@@ -249,8 +252,11 @@ async def load_config_from_env() -> AutonomousRuntimeConfig:
             )
     except Exception as e:
         import structlog
+
         logger = structlog.get_logger("config.runtime")
-        logger.warning("Failed to load config from database, using environment fallback", error=str(e))
+        logger.warning(
+            "Failed to load config from database, using environment fallback", error=str(e)
+        )
 
     # Fallback to direct environment variable loading
     return AutonomousRuntimeConfig(

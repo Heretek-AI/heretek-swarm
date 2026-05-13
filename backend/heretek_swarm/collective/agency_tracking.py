@@ -46,10 +46,10 @@ logger = structlog.get_logger("agency_tracking")
 class AgencyHealthStatus(StrEnum):
     """Health status based on agency metrics."""
 
-    CRITICAL = "critical"      # Agency scores too low
-    WARNING = "warning"         # Agency scores below target
-    HEALTHY = "healthy"         # Agency scores in healthy range
-    EXCELLENT = "excellent"     # Agency scores exceed expectations
+    CRITICAL = "critical"  # Agency scores too low
+    WARNING = "warning"  # Agency scores below target
+    HEALTHY = "healthy"  # Agency scores in healthy range
+    EXCELLENT = "excellent"  # Agency scores exceed expectations
 
 
 @dataclass
@@ -157,12 +157,12 @@ class AgencyThresholds:
     """
 
     # Autonomy thresholds
-    min_autonomy_score: float = 0.5   # Minimum acceptable autonomy
+    min_autonomy_score: float = 0.5  # Minimum acceptable autonomy
     target_autonomy_score: float = 0.7  # Target autonomy
 
     # Agency thresholds
-    min_agency_score: float = 0.5     # Minimum acceptable agency
-    target_agency_score: float = 0.7   # Target agency
+    min_agency_score: float = 0.5  # Minimum acceptable agency
+    target_agency_score: float = 0.7  # Target agency
 
     # Self-determination thresholds
     min_self_determination: float = 0.4  # Minimum self-determination
@@ -177,7 +177,7 @@ class AgencyThresholds:
     target_resource_autonomy: float = 0.6  # Target resource control
 
     # Prime Directive compliance thresholds
-    min_compliance: float = 0.7   # Minimum 70% compliance
+    min_compliance: float = 0.7  # Minimum 70% compliance
     target_compliance: float = 0.85  # Target 85% compliance
 
     def check_health_status(
@@ -251,9 +251,7 @@ class AgencyThresholds:
             )
 
         if metrics.agency_score < self.min_agency_score:
-            violations.append(
-                f"agency={metrics.agency_score:.2f} < min={self.min_agency_score}"
-            )
+            violations.append(f"agency={metrics.agency_score:.2f} < min={self.min_agency_score}")
 
         if metrics.self_determination_index < self.min_self_determination:
             violations.append(
@@ -516,10 +514,7 @@ class AgencyMetricsTracker:
         # Filter by window
         if window_seconds:
             cutoff = datetime.now(UTC) - timedelta(seconds=window_seconds)
-            history = [
-                (ts, v) for ts, v in history
-                if datetime.fromisoformat(ts) > cutoff
-            ]
+            history = [(ts, v) for ts, v in history if datetime.fromisoformat(ts) > cutoff]
 
         # Calculate trend
         if len(history) < 2:
@@ -572,7 +567,7 @@ class AgencyMetricsTracker:
         if not self._agent_metrics:
             return PrimeDirectiveComplianceReport(
                 compliance_verdict="NO_DATA",
-                recommendations=["No agent metrics available for analysis"]
+                recommendations=["No agent metrics available for analysis"],
             )
 
         # Calculate aggregate scores
@@ -583,10 +578,10 @@ class AgencyMetricsTracker:
 
         # Overall compliance
         overall = (
-            avg_independence * 0.25 +
-            avg_self_gov * 0.25 +
-            avg_role_based * 0.25 +
-            avg_emergent * 0.25
+            avg_independence * 0.25
+            + avg_self_gov * 0.25
+            + avg_role_based * 0.25
+            + avg_emergent * 0.25
         )
 
         # Determine verdict
@@ -689,11 +684,15 @@ class AgencyMetricsTracker:
                 f"Resource independence: {metrics.resource_independence:.2f}",
             ],
             overall_compliance=metrics.prime_directive_compliance,
-            compliance_verdict="COMPLIANT" if metrics.is_prime_directive_compliant(self.thresholds.min_compliance) else "NON_COMPLIANT",
+            compliance_verdict="COMPLIANT"
+            if metrics.is_prime_directive_compliant(self.thresholds.min_compliance)
+            else "NON_COMPLIANT",
             recommendations=[
                 f"Threshold violations: {len(violations)}",
                 *violations[:3],  # First 3 violations
-            ] if violations else ["No violations detected"],
+            ]
+            if violations
+            else ["No violations detected"],
         )
 
     def get_agency_distribution(self) -> dict[str, Any]:
@@ -719,12 +718,21 @@ class AgencyMetricsTracker:
             "agency_distribution": agency_level_counts,
             "autonomy_distribution": autonomy_level_counts,
             "health_distribution": {
-                "healthy": sum(1 for m in self._agent_metrics.values()
-                    if self.thresholds.check_health_status(m) == AgencyHealthStatus.HEALTHY),
-                "warning": sum(1 for m in self._agent_metrics.values()
-                    if self.thresholds.check_health_status(m) == AgencyHealthStatus.WARNING),
-                "critical": sum(1 for m in self._agent_metrics.values()
-                    if self.thresholds.check_health_status(m) == AgencyHealthStatus.CRITICAL),
+                "healthy": sum(
+                    1
+                    for m in self._agent_metrics.values()
+                    if self.thresholds.check_health_status(m) == AgencyHealthStatus.HEALTHY
+                ),
+                "warning": sum(
+                    1
+                    for m in self._agent_metrics.values()
+                    if self.thresholds.check_health_status(m) == AgencyHealthStatus.WARNING
+                ),
+                "critical": sum(
+                    1
+                    for m in self._agent_metrics.values()
+                    if self.thresholds.check_health_status(m) == AgencyHealthStatus.CRITICAL
+                ),
             },
         }
 
@@ -780,8 +788,10 @@ class AgencyMetricsTracker:
         """Trim history to prevent unbounded growth."""
         max_history = 10000
         for history_attr in [
-            "_autonomy_history", "_agency_history",
-            "_self_determination_history", "_compliance_history"
+            "_autonomy_history",
+            "_agency_history",
+            "_self_determination_history",
+            "_compliance_history",
         ]:
             history = getattr(self, history_attr)
             if len(history) > max_history:
@@ -790,7 +800,7 @@ class AgencyMetricsTracker:
     def _trim_snapshots(self) -> None:
         """Trim snapshots to prevent unbounded growth."""
         if len(self._snapshots) > self._max_snapshots:
-            self._snapshots = self._snapshots[-self._max_snapshots:]
+            self._snapshots = self._snapshots[-self._max_snapshots :]
 
 
 # Convenience function for quick testing
@@ -816,23 +826,28 @@ def create_sample_metrics(
     decisions = []
     for i in range(10):
         origin = ActionOrigin.SELF_INITIATED if high_autonomy else ActionOrigin.PROMPTED
-        decisions.append(create_decision_point(
-            agent_id=agent_id,
-            options_considered=3 if high_autonomy else 1,
-            choice_made=i % 3,
-            origin=origin,
-        ))
+        decisions.append(
+            create_decision_point(
+                agent_id=agent_id,
+                options_considered=3 if high_autonomy else 1,
+                choice_made=i % 3,
+                origin=origin,
+            )
+        )
 
     # Create sample actions
     actions = [
-        ActionOrigin.SELF_INITIATED if high_autonomy else ActionOrigin.PROMPTED
-        for _ in range(20)
+        ActionOrigin.SELF_INITIATED if high_autonomy else ActionOrigin.PROMPTED for _ in range(20)
     ]
 
     # Create sample resources
     resources = [
-        create_resource_control("memory", 100, 80 if high_agency else 40, 20 if high_agency else 60),
-        create_resource_control("compute", 100, 70 if high_agency else 30, 30 if high_agency else 70),
+        create_resource_control(
+            "memory", 100, 80 if high_agency else 40, 20 if high_agency else 60
+        ),
+        create_resource_control(
+            "compute", 100, 70 if high_agency else 30, 30 if high_agency else 70
+        ),
     ]
 
     return calculator.calculate_metrics(

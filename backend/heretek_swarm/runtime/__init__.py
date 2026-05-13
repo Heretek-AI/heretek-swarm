@@ -21,6 +21,7 @@ from .tools import ToolRegistry
 @dataclass
 class CharacterStyle:
     """Defines the character's communication style."""
+
     all: list[str] = field(default_factory=list)
     chat: list[str] = field(default_factory=list)
     speak: list[str] = field(default_factory=list)
@@ -34,6 +35,7 @@ class Character:
     Contains all the configuration needed to define an agent's
     personality, knowledge, and behavior patterns.
     """
+
     name: str
     role: str
     bio: str

@@ -1392,8 +1392,12 @@ class DeliberationEngine:
         # Compute position distribution
         positions = deliberation.get("positions", {})
         for_pos = sum(1 for p in positions.values() if hasattr(p, "value") and p.value == "FOR")
-        against_pos = sum(1 for p in positions.values() if hasattr(p, "value") and p.value == "AGAINST")
-        neutral_pos = sum(1 for p in positions.values() if hasattr(p, "value") and p.value == "NEUTRAL")
+        against_pos = sum(
+            1 for p in positions.values() if hasattr(p, "value") and p.value == "AGAINST"
+        )
+        neutral_pos = sum(
+            1 for p in positions.values() if hasattr(p, "value") and p.value == "NEUTRAL"
+        )
 
         # Determine final position from last round or consensus
         final_round = self.round_results.get(deliberation_id, [])
@@ -1401,7 +1405,9 @@ class DeliberationEngine:
         consensus_score = 0.0
         if final_round:
             last = final_round[-1]
-            final_position = last.outcome.value if hasattr(last.outcome, "value") else str(last.outcome)
+            final_position = (
+                last.outcome.value if hasattr(last.outcome, "value") else str(last.outcome)
+            )
             consensus_score = last.consensus_score
 
         # Top FOR and AGAINST arguments (up to 3 each)

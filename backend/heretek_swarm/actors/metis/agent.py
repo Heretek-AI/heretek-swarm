@@ -824,9 +824,7 @@ Format each risk as JSON object.
         perspective = message.content.get("perspective", "neutral")
 
         if not context:
-            logger.warning(
-                f"[{self.agent_id}] on_demand_analysis called with empty context"
-            )
+            logger.warning(f"[{self.agent_id}] on_demand_analysis called with empty context")
             if message.content.get("reply_to"):
                 await self.send(
                     topic=message.content["reply_to"],
@@ -919,8 +917,7 @@ Format your response as a clear analysis with recommendations.
             recommendations = [
                 line.strip().lstrip("0123456789.- ")
                 for line in (response or "").split("\n")
-                if line.strip()
-                and (line.strip()[0].isdigit() or line.strip().startswith("-"))
+                if line.strip() and (line.strip()[0].isdigit() or line.strip().startswith("-"))
             ][:5]
 
             return {

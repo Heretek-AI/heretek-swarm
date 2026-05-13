@@ -193,15 +193,11 @@ class HistorianAgent(
         if db_pool is not None:
             self._using_pg = True
             self._writer_task = asyncio.create_task(self._pg_writer(db_pool))
-            logger.info(
-                f"[{self.agent_id}] Starting Postgres event writer"
-            )
+            logger.info(f"[{self.agent_id}] Starting Postgres event writer")
         else:
             self._using_pg = False
             self._writer_task = asyncio.create_task(self._jsonl_writer())
-            logger.info(
-                f"[{self.agent_id}] Starting JSONL event writer"
-            )
+            logger.info(f"[{self.agent_id}] Starting JSONL event writer")
 
         # Register message handlers
         self.register_handler("store_memory", self._handle_store_memory)
@@ -965,13 +961,9 @@ class HistorianAgent(
                 line = json.dumps(record, default=str, ensure_ascii=False)
                 # Use asyncio.to_thread so file I/O does not block the
                 # event loop — stdlib only, no aiofiles dependency.
-                await asyncio.to_thread(
-                    self._write_jsonl_line, self._jsonl_path, line
-                )
+                await asyncio.to_thread(self._write_jsonl_line, self._jsonl_path, line)
             except Exception:
-                logger.exception(
-                    f"[{self.agent_id}] JSONL writer error"
-                )
+                logger.exception(f"[{self.agent_id}] JSONL writer error")
             finally:
                 self._jsonl_queue.task_done()
 
@@ -1015,9 +1007,7 @@ class HistorianAgent(
             async with db_pool.acquire() as conn:
                 await conn.execute(self._CREATE_HISTORIAN_EVENTS_DDL)
         except Exception:
-            logger.exception(
-                f"[{self.agent_id}] Failed to create historian_events table"
-            )
+            logger.exception(f"[{self.agent_id}] Failed to create historian_events table")
             return
 
         while True:
@@ -1036,9 +1026,7 @@ class HistorianAgent(
                         record["agent_id"],
                         json.dumps(record["payload"]),
                     )
-                logger.debug(
-                    f"[{self.agent_id}] PG writer: inserted event {record['event_id']}"
-                )
+                logger.debug(f"[{self.agent_id}] PG writer: inserted event {record['event_id']}")
             except Exception:
                 logger.exception(
                     f"[{self.agent_id}] PG writer error for event {record.get('event_id', '?')}"
@@ -1086,9 +1074,7 @@ class HistorianAgent(
 
         db_pool = self._db_pool or self.get_state("_db_pool")
         if db_pool is None:
-            logger.warning(
-                f"[{self.agent_id}] read_events called but no db_pool available"
-            )
+            logger.warning(f"[{self.agent_id}] read_events called but no db_pool available")
             return []
 
         # Build dynamic WHERE clause with parameterized placeholders
@@ -1128,9 +1114,7 @@ class HistorianAgent(
             async with db_pool.acquire() as conn:
                 rows = await conn.fetch(query, *params)
         except Exception:
-            logger.exception(
-                f"[{self.agent_id}] read_events query failed"
-            )
+            logger.exception(f"[{self.agent_id}] read_events query failed")
             return []
 
         return [
@@ -1231,9 +1215,7 @@ class HistorianAgent(
                 try:
                     await db_pool.close()
                 except Exception:
-                    logger.exception(
-                        f"[{self.agent_id}] Error closing db_pool during cleanup"
-                    )
+                    logger.exception(f"[{self.agent_id}] Error closing db_pool during cleanup")
 
         await self.memory_system.close()
         logger.info(f"[{self.agent_id}] Historian cleanup complete")

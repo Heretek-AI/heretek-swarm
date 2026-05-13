@@ -60,6 +60,7 @@ logger = structlog.get_logger(__name__)
 
 class ActionType(StrEnum):
     """Types of agent actions."""
+
     MESSAGE_SENT = "message_sent"
     MESSAGE_RECEIVED = "message_received"
     TASK_STARTED = "task_started"
@@ -75,6 +76,7 @@ class ActionType(StrEnum):
 
 class AnomalyType(StrEnum):
     """Types of detected anomalies."""
+
     FREQUENCY_SPIKE = "frequency_spike"  # Unusual activity rate
     FREQUENCY_DROP = "frequency_drop"  # Unusual inactivity
     ERROR_RATE_HIGH = "error_rate_high"  # High error rate
@@ -87,6 +89,7 @@ class AnomalyType(StrEnum):
 
 class AlertSeverity(StrEnum):
     """Alert severity levels."""
+
     LOW = "low"
     MEDIUM = "medium"
     HIGH = "high"
@@ -96,6 +99,7 @@ class AlertSeverity(StrEnum):
 @dataclass
 class ActivityRecord:
     """Record of a single agent activity."""
+
     timestamp: datetime
     agent_id: str
     action: ActionType
@@ -117,6 +121,7 @@ class ActivityRecord:
 @dataclass
 class BehaviorMetrics:
     """Computed behavior metrics for an agent."""
+
     agent_id: str
     window_start: datetime
     window_end: datetime
@@ -179,6 +184,7 @@ class BehaviorProfile:
     Contains baseline behavior patterns and statistical bounds
     for normal behavior.
     """
+
     agent_type: str
     created_at: datetime = field(default_factory=lambda: datetime.now(UTC))
     updated_at: datetime = field(default_factory=lambda: datetime.now(UTC))
@@ -217,24 +223,20 @@ class BehaviorProfile:
         else:
             # Exponential moving average
             self.baseline_actions_per_minute = (
-                alpha * metrics.actions_per_minute +
-                (1 - alpha) * self.baseline_actions_per_minute
+                alpha * metrics.actions_per_minute + (1 - alpha) * self.baseline_actions_per_minute
             )
             self.baseline_task_success_rate = (
-                alpha * metrics.task_success_rate +
-                (1 - alpha) * self.baseline_task_success_rate
+                alpha * metrics.task_success_rate + (1 - alpha) * self.baseline_task_success_rate
             )
             self.baseline_avg_task_duration_ms = (
-                alpha * metrics.avg_task_duration_ms +
-                (1 - alpha) * self.baseline_avg_task_duration_ms
+                alpha * metrics.avg_task_duration_ms
+                + (1 - alpha) * self.baseline_avg_task_duration_ms
             )
             self.baseline_error_rate = (
-                alpha * metrics.error_rate +
-                (1 - alpha) * self.baseline_error_rate
+                alpha * metrics.error_rate + (1 - alpha) * self.baseline_error_rate
             )
             self.baseline_response_time_ms = (
-                alpha * metrics.avg_response_time_ms +
-                (1 - alpha) * self.baseline_response_time_ms
+                alpha * metrics.avg_response_time_ms + (1 - alpha) * self.baseline_response_time_ms
             )
 
         self.sample_count += 1
@@ -259,13 +261,19 @@ class BehaviorProfile:
 
         # Check actions per minute
         if self.actions_per_minute_std > 0:
-            z_score = abs(metrics.actions_per_minute - self.baseline_actions_per_minute) / self.actions_per_minute_std
+            z_score = (
+                abs(metrics.actions_per_minute - self.baseline_actions_per_minute)
+                / self.actions_per_minute_std
+            )
             if z_score > std_threshold:
                 anomalies.append(f"actions_per_minute_z_score_{z_score:.2f}")
 
         # Check task success rate
         if self.task_success_rate_std > 0:
-            z_score = abs(metrics.task_success_rate - self.baseline_task_success_rate) / self.task_success_rate_std
+            z_score = (
+                abs(metrics.task_success_rate - self.baseline_task_success_rate)
+                / self.task_success_rate_std
+            )
             if z_score > std_threshold:
                 anomalies.append(f"task_success_rate_z_score_{z_score:.2f}")
 
@@ -277,7 +285,10 @@ class BehaviorProfile:
 
         # Check response time
         if self.response_time_std > 0:
-            z_score = abs(metrics.avg_response_time_ms - self.baseline_response_time_ms) / self.response_time_std
+            z_score = (
+                abs(metrics.avg_response_time_ms - self.baseline_response_time_ms)
+                / self.response_time_std
+            )
             if z_score > std_threshold:
                 anomalies.append(f"response_time_z_score_{z_score:.2f}")
 
@@ -306,6 +317,7 @@ class BehaviorProfile:
 @dataclass
 class Anomaly:
     """Detected anomaly in agent behavior."""
+
     timestamp: datetime
     agent_id: str
     anomaly_type: AnomalyType
@@ -333,6 +345,7 @@ class Anomaly:
 @dataclass
 class Alert:
     """Alert generated from anomaly detection."""
+
     timestamp: datetime
     agent_id: str
     anomaly: Anomaly
@@ -356,6 +369,7 @@ class Alert:
 @dataclass
 class ProfilingConfig:
     """Configuration for behavior profiling."""
+
     # Window settings
     analysis_window_minutes: int = 5
     baseline_window_hours: int = 24
@@ -414,7 +428,9 @@ class AnomalyDetector:
                 # Exponential moving average for baseline
                 alpha = 0.1
                 old_baseline = self._agent_baselines[agent_id][key]
-                self._agent_baselines[agent_id][key] = alpha * float(value) + (1 - alpha) * old_baseline
+                self._agent_baselines[agent_id][key] = (
+                    alpha * float(value) + (1 - alpha) * old_baseline
+                )
 
                 # Update standard deviation estimate
                 old_std = self._agent_stds[agent_id][key]
@@ -469,83 +485,97 @@ class AnomalyDetector:
             ratio = metrics.actions_per_minute / baseline["actions_per_minute"]
 
             if ratio > self.config.frequency_spike_threshold:
-                anomalies.append(Anomaly(
-                    timestamp=now,
-                    agent_id=agent_id,
-                    anomaly_type=AnomalyType.FREQUENCY_SPIKE,
-                    severity=AlertSeverity.MEDIUM,
-                    description=f"Activity spike detected: {ratio:.2f}x normal rate",
-                    metrics={"actions_per_minute": metrics.actions_per_minute},
-                    threshold_exceeded=self.config.frequency_spike_threshold,
-                    expected_value=baseline["actions_per_minute"],
-                    actual_value=metrics.actions_per_minute,
-                ))
+                anomalies.append(
+                    Anomaly(
+                        timestamp=now,
+                        agent_id=agent_id,
+                        anomaly_type=AnomalyType.FREQUENCY_SPIKE,
+                        severity=AlertSeverity.MEDIUM,
+                        description=f"Activity spike detected: {ratio:.2f}x normal rate",
+                        metrics={"actions_per_minute": metrics.actions_per_minute},
+                        threshold_exceeded=self.config.frequency_spike_threshold,
+                        expected_value=baseline["actions_per_minute"],
+                        actual_value=metrics.actions_per_minute,
+                    )
+                )
 
             if ratio < self.config.frequency_drop_threshold:
-                anomalies.append(Anomaly(
-                    timestamp=now,
-                    agent_id=agent_id,
-                    anomaly_type=AnomalyType.FREQUENCY_DROP,
-                    severity=AlertSeverity.HIGH,
-                    description=f"Activity drop detected: {ratio:.2f}x normal rate",
-                    metrics={"actions_per_minute": metrics.actions_per_minute},
-                    threshold_exceeded=self.config.frequency_drop_threshold,
-                    expected_value=baseline["actions_per_minute"],
-                    actual_value=metrics.actions_per_minute,
-                ))
+                anomalies.append(
+                    Anomaly(
+                        timestamp=now,
+                        agent_id=agent_id,
+                        anomaly_type=AnomalyType.FREQUENCY_DROP,
+                        severity=AlertSeverity.HIGH,
+                        description=f"Activity drop detected: {ratio:.2f}x normal rate",
+                        metrics={"actions_per_minute": metrics.actions_per_minute},
+                        threshold_exceeded=self.config.frequency_drop_threshold,
+                        expected_value=baseline["actions_per_minute"],
+                        actual_value=metrics.actions_per_minute,
+                    )
+                )
 
         # Check error rate
         if metrics.error_rate > self.config.error_rate_threshold:
             severity = AlertSeverity.HIGH if metrics.error_rate > 0.5 else AlertSeverity.MEDIUM
-            anomalies.append(Anomaly(
-                timestamp=now,
-                agent_id=agent_id,
-                anomaly_type=AnomalyType.ERROR_RATE_HIGH,
-                severity=severity,
-                description=f"High error rate: {metrics.error_rate:.2%}",
-                metrics={"error_rate": metrics.error_rate, "error_count": metrics.error_count},
-                threshold_exceeded=self.config.error_rate_threshold,
-                expected_value=profile.baseline_error_rate if profile else 0.0,
-                actual_value=metrics.error_rate,
-            ))
+            anomalies.append(
+                Anomaly(
+                    timestamp=now,
+                    agent_id=agent_id,
+                    anomaly_type=AnomalyType.ERROR_RATE_HIGH,
+                    severity=severity,
+                    description=f"High error rate: {metrics.error_rate:.2%}",
+                    metrics={"error_rate": metrics.error_rate, "error_count": metrics.error_count},
+                    threshold_exceeded=self.config.error_rate_threshold,
+                    expected_value=profile.baseline_error_rate if profile else 0.0,
+                    actual_value=metrics.error_rate,
+                )
+            )
 
         # Check task failure rate
         if metrics.task_success_rate < (1 - self.config.task_failure_threshold):
-            severity = AlertSeverity.HIGH if metrics.task_success_rate < 0.5 else AlertSeverity.MEDIUM
-            anomalies.append(Anomaly(
-                timestamp=now,
-                agent_id=agent_id,
-                anomaly_type=AnomalyType.TASK_FAILURE_RATE_HIGH,
-                severity=severity,
-                description=f"High task failure rate: {1 - metrics.task_success_rate:.2%}",
-                metrics={
-                    "task_success_rate": metrics.task_success_rate,
-                    "tasks_failed": metrics.tasks_failed,
-                    "tasks_completed": metrics.tasks_completed,
-                },
-                threshold_exceeded=self.config.task_failure_threshold,
-                expected_value=profile.baseline_task_success_rate if profile else 1.0,
-                actual_value=metrics.task_success_rate,
-            ))
+            severity = (
+                AlertSeverity.HIGH if metrics.task_success_rate < 0.5 else AlertSeverity.MEDIUM
+            )
+            anomalies.append(
+                Anomaly(
+                    timestamp=now,
+                    agent_id=agent_id,
+                    anomaly_type=AnomalyType.TASK_FAILURE_RATE_HIGH,
+                    severity=severity,
+                    description=f"High task failure rate: {1 - metrics.task_success_rate:.2%}",
+                    metrics={
+                        "task_success_rate": metrics.task_success_rate,
+                        "tasks_failed": metrics.tasks_failed,
+                        "tasks_completed": metrics.tasks_completed,
+                    },
+                    threshold_exceeded=self.config.task_failure_threshold,
+                    expected_value=profile.baseline_task_success_rate if profile else 1.0,
+                    actual_value=metrics.task_success_rate,
+                )
+            )
 
         # Check response time (z-score)
         if "response_time_ms" in stds and stds["response_time_ms"] > 0:
-            z_score = (metrics.avg_response_time_ms - baseline.get("response_time_ms", 0)) / stds["response_time_ms"]
+            z_score = (metrics.avg_response_time_ms - baseline.get("response_time_ms", 0)) / stds[
+                "response_time_ms"
+            ]
             if z_score > self.config.response_time_threshold:
-                anomalies.append(Anomaly(
-                    timestamp=now,
-                    agent_id=agent_id,
-                    anomaly_type=AnomalyType.RESPONSE_TIME_HIGH,
-                    severity=AlertSeverity.MEDIUM,
-                    description=f"High response time: z-score {z_score:.2f}",
-                    metrics={
-                        "avg_response_time_ms": metrics.avg_response_time_ms,
-                        "z_score": z_score,
-                    },
-                    threshold_exceeded=self.config.response_time_threshold,
-                    expected_value=baseline.get("response_time_ms", 0),
-                    actual_value=metrics.avg_response_time_ms,
-                ))
+                anomalies.append(
+                    Anomaly(
+                        timestamp=now,
+                        agent_id=agent_id,
+                        anomaly_type=AnomalyType.RESPONSE_TIME_HIGH,
+                        severity=AlertSeverity.MEDIUM,
+                        description=f"High response time: z-score {z_score:.2f}",
+                        metrics={
+                            "avg_response_time_ms": metrics.avg_response_time_ms,
+                            "z_score": z_score,
+                        },
+                        threshold_exceeded=self.config.response_time_threshold,
+                        expected_value=baseline.get("response_time_ms", 0),
+                        actual_value=metrics.avg_response_time_ms,
+                    )
+                )
 
         # Check pattern deviation using profile
         if profile:
@@ -554,15 +584,17 @@ class AnomalyDetector:
                 self.config.pattern_deviation_threshold,
             )
             if not is_normal:
-                anomalies.append(Anomaly(
-                    timestamp=now,
-                    agent_id=agent_id,
-                    anomaly_type=AnomalyType.PATTERN_DEVIATION,
-                    severity=AlertSeverity.LOW,
-                    description=f"Pattern deviation detected: {', '.join(deviation_details)}",
-                    metrics={"deviations": deviation_details},
-                    threshold_exceeded=self.config.pattern_deviation_threshold,
-                ))
+                anomalies.append(
+                    Anomaly(
+                        timestamp=now,
+                        agent_id=agent_id,
+                        anomaly_type=AnomalyType.PATTERN_DEVIATION,
+                        severity=AlertSeverity.LOW,
+                        description=f"Pattern deviation detected: {', '.join(deviation_details)}",
+                        metrics={"deviations": deviation_details},
+                        threshold_exceeded=self.config.pattern_deviation_threshold,
+                    )
+                )
 
         return anomalies
 
@@ -757,9 +789,9 @@ class BehaviorProfiler(ValidationMixin, PatternMixin, HealthReportingMixin, Agen
 
         # Calculate task duration from activities with duration
         task_durations = [
-            a.duration_ms for a in recent_activities
-            if a.action in [ActionType.TASK_COMPLETED, ActionType.TASK_FAILED]
-            and a.duration_ms > 0
+            a.duration_ms
+            for a in recent_activities
+            if a.action in [ActionType.TASK_COMPLETED, ActionType.TASK_FAILED] and a.duration_ms > 0
         ]
         if task_durations:
             metrics.avg_task_duration_ms = statistics.mean(task_durations)
@@ -769,10 +801,7 @@ class BehaviorProfiler(ValidationMixin, PatternMixin, HealthReportingMixin, Agen
             metrics.error_rate = metrics.error_count / metrics.total_actions
 
         # Response time metrics (from message activities)
-        response_times = [
-            a.duration_ms for a in recent_activities
-            if a.duration_ms > 0
-        ]
+        response_times = [a.duration_ms for a in recent_activities if a.duration_ms > 0]
         if response_times:
             metrics.avg_response_time_ms = statistics.mean(response_times)
             metrics.max_response_time_ms = max(response_times)
@@ -875,13 +904,18 @@ class BehaviorProfiler(ValidationMixin, PatternMixin, HealthReportingMixin, Agen
         if last_alert_time:
             cooldown = timedelta(minutes=self.config.alert_cooldown_minutes)
             if now - last_alert_time < cooldown:
-                logger.debug("alert_suppressed_cooldown", agent_id=agent_id, anomaly_type=anomaly.anomaly_type.value)
+                logger.debug(
+                    "alert_suppressed_cooldown",
+                    agent_id=agent_id,
+                    anomaly_type=anomaly.anomaly_type.value,
+                )
                 return None
 
         # Check rate limit
         hour_ago = now - timedelta(hours=1)
         recent_alerts = sum(
-            1 for alert in self._alerts
+            1
+            for alert in self._alerts
             if alert.agent_id == agent_id and alert.timestamp >= hour_ago
         )
         if recent_alerts >= self.config.max_alerts_per_hour:
@@ -1023,43 +1057,47 @@ class BehaviorProfiler(ValidationMixin, PatternMixin, HealthReportingMixin, Agen
         for agent_id, metrics in self._current_metrics.items():
             safe_agent_id = agent_id.replace("-", "_").replace(".", "_")
 
-            lines.extend([
-                f"# HELP heretek_agent_{safe_agent_id}_actions_per_minute Actions per minute",
-                f"# TYPE heretek_agent_{safe_agent_id}_actions_per_minute gauge",
-                f"heretek_agent_{safe_agent_id}_actions_per_minute {metrics.actions_per_minute}",
-                "",
-                f"# HELP heretek_agent_{safe_agent_id}_error_rate Error rate",
-                f"# TYPE heretek_agent_{safe_agent_id}_error_rate gauge",
-                f"heretek_agent_{safe_agent_id}_error_rate {metrics.error_rate}",
-                "",
-                f"# HELP heretek_agent_{safe_agent_id}_task_success_rate Task success rate",
-                f"# TYPE heretek_agent_{safe_agent_id}_task_success_rate gauge",
-                f"heretek_agent_{safe_agent_id}_task_success_rate {metrics.task_success_rate}",
-                "",
-                f"# HELP heretek_agent_{safe_agent_id}_avg_response_time_ms Average response time",
-                f"# TYPE heretek_agent_{safe_agent_id}_avg_response_time_ms gauge",
-                f"heretek_agent_{safe_agent_id}_avg_response_time_ms {metrics.avg_response_time_ms}",
-                "",
-            ])
+            lines.extend(
+                [
+                    f"# HELP heretek_agent_{safe_agent_id}_actions_per_minute Actions per minute",
+                    f"# TYPE heretek_agent_{safe_agent_id}_actions_per_minute gauge",
+                    f"heretek_agent_{safe_agent_id}_actions_per_minute {metrics.actions_per_minute}",
+                    "",
+                    f"# HELP heretek_agent_{safe_agent_id}_error_rate Error rate",
+                    f"# TYPE heretek_agent_{safe_agent_id}_error_rate gauge",
+                    f"heretek_agent_{safe_agent_id}_error_rate {metrics.error_rate}",
+                    "",
+                    f"# HELP heretek_agent_{safe_agent_id}_task_success_rate Task success rate",
+                    f"# TYPE heretek_agent_{safe_agent_id}_task_success_rate gauge",
+                    f"heretek_agent_{safe_agent_id}_task_success_rate {metrics.task_success_rate}",
+                    "",
+                    f"# HELP heretek_agent_{safe_agent_id}_avg_response_time_ms Average response time",
+                    f"# TYPE heretek_agent_{safe_agent_id}_avg_response_time_ms gauge",
+                    f"heretek_agent_{safe_agent_id}_avg_response_time_ms {metrics.avg_response_time_ms}",
+                    "",
+                ]
+            )
 
         # Per-profile metrics
         for agent_type, profile in self._profiles.items():
             safe_type = agent_type.replace("-", "_").replace(".", "_")
 
-            lines.extend([
-                f"# HELP heretek_profile_{safe_type}_baseline_actions_per_minute Baseline actions per minute",
-                f"# TYPE heretek_profile_{safe_type}_baseline_actions_per_minute gauge",
-                f"heretek_profile_{safe_type}_baseline_actions_per_minute {profile.baseline_actions_per_minute}",
-                "",
-                f"# HELP heretek_profile_{safe_type}_baseline_error_rate Baseline error rate",
-                f"# TYPE heretek_profile_{safe_type}_baseline_error_rate gauge",
-                f"heretek_profile_{safe_type}_baseline_error_rate {profile.baseline_error_rate}",
-                "",
-                f"# HELP heretek_profile_{safe_type}_sample_count Profile sample count",
-                f"# TYPE heretek_profile_{safe_type}_sample_count gauge",
-                f"heretek_profile_{safe_type}_sample_count {profile.sample_count}",
-                "",
-            ])
+            lines.extend(
+                [
+                    f"# HELP heretek_profile_{safe_type}_baseline_actions_per_minute Baseline actions per minute",
+                    f"# TYPE heretek_profile_{safe_type}_baseline_actions_per_minute gauge",
+                    f"heretek_profile_{safe_type}_baseline_actions_per_minute {profile.baseline_actions_per_minute}",
+                    "",
+                    f"# HELP heretek_profile_{safe_type}_baseline_error_rate Baseline error rate",
+                    f"# TYPE heretek_profile_{safe_type}_baseline_error_rate gauge",
+                    f"heretek_profile_{safe_type}_baseline_error_rate {profile.baseline_error_rate}",
+                    "",
+                    f"# HELP heretek_profile_{safe_type}_sample_count Profile sample count",
+                    f"# TYPE heretek_profile_{safe_type}_sample_count gauge",
+                    f"heretek_profile_{safe_type}_sample_count {profile.sample_count}",
+                    "",
+                ]
+            )
 
         return "\n".join(lines)
 

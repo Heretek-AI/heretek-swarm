@@ -22,7 +22,7 @@ class MigrationPhase(ABC):
         memory: Any,
         source_tier: Any,
         target_tier: Any,
-        memories_by_tier: dict[str, dict[str, Any]]
+        memories_by_tier: dict[str, dict[str, Any]],
     ) -> tuple[bool, str | None, dict[str, Any]]:
         """Execute the phase"""
 
@@ -35,7 +35,7 @@ class MigrationValidationPhase(MigrationPhase):
         memory: Any,
         source_tier: Any,
         target_tier: Any,
-        memories_by_tier: dict[str, dict[str, Any]]
+        memories_by_tier: dict[str, dict[str, Any]],
     ) -> tuple[bool, str | None, dict[str, Any]]:
         """Validate migration parameters"""
         if target_tier == source_tier:
@@ -61,7 +61,7 @@ class MigrationRemovalPhase(MigrationPhase):
         memory: Any,
         source_tier: Any,
         target_tier: Any,
-        memories_by_tier: dict[str, dict[str, Any]]
+        memories_by_tier: dict[str, dict[str, Any]],
     ) -> tuple[bool, str | None, dict[str, Any]]:
         """Remove memory from source tier"""
         if memory.memory_id in memories_by_tier.get(source_tier, {}):
@@ -78,7 +78,7 @@ class MigrationUpdatePhase(MigrationPhase):
         memory: Any,
         source_tier: Any,
         target_tier: Any,
-        memories_by_tier: dict[str, dict[str, Any]]
+        memories_by_tier: dict[str, dict[str, Any]],
     ) -> tuple[bool, str | None, dict[str, Any]]:
         """Update memory with new tier"""
         memory.current_tier = target_tier
@@ -102,7 +102,7 @@ class MigrationAdditionPhase(MigrationPhase):
         memory: Any,
         source_tier: Any,
         target_tier: Any,
-        memories_by_tier: dict[str, dict[str, Any]]
+        memories_by_tier: dict[str, dict[str, Any]],
     ) -> tuple[bool, str | None, dict[str, Any]]:
         """Add memory to target tier"""
         memories_by_tier[target_tier][memory.memory_id] = memory
@@ -120,7 +120,7 @@ class MigrationVerificationPhase(MigrationPhase):
         memory: Any,
         source_tier: Any,
         target_tier: Any,
-        memories_by_tier: dict[str, dict[str, Any]]
+        memories_by_tier: dict[str, dict[str, Any]],
     ) -> tuple[bool, str | None, dict[str, Any]]:
         """Verify memory is in correct tier"""
         result = self._verify_func(
@@ -145,7 +145,7 @@ class MigrationRollbackPhase(MigrationPhase):
         self,
         memory: Any,
         original_state: dict[str, Any],
-        memories_by_tier: dict[str, dict[str, Any]]
+        memories_by_tier: dict[str, dict[str, Any]],
     ) -> dict[str, Any]:
         """Execute rollback"""
         return self._rollback_func(
@@ -232,7 +232,7 @@ class MigrationStrategy:
         self,
         memory: Any,
         original_state: dict[str, Any],
-        memories_by_tier: dict[str, dict[str, Any]]
+        memories_by_tier: dict[str, dict[str, Any]],
     ) -> dict[str, Any]:
         """Execute rollback"""
         return await self._rollback_phase.execute(memory, original_state, memories_by_tier)

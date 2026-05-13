@@ -35,6 +35,7 @@ logger = structlog.get_logger(__name__)
 try:
     import nats
     from nats.errors import ConnectionClosedError, NatsError, TimeoutError
+
     NATS_AVAILABLE = True
 except ImportError:
     NATS_AVAILABLE = False
@@ -45,6 +46,7 @@ except ImportError:
 
 class RetentionPolicy(StrEnum):
     """Stream retention policies."""
+
     LIMITS = "limits"  # Retain until max messages/bytes/age
     INTEREST = "interest"  # Retain while consumers interested
     WORKQUEUE = "workqueue"  # Retain until acknowledged
@@ -52,12 +54,14 @@ class RetentionPolicy(StrEnum):
 
 class StorageType(StrEnum):
     """Stream storage types."""
+
     FILE = "file"
     MEMORY = "memory"
 
 
 class DeliverPolicy(StrEnum):
     """Consumer delivery policies."""
+
     ALL = "all"  # Start from beginning
     LAST = "last"  # Start from last message
     NEW = "new"  # Only new messages
@@ -67,6 +71,7 @@ class DeliverPolicy(StrEnum):
 
 class AckPolicy(StrEnum):
     """Consumer acknowledgment policies."""
+
     EXPLICIT = "explicit"  # Must acknowledge each message
     ALL = "all"  # Acknowledge all up to this message
     NONE = "none"  # No acknowledgment required
@@ -89,6 +94,7 @@ class JetStreamConfig:
         description: Human-readable description
         metadata: Custom metadata for the stream
     """
+
     stream_name: str
     subjects: list[str]
     retention: RetentionPolicy = RetentionPolicy.LIMITS
@@ -147,6 +153,7 @@ class ConsumerConfig:
         filter_subject: Subject filter for this consumer
         description: Human-readable description
     """
+
     durable_name: str
     stream_name: str
     deliver_policy: DeliverPolicy = DeliverPolicy.ALL
@@ -173,6 +180,7 @@ class ConsumerConfig:
 @dataclass
 class StreamInfo:
     """Stream information and statistics."""
+
     name: str
     config: JetStreamConfig
     created_at: datetime
@@ -685,9 +693,7 @@ class JetStreamManager:
             self._consumers[consumer_id] = consumer
 
             # Start message processing
-            asyncio.create_task(
-                self._process_consumer_messages(consumer, callback, consumer_id)
-            )
+            asyncio.create_task(self._process_consumer_messages(consumer, callback, consumer_id))
 
             self._stats["consumers_created"] += 1
 
@@ -901,9 +907,7 @@ class JetStreamManager:
                             subject = msg.subject
 
                             # Apply subject filter
-                            if subject_filter and not self._match_subject(
-                                subject, subject_filter
-                            ):
+                            if subject_filter and not self._match_subject(subject, subject_filter):
                                 await msg.ack()
                                 continue
 
@@ -914,12 +918,14 @@ class JetStreamManager:
                                 break
 
                             data = envelope.get("data", envelope)
-                            messages.append({
-                                "sequence": seq,
-                                "subject": subject,
-                                "data": data,
-                                "timestamp": envelope.get("metadata", {}).get("timestamp"),
-                            })
+                            messages.append(
+                                {
+                                    "sequence": seq,
+                                    "subject": subject,
+                                    "data": data,
+                                    "timestamp": envelope.get("metadata", {}).get("timestamp"),
+                                }
+                            )
 
                             if callback:
                                 if asyncio.iscoroutinefunction(callback):
@@ -983,6 +989,7 @@ class JetStreamManager:
     def _match_subject(self, subject: str, pattern: str) -> bool:
         """Match subject against wildcard pattern."""
         import fnmatch
+
         return fnmatch.fnmatch(subject, pattern)
 
     def _parse_duration_to_nanos(self, duration: str) -> int:

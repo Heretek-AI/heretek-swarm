@@ -35,6 +35,7 @@ logger = structlog.get_logger(__name__)
 
 class EventType(StrEnum):
     """Standard event types for the swarm."""
+
     # Agent events
     AGENT_CREATED = "agent.created"
     AGENT_STARTED = "agent.started"
@@ -81,6 +82,7 @@ class DomainEvent:
         payload: Event data
         metadata: Additional context (correlation_id, causation_id, user_id)
     """
+
     event_id: str
     event_type: str
     aggregate_id: str
@@ -171,6 +173,7 @@ class Snapshot:
         created_at: Snapshot creation timestamp
         metadata: Optional metadata
     """
+
     snapshot_id: str
     aggregate_id: str
     aggregate_type: str
@@ -487,9 +490,7 @@ class EventStore:
 
     def _check_snapshot_memory(self, aggregate_id: str, aggregate_type: str) -> None:
         """Check if snapshot should be created in memory."""
-        count = sum(
-            1 for e in self._memory_events if e.aggregate_id == aggregate_id
-        )
+        count = sum(1 for e in self._memory_events if e.aggregate_id == aggregate_id)
 
         if count > 0 and count % self._snapshot_interval == 0:
             # Skip snapshot reconstruction during event append to avoid recursion
@@ -533,7 +534,9 @@ class EventStore:
                         WHERE aggregate_id = $1 AND version > $2 AND version <= $3
                         ORDER BY version ASC
                     """,
-                    aggregate_id, from_version, to_version,
+                    aggregate_id,
+                    from_version,
+                    to_version,
                 )
             else:
                 rows = await conn.fetch(  # nosec B608
@@ -544,7 +547,8 @@ class EventStore:
                         WHERE aggregate_id = $1 AND version > $2
                         ORDER BY version ASC
                     """,
-                    aggregate_id, from_version,
+                    aggregate_id,
+                    from_version,
                 )
 
             return [
@@ -569,7 +573,8 @@ class EventStore:
     ) -> list[DomainEvent]:
         """Get events from memory."""
         events = [
-            e for e in self._memory_events
+            e
+            for e in self._memory_events
             if e.aggregate_id == aggregate_id and e.version > from_version
         ]
 
@@ -588,13 +593,12 @@ class EventStore:
             async with self._db_pool.acquire() as conn:
                 rows = await conn.fetch(
                     self.GET_EVENTS_BY_TYPE_QUERY,
-                    event_type, limit,
+                    event_type,
+                    limit,
                 )
                 return [self._row_to_event(row) for row in rows]
         else:
-            return [
-                e for e in self._memory_events if e.event_type == event_type
-            ][-limit:]
+            return [e for e in self._memory_events if e.event_type == event_type][-limit:]
 
     async def get_events_by_time_range(
         self,
@@ -607,14 +611,15 @@ class EventStore:
             async with self._db_pool.acquire() as conn:
                 rows = await conn.fetch(
                     self.GET_EVENTS_BY_TIME_RANGE_QUERY,
-                    start_time, end_time, limit,
+                    start_time,
+                    end_time,
+                    limit,
                 )
                 return [self._row_to_event(row) for row in rows]
         else:
-            return [
-                e for e in self._memory_events
-                if start_time <= e.timestamp <= end_time
-            ][-limit:]
+            return [e for e in self._memory_events if start_time <= e.timestamp <= end_time][
+                -limit:
+            ]
 
     async def get_events_by_aggregate_type(
         self,
@@ -626,13 +631,12 @@ class EventStore:
             async with self._db_pool.acquire() as conn:
                 rows = await conn.fetch(
                     self.GET_EVENTS_BY_AGGREGATE_TYPE_QUERY,
-                    aggregate_type, limit,
+                    aggregate_type,
+                    limit,
                 )
                 return [self._row_to_event(row) for row in rows]
         else:
-            return [
-                e for e in self._memory_events if e.aggregate_type == aggregate_type
-            ][-limit:]
+            return [e for e in self._memory_events if e.aggregate_type == aggregate_type][-limit:]
 
     def _row_to_event(self, row) -> DomainEvent:
         """Convert database row to DomainEvent."""
@@ -657,10 +661,7 @@ class EventStore:
                 )
                 return row["version"] or 0
         else:
-            versions = [
-                e.version for e in self._memory_events
-                if e.aggregate_id == aggregate_id
-            ]
+            versions = [e.version for e in self._memory_events if e.aggregate_id == aggregate_id]
             return max(versions) if versions else 0
 
     async def reconstruct_state(
@@ -867,6 +868,7 @@ class EventStore:
 
 # Event sourcing helper functions
 
+
 def create_event_applier(
     state_field: str,
     value_field: str,
@@ -881,6 +883,7 @@ def create_event_applier(
     Returns:
         Applier function
     """
+
     def applier(state: dict[str, Any], event: DomainEvent) -> dict[str, Any]:
         state[state_field] = event.payload.get(value_field)
         return state

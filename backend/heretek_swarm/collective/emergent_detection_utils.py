@@ -256,7 +256,9 @@ def calculate_novelty_score(
         EmergenceLevel.CRITICAL: 0.9,
     }
     pattern_level = avg_level_score.get(pattern.emergence_level, 0.0)
-    hist_avg = sum(avg_level_score.get(p.emergence_level, 0.0) for p in historical_patterns) / len(historical_patterns)
+    hist_avg = sum(avg_level_score.get(p.emergence_level, 0.0) for p in historical_patterns) / len(
+        historical_patterns
+    )
     level_divergence = abs(pattern_level - hist_avg)
     novelty_factors.append(level_divergence)
 
@@ -265,7 +267,8 @@ def calculate_novelty_score(
     recent = historical_patterns[-10:]
     very_similar = any(
         p.pattern_class == pattern.pattern_class
-        and len(set(p.involved_agents) & set(pattern.involved_agents)) >= len(pattern.involved_agents) * 0.8
+        and len(set(p.involved_agents) & set(pattern.involved_agents))
+        >= len(pattern.involved_agents) * 0.8
         for p in recent
     )
     recency_novelty = 0.0 if very_similar else 1.0
@@ -305,14 +308,11 @@ def _compute_problem_novelty(
     historical_patterns: list[EmergentPattern],
 ) -> float:
     """Compute problem novelty factor for solution novelty."""
-    historical_signatures = [
-        p.evidence.get("problem_signature", {}) for p in historical_patterns
-    ]
+    historical_signatures = [p.evidence.get("problem_signature", {}) for p in historical_patterns]
     if not historical_signatures:
         return 1.0
     signature_diffs = [
-        _calculate_signature_difference(problem_signature, hs)
-        for hs in historical_signatures
+        _calculate_signature_difference(problem_signature, hs) for hs in historical_signatures
     ]
     return sum(signature_diffs) / len(signature_diffs)
 
@@ -324,9 +324,7 @@ def _compute_approach_novelty(
     """Compute approach novelty factor for solution novelty."""
     if not approach_used:
         return 0.5
-    historical_approaches = [
-        p.evidence.get("approach_used", "") for p in historical_patterns
-    ]
+    historical_approaches = [p.evidence.get("approach_used", "") for p in historical_patterns]
     total = len(historical_approaches)
     if total == 0:
         return 1.0
@@ -390,14 +388,26 @@ def calculate_solution_novelty(
         # No history = maximally novel
         return 1.0
 
-    problem_sig = problem_signature if problem_signature is not None else pattern.evidence.get("problem_signature", {})
-    approach = approach_used if approach_used is not None else pattern.evidence.get("approach_used", "")
-    expected_perf = expected_performance if expected_performance is not None else pattern.evidence.get("expected_performance", None)
+    problem_sig = (
+        problem_signature
+        if problem_signature is not None
+        else pattern.evidence.get("problem_signature", {})
+    )
+    approach = (
+        approach_used if approach_used is not None else pattern.evidence.get("approach_used", "")
+    )
+    expected_perf = (
+        expected_performance
+        if expected_performance is not None
+        else pattern.evidence.get("expected_performance", None)
+    )
 
     novelty_factors: list[float] = []
     novelty_factors.append(_compute_problem_novelty(problem_sig, historical_patterns))
     novelty_factors.append(_compute_approach_novelty(approach, historical_patterns))
-    novelty_factors.append(_compute_result_novelty(pattern.impact_score, expected_perf, historical_patterns))
+    novelty_factors.append(
+        _compute_result_novelty(pattern.impact_score, expected_perf, historical_patterns)
+    )
 
     return sum(novelty_factors) / len(novelty_factors)
 

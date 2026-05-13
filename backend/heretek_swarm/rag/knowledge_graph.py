@@ -60,9 +60,7 @@ class GraphRetrievalResult:
     content: str
     score: float
     heading_path: list[str] = field(default_factory=list)
-    traversal_path: list[str] = field(
-        default_factory=list
-    )  # Chunks traversed to reach this result
+    traversal_path: list[str] = field(default_factory=list)  # Chunks traversed to reach this result
     hop_depth: int = 0  # How many hops from the seed chunk
     graph_edges_count: int = 0  # Number of graph relationships used
     document_id: str | None = None
@@ -100,7 +98,9 @@ class SubQuestionDecomposer:
             flags=re.IGNORECASE,
         )
         if len(sequential_split) > 1:
-            sub_questions.extend(s.strip().capitalize() + "?" for s in sequential_split if s.strip())
+            sub_questions.extend(
+                s.strip().capitalize() + "?" for s in sequential_split if s.strip()
+            )
 
         # Comparative decomposition: split on "vs", "versus", "compared to", "X vs Y"
         comparative_split = re.split(
@@ -262,9 +262,7 @@ class KnowledgeGraphRetriever:
         if not parent:
             return []
         return [
-            self._chunk_graph[cid]
-            for cid in parent.child_chunk_ids
-            if cid in self._chunk_graph
+            self._chunk_graph[cid] for cid in parent.child_chunk_ids if cid in self._chunk_graph
         ]
 
     def get_parent_chunks(self, chunk_id: str) -> list[GraphChunkNode]:
@@ -353,9 +351,7 @@ class KnowledgeGraphRetriever:
 
         # Step 1: Sub-question decomposition
         sub_questions = (
-            self._decomposer.decompose(query)
-            if self.config.sub_question_enabled
-            else [query]
+            self._decomposer.decompose(query) if self.config.sub_question_enabled else [query]
         )
 
         if len(sub_questions) > 1:
@@ -428,10 +424,7 @@ class KnowledgeGraphRetriever:
         Returns:
             List of headings with their level and constituent chunk IDs
         """
-        doc_chunks = [
-            c for c in self._chunk_graph.values()
-            if c.document_id == document_id
-        ]
+        doc_chunks = [c for c in self._chunk_graph.values() if c.document_id == document_id]
 
         # Build heading tree from root to leaves
         headings: list[dict[str, Any]] = []
@@ -451,9 +444,7 @@ class KnowledgeGraphRetriever:
     def get_statistics(self) -> dict[str, Any]:
         """Get graph statistics."""
         total_chunks = len(self._chunk_graph)
-        chunks_with_children = sum(
-            1 for c in self._chunk_graph.values() if c.child_chunk_ids
-        )
+        chunks_with_children = sum(1 for c in self._chunk_graph.values() if c.child_chunk_ids)
         max_depth = max((c.level for c in self._chunk_graph.values()), default=0)
 
         return {

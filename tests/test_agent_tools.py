@@ -145,18 +145,21 @@ class TestBuildToolHandlers:
 
     def test_handler_returns_error_on_exception(self):
         """When the async handler raises, the wrapper returns an error dict."""
+
         # Register a tool whose handler explicitly raises.
         def _raise_handler(args, ctx):
             raise RuntimeError("tool failure")
 
         core = _make_core_mcp_with_tools(tool_count=0)
-        core.registry.register(MCPToolDefinition(
-            name="failing_tool",
-            description="Always fails",
-            input_schema={"type": "object", "properties": {}},
-            handler=_raise_handler,
-            category="test",
-        ))
+        core.registry.register(
+            MCPToolDefinition(
+                name="failing_tool",
+                description="Always fails",
+                input_schema={"type": "object", "properties": {}},
+                handler=_raise_handler,
+                category="test",
+            )
+        )
         handlers = build_tool_handlers(core.get_registry())
         result = handlers["failing_tool"]({}, {"agent_id": "test"})
         assert "error" in result
@@ -222,19 +225,21 @@ class TestAgentToolInjection:
             return {"weather": "sunny", "temp": args.get("city", "unknown")}
 
         core = _make_core_mcp_with_tools(tool_count=0)
-        core.registry.register(MCPToolDefinition(
-            name="get_weather",
-            description="Get weather for a city",
-            input_schema={
-                "type": "object",
-                "properties": {
-                    "city": {"type": "string", "description": "City name"},
+        core.registry.register(
+            MCPToolDefinition(
+                name="get_weather",
+                description="Get weather for a city",
+                input_schema={
+                    "type": "object",
+                    "properties": {
+                        "city": {"type": "string", "description": "City name"},
+                    },
+                    "required": ["city"],
                 },
-                "required": ["city"],
-            },
-            handler=mock_handler,
-            category="test",
-        ))
+                handler=mock_handler,
+                category="test",
+            )
+        )
 
         registry = core.get_registry()
         schemas = build_tools_list_dictionary(registry)
@@ -264,13 +269,15 @@ class TestAgentToolInjection:
             raise RuntimeError("simulated failure")
 
         core = _make_core_mcp_with_tools(tool_count=0)
-        core.registry.register(MCPToolDefinition(
-            name="failing_tool",
-            description="Always fails",
-            input_schema={"type": "object", "properties": {}},
-            handler=failing_handler,
-            category="test",
-        ))
+        core.registry.register(
+            MCPToolDefinition(
+                name="failing_tool",
+                description="Always fails",
+                input_schema={"type": "object", "properties": {}},
+                handler=failing_handler,
+                category="test",
+            )
+        )
 
         handlers = build_tool_handlers(core.get_registry())
         agent = Agent(agent_name="test_fail_agent")
@@ -316,10 +323,12 @@ class TestModuleImport:
 
     def test_imports(self):
         from heretek_swarm.mcp import agent_tools
+
         assert hasattr(agent_tools, "build_tools_list_dictionary")
         assert hasattr(agent_tools, "build_tool_handlers")
 
     def test_main_loop_import_after_injection(self):
         """Verify main_loop can still be imported (injection code doesn't break imports)."""
         from heretek_swarm.runtime import main_loop
+
         assert hasattr(main_loop, "AutonomousSwarm")

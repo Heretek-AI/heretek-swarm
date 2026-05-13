@@ -19,6 +19,7 @@ class Severity(Enum):
     INFO: Code style concerns, maintainability hints, or documentation gaps.
         Examples: duplicate definitions, TODO comments, complexity concerns.
     """
+
     CRITICAL = auto()
     WARNING = auto()
     INFO = auto()
@@ -27,6 +28,7 @@ class Severity(Enum):
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
+
 
 def is_critical(severity: Severity | str) -> bool:
     """Return True if severity is CRITICAL."""

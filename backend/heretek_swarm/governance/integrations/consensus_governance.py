@@ -203,10 +203,12 @@ class GovernanceDeliberationEngine(DeliberationEngine):
             deliberation_id=deliberation_id,
         )
 
-        result = self._run_async(self._governance.validate_deliberation_input(
-            input_data=input_data,
-            agent_identity=agent_identity,
-        ))
+        result = self._run_async(
+            self._governance.validate_deliberation_input(
+                input_data=input_data,
+                agent_identity=agent_identity,
+            )
+        )
 
         if not result.passed:
             logger.error(
@@ -215,11 +217,15 @@ class GovernanceDeliberationEngine(DeliberationEngine):
                 agent_id=agent_id,
                 deliberation_id=deliberation_id,
                 request_id=result.request_id,
-                failed_layers=[lr.layer for lr in [result.layer1, result.layer2, result.layer3, result.layer4] if not lr.passed],
+                failed_layers=[
+                    lr.layer
+                    for lr in [result.layer1, result.layer2, result.layer3, result.layer4]
+                    if not lr.passed
+                ],
             )
             raise GovernanceSecurityError(
                 message=f"Governance validation failed for argument by {agent_id} "
-                        f"in deliberation {deliberation_id}",
+                f"in deliberation {deliberation_id}",
                 result=result,
             )
 
@@ -291,10 +297,12 @@ class GovernanceDeliberationEngine(DeliberationEngine):
             "confidence": confidence,
         }
 
-        result = self._run_async(self._governance.validate_deliberation_input(
-            input_data=input_data,
-            agent_identity=agent_identity,
-        ))
+        result = self._run_async(
+            self._governance.validate_deliberation_input(
+                input_data=input_data,
+                agent_identity=agent_identity,
+            )
+        )
 
         if not result.passed:
             logger.error(
@@ -362,10 +370,12 @@ class GovernanceDeliberationEngine(DeliberationEngine):
             "reliability_score": reliability_score,
         }
 
-        result = self._run_async(self._governance.validate_deliberation_input(
-            input_data=input_data,
-            agent_identity=agent_identity,
-        ))
+        result = self._run_async(
+            self._governance.validate_deliberation_input(
+                input_data=input_data,
+                agent_identity=agent_identity,
+            )
+        )
 
         if not result.passed:
             logger.error(
@@ -431,10 +441,12 @@ class GovernanceDeliberationEngine(DeliberationEngine):
             "action": "run_deliberation",
         }
 
-        result = self._run_async(self._governance.validate_deliberation_input(
-            input_data=input_data,
-            agent_identity=agent_identity,
-        ))
+        result = self._run_async(
+            self._governance.validate_deliberation_input(
+                input_data=input_data,
+                agent_identity=agent_identity,
+            )
+        )
 
         if not result.passed:
             logger.error(
@@ -495,10 +507,12 @@ class GovernanceDeliberationEngine(DeliberationEngine):
             "action": "run_deliberation_round",
         }
 
-        result = self._run_async(self._governance.validate_deliberation_input(
-            input_data=input_data,
-            agent_identity=agent_identity,
-        ))
+        result = self._run_async(
+            self._governance.validate_deliberation_input(
+                input_data=input_data,
+                agent_identity=agent_identity,
+            )
+        )
 
         if not result.passed:
             logger.error(
@@ -546,10 +560,12 @@ class GovernanceDeliberationEngine(DeliberationEngine):
             "action": "finalize_deliberation",
         }
 
-        result = self._run_async(self._governance.validate_deliberation_input(
-            input_data=input_data,
-            agent_identity=agent_identity,
-        ))
+        result = self._run_async(
+            self._governance.validate_deliberation_input(
+                input_data=input_data,
+                agent_identity=agent_identity,
+            )
+        )
 
         if not result.passed:
             logger.error(

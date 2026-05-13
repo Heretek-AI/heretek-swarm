@@ -72,11 +72,13 @@ async def get_all_agents_with_skills(
         for agent_id in skill.agent_ids:
             if agent_id not in agent_skills:
                 agent_skills[agent_id] = []
-            agent_skills[agent_id].append({
-                "name": skill.name,
-                "category": skill.category.value,
-                "description": skill.description,
-            })
+            agent_skills[agent_id].append(
+                {
+                    "name": skill.name,
+                    "category": skill.category.value,
+                    "description": skill.description,
+                }
+            )
 
     return {
         "agents": agent_skills,
@@ -168,7 +170,7 @@ async def get_agent_skills(
                 "agent_id": agent_id,
                 "skills": [],
                 "message": "Agent exists but no skills registered. "
-                           "Agent capabilities may not be configured for skill registry.",
+                "Agent capabilities may not be configured for skill registry.",
             }
 
         raise HTTPException(status_code=404, detail=f"Agent not found: {agent_id}")
@@ -230,8 +232,7 @@ async def register_skill(
         except ValueError:
             raise HTTPException(
                 status_code=400,
-                detail=f"Invalid category: {category}. "
-                       f"Valid: {[c.value for c in SkillCategory]}",
+                detail=f"Invalid category: {category}. Valid: {[c.value for c in SkillCategory]}",
             )
 
     skill = SkillMetadata(

@@ -113,7 +113,9 @@ class CoordinatorAgent(
         self._max_coordination_ratio: float = 0.35
 
         # Strategy instances for dependency resolution
-        self._dependency_strategy = DependencyResolutionStrategy(self._tasks, self._dependency_graph)
+        self._dependency_strategy = DependencyResolutionStrategy(
+            self._tasks, self._dependency_graph
+        )
         self._parallel_strategy = ParallelExecutionStrategy()
         self._resource_strategy = ResourceAllocationStrategy()
 
@@ -907,9 +909,7 @@ class CoordinatorAgent(
     async def _handle_graph_detect_cycles(self, message: ActorMessage) -> None:
         """Detect cycles in task dependency graph."""
         if not self._task_graph:
-            await self._send_error(
-                message.sender_id, _TASKGRAPH_NOT_INIT, message.message_type
-            )
+            await self._send_error(message.sender_id, _TASKGRAPH_NOT_INIT, message.message_type)
             return
         try:
             result = self._task_graph.detect_cycles()
@@ -937,9 +937,7 @@ class CoordinatorAgent(
     async def _handle_graph_get_metrics(self, message: ActorMessage) -> None:
         """Get task graph metrics."""
         if not self._task_graph:
-            await self._send_error(
-                message.sender_id, _TASKGRAPH_NOT_INIT, message.message_type
-            )
+            await self._send_error(message.sender_id, _TASKGRAPH_NOT_INIT, message.message_type)
             return
         try:
             content = message.content or {}
@@ -976,9 +974,7 @@ class CoordinatorAgent(
     async def _handle_graph_get_topological_order(self, message: ActorMessage) -> None:
         """Get topological order of tasks."""
         if not self._task_graph:
-            await self._send_error(
-                message.sender_id, _TASKGRAPH_NOT_INIT, message.message_type
-            )
+            await self._send_error(message.sender_id, _TASKGRAPH_NOT_INIT, message.message_type)
             return
         try:
             order = self._task_graph.get_topological_order()
@@ -1003,9 +999,7 @@ class CoordinatorAgent(
     async def _handle_sync_register_dependency(self, message: ActorMessage) -> None:
         """Register an agent dependency for tracking."""
         if not self._synchronizer:
-            await self._send_error(
-                message.sender_id, _TASKSYNC_NOT_INIT, message.message_type
-            )
+            await self._send_error(message.sender_id, _TASKSYNC_NOT_INIT, message.message_type)
             return
         try:
             content = message.content or {}
@@ -1031,9 +1025,7 @@ class CoordinatorAgent(
     async def _handle_sync_release_dependency(self, message: ActorMessage) -> None:
         """Release an agent dependency."""
         if not self._synchronizer:
-            await self._send_error(
-                message.sender_id, _TASKSYNC_NOT_INIT, message.message_type
-            )
+            await self._send_error(message.sender_id, _TASKSYNC_NOT_INIT, message.message_type)
             return
         try:
             content = message.content or {}
@@ -1055,9 +1047,7 @@ class CoordinatorAgent(
     async def _handle_sync_detect_deadlock(self, message: ActorMessage) -> None:
         """Detect deadlocks in agent dependencies."""
         if not self._synchronizer:
-            await self._send_error(
-                message.sender_id, _TASKSYNC_NOT_INIT, message.message_type
-            )
+            await self._send_error(message.sender_id, _TASKSYNC_NOT_INIT, message.message_type)
             return
         try:
             content = message.content or {}
@@ -1081,9 +1071,7 @@ class CoordinatorAgent(
     async def _handle_get_coordination_ratio(self, message: ActorMessage) -> None:
         """Get current coordination ratio."""
         if not self._synchronizer:
-            await self._send_error(
-                message.sender_id, _TASKSYNC_NOT_INIT, message.message_type
-            )
+            await self._send_error(message.sender_id, _TASKSYNC_NOT_INIT, message.message_type)
             return
         try:
             ratio = await self._synchronizer.get_coordination_ratio()
@@ -1110,9 +1098,7 @@ class CoordinatorAgent(
     async def _handle_get_sync_health(self, message: ActorMessage) -> None:
         """Get synchronization health report."""
         if not self._synchronizer:
-            await self._send_error(
-                message.sender_id, _TASKSYNC_NOT_INIT, message.message_type
-            )
+            await self._send_error(message.sender_id, _TASKSYNC_NOT_INIT, message.message_type)
             return
         try:
             report = await self._synchronizer.emit_health_report()

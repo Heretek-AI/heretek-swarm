@@ -12,7 +12,7 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
 from starlette.responses import Response
 
-from heretek_swarm.logging.config import (
+from heretek_swarm.swarm_logging.config import (
     clear_context,
     get_logger,
     log_api_request,
@@ -57,9 +57,7 @@ class LoggingMiddleware(BaseHTTPMiddleware):
     # Agent ID header
     AGENT_ID_HEADER = "x-agent-id"
 
-    async def dispatch(
-        self, request: Request, call_next: Callable
-    ) -> Response:
+    async def dispatch(self, request: Request, call_next: Callable) -> Response:
         """Process the request and log the result."""
         # Skip excluded paths
         if self._should_skip(request.url.path):

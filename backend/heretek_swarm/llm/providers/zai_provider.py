@@ -161,7 +161,11 @@ class ZAIProvider(LLMProviderBase):
                     provider="zai",
                 )
             if response.status_code != 200:
-                error_data = response.json() if response.headers.get("content-type", "").startswith("application/json") else {"text": response.text}
+                error_data = (
+                    response.json()
+                    if response.headers.get("content-type", "").startswith("application/json")
+                    else {"text": response.text}
+                )
                 raise ProviderError(
                     f"Z.AI API error: {response.status_code} - {error_data}",
                     provider="zai",
@@ -287,6 +291,7 @@ class ZAIProvider(LLMProviderBase):
         """Cleanup HTTP client."""
         if self._client and not self._client.is_closed:
             await self._client.aclose()
+
 
 # Import at module level for type annotation
 from heretek_swarm.infrastructure.otel import InstrumentedAsyncClient

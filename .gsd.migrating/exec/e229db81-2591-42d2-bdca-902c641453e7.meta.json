@@ -1,0 +1,18 @@
+{
+  "id": "e229db81-2591-42d2-bdca-902c641453e7",
+  "runtime": "bash",
+  "purpose": "Verify grep content in M008-SUMMARY.md with robust counting",
+  "script_chars": 603,
+  "started_at": "2026-05-12T23:53:03.389Z",
+  "finished_at": "2026-05-12T23:53:03.463Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 74,
+  "stdout_bytes": 2245,
+  "stderr_bytes": 53,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\e229db81-2591-42d2-bdca-902c641453e7.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\e229db81-2591-42d2-bdca-902c641453e7.stderr"
+}

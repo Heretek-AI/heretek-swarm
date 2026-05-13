@@ -1,0 +1,300 @@
+=== Test files ===
+67
+Test files:
+tests/__init__.py
+tests/conftest.py
+tests/test_actor_lifecycle.py
+tests/test_actor_routing.py
+tests/test_agent_factory.py
+tests/test_agent_tools.py
+tests/test_auto_routing_integration.py
+tests/test_chronos_ticks.py
+tests/test_cli_help.py
+tests/test_cli_output.py
+tests/test_complexity_heuristic.py
+tests/test_config_cli.py
+tests/test_consciousness_api.py
+tests/test_consensus_api_auth.py
+tests/test_consensus_audit_jsonl.py
+tests/test_consensus_cli.py
+tests/test_consensus_coordinator.py
+tests/test_consensus_runtime.py
+tests/test_consensus_websocket.py
+tests/test_cost_calculation.py
+tests/test_cross_slice_mcp_routing.py
+tests/test_daemon.py
+tests/test_deliberation_flow.py
+tests/test_docker_config.py
+tests/test_domain_selector.py
+tests/test_end_to_end_s03.py
+tests/test_goal_cli.py
+tests/test_goal_consensus.py
+tests/test_goal_pipeline.py
+tests/test_goal_proposer.py
+
+=== tests/conftest.py (first 80 lines) ===
+"""Shared pytest fixtures for the heretek-swarm test suite.
+
+Provides:
+* ``mock_agent`` — a ``unittest.mock.MagicMock`` pre-configured with the
+  ``agent_name`` attribute and a no-op ``run`` method.
+* ``mock_agent_dict`` — builds a dict populated with ``analysis_history``,
+  ``_analyses``, and ``_challenges`` for test-injectable state on mocked
+  agents.
+* An **autouse** fixture that clears ``get_supervisor().actors`` after every
+  test to prevent singleton state from leaking between tests.
+* A **pytest filterwarnings** entry that suppresses ``ResourceWarning`` —
+  these are emitted by unclosed ``aiohttp.ClientSession`` objects from
+  ``AgentActor`` heartbeat loops in integration tests.
+* A **logging filter** on the ``asyncio`` logger that suppresses
+  ``Unclosed client session`` messages — these are emitted by the event
+  loop's default exception handler during teardown when background tasks
+  created ``aiohttp.ClientSession`` objects that were not explicitly closed.
+"""
+
+import logging
+import warnings
+
+from collections.abc import Generator
+from unittest.mock import MagicMock
+
+import pytest
+
+from heretek_swarm.actors.supervisor import get_supervisor
+
+
+# Ignore ResourceWarning from unclosed aiohttp.ClientSession objects —
+# these are created by AgentActor heartbeat background tasks in integration
+# tests and are harmless (cleaned up by the event loop on shutdown).
+warnings.filterwarnings("ignore", category=ResourceWarning, message=".*unclosed.*")
+
+
+class _SuppressUnclosedSessions(logging.Filter):
+    """Drop asyncio 'Unclosed client session' log records.
+
+    The asyncio event loop logs unclosed aiohttp sessions as ERROR-level
+    messages through the ``asyncio`` logger during event-loop teardown.
+    These are benign in the test suite (background heartbeat tasks create
+    sessions that are cleaned up when the loop closes).  Suppressing them
+    keeps ``pytest`` stderr clean and prevents false-negative verification.
+    """
+
+    def filter(self, record: logging.LogRecord) -> bool:
+        return "Unclosed client session" not in record.getMessage()
+
+
+# Apply the filter to the asyncio logger so structured-log and stdlib
+# handlers both see it.
+logging.getLogger("asyncio").addFilter(_SuppressUnclosedSessions())
+
+
+@pytest.fixture
+def mock_agent() -> MagicMock:
+    """Return a fresh ``MagicMock`` that looks like a ``swarms.Agent``.
+
+    The mock carries an ``agent_name`` attribute (``"test-agent"``) and a
+    ``run`` method that returns a preset string so callers get a real return
+    value without hitting an LLM.
+    """
+    agent = MagicMock()
+    agent.agent_name = "test-agent"
+    agent.run.return_value = "mock response"
+    return agent
+
+
+@pytest.fixture
+def mock_agent_dict() -> dict:
+    """Return a dict with per-agent attributes for deliberation testing.
+
+    Dict keys mirror what real ``AgentActor`` instances carry so that
+    downstream code can inspect ``analysis_history``, ``_analyses``, and
+    ``_challenges`` without instantiating real actors.
+    """
+    return {
+        "analysis_history": [],
+        "_analyses": {},
+
+=== Test marker definitions ===
+99:    "pytest-benchmark>=4.0.0",
+151:    "--strict-markers",
+155:markers = [
+162:    "latency: Latency benchmark tests (<100ms baseline)",
+310:exclude_dirs = [".roo", "agent_workspace", ".benchmarks", ".dist-rig", "tests"]
+
+=== Test marker usage ===
+      3 149
+      3 125
+      2 725
+      2 59
+      2 462
+      2 447
+      2 438
+      2 347
+      2 331
+      2 317
+      2 316
+      2 285
+      2 217
+      2 201
+      2 193
+      2 130
+      2 117
+      2 112
+      1 98
+      1 924
+      1 90
+      1 898
+      1 883
+      1 861
+      1 86
+      1 849
+      1 81
+      1 805
+      1 8
+      1 78
+      1 765
+      1 760
+      1 75
+      1 734
+      1 731
+      1 707
+      1 705
+      1 703
+      1 70
+      1 698
+      1 690
+      1 688
+      1 685
+      1 682
+      1 668
+      1 667
+      1 66
+      1 65
+      1 646
+      1 638
+      1 629
+      1 625
+      1 61
+      1 606
+      1 601
+      1 585
+      1 575
+      1 571
+      1 568
+      1 567
+      1 564
+      1 551
+      1 548
+      1 534
+      1 532
+      1 530
+      1 525
+      1 520
+      1 52
+      1 519
+      1 510
+      1 503
+      1 50
+      1 496
+      1 495
+      1 49
+      1 488
+      1 487
+      1 484
+      1 480
+      1 474
+      1 473
+      1 472
+      1 467
+      1 455
+      1 454
+      1 440
+      1 435
+      1 430
+      1 425
+      1 423
+      1 422
+      1 419
+      1 414
+      1 410
+      1 407
+      1 405
+      1 40
+      1 393
+      1 391
+      1 390
+      1 388
+      1 386
+      1 381
+      1 376
+      1 374
+      1 368
+      1 367
+      1 364
+      1 355
+      1 354
+      1 349
+      1 348
+      1 345
+      1 338
+      1 337
+      1 334
+      1 311
+      1 310
+      1 31
+      1 307
+      1 301
+      1 300
+      1 30
+      1 299
+      1 296
+      1 294
+      1 291
+      1 287
+      1 284
+      1 274
+      1 270
+      1 265
+      1 262
+      1 261
+      1 255
+      1 252
+      1 251
+      1 244
+      1 240
+      1 235
+      1 231
+      1 228
+      1 227
+      1 226
+      1 225
+      1 221
+      1 219
+      1 214
+      1 213
+      1 211
+      1 209
+      1 207
+      1 205
+      1 197
+      1 189
+      1 188
+      1 185
+      1 183
+      1 180
+      1 179
+      1 178
+      1 176
+      1 171
+      1 169
+      1 164
+      1 162
+      1 160
+      1 151
+      1 150
+      1 145
+      1 144
+      1 143
+      1 124
+      1 121
+      1 104

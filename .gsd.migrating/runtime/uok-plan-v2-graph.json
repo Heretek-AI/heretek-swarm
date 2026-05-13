@@ -1,202 +1,230 @@
 {
-  "compiledAt": "2026-05-12T23:30:15.489Z",
-  "milestoneId": "M008",
+  "compiledAt": "2026-05-13T02:07:49.878Z",
+  "milestoneId": "M009",
   "pipeline": {
     "clarifyRoundLimit": 3,
     "researchSynthesized": true,
     "draftContextIncluded": false,
     "finalizedContextIncluded": true,
-    "sourcePhase": "summarizing"
+    "sourcePhase": "executing"
   },
   "nodes": [
     {
-      "id": "execute-task:M008:S01:T01",
+      "id": "execute-task:M009:S01:T01",
       "kind": "unit",
       "dependsOn": [],
       "writes": [
-        ".gitignore"
+        ".env"
       ],
       "metadata": {
         "unitType": "execute-task",
-        "unitId": "M008.S01.T01",
-        "title": "Git-rm'd all 13 tracked garbage files (=*.0 pip artifacts + 0 grep artifact) and added =* gitignore prevention rule",
+        "unitId": "M009.S01.T01",
+        "title": "Created .env from .env.example with placeholder values for all required variables",
         "status": "complete"
       }
     },
     {
-      "id": "execute-task:M008:S01:T02",
+      "id": "execute-task:M009:S01:T02",
       "kind": "unit",
       "dependsOn": [
-        "execute-task:M008:S01:T01"
+        "execute-task:M009:S01:T01"
       ],
       "writes": [
-        ".gitignore"
+        "pyproject.toml"
       ],
       "metadata": {
         "unitType": "execute-task",
-        "unitId": "M008.S01.T02",
-        "title": "Ran exhaustive 7-check verification suite confirming clean git index, clean filesystem, and =* gitignore prevention rule",
+        "unitId": "M009.S01.T02",
+        "title": "Successfully installed heretek-swarm in editable mode with dev dependencies and verified import + CLI work.",
         "status": "complete"
       }
     },
     {
-      "id": "complete-slice:M008:S01",
+      "id": "execute-task:M009:S01:T03",
+      "kind": "unit",
+      "dependsOn": [
+        "execute-task:M009:S01:T02"
+      ],
+      "writes": [],
+      "metadata": {
+        "unitType": "execute-task",
+        "unitId": "M009.S01.T03",
+        "title": "Run and fix full pytest suite",
+        "status": "pending"
+      }
+    },
+    {
+      "id": "execute-task:M009:S01:T04",
+      "kind": "unit",
+      "dependsOn": [
+        "execute-task:M009:S01:T03"
+      ],
+      "writes": [],
+      "metadata": {
+        "unitType": "execute-task",
+        "unitId": "M009.S01.T04",
+        "title": "Fix ruff lint violations",
+        "status": "pending"
+      }
+    },
+    {
+      "id": "execute-task:M009:S01:T05",
+      "kind": "unit",
+      "dependsOn": [
+        "execute-task:M009:S01:T04"
+      ],
+      "writes": [],
+      "metadata": {
+        "unitType": "execute-task",
+        "unitId": "M009.S01.T05",
+        "title": "Fix mypy strict mode type errors",
+        "status": "pending"
+      }
+    },
+    {
+      "id": "complete-slice:M009:S01",
       "kind": "verification",
       "dependsOn": [
-        "execute-task:M008:S01:T02"
+        "execute-task:M009:S01:T05"
       ],
       "metadata": {
         "unitType": "complete-slice",
-        "unitId": "M008.S01",
+        "unitId": "M009.S01",
         "title": "S01",
-        "status": "complete"
+        "status": "pending"
       }
     },
     {
-      "id": "execute-task:M008:S02:T01",
+      "id": "execute-task:M009:S02:T01",
       "kind": "unit",
       "dependsOn": [],
       "writes": [],
       "metadata": {
         "unitType": "execute-task",
-        "unitId": "M008.S02.T01",
-        "title": "Deleted all four stale root files (triage_classifier.py, audit/cli.py, audit-report.md, triage_data.json) via git rm; empty audit/ directory auto-removed; canonical backend/heretek_swarm/audit untouched",
-        "status": "complete"
+        "unitId": "M009.S02.T01",
+        "title": "Fix Dockerfile HEALTHCHECK URL",
+        "status": "pending"
       }
     },
     {
-      "id": "execute-task:M008:S02:T02",
+      "id": "execute-task:M009:S02:T02",
       "kind": "unit",
       "dependsOn": [
-        "execute-task:M008:S02:T01"
+        "execute-task:M009:S02:T01"
       ],
       "writes": [],
       "metadata": {
         "unitType": "execute-task",
-        "unitId": "M008.S02.T02",
-        "title": "Verified all four stale files removed from git tracking and disk; audit/ directory gone; canonical backend/heretek_swarm/audit untouched",
-        "status": "complete"
+        "unitId": "M009.S02.T02",
+        "title": "Fix docker-compose.yml HEALTHCHECK URL",
+        "status": "pending"
       }
     },
     {
-      "id": "complete-slice:M008:S02",
+      "id": "execute-task:M009:S02:T03",
+      "kind": "unit",
+      "dependsOn": [
+        "execute-task:M009:S02:T02"
+      ],
+      "writes": [],
+      "metadata": {
+        "unitType": "execute-task",
+        "unitId": "M009.S02.T03",
+        "title": "Fix SPA catch-all dist path in main.py",
+        "status": "pending"
+      }
+    },
+    {
+      "id": "execute-task:M009:S02:T04",
+      "kind": "unit",
+      "dependsOn": [
+        "execute-task:M009:S02:T03"
+      ],
+      "writes": [],
+      "metadata": {
+        "unitType": "execute-task",
+        "unitId": "M009.S02.T04",
+        "title": "Build all Docker images",
+        "status": "pending"
+      }
+    },
+    {
+      "id": "execute-task:M009:S02:T05",
+      "kind": "unit",
+      "dependsOn": [
+        "execute-task:M009:S02:T04"
+      ],
+      "writes": [],
+      "metadata": {
+        "unitType": "execute-task",
+        "unitId": "M009.S02.T05",
+        "title": "Bring stack up and verify health",
+        "status": "pending"
+      }
+    },
+    {
+      "id": "complete-slice:M009:S02",
       "kind": "verification",
       "dependsOn": [
-        "execute-task:M008:S02:T02"
+        "execute-task:M009:S02:T05"
       ],
       "metadata": {
         "unitType": "complete-slice",
-        "unitId": "M008.S02",
-        "title": "S02",
-        "status": "complete"
+        "unitId": "M009.S02",
+        "title": "Docker Infrastructure Fix & Build",
+        "status": "pending"
       }
     },
     {
-      "id": "execute-task:M008:S03:T01",
+      "id": "execute-task:M009:S03:T01",
       "kind": "unit",
       "dependsOn": [],
-      "writes": [
-        "docs/ARCHITECTURE.md"
-      ],
+      "writes": [],
       "metadata": {
         "unitType": "execute-task",
-        "unitId": "M008.S03.T01",
-        "title": "Replaced 54 stale heretek-swarm/heretek_swarm/ path references in ARCHITECTURE.md with backend/heretek_swarm/",
-        "status": "complete"
+        "unitId": "M009.S03.T01",
+        "title": "Verify live prompt → swarm response",
+        "status": "pending"
       }
     },
     {
-      "id": "execute-task:M008:S03:T02",
+      "id": "execute-task:M009:S03:T02",
       "kind": "unit",
       "dependsOn": [
-        "execute-task:M008:S03:T01"
+        "execute-task:M009:S03:T01"
       ],
-      "writes": [
-        "docs/AGENTS.md",
-        "docs/API_ENDPOINTS.md",
-        "docs/AGENT_REFERENCE.md",
-        "docs/AGENT_ARCHITECTURE.md",
-        "docs/CODEBASE_AUDIT.md",
-        "docs/API_REFERENCE.md",
-        "docs/CORE_ACTORS.md",
-        "docs/INDEX.md",
-        "docs/MAIN_PROMPT.md",
-        "docs/PROMETHEUS_METRICS.md",
-        "docs/PROTOCOL_SPEC.md",
-        "docs/architecture/ARCHITECTURE_REALITY.md",
-        "docs/architecture/actors-system.md",
-        "docs/architecture/memory-system.md",
-        "docs/architecture/consensus-mechanism.md",
-        "docs/architecture/emergent-intelligence.md",
-        "docs/architecture/collective-learning.md",
-        "docs/architecture/orchestration-system.md",
-        "docs/architecture/plugins.md",
-        "docs/architecture/EXTERNAL_PATTERNS_ANALYSIS.md"
-      ],
+      "writes": [],
       "metadata": {
         "unitType": "execute-task",
-        "unitId": "M008.S03.T02",
-        "title": "Replaced all src/heretek_swarm → backend/heretek_swarm references across 20 doc files",
-        "status": "complete"
+        "unitId": "M009.S03.T02",
+        "title": "Verify dashboard serves and connects",
+        "status": "pending"
       }
     },
     {
-      "id": "execute-task:M008:S03:T03",
+      "id": "execute-task:M009:S03:T03",
       "kind": "unit",
       "dependsOn": [
-        "execute-task:M008:S03:T02"
+        "execute-task:M009:S03:T02"
       ],
-      "writes": [
-        "README.md",
-        "CLAUDE.md"
-      ],
+      "writes": [],
       "metadata": {
         "unitType": "execute-task",
-        "unitId": "M008.S03.T03",
-        "title": "Updated README.md directory tree and install instructions; cleaned CLAUDE.md of src/ references",
-        "status": "complete"
+        "unitId": "M009.S03.T03",
+        "title": "Handle missing embedding server gracefully",
+        "status": "pending"
       }
     },
     {
-      "id": "complete-slice:M008:S03",
+      "id": "complete-slice:M009:S03",
       "kind": "verification",
       "dependsOn": [
-        "execute-task:M008:S03:T03"
+        "execute-task:M009:S03:T03"
       ],
       "metadata": {
         "unitType": "complete-slice",
-        "unitId": "M008.S03",
-        "title": "S03",
-        "status": "complete"
-      }
-    },
-    {
-      "id": "execute-task:M008:S04:T01",
-      "kind": "unit",
-      "dependsOn": [],
-      "writes": [
-        "backend/heretek_swarm/api/main.py",
-        "backend/heretek_swarm/memory/__init__.py",
-        "backend/heretek_swarm/runtime/registry_enhanced.py",
-        "backend/heretek_swarm/tools/__init__.py"
-      ],
-      "metadata": {
-        "unitType": "execute-task",
-        "unitId": "M008.S04.T01",
-        "title": "Replaced 7 stale src/ path-string references across 4 Python source files with correct backend/ paths",
-        "status": "complete"
-      }
-    },
-    {
-      "id": "complete-slice:M008:S04",
-      "kind": "verification",
-      "dependsOn": [
-        "execute-task:M008:S04:T01"
-      ],
-      "metadata": {
-        "unitType": "complete-slice",
-        "unitId": "M008.S04",
-        "title": "S04",
+        "unitId": "M009.S03",
+        "title": "Live E2E & Embedding Edge Cases",
         "status": "pending"
       }
     }

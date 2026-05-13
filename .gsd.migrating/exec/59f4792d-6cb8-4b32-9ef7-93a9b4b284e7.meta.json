@@ -1,0 +1,18 @@
+{
+  "id": "59f4792d-6cb8-4b32-9ef7-93a9b4b284e7",
+  "runtime": "bash",
+  "purpose": "Test structure deep dive - conftest, markers, imports",
+  "script_chars": 632,
+  "started_at": "2026-05-13T00:40:58.180Z",
+  "finished_at": "2026-05-13T00:41:00.195Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 2015,
+  "stdout_bytes": 2063,
+  "stderr_bytes": 0,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\59f4792d-6cb8-4b32-9ef7-93a9b4b284e7.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\59f4792d-6cb8-4b32-9ef7-93a9b4b284e7.stderr"
+}

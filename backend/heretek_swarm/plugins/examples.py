@@ -4,6 +4,7 @@ Example Plugins for Heretek Swarm
 This module contains example plugins demonstrating the plugin system.
 """
 
+import asyncio
 from datetime import UTC
 from typing import Any
 
@@ -23,7 +24,7 @@ class LoggingPlugin(Plugin):
             version="0.1.0",
             description="Logs all messages passing through the system",
             author="Heretek Swarm",
-            dependencies=[]
+            dependencies=[],
         )
         self.message_count = 0
 
@@ -60,7 +61,7 @@ class MemoryEnhancementPlugin(Plugin):
             version="0.1.0",
             description="Enhances memory with importance scoring",
             author="Heretek Swarm",
-            dependencies=["memory"]
+            dependencies=["memory"],
         )
         self.active_agents: dict[str, Any] = {}
 
@@ -75,10 +76,7 @@ class MemoryEnhancementPlugin(Plugin):
         Args:
             agent_id: Agent identifier
         """
-        self.active_agents[agent_id] = {
-            "spawned_at": self._get_timestamp(),
-            "message_count": 0
-        }
+        self.active_agents[agent_id] = {"spawned_at": self._get_timestamp(), "message_count": 0}
 
     async def on_agent_terminate(self, agent_id: str) -> None:
         """
@@ -114,7 +112,7 @@ class MemoryEnhancementPlugin(Plugin):
         return {
             "original_message": message,
             "importance_score": importance,
-            "enhanced_at": self._get_timestamp()
+            "enhanced_at": self._get_timestamp(),
         }
 
     def _calculate_importance(self, content: str) -> float:
@@ -148,6 +146,7 @@ class MemoryEnhancementPlugin(Plugin):
     def _get_timestamp(self) -> str:
         """Get current timestamp in ISO format."""
         from datetime import datetime
+
         return datetime.now(UTC).isoformat()
 
 
@@ -164,7 +163,7 @@ class HealthMonitorPlugin(Plugin):
             version="0.1.0",
             description="Monitors system health and performance",
             author="Heretek Swarm",
-            dependencies=[]
+            dependencies=[],
         )
         self.health_status = "healthy"
         self.check_count = 0
@@ -193,6 +192,7 @@ class HealthMonitorPlugin(Plugin):
         # Check memory
         try:
             from memory.persistent import PersistentMemoryStore
+
             memory_store = PersistentMemoryStore()
             await memory_store.connect()
 
@@ -201,7 +201,6 @@ class HealthMonitorPlugin(Plugin):
 
         except Exception as e:
             self.health_status = f"unhealthy: {e!s}"
-
 
     async def on_message(self, message: dict[str, Any]) -> dict[str, Any] | None:
         """
@@ -218,7 +217,7 @@ class HealthMonitorPlugin(Plugin):
             return {
                 "health_status": self.health_status,
                 "check_count": self.check_count,
-                "checked_at": self._get_timestamp()
+                "checked_at": self._get_timestamp(),
             }
 
         return None

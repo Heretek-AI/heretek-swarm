@@ -19,6 +19,7 @@ logger = structlog.get_logger("embeddings.providers.base")
 @dataclass
 class EmbeddingRequest:
     """Request parameters for embedding generation."""
+
     inputs: str | list[str]
     model: str | None = None
     encoding_format: str = "float"  # "float" or "base64"
@@ -48,6 +49,7 @@ class EmbeddingRequest:
 @dataclass
 class EmbeddingResponse:
     """Response from an embedding generation request."""
+
     embeddings: list[list[float]]
     model: str
     usage: dict[str, int] = field(default_factory=dict)
@@ -75,6 +77,7 @@ class EmbeddingResponse:
 @dataclass
 class EmbeddingProviderCapabilities:
     """Capabilities of an embedding provider."""
+
     max_batch_size: int = 32
     max_tokens_per_batch: int = 8192
     supported_formats: list[str] = field(default_factory=lambda: ["float"])
@@ -262,6 +265,7 @@ class EmbeddingAuthenticationError(EmbeddingProviderError):
 
 class EmbeddingRateLimitError(EmbeddingProviderError):
     """Exception raised when rate limited."""
+
     def __init__(
         self,
         message: str,

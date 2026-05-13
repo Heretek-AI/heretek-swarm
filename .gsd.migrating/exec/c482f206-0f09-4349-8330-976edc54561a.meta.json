@@ -1,0 +1,18 @@
+{
+  "id": "c482f206-0f09-4349-8330-976edc54561a",
+  "runtime": "bash",
+  "purpose": "Explore API surface and actor structure",
+  "script_chars": 530,
+  "started_at": "2026-05-13T00:42:24.924Z",
+  "finished_at": "2026-05-13T00:42:28.084Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 3160,
+  "stdout_bytes": 7710,
+  "stderr_bytes": 0,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\c482f206-0f09-4349-8330-976edc54561a.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\c482f206-0f09-4349-8330-976edc54561a.stderr"
+}

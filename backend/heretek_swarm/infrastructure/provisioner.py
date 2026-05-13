@@ -31,6 +31,7 @@ logger = structlog.get_logger("infrastructure.provisioner")
 
 class ContainerRuntime(StrEnum):
     """Supported container runtimes."""
+
     PODMAN = "podman"
     DOCKER = "docker"
 
@@ -38,6 +39,7 @@ class ContainerRuntime(StrEnum):
 @dataclass
 class ContainerConfig:
     """Configuration for a container to be provisioned."""
+
     service: InfrastructureService
     image: str
     ports: dict[str, str] = field(default_factory=dict)  # host_port: container_port
@@ -54,6 +56,7 @@ class ContainerConfig:
 @dataclass
 class ConnectionStringResult:
     """Result of provisioning a single service."""
+
     service: InfrastructureService
     success: bool
     connection_string: str | None = None
@@ -203,9 +206,11 @@ def start_container(runtime: ContainerRuntime, config: ContainerConfig) -> bool:
 
     # Build the run command
     cmd: list[str] = [
-        runtime.value, "run",
+        runtime.value,
+        "run",
         "--detach",
-        "--name", container_name,
+        "--name",
+        container_name,
         "--rm",  # Auto-remove when stopped
     ]
 
@@ -684,6 +689,7 @@ async def provision_infrastructure(
 
 
 # Synchronous wrappers for non-async contexts
+
 
 def provision_service_sync(
     service: InfrastructureService,

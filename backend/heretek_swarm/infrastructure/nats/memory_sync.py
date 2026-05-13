@@ -90,12 +90,8 @@ class VectorClock:
 
         Returns True if neither clock dominates the other (concurrent updates).
         """
-        self_dominates = all(
-            self.clocks.get(a, 0) >= c for a, c in other.clocks.items()
-        )
-        other_dominates = all(
-            other.clocks.get(a, 0) >= c for a, c in self.clocks.items()
-        )
+        self_dominates = all(self.clocks.get(a, 0) >= c for a, c in other.clocks.items())
+        other_dominates = all(other.clocks.get(a, 0) >= c for a, c in self.clocks.items())
         return not self_dominates and not other_dominates
 
     def to_dict(self) -> dict[str, int]:
@@ -208,8 +204,7 @@ class MemoryConflict:
                 remote_clock.merge(local_clock)
             winner = (
                 self.remote_update
-                if sum(remote_clock.clocks.values())
-                > sum(local_clock.clocks.values())
+                if sum(remote_clock.clocks.values()) > sum(local_clock.clocks.values())
                 else self.local_update
             )
             self.resolved_content = winner.content
@@ -353,7 +348,10 @@ class MemorySync:
         self, update: MemoryUpdate, local_update: MemoryUpdate | None
     ) -> MemoryUpdate | None:
         """Check for conflict and resolve if needed. Returns resolved update or original."""
-        if not local_update or update.operation not in (MemoryOperation.UPDATE, MemoryOperation.CREATE):
+        if not local_update or update.operation not in (
+            MemoryOperation.UPDATE,
+            MemoryOperation.CREATE,
+        ):
             return update
 
         local_clock = VectorClock.from_dict(local_update.vector_clock)
@@ -394,9 +392,7 @@ class MemorySync:
                     error=str(e),
                 )
 
-    async def _handle_memory_update(
-        self, _subject: str, data: bytes
-    ) -> None:
+    async def _handle_memory_update(self, _subject: str, data: bytes) -> None:
         """Handle incoming memory update from NATS."""
         try:
             import json
@@ -444,9 +440,7 @@ class MemorySync:
         except Exception as e:
             logger.error("sync_response_handler_failed", error=str(e))
 
-    async def _handle_conflict_notification(
-        self, _subject: str, data: bytes
-    ) -> None:
+    async def _handle_conflict_notification(self, _subject: str, data: bytes) -> None:
         """Handle conflict resolution notification."""
         try:
             import json
@@ -460,9 +454,7 @@ class MemorySync:
         except Exception as e:
             logger.error("conflict_notification_handler_failed", error=str(e))
 
-    async def _broadcast_conflict_resolution(
-        self, conflict: MemoryConflict
-    ) -> None:
+    async def _broadcast_conflict_resolution(self, conflict: MemoryConflict) -> None:
         """Broadcast conflict resolution to the swarm."""
         message = {
             "memory_id": conflict.memory_id,
@@ -534,9 +526,7 @@ class MemorySync:
 
         return success
 
-    async def subscribe_memory_updates(
-        self, callback: Callable[[MemoryUpdate], None]
-    ) -> None:
+    async def subscribe_memory_updates(self, callback: Callable[[MemoryUpdate], None]) -> None:
         """
         Subscribe to memory updates from other agents.
 
@@ -547,9 +537,7 @@ class MemorySync:
         self._update_callbacks.append(callback)
         logger.debug("memory_update_subscriber_added")
 
-    async def unsubscribe_memory_updates(
-        self, callback: Callable[[MemoryUpdate], None]
-    ) -> None:
+    async def unsubscribe_memory_updates(self, callback: Callable[[MemoryUpdate], None]) -> None:
         """Unsubscribe from memory updates."""
         if callback in self._update_callbacks:
             self._update_callbacks.remove(callback)
@@ -617,9 +605,7 @@ class MemorySync:
             logger.error("sync_state_failed", error=str(e))
             return dict.fromkeys(memory_ids)
 
-    def get_local_cached_update(
-        self, memory_id: str
-    ) -> MemoryUpdate | None:
+    def get_local_cached_update(self, memory_id: str) -> MemoryUpdate | None:
         """
         Get the locally cached version of a memory update.
 
@@ -631,9 +617,7 @@ class MemorySync:
         """
         return self._local_memory_cache.get(memory_id)
 
-    def update_local_cache(
-        self, memory_id: str, update: MemoryUpdate
-    ) -> None:
+    def update_local_cache(self, memory_id: str, update: MemoryUpdate) -> None:
         """
         Update the local memory cache (used when local memory changes).
 
@@ -643,9 +627,7 @@ class MemorySync:
         """
         self._local_memory_cache[memory_id] = update
 
-    async def handle_sync_request(
-        self, _subject: str, data: bytes
-    ) -> None:
+    async def handle_sync_request(self, _subject: str, data: bytes) -> None:
         """
         Handle incoming sync request (callback for NATS subscriber).
 

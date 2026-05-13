@@ -9,8 +9,8 @@
       "sourceFile": "STATE.md"
     },
     {
-      "id": "concept:phase:planning",
-      "label": "Phase: planning",
+      "id": "concept:phase:validating-milestone",
+      "label": "Phase: validating-milestone",
       "type": "concept",
       "confidence": "EXTRACTED",
       "sourceFile": "STATE.md"
@@ -534,6 +534,25 @@
     {
       "id": "task:M008:S04:T01",
       "label": "T01: Replace stale src/ path references in Python source comments and docstrings",
+      "type": "task",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "id": "slice:M008:S05",
+      "label": "S05: Final validation pass",
+      "type": "slice",
+      "confidence": "EXTRACTED",
+      "sourceFile": "milestones/M008/slices/S05/S05-PLAN.md"
+    },
+    {
+      "id": "task:M008:S05:T01",
+      "label": "T01: Static stale-ref verification and CI workflow audit",
+      "type": "task",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "id": "task:M008:S05:T02",
+      "label": "T02: Milestone completion summary (M008-SUMMARY.md)",
       "type": "task",
       "confidence": "EXTRACTED"
     },
@@ -2149,6 +2168,24 @@
       "confidence": "EXTRACTED"
     },
     {
+      "from": "milestone:M008",
+      "to": "slice:M008:S05",
+      "type": "contains",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "slice:M008:S05",
+      "to": "task:M008:S05:T01",
+      "type": "contains",
+      "confidence": "EXTRACTED"
+    },
+    {
+      "from": "slice:M008:S05",
+      "to": "task:M008:S05:T02",
+      "type": "contains",
+      "confidence": "EXTRACTED"
+    },
+    {
       "from": "milestone:M001",
       "to": "decision:M001:1",
       "type": "relates_to",
@@ -3013,5 +3050,5 @@
       "confidence": "EXTRACTED"
     }
   ],
-  "builtAt": "2026-05-12T23:32:47.375Z"
+  "builtAt": "2026-05-12T23:54:17.493Z"
 }

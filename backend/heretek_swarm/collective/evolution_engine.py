@@ -167,7 +167,9 @@ class EvolutionEngine:
         if not performance_history:
             return 0.0
 
-        recent_perf = performance_history[-10:] if len(performance_history) >= 10 else performance_history
+        recent_perf = (
+            performance_history[-10:] if len(performance_history) >= 10 else performance_history
+        )
         base_fitness = sum(recent_perf) / len(recent_perf)
 
         if capability_levels:
@@ -190,15 +192,17 @@ class EvolutionEngine:
                 alignment = 1.0 - abs(current_level - demand_level)
                 alignment_scores.append(max(0, alignment))
 
-            environment_fitness = sum(alignment_scores) / len(alignment_scores) if alignment_scores else 0.5
+            environment_fitness = (
+                sum(alignment_scores) / len(alignment_scores) if alignment_scores else 0.5
+            )
         else:
             environment_fitness = 0.5
 
         fitness = (
-            base_fitness * 0.4 +
-            capability_fitness * 0.3 +
-            trend_fitness * 0.15 +
-            environment_fitness * 0.15
+            base_fitness * 0.4
+            + capability_fitness * 0.3
+            + trend_fitness * 0.15
+            + environment_fitness * 0.15
         )
 
         return max(0.0, min(1.0, fitness))
@@ -295,7 +299,8 @@ class EvolutionEngine:
 
         cutoff = datetime.now(UTC) - timedelta(hours=self._capability_window_hours)
         metrics.active_capabilities = sum(
-            1 for r in self._capability_records.values()
+            1
+            for r in self._capability_records.values()
             if datetime.fromisoformat(r.last_reinforced) > cutoff
         )
 
@@ -355,8 +360,7 @@ class EvolutionEngine:
         cutoff = datetime.now(UTC) - recent_window
 
         recent_caps = [
-            r for r in self._capability_history
-            if datetime.fromisoformat(r.first_observed) > cutoff
+            r for r in self._capability_history if datetime.fromisoformat(r.first_observed) > cutoff
         ]
 
         if not recent_caps:

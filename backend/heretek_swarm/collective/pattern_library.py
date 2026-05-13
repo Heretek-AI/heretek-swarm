@@ -220,9 +220,7 @@ class PatternLibrary:
         self._category_index: dict[PatternCategory, set[str]] = {
             cat: set() for cat in PatternCategory
         }
-        self._type_index: dict[PatternType, set[str]] = {
-            pt: set() for pt in PatternType
-        }
+        self._type_index: dict[PatternType, set[str]] = {pt: set() for pt in PatternType}
         self._tag_index: dict[str, set[str]] = {}
 
         self._redis = None
@@ -454,7 +452,7 @@ class PatternLibrary:
 
         # Apply pagination
         total_count = len(filtered)
-        paginated = filtered[offset:offset + limit]
+        paginated = filtered[offset : offset + limit]
 
         query_time = (datetime.now(UTC) - start_time).total_seconds() * 1000
 
@@ -696,6 +694,7 @@ class PatternLibrary:
         if not self._redis:
             try:
                 import redis.asyncio as redis
+
                 self._redis = redis.from_url(self.redis_url, decode_responses=True)
             except (ImportError, Exception) as e:
                 logger.warning(
@@ -791,10 +790,7 @@ class PatternLibrary:
             by_category[cat.value] = len(self._category_index.get(cat, set()))
 
         # Estimate storage size
-        size_bytes = sum(
-            len(json.dumps(e.to_dict()))
-            for e in self._patterns.values()
-        )
+        size_bytes = sum(len(json.dumps(e.to_dict())) for e in self._patterns.values())
 
         # Find oldest and newest
         dates = []
@@ -845,10 +841,7 @@ class PatternLibrary:
         Returns:
             Dictionary of category names to counts
         """
-        return {
-            cat.value: len(self._category_index.get(cat, set()))
-            for cat in PatternCategory
-        }
+        return {cat.value: len(self._category_index.get(cat, set())) for cat in PatternCategory}
 
     def list_tags(self) -> dict[str, int]:
         """
@@ -857,10 +850,7 @@ class PatternLibrary:
         Returns:
             Dictionary of tags to counts
         """
-        return {
-            tag: len(entries)
-            for tag, entries in self._tag_index.items()
-        }
+        return {tag: len(entries) for tag, entries in self._tag_index.items()}
 
 
 class PatternLibraryService:

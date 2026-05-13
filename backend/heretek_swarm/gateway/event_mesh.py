@@ -100,10 +100,11 @@ class EventMesh:
 
         try:
             import asyncio
-            asyncio.create_task(
-                self._nats_publisher.publish_event(event)
+
+            asyncio.create_task(self._nats_publisher.publish_event(event))
+            logger.info(
+                "a2a_nats_publish_success", event_type=event_type, source=source_agent, topic=topic
             )
-            logger.info("a2a_nats_publish_success", event_type=event_type, source=source_agent, topic=topic)
         except Exception as e:
             logger.debug("a2a_nats_publish_failed", error=str(e), event_type=event_type)
 
@@ -185,6 +186,7 @@ class EventMesh:
 
         # Filter to active connections ONLY (null-safe)
         async with self._lock:
+
             def _is_disconnecting(ws):
                 """Check if websocket is disconnecting (handles mocks and real WebSockets)."""
                 if ws is None:
@@ -201,21 +203,20 @@ class EventMesh:
                     return False
 
             # Identify null/disconnecting clients for cleanup
-            to_cleanup = [
-                cid for cid, ws in self.clients.items()
-                if _is_disconnecting(ws)
-            ]
+            to_cleanup = [cid for cid, ws in self.clients.items() if _is_disconnecting(ws)]
 
             # Create active clients dict
             if target_clients is not None:
                 # Filter to target clients only
                 active_clients = {
-                    cid: ws for cid, ws in self.clients.items()
+                    cid: ws
+                    for cid, ws in self.clients.items()
                     if ws is not None and not _is_disconnecting(ws) and cid in target_clients
                 }
             else:
                 active_clients = {
-                    cid: ws for cid, ws in self.clients.items()
+                    cid: ws
+                    for cid, ws in self.clients.items()
                     if ws is not None and not _is_disconnecting(ws)
                 }
 

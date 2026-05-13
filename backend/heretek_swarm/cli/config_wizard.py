@@ -100,6 +100,7 @@ HERETEK_CONFIG_FILE = _config_mod.get_config_path()  # single source of truth
 # Config File Helpers
 # =============================================================================
 
+
 def _load_config() -> dict[str, Any]:
     """Load the full config file, returning an empty dict if missing."""
     if HERETEK_CONFIG_FILE.exists():
@@ -152,6 +153,7 @@ def _provider_display_name(p: dict[str, Any]) -> str:
 # =============================================================================
 # Sync Validators — extracted from api/wizard.py async validators
 # =============================================================================
+
 
 def _validate_openai_sync(api_key: str, base_url: str) -> dict[str, Any]:
     """Validate OpenAI API key (synchronous)."""
@@ -216,9 +218,7 @@ def _validate_ollama_sync(api_key: str | None, base_url: str) -> dict[str, Any]:
         return {"valid": False, "error": f"Connection failed: {e!s}"}
 
 
-def _validate_openai_compatible_sync(
-    api_key: str, base_url: str, model: str
-) -> dict[str, Any]:
+def _validate_openai_compatible_sync(api_key: str, base_url: str, model: str) -> dict[str, Any]:
     """Validate an OpenAI-compatible API key (generic)."""
     try:
         with httpx.Client(timeout=10.0) as client:
@@ -300,6 +300,7 @@ def validate_provider(
 # CLI Wizard Prompts
 # =============================================================================
 
+
 def prompt_for_provider() -> dict[str, Any] | None:
     """Run an interactive prompt to add a new LLM provider.
 
@@ -316,7 +317,10 @@ def prompt_for_provider() -> dict[str, Any] | None:
     for i, pid in enumerate(provider_ids, 1):
         info = AVAILABLE_PROVIDERS[pid]
         default_str = style(f"  (default: {info['default_model']})", dim=True)
-        key_str = style("  [API key required]" if info["requires_api_key"] else "  [No API key needed]", dim=True)
+        key_str = style(
+            "  [API key required]" if info["requires_api_key"] else "  [No API key needed]",
+            dim=True,
+        )
         echo(f"  {i}. {info['name']}{key_str}")
         echo(f"     {info['description']}{default_str}")
 
@@ -437,6 +441,7 @@ def prompt_for_provider() -> dict[str, Any] | None:
 # =============================================================================
 # Config Operations
 # =============================================================================
+
 
 def list_configured_providers() -> list[dict[str, Any]]:
     """Return the list of currently configured providers."""

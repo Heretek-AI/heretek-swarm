@@ -287,9 +287,7 @@ class KnowledgeTransformer:
             transformed.validation_errors = errors
 
             # Calculate transformation time
-            transformation_time = (
-                datetime.now(UTC) - start_time
-            ).total_seconds() * 1000
+            transformation_time = (datetime.now(UTC) - start_time).total_seconds() * 1000
 
             # Cache result
             self._transformed_cache[transformed.transformation_id] = transformed
@@ -303,9 +301,7 @@ class KnowledgeTransformer:
             )
 
         except Exception as e:
-            transformation_time = (
-                datetime.now(UTC) - start_time
-            ).total_seconds() * 1000
+            transformation_time = (datetime.now(UTC) - start_time).total_seconds() * 1000
 
             logger.error(
                 "transformation_error",
@@ -351,10 +347,12 @@ class KnowledgeTransformer:
         transformed_results = []
         for _i, result in enumerate(results):
             if isinstance(result, Exception):
-                transformed_results.append(TransformationResult(
-                    success=False,
-                    error_message=str(result),
-                ))
+                transformed_results.append(
+                    TransformationResult(
+                        success=False,
+                        error_message=str(result),
+                    )
+                )
             else:
                 transformed_results.append(result)
 
@@ -534,7 +532,7 @@ class KnowledgeTransformer:
                 truncated[key] = value
                 current_size += len(item_str)
             else:
-                truncated[key] = item_str[:max_size - current_size] + "... [truncated]"
+                truncated[key] = item_str[: max_size - current_size] + "... [truncated]"
                 break
 
         return truncated
@@ -622,8 +620,7 @@ class KnowledgeTransformer:
 
         keywords = type_keywords.get(agent_type, [])
         return any(
-            any(keyword in agent_id.lower() for keyword in keywords)
-            for agent_id in agent_ids
+            any(keyword in agent_id.lower() for keyword in keywords) for agent_id in agent_ids
         )
 
     def _topics_match_agent_type(
@@ -644,8 +641,7 @@ class KnowledgeTransformer:
 
         interests = topic_interests.get(agent_type, [])
         return any(
-            any(interest in (topic or "").lower() for topic in topics)
-            for interest in interests
+            any(interest in (topic or "").lower() for topic in topics) for interest in interests
         )
 
     def _get_agent_relevance(
@@ -664,7 +660,8 @@ class KnowledgeTransformer:
                 pattern.metadata.topics,
                 agent_type,
             ),
-            "pattern_type_match": pattern.metadata.pattern_type in [
+            "pattern_type_match": pattern.metadata.pattern_type
+            in [
                 PatternType.SUCCESS,
                 PatternType.OPTIMIZATION,
             ],
@@ -767,10 +764,12 @@ class KnowledgeTransformer:
         counter_examples = []
 
         if pattern.metadata.pattern_type == PatternType.FAILURE:
-            counter_examples.append({
-                "what_to_avoid": "Conditions that triggered this failure pattern",
-                "alternative": "Use alternative approach...",
-            })
+            counter_examples.append(
+                {
+                    "what_to_avoid": "Conditions that triggered this failure pattern",
+                    "alternative": "Use alternative approach...",
+                }
+            )
 
         return counter_examples
 
@@ -897,7 +896,9 @@ class KnowledgeTransformer:
         # Safety knowledge must include risk/validation info
         if transformed.target_agent_type == AgentType.SAFETY:
             content_str = str(transformed.knowledge_content)
-            if not any(term in content_str.lower() for term in ["risk", "validate", "security", "check"]):
+            if not any(
+                term in content_str.lower() for term in ["risk", "validate", "security", "check"]
+            ):
                 errors.append("Safety knowledge should address risk or validation")
 
         return ValidationResult(valid=len(errors) == 0, errors=errors)
@@ -913,9 +914,7 @@ class KnowledgeTransformer:
         if "interaction" not in str(transformed.knowledge_content).lower():
             if "handoff" not in str(transformed.knowledge_content).lower():
                 if "communication" not in str(transformed.knowledge_content).lower():
-                    errors.append(
-                        "Coordination knowledge should involve interaction patterns"
-                    )
+                    errors.append("Coordination knowledge should involve interaction patterns")
 
         return ValidationResult(valid=len(errors) == 0, errors=errors)
 

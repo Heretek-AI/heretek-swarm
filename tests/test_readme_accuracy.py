@@ -51,9 +51,7 @@ class TestReadmeCommandCoverage:
         """The command ``{cmd}`` should appear in the README."""
         # We look for the command name as a word boundary match to avoid
         # false positives from substrings (e.g. "stop" inside "startup").
-        assert cmd in readme_text, (
-            f"Command '{cmd}' not found in README.md"
-        )
+        assert cmd in readme_text, f"Command '{cmd}' not found in README.md"
 
 
 # ---------------------------------------------------------------------------
@@ -89,9 +87,7 @@ class TestReadmeVersionAlignment:
         from heretek_swarm import __version__
 
         # README uses "**Version:** X.Y.Z" in the header
-        assert __version__ in readme_text, (
-            f"Package version {__version__!r} not found in README.md"
-        )
+        assert __version__ in readme_text, f"Package version {__version__!r} not found in README.md"
 
 
 # ---------------------------------------------------------------------------
@@ -112,9 +108,7 @@ class TestReadmeCliGroups:
     @pytest.mark.parametrize("group", EXPECTED_GROUPS)
     def test_group_mentioned(readme_text: str, group: str) -> None:
         """The CLI group heading '{group}' should appear in the README."""
-        assert group in readme_text, (
-            f"CLI group '{group}' not found in README.md"
-        )
+        assert group in readme_text, f"CLI group '{group}' not found in README.md"
 
 
 # ---------------------------------------------------------------------------
@@ -144,9 +138,7 @@ class TestReadmeDockerComposeNaming:
         )
         lines = readme_text.splitlines()
         violations = [
-            (i + 1, line)
-            for i, line in enumerate(lines)
-            if v1_command_pattern.search(line)
+            (i + 1, line) for i, line in enumerate(lines) if v1_command_pattern.search(line)
         ]
         assert not violations, (
             "Found 'docker-compose <cmd>' (V1 command) in README on line(s): "

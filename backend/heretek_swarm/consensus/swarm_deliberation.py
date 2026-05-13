@@ -343,15 +343,15 @@ class SwarmDeliberationEngine:
             # Track position change
             old_position = positions[agent_id].position
             if old_position != position:
-                self.active_deliberations[deliberation_id]["provenance"][
-                    "position_changes"
-                ].append({
-                    "agent_id": agent_id,
-                    "from": old_position.value,
-                    "to": position.value,
-                    "round": current_round,
-                    "timestamp": datetime.now(UTC).isoformat(),
-                })
+                self.active_deliberations[deliberation_id]["provenance"]["position_changes"].append(
+                    {
+                        "agent_id": agent_id,
+                        "from": old_position.value,
+                        "to": position.value,
+                        "round": current_round,
+                        "timestamp": datetime.now(UTC).isoformat(),
+                    }
+                )
             positions[agent_id].update_position(position, confidence, current_round)
         else:
             positions[agent_id] = AgentPosition(
@@ -410,9 +410,7 @@ class SwarmDeliberationEngine:
         expertise_weight = 1.0
         domain = self.active_deliberations[deliberation_id].get("domain")
         if self.expertise_profiler and domain:
-            expertise_weight = self.expertise_profiler.get_expertise_score(
-                agent_id, domain
-            )
+            expertise_weight = self.expertise_profiler.get_expertise_score(agent_id, domain)
 
         argument_id = f"arg-{deliberation_id}-{len(self.active_deliberations[deliberation_id]['arguments']) + 1}"
         argument = Argument(
@@ -427,14 +425,14 @@ class SwarmDeliberationEngine:
         )
 
         self.active_deliberations[deliberation_id]["arguments"].append(argument)
-        self.active_deliberations[deliberation_id]["provenance"][
-            "arguments_submitted"
-        ].append({
-            "argument_id": argument_id,
-            "agent_id": agent_id,
-            "position": position.value,
-            "timestamp": datetime.now(UTC).isoformat(),
-        })
+        self.active_deliberations[deliberation_id]["provenance"]["arguments_submitted"].append(
+            {
+                "argument_id": argument_id,
+                "agent_id": agent_id,
+                "position": position.value,
+                "timestamp": datetime.now(UTC).isoformat(),
+            }
+        )
 
         logger.debug(
             f"Argument submitted in {deliberation_id}: {argument_id} "
@@ -482,8 +480,7 @@ class SwarmDeliberationEngine:
         position_changes = sum(
             1
             for pos in positions.values()
-            if len(pos.previous_positions) > 0
-            and pos.previous_positions[-1][0] != pos.position
+            if len(pos.previous_positions) > 0 and pos.previous_positions[-1][0] != pos.position
         )
 
         # Generate summary
@@ -502,12 +499,14 @@ class SwarmDeliberationEngine:
         )
 
         self.round_results[deliberation_id].append(round_result)
-        self.active_deliberations[deliberation_id]["provenance"]["rounds"].append({
-            "round": current_round,
-            "consensus_score": consensus_score,
-            "position_changes": position_changes,
-            "timestamp": datetime.now(UTC).isoformat(),
-        })
+        self.active_deliberations[deliberation_id]["provenance"]["rounds"].append(
+            {
+                "round": current_round,
+                "consensus_score": consensus_score,
+                "position_changes": position_changes,
+                "timestamp": datetime.now(UTC).isoformat(),
+            }
+        )
 
         logger.info(
             f"Round {current_round} complete for {deliberation_id}: "
@@ -517,9 +516,7 @@ class SwarmDeliberationEngine:
         # Check if consensus reached
         if consensus_score >= self.consensus_threshold:
             self.deliberation_states[deliberation_id] = DeliberationState.FINAL_VOTING
-            logger.info(
-                f"Consensus threshold reached for {deliberation_id}: {consensus_score:.2f}"
-            )
+            logger.info(f"Consensus threshold reached for {deliberation_id}: {consensus_score:.2f}")
         elif current_round >= self.max_rounds:
             self.deliberation_states[deliberation_id] = DeliberationState.COMPLETED
             logger.info(f"Max rounds reached for {deliberation_id}")
@@ -569,12 +566,8 @@ class SwarmDeliberationEngine:
             Position.STRONG_DISAGREE,
         ]
 
-        agree_weight = sum(
-            position_weights.get(p, 0.0) for p in agree_positions
-        )
-        disagree_weight = sum(
-            position_weights.get(p, 0.0) for p in disagree_positions
-        )
+        agree_weight = sum(position_weights.get(p, 0.0) for p in agree_positions)
+        disagree_weight = sum(position_weights.get(p, 0.0) for p in disagree_positions)
         total_weight = agree_weight + disagree_weight
 
         if total_weight == 0:
@@ -687,12 +680,14 @@ class SwarmDeliberationEngine:
         for agent_id, pos in positions.items():
             pos_key = pos.position.value
             if pos_key != majority_position and pos.confidence >= min_confidence:
-                minority_opinions.append({
-                    "agent_id": agent_id,
-                    "position": pos.position.value,
-                    "confidence": pos.confidence,
-                    "argument": pos.argument,
-                })
+                minority_opinions.append(
+                    {
+                        "agent_id": agent_id,
+                        "position": pos.position.value,
+                        "confidence": pos.confidence,
+                        "argument": pos.argument,
+                    }
+                )
 
         return minority_opinions
 
@@ -736,15 +731,23 @@ class SwarmDeliberationEngine:
         arguments = self.active_deliberations[deliberation_id]["arguments"]
         arguments_summary = {
             "total_arguments": len(arguments),
-            "supporting": len([a for a in arguments if a.position in [
-                Position.STRONG_AGREE, Position.AGREE, Position.LEAN_AGREE
-            ]]),
-            "opposing": len([a for a in arguments if a.position in [
-                Position.LEAN_DISAGREE, Position.DISAGREE, Position.STRONG_DISAGREE
-            ]]),
+            "supporting": len(
+                [
+                    a
+                    for a in arguments
+                    if a.position in [Position.STRONG_AGREE, Position.AGREE, Position.LEAN_AGREE]
+                ]
+            ),
+            "opposing": len(
+                [
+                    a
+                    for a in arguments
+                    if a.position
+                    in [Position.LEAN_DISAGREE, Position.DISAGREE, Position.STRONG_DISAGREE]
+                ]
+            ),
             "avg_expertise_weight": (
-                statistics.mean([a.expertise_weight for a in arguments])
-                if arguments else 0.0
+                statistics.mean([a.expertise_weight for a in arguments]) if arguments else 0.0
             ),
         }
 
@@ -895,8 +898,7 @@ class SwarmDeliberationEngine:
         """
         active_count = len(self.active_deliberations)
         completed_count = sum(
-            1 for s in self.deliberation_states.values()
-            if s == DeliberationState.COMPLETED
+            1 for s in self.deliberation_states.values() if s == DeliberationState.COMPLETED
         )
 
         return {
@@ -930,16 +932,10 @@ class SwarmDeliberationEngine:
             while True:
                 # Check timeout
                 if timeout:
-                    elapsed = (
-                        datetime.now(UTC) - start_time
-                    ).total_seconds()
+                    elapsed = (datetime.now(UTC) - start_time).total_seconds()
                     if elapsed >= timeout:
-                        self.deliberation_states[deliberation_id] = (
-                            DeliberationState.TIMEOUT
-                        )
-                        logger.warning(
-                            f"Deliberation {deliberation_id} timed out after {elapsed}s"
-                        )
+                        self.deliberation_states[deliberation_id] = DeliberationState.TIMEOUT
+                        logger.warning(f"Deliberation {deliberation_id} timed out after {elapsed}s")
                         break
 
                 # Check if deliberation is complete

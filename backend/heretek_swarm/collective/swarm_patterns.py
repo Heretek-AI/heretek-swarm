@@ -10,6 +10,7 @@ from enum import Enum
 
 class SwarmPattern(Enum):
     """Swarm intelligence pattern types."""
+
     PSO = "particle_swarm_optimization"
     ANT_COLONY = "ant_colony_optimization"
     BEE_ALGORITHM = "bee_algorithm"
@@ -19,6 +20,7 @@ class SwarmPattern(Enum):
 
 class FlockingRule(Enum):
     """Flocking behavior rules."""
+
     SEPARATION = "separation"
     ALIGNMENT = "alignment"
     COHESION = "cohesion"

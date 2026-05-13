@@ -12,9 +12,11 @@ from typing import TYPE_CHECKING
 # Pattern definitions
 # ---------------------------------------------------------------------------
 
+
 @dataclass
 class Pattern:
     """A stub detection pattern."""
+
     name: str
     severity: str  # "CRITICAL", "WARNING", "INFO"
     description: str
@@ -69,9 +71,9 @@ REGEX_PATTERNS: dict[str, Pattern] = {
 
 # AST-based pattern names
 AST_PATTERNS: dict[str, type] = {
-    "PassOnlyFunction": ast.Pass,          # checked at function level
+    "PassOnlyFunction": ast.Pass,  # checked at function level
     "ReturnEmptyDictFunction": ast.Dict,  # checked at function return level
-    "NotImplementedModule": ast.Raise,    # checked at module level
+    "NotImplementedModule": ast.Raise,  # checked at module level
     "DuplicateClassDefinition": ast.ClassDef,
     "SampleDataGenerator": ast.FunctionDef,
 }
@@ -92,21 +94,30 @@ DEFAULT_EXTENSIONS = {".py", ".js", ".ts", ".jsx", ".tsx"}
 
 # Exclusion patterns
 EXCLUDED_DIRS = {
-    "tests", "__pycache__", ".venv", "node_modules", ".git", ".pytest_cache",
+    "tests",
+    "__pycache__",
+    ".venv",
+    "node_modules",
+    ".git",
+    ".pytest_cache",
 }
 EXCLUDED_NAME_PARTS = re.compile(r"_sample|_test|_demo")
 
 # Files excluded from scanning (self-referential: audit tool detecting its own code)
-EXCLUDED_FILES = frozenset({
-    "stub_patterns.py",  # self-referential: generateRandom is the audit tool's own utility
-})
+EXCLUDED_FILES = frozenset(
+    {
+        "stub_patterns.py",  # self-referential: generateRandom is the audit tool's own utility
+    }
+)
 
 # Function names excluded from SampleDataGenerator pattern
 # These match the naming convention but are legitimate production utilities
-EXCLUDED_FUNCTIONS = frozenset({
-    # Production utility in collective/agency_tracking.py, exported and used in API
-    "create_sample_metrics",
-})
+EXCLUDED_FUNCTIONS = frozenset(
+    {
+        # Production utility in collective/agency_tracking.py, exported and used in API
+        "create_sample_metrics",
+    }
+)
 
 
 # ---------------------------------------------------------------------------
@@ -154,22 +165,22 @@ def scan_file(
     # Filter pattern names if provided
     active_pattern_names = set(patterns) if patterns else set(REGEX_PATTERNS)
     active_re_list = [
-        (compiled_re, name)
-        for compiled_re, name in REGEX_RE_LIST
-        if name in active_pattern_names
+        (compiled_re, name) for compiled_re, name in REGEX_RE_LIST if name in active_pattern_names
     ]
 
     # Regex scan
     for line_no, line in enumerate(content.splitlines(), start=1):
         for compiled_re, name in active_re_list:
             if compiled_re.search(line):
-                findings.append(AuditFinding(
-                    file=str(path),
-                    line=line_no,
-                    pattern_name=name,
-                    severity=REGEX_PATTERNS[name].severity,
-                    description=REGEX_PATTERNS[name].description,
-                ))
+                findings.append(
+                    AuditFinding(
+                        file=str(path),
+                        line=line_no,
+                        pattern_name=name,
+                        severity=REGEX_PATTERNS[name].severity,
+                        description=REGEX_PATTERNS[name].description,
+                    )
+                )
 
     # AST scan for Python files
     if path.suffix == ".py":
@@ -204,24 +215,23 @@ def _scan_ast(
             and node.exc.id == "NotImplementedError"
             and getattr(node, "col_offset", -1) == 0
         ):
-            findings.append(AuditFinding(
-                file=filename,
-                line=node.lineno or 0,
-                pattern_name="NotImplementedModule",
-                severity="CRITICAL",
-                description=(
-                    "Module-level `raise NotImplementedError` detected — "
-                    "entire module is unimplemented."
-                ),
-            ))
+            findings.append(
+                AuditFinding(
+                    file=filename,
+                    line=node.lineno or 0,
+                    pattern_name="NotImplementedModule",
+                    severity="CRITICAL",
+                    description=(
+                        "Module-level `raise NotImplementedError` detected — "
+                        "entire module is unimplemented."
+                    ),
+                )
+            )
 
         # DuplicateClassDefinition: same class name defined multiple times at module level
         # Nested classes (e.g. Pydantic's `class Config:` inside model classes) are excluded
         # because they are scoped to their parent class, not the module
-        if (
-            "DuplicateClassDefinition" in active_pattern_names
-            and isinstance(node, ast.ClassDef)
-        ):
+        if "DuplicateClassDefinition" in active_pattern_names and isinstance(node, ast.ClassDef):
             # Module-level classes have col_offset == 0 and appear directly in tree.body
             # Nested classes (e.g. `class Config:` inside `class UserConfiguration:`)
             # have col_offset > 0 or are not in tree.body
@@ -229,35 +239,37 @@ def _scan_ast(
             if is_module_level:
                 # Count module-level classes with the same name
                 class_count = sum(
-                    1 for n in tree.body
-                    if isinstance(n, ast.ClassDef) and n.name == node.name
+                    1 for n in tree.body if isinstance(n, ast.ClassDef) and n.name == node.name
                 )
                 if class_count > 1:
-                    findings.append(AuditFinding(
-                        file=filename,
-                        line=node.lineno or 0,
-                        pattern_name="DuplicateClassDefinition",
-                        severity="INFO",
-                        description=f"Class `{node.name}` defined multiple times at module scope.",
-                    ))
+                    findings.append(
+                        AuditFinding(
+                            file=filename,
+                            line=node.lineno or 0,
+                            pattern_name="DuplicateClassDefinition",
+                            severity="INFO",
+                            description=f"Class `{node.name}` defined multiple times at module scope.",
+                        )
+                    )
 
         # SampleDataGenerator: function named create_sample_* or _sample_*
-        if (
-            "SampleDataGenerator" in active_pattern_names
-            and isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+        if "SampleDataGenerator" in active_pattern_names and isinstance(
+            node, (ast.FunctionDef, ast.AsyncFunctionDef)
         ):
             name = node.name
             if name.startswith(("create_sample_", "_sample_")):
                 # Exclude known legitimate production utilities
                 if name in EXCLUDED_FUNCTIONS:
                     continue
-                findings.append(AuditFinding(
-                    file=filename,
-                    line=node.lineno or 0,
-                    pattern_name="SampleDataGenerator",
-                    severity="WARNING",
-                    description=f"Function `{name}` is a sample data generator.",
-                ))
+                findings.append(
+                    AuditFinding(
+                        file=filename,
+                        line=node.lineno or 0,
+                        pattern_name="SampleDataGenerator",
+                        severity="WARNING",
+                        description=f"Function `{name}` is a sample data generator.",
+                    )
+                )
 
     return findings
 

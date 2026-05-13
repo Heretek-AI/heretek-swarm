@@ -135,9 +135,7 @@ def create_embedding_provider(
         # Create provider based on type
         if provider_type == "openai":
             if not api_key:
-                raise EmbeddingConfigurationError(
-                    "OpenAI embedding provider requires api_key"
-                )
+                raise EmbeddingConfigurationError("OpenAI embedding provider requires api_key")
             return OpenAIEmbeddingProvider(
                 api_key=api_key,
                 base_url=base_url or "https://api.openai.com/v1",
@@ -175,9 +173,7 @@ def create_embedding_provider(
         )
 
     except TypeError as e:
-        raise EmbeddingConfigurationError(
-            f"Invalid configuration for {provider_type}: {e}"
-        )
+        raise EmbeddingConfigurationError(f"Invalid configuration for {provider_type}: {e}")
 
 
 def create_embedding_provider_from_db_config(

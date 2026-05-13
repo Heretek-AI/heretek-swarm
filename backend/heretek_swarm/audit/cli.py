@@ -23,23 +23,27 @@ from heretek_swarm.audit import (
 
 @click.command()
 @click.option(
-    "--directory", "-d",
+    "--directory",
+    "-d",
     default="heretek-swarm/heretek_swarm",
     help="Root directory to scan (default: heretek-swarm/heretek_swarm)",
 )
 @click.option(
-    "--output", "-o",
+    "--output",
+    "-o",
     default=None,
     help="Output file path. If not provided, prints to stdout.",
 )
 @click.option(
-    "--severity", "-s",
+    "--severity",
+    "-s",
     type=click.Choice(["CRITICAL", "WARNING", "INFO", "all"], case_sensitive=False),
     default="all",
     help="Filter findings by severity level.",
 )
 @click.option(
-    "--format", "-f",
+    "--format",
+    "-f",
     type=click.Choice(["markdown", "json"], case_sensitive=False),
     default="markdown",
     help="Output format.",
@@ -91,6 +95,7 @@ def cli(
     # Generate report
     if format.lower() == "json":
         import json
+
         body = json.dumps(
             [
                 {

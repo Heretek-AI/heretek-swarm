@@ -31,6 +31,7 @@ logger = structlog.get_logger("ConsciousnessMetrics")
 
 class IntegrationLevel(Enum):
     """Levels of system integration based on IIT."""
+
     DISCONNECTED = "disconnected"  # No integration
     WEAKLY_INTEGRATED = "weakly-integrated"  # Minimal integration
     MODERATELY_INTEGRATED = "moderately-integrated"  # Moderate integration
@@ -50,6 +51,7 @@ class CausalAnalysis:
         causal_density: Density of causal connections
         differentiation: System differentiation score
     """
+
     cause_info: float = 0.0
     effect_info: float = 0.0
     integrated_info: float = 0.0
@@ -73,6 +75,7 @@ class TemporalMetrics:
         trend: Trend direction (positive/negative/stable)
         data_points: Number of samples
     """
+
     window_seconds: int = 300
     average_phi: float = 0.0
     max_phi: float = 0.0
@@ -98,6 +101,7 @@ class CollectiveMetrics:
         fep_free_energy: Average FEP free energy across agents
         fep_surprise: Average Bayesian surprise across agents
     """
+
     collective_phi: float = 0.0
     integration_level: IntegrationLevel = IntegrationLevel.DISCONNECTED
     synchronization: float = 0.0
@@ -123,6 +127,7 @@ class AgentConsciousnessData:
         connectivity_matrix: Agent connectivity data
         timestamp: Data timestamp
     """
+
     agent_id: str
     phi_score: float = 0.0
     integrated_information: float = 0.0
@@ -235,7 +240,9 @@ class ConsciousnessMetricsCalculator:
         return CausalAnalysis(
             cause_info=cause_info,
             effect_info=effect_info,
-            integrated_info=self._compute_integrated_information(norm_matrix, cause_info, effect_info),
+            integrated_info=self._compute_integrated_information(
+                norm_matrix, cause_info, effect_info
+            ),
             causal_density=self._compute_causal_density(norm_matrix),
             differentiation=phi_result.phi_max,
         )
@@ -256,7 +263,9 @@ class ConsciousnessMetricsCalculator:
             FEPResult with free energy, surprise, and KL divergence
         """
         free_energy = self._fep_calculator.calculate_free_energy(observations, generative_model)
-        surprise = self._fep_calculator.calculate_surprise(observations, generative_model.get("predictions", {}))
+        surprise = self._fep_calculator.calculate_surprise(
+            observations, generative_model.get("predictions", {})
+        )
 
         return FEPResult(
             free_energy=free_energy,
@@ -266,7 +275,6 @@ class ConsciousnessMetricsCalculator:
                 generative_model.get("prior", {}),
             ),
         )
-
 
     def calculate_collective_metrics(
         self,
@@ -345,7 +353,9 @@ class ConsciousnessMetricsCalculator:
             emergence_score=emergence_score,
             collective_state=collective_state,
             agent_count=len(agent_data),
-            active_connections=self._count_connections(connection_matrix) if connection_matrix else 0,
+            active_connections=self._count_connections(connection_matrix)
+            if connection_matrix
+            else 0,
             fep_free_energy=fep_free_energy,
             fep_surprise=fep_surprise,
         )
@@ -379,7 +389,7 @@ class ConsciousnessMetricsCalculator:
 
         # Trim history if needed
         if len(self._temporal_data[agent_id]) > self._max_history:
-            self._temporal_data[agent_id] = self._temporal_data[agent_id][-self._max_history:]
+            self._temporal_data[agent_id] = self._temporal_data[agent_id][-self._max_history :]
 
         # Calculate temporal metrics
         return self._calculate_temporal_metrics(agent_id)
@@ -659,7 +669,9 @@ class ConsciousnessMetricsCalculator:
         # Determine trend (compare first half to second half)
         mid = len(phi_values) // 2
         first_half_avg = sum(phi_values[:mid]) / mid if mid > 0 else 0
-        second_half_avg = sum(phi_values[mid:]) / (len(phi_values) - mid) if len(phi_values) > mid else 0
+        second_half_avg = (
+            sum(phi_values[mid:]) / (len(phi_values) - mid) if len(phi_values) > mid else 0
+        )
 
         if second_half_avg > first_half_avg * 1.1:
             trend = "rising"

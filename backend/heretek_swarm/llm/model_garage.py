@@ -53,11 +53,12 @@ HEREKET_LOGS_DIR.mkdir(parents=True, exist_ok=True)
 # This is always safe because config.__init__ only depends on its sub-modules.
 import contextlib
 
-from heretek_swarm.config import get_config_path  # noqa: E402
+from heretek_swarm.config import get_config_path
 
 
 class ProviderType(StrEnum):
     """Supported LLM provider types."""
+
     OPENAI = "openai"
     OLLAMA = "ollama"
     MINIMAX = "minimax"
@@ -73,6 +74,7 @@ class ProviderType(StrEnum):
 @dataclass
 class ModelInfo:
     """Information about a model."""
+
     name: str
     provider: ProviderType
     max_tokens: int | None = None
@@ -88,6 +90,7 @@ class ModelInfo:
 @dataclass
 class ProviderConfig:
     """Configuration for an LLM provider."""
+
     id: str
     name: str
     provider_type: ProviderType
@@ -131,6 +134,7 @@ class ProviderConfig:
 @dataclass
 class ChatMessage:
     """A chat message."""
+
     role: str  # system, user, assistant
     content: str
     name: str | None = None
@@ -152,6 +156,7 @@ class ChatMessage:
 @dataclass
 class LLMRequest:
     """Request for LLM completion."""
+
     messages: list[ChatMessage]
     model: str | None = None
     temperature: float = 0.7
@@ -198,6 +203,7 @@ class LLMRequest:
 @dataclass
 class LLMResponse:
     """Response from LLM completion."""
+
     content: str
     model: str
     provider: ProviderType
@@ -224,6 +230,7 @@ class LLMResponse:
 # ============================================================================
 # Base Provider Implementation
 # ============================================================================
+
 
 class LLMProvider(ABC):
     """Abstract base class for LLM providers."""
@@ -290,6 +297,7 @@ class LLMProvider(ABC):
 # Provider Implementations
 # ============================================================================
 
+
 class OpenAIProvider(LLMProvider):
     """OpenAI API provider."""
 
@@ -323,7 +331,9 @@ class OpenAIProvider(LLMProvider):
                     latency_ms=latency_ms,
                 )
             except httpx.HTTPStatusError as e:
-                logger.error("OpenAI API error", status=e.response.status_code, detail=e.response.text)
+                logger.error(
+                    "OpenAI API error", status=e.response.status_code, detail=e.response.text
+                )
                 raise
             except Exception as e:
                 logger.error("OpenAI completion failed", error=str(e))
@@ -369,7 +379,7 @@ class OllamaProvider(LLMProvider):
                 "options": {
                     "temperature": request.temperature,
                     "top_p": request.top_p,
-                }
+                },
             }
             if request.max_tokens:
                 payload["options"]["num_predict"] = request.max_tokens
@@ -405,7 +415,7 @@ class OllamaProvider(LLMProvider):
                 "model": model,
                 "messages": [m.to_dict() for m in request.messages],
                 "stream": True,
-                "options": {"temperature": request.temperature}
+                "options": {"temperature": request.temperature},
             }
 
             async with client.stream("POST", "/api/chat", json=payload) as response:
@@ -473,10 +483,12 @@ class MiniMaxProvider(LLMProvider):
             # Convert messages to MiniMax format
             messages = []
             for msg in request.messages:
-                messages.append({
-                    "sender_type": msg.role,
-                    "text": msg.content,
-                })
+                messages.append(
+                    {
+                        "sender_type": msg.role,
+                        "text": msg.content,
+                    }
+                )
 
             payload = {
                 "model": model,
@@ -491,7 +503,9 @@ class MiniMaxProvider(LLMProvider):
                 payload["group_id"] = self.config.metadata["group_id"]
 
             try:
-                async with client.stream("POST", "/text/chatcompletion_v2", json=payload) as response:
+                async with client.stream(
+                    "POST", "/text/chatcompletion_v2", json=payload
+                ) as response:
                     response.raise_for_status()
                     async for line in response.aiter_lines():
                         if line.startswith("data: "):
@@ -604,7 +618,9 @@ class AnthropicProvider(LLMProvider):
                                 try:
                                     chunk = json.loads(data_str)
                                     # Handle message delta events
-                                    if (current_event == "message_delta" and "delta" in chunk) or (current_event == "content_block_delta" and "delta" in chunk):
+                                    if (current_event == "message_delta" and "delta" in chunk) or (
+                                        current_event == "content_block_delta" and "delta" in chunk
+                                    ):
                                         delta = chunk["delta"]
                                         if "text" in delta:
                                             yield delta["text"]
@@ -716,6 +732,7 @@ def register_provider_class(provider_type: ProviderType, provider_class: type[LL
 # Model Garage - Main Class
 # ============================================================================
 
+
 class ModelGarage:
     """
     Unified LLM interface for Heretek Swarm.
@@ -808,7 +825,7 @@ class ModelGarage:
                     "isDefault": True,
                     "priority": 1,
                 }
-            ]
+            ],
         }
 
         try:
@@ -839,7 +856,9 @@ class ModelGarage:
         for key in sorted(self._PRICING_TABLE, key=len, reverse=True):
             if key in model_name:
                 input_rate, output_rate = self._PRICING_TABLE[key]
-                cost = (prompt_tokens / 1000.0 * input_rate) + (completion_tokens / 1000.0 * output_rate)
+                cost = (prompt_tokens / 1000.0 * input_rate) + (
+                    completion_tokens / 1000.0 * output_rate
+                )
                 return round(cost, 6)
         return 0.0
 
@@ -886,10 +905,12 @@ class ModelGarage:
             tmp.replace(target)
             logger.info("config_saved", path=str(target))
         except OSError as e:
-            logger.error("config_save_failed_atomic",
-                         path=str(target),
-                         error=e.__class__.__name__,
-                         detail=str(e))
+            logger.error(
+                "config_save_failed_atomic",
+                path=str(target),
+                error=e.__class__.__name__,
+                detail=str(e),
+            )
             # Best-effort cleanup of the temp file
             with contextlib.suppress(FileNotFoundError):
                 tmp.unlink()
@@ -905,7 +926,9 @@ class ModelGarage:
                     provider_class = PROVIDER_CLASSES[config.provider_type]
                     provider = provider_class(config)
                     self._providers[config.id] = provider
-                    logger.info("Initialized provider", name=config.name, type=config.provider_type.value)
+                    logger.info(
+                        "Initialized provider", name=config.name, type=config.provider_type.value
+                    )
                 except Exception as e:
                     logger.error("Failed to initialize provider", name=config.name, error=str(e))
 
@@ -946,9 +969,7 @@ class ModelGarage:
         self._provider_configs.clear()
         self._load_config()
         new_count = len(self._provider_configs)
-        logger.info("config_reloaded",
-                    previous_providers=old_count,
-                    new_providers=new_count)
+        logger.info("config_reloaded", previous_providers=old_count, new_providers=new_count)
 
     def update_provider(self, provider_id: str, config: ProviderConfig) -> None:
         """Replace an existing provider's configuration.
@@ -1026,21 +1047,22 @@ class ModelGarage:
                 "latency_ms": round(latency_ms, 2),
                 "error": str(e),
             }
-            logger.warning("provider_test_failed",
-                          provider_id=provider_id,
-                          name=config.name,
-                          error=str(e))
+            logger.warning(
+                "provider_test_failed", provider_id=provider_id, name=config.name, error=str(e)
+            )
         finally:
             try:
                 await provider.close()
             except Exception:
                 pass  # best-effort cleanup
 
-        logger.info("provider_test_result",
-                    provider_id=provider_id,
-                    name=config.name,
-                    reachable=result["reachable"],
-                    latency_ms=result["latency_ms"])
+        logger.info(
+            "provider_test_result",
+            provider_id=provider_id,
+            name=config.name,
+            reachable=result["reachable"],
+            latency_ms=result["latency_ms"],
+        )
         return result
 
     def get_provider_config(self, provider_id: str) -> ProviderConfig | None:
@@ -1055,9 +1077,7 @@ class ModelGarage:
         """Check health of providers."""
         results = {}
         providers_to_check = (
-            {provider_id: self._providers[provider_id]}
-            if provider_id
-            else self._providers
+            {provider_id: self._providers[provider_id]} if provider_id else self._providers
         )
 
         for pid, provider in providers_to_check.items():
@@ -1088,16 +1108,15 @@ class ModelGarage:
             await self.initialize()
 
         request = LLMRequest(
-            messages=messages,
-            model=model,
-            **{k: v for k, v in kwargs.items() if v is not None}
+            messages=messages, model=model, **{k: v for k, v in kwargs.items() if v is not None}
         )
 
         if provider_id:
             providers_to_try = [provider_id] if provider_id in self._providers else []
         elif provider_preference:
             providers_to_try = [
-                pid for pid, cfg in self._provider_configs.items()
+                pid
+                for pid, cfg in self._provider_configs.items()
                 if cfg.provider_type in provider_preference and pid in self._providers
             ]
         else:
@@ -1118,7 +1137,11 @@ class ModelGarage:
                 continue
 
             try:
-                logger.debug("Attempting completion", provider=pid, model=model or provider.config.default_model)
+                logger.debug(
+                    "Attempting completion",
+                    provider=pid,
+                    model=model or provider.config.default_model,
+                )
                 response = await provider.complete(request)
                 # Set cost from pricing table; will be 0.0 for local/unknown models
                 response.cost = self._calculate_cost(response, response.model)
@@ -1153,7 +1176,7 @@ class ModelGarage:
             messages=messages,
             model=model,
             stream=True,
-            **{k: v for k, v in kwargs.items() if v is not None}
+            **{k: v for k, v in kwargs.items() if v is not None},
         )
 
         provider = None
@@ -1203,6 +1226,7 @@ async def initialize_model_garage() -> ModelGarage:
 # Example Usage
 # ============================================================================
 
+
 async def main():
     """Example usage of ModelGarage."""
     garage = await initialize_model_garage()
@@ -1215,7 +1239,6 @@ async def main():
             ChatMessage(role="user", content="What is the capital of France?"),
         ]
     )
-
 
     await garage.close()
 

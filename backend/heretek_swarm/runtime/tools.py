@@ -25,28 +25,71 @@ logger = structlog.get_logger(__name__)
 # SECURITY NOTE: 'python' and 'git' removed due to arbitrary code execution risk
 ALLOWED_COMMANDS: set[str] = {
     # File operations (safe)
-    "ls", "pwd", "cd", "cat", "head", "tail", "wc",
-    "grep", "find", "sort", "uniq", "diff",
-
+    "ls",
+    "pwd",
+    "cd",
+    "cat",
+    "head",
+    "tail",
+    "wc",
+    "grep",
+    "find",
+    "sort",
+    "uniq",
+    "diff",
     # Text processing
-    "echo", "printf", "sed", "awk", "cut",
-
+    "echo",
+    "printf",
+    "sed",
+    "awk",
+    "cut",
     # System information (read-only)
-    "df", "du", "free", "top", "ps", "uptime",
-    "date", "whoami", "id", "uname",
-
+    "df",
+    "du",
+    "free",
+    "top",
+    "ps",
+    "uptime",
+    "date",
+    "whoami",
+    "id",
+    "uname",
     # Package management (controlled)
     "pip",
 }
 
 # Commands that are NEVER allowed (security critical)
 BLOCKED_COMMANDS: set[str] = {
-    "rm", "rmdir", "mv", "cp", "chmod", "chown",
-    "sudo", "su", "passwd", "useradd", "userdel",
-    "systemctl", "service", "iptables", "netstat",
-    "curl", "wget", "ssh", "scp", "rsync",
-    "kill", "killall", "pkill", "reboot", "shutdown",
-    "dd", "mkfs", "fdisk", "mount", "umount",
+    "rm",
+    "rmdir",
+    "mv",
+    "cp",
+    "chmod",
+    "chown",
+    "sudo",
+    "su",
+    "passwd",
+    "useradd",
+    "userdel",
+    "systemctl",
+    "service",
+    "iptables",
+    "netstat",
+    "curl",
+    "wget",
+    "ssh",
+    "scp",
+    "rsync",
+    "kill",
+    "killall",
+    "pkill",
+    "reboot",
+    "shutdown",
+    "dd",
+    "mkfs",
+    "fdisk",
+    "mount",
+    "umount",
 }
 
 
@@ -150,6 +193,7 @@ class ToolRegistry:
 # Built-in Tool Implementations
 # =============================================================================
 
+
 async def search_memory(query: str, agent_id: str, limit: int = 5, memory_backend=None):
     """
     Search agent memory for relevant information.
@@ -213,7 +257,7 @@ async def call_agent(
             "from": agent_id,
             "content": message,
             "timestamp": datetime.now(UTC).isoformat(),
-        }
+        },
     )
 
     return {
@@ -254,11 +298,11 @@ async def read_file(path: str, allowed_base_paths: list[str] | None = None) -> d
             "path_traversal_blocked",
             requested_path=path,
             resolved_path=resolved_path,
-            allowed_bases=allowed_base_paths
+            allowed_bases=allowed_base_paths,
         )
         return {
             "success": False,
-            "error": "Access denied: Path traversal detected. Access is restricted to allowed directories."
+            "error": "Access denied: Path traversal detected. Access is restricted to allowed directories.",
         }
 
     try:
@@ -310,11 +354,11 @@ async def write_file(path: str, content: str, allowed_base_paths: list[str] | No
             "path_traversal_blocked",
             requested_path=path,
             resolved_path=resolved_path,
-            allowed_bases=allowed_base_paths
+            allowed_bases=allowed_base_paths,
         )
         return {
             "success": False,
-            "error": "Access denied: Path traversal detected. Access is restricted to allowed directories."
+            "error": "Access denied: Path traversal detected. Access is restricted to allowed directories.",
         }
 
     try:
@@ -352,43 +396,29 @@ async def run_command(command: str, timeout: int = 30) -> dict:
     """
     # Validate command is not empty
     if not command or not command.strip():
-        return {
-            "success": False,
-            "error": "Empty command not allowed"
-        }
+        return {"success": False, "error": "Empty command not allowed"}
 
     # Parse command to extract base command
     parts = command.strip().split()
     if not parts:
-        return {
-            "success": False,
-            "error": "Invalid command format"
-        }
+        return {"success": False, "error": "Invalid command format"}
 
     base_cmd = parts[0]
 
     # Check if command is blocked (security critical)
     if base_cmd in BLOCKED_COMMANDS:
-        logger.warning(
-            "command_blocked",
-            command=base_cmd,
-            reason="Command in blocked list"
-        )
+        logger.warning("command_blocked", command=base_cmd, reason="Command in blocked list")
         return {
             "success": False,
-            "error": f"Command '{base_cmd}' is not allowed for security reasons"
+            "error": f"Command '{base_cmd}' is not allowed for security reasons",
         }
 
     # Check if command is allowed
     if base_cmd not in ALLOWED_COMMANDS:
-        logger.warning(
-            "command_not_allowed",
-            command=base_cmd,
-            reason="Command not in whitelist"
-        )
+        logger.warning("command_not_allowed", command=base_cmd, reason="Command not in whitelist")
         return {
             "success": False,
-            "error": f"Command '{base_cmd}' is not in the allowed command list"
+            "error": f"Command '{base_cmd}' is not in the allowed command list",
         }
 
     # Sanitize arguments to prevent injection
@@ -397,10 +427,7 @@ async def run_command(command: str, timeout: int = 30) -> dict:
         safe_command = f"{base_cmd} {' '.join(sanitized_args)}"
     except Exception as e:
         logger.error("command_sanitization_failed", error=str(e))
-        return {
-            "success": False,
-            "error": f"Failed to sanitize command arguments: {e!s}"
-        }
+        return {"success": False, "error": f"Failed to sanitize command arguments: {e!s}"}
 
     # Execute command with subprocess (no shell=True for security)
     try:
@@ -433,28 +460,16 @@ async def run_command(command: str, timeout: int = 30) -> dict:
         }
     except TimeoutError:
         logger.warning("command_timeout", command=base_cmd, timeout=timeout)
-        return {
-            "success": False,
-            "error": f"Command timed out after {timeout}s"
-        }
+        return {"success": False, "error": f"Command timed out after {timeout}s"}
     except FileNotFoundError:
         logger.error("command_not_found", command=base_cmd)
-        return {
-            "success": False,
-            "error": f"Command '{base_cmd}' not found"
-        }
+        return {"success": False, "error": f"Command '{base_cmd}' not found"}
     except PermissionError:
         logger.error("command_permission_denied", command=base_cmd)
-        return {
-            "success": False,
-            "error": f"Permission denied for command '{base_cmd}'"
-        }
+        return {"success": False, "error": f"Permission denied for command '{base_cmd}'"}
     except Exception as e:
         logger.error("command_execution_failed", command=base_cmd, error=str(e))
-        return {
-            "success": False,
-            "error": f"Command execution failed: {e!s}"
-        }
+        return {"success": False, "error": f"Command execution failed: {e!s}"}
 
 
 async def http_request(
@@ -488,9 +503,10 @@ async def http_request(
 
     # Block private/internal IP ranges to prevent SSRF
     import re
+
     private_ip_pattern = re.compile(
         r"^(127\.|10\.|172\.(1[6-9]|2[0-9]|3[0-1])\.|192\.168\.|0\.0\.0\.0|localhost)",
-        re.IGNORECASE
+        re.IGNORECASE,
     )
     if private_ip_pattern.match(url):
         logger.warning("ssrf_attempt_blocked", url=url)
@@ -504,13 +520,16 @@ async def http_request(
 
     while attempt <= max_retries:
         try:
-            async with aiohttp.ClientSession() as session, session.request(
-                method,
-                url,
-                headers=headers,
-                json=body,
-                timeout=aiohttp.ClientTimeout(total=timeout),
-            ) as response:
+            async with (
+                aiohttp.ClientSession() as session,
+                session.request(
+                    method,
+                    url,
+                    headers=headers,
+                    json=body,
+                    timeout=aiohttp.ClientTimeout(total=timeout),
+                ) as response,
+            ):
                 content = await response.text()
 
                 return {
@@ -545,6 +564,7 @@ async def http_request(
 # Tool Registration
 # =============================================================================
 
+
 def register_builtin_tools(
     registry: ToolRegistry,
     memory_backend=None,
@@ -558,6 +578,7 @@ def register_builtin_tools(
         memory_backend: Optional memory backend
         a2a_server: Optional A2A server
     """
+
     # Memory search (requires backend)
     async def memory_search_wrapper(query: str, agent_id: str, limit: int = 5):
         return await search_memory(query, agent_id, limit, memory_backend)

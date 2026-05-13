@@ -1,0 +1,18 @@
+{
+  "id": "b65990c6-2426-4af4-b052-1e27fd5f33b9",
+  "runtime": "bash",
+  "purpose": "Find all API route handlers",
+  "script_chars": 361,
+  "started_at": "2026-05-13T00:43:30.794Z",
+  "finished_at": "2026-05-13T00:43:38.447Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 7653,
+  "stdout_bytes": 34292,
+  "stderr_bytes": 0,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\b65990c6-2426-4af4-b052-1e27fd5f33b9.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\b65990c6-2426-4af4-b052-1e27fd5f33b9.stderr"
+}

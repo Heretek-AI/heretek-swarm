@@ -115,9 +115,7 @@ class TestContractDispatchSuccess:
     async def test_returns_dispatched_on_success() -> None:
         steward = _make_steward_mock(route_result="msg-coder-001")
         historian = _make_historian_mock()
-        swarm = _make_swarm_with_actors(
-            {"steward": steward, "historian": historian}
-        )
+        swarm = _make_swarm_with_actors({"steward": steward, "historian": historian})
 
         result = await swarm.run_routed_task(
             agent_name="coder",
@@ -135,9 +133,7 @@ class TestContractDispatchSuccess:
     async def test_calls_steward_route_to_agent() -> None:
         steward = _make_steward_mock()
         historian = _make_historian_mock()
-        swarm = _make_swarm_with_actors(
-            {"steward": steward, "historian": historian}
-        )
+        swarm = _make_swarm_with_actors({"steward": steward, "historian": historian})
 
         await swarm.run_routed_task(
             agent_name="coder",
@@ -156,9 +152,7 @@ class TestContractDispatchSuccess:
     async def test_logs_to_historian_on_success() -> None:
         steward = _make_steward_mock(route_result="msg-42")
         historian = _make_historian_mock()
-        swarm = _make_swarm_with_actors(
-            {"steward": steward, "historian": historian}
-        )
+        swarm = _make_swarm_with_actors({"steward": steward, "historian": historian})
 
         await swarm.run_routed_task(
             agent_name="explorer",
@@ -191,9 +185,7 @@ class TestContractDispatchFailure:
     async def test_returns_failed_on_empty_result() -> None:
         steward = _make_steward_mock(route_result="")
         historian = _make_historian_mock()
-        swarm = _make_swarm_with_actors(
-            {"steward": steward, "historian": historian}
-        )
+        swarm = _make_swarm_with_actors({"steward": steward, "historian": historian})
 
         result = await swarm.run_routed_task(
             agent_name="coder",
@@ -211,9 +203,7 @@ class TestContractDispatchFailure:
         does NOT log to Historian."""
         steward = _make_steward_mock(route_result="")
         historian = _make_historian_mock()
-        swarm = _make_swarm_with_actors(
-            {"steward": steward, "historian": historian}
-        )
+        swarm = _make_swarm_with_actors({"steward": steward, "historian": historian})
 
         await swarm.run_routed_task(
             agent_name="coder",

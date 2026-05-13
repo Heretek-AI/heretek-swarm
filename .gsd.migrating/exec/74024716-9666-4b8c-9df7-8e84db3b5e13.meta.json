@@ -1,0 +1,18 @@
+{
+  "id": "74024716-9666-4b8c-9df7-8e84db3b5e13",
+  "runtime": "bash",
+  "purpose": "show merge-base and diff",
+  "script_chars": 262,
+  "started_at": "2026-05-13T00:00:01.829Z",
+  "finished_at": "2026-05-13T00:00:03.945Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 2116,
+  "stdout_bytes": 14,
+  "stderr_bytes": 0,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\74024716-9666-4b8c-9df7-8e84db3b5e13.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\74024716-9666-4b8c-9df7-8e84db3b5e13.stderr"
+}

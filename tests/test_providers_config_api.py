@@ -39,7 +39,9 @@ if TYPE_CHECKING:
 # ---------------------------------------------------------------------------
 
 
-def _seed_providers_config(path: Path, llm: list[dict] | None = None, emb: list[dict] | None = None) -> None:
+def _seed_providers_config(
+    path: Path, llm: list[dict] | None = None, emb: list[dict] | None = None
+) -> None:
     """Write a valid config.json with optional llm and embedding providers."""
     data: dict = {"version": "1.0.0"}
     if llm is not None:
@@ -55,6 +57,7 @@ def _reset_global_garage() -> None:
     """Reset the global ModelGarage singleton between tests."""
     ModelGarage._model_garage = None
     import heretek_swarm.llm.model_garage as mg
+
     mg._model_garage = None
 
 
@@ -67,6 +70,7 @@ def client_with_config(tmp_path: Path):
         # Create a fresh garage pointing at the temp file
         fresh = ModelGarage(config_file=config_file)
         import heretek_swarm.llm.model_garage as mg
+
         mg._model_garage = fresh
         yield TestClient(app)
 
@@ -92,20 +96,28 @@ class TestListLLMProviders:
         assert "X-RateLimit-Remaining" in resp.headers
         assert "X-RateLimit-Reset" in resp.headers
 
-    def test_list_includes_configured_provider(self, client_with_config: TestClient, tmp_path: Path) -> None:
+    def test_list_includes_configured_provider(
+        self, client_with_config: TestClient, tmp_path: Path
+    ) -> None:
         config_file = tmp_path / ".heretek-swarm" / "config.json"
-        _seed_providers_config(config_file, llm=[{
-            "id": "ollama-1",
-            "type": "ollama",
-            "name": "Local Ollama",
-            "baseUrl": "http://localhost:11434",
-            "defaultModel": "llama3.1",
-            "isEnabled": True,
-            "isDefault": False,
-            "priority": 100,
-        }])
+        _seed_providers_config(
+            config_file,
+            llm=[
+                {
+                    "id": "ollama-1",
+                    "type": "ollama",
+                    "name": "Local Ollama",
+                    "baseUrl": "http://localhost:11434",
+                    "defaultModel": "llama3.1",
+                    "isEnabled": True,
+                    "isDefault": False,
+                    "priority": 100,
+                }
+            ],
+        )
         fresh = ModelGarage(config_file=config_file)
         import heretek_swarm.llm.model_garage as mg
+
         mg._model_garage = fresh
 
         resp = client_with_config.get("/api/v1/providers/llm")
@@ -140,29 +152,47 @@ class TestCreateLLMProvider:
         assert data["is_enabled"] is True
 
     def test_create_persists_in_list(self, client_with_config: TestClient) -> None:
-        client_with_config.post("/api/v1/providers/llm", json={
-            "type": "openai",
-            "name": "OpenAI Prod",
-            "baseUrl": "https://api.openai.com/v1",
-            "apiKey": "sk-prod",
-            "defaultModel": "gpt-4o",
-        })
+        client_with_config.post(
+            "/api/v1/providers/llm",
+            json={
+                "type": "openai",
+                "name": "OpenAI Prod",
+                "baseUrl": "https://api.openai.com/v1",
+                "apiKey": "sk-prod",
+                "defaultModel": "gpt-4o",
+            },
+        )
         resp = client_with_config.get("/api/v1/providers/llm")
         providers = resp.json()["providers"]
         assert len(providers) == 1
         assert providers[0]["name"] == "OpenAI Prod"
 
     def test_auto_generates_unique_ids(self, client_with_config: TestClient) -> None:
-        p1 = client_with_config.post("/api/v1/providers/llm", json={
-            "type": "ollama", "name": "A", "baseUrl": "http://a:11434",
-        }).json()
-        p2 = client_with_config.post("/api/v1/providers/llm", json={
-            "type": "ollama", "name": "B", "baseUrl": "http://b:11434",
-        }).json()
+        p1 = client_with_config.post(
+            "/api/v1/providers/llm",
+            json={
+                "type": "ollama",
+                "name": "A",
+                "baseUrl": "http://a:11434",
+            },
+        ).json()
+        p2 = client_with_config.post(
+            "/api/v1/providers/llm",
+            json={
+                "type": "ollama",
+                "name": "B",
+                "baseUrl": "http://b:11434",
+            },
+        ).json()
         assert p1["id"] != p2["id"]
 
     def test_default_enabled_flag(self, client_with_config: TestClient) -> None:
-        body = {"type": "ollama", "name": "Explicit Disabled", "baseUrl": "http://localhost:11434", "isEnabled": False}
+        body = {
+            "type": "ollama",
+            "name": "Explicit Disabled",
+            "baseUrl": "http://localhost:11434",
+            "isEnabled": False,
+        }
         resp = client_with_config.post("/api/v1/providers/llm", json=body)
         assert resp.json()["is_enabled"] is False
 
@@ -176,9 +206,14 @@ class TestUpdateLLMProvider:
     """``PUT /api/v1/providers/llm/{provider_id}``"""
 
     def test_update_changes_name(self, client_with_config: TestClient) -> None:
-        created = client_with_config.post("/api/v1/providers/llm", json={
-            "type": "ollama", "name": "Original", "baseUrl": "http://localhost:11434",
-        }).json()
+        created = client_with_config.post(
+            "/api/v1/providers/llm",
+            json={
+                "type": "ollama",
+                "name": "Original",
+                "baseUrl": "http://localhost:11434",
+            },
+        ).json()
         pid = created["id"]
 
         resp = client_with_config.put(f"/api/v1/providers/llm/{pid}", json={"name": "Renamed"})
@@ -190,14 +225,23 @@ class TestUpdateLLMProvider:
         assert providers[0]["name"] == "Renamed"
 
     def test_update_persists_across_requests(self, client_with_config: TestClient) -> None:
-        created = client_with_config.post("/api/v1/providers/llm", json={
-            "type": "ollama", "name": "Persist Me", "baseUrl": "http://localhost:11434",
-        }).json()
+        created = client_with_config.post(
+            "/api/v1/providers/llm",
+            json={
+                "type": "ollama",
+                "name": "Persist Me",
+                "baseUrl": "http://localhost:11434",
+            },
+        ).json()
         pid = created["id"]
 
-        client_with_config.put(f"/api/v1/providers/llm/{pid}", json={
-            "baseUrl": "http://localhost:11435", "defaultModel": "llama3.2",
-        })
+        client_with_config.put(
+            f"/api/v1/providers/llm/{pid}",
+            json={
+                "baseUrl": "http://localhost:11435",
+                "defaultModel": "llama3.2",
+            },
+        )
 
         providers = client_with_config.get("/api/v1/providers/llm").json()["providers"]
         p = providers[0]
@@ -218,9 +262,14 @@ class TestDeleteLLMProvider:
     """``DELETE /api/v1/providers/llm/{provider_id}``"""
 
     def test_delete_removes_provider(self, client_with_config: TestClient) -> None:
-        created = client_with_config.post("/api/v1/providers/llm", json={
-            "type": "ollama", "name": "To Delete", "baseUrl": "http://localhost:11434",
-        }).json()
+        created = client_with_config.post(
+            "/api/v1/providers/llm",
+            json={
+                "type": "ollama",
+                "name": "To Delete",
+                "baseUrl": "http://localhost:11434",
+            },
+        ).json()
         pid = created["id"]
 
         resp = client_with_config.delete(f"/api/v1/providers/llm/{pid}")
@@ -244,9 +293,14 @@ class TestLLMProviderTest:
     """``POST /api/v1/providers/llm/{provider_id}/test``"""
 
     def test_test_returns_structure(self, client_with_config: TestClient) -> None:
-        created = client_with_config.post("/api/v1/providers/llm", json={
-            "type": "ollama", "name": "Testable", "baseUrl": "http://localhost:11434",
-        }).json()
+        created = client_with_config.post(
+            "/api/v1/providers/llm",
+            json={
+                "type": "ollama",
+                "name": "Testable",
+                "baseUrl": "http://localhost:11434",
+            },
+        ).json()
         pid = created["id"]
 
         # Mock httpx to avoid real network calls
@@ -255,7 +309,9 @@ class TestLLMProviderTest:
             mock_client.get = AsyncMock(return_value=MagicMock(status_code=200))
             mock_client.is_closed = False
             mock_cls.return_value = mock_client
-            with patch("heretek_swarm.llm.model_garage.instrumented_httpx_client", return_value=mock_client):
+            with patch(
+                "heretek_swarm.llm.model_garage.instrumented_httpx_client", return_value=mock_client
+            ):
                 resp = client_with_config.post(f"/api/v1/providers/llm/{pid}/test")
 
         assert resp.status_code == 200
@@ -283,12 +339,15 @@ class TestEmbeddingProviders:
         assert resp.json()["providers"] == []
 
     def test_create_and_list(self, client_with_config: TestClient) -> None:
-        resp = client_with_config.post("/api/v1/providers/embedding", json={
-            "type": "ollama",
-            "name": "Ollama Embeddings",
-            "baseUrl": "http://localhost:11434",
-            "defaultModel": "nomic-embed-text",
-        })
+        resp = client_with_config.post(
+            "/api/v1/providers/embedding",
+            json={
+                "type": "ollama",
+                "name": "Ollama Embeddings",
+                "baseUrl": "http://localhost:11434",
+                "defaultModel": "nomic-embed-text",
+            },
+        )
         assert resp.status_code == 200
         data = resp.json()
         assert data["name"] == "Ollama Embeddings"
@@ -299,9 +358,14 @@ class TestEmbeddingProviders:
         assert providers[0]["name"] == "Ollama Embeddings"
 
     def test_delete(self, client_with_config: TestClient) -> None:
-        created = client_with_config.post("/api/v1/providers/embedding", json={
-            "type": "openai", "name": "OpenAI Emb", "baseUrl": "https://api.openai.com/v1",
-        }).json()
+        created = client_with_config.post(
+            "/api/v1/providers/embedding",
+            json={
+                "type": "openai",
+                "name": "OpenAI Emb",
+                "baseUrl": "https://api.openai.com/v1",
+            },
+        ).json()
         pid = created["id"]
 
         resp = client_with_config.delete(f"/api/v1/providers/embedding/{pid}")
@@ -312,12 +376,19 @@ class TestEmbeddingProviders:
         assert len(providers) == 0
 
     def test_update(self, client_with_config: TestClient) -> None:
-        created = client_with_config.post("/api/v1/providers/embedding", json={
-            "type": "ollama", "name": "Original Emb", "baseUrl": "http://localhost:11434",
-        }).json()
+        created = client_with_config.post(
+            "/api/v1/providers/embedding",
+            json={
+                "type": "ollama",
+                "name": "Original Emb",
+                "baseUrl": "http://localhost:11434",
+            },
+        ).json()
         pid = created["id"]
 
-        resp = client_with_config.put(f"/api/v1/providers/embedding/{pid}", json={"name": "Renamed Emb"})
+        resp = client_with_config.put(
+            f"/api/v1/providers/embedding/{pid}", json={"name": "Renamed Emb"}
+        )
         assert resp.status_code == 200
         assert resp.json()["name"] == "Renamed Emb"
 
@@ -330,11 +401,14 @@ class TestEmbeddingProviders:
         assert resp.status_code == 404
 
     def test_test_endpoint_returns_structure(self, client_with_config: TestClient) -> None:
-        created = client_with_config.post("/api/v1/providers/embedding", json={
-            "type": "ollama",
-            "name": "Emb Test",
-            "baseUrl": "http://localhost:11434",
-        }).json()
+        created = client_with_config.post(
+            "/api/v1/providers/embedding",
+            json={
+                "type": "ollama",
+                "name": "Emb Test",
+                "baseUrl": "http://localhost:11434",
+            },
+        ).json()
         pid = created["id"]
 
         with patch("httpx.AsyncClient.get", new_callable=AsyncMock) as mock_get:
@@ -365,46 +439,61 @@ class TestNegativeInputs:
     """Malformed inputs, error paths, boundary conditions."""
 
     def test_invalid_provider_type_returns_400(self, client_with_config: TestClient) -> None:
-        resp = client_with_config.post("/api/v1/providers/llm", json={
-            "type": "not-a-real-type",
-            "name": "Bad",
-            "baseUrl": "http://localhost:11434",
-        })
+        resp = client_with_config.post(
+            "/api/v1/providers/llm",
+            json={
+                "type": "not-a-real-type",
+                "name": "Bad",
+                "baseUrl": "http://localhost:11434",
+            },
+        )
         assert resp.status_code == 400
         assert "Unknown provider type" in resp.json()["detail"]
 
     def test_empty_name_returns_422(self, client_with_config: TestClient) -> None:
-        resp = client_with_config.post("/api/v1/providers/llm", json={
-            "type": "ollama",
-            "name": "",
-            "baseUrl": "http://localhost:11434",
-        })
+        resp = client_with_config.post(
+            "/api/v1/providers/llm",
+            json={
+                "type": "ollama",
+                "name": "",
+                "baseUrl": "http://localhost:11434",
+            },
+        )
         assert resp.status_code == 422
 
     def test_missing_base_url_returns_422(self, client_with_config: TestClient) -> None:
-        resp = client_with_config.post("/api/v1/providers/llm", json={
-            "type": "ollama",
-            "name": "Missing URL",
-        })
+        resp = client_with_config.post(
+            "/api/v1/providers/llm",
+            json={
+                "type": "ollama",
+                "name": "Missing URL",
+            },
+        )
         assert resp.status_code == 422
 
     def test_long_name_is_accepted_or_validated(self, client_with_config: TestClient) -> None:
         """Names longer than 200 chars should be 422."""
         long_name = "A" * 201
-        resp = client_with_config.post("/api/v1/providers/llm", json={
-            "type": "ollama",
-            "name": long_name,
-            "baseUrl": "http://localhost:11434",
-        })
+        resp = client_with_config.post(
+            "/api/v1/providers/llm",
+            json={
+                "type": "ollama",
+                "name": long_name,
+                "baseUrl": "http://localhost:11434",
+            },
+        )
         assert resp.status_code == 422
 
     def test_negative_priority_rejected(self, client_with_config: TestClient) -> None:
-        resp = client_with_config.post("/api/v1/providers/llm", json={
-            "type": "ollama",
-            "name": "Bad Priority",
-            "baseUrl": "http://localhost:11434",
-            "priority": -1,
-        })
+        resp = client_with_config.post(
+            "/api/v1/providers/llm",
+            json={
+                "type": "ollama",
+                "name": "Bad Priority",
+                "baseUrl": "http://localhost:11434",
+                "priority": -1,
+            },
+        )
         assert resp.status_code == 422
 
     def test_whitespace_only_provider_id_returns_400(self, client_with_config: TestClient) -> None:
@@ -412,16 +501,22 @@ class TestNegativeInputs:
         assert resp.status_code == 400
 
     def test_embedding_missing_type_returns_422(self, client_with_config: TestClient) -> None:
-        resp = client_with_config.post("/api/v1/providers/embedding", json={
-            "name": "NoType",
-            "baseUrl": "http://localhost:11434",
-        })
+        resp = client_with_config.post(
+            "/api/v1/providers/embedding",
+            json={
+                "name": "NoType",
+                "baseUrl": "http://localhost:11434",
+            },
+        )
         assert resp.status_code == 422
 
     def test_embedding_empty_name_returns_422(self, client_with_config: TestClient) -> None:
-        resp = client_with_config.post("/api/v1/providers/embedding", json={
-            "type": "ollama",
-            "name": "",
-            "baseUrl": "http://localhost:11434",
-        })
+        resp = client_with_config.post(
+            "/api/v1/providers/embedding",
+            json={
+                "type": "ollama",
+                "name": "",
+                "baseUrl": "http://localhost:11434",
+            },
+        )
         assert resp.status_code == 422

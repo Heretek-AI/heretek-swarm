@@ -273,6 +273,10 @@ ignore = [
     "ARG002", # unused argument (function)
     "PT019",  # pytest.fixture without value
     "S106",   # hardcoded password (test fixtures)
+    "SLF001", # Private member access (tests need to access internals)
+]
+"backend/heretek_swarm/actors/{alpha,beta,catalyst,charlie,coder,echo,empath,explorer,handoff,handoff_handlers,historian,metis,perceiver,steward}.py" = [
+    "F403",   # Re-export stubs use wildcard imports
 ]
 
 [tool.ruff.lint.isort]

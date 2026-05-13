@@ -9,6 +9,7 @@ from typing import Any
 
 class DocumentType(Enum):
     """Document type enumeration."""
+
     TEXT = "text"
     MARKDOWN = "markdown"
     PDF = "pdf"
@@ -20,6 +21,7 @@ class DocumentType(Enum):
 
 class ChunkStrategy(Enum):
     """Chunking strategy enumeration."""
+
     FIXED = "fixed"
     FIXED_SIZE = "fixed_size"
     RECURSIVE = "recursive"
@@ -31,6 +33,7 @@ class ChunkStrategy(Enum):
 @dataclass
 class ProcessingConfig:
     """Configuration for document processing."""
+
     chunk_size: int = 512
     chunk_overlap: int = 50
     min_chunk_size: int = 50
@@ -42,6 +45,7 @@ class ProcessingConfig:
 @dataclass
 class ProcessedDocument:
     """Processed document with chunks and metadata."""
+
     id: str
     content: str
     chunks: list[str] = field(default_factory=list)
@@ -100,7 +104,18 @@ class DocumentProcessor:
     def _extract_keywords(self, content: str) -> list[str]:
         """Extract keywords from content."""
         words = re.findall(r"\b[a-z]{4,}\b", content.lower())
-        stop_words = {"this", "that", "with", "from", "have", "they", "will", "been", "were", "when"}
+        stop_words = {
+            "this",
+            "that",
+            "with",
+            "from",
+            "have",
+            "they",
+            "will",
+            "been",
+            "were",
+            "when",
+        }
         keywords = [w for w in words if w not in stop_words]
         return list(set(keywords))[:10]
 
@@ -172,37 +187,43 @@ class DocumentProcessor:
             else:
                 if current_chunk.strip():
                     chunk_id = f"{doc_id}_chunk_{chunk_index}"
-                    chunks.append(ProcessedDocument(
-                        id=chunk_id,
-                        content=current_chunk.strip(),
-                        chunks=[current_chunk.strip()],
-                        metadata={"source": filename, "chunk_index": chunk_index},
-                        document_type=doc_type,
-                    ))
+                    chunks.append(
+                        ProcessedDocument(
+                            id=chunk_id,
+                            content=current_chunk.strip(),
+                            chunks=[current_chunk.strip()],
+                            metadata={"source": filename, "chunk_index": chunk_index},
+                            document_type=doc_type,
+                        )
+                    )
                     chunk_index += 1
                 current_chunk = sentence + " "
 
         # Don't forget the last chunk
         if current_chunk.strip():
             chunk_id = f"{doc_id}_chunk_{chunk_index}"
-            chunks.append(ProcessedDocument(
-                id=chunk_id,
-                content=current_chunk.strip(),
-                chunks=[current_chunk.strip()],
-                metadata={"source": filename, "chunk_index": chunk_index},
-                document_type=doc_type,
-            ))
+            chunks.append(
+                ProcessedDocument(
+                    id=chunk_id,
+                    content=current_chunk.strip(),
+                    chunks=[current_chunk.strip()],
+                    metadata={"source": filename, "chunk_index": chunk_index},
+                    document_type=doc_type,
+                )
+            )
 
         # Ensure at least one chunk
         if not chunks:
             chunk_id = f"{doc_id}_chunk_0"
-            chunks.append(ProcessedDocument(
-                id=chunk_id,
-                content=text,
-                chunks=[text],
-                metadata={"source": filename, "chunk_index": 0},
-                document_type=doc_type,
-            ))
+            chunks.append(
+                ProcessedDocument(
+                    id=chunk_id,
+                    content=text,
+                    chunks=[text],
+                    metadata={"source": filename, "chunk_index": 0},
+                    document_type=doc_type,
+                )
+            )
 
         return chunks
 
@@ -220,7 +241,7 @@ class DocumentProcessor:
         chunk_size = self.config.chunk_size
         overlap = self.config.chunk_overlap
         for i in range(0, len(content), chunk_size - overlap):
-            chunk = content[i:i + chunk_size]
+            chunk = content[i : i + chunk_size]
             if chunk:
                 chunks.append(chunk)
         return chunks if chunks else [content]

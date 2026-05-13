@@ -117,24 +117,18 @@ class DAGStrategy(ExecutionStrategy):
         failed_nodes: list[str] = []
 
         # Build dependency map: node_id -> list of input node ids
-        {
-            node.id: node.inputs for node in workflow.nodes
-        }
+        {node.id: node.inputs for node in workflow.nodes}
 
         # Compute in-degree (number of unmet dependencies)
-        in_degree: dict[str, int] = {
-            node.id: len(node.inputs) for node in workflow.nodes
-        }
+        in_degree: dict[str, int] = {node.id: len(node.inputs) for node in workflow.nodes}
 
         # Start with nodes that have no unmet dependencies
-        ready: list[str] = [
-            node_id for node_id, degree in in_degree.items() if degree == 0
-        ]
+        ready: list[str] = [node_id for node_id, degree in in_degree.items() if degree == 0]
 
         while ready:
             # Batch nodes that can run in parallel (within max_parallel limit)
             batch = ready[: self.max_parallel]
-            ready = ready[self.max_parallel:]
+            ready = ready[self.max_parallel :]
 
             # Execute batch concurrently
             async def run_node(node_id: str) -> tuple[str, Any | None, str | None]:
@@ -197,8 +191,7 @@ class DAGStrategy(ExecutionStrategy):
             node_results=node_results,
             error_message=None if success else f"Failed nodes: {failed_nodes}",
             node_status={
-                nid: "failed" if nid in failed_nodes else "completed"
-                for nid in node_results
+                nid: "failed" if nid in failed_nodes else "completed" for nid in node_results
             },
         )
 
@@ -339,9 +332,7 @@ class CycleStrategy(ExecutionStrategy):
         if not old:
             return 1.0
 
-        changed_keys = sum(
-            1 for k in new if old.get(k) != new[k]
-        )
+        changed_keys = sum(1 for k in new if old.get(k) != new[k])
         total_keys = max(len(new), 1)
         return changed_keys / total_keys
 
@@ -369,6 +360,7 @@ class MajorityVoteStrategy(ExecutionStrategy):
         """
         Execute all nodes in parallel, then aggregate via majority vote.
         """
+
         # Execute all nodes concurrently
         async def run_all() -> list[tuple[str, Any | None, str | None]]:
             async def run_node(node: WorkflowNode) -> tuple[str, Any | None, str | None]:
@@ -448,7 +440,11 @@ class MajorityVoteStrategy(ExecutionStrategy):
             if count / len(results) >= threshold:
                 return most_common
             # No majority — return all with votes
-            return {"votes": dict(counter), "winner": most_common, "agreement": count / len(results)}
+            return {
+                "votes": dict(counter),
+                "winner": most_common,
+                "agreement": count / len(results),
+            }
 
         # For dict results, aggregate per key
         if all(isinstance(r, dict) for r in results):

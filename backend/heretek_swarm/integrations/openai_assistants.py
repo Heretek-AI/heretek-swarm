@@ -33,6 +33,7 @@ try:
     from openai.types.beta import Assistant, Run, Thread
     from openai.types.beta.threads import Message, TextContentBlock
     from openai.types.beta.threads.runs import FunctionToolCall, ToolCall
+
     OPENAI_AVAILABLE = True
 except ImportError:
     OPENAI_AVAILABLE = False
@@ -49,6 +50,7 @@ except ImportError:
 
 class RunStatus(StrEnum):
     """Run status enumeration."""
+
     QUEUED = "queued"
     IN_PROGRESS = "in_progress"
     REQUIRES_ACTION = "requires_action"
@@ -61,6 +63,7 @@ class RunStatus(StrEnum):
 
 class MessageRole(StrEnum):
     """Message role enumeration."""
+
     USER = "user"
     ASSISTANT = "assistant"
 
@@ -80,6 +83,7 @@ class AssistantConfig:
         file_ids: Attached file IDs
         metadata: Additional metadata
     """
+
     assistant_id: str
     name: str
     model: str = "gpt-4o"
@@ -117,6 +121,7 @@ class ThreadContext:
         created_at: Creation timestamp
         metadata: Additional metadata
     """
+
     thread_id: str
     assistant_id: str | None = None
     messages: list[dict[str, Any]] = field(default_factory=list)
@@ -150,6 +155,7 @@ class RunContext:
         tools: Run-specific tools
         metadata: Additional metadata
     """
+
     run_id: str
     thread_id: str
     assistant_id: str
@@ -190,6 +196,7 @@ class FunctionCallRequest:
         thread_id: Associated thread ID
         run_id: Associated run ID
     """
+
     call_id: str
     name: str
     arguments: dict[str, Any]
@@ -364,9 +371,7 @@ class OpenAIAssistantsAdapter:
         """
         if not OPENAI_AVAILABLE:
             logger.warning("openai_not_available")
-            raise RuntimeError(
-                "OpenAI is not available. Install with: pip install openai"
-            )
+            raise RuntimeError("OpenAI is not available. Install with: pip install openai")
 
         if not self.client:
             raise RuntimeError("OpenAI client not initialized. Provide API key.")
@@ -504,12 +509,14 @@ class OpenAIAssistantsAdapter:
             )
 
             # Track message locally
-            self.threads[thread_id].messages.append({
-                "role": role.value,
-                "content": content,
-                "file_ids": file_ids or [],
-                "timestamp": datetime.now(UTC).isoformat(),
-            })
+            self.threads[thread_id].messages.append(
+                {
+                    "role": role.value,
+                    "content": content,
+                    "file_ids": file_ids or [],
+                    "timestamp": datetime.now(UTC).isoformat(),
+                }
+            )
 
             logger.debug("message_added", thread_id=thread_id)
             return True
@@ -688,10 +695,14 @@ class OpenAIAssistantsAdapter:
                     await self.client.beta.threads.runs.submit_tool_outputs(
                         thread_id=context.thread_id,
                         run_id=context.run_id,
-                        tool_outputs=[{
-                            "tool_call_id": tool_call.id,
-                            "output": json.dumps(result) if not isinstance(result, str) else result,
-                        }],
+                        tool_outputs=[
+                            {
+                                "tool_call_id": tool_call.id,
+                                "output": json.dumps(result)
+                                if not isinstance(result, str)
+                                else result,
+                            }
+                        ],
                     )
                     logger.debug(
                         "tool_output_submitted",
@@ -811,11 +822,13 @@ class OpenAIAssistantsAdapter:
                     if isinstance(c, TextContentBlock):
                         content += c.text.value
 
-                result.append({
-                    "role": msg.role,
-                    "content": content,
-                    "created_at": datetime.fromtimestamp(msg.created_at).isoformat(),
-                })
+                result.append(
+                    {
+                        "role": msg.role,
+                        "content": content,
+                        "created_at": datetime.fromtimestamp(msg.created_at).isoformat(),
+                    }
+                )
 
             return result
 
@@ -917,11 +930,13 @@ def create_assistant(
     """
     adapter = get_openai_assistants_adapter()
 
-    return asyncio.create_task(adapter.create_assistant(
-        assistant_id=assistant_id,
-        name=name,
-        model=model,
-        instructions=instructions,
-        tools=tools,
-        heretek_agent_id=heretek_agent_id,
-    ))
+    return asyncio.create_task(
+        adapter.create_assistant(
+            assistant_id=assistant_id,
+            name=name,
+            model=model,
+            instructions=instructions,
+            tools=tools,
+            heretek_agent_id=heretek_agent_id,
+        )
+    )

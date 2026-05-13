@@ -101,9 +101,10 @@ async def _collect_vote_responses(
         # The triad agents send to "triad" topic with vote_response message type
         async def on_vote_response(data: dict[str, Any]) -> None:
             """Handle incoming vote response."""
-            if data.get("message_type") == "vote_response" and data.get(
-                "deliberation_id"
-            ) == deliberation_id:
+            if (
+                data.get("message_type") == "vote_response"
+                and data.get("deliberation_id") == deliberation_id
+            ):
                 contribution = Contribution(
                     agent_id=data.get("agent_id", "unknown"),
                     role=_get_agent_role(data.get("agent_id", "")),
@@ -187,9 +188,7 @@ def _synthesize_response(
 
     # Add synthesis note if multiple contributions
     if len(contributions) > 1:
-        synthesized = (
-            f"Based on deliberation with {len(contributions)} agents:\n\n{synthesized}"
-        )
+        synthesized = f"Based on deliberation with {len(contributions)} agents:\n\n{synthesized}"
 
     return synthesized
 

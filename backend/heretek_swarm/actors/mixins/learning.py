@@ -56,29 +56,21 @@ class LearningMixin:
             "agent_id": self.agent_id,
             "collective_learning": {
                 "patterns_extracted": (
-                    len(self.pattern_extractor._validated_patterns)
-                    if self.pattern_extractor
-                    else 0
+                    len(self.pattern_extractor._validated_patterns) if self.pattern_extractor else 0
                 ),
                 "message_cache_size": (
-                    len(self.pattern_extractor._message_cache)
-                    if self.pattern_extractor
-                    else 0
+                    len(self.pattern_extractor._message_cache) if self.pattern_extractor else 0
                 ),
             },
             "consensus": {
                 "active_deliberations": len(self._active_deliberations or {}),
                 "deliberation_engine_stats": (
-                    self.deliberation_engine.get_statistics()
-                    if self.deliberation_engine
-                    else {}
+                    self.deliberation_engine.get_statistics() if self.deliberation_engine else {}
                 ),
             },
             "memory_optimization": {
                 "access_statistics": (
-                    self.access_analyzer.get_statistics().to_dict()
-                    if self.access_analyzer
-                    else {}
+                    self.access_analyzer.get_statistics().to_dict() if self.access_analyzer else {}
                 ),
             },
         }

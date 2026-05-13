@@ -28,22 +28,25 @@ logger = structlog.get_logger(__name__)
 # Pre-fetch Types and Enums
 # =============================================================================
 
+
 class PreFetchStrategy(StrEnum):
     """Pre-fetching strategies."""
-    LRU = "lru"              # Least Recently Used
-    LFU = "lfu"              # Least Frequently Used
-    PATTERN = "pattern"      # Pattern-based prediction
-    AGENT = "agent"          # Agent behavior-based
-    HYBRID = "hybrid"        # Combined strategy
+
+    LRU = "lru"  # Least Recently Used
+    LFU = "lfu"  # Least Frequently Used
+    PATTERN = "pattern"  # Pattern-based prediction
+    AGENT = "agent"  # Agent behavior-based
+    HYBRID = "hybrid"  # Combined strategy
 
 
 class PreFetchPriority(StrEnum):
     """Pre-fetch priority levels."""
-    CRITICAL = "critical"    # Highest priority, immediate
-    HIGH = "high"            # High priority, next batch
-    NORMAL = "normal"        # Standard priority
-    LOW = "low"              # Low priority, background
-    IDLE = "idle"            # Only when system idle
+
+    CRITICAL = "critical"  # Highest priority, immediate
+    HIGH = "high"  # High priority, next batch
+    NORMAL = "normal"  # Standard priority
+    LOW = "low"  # Low priority, background
+    IDLE = "idle"  # Only when system idle
 
 
 @dataclass
@@ -61,6 +64,7 @@ class PreFetchRequest:
         agent_id: Agent that may access this memory
         created_at: Request creation timestamp
     """
+
     memory_id: str
     priority: PreFetchPriority
     reason: str
@@ -97,6 +101,7 @@ class PreFetchResult:
         strategy: Strategy used
         was_used: Whether the pre-fetched memory was actually accessed
     """
+
     memory_id: str
     success: bool
     latency_ms: float
@@ -135,6 +140,7 @@ class CacheStatistics:
         eviction_count: Total evictions
         avg_latency_ms: Average access latency
     """
+
     total_size: int = 0
     max_size: int = 0
     utilization: float = 0.0
@@ -171,6 +177,7 @@ class CacheStatistics:
 @dataclass
 class LRUCacheEntry:
     """Entry in LRU cache with metadata."""
+
     memory_id: str
     data: Any
     access_count: int = 1
@@ -182,6 +189,7 @@ class LRUCacheEntry:
 # =============================================================================
 # LRU Cache Implementation
 # =============================================================================
+
 
 class LRUCache:
     """
@@ -331,6 +339,7 @@ class LRUCache:
 # LFU Cache Implementation
 # =============================================================================
 
+
 class LFUCache:
     """
     Least Frequently Used (LFU) Cache.
@@ -453,9 +462,11 @@ class LFUCache:
 # Pre-fetch Scheduler
 # =============================================================================
 
+
 @dataclass
 class PreFetchSchedule:
     """Scheduled pre-fetch task."""
+
     memory_id: str
     scheduled_time: str
     priority: PreFetchPriority
@@ -538,9 +549,7 @@ class PreFetchScheduler:
             self._skipped_count += 1
             return False
 
-        scheduled_time = (
-            datetime.now(UTC) + timedelta(seconds=delay_seconds)
-        ).isoformat()
+        scheduled_time = (datetime.now(UTC) + timedelta(seconds=delay_seconds)).isoformat()
 
         schedule = PreFetchSchedule(
             memory_id=memory_id,
@@ -621,7 +630,7 @@ class PreFetchScheduler:
                 ready.append(schedule)
 
         # Execute ready pre-fetches up to concurrent limit
-        for schedule in ready[:self.max_concurrent - self._running_count]:
+        for schedule in ready[: self.max_concurrent - self._running_count]:
             if self._running_count >= self.max_concurrent:
                 break
 
@@ -666,6 +675,7 @@ class PreFetchScheduler:
 # =============================================================================
 # Intelligent Pre-fetcher
 # =============================================================================
+
 
 class IntelligentPrefetcher:
     """
@@ -854,6 +864,7 @@ class IntelligentPrefetcher:
 
         # Return most common next memory
         from collections import Counter
+
         counter = Counter(next_memories)
         return counter.most_common(1)[0][0]
 
@@ -966,13 +977,10 @@ class IntelligentPrefetcher:
         lfu_stats = self._lfu_cache.get_statistics()
 
         total_prefetch = self._prefetch_hits + self._prefetch_misses
-        prefetch_hit_rate = (
-            self._prefetch_hits / total_prefetch if total_prefetch > 0 else 0.0
-        )
+        prefetch_hit_rate = self._prefetch_hits / total_prefetch if total_prefetch > 0 else 0.0
 
         avg_latency = (
-            self._total_latency_ms / self._total_accesses
-            if self._total_accesses > 0 else 0.0
+            self._total_latency_ms / self._total_accesses if self._total_accesses > 0 else 0.0
         )
 
         scheduler_stats = self._scheduler.get_stats() if self._scheduler else {}

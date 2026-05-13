@@ -107,6 +107,7 @@ def lazy_import(import_path: str) -> Callable[[Callable[..., T]], Callable[..., 
         def create_provider(config):
             return create_provider(config)
     """
+
     def decorator(func: Callable[..., T]) -> Callable[..., T]:
         # Store the import path in a mutable container to allow modification
         import_ref = {"path": import_path}
@@ -117,7 +118,9 @@ def lazy_import(import_path: str) -> Callable[[Callable[..., T]], Callable[..., 
             module = importlib.import_module(module_path)
             attr = getattr(module, attr_name)
             return attr(*args, **kwargs)
+
         return wrapper
+
     return decorator
 
 

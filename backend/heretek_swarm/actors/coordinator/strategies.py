@@ -32,7 +32,9 @@ class DependencyResolutionStrategy:
         while queue:
             # Sort by priority for deterministic ordering
             queue.sort(
-                key=lambda x: -self._tasks.get(x, self._tasks.values().__iter__().__next__()).priority
+                key=lambda x: (
+                    -self._tasks.get(x, self._tasks.values().__iter__().__next__()).priority
+                )
             )
             node = queue.pop(0)
             result.append(node)
@@ -150,9 +152,7 @@ class ResourceAllocationStrategy:
         """Register a resource pool."""
         self._resources[resource_name] = count
 
-    def allocate(
-        self, resource_name: str, task_id: str, count: int = 1
-    ) -> tuple[bool, int]:
+    def allocate(self, resource_name: str, task_id: str, count: int = 1) -> tuple[bool, int]:
         """Attempt to allocate resources for a task.
 
         Returns (success, remaining_count).

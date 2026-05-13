@@ -1,4 +1,5 @@
 """DeliberationMixin for consensus-based decision making."""
+
 import asyncio
 from typing import Any
 
@@ -42,7 +43,7 @@ class DeliberationMixin:
         deliberation_id: str,
         position: dict[str, Any],
         rationale: str = "",
-        timeout: float = 30.0
+        timeout: float = 30.0,
     ) -> dict[str, Any] | None:
         """Submit position to consensus deliberation.
 
@@ -62,28 +63,25 @@ class DeliberationMixin:
         try:
             await self._publish_position(position, deliberation_id)
             result = await asyncio.wait_for(
-                self._wait_for_consensus(deliberation_id),
-                timeout=timeout
+                self._wait_for_consensus(deliberation_id), timeout=timeout
             )
             self._deliberation_position = position
             return result
         except TimeoutError:
             self.logger.warning(
                 f"Consensus timeout for round {deliberation_id}",
-                extra={"deliberation_id": deliberation_id}
+                extra={"deliberation_id": deliberation_id},
             )
             return None
         except Exception as e:
             self.logger.error(
                 f"Error submitting deliberation position: {e}",
-                extra={"deliberation_id": deliberation_id}
+                extra={"deliberation_id": deliberation_id},
             )
             return None
 
     async def _finalize_deliberation(
-        self,
-        deliberation_id: str,
-        binding: bool = True
+        self, deliberation_id: str, binding: bool = True
     ) -> dict[str, Any]:
         """Finalize deliberation and apply consensus.
 
@@ -106,10 +104,7 @@ class DeliberationMixin:
         if binding:
             await self._apply_consensus_decision(finalized)
 
-        await self._emit_pattern(
-            pattern_type="consensus_decision",
-            data=finalized
-        )
+        await self._emit_pattern(pattern_type="consensus_decision", data=finalized)
 
         self._deliberation_active = False
         self._deliberation_id = None
@@ -123,22 +118,14 @@ class DeliberationMixin:
             "position": self._deliberation_position,
         }
 
-    async def _publish_position(
-        self,
-        position: dict[str, Any],
-        deliberation_id: str
-    ) -> None:
+    async def _publish_position(self, position: dict[str, Any], deliberation_id: str) -> None:
         """Publish position to consensus channel."""
         if hasattr(self, "_consensus_publisher"):
             await self._consensus_publisher.publish(
-                channel=f"consensus:{deliberation_id}",
-                message=position
+                channel=f"consensus:{deliberation_id}", message=position
             )
 
-    async def _wait_for_consensus(
-        self,
-        deliberation_id: str
-    ) -> dict[str, Any]:
+    async def _wait_for_consensus(self, deliberation_id: str) -> dict[str, Any]:
         """Wait for consensus result."""
         if hasattr(self, "_consensus_subscriber"):
             return await self._consensus_subscriber.subscribe(
@@ -146,10 +133,7 @@ class DeliberationMixin:
             )
         return {"decision": None, "confidence": 0.0}
 
-    async def _apply_consensus_decision(
-        self,
-        decision: dict[str, Any]
-    ) -> None:
+    async def _apply_consensus_decision(self, decision: dict[str, Any]) -> None:
         """Apply consensus decision to agent state."""
         if hasattr(self, "state"):
             self.state["last_consensus_decision"] = decision

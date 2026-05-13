@@ -29,7 +29,9 @@ async def create_snapshot(
     message: Annotated[str, Query(description="Version commit message")],
     authenticated: dict = Depends(verify_auth),
     agent_id: Annotated[str | None, Query(description="Agent triggering this snapshot")] = None,
-    deliberation_id: Annotated[str | None, Query(description="Associated deliberation round")] = None,
+    deliberation_id: Annotated[
+        str | None, Query(description="Associated deliberation round")
+    ] = None,
     branch: Annotated[str | None, Query(description="Branch name")] = None,
     labels: Annotated[str | None, Query(description="Comma-separated labels")] = None,
 ) -> dict[str, Any]:
@@ -237,7 +239,9 @@ async def diff_versions(
 async def restore_version(
     version_id: str,
     authenticated: dict = Depends(verify_auth),
-    message: Annotated[str | None, Query(description="Override message for the restore version")] = None,
+    message: Annotated[
+        str | None, Query(description="Override message for the restore version")
+    ] = None,
     branch: Annotated[str | None, Query(description="Branch to restore on")] = None,
 ) -> dict[str, Any]:
     """

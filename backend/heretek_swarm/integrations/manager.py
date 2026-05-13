@@ -31,6 +31,7 @@ logger = structlog.get_logger(__name__)
 
 class IntegrationType(StrEnum):
     """Integration types."""
+
     LANGGRAPH = "langgraph"
     AUTOGEN = "autogen"
     CREWAI = "crewai"
@@ -45,6 +46,7 @@ class IntegrationType(StrEnum):
 
 class IntegrationStatus(StrEnum):
     """Integration status enumeration."""
+
     UNINITIALIZED = "uninitialized"
     INITIALIZED = "initialized"
     STARTING = "starting"
@@ -57,6 +59,7 @@ class IntegrationStatus(StrEnum):
 
 class HealthStatus(StrEnum):
     """Health status enumeration."""
+
     HEALTHY = "healthy"
     DEGRADED = "degraded"
     UNHEALTHY = "unhealthy"
@@ -76,6 +79,7 @@ class IntegrationConfig:
         config: Integration-specific configuration
         metadata: Additional metadata
     """
+
     integration_id: str
     integration_type: IntegrationType
     name: str
@@ -107,6 +111,7 @@ class HealthCheckResult:
         details: Health check details
         timestamp: Check timestamp
     """
+
     integration_id: str
     status: HealthStatus
     latency_ms: float
@@ -140,6 +145,7 @@ class IntegrationState:
         error_count: Number of errors
         metadata: Additional state metadata
     """
+
     integration_id: str
     status: IntegrationStatus = IntegrationStatus.UNINITIALIZED
     instance: Any | None = None
@@ -159,7 +165,9 @@ class IntegrationState:
             "stopped_at": self.stopped_at,
             "restart_count": self.restart_count,
             "error_count": self.error_count,
-            "last_health_check": self.last_health_check.to_dict() if self.last_health_check else None,
+            "last_health_check": self.last_health_check.to_dict()
+            if self.last_health_check
+            else None,
             "metadata": self.metadata,
         }
 
@@ -176,6 +184,7 @@ class IntegrationEvent:
         data: Event data
         timestamp: Event timestamp
     """
+
     event_id: str
     event_type: str
     integration_id: str
@@ -540,6 +549,7 @@ class IntegrationManager:
 
         if integration_type == IntegrationType.LANGGRAPH:
             from .langgraph import get_langgraph_adapter
+
             adapter = get_langgraph_adapter()
             if config.config:
                 if hasattr(adapter, "create_graph") and "graph_id" in config.config:
@@ -551,6 +561,7 @@ class IntegrationManager:
 
         if integration_type == IntegrationType.AUTOGEN:
             from .autogen import get_autogen_adapter
+
             adapter = get_autogen_adapter()
             if config.config.get("llm_config"):
                 adapter.llm_config = config.config["llm_config"]
@@ -558,6 +569,7 @@ class IntegrationManager:
 
         if integration_type == IntegrationType.CREWAI:
             from .crewai import get_crewai_adapter
+
             return get_crewai_adapter(
                 verbose=config.config.get("verbose", True),
                 memory_enabled=config.config.get("memory_enabled", False),
@@ -566,6 +578,7 @@ class IntegrationManager:
 
         if integration_type == IntegrationType.OPENAI_ASSISTANTS:
             from .openai_assistants import get_openai_assistants_adapter
+
             return get_openai_assistants_adapter(
                 api_key=config.config.get("api_key"),
                 base_url=config.config.get("base_url"),
@@ -573,6 +586,7 @@ class IntegrationManager:
 
         if integration_type == IntegrationType.ANTHROPIC:
             from .anthropic import get_anthropic_adapter
+
             return get_anthropic_adapter(
                 api_key=config.config.get("api_key"),
                 base_url=config.config.get("base_url"),
@@ -738,10 +752,12 @@ class IntegrationManager:
             if status and (not state or state.status != status):
                 continue
 
-            result.append({
-                "config": config.to_dict(),
-                "state": state.to_dict() if state else None,
-            })
+            result.append(
+                {
+                    "config": config.to_dict(),
+                    "state": state.to_dict() if state else None,
+                }
+            )
 
         return result
 
@@ -770,8 +786,7 @@ class IntegrationManager:
         return {
             "total_integrations": len(self.configs),
             "running_count": sum(
-                1 for s in self.states.values()
-                if s.status == IntegrationStatus.RUNNING
+                1 for s in self.states.values() if s.status == IntegrationStatus.RUNNING
             ),
             "status_counts": status_counts,
             "type_counts": type_counts,
@@ -791,16 +806,13 @@ class IntegrationManager:
 
         total = len(health_results)
         healthy = sum(
-            1 for r in health_results.values()
-            if r["status"] == HealthStatus.HEALTHY.value
+            1 for r in health_results.values() if r["status"] == HealthStatus.HEALTHY.value
         )
         degraded = sum(
-            1 for r in health_results.values()
-            if r["status"] == HealthStatus.DEGRADED.value
+            1 for r in health_results.values() if r["status"] == HealthStatus.DEGRADED.value
         )
         unhealthy = sum(
-            1 for r in health_results.values()
-            if r["status"] == HealthStatus.UNHEALTHY.value
+            1 for r in health_results.values() if r["status"] == HealthStatus.UNHEALTHY.value
         )
 
         return {
@@ -809,8 +821,10 @@ class IntegrationManager:
             "degraded": degraded,
             "unhealthy": unhealthy,
             "overall_status": (
-                HealthStatus.HEALTHY.value if unhealthy == 0 and healthy == total
-                else HealthStatus.DEGRADED.value if unhealthy < total / 2
+                HealthStatus.HEALTHY.value
+                if unhealthy == 0 and healthy == total
+                else HealthStatus.DEGRADED.value
+                if unhealthy < total / 2
                 else HealthStatus.UNHEALTHY.value
             ),
             "integrations": health_results,

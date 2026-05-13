@@ -50,6 +50,7 @@ def set_registry(registry: MCPToolRegistry) -> None:
 
 class ToolCallRequest(BaseModel):
     """Request to call an MCP tool."""
+
     name: str = Field(..., description="Tool name to invoke")
     arguments: dict[str, Any] = Field(default_factory=dict, description="Tool arguments")
     context: dict[str, Any] | None = Field(default=None, description="Invocation context")
@@ -57,6 +58,7 @@ class ToolCallRequest(BaseModel):
 
 class ToolCallResponse(BaseModel):
     """Response from tool invocation."""
+
     success: bool
     result: Any | None = None
     error: str | None = None
@@ -66,6 +68,7 @@ class ToolCallResponse(BaseModel):
 
 class ToolListItem(BaseModel):
     """Tool in list response."""
+
     name: str
     description: str
     inputSchema: dict[str, Any]
@@ -77,6 +80,7 @@ class ToolListItem(BaseModel):
 
 class ToolListResponse(BaseModel):
     """Response listing available tools."""
+
     tools: list[ToolListItem]
     total: int
     categories: list[str]
@@ -84,6 +88,7 @@ class ToolListResponse(BaseModel):
 
 class ToolDetailResponse(BaseModel):
     """Detailed tool information."""
+
     name: str
     description: str
     inputSchema: dict[str, Any]
@@ -98,11 +103,13 @@ class ToolDetailResponse(BaseModel):
 
 class ToolToggleRequest(BaseModel):
     """Request body for toggling a tool's enabled state."""
+
     enabled: bool = Field(..., description="New enabled state for the tool")
 
 
 class HealthResponse(BaseModel):
     """Server health response."""
+
     status: str
     timestamp: str
     registry: dict[str, Any]
@@ -110,6 +117,7 @@ class HealthResponse(BaseModel):
 
 class ServerInfo(BaseModel):
     """MCP server information."""
+
     name: str = "heretek-swarm-mcp"
     version: str = "1.0.0"
     protocol_version: str = "2024-11-05"

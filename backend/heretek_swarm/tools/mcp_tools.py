@@ -186,7 +186,8 @@ class MCPToolRegistry:
                 "version": t.version,
                 "enabled": t.enabled,
             }
-            for t in tools if t.enabled
+            for t in tools
+            if t.enabled
         ]
 
     def list_categories(self) -> list[str]:
@@ -202,10 +203,7 @@ class MCPToolRegistry:
         return self._tool_stats.copy()
 
     async def invoke(
-        self,
-        name: str,
-        arguments: dict[str, Any],
-        context: dict | None = None
+        self, name: str, arguments: dict[str, Any], context: dict | None = None
     ) -> dict[str, Any]:
         """
         Invoke an MCP tool.
@@ -327,11 +325,7 @@ class MCPToolRegistry:
 
             return {"success": False, "error": str(e)}
 
-    def _validate_arguments(
-        self,
-        arguments: dict[str, Any],
-        schema: dict[str, Any]
-    ) -> bool:
+    def _validate_arguments(self, arguments: dict[str, Any], schema: dict[str, Any]) -> bool:
         """
         Validate arguments against JSON schema.
 
@@ -358,9 +352,16 @@ class MCPToolRegistry:
                 prop_schema = properties[key]
                 expected_type = prop_schema.get("type")
 
-                if (expected_type == "string" and not isinstance(value, str)) or (expected_type == "integer" and not isinstance(value, int)):
+                if (expected_type == "string" and not isinstance(value, str)) or (
+                    expected_type == "integer" and not isinstance(value, int)
+                ):
                     return False
-                if (expected_type == "number" and not isinstance(value, (int, float))) or (expected_type == "boolean" and not isinstance(value, bool)) or (expected_type == "array" and not isinstance(value, list)) or (expected_type == "object" and not isinstance(value, dict)):
+                if (
+                    (expected_type == "number" and not isinstance(value, (int, float)))
+                    or (expected_type == "boolean" and not isinstance(value, bool))
+                    or (expected_type == "array" and not isinstance(value, list))
+                    or (expected_type == "object" and not isinstance(value, dict))
+                ):
                     return False
 
                 # Check enum values
@@ -380,6 +381,7 @@ class MCPToolRegistry:
 # ============================================================================
 # Core MCP Tools
 # ============================================================================
+
 
 class CoreMCPTools:
     """
@@ -414,9 +416,7 @@ class CoreMCPTools:
         register_all_tools(self.registry, handlers)
 
     async def _handle_memory_store(
-        self,
-        arguments: dict[str, Any],
-        context: dict | None = None
+        self, arguments: dict[str, Any], context: dict | None = None
     ) -> dict:
         """Handle memory store request."""
         if not self.memory:
@@ -428,15 +428,19 @@ class CoreMCPTools:
 
         result = await self.memory.store(
             content={"text": content, **metadata},
-            metadata={"importance": importance, "source": context.get("agent_id", "unknown") if context else "unknown"}
+            metadata={
+                "importance": importance,
+                "source": context.get("agent_id", "unknown") if context else "unknown",
+            },
         )
 
-        return {"memory_id": getattr(result, "id", "unknown"), "stored_at": datetime.now(UTC).isoformat()}
+        return {
+            "memory_id": getattr(result, "id", "unknown"),
+            "stored_at": datetime.now(UTC).isoformat(),
+        }
 
     async def _handle_memory_retrieve(
-        self,
-        arguments: dict[str, Any],
-        context: dict | None = None
+        self, arguments: dict[str, Any], context: dict | None = None
     ) -> dict:
         """Handle memory retrieve request."""
         if not self.memory:
@@ -463,9 +467,7 @@ class CoreMCPTools:
         }
 
     async def _handle_agent_message(
-        self,
-        arguments: dict[str, Any],
-        context: dict | None = None
+        self, arguments: dict[str, Any], context: dict | None = None
     ) -> dict:
         """Handle agent message request."""
         target = arguments.get("target_agent")
@@ -481,15 +483,13 @@ class CoreMCPTools:
                 "type": message_type,
                 "content": content,
                 "from_agent": context.get("agent_id") if context else None,
-            }
+            },
         )
 
         return {"sent": True, "target": target}
 
     async def _handle_agent_handoff(
-        self,
-        arguments: dict[str, Any],
-        context: dict | None = None
+        self, arguments: dict[str, Any], context: dict | None = None
     ) -> dict:
         """Handle agent handoff request."""
         to_agent = arguments.get("to_agent")
@@ -506,15 +506,13 @@ class CoreMCPTools:
                 "context": handoff_context,
                 "reason": reason,
                 "from_agent": context.get("agent_id") if context else None,
-            }
+            },
         )
 
         return {"handoff_initiated": True, "to_agent": to_agent}
 
     async def _handle_consensus_propose(
-        self,
-        arguments: dict[str, Any],
-        context: dict | None = None
+        self, arguments: dict[str, Any], context: dict | None = None
     ) -> dict:
         """Handle consensus propose request."""
         if not self.consensus:
@@ -534,9 +532,7 @@ class CoreMCPTools:
         }
 
     async def _handle_consensus_vote(
-        self,
-        arguments: dict[str, Any],
-        context: dict | None = None
+        self, arguments: dict[str, Any], context: dict | None = None
     ) -> dict:
         """Handle consensus vote request."""
         if not self.consensus:
@@ -555,9 +551,7 @@ class CoreMCPTools:
         }
 
     async def _handle_rag_query(
-        self,
-        arguments: dict[str, Any],
-        context: dict | None = None
+        self, arguments: dict[str, Any], context: dict | None = None
     ) -> dict:
         """Handle RAG query request."""
         if not self.rag:
@@ -584,9 +578,7 @@ class CoreMCPTools:
         }
 
     async def _handle_rag_ingest(
-        self,
-        arguments: dict[str, Any],
-        context: dict | None = None
+        self, arguments: dict[str, Any], context: dict | None = None
     ) -> dict:
         """Handle RAG ingest request."""
         if not self.rag:
@@ -600,9 +592,7 @@ class CoreMCPTools:
         return {"ingested": True, "source": source}
 
     async def _handle_external_api_call(
-        self,
-        arguments: dict[str, Any],
-        context: dict | None = None
+        self, arguments: dict[str, Any], context: dict | None = None
     ) -> dict:
         """Handle external API call request."""
         import httpx
@@ -617,15 +607,15 @@ class CoreMCPTools:
                 response = await client.request(method, endpoint, json=payload)
                 return {
                     "status_code": response.status_code,
-                    "body": response.json() if response.headers.get("content-type", "").startswith("application/json") else response.text,
+                    "body": response.json()
+                    if response.headers.get("content-type", "").startswith("application/json")
+                    else response.text,
                 }
         except Exception as e:
             return {"error": str(e)}
 
     async def _handle_notification_send(
-        self,
-        arguments: dict[str, Any],
-        context: dict | None = None
+        self, arguments: dict[str, Any], context: dict | None = None
     ) -> dict:
         """Handle notification send request."""
         channel = arguments.get("channel")
@@ -641,15 +631,13 @@ class CoreMCPTools:
                 "message": message,
                 "priority": priority,
                 "timestamp": datetime.now(UTC).isoformat(),
-            }
+            },
         )
 
         return {"sent": True, "channel": channel}
 
     async def _handle_workflow_start(
-        self,
-        arguments: dict[str, Any],
-        context: dict | None = None
+        self, arguments: dict[str, Any], context: dict | None = None
     ) -> dict:
         """Handle workflow start request."""
         workflow_type = arguments.get("workflow_type")
@@ -669,15 +657,13 @@ class CoreMCPTools:
                 "workflow_type": workflow_type,
                 "params": params,
                 "topic": topic,
-            }
+            },
         )
 
         return {"workflow_id": workflow_id, "status": "started"}
 
     async def _handle_workflow_status(
-        self,
-        arguments: dict[str, Any],
-        context: dict | None = None
+        self, arguments: dict[str, Any], context: dict | None = None
     ) -> dict:
         """Handle workflow status request."""
         workflow_id = arguments.get("workflow_id")
@@ -690,9 +676,7 @@ class CoreMCPTools:
         }
 
     async def _handle_system_health(
-        self,
-        arguments: dict[str, Any],
-        context: dict | None = None
+        self, arguments: dict[str, Any], context: dict | None = None
     ) -> dict:
         """Handle system health request."""
         return {

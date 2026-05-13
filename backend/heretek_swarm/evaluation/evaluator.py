@@ -1,4 +1,5 @@
 """Agent Evaluator Framework for testing agent quality."""
+
 import asyncio
 from dataclasses import dataclass, field
 from datetime import datetime
@@ -113,7 +114,9 @@ class AgentEvaluator:
         validation_errors: list[str] = []
 
         try:
-            input_data = tc.input_data if isinstance(tc.input_data, dict) else {"query": tc.input_data}
+            input_data = (
+                tc.input_data if isinstance(tc.input_data, dict) else {"query": tc.input_data}
+            )
             output = await asyncio.wait_for(agent.execute(input_data), timeout=self.timeout)
 
             if tc.expected_output is not None:
@@ -177,7 +180,9 @@ class AgentEvaluator:
             status=EvaluationStatus.COMPLETED,
             started_at=started,
             completed_at=completed,
-            total_time=(datetime.fromisoformat(completed) - datetime.fromisoformat(started)).total_seconds(),
+            total_time=(
+                datetime.fromisoformat(completed) - datetime.fromisoformat(started)
+            ).total_seconds(),
             metrics=metrics,
             test_results=test_results,
         )
@@ -211,11 +216,14 @@ class AgentEvaluator:
         if hasattr(constraints, "max_length") and constraints.max_length:
             output_str = str(output)
             if len(output_str) > constraints.max_length:
-                errors.append(f"Output exceeds max length: {len(output_str)} > {constraints.max_length}")
+                errors.append(
+                    f"Output exceeds max length: {len(output_str)} > {constraints.max_length}"
+                )
 
         # Check forbidden patterns
         if constraints.forbidden_patterns and isinstance(output, str):
             import re
+
             for pattern in constraints.forbidden_patterns:
                 if re.search(pattern, output):
                     errors.append("forbidden pattern detected in output")
@@ -239,10 +247,7 @@ class AgentEvaluator:
         """List all evaluations."""
         return list(self._evaluations.values())
 
-    def compare_agents(
-        self,
-        results: dict[str, EvaluationResult]
-    ) -> dict[str, EvaluationMetrics]:
+    def compare_agents(self, results: dict[str, EvaluationResult]) -> dict[str, EvaluationMetrics]:
         """Compare evaluation results across agents."""
         comparison = {}
         for agent_id, result in results.items():
@@ -258,5 +263,5 @@ class AgentEvaluator:
             "total": total,
             "passed": passed,
             "failed": total - passed,
-            "pass_rate": passed / total if total > 0 else 0.0
+            "pass_rate": passed / total if total > 0 else 0.0,
         }

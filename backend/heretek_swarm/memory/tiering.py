@@ -27,17 +27,20 @@ logger = structlog.get_logger(__name__)
 # Memory Tier Types and Enums
 # =============================================================================
 
+
 class MemoryTier(StrEnum):
     """Memory storage tiers."""
-    L1_HOT = "l1_hot"           # Redis - fastest, most expensive
-    L2_WARM = "l2_warm"         # PostgreSQL - balanced
-    L3_COLD = "l3_cold"         # Compressed archive - slowest, cheapest
-    ARCHIVE = "archive"         # Deep archive - very slow, minimal cost
-    PERSISTENT = "persistent"   # Generic persistent storage alias
+
+    L1_HOT = "l1_hot"  # Redis - fastest, most expensive
+    L2_WARM = "l2_warm"  # PostgreSQL - balanced
+    L3_COLD = "l3_cold"  # Compressed archive - slowest, cheapest
+    ARCHIVE = "archive"  # Deep archive - very slow, minimal cost
+    PERSISTENT = "persistent"  # Generic persistent storage alias
 
 
 class TierMigrationStatus(StrEnum):
     """Status of tier migration."""
+
     PENDING = "pending"
     IN_PROGRESS = "in_progress"
     COMPLETED = "completed"
@@ -47,11 +50,12 @@ class TierMigrationStatus(StrEnum):
 
 class MigrationTrigger(StrEnum):
     """Triggers for tier migration."""
-    ACCESS_PATTERN = "access_pattern"     # Based on access frequency/recency
-    POLICY = "policy"                     # Based on policy rules
-    MANUAL = "manual"                     # Manual migration
-    SCHEDULED = "scheduled"               # Scheduled maintenance
-    CAPACITY = "capacity"                 # Capacity management
+
+    ACCESS_PATTERN = "access_pattern"  # Based on access frequency/recency
+    POLICY = "policy"  # Based on policy rules
+    MANUAL = "manual"  # Manual migration
+    SCHEDULED = "scheduled"  # Scheduled maintenance
+    CAPACITY = "capacity"  # Capacity management
     COST_OPTIMIZATION = "cost_optimization"  # Cost-driven migration
 
 
@@ -73,6 +77,7 @@ class TierConfig:
         compression_enabled: Whether compression is enabled
         auto_migrate_enabled: Enable automatic migration
     """
+
     tier: MemoryTier
     name: str
     description: str
@@ -124,6 +129,7 @@ class TieredMemory:
         compressed: Whether data is compressed
         compression_ratio: Compression ratio if compressed
     """
+
     memory_id: str
     current_tier: MemoryTier
     data: Any
@@ -171,6 +177,7 @@ class MigrationRecord:
         rolled_back: Whether migration was rolled back
         audit_metadata: Additional audit information
     """
+
     memory_id: str
     from_tier: MemoryTier
     to_tier: MemoryTier
@@ -215,6 +222,7 @@ class MigrationPolicy:
         actions: Actions to take
         priority: Policy priority (higher = evaluated first)
     """
+
     name: str
     description: str = ""
     enabled: bool = True
@@ -250,6 +258,7 @@ class TieringStatistics:
         cost_estimate_monthly: Estimated monthly cost
         storage_efficiency: Overall storage efficiency
     """
+
     total_memories: int = 0
     memories_per_tier: dict[str, int] = field(default_factory=dict)
     bytes_per_tier: dict[str, int] = field(default_factory=dict)
@@ -340,6 +349,7 @@ DEFAULT_TIER_CONFIGS = {
 # =============================================================================
 # Memory Tiering System
 # =============================================================================
+
 
 class MemoryTieringSystem:
     """
@@ -566,9 +576,12 @@ class MemoryTieringSystem:
 
             # Exponential decay with 24-hour half-life
             import math
+
             return math.exp(-math.log(2) * age_hours / 24)
         except (ValueError, TypeError) as e:
-            logger.warning("recency_score_calculation_failed", memory_id=memory.memory_id, error=str(e))
+            logger.warning(
+                "recency_score_calculation_failed", memory_id=memory.memory_id, error=str(e)
+            )
             return 0.0
 
     def _calculate_frequency_score(self, memory: TieredMemory) -> float:
@@ -580,12 +593,15 @@ class MemoryTieringSystem:
 
             # Normalize access count by age
             import math
+
             accesses_per_hour = memory.access_count / age_hours
 
             # Logarithmic scaling
             return min(1.0, math.log(accesses_per_hour + 1) / math.log(100))
         except (ValueError, TypeError) as e:
-            logger.warning("frequency_score_calculation_failed", memory_id=memory.memory_id, error=str(e))
+            logger.warning(
+                "frequency_score_calculation_failed", memory_id=memory.memory_id, error=str(e)
+            )
             return 0.0
 
     def store(
@@ -620,11 +636,13 @@ class MemoryTieringSystem:
             data=data,
             metadata=metadata or {},
             size_bytes=size_bytes or len(str(data)),
-            tier_history=[{
-                "action": "created",
-                "tier": target_tier.value,
-                "timestamp": datetime.now(UTC).isoformat(),
-            }],
+            tier_history=[
+                {
+                    "action": "created",
+                    "tier": target_tier.value,
+                    "timestamp": datetime.now(UTC).isoformat(),
+                }
+            ],
         )
 
         # Store in tier
@@ -651,7 +669,11 @@ class MemoryTieringSystem:
                 try:
                     return MemoryTier(tier_hint)
                 except ValueError:
-                    logger.debug("invalid_tier_hint_skipped", tier_hint=tier_hint, valid_tiers=[t.value for t in MemoryTier])
+                    logger.debug(
+                        "invalid_tier_hint_skipped",
+                        tier_hint=tier_hint,
+                        valid_tiers=[t.value for t in MemoryTier],
+                    )
 
             # Check importance/priority
             importance = metadata.get("importance", 0)
@@ -704,7 +726,6 @@ class MemoryTieringSystem:
         original_compressed = memory.compressed
         original_compression_ratio = memory.compression_ratio
         original_size_bytes = memory.size_bytes
-
 
         try:
             # PHASE 1: Validate migration is possible
@@ -767,7 +788,6 @@ class MemoryTieringSystem:
 
             # Add to history
             self._add_to_history(record)
-
 
             logger.info(
                 "memory_migrated",
@@ -975,7 +995,7 @@ class MemoryTieringSystem:
 
         # Limit history size
         if len(self._migration_history) > self._max_history_size:
-            self._migration_history = self._migration_history[-self._max_history_size:]
+            self._migration_history = self._migration_history[-self._max_history_size :]
 
     def get_memory(self, memory_id: str) -> TieredMemory | None:
         """Get a memory by ID from any tier."""
@@ -1017,18 +1037,24 @@ class MemoryTieringSystem:
         for tier, byte_count in bytes_per_tier.items():
             tier_config = self.tier_configs.get(MemoryTier(tier))
             if tier_config:
-                gb_count = byte_count / (1024 ** 3)
+                gb_count = byte_count / (1024**3)
                 cost_estimate += gb_count * tier_config.cost_per_gb_month
 
         # Calculate storage efficiency
-        storage_efficiency = 1.0 if total_bytes == 0 else (
-            bytes_per_tier.get(MemoryTier.L3_COLD.value, 0) +
-            bytes_per_tier.get(MemoryTier.ARCHIVE.value, 0)
-        ) / total_bytes
+        storage_efficiency = (
+            1.0
+            if total_bytes == 0
+            else (
+                bytes_per_tier.get(MemoryTier.L3_COLD.value, 0)
+                + bytes_per_tier.get(MemoryTier.ARCHIVE.value, 0)
+            )
+            / total_bytes
+        )
 
         avg_latency = (
             self._total_migration_latency_ms / self._total_migrations
-            if self._total_migrations > 0 else 0.0
+            if self._total_migrations > 0
+            else 0.0
         )
 
         return TieringStatistics(
@@ -1109,7 +1135,11 @@ class MemoryTieringSystem:
         for tier, memories in self._memories_by_tier.items():
             config = self.tier_configs.get(tier)
             if config:
-                count_util = len(memories) / config.max_capacity_count if config.max_capacity_count > 0 else 0
+                count_util = (
+                    len(memories) / config.max_capacity_count
+                    if config.max_capacity_count > 0
+                    else 0
+                )
                 tier_utilization[tier.value] = {
                     "count": len(memories),
                     "count_utilization": count_util,
@@ -1117,22 +1147,23 @@ class MemoryTieringSystem:
                 }
 
         # Recent migrations
-        recent_migrations = [
-            r.to_dict() for r in self._migration_history[-50:]
-        ]
+        recent_migrations = [r.to_dict() for r in self._migration_history[-50:]]
 
         # Policy effectiveness
         policy_stats = []
         for policy in self._policies:
             matching_migrations = sum(
-                1 for r in self._migration_history
+                1
+                for r in self._migration_history
                 if r.trigger == MigrationTrigger.ACCESS_PATTERN and policy.name in r.reason
             )
-            policy_stats.append({
-                "name": policy.name,
-                "enabled": policy.enabled,
-                "migrations_triggered": matching_migrations,
-            })
+            policy_stats.append(
+                {
+                    "name": policy.name,
+                    "enabled": policy.enabled,
+                    "migrations_triggered": matching_migrations,
+                }
+            )
 
         return {
             "statistics": stats.to_dict(),

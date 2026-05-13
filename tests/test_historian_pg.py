@@ -132,10 +132,7 @@ class TestPGWriter:
 
             # The _pg_writer should have logged at least one debug
             # message for the insert.
-            debug_calls = [
-                c for c in mock_debug.call_args_list
-                if "PG writer: inserted" in str(c)
-            ]
+            debug_calls = [c for c in mock_debug.call_args_list if "PG writer: inserted" in str(c)]
             assert len(debug_calls) >= 1
 
         await agent.cleanup()
@@ -190,7 +187,8 @@ class TestFallback:
             await asyncio.sleep(0.05)  # Let the writer task run
 
             error_calls = [
-                c for c in mock_exception.call_args_list
+                c
+                for c in mock_exception.call_args_list
                 if "Failed to create historian_events table" in str(c)
             ]
             assert len(error_calls) >= 1
@@ -214,22 +212,24 @@ class TestReadEvents:
         # Set up the mock connection's fetch to return fake rows
         async with mock_pool.acquire() as conn:
             now = datetime.now(UTC)
-            conn.fetch = AsyncMock(return_value=[
-                {
-                    "event_id": "abc123",
-                    "event_type": "test_event",
-                    "timestamp": now,
-                    "agent_id": "alice",
-                    "payload": {"n": 1},
-                },
-                {
-                    "event_id": "def456",
-                    "event_type": "other_event",
-                    "timestamp": now,
-                    "agent_id": "bob",
-                    "payload": {"n": 2},
-                },
-            ])
+            conn.fetch = AsyncMock(
+                return_value=[
+                    {
+                        "event_id": "abc123",
+                        "event_type": "test_event",
+                        "timestamp": now,
+                        "agent_id": "alice",
+                        "payload": {"n": 1},
+                    },
+                    {
+                        "event_id": "def456",
+                        "event_type": "other_event",
+                        "timestamp": now,
+                        "agent_id": "bob",
+                        "payload": {"n": 2},
+                    },
+                ]
+            )
 
         await agent.initialize()
         assert agent._using_pg is True
@@ -277,9 +277,7 @@ class TestReadEvents:
         agent = HistorianAgent(db_pool=mock_pool)
 
         async with mock_pool.acquire() as conn:
-            conn.fetch = AsyncMock(
-                side_effect=Exception("db connection lost")
-            )
+            conn.fetch = AsyncMock(side_effect=Exception("db connection lost"))
 
         await agent.initialize()
 
@@ -289,8 +287,7 @@ class TestReadEvents:
 
             # Should have logged the exception
             error_calls = [
-                c for c in mock_exception.call_args_list
-                if "read_events query failed" in str(c)
+                c for c in mock_exception.call_args_list if "read_events query failed" in str(c)
             ]
             assert len(error_calls) >= 1
 

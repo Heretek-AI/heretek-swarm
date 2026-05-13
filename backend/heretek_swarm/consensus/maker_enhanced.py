@@ -99,6 +99,7 @@ async def _emit_consensus_result(result: ConsensusResult, consensus_id: str) -> 
         if publisher:
             # Use a fire-and-forget task
             import asyncio
+
             asyncio.create_task(
                 publisher.emit_agent_event(
                     agent_id="maker",
@@ -233,9 +234,7 @@ class ReasoningChain:
             if step.step_type == "observation":
                 # Observations should not reference conclusions
                 for _validates_id in step.validates:
-                    validating_step = next(
-                        (s for s in self.steps if id(s) == id(step)), None
-                    )
+                    validating_step = next((s for s in self.steps if id(s) == id(step)), None)
                     if validating_step and validating_step.step_type == "conclusion":
                         errors.append("Circular reasoning detected")
                         self.status = ReasoningChainStatus.CIRCULAR
@@ -510,9 +509,7 @@ class EnhancedMAKERConsensus(MAKERConsensus):
 
         # Store domain for expertise weighting
         if domain:
-            self.decision_provenance[consensus_id].participating_agents.append(
-                f"_domain:{domain}"
-            )
+            self.decision_provenance[consensus_id].participating_agents.append(f"_domain:{domain}")
 
         # Create rollback checkpoint if enabled
         if self.enable_rollback:
@@ -592,7 +589,9 @@ class EnhancedMAKERConsensus(MAKERConsensus):
         )
 
         # Build reasoning chain
-        chain = ReasoningChain(chain_id=f"chain-{consensus_id}-{agent_id}", agent_id=agent_id, steps=[])
+        chain = ReasoningChain(
+            chain_id=f"chain-{consensus_id}-{agent_id}", agent_id=agent_id, steps=[]
+        )
 
         for step_data in reasoning_chain:
             chain.add_step(
@@ -619,19 +618,19 @@ class EnhancedMAKERConsensus(MAKERConsensus):
 
             # Update provenance
             if pattern_references:
-                self.decision_provenance[consensus_id].patterns_used.extend(
-                    pattern_references
-                )
+                self.decision_provenance[consensus_id].patterns_used.extend(pattern_references)
             self.decision_provenance[consensus_id].reasoning_chains.append(chain)
 
             # Update rollback checkpoint
             if self.enable_rollback and consensus_id in self.rollback_checkpoints:
-                self.rollback_checkpoints[consensus_id]["votes"].append({
-                    "agent_id": agent_id,
-                    "decision": decision,
-                    "confidence": confidence,
-                    "chain_id": chain.chain_id,
-                })
+                self.rollback_checkpoints[consensus_id]["votes"].append(
+                    {
+                        "agent_id": agent_id,
+                        "decision": decision,
+                        "confidence": confidence,
+                        "chain_id": chain.chain_id,
+                    }
+                )
 
             logger.info(
                 f"Vote with reasoning added: {agent_id} -> {decision} "
@@ -673,9 +672,7 @@ class EnhancedMAKERConsensus(MAKERConsensus):
         confidence_score = enhanced_vote.confidence
 
         # 4. Historical Accuracy Score (15% weight)
-        historical_score = self._calculate_historical_accuracy_score(
-            consensus_id, agent_id
-        )
+        historical_score = self._calculate_historical_accuracy_score(consensus_id, agent_id)
 
         # Calculate weighted combination
         weighted_score = (
@@ -687,9 +684,7 @@ class EnhancedMAKERConsensus(MAKERConsensus):
 
         # Apply expertise multiplier from profiler
         if domain and self.expertise_profiler:
-            domain_expertise = self.expertise_profiler.get_expertise_for_domain(
-                agent_id, domain
-            )
+            domain_expertise = self.expertise_profiler.get_expertise_for_domain(agent_id, domain)
             if domain_expertise:
                 expertise_multiplier = domain_expertise.get_expertise_multiplier()
                 # Scale multiplier to have moderate effect (0.8 to 1.2 range)
@@ -763,9 +758,7 @@ class EnhancedMAKERConsensus(MAKERConsensus):
 
         return weighted
 
-    def _calculate_evidence_quality_score(
-        self, enhanced_vote: EnhancedVote
-    ) -> float:
+    def _calculate_evidence_quality_score(self, enhanced_vote: EnhancedVote) -> float:
         """
         Calculate evidence quality score from reasoning chain.
 
@@ -830,9 +823,7 @@ class EnhancedMAKERConsensus(MAKERConsensus):
 
         return evidence_quality.calculate_quality_score()
 
-    def _calculate_expertise_score(
-        self, agent_id: str, domain: str | None = None
-    ) -> float:
+    def _calculate_expertise_score(self, agent_id: str, domain: str | None = None) -> float:
         """
         Calculate agent expertise score.
 
@@ -850,9 +841,7 @@ class EnhancedMAKERConsensus(MAKERConsensus):
             return self.expertise_profiler.get_expertise_score(agent_id, domain)
         return self.expertise_profiler.get_expertise_score(agent_id)
 
-    def _calculate_historical_accuracy_score(
-        self, consensus_id: str, agent_id: str
-    ) -> float:
+    def _calculate_historical_accuracy_score(self, consensus_id: str, agent_id: str) -> float:
         """
         Calculate historical accuracy score for an agent.
 
@@ -922,9 +911,7 @@ class EnhancedMAKERConsensus(MAKERConsensus):
                 confidence=0.5,  # Placeholder
             )
 
-        logger.debug(
-            f"Recorded decision outcome for {agent_id}: correct={was_correct}"
-        )
+        logger.debug(f"Recorded decision outcome for {agent_id}: correct={was_correct}")
 
     def compute_consensus(
         self,
@@ -949,19 +936,15 @@ class EnhancedMAKERConsensus(MAKERConsensus):
         if result:
             # Update provenance
             if consensus_id in self.decision_provenance:
-                self.decision_provenance[consensus_id].end_time = datetime.now(
-                    UTC
-                ).isoformat()
-                self.decision_provenance[consensus_id].validation_results = (
-                    self._get_validation_results(consensus_id)
-                )
-                self.decision_provenance[consensus_id].rollback_available = (
-                    self.enable_rollback
-                )
+                self.decision_provenance[consensus_id].end_time = datetime.now(UTC).isoformat()
+                self.decision_provenance[
+                    consensus_id
+                ].validation_results = self._get_validation_results(consensus_id)
+                self.decision_provenance[consensus_id].rollback_available = self.enable_rollback
                 if self.enable_rollback:
-                    self.decision_provenance[consensus_id].rollback_checkpoint = (
-                        self.rollback_checkpoints.get(consensus_id)
-                    )
+                    self.decision_provenance[
+                        consensus_id
+                    ].rollback_checkpoint = self.rollback_checkpoints.get(consensus_id)
 
             # Update rollback checkpoint state
             if self.enable_rollback and consensus_id in self.rollback_checkpoints:
@@ -973,9 +956,8 @@ class EnhancedMAKERConsensus(MAKERConsensus):
 
             # Emit consensus result event (fire-and-forget)
             import asyncio
-            asyncio.create_task(
-                _emit_consensus_result(result, consensus_id)
-            )
+
+            asyncio.create_task(_emit_consensus_result(result, consensus_id))
 
         return result
 
@@ -998,10 +980,15 @@ class EnhancedMAKERConsensus(MAKERConsensus):
         self._cross_validate_reasoning(consensus_id)
 
         # Check if validation passes threshold
-        avg_validation_score = statistics.mean(
-            v.validation_score for v in self.enhanced_votes.get(consensus_id, [])
-            if v.cross_validated
-        ) if self.enhanced_votes.get(consensus_id) else 0.0
+        avg_validation_score = (
+            statistics.mean(
+                v.validation_score
+                for v in self.enhanced_votes.get(consensus_id, [])
+                if v.cross_validated
+            )
+            if self.enhanced_votes.get(consensus_id)
+            else 0.0
+        )
 
         if avg_validation_score < min_validation_score:
             logger.warning(
@@ -1057,20 +1044,14 @@ class EnhancedMAKERConsensus(MAKERConsensus):
         self._calculate_validation_scores(enhanced_votes, domain, consensus_id)
 
         validation_results["average_validation_score"] = (
-            statistics.mean(
-                ev.validation_score
-                for ev in enhanced_votes
-                if ev.cross_validated
-            )
+            statistics.mean(ev.validation_score for ev in enhanced_votes if ev.cross_validated)
             if enhanced_votes
             else 0.0
         )
 
         # Store validation results in provenance
         if consensus_id in self.decision_provenance:
-            self.decision_provenance[consensus_id].validation_results = (
-                validation_results
-            )
+            self.decision_provenance[consensus_id].validation_results = validation_results
 
         logger.info(
             f"Cross-validation complete for {consensus_id}: "
@@ -1108,8 +1089,11 @@ class EnhancedMAKERConsensus(MAKERConsensus):
 
         # Check for contradictory reasoning supporting same decision
         for i, chain1 in enumerate(chains):
-            for chain2 in chains[i + 1:]:
-                if chain1.status == ReasoningChainStatus.VALID and chain2.status == ReasoningChainStatus.VALID:
+            for chain2 in chains[i + 1 :]:
+                if (
+                    chain1.status == ReasoningChainStatus.VALID
+                    and chain2.status == ReasoningChainStatus.VALID
+                ):
                     # Check if chains reference contradictory patterns
                     common_patterns = set(chain1.pattern_references) & set(
                         chain2.pattern_references
@@ -1119,12 +1103,14 @@ class EnhancedMAKERConsensus(MAKERConsensus):
                         decision1 = decisions_by_chain.get(chain1.chain_id)
                         decision2 = decisions_by_chain.get(chain2.chain_id)
                         if decision1 != decision2:
-                            contradictions.append({
-                                "chain1": chain1.chain_id,
-                                "chain2": chain2.chain_id,
-                                "issue": "contradictory_conclusions",
-                                "shared_patterns": list(common_patterns),
-                            })
+                            contradictions.append(
+                                {
+                                    "chain1": chain1.chain_id,
+                                    "chain2": chain2.chain_id,
+                                    "issue": "contradictory_conclusions",
+                                    "shared_patterns": list(common_patterns),
+                                }
+                            )
 
         return contradictions
 
@@ -1272,9 +1258,7 @@ class EnhancedMAKERConsensus(MAKERConsensus):
             # Clear checkpoint
             del self.rollback_checkpoints[consensus_id]
 
-            logger.info(
-                f"Rollback completed for {consensus_id}: {reason or 'no reason provided'}"
-            )
+            logger.info(f"Rollback completed for {consensus_id}: {reason or 'no reason provided'}")
 
             return RollbackResult(
                 success=True,
@@ -1345,9 +1329,7 @@ class EnhancedMAKERConsensus(MAKERConsensus):
         """
         base_stats = self.get_statistics()
 
-        total_chains = sum(
-            len(chains) for chains in self.reasoning_chains.values()
-        )
+        total_chains = sum(len(chains) for chains in self.reasoning_chains.values())
         valid_chains = sum(
             sum(1 for c in chains if c.status == ReasoningChainStatus.VALID)
             for chains in self.reasoning_chains.values()
@@ -1357,13 +1339,10 @@ class EnhancedMAKERConsensus(MAKERConsensus):
             **base_stats,
             "total_reasoning_chains": total_chains,
             "valid_reasoning_chains": valid_chains,
-            "chain_validity_rate": (
-                valid_chains / total_chains if total_chains > 0 else 0.0
-            ),
+            "chain_validity_rate": (valid_chains / total_chains if total_chains > 0 else 0.0),
             "provenance_tracked": len(self.decision_provenance),
             "rollbacks_available": sum(
-                1 for p in self.decision_provenance.values()
-                if p.rollback_available
+                1 for p in self.decision_provenance.values() if p.rollback_available
             ),
         }
 
@@ -1482,8 +1461,7 @@ class EnhancedMAKERConsensus(MAKERConsensus):
             "expertise_profiler": self.expertise_profiler.export_profiles(),
             "accuracy_history": self.export_accuracy_history(),
             "decision_provenance": {
-                cid: self.export_provenance(cid)
-                for cid in self.decision_provenance
+                cid: self.export_provenance(cid) for cid in self.decision_provenance
             },
         }
         with open(filepath, "w") as f:

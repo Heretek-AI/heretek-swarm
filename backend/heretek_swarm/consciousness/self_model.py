@@ -355,7 +355,7 @@ class SelfModel:
                 "agent_id": agent_id,
                 "beliefs": len(self.beliefs),
                 "goals": len(self.goals),
-            }
+            },
         )
 
     def update_belief(
@@ -418,8 +418,11 @@ class SelfModel:
             self.goals[parent_goal_id].sub_goals.append(new_goal.goal_id)
 
         if depends_on:
-            incomplete_deps = [d for d in depends_on if d not in self.goals or
-                              self.goals[d].status != GoalStatus.COMPLETED]
+            incomplete_deps = [
+                d
+                for d in depends_on
+                if d not in self.goals or self.goals[d].status != GoalStatus.COMPLETED
+            ]
             if incomplete_deps:
                 new_goal.status = GoalStatus.BLOCKED
                 new_goal.blocked_by = incomplete_deps
@@ -469,16 +472,18 @@ class SelfModel:
         belief_list = list(self.beliefs.values())
 
         for i, belief in enumerate(belief_list):
-            for other_belief in belief_list[i + 1:]:
+            for other_belief in belief_list[i + 1 :]:
                 if self._are_beliefs_conflicting(belief, other_belief):
-                    conflicts_found.append({
-                        "belief_1": belief.belief_id,
-                        "belief_2": other_belief.belief_id,
-                        "state_1": belief.state,
-                        "state_2": other_belief.state,
-                        "confidence_1": belief.confidence,
-                        "confidence_2": other_belief.confidence,
-                    })
+                    conflicts_found.append(
+                        {
+                            "belief_1": belief.belief_id,
+                            "belief_2": other_belief.belief_id,
+                            "state_1": belief.state,
+                            "state_2": other_belief.state,
+                            "confidence_1": belief.confidence,
+                            "confidence_2": other_belief.confidence,
+                        }
+                    )
 
                     if other_belief.belief_id not in belief.conflicting_beliefs:
                         belief.conflicting_beliefs.append(other_belief.belief_id)
@@ -488,19 +493,23 @@ class SelfModel:
                     if belief.confidence > other_belief.confidence:
                         reduction = min(0.2, belief.confidence - other_belief.confidence) / 2
                         other_belief.confidence = max(0.1, other_belief.confidence - reduction)
-                        resolutions_applied.append({
-                            "type": "confidence_reduction",
-                            "affected_belief": other_belief.belief_id,
-                            "reduction": reduction,
-                        })
+                        resolutions_applied.append(
+                            {
+                                "type": "confidence_reduction",
+                                "affected_belief": other_belief.belief_id,
+                                "reduction": reduction,
+                            }
+                        )
                     elif other_belief.confidence > belief.confidence:
                         reduction = min(0.2, other_belief.confidence - belief.confidence) / 2
                         belief.confidence = max(0.1, belief.confidence - reduction)
-                        resolutions_applied.append({
-                            "type": "confidence_reduction",
-                            "affected_belief": belief.belief_id,
-                            "reduction": reduction,
-                        })
+                        resolutions_applied.append(
+                            {
+                                "type": "confidence_reduction",
+                                "affected_belief": belief.belief_id,
+                                "reduction": reduction,
+                            }
+                        )
 
         coherence = self._calculate_self_coherence()
 
@@ -544,41 +553,45 @@ class SelfModel:
             for btype, count in beliefs_by_type.items():
                 lines.append(f"    - {btype}: {count}")
 
-        lines.extend([
-            "",
-            "GOALS",
-            f"- Total Goals: {len(self.goals)}",
-            f"- Goal Clarity: {metrics.goal_clarity:.2f}",
-            f"- Progress Rate: {metrics.goal_progress_rate:.2f}",
-        ])
+        lines.extend(
+            [
+                "",
+                "GOALS",
+                f"- Total Goals: {len(self.goals)}",
+                f"- Goal Clarity: {metrics.goal_clarity:.2f}",
+                f"- Progress Rate: {metrics.goal_progress_rate:.2f}",
+            ]
+        )
 
         if goals_by_status:
             lines.append("  By Status:")
             for status_name, count in goals_by_status.items():
                 lines.append(f"    - {status_name}: {count}")
 
-        lines.extend([
-            "",
-            "CAPABILITIES",
-            f"- Total Capabilities: {len(self.capabilities)}",
-            f"- Reliability: {metrics.capability_reliability:.2f}",
-        ])
+        lines.extend(
+            [
+                "",
+                "CAPABILITIES",
+                f"- Total Capabilities: {len(self.capabilities)}",
+                f"- Reliability: {metrics.capability_reliability:.2f}",
+            ]
+        )
 
         if self.capabilities:
             lines.append("  Top Capabilities:")
             sorted_caps = sorted(
-                self.capabilities.values(),
-                key=lambda c: c.level * c.experience_count,
-                reverse=True
+                self.capabilities.values(), key=lambda c: c.level * c.experience_count, reverse=True
             )[:3]
             for cap in sorted_caps:
                 lines.append(f"    - {cap.name}: {cap.level:.2f} (exp: {cap.experience_count})")
 
-        lines.extend([
-            "",
-            "LIMITATIONS",
-            f"- Total Limitations: {len(self.limitations)}",
-        ])
+        lines.extend(
+            [
+                "",
+                "LIMITATIONS",
+                f"- Total Limitations: {len(self.limitations)}",
+            ]
+        )
 
         if self.limitations:
             critical_limits = [l for l in self.limitations.values() if l.severity > 0.7]
@@ -587,13 +600,15 @@ class SelfModel:
                 for lim in critical_limits[:3]:
                     lines.append(f"    - {lim.description} (severity: {lim.severity:.2f})")
 
-        lines.extend([
-            "",
-            "HISTORY",
-            f"- Snapshots: {len(self.history)}",
-            f"- Update Count: {self._update_count}",
-            "",
-        ])
+        lines.extend(
+            [
+                "",
+                "HISTORY",
+                f"- Snapshots: {len(self.history)}",
+                f"- Update Count: {self._update_count}",
+                "",
+            ]
+        )
 
         return "\n".join(lines)
 
@@ -603,7 +618,9 @@ class SelfModel:
         self_accuracy = self._calculate_self_accuracy()
 
         if self.beliefs:
-            belief_confidence_avg = sum(b.confidence for b in self.beliefs.values()) / len(self.beliefs)
+            belief_confidence_avg = sum(b.confidence for b in self.beliefs.values()) / len(
+                self.beliefs
+            )
         else:
             belief_confidence_avg = 0.0
 
@@ -637,7 +654,9 @@ class SelfModel:
             cap.last_used = datetime.now(UTC).isoformat()
             if success is not None:
                 alpha = 0.3
-                cap.success_rate = alpha * (1.0 if success else 0.0) + (1 - alpha) * cap.success_rate
+                cap.success_rate = (
+                    alpha * (1.0 if success else 0.0) + (1 - alpha) * cap.success_rate
+                )
             if level is not None:
                 cap.level = max(0.0, min(1.0, level))
             if cap.experience_count > 10:
@@ -713,7 +732,8 @@ class SelfModel:
 
         return {
             "beliefs": beliefs_dict,
-            "precision": sum(b.confidence for b in self.beliefs.values()) / max(1, len(self.beliefs)),
+            "precision": sum(b.confidence for b in self.beliefs.values())
+            / max(1, len(self.beliefs)),
             "timestamp": datetime.now(UTC).isoformat(),
         }
 
@@ -753,7 +773,11 @@ class SelfModel:
 
     def get_belief_states(self) -> list[dict[str, Any]]:
         return [
-            {"state": belief.state, "confidence": belief.confidence, "type": belief.belief_type.value}
+            {
+                "state": belief.state,
+                "confidence": belief.confidence,
+                "type": belief.belief_type.value,
+            }
             for belief in self.beliefs.values()
         ]
 
@@ -767,7 +791,7 @@ class SelfModel:
                 "belief_id": belief.belief_id,
                 "old_confidence": old_confidence,
                 "new_confidence": belief.confidence,
-            }
+            },
         )
 
     def _are_beliefs_conflicting(self, b1: Belief, b2: Belief) -> bool:
@@ -775,7 +799,17 @@ class SelfModel:
             return False
         state1_lower = b1.state.lower()
         state2_lower = b2.state.lower()
-        negation_words = ["not", "no", "never", "don't", "doesn't", "isn't", "aren't", "wasn't", "weren't"]
+        negation_words = [
+            "not",
+            "no",
+            "never",
+            "don't",
+            "doesn't",
+            "isn't",
+            "aren't",
+            "wasn't",
+            "weren't",
+        ]
         for neg in negation_words:
             if neg in state1_lower or neg in state2_lower:
                 # Remove negation and normalize whitespace
@@ -858,8 +892,11 @@ class SelfModel:
         for goal in self.goals.values():
             if goal.status == GoalStatus.BLOCKED and completed_goal_id in goal.blocked_by:
                 goal.blocked_by.remove(completed_goal_id)
-                still_blocked = [b for b in goal.blocked_by if
-                                b in self.goals and self.goals[b].status != GoalStatus.COMPLETED]
+                still_blocked = [
+                    b
+                    for b in goal.blocked_by
+                    if b in self.goals and self.goals[b].status != GoalStatus.COMPLETED
+                ]
                 if not still_blocked:
                     goal.status = GoalStatus.ACTIVE
                     goal.blocked_by = []
@@ -882,4 +919,4 @@ class SelfModel:
         self.history.append(snapshot)
         self._last_snapshot_time = now
         if len(self.history) > self.MAX_HISTORY_SIZE:
-            self.history = self.history[-self.MAX_HISTORY_SIZE:]
+            self.history = self.history[-self.MAX_HISTORY_SIZE :]

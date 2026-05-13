@@ -39,6 +39,7 @@ try:
         StrategySelector,
         create_strategy_selector,
     )
+
     RAG_STRATEGIES_AVAILABLE = True
 except ImportError:
     RAG_STRATEGIES_AVAILABLE = False
@@ -67,6 +68,7 @@ class KnowledgeEntry:
         diversity_score: Diversity score for MMR (0-1)
         combined_score: Final combined score after reranking
     """
+
     content: Any
     source: str
     source_id: str
@@ -103,6 +105,7 @@ class KnowledgeQueryResult:
         reranking_applied: Whether reranking was applied
         parameters: Query parameters used
     """
+
     entries: list[KnowledgeEntry]
     total_results: int = 0
     query_time_ms: float = 0.0
@@ -192,6 +195,7 @@ class UnifiedKnowledgeAccess:
             KnowledgeQueryResult with merged and optionally reranked entries
         """
         import time
+
         start_time = time.time()
 
         sources = sources or ["all"]
@@ -294,6 +298,7 @@ class UnifiedKnowledgeAccess:
             KnowledgeQueryResult with retrieved entries
         """
         import time
+
         start_time = time.time()
 
         if not RAG_STRATEGIES_AVAILABLE:
@@ -324,14 +329,16 @@ class UnifiedKnowledgeAccess:
             # Convert RetrievalResult to KnowledgeEntry
             entries = []
             for result in results:
-                entries.append(KnowledgeEntry(
-                    content=result.content,
-                    source=f"rag_{result.strategy.value}",
-                    source_id=result.source,
-                    metadata={**result.metadata, "strategy": result.strategy.value},
-                    score=result.score,
-                    created_at=None,
-                ))
+                entries.append(
+                    KnowledgeEntry(
+                        content=result.content,
+                        source=f"rag_{result.strategy.value}",
+                        source_id=result.source,
+                        metadata={**result.metadata, "strategy": result.strategy.value},
+                        score=result.score,
+                        created_at=None,
+                    )
+                )
 
             query_time_ms = (time.time() - start_time) * 1000
 
@@ -368,11 +375,7 @@ class UnifiedKnowledgeAccess:
             logger.error("query_with_strategy_error", error=str(e))
             return await self.query(query, sources=["rag"], limit=top_k)
 
-    async def _query_memory(
-        self,
-        query: str,
-        filters: dict[str, Any]
-    ) -> list[KnowledgeEntry]:
+    async def _query_memory(self, query: str, filters: dict[str, Any]) -> list[KnowledgeEntry]:
         """Query the memory system."""
         if not self.memory:
             return []
@@ -390,22 +393,20 @@ class UnifiedKnowledgeAccess:
         memory_entries = results.entries if hasattr(results, "entries") else results
 
         for entry in memory_entries:
-            entries.append(KnowledgeEntry(
-                content=entry.content if hasattr(entry, "content") else entry,
-                source="memory",
-                source_id=getattr(entry, "id", getattr(entry, "memory_id", "unknown")),
-                metadata=getattr(entry, "metadata", {}),
-                score=getattr(entry, "similarity", getattr(entry, "score", 0.5)),
-                created_at=getattr(entry, "created_at", None),
-            ))
+            entries.append(
+                KnowledgeEntry(
+                    content=entry.content if hasattr(entry, "content") else entry,
+                    source="memory",
+                    source_id=getattr(entry, "id", getattr(entry, "memory_id", "unknown")),
+                    metadata=getattr(entry, "metadata", {}),
+                    score=getattr(entry, "similarity", getattr(entry, "score", 0.5)),
+                    created_at=getattr(entry, "created_at", None),
+                )
+            )
 
         return entries
 
-    async def _query_rag(
-        self,
-        query: str,
-        filters: dict[str, Any]
-    ) -> list[KnowledgeEntry]:
+    async def _query_rag(self, query: str, filters: dict[str, Any]) -> list[KnowledgeEntry]:
         """Query the RAG pipeline."""
         if not self.rag:
             return []
@@ -424,14 +425,16 @@ class UnifiedKnowledgeAccess:
         documents = result.documents if hasattr(result, "documents") else result
 
         for doc in documents:
-            entries.append(KnowledgeEntry(
-                content=doc.content if hasattr(doc, "content") else doc,
-                source="rag",
-                source_id=getattr(doc, "id", getattr(doc, "doc_id", "unknown")),
-                metadata=getattr(doc, "metadata", {}),
-                score=getattr(doc, "score", getattr(doc, "similarity", 0.5)),
-                created_at=None,
-            ))
+            entries.append(
+                KnowledgeEntry(
+                    content=doc.content if hasattr(doc, "content") else doc,
+                    source="rag",
+                    source_id=getattr(doc, "id", getattr(doc, "doc_id", "unknown")),
+                    metadata=getattr(doc, "metadata", {}),
+                    score=getattr(doc, "score", getattr(doc, "similarity", 0.5)),
+                    created_at=None,
+                )
+            )
 
         return entries
 
@@ -491,10 +494,7 @@ class UnifiedKnowledgeAccess:
                     max_similarity = max(max_similarity, sim)
 
                 # MMR score
-                mmr_score = (
-                    diversity_lambda * entry.score -
-                    (1 - diversity_lambda) * max_similarity
-                )
+                mmr_score = diversity_lambda * entry.score - (1 - diversity_lambda) * max_similarity
 
                 if mmr_score > best_score:
                     best_score = mmr_score
@@ -503,18 +503,16 @@ class UnifiedKnowledgeAccess:
             # Select best item
             best_entry = remaining.pop(best_idx)
             best_entry.combined_score = best_score
-            best_entry.diversity_score = 1.0 - max(
-                self._compute_similarity(best_entry, s) for s in selected
-            ) if selected else 1.0
+            best_entry.diversity_score = (
+                1.0 - max(self._compute_similarity(best_entry, s) for s in selected)
+                if selected
+                else 1.0
+            )
             selected.append(best_entry)
 
         return selected
 
-    def _compute_similarity(
-        self,
-        entry1: KnowledgeEntry,
-        entry2: KnowledgeEntry
-    ) -> float:
+    def _compute_similarity(self, entry1: KnowledgeEntry, entry2: KnowledgeEntry) -> float:
         """
         Compute similarity between two knowledge entries.
 
@@ -612,16 +610,18 @@ class UnifiedKnowledgeAccess:
 
         # Add unified knowledge access metrics
         for source_key, source_stats in self._query_stats.items():
-            lines.extend([
-                f"# HELP heretek_knowledge_queries_total Total knowledge queries for {source_key}",
-                "# TYPE heretek_knowledge_queries_total counter",
-                f'heretek_knowledge_queries_total{{sources="{source_key}"}} {source_stats["count"]}',
-                "",
-                f"# HELP heretek_knowledge_query_time_ms_total Total query time for {source_key}",
-                "# TYPE heretek_knowledge_query_time_ms_total counter",
-                f'heretek_knowledge_query_time_ms_total{{sources="{source_key}"}} {source_stats["total_time_ms"]}',
-                "",
-            ])
+            lines.extend(
+                [
+                    f"# HELP heretek_knowledge_queries_total Total knowledge queries for {source_key}",
+                    "# TYPE heretek_knowledge_queries_total counter",
+                    f'heretek_knowledge_queries_total{{sources="{source_key}"}} {source_stats["count"]}',
+                    "",
+                    f"# HELP heretek_knowledge_query_time_ms_total Total query time for {source_key}",
+                    "# TYPE heretek_knowledge_query_time_ms_total counter",
+                    f'heretek_knowledge_query_time_ms_total{{sources="{source_key}"}} {source_stats["total_time_ms"]}',
+                    "",
+                ]
+            )
 
         return "\n".join(lines)
 

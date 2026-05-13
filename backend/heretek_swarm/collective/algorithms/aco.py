@@ -45,6 +45,7 @@ class PheromoneTrail:
         evaporation_rate: Rate of pheromone decay
         quality: Quality of the path
     """
+
     trail_id: str = field(default_factory=lambda: str(uuid.uuid4()))
     from_node: str = ""
     to_node: str = ""
@@ -57,6 +58,7 @@ class PheromoneTrail:
 @dataclass
 class SwarmDecision:
     """Result of a swarm intelligence decision process."""
+
     pattern: SwarmPattern = SwarmPattern.ANT_COLONY
     participants: list[str] = field(default_factory=list)
     convergence_iterations: int = 0
@@ -152,7 +154,7 @@ class ACO:
             quality_metrics={
                 "path_length": len(best_path),
                 "pheromone_strength": self._get_path_pheromone_strength(best_path),
-            }
+            },
         )
 
         self.decision_history.append(decision)
@@ -202,10 +204,8 @@ class ACO:
 
             probabilities = []
             for neighbor in neighbors:
-                pheromone = self.pheromone_trails.get(current, {}).get(
-                    neighbor, PheromoneTrail()
-                )
-                tau = pheromone.pheromone_level ** self.alpha
+                pheromone = self.pheromone_trails.get(current, {}).get(neighbor, PheromoneTrail())
+                tau = pheromone.pheromone_level**self.alpha
                 eta = (ACO_HEURISTIC_BASE_DISTANCE / (1 + len(path))) ** self.beta
                 probabilities.append(tau * eta)
 
@@ -232,21 +232,17 @@ class ACO:
             if (path[i], path[i + 1]) in edge_set:
                 valid_edges += 1
 
-        validity_factor = (
-            valid_edges / (len(path) - 1) if len(path) > 1 else 0
-        )
+        validity_factor = valid_edges / (len(path) - 1) if len(path) > 1 else 0
 
         return (
-            ACO_LENGTH_FACTOR_WEIGHT * length_factor +
-            ACO_VALIDITY_FACTOR_WEIGHT * validity_factor
+            ACO_LENGTH_FACTOR_WEIGHT * length_factor + ACO_VALIDITY_FACTOR_WEIGHT * validity_factor
         )
 
     def _update_pheromones(self, path: list[str], quality: float) -> None:
         """Update pheromones along a path."""
         for i in range(len(path) - 1):
             from_node, to_node = path[i], path[i + 1]
-            if (from_node in self.pheromone_trails and
-                    to_node in self.pheromone_trails[from_node]):
+            if from_node in self.pheromone_trails and to_node in self.pheromone_trails[from_node]:
                 trail = self.pheromone_trails[from_node][to_node]
                 trail.pheromone_level += quality * ACO_PHEROMONE_DEPOSIT_FACTOR
                 trail.quality = quality
@@ -256,7 +252,7 @@ class ACO:
         """Evaporate pheromones on all trails."""
         for from_node in self.pheromone_trails.values():
             for trail in from_node.values():
-                trail.pheromone_level *= (1 - trail.evaporation_rate)
+                trail.pheromone_level *= 1 - trail.evaporation_rate
                 trail.pheromone_level = max(ACO_MIN_PHEROMONE, trail.pheromone_level)
 
     def _get_path_pheromone_strength(self, path: list[str]) -> float:
@@ -264,8 +260,7 @@ class ACO:
         total = 0.0
         for i in range(len(path) - 1):
             from_node, to_node = path[i], path[i + 1]
-            if (from_node in self.pheromone_trails and
-                    to_node in self.pheromone_trails[from_node]):
+            if from_node in self.pheromone_trails and to_node in self.pheromone_trails[from_node]:
                 total += self.pheromone_trails[from_node][to_node].pheromone_level
         return total
 

@@ -51,6 +51,7 @@ HERETEK_LOGS_DIR.mkdir(parents=True, exist_ok=True)
 
 class LogLevel(StrEnum):
     """Log levels."""
+
     DEBUG = "DEBUG"
     INFO = "INFO"
     WARNING = "WARNING"
@@ -60,6 +61,7 @@ class LogLevel(StrEnum):
 
 class ServiceStatus(StrEnum):
     """Service health status."""
+
     HEALTHY = "healthy"
     UNHEALTHY = "unhealthy"
     DEGRADED = "degraded"
@@ -72,9 +74,11 @@ class ServiceStatus(StrEnum):
 # Structured Log Entry
 # ============================================================================
 
+
 @dataclass
 class LogEntry:
     """Structured log entry for Loki/ELK integration."""
+
     timestamp: str
     level: str
     logger: str
@@ -93,6 +97,7 @@ class LogEntry:
 # ============================================================================
 # Loki Log Handler
 # ============================================================================
+
 
 class LokiHandler(logging.Handler):
     """
@@ -136,12 +141,15 @@ class LokiHandler(logging.Handler):
         self.log_dir.mkdir(parents=True, exist_ok=True)
 
         # Create current log file
-        self._current_file = self.log_dir / f"{service_name}-{datetime.now().strftime('%Y%m%d')}.jsonl"
+        self._current_file = (
+            self.log_dir / f"{service_name}-{datetime.now().strftime('%Y%m%d')}.jsonl"
+        )
 
     async def _get_client(self):
         """Get or create HTTP client."""
         if self._http_client is None:
             import httpx
+
             self._http_client = httpx.AsyncClient(timeout=30.0)
         return self._http_client
 
@@ -174,12 +182,14 @@ class LokiHandler(logging.Handler):
                     labels = f'{{service="{self.service_name}",level="{log_entry["level"]}"}}'
                     if labels not in streams:
                         streams[labels] = []
-                    streams[labels].append({
-                        "ts": log_entry["timestamp"],
-                        "v": 0,
-                        "msg": log_entry["message"],
-                        **log_entry
-                    })
+                    streams[labels].append(
+                        {
+                            "ts": log_entry["timestamp"],
+                            "v": 0,
+                            "msg": log_entry["message"],
+                            **log_entry,
+                        }
+                    )
 
                 payload = {
                     "streams": [
@@ -268,6 +278,7 @@ class LokiHandler(logging.Handler):
 # Observability Manager
 # ============================================================================
 
+
 class ObservabilityManager:
     """
     Centralized observability management for Heretek Swarm.
@@ -315,7 +326,9 @@ class ObservabilityManager:
         self.service_name = service_name
         self.service_version = service_version
         self.loki_url = loki_url or os.getenv("LOKI_URL", "http://localhost:3100/loki/api/v1/push")
-        self.otlp_endpoint = otlp_endpoint or os.getenv("OTEL_EXPORTER_OTLP_ENDPOINT", "http://localhost:4317")
+        self.otlp_endpoint = otlp_endpoint or os.getenv(
+            "OTEL_EXPORTER_OTLP_ENDPOINT", "http://localhost:4317"
+        )
         self.prometheus_port = prometheus_port
 
         self.metrics = PrometheusMetrics()
@@ -468,6 +481,7 @@ class ObservabilityManager:
     ):
         """Async context manager for tracing."""
         from .tracing import span_context
+
         span_attributes = {**attributes}
         if agent_id:
             span_attributes["agent_id"] = agent_id
@@ -510,7 +524,9 @@ class ObservabilityManager:
                     result = check_fn()
 
                 check_results[name] = {
-                    "status": ServiceStatus.HEALTHY.value if result else ServiceStatus.UNHEALTHY.value,
+                    "status": ServiceStatus.HEALTHY.value
+                    if result
+                    else ServiceStatus.UNHEALTHY.value,
                     "healthy": result,
                 }
 
@@ -594,6 +610,7 @@ async def initialize_observability() -> ObservabilityManager:
 # ============================================================================
 # Example Usage
 # ============================================================================
+
 
 async def main():
     """Example usage of observability."""

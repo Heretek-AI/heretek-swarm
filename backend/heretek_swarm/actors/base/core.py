@@ -25,12 +25,10 @@ from pydantic import ValidationError
 from swarms import Agent
 
 import heretek_swarm.actors.stubs as _actor_stubs
-from heretek_swarm.actors.stubs import get_db_pool  # noqa: F401 - imported for test patching
 from heretek_swarm.actors.validation import (
     validate_message,
 )
 from heretek_swarm.agents.skills import SkillCategory, SkillMetadata
-from heretek_swarm.logging.config import get_logger
 from heretek_swarm.routing import (
     AgentModelRouter,
     get_router,
@@ -39,6 +37,7 @@ from heretek_swarm.state.repository import (
     AgentStateRecord,
     StateRepository,
 )
+from heretek_swarm.swarm_logging.config import get_logger
 
 
 def _make_skill_metadata(capability: str) -> SkillMetadata:
@@ -526,12 +525,6 @@ class AgentActor:
 
 
 # Trigger mixin bindings when this module is imported
-from heretek_swarm.actors.base.message_handling import (
-    AgentActorMessageHandling,  # noqa: F401 - triggers mixin injection
-)
-from heretek_swarm.actors.base.state_management import (
-    AgentActorStateManagement,  # noqa: F401 - triggers state management bindings
-)
 
 # Backward-compat: existing code that imports ActorMessage from actors.base.core
 # gets the internal dataclass ActorMessage (defined above), not the Pydantic one.

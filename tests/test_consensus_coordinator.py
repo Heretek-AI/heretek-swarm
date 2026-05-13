@@ -17,6 +17,7 @@ from heretek_swarm.consensus.maker import ConsensusResult, ConsensusState, MAKER
 # Resolve characters directory relative to the test file
 _CHARACTERS_DIR = os.path.join(
     os.path.dirname(os.path.dirname(__file__)),
+    "backend",
     "heretek_swarm",
     "runtime",
     "characters",
@@ -42,6 +43,7 @@ def _make_mock_actor(responses: dict[str, str | Exception] | None = None):
             return_value='{"decision": "yes", "confidence": 0.9, "reasoning": "Good idea."}'
         )
     else:
+
         async def _side_effect(prompt, **kwargs):
             for key, val in responses.items():
                 if key in prompt:
@@ -274,8 +276,9 @@ class TestAgentAvailability:
             if agent_id == "alpha":
                 maker.add_vote(consensus_id, agent_id, "yes", 0.9)
             else:
-                maker.add_vote(consensus_id, agent_id, "abstain", 0.0,
-                                metadata={"status": "agent_unavailable"})
+                maker.add_vote(
+                    consensus_id, agent_id, "abstain", 0.0, metadata={"status": "agent_unavailable"}
+                )
 
         votes = maker.active_processes[consensus_id]
         abstain_votes = [v for v in votes if v.decision == "abstain"]
@@ -319,8 +322,13 @@ class TestLLMFailureHandling:
         # Direct test: manually record a failed vote
         consensus_id = "test-failure"
         maker.start_consensus(consensus_id)
-        maker.add_vote(consensus_id, "sentinel", "abstain", 0.0,
-                        metadata={"status": "llm_failure", "error": "timeout"})
+        maker.add_vote(
+            consensus_id,
+            "sentinel",
+            "abstain",
+            0.0,
+            metadata={"status": "llm_failure", "error": "timeout"},
+        )
         maker.add_vote(consensus_id, "alpha", "yes", 0.9)
         maker.add_vote(consensus_id, "examiner", "yes", 0.9)
 
@@ -349,9 +357,7 @@ class TestLLMFailureHandling:
         """When all agents fail, all votes are abstain and MAKER returns abstain."""
         actors = _all_agents_mock()
         for actor in actors.values():
-            actor.run_with_llm = AsyncMock(
-                side_effect=RuntimeError("All providers down")
-            )
+            actor.run_with_llm = AsyncMock(side_effect=RuntimeError("All providers down"))
 
         coord = ConsensusCoordinator(maker=maker, domain_selector=ds, actors=actors)
         result = await coord.run_consensus("security analysis")
@@ -598,20 +604,36 @@ class TestArgumentExchange:
 
         # Create a mock result with votes containing reasoning
         from heretek_swarm.consensus.maker import Vote
+
         votes = [
-            Vote(agent_id="alpha", decision="yes", confidence=0.9,
-                 timestamp="2026-01-01T00:00:00",
-                 metadata={"reasoning": "Strong evidence for."}),
-            Vote(agent_id="beta", decision="no", confidence=0.8,
-                 timestamp="2026-01-01T00:00:00",
-                 metadata={"reasoning": "Too risky."}),
-            Vote(agent_id="gamma", decision="yes", confidence=0.7,
-                 timestamp="2026-01-01T00:00:00",
-                 metadata={"reasoning": "Looks reasonable."}),
+            Vote(
+                agent_id="alpha",
+                decision="yes",
+                confidence=0.9,
+                timestamp="2026-01-01T00:00:00",
+                metadata={"reasoning": "Strong evidence for."},
+            ),
+            Vote(
+                agent_id="beta",
+                decision="no",
+                confidence=0.8,
+                timestamp="2026-01-01T00:00:00",
+                metadata={"reasoning": "Too risky."},
+            ),
+            Vote(
+                agent_id="gamma",
+                decision="yes",
+                confidence=0.7,
+                timestamp="2026-01-01T00:00:00",
+                metadata={"reasoning": "Looks reasonable."},
+            ),
         ]
         result = ConsensusResult(
-            decision="yes", confidence=0.8, votes=votes,
-            state=ConsensusState.COMPLETED, timestamp="2026-01-01T00:00:00",
+            decision="yes",
+            confidence=0.8,
+            votes=votes,
+            state=ConsensusState.COMPLETED,
+            timestamp="2026-01-01T00:00:00",
         )
 
         round_summary, args_for, args_against = coord._build_argument_exchange(result)
@@ -637,13 +659,22 @@ class TestArgumentExchange:
         coord = ConsensusCoordinator(maker=maker, domain_selector=ds, actors={})
 
         from heretek_swarm.consensus.maker import Vote
+
         votes = [
-            Vote(agent_id="alpha", decision="yes", confidence=0.9,
-                 timestamp="2026-01-01T00:00:00", metadata={}),
+            Vote(
+                agent_id="alpha",
+                decision="yes",
+                confidence=0.9,
+                timestamp="2026-01-01T00:00:00",
+                metadata={},
+            ),
         ]
         result = ConsensusResult(
-            decision="yes", confidence=0.9, votes=votes,
-            state=ConsensusState.COMPLETED, timestamp="2026-01-01T00:00:00",
+            decision="yes",
+            confidence=0.9,
+            votes=votes,
+            state=ConsensusState.COMPLETED,
+            timestamp="2026-01-01T00:00:00",
         )
 
         _, args_for, args_against = coord._build_argument_exchange(result)
@@ -693,10 +724,7 @@ class TestReasoningInVoteMetadata:
 
         assert result is not None
         # Check that at least some votes have reasoning in metadata
-        reasoning_votes = [
-            v for v in result.votes
-            if v.metadata.get("reasoning")
-        ]
+        reasoning_votes = [v for v in result.votes if v.metadata.get("reasoning")]
         assert len(reasoning_votes) > 0
         assert all(v.metadata["reasoning"] == "Solid approach." for v in reasoning_votes)
 
@@ -705,9 +733,7 @@ class TestReasoningInVoteMetadata:
         """When response has no reasoning field, metadata is empty or absent."""
         actors = _all_agents_mock()
         for actor in actors.values():
-            actor.run_with_llm = AsyncMock(
-                return_value='{"decision": "yes", "confidence": 0.8}'
-            )
+            actor.run_with_llm = AsyncMock(return_value='{"decision": "yes", "confidence": 0.8}')
 
         coord = ConsensusCoordinator(maker=maker, domain_selector=ds, actors=actors)
         result = await coord.run_consensus("security analysis")
@@ -746,10 +772,7 @@ class TestRoundPromptContent:
         await coord.run_consensus("security analysis", max_rounds=3)
 
         # Check if round 2 prompt was sent
-        round_2_prompts = [
-            p for p in captured_prompts
-            if "previous round" in p.lower()
-        ]
+        round_2_prompts = [p for p in captured_prompts if "previous round" in p.lower()]
 
         if len(round_2_prompts) > 0:
             prompt = round_2_prompts[0]

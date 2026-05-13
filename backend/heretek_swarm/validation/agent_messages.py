@@ -30,6 +30,7 @@ from heretek_swarm.validation.llm_output import (
 
 class MessageType(StrEnum):
     """Standard message types in the swarm system."""
+
     # Actor base messages
     ACTOR_MESSAGE = "actor_message"
     STATE_UPDATE = "state_update"
@@ -93,6 +94,7 @@ class MessageType(StrEnum):
 
 class MessagePriority(StrEnum):
     """Message priority levels."""
+
     CRITICAL = "critical"
     HIGH = "high"
     NORMAL = "normal"
@@ -164,9 +166,13 @@ class StateUpdate(AgentMessageBase):
     """
 
     message_type: str = Field(default=MessageType.STATE_UPDATE.value)
-    state_key: str = Field(..., min_length=1, max_length=256, description="Key identifying the state to update")
+    state_key: str = Field(
+        ..., min_length=1, max_length=256, description="Key identifying the state to update"
+    )
     state_value: Any = Field(..., description="New value for the state")
-    operation: str = Field(default="set", description="Operation to perform (set, append, delete, merge)")
+    operation: str = Field(
+        default="set", description="Operation to perform (set, append, delete, merge)"
+    )
     version: int | None = Field(None, description="Expected version for optimistic locking")
 
     @pydantic_validator("state_key")
@@ -186,11 +192,15 @@ class StateUpdate(AgentMessageBase):
             if isinstance(value, str):
                 result = validator.validate_text(value)
                 if not result.valid:
-                    raise ValueError(f"Unsafe state value at path '{path}': {', '.join(result.errors)}")
+                    raise ValueError(
+                        f"Unsafe state value at path '{path}': {', '.join(result.errors)}"
+                    )
                 # Return sanitized version if available
                 return result.sanitized_content or value
             if isinstance(value, dict):
-                return {k: check_value(val, f"{path}.{k}" if path else k) for k, val in value.items()}
+                return {
+                    k: check_value(val, f"{path}.{k}" if path else k) for k, val in value.items()
+                }
             if isinstance(value, list):
                 return [check_value(item, f"{path}[{i}]") for i, item in enumerate(value)]
             return value
@@ -218,7 +228,9 @@ class ToolRequest(AgentMessageBase):
     """
 
     message_type: str = Field(default=MessageType.TOOL_REQUEST.value)
-    tool_name: str = Field(..., min_length=1, max_length=100, description="Name of the tool to execute")
+    tool_name: str = Field(
+        ..., min_length=1, max_length=100, description="Name of the tool to execute"
+    )
     arguments: dict[str, Any] = Field(default_factory=dict, description="Arguments for the tool")
     timeout: int = Field(default=30, ge=1, le=300, description="Execution timeout in seconds")
     execution_id: str = Field(default_factory=lambda: f"exec_{uuid.uuid4().hex[:8]}")
@@ -230,7 +242,22 @@ class ToolRequest(AgentMessageBase):
             raise ValueError(f"Invalid tool name format: {v}")
 
         # Block dangerous tool names
-        dangerous_tools = {"eval", "exec", "compile", "__import__", "getattr", "setattr", "delattr", "hasattr", "globals", "locals", "vars", "dir", "open", "input"}
+        dangerous_tools = {
+            "eval",
+            "exec",
+            "compile",
+            "__import__",
+            "getattr",
+            "setattr",
+            "delattr",
+            "hasattr",
+            "globals",
+            "locals",
+            "vars",
+            "dir",
+            "open",
+            "input",
+        }
         if v.lower() in dangerous_tools:
             raise ValueError(f"Dangerous tool name not allowed: {v}")
 
@@ -296,8 +323,12 @@ class CoordinationRequest(AgentMessageBase):
 
     message_type: str = Field(default=MessageType.COORDINATION_REQUEST.value)
     request_type: str = Field(..., description="Type of coordination request")
-    description: str = Field(..., max_length=2000, description="Description of the coordination needed")
-    required_capabilities: list[str] = Field(default_factory=list, description="Required agent capabilities")
+    description: str = Field(
+        ..., max_length=2000, description="Description of the coordination needed"
+    )
+    required_capabilities: list[str] = Field(
+        default_factory=list, description="Required agent capabilities"
+    )
     deadline: datetime | None = Field(None, description="Optional deadline for the request")
     payload: dict[str, Any] | None = Field(None, description="Additional payload for the request")
 
@@ -325,7 +356,9 @@ class CoordinationRequest(AgentMessageBase):
                     raise ValueError(f"Unsafe payload at '{path}': {', '.join(result.errors)}")
                 return result.sanitized_content or value
             if isinstance(value, dict):
-                return {k: check_value(val, f"{path}.{k}" if path else k) for k, val in value.items()}
+                return {
+                    k: check_value(val, f"{path}.{k}" if path else k) for k, val in value.items()
+                }
             if isinstance(value, list):
                 return [check_value(item, f"{path}[{i}]") for i, item in enumerate(value)]
             return value
@@ -347,7 +380,9 @@ class ConsensusProposal(AgentMessageBase):
     message_type: str = Field(default=MessageType.CONSENSUS_PROPOSAL.value)
     proposal_id: str = Field(default_factory=lambda: f"prop_{uuid.uuid4().hex[:12]}")
     title: str = Field(..., min_length=1, max_length=200, description="Title of the proposal")
-    description: str = Field(..., max_length=5000, description="Detailed description of the proposal")
+    description: str = Field(
+        ..., max_length=5000, description="Detailed description of the proposal"
+    )
     options: list[str] = Field(default_factory=list, description="Available options for voting")
     proposer_id: str = Field(..., description="ID of the proposing agent")
 
@@ -373,8 +408,12 @@ class ConsensusVote(AgentMessageBase):
     message_type: str = Field(default=MessageType.CONSENSUS_VOTE.value)
     proposal_id: str = Field(..., description="ID of the proposal being voted on")
     vote: str = Field(..., description="The vote value (option name or yes/no)")
-    confidence: float = Field(default=1.0, ge=0.0, le=1.0, description="Confidence in the vote (0-1)")
-    reasoning: str | None = Field(None, max_length=1000, description="Optional reasoning for the vote")
+    confidence: float = Field(
+        default=1.0, ge=0.0, le=1.0, description="Confidence in the vote (0-1)"
+    )
+    reasoning: str | None = Field(
+        None, max_length=1000, description="Optional reasoning for the vote"
+    )
 
     @pydantic_validator("reasoning")
     def validate_reasoning_safety(cls, v: str | None) -> str | None:
@@ -444,7 +483,9 @@ class TaskMessage(AgentMessageBase):
                     raise ValueError(f"Unsafe task data at '{path}': {', '.join(result.errors)}")
                 return result.sanitized_content or value
             if isinstance(value, dict):
-                return {k: check_value(val, f"{path}.{k}" if path else k) for k, val in value.items()}
+                return {
+                    k: check_value(val, f"{path}.{k}" if path else k) for k, val in value.items()
+                }
             if isinstance(value, list):
                 return [check_value(item, f"{path}[{i}]") for i, item in enumerate(value)]
             return value

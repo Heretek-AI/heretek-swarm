@@ -40,7 +40,12 @@ class GovernanceSecurityError(Exception):
     def get_failed_layers(self) -> list[str]:
         """Get list of layers that failed validation."""
         failed = []
-        for layer in [self.result.layer1, self.result.layer2, self.result.layer3, self.result.layer4]:
+        for layer in [
+            self.result.layer1,
+            self.result.layer2,
+            self.result.layer3,
+            self.result.layer4,
+        ]:
             if not layer.passed:
                 failed.append(layer.layer)
         return failed
@@ -48,7 +53,12 @@ class GovernanceSecurityError(Exception):
     def get_failure_reasons(self) -> list[str]:
         """Get reasons for each failed layer."""
         reasons = []
-        for layer in [self.result.layer1, self.result.layer2, self.result.layer3, self.result.layer4]:
+        for layer in [
+            self.result.layer1,
+            self.result.layer2,
+            self.result.layer3,
+            self.result.layer4,
+        ]:
             if not layer.passed and layer.reason:
                 reasons.append(f"{layer.layer}: {layer.reason}")
         return reasons
@@ -117,15 +127,17 @@ class GovernanceCoordinator:
 
         # Store high severity events
         if severity in (Severity.HIGH, Severity.CRITICAL):
-            self._high_severity_events.append({
-                "event_type": event_type,
-                "request_id": result.request_id,
-                "agent_id": result.agent_id,
-                "passed": result.passed,
-                "severity": severity.value,
-                "timestamp": datetime.now(UTC).isoformat(),
-                **context,
-            })
+            self._high_severity_events.append(
+                {
+                    "event_type": event_type,
+                    "request_id": result.request_id,
+                    "agent_id": result.agent_id,
+                    "passed": result.passed,
+                    "severity": severity.value,
+                    "timestamp": datetime.now(UTC).isoformat(),
+                    **context,
+                }
+            )
             # Keep only last 1000 events
             if len(self._high_severity_events) > 1000:
                 self._high_severity_events = self._high_severity_events[-1000:]

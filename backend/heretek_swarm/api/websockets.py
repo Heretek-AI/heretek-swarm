@@ -169,7 +169,11 @@ async def _ws_authenticate_and_accept(
 
 
 async def _ws_handle_agent_subscribe(
-    websocket: WebSocket, message: dict, subscribed_agents: set, agent_id: str | None, manager: "ConnectionManager"
+    websocket: WebSocket,
+    message: dict,
+    subscribed_agents: set,
+    agent_id: str | None,
+    manager: "ConnectionManager",
 ) -> None:
     """Handle a subscribe action for an agent resource."""
     sub_agent_id = message.get("agentId") or agent_id
@@ -195,7 +199,11 @@ async def _ws_handle_agent_unsubscribe(
 
 
 async def _ws_handle_workflow_subscribe(
-    websocket: WebSocket, message: dict, subscribed_workflows: set, workflow_id: str | None, manager: "ConnectionManager"
+    websocket: WebSocket,
+    message: dict,
+    subscribed_workflows: set,
+    workflow_id: str | None,
+    manager: "ConnectionManager",
 ) -> None:
     """Handle a subscribe action for a workflow resource."""
     sub_workflow_id = message.get("workflowId") or workflow_id
@@ -206,7 +214,10 @@ async def _ws_handle_workflow_subscribe(
 
 
 async def _ws_handle_workflow_unsubscribe(
-    subscribed_workflows: set, workflow_id: str | None, websocket: WebSocket, manager: "ConnectionManager"
+    subscribed_workflows: set,
+    workflow_id: str | None,
+    websocket: WebSocket,
+    manager: "ConnectionManager",
 ) -> None:
     """Handle an unsubscribe action for a workflow resource."""
     sub_workflow_id = workflow_id
@@ -217,7 +228,11 @@ async def _ws_handle_workflow_unsubscribe(
 
 
 async def _ws_handle_metrics_subscribe(
-    websocket: WebSocket, message: dict, subscribed_agents: set, agent_id: str | None, manager: "ConnectionManager"
+    websocket: WebSocket,
+    message: dict,
+    subscribed_agents: set,
+    agent_id: str | None,
+    manager: "ConnectionManager",
 ) -> None:
     """Handle a subscribe action for agent metrics."""
     sub_agent_id = message.get("agentId") or agent_id
@@ -852,7 +867,9 @@ async def agent_status_websocket(
                 action = message.get("action")
 
                 if action == "subscribe":
-                    await _ws_handle_agent_subscribe(websocket, message, subscribed_agents, agent_id, manager)
+                    await _ws_handle_agent_subscribe(
+                        websocket, message, subscribed_agents, agent_id, manager
+                    )
                 elif action == "unsubscribe":
                     await _ws_handle_agent_unsubscribe(subscribed_agents, agent_id, manager)
 
@@ -908,7 +925,9 @@ async def workflow_progress_websocket(
         token: Authentication token (required)
     """
     # SECURITY: Authenticate connection
-    authenticated, _user_id = await _ws_authenticate_and_accept(websocket, token, "workflow_progress")
+    authenticated, _user_id = await _ws_authenticate_and_accept(
+        websocket, token, "workflow_progress"
+    )
     if not authenticated:
         return
 
@@ -925,9 +944,13 @@ async def workflow_progress_websocket(
                 action = message.get("action")
 
                 if action == "subscribe":
-                    await _ws_handle_workflow_subscribe(websocket, message, subscribed_workflows, workflow_id, manager)
+                    await _ws_handle_workflow_subscribe(
+                        websocket, message, subscribed_workflows, workflow_id, manager
+                    )
                 elif action == "unsubscribe":
-                    await _ws_handle_workflow_unsubscribe(subscribed_workflows, workflow_id, websocket, manager)
+                    await _ws_handle_workflow_unsubscribe(
+                        subscribed_workflows, workflow_id, websocket, manager
+                    )
 
             except TimeoutError:
                 await websocket.send_json(
@@ -1002,9 +1025,13 @@ async def agent_metrics_websocket(
                 action = message.get("action")
 
                 if action == "subscribe":
-                    await _ws_handle_metrics_subscribe(websocket, message, subscribed_agents, agent_id, manager)
+                    await _ws_handle_metrics_subscribe(
+                        websocket, message, subscribed_agents, agent_id, manager
+                    )
                 elif action == "unsubscribe":
-                    await _ws_handle_metrics_unsubscribe(subscribed_agents, agent_id, websocket, manager)
+                    await _ws_handle_metrics_unsubscribe(
+                        subscribed_agents, agent_id, websocket, manager
+                    )
 
             except TimeoutError:
                 await websocket.send_json(
@@ -1207,7 +1234,6 @@ async def logs_websocket(
 
 
 @router.websocket("/ws/agents")
-
 async def all_agents_websocket(
     websocket: WebSocket, token: str | None = Query(None, description=_AUTH_TOKEN_DESC)
 ):
@@ -1289,11 +1315,13 @@ async def send_agent_status_update(agent_id: str, status: str, current_task: str
     }
     _agent_states[agent_id] = update
     await manager.broadcast_agent_status(agent_id, update)
-    await manager.broadcast_dashboard({
-        "type": "agent_status",
-        "agentId": agent_id,
-        **update,
-    })
+    await manager.broadcast_dashboard(
+        {
+            "type": "agent_status",
+            "agentId": agent_id,
+            **update,
+        }
+    )
 
 
 async def send_workflow_progress_update(

@@ -13,6 +13,7 @@ from typing import Any
 
 class ToolStatus(Enum):
     """Tool execution status."""
+
     PENDING = "pending"
     RUNNING = "running"
     SUCCESS = "success"
@@ -23,6 +24,7 @@ class ToolStatus(Enum):
 @dataclass
 class ToolMetadata:
     """Metadata for a tool."""
+
     name: str
     description: str
     category: str = "general"
@@ -33,6 +35,7 @@ class ToolMetadata:
 @dataclass
 class ToolContext:
     """Context for tool execution."""
+
     agent_id: str
     session_id: str
     task_id: str | None = None
@@ -42,6 +45,7 @@ class ToolContext:
 @dataclass
 class ToolExecutionResult:
     """Result of tool execution."""
+
     tool_name: str
     status: ToolStatus
     output: Any = None

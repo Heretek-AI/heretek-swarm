@@ -28,11 +28,13 @@ import structlog
 logger = structlog.get_logger(__name__)
 
 from heretek_swarm.integrations.openai_assistants import MessageRole
+
 try:
     from anthropic import Anthropic, AsyncAnthropic
     from anthropic.types import ContentBlock, Message, TextBlock, ToolUseBlock
     from anthropic.types.beta.tools import ToolsBetaMessage
     from anthropic.types.beta.tools import ToolUseBlock as BetaToolUseBlock
+
     ANTHROPIC_AVAILABLE = True
 except ImportError:
     ANTHROPIC_AVAILABLE = False
@@ -45,15 +47,19 @@ except ImportError:
     ToolsBetaMessage = None
     BetaToolUseBlock = None
 
+
 class AnthropicMessageRole(StrEnum):
     """Message roles for Anthropic API."""
+
     USER = "user"
     ASSISTANT = "assistant"
     SYSTEM = "system"
     TOOL = "tool"
 
+
 class StopReason(StrEnum):
     """Message stop reasons."""
+
     END_TURN = "end_turn"
     MAX_TOKENS = "max_tokens"
     STOP_SEQUENCE = "stop_sequence"
@@ -71,6 +77,7 @@ class ToolDefinition:
         input_schema: JSON schema for input
         handler: Optional handler function
     """
+
     name: str
     description: str
     input_schema: dict[str, Any]
@@ -111,6 +118,7 @@ class ConversationMessage:
         tool_results: Tool results if any
         timestamp: Message timestamp
     """
+
     message_id: str
     role: AnthropicMessageRole
     content: str | list[dict[str, Any]]
@@ -132,31 +140,33 @@ class ConversationMessage:
         }
 
     def to_anthropic_format(self) -> dict[str, Any]:
-            """Convert to Anthropic messages API format."""
-            if self.role == AnthropicMessageRole.USER:
-                return {
-                    "role": "user",
-                    "content": self.content,
-                }
-            if self.role == AnthropicMessageRole.ASSISTANT:
-                content = []
-                if isinstance(self.content, str):
-                    content.append({"type": "text", "text": self.content})
+        """Convert to Anthropic messages API format."""
+        if self.role == AnthropicMessageRole.USER:
+            return {
+                "role": "user",
+                "content": self.content,
+            }
+        if self.role == AnthropicMessageRole.ASSISTANT:
+            content = []
+            if isinstance(self.content, str):
+                content.append({"type": "text", "text": self.content})
 
-                for tool_call in self.tool_calls:
-                    content.append({
+            for tool_call in self.tool_calls:
+                content.append(
+                    {
                         "type": "tool_use",
                         "id": tool_call.get("id", str(uuid.uuid4())),
                         "name": tool_call.get("name", "unknown"),
                         "input": tool_call.get("input", {}),
-                    })
+                    }
+                )
 
-                return {
-                    "role": "assistant",
-                    "content": content,
-                }
+            return {
+                "role": "assistant",
+                "content": content,
+            }
 
-            return {"role": self.role.value, "content": self.content}
+        return {"role": self.role.value, "content": self.content}
 
 
 @dataclass
@@ -173,6 +183,7 @@ class ConversationContext:
         tools: Available tools
         metadata: Additional metadata
     """
+
     conversation_id: str
     messages: list[ConversationMessage] = field(default_factory=list)
     system_prompt: str | None = None
@@ -198,8 +209,8 @@ class ConversationContext:
         }
 
     def add_message(
-            self,
-            role: AnthropicMessageRole,
+        self,
+        role: AnthropicMessageRole,
         content: str | list[dict[str, Any]],
         **kwargs,
     ) -> ConversationMessage:
@@ -242,6 +253,7 @@ class ToolUseRequest:
         conversation_id: Associated conversation ID
         heretek_agent_id: Optional Heretek agent ID
     """
+
     request_id: str
     tool_name: str
     tool_input: dict[str, Any]
@@ -464,7 +476,7 @@ class AnthropicAdapter:
         self,
         conversation_id: str,
         content: str,
-                role: AnthropicMessageRole = AnthropicMessageRole.USER,
+        role: AnthropicMessageRole = AnthropicMessageRole.USER,
         max_tokens: int | None = None,
         temperature: float | None = None,
         system_prompt: str | None = None,
@@ -496,7 +508,11 @@ class AnthropicAdapter:
         await self._notify_conversation_event("message_sent", conversation_id, user_message)
 
         # Prepare API request
-        messages = [m.to_anthropic_format() for m in context.messages if m.role in [MessageRole.USER, MessageRole.ASSISTANT]]
+        messages = [
+            m.to_anthropic_format()
+            for m in context.messages
+            if m.role in [MessageRole.USER, MessageRole.ASSISTANT]
+        ]
 
         # Get tools
         tool_defs = [t.to_anthropic_format() for t in context.tools] if context.tools else None
@@ -553,11 +569,13 @@ class AnthropicAdapter:
             if isinstance(block, TextBlock):
                 content_parts.append(block.text)
             elif isinstance(block, (ToolUseBlock, BetaToolUseBlock)):
-                tool_calls.append({
-                    "id": block.id,
-                    "name": block.name,
-                    "input": block.input if hasattr(block, "input") else {},
-                })
+                tool_calls.append(
+                    {
+                        "id": block.id,
+                        "name": block.name,
+                        "input": block.input if hasattr(block, "input") else {},
+                    }
+                )
 
         content = "\n".join(content_parts) if content_parts else ""
 
@@ -566,7 +584,6 @@ class AnthropicAdapter:
             content if content else "[Tool use]",
             tool_calls=tool_calls,
         )
-
 
     async def _handle_tool_uses(
         self,
@@ -595,10 +612,12 @@ class AnthropicAdapter:
             context.add_message(
                 MessageRole.USER,
                 [tool_result_message],
-                tool_results=[{
-                    "tool_use_id": request.request_id,
-                    "result": result,
-                }],
+                tool_results=[
+                    {
+                        "tool_use_id": request.request_id,
+                        "result": result,
+                    }
+                ],
             )
 
             # Get follow-up response
@@ -611,7 +630,9 @@ class AnthropicAdapter:
                     messages=messages,
                     system=context.system_prompt,
                     temperature=context.temperature,
-                    tools=[t.to_anthropic_format() for t in context.tools] if context.tools else None,
+                    tools=[t.to_anthropic_format() for t in context.tools]
+                    if context.tools
+                    else None,
                 )
 
                 # Process follow-up
@@ -653,7 +674,9 @@ class AnthropicAdapter:
                 try:
                     runtime = self._agent_runtime[heretek_agent_id]
                     if hasattr(runtime, "think"):
-                        prompt = f"Execute tool: {request.tool_name}({json.dumps(request.tool_input)})"
+                        prompt = (
+                            f"Execute tool: {request.tool_name}({json.dumps(request.tool_input)})"
+                        )
                         return await runtime.think(prompt)
                 except Exception as e:
                     logger.error(

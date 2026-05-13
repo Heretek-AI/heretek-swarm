@@ -1,4 +1,5 @@
 """PatternConsumerMixin for collective learning patterns."""
+
 import asyncio
 from typing import Any
 
@@ -10,10 +11,7 @@ class PatternConsumerMixin:
     """
 
     async def _emit_pattern(
-        self,
-        pattern_type: str,
-        data: dict[str, Any],
-        metadata: dict[str, Any] | None = None
+        self, pattern_type: str, data: dict[str, Any], metadata: dict[str, Any] | None = None
     ) -> None:
         """Emit a pattern for collective learning.
 
@@ -35,16 +33,13 @@ class PatternConsumerMixin:
         try:
             if hasattr(self, "_pattern_publisher"):
                 await self._pattern_publisher.publish(
-                    channel="collective:patterns",
-                    message=pattern
+                    channel="collective:patterns", message=pattern
                 )
         except Exception as e:
             self.logger.warning(f"Failed to emit pattern: {e}")
 
     async def _consume_patterns(
-        self,
-        pattern_types: list[str] | None = None,
-        limit: int = 10
+        self, pattern_types: list[str] | None = None, limit: int = 10
     ) -> list[dict[str, Any]]:
         """Consume patterns from collective learning.
 
@@ -58,23 +53,16 @@ class PatternConsumerMixin:
         try:
             if hasattr(self, "_pattern_subscriber"):
                 patterns = await self._pattern_subscriber.fetch(
-                    channel="collective:patterns",
-                    limit=limit
+                    channel="collective:patterns", limit=limit
                 )
                 if pattern_types:
-                    patterns = [
-                        p for p in patterns
-                        if p.get("type") in pattern_types
-                    ]
+                    patterns = [p for p in patterns if p.get("type") in pattern_types]
                 return patterns
         except Exception as e:
             self.logger.warning(f"Failed to consume patterns: {e}")
         return []
 
-    async def _learn_from_pattern(
-        self,
-        pattern: dict[str, Any]
-    ) -> None:
+    async def _learn_from_pattern(self, pattern: dict[str, Any]) -> None:
         """Extract and apply learning from a pattern."""
         pattern_type = pattern.get("type")
         data = pattern.get("data", {})

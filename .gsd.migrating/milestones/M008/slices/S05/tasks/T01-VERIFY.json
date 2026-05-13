@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "taskId": "T01",
+  "unitId": "M008/S05/T01",
+  "timestamp": 1778629704475,
+  "passed": false,
+  "discoverySource": "task-plan",
+  "checks": [
+    {
+      "command": "All 8 static verification commands return expected exit codes (grep exit 1 for zero stale matches, git ls-files returns 0 for garbage/root files, grep -c for backend/ paths returns >= 1)",
+      "exitCode": 1,
+      "durationMs": 111,
+      "verdict": "fail"
+    }
+  ],
+  "retryAttempt": 1,
+  "maxRetries": 10
+}

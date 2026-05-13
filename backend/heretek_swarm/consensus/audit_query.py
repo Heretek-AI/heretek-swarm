@@ -98,25 +98,25 @@ class AuditQueryMixin:
                 continue
             if outcome and record.outcome != outcome:
                 continue
-            if participants and not any(
-                p in record.participants for p in participants
-            ):
+            if participants and not any(p in record.participants for p in participants):
                 continue
 
             # Add to results
-            results.append({
-                "decision_id": decision_id,
-                "consensus_id": record.consensus_id,
-                "proposal": record.proposal,
-                "decision": record.decision,
-                "confidence": record.confidence,
-                "outcome": record.outcome.value,
-                "participants": record.participants,
-                "start_time": record.start_time,
-                "end_time": record.end_time,
-                "vote_count": len(record.votes),
-                "argument_count": len(record.arguments),
-            })
+            results.append(
+                {
+                    "decision_id": decision_id,
+                    "consensus_id": record.consensus_id,
+                    "proposal": record.proposal,
+                    "decision": record.decision,
+                    "confidence": record.confidence,
+                    "outcome": record.outcome.value,
+                    "participants": record.participants,
+                    "start_time": record.start_time,
+                    "end_time": record.end_time,
+                    "vote_count": len(record.votes),
+                    "argument_count": len(record.arguments),
+                }
+            )
 
         # Calculate execution time
         end_time = datetime.now(UTC)
@@ -140,10 +140,7 @@ class AuditQueryMixin:
             execution_time_ms=execution_time_ms,
         )
 
-        logger.info(
-            f"Audit query completed: {len(results)} results "
-            f"in {execution_time_ms:.2f}ms"
-        )
+        logger.info(f"Audit query completed: {len(results)} results in {execution_time_ms:.2f}ms")
         return query_result
 
     def get_vote_breakdown(self, consensus_id: str) -> dict[str, Any]:
@@ -212,18 +209,18 @@ class AuditQueryMixin:
         timeline = []
 
         # Get all events for this consensus
-        consensus_events = [
-            e for e in trail.events if e.consensus_id == consensus_id
-        ]
+        consensus_events = [e for e in trail.events if e.consensus_id == consensus_id]
 
         for event in consensus_events:
-            timeline.append({
-                "event_id": event.event_id,
-                "event_type": event.event_type.value,
-                "timestamp": event.timestamp,
-                "agent_id": event.agent_id,
-                "data": event.data,
-            })
+            timeline.append(
+                {
+                    "event_id": event.event_id,
+                    "event_type": event.event_type.value,
+                    "timestamp": event.timestamp,
+                    "agent_id": event.agent_id,
+                    "data": event.data,
+                }
+            )
 
         # Sort by timestamp
         timeline.sort(key=lambda x: x["timestamp"])
@@ -266,19 +263,21 @@ class AuditQueryMixin:
                     decision = dec_record
                     break
             if decision:
-                export_data["decisions"] = [{
-                    "decision_id": decision.decision_id,
-                    "consensus_id": decision.consensus_id,
-                    "proposal": decision.proposal,
-                    "decision": decision.decision,
-                    "confidence": decision.confidence,
-                    "outcome": decision.outcome.value,
-                    "participants": decision.participants,
-                    "reasoning_summary": decision.reasoning_summary,
-                    "start_time": decision.start_time,
-                    "end_time": decision.end_time,
-                    "metadata": decision.metadata,
-                }]
+                export_data["decisions"] = [
+                    {
+                        "decision_id": decision.decision_id,
+                        "consensus_id": decision.consensus_id,
+                        "proposal": decision.proposal,
+                        "decision": decision.decision,
+                        "confidence": decision.confidence,
+                        "outcome": decision.outcome.value,
+                        "participants": decision.participants,
+                        "reasoning_summary": decision.reasoning_summary,
+                        "start_time": decision.start_time,
+                        "end_time": decision.end_time,
+                        "metadata": decision.metadata,
+                    }
+                ]
 
             if include_votes:
                 export_data["votes"] = [
@@ -357,9 +356,7 @@ class AuditQueryMixin:
             },
         )
 
-        logger.info(
-            f"Audit data exported: {len(export_data.get('decisions', []))} decisions"
-        )
+        logger.info(f"Audit data exported: {len(export_data.get('decisions', []))} decisions")
         return export_data
 
     def export_decision_audit(self, decision_id: str, format: str = "json") -> str:

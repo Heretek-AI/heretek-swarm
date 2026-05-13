@@ -23,6 +23,7 @@ logger = structlog.get_logger(__name__)
 
 class SubscriptionState(Enum):
     """Subscription lifecycle state."""
+
     PENDING = "pending"
     ACTIVE = "active"
     PAUSED = "paused"
@@ -33,6 +34,7 @@ class SubscriptionState(Enum):
 @dataclass
 class SubscriptionConfig:
     """Configuration for a subscription."""
+
     subject: str
     queue: str | None = None
     max_messages: int = 0  # 0 = unlimited
@@ -44,6 +46,7 @@ class SubscriptionConfig:
 @dataclass
 class Subscription:
     """Represents a subscription to NATS subject."""
+
     subscription_id: str
     config: SubscriptionConfig
     state: SubscriptionState = SubscriptionState.PENDING
@@ -124,6 +127,7 @@ class NATSSubscriber:
         # Register with NATS
         if self._client:
             try:
+
                 def wrapped_callback(msg):
                     """Wrapper that converts NATS message to SwarmEvent and calls callback."""
                     self._handle_message(sub_id, msg)
@@ -159,6 +163,7 @@ class NATSSubscriber:
             data = msg.data if hasattr(msg, "data") else msg
             if isinstance(data, bytes):
                 import json
+
                 data = json.loads(data.decode("utf-8"))
 
             event = SwarmEvent(
@@ -183,6 +188,7 @@ class NATSSubscriber:
             # Call callback
             if subscription.callback:
                 import asyncio
+
                 asyncio.create_task(subscription.callback(event))
 
             # Check auto-unsubscribe

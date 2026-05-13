@@ -93,15 +93,15 @@ class OpenAICompatibleProvider(LLMProviderBase):
         """Initialize provider capabilities from config."""
         return ProviderCapabilities(
             supports_streaming=self._custom_capabilities.get("supports_streaming", True),
-            supports_function_calling=self._custom_capabilities.get("supports_function_calling", False),
+            supports_function_calling=self._custom_capabilities.get(
+                "supports_function_calling", False
+            ),
             supports_vision=self._custom_capabilities.get("supports_vision", False),
             supports_json_mode=self._custom_capabilities.get("supports_json_mode", False),
             max_context_length=self._custom_capabilities.get("max_context_length"),
             max_output_tokens=self._custom_capabilities.get("max_output_tokens"),
             default_temperature=self._custom_capabilities.get("default_temperature", 0.7),
-            temperature_range=tuple(
-                self._custom_capabilities.get("temperature_range", [0.0, 2.0])
-            ),
+            temperature_range=tuple(self._custom_capabilities.get("temperature_range", [0.0, 2.0])),
         )
 
     async def _get_client(self) -> InstrumentedAsyncClient:
@@ -118,7 +118,9 @@ class OpenAICompatibleProvider(LLMProviderBase):
                 headers=headers,
                 timeout=httpx.Timeout(60.0, connect=10.0),
             )
-            self._client = instrumented_httpx_client(client=base_client, call_type="llm_openai_compatible")
+            self._client = instrumented_httpx_client(
+                client=base_client, call_type="llm_openai_compatible"
+            )
         return self._client
 
     async def complete(self, request: LLMRequest) -> LLMResponse:
@@ -289,6 +291,7 @@ class OpenAICompatibleProvider(LLMProviderBase):
         """Cleanup HTTP client."""
         if self._client and not self._client.is_closed:
             await self._client.aclose()
+
 
 # Import at module level for type annotation
 from heretek_swarm.infrastructure.otel import InstrumentedAsyncClient

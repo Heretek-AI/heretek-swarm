@@ -56,11 +56,7 @@ class ProviderRegistryInterface(ABC):
         """
 
     @abstractmethod
-    def register_llm_provider(
-        self,
-        name: str,
-        provider_class: type[LLMProviderInterface]
-    ) -> None:
+    def register_llm_provider(self, name: str, provider_class: type[LLMProviderInterface]) -> None:
         """Register an LLM provider class.
 
         Args:
@@ -70,9 +66,7 @@ class ProviderRegistryInterface(ABC):
 
     @abstractmethod
     def register_embedding_provider(
-        self,
-        name: str,
-        provider_class: type[EmbeddingProviderInterface]
+        self, name: str, provider_class: type[EmbeddingProviderInterface]
     ) -> None:
         """Register an embedding provider class.
 

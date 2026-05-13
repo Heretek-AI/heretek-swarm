@@ -16,6 +16,7 @@ The mixin automatically logs:
 - State transitions
 - Handler execution
 """
+
 from typing import Any
 
 import structlog
@@ -41,7 +42,13 @@ class AuditMixin:
         self._audit_enabled: bool = self._get_config_value("audit_enabled", True)
         self._audit_actions: list[str] = self._get_config_value(
             "audit_actions",
-            ["message_received", "message_sent", "state_change", "handler_executed", "decision_made"],
+            [
+                "message_received",
+                "message_sent",
+                "state_change",
+                "handler_executed",
+                "decision_made",
+            ],
         )
 
         # Audit statistics

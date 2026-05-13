@@ -41,6 +41,7 @@ logger = structlog.get_logger(__name__)
 
 class RetrievalStrategyType(StrEnum):
     """Types of retrieval strategies."""
+
     DENSE = "dense"
     SPARSE = "sparse"
     HYBRID = "hybrid"
@@ -50,6 +51,7 @@ class RetrievalStrategyType(StrEnum):
 
 class QueryType(StrEnum):
     """Types of queries for strategy selection."""
+
     FACTUAL = "factual"  # Specific fact lookup
     EXPLANATORY = "explanatory"  # How/why questions
     COMPARATIVE = "comparative"  # Comparison questions
@@ -71,6 +73,7 @@ class RetrievalResult:
         strategy: Strategy that produced this result
         latency_ms: Time taken for retrieval
     """
+
     content: str
     score: float
     source: str
@@ -93,6 +96,7 @@ class RetrievalResult:
 @dataclass
 class QueryCacheEntry:
     """Cached query result."""
+
     query_hash: str
     results: list[RetrievalResult]
     created_at: datetime
@@ -121,12 +125,7 @@ class BaseRetrievalStrategy(ABC):
         }
 
     @abstractmethod
-    async def retrieve(
-        self,
-        query: str,
-        top_k: int = 5,
-        **kwargs
-    ) -> list[RetrievalResult]:
+    async def retrieve(self, query: str, top_k: int = 5, **kwargs) -> list[RetrievalResult]:
         """
         Retrieve relevant documents for a query.
 
@@ -193,11 +192,7 @@ class DenseRetrievalStrategy(BaseRetrievalStrategy):
         return RetrievalStrategyType.DENSE
 
     async def retrieve(
-        self,
-        query: str,
-        top_k: int = 5,
-        filters: dict[str, Any] | None = None,
-        **kwargs
+        self, query: str, top_k: int = 5, filters: dict[str, Any] | None = None, **kwargs
     ) -> list[RetrievalResult]:
         """
         Retrieve using dense vector similarity.
@@ -214,8 +209,10 @@ class DenseRetrievalStrategy(BaseRetrievalStrategy):
         start_time = time.time()
 
         if not self.embedding_provider or not self.vector_store:
-            logger.warning("dense_retrieval_unavailable",
-                          reason="embedding_provider or vector_store not configured")
+            logger.warning(
+                "dense_retrieval_unavailable",
+                reason="embedding_provider or vector_store not configured",
+            )
             return []
 
         try:
@@ -235,20 +232,24 @@ class DenseRetrievalStrategy(BaseRetrievalStrategy):
             for doc in results:
                 score = doc.get("score", doc.get("similarity", 0.5))
                 if score >= self.similarity_threshold:
-                    retrieval_results.append(RetrievalResult(
-                        content=doc.get("content", ""),
-                        score=score,
-                        source=doc.get("id", doc.get("source", "unknown")),
-                        metadata=doc.get("metadata", {}),
-                        strategy=self.strategy_type,
-                    ))
+                    retrieval_results.append(
+                        RetrievalResult(
+                            content=doc.get("content", ""),
+                            score=score,
+                            source=doc.get("id", doc.get("source", "unknown")),
+                            metadata=doc.get("metadata", {}),
+                            strategy=self.strategy_type,
+                        )
+                    )
 
             self._track_latency(start_time, retrieval_results)
 
-            logger.debug("dense_retrieval_completed",
-                        query=query[:50] if len(query) > 50 else query,
-                        results_count=len(retrieval_results),
-                        latency_ms=retrieval_results[0].latency_ms if retrieval_results else 0)
+            logger.debug(
+                "dense_retrieval_completed",
+                query=query[:50] if len(query) > 50 else query,
+                results_count=len(retrieval_results),
+                latency_ms=retrieval_results[0].latency_ms if retrieval_results else 0,
+            )
 
             return retrieval_results[:top_k]
 
@@ -281,7 +282,7 @@ class SparseRetrievalStrategy(BaseRetrievalStrategy):
         super().__init__("sparse_retrieval")
         self.index = index
         self.k1 = k1  # BM25 term frequency saturation
-        self.b = b    # BM25 document length normalization
+        self.b = b  # BM25 document length normalization
         self.min_term_frequency = min_term_frequency
         self._document_lengths: dict[str, int] = {}
         self._avg_doc_length: float = 0.0
@@ -295,6 +296,7 @@ class SparseRetrievalStrategy(BaseRetrievalStrategy):
     def _tokenize(self, text: str) -> list[str]:
         """Tokenize text into terms."""
         import re
+
         # Simple tokenization - can be enhanced with stemming, lemmatization
         return re.findall(r"\b[a-zA-Z][a-zA-Z0-9-]*[a-zA-Z0-9]\b|\b[a-zA-Z]\b", text.lower())
 
@@ -332,16 +334,14 @@ class SparseRetrievalStrategy(BaseRetrievalStrategy):
 
         # BM25 term score
         numerator = term_frequency * (self.k1 + 1)
-        denominator = term_frequency + self.k1 * (1 - self.b + self.b * doc_length / self._avg_doc_length)
+        denominator = term_frequency + self.k1 * (
+            1 - self.b + self.b * doc_length / self._avg_doc_length
+        )
 
         return idf * (numerator / denominator) if denominator > 0 else 0.0
 
     async def retrieve(
-        self,
-        query: str,
-        top_k: int = 5,
-        filters: dict[str, Any] | None = None,
-        **kwargs
+        self, query: str, top_k: int = 5, filters: dict[str, Any] | None = None, **kwargs
     ) -> list[RetrievalResult]:
         """
         Retrieve using BM25 sparse retrieval.
@@ -380,20 +380,24 @@ class SparseRetrievalStrategy(BaseRetrievalStrategy):
             # Convert to RetrievalResult
             retrieval_results = []
             for doc in results:
-                retrieval_results.append(RetrievalResult(
-                    content=doc.get("content", ""),
-                    score=doc.get("bm25_score", doc.get("score", 0.5)),
-                    source=doc.get("id", doc.get("source", "unknown")),
-                    metadata=doc.get("metadata", {}),
-                    strategy=self.strategy_type,
-                ))
+                retrieval_results.append(
+                    RetrievalResult(
+                        content=doc.get("content", ""),
+                        score=doc.get("bm25_score", doc.get("score", 0.5)),
+                        source=doc.get("id", doc.get("source", "unknown")),
+                        metadata=doc.get("metadata", {}),
+                        strategy=self.strategy_type,
+                    )
+                )
 
             self._track_latency(start_time, retrieval_results)
 
-            logger.debug("sparse_retrieval_completed",
-                        query=query[:50] if len(query) > 50 else query,
-                        results_count=len(retrieval_results),
-                        latency_ms=retrieval_results[0].latency_ms if retrieval_results else 0)
+            logger.debug(
+                "sparse_retrieval_completed",
+                query=query[:50] if len(query) > 50 else query,
+                results_count=len(retrieval_results),
+                latency_ms=retrieval_results[0].latency_ms if retrieval_results else 0,
+            )
 
             return retrieval_results[:top_k]
 
@@ -514,6 +518,7 @@ class HybridRetrievalStrategy(BaseRetrievalStrategy):
 
         Normalizes scores from both methods and combines with weights.
         """
+
         # Normalize scores (min-max normalization)
         def normalize_scores(results: list[RetrievalResult]) -> dict[str, float]:
             if not results:
@@ -524,10 +529,7 @@ class HybridRetrievalStrategy(BaseRetrievalStrategy):
             max_score = max(scores)
             score_range = max_score - min_score if max_score > min_score else 1.0
 
-            return {
-                r.source: (r.score - min_score) / score_range
-                for r in results
-            }
+            return {r.source: (r.score - min_score) / score_range for r in results}
 
         dense_normalized = normalize_scores(dense_results)
         sparse_normalized = normalize_scores(sparse_results)
@@ -541,10 +543,7 @@ class HybridRetrievalStrategy(BaseRetrievalStrategy):
             dense_score = dense_normalized.get(source, 0.0)
             sparse_score = sparse_normalized.get(source, 0.0)
 
-            combined_score = (
-                self.dense_weight * dense_score +
-                self.sparse_weight * sparse_score
-            )
+            combined_score = self.dense_weight * dense_score + self.sparse_weight * sparse_score
             combined_scores[source] = combined_score
 
             # Keep reference to result
@@ -555,7 +554,9 @@ class HybridRetrievalStrategy(BaseRetrievalStrategy):
                     break
 
         # Sort by combined score
-        sorted_sources = sorted(combined_scores.keys(), key=lambda s: combined_scores[s], reverse=True)
+        sorted_sources = sorted(
+            combined_scores.keys(), key=lambda s: combined_scores[s], reverse=True
+        )
 
         # Build combined results
         combined_results = []
@@ -568,11 +569,7 @@ class HybridRetrievalStrategy(BaseRetrievalStrategy):
         return combined_results
 
     async def retrieve(
-        self,
-        query: str,
-        top_k: int = 5,
-        filters: dict[str, Any] | None = None,
-        **kwargs
+        self, query: str, top_k: int = 5, filters: dict[str, Any] | None = None, **kwargs
     ) -> list[RetrievalResult]:
         """
         Retrieve using hybrid dense + sparse combination.
@@ -589,8 +586,14 @@ class HybridRetrievalStrategy(BaseRetrievalStrategy):
         start_time = time.time()
 
         # Execute both strategies in parallel
-        dense_task = self.dense_strategy.retrieve(query, top_k * 2, filters) if self.dense_strategy else None
-        sparse_task = self.sparse_strategy.retrieve(query, top_k * 2, filters) if self.sparse_strategy else None
+        dense_task = (
+            self.dense_strategy.retrieve(query, top_k * 2, filters) if self.dense_strategy else None
+        )
+        sparse_task = (
+            self.sparse_strategy.retrieve(query, top_k * 2, filters)
+            if self.sparse_strategy
+            else None
+        )
 
         dense_results = await dense_task if dense_task else []
         sparse_results = await sparse_task if sparse_task else []
@@ -606,12 +609,14 @@ class HybridRetrievalStrategy(BaseRetrievalStrategy):
 
         self._track_latency(start_time, final_results)
 
-        logger.debug("hybrid_retrieval_completed",
-                    query=query[:50] if len(query) > 50 else query,
-                    dense_count=len(dense_results),
-                    sparse_count=len(sparse_results),
-                    fused_count=len(final_results),
-                    latency_ms=final_results[0].latency_ms if final_results else 0)
+        logger.debug(
+            "hybrid_retrieval_completed",
+            query=query[:50] if len(query) > 50 else query,
+            dense_count=len(dense_results),
+            sparse_count=len(sparse_results),
+            fused_count=len(final_results),
+            latency_ms=final_results[0].latency_ms if final_results else 0,
+        )
 
         return final_results
 
@@ -677,10 +682,7 @@ class MultiHopRetrievalStrategy(BaseRetrievalStrategy):
 
         # Filter out query terms (we want NEW information)
         query_terms = set(query.lower().split())
-        bridge_entities = [
-            e for e in entities
-            if e.lower() not in query_terms and len(e) > 2
-        ]
+        bridge_entities = [e for e in entities if e.lower() not in query_terms and len(e) > 2]
 
         return bridge_entities[:5]  # Limit entities
 
@@ -700,11 +702,7 @@ class MultiHopRetrievalStrategy(BaseRetrievalStrategy):
         return templates[hop_number % len(templates)]
 
     async def retrieve(
-        self,
-        query: str,
-        top_k: int = 5,
-        filters: dict[str, Any] | None = None,
-        **kwargs
+        self, query: str, top_k: int = 5, filters: dict[str, Any] | None = None, **kwargs
     ) -> list[RetrievalResult]:
         """
         Retrieve using multi-hop chained queries.
@@ -775,12 +773,14 @@ class MultiHopRetrievalStrategy(BaseRetrievalStrategy):
 
         self._track_latency(start_time, final_results)
 
-        logger.debug("multi_hop_retrieval_completed",
-                    query=query[:50] if len(query) > 50 else query,
-                    hops_executed=len(self._hop_stats),
-                    total_results=len(all_results),
-                    final_results=len(final_results),
-                    latency_ms=final_results[0].latency_ms if final_results else 0)
+        logger.debug(
+            "multi_hop_retrieval_completed",
+            query=query[:50] if len(query) > 50 else query,
+            hops_executed=len(self._hop_stats),
+            total_results=len(all_results),
+            final_results=len(final_results),
+            latency_ms=final_results[0].latency_ms if final_results else 0,
+        )
 
         return final_results
 
@@ -827,7 +827,7 @@ class ReRankingStrategy(BaseRetrievalStrategy):
         query: str,
         top_k: int = 5,
         initial_results: list[RetrievalResult] | None = None,
-        **kwargs
+        **kwargs,
     ) -> list[RetrievalResult]:
         """
         Re-rank initial retrieval results using cross-encoder.
@@ -853,7 +853,7 @@ class ReRankingStrategy(BaseRetrievalStrategy):
 
         try:
             # Limit candidates for re-ranking
-            candidates = initial_results[:self.re_rank_limit]
+            candidates = initial_results[: self.re_rank_limit]
 
             # Prepare query-document pairs for cross-encoder
             pairs = [(query, candidate.content) for candidate in candidates]
@@ -861,7 +861,7 @@ class ReRankingStrategy(BaseRetrievalStrategy):
             # Score in batches
             cross_scores = []
             for i in range(0, len(pairs), self.batch_size):
-                batch = pairs[i:i + self.batch_size]
+                batch = pairs[i : i + self.batch_size]
                 batch_scores = await self.cross_encoder.predict(batch)
                 cross_scores.extend(batch_scores)
 
@@ -879,11 +879,13 @@ class ReRankingStrategy(BaseRetrievalStrategy):
 
             self._track_latency(start_time, final_results)
 
-            logger.debug("re_ranking_completed",
-                        query=query[:50] if len(query) > 50 else query,
-                        candidates=len(candidates),
-                        final_count=len(final_results),
-                        latency_ms=final_results[0].latency_ms if final_results else 0)
+            logger.debug(
+                "re_ranking_completed",
+                query=query[:50] if len(query) > 50 else query,
+                candidates=len(candidates),
+                final_count=len(final_results),
+                latency_ms=final_results[0].latency_ms if final_results else 0,
+            )
 
             return final_results
 
@@ -1028,10 +1030,7 @@ class StrategySelector:
         """Remove expired and least recently used cache entries."""
         datetime.now(UTC)
         # Remove expired
-        expired = [
-            k for k, v in self._query_cache.items()
-            if v.is_expired(self.cache_ttl_seconds)
-        ]
+        expired = [k for k, v in self._query_cache.items() if v.is_expired(self.cache_ttl_seconds)]
         for k in expired:
             del self._query_cache[k]
 
@@ -1059,7 +1058,7 @@ class StrategySelector:
         top_k: int = 5,
         strategy: RetrievalStrategyType | None = None,
         filters: dict[str, Any] | None = None,
-        **kwargs
+        **kwargs,
     ) -> list[RetrievalResult]:
         """
         Retrieve using the best strategy for the query.
@@ -1114,10 +1113,12 @@ class StrategySelector:
         # Cache results
         self._store_in_cache(query_hash, results)
 
-        logger.debug("strategy_selected",
-                    query=query[:50] if len(query) > 50 else query,
-                    strategy=strategy.value,
-                    results_count=len(results))
+        logger.debug(
+            "strategy_selected",
+            query=query[:50] if len(query) > 50 else query,
+            strategy=strategy.value,
+            results_count=len(results),
+        )
 
         return results
 
@@ -1133,6 +1134,7 @@ class StrategySelector:
 @dataclass
 class RAGStrategyConfig:
     """Configuration for RAG strategies."""
+
     # Dense retrieval config
     dense_enabled: bool = True
     similarity_metric: str = "cosine"
@@ -1165,7 +1167,9 @@ class RAGStrategyConfig:
     cache_ttl_seconds: int = 300
 
 
-def create_default_strategies(config: RAGStrategyConfig | None = None) -> dict[RetrievalStrategyType, BaseRetrievalStrategy]:
+def create_default_strategies(
+    config: RAGStrategyConfig | None = None,
+) -> dict[RetrievalStrategyType, BaseRetrievalStrategy]:
     """
     Create default strategy instances.
 
@@ -1193,7 +1197,11 @@ def create_default_strategies(config: RAGStrategyConfig | None = None) -> dict[R
         )
 
     # Create hybrid strategy (requires dense and sparse)
-    if config.hybrid_enabled and RetrievalStrategyType.DENSE in strategies and RetrievalStrategyType.SPARSE in strategies:
+    if (
+        config.hybrid_enabled
+        and RetrievalStrategyType.DENSE in strategies
+        and RetrievalStrategyType.SPARSE in strategies
+    ):
         strategies[RetrievalStrategyType.HYBRID] = HybridRetrievalStrategy(
             dense_strategy=strategies[RetrievalStrategyType.DENSE],
             sparse_strategy=strategies[RetrievalStrategyType.SPARSE],
@@ -1206,7 +1214,9 @@ def create_default_strategies(config: RAGStrategyConfig | None = None) -> dict[R
     # Create multi-hop strategy
     if config.multi_hop_enabled:
         # Use hybrid as base if available, otherwise dense
-        base_strategy = strategies.get(RetrievalStrategyType.HYBRID) or strategies.get(RetrievalStrategyType.DENSE)
+        base_strategy = strategies.get(RetrievalStrategyType.HYBRID) or strategies.get(
+            RetrievalStrategyType.DENSE
+        )
         if base_strategy:
             strategies[RetrievalStrategyType.MULTI_HOP] = MultiHopRetrievalStrategy(
                 base_strategy=base_strategy,
@@ -1266,4 +1276,3 @@ def create_strategy_selector(
         cache_enabled=config.cache_enabled,
         cache_ttl_seconds=config.cache_ttl_seconds,
     )
-

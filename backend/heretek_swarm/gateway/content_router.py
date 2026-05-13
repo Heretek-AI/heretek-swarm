@@ -34,22 +34,24 @@ logger = structlog.get_logger(__name__)
 
 class FilterOperator(StrEnum):
     """Content filter operators."""
-    EQ = "eq"           # Exact match
-    NE = "ne"           # Not equal
+
+    EQ = "eq"  # Exact match
+    NE = "ne"  # Not equal
     CONTAINS = "contains"  # String contains
-    REGEX = "regex"     # Regular expression match
-    GT = "gt"           # Greater than
-    LT = "lt"           # Less than
-    GTE = "gte"         # Greater than or equal
-    LTE = "lte"         # Less than or equal
-    IN = "in"           # Value in list
-    NOT_IN = "not_in"   # Value not in list
-    EXISTS = "exists"   # Field exists
+    REGEX = "regex"  # Regular expression match
+    GT = "gt"  # Greater than
+    LT = "lt"  # Less than
+    GTE = "gte"  # Greater than or equal
+    LTE = "lte"  # Less than or equal
+    IN = "in"  # Value in list
+    NOT_IN = "not_in"  # Value not in list
+    EXISTS = "exists"  # Field exists
     NOT_EXISTS = "not_exists"  # Field does not exist
 
 
 class RouteDecision(StrEnum):
     """Routing decision outcomes."""
+
     MATCHED = "matched"
     NO_MATCH = "no_match"
     FILTERED = "filtered"
@@ -66,6 +68,7 @@ class ContentFilter:
         operator: Filter operator (eq, ne, contains, regex, gt, lt, in)
         value: Value to compare against
     """
+
     field: str
     operator: FilterOperator
     value: Any
@@ -107,6 +110,7 @@ class RoutingRule:
         enabled: Whether rule is active
         description: Optional rule description
     """
+
     id: str
     name: str
     priority: int
@@ -162,6 +166,7 @@ class RoutingDecision:
         filters_evaluated: Number of filters evaluated
         filters_matched: Number of filters that matched
     """
+
     decision: RouteDecision
     matched_rule: RoutingRule | None = None
     correlation_id: str = ""
@@ -188,6 +193,7 @@ class RoutingDecision:
 # Prometheus Metrics
 # =============================================================================
 
+
 class RoutingMetrics:
     """Prometheus metrics for content routing."""
 
@@ -208,7 +214,7 @@ class RoutingMetrics:
             "content_router_messages_total",
             "Total number of messages routed",
             ["decision", "rule_id"],
-            registry=self._registry
+            registry=self._registry,
         )
 
         # Routing latency histogram
@@ -216,14 +222,12 @@ class RoutingMetrics:
             "content_router_routing_latency_seconds",
             "Time spent routing messages",
             buckets=(0.001, 0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1.0),
-            registry=self._registry
+            registry=self._registry,
         )
 
         # Active rules gauge
         self.active_rules = Gauge(
-            "content_router_active_rules",
-            "Number of active routing rules",
-            registry=self._registry
+            "content_router_active_rules", "Number of active routing rules", registry=self._registry
         )
 
         # Filter evaluation counter
@@ -231,7 +235,7 @@ class RoutingMetrics:
             "content_router_filters_evaluated_total",
             "Total number of content filters evaluated",
             ["operator"],
-            registry=self._registry
+            registry=self._registry,
         )
 
         # Error counter
@@ -239,15 +243,12 @@ class RoutingMetrics:
             "content_router_errors_total",
             "Total number of routing errors",
             ["error_type"],
-            registry=self._registry
+            registry=self._registry,
         )
 
     def record_routing(self, decision: RouteDecision, rule_id: str | None = None):
         """Record a routing decision."""
-        self.messages_routed.labels(
-            decision=decision.value,
-            rule_id=rule_id or "none"
-        ).inc()
+        self.messages_routed.labels(decision=decision.value, rule_id=rule_id or "none").inc()
 
     def record_latency(self, duration_seconds: float):
         """Record routing latency."""
@@ -269,6 +270,7 @@ class RoutingMetrics:
 # =============================================================================
 # JSONPath Extractor (Safe Implementation)
 # =============================================================================
+
 
 class SafeJSONPath:
     """
@@ -315,7 +317,7 @@ class SafeJSONPath:
                 # Handle array index
                 if "[" in component and "]" in component:
                     field_name = component.split("[")[0]
-                    index_str = component[component.index("[")+1:component.index("]")]
+                    index_str = component[component.index("[") + 1 : component.index("]")]
 
                     # Navigate to field first
                     if isinstance(current, dict) and field_name in current:
@@ -353,6 +355,7 @@ class SafeJSONPath:
 # =============================================================================
 # Content Router
 # =============================================================================
+
 
 class ContentRouter:
     """
@@ -705,8 +708,7 @@ class ContentRouter:
             "active_rules": len([r for r in self._rules.values() if r.enabled]),
             "total_rules": len(self._rules),
             "uptime_seconds": (
-                datetime.now(UTC) -
-                datetime.fromisoformat(self._stats["started_at"])
+                datetime.now(UTC) - datetime.fromisoformat(self._stats["started_at"])
             ).total_seconds(),
         }
 

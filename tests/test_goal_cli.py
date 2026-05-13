@@ -49,9 +49,16 @@ class TestGoalList:
 
     def test_goal_list_with_goals(self) -> None:
         goals = [
-            Goal(id="goal_aaa111", title="Example goal", description="A test goal", status="proposed"),
-            Goal(id="goal_bbb222", title="Accepted goal", description="Already voted in", status="accepted",
-                 votes=[{"agent_id": "steward", "decision": "approve", "confidence": 0.9}]),
+            Goal(
+                id="goal_aaa111", title="Example goal", description="A test goal", status="proposed"
+            ),
+            Goal(
+                id="goal_bbb222",
+                title="Accepted goal",
+                description="Already voted in",
+                status="accepted",
+                votes=[{"agent_id": "steward", "decision": "approve", "confidence": 0.9}],
+            ),
         ]
         with patch(
             "heretek_swarm.goals.store.FileGoalStore.load_all",

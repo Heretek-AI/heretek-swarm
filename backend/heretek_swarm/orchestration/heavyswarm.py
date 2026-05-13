@@ -258,9 +258,7 @@ class HeavySwarmWorkflow:
             result.phase_results["research"] = research_result
 
             if not research_result.success:
-                raise WorkflowPhaseError(
-                    f"Research phase failed: {research_result.errors}"
-                )
+                raise WorkflowPhaseError(f"Research phase failed: {research_result.errors}")
 
             # Phase 2: Analysis
             result.state = WorkflowPhase.ANALYSIS
@@ -275,9 +273,7 @@ class HeavySwarmWorkflow:
             result.phase_results["analysis"] = analysis_result
 
             if not analysis_result.success:
-                raise WorkflowPhaseError(
-                    f"Analysis phase failed: {analysis_result.errors}"
-                )
+                raise WorkflowPhaseError(f"Analysis phase failed: {analysis_result.errors}")
 
             # Phase 3: Alternatives
             result.state = WorkflowPhase.ALTERNATIVES
@@ -292,9 +288,7 @@ class HeavySwarmWorkflow:
             result.phase_results["alternatives"] = alternatives_result
 
             if not alternatives_result.success:
-                raise WorkflowPhaseError(
-                    f"Alternatives phase failed: {alternatives_result.errors}"
-                )
+                raise WorkflowPhaseError(f"Alternatives phase failed: {alternatives_result.errors}")
 
             # Phase 4: Verification
             result.state = WorkflowPhase.VERIFICATION
@@ -309,9 +303,7 @@ class HeavySwarmWorkflow:
             result.phase_results["verification"] = verification_result
 
             if not verification_result.success:
-                raise WorkflowPhaseError(
-                    f"Verification phase failed: {verification_result.errors}"
-                )
+                raise WorkflowPhaseError(f"Verification phase failed: {verification_result.errors}")
 
             # Phase 5: Decision
             result.state = WorkflowPhase.DECISION
@@ -326,9 +318,7 @@ class HeavySwarmWorkflow:
             result.phase_results["decision"] = decision_result
 
             if not decision_result.success:
-                raise WorkflowPhaseError(
-                    f"Decision phase failed: {decision_result.errors}"
-                )
+                raise WorkflowPhaseError(f"Decision phase failed: {decision_result.errors}")
 
             # Set final decision
             result.final_decision = decision_result.output.get("consensus_result")
@@ -348,9 +338,7 @@ class HeavySwarmWorkflow:
             # Finalize
             completed_at = datetime.now(UTC)
             result.completed_at = completed_at.isoformat()
-            result.total_duration_ms = (
-                completed_at - started_at
-            ).total_seconds() * 1000
+            result.total_duration_ms = (completed_at - started_at).total_seconds() * 1000
 
             # Move to history
             if workflow_id in self.active_workflows:
@@ -479,9 +467,7 @@ class HeavySwarmWorkflow:
                 research_data["historical_context"] = deliberation_context.get(
                     "relevant_memories", []
                 )
-                research_data["matched_patterns"] = deliberation_context.get(
-                    "matched_patterns", []
-                )
+                research_data["matched_patterns"] = deliberation_context.get("matched_patterns", [])
             except Exception as e:
                 logger.warning(f"[{self.name}] Historian query failed: {e}")
 
@@ -575,11 +561,7 @@ class HeavySwarmWorkflow:
                 analysis_data["key_insights"].extend(insights)
 
         # Identify disagreements
-        decisions = [
-            a.get("decision")
-            for a in triad_analyses.values()
-            if a and a.get("decision")
-        ]
+        decisions = [a.get("decision") for a in triad_analyses.values() if a and a.get("decision")]
         if len(set(decisions)) > 1:
             analysis_data["disagreements"].append(
                 f"Triad disagreement on initial analysis: {decisions}"
@@ -651,9 +633,7 @@ class HeavySwarmWorkflow:
                 }
 
             except Exception as e:
-                logger.error(
-                    f"[{self.name}] Error collecting analysis from {agent_id}: {e}"
-                )
+                logger.error(f"[{self.name}] Error collecting analysis from {agent_id}: {e}")
                 analyses[agent_id] = {
                     "agent_id": agent_id,
                     "decision": "analysis_failed",
@@ -804,11 +784,13 @@ class HeavySwarmWorkflow:
         trade_offs = []
         for i, alt1 in enumerate(alternatives[:-1]):
             for alt2 in alternatives[i + 1 :]:
-                trade_offs.append({
-                    "alternative_1": alt1.get("name", "unknown"),
-                    "alternative_2": alt2.get("name", "unknown"),
-                    "trade_off": "Different risk/reward profiles",
-                })
+                trade_offs.append(
+                    {
+                        "alternative_1": alt1.get("name", "unknown"),
+                        "alternative_2": alt2.get("name", "unknown"),
+                        "trade_off": "Different risk/reward profiles",
+                    }
+                )
 
         return trade_offs
 
@@ -846,9 +828,7 @@ class HeavySwarmWorkflow:
 
         verification_data = {
             "topic": topic,
-            "recommended_alternative": alternatives_data.get(
-                "recommended_alternative", {}
-            ),
+            "recommended_alternative": alternatives_data.get("recommended_alternative", {}),
             "validation_results": [],
             "error_checks": [],
             "risk_assessments": [],
@@ -880,12 +860,8 @@ class HeavySwarmWorkflow:
             charlie_agent = self.agents["charlie"]
             try:
                 risk_assessment = await charlie_agent._assess_risks(recommended)
-                verification_data["risk_assessments"] = risk_assessment.get(
-                    "risks_identified", []
-                )
-                verification_data["risk_level"] = risk_assessment.get(
-                    "risk_level", "unknown"
-                )
+                verification_data["risk_assessments"] = risk_assessment.get("risks_identified", [])
+                verification_data["risk_level"] = risk_assessment.get("risk_level", "unknown")
             except Exception as e:
                 logger.warning(f"[{self.name}] Charlie risk assessment failed: {e}")
 
@@ -1060,12 +1036,8 @@ class HeavySwarmWorkflow:
     def get_statistics(self) -> dict[str, Any]:
         """Get workflow statistics."""
         total_workflows = len(self.workflow_history)
-        completed = sum(
-            1 for w in self.workflow_history if w.state == WorkflowPhase.COMPLETED
-        )
-        failed = sum(
-            1 for w in self.workflow_history if w.state == WorkflowPhase.FAILED
-        )
+        completed = sum(1 for w in self.workflow_history if w.state == WorkflowPhase.COMPLETED)
+        failed = sum(1 for w in self.workflow_history if w.state == WorkflowPhase.FAILED)
 
         avg_duration = (
             sum(w.total_duration_ms for w in self.workflow_history) / total_workflows
@@ -1085,4 +1057,3 @@ class HeavySwarmWorkflow:
 
 class WorkflowPhaseError(Exception):
     """Exception raised when a workflow phase fails."""
-

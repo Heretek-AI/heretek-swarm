@@ -1,4 +1,5 @@
 """HealthReportingMixin for agent health and error reporting."""
+
 import asyncio
 import time
 from typing import Any
@@ -27,11 +28,7 @@ class HealthReportingMixin:
             "uptime": time.monotonic() - self._spawn_time,
         }
 
-    def record_error(
-        self,
-        error: Exception,
-        context: dict[str, Any] | None = None
-    ) -> None:
+    def record_error(self, error: Exception, context: dict[str, Any] | None = None) -> None:
         """Record an error for health tracking."""
         self._error_count += 1
         if self._error_count >= 10:
@@ -49,7 +46,7 @@ class HealthReportingMixin:
         }
         self.logger.error(
             f"Agent error: {error_data['error_type']} - {error_data['error_message']}",
-            extra=error_data
+            extra=error_data,
         )
 
     def reset_error_count(self) -> None:
@@ -72,10 +69,7 @@ class HealthReportingMixin:
 
         health_data["subsystems"] = subsystem_health
 
-        await self._emit_pattern(
-            pattern_type="health_report",
-            data=health_data
-        )
+        await self._emit_pattern(pattern_type="health_report", data=health_data)
         return health_data
 
     async def _check_memory_health(self) -> bool:

@@ -30,6 +30,7 @@ try:
     from crewai import Agent, Crew, Process, Task
     from crewai.task import TaskOutput
     from crewai_tools import BaseTool
+
     CREWAI_AVAILABLE = True
 except ImportError:
     CREWAI_AVAILABLE = False
@@ -43,12 +44,14 @@ except ImportError:
 
 class CrewProcess(StrEnum):
     """CrewAI process types."""
+
     SEQUENTIAL = "sequential"
     HIERARCHICAL = "hierarchical"
 
 
 class TaskStatus(StrEnum):
     """Task execution status."""
+
     PENDING = "pending"
     IN_PROGRESS = "in_progress"
     COMPLETED = "completed"
@@ -58,6 +61,7 @@ class TaskStatus(StrEnum):
 
 class AgentRole(StrEnum):
     """CrewAI agent roles."""
+
     RESEARCHER = "researcher"
     ANALYST = "analyst"
     WRITER = "writer"
@@ -83,6 +87,7 @@ class CrewAgentConfig:
         max_rpm: Maximum requests per minute
         cache: Enable caching
     """
+
     agent_id: str
     role: str
     goal: str
@@ -128,6 +133,7 @@ class CrewTaskConfig:
         output_json: Output as JSON
         output_pydantic: Output as Pydantic model
     """
+
     task_id: str
     description: str
     expected_output: str
@@ -171,6 +177,7 @@ class TaskExecutionResult:
         raw: Raw output
         json_dict: JSON output if applicable
     """
+
     task_id: str
     status: TaskStatus
     output: str | None
@@ -208,6 +215,7 @@ class CrewExecutionResult:
         token_usage: Token usage statistics
         process_type: Process type used
     """
+
     crew_id: str
     status: str
     task_results: list[TaskExecutionResult]
@@ -363,9 +371,7 @@ class CrewAIAdapter:
         """
         if not CREWAI_AVAILABLE:
             logger.warning("crewai_not_available")
-            raise RuntimeError(
-                "CrewAI is not available. Install with: pip install crewai"
-            )
+            raise RuntimeError("CrewAI is not available. Install with: pip install crewai")
 
         config = CrewAgentConfig(
             agent_id=agent_id,
@@ -566,7 +572,9 @@ class CrewAIAdapter:
             raise ValueError(f"No valid tasks found for IDs: {task_ids}")
 
         # Convert process type
-        crew_process = Process.SEQUENTIAL if process == CrewProcess.SEQUENTIAL else Process.HIERARCHICAL
+        crew_process = (
+            Process.SEQUENTIAL if process == CrewProcess.SEQUENTIAL else Process.HIERARCHICAL
+        )
 
         config = {
             "crew_id": crew_id,
@@ -623,11 +631,14 @@ class CrewAIAdapter:
             raise ValueError(f"Task {task_id} not found")
 
         start_time = datetime.now(UTC)
-        config = self.task_configs.get(task_id, CrewTaskConfig(
-            task_id=task_id,
-            description="",
-            expected_output="",
-        ))
+        config = self.task_configs.get(
+            task_id,
+            CrewTaskConfig(
+                task_id=task_id,
+                description="",
+                expected_output="",
+            ),
+        )
 
         result = TaskExecutionResult(
             task_id=task_id,

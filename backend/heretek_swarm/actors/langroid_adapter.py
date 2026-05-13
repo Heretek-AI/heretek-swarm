@@ -25,9 +25,10 @@ logger = structlog.get_logger("LangroidAdapter")
 # Try to import Langroid, but make it optional
 try:
     from langroid.agent import Agent as LangroidAgentBase
-    from langroid.embedding import EmbeddingConfig  # noqa: F401 - used in isinstance checks
+    from langroid.embedding import EmbeddingConfig
     from langroid.language import LanguageModelConfig
-    from langroid.vector_store import VectorStoreConfig  # noqa: F401 - used in isinstance checks
+    from langroid.vector_store import VectorStoreConfig
+
     LANGROID_AVAILABLE = True
 except ImportError:
     LANGROID_AVAILABLE = False
@@ -36,6 +37,7 @@ except ImportError:
 
 class ConversationState(Enum):
     """Conversation states."""
+
     IDLE = "idle"
     ACTIVE = "active"
     WAITING = "waiting"
@@ -57,6 +59,7 @@ class AgentConversation:
         updated_at: Last update time
         metadata: Additional metadata
     """
+
     conversation_id: str
     agent_id: str
     messages: list[dict[str, str]] = field(default_factory=list)
@@ -67,11 +70,13 @@ class AgentConversation:
 
     def add_message(self, role: str, content: str) -> None:
         """Add a message to the conversation."""
-        self.messages.append({
-            "role": role,
-            "content": content,
-            "timestamp": datetime.now(UTC).isoformat(),
-        })
+        self.messages.append(
+            {
+                "role": role,
+                "content": content,
+                "timestamp": datetime.now(UTC).isoformat(),
+            }
+        )
         self.updated_at = datetime.now(UTC).isoformat()
 
     def get_messages(self) -> list[dict[str, str]]:
@@ -96,6 +101,7 @@ class LangroidConfig:
         use_tools: Enable tool use
         debug: Enable debug mode
     """
+
     agent_name: str = "heretek-agent"
     llm_config: dict[str, Any] | None = None
     embedding_config: dict[str, Any] | None = None
@@ -380,8 +386,7 @@ class LangroidAgent:
     def _format_messages(self, conversation: AgentConversation) -> list[dict[str, str]]:
         """Format messages for Langroid."""
         return [
-            {"role": msg["role"], "content": msg["content"]}
-            for msg in conversation.get_messages()
+            {"role": msg["role"], "content": msg["content"]} for msg in conversation.get_messages()
         ]
 
     async def _use_swarms_agent(self, conversation: AgentConversation) -> str:
@@ -437,8 +442,7 @@ class LangroidAgent:
     def get_active_conversations(self) -> list[AgentConversation]:
         """Get active conversations."""
         return [
-            conv for conv in self._conversations.values()
-            if conv.state == ConversationState.ACTIVE
+            conv for conv in self._conversations.values() if conv.state == ConversationState.ACTIVE
         ]
 
     def set_message_callback(self, callback: callable) -> None:

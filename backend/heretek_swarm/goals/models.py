@@ -11,7 +11,9 @@ from dataclasses import asdict, dataclass, field
 from datetime import UTC, datetime
 from typing import Any, Literal
 
-GoalStatus = Literal["proposed", "voting", "accepted", "rejected", "error", "executing", "completed"]
+GoalStatus = Literal[
+    "proposed", "voting", "accepted", "rejected", "error", "executing", "completed"
+]
 
 
 @dataclass

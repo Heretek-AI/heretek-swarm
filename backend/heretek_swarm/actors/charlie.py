@@ -1,4 +1,3 @@
-# flake8: noqa: F403
 """Charlie Agent — thin re-export stub.
 All implementation lives in the triad subpackage."""
 

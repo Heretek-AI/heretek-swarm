@@ -190,8 +190,17 @@ AGENT_TIERS = {
         "description": "Full swarm with memory and coordination",
         "agent_count": 11,
         "agents": [
-            "coordinator", "coder", "examiner", "historian", "catalyst",
-            "explorer", "dreamer", "echo", "metis", "nexus", "arbiter",
+            "coordinator",
+            "coder",
+            "examiner",
+            "historian",
+            "catalyst",
+            "explorer",
+            "dreamer",
+            "echo",
+            "metis",
+            "nexus",
+            "arbiter",
         ],
         "memory_enabled": True,
         "consciousness_enabled": True,
@@ -202,10 +211,28 @@ AGENT_TIERS = {
         "description": "Complete 23-agent collective with full capabilities",
         "agent_count": 23,
         "agents": [
-            "alpha", "beta", "charlie", "coordinator", "coder", "examiner",
-            "historian", "catalyst", "explorer", "dreamer", "echo", "metis",
-            "nexus", "arbiter", "prism", "perceiver", "perceiver_plus",
-            "steward", "sentinel", "sentinel_prime", "triad", "handoff",
+            "alpha",
+            "beta",
+            "charlie",
+            "coordinator",
+            "coder",
+            "examiner",
+            "historian",
+            "catalyst",
+            "explorer",
+            "dreamer",
+            "echo",
+            "metis",
+            "nexus",
+            "arbiter",
+            "prism",
+            "perceiver",
+            "perceiver_plus",
+            "steward",
+            "sentinel",
+            "sentinel_prime",
+            "triad",
+            "handoff",
             "validation",
         ],
         "memory_enabled": True,
@@ -217,6 +244,7 @@ AGENT_TIERS = {
 # =============================================================================
 # Wizard State Management
 # =============================================================================
+
 
 class WizardState:
     """In-memory wizard state (would be Redis/DB in production)."""
@@ -269,6 +297,7 @@ _wizard_state = WizardState()
 # Helper Functions
 # =============================================================================
 
+
 def get_service() -> ConfigurationService:
     """Dependency injection for ConfigurationService."""
     return get_config_service()
@@ -282,6 +311,7 @@ def get_wizard_state() -> WizardState:
 # =============================================================================
 # Provider Endpoints
 # =============================================================================
+
 
 @router.get("/providers")
 async def list_providers() -> dict[str, Any]:
@@ -443,6 +473,7 @@ async def delete_provider(provider_id: str) -> Response:
 # Agent Tier Endpoints
 # =============================================================================
 
+
 @router.get("/tiers")
 async def list_tiers() -> dict[str, Any]:
     """
@@ -477,6 +508,7 @@ async def get_tier(tier_id: str) -> dict[str, Any]:
 # =============================================================================
 # Config Status Endpoint
 # =============================================================================
+
 
 @router.get("/config")
 async def get_config_status() -> dict[str, Any]:
@@ -532,7 +564,9 @@ async def get_config_status() -> dict[str, Any]:
                 "host": c.host,
                 "port": c.port,
                 "health_status": c.health_status,
-                "last_health_check": c.last_health_check.isoformat() if c.last_health_check else None,
+                "last_health_check": c.last_health_check.isoformat()
+                if c.last_health_check
+                else None,
                 "health_check_latency_ms": c.health_check_latency_ms,
             }
             for c in infra_configs
@@ -581,6 +615,7 @@ VALIDATION_FAILED = "Validation failed: {error}"
 # Provider Validation Dispatch
 # =============================================================================
 
+
 async def _dispatch_validation(
     provider_id: str,
     api_key: str | None,
@@ -617,6 +652,7 @@ async def _dispatch_validation(
 # Validation Endpoint
 # =============================================================================
 
+
 @router.post("/validate")
 async def validate_credentials(
     provider_id: str,
@@ -649,9 +685,7 @@ async def validate_credentials(
 
     # Perform validation via dispatch
     try:
-        result = await _dispatch_validation(
-            provider_id, api_key, base_url or provider["base_url"]
-        )
+        result = await _dispatch_validation(provider_id, api_key, base_url or provider["base_url"])
         result["provider_id"] = provider_id
         return result
     except Exception as e:
@@ -694,9 +728,7 @@ async def _validate_anthropic(api_key: str | None, base_url: str) -> dict[str, A
                     "message": API_KEY_VALID,
                 }
             error_data = response.json() if response.text else {}
-            error_msg = (
-                error_data.get("error", {}).get("message", response.text) or INVALID_API_KEY
-            )
+            error_msg = error_data.get("error", {}).get("message", response.text) or INVALID_API_KEY
             return {"valid": False, "error": error_msg}
     except httpx.TimeoutException:
         return {"valid": False, "error": CONNECTION_TIMED_OUT}
@@ -893,6 +925,7 @@ async def _validate_local(base_url: str, api_key: str | None) -> dict[str, Any]:
 # Wizard Event Emission
 # =============================================================================
 
+
 async def _emit_wizard_completed_event(tier_config: dict[str, Any]) -> None:
     """
     Emit a wizard.completed SwarmEvent to trigger autonomous runtime startup.
@@ -943,6 +976,7 @@ async def _emit_wizard_completed_event(tier_config: dict[str, Any]) -> None:
 # Configuration Submission Endpoint
 # =============================================================================
 
+
 @router.post("/config")
 async def submit_config(config: dict[str, Any]) -> dict[str, Any]:
     """
@@ -975,9 +1009,8 @@ async def submit_config(config: dict[str, Any]) -> dict[str, Any]:
     for provider_config in providers:
         provider_id = provider_config.get("provider_id")
         api_key = provider_config.get("api_key")
-        model = (
-            provider_config.get("model")
-            or AVAILABLE_PROVIDERS.get(provider_id, {}).get("default_model")
+        model = provider_config.get("model") or AVAILABLE_PROVIDERS.get(provider_id, {}).get(
+            "default_model"
         )
         is_default = provider_config.get("is_default", False)
 
@@ -1021,19 +1054,24 @@ async def submit_config(config: dict[str, Any]) -> dict[str, Any]:
 
             created = await service.create_llm_provider(create_data, changed_by="wizard")
 
-            result["providers_created"].append({
-                "id": str(created.id),
-                "name": created.provider_name,
-                "type": created.provider_type,
-                "model": created.default_model,
-            })
+            result["providers_created"].append(
+                {
+                    "id": str(created.id),
+                    "name": created.provider_name,
+                    "type": created.provider_type,
+                    "model": created.default_model,
+                }
+            )
 
             # Store in wizard state
-            wizard_state.set_provider_config(provider_id, {
-                "provider_id": str(created.id),
-                "model": model,
-                "api_key_provided": bool(api_key),
-            })
+            wizard_state.set_provider_config(
+                provider_id,
+                {
+                    "provider_id": str(created.id),
+                    "model": model,
+                    "api_key_provided": bool(api_key),
+                },
+            )
 
         except Exception as e:
             logger.error("Failed to create provider", provider=provider_id, error=str(e))
@@ -1044,13 +1082,15 @@ async def submit_config(config: dict[str, Any]) -> dict[str, Any]:
     tier_config = {}
     if tier_id in AGENT_TIERS:
         tier_config = AGENT_TIERS[tier_id]
-        wizard_state.set_wizard_config({
-            "tier": tier_id,
-            "agent_count": tier_config["agent_count"],
-            "agents": tier_config["agents"],
-            "memory_enabled": tier_config["memory_enabled"],
-            "consciousness_enabled": tier_config["consciousness_enabled"],
-        })
+        wizard_state.set_wizard_config(
+            {
+                "tier": tier_id,
+                "agent_count": tier_config["agent_count"],
+                "agents": tier_config["agents"],
+                "memory_enabled": tier_config["memory_enabled"],
+                "consciousness_enabled": tier_config["consciousness_enabled"],
+            }
+        )
 
         result["config"]["tier"] = tier_id
         result["config"]["agent_count"] = tier_config["agent_count"]
@@ -1077,6 +1117,7 @@ async def submit_config(config: dict[str, Any]) -> dict[str, Any]:
 # Infrastructure Configuration Endpoints
 # =============================================================================
 
+
 @router.get("/infrastructure")
 async def list_infrastructure_configs() -> dict[str, Any]:
     """
@@ -1100,7 +1141,9 @@ async def list_infrastructure_configs() -> dict[str, Any]:
                     "connection_url": c.connection_url,
                     "is_enabled": c.is_enabled,
                     "health_status": c.health_status,
-                    "last_health_check": c.last_health_check.isoformat() if c.last_health_check else None,
+                    "last_health_check": c.last_health_check.isoformat()
+                    if c.last_health_check
+                    else None,
                     "health_check_latency_ms": c.health_check_latency_ms,
                     "health_check_error": c.health_check_error,
                 }
@@ -1180,7 +1223,11 @@ async def create_infrastructure_config(
             "message": "Configuration created",
         }
     except Exception as e:
-        logger.error("Failed to create/update infrastructure config", service=config.service.value, error=str(e))
+        logger.error(
+            "Failed to create/update infrastructure config",
+            service=config.service.value,
+            error=str(e),
+        )
         raise HTTPException(500, f"Failed to create/update infrastructure config: {e!s}")
 
 
@@ -1200,7 +1247,10 @@ async def get_infrastructure_config(service: str) -> dict[str, Any]:
     try:
         infra_service = InfrastructureService(service.lower())
     except ValueError:
-        raise HTTPException(400, f"Invalid service type: {service}. Valid types: postgres, redis, qdrant, nats, mem0")
+        raise HTTPException(
+            400,
+            f"Invalid service type: {service}. Valid types: postgres, redis, qdrant, nats, mem0",
+        )
 
     try:
         config = await service.get_infrastructure_config_by_service(infra_service.value)
@@ -1216,7 +1266,9 @@ async def get_infrastructure_config(service: str) -> dict[str, Any]:
             "connection_url": config.connection_url,
             "is_enabled": config.is_enabled,
             "health_status": config.health_status,
-            "last_health_check": config.last_health_check.isoformat() if config.last_health_check else None,
+            "last_health_check": config.last_health_check.isoformat()
+            if config.last_health_check
+            else None,
             "health_check_latency_ms": config.health_check_latency_ms,
             "health_check_error": config.health_check_error,
         }
@@ -1243,7 +1295,10 @@ async def check_service_health(service: str) -> dict[str, Any]:
     try:
         infra_service = InfrastructureService(service.lower())
     except ValueError:
-        raise HTTPException(400, f"Invalid service type: {service}. Valid types: postgres, redis, qdrant, nats, mem0")
+        raise HTTPException(
+            400,
+            f"Invalid service type: {service}. Valid types: postgres, redis, qdrant, nats, mem0",
+        )
 
     try:
         config = await service_obj.get_infrastructure_config_by_service(infra_service.value)
@@ -1403,6 +1458,7 @@ async def delete_infrastructure_config(service: str) -> Response:
 # =============================================================================
 # Reset Endpoint
 # =============================================================================
+
 
 @router.post("/reset")
 async def reset_wizard() -> dict[str, Any]:

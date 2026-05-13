@@ -226,13 +226,17 @@ class TestConsensusCompleteBroadcast:
         )
 
         # Mock the MAKER consensus instance to support aggregate_consensus
-        mock_result = type("Result", (), {
-            "decision": "approve",
-            "confidence": 0.9,
-            "state": type("State", (), {"value": "completed"})(),
-            "red_flags": [],
-            "timestamp": "2026-01-01T00:00:00Z",
-        })()
+        mock_result = type(
+            "Result",
+            (),
+            {
+                "decision": "approve",
+                "confidence": 0.9,
+                "state": type("State", (), {"value": "completed"})(),
+                "red_flags": [],
+                "timestamp": "2026-01-01T00:00:00Z",
+            },
+        )()
         _consensus_store[round_id].aggregate_consensus = lambda cid: mock_result
 
         # Reset mock to isolate aggregate broadcast
@@ -266,13 +270,17 @@ class TestConsensusCompleteBroadcast:
         )
 
         # Mock the MAKER's aggregate_consensus method
-        mock_result = type("Result", (), {
-            "decision": "approve",
-            "confidence": 0.9,
-            "state": type("State", (), {"value": "completed"})(),
-            "red_flags": [],
-            "timestamp": "2026-01-01T00:00:00Z",
-        })()
+        mock_result = type(
+            "Result",
+            (),
+            {
+                "decision": "approve",
+                "confidence": 0.9,
+                "state": type("State", (), {"value": "completed"})(),
+                "red_flags": [],
+                "timestamp": "2026-01-01T00:00:00Z",
+            },
+        )()
         _consensus_store[round_id].aggregate_consensus = lambda cid: mock_result
 
         mock_broadcast.reset_mock()
@@ -324,16 +332,21 @@ class TestDeliberationRoundBroadcast:
         # Simulate the broadcast that happens in the endpoint
         async def _do_broadcast():
             from heretek_swarm.api.websockets import manager as ws_manager
-            await ws_manager.broadcast_dashboard({
-                "type": "deliberation_round",
-                "deliberation_id": delib_id,
-                "round_number": 0,
-                "arguments_submitted": len(round_result.arguments),
-                "positions": positions_dict,
-                "consensus_score": round_result.consensus_score,
-                "summary": round_result.outcome.value if hasattr(round_result, "outcome") else "",
-                "timestamp": datetime.now(UTC).isoformat(),
-            })
+
+            await ws_manager.broadcast_dashboard(
+                {
+                    "type": "deliberation_round",
+                    "deliberation_id": delib_id,
+                    "round_number": 0,
+                    "arguments_submitted": len(round_result.arguments),
+                    "positions": positions_dict,
+                    "consensus_score": round_result.consensus_score,
+                    "summary": round_result.outcome.value
+                    if hasattr(round_result, "outcome")
+                    else "",
+                    "timestamp": datetime.now(UTC).isoformat(),
+                }
+            )
 
         loop = asyncio.new_event_loop()
         try:
@@ -397,13 +410,17 @@ class TestBroadcastIsolation:
         )
 
         # Mock the MAKER's aggregate_consensus method
-        mock_result = type("Result", (), {
-            "decision": "approve",
-            "confidence": 0.9,
-            "state": type("State", (), {"value": "completed"})(),
-            "red_flags": [],
-            "timestamp": "2026-01-01T00:00:00Z",
-        })()
+        mock_result = type(
+            "Result",
+            (),
+            {
+                "decision": "approve",
+                "confidence": 0.9,
+                "state": type("State", (), {"value": "completed"})(),
+                "red_flags": [],
+                "timestamp": "2026-01-01T00:00:00Z",
+            },
+        )()
         _consensus_store[round_id].aggregate_consensus = lambda cid: mock_result
 
         resp = client.post(

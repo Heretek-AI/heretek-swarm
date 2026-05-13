@@ -17,7 +17,7 @@ import operator
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from enum import Enum
-from typing import Annotated, TYPE_CHECKING, Any, TypeVar
+from typing import TYPE_CHECKING, Annotated, Any, TypeVar
 
 import structlog
 from typing_extensions import TypedDict
@@ -458,15 +458,11 @@ def merge_workflow_states(
             # Both have this key - apply merge logic
             if key == "messages":
                 result["messages"] = _merge_state_field(
-                    current.get("messages", []),
-                    update.get("messages", []),
-                    "append"
+                    current.get("messages", []), update.get("messages", []), "append"
                 )
             elif key == "results":
                 result["results"] = _merge_state_field(
-                    current.get("results", {}),
-                    update.get("results", {}),
-                    "merge"
+                    current.get("results", {}), update.get("results", {}), "merge"
                 )
             else:
                 # Default: use update value
@@ -621,7 +617,7 @@ class WorkflowEngine:
                 data=node.get("data", {}),
                 inputs=node.get("inputs", []),
                 outputs=node.get("outputs", []),
-                position=node.get("position", {})
+                position=node.get("position", {}),
             )
             for node in workflow_definition.get("nodes", [])
         ]
@@ -631,7 +627,7 @@ class WorkflowEngine:
                 id=edge["id"],
                 source=edge["source"],
                 target=edge["target"],
-                condition=edge.get("condition")
+                condition=edge.get("condition"),
             )
             for edge in workflow_definition.get("edges", [])
         ]
@@ -641,7 +637,7 @@ class WorkflowEngine:
             name=workflow_definition.get("name", "Untitled Workflow"),
             nodes=nodes,
             edges=edges,
-            metadata=workflow_definition.get("metadata", {})
+            metadata=workflow_definition.get("metadata", {}),
         )
 
         self.workflows[workflow.id] = workflow
@@ -687,7 +683,7 @@ class WorkflowEngine:
             workflow_id=workflow_id,
             execution_id=execution_id,
             start_time=datetime.now(UTC),
-            state=WorkflowStatus.RUNNING
+            state=WorkflowStatus.RUNNING,
         )
 
         self.active_executions[execution_id] = context
@@ -706,6 +702,7 @@ class WorkflowEngine:
                 )
 
                 strat = MajorityVoteStrategy()
+
                 async def node_executor(nid: str, ndata: dict) -> Any:
                     node = next(n for n in workflow.nodes if n.id == nid)
                     return await self._execute_and_capture(workflow, nid, context, node)
@@ -720,7 +717,10 @@ class WorkflowEngine:
             if strategy == "cycle":
                 from heretek_swarm.workflow.strategies import CycleStrategy
 
-                strat = CycleStrategy(max_iterations=self.max_iterations, timeout_seconds=self.timeout_seconds)
+                strat = CycleStrategy(
+                    max_iterations=self.max_iterations, timeout_seconds=self.timeout_seconds
+                )
+
                 async def node_executor(nid: str, ndata: dict) -> Any:
                     node = next(n for n in workflow.nodes if n.id == nid)
                     return await self._execute_and_capture(workflow, nid, context, node)
@@ -747,7 +747,7 @@ class WorkflowEngine:
                         event = self.cycle_detector.break_cycle(
                             execution_id,
                             CycleBreakingStrategy.MAX_ITERATIONS,
-                            reason=f"Cycle detected at node {node_id}"
+                            reason=f"Cycle detected at node {node_id}",
                         )
                         logger.warning(
                             "cycle_broken_during_execution",
@@ -761,15 +761,13 @@ class WorkflowEngine:
                             node_id=node_id,
                             status=NodeStatus.SKIPPED,
                             output=None,
-                            error=Exception(f"Node skipped due to cycle detection: {node_id}")
+                            error=Exception(f"Node skipped due to cycle detection: {node_id}"),
                         )
                         continue
 
                 # Record node execution for tracking
                 self.cycle_detector.record_node_execution(
-                    execution_id,
-                    node_id,
-                    state={"node": node_id, "phase": "execution"}
+                    execution_id, node_id, state={"node": node_id, "phase": "execution"}
                 )
 
                 await self._execute_node(workflow, node_id, context)
@@ -788,7 +786,7 @@ class WorkflowEngine:
                 variables=context.variables,
                 start_time=context.start_time,
                 end_time=context.end_time,
-                error=None
+                error=None,
             )
 
         except Exception as e:
@@ -807,7 +805,7 @@ class WorkflowEngine:
                 variables=context.variables,
                 start_time=context.start_time,
                 end_time=context.end_time,
-                error=e
+                error=e,
             )
 
         finally:
@@ -817,10 +815,7 @@ class WorkflowEngine:
                 del self.active_executions[execution_id]
 
     async def _execute_node(
-        self,
-        workflow: Workflow,
-        node_id: str,
-        context: WorkflowContext
+        self, workflow: Workflow, node_id: str, context: WorkflowContext
     ) -> None:
         """
         Execute a single workflow node.
@@ -837,16 +832,13 @@ class WorkflowEngine:
             context.node_results[node_id] = NodeResult(
                 node_id=node_id,
                 status=NodeStatus.FAILED,
-                error=ValueError(f"Node not found: {node_id}")
+                error=ValueError(f"Node not found: {node_id}"),
             )
             return
 
         # Check if node should be skipped (condition check)
         if not self._should_execute_node(workflow, node, context):
-            context.node_results[node_id] = NodeResult(
-                node_id=node_id,
-                status=NodeStatus.SKIPPED
-            )
+            context.node_results[node_id] = NodeResult(node_id=node_id, status=NodeStatus.SKIPPED)
             return
 
         # Get input data for node
@@ -877,7 +869,7 @@ class WorkflowEngine:
                 node_id=node_id,
                 status=NodeStatus.COMPLETED,
                 output=output,
-                execution_time=execution_time
+                execution_time=execution_time,
             )
 
             # Store output in context variables
@@ -890,7 +882,7 @@ class WorkflowEngine:
                 node_id=node_id,
                 status=NodeStatus.FAILED,
                 error=e,
-                execution_time=(datetime.now(UTC) - start_time).total_seconds()
+                execution_time=(datetime.now(UTC) - start_time).total_seconds(),
             )
 
     async def _execute_and_capture(
@@ -966,10 +958,7 @@ class WorkflowEngine:
         )
 
     def _should_execute_node(
-        self,
-        workflow: Workflow,
-        node: WorkflowNode,
-        context: WorkflowContext
+        self, workflow: Workflow, node: WorkflowNode, context: WorkflowContext
     ) -> bool:
         """
         Check if a node should be executed based on conditions.
@@ -1018,10 +1007,7 @@ class WorkflowEngine:
             return False
 
     def _get_node_input(
-        self,
-        workflow: Workflow,
-        node: WorkflowNode,
-        context: WorkflowContext
+        self, workflow: Workflow, node: WorkflowNode, context: WorkflowContext
     ) -> dict[str, Any]:
         """
         Get input data for a node from context.
@@ -1048,10 +1034,7 @@ class WorkflowEngine:
         return input_data
 
     async def _execute_agent_node(
-        self,
-        node: WorkflowNode,
-        input_data: dict[str, Any],
-        context: WorkflowContext
+        self, node: WorkflowNode, input_data: dict[str, Any], context: WorkflowContext
     ) -> Any:
         """
         Execute an agent node.
@@ -1149,7 +1132,9 @@ class WorkflowEngine:
         from heretek_swarm.actors.supervisor import get_supervisor
 
         # Extract prompt: prefer node.data, fall back to input_data
-        prompt = node.data.get("prompt") or input_data.get("prompt") or input_data.get("message", "")
+        prompt = (
+            node.data.get("prompt") or input_data.get("prompt") or input_data.get("message", "")
+        )
         if not prompt:
             raise ValueError("LLM node requires a 'prompt' in node.data or input_data")
 
@@ -1189,12 +1174,8 @@ class WorkflowEngine:
 
         return await actor.run_with_llm(prompt, timeout=timeout, **kwargs)
 
-
     async def _execute_tool_node(
-        self,
-        node: WorkflowNode,
-        input_data: dict[str, Any],
-        context: WorkflowContext
+        self, node: WorkflowNode, input_data: dict[str, Any], context: WorkflowContext
     ) -> Any:
         """
         Execute a tool node.
@@ -1223,12 +1204,8 @@ class WorkflowEngine:
         # Execute tool
         return await tool_registry.execute(tool_name, **tool_params)
 
-
     async def _execute_chain_node(
-        self,
-        node: WorkflowNode,
-        input_data: dict[str, Any],
-        context: WorkflowContext
+        self, node: WorkflowNode, input_data: dict[str, Any], context: WorkflowContext
     ) -> Any:
         """
         Execute a chain node (sequential processing).
@@ -1260,10 +1237,7 @@ class WorkflowEngine:
         return output
 
     async def _execute_memory_node(
-        self,
-        node: WorkflowNode,
-        input_data: dict[str, Any],
-        context: WorkflowContext
+        self, node: WorkflowNode, input_data: dict[str, Any], context: WorkflowContext
     ) -> Any:
         """
         Execute a memory node (store or retrieve).
@@ -1298,7 +1272,7 @@ class WorkflowEngine:
                 agent_id=context.workflow_id,
                 content=content,
                 memory_type=memory_type,
-                metadata=metadata
+                metadata=metadata,
             )
 
             return {"stored": True}
@@ -1310,10 +1284,9 @@ class WorkflowEngine:
 
             # Search memory
             from heretek_swarm.memory.base import MemoryQuery
+
             search_query = MemoryQuery(
-                query_text=query,
-                agent_ids=[context.workflow_id],
-                limit=limit
+                query_text=query, agent_ids=[context.workflow_id], limit=limit
             )
 
             result = await memory_store.search(search_query)
@@ -1323,7 +1296,7 @@ class WorkflowEngine:
                     {
                         "content": entry.content,
                         "memory_type": entry.memory_type.value,
-                        "importance_score": entry.importance_score
+                        "importance_score": entry.importance_score,
                     }
                     for entry in result.entries
                 ]
@@ -1367,9 +1340,7 @@ class WorkflowEngine:
         # Extract question from node.data or input_data
         question = node.data.get("question") or input_data.get("question")
         if not question:
-            raise ValueError(
-                "Consensus node requires a 'question' in node.data or input_data."
-            )
+            raise ValueError("Consensus node requires a 'question' in node.data or input_data.")
 
         # Extract optional parameters
         timeout = node.data.get("timeout", 120)
@@ -1566,9 +1537,7 @@ class WorkflowEngine:
 
         return None
 
-    async def update_workflow(
-        self, workflow_id: str, definition: dict[str, Any]
-    ) -> Workflow:
+    async def update_workflow(self, workflow_id: str, definition: dict[str, Any]) -> Workflow:
         """Update an existing workflow definition.
 
         Persists the updated definition to disk and refreshes the in-memory
@@ -1580,9 +1549,7 @@ class WorkflowEngine:
         if workflow_id not in self.workflows and not self.store.exists(workflow_id):
             raise ValueError(f"Workflow not found: {workflow_id}")
 
-        workflow = await self.load_workflow(
-            {**definition, "id": workflow_id}
-        )
+        workflow = await self.load_workflow({**definition, "id": workflow_id})
         logger.info("workflow_updated", workflow_id=workflow_id)
         return workflow
 

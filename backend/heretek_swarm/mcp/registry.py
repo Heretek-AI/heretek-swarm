@@ -40,6 +40,7 @@ constant or setting ``HEREKET_CONFIG_DIR`` before import.
 
 class ToolProviderType(StrEnum):
     """Source of the tool."""
+
     LOCAL = "local"
     EXTERNAL = "external"
     PROXIED = "proxied"
@@ -47,6 +48,7 @@ class ToolProviderType(StrEnum):
 
 class ToolStatus(StrEnum):
     """Tool execution status."""
+
     READY = "ready"
     RUNNING = "running"
     DISABLED = "disabled"
@@ -56,6 +58,7 @@ class ToolStatus(StrEnum):
 @dataclass
 class MCPToolMetadata:
     """MCP tool metadata."""
+
     name: str
     description: str
     input_schema: dict[str, Any]
@@ -72,6 +75,7 @@ class MCPToolMetadata:
 @dataclass
 class MCPToolInvocation:
     """Record of a tool invocation."""
+
     invocation_id: UUID
     tool_name: str
     arguments: dict[str, Any]
@@ -177,10 +181,7 @@ class MCPToolRegistry:
         """
         payload: dict[str, Any] = {
             "version": "1.0.0",
-            "tool_states": {
-                name: meta.enabled
-                for name, meta in self._tools.items()
-            },
+            "tool_states": {name: meta.enabled for name, meta in self._tools.items()},
         }
 
         tmp_path = Path(str(TOOLS_STATE_FILE) + ".tmp")
@@ -336,6 +337,7 @@ class MCPToolRegistry:
             if loop.is_running():
                 # If loop is already running, create a new task
                 import concurrent.futures
+
                 with concurrent.futures.ThreadPoolExecutor() as pool:
                     future = pool.submit(asyncio.run, self.invoke(name, arguments, context))
                     return future.result()
@@ -387,12 +389,8 @@ class MCPToolRegistry:
 
         # Validate arguments
         if not self._validate_arguments(arguments, tool.input_schema):
-            self._record_invocation_error(
-                invocation, f"Invalid arguments for tool {name}"
-            )
-            logger.error(
-                "mcp_tool_validation_failed", name=name, arguments=arguments
-            )
+            self._record_invocation_error(invocation, f"Invalid arguments for tool {name}")
+            logger.error("mcp_tool_validation_failed", name=name, arguments=arguments)
             return {"success": False, "error": f"Invalid arguments for tool {name}"}
 
         # Update stats
@@ -483,9 +481,7 @@ class MCPToolRegistry:
         """Update latency statistics after a successful invocation."""
         stats = self._stats[name]
         calls = stats["calls"]
-        stats["avg_latency_ms"] = (
-            stats["avg_latency_ms"] * (calls - 1) + latency_ms
-        ) / calls
+        stats["avg_latency_ms"] = (stats["avg_latency_ms"] * (calls - 1) + latency_ms) / calls
 
     def _validate_arguments(
         self,

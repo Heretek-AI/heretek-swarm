@@ -18,6 +18,7 @@ from uuid import UUID, uuid4
 
 class StateStatus(Enum):
     """Agent state status enumeration."""
+
     ACTIVE = "active"
     IDLE = "idle"
     SUSPENDED = "suspended"
@@ -27,6 +28,7 @@ class StateStatus(Enum):
 
 class TransitionType(Enum):
     """State transition type enumeration."""
+
     CREATED = "created"
     UPDATED = "updated"
     ACTIVATED = "activated"
@@ -37,6 +39,7 @@ class TransitionType(Enum):
 
 class MessageType(Enum):
     """Message type enumeration."""
+
     USER = "user"
     AGENT = "agent"
     SYSTEM = "system"
@@ -54,6 +57,7 @@ class SystemState:
         uptime_seconds: System uptime in seconds
         last_heartbeat: Last heartbeat timestamp
     """
+
     system_id: str = "default"
     active_agents: int = 0
     total_messages: int = 0
@@ -80,6 +84,7 @@ class StateSnapshot:
         agent_states: Dict of agent_id -> AgentState at snapshot time
         metadata: Optional metadata
     """
+
     snapshot_id: UUID = field(default_factory=uuid4)
     agent_id: str = "system"
     state: dict[str, Any] = field(default_factory=dict)
@@ -95,6 +100,7 @@ class StateSnapshot:
 @dataclass
 class StateTransition:
     """Represents a state change event."""
+
     transition_id: UUID = field(default_factory=uuid4)
     agent_id: str = ""
     from_status: StateStatus = StateStatus.IDLE
@@ -121,6 +127,7 @@ class MessageLineage:
         content_size_bytes: Size of content in bytes
         child_count: Number of direct replies
     """
+
     message_id: UUID = field(default_factory=uuid4)
     conversation_id: UUID | None = None
     root_message_id: UUID | None = None
@@ -154,6 +161,7 @@ class AgentState:
         working_memory: Agent's current working memory
         metadata: Additional metadata
     """
+
     agent_id: str
     agent_type: str = "worker"
     status: StateStatus = StateStatus.ACTIVE
@@ -180,6 +188,7 @@ class AgentState:
     def compute_hash(self) -> str:
         """Compute a hash of the current state for comparison."""
         import hashlib
+
         state_str = json.dumps(self.working_memory, sort_keys=True)
         return hashlib.sha256(state_str.encode()).hexdigest()[:16]
 
@@ -199,6 +208,7 @@ class ConversationState:
         decisions: List of decisions made in conversation
         topic: Conversation topic/subject
     """
+
     conversation_id: UUID = field(default_factory=uuid4)
     initiator_agent_id: str = ""
     status: StateStatus = StateStatus.ACTIVE
@@ -224,9 +234,11 @@ class ConversationState:
 
 # Configuration dataclasses
 
+
 @dataclass
 class LineageConfig:
     """Configuration for lineage tracking."""
+
     max_lineage_depth: int = 100
     cache_size: int = 1000
     enable_persistence: bool = True
@@ -235,6 +247,7 @@ class LineageConfig:
 @dataclass
 class SnapshotConfig:
     """Configuration for snapshot management."""
+
     storage_path: str = "./snapshots"
     max_snapshots: int = 50
     auto_snapshot_enabled: bool = True
@@ -245,6 +258,7 @@ class SnapshotConfig:
 @dataclass
 class StateConfig:
     """Configuration for state management."""
+
     lineage: LineageConfig = field(default_factory=LineageConfig)
     snapshots: SnapshotConfig = field(default_factory=SnapshotConfig)
     max_agents: int = 1000
@@ -253,12 +267,14 @@ class StateConfig:
 
 # Manager stubs (minimal implementations for test compatibility)
 
+
 class LineageNode:
     """
     Represents a node in the message lineage tree.
 
     Used to track message relationships in conversations.
     """
+
     node_id: UUID
     message_id: UUID
     parent_id: UUID | None
@@ -557,6 +573,7 @@ class StateManager:
     async def shutdown(self) -> None:
         """Shutdown the state manager."""
         from heretek_swarm.infrastructure.otel.logging import get_logger
+
         logger = get_logger(__name__)
         logger.info("state_manager_shutdown")
 
@@ -602,7 +619,9 @@ class StateManager:
             parent_message_id=parent_message_id,
         )
 
-    async def create_snapshot(self, trigger: str = "manual", description: str = "") -> StateSnapshot:
+    async def create_snapshot(
+        self, trigger: str = "manual", description: str = ""
+    ) -> StateSnapshot:
         """Create a snapshot of current state."""
         system_state = SystemState(active_agents=len(self._states))
         return await self._snapshot_manager.create_snapshot(

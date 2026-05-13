@@ -35,9 +35,7 @@ class MemorySnapshot:
     entries: list[dict[str, Any]]  # Serialized memory entries
     total_count: int
     metadata: dict[str, Any] = field(default_factory=dict)
-    captured_at: str = field(
-        default_factory=lambda: datetime.now(UTC).isoformat()
-    )
+    captured_at: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
 
 
 @dataclass
@@ -57,9 +55,7 @@ class MemoryVersion:
     deliberation_id: str | None  # Associated deliberation round
     total_entries: int  # Number of entries at this version
     labels: list[str] = field(default_factory=list)  # User-defined tags
-    created_at: str = field(
-        default_factory=lambda: datetime.now(UTC).isoformat()
-    )
+    created_at: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
     snapshot_id: str | None = None  # Reference to the snapshot data
 
     @property
@@ -401,10 +397,7 @@ class VersionedMemoryStore:
         removed_ids = from_ids - to_ids
 
         added = [e for i, e in enumerate(to_entries) if e.get("id", str(i)) in added_ids]
-        removed = [
-            e for i, e in enumerate(from_entries)
-            if e.get("id", str(i)) in removed_ids
-        ]
+        removed = [e for i, e in enumerate(from_entries) if e.get("id", str(i)) in removed_ids]
 
         total = len(to_entries)
         unchanged = total - len(added)
@@ -545,9 +538,7 @@ class VersionedMemoryStore:
         branches = list(self._branches.keys())
         total_labels = len(self._labels)
 
-        branch_stats = {
-            branch: len(vids) for branch, vids in self._branches.items()
-        }
+        branch_stats = {branch: len(vids) for branch, vids in self._branches.items()}
 
         return {
             "total_versions": total_versions,
@@ -558,6 +549,7 @@ class VersionedMemoryStore:
             "default_branch": self._default_branch,
             "max_versions": self._max_versions,
         }
+
 
 # ---------------------------------------------------------------------------
 # Global store instance

@@ -51,7 +51,8 @@ def _initialize_plugin_states():
         "version": "0.1.0",
         "config": {
             "audit_enabled": os.environ.get("LIBERATION_AUDIT_ENABLED", "true").lower() == "true",
-            "threat_detection": os.environ.get("LIBERATION_THREAT_DETECTION", "true").lower() == "true",
+            "threat_detection": os.environ.get("LIBERATION_THREAT_DETECTION", "true").lower()
+            == "true",
             "red_flag_sensitivity": float(os.environ.get("LIBERATION_SENSITIVITY", "0.3")),
         },
     }
@@ -65,6 +66,7 @@ _initialize_plugin_states()
 # Plugin List Endpoints
 # =============================================================================
 
+
 @router.get("")
 async def get_all_plugins():
     """
@@ -75,14 +77,16 @@ async def get_all_plugins():
     """
     plugins = []
     for plugin_id, state in _plugin_states.items():
-        plugins.append({
-            "id": plugin_id,
-            "name": state["name"],
-            "description": state["description"],
-            "version": state["version"],
-            "enabled": state["enabled"],
-            "config": state["config"],
-        })
+        plugins.append(
+            {
+                "id": plugin_id,
+                "name": state["name"],
+                "description": state["description"],
+                "version": state["version"],
+                "enabled": state["enabled"],
+                "config": state["config"],
+            }
+        )
 
     return {
         "plugins": plugins,
@@ -120,6 +124,7 @@ async def get_plugin(plugin_id: str):
 # =============================================================================
 # Plugin Enable/Disable Endpoints
 # =============================================================================
+
 
 @router.post("/{plugin_id}/enable")
 async def enable_plugin(plugin_id: str):
@@ -174,6 +179,7 @@ async def disable_plugin(plugin_id: str):
 # =============================================================================
 # Plugin Configuration Endpoints
 # =============================================================================
+
 
 @router.get("/{plugin_id}/config")
 async def get_plugin_config(plugin_id: str):
@@ -243,6 +249,7 @@ async def update_plugin_config(plugin_id: str, config: dict[str, Any]):
 # Plugin Metrics Endpoints
 # =============================================================================
 
+
 @router.get("/{plugin_id}/metrics")
 async def get_plugin_metrics(plugin_id: str):
     """
@@ -296,6 +303,7 @@ async def get_plugin_metrics(plugin_id: str):
 # Plugin Status Endpoints
 # =============================================================================
 
+
 @router.get("/{plugin_id}/status")
 async def get_plugin_status(plugin_id: str):
     """
@@ -324,6 +332,7 @@ async def get_plugin_status(plugin_id: str):
 # =============================================================================
 # Plugin Reset Endpoint
 # =============================================================================
+
 
 @router.post("/{plugin_id}/reset")
 async def reset_plugin(plugin_id: str):

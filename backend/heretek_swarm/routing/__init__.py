@@ -1,4 +1,5 @@
 """Agent model routing package."""
+
 from .model_router import (
     AgentModelRouter,
     RouterProviderConfig,

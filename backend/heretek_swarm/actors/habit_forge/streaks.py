@@ -82,9 +82,7 @@ class HabitForgeStreaksMixin:
             "current_streak": habit.streak_current,
             "longest_streak": habit.streak_longest,
             "days_since_completion": (
-                (datetime.now(UTC) - habit.last_completion).days
-                if habit.last_completion
-                else None
+                (datetime.now(UTC) - habit.last_completion).days if habit.last_completion else None
             ),
             "streak_at_risk": (
                 habit.last_completion is not None
@@ -141,7 +139,6 @@ class HabitForgeStreaksMixin:
         # Calculate consistency score
         consistency = 1.0 - (min(avg_gap - 1, 2) / 3)  # Penalize gaps > 1 day
         return max(0.0, min(1.0, consistency))
-
 
 
 # Standalone utility functions for use without a class instance

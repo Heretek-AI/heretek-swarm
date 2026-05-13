@@ -157,6 +157,7 @@ class TestFullProcessCycle:
 
             # ChronosAgent needs initialize() to start its scheduler
             from heretek_swarm.actors.chronos import ChronosAgent
+
             chronos = ChronosAgent()
             await chronos.initialize()
 
@@ -164,6 +165,7 @@ class TestFullProcessCycle:
             _make_tick(agent_id="alpha", action="do_work")
             # The schedule is managed via _tasks and _task_queue on ChronosAgent
             from heretek_swarm.actors.chronos.types import ScheduledTask
+
             task = ScheduledTask(
                 task_id="test-task-001",
                 name="test task",
@@ -189,6 +191,7 @@ class TestFullProcessCycle:
             # Override _process_external_events and friends to no-ops
             async def _noop():
                 pass
+
             swarm._process_external_events = _noop
             swarm._process_workflows = _noop
             swarm._run_health_checks = _noop
@@ -233,6 +236,7 @@ class TestFullProcessCycle:
 
             async def _noop():
                 pass
+
             swarm._process_scheduled_tasks = _noop
             swarm._process_external_events = _noop
             swarm._process_workflows = _noop
@@ -273,6 +277,7 @@ class TestFullProcessCycle:
 
             async def _noop():
                 pass
+
             swarm._process_scheduled_tasks = _noop
             swarm._process_external_events = _noop
             swarm._process_workflows = _noop
@@ -302,6 +307,7 @@ class TestFullProcessCycle:
 
             async def _noop():
                 pass
+
             swarm._process_scheduled_tasks = _noop
             swarm._process_external_events = _noop
             swarm._process_workflows = _noop
@@ -425,9 +431,7 @@ class TestRegistryHeartbeatIntegration:
         gs = get_supervisor()
         try:
             stale_actor = MagicMock()
-            stale_actor.last_activity = (
-                datetime.now(UTC) - timedelta(seconds=30)
-            ).isoformat()
+            stale_actor.last_activity = (datetime.now(UTC) - timedelta(seconds=30)).isoformat()
 
             gs.actors["alpha"] = stale_actor
 
@@ -474,6 +478,7 @@ class TestGracefulShutdown:
         swarm = AutonomousSwarm(no_infra=True)
         try:
             from heretek_swarm.actors.supervisor import ActorSupervisor
+
             swarm.supervisor = ActorSupervisor()
             swarm.event_mesh = None
             swarm.rag = None
@@ -502,6 +507,7 @@ class TestGracefulShutdown:
         swarm = AutonomousSwarm(no_infra=True)
         try:
             from heretek_swarm.actors.supervisor import ActorSupervisor
+
             swarm.supervisor = ActorSupervisor()
             swarm.event_mesh = None
             swarm.rag = None
@@ -543,8 +549,9 @@ class TestStatusResponseWithRealAgents:
             mock_instance.agent_name = "test-agent"
             mock_agent_cls.return_value = mock_instance
 
-            with patch("heretek_swarm.agents.agent_factory.build_agent_for",
-                       return_value=mock_instance):
+            with patch(
+                "heretek_swarm.agents.agent_factory.build_agent_for", return_value=mock_instance
+            ):
                 swarm = AutonomousSwarm(no_infra=True)
                 try:
                     await swarm.initialize()
@@ -591,8 +598,9 @@ class TestStatusResponseWithRealAgents:
             mock_instance.agent_name = "test-agent"
             mock_agent_cls.return_value = mock_instance
 
-            with patch("heretek_swarm.agents.agent_factory.build_agent_for",
-                       return_value=mock_instance):
+            with patch(
+                "heretek_swarm.agents.agent_factory.build_agent_for", return_value=mock_instance
+            ):
                 swarm = AutonomousSwarm(no_infra=True)
                 try:
                     await swarm.initialize()
@@ -628,6 +636,7 @@ class TestStatusResponseWithRealAgents:
                     if swarm.supervisor is not None:
                         await swarm.supervisor.terminate_all()
                     _cleanup_supervisors(swarm)
+
 
 # ===================================================================
 # TestDaemonSocketIPC (2 tests)
@@ -779,11 +788,13 @@ class TestJsonlEndToEnd:
         try:
             # Two sources: historian logs a pulse; "main_loop" logs a cycle
             eid1 = await historian.log_event(
-                event_type="steward_pulse", agent_id="steward",
+                event_type="steward_pulse",
+                agent_id="steward",
                 payload={"actors": 5},
             )
             eid2 = await historian.log_event(
-                event_type="cycle_complete", agent_id="main_loop",
+                event_type="cycle_complete",
+                agent_id="main_loop",
                 payload={"cycle": 1},
             )
 
@@ -817,7 +828,8 @@ class TestJsonlEndToEnd:
 
         # Enqueue without waiting
         await agent.log_event(
-            event_type="pre_cleanup", agent_id="test",
+            event_type="pre_cleanup",
+            agent_id="test",
             payload={"flush": True},
         )
         # Do NOT await the queue — clean up should drain it

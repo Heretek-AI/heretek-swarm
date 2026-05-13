@@ -40,6 +40,7 @@ logger = structlog.get_logger(__name__)
 
 class TraceState(Enum):
     """Trace lifecycle state."""
+
     UNSTARTED = "unstarted"
     ACTIVE = "active"
     ENDED = "ended"
@@ -47,6 +48,7 @@ class TraceState(Enum):
 
 class SpanStatus(Enum):
     """Span execution status."""
+
     UNSET = "unset"
     OK = "ok"
     ERROR = "error"
@@ -60,6 +62,7 @@ class SpanStatus(Enum):
 @dataclass
 class TracingConfig:
     """Configuration for distributed tracing."""
+
     service_name: str = "heretek-swarm"
     service_version: str = "0.1.0"
     exporter: str = "console"  # console, otlp
@@ -95,12 +98,14 @@ def init_tracing(config: TracingConfig | None = None) -> TracingConfig:
 
     _tracer_config = config or TracingConfig()
 
-    resource = Resource.create({
-        SERVICE_NAME: _tracer_config.service_name,
-        SERVICE_VERSION: _tracer_config.service_version,
-        "deployment.environment": os.getenv("ENVIRONMENT", "development"),
-        "heretek.swarm.node_id": os.getenv("NODE_ID", str(uuid.uuid4())),
-    })
+    resource = Resource.create(
+        {
+            SERVICE_NAME: _tracer_config.service_name,
+            SERVICE_VERSION: _tracer_config.service_version,
+            "deployment.environment": os.getenv("ENVIRONMENT", "development"),
+            "heretek.swarm.node_id": os.getenv("NODE_ID", str(uuid.uuid4())),
+        }
+    )
 
     sampler: Sampler = TraceIdRatioBased(_tracer_config.sample_rate)
 
@@ -237,6 +242,7 @@ def with_span(name: str) -> Callable:
         async def my_operation():
             ...
     """
+
     def decorator(func: Callable) -> Callable:
         @wraps(func)
         async def async_wrapper(*args, **kwargs):
@@ -265,6 +271,7 @@ def with_span(name: str) -> Callable:
                     raise
 
         import asyncio
+
         if asyncio.iscoroutinefunction(func):
             return async_wrapper
         return sync_wrapper
@@ -872,9 +879,7 @@ class InstrumentedAsyncClient:
 
                 duration_ms = (time.perf_counter() - start) * 1000
 
-                span.set_attribute(
-                    SpanAttributes.HTTP_STATUS_CODE, response.status_code
-                )
+                span.set_attribute(SpanAttributes.HTTP_STATUS_CODE, response.status_code)
                 span.set_status(
                     Status(StatusCode.OK)
                     if 200 <= response.status_code < 400

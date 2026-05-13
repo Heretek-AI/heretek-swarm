@@ -191,7 +191,8 @@ class OllamaEmbeddingProvider(EmbeddingProviderBase):
                 # Filter for embedding models (typically have "embed" in name)
                 all_models = [m.get("name", "") for m in data.get("models", [])]
                 embedding_models = [
-                    m for m in all_models
+                    m
+                    for m in all_models
                     if "embed" in m.lower() or m in ["nomic-embed-text", "mxbai-embed-large"]
                 ]
                 return embedding_models if embedding_models else all_models
@@ -209,6 +210,7 @@ class OllamaEmbeddingProvider(EmbeddingProviderBase):
         """Cleanup HTTP client."""
         if self._client and not self._client.is_closed:
             await self._client.aclose()
+
 
 # Import at module level for type annotation
 from heretek_swarm.infrastructure.otel import InstrumentedAsyncClient

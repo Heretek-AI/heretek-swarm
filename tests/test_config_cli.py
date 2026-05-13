@@ -183,16 +183,18 @@ class TestProviderCRUD:
     def test_set_default_provider(self, seeded_config: Path) -> None:
         """Setting a provider as default marks it and clears others."""
         # Add a second provider first
-        add_provider({
-            "id": "second-id-001",
-            "type": "openai",
-            "name": "Second Provider",
-            "baseUrl": "https://api.example.com",
-            "defaultModel": "gpt-4o",
-            "isEnabled": True,
-            "isDefault": False,
-            "priority": 50,
-        })
+        add_provider(
+            {
+                "id": "second-id-001",
+                "type": "openai",
+                "name": "Second Provider",
+                "baseUrl": "https://api.example.com",
+                "defaultModel": "gpt-4o",
+                "isEnabled": True,
+                "isDefault": False,
+                "priority": 50,
+            }
+        )
 
         # Set the second as default
         assert set_default_provider("second-id-001") is True
@@ -242,15 +244,17 @@ class TestValidateProvider:
         with a skip message."""
         with patch.dict(
             "heretek_swarm.cli.config_wizard.AVAILABLE_PROVIDERS",
-            {"custom": {
-                "id": "custom",
-                "type": "custom_protocol",
-                "name": "Custom",
-                "description": "Test",
-                "default_model": "test",
-                "requires_api_key": False,
-                "base_url": "http://localhost",
-            }},
+            {
+                "custom": {
+                    "id": "custom",
+                    "type": "custom_protocol",
+                    "name": "Custom",
+                    "description": "Test",
+                    "default_model": "test",
+                    "requires_api_key": False,
+                    "base_url": "http://localhost",
+                }
+            },
             clear=False,
         ):
             result = validate_provider("custom", None, "http://localhost", "test")
@@ -260,9 +264,7 @@ class TestValidateProvider:
     def test_missing_api_key_required_provider(self) -> None:
         """A provider that requires an API key returns invalid when key is
         missing."""
-        result = validate_provider(
-            "openai", None, "https://api.openai.com/v1", "gpt-4o"
-        )
+        result = validate_provider("openai", None, "https://api.openai.com/v1", "gpt-4o")
         assert result["valid"] is False
         assert "API key is required" in result["error"]
 
@@ -276,9 +278,7 @@ class TestValidateProvider:
         mock_response.json.return_value = {"models": [{"name": "llama3.2"}]}
         mock_client.get.return_value = mock_response
 
-        result = validate_provider(
-            "ollama", None, "http://localhost:11434", "llama3.2"
-        )
+        result = validate_provider("ollama", None, "http://localhost:11434", "llama3.2")
         assert result["valid"] is True
         assert "Connected" in result["message"]
 
@@ -288,11 +288,10 @@ class TestValidateProvider:
         mock_client = MagicMock()
         mock_client_cls.return_value.__enter__.return_value = mock_client
         from httpx import ConnectError
+
         mock_client.get.side_effect = ConnectError("Connection refused")
 
-        result = validate_provider(
-            "ollama", None, "http://localhost:11434", "llama3.2"
-        )
+        result = validate_provider("ollama", None, "http://localhost:11434", "llama3.2")
         assert result["valid"] is False
 
 
@@ -327,7 +326,8 @@ class TestConfigRemoveCommand:
     def test_remove_exact_id(self, runner: CliRunner, seeded_config: Path) -> None:
         """Removing by exact ID works with confirmation."""
         result = runner.invoke(
-            cli, ["config", "remove", "550e8400-e29b-41d4-a716-446655440000"],
+            cli,
+            ["config", "remove", "550e8400-e29b-41d4-a716-446655440000"],
             input="y\n",
         )
         assert result.exit_code == 0
@@ -336,7 +336,8 @@ class TestConfigRemoveCommand:
     def test_remove_partial_id(self, runner: CliRunner, seeded_config: Path) -> None:
         """Removing by partial ID (first 8+ chars) works."""
         result = runner.invoke(
-            cli, ["config", "remove", "550e8400"],
+            cli,
+            ["config", "remove", "550e8400"],
             input="y\n",
         )
         assert result.exit_code == 0
@@ -345,7 +346,8 @@ class TestConfigRemoveCommand:
     def test_remove_cancelled(self, runner: CliRunner, seeded_config: Path) -> None:
         """Removing is cancelled when the user says no."""
         result = runner.invoke(
-            cli, ["config", "remove", "550e8400-e29b-41d4-a716-446655440000"],
+            cli,
+            ["config", "remove", "550e8400-e29b-41d4-a716-446655440000"],
             input="n\n",
         )
         assert result.exit_code == 0
@@ -366,7 +368,8 @@ class TestConfigSetDefaultCommand:
     def test_set_default_exact(self, runner: CliRunner, seeded_config: Path) -> None:
         """Setting default by exact ID works."""
         result = runner.invoke(
-            cli, ["config", "set-default", "550e8400-e29b-41d4-a716-446655440000"],
+            cli,
+            ["config", "set-default", "550e8400-e29b-41d4-a716-446655440000"],
         )
         assert result.exit_code == 0
         assert "set as default" in result.output.lower()
@@ -426,16 +429,15 @@ class TestConfigValidateCommand:
         mock_client.get.return_value = mock_response
 
         result = runner.invoke(
-            cli, ["config", "validate", "550e8400"],
+            cli,
+            ["config", "validate", "550e8400"],
         )
         assert result.exit_code == 0
         assert "Local Ollama" in result.output
         # Should only validate one provider
         assert mock_client.get.call_count == 1
 
-    def test_validate_empty(
-        self, runner: CliRunner, temp_config_dir: Path
-    ) -> None:
+    def test_validate_empty(self, runner: CliRunner, temp_config_dir: Path) -> None:
         """Validating with no configured providers shows appropriate message."""
         result = runner.invoke(cli, ["config", "validate"])
         assert result.exit_code == 0
@@ -464,6 +466,7 @@ class TestConfigValidateCommand:
         mock_client = MagicMock()
         mock_client_cls.return_value.__enter__.return_value = mock_client
         from httpx import ConnectError
+
         mock_client.get.side_effect = ConnectError("Ollama not running")
 
         result = runner.invoke(cli, ["config", "validate"])
@@ -484,21 +487,22 @@ class TestConfigWizardCommand:
         """Returns CliRunner input for adding an Ollama provider via wizard."""
         # Selection of Ollama (3rd in list), enter URL, skip API key,
         # default model, skip validation, done adding
-        return "\n".join([
-            "3",         # Ollama
-            "",          # default URL
-            "",          # skip API key
-            "",          # default model
-            "n",         # skip validation
-            "n",         # don't add another
-        ])
+        return "\n".join(
+            [
+                "3",  # Ollama
+                "",  # default URL
+                "",  # skip API key
+                "",  # default model
+                "n",  # skip validation
+                "n",  # don't add another
+            ]
+        )
 
-    def test_wizard_adds_provider(
-        self, runner: CliRunner, temp_config_dir: Path
-    ) -> None:
+    def test_wizard_adds_provider(self, runner: CliRunner, temp_config_dir: Path) -> None:
         """Running the wizard and completing the flow adds a provider."""
         result = runner.invoke(
-            cli, ["config", "wizard"],
+            cli,
+            ["config", "wizard"],
             input=self._ollama_inputs(),
         )
         assert result.exit_code == 0
@@ -509,24 +513,22 @@ class TestConfigWizardCommand:
         assert len(providers) == 1
         assert providers[0]["type"] == "ollama"
 
-    def test_wizard_cancels_cleanly(
-        self, runner: CliRunner, temp_config_dir: Path
-    ) -> None:
+    def test_wizard_cancels_cleanly(self, runner: CliRunner, temp_config_dir: Path) -> None:
         """Cancelling the wizard at the provider selection prompt shows
         no providers configured and exits cleanly."""
         result = runner.invoke(
-            cli, ["config", "wizard"],
+            cli,
+            ["config", "wizard"],
             input="q\n",
         )
         assert result.exit_code == 0
         assert "No providers configured" in result.output
 
-    def test_wizard_shows_summary_commands(
-        self, runner: CliRunner, temp_config_dir: Path
-    ) -> None:
+    def test_wizard_shows_summary_commands(self, runner: CliRunner, temp_config_dir: Path) -> None:
         """After completing the wizard, summary shows management commands."""
         result = runner.invoke(
-            cli, ["config", "wizard"],
+            cli,
+            ["config", "wizard"],
             input=self._ollama_inputs(),
         )
         assert result.exit_code == 0
@@ -735,6 +737,7 @@ class TestConfigEdgeCases:
         from heretek_swarm.cli import (
             validate_provider as cli_vp,
         )
+
         # Smoke test — all imports resolved
         assert callable(cli_add)
         assert callable(cli_lcp)
@@ -746,16 +749,18 @@ class TestConfigEdgeCases:
 
     def test_list_shows_disabled_providers(self, seeded_config: Path) -> None:
         """Disabled providers still appear in the list."""
-        add_provider({
-            "id": "disabled-id",
-            "type": "openai",
-            "name": "Disabled Provider",
-            "baseUrl": "https://api.example.com",
-            "defaultModel": "gpt-4o",
-            "isEnabled": False,
-            "isDefault": False,
-            "priority": 99,
-        })
+        add_provider(
+            {
+                "id": "disabled-id",
+                "type": "openai",
+                "name": "Disabled Provider",
+                "baseUrl": "https://api.example.com",
+                "defaultModel": "gpt-4o",
+                "isEnabled": False,
+                "isDefault": False,
+                "priority": 99,
+            }
+        )
         providers = list_configured_providers()
         names = [p["name"] for p in providers]
         assert "Disabled Provider" in names

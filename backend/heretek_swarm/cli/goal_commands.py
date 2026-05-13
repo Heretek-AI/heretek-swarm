@@ -17,8 +17,10 @@ import structlog
 logger = structlog.get_logger("goal_cli")
 
 
-from heretek_swarm.goals.models import Goal
+from typing import TYPE_CHECKING
 
+if TYPE_CHECKING:
+    from heretek_swarm.goals.models import Goal
 
 
 def _goal_table_header() -> str:
@@ -40,8 +42,8 @@ async def _run_goal_propose() -> None:
     """Async helper: spin up swarm, propose a goal via Metis, persist, and display."""
     from heretek_swarm.goals.models import Goal
     from heretek_swarm.goals.store import FileGoalStore
-    from heretek_swarm.logging.config import setup_logging
     from heretek_swarm.runtime.main_loop import AutonomousSwarm
+    from heretek_swarm.swarm_logging.config import setup_logging
 
     setup_logging(json_output=False, include_caller_info=False)
 
@@ -171,11 +173,7 @@ def goal() -> None:
 
 @goal.command(
     "propose",
-    epilog=(
-        "\b\n"
-        "Examples:\n"
-        "  heretek-swarm goal propose\n"
-    ),
+    epilog=("\b\nExamples:\n  heretek-swarm goal propose\n"),
 )
 def goal_propose() -> None:
     """

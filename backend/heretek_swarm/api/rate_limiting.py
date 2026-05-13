@@ -27,6 +27,7 @@ try:
     from slowapi import Limiter
     from slowapi.errors import RateLimitExceeded
     from slowapi.util import get_remote_address
+
     SLOWAPI_AVAILABLE = True
 except ImportError:
     SLOWAPI_AVAILABLE = False
@@ -63,6 +64,7 @@ class InMemoryRateLimiter:
             (allowed, remaining, reset_seconds)
         """
         import asyncio
+
         if self._lock is None:
             self._lock = asyncio.Lock()
 
@@ -75,10 +77,7 @@ class InMemoryRateLimiter:
                 self._requests[key] = []
 
             # Clean old requests
-            self._requests[key] = [
-                t for t in self._requests[key]
-                if t > window_start
-            ]
+            self._requests[key] = [t for t in self._requests[key] if t > window_start]
 
             # Check limit
             current_count = len(self._requests[key])
@@ -102,10 +101,7 @@ class InMemoryRateLimiter:
         cutoff = now - max_age_seconds
 
         for key in list(self._requests.keys()):
-            self._requests[key] = [
-                t for t in self._requests[key]
-                if t > cutoff
-            ]
+            self._requests[key] = [t for t in self._requests[key] if t > cutoff]
             if not self._requests[key]:
                 del self._requests[key]
 
@@ -119,34 +115,26 @@ RATE_LIMITS = {
     # Health checks - high limit
     "/api/health": "600/minute",
     "/api/health/services": "120/minute",
-
     # Agent operations - moderate
     "/api/agents": "120/minute",
     "/api/agents/{agent_id}": "60/minute",
-
     # Memory operations - moderate
     "/api/memory": "120/minute",
     "/api/memory/search": "60/minute",
-
     # A2A messaging - high for real-time
     "/api/a2a/messages": "300/minute",
-
     # Provider CRUD - moderate
     "/api/v1/providers": "100/minute",
-
     # Consensus - moderate
     "/api/consensus": "60/minute",
     "/api/consensus/{consensus_id}/vote": "30/minute",
     "/api/consensus/{consensus_id}/aggregate": "10/minute",
     "/api/consensus/deliberation/{deliberation_id}/run_round": "20/minute",
-
     # LiteLLM metrics - lower (expensive)
     "/api/litellm/metrics": "30/minute",
-
     # RAG endpoints - moderate
     "/api/rag/query": "60/minute",
     "/api/rag/ingest": "30/minute",
-
     # Default for unmatched endpoints
     "default": "100/minute",
 }
@@ -348,7 +336,9 @@ def rate_limit(limit: str):
         async def my_endpoint():
             ...
     """
+
     def decorator(func):
         func._rate_limit = limit
         return func
+
     return decorator

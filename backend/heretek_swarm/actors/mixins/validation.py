@@ -11,6 +11,7 @@ Features:
 - Validation timeout protection
 - Circular validation prevention
 """
+
 import time
 from typing import Any
 
@@ -97,12 +98,14 @@ class ValidationMixin:
     def get_immutable_rules(cls) -> list[dict[str, str]]:
         """Get the list of immutable security rules (copied for safety)."""
         import copy
+
         return copy.deepcopy(cls.IMMUTABLE_RULES)
 
     @classmethod
     def get_baseline_config(cls) -> dict[str, object]:
         """Get the baseline initialization configuration (copied for safety)."""
         import copy
+
         return copy.deepcopy(cls.BASELINE_CONFIG)
 
     def __init__(self, *args, **kwargs):
@@ -110,7 +113,9 @@ class ValidationMixin:
 
         # ZERO-02: Validation configuration
         self._validation_timeout_ms: float = self._get_config_value("validation_timeout_ms", 10.0)
-        self._anomaly_threshold_std_dev: float = self._get_config_value("anomaly_threshold_std_dev", 3.0)
+        self._anomaly_threshold_std_dev: float = self._get_config_value(
+            "anomaly_threshold_std_dev", 3.0
+        )
 
         # Behavioral baseline tracking
         self._behavioral_baseline: dict[str, Any] = {}
@@ -389,15 +394,17 @@ class ValidationMixin:
         """Update behavioral history with new data point."""
         metrics = self._extract_metrics(input_data)
 
-        self._behavioral_history.append({
-            "operation": operation,
-            "metrics": metrics,
-            "timestamp": time.time(),
-        })
+        self._behavioral_history.append(
+            {
+                "operation": operation,
+                "metrics": metrics,
+                "timestamp": time.time(),
+            }
+        )
 
         # Prune history if needed
         if len(self._behavioral_history) > self._max_history_size:
-            self._behavioral_history = self._behavioral_history[-self._max_history_size:]
+            self._behavioral_history = self._behavioral_history[-self._max_history_size :]
 
         # Update baseline periodically (every 100 data points)
         if len(self._behavioral_history) % 100 == 0:

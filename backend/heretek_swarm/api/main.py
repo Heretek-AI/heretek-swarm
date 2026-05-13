@@ -26,10 +26,10 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from heretek_swarm.agents.agent_factory import build_agent_for
-from heretek_swarm.logging.config import logger as logging_logger
+from heretek_swarm.swarm_logging.config import logger as logging_logger
 
 # Initialize logging with JSON output for Loki/Promtail
-from heretek_swarm.logging.config import setup_logging
+from heretek_swarm.swarm_logging.config import setup_logging
 
 # Setup structured JSON logging
 log_level = os.getenv("LOG_LEVEL", "INFO").upper()
@@ -163,7 +163,11 @@ async def _init_config_service() -> None:
 
         try:
             seed_result = await config_service.seed_from_env()
-            if seed_result.get("providers_created") or seed_result.get("embedding_providers_created") or seed_result.get("configs_created"):
+            if (
+                seed_result.get("providers_created")
+                or seed_result.get("embedding_providers_created")
+                or seed_result.get("configs_created")
+            ):
                 logger.info("env_seeding_complete", **seed_result)
             else:
                 logger.info("env_seeding_skipped", reason="no_env_vars_set")
@@ -365,10 +369,12 @@ async def _init_nats_bridge() -> None:
             ) -> None:
                 """Handle external call event from NATS and broadcast to WebSocket clients."""
                 try:
-                    await websockets.manager.broadcast_dashboard({
-                        "type": "external_call",
-                        **data,
-                    })
+                    await websockets.manager.broadcast_dashboard(
+                        {
+                            "type": "external_call",
+                            **data,
+                        }
+                    )
                     logger.debug(
                         "broadcast_external_call_from_nats",
                         subject=subject,
@@ -405,7 +411,9 @@ async def _init_nats_bridge() -> None:
 
             await _nats_mesh.subscribe("swarm.metrics.consciousness", consciousness_event_handler)
 
-            logger.info("NATS subscriptions registered for A2A events, external calls, and consciousness events")
+            logger.info(
+                "NATS subscriptions registered for A2A events, external calls, and consciousness events"
+            )
         else:
             logger.warning("NATS EventMesh not available, WebSocket bridge using fallback")
     except Exception as e:
@@ -420,8 +428,7 @@ async def _init_spa_mount(app: FastAPI) -> None:
     # Calculate project root: backend/heretek_swarm/api/main.py -> project root (4 levels up)
     project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
     dist_path = os.environ.get(
-        "DASHBOARD_DIST_PATH",
-        os.path.join(project_root, "dashboard", "frontend", "dist")
+        "DASHBOARD_DIST_PATH", os.path.join(project_root, "dashboard", "frontend", "dist")
     )
 
     if os.path.isdir(dist_path):
@@ -1240,8 +1247,7 @@ async def root():
     # Calculate project root: backend/heretek_swarm/api/main.py -> project root (4 levels up)
     project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
     dist_path = os.environ.get(
-        "DASHBOARD_DIST_PATH",
-        os.path.join(project_root, "dashboard", "frontend", "dist")
+        "DASHBOARD_DIST_PATH", os.path.join(project_root, "dashboard", "frontend", "dist")
     )
     index_path = os.path.join(dist_path, "index.html")
 
@@ -1271,8 +1277,7 @@ async def serve_spa(path: str):
     # Calculate project root: backend/heretek_swarm/api/main.py -> project root (4 levels up)
     project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
     dist_path = os.environ.get(
-        "DASHBOARD_DIST_PATH",
-        os.path.join(project_root, "dashboard", "frontend", "dist")
+        "DASHBOARD_DIST_PATH", os.path.join(project_root, "dashboard", "frontend", "dist")
     )
     index_path = os.path.join(dist_path, "index.html")
 

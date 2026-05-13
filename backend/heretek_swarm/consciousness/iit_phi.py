@@ -52,6 +52,7 @@ class CauseEffectStructure:
         phi_total: Total integrated information
         timestamp: Creation timestamp
     """
+
     element_id: str
     cause_repertoire: dict[str, float] = field(default_factory=dict)
     effect_repertoire: dict[str, float] = field(default_factory=dict)
@@ -87,6 +88,7 @@ class SystemPartition:
         information_loss: Information loss due to partitioning
         is_mip: Whether this is the minimum information partition
     """
+
     partition_id: str
     parts: list[set[str]] = field(default_factory=list)
     information_loss: float = 0.0
@@ -119,6 +121,7 @@ class PhiResult:
         timestamp: Calculation timestamp
         metadata: Additional metadata
     """
+
     system_id: str
     phi: float = 0.0
     phi_max: float = 0.0
@@ -284,11 +287,13 @@ class PhiCalculator:
             element_phis.append(ces.phi_total)
 
         # Find Minimum Information Partition
-        mip = self.find_mip({
-            "elements": elements,
-            "connectivity": connectivity,
-            "current_state": current_state,
-        })
+        mip = self.find_mip(
+            {
+                "elements": elements,
+                "connectivity": connectivity,
+                "current_state": current_state,
+            }
+        )
 
         # Calculate system Phi (sum of element phis under MIP)
         # Apply MIP information loss factor
@@ -394,7 +399,9 @@ class PhiCalculator:
                             errors.append(f"Connection weight must be numeric: {source}->{target}")
                             break
                         if weight < 0 or weight > 1:
-                            warnings.append(f"Connection weight outside [0,1] range: {source}->{target}={weight}")
+                            warnings.append(
+                                f"Connection weight outside [0,1] range: {source}->{target}={weight}"
+                            )
 
         # Validate current state
         current_state = structure.get("current_state")
@@ -407,8 +414,10 @@ class PhiCalculator:
         if not safety_result.valid:
             errors.extend(safety_result.errors)
 
-        severity = ValidationSeverity.CRITICAL if errors else (
-            ValidationSeverity.WARNING if warnings else ValidationSeverity.INFO
+        severity = (
+            ValidationSeverity.CRITICAL
+            if errors
+            else (ValidationSeverity.WARNING if warnings else ValidationSeverity.INFO)
         )
 
         return ValidationResult(
@@ -997,8 +1006,6 @@ class PhiCalculator:
             "calculation_count": self._calculation_count,
             "cache_size": len(self._cache),
             "last_calculation_time": (
-                self._last_calculation_time.isoformat()
-                if self._last_calculation_time
-                else None
+                self._last_calculation_time.isoformat() if self._last_calculation_time else None
             ),
         }

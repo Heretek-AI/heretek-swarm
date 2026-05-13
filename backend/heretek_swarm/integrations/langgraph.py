@@ -35,6 +35,7 @@ try:
     from langgraph.checkpoint.memory import MemorySaver
     from langgraph.graph import END, StateGraph
     from langgraph.prebuilt import ToolNode
+
     LANGGRAPH_AVAILABLE = True
 except ImportError:
     LANGGRAPH_AVAILABLE = False
@@ -53,6 +54,7 @@ except ImportError:
 
 class GraphState(StrEnum):
     """Graph execution states."""
+
     INITIALIZED = "initialized"
     RUNNING = "running"
     WAITING = "waiting"
@@ -63,6 +65,7 @@ class GraphState(StrEnum):
 
 class NodeStatus(StrEnum):
     """Node execution status."""
+
     PENDING = "pending"
     RUNNING = "running"
     COMPLETED = "completed"
@@ -84,6 +87,7 @@ class GraphNode:
         status: Current node status
         metadata: Node metadata
     """
+
     node_id: str
     name: str
     agent_id: str | None = None
@@ -122,6 +126,7 @@ class GraphEdge:
         condition: Optional condition for edge traversal
         weight: Edge weight for prioritization
     """
+
     edge_id: str
     source: str
     target: str
@@ -154,6 +159,7 @@ class GraphCheckpoint:
         timestamp: Checkpoint timestamp
         thread_id: Optional thread ID for multi-threaded execution
     """
+
     checkpoint_id: str
     graph_id: str
     state: dict[str, Any]
@@ -188,6 +194,7 @@ class GraphExecutionResult:
         execution_time_ms: Total execution time
         checkpoints: Checkpoints created during execution
     """
+
     graph_id: str
     status: GraphState
     output: dict[str, Any]
@@ -264,7 +271,9 @@ class LangGraphAdapter:
 
         logger.info(
             "langgraph_adapter_initialized",
-            checkpoint_saver=type(self.checkpoint_saver).__name__ if self.checkpoint_saver else None,
+            checkpoint_saver=type(self.checkpoint_saver).__name__
+            if self.checkpoint_saver
+            else None,
             state_sync_enabled=enable_state_sync,
         )
 
@@ -321,6 +330,7 @@ class LangGraphAdapter:
 
         class GraphStateSchema(TypedDict):
             """Dynamic state schema for graph."""
+
             messages: list[Any]
             agent_states: dict[str, Any]
             context: dict[str, Any]
@@ -438,7 +448,9 @@ class LangGraphAdapter:
         if LANGGRAPH_AVAILABLE:
             if condition:
                 # Conditional edge
-                self.graphs[graph_id].add_conditional_edges(source, condition, {True: target, False: source})
+                self.graphs[graph_id].add_conditional_edges(
+                    source, condition, {True: target, False: source}
+                )
             else:
                 self.graphs[graph_id].add_edge(source, target)
 
@@ -670,8 +682,7 @@ class LangGraphAdapter:
         checkpoint_id = f"checkpoint_{graph_id}_{uuid.uuid4().hex[:8]}"
 
         node_states = {
-            node_id: node.status
-            for node_id, node in self.graph_nodes.get(graph_id, {}).items()
+            node_id: node.status for node_id, node in self.graph_nodes.get(graph_id, {}).items()
         }
 
         checkpoint = GraphCheckpoint(
@@ -690,7 +701,7 @@ class LangGraphAdapter:
 
         # Trim old checkpoints
         if len(self.checkpoints[graph_id]) > self.max_checkpoints:
-            self.checkpoints[graph_id] = self.checkpoints[graph_id][-self.max_checkpoints:]
+            self.checkpoints[graph_id] = self.checkpoints[graph_id][-self.max_checkpoints :]
 
         logger.debug("checkpoint_created", checkpoint_id=checkpoint_id)
         return checkpoint

@@ -39,6 +39,7 @@ def make_response(
 # Pricing accuracy — spot-check known values
 # ---------------------------------------------------------------------------
 
+
 def test_gpt4o_pricing() -> None:
     """gpt-4o: $2.50/1K input, $10/1K output."""
     garage = make_garage()
@@ -60,7 +61,9 @@ def test_gpt4o_mini_pricing() -> None:
 def test_claude_sonnet_pricing() -> None:
     """claude-3-5-sonnet: $3/1K input, $15/1K output."""
     garage = make_garage()
-    resp = make_response(prompt_tokens=500, completion_tokens=200, model="claude-3-5-sonnet-20241022")
+    resp = make_response(
+        prompt_tokens=500, completion_tokens=200, model="claude-3-5-sonnet-20241022"
+    )
     cost = garage._calculate_cost(resp, resp.model)
     # 0.5 * 3 + 0.2 * 15 = 1.50 + 3.00 = 4.50
     assert cost == 4.50, f"Expected 4.50, got {cost}"
@@ -95,6 +98,7 @@ def test_o1_preview_pricing() -> None:
 # Substring matching — specificity ordering
 # ---------------------------------------------------------------------------
 
+
 def test_substring_not_matches_shorter() -> None:
     """'gpt-4o-mini' must NOT match the 'gpt-4o' row."""
     garage = make_garage()
@@ -107,6 +111,7 @@ def test_substring_not_matches_shorter() -> None:
 # ---------------------------------------------------------------------------
 # Local / free models
 # ---------------------------------------------------------------------------
+
 
 def test_llama_is_zero_cost() -> None:
     """llama* models cost $0."""
@@ -142,6 +147,7 @@ def test_exact_full_model_name() -> None:
 # Edge cases
 # ---------------------------------------------------------------------------
 
+
 def test_zero_tokens_zero_cost() -> None:
     """Both prompt and completion tokens at zero should cost nothing."""
     garage = make_garage()
@@ -159,7 +165,9 @@ def test_empty_usage_zero_cost() -> None:
 def test_no_usage_key_zero_cost() -> None:
     """When usage dict lacks prompt_tokens/completion_tokens, cost must be 0.0."""
     garage = make_garage()
-    resp = LLMResponse(content="", model="gpt-4o", provider=ProviderType.OLLAMA, usage={"total_tokens": 10})
+    resp = LLMResponse(
+        content="", model="gpt-4o", provider=ProviderType.OLLAMA, usage={"total_tokens": 10}
+    )
     assert garage._calculate_cost(resp, resp.model) == 0.0
 
 
@@ -175,6 +183,7 @@ def test_partial_tokens_rounding() -> None:
 # ---------------------------------------------------------------------------
 # Integration: _calculate_cost is wired into garage.complete()
 # ---------------------------------------------------------------------------
+
 
 def test_cost_is_set_on_response() -> None:
     """When a provider returns usage, the cost field must be populated."""

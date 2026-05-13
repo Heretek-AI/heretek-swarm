@@ -234,7 +234,8 @@ class TestSelfLoop:
     def test_self_loop_error_has_node_and_edge_id(self):
         result = validate_workflow(_self_loop_workflow())
         loop_error = next(
-            e for e in result.errors
+            e
+            for e in result.errors
             if e.code == ErrorCodes.INVALID_EDGE_CONNECTION and "Self-loop" in e.message
         )
         assert loop_error.node_id == "n1"
@@ -277,9 +278,7 @@ class TestDisconnectedNode:
 
     def test_disconnected_node_id_reported(self):
         result = validate_workflow(_disconnected_workflow())
-        disc_error = next(
-            e for e in result.errors if e.code == ErrorCodes.DISCONNECTED_NODE
-        )
+        disc_error = next(e for e in result.errors if e.code == ErrorCodes.DISCONNECTED_NODE)
         assert disc_error.node_id == "c"
 
     def test_single_node_not_flagged(self):
@@ -424,9 +423,7 @@ class TestComplexCycle:
 
     def test_complex_cycle_error_message_contains_path(self):
         result = validate_workflow(_complex_cycle_workflow())
-        cycle_error = next(
-            e for e in result.errors if e.code == ErrorCodes.CIRCULAR_DEPENDENCY
-        )
+        cycle_error = next(e for e in result.errors if e.code == ErrorCodes.CIRCULAR_DEPENDENCY)
         # Message should show the cycle path (e.g. "A -> B -> C -> A")
         assert "A" in cycle_error.message
         assert "->" in cycle_error.message

@@ -274,7 +274,9 @@ async def update_llm_provider(
         provider_type=provider_type,
         base_url=body.baseUrl if body.baseUrl is not None else existing.base_url,
         api_key=body.apiKey if body.apiKey is not None else existing.api_key,
-        default_model=body.defaultModel if body.defaultModel is not None else existing.default_model,
+        default_model=body.defaultModel
+        if body.defaultModel is not None
+        else existing.default_model,
         available_models=body.models if body.models is not None else existing.available_models,
         is_enabled=body.isEnabled if body.isEnabled is not None else existing.is_enabled,
         is_default=body.isDefault if body.isDefault is not None else existing.is_default,
@@ -450,9 +452,7 @@ async def update_embedding_provider(
 
 
 @router.delete("/embedding/{provider_id}")
-async def delete_embedding_provider(
-    request: Request, provider_id: str
-) -> dict[str, Any]:
+async def delete_embedding_provider(request: Request, provider_id: str) -> dict[str, Any]:
     """Remove an embedding provider by id."""
     t0 = time.time()
     _normalise_id(provider_id, "embedding")
@@ -512,7 +512,9 @@ async def test_embedding_provider(request: Request, provider_id: str) -> dict[st
             "error": None if reachable else f"HTTP {resp.status_code}",
         }
     except Exception as e:
-        latency_ms = round((time.time() - t0 - 0.001) * 1000, 2)  # rough, excluding routing overhead
+        latency_ms = round(
+            (time.time() - t0 - 0.001) * 1000, 2
+        )  # rough, excluding routing overhead
         result = {
             "reachable": False,
             "latency_ms": latency_ms,

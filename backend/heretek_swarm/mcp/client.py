@@ -344,9 +344,7 @@ class MCPClientManager:
 
         # Unregister proxied tools
         tools_to_remove = [
-            tool_name
-            for tool_name, srv_id in self._proxied_tools.items()
-            if srv_id == server_id
+            tool_name for tool_name, srv_id in self._proxied_tools.items() if srv_id == server_id
         ]
         for tool_name in tools_to_remove:
             self._local_registry.unregister_tool(tool_name)
@@ -455,9 +453,5 @@ class MCPClientManager:
             List of tool names
         """
         if server_id:
-            return [
-                name
-                for name, srv_id in self._proxied_tools.items()
-                if srv_id == server_id
-            ]
+            return [name for name, srv_id in self._proxied_tools.items() if srv_id == server_id]
         return list(self._proxied_tools.keys())

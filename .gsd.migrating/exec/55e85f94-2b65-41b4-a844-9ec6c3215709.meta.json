@@ -1,0 +1,18 @@
+{
+  "id": "55e85f94-2b65-41b4-a844-9ec6c3215709",
+  "runtime": "bash",
+  "purpose": "Check what Docker Desktop setup looks like",
+  "script_chars": 411,
+  "started_at": "2026-05-13T00:42:39.730Z",
+  "finished_at": "2026-05-13T00:42:40.097Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 367,
+  "stdout_bytes": 836,
+  "stderr_bytes": 0,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\55e85f94-2b65-41b4-a844-9ec6c3215709.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\55e85f94-2b65-41b4-a844-9ec6c3215709.stderr"
+}

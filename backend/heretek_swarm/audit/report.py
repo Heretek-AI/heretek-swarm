@@ -8,6 +8,7 @@ from dataclasses import dataclass
 @dataclass
 class AuditFinding:
     """A single audit finding."""
+
     file: str
     line: int
     pattern_name: str

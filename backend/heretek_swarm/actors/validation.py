@@ -31,7 +31,6 @@ from heretek_swarm.actors.mixins.validation import ValidationMixin
 _TASK_DESCRIPTION = "Task description"
 
 
-
 # =============================================================================
 # Behavioral Baseline Initialization - Static Rules Bootstrap
 # =============================================================================

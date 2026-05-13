@@ -442,7 +442,7 @@ class CoderAgent(
             self._active_debugs.discard(session_id)
 
             return {
-                "status": "success",
+                "result": "success",
                 "session_id": session_id,
                 "root_cause": session.root_cause,
                 "fix": session.fix,

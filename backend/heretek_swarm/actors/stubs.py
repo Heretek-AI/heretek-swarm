@@ -28,6 +28,7 @@ from typing import Any
 @dataclass
 class _StubAccessProfile:
     """Minimal stand-in for MemoryAccessProfile."""
+
     memory_id: str = ""
     access_count: int = 0
     access_timestamps: list[str] = field(default_factory=list)
@@ -44,6 +45,7 @@ class _StubAccessProfile:
 @dataclass
 class _StubAccessStatistics:
     """Minimal stand-in for AccessStatistics."""
+
     total_accesses: int = 0
     unique_memories: int = 0
     hot_count: int = 0
@@ -81,6 +83,7 @@ class _StubAccessStatistics:
 @dataclass
 class _StubMessageAnalysis:
     """Minimal stand-in for MessageAnalysis."""
+
     message_id: str = ""
     sender: str = ""
     recipient: str = ""
@@ -95,6 +98,7 @@ class _StubMessageAnalysis:
 @dataclass
 class _StubExtractedPattern:
     """Minimal stand-in for ExtractedPattern."""
+
     pattern_id: str = ""
     pattern_type: str = ""
     content: dict[str, Any] = field(default_factory=dict)
@@ -106,6 +110,7 @@ class _StubExtractedPattern:
 @dataclass
 class _StubTribunalCase:
     """Minimal stand-in for TribunalCase."""
+
     case_id: str = ""
     original_decision_id: str = ""
     original_consensus_id: str = ""
@@ -122,6 +127,7 @@ class _StubTribunalCase:
 @dataclass
 class _StubTribunalEvidence:
     """Minimal stand-in for TribunalEvidence."""
+
     evidence_id: str = ""
     case_id: str = ""
     agent_id: str = ""
@@ -134,6 +140,7 @@ class _StubTribunalEvidence:
 @dataclass
 class _StubTribunalRuling:
     """Minimal stand-in for TribunalRuling."""
+
     ruling_id: str = ""
     case_id: str = ""
     ruling_type: str = ""
@@ -147,6 +154,7 @@ class _StubTribunalRuling:
 @dataclass
 class _StubDeliberationRound:
     """Minimal stand-in for DeliberationRound."""
+
     round_number: int = 0
     positions: dict[str, Any] = field(default_factory=dict)
     arguments: list[dict[str, Any]] = field(default_factory=list)
@@ -197,9 +205,7 @@ class StubAccessAnalyzer:
         if profile.first_access is None:
             profile.first_access = now
         profile.last_access = now
-        profile.access_types[access_type] = (
-            profile.access_types.get(access_type, 0) + 1
-        )
+        profile.access_types[access_type] = profile.access_types.get(access_type, 0) + 1
         if agent_id:
             profile.agents_accessed.add(agent_id)
         if session_id:
@@ -265,11 +271,7 @@ class StubPatternExtractor:
         pattern_types: list[Any] | None = None,
     ) -> list[_StubExtractedPattern]:
         """Return validated patterns that meet confidence threshold."""
-        return [
-            p
-            for p in self._validated_patterns.values()
-            if p.confidence >= 0.7
-        ]
+        return [p for p in self._validated_patterns.values() if p.confidence >= 0.7]
 
     def register_extraction_hook(self, hook: Any) -> None:
         """Register a post-extraction hook (no-op in stub)."""
@@ -338,9 +340,7 @@ class StubTribunal:
             case_id=case_id,
             agent_id=agent_id,
             content=content,
-            evidence_type=str(
-                getattr(evidence_type, "value", evidence_type) or "document"
-            ),
+            evidence_type=str(getattr(evidence_type, "value", evidence_type) or "document"),
             source=source,
             reliability_score=reliability_score,
         )
@@ -555,12 +555,14 @@ class StubEventMesh:
         **kwargs: Any,
     ) -> None:
         """Store a published message for test inspection."""
-        self._published.append({
-            "subject": subject,
-            "data": data,
-            "kwargs": kwargs,
-            "timestamp": datetime.now(UTC).isoformat(),
-        })
+        self._published.append(
+            {
+                "subject": subject,
+                "data": data,
+                "kwargs": kwargs,
+                "timestamp": datetime.now(UTC).isoformat(),
+            }
+        )
 
     async def subscribe(
         self,
@@ -570,11 +572,13 @@ class StubEventMesh:
     ) -> str:
         """Register a stub subscription. Returns subscription ID."""
         sub_id = f"stub_sub_{len(self._subscriptions) + 1}"
-        self._subscriptions.setdefault(subject, []).append({
-            "id": sub_id,
-            "handler": handler,
-            "kwargs": kwargs,
-        })
+        self._subscriptions.setdefault(subject, []).append(
+            {
+                "id": sub_id,
+                "handler": handler,
+                "kwargs": kwargs,
+            }
+        )
         return sub_id
 
     async def request(
@@ -590,11 +594,7 @@ class StubEventMesh:
 
     def get_subscription_ids(self) -> set[str]:
         """Return all registered subscription IDs."""
-        return {
-            sub["id"]
-            for subs in self._subscriptions.values()
-            for sub in subs
-        }
+        return {sub["id"] for subs in self._subscriptions.values() for sub in subs}
 
     def client_count(self) -> int:
         """Return stub client count."""
@@ -607,23 +607,27 @@ class StubEventMesh:
         **kwargs: Any,
     ) -> None:
         """Store a JSON-serialized message for test inspection."""
-        self._published.append({
-            "subject": subject,
-            "data": data,
-            "kwargs": kwargs,
-            "timestamp": datetime.now(UTC).isoformat(),
-        })
+        self._published.append(
+            {
+                "subject": subject,
+                "data": data,
+                "kwargs": kwargs,
+                "timestamp": datetime.now(UTC).isoformat(),
+            }
+        )
 
     async def broadcast_json(
         self,
         data: dict[str, Any],
     ) -> None:
         """Store a broadcast message for test inspection."""
-        self._published.append({
-            "subject": "__broadcast__",
-            "data": data,
-            "timestamp": datetime.now(UTC).isoformat(),
-        })
+        self._published.append(
+            {
+                "subject": "__broadcast__",
+                "data": data,
+                "timestamp": datetime.now(UTC).isoformat(),
+            }
+        )
 
 
 # ---------------------------------------------------------------------------

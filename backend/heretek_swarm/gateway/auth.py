@@ -58,15 +58,13 @@ def get_api_key_from_env() -> str:
         logger.warning(
             "api_key_generated_development",
             message="Set HERETEK_API_KEY environment variable",
-            key_prefix=key[:10] + "..."
+            key_prefix=key[:10] + "...",
         )
 
     return key
 
 
-async def verify_auth(
-    credentials: HTTPAuthorizationCredentials | None = Security(security)
-) -> str:
+async def verify_auth(credentials: HTTPAuthorizationCredentials | None = Security(security)) -> str:
     """
     Verify Bearer token authentication.
 
@@ -93,10 +91,7 @@ async def verify_auth(
 
     # Validate token
     if credentials.credentials != expected_key:
-        logger.warning(
-            "auth_invalid_token",
-            provided_prefix=credentials.credentials[:10] + "..."
-        )
+        logger.warning("auth_invalid_token", provided_prefix=credentials.credentials[:10] + "...")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid API key",
@@ -108,7 +103,7 @@ async def verify_auth(
 
 
 async def optional_auth(
-    credentials: HTTPAuthorizationCredentials | None = Security(security)
+    credentials: HTTPAuthorizationCredentials | None = Security(security),
 ) -> str | None:
     """
     Optional authentication - returns None if no credentials.

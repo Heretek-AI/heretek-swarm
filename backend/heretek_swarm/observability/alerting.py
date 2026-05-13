@@ -32,6 +32,7 @@ import structlog
 
 logger = structlog.get_logger("alerting")
 
+
 # Alert severity levels
 class AlertSeverity(StrEnum):
     CRITICAL = "critical"
@@ -49,6 +50,7 @@ class AlertStatus(StrEnum):
 @dataclass
 class Alert:
     """Represents an alert in the system."""
+
     alert_id: str = field(default_factory=lambda: str(uuid.uuid4()))
     severity: AlertSeverity = AlertSeverity.MEDIUM
     title: str = ""
@@ -89,7 +91,9 @@ class AlertManager:
         self._alert_history: list[Alert] = []
         self._pagerduty_enabled = bool(os.getenv("PAGERDUTY_API_KEY"))
         self._opsgenie_enabled = bool(os.getenv("OPSGENIE_API_KEY"))
-        self._integration = os.getenv("ALERT_INTEGRATION", "none")  # pagerduty, opsgenie, both, none
+        self._integration = os.getenv(
+            "ALERT_INTEGRATION", "none"
+        )  # pagerduty, opsgenie, both, none
 
     async def send_alert(self, alert: Alert) -> bool:
         """Send an alert through configured integration."""
@@ -118,7 +122,9 @@ class AlertManager:
         try:
             import aiohttp
 
-            pd_urgency = "high" if alert.severity in (AlertSeverity.CRITICAL, AlertSeverity.HIGH) else "low"
+            pd_urgency = (
+                "high" if alert.severity in (AlertSeverity.CRITICAL, AlertSeverity.HIGH) else "low"
+            )
 
             payload = {
                 "routing_key": os.getenv("PAGERDUTY_API_KEY"),
@@ -131,15 +137,18 @@ class AlertManager:
                         "description": alert.description,
                         "alert_id": alert.alert_id,
                         "metadata": alert.metadata,
-                    }
-                }
+                    },
+                },
             }
 
-            async with aiohttp.ClientSession() as session, session.post(
-                "https://events.pagerduty.com/v2/enqueue",
-                json=payload,
-                headers={"Content-Type": "application/json"},
-            ) as resp:
+            async with (
+                aiohttp.ClientSession() as session,
+                session.post(
+                    "https://events.pagerduty.com/v2/enqueue",
+                    json=payload,
+                    headers={"Content-Type": "application/json"},
+                ) as resp,
+            ):
                 if resp.status == 202:
                     logger.info("pagerduty_alert_sent", alert_id=alert.alert_id)
                     return True
@@ -154,9 +163,15 @@ class AlertManager:
         try:
             import aiohttp
 
-            opsgenie_priority = "P1" if alert.severity == AlertSeverity.CRITICAL else \
-                              "P2" if alert.severity == AlertSeverity.HIGH else \
-                              "P3" if alert.severity == AlertSeverity.MEDIUM else "P4"
+            opsgenie_priority = (
+                "P1"
+                if alert.severity == AlertSeverity.CRITICAL
+                else "P2"
+                if alert.severity == AlertSeverity.HIGH
+                else "P3"
+                if alert.severity == AlertSeverity.MEDIUM
+                else "P4"
+            )
 
             payload = {
                 "message": alert.title,
@@ -167,7 +182,7 @@ class AlertManager:
                     "alert_id": alert.alert_id,
                     "source": alert.source,
                     **alert.metadata,
-                }
+                },
             }
 
             headers = {
@@ -175,11 +190,14 @@ class AlertManager:
                 "Authorization": f"GenieKey {os.getenv('OPSGENIE_API_KEY')}",
             }
 
-            async with aiohttp.ClientSession() as session, session.post(
-                "https://api.opsgenie.com/v2/alerts",
-                json=payload,
-                headers=headers,
-            ) as resp:
+            async with (
+                aiohttp.ClientSession() as session,
+                session.post(
+                    "https://api.opsgenie.com/v2/alerts",
+                    json=payload,
+                    headers=headers,
+                ) as resp,
+            ):
                 if resp.status == 202:
                     logger.info("opsgenie_alert_sent", alert_id=alert.alert_id)
                     return True
@@ -224,7 +242,11 @@ class AlertManager:
         source: str,
     ) -> Alert | None:
         """Check a value against threshold and alert if exceeded."""
-        if (check_type == "above" and value > threshold) or (check_type == "below" and value < threshold) or (check_type == "equals" and abs(value - threshold) < 0.001):
+        if (
+            (check_type == "above" and value > threshold)
+            or (check_type == "below" and value < threshold)
+            or (check_type == "equals" and abs(value - threshold) < 0.001)
+        ):
             pass  # Alert
         else:
             return None  # No alert needed

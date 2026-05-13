@@ -94,7 +94,9 @@ def build_tools_list_dictionary(
         schemas.append(schema)
 
     if not schemas:
-        logger.warning("agent_tools_schema_empty", message="No MCP tools converted to OpenAI schemas")
+        logger.warning(
+            "agent_tools_schema_empty", message="No MCP tools converted to OpenAI schemas"
+        )
 
     logger.debug("agent_tools_schema_built", tool_count=len(schemas))
     return schemas

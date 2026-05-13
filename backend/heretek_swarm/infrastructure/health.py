@@ -29,6 +29,7 @@ logger = structlog.get_logger("infrastructure.health")
 
 class HealthCheckResult(NamedTuple):
     """Result of an infrastructure health check."""
+
     service: InfrastructureService
     status: HealthStatus
     latency_ms: float

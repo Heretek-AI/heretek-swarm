@@ -1,0 +1,6 @@
+=== Check 1: M008-SUMMARY.md exists ===
+PASS: .gsd/milestones/M008/M008-SUMMARY.md exists
+
+=== Check 2: grep count for S05/verification/pytest/ruff ===
+Match count: 
+FAIL

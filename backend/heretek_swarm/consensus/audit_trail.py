@@ -301,22 +301,23 @@ class ConsensusAuditTrail:
 
         # Queue for JSONL persistence in --no-infra mode
         if self.storage_backend == "jsonl":
-            self._record_to_jsonl({
-                "record_type": "decision",
-                "decision_id": decision_id,
-                "consensus_id": consensus_id,
-                "proposal": proposal,
-                "decision": decision,
-                "confidence": confidence,
-                "participants": participants or [],
-                "reasoning_summary": reasoning,
-                "metadata": metadata or {},
-                "timestamp": record.start_time,
-            })
+            self._record_to_jsonl(
+                {
+                    "record_type": "decision",
+                    "decision_id": decision_id,
+                    "consensus_id": consensus_id,
+                    "proposal": proposal,
+                    "decision": decision,
+                    "confidence": confidence,
+                    "participants": participants or [],
+                    "reasoning_summary": reasoning,
+                    "metadata": metadata or {},
+                    "timestamp": record.start_time,
+                }
+            )
 
         logger.info(
-            f"Decision recorded: {decision_id} -> {decision} "
-            f"(confidence: {confidence:.2f})"
+            f"Decision recorded: {decision_id} -> {decision} (confidence: {confidence:.2f})"
         )
         return record
 
@@ -379,22 +380,21 @@ class ConsensusAuditTrail:
 
         # Queue for JSONL persistence in --no-infra mode
         if self.storage_backend == "jsonl":
-            self._record_to_jsonl({
-                "record_type": "vote",
-                "vote_id": vote_id,
-                "consensus_id": consensus_id,
-                "agent_id": agent_id,
-                "decision": decision,
-                "confidence": confidence,
-                "reasoning": reasoning,
-                "metadata": metadata or {},
-                "timestamp": vote.timestamp,
-            })
+            self._record_to_jsonl(
+                {
+                    "record_type": "vote",
+                    "vote_id": vote_id,
+                    "consensus_id": consensus_id,
+                    "agent_id": agent_id,
+                    "decision": decision,
+                    "confidence": confidence,
+                    "reasoning": reasoning,
+                    "metadata": metadata or {},
+                    "timestamp": vote.timestamp,
+                }
+            )
 
-        logger.debug(
-            f"Vote recorded: {agent_id} -> {decision} "
-            f"(confidence: {confidence:.2f})"
-        )
+        logger.debug(f"Vote recorded: {agent_id} -> {decision} (confidence: {confidence:.2f})")
         return vote
 
     def record_argument(
@@ -420,9 +420,7 @@ class ConsensusAuditTrail:
         Returns:
             Created argument record
         """
-        argument_id = (
-            f"arg-{consensus_id}-{len(self.arguments.get(consensus_id, [])) + 1}"
-        )
+        argument_id = f"arg-{consensus_id}-{len(self.arguments.get(consensus_id, [])) + 1}"
 
         argument = ArgumentRecord(
             argument_id=argument_id,
@@ -454,9 +452,7 @@ class ConsensusAuditTrail:
             },
         )
 
-        logger.debug(
-            f"Argument recorded: {argument_id} by {agent_id} ({position})"
-        )
+        logger.debug(f"Argument recorded: {argument_id} by {agent_id} ({position})")
         return argument
 
     def record_decision_outcome(
@@ -494,9 +490,7 @@ class ConsensusAuditTrail:
                 },
             )
 
-        logger.info(
-            f"Decision outcome recorded: {decision_id} -> {outcome.value}"
-        )
+        logger.info(f"Decision outcome recorded: {decision_id} -> {outcome.value}")
 
     def record_rollback(
         self,
@@ -515,9 +509,7 @@ class ConsensusAuditTrail:
             return
 
         self.decisions[decision_id].metadata["rollback_reason"] = reason
-        self.decisions[decision_id].metadata["rollback_time"] = datetime.now(
-            UTC
-        ).isoformat()
+        self.decisions[decision_id].metadata["rollback_time"] = datetime.now(UTC).isoformat()
 
         self.record_event(
             event_type=AuditEventType.DECISION_ROLLED_BACK,
@@ -578,19 +570,14 @@ class ConsensusAuditTrail:
             confidence_breakdown=confidence_breakdown or {},
             dissenting_agents=dissenting_agents or [],
             minority_report=minority_report,
-            outcome=(
-                existing_decision.outcome
-                if existing_decision
-                else DecisionOutcome.PENDING
-            ),
+            outcome=(existing_decision.outcome if existing_decision else DecisionOutcome.PENDING),
             metadata=metadata or {},
         )
 
         self.decision_audits[decision_id] = audit
 
         logger.info(
-            f"Decision audit created: {decision_id} "
-            f"with {len(rounds)} rounds, {len(votes)} votes"
+            f"Decision audit created: {decision_id} with {len(rounds)} rounds, {len(votes)} votes"
         )
         return audit
 
@@ -635,9 +622,7 @@ class ConsensusAuditTrail:
             if audit.consensus_id == consensus_id:
                 audit.add_deliberation_round(round_record)
 
-        logger.debug(
-            f"Deliberation round recorded: {round_id} (score: {consensus_score:.2f})"
-        )
+        logger.debug(f"Deliberation round recorded: {round_id} (score: {consensus_score:.2f})")
         return round_record
 
     # ------------------------------------------------------------------------
@@ -675,10 +660,7 @@ class ConsensusAuditTrail:
         outcome: DecisionOutcome,
     ) -> list[DecisionAudit]:
         """Get all decision audits with a specific outcome."""
-        return [
-            audit for audit in self.decision_audits.values()
-            if audit.outcome == outcome
-        ]
+        return [audit for audit in self.decision_audits.values() if audit.outcome == outcome]
 
     def get_failed_audits(self) -> list[DecisionAudit]:
         """Get all audits with failure outcomes."""
@@ -738,24 +720,18 @@ class ConsensusAuditTrail:
             expected_hash = event._generate_hash()
             if event.hash != expected_hash:
                 results["failed_events"] += 1
-                results["errors"].append(
-                    f"Event {event.event_id}: hash mismatch"
-                )
+                results["errors"].append(f"Event {event.event_id}: hash mismatch")
             else:
                 results["verified_events"] += 1
 
             if event.previous_hash != previous_hash:
                 results["chain_broken"] = True
-                results["errors"].append(
-                    f"Event {event.event_id}: chain broken at position {i}"
-                )
+                results["errors"].append(f"Event {event.event_id}: chain broken at position {i}")
 
             previous_hash = event.hash
 
         results["status"] = (
-            "valid"
-            if results["failed_events"] == 0 and not results["chain_broken"]
-            else "invalid"
+            "valid" if results["failed_events"] == 0 and not results["chain_broken"] else "invalid"
         )
 
         logger.info(
@@ -788,9 +764,7 @@ class ConsensusAuditTrail:
             "outcome_distribution": outcome_counts,
             "query_count": self.query_count,
             "avg_query_time_ms": (
-                self.total_query_time_ms / self.query_count
-                if self.query_count > 0
-                else 0.0
+                self.total_query_time_ms / self.query_count if self.query_count > 0 else 0.0
             ),
             "storage_backend": self.storage_backend,
             "retention_days": self.retention_days,
@@ -806,20 +780,20 @@ class ConsensusAuditTrail:
         """
         total = len(self.decision_audits)
         by_outcome = {
-            outcome.value: len(
-                [a for a in self.decision_audits.values() if a.outcome == outcome]
-            )
+            outcome.value: len([a for a in self.decision_audits.values() if a.outcome == outcome])
             for outcome in DecisionOutcome
         }
 
         avg_confidence = (
             sum(a.confidence_score for a in self.decision_audits.values()) / total
-            if total > 0 else 0.0
+            if total > 0
+            else 0.0
         )
 
         avg_rounds = (
-            sum(len(a.deliberation_rounds) for a in self.decision_audits.values())
-            / total if total > 0 else 0.0
+            sum(len(a.deliberation_rounds) for a in self.decision_audits.values()) / total
+            if total > 0
+            else 0.0
         )
 
         return {

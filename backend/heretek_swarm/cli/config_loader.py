@@ -29,6 +29,7 @@ if TYPE_CHECKING:
 
 class LoadResult(TypedDict):
     """Result of loading infrastructure configuration."""
+
     postgres: dict[str, bool | str | None]  # 'set': True/False, 'url': str or None
     redis: dict[str, bool | str | None]
     qdrant: dict[str, bool | str | None]
@@ -129,7 +130,7 @@ def _query_and_set_env(engine: Engine) -> LoadResult:
     try:
         # Query all enabled infrastructure configs
         stmt = select(InfrastructureConfigORM).where(
-            InfrastructureConfigORM.is_enabled == True  # noqa: E712
+            InfrastructureConfigORM.is_enabled == True
         )
         configs = session.execute(stmt).scalars().all()
 

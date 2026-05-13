@@ -27,6 +27,7 @@ logger = structlog.get_logger("registry_enhanced")
 
 class AgentLifecycleState(Enum):
     """Agent lifecycle states for management."""
+
     AVAILABLE = "available"
     DEPLOYED = "deployed"
     RUNNING = "running"
@@ -49,6 +50,7 @@ class AgentTypeMetadata:
         config_schema: JSON schema for configuration
         actor_type: Actor type identifier
     """
+
     type_name: str
     module_path: str
     description: str = ""
@@ -71,6 +73,7 @@ class AgentInstance:
         actor: Reference to the running actor
         metadata: Agent type metadata
     """
+
     instance_id: str
     agent_type: str
     config: dict[str, Any]
@@ -114,6 +117,7 @@ class EnhancedAgentRegistry:
         if self._supervisor is None:
             try:
                 from heretek_swarm.actors.supervisor import get_supervisor
+
                 self._supervisor = get_supervisor()
             except (ImportError, Exception) as e:
                 logger.warning(f"Could not get supervisor: {e}")
@@ -151,7 +155,9 @@ class EnhancedAgentRegistry:
         logger.info(f"Discovered {len(discovered)} agent types")
         return discovered
 
-    def _extract_agent_metadata(self, module_name: str, actor_name: str) -> AgentTypeMetadata | None:
+    def _extract_agent_metadata(
+        self, module_name: str, actor_name: str
+    ) -> AgentTypeMetadata | None:
         """
         Extract metadata from an agent module.
 
@@ -228,39 +234,33 @@ class EnhancedAgentRegistry:
         return {
             "type": "object",
             "properties": {
-                "name": {
-                    "type": "string",
-                    "description": "Human-readable name for the agent"
-                },
-                "description": {
-                    "type": "string",
-                    "description": "Agent description"
-                },
+                "name": {"type": "string", "description": "Human-readable name for the agent"},
+                "description": {"type": "string", "description": "Agent description"},
                 "topics": {
                     "type": "array",
                     "items": {"type": "string"},
-                    "description": "Topics to subscribe to"
+                    "description": "Topics to subscribe to",
                 },
                 "capabilities": {
                     "type": "array",
                     "items": {"type": "string"},
-                    "description": "Agent capabilities"
+                    "description": "Agent capabilities",
                 },
                 "max_mailbox_size": {
                     "type": "integer",
                     "default": 1000,
-                    "description": "Maximum mailbox queue size"
+                    "description": "Maximum mailbox queue size",
                 },
                 "heartbeat_interval": {
                     "type": "number",
                     "default": 10.0,
-                    "description": "Heartbeat interval in seconds"
+                    "description": "Heartbeat interval in seconds",
                 },
                 "persistence_interval": {
                     "type": "integer",
                     "nullable": True,
-                    "description": "Messages between auto-persistence"
-                }
+                    "description": "Messages between auto-persistence",
+                },
             },
             "additionalProperties": True,
         }
@@ -362,7 +362,11 @@ class EnhancedAgentRegistry:
             logger.error(f"Instance not found: {instance_id}")
             return False
 
-        if instance.state not in [AgentLifecycleState.DEPLOYED, AgentLifecycleState.STOPPED, AgentLifecycleState.SUSPENDED]:
+        if instance.state not in [
+            AgentLifecycleState.DEPLOYED,
+            AgentLifecycleState.STOPPED,
+            AgentLifecycleState.SUSPENDED,
+        ]:
             logger.warning(f"Cannot start agent in state: {instance.state.value}")
             return False
 
@@ -553,10 +557,7 @@ class EnhancedAgentRegistry:
         Returns:
             List of matching instances
         """
-        return [
-            inst for inst in self._instances.values()
-            if inst.agent_type == agent_type
-        ]
+        return [inst for inst in self._instances.values() if inst.agent_type == agent_type]
 
     def update_agent_config(self, instance_id: str, config: dict[str, Any]) -> bool:
         """

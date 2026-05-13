@@ -17,9 +17,7 @@ class InputValidator(ABC):
 
     @abstractmethod
     async def validate(
-        self,
-        input_text: str,
-        agent_id: str | None = None
+        self, input_text: str, agent_id: str | None = None
     ) -> tuple[bool, str | None]:
         """
         Validate input and return (is_valid, reason)
@@ -37,26 +35,17 @@ class LengthValidator(InputValidator):
         self.max_length = max_length
 
     async def validate(
-        self,
-        input_text: str,
-        agent_id: str | None = None
+        self, input_text: str, agent_id: str | None = None
     ) -> tuple[bool, str | None]:
         text_length = len(input_text)
 
         if text_length < self.min_length:
-            logger.warning(
-                "input_too_short",
-                agent_id=agent_id,
-                length=text_length
-            )
+            logger.warning("input_too_short", agent_id=agent_id, length=text_length)
             return False, f"Input too short (min: {self.min_length})"
 
         if text_length > self.max_length:
             logger.warning(
-                "input_too_long",
-                agent_id=agent_id,
-                length=text_length,
-                max_length=self.max_length
+                "input_too_long", agent_id=agent_id, length=text_length, max_length=self.max_length
             )
             return False, f"Input too long (max: {self.max_length})"
 
@@ -70,9 +59,7 @@ class BlockedPatternValidator(InputValidator):
         self.patterns = compiled_patterns
 
     async def validate(
-        self,
-        input_text: str,
-        agent_id: str | None = None
+        self, input_text: str, agent_id: str | None = None
     ) -> tuple[bool, str | None]:
         for pattern in self.patterns:
             match = pattern.search(input_text)
@@ -81,7 +68,7 @@ class BlockedPatternValidator(InputValidator):
                     "input_blocked",
                     agent_id=agent_id,
                     pattern=pattern.pattern,
-                    match=match.group(0)
+                    match=match.group(0),
                 )
                 return False, f"Blocked pattern detected: {pattern.pattern}"
 
@@ -101,9 +88,7 @@ class PersonalInfoValidator(InputValidator):
         self.block_personal_info = block_personal_info
 
     async def validate(
-        self,
-        input_text: str,
-        agent_id: str | None = None
+        self, input_text: str, agent_id: str | None = None
     ) -> tuple[bool, str | None]:
         if not self.block_personal_info:
             return True, None
@@ -142,9 +127,7 @@ class CodeExecutionValidator(InputValidator):
         self.block_code_execution = block_code_execution
 
     async def validate(
-        self,
-        input_text: str,
-        agent_id: str | None = None
+        self, input_text: str, agent_id: str | None = None
     ) -> tuple[bool, str | None]:
         if not self.block_code_execution:
             return True, None
@@ -170,9 +153,7 @@ class AllowedPatternsValidator(InputValidator):
         self._compiled = [re.compile(p, re.IGNORECASE) for p in allowed_patterns]
 
     async def validate(
-        self,
-        input_text: str,
-        agent_id: str | None = None
+        self, input_text: str, agent_id: str | None = None
     ) -> tuple[bool, str | None]:
         if not self.allowed_patterns:
             return True, None
@@ -181,11 +162,7 @@ class AllowedPatternsValidator(InputValidator):
             if pattern.search(input_text):
                 return True, None
 
-        logger.warning(
-            "input_not_allowed",
-            agent_id=agent_id,
-            input=input_text[:100]
-        )
+        logger.warning("input_not_allowed", agent_id=agent_id, input=input_text[:100])
         return False, "Input does not match allowed patterns"
 
 
@@ -201,9 +178,7 @@ class ValidatorChain:
         return self
 
     async def validate(
-        self,
-        input_text: str,
-        agent_id: str | None = None
+        self, input_text: str, agent_id: str | None = None
     ) -> tuple[bool, str | None]:
         """Run all validators in sequence"""
         for validator in self._validators:

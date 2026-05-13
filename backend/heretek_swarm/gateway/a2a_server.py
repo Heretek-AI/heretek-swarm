@@ -29,6 +29,7 @@ logger = structlog.get_logger(__name__)
 # Authentication Configuration
 # =============================================================================
 
+
 class AuthTokenManager:
     """Manages authentication tokens for A2A connections."""
 
@@ -87,6 +88,7 @@ token_manager = AuthTokenManager()
 
 class MessageType(StrEnum):
     """A2A message types."""
+
     HANDSHAKE = "handshake"
     DISCOVERY = "discovery"
     MESSAGE = "message"
@@ -100,6 +102,7 @@ class MessageType(StrEnum):
 @dataclass
 class AgentInfo:
     """Connected agent information."""
+
     id: str
     websocket: WebSocket
     connected_at: datetime = field(default_factory=lambda: datetime.now(UTC))
@@ -122,7 +125,9 @@ class A2AServer:
         self._message_log: list[dict] = []
         self._max_log_size = 1000
 
-    async def handle_connection(self, websocket: WebSocket, agent_id: str, auth_token: str | None = None) -> None:
+    async def handle_connection(
+        self, websocket: WebSocket, agent_id: str, auth_token: str | None = None
+    ) -> None:
         """
         Handle new agent connection with authentication.
 
@@ -137,10 +142,12 @@ class A2AServer:
         if not auth_token:
             try:
                 await websocket.accept()
-                await websocket.send_json({
-                    "type": MessageType.ERROR.value,
-                    "error": "Authentication required. Provide valid auth_token."
-                })
+                await websocket.send_json(
+                    {
+                        "type": MessageType.ERROR.value,
+                        "error": "Authentication required. Provide valid auth_token.",
+                    }
+                )
                 await websocket.close()
             except Exception as e:
                 logger.debug("a2a_close_failed", error=str(e))
@@ -152,10 +159,9 @@ class A2AServer:
         if not is_valid:
             try:
                 await websocket.accept()
-                await websocket.send_json({
-                    "type": MessageType.ERROR.value,
-                    "error": f"Authentication failed: {error}"
-                })
+                await websocket.send_json(
+                    {"type": MessageType.ERROR.value, "error": f"Authentication failed: {error}"}
+                )
                 await websocket.close()
             except Exception as e:
                 logger.debug("a2a_close_failed", error=str(e))
@@ -166,17 +172,19 @@ class A2AServer:
         if valid_agent_id != agent_id:
             try:
                 await websocket.accept()
-                await websocket.send_json({
-                    "type": MessageType.ERROR.value,
-                    "error": f"Agent ID mismatch. Token belongs to {valid_agent_id}"
-                })
+                await websocket.send_json(
+                    {
+                        "type": MessageType.ERROR.value,
+                        "error": f"Agent ID mismatch. Token belongs to {valid_agent_id}",
+                    }
+                )
                 await websocket.close()
             except Exception as e:
                 logger.debug("a2a_close_failed", error=str(e))
             logger.warning(
                 "a2a_connection_rejected_agent_mismatch",
                 requested_agent=agent_id,
-                token_agent=valid_agent_id
+                token_agent=valid_agent_id,
             )
             return
 
@@ -192,23 +200,27 @@ class A2AServer:
         await self.event_mesh.register(agent_id, websocket)
 
         # Send handshake response
-        await websocket.send_json({
-            "type": MessageType.HANDSHAKE.value,
-            "status": "ok",
-            "agent_id": agent_id,
-            "timestamp": datetime.now(UTC).isoformat(),
-            "server": "heretek-swarm-a2a",
-            "authenticated": True
-        })
+        await websocket.send_json(
+            {
+                "type": MessageType.HANDSHAKE.value,
+                "status": "ok",
+                "agent_id": agent_id,
+                "timestamp": datetime.now(UTC).isoformat(),
+                "server": "heretek-swarm-a2a",
+                "authenticated": True,
+            }
+        )
 
         # Log connection
-        self._log_message({
-            "type": "connection",
-            "agent_id": agent_id,
-            "action": "connected",
-            "authenticated": True,
-            "timestamp": datetime.now(UTC).isoformat()
-        })
+        self._log_message(
+            {
+                "type": "connection",
+                "agent_id": agent_id,
+                "action": "connected",
+                "authenticated": True,
+                "timestamp": datetime.now(UTC).isoformat(),
+            }
+        )
 
         try:
             # Message loop
@@ -218,10 +230,9 @@ class A2AServer:
                     await self._handle_message(agent_id, data)
                 except json.JSONDecodeError as e:
                     logger.error("a2a_invalid_json", agent_id=agent_id, error=str(e))
-                    await websocket.send_json({
-                        "type": MessageType.ERROR.value,
-                        "error": f"Invalid JSON: {e!s}"
-                    })
+                    await websocket.send_json(
+                        {"type": MessageType.ERROR.value, "error": f"Invalid JSON: {e!s}"}
+                    )
         except WebSocketDisconnect:
             logger.info("a2a_agent_disconnected", agent_id=agent_id)
         finally:
@@ -275,8 +286,12 @@ class A2AServer:
                 {
                     "id": aid,
                     "status": info.status,
-                    "connected_at": info.connected_at.isoformat() if isinstance(info.connected_at, datetime) else info.connected_at,
-                    "last_activity": info.last_activity.isoformat() if isinstance(info.last_activity, datetime) else info.last_activity
+                    "connected_at": info.connected_at.isoformat()
+                    if isinstance(info.connected_at, datetime)
+                    else info.connected_at,
+                    "last_activity": info.last_activity.isoformat()
+                    if isinstance(info.last_activity, datetime)
+                    else info.last_activity,
                 }
                 for aid, info in self.agents.items()
             ]
@@ -285,7 +300,7 @@ class A2AServer:
             "type": MessageType.DISCOVERY.value,
             "agents": agents_list,
             "count": len(agents_list),
-            "timestamp": datetime.now(UTC).isoformat()
+            "timestamp": datetime.now(UTC).isoformat(),
         }
 
         await self.event_mesh.send_to_json(agent_id, response)
@@ -303,7 +318,7 @@ class A2AServer:
             "from": sender_id,
             "content": data.get("content"),
             "metadata": data.get("metadata", {}),
-            "timestamp": datetime.now(UTC).isoformat()
+            "timestamp": datetime.now(UTC).isoformat(),
         }
 
         # Broadcast to all except sender
@@ -334,7 +349,7 @@ class A2AServer:
             "from": agent_id,
             "action": data.get("action"),
             "details": data.get("details", {}),
-            "timestamp": datetime.now(UTC).isoformat()
+            "timestamp": datetime.now(UTC).isoformat(),
         }
 
         logger.info("a2a_proposal_created", proposal_id=proposal["id"], agent_id=agent_id)
@@ -359,7 +374,7 @@ class A2AServer:
             "from": agent_id,
             "vote": data.get("vote"),  # "yes", "no", "abstain"
             "reason": data.get("reason", ""),
-            "timestamp": datetime.now(UTC).isoformat()
+            "timestamp": datetime.now(UTC).isoformat(),
         }
 
         logger.info("a2a_vote_cast", proposal_id=vote["proposal_id"], vote=vote["vote"])
@@ -384,12 +399,14 @@ class A2AServer:
         await self.event_mesh.unregister(agent_id)
 
         # Log disconnection
-        self._log_message({
-            "type": "connection",
-            "agent_id": agent_id,
-            "action": "disconnected",
-            "timestamp": datetime.now(UTC).isoformat()
-        })
+        self._log_message(
+            {
+                "type": "connection",
+                "agent_id": agent_id,
+                "action": "disconnected",
+                "timestamp": datetime.now(UTC).isoformat(),
+            }
+        )
 
     def _log_message(self, message: dict) -> None:
         """
@@ -402,7 +419,7 @@ class A2AServer:
 
         # Trim if over limit
         if len(self._message_log) > self._max_log_size:
-            self._message_log = self._message_log[-self._max_log_size:]
+            self._message_log = self._message_log[-self._max_log_size :]
 
     def get_message_log(self, limit: int = 100) -> list[dict]:
         """Get recent message log."""

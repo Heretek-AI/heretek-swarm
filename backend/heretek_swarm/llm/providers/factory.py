@@ -152,9 +152,7 @@ def create_llm_provider(
 
         if provider_type == "openai_compatible":
             if not base_url:
-                raise ProviderConfigurationError(
-                    "OpenAI-compatible provider requires base_url"
-                )
+                raise ProviderConfigurationError("OpenAI-compatible provider requires base_url")
             return OpenAICompatibleProvider(
                 base_url=base_url,
                 api_key=api_key,
@@ -218,9 +216,7 @@ def create_llm_provider(
         )
 
     except TypeError as e:
-        raise ProviderConfigurationError(
-            f"Invalid configuration for {provider_type}: {e}"
-        )
+        raise ProviderConfigurationError(f"Invalid configuration for {provider_type}: {e}")
 
 
 def create_llm_provider_from_db_config(

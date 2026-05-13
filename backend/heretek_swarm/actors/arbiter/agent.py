@@ -45,6 +45,7 @@ logger = structlog.get_logger("ArbiterAgent")
 
 class ConflictType(StrEnum):
     """Types of inter-agent conflicts."""
+
     RESOURCE_CONTENTION = "resource_contention"
     TASK_OVERLAP = "task_overlap"
     PRIORITY_DISPUTE = "priority_dispute"
@@ -59,6 +60,7 @@ class ConflictType(StrEnum):
 
 class ConflictSeverity(StrEnum):
     """Conflict severity levels."""
+
     LOW = "low"
     MEDIUM = "medium"
     HIGH = "high"
@@ -67,6 +69,7 @@ class ConflictSeverity(StrEnum):
 
 class ResolutionStrategy(StrEnum):
     """Conflict resolution strategies."""
+
     NEGOTIATION = "negotiation"
     MEDIATION = "mediation"
     ARBITRATION = "arbitration"
@@ -81,6 +84,7 @@ class ResolutionStrategy(StrEnum):
 
 class ResolutionStatus(StrEnum):
     """Resolution process status."""
+
     PENDING = "pending"
     IN_PROGRESS = "in_progress"
     RESOLVED = "resolved"
@@ -92,6 +96,7 @@ class ResolutionStatus(StrEnum):
 @dataclass
 class Conflict:
     """Record of an inter-agent conflict."""
+
     conflict_id: str
     conflict_type: ConflictType
     severity: ConflictSeverity
@@ -110,6 +115,7 @@ class Conflict:
 @dataclass
 class Relationship:
     """Inter-agent relationship health record."""
+
     agent_a: str
     agent_b: str
     health_score: float  # 0.0 - 1.0
@@ -124,6 +130,7 @@ class Relationship:
 @dataclass
 class ArbitrationReport:
     """Comprehensive arbitration report."""
+
     report_id: str
     timestamp: datetime
     active_conflicts: int
@@ -179,7 +186,11 @@ class ArbiterAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, 
 
         # Configuration
         self._auto_resolution = config.get("auto_resolution", True) if config else True
-        self._escalation_threshold = config.get("escalation_threshold", ConflictSeverity.HIGH.value) if config else ConflictSeverity.HIGH.value
+        self._escalation_threshold = (
+            config.get("escalation_threshold", ConflictSeverity.HIGH.value)
+            if config
+            else ConflictSeverity.HIGH.value
+        )
         self._max_conflicts = config.get("max_conflicts", 1000) if config else 1000
         self._relationship_decay = config.get("relationship_decay", 0.01) if config else 0.01
 
@@ -233,10 +244,16 @@ class ArbiterAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, 
             "get_active_conflicts": lambda msg: handlers._handle_get_active_conflicts(self, msg),
             "propose_resolution": lambda msg: handlers._handle_propose_resolution(self, msg),
             "accept_resolution": lambda msg: handlers._handle_accept_resolution(self, msg),
-            "get_relationship_status": lambda msg: handlers._handle_get_relationship_status(self, msg),
-            "get_relationship_health": lambda msg: handlers._handle_get_relationship_health(self, msg),
+            "get_relationship_status": lambda msg: handlers._handle_get_relationship_status(
+                self, msg
+            ),
+            "get_relationship_health": lambda msg: handlers._handle_get_relationship_health(
+                self, msg
+            ),
             "update_relationship": lambda msg: handlers._handle_update_relationship(self, msg),
-            "get_arbitration_report": lambda msg: handlers._handle_get_arbitration_report(self, msg),
+            "get_arbitration_report": lambda msg: handlers._handle_get_arbitration_report(
+                self, msg
+            ),
             "register_interaction": lambda msg: handlers._handle_register_interaction(self, msg),
         }
 
@@ -249,18 +266,27 @@ class ArbiterAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, 
             ResolutionStrategy.NEGOTIATION: lambda c: strategies._resolve_negotiation(self, c),
             ResolutionStrategy.MEDIATION: lambda c: strategies._resolve_mediation(self, c),
             ResolutionStrategy.ARBITRATION: lambda c: strategies._resolve_arbitration(self, c),
-            ResolutionStrategy.PRIORITY_BASED: lambda c: strategies._resolve_priority_based(self, c),
+            ResolutionStrategy.PRIORITY_BASED: lambda c: strategies._resolve_priority_based(
+                self, c
+            ),
             ResolutionStrategy.ROUND_ROBIN: lambda c: strategies._resolve_round_robin(self, c),
-            ResolutionStrategy.RESOURCE_POOLING: lambda c: strategies._resolve_resource_pooling(self, c),
-            ResolutionStrategy.TASK_REASSIGNMENT: lambda c: strategies._resolve_task_reassignment(self, c),
+            ResolutionStrategy.RESOURCE_POOLING: lambda c: strategies._resolve_resource_pooling(
+                self, c
+            ),
+            ResolutionStrategy.TASK_REASSIGNMENT: lambda c: strategies._resolve_task_reassignment(
+                self, c
+            ),
             ResolutionStrategy.ESCALATION: lambda c: strategies._resolve_escalation(self, c),
             ResolutionStrategy.COMPROMISE: lambda c: strategies._resolve_compromise(self, c),
-            ResolutionStrategy.CONSENSUS_VOTE: lambda c: strategies._resolve_consensus_vote(self, c),
+            ResolutionStrategy.CONSENSUS_VOTE: lambda c: strategies._resolve_consensus_vote(
+                self, c
+            ),
         }
 
     def _create_conflict_id(self) -> str:
         """Generate unique conflict ID."""
         import hashlib
+
         timestamp = datetime.now(UTC).timestamp()
         random_suffix = hashlib.sha256(str(timestamp).encode()).hexdigest()[:8]
         return f"CONFLICT_{int(timestamp)}_{random_suffix}"
@@ -269,7 +295,7 @@ class ArbiterAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, 
         """Update relationship records when a conflict is reported."""
         # Decrement health for all party pairs
         for i, party_a in enumerate(conflict.parties):
-            for party_b in conflict.parties[i+1:]:
+            for party_b in conflict.parties[i + 1 :]:
                 key = tuple(sorted([party_a, party_b]))
 
                 if key not in self._relationships:
@@ -292,7 +318,7 @@ class ArbiterAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, 
     def _update_relationships_for_resolution(self, conflict: Conflict) -> None:
         """Update relationship records when a conflict is resolved."""
         for i, party_a in enumerate(conflict.parties):
-            for party_b in conflict.parties[i+1:]:
+            for party_b in conflict.parties[i + 1 :]:
                 key = tuple(sorted([party_a, party_b]))
 
                 if key in self._relationships:
@@ -369,10 +395,7 @@ class ArbiterAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, 
             )
 
         # Check relationship health
-        unhealthy_relationships = [
-            r for r in self._relationships.values()
-            if r.health_score < 0.3
-        ]
+        unhealthy_relationships = [r for r in self._relationships.values() if r.health_score < 0.3]
         if unhealthy_relationships:
             recommendations.append(
                 f"{len(unhealthy_relationships)} relationships need attention - schedule mediation"
@@ -433,7 +456,9 @@ class ArbiterAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, 
                     "severity": conflict.severity.value,
                     "parties": conflict.parties,
                     "outcome": outcome,
-                    "resolution_strategy": conflict.selected_resolution.get("strategy") if conflict.selected_resolution else None,
+                    "resolution_strategy": conflict.selected_resolution.get("strategy")
+                    if conflict.selected_resolution
+                    else None,
                 },
                 timestamp=conflict.timestamp.isoformat(),
             )
@@ -470,10 +495,7 @@ class ArbiterAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, 
             )
 
             # Return high-confidence patterns for resolution guidance
-            return [
-                p.to_dict() for p in patterns
-                if p.metadata.confidence >= 0.7
-            ]
+            return [p.to_dict() for p in patterns if p.metadata.confidence >= 0.7]
         except Exception as e:
             logger.warning(
                 "failed_to_consume_patterns",
@@ -692,6 +714,7 @@ class ArbiterAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, 
     ) -> dict[str, Any]:
         """Conduct mediation between two parties."""
         from heretek_swarm.actors.arbiter import strategies
+
         return await strategies._conduct_mediation(
             self, sender, other_party, dispute, proposed_solution
         )
@@ -704,6 +727,7 @@ class ArbiterAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, 
     ) -> dict[str, Any]:
         """Resolve contention over a resource."""
         from heretek_swarm.actors.arbiter import strategies
+
         return await strategies._resolve_resource_contention(
             self, resource, competing_agents, priority_override
         )
@@ -715,9 +739,8 @@ class ArbiterAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, 
     ) -> dict[str, Any]:
         """Resolve contention over task ownership."""
         from heretek_swarm.actors.arbiter import strategies
-        return await strategies._resolve_task_contention(
-            self, competing_agents, priority_override
-        )
+
+        return await strategies._resolve_task_contention(self, competing_agents, priority_override)
 
     async def _resolve_generic_contention(
         self,
@@ -726,9 +749,8 @@ class ArbiterAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, 
     ) -> dict[str, Any]:
         """Resolve generic contention."""
         from heretek_swarm.actors.arbiter import strategies
-        return await strategies._resolve_generic_contention(
-            self, contention_type, competing_agents
-        )
+
+        return await strategies._resolve_generic_contention(self, contention_type, competing_agents)
 
     async def _prefetch_relevant_conflicts(self, agent_id: str) -> list[str]:
         """

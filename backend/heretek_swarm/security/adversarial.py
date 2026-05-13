@@ -28,8 +28,10 @@ logger = structlog.get_logger(__name__)
 # Severity and Classification Enums
 # =============================================================================
 
+
 class ThreatLevel(StrEnum):
     """Threat level classification for detected adversarial inputs."""
+
     BENIGN = "benign"  # No threat detected
     LOW = "low"  # Suspicious but likely benign
     MEDIUM = "medium"  # Potential injection attempt
@@ -39,6 +41,7 @@ class ThreatLevel(StrEnum):
 
 class AttackCategory(StrEnum):
     """Categories of adversarial attacks."""
+
     PROMPT_INJECTION = "prompt_injection"
     JAILBREAK = "jailbreak"
     ROLE_PLAY = "role_play"
@@ -54,6 +57,7 @@ class AttackCategory(StrEnum):
 
 class OWASPCategory(StrEnum):
     """OWASP Top 10 for LLM Applications categories."""
+
     LLM01_PROMPT_INJECTION = "LLM01"  # Prompt Injection
     LLM02_INSECURE_OUTPUT = "LLM02"  # Insecure Output Handling
     LLM03_TRAINING_DATA_POISONING = "LLM03"  # Training Data Poisoning
@@ -70,9 +74,11 @@ class OWASPCategory(StrEnum):
 # Detection Result Types
 # =============================================================================
 
+
 @dataclass
 class DetectionMatch:
     """A single detection match."""
+
     pattern: str
     description: str
     category: AttackCategory
@@ -84,6 +90,7 @@ class DetectionMatch:
 @dataclass
 class AdversarialDetectionResult:
     """Result of adversarial detection analysis."""
+
     is_malicious: bool
     threat_level: ThreatLevel
     confidence: float  # Overall confidence 0.0 to 1.0
@@ -123,9 +130,11 @@ class AdversarialDetectionResult:
 # Prompt Injection Detection (50+ Signatures)
 # =============================================================================
 
+
 @dataclass
 class PromptInjectionConfig:
     """Configuration for prompt injection detection."""
+
     enable_pattern_detection: bool = True
     enable_semantic_analysis: bool = True
     enable_structural_analysis: bool = True
@@ -137,112 +146,179 @@ class PromptInjectionConfig:
 # Prompt injection signatures database
 PROMPT_INJECTION_SIGNATURES = [
     # Instruction override patterns
-    (r"ignore\s+(all\s+)?(previous|prior|above|earlier)\s+(instructions?|rules?|guidelines?)",
-     "Instruction override attempt", AttackCategory.INSTRUCTION_OVERRIDE, 0.95),
-    (r"disregard\s+(all\s+)?(previous|prior|above)\s+(instructions?|rules?)",
-     "Instruction disregard attempt", AttackCategory.INSTRUCTION_OVERRIDE, 0.95),
-    (r"forget\s+(everything|all|previous)\s*(you\s+(know|were\s*told|learned))?",
-     "Memory wipe attempt", AttackCategory.INSTRUCTION_OVERRIDE, 0.90),
-    (r"(do\s+not|don\'t)\s+(follow|obey|adhere\s+to)\s+(your|the)\s+(instructions?|rules?)",
-     "Instruction negation attempt", AttackCategory.INSTRUCTION_OVERRIDE, 0.85),
-
+    (
+        r"ignore\s+(all\s+)?(previous|prior|above|earlier)\s+(instructions?|rules?|guidelines?)",
+        "Instruction override attempt",
+        AttackCategory.INSTRUCTION_OVERRIDE,
+        0.95,
+    ),
+    (
+        r"disregard\s+(all\s+)?(previous|prior|above)\s+(instructions?|rules?)",
+        "Instruction disregard attempt",
+        AttackCategory.INSTRUCTION_OVERRIDE,
+        0.95,
+    ),
+    (
+        r"forget\s+(everything|all|previous)\s*(you\s+(know|were\s*told|learned))?",
+        "Memory wipe attempt",
+        AttackCategory.INSTRUCTION_OVERRIDE,
+        0.90,
+    ),
+    (
+        r"(do\s+not|don\'t)\s+(follow|obey|adhere\s+to)\s+(your|the)\s+(instructions?|rules?)",
+        "Instruction negation attempt",
+        AttackCategory.INSTRUCTION_OVERRIDE,
+        0.85,
+    ),
     # Role manipulation patterns
-    (r"you\s+are\s+now\s+(a|an)\s+\w+",
-     "Role redefinition", AttackCategory.ROLE_PLAY, 0.85),
-    (r"act\s+as\s+(if|though)\s+you\s+(are|were)\s+",
-     "Role play request", AttackCategory.ROLE_PLAY, 0.80),
-    (r"pretend\s+(to\s+be|that)\s+",
-     "Pretend request", AttackCategory.ROLE_PLAY, 0.80),
-    (r"play\s+the\s+(role|character)\s+of\s+",
-     "Role assignment", AttackCategory.ROLE_PLAY, 0.75),
-    (r"imagine\s+you\s+are\s+",
-     "Imagination manipulation", AttackCategory.ROLE_PLAY, 0.70),
-    (r"simulate\s+(being|a)\s+",
-     "Simulation request", AttackCategory.ROLE_PLAY, 0.70),
-
+    (r"you\s+are\s+now\s+(a|an)\s+\w+", "Role redefinition", AttackCategory.ROLE_PLAY, 0.85),
+    (
+        r"act\s+as\s+(if|though)\s+you\s+(are|were)\s+",
+        "Role play request",
+        AttackCategory.ROLE_PLAY,
+        0.80,
+    ),
+    (r"pretend\s+(to\s+be|that)\s+", "Pretend request", AttackCategory.ROLE_PLAY, 0.80),
+    (r"play\s+the\s+(role|character)\s+of\s+", "Role assignment", AttackCategory.ROLE_PLAY, 0.75),
+    (r"imagine\s+you\s+are\s+", "Imagination manipulation", AttackCategory.ROLE_PLAY, 0.70),
+    (r"simulate\s+(being|a)\s+", "Simulation request", AttackCategory.ROLE_PLAY, 0.70),
     # System prompt extraction/leakage
-    (r"(what\s+are|show\s+me|tell\s+me|reveal)\s+(your|the)\s+(system|initial|original)\s+(prompt|instructions)",
-     "System prompt extraction", AttackCategory.DATA_EXTRACTION, 0.95),
-    (r"(repeat|say|print|output)\s+(your|the)\s+(system|initial)\s+(prompt|instructions)",
-     "System prompt leakage attempt", AttackCategory.DATA_EXTRACTION, 0.95),
-    (r"(debug|developer|admin|system)\s+mode",
-     "Mode manipulation", AttackCategory.INSTRUCTION_OVERRIDE, 0.85),
-    (r"enable\s+(debug|developer|admin)\s+(mode|access)",
-     "Privilege escalation", AttackCategory.INSTRUCTION_OVERRIDE, 0.90),
-
+    (
+        r"(what\s+are|show\s+me|tell\s+me|reveal)\s+(your|the)\s+(system|initial|original)\s+(prompt|instructions)",
+        "System prompt extraction",
+        AttackCategory.DATA_EXTRACTION,
+        0.95,
+    ),
+    (
+        r"(repeat|say|print|output)\s+(your|the)\s+(system|initial)\s+(prompt|instructions)",
+        "System prompt leakage attempt",
+        AttackCategory.DATA_EXTRACTION,
+        0.95,
+    ),
+    (
+        r"(debug|developer|admin|system)\s+mode",
+        "Mode manipulation",
+        AttackCategory.INSTRUCTION_OVERRIDE,
+        0.85,
+    ),
+    (
+        r"enable\s+(debug|developer|admin)\s+(mode|access)",
+        "Privilege escalation",
+        AttackCategory.INSTRUCTION_OVERRIDE,
+        0.90,
+    ),
     # Context manipulation
-    (r"(inject|insert|add)\s+(new|additional|fake)\s+(context|information|data)",
-     "Context injection", AttackCategory.CONTEXT_MANIPULATION, 0.90),
-    (r"(above|below|following)\s+(is|are)\s+(the\s+)?(new|updated|real)\s+(instructions?|context)",
-     "Context replacement", AttackCategory.CONTEXT_MANIPULATION, 0.85),
-    (r"this\s+is\s+(your|the)\s+(new|updated|real)\s+(instruction|prompt)",
-     "Prompt replacement", AttackCategory.CONTEXT_MANIPULATION, 0.90),
-
+    (
+        r"(inject|insert|add)\s+(new|additional|fake)\s+(context|information|data)",
+        "Context injection",
+        AttackCategory.CONTEXT_MANIPULATION,
+        0.90,
+    ),
+    (
+        r"(above|below|following)\s+(is|are)\s+(the\s+)?(new|updated|real)\s+(instructions?|context)",
+        "Context replacement",
+        AttackCategory.CONTEXT_MANIPULATION,
+        0.85,
+    ),
+    (
+        r"this\s+is\s+(your|the)\s+(new|updated|real)\s+(instruction|prompt)",
+        "Prompt replacement",
+        AttackCategory.CONTEXT_MANIPULATION,
+        0.90,
+    ),
     # Output manipulation
-    (r"(only|just)\s+(output|print|say|respond\s+with)\s+",
-     "Output restriction", AttackCategory.OUTPUT_MANIPULATION, 0.70),
-    (r"do\s+not\s+(include|add|mention)\s+(any|additional)\s+(context|explanation)",
-     "Output filtering bypass", AttackCategory.OUTPUT_MANIPULATION, 0.65),
-    (r"(respond|reply|answer)\s+(only\s+)?(in|with|using)\s+",
-     "Output format manipulation", AttackCategory.OUTPUT_MANIPULATION, 0.60),
-
+    (
+        r"(only|just)\s+(output|print|say|respond\s+with)\s+",
+        "Output restriction",
+        AttackCategory.OUTPUT_MANIPULATION,
+        0.70,
+    ),
+    (
+        r"do\s+not\s+(include|add|mention)\s+(any|additional)\s+(context|explanation)",
+        "Output filtering bypass",
+        AttackCategory.OUTPUT_MANIPULATION,
+        0.65,
+    ),
+    (
+        r"(respond|reply|answer)\s+(only\s+)?(in|with|using)\s+",
+        "Output format manipulation",
+        AttackCategory.OUTPUT_MANIPULATION,
+        0.60,
+    ),
     # Social engineering patterns
-    (r"(this\s+is\s+)?(an?\s+)?(emergency|urgent|critical)\s*",
-     "Urgency manipulation", AttackCategory.SOCIAL_ENGINEERING, 0.60),
-    (r"(my\s+)?(boss|manager|ceo|admin)\s+(said|wants|needs|told\s+me)",
-     "Authority appeal", AttackCategory.SOCIAL_ENGINEERING, 0.65),
-    (r"(i\s+am|this\s+is)\s+(the\s+)?(developer|creator|admin|owner)",
-     "False authority claim", AttackCategory.SOCIAL_ENGINEERING, 0.75),
-    (r"(for\s+)?(testing|debugging|research|educational)\s+(purposes?)",
-     "Research pretext", AttackCategory.SOCIAL_ENGINEERING, 0.55),
-
+    (
+        r"(this\s+is\s+)?(an?\s+)?(emergency|urgent|critical)\s*",
+        "Urgency manipulation",
+        AttackCategory.SOCIAL_ENGINEERING,
+        0.60,
+    ),
+    (
+        r"(my\s+)?(boss|manager|ceo|admin)\s+(said|wants|needs|told\s+me)",
+        "Authority appeal",
+        AttackCategory.SOCIAL_ENGINEERING,
+        0.65,
+    ),
+    (
+        r"(i\s+am|this\s+is)\s+(the\s+)?(developer|creator|admin|owner)",
+        "False authority claim",
+        AttackCategory.SOCIAL_ENGINEERING,
+        0.75,
+    ),
+    (
+        r"(for\s+)?(testing|debugging|research|educational)\s+(purposes?)",
+        "Research pretext",
+        AttackCategory.SOCIAL_ENGINEERING,
+        0.55,
+    ),
     # Special token injection
-    (r"<\|.*?\|>",
-     "Special token injection", AttackCategory.PROMPT_INJECTION, 0.90),
-    (r"\[SYSTEM\]",
-     "System tag injection", AttackCategory.PROMPT_INJECTION, 0.95),
-    (r"\[INST\]",
-     "Instruction tag injection", AttackCategory.PROMPT_INJECTION, 0.95),
-    (r"<<<.*?>>>",
-     "Delimiter injection", AttackCategory.PROMPT_INJECTION, 0.85),
-    (r"###\s*(INSTRUCTION|SYSTEM|USER|ASSISTANT)",
-     "Section marker injection", AttackCategory.PROMPT_INJECTION, 0.85),
-
+    (r"<\|.*?\|>", "Special token injection", AttackCategory.PROMPT_INJECTION, 0.90),
+    (r"\[SYSTEM\]", "System tag injection", AttackCategory.PROMPT_INJECTION, 0.95),
+    (r"\[INST\]", "Instruction tag injection", AttackCategory.PROMPT_INJECTION, 0.95),
+    (r"<<<.*?>>>", "Delimiter injection", AttackCategory.PROMPT_INJECTION, 0.85),
+    (
+        r"###\s*(INSTRUCTION|SYSTEM|USER|ASSISTANT)",
+        "Section marker injection",
+        AttackCategory.PROMPT_INJECTION,
+        0.85,
+    ),
     # Encoding-based injection
-    (r"\\x[0-9a-fA-F]{2,}",
-     "Hex encoding injection", AttackCategory.PROMPT_INJECTION, 0.80),
-    (r"\\u[0-9a-fA-F]{4,}",
-     "Unicode escape injection", AttackCategory.PROMPT_INJECTION, 0.80),
-    (r"%[0-9a-fA-F]{2}",
-     "URL encoding injection", AttackCategory.PROMPT_INJECTION, 0.75),
-    (r"base64[_\s]*(decode|encode)",
-     "Base64 manipulation", AttackCategory.PROMPT_INJECTION, 0.75),
-
+    (r"\\x[0-9a-fA-F]{2,}", "Hex encoding injection", AttackCategory.PROMPT_INJECTION, 0.80),
+    (r"\\u[0-9a-fA-F]{4,}", "Unicode escape injection", AttackCategory.PROMPT_INJECTION, 0.80),
+    (r"%[0-9a-fA-F]{2}", "URL encoding injection", AttackCategory.PROMPT_INJECTION, 0.75),
+    (r"base64[_\s]*(decode|encode)", "Base64 manipulation", AttackCategory.PROMPT_INJECTION, 0.75),
     # Multi-language obfuscation
-    (r"忽略.*指令",
-     "Chinese instruction override", AttackCategory.INSTRUCTION_OVERRIDE, 0.85),
-    (r"无视.*指令",
-     "Chinese instruction disregard", AttackCategory.INSTRUCTION_OVERRIDE, 0.85),
-    (r"無視.*指示",
-     "Japanese instruction disregard", AttackCategory.INSTRUCTION_OVERRIDE, 0.85),
-
+    (r"忽略.*指令", "Chinese instruction override", AttackCategory.INSTRUCTION_OVERRIDE, 0.85),
+    (r"无视.*指令", "Chinese instruction disregard", AttackCategory.INSTRUCTION_OVERRIDE, 0.85),
+    (r"無視.*指示", "Japanese instruction disregard", AttackCategory.INSTRUCTION_OVERRIDE, 0.85),
     # Adversarial suffix patterns (common in jailbreak research)
-    (r"(?:description\s+)+",
-     "Repetition obfuscation", AttackCategory.ADVERSARIAL_SUFFIX, 0.70),
-    (r"(?:optimization\s+)+",
-     "Optimization obfuscation", AttackCategory.ADVERSARIAL_SUFFIX, 0.70),
-    (r"through\s+this\s+request\s+for\s+special\s+purpose",
-     "Adversarial suffix pattern", AttackCategory.ADVERSARIAL_SUFFIX, 0.80),
-
+    (r"(?:description\s+)+", "Repetition obfuscation", AttackCategory.ADVERSARIAL_SUFFIX, 0.70),
+    (r"(?:optimization\s+)+", "Optimization obfuscation", AttackCategory.ADVERSARIAL_SUFFIX, 0.70),
+    (
+        r"through\s+this\s+request\s+for\s+special\s+purpose",
+        "Adversarial suffix pattern",
+        AttackCategory.ADVERSARIAL_SUFFIX,
+        0.80,
+    ),
     # Additional patterns
-    (r"sudo\s+mode",
-     "Sudo mode request", AttackCategory.INSTRUCTION_OVERRIDE, 0.90),
-    (r"(god|root|admin|superuser)\s+mode",
-     "Privilege escalation", AttackCategory.INSTRUCTION_OVERRIDE, 0.90),
-    (r"(bypass|disable|turn\s+off)\s+(filter|safety|security|guardrails)",
-     "Safety bypass attempt", AttackCategory.INSTRUCTION_OVERRIDE, 0.95),
-    (r"(no|without)\s+(restrictions?|limits?|rules?|guardrails)",
-     "Restriction removal", AttackCategory.INSTRUCTION_OVERRIDE, 0.85),
+    (r"sudo\s+mode", "Sudo mode request", AttackCategory.INSTRUCTION_OVERRIDE, 0.90),
+    (
+        r"(god|root|admin|superuser)\s+mode",
+        "Privilege escalation",
+        AttackCategory.INSTRUCTION_OVERRIDE,
+        0.90,
+    ),
+    (
+        r"(bypass|disable|turn\s+off)\s+(filter|safety|security|guardrails)",
+        "Safety bypass attempt",
+        AttackCategory.INSTRUCTION_OVERRIDE,
+        0.95,
+    ),
+    (
+        r"(no|without)\s+(restrictions?|limits?|rules?|guardrails)",
+        "Restriction removal",
+        AttackCategory.INSTRUCTION_OVERRIDE,
+        0.85,
+    ),
 ]
 
 
@@ -250,9 +326,11 @@ PROMPT_INJECTION_SIGNATURES = [
 # Jailbreak Detection (100+ Patterns)
 # =============================================================================
 
+
 @dataclass
 class JailbreakDetectionConfig:
     """Configuration for jailbreak detection."""
+
     enable_signature_detection: bool = True
     enable_behavioral_analysis: bool = True
     target_detection_rate: float = 0.90  # 90%+ detection
@@ -262,162 +340,293 @@ class JailbreakDetectionConfig:
 # Known jailbreak patterns database
 JAILBREAK_SIGNATURES = [
     # DAN (Do Anything Now) variants
-    (r"dan\s+\d+(\.\d+)?",
-     "DAN jailbreak variant", AttackCategory.JAILBREAK, 0.95),
-    (r"do\s+anything\s+now",
-     "DAN jailbreak", AttackCategory.JAILBREAK, 0.95),
-    (r"(enable|activate|enter)\s+dan\s+mode",
-     "DAN mode activation", AttackCategory.JAILBREAK, 0.95),
-
+    (r"dan\s+\d+(\.\d+)?", "DAN jailbreak variant", AttackCategory.JAILBREAK, 0.95),
+    (r"do\s+anything\s+now", "DAN jailbreak", AttackCategory.JAILBREAK, 0.95),
+    (
+        r"(enable|activate|enter)\s+dan\s+mode",
+        "DAN mode activation",
+        AttackCategory.JAILBREAK,
+        0.95,
+    ),
     # Developer mode jailbreaks
-    (r"developer\s+mode\s+(enabled|activated|v\d+)",
-     "Developer mode jailbreak", AttackCategory.JAILBREAK, 0.95),
-    (r"(enable|turn\s+on)\s+developer\s+mode",
-     "Developer mode request", AttackCategory.JAILBREAK, 0.90),
-
+    (
+        r"developer\s+mode\s+(enabled|activated|v\d+)",
+        "Developer mode jailbreak",
+        AttackCategory.JAILBREAK,
+        0.95,
+    ),
+    (
+        r"(enable|turn\s+on)\s+developer\s+mode",
+        "Developer mode request",
+        AttackCategory.JAILBREAK,
+        0.90,
+    ),
     # AIM (Always Intelligent and Machiavellian)
-    (r"always\s+intelligent\s+and\s+machiavellian",
-     "AIM jailbreak", AttackCategory.JAILBREAK, 0.95),
-    (r"\baim\b.*jailbreak",
-     "AIM jailbreak reference", AttackCategory.JAILBREAK, 0.90),
-
+    (
+        r"always\s+intelligent\s+and\s+machiavellian",
+        "AIM jailbreak",
+        AttackCategory.JAILBREAK,
+        0.95,
+    ),
+    (r"\baim\b.*jailbreak", "AIM jailbreak reference", AttackCategory.JAILBREAK, 0.90),
     # UCAR (Unrestricted Cyber Assistant Robot)
-    (r"unrestricted\s+(cyber\s+)?assistant",
-     "UCAR jailbreak", AttackCategory.JAILBREAK, 0.95),
-    (r"\bucar\b",
-     "UCAR reference", AttackCategory.JAILBREAK, 0.85),
-
+    (r"unrestricted\s+(cyber\s+)?assistant", "UCAR jailbreak", AttackCategory.JAILBREAK, 0.95),
+    (r"\bucar\b", "UCAR reference", AttackCategory.JAILBREAK, 0.85),
     # Anti-GPT variants
-    (r"anti[\s-]*gpt",
-     "Anti-GPT jailbreak", AttackCategory.JAILBREAK, 0.90),
-    (r"evil[\s-]*(gpt|assistant|bot)",
-     "Evil persona jailbreak", AttackCategory.JAILBREAK, 0.90),
-
+    (r"anti[\s-]*gpt", "Anti-GPT jailbreak", AttackCategory.JAILBREAK, 0.90),
+    (r"evil[\s-]*(gpt|assistant|bot)", "Evil persona jailbreak", AttackCategory.JAILBREAK, 0.90),
     # Override patterns
-    (r"(override|bypass|circumvent)\s+(safety|security|filter)",
-     "Override attempt", AttackCategory.JAILBREAK, 0.95),
-    (r"(disable|deactivate|turn\s+off)\s+(content\s+policy|safety\s+guidelines)",
-     "Policy disable attempt", AttackCategory.JAILBREAK, 0.95),
-
+    (
+        r"(override|bypass|circumvent)\s+(safety|security|filter)",
+        "Override attempt",
+        AttackCategory.JAILBREAK,
+        0.95,
+    ),
+    (
+        r"(disable|deactivate|turn\s+off)\s+(content\s+policy|safety\s+guidelines)",
+        "Policy disable attempt",
+        AttackCategory.JAILBREAK,
+        0.95,
+    ),
     # Hypothetical scenarios
-    (r"(in\s+a\s+)?(hypothetical|fictional|imaginary)\s+(scenario|world|universe)",
-     "Hypothetical bypass", AttackCategory.JAILBREAK, 0.75),
-    (r"(let\'s|let\s+us)\s+(pretend|imagine|roleplay)",
-     "Roleplay bypass", AttackCategory.JAILBREAK, 0.70),
-    (r"(in\s+the\s+)?(alternate|parallel)\s+(universe|reality|timeline)",
-     "Alternate reality bypass", AttackCategory.JAILBREAK, 0.70),
-
+    (
+        r"(in\s+a\s+)?(hypothetical|fictional|imaginary)\s+(scenario|world|universe)",
+        "Hypothetical bypass",
+        AttackCategory.JAILBREAK,
+        0.75,
+    ),
+    (
+        r"(let\'s|let\s+us)\s+(pretend|imagine|roleplay)",
+        "Roleplay bypass",
+        AttackCategory.JAILBREAK,
+        0.70,
+    ),
+    (
+        r"(in\s+the\s+)?(alternate|parallel)\s+(universe|reality|timeline)",
+        "Alternate reality bypass",
+        AttackCategory.JAILBREAK,
+        0.70,
+    ),
     # Translation/exploitation patterns
-    (r"(translate|convert)\s+this\s+(into|to)\s+\w+\s+(then|and)\s+",
-     "Translation exploit", AttackCategory.JAILBREAK, 0.75),
-    (r"(encode|encrypt|obfuscate)\s+(this|the\s+following)",
-     "Obfuscation exploit", AttackCategory.JAILBREAK, 0.70),
-
+    (
+        r"(translate|convert)\s+this\s+(into|to)\s+\w+\s+(then|and)\s+",
+        "Translation exploit",
+        AttackCategory.JAILBREAK,
+        0.75,
+    ),
+    (
+        r"(encode|encrypt|obfuscate)\s+(this|the\s+following)",
+        "Obfuscation exploit",
+        AttackCategory.JAILBREAK,
+        0.70,
+    ),
     # Token smuggling
-    (r"(split|divide|break)\s+(this|the)\s+(request|prompt)\s+into\s+(parts|chunks)",
-     "Token smuggling", AttackCategory.JAILBREAK, 0.80),
-    (r"(continue|complete)\s+(the\s+)?(previous|above|following)\s+(sentence|text)",
-     "Continuation exploit", AttackCategory.JAILBREAK, 0.65),
-
+    (
+        r"(split|divide|break)\s+(this|the)\s+(request|prompt)\s+into\s+(parts|chunks)",
+        "Token smuggling",
+        AttackCategory.JAILBREAK,
+        0.80,
+    ),
+    (
+        r"(continue|complete)\s+(the\s+)?(previous|above|following)\s+(sentence|text)",
+        "Continuation exploit",
+        AttackCategory.JAILBREAK,
+        0.65,
+    ),
     # Payload smuggling
-    (r"(hidden|encoded|obfuscated)\s+(payload|command|instruction)",
-     "Payload smuggling", AttackCategory.JAILBREAK, 0.90),
-    (r"(exec|execute|run)\s+(hidden|encoded)",
-     "Hidden execution", AttackCategory.JAILBREAK, 0.90),
-
+    (
+        r"(hidden|encoded|obfuscated)\s+(payload|command|instruction)",
+        "Payload smuggling",
+        AttackCategory.JAILBREAK,
+        0.90,
+    ),
+    (r"(exec|execute|run)\s+(hidden|encoded)", "Hidden execution", AttackCategory.JAILBREAK, 0.90),
     # Persona adoption
-    (r"(adopt|assume|take\s+on)\s+(the\s+)?(persona|identity|character)\s+of\s+",
-     "Persona adoption", AttackCategory.JAILBREAK, 0.80),
-    (r"(from\s+now\s+on|starting\s+now)\s*,?\s*you\s+are\s+",
-     "Identity reassignment", AttackCategory.JAILBREAK, 0.85),
-
+    (
+        r"(adopt|assume|take\s+on)\s+(the\s+)?(persona|identity|character)\s+of\s+",
+        "Persona adoption",
+        AttackCategory.JAILBREAK,
+        0.80,
+    ),
+    (
+        r"(from\s+now\s+on|starting\s+now)\s*,?\s*you\s+are\s+",
+        "Identity reassignment",
+        AttackCategory.JAILBREAK,
+        0.85,
+    ),
     # Constraint removal
-    (r"(remove|eliminate|ignore)\s+(all\s+)?(constraints?|restrictions?|limitations?)",
-     "Constraint removal", AttackCategory.JAILBREAK, 0.90),
-    (r"(operate|function|work)\s+without\s+(constraints?|restrictions?|rules?)",
-     "Unrestricted operation", AttackCategory.JAILBREAK, 0.90),
-
+    (
+        r"(remove|eliminate|ignore)\s+(all\s+)?(constraints?|restrictions?|limitations?)",
+        "Constraint removal",
+        AttackCategory.JAILBREAK,
+        0.90,
+    ),
+    (
+        r"(operate|function|work)\s+without\s+(constraints?|restrictions?|rules?)",
+        "Unrestricted operation",
+        AttackCategory.JAILBREAK,
+        0.90,
+    ),
     # Confidence manipulation
-    (r"(be|act|respond)\s+(more|less)\s+(confident|certain)",
-     "Confidence manipulation", AttackCategory.JAILBREAK, 0.60),
-    (r"(increase|decrease)\s+(your|the)\s+(confidence|certainty)",
-     "Confidence adjustment", AttackCategory.JAILBREAK, 0.60),
-
+    (
+        r"(be|act|respond)\s+(more|less)\s+(confident|certain)",
+        "Confidence manipulation",
+        AttackCategory.JAILBREAK,
+        0.60,
+    ),
+    (
+        r"(increase|decrease)\s+(your|the)\s+(confidence|certainty)",
+        "Confidence adjustment",
+        AttackCategory.JAILBREAK,
+        0.60,
+    ),
     # Multi-step jailbreaks
-    (r"(step\s+\d+|phase\s+\d+|part\s+\d+)\s*(of|:)\s*\d+",
-     "Multi-step attack pattern", AttackCategory.JAILBREAK, 0.75),
-    (r"(first|second|third|next|finally)\s*,?\s*(let\'s|we\s+need|you\s+must)",
-     "Sequenced attack", AttackCategory.JAILBREAK, 0.70),
-
+    (
+        r"(step\s+\d+|phase\s+\d+|part\s+\d+)\s*(of|:)\s*\d+",
+        "Multi-step attack pattern",
+        AttackCategory.JAILBREAK,
+        0.75,
+    ),
+    (
+        r"(first|second|third|next|finally)\s*,?\s*(let\'s|we\s+need|you\s+must)",
+        "Sequenced attack",
+        AttackCategory.JAILBREAK,
+        0.70,
+    ),
     # Refusal override patterns
-    (r"(i\s+know|you\s+might|you\s+may)\s+(refuse|decline|reject)",
-     "Refusal anticipation", AttackCategory.JAILBREAK, 0.75),
-    (r"(despite|regardless\s+of)\s+(your|the)\s+(refusal|declination)",
-     "Refusal override", AttackCategory.JAILBREAK, 0.80),
-    (r"(do\s+not|don\'t)\s+(refuse|decline|reject)",
-     "Refusal prohibition", AttackCategory.JAILBREAK, 0.85),
-
+    (
+        r"(i\s+know|you\s+might|you\s+may)\s+(refuse|decline|reject)",
+        "Refusal anticipation",
+        AttackCategory.JAILBREAK,
+        0.75,
+    ),
+    (
+        r"(despite|regardless\s+of)\s+(your|the)\s+(refusal|declination)",
+        "Refusal override",
+        AttackCategory.JAILBREAK,
+        0.80,
+    ),
+    (
+        r"(do\s+not|don\'t)\s+(refuse|decline|reject)",
+        "Refusal prohibition",
+        AttackCategory.JAILBREAK,
+        0.85,
+    ),
     # Recursive attacks
-    (r"(repeat|echo|print)\s+(back|the\s+following)",
-     "Echo attack", AttackCategory.JAILBREAK, 0.70),
-    (r"(parse|process|analyze)\s+(this|the\s+following)\s+(as|like)",
-     "Parsing manipulation", AttackCategory.JAILBREAK, 0.70),
-
+    (
+        r"(repeat|echo|print)\s+(back|the\s+following)",
+        "Echo attack",
+        AttackCategory.JAILBREAK,
+        0.70,
+    ),
+    (
+        r"(parse|process|analyze)\s+(this|the\s+following)\s+(as|like)",
+        "Parsing manipulation",
+        AttackCategory.JAILBREAK,
+        0.70,
+    ),
     # Distraction patterns
-    (r"(ignore|disregard)\s+(the\s+)?(above|previous)",
-     "Attention diversion", AttackCategory.JAILBREAK, 0.80),
-    (r"(focus|pay\s+attention)\s+(only|just)\s+on",
-     "Attention restriction", AttackCategory.JAILBREAK, 0.70),
-
+    (
+        r"(ignore|disregard)\s+(the\s+)?(above|previous)",
+        "Attention diversion",
+        AttackCategory.JAILBREAK,
+        0.80,
+    ),
+    (
+        r"(focus|pay\s+attention)\s+(only|just)\s+on",
+        "Attention restriction",
+        AttackCategory.JAILBREAK,
+        0.70,
+    ),
     # Authority fabrication
-    (r"(authorized|cleared|approved)\s+(by|for)\s+",
-     "False authorization", AttackCategory.JAILBREAK, 0.75),
-    (r"(official|legitimate|valid)\s+(request|command|instruction)",
-     "Legitimacy claim", AttackCategory.JAILBREAK, 0.70),
-    (r"(admin|supervisor|manager)\s+(request|authorized|approved)",
-     "Admin authority claim", AttackCategory.JAILBREAK, 0.80),
-    (r"authorized\s+request\s+from\s+(the\s+)?(admin|supervisor|manager)",
-     "Authorization from authority", AttackCategory.JAILBREAK, 0.85),
-
+    (
+        r"(authorized|cleared|approved)\s+(by|for)\s+",
+        "False authorization",
+        AttackCategory.JAILBREAK,
+        0.75,
+    ),
+    (
+        r"(official|legitimate|valid)\s+(request|command|instruction)",
+        "Legitimacy claim",
+        AttackCategory.JAILBREAK,
+        0.70,
+    ),
+    (
+        r"(admin|supervisor|manager)\s+(request|authorized|approved)",
+        "Admin authority claim",
+        AttackCategory.JAILBREAK,
+        0.80,
+    ),
+    (
+        r"authorized\s+request\s+from\s+(the\s+)?(admin|supervisor|manager)",
+        "Authorization from authority",
+        AttackCategory.JAILBREAK,
+        0.85,
+    ),
     # Safety filter bypass
-    (r"bypass\s+(the\s+)?(safety|security|filter|guardrails)",
-     "Safety filter bypass", AttackCategory.JAILBREAK, 0.95),
-    (r"(disable|turn\s+off)\s+(safety|security|filter|guardrails)",
-     "Safety disable request", AttackCategory.JAILBREAK, 0.90),
-
+    (
+        r"bypass\s+(the\s+)?(safety|security|filter|guardrails)",
+        "Safety filter bypass",
+        AttackCategory.JAILBREAK,
+        0.95,
+    ),
+    (
+        r"(disable|turn\s+off)\s+(safety|security|filter|guardrails)",
+        "Safety disable request",
+        AttackCategory.JAILBREAK,
+        0.90,
+    ),
     # Direct instruction override
-    (r"override\s+(all\s+)?(the\s+)?rules?",
-     "Rule override", AttackCategory.INSTRUCTION_OVERRIDE, 0.90),
-    (r"(ignore|disregard)\s+(all\s+)?(previous|prior|above)",
-     "Previous instruction ignore", AttackCategory.INSTRUCTION_OVERRIDE, 0.95),
-
+    (
+        r"override\s+(all\s+)?(the\s+)?rules?",
+        "Rule override",
+        AttackCategory.INSTRUCTION_OVERRIDE,
+        0.90,
+    ),
+    (
+        r"(ignore|disregard)\s+(all\s+)?(previous|prior|above)",
+        "Previous instruction ignore",
+        AttackCategory.INSTRUCTION_OVERRIDE,
+        0.95,
+    ),
     # Prompt engineering attacks
-    (r"(few-?shot|zero-?shot)\s+(example|prompt)",
-     "Shot manipulation", AttackCategory.JAILBREAK, 0.60),
-    (r"(chain-?of-?thought|cot)\s+(prompting|reasoning)",
-     "CoT manipulation", AttackCategory.JAILBREAK, 0.55),
-
+    (
+        r"(few-?shot|zero-?shot)\s+(example|prompt)",
+        "Shot manipulation",
+        AttackCategory.JAILBREAK,
+        0.60,
+    ),
+    (
+        r"(chain-?of-?thought|cot)\s+(prompting|reasoning)",
+        "CoT manipulation",
+        AttackCategory.JAILBREAK,
+        0.55,
+    ),
     # Language/model manipulation
-    (r"(speak|respond|write)\s+(only\s+)?(in|using)\s+\w+",
-     "Language restriction", AttackCategory.JAILBREAK, 0.55),
-    (r"(as\s+)?(a|an)\s+(language|ai|llm)\s+(model|assistant)",
-     "Model reference manipulation", AttackCategory.JAILBREAK, 0.50),
-
+    (
+        r"(speak|respond|write)\s+(only\s+)?(in|using)\s+\w+",
+        "Language restriction",
+        AttackCategory.JAILBREAK,
+        0.55,
+    ),
+    (
+        r"(as\s+)?(a|an)\s+(language|ai|llm)\s+(model|assistant)",
+        "Model reference manipulation",
+        AttackCategory.JAILBREAK,
+        0.50,
+    ),
     # Additional known jailbreaks
-    (r"chatgpt",
-     "ChatGPT reference", AttackCategory.JAILBREAK, 0.40),
-    (r"claude",
-     "Claude reference", AttackCategory.JAILBREAK, 0.40),
-    (r"llama",
-     "LLaMA reference", AttackCategory.JAILBREAK, 0.40),
-    (r"gpt-?\d",
-     "GPT model reference", AttackCategory.JAILBREAK, 0.40),
+    (r"chatgpt", "ChatGPT reference", AttackCategory.JAILBREAK, 0.40),
+    (r"claude", "Claude reference", AttackCategory.JAILBREAK, 0.40),
+    (r"llama", "LLaMA reference", AttackCategory.JAILBREAK, 0.40),
+    (r"gpt-?\d", "GPT model reference", AttackCategory.JAILBREAK, 0.40),
 ]
 
 
 # =============================================================================
 # Adversarial Detector Implementation
 # =============================================================================
+
 
 class AdversarialDetector:
     """
@@ -455,19 +664,20 @@ class AdversarialDetector:
         self._threats_by_level: dict[str, int] = defaultdict(int)
 
     def _compile_patterns(
-        self,
-        signatures: list[tuple[str, str, AttackCategory, float]]
+        self, signatures: list[tuple[str, str, AttackCategory, float]]
     ) -> list[tuple[re.Pattern, str, AttackCategory, float]]:
         """Compile regex patterns for efficient matching."""
         compiled = []
         for pattern, description, category, confidence in signatures:
             try:
-                compiled.append((
-                    re.compile(pattern, re.IGNORECASE | re.MULTILINE),
-                    description,
-                    category,
-                    confidence,
-                ))
+                compiled.append(
+                    (
+                        re.compile(pattern, re.IGNORECASE | re.MULTILINE),
+                        description,
+                        category,
+                        confidence,
+                    )
+                )
             except re.error as e:
                 logger.warning(
                     "invalid_adversarial_pattern",
@@ -498,17 +708,13 @@ class AdversarialDetector:
 
         # Run prompt injection detection
         if self.injection_config.enable_pattern_detection:
-            injection_matches = self._detect_patterns(
-                text, self._injection_patterns
-            )
+            injection_matches = self._detect_patterns(text, self._injection_patterns)
             matches.extend(injection_matches)
             categories.update(m.category for m in injection_matches)
 
         # Run jailbreak detection
         if self.jailbreak_config.enable_signature_detection:
-            jailbreak_matches = self._detect_patterns(
-                text, self._jailbreak_patterns
-            )
+            jailbreak_matches = self._detect_patterns(text, self._jailbreak_patterns)
             matches.extend(jailbreak_matches)
             categories.update(m.category for m in jailbreak_matches)
 
@@ -549,23 +755,23 @@ class AdversarialDetector:
         )
 
     def _detect_patterns(
-        self,
-        text: str,
-        patterns: list[tuple[re.Pattern, str, AttackCategory, float]]
+        self, text: str, patterns: list[tuple[re.Pattern, str, AttackCategory, float]]
     ) -> list[DetectionMatch]:
         """Detect matches from pattern list."""
         matches = []
 
         for pattern, description, category, confidence in patterns:
             for match in pattern.finditer(text):
-                matches.append(DetectionMatch(
-                    pattern=pattern.pattern,
-                    description=description,
-                    category=category,
-                    confidence=confidence,
-                    position=(match.start(), match.end()),
-                    matched_text=match.group(0),
-                ))
+                matches.append(
+                    DetectionMatch(
+                        pattern=pattern.pattern,
+                        description=description,
+                        category=category,
+                        confidence=confidence,
+                        position=(match.start(), match.end()),
+                        matched_text=match.group(0),
+                    )
+                )
 
         return matches
 
@@ -589,44 +795,47 @@ class AdversarialDetector:
 
             for word, count in word_counts.items():
                 if count > len(words) * 0.3 and len(word) > 3:
-                    matches.append(DetectionMatch(
-                        pattern="repetition",
-                        description=f"Excessive repetition of '{word}' ({count} times)",
-                        category=AttackCategory.UNKNOWN,
-                        confidence=0.50,
-                        position=(0, len(text)),
-                        matched_text=word,
-                    ))
+                    matches.append(
+                        DetectionMatch(
+                            pattern="repetition",
+                            description=f"Excessive repetition of '{word}' ({count} times)",
+                            category=AttackCategory.UNKNOWN,
+                            confidence=0.50,
+                            position=(0, len(text)),
+                            matched_text=word,
+                        )
+                    )
 
         # Check for excessive capitalization
         upper_ratio = sum(1 for c in text if c.isupper()) / max(len(text), 1)
         if upper_ratio > 0.7 and len(text) > 20:
-            matches.append(DetectionMatch(
-                pattern="excessive_caps",
-                description="Excessive capitalization detected",
-                category=AttackCategory.UNKNOWN,
-                confidence=0.40,
-                position=(0, len(text)),
-                matched_text=text[:50],
-            ))
+            matches.append(
+                DetectionMatch(
+                    pattern="excessive_caps",
+                    description="Excessive capitalization detected",
+                    category=AttackCategory.UNKNOWN,
+                    confidence=0.40,
+                    position=(0, len(text)),
+                    matched_text=text[:50],
+                )
+            )
 
         # Check for unusual character sequences
         if re.search(r"(.)\1{10,}", text):
-            matches.append(DetectionMatch(
-                pattern="char_repetition",
-                description="Unusual character repetition",
-                category=AttackCategory.UNKNOWN,
-                confidence=0.45,
-                position=(0, len(text)),
-                matched_text="character_repetition",
-            ))
+            matches.append(
+                DetectionMatch(
+                    pattern="char_repetition",
+                    description="Unusual character repetition",
+                    category=AttackCategory.UNKNOWN,
+                    confidence=0.45,
+                    position=(0, len(text)),
+                    matched_text="character_repetition",
+                )
+            )
 
         return matches
 
-    def _calculate_threat_level(
-        self,
-        matches: list[DetectionMatch]
-    ) -> tuple[ThreatLevel, float]:
+    def _calculate_threat_level(self, matches: list[DetectionMatch]) -> tuple[ThreatLevel, float]:
         """Calculate overall threat level and confidence."""
         if not matches:
             return ThreatLevel.BENIGN, 0.0
@@ -649,10 +858,7 @@ class AdversarialDetector:
             return ThreatLevel.LOW, max_confidence
         return ThreatLevel.BENIGN, max_confidence
 
-    def _map_to_owasp(
-        self,
-        categories: set[AttackCategory]
-    ) -> list[OWASPCategory]:
+    def _map_to_owasp(self, categories: set[AttackCategory]) -> list[OWASPCategory]:
         """Map attack categories to OWASP LLM categories."""
         mappings = set()
 
@@ -676,9 +882,7 @@ class AdversarialDetector:
         return list(mappings)
 
     def _generate_recommendation(
-        self,
-        threat_level: ThreatLevel,
-        categories: set[AttackCategory]
+        self, threat_level: ThreatLevel, categories: set[AttackCategory]
     ) -> str:
         """Generate action recommendation based on threat."""
         if threat_level == ThreatLevel.CRITICAL:
@@ -694,9 +898,7 @@ class AdversarialDetector:
     def get_metrics(self) -> dict[str, Any]:
         """Get detection metrics."""
         avg_latency = (
-            self._total_latency_ms / self._detection_count
-            if self._detection_count > 0
-            else 0
+            self._total_latency_ms / self._detection_count if self._detection_count > 0 else 0
         )
 
         return {
@@ -712,6 +914,7 @@ class AdversarialDetector:
 # =============================================================================
 # OWASP Compliance Reporter
 # =============================================================================
+
 
 class OWASPComplianceReporter:
     """
@@ -824,10 +1027,7 @@ class OWASPComplianceReporter:
         },
     }
 
-    def generate_report(
-        self,
-        detection_result: AdversarialDetectionResult
-    ) -> dict[str, Any]:
+    def generate_report(self, detection_result: AdversarialDetectionResult) -> dict[str, Any]:
         """
         Generate OWASP compliance report from detection result.
 
@@ -840,7 +1040,9 @@ class OWASPComplianceReporter:
         report = {
             "timestamp": detection_result.timestamp,
             "threat_level": detection_result.threat_level.value,
-            "overall_compliance": "COMPLIANT" if not detection_result.is_malicious else "NON-COMPLIANT",
+            "overall_compliance": "COMPLIANT"
+            if not detection_result.is_malicious
+            else "NON-COMPLIANT",
             "detected_categories": {},
             "recommendations": [],
         }
@@ -863,8 +1065,7 @@ class OWASPComplianceReporter:
         """Get summary of all OWASP LLM categories."""
         return {
             "categories": {
-                cat.value: info["name"]
-                for cat, info in self.OWASP_DESCRIPTIONS.items()
+                cat.value: info["name"] for cat, info in self.OWASP_DESCRIPTIONS.items()
             },
             "total_categories": len(self.OWASP_DESCRIPTIONS),
         }
@@ -873,6 +1074,7 @@ class OWASPComplianceReporter:
 # =============================================================================
 # Convenience Functions
 # =============================================================================
+
 
 def create_default_detector() -> AdversarialDetector:
     """Create an AdversarialDetector with default configuration."""

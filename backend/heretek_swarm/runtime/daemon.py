@@ -384,7 +384,9 @@ def _build_status_response(swarm: Any) -> dict[str, Any]:
         agents.append(
             {
                 "agent_id": agent_id,
-                "state": status.state.value if hasattr(status.state, "value") else str(status.state),
+                "state": status.state.value
+                if hasattr(status.state, "value")
+                else str(status.state),
                 "mailbox_size": status.mailbox_size,
                 "message_count": status.message_count,
                 "last_activity": status.last_activity or "",

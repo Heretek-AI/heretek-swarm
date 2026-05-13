@@ -312,7 +312,7 @@ class RAGPipeline:
         question: str,
         top_k: int | None = None,
         filters: dict[str, Any] | None = None,
-        conversation_id: str | None = None,  # noqa: ARG002
+        conversation_id: str | None = None,
     ) -> RAGResponse:
         """
         Query the RAG pipeline.
@@ -403,11 +403,14 @@ class RAGPipeline:
             response = await litellm.acompletion(
                 model=f"{self.config.llm_provider}/{self.config.llm_model}",
                 messages=[
-                    {"role": "system", "content": (
-                        "You are a helpful AI assistant that answers questions "
-                        "based on the provided context. "
-                        "If the context doesn't contain relevant information, say so."
-                    )},
+                    {
+                        "role": "system",
+                        "content": (
+                            "You are a helpful AI assistant that answers questions "
+                            "based on the provided context. "
+                            "If the context doesn't contain relevant information, say so."
+                        ),
+                    },
                     {"role": "user", "content": prompt},
                 ],
                 max_tokens=self.config.max_tokens,
@@ -459,7 +462,7 @@ Answer based on the context provided above."""
         self,
         query: str,
         top_k: int | None = None,
-        filters: dict[str, Any] | None = None,  # noqa: ARG002
+        filters: dict[str, Any] | None = None,
     ) -> tuple[str, list[RetrievalResult]]:
         """
         Retrieve context without generating a response.

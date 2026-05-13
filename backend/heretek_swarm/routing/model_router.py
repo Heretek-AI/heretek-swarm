@@ -5,6 +5,7 @@ provider/model combination. When wired to ModelGarage, it uses the
 garage's provider configs as the source of truth and falls back to
 its own standalone configs when no garage is available.
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -29,6 +30,7 @@ class RouterProviderConfig:
     When ModelGarage is connected, the router derives its provider info
     from the garage's ProviderConfigs instead.
     """
+
     provider_id: str
     base_url: str
     api_key: str
@@ -75,9 +77,7 @@ class AgentModelRouter:
         """Register a standalone provider config (garage-independent path)."""
         self._providers[config.provider_id] = config
 
-    def record_usage(
-        self, provider_id: str, response: LLMResponse
-    ) -> None:
+    def record_usage(self, provider_id: str, response: LLMResponse) -> None:
         """Record token usage, request count, and cost for a provider after an LLM call.
 
         Args:
@@ -85,16 +85,12 @@ class AgentModelRouter:
             response: The LLMResponse returned by the provider, which may
                       include ``cost``, ``total_tokens``, and ``usage``.
         """
-        self._request_counts[provider_id] = (
-            self._request_counts.get(provider_id, 0) + 1
-        )
-        self._cost_tracking[provider_id] = (
-            self._cost_tracking.get(provider_id, 0.0)
-            + (response.cost or 0.0)
+        self._request_counts[provider_id] = self._request_counts.get(provider_id, 0) + 1
+        self._cost_tracking[provider_id] = self._cost_tracking.get(provider_id, 0.0) + (
+            response.cost or 0.0
         )
         self._token_tracking[provider_id] = (
-            self._token_tracking.get(provider_id, 0)
-            + response.total_tokens
+            self._token_tracking.get(provider_id, 0) + response.total_tokens
         )
         # Track per-model request counts within each provider
         if provider_id not in self._models_used:
@@ -131,10 +127,7 @@ class AgentModelRouter:
         return providers
 
     def classify_complexity(
-        self,
-        task: str,
-        tokens_estimate: int | None = None,
-        requires_reasoning: bool = False
+        self, task: str, tokens_estimate: int | None = None, requires_reasoning: bool = False
     ) -> TaskComplexity:
         score = 0
         if tokens_estimate:
@@ -202,7 +195,7 @@ class AgentModelRouter:
                     model=matched_model,
                     complexity=complexity,
                     fallback_chain=fallback_chain,
-                    confidence=confidence
+                    confidence=confidence,
                 ), fallback_chain
 
             fallback_chain.append(pid)
@@ -221,7 +214,7 @@ class AgentModelRouter:
                     model=provider.models[0],
                     complexity=complexity,
                     fallback_chain=fallback_chain,
-                    confidence=0.5
+                    confidence=0.5,
                 )
         return None
 
@@ -230,7 +223,7 @@ class AgentModelRouter:
         task: str,
         preferred_provider: str | None = None,
         tokens_estimate: int | None = None,
-        requires_reasoning: bool = False
+        requires_reasoning: bool = False,
     ) -> RoutingDecision:
         """Route a task to the appropriate model provider."""
         complexity = self.classify_complexity(task, tokens_estimate, requires_reasoning)
@@ -279,7 +272,8 @@ def set_global_model_garage(garage: ModelGarage | None) -> None:
 def get_router(agent_id: str) -> AgentModelRouter:
     if agent_id not in _router_registry:
         _router_registry[agent_id] = AgentModelRouter(
-            agent_id, model_garage=_global_model_garage,
+            agent_id,
+            model_garage=_global_model_garage,
         )
     return _router_registry[agent_id]
 

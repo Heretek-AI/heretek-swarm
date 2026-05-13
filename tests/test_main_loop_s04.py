@@ -146,9 +146,7 @@ class _MockSwarm:
                 pulse_data = {
                     "timestamp": datetime.now(UTC).isoformat(),
                     "active_actors": len(self.supervisor.actors) if self.supervisor else 0,
-                    "deliberations_active": len(
-                        getattr(steward, "active_deliberations", {})
-                    ),
+                    "deliberations_active": len(getattr(steward, "active_deliberations", {})),
                     "heartbeat_healthy": True,
                 }
                 await historian.log_event("steward_pulse", "steward", pulse_data)
@@ -394,8 +392,7 @@ class TestEmpathPerformSentimentNew:
         """The method detects negative sentiment in the LLM response."""
         agent = _make_empath()
         agent.run_with_llm = AsyncMock(
-            return_value="The text is negative and pessimistic. "
-            "The tone is critical."
+            return_value="The text is negative and pessimistic. The tone is critical."
         )
 
         result = await agent._perform_sentiment("This is a terrible failure.")
@@ -478,9 +475,7 @@ class TestEmpathAnalyzeSentimentLlm:
         """The fallback result contains sentiment, confidence,
         intensity, and emotions."""
         agent = _make_empath()
-        result = await agent._analyze_sentiment_llm(
-            "This is a great positive message"
-        )
+        result = await agent._analyze_sentiment_llm("This is a great positive message")
 
         assert isinstance(result, dict)
         assert "sentiment" in result

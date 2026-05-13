@@ -151,7 +151,11 @@ class LemonadeProvider(LLMProviderBase):
                     provider="lemonade",
                 )
             if response.status_code != 200:
-                error_text = response.text[:200] if response.headers.get("content-type", "").startswith("text") else response.json()
+                error_text = (
+                    response.text[:200]
+                    if response.headers.get("content-type", "").startswith("text")
+                    else response.json()
+                )
                 raise ProviderError(
                     f"lemonade-server API error: {response.status_code} - {error_text}",
                     provider="lemonade",
@@ -269,6 +273,7 @@ class LemonadeProvider(LLMProviderBase):
         """Cleanup HTTP client."""
         if self._client and not self._client.is_closed:
             await self._client.aclose()
+
 
 # Import at module level for type annotation
 from heretek_swarm.infrastructure.otel import InstrumentedAsyncClient

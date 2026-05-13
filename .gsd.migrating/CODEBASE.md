@@ -1,7 +1,7 @@
 # Codebase Map
 
-Generated: 2026-05-12T23:32:59Z | Files: 1000 | Described: 0/1000
-<!-- gsd:codebase-meta {"generatedAt":"2026-05-12T23:32:59Z","fingerprint":"7c4701ee6a8ceb195fcddbcca051fed3190a8ff2","fileCount":1000,"truncated":true} -->
+Generated: 2026-05-13T01:16:46Z | Files: 1000 | Described: 0/1000
+<!-- gsd:codebase-meta {"generatedAt":"2026-05-13T01:16:46Z","fingerprint":"0b241f2bd42fbd87e08709c8261f31d7bd16bf4f","fileCount":1000,"truncated":true} -->
 Note: Truncated to first 1000 files. Run with higher --max-files to include all.
 
 ### (root)/
@@ -28,10 +28,10 @@ Note: Truncated to first 1000 files. Run with higher --max-files to include all.
 - `.gsd.migrating/STATE.md`
 
 ### .gsd.migrating/activity/
-- *(167 files: 167 .jsonl)*
+- *(177 files: 177 .jsonl)*
 
 ### .gsd.migrating/audit/
 - `.gsd.migrating/audit/events.jsonl`
 
 ### .gsd.migrating/exec/
-- *(815 files: 272 .json, 272 .stderr, 271 .stdout)*
+- *(805 files: 269 .json, 268 .stderr, 268 .stdout)*

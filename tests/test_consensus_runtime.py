@@ -65,6 +65,7 @@ def mock_swarm():
 
         # Real consensus engine
         from heretek_swarm.consensus.maker import MAKERConsensus
+
         swarm.consensus = MAKERConsensus(ahead_by_k=2, min_votes=3)
 
         return swarm
@@ -210,6 +211,7 @@ class TestRunConsensus:
 
         swarm = MagicMock()
         from heretek_swarm.consensus.maker import MAKERConsensus
+
         swarm.consensus = MAKERConsensus(ahead_by_k=2, min_votes=3)
         swarm.supervisor = MagicMock()
         # Mix of working and failing actors
@@ -239,6 +241,7 @@ class TestRunConsensus:
 
         swarm = MagicMock()
         from heretek_swarm.consensus.maker import MAKERConsensus
+
         swarm.consensus = MAKERConsensus(ahead_by_k=2, min_votes=3)
         swarm.supervisor = MagicMock()
         swarm.supervisor.actors = {}
@@ -300,6 +303,7 @@ class TestRunConsensus:
 
         swarm = MagicMock()
         from heretek_swarm.consensus.maker import MAKERConsensus
+
         swarm.consensus = MAKERConsensus(ahead_by_k=2, min_votes=3)
         swarm.supervisor = MagicMock()
 

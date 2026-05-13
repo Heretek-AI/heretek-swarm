@@ -60,9 +60,7 @@ class ExternalCallLogEncryptor:
     def _initialize_encryption(self) -> None:
         """Initialize Fernet encryption."""
         if not CRYPTOGRAPHY_AVAILABLE:
-            logger.error(
-                "cryptography package not installed - encryption disabled"
-            )
+            logger.error("cryptography package not installed - encryption disabled")
             return
 
         key_bytes: bytes
@@ -74,17 +72,13 @@ class ExternalCallLogEncryptor:
             if len(encryption_key) == 44 and encryption_key.endswith("="):
                 key_bytes = encryption_key.encode()
             else:
-                key_bytes = base64.urlsafe_b64encode(
-                    encryption_key.encode().ljust(32)
-                )
+                key_bytes = base64.urlsafe_b64encode(encryption_key.encode().ljust(32))
 
             if Fernet is not None:
                 self._fernet = Fernet(key_bytes)
                 logger.info("ExternalCallLog encryption initialized")
         except Exception as e:
-            logger.error(
-                "Failed to initialize ExternalCallLog encryption", error=str(e)
-            )
+            logger.error("Failed to initialize ExternalCallLog encryption", error=str(e))
             self._fernet = None
 
     @property
@@ -151,9 +145,7 @@ class ExternalCallLogEncryptor:
             encrypted = self._fernet.encrypt(serialized.encode())
             return {"encrypted": encrypted.decode()}
         except Exception as e:
-            logger.error(
-                "Failed to encrypt external call log data", error=str(e)
-            )
+            logger.error("Failed to encrypt external call log data", error=str(e))
             # Fall back to unencrypted storage
             return {"encrypted": serialized}
 
@@ -184,15 +176,11 @@ class ExternalCallLogEncryptor:
             decrypted = self._fernet.decrypt(ciphertext.encode())
             return self._deserialize_dict(decrypted.decode())
         except Exception as e:
-            logger.error(
-                "Failed to decrypt external call log data", error=str(e)
-            )
+            logger.error("Failed to decrypt external call log data", error=str(e))
             # Try to deserialize as plain text (backwards compatibility)
             return self._deserialize_dict(ciphertext)
 
-    def sanitize(
-        self, data: dict[str, Any], include_url: bool = True
-    ) -> dict[str, Any]:
+    def sanitize(self, data: dict[str, Any], include_url: bool = True) -> dict[str, Any]:
         """
         Sanitize a dictionary by redacting sensitive information.
 

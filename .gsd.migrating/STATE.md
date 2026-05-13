@@ -1,8 +1,8 @@
 # GSD State
 
-**Active Milestone:** M008: Post-Restructure Cleanup & Hardening
-**Active Slice:** S05: Final validation pass
-**Phase:** evaluating-gates
+**Active Milestone:** M009: Runtime Hardening & Live Verification
+**Active Slice:** S01: S01
+**Phase:** executing
 **Requirements Status:** 0 active · 0 validated · 0 deferred · 0 out of scope
 
 ## Milestone Registry
@@ -13,8 +13,8 @@
 - ✅ **M005:** Document architecture and compress flat actor API surface
 - ✅ **M006:** Audit and plan repository restructure
 - ✅ **M007:** Execute repository restructure
-- 🔄 **M008:** Post-Restructure Cleanup & Hardening
-- ⬜ **M009:** M009
+- ✅ **M008:** Post-Restructure Cleanup & Hardening
+- 🔄 **M009:** Runtime Hardening & Live Verification
 
 ## Recent Decisions
 - None recorded
@@ -23,4 +23,4 @@
 - None
 
 ## Next Action
-Evaluate 2 quality gate(s) for S05 before execution.
+Execute T03: Run and fix full pytest suite in slice S01.

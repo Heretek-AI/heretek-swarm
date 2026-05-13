@@ -54,6 +54,7 @@ class BeliefState:
         prior: Prior belief distribution
         posterior: Updated belief distribution after observation
     """
+
     belief_id: str = field(default_factory=lambda: str(uuid.uuid4()))
     beliefs: dict[str, dict[str, float]] = field(default_factory=dict)
     precision: float = 1.0
@@ -98,6 +99,7 @@ class Action:
         cost: Action cost (energy, resources, etc.)
         policy_id: Associated policy identifier
     """
+
     action_id: str = field(default_factory=lambda: str(uuid.uuid4()))
     action_type: str = "default"
     parameters: dict[str, Any] = field(default_factory=dict)
@@ -129,6 +131,7 @@ class Policy:
         prior_probability: Prior probability of this policy being optimal
         value: Expected value/utility of this policy
     """
+
     policy_id: str = field(default_factory=lambda: str(uuid.uuid4()))
     actions: list[Action] = field(default_factory=list)
     expected_free_energy: float = 0.0
@@ -180,6 +183,7 @@ class FEPResult:
         timestamp: Calculation timestamp
         metadata: Additional metadata about the calculation
     """
+
     calculation_id: str = field(default_factory=lambda: str(uuid.uuid4()))
     free_energy: float = 0.0
     surprise: float = 0.0
@@ -271,7 +275,9 @@ class FreeEnergyCalculator:
         self._calculation_count = 0
         self._last_calculation_time: datetime | None = None
 
-        logger.info("FreeEnergyCalculator initialized", extra={"strict_validation": strict_validation})
+        logger.info(
+            "FreeEnergyCalculator initialized", extra={"strict_validation": strict_validation}
+        )
 
     def calculate_free_energy(
         self,
@@ -568,8 +574,10 @@ class FreeEnergyCalculator:
         if not safety_result.valid:
             errors.extend(safety_result.errors)
 
-        severity = ValidationSeverity.CRITICAL if errors else (
-            ValidationSeverity.WARNING if warnings else ValidationSeverity.INFO
+        severity = (
+            ValidationSeverity.CRITICAL
+            if errors
+            else (ValidationSeverity.WARNING if warnings else ValidationSeverity.INFO)
         )
 
         return ValidationResult(
@@ -843,7 +851,6 @@ class FreeEnergyCalculator:
         # Expected free energy
         return risk + ambiguity + total_cost * 0.1
 
-
     def get_cached_result(self, calculation_id: str) -> FEPResult | None:
         """
         Get cached FEP calculation result.
@@ -872,9 +879,7 @@ class FreeEnergyCalculator:
             "calculation_count": self._calculation_count,
             "cache_size": len(self._cache),
             "last_calculation_time": (
-                self._last_calculation_time.isoformat()
-                if self._last_calculation_time
-                else None
+                self._last_calculation_time.isoformat() if self._last_calculation_time else None
             ),
         }
 
@@ -1385,7 +1390,9 @@ class ActiveInferenceAgent:
                     expected = optimized_action.expected_outcome[key]
                     current = optimized_action.parameters[key]
                     # Move toward expected value
-                    optimized_action.parameters[key] = current + surprise_factor * (expected - current)
+                    optimized_action.parameters[key] = current + surprise_factor * (
+                        expected - current
+                    )
 
             optimized.actions.append(optimized_action)
 

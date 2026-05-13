@@ -1,0 +1,18 @@
+{
+  "id": "1a78db30-9a62-4deb-a6c1-d5fdf91dcb90",
+  "runtime": "bash",
+  "purpose": "Check python3 availability and environment",
+  "script_chars": 466,
+  "started_at": "2026-05-13T00:43:30.789Z",
+  "finished_at": "2026-05-13T00:43:38.641Z",
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 7852,
+  "stdout_bytes": 1192,
+  "stderr_bytes": 0,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\1a78db30-9a62-4deb-a6c1-d5fdf91dcb90.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\1a78db30-9a62-4deb-a6c1-d5fdf91dcb90.stderr"
+}

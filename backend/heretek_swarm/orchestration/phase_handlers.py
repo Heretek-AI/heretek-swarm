@@ -70,9 +70,7 @@ class ResearchPhaseHandler(PhaseHandler):
                 research_data["historical_context"] = deliberation_context.get(
                     "relevant_memories", []
                 )
-                research_data["matched_patterns"] = deliberation_context.get(
-                    "matched_patterns", []
-                )
+                research_data["matched_patterns"] = deliberation_context.get("matched_patterns", [])
             except Exception as e:
                 errors.append(f"Historian query failed: {e}")
                 logger.warning(f"Historian query failed: {e}")
@@ -95,10 +93,13 @@ class ResearchPhaseHandler(PhaseHandler):
             research_data["constraints"] = context.get("constraints", [])
             research_data["assumptions"] = context.get("assumptions", [])
 
-        logger.info("Research phase complete", extra={
-            "historical_context_count": len(research_data["historical_context"]),
-            "constraints_count": len(research_data["constraints"]),
-        })
+        logger.info(
+            "Research phase complete",
+            extra={
+                "historical_context_count": len(research_data["historical_context"]),
+                "constraints_count": len(research_data["constraints"]),
+            },
+        )
 
         return len(errors) == 0, research_data, errors
 
@@ -219,9 +220,24 @@ class AlternativesPhaseHandler(PhaseHandler):
 
         # Generate alternatives
         alternatives = [
-            {"id": "alt_1", "name": "Conservative Approach", "description": "Minimal change, low risk", "type": "conservative"},
-            {"id": "alt_2", "name": "Balanced Approach", "description": "Moderate change, balanced risk/reward", "type": "balanced"},
-            {"id": "alt_3", "name": "Aggressive Approach", "description": "Significant change, high risk/reward", "type": "aggressive"},
+            {
+                "id": "alt_1",
+                "name": "Conservative Approach",
+                "description": "Minimal change, low risk",
+                "type": "conservative",
+            },
+            {
+                "id": "alt_2",
+                "name": "Balanced Approach",
+                "description": "Moderate change, balanced risk/reward",
+                "type": "balanced",
+            },
+            {
+                "id": "alt_3",
+                "name": "Aggressive Approach",
+                "description": "Significant change, high risk/reward",
+                "type": "aggressive",
+            },
         ]
 
         # Evaluate each alternative
@@ -236,7 +252,9 @@ class AlternativesPhaseHandler(PhaseHandler):
             }
 
         # Rank alternatives
-        ranked = sorted(alternatives, key=lambda x: x.get("evaluation", {}).get("total_score", 0), reverse=True)
+        ranked = sorted(
+            alternatives, key=lambda x: x.get("evaluation", {}).get("total_score", 0), reverse=True
+        )
 
         if ranked:
             alternatives_data["recommended_alternative"] = ranked[0]
@@ -244,7 +262,11 @@ class AlternativesPhaseHandler(PhaseHandler):
 
         # Trade-offs
         alternatives_data["trade_offs"] = [
-            {"alternative_1": "Conservative Approach", "alternative_2": "Balanced Approach", "trade_off": "Different risk/reward profiles"}
+            {
+                "alternative_1": "Conservative Approach",
+                "alternative_2": "Balanced Approach",
+                "trade_off": "Different risk/reward profiles",
+            }
         ]
 
         return True, alternatives_data, errors
@@ -349,7 +371,9 @@ class DecisionPhaseHandler(PhaseHandler):
 
             vote = {
                 "agent_id": agent_id,
-                "decision": previous_output.get("recommended_alternative", {}).get("name", "unknown"),
+                "decision": previous_output.get("recommended_alternative", {}).get(
+                    "name", "unknown"
+                ),
                 "confidence": 0.8,
             }
 

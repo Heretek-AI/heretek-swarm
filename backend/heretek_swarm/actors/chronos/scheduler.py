@@ -8,13 +8,16 @@ Contains scheduling loop and task execution methods as a mixin for cooperative M
 from __future__ import annotations
 
 import asyncio
-from datetime import datetime
+from typing import TYPE_CHECKING
 
 import structlog
 
 from heretek_swarm.actors.base import ActorMessage
 
-from .types import Deadline, RecurrenceType, ScheduledTask, ScheduleStatus
+from .types import Deadline, RecurrenceType, ScheduledTask, ScheduleStatus, Tick
+
+if TYPE_CHECKING:
+    from datetime import datetime
 
 logger = structlog.get_logger("ChronosSchedulerMixin")
 
@@ -205,7 +208,7 @@ class ChronosSchedulerMixin:
                 ),
             )
 
-    async def generate_ticks(self) -> list["Tick"]:  # noqa: F821
+    async def generate_ticks(self) -> list[Tick]:
         """Generate ticks from due PENDING tasks.
 
         Iterates ``_task_queue``, finds tasks whose ``scheduled_at`` ≤ now
@@ -247,9 +250,11 @@ class ChronosSchedulerMixin:
     def _get_current_time(self):
         """Get current UTC time. Override in tests."""
         from datetime import UTC, datetime
+
         return datetime.now(UTC)
 
     def _get_time_delta(self, days=0, hours=0, minutes=0, seconds=0, weeks=0):
         """Get a timedelta. Override in tests."""
         from datetime import timedelta
+
         return timedelta(days=days, hours=hours, minutes=minutes, seconds=seconds, weeks=weeks)

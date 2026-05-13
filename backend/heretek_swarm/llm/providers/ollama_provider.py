@@ -116,10 +116,12 @@ class OllamaProvider(LLMProviderBase):
         # Convert messages to Ollama format
         messages = []
         for msg in request.messages:
-            messages.append({
-                "role": msg.role,
-                "content": msg.content,
-            })
+            messages.append(
+                {
+                    "role": msg.role,
+                    "content": msg.content,
+                }
+            )
 
         # Build Ollama-specific payload
         payload = {
@@ -177,7 +179,9 @@ class OllamaProvider(LLMProviderBase):
 
             # Calculate approximate token usage
             prompt_tokens = self._estimate_tokens(messages)
-            completion_tokens = self._estimate_tokens([{"content": message_data.get("content", "")}])
+            completion_tokens = self._estimate_tokens(
+                [{"content": message_data.get("content", "")}]
+            )
 
             return LLMResponse(
                 content=message_data.get("content", ""),
@@ -216,10 +220,12 @@ class OllamaProvider(LLMProviderBase):
         # Convert messages to Ollama format
         messages = []
         for msg in request.messages:
-            messages.append({
-                "role": msg.role,
-                "content": msg.content,
-            })
+            messages.append(
+                {
+                    "role": msg.role,
+                    "content": msg.content,
+                }
+            )
 
         payload = {
             "model": model,
@@ -300,6 +306,7 @@ class OllamaProvider(LLMProviderBase):
         """Cleanup HTTP client."""
         if self._client and not self._client.is_closed:
             await self._client.aclose()
+
 
 # Import at module level for type annotation
 from heretek_swarm.infrastructure.otel import InstrumentedAsyncClient

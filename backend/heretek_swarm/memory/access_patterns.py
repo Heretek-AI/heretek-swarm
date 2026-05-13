@@ -26,24 +26,27 @@ logger = structlog.get_logger(__name__)
 # Access Pattern Types and Enums
 # =============================================================================
 
+
 class AccessTier(StrEnum):
     """Memory access tier classification."""
-    HOT = "hot"           # Frequently accessed, keep in fastest storage
-    WARM = "warm"         # Moderately accessed, standard storage
-    COLD = "cold"         # Rarely accessed, can be compressed/archived
-    FROZEN = "frozen"     # Never accessed, candidate for deletion
+
+    HOT = "hot"  # Frequently accessed, keep in fastest storage
+    WARM = "warm"  # Moderately accessed, standard storage
+    COLD = "cold"  # Rarely accessed, can be compressed/archived
+    FROZEN = "frozen"  # Never accessed, candidate for deletion
 
 
 class AccessPattern(StrEnum):
     """Types of access patterns detected."""
-    SEQUENTIAL = "sequential"      # Accessing in order
-    RANDOM = "random"              # No predictable pattern
-    TEMPORAL = "temporal"          # Time-based access pattern
-    SPATIAL = "spatial"            # Related memories accessed together
-    BURST = "burst"                # Sudden high-frequency access
-    DECAYING = "decaying"          # Decreasing access over time
-    GROWING = "growing"            # Increasing access over time
-    CYCLICAL = "cyclical"          # Periodic access pattern
+
+    SEQUENTIAL = "sequential"  # Accessing in order
+    RANDOM = "random"  # No predictable pattern
+    TEMPORAL = "temporal"  # Time-based access pattern
+    SPATIAL = "spatial"  # Related memories accessed together
+    BURST = "burst"  # Sudden high-frequency access
+    DECAYING = "decaying"  # Decreasing access over time
+    GROWING = "growing"  # Increasing access over time
+    CYCLICAL = "cyclical"  # Periodic access pattern
 
 
 @dataclass
@@ -60,6 +63,7 @@ class MemoryAccessRecord:
         access_latency_ms: Time taken for access
         success: Whether access succeeded
     """
+
     memory_id: str
     access_type: str  # read, write, delete
     timestamp: str
@@ -87,6 +91,7 @@ class AccessStatistics:
         miss_rate: Cache miss rate if applicable
         predicted_hits: Predicted future access count
     """
+
     total_accesses: int = 0
     unique_memories: int = 0
     hot_count: int = 0
@@ -145,6 +150,7 @@ class MemoryAccessProfile:
         predicted_next_access: Predicted next access time
         confidence: Prediction confidence (0-1)
     """
+
     memory_id: str
     access_count: int = 0
     first_access: str | None = None
@@ -194,6 +200,7 @@ class AccessPatternReport:
         predictions: Access predictions
         recommendations: Optimization recommendations
     """
+
     generated_at: str
     analysis_window_hours: int
     total_memories: int
@@ -229,6 +236,7 @@ class AccessPatternReport:
 # Access Pattern Analyzer
 # =============================================================================
 
+
 class AccessPatternAnalyzer:
     """
     Memory Access Pattern Analyzer
@@ -248,18 +256,18 @@ class AccessPatternAnalyzer:
     """
 
     # Tier classification thresholds
-    HOT_FREQUENCY_THRESHOLD = 0.8      # Top 20% by frequency
-    WARM_FREQUENCY_THRESHOLD = 0.4     # 40-80% by frequency
-    COLD_FREQUENCY_THRESHOLD = 0.1     # 10-40% by frequency
+    HOT_FREQUENCY_THRESHOLD = 0.8  # Top 20% by frequency
+    WARM_FREQUENCY_THRESHOLD = 0.4  # 40-80% by frequency
+    COLD_FREQUENCY_THRESHOLD = 0.1  # 10-40% by frequency
 
     # Recency decay constants
-    RECENCY_HALF_LIFE_HOURS = 24       # Half-life for recency decay
-    MAX_RECENCY_AGE_HOURS = 168        # 1 week max for recency
+    RECENCY_HALF_LIFE_HOURS = 24  # Half-life for recency decay
+    MAX_RECENCY_AGE_HOURS = 168  # 1 week max for recency
 
     # Pattern detection parameters
-    MIN_ACCESSES_FOR_PATTERN = 5       # Minimum accesses to detect pattern
-    SEQUENTIAL_THRESHOLD = 0.7         # Correlation threshold for sequential
-    CYCLICAL_THRESHOLD = 0.6           # Periodicity threshold
+    MIN_ACCESSES_FOR_PATTERN = 5  # Minimum accesses to detect pattern
+    SEQUENTIAL_THRESHOLD = 0.7  # Correlation threshold for sequential
+    CYCLICAL_THRESHOLD = 0.6  # Periodicity threshold
 
     def __init__(
         self,
@@ -340,7 +348,7 @@ class AccessPatternAnalyzer:
         # Update history
         self._access_history.append(record)
         if len(self._access_history) > self._max_history_size:
-            self._access_history = self._access_history[-self._max_history_size:]
+            self._access_history = self._access_history[-self._max_history_size :]
 
         # Update or create profile
         if memory_id not in self._profiles:
@@ -415,7 +423,8 @@ class AccessPatternAnalyzer:
             profile.frequency_score = min(
                 1.0,
                 math.log(profile.access_count + 1) / math.log(max_possible + 1)
-                if max_possible > 0 else 0.5
+                if max_possible > 0
+                else 0.5,
             )
 
         # Calculate recency score with exponential decay
@@ -495,10 +504,7 @@ class AccessPatternAnalyzer:
 
         try:
             times = [datetime.fromisoformat(ts) for ts in timestamps]
-            intervals = [
-                (times[i+1] - times[i]).total_seconds()
-                for i in range(len(times) - 1)
-            ]
+            intervals = [(times[i + 1] - times[i]).total_seconds() for i in range(len(times) - 1)]
 
             if not intervals:
                 return False
@@ -551,8 +557,9 @@ class AccessPatternAnalyzer:
             # Burst if 80% of accesses in less than 10% of total time
             burst_threshold = total_span * 0.1
             burst_count = sum(
-                1 for i in range(len(times) - 1)
-                if (times[i+1] - times[i]).total_seconds() < burst_threshold
+                1
+                for i in range(len(times) - 1)
+                if (times[i + 1] - times[i]).total_seconds() < burst_threshold
             )
 
             return burst_count >= len(timestamps) * 0.8
@@ -566,18 +573,14 @@ class AccessPatternAnalyzer:
 
         try:
             times = [datetime.fromisoformat(ts) for ts in timestamps]
-            intervals = [
-                (times[i+1] - times[i]).total_seconds()
-                for i in range(len(times) - 1)
-            ]
+            intervals = [(times[i + 1] - times[i]).total_seconds() for i in range(len(times) - 1)]
 
             if len(intervals) < 3:
                 return False
 
             # Check if intervals are increasing (access becoming less frequent)
             increasing_count = sum(
-                1 for i in range(len(intervals) - 1)
-                if intervals[i+1] > intervals[i]
+                1 for i in range(len(intervals) - 1) if intervals[i + 1] > intervals[i]
             )
 
             return increasing_count / len(intervals) >= 0.7
@@ -591,18 +594,14 @@ class AccessPatternAnalyzer:
 
         try:
             times = [datetime.fromisoformat(ts) for ts in timestamps]
-            intervals = [
-                (times[i+1] - times[i]).total_seconds()
-                for i in range(len(times) - 1)
-            ]
+            intervals = [(times[i + 1] - times[i]).total_seconds() for i in range(len(times) - 1)]
 
             if len(intervals) < 3:
                 return False
 
             # Check if intervals are decreasing (access becoming more frequent)
             decreasing_count = sum(
-                1 for i in range(len(intervals) - 1)
-                if intervals[i+1] < intervals[i]
+                1 for i in range(len(intervals) - 1) if intervals[i + 1] < intervals[i]
             )
 
             return decreasing_count / len(intervals) >= 0.7
@@ -620,10 +619,7 @@ class AccessPatternAnalyzer:
             times = [datetime.fromisoformat(ts) for ts in timestamps]
 
             # Calculate average interval
-            intervals = [
-                (times[i+1] - times[i]).total_seconds()
-                for i in range(len(times) - 1)
-            ]
+            intervals = [(times[i + 1] - times[i]).total_seconds() for i in range(len(times) - 1)]
 
             if not intervals:
                 return None, 0.0
@@ -676,12 +672,10 @@ class AccessPatternAnalyzer:
         cold_count = sum(1 for p in self._profiles.values() if p.tier == AccessTier.COLD)
         frozen_count = sum(1 for p in self._profiles.values() if p.tier == AccessTier.FROZEN)
 
-        avg_frequency = (
-            sum(p.frequency_score for p in self._profiles.values()) / len(self._profiles)
+        avg_frequency = sum(p.frequency_score for p in self._profiles.values()) / len(
+            self._profiles
         )
-        avg_recency = (
-            sum(p.recency_score for p in self._profiles.values()) / len(self._profiles)
-        )
+        avg_recency = sum(p.recency_score for p in self._profiles.values()) / len(self._profiles)
 
         total_ops = self._cache_hits + self._cache_misses
         hit_rate = self._cache_hits / total_ops if total_ops > 0 else 0.0
@@ -689,7 +683,8 @@ class AccessPatternAnalyzer:
 
         # Calculate predicted hits
         predicted_hits = sum(
-            1 for p in self._profiles.values()
+            1
+            for p in self._profiles.values()
             if p.confidence > 0.7 and p.predicted_next_access is not None
         )
 
@@ -756,7 +751,8 @@ class AccessPatternAnalyzer:
     def _generate_predictions(self, analysis_window_hours: int) -> dict[str, Any]:
         """Generate access predictions for the analysis window."""
         high_confidence_predictions = [
-            p for p in self._profiles.values()
+            p
+            for p in self._profiles.values()
             if p.confidence > 0.7 and p.predicted_next_access is not None
         ]
 
@@ -764,19 +760,23 @@ class AccessPatternAnalyzer:
         migrations_predicted = []
         for profile in self._profiles.values():
             if profile.tier == AccessTier.WARM and profile.recency_score < 0.2:
-                migrations_predicted.append({
-                    "memory_id": profile.memory_id,
-                    "from_tier": "warm",
-                    "to_tier": "cold",
-                    "confidence": 0.8,
-                })
+                migrations_predicted.append(
+                    {
+                        "memory_id": profile.memory_id,
+                        "from_tier": "warm",
+                        "to_tier": "cold",
+                        "confidence": 0.8,
+                    }
+                )
             elif profile.tier == AccessTier.COLD and profile.frequency_score > 0.6:
-                migrations_predicted.append({
-                    "memory_id": profile.memory_id,
-                    "from_tier": "cold",
-                    "to_tier": "warm",
-                    "confidence": 0.7,
-                })
+                migrations_predicted.append(
+                    {
+                        "memory_id": profile.memory_id,
+                        "from_tier": "cold",
+                        "to_tier": "warm",
+                        "confidence": 0.7,
+                    }
+                )
 
         return {
             "high_confidence_accesses": len(high_confidence_predictions),

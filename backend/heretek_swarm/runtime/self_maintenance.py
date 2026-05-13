@@ -82,9 +82,7 @@ class SelfMaintenanceConfig:
     """Aggregated configuration for self-maintenance tasks."""
 
     log_rotation: LogRotationConfig = field(default_factory=LogRotationConfig)
-    db_maintenance: DatabaseMaintenanceConfig = field(
-        default_factory=DatabaseMaintenanceConfig
-    )
+    db_maintenance: DatabaseMaintenanceConfig = field(default_factory=DatabaseMaintenanceConfig)
     config_drift: ConfigDriftConfig = field(default_factory=ConfigDriftConfig)
     # Scheduler settings
     run_interval_seconds: int = 3600  # Run all tasks every hour
@@ -347,7 +345,9 @@ class DatabaseMaintenance:
     async def _prune_orphaned(self, pool: Any) -> None:
         """Prune orphaned agent state records."""
         try:
-            cutoff = datetime.now(UTC) - timedelta(hours=self.config.prune_orphaned_older_than_hours)
+            cutoff = datetime.now(UTC) - timedelta(
+                hours=self.config.prune_orphaned_older_than_hours
+            )
             async with pool.acquire() as conn:
                 # Prune inactive agent states older than retention period
                 result = await conn.execute(
@@ -539,9 +539,7 @@ class ConfigDriftDetector:
         baseline_path = self._get_baseline_path(config_name)
 
         if not baseline_path.exists():
-            logger.warning(
-                f"No baseline found at {baseline_path}, run store_baseline() first"
-            )
+            logger.warning(f"No baseline found at {baseline_path}, run store_baseline() first")
             self._last_drift_result = {
                 "has_drift": False,
                 "reason": "no_baseline",
@@ -743,9 +741,7 @@ class SelfMaintenanceScheduler:
                 "monitoring_enabled": getattr(cfg, "monitoring_enabled", None),
                 "auto_restart_enabled": getattr(cfg, "auto_restart_enabled", None),
                 "max_restart_attempts": getattr(cfg, "max_restart_attempts", None),
-                "state_persistence_enabled": getattr(
-                    cfg, "state_persistence_enabled", None
-                ),
+                "state_persistence_enabled": getattr(cfg, "state_persistence_enabled", None),
                 "auto_scaling_enabled": getattr(cfg, "auto_scaling_enabled", None),
             }
         return {}
@@ -806,9 +802,7 @@ class SelfMaintenanceScheduler:
                     or (now - self._last_drift_check).total_seconds()
                     >= self.config.config_drift_interval_seconds
                 ):
-                    result = await self._drift_detector.detect_drift(
-                        self._get_runtime_config()
-                    )
+                    result = await self._drift_detector.detect_drift(self._get_runtime_config())
                     self._stats["last_drift_result"] = result
                     self._last_drift_check = now
 
@@ -822,9 +816,7 @@ class SelfMaintenanceScheduler:
         Returns:
             Path where baseline was stored
         """
-        return self._drift_detector.store_baseline(
-            self._get_runtime_config(), config_name
-        )
+        return self._drift_detector.store_baseline(self._get_runtime_config(), config_name)
 
     def get_status(self) -> dict[str, Any]:
         """
@@ -840,11 +832,7 @@ class SelfMaintenanceScheduler:
             "log_rotation_stats": self._stats["log_rotation"],
             "db_maintenance_stats": self._stats["db_maintenance"],
             "last_drift_result": self._stats["last_drift_result"],
-            "integration": (
-                "autonomous_runtime"
-                if self.runtime_ref is not None
-                else "standalone"
-            ),
+            "integration": ("autonomous_runtime" if self.runtime_ref is not None else "standalone"),
         }
 
     # Convenience accessors for individual components

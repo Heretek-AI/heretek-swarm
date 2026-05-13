@@ -100,9 +100,7 @@ class TestRoutedTaskDispatch:
         with 'routed_task' event type."""
         steward = _make_steward_mock(route_result="msg-001")
         historian = _make_historian_mock()
-        swarm = _make_swarm_with_actors(
-            {"steward": steward, "historian": historian}
-        )
+        swarm = _make_swarm_with_actors({"steward": steward, "historian": historian})
 
         result = await swarm.run_routed_task(
             agent_name="coder",
@@ -130,9 +128,7 @@ class TestRoutedTaskDispatch:
         keys (target_agent, task_type, message_id)."""
         steward = _make_steward_mock(route_result="msg-002")
         historian = _make_historian_mock()
-        swarm = _make_swarm_with_actors(
-            {"steward": steward, "historian": historian}
-        )
+        swarm = _make_swarm_with_actors({"steward": steward, "historian": historian})
 
         await swarm.run_routed_task(
             agent_name="coder",
@@ -178,9 +174,7 @@ class TestRoutedTaskDispatch:
         ``run_routed_task()`` returns ``{"status": "failed"}``."""
         steward = _make_steward_mock(route_result="")
         historian = _make_historian_mock()
-        swarm = _make_swarm_with_actors(
-            {"steward": steward, "historian": historian}
-        )
+        swarm = _make_swarm_with_actors({"steward": steward, "historian": historian})
 
         result = await swarm.run_routed_task(
             agent_name="coder",
@@ -236,6 +230,7 @@ class TestRoutedTaskWithRealEntrypoint:
             swarm.supervisor = ActorSupervisor()
             steward = StewardAgent(agent_id="steward")
             from heretek_swarm.actors.historian import HistorianAgent
+
             historian = HistorianAgent()
 
             # We need to register them but skip the mail processing for speed.

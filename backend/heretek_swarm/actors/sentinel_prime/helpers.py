@@ -164,6 +164,7 @@ class SentinelPrimeHelpers:
     def _get_incident_status(self, value: str) -> Any:
         """Get IncidentStatus enum value."""
         from heretek_swarm.actors.sentinel_prime.types import IncidentStatus
+
         return IncidentStatus(value)
 
     # =====================================================================
@@ -187,9 +188,9 @@ class SentinelPrimeHelpers:
 
         # Count recent threats from this source
         recent_threats = sum(
-            1 for inc in self._incidents.values()
-            if inc.source_actor == source
-            and inc.status == IncidentStatus.DETECTED
+            1
+            for inc in self._incidents.values()
+            if inc.source_actor == source and inc.status == IncidentStatus.DETECTED
         )
 
         # Escalate if threshold reached
@@ -477,9 +478,7 @@ class SentinelPrimeHelpers:
 
         # Check external threat detection stats
         if self._stats["external_threats_detected"] > 50:
-            recommendations.append(
-                "High external threat count - review gateway protections"
-            )
+            recommendations.append("High external threat count - review gateway protections")
 
         if not recommendations:
             recommendations.append("Security posture stable - continue monitoring")

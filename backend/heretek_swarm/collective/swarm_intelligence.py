@@ -74,6 +74,7 @@ STIGMERGY_COLLECTIVE_THRESHOLD = 0.3
 @dataclass
 class FlockingAgent:
     """Agent exhibiting flocking behavior."""
+
     agent_id: str = ""
     position: tuple[float, float, float] = (0.0, 0.0, 0.0)
     velocity: tuple[float, float, float] = (0.0, 0.0, 0.0)
@@ -84,6 +85,7 @@ class FlockingAgent:
 @dataclass
 class StigmergicTrace:
     """Trace left by an agent for stigmergic coordination."""
+
     trace_id: str = field(default_factory=lambda: str(uuid.uuid4()))
     agent_id: str = ""
     trace_type: str = "marker"
@@ -96,6 +98,7 @@ class StigmergicTrace:
 @dataclass
 class SwarmDecision:
     """Result of a swarm intelligence decision process."""
+
     pattern: SwarmPattern = SwarmPattern.PSO
     participants: list[str] = field(default_factory=list)
     convergence_iterations: int = 0
@@ -109,6 +112,7 @@ class SwarmDecision:
 @dataclass
 class SwarmConfig:
     """Configuration for swarm intelligence algorithms."""
+
     pso_inertia: float = 0.7
     pso_cognitive: float = 1.5
     pso_social: float = 1.5
@@ -164,8 +168,7 @@ class SwarmIntelligenceEngine:
         self.decision_history: list[SwarmDecision] = []
 
         logger.info(
-            f"SwarmIntelligenceEngine initialized with "
-            f"max_iterations={self.config.max_iterations}"
+            f"SwarmIntelligenceEngine initialized with max_iterations={self.config.max_iterations}"
         )
 
     # =========================================================================
@@ -247,9 +250,7 @@ class SwarmIntelligenceEngine:
         )
 
         self.decision_history.append(decision)
-        logger.info(
-            f"ACO completed: found path with quality {decision.confidence:.2f}"
-        )
+        logger.info(f"ACO completed: found path with quality {decision.confidence:.2f}")
 
         return decision
 
@@ -286,9 +287,7 @@ class SwarmIntelligenceEngine:
         )
 
         self.decision_history.append(decision)
-        logger.info(
-            f"Bee Algorithm completed: {len(decision.final_position)} tasks allocated"
-        )
+        logger.info(f"Bee Algorithm completed: {len(decision.final_position)} tasks allocated")
 
         return decision
 
@@ -334,7 +333,7 @@ class SwarmIntelligenceEngine:
                 "cohesion": self._calculate_flocking_cohesion(),
                 "alignment": self._calculate_flocking_alignment(),
                 "separation": self._calculate_flocking_separation(),
-            }
+            },
         )
 
         self.decision_history.append(decision)
@@ -351,11 +350,14 @@ class SwarmIntelligenceEngine:
         self.flocking_agents.clear()
 
         for agent_id in agents:
-            position = initial_positions.get(agent_id, (
-                random.uniform(-10, 10),
-                random.uniform(-10, 10),
-                random.uniform(-10, 10),
-            ))
+            position = initial_positions.get(
+                agent_id,
+                (
+                    random.uniform(-10, 10),
+                    random.uniform(-10, 10),
+                    random.uniform(-10, 10),
+                ),
+            )
 
             velocity = (
                 random.uniform(-1, 1),
@@ -390,21 +392,21 @@ class SwarmIntelligenceEngine:
         cohesion = self._calculate_cohesion(agent)
 
         new_velocity = (
-            agent.velocity[0] +
-            separation[0] * self.config.flock_separation_weight +
-            alignment[0] * self.config.flock_alignment_weight +
-            cohesion[0] * self.config.flock_cohesion_weight,
-            agent.velocity[1] +
-            separation[1] * self.config.flock_separation_weight +
-            alignment[1] * self.config.flock_alignment_weight +
-            cohesion[1] * self.config.flock_cohesion_weight,
-            agent.velocity[2] +
-            separation[2] * self.config.flock_separation_weight +
-            alignment[2] * self.config.flock_alignment_weight +
-            cohesion[2] * self.config.flock_cohesion_weight,
+            agent.velocity[0]
+            + separation[0] * self.config.flock_separation_weight
+            + alignment[0] * self.config.flock_alignment_weight
+            + cohesion[0] * self.config.flock_cohesion_weight,
+            agent.velocity[1]
+            + separation[1] * self.config.flock_separation_weight
+            + alignment[1] * self.config.flock_alignment_weight
+            + cohesion[1] * self.config.flock_cohesion_weight,
+            agent.velocity[2]
+            + separation[2] * self.config.flock_separation_weight
+            + alignment[2] * self.config.flock_alignment_weight
+            + cohesion[2] * self.config.flock_cohesion_weight,
         )
 
-        magnitude = math.sqrt(sum(v ** 2 for v in new_velocity))
+        magnitude = math.sqrt(sum(v**2 for v in new_velocity))
         if magnitude > 0:
             scale = min(FLOCK_MAX_SPEED, magnitude) / magnitude
             agent.velocity = tuple(v * scale for v in new_velocity)
@@ -439,7 +441,9 @@ class SwarmIntelligenceEngine:
         avg_velocity = [0.0, 0.0, 0.0]
         for neighbor_id in agent.neighbors:
             neighbor = self.flocking_agents[neighbor_id]
-            avg_velocity = tuple(a + b for a, b in zip(avg_velocity, neighbor.velocity, strict=False))
+            avg_velocity = tuple(
+                a + b for a, b in zip(avg_velocity, neighbor.velocity, strict=False)
+            )
 
         avg_velocity = tuple(v / len(agent.neighbors) for v in avg_velocity)
 
@@ -493,7 +497,7 @@ class SwarmIntelligenceEngine:
 
         result = tuple(a / len(self.flocking_agents) for a in avg)
 
-        magnitude = math.sqrt(sum(v ** 2 for v in result))
+        magnitude = math.sqrt(sum(v**2 for v in result))
         if magnitude > 0:
             result = tuple(v / magnitude for v in result)
 
@@ -609,9 +613,7 @@ class SwarmIntelligenceEngine:
                 if x in self.traces:
                     self.traces[x].append(trace)
 
-                new_position = self._stigmergic_movement(
-                    agent_id, (x, y), environment_size
-                )
+                new_position = self._stigmergic_movement(agent_id, (x, y), environment_size)
                 agent_positions[agent_id] = new_position
 
             self._decay_traces()
@@ -632,7 +634,7 @@ class SwarmIntelligenceEngine:
             quality_metrics={
                 "trace_density": trace_density,
                 "coordination_score": coordination_score,
-            }
+            },
         )
 
         self.decision_history.append(decision)
@@ -679,10 +681,12 @@ class SwarmIntelligenceEngine:
         """Decay trace strengths over time."""
         for x in self.traces:
             for trace in self.traces[x]:
-                trace.strength *= (1 - trace.decay_rate)
+                trace.strength *= 1 - trace.decay_rate
 
         for x in self.traces:
-            self.traces[x] = [t for t in self.traces[x] if t.strength > STIGMERGY_TRACE_MIN_THRESHOLD]
+            self.traces[x] = [
+                t for t in self.traces[x] if t.strength > STIGMERGY_TRACE_MIN_THRESHOLD
+            ]
 
     def _calculate_trace_density(self, environment_size: tuple[int, int]) -> float:
         """Calculate trace density in environment."""
@@ -704,14 +708,17 @@ class SwarmIntelligenceEngine:
         center_y = sum(p[1] for p in positions) / len(positions)
 
         avg_distance = sum(
-            math.sqrt((p[0] - center_x) ** 2 + (p[1] - center_y) ** 2)
-            for p in positions
+            math.sqrt((p[0] - center_x) ** 2 + (p[1] - center_y) ** 2) for p in positions
         ) / len(positions)
 
-        max_distance = math.sqrt(
-            (positions[0][0] - positions[-1][0]) ** 2 +
-            (positions[0][1] - positions[-1][1]) ** 2
-        ) if len(positions) > 1 else 1.0
+        max_distance = (
+            math.sqrt(
+                (positions[0][0] - positions[-1][0]) ** 2
+                + (positions[0][1] - positions[-1][1]) ** 2
+            )
+            if len(positions) > 1
+            else 1.0
+        )
 
         return 1.0 - (avg_distance / max_distance) if max_distance > 0 else 1.0
 
@@ -742,7 +749,8 @@ class SwarmIntelligenceEngine:
             "patterns_used": list({d.pattern.value for d in self.decision_history}),
             "avg_confidence": (
                 sum(d.confidence for d in self.decision_history) / len(self.decision_history)
-                if self.decision_history else 0.0
+                if self.decision_history
+                else 0.0
             ),
         }
 

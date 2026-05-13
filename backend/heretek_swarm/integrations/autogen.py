@@ -41,6 +41,7 @@ try:
         register_function,
     )
     from autogen.agentchat import ChatResult
+
     AUTOGEN_AVAILABLE = True
 except ImportError:
     AUTOGEN_AVAILABLE = False
@@ -55,6 +56,7 @@ except ImportError:
 
 class AgentRole(StrEnum):
     """AutoGen agent roles."""
+
     ASSISTANT = "assistant"
     USER_PROXY = "user_proxy"
     GROUP_MANAGER = "group_manager"
@@ -63,6 +65,7 @@ class AgentRole(StrEnum):
 
 class MessageRole(StrEnum):
     """Message roles for translation."""
+
     USER = "user"
     ASSISTANT = "assistant"
     SYSTEM = "system"
@@ -84,6 +87,7 @@ class AutoGenMessage:
         tool_calls: Optional tool calls
         timestamp: Message timestamp
     """
+
     message_id: str
     role: str
     content: str | None
@@ -136,6 +140,7 @@ class AutoGenAgentConfig:
         max_consecutive_auto_reply: Max auto replies
         llm_config: LLM configuration
     """
+
     agent_id: str
     name: str
     role: AgentRole = AgentRole.ASSISTANT
@@ -174,6 +179,7 @@ class GroupChatConfig:
         max_round: Maximum chat rounds
         speaker_selection_method: Speaker selection method
     """
+
     group_id: str
     name: str
     agents: list[str] = field(default_factory=list)
@@ -207,6 +213,7 @@ class ToolRegistration:
         function: Tool function
         heretek_tool: Whether this is a Heretek tool
     """
+
     tool_id: str
     name: str
     description: str
@@ -349,9 +356,7 @@ class AutoGenAdapter:
         """
         if not AUTOGEN_AVAILABLE:
             logger.warning("autogen_not_available")
-            raise RuntimeError(
-                "AutoGen is not available. Install with: pip install pyautogen"
-            )
+            raise RuntimeError("AutoGen is not available. Install with: pip install pyautogen")
 
         config = AutoGenAgentConfig(
             agent_id=agent_id,
@@ -446,6 +451,7 @@ class AutoGenAdapter:
                     if hasattr(runtime, "think"):
                         # Synchronous call for callback compatibility
                         import asyncio
+
                         loop = asyncio.get_event_loop()
                         response = loop.run_until_complete(runtime.think(content))
                         return True, {"role": "assistant", "content": response}
@@ -683,7 +689,9 @@ class AutoGenAdapter:
             self.message_history[recipient_id].append(autogen_msg)
             # Trim history
             if len(self.message_history[recipient_id]) > self.max_messages:
-                self.message_history[recipient_id] = self.message_history[recipient_id][-self.max_messages:]
+                self.message_history[recipient_id] = self.message_history[recipient_id][
+                    -self.max_messages :
+                ]
 
         # Notify callbacks
         await self._notify_conversation_event("message_sent", sender_id, message)

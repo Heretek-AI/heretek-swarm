@@ -1,4 +1,5 @@
 """Tests for AgentModelRouter usage recording."""
+
 from __future__ import annotations
 
 import pytest
@@ -93,9 +94,7 @@ class TestRecordUsage:
         router.record_usage("openai", _make_response(total_tokens=0))
         assert router._token_tracking["openai"] == 0
 
-    def test_tracks_multiple_providers_independently(
-        self, router: AgentModelRouter
-    ) -> None:
+    def test_tracks_multiple_providers_independently(self, router: AgentModelRouter) -> None:
         router.register_provider(
             RouterProviderConfig(
                 provider_id="anthropic",

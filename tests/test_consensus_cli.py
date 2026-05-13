@@ -11,6 +11,7 @@ from heretek_swarm.cli import _display_consensus_results, cli
 # Fixtures
 # ------------------------------------------------------------------
 
+
 def _sample_consensus_result() -> dict:
     """Return a realistic consensus result dict matching run_consensus output."""
     return {
@@ -78,6 +79,7 @@ def _sample_consensus_error_result() -> dict:
 # ------------------------------------------------------------------
 # _display_consensus_results unit tests
 # ------------------------------------------------------------------
+
 
 class TestDisplayConsensusResults:
     """Test the _display_consensus_results helper directly."""
@@ -158,6 +160,7 @@ class TestDisplayConsensusResults:
 # CLI command tests
 # ------------------------------------------------------------------
 
+
 class TestConsensusCLI:
     """Test the `consensus` Click command via CliRunner."""
 
@@ -180,7 +183,6 @@ class TestConsensusCLI:
                 cli,
                 ["consensus", "should we add rate limiting?"],
             )
-
 
     def test_consensus_command_exists(self):
         """consensus command is registered in the CLI."""
@@ -295,6 +297,7 @@ class TestConsensusCLI:
 # T03: --rounds flag tests
 # ------------------------------------------------------------------
 
+
 class TestConsensusRoundsFlag:
     """Test the --rounds option on the consensus command."""
 
@@ -370,6 +373,7 @@ class TestConsensusRoundsFlag:
 # T03: Round history display tests
 # ------------------------------------------------------------------
 
+
 class TestRoundHistoryDisplay:
     """Test _display_consensus_results with round_history data."""
 
@@ -427,6 +431,7 @@ class TestRoundHistoryDisplay:
 # T03: --consensus flag on run command tests
 # ------------------------------------------------------------------
 
+
 class TestRunConsensusFlag:
     """Test the --consensus flag on the run command."""
 
@@ -452,6 +457,7 @@ class TestRunConsensusFlag:
 # ------------------------------------------------------------------
 # T03: Auto-routing integration tests (via _start_autonomous_swarm)
 # ------------------------------------------------------------------
+
 
 class TestAutoRouting:
     """Test that _start_autonomous_swarm uses ComplexityHeuristic for routing."""

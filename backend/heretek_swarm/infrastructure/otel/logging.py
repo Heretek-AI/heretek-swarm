@@ -5,7 +5,7 @@ Provides structured logging with OpenTelemetry context propagation.
 Integrates structlog with trace context for unified observability.
 
 Note: structlog configuration is delegated to
-``heretek_swarm.logging.config.setup_logging()`` (the canonical config path).
+``heretek_swarm.swarm_logging.config.setup_logging()`` (the canonical config path).
 This module's ``init_logging()`` maps its ``LoggingConfig`` fields to
 ``setup_logging()`` parameters and calls it, ensuring only one code path ever
 calls ``structlog.configure()``.
@@ -17,13 +17,14 @@ from typing import Any
 
 import structlog
 
-from heretek_swarm.logging.config import setup_logging as _setup_logging
+from heretek_swarm.swarm_logging.config import setup_logging as _setup_logging
 
 logger = structlog.get_logger(__name__)
 
 
 class LogLevel(Enum):
     """Log levels."""
+
     DEBUG = 10
     INFO = 20
     WARNING = 30
@@ -34,6 +35,7 @@ class LogLevel(Enum):
 @dataclass
 class LoggingConfig:
     """Configuration for structured logging."""
+
     service_name: str = "heretek-swarm"
     log_level: str = "INFO"  # DEBUG, INFO, WARNING, ERROR, CRITICAL
     format: str = "json"  # json, console
@@ -51,7 +53,7 @@ def init_logging(config: LoggingConfig | None = None) -> LoggingConfig:
     Initialize structured logging with OpenTelemetry context.
 
     Delegates structlog configuration to
-    ``heretek_swarm.logging.config.setup_logging()``, the canonical single
+    ``heretek_swarm.swarm_logging.config.setup_logging()``, the canonical single
     source of truth for log configuration.  The ``LoggingConfig`` dataclass
     fields are mapped to ``setup_logging()`` parameters.
 

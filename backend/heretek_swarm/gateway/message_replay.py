@@ -36,6 +36,7 @@ logger = structlog.get_logger(__name__)
 
 class ReplayStatus(StrEnum):
     """Replay job status."""
+
     PENDING = "pending"
     RUNNING = "running"
     COMPLETED = "completed"
@@ -65,6 +66,7 @@ class ReplayJob:
         error: Error message if failed
         metadata: Additional job metadata
     """
+
     job_id: str
     stream_name: str
     start_sequence: int | None
@@ -144,6 +146,7 @@ class TimeTravelRequest:
         include_snapshots: Use snapshots if available
         destination: Replay destination (optional)
     """
+
     request_id: str
     entity_id: str
     entity_type: str
@@ -270,7 +273,8 @@ class MessageReplayManager:
     def active_jobs(self) -> list[ReplayJob]:
         """Get active replay jobs."""
         return [
-            job for job in self._jobs.values()
+            job
+            for job in self._jobs.values()
             if job.status in (ReplayStatus.PENDING, ReplayStatus.RUNNING, ReplayStatus.PAUSED)
         ]
 
@@ -633,10 +637,7 @@ class MessageReplayManager:
         )
 
         # Filter events by target time
-        filtered_events = [
-            e for e in events
-            if e.timestamp <= request.target_time
-        ]
+        filtered_events = [e for e in events if e.timestamp <= request.target_time]
 
         # Apply events
         state = initial_state

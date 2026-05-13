@@ -17,6 +17,7 @@ logger = structlog.get_logger(__name__)
 
 class MetricType(Enum):
     """Metric types supported."""
+
     COUNTER = "counter"
     GAUGE = "gauge"
     HISTOGRAM = "histogram"
@@ -27,6 +28,7 @@ class MetricType(Enum):
 @dataclass
 class MetricsConfig:
     """Configuration for metrics collection."""
+
     service_name: str = "heretek-swarm"
     exporter: str = "console"  # console, prometheus, otlp
     endpoint: str | None = None
@@ -37,6 +39,7 @@ class MetricsConfig:
 @dataclass
 class MetricPoint:
     """A single measurement point."""
+
     value: float | int  # No default - must be provided
     timestamp: datetime = field(default_factory=lambda: datetime.now(UTC))
     labels: dict[str, str] = field(default_factory=dict)
@@ -46,6 +49,7 @@ class MetricPoint:
 @dataclass
 class Metric:
     """A metric definition and its current value."""
+
     name: str
     metric_type: MetricType
     description: str = ""
@@ -137,6 +141,7 @@ def record_metric(
 # =============================================================================
 # Meter Implementation
 # =============================================================================
+
 
 class Meter:
     """

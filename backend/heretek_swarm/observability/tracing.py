@@ -63,19 +63,23 @@ def initialize_tracing(
     global _tracer
 
     # Create resource with service information
-    resource = Resource.create({
-        SERVICE_NAME: service_name,
-        SERVICE_VERSION: service_version,
-        "deployment.environment": os.getenv("ENVIRONMENT", "development"),
-        "heretek.swarm.node_id": os.getenv("NODE_ID", str(uuid.uuid4())),
-    })
+    resource = Resource.create(
+        {
+            SERVICE_NAME: service_name,
+            SERVICE_VERSION: service_version,
+            "deployment.environment": os.getenv("ENVIRONMENT", "development"),
+            "heretek.swarm.node_id": os.getenv("NODE_ID", str(uuid.uuid4())),
+        }
+    )
 
     # Create tracer provider
     provider = TracerProvider(resource=resource)
 
     # Configure OTLP exporter if endpoint provided
     if otlp_endpoint is None:
-        otlp_endpoint = os.getenv("OTEL_EXPORTER_OTLP_ENDPOINT", "http://otel-collector:4317")  # Internal only
+        otlp_endpoint = os.getenv(
+            "OTEL_EXPORTER_OTLP_ENDPOINT", "http://otel-collector:4317"
+        )  # Internal only
 
     # Add OTLP exporter for production
     if otlp_endpoint and not enable_console_export:
@@ -140,6 +144,7 @@ def create_span(
         async def execute_task(task: Task):
             ...
     """
+
     def decorator(func: Callable) -> Callable:
         @wraps(func)
         async def async_wrapper(*args, **kwargs):
@@ -176,6 +181,7 @@ def create_span(
                     raise
 
         import asyncio
+
         if asyncio.iscoroutinefunction(func):
             return async_wrapper
         return sync_wrapper
@@ -247,6 +253,7 @@ def set_span_attributes(attributes: dict[str, Any]) -> None:
 # Predefined Span Names for Heretek Swarm
 # =============================================================================
 
+
 class SpanNames:
     """Standardized span names for Heretek Swarm operations."""
 
@@ -291,6 +298,7 @@ class SpanNames:
 # Span Attribute Keys
 # =============================================================================
 
+
 class SpanAttributes:
     """Standardized attribute keys for Heretek Swarm spans."""
 
@@ -330,6 +338,7 @@ class SpanAttributes:
 # =============================================================================
 # Starlette Middleware for HTTP Tracing
 # =============================================================================
+
 
 class TelemetryMiddleware(BaseHTTPMiddleware):
     """
@@ -422,6 +431,7 @@ def setup_telemetry_middleware(app):
 # Context Propagation Helpers
 # =============================================================================
 
+
 async def propagate_trace_context(coro):
     """
     Execute coroutine with trace context propagation.
@@ -442,6 +452,7 @@ async def propagate_trace_context(coro):
 # =============================================================================
 # Shutdown
 # =============================================================================
+
 
 async def shutdown_tracing():
     """Shutdown tracing provider and flush spans."""

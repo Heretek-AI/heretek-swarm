@@ -28,7 +28,7 @@
 - [x] **S04: S04** `risk:Low — mechanical find-and-replace in comments/docstrings` `depends:[]`
   > After this: grep -rn 'src/' backend/heretek_swarm/ --include='*.py' returns zero stale path references
 
-- [ ] **S05: Final validation pass** `risk:Low — full verification pass` `depends:[S04]`
+- [x] **S05: S05** `risk:Low — full verification pass` `depends:[]`
   > After this: pytest passes, ruff check clean, grep for stale refs zero, CI workflow files verified correct
 
 ## Boundary Map

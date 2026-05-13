@@ -300,5 +300,6 @@ class OpenAIProvider(LLMProviderBase):
         if self._client and not self._client.is_closed:
             await self._client.aclose()
 
+
 # Import at module level for type annotation
 from heretek_swarm.infrastructure.otel import InstrumentedAsyncClient

@@ -205,7 +205,9 @@ async def _conduct_mediation(
     # Update relationship
     key = tuple(sorted([sender, other_party]))
     if key in agent._relationships:
-        agent._relationships[key].health_score = min(1.0, agent._relationships[key].health_score + 0.1)
+        agent._relationships[key].health_score = min(
+            1.0, agent._relationships[key].health_score + 0.1
+        )
 
     return mediation_result
 
@@ -254,8 +256,7 @@ async def _resolve_task_contention(
         "assigned_to": competing_agents[0],
         "reasoning": "Task assigned to first agent",
         "alternatives": [
-            {"agent": a, "subtask": f"Supporting role for agent {a}"}
-            for a in competing_agents[1:]
+            {"agent": a, "subtask": f"Supporting role for agent {a}"} for a in competing_agents[1:]
         ],
     }
 

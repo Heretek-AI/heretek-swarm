@@ -15,8 +15,7 @@ from pathlib import Path
 from heretek_swarm.cli.config_loader import load_infrastructure_config
 
 _spec = importlib.util.spec_from_file_location(
-    "heretek_swarm._cli_module",
-    Path(__file__).parent.parent / "cli.py"
+    "heretek_swarm._cli_module", Path(__file__).parent.parent / "cli.py"
 )
 _cli_module = importlib.util.module_from_spec(_spec)
 sys.modules["heretek_swarm._cli_module"] = _cli_module

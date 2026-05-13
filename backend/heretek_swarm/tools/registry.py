@@ -13,6 +13,7 @@ from heretek_swarm.tools.base import BaseTool, ToolMetadata
 @dataclass
 class ToolRegistryConfig:
     """Configuration for tool registry."""
+
     auto_register: bool = True
     validate_on_register: bool = True
     max_tools: int = 1000
@@ -21,6 +22,7 @@ class ToolRegistryConfig:
 @dataclass
 class ToolRegistryEntry:
     """Entry in the tool registry."""
+
     tool: BaseTool
     registered_at: datetime = field(default_factory=lambda: datetime.now(UTC))
     enabled: bool = True

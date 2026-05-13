@@ -1,4 +1,5 @@
 """MemoryAccessMixin for agent memory operations."""
+
 import asyncio
 from typing import Any
 
@@ -10,10 +11,7 @@ class MemoryAccessMixin:
     """
 
     async def _track_memory_access(
-        self,
-        memory_id: str,
-        access_type: str,
-        metadata: dict[str, Any] | None = None
+        self, memory_id: str, access_type: str, metadata: dict[str, Any] | None = None
     ) -> None:
         """Track memory access for observability."""
         access_record = {
@@ -39,47 +37,31 @@ class MemoryAccessMixin:
         return tier_mapping.get(memory_type, "tier-2")
 
     async def _fetch_from_memory(
-        self,
-        query: str,
-        memory_type: str | None = None,
-        limit: int = 5
+        self, query: str, memory_type: str | None = None, limit: int = 5
     ) -> list[dict[str, Any]]:
         """Fetch memories matching query."""
         try:
             if hasattr(self, "_memory_system"):
                 memories = await self._memory_system.search(
-                    query=query,
-                    memory_type=memory_type,
-                    limit=limit
+                    query=query, memory_type=memory_type, limit=limit
                 )
                 for memory in memories:
-                    await self._track_memory_access(
-                        memory_id=memory.get("id"),
-                        access_type="read"
-                    )
+                    await self._track_memory_access(memory_id=memory.get("id"), access_type="read")
                 return memories
         except Exception as e:
             self.logger.warning(f"Memory fetch failed: {e}")
         return []
 
     async def _store_to_memory(
-        self,
-        content: str,
-        memory_type: str = "episodic",
-        metadata: dict[str, Any] | None = None
+        self, content: str, memory_type: str = "episodic", metadata: dict[str, Any] | None = None
     ) -> str | None:
         """Store content to memory."""
         try:
             if hasattr(self, "_memory_system"):
                 memory_id = await self._memory_system.store(
-                    content=content,
-                    memory_type=memory_type,
-                    metadata=metadata or {}
+                    content=content, memory_type=memory_type, metadata=metadata or {}
                 )
-                await self._track_memory_access(
-                    memory_id=memory_id,
-                    access_type="write"
-                )
+                await self._track_memory_access(memory_id=memory_id, access_type="write")
                 return memory_id
         except Exception as e:
             self.logger.warning(f"Memory store failed: {e}")

@@ -18,6 +18,7 @@ logger = __import__("logging").getLogger(__name__)
 
 class AgentStatus(Enum):
     """Agent availability status."""
+
     ONLINE = "online"
     AWAY = "away"
     BUSY = "busy"
@@ -27,6 +28,7 @@ class AgentStatus(Enum):
 @dataclass
 class AgentInfo:
     """Information about a discovered agent."""
+
     agent_id: str
     agent_type: str
     name: str
@@ -65,6 +67,7 @@ class AgentInfo:
 @dataclass
 class HeartbeatMessage:
     """Heartbeat message for agent liveness."""
+
     agent_id: str
     timestamp: datetime = field(default_factory=lambda: datetime.now(UTC))
     status: AgentStatus = AgentStatus.ONLINE
@@ -88,6 +91,7 @@ class HeartbeatMessage:
 @dataclass
 class PresenceAnnouncement:
     """Agent presence announcement."""
+
     agent_id: str
     agent_type: str
     name: str
@@ -129,7 +133,7 @@ class AgentRegistry:
     """
 
     HEARTBEAT_INTERVAL = 5.0  # seconds
-    HEARTBEAT_TIMEOUT = 15.0   # seconds
+    HEARTBEAT_TIMEOUT = 15.0  # seconds
     ANNOUNCEMENT_TOPIC = "agents.presence"
     HEARTBEAT_TOPIC = "agents.heartbeat"
     REGISTRY_TOPIC = "agents.registry"
@@ -151,17 +155,11 @@ class AgentRegistry:
         self._running = True
 
         # Subscribe to presence announcements
-        sub = await self._nats.subscribe(
-            self.ANNOUNCEMENT_TOPIC,
-            self._handle_presence
-        )
+        sub = await self._nats.subscribe(self.ANNOUNCEMENT_TOPIC, self._handle_presence)
         self._subscriptions.append(sub)
 
         # Subscribe to heartbeat messages
-        heartbeat_sub = await self._nats.subscribe(
-            self.HEARTBEAT_TOPIC,
-            self._handle_heartbeat
-        )
+        heartbeat_sub = await self._nats.subscribe(self.HEARTBEAT_TOPIC, self._handle_heartbeat)
         self._subscriptions.append(heartbeat_sub)
 
         logger.info("Agent discovery protocol initialized")
@@ -285,6 +283,7 @@ class AgentRegistry:
 
     async def _start_heartbeat(self, agent_id: str) -> None:
         """Start heartbeat task for an agent."""
+
         async def heartbeat_loop():
             while self._running and agent_id in self._agents:
                 try:
@@ -327,17 +326,11 @@ class AgentRegistry:
 
     def get_agents_by_type(self, agent_type: str) -> list[AgentInfo]:
         """Get all agents of a specific type."""
-        return [
-            agent for agent in self._agents.values()
-            if agent.agent_type == agent_type
-        ]
+        return [agent for agent in self._agents.values() if agent.agent_type == agent_type]
 
     def get_agents_by_status(self, status: AgentStatus) -> list[AgentInfo]:
         """Get all agents with a specific status."""
-        return [
-            agent for agent in self._agents.values()
-            if agent.status == status
-        ]
+        return [agent for agent in self._agents.values() if agent.status == status]
 
     def list_agents(self) -> list[AgentInfo]:
         """List all registered agents."""
@@ -355,7 +348,8 @@ class AgentRegistry:
 
         async with self._lock:
             stale = [
-                agent_id for agent_id, agent in self._agents.items()
+                agent_id
+                for agent_id, agent in self._agents.items()
                 if agent.last_heartbeat < cutoff
             ]
 

@@ -232,9 +232,7 @@ class DreamerAgent(
             logger.error("Failed to generate ideas", error=str(e))
             return {"status": "error", "error": str(e)}
 
-    async def _handle_start_creative_session(
-        self, message: ActorMessage
-    ) -> dict[str, Any] | None:
+    async def _handle_start_creative_session(self, message: ActorMessage) -> dict[str, Any] | None:
         """Handle creative session start request."""
         try:
             content = validate_message(message.content, "DreamerStartCreativeSession")

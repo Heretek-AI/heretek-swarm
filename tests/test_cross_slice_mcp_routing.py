@@ -91,19 +91,21 @@ def _make_core_mcp_with_weather_tool() -> CoreMCPTools:
     for name in existing:
         core.registry.unregister(name)
 
-    core.registry.register(MCPToolDefinition(
-        name="get_weather",
-        description="Get the current weather for a city",
-        input_schema={
-            "type": "object",
-            "properties": {
-                "city": {"type": "string", "description": "City name"},
+    core.registry.register(
+        MCPToolDefinition(
+            name="get_weather",
+            description="Get the current weather for a city",
+            input_schema={
+                "type": "object",
+                "properties": {
+                    "city": {"type": "string", "description": "City name"},
+                },
+                "required": ["city"],
             },
-            "required": ["city"],
-        },
-        handler=weather_handler,
-        category="test",
-    ))
+            handler=weather_handler,
+            category="test",
+        )
+    )
 
     # Attach the call_log to the instance for test assertions
     core._call_log = call_log  # type: ignore[attr-defined]
@@ -167,20 +169,18 @@ class TestCrossSliceMCPRoutingIntegration:
             model_router=router,
         )
         TestCrossSliceMCPRoutingIntegration._inject_swarms_agent_for_test(
-            actor, tool_schemas, tool_handlers,
+            actor,
+            tool_schemas,
+            tool_handlers,
         )
 
         # -- Act ----------------------------------------------------------
         # S01 path: run_with_llm routes through garage
         simple_response = await actor.run_with_llm("format this text")
-        complex_response = await actor.run_with_llm(
-            "design and analyze and evaluate the tradeoffs"
-        )
+        complex_response = await actor.run_with_llm("design and analyze and evaluate the tradeoffs")
 
         # S02 path: tool schemas and handlers are available on swarms_agent
-        tool_names = {
-            t["function"]["name"] for t in actor.swarms_agent.tools_list_dictionary
-        }
+        tool_names = {t["function"]["name"] for t in actor.swarms_agent.tools_list_dictionary}
         handler_result = actor.swarms_agent.tools[0](
             {"city": "London"}, {"agent_id": "cross-slice-agent"}
         )
@@ -198,9 +198,7 @@ class TestCrossSliceMCPRoutingIntegration:
         )
 
         # S02: Tool schemas are present and correct
-        assert "get_weather" in tool_names, (
-            f"Expected get_weather tool, got {tool_names}"
-        )
+        assert "get_weather" in tool_names, f"Expected get_weather tool, got {tool_names}"
 
         # S02: Handler is callable and returns correct result
         assert handler_result["weather"] == "sunny"
@@ -234,14 +232,13 @@ class TestCrossSliceMCPRoutingIntegration:
             model_router=router,
         )
         TestCrossSliceMCPRoutingIntegration._inject_swarms_agent_for_test(
-            actor, tool_schemas, tool_handlers,
+            actor,
+            tool_schemas,
+            tool_handlers,
         )
 
         # Capture state before routing
-        pre_tool_names = {
-            t["function"]["name"]
-            for t in actor.swarms_agent.tools_list_dictionary
-        }
+        pre_tool_names = {t["function"]["name"] for t in actor.swarms_agent.tools_list_dictionary}
         pre_handler_count = len(actor.swarms_agent.tools)
 
         # -- Act: route through garage several times ----------------------
@@ -249,10 +246,7 @@ class TestCrossSliceMCPRoutingIntegration:
             await actor.run_with_llm("format this")
 
         # -- Assert: tools are unchanged ----------------------------------
-        post_tool_names = {
-            t["function"]["name"]
-            for t in actor.swarms_agent.tools_list_dictionary
-        }
+        post_tool_names = {t["function"]["name"] for t in actor.swarms_agent.tools_list_dictionary}
         post_handler_count = len(actor.swarms_agent.tools)
 
         assert pre_tool_names == post_tool_names, "Tool schemas mutated by routing"
@@ -279,7 +273,8 @@ class TestCrossSliceMCPRoutingIntegration:
 
         # Create a mock swarms_agent so run_with_llm's fallback works (S02 tools injected)
         TestCrossSliceMCPRoutingIntegration._inject_swarms_agent_for_test(
-            actor, tool_schemas,
+            actor,
+            tool_schemas,
         )
 
         # -- Act ----------------------------------------------------------
@@ -288,7 +283,4 @@ class TestCrossSliceMCPRoutingIntegration:
         # -- Assert -------------------------------------------------------
         assert response == "swarms fallback response"
         assert len(actor.swarms_agent.tools_list_dictionary) == 1
-        assert (
-            actor.swarms_agent.tools_list_dictionary[0]["function"]["name"]
-            == "get_weather"
-        )
+        assert actor.swarms_agent.tools_list_dictionary[0]["function"]["name"] == "get_weather"

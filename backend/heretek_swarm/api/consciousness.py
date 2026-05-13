@@ -482,7 +482,7 @@ async def get_agent_iit_metrics(
     # so the IIT phi calculation measures real integration across connected agents.
     iit_calculator = plugin.iit_calculator
     related_agents: set[str] = {agent_id}
-    for (from_a, to_a) in iit_calculator.interaction_matrix:
+    for from_a, to_a in iit_calculator.interaction_matrix:
         if from_a == agent_id or to_a == agent_id:
             related_agents.add(from_a)
             related_agents.add(to_a)
@@ -490,7 +490,7 @@ async def get_agent_iit_metrics(
 
     # Build adjacency dict from interaction matrix
     all_agents: set[str] = set()
-    for (from_a, to_a) in iit_calculator.interaction_matrix:
+    for from_a, to_a in iit_calculator.interaction_matrix:
         all_agents.add(from_a)
         all_agents.add(to_a)
     connectivity: dict[str, dict[str, float]] = {a: {} for a in all_agents}
@@ -555,7 +555,7 @@ async def get_connectivity_matrix(
     iit_calculator = plugin.iit_calculator
     # Build adjacency dict from interaction matrix
     all_agents: set[str] = set()
-    for (from_a, to_a) in iit_calculator.interaction_matrix:
+    for from_a, to_a in iit_calculator.interaction_matrix:
         all_agents.add(from_a)
         all_agents.add(to_a)
     connectivity: dict[str, dict[str, float]] = {a: {} for a in all_agents}
@@ -755,7 +755,7 @@ async def get_network_visualization(
 
     # Build adjacency dict from interaction matrix
     all_agents: set[str] = set()
-    for (from_a, to_a) in iit_calculator.interaction_matrix:
+    for from_a, to_a in iit_calculator.interaction_matrix:
         all_agents.add(from_a)
         all_agents.add(to_a)
     connectivity: dict[str, dict[str, float]] = {a: {} for a in all_agents}
@@ -833,7 +833,11 @@ async def get_timeseries_data(
         for pred in agent_predictions:
             pred_time = datetime.fromtimestamp(pred["timestamp"], tz=UTC)
             if pred_time >= cutoff_time:
-                value = pred.get("prediction", {}).get(metric, 0) if isinstance(pred.get("prediction"), dict) else 0
+                value = (
+                    pred.get("prediction", {}).get(metric, 0)
+                    if isinstance(pred.get("prediction"), dict)
+                    else 0
+                )
                 data_points.append(
                     {
                         "timestamp": pred_time.isoformat(),

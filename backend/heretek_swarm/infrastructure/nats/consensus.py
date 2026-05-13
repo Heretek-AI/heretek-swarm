@@ -408,9 +408,7 @@ class ConsensusVoting:
 
         return max(position_scores, key=position_scores.get)  # type: ignore
 
-    def _identify_dissent(
-        self, votes: list[Vote], consensus_score: float
-    ) -> list[str]:
+    def _identify_dissent(self, votes: list[Vote], consensus_score: float) -> list[str]:
         """Identify agents that dissented from consensus."""
         if not votes or consensus_score >= self.quorum_threshold:
             return []
@@ -424,15 +422,9 @@ class ConsensusVoting:
             return []
 
         majority_position = max(position_counts, key=position_counts.get)
-        return [
-            vote.agent_id
-            for vote in votes
-            if vote.position.value != majority_position
-        ]
+        return [vote.agent_id for vote in votes if vote.position.value != majority_position]
 
-    async def register_decision(
-        self, decision_id: str, participant_count: int
-    ) -> None:
+    async def register_decision(self, decision_id: str, participant_count: int) -> None:
         """
         Register a decision for tracking.
 
@@ -491,12 +483,8 @@ class ConsensusVoting:
         def wrapped_callback(msg):
             """Wrapper that parses vote and calls callback."""
             try:
-                payload = (
-                    json.loads(msg.data.decode())
-                    if isinstance(msg.data, bytes)
-                    else msg.data
-                )
-                asyncio.create_task(callback(payload))  # noqa: RUF006
+                payload = json.loads(msg.data.decode()) if isinstance(msg.data, bytes) else msg.data
+                asyncio.create_task(callback(payload))
             except Exception as e:
                 logger.error("vote_callback_error", error=str(e))
 

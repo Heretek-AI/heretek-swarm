@@ -98,9 +98,7 @@ def get_technique_prompt(technique: CreativityTechnique) -> str:
     return prompts.get(technique, "Generate creative ideas.")
 
 
-def calculate_innovation_score(
-    ideas: list[CreativeIdea], sessions: list[CreativeSession]
-) -> float:
+def calculate_innovation_score(ideas: list[CreativeIdea], sessions: list[CreativeSession]) -> float:
     """Calculate overall innovation score from ideas and sessions."""
     if not ideas and not sessions:
         return 0.0

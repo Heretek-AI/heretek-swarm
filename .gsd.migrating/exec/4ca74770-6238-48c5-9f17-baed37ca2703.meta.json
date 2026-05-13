@@ -1,0 +1,18 @@
+{
+  "id": "4ca74770-6238-48c5-9f17-baed37ca2703",
+  "runtime": "bash",
+  "purpose": "find M008 commits",
+  "script_chars": 90,
+  "started_at": "2026-05-12T23:59:36.279Z",
+  "finished_at": "2026-05-12T23:59:40.330Z",
+  "exit_code": 1,
+  "signal": null,
+  "timed_out": false,
+  "duration_ms": 4051,
+  "stdout_bytes": 0,
+  "stderr_bytes": 87,
+  "stdout_truncated": false,
+  "stderr_truncated": false,
+  "stdout_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\4ca74770-6238-48c5-9f17-baed37ca2703.stdout",
+  "stderr_path": "C:\\Users\\Derek\\Desktop\\heretek-swarm\\.gsd\\exec\\4ca74770-6238-48c5-9f17-baed37ca2703.stderr"
+}

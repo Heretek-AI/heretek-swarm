@@ -33,11 +33,12 @@ logger = structlog.get_logger("ASTMetrics")
 
 class EmergenceLevel(Enum):
     """Levels of emergence in adaptive systems."""
-    NONE = "none"           # No emergent properties
-    WEAK = "weak"           # Simple emergent properties
-    MODERATE = "moderate"   # Moderate emergence
-    STRONG = "strong"       # Strong emergence
-    CRITICAL = "critical"    # Near-critical transition
+
+    NONE = "none"  # No emergent properties
+    WEAK = "weak"  # Simple emergent properties
+    MODERATE = "moderate"  # Moderate emergence
+    STRONG = "strong"  # Strong emergence
+    CRITICAL = "critical"  # Near-critical transition
 
 
 @dataclass
@@ -58,6 +59,7 @@ class AdaptiveMetrics:
         coupling: Inter-component coupling (0-1)
         timestamp: Measurement timestamp
     """
+
     entity_id: str
     entity_type: str = "agent"
     complexity: float = 0.0
@@ -301,8 +303,11 @@ def measure_adaptive_metrics(entity_state: dict[str, Any]) -> AdaptiveMetrics:
 
             complexity = measure_complexity(
                 components,
-                [(f"c{i}", f"c{j}") for i in range(len(components))
-                 for j in range(i+1, min(len(components), connections))]
+                [
+                    (f"c{i}", f"c{j}")
+                    for i in range(len(components))
+                    for j in range(i + 1, min(len(components), connections))
+                ],
             )
 
             emergence_score, emergence_level = measure_emergence(
@@ -310,8 +315,7 @@ def measure_adaptive_metrics(entity_state: dict[str, Any]) -> AdaptiveMetrics:
                 ["adaptation", "learning"] if behavioral_variety > 1 else [],
             )
 
-            self_org = min(1.0, (len(components) / 10.0) * 0.5 +
-                          (connections / 20.0) * 0.5)
+            self_org = min(1.0, (len(components) / 10.0) * 0.5 + (connections / 20.0) * 0.5)
 
             resilience = measure_resilience(
                 entity_state.get("recovery_events", 0),
@@ -332,8 +336,12 @@ def measure_adaptive_metrics(entity_state: dict[str, Any]) -> AdaptiveMetrics:
             components = [f"agent_{i}" for i in range(min(agent_count, 100))]
             complexity = measure_complexity(
                 components,
-                [(f"agent_{i}", f"agent_{j}") for i in range(min(agent_count, 50))
-                 for j in range(i+1, min(agent_count, 50)) if (i+j) % 3 == 0]
+                [
+                    (f"agent_{i}", f"agent_{j}")
+                    for i in range(min(agent_count, 50))
+                    for j in range(i + 1, min(agent_count, 50))
+                    if (i + j) % 3 == 0
+                ],
             )
 
             emergence_score, emergence_level = measure_emergence(
@@ -356,8 +364,11 @@ def measure_adaptive_metrics(entity_state: dict[str, Any]) -> AdaptiveMetrics:
             adaptation_rate = min(1.0, patterns / 10.0)
             entropy = 0.5 - (complexity * 0.2)  # Lower entropy in organized swarms
 
-        coupling = min(1.0, connections / 100.0) if entity_type == "agent" \
+        coupling = (
+            min(1.0, connections / 100.0)
+            if entity_type == "agent"
             else min(1.0, entity_state.get("inter_agent_connections", 0) / (agent_count * 10))
+        )
 
         return AdaptiveMetrics(
             entity_id=entity_id,

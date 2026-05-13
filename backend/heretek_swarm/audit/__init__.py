@@ -2,6 +2,7 @@
 
 Test discovery: pytest tests/audit/
 """
+
 from heretek_swarm.audit.report import AuditFinding, generate_report, group_by_severity
 from heretek_swarm.audit.severity import Severity
 from heretek_swarm.audit.stub_patterns import scan_directory, scan_file

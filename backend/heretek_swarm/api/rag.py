@@ -26,6 +26,7 @@ from heretek_swarm.rag.rag_pipeline import RAGPipeline
 try:
     from rag.document_processor import ProcessingConfig
     from rag.rag_pipeline import RAGPipeline
+
     RAG_AVAILABLE = True
 except ImportError:
     RAG_AVAILABLE = False
@@ -37,31 +38,35 @@ logger = structlog.get_logger(__name__)
 router = APIRouter(prefix="/api/rag", tags=["rag"])
 
 # Global RAG pipeline instance
-_rag_pipeline: "RAGPipeline | None" = None  # type: ignore
+_rag_pipeline: RAGPipeline | None = None  # type: ignore
 
 # =============================================================================
 # Lifecycle Management
 # =============================================================================
+
 
 async def get_rag_pipeline() -> RAGPipeline:
     """Get or initialize RAG pipeline instance."""
     global _rag_pipeline
     if _rag_pipeline is None:
         from heretek_swarm.rag.rag_pipeline import RAGPipeline
+
         _rag_pipeline = RAGPipeline()
         await _rag_pipeline.initialize()
     return _rag_pipeline
 
+
 # =============================================================================
 # Document Ingestion Endpoints
 # =============================================================================
+
 
 @router.post("/ingest", status_code=201)
 async def ingest_document(
     file: UploadFile,
     metadata: dict[str, Any] | None = None,
     chunk_strategy: str = "recursive",
-    authenticated: str = Depends(verify_auth)
+    authenticated: str = Depends(verify_auth),
 ) -> dict[str, Any]:
     """
     Ingest a document into the RAG system.
@@ -116,7 +121,7 @@ async def ingest_document(
 async def ingest_batch(
     files: list[UploadFile],
     metadata: dict[str, Any] | None = None,
-    authenticated: str = Depends(verify_auth)
+    authenticated: str = Depends(verify_auth),
 ) -> dict[str, Any]:
     """
     Ingest multiple documents in batch.
@@ -144,22 +149,26 @@ async def ingest_batch(
                 metadata=metadata,
             )
 
-            results.append({
-                "filename": file.filename,
-                "chunks_processed": result.chunks_processed,
-                "vectors_stored": result.vectors_stored,
-                "document_id": result.id,
-            })
+            results.append(
+                {
+                    "filename": file.filename,
+                    "chunks_processed": result.chunks_processed,
+                    "vectors_stored": result.vectors_stored,
+                    "document_id": result.id,
+                }
+            )
 
             total_chunks += result.chunks_processed
             total_vectors += result.vectors_stored
 
         except Exception as e:
             logger.error("batch_ingest_failed", filename=file.filename, error=str(e))
-            results.append({
-                "filename": file.filename,
-                "error": str(e),
-            })
+            results.append(
+                {
+                    "filename": file.filename,
+                    "error": str(e),
+                }
+            )
 
     logger.info(
         "batch_ingest_completed",
@@ -180,12 +189,13 @@ async def ingest_batch(
 # Search and Retrieval Endpoints
 # =============================================================================
 
+
 @router.post("/query", status_code=200)
 async def query_rag(
     query: str,
     top_k: int = 5,
     search_mode: str = "hybrid",
-    authenticated: str = Depends(verify_auth)
+    authenticated: str = Depends(verify_auth),
 ) -> dict[str, Any]:
     """
     Query the RAG system for relevant documents.
@@ -232,9 +242,7 @@ async def query_rag(
 
 @router.get("/documents", status_code=200)
 async def list_documents(
-    limit: int = 100,
-    offset: int = 0,
-    authenticated: str = Depends(verify_auth)
+    limit: int = 100, offset: int = 0, authenticated: str = Depends(verify_auth)
 ) -> dict[str, Any]:
     """
     List all ingested documents.
@@ -272,8 +280,7 @@ async def list_documents(
 
 @router.get("/documents/{document_id}", status_code=200)
 async def get_document(
-    document_id: str,
-    authenticated: str = Depends(verify_auth)
+    document_id: str, authenticated: str = Depends(verify_auth)
 ) -> dict[str, Any]:
     """
     Get a specific document by ID.
@@ -315,10 +322,7 @@ async def get_document(
 
 
 @router.delete("/documents/{document_id}", status_code=204)
-async def delete_document(
-    document_id: str,
-    authenticated: str = Depends(verify_auth)
-):
+async def delete_document(document_id: str, authenticated: str = Depends(verify_auth)):
     """
     Delete a document and its associated vectors.
 
@@ -339,9 +343,7 @@ async def delete_document(
 
         logger.info("document_deleted", document_id=document_id)
 
-        return {
-            "message": f"Document {document_id} deleted successfully"
-        }
+        return {"message": f"Document {document_id} deleted successfully"}
 
     except Exception as e:
         logger.error("delete_document_failed", document_id=document_id, error=str(e))
@@ -352,10 +354,9 @@ async def delete_document(
 # RAG Configuration Endpoints
 # =============================================================================
 
+
 @router.get("/config", status_code=200)
-async def get_rag_config(
-    authenticated: str = Depends(verify_auth)
-) -> dict[str, Any]:
+async def get_rag_config(authenticated: str = Depends(verify_auth)) -> dict[str, Any]:
     """
     Get current RAG configuration.
 
@@ -393,8 +394,7 @@ async def get_rag_config(
 
 @router.post("/config", status_code=200)
 async def update_rag_config(
-    config: dict[str, Any],
-    authenticated: str = Depends(verify_auth)
+    config: dict[str, Any], authenticated: str = Depends(verify_auth)
 ) -> dict[str, Any]:
     """
     Update RAG configuration.
@@ -495,7 +495,6 @@ def _update_storage_config(pipeline: RAGPipeline, storage: dict[str, Any] | None
 # =============================================================================
 
 _knowledge_graph_retriever: KnowledgeGraphRetriever | None = None
-
 
 
 def get_knowledge_graph_retriever() -> KnowledgeGraphRetriever:
