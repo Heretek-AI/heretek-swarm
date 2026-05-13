@@ -82,8 +82,6 @@ postgres = [
 ]
 full = [
     "heretek-swarm[agents]",
-    # Infrastructure
-    "nats-server>=3.0.0",
     # Extended observability
     "opentelemetry-instrumentation-fastapi>=0.53b0",
     "opentelemetry-instrumentation-httpx>=0.53b0",
