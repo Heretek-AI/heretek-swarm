@@ -108,7 +108,7 @@ services:
         condition: service_started
     healthcheck:
       <<: *healthcheck-defaults
-      test: ["CMD", "curl", "-sf", "http://localhost:8000/health"]
+      test: ["CMD", "curl", "-sf", "http://localhost:8000/api/health"]
     restart: unless-stopped
 
   # =============================================================================
