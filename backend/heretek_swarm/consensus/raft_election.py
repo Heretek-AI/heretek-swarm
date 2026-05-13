@@ -285,7 +285,7 @@ class RaftElection:
         """Start Raft node."""
         self._running = True
         self._election_task = asyncio.create_task(self._election_loop())
-        logger.info(f"RaftElection started for {self.node_id}")
+        logger.info("RaftElection started for {self.node_id}")
 
     async def stop(self) -> None:
         """Stop Raft node."""
@@ -296,7 +296,7 @@ class RaftElection:
         if self._heartbeat_task:
             self._heartbeat_task.cancel()
 
-        logger.info(f"RaftElection stopped for {self.node_id}")
+        logger.info("RaftElection stopped for {self.node_id}")
 
     async def _election_loop(self) -> None:
         """Election timeout loop."""
@@ -311,7 +311,7 @@ class RaftElection:
             except asyncio.CancelledError:
                 break
             except Exception as e:
-                logger.error(f"Election loop error: {e}")
+                logger.error("Election loop error: {e}")
 
     async def _start_election(self) -> None:
         """Start leader election."""
@@ -337,7 +337,7 @@ class RaftElection:
                 if response and response.vote_granted:
                     vote_count += 1
             except Exception as e:
-                logger.error(f"Failed to get vote from {peer_id}: {e}")
+                logger.error("Failed to get vote from {peer_id}: {e}")
 
         # Check if won election
         majority = (len(self.peers) + 1) // 2 + 1
@@ -379,7 +379,7 @@ class RaftElection:
             try:
                 await self._on_leader_change(self.node_id)
             except Exception as e:
-                logger.error(f"Leader change callback error: {e}")
+                logger.error("Leader change callback error: {e}")
 
     async def _heartbeat_loop(self) -> None:
         """Send periodic heartbeats to followers."""
@@ -389,14 +389,14 @@ class RaftElection:
                     try:
                         await self._send_heartbeat(peer_id)
                     except Exception as e:
-                        logger.error(f"Failed to send heartbeat to {peer_id}: {e}")
+                        logger.error("Failed to send heartbeat to {peer_id}: {e}")
 
                 await asyncio.sleep(self.heartbeat_interval)
 
             except asyncio.CancelledError:
                 break
             except Exception as e:
-                logger.error(f"Heartbeat loop error: {e}")
+                logger.error("Heartbeat loop error: {e}")
 
     async def _request_vote_from_peer(
         self,
@@ -577,7 +577,7 @@ class RaftElection:
         self._leader_state = LeaderState(term=new_term)
         self._reset_election_timeout()
 
-        logger.debug(f"Stepped down to term {new_term}")
+        logger.debug("Stepped down to term {new_term}")
 
     def _is_log_up_to_date(self, last_index: int, last_term: int) -> bool:
         """Check if candidate's log is up-to-date."""
@@ -620,9 +620,9 @@ class RaftElection:
             try:
                 await self._replicate_to_peer(peer_id, entry)
             except Exception as e:
-                logger.error(f"Failed to replicate to {peer_id}: {e}")
+                logger.error("Failed to replicate to {peer_id}: {e}")
 
-        logger.debug(f"Appended log entry {self._log_index}")
+        logger.debug("Appended log entry {self._log_index}")
         return self._log_index
 
     async def _replicate_to_peer(self, peer_id: str, entry: LogEntry) -> None:
@@ -657,13 +657,13 @@ class RaftElection:
     def register_peer(self, peer_id: str, peer: "RaftElection") -> None:
         """Register peer connection."""
         self._peer_connections[peer_id] = peer
-        logger.debug(f"Registered peer {peer_id}")
+        logger.debug("Registered peer {peer_id}")
 
     def unregister_peer(self, peer_id: str) -> None:
         """Unregister peer connection."""
         if peer_id in self._peer_connections:
             del self._peer_connections[peer_id]
-            logger.debug(f"Unregistered peer {peer_id}")
+            logger.debug("Unregistered peer {peer_id}")
 
     def set_leader_change_callback(self, callback: callable) -> None:
         """Set callback for leader changes."""
@@ -795,7 +795,7 @@ class MAKERConsensusWithRaft:
 
     async def _on_leader_change(self, new_leader_id: str) -> None:
         """Handle leader change."""
-        logger.info(f"Leader changed to {new_leader_id}")
+        logger.info("Leader changed to {new_leader_id}")
 
         # Could trigger re-election of MAKER consensus here
 

@@ -177,7 +177,7 @@ class LangroidAgent:
             try:
                 self._langroid_agent = self._create_langroid_agent()
             except Exception as e:
-                logger.warning(f"Failed to create Langroid agent: {e}")
+                logger.warning("Failed to create Langroid agent: {e}")
 
         # Conversations
         self._conversations: dict[str, AgentConversation] = {}
@@ -284,7 +284,7 @@ class LangroidAgent:
         if conversation_id in self._message_queues:
             del self._message_queues[conversation_id]
 
-        logger.info(f"Ended conversation {conversation_id}")
+        logger.info("Ended conversation {conversation_id}")
 
     async def send_message(
         self,
@@ -328,7 +328,7 @@ class LangroidAgent:
             return response
 
         except Exception as e:
-            logger.error(f"Failed to generate response: {e}")
+            logger.error("Failed to generate response: {e}")
             conversation.state = ConversationState.ERROR
             raise
 
@@ -414,7 +414,7 @@ class LangroidAgent:
             )
             return str(response)
         except Exception as e:
-            logger.error(f"Swarms agent error: {e}")
+            logger.error("Swarms agent error: {e}")
             return f"Error generating response: {e}"
 
     async def _echo_response(self, conversation: AgentConversation) -> str:
@@ -542,7 +542,7 @@ class ConversationHandlerMixin:
         if self._active_conversation == conversation_id:
             self._active_conversation = None
 
-        logger.debug(f"[{self.agent_id}] Ended conversation {conversation_id}")
+        logger.debug("[{self.agent_id}] Ended conversation {conversation_id}")
 
     async def send_message(
         self,

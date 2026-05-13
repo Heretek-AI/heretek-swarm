@@ -156,7 +156,7 @@ class HabitForgeAgent(
         self.collective_behavior_score: float = 0.5
         self.pattern_evolution: list[dict[str, Any]] = []
 
-        logger.info(f"[{self.agent_id}] Habit-Forge agent initialized")
+        logger.info("[{self.agent_id}] Habit-Forge agent initialized")
 
     async def initialize(self) -> None:
         """Initialize the Habit-Forge agent."""
@@ -169,7 +169,7 @@ class HabitForgeAgent(
         self.register_handler("get_behavior_report", self._handle_get_behavior_report)
         self.register_handler("design_reinforcement", self._handle_design_reinforcement)
 
-        logger.info(f"[{self.agent_id}] Habit-Forge initialization complete")
+        logger.info("[{self.agent_id}] Habit-Forge initialization complete")
 
     async def process_message(self, message: ActorMessage) -> None:
         """
@@ -199,7 +199,7 @@ class HabitForgeAgent(
                         sender_id=self.agent_id,
                     )
         else:
-            logger.warning(f"[{self.agent_id}] Unknown message type: {message.message_type}")
+            logger.warning("[{self.agent_id}] Unknown message type: {message.message_type}")
 
     def _validate_habit_request(self, content: dict[str, Any]) -> tuple[bool, str]:
         """
@@ -232,12 +232,12 @@ class HabitForgeAgent(
             # Validate content
             is_valid, error = self._validate_habit_request(message.content)
             if not is_valid:
-                logger.error(f"[{self.agent_id}] Invalid habit creation request: {error}")
+                logger.error("[{self.agent_id}] Invalid habit creation request: {error}")
                 return
 
             # Check habit limit
             if len(self.active_habits) >= self.max_habits:
-                logger.error(f"[{self.agent_id}] Maximum habit limit reached ({self.max_habits})")
+                logger.error("[{self.agent_id}] Maximum habit limit reached ({self.max_habits})")
                 return
 
             habit_id = message.content.get("habit_id", f"habit_{datetime.now(UTC).timestamp()}")
@@ -257,7 +257,7 @@ class HabitForgeAgent(
             # Store habit
             self.active_habits[habit_id] = habit
 
-            logger.info(f"[{self.agent_id}] Created habit: {habit.name} ({habit_id})")
+            logger.info("[{self.agent_id}] Created habit: {habit.name} ({habit_id})")
 
             # Send response
             response = {
@@ -275,7 +275,7 @@ class HabitForgeAgent(
                 )
 
         except Exception as e:
-            logger.error(f"[{self.agent_id}] Error creating habit: {e}", exc_info=True)
+            logger.error("[{self.agent_id}] Error creating habit: {e}", exc_info=True)
 
     async def _handle_track_habit(self, message: ActorMessage) -> None:
         """
@@ -287,11 +287,11 @@ class HabitForgeAgent(
         try:
             habit_id = message.content.get("habit_id")
             if not habit_id:
-                logger.error(f"[{self.agent_id}] No habit_id provided for tracking")
+                logger.error("[{self.agent_id}] No habit_id provided for tracking")
                 return
 
             if habit_id not in self.active_habits:
-                logger.error(f"[{self.agent_id}] Habit not found: {habit_id}")
+                logger.error("[{self.agent_id}] Habit not found: {habit_id}")
                 return
 
             habit = self.active_habits[habit_id]
@@ -329,7 +329,7 @@ class HabitForgeAgent(
                 )
 
         except Exception as e:
-            logger.error(f"[{self.agent_id}] Error tracking habit: {e}", exc_info=True)
+            logger.error("[{self.agent_id}] Error tracking habit: {e}", exc_info=True)
 
     async def _check_stage_progression(self, habit: Habit) -> None:
         """
@@ -365,7 +365,7 @@ class HabitForgeAgent(
             if habit.stage == HabitStage.MAINTENANCE:
                 self.completed_habits[habit.habit_id] = habit
                 del self.active_habits[habit.habit_id]
-                logger.info(f"[{self.agent_id}] Habit '{habit.name}' graduated to completed habits")
+                logger.info("[{self.agent_id}] Habit '{habit.name}' graduated to completed habits")
 
     async def _handle_analyze_patterns(self, message: ActorMessage) -> None:
         """
@@ -379,10 +379,10 @@ class HabitForgeAgent(
             context = message.content.get("context", "")
 
             if not behavior_data:
-                logger.warning(f"[{self.agent_id}] No behavior data provided for analysis")
+                logger.warning("[{self.agent_id}] No behavior data provided for analysis")
                 return
 
-            logger.info(f"[{self.agent_id}] Analyzing behavioral patterns")
+            logger.info("[{self.agent_id}] Analyzing behavioral patterns")
 
             # Analyze patterns
             patterns = await self._analyze_behavior_patterns(behavior_data, context)
@@ -410,10 +410,10 @@ class HabitForgeAgent(
                     sender_id=self.agent_id,
                 )
 
-            logger.info(f"[{self.agent_id}] Detected {len(patterns)} behavioral patterns")
+            logger.info("[{self.agent_id}] Detected {len(patterns)} behavioral patterns")
 
         except Exception as e:
-            logger.error(f"[{self.agent_id}] Error analyzing patterns: {e}", exc_info=True)
+            logger.error("[{self.agent_id}] Error analyzing patterns: {e}", exc_info=True)
 
     async def _analyze_behavior_patterns(
         self,
@@ -503,7 +503,7 @@ Respond in JSON format:
                 patterns.extend(self._heuristic_pattern_detection(behavior_data))
 
         except Exception as e:
-            logger.warning(f"[{self.agent_id}] LLM pattern analysis failed: {e}")
+            logger.warning("[{self.agent_id}] LLM pattern analysis failed: {e}")
             patterns.extend(self._heuristic_pattern_detection(behavior_data))
 
         return patterns
@@ -609,7 +609,7 @@ Respond in JSON format:
                 elif habit_id in self.completed_habits:
                     habit = self.completed_habits[habit_id]
                 else:
-                    logger.error(f"[{self.agent_id}] Habit not found: {habit_id}")
+                    logger.error("[{self.agent_id}] Habit not found: {habit_id}")
                     return
 
                 response = {
@@ -646,7 +646,7 @@ Respond in JSON format:
                 )
 
         except Exception as e:
-            logger.error(f"[{self.agent_id}] Error getting habit progress: {e}", exc_info=True)
+            logger.error("[{self.agent_id}] Error getting habit progress: {e}", exc_info=True)
 
     def _calculate_collective_adherence(self) -> float:
         """Calculate collective adherence rate across all active habits."""
@@ -666,17 +666,17 @@ Respond in JSON format:
         try:
             pattern_id = message.content.get("pattern_id")
             if not pattern_id:
-                logger.error(f"[{self.agent_id}] No pattern_id provided")
+                logger.error("[{self.agent_id}] No pattern_id provided")
                 return
 
             if pattern_id not in self.detected_patterns:
-                logger.error(f"[{self.agent_id}] Pattern not found: {pattern_id}")
+                logger.error("[{self.agent_id}] Pattern not found: {pattern_id}")
                 return
 
             pattern = self.detected_patterns[pattern_id]
             modification_type = message.content.get("modification_type", "replace")
 
-            logger.info(f"[{self.agent_id}] Modifying pattern: {pattern.pattern_id}")
+            logger.info("[{self.agent_id}] Modifying pattern: {pattern.pattern_id}")
 
             # Generate modification plan
             modification_plan = await self._generate_modification_plan(
@@ -699,7 +699,7 @@ Respond in JSON format:
                 )
 
         except Exception as e:
-            logger.error(f"[{self.agent_id}] Error modifying pattern: {e}", exc_info=True)
+            logger.error("[{self.agent_id}] Error modifying pattern: {e}", exc_info=True)
 
     async def _generate_modification_plan(
         self,
@@ -773,7 +773,7 @@ Respond in JSON:
             }
 
         except Exception as e:
-            logger.warning(f"[{self.agent_id}] Modification plan generation failed: {e}")
+            logger.warning("[{self.agent_id}] Modification plan generation failed: {e}")
             return {
                 "error": str(e),
                 "note": "Plan generation failed",
@@ -823,7 +823,7 @@ Respond in JSON:
                 )
 
         except Exception as e:
-            logger.error(f"[{self.agent_id}] Error generating behavior report: {e}", exc_info=True)
+            logger.error("[{self.agent_id}] Error generating behavior report: {e}", exc_info=True)
 
     async def _handle_design_reinforcement(self, message: ActorMessage) -> None:
         """
@@ -837,10 +837,10 @@ Respond in JSON:
             behavior = message.content.get("behavior", "")
 
             if not habit_id and not behavior:
-                logger.error(f"[{self.agent_id}] No habit_id or behavior provided")
+                logger.error("[{self.agent_id}] No habit_id or behavior provided")
                 return
 
-            logger.info(f"[{self.agent_id}] Designing reinforcement strategy")
+            logger.info("[{self.agent_id}] Designing reinforcement strategy")
 
             # Design reinforcement
             reinforcement = await self._design_reinforcement_strategy(habit_id, behavior)
@@ -863,7 +863,7 @@ Respond in JSON:
                 )
 
         except Exception as e:
-            logger.error(f"[{self.agent_id}] Error designing reinforcement: {e}", exc_info=True)
+            logger.error("[{self.agent_id}] Error designing reinforcement: {e}", exc_info=True)
 
     # =========================================================================
     # Session 44: Collective Learning Integration Methods
@@ -890,7 +890,7 @@ Respond in JSON:
             )
 
             self._pattern_emitted.add(item_id)
-            logger.info(f"{item_type}_pattern_emitted", item_id=item_id, outcome=outcome)
+            logger.info("{item_type}_pattern_emitted", item_id=item_id, outcome=outcome)
         except Exception as e:
             logger.warning("failed_to_emit_pattern", item_id=item_id, error=str(e))
 
@@ -1171,7 +1171,7 @@ Respond in JSON:
             }
 
         except Exception as e:
-            logger.warning(f"[{self.agent_id}] Reinforcement design failed: {e}")
+            logger.warning("[{self.agent_id}] Reinforcement design failed: {e}")
             return {
                 "error": str(e),
                 "note": "Reinforcement design failed",

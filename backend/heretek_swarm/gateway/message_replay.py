@@ -355,7 +355,7 @@ class MessageReplayManager:
             True if completed successfully
         """
         if job.job_id not in self._jobs:
-            logger.error(f"Job not found: {job.job_id}")
+            logger.error("Job not found: {job.job_id}")
             return False
 
         # Update job status
@@ -380,7 +380,7 @@ class MessageReplayManager:
             # Process messages
             for i, msg in enumerate(messages):
                 if job.status == ReplayStatus.CANCELLED:
-                    logger.info(f"Replay cancelled: {job.job_id}")
+                    logger.info("Replay cancelled: {job.job_id}")
                     job.status = ReplayStatus.CANCELLED
                     job.completed_at = datetime.now(UTC)
                     return False
@@ -505,7 +505,7 @@ class MessageReplayManager:
         job = self._jobs[job_id]
         if job.status == ReplayStatus.RUNNING:
             job.status = ReplayStatus.PAUSED
-            logger.info(f"Replay paused: {job_id}")
+            logger.info("Replay paused: {job_id}")
             return True
 
         return False
@@ -518,7 +518,7 @@ class MessageReplayManager:
         job = self._jobs[job_id]
         if job.status == ReplayStatus.PAUSED:
             job.status = ReplayStatus.RUNNING
-            logger.info(f"Replay resumed: {job_id}")
+            logger.info("Replay resumed: {job_id}")
             return True
 
         return False
@@ -532,7 +532,7 @@ class MessageReplayManager:
         if job.status in (ReplayStatus.PENDING, ReplayStatus.RUNNING, ReplayStatus.PAUSED):
             job.status = ReplayStatus.CANCELLED
             job.completed_at = datetime.now(UTC)
-            logger.info(f"Replay cancelled: {job_id}")
+            logger.info("Replay cancelled: {job_id}")
             return True
 
         return False

@@ -133,7 +133,7 @@ class ActorSupervisor(AuditMixin, ValidationMixin, HealthReportingMixin, Pattern
         This method is called to initialize the supervisor after construction.
         It can be overridden by subclasses for custom initialization logic.
         """
-        logger.info(f"[{self.name}] Supervisor initialize called")
+        logger.info("[{self.name}] Supervisor initialize called")
         # Initialization is handled in __init__, this method is for API compatibility
 
     async def spawn_actor(
@@ -242,18 +242,18 @@ class ActorSupervisor(AuditMixin, ValidationMixin, HealthReportingMixin, Pattern
         if actor_id in self.actor_configs:
             del self.actor_configs[actor_id]
 
-        logger.info(f"[{self.name}] Actor {actor_id} terminated")
+        logger.info("[{self.name}] Actor {actor_id} terminated")
 
     async def terminate_all(self) -> None:
         """Terminate all actors."""
-        logger.info(f"[{self.name}] Terminating all actors...")
+        logger.info("[{self.name}] Terminating all actors...")
 
         actor_ids = list(self.actors.keys())
         tasks = [self.terminate_actor(actor_id) for actor_id in actor_ids]
 
         await asyncio.gather(*tasks, return_exceptions=True)
 
-        logger.info(f"[{self.name}] All actors terminated")
+        logger.info("[{self.name}] All actors terminated")
 
     async def get_actor_status(self, actor_id: str) -> ActorStatus | None:
         """
@@ -282,13 +282,13 @@ class ActorSupervisor(AuditMixin, ValidationMixin, HealthReportingMixin, Pattern
     async def start_monitoring(self) -> None:
         """Start monitoring actors."""
         if self._running:
-            logger.warning(f"[{self.name}] Monitoring already running")
+            logger.warning("[{self.name}] Monitoring already running")
             return
 
         self._running = True
         self._monitor_task = asyncio.create_task(self._monitor_loop())
 
-        logger.info(f"[{self.name}] Actor monitoring started")
+        logger.info("[{self.name}] Actor monitoring started")
 
     async def stop_monitoring(self) -> None:
         """Stop monitoring actors."""
@@ -304,11 +304,11 @@ class ActorSupervisor(AuditMixin, ValidationMixin, HealthReportingMixin, Pattern
                 # P1-10h fix: Reset _monitor_task to None after cancellation
                 self._monitor_task = None
 
-        logger.info(f"[{self.name}] Actor monitoring stopped")
+        logger.info("[{self.name}] Actor monitoring stopped")
 
     async def _monitor_loop(self) -> None:
         """Monitor actor health."""
-        logger.info(f"[{self.name}] Starting monitor loop")
+        logger.info("[{self.name}] Starting monitor loop")
 
         while self._running:
             try:
@@ -346,7 +346,7 @@ class ActorSupervisor(AuditMixin, ValidationMixin, HealthReportingMixin, Pattern
             except asyncio.CancelledError:
                 break
             except Exception as e:
-                logger.error(f"[{self.name}] Monitor error: {e}", exc_info=True)
+                logger.error("[{self.name}] Monitor error: {e}", exc_info=True)
                 await asyncio.sleep(5.0)
 
     async def _attempt_restart(self, actor_id: str) -> None:
@@ -405,7 +405,7 @@ class ActorSupervisor(AuditMixin, ValidationMixin, HealthReportingMixin, Pattern
             )
 
         except Exception as e:
-            logger.error(f"[{self.name}] Restart failed for {actor_id}: {e}", exc_info=True)
+            logger.error("[{self.name}] Restart failed for {actor_id}: {e}", exc_info=True)
             self.restart_counts[actor_id] = restart_count + 1
 
     async def respawn_actor(self, actor_id: str) -> bool:
@@ -422,15 +422,15 @@ class ActorSupervisor(AuditMixin, ValidationMixin, HealthReportingMixin, Pattern
             True if respawn successful, False otherwise
         """
         if actor_id not in self.actors:
-            logger.warning(f"[{self.name}] Cannot respawn actor {actor_id}: not found")
+            logger.warning("[{self.name}] Cannot respawn actor {actor_id}: not found")
             return False
 
         config = self.actor_configs.get(actor_id)
         if config is None:
-            logger.error(f"[{self.name}] No configuration found for actor {actor_id}")
+            logger.error("[{self.name}] No configuration found for actor {actor_id}")
             return False
 
-        logger.info(f"[{self.name}] Manual respawn triggered for {actor_id}")
+        logger.info("[{self.name}] Manual respawn triggered for {actor_id}")
 
         try:
             # Terminate current actor
@@ -450,30 +450,30 @@ class ActorSupervisor(AuditMixin, ValidationMixin, HealthReportingMixin, Pattern
             # Register new actor
             self.actors[actor_id] = new_actor
 
-            logger.info(f"[{self.name}] Actor {actor_id} successfully respawned")
+            logger.info("[{self.name}] Actor {actor_id} successfully respawned")
             return True
 
         except Exception as e:
-            logger.error(f"[{self.name}] Respawn failed for {actor_id}: {e}", exc_info=True)
+            logger.error("[{self.name}] Respawn failed for {actor_id}: {e}", exc_info=True)
             return False
 
     async def save_all_states(self) -> None:
         """Save states of all actors."""
-        logger.info(f"[{self.name}] Saving all actor states...")
+        logger.info("[{self.name}] Saving all actor states...")
 
         tasks = [actor.save_state() for actor in self.actors.values()]
         await asyncio.gather(*tasks, return_exceptions=True)
 
-        logger.info(f"[{self.name}] All states saved")
+        logger.info("[{self.name}] All states saved")
 
     async def load_all_states(self) -> None:
         """Load states for all actors."""
-        logger.info(f"[{self.name}] Loading all actor states...")
+        logger.info("[{self.name}] Loading all actor states...")
 
         tasks = [actor.load_state() for actor in self.actors.values()]
         await asyncio.gather(*tasks, return_exceptions=True)
 
-        logger.info(f"[{self.name}] All states loaded")
+        logger.info("[{self.name}] All states loaded")
 
     def get_statistics(self) -> dict[str, Any]:
         """

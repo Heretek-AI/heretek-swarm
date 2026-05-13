@@ -210,9 +210,9 @@ class AutonomousRuntime:
                         agent_name,
                         str(config_path),
                     )
-                    logger.info(f"Started agent: {agent_name}")
+                    logger.info("Started agent: {agent_name}")
             except Exception as e:
-                logger.error(f"Failed to start agent {agent_name}: {e}")
+                logger.error("Failed to start agent {agent_name}: {e}")
                 self.state.total_failures += 1
 
         self.state.current_agents = len(self.supervisor.actors) if self.supervisor else 0
@@ -231,7 +231,7 @@ class AutonomousRuntime:
             except asyncio.CancelledError:
                 break
             except Exception as e:
-                logger.error(f"Monitoring loop error: {e}")
+                logger.error("Monitoring loop error: {e}")
                 await asyncio.sleep(5)  # Brief pause before retry
 
     async def _health_checks(self) -> None:
@@ -272,7 +272,7 @@ class AutonomousRuntime:
                 attempts = self._restart_attempts.get(agent_id, 0)
 
                 if attempts >= self.config.max_restart_attempts:
-                    logger.error(f"Max restart attempts reached for {agent_id}")
+                    logger.error("Max restart attempts reached for {agent_id}")
                     # Publish failure event to NATS
                     await self._publish_recovery_event(
                         agent_id,
@@ -296,7 +296,7 @@ class AutonomousRuntime:
                     self.state.total_agent_restarts += 1
                     # Track restart attempt
                     self._restart_attempts[agent_id] = attempts + 1
-                    logger.info(f"Restarted agent: {agent_id} (attempt {attempts + 1})")
+                    logger.info("Restarted agent: {agent_id} (attempt {attempts + 1})")
 
                     # Publish recovery event to NATS
                     await self._publish_recovery_event(agent_id, "health_check_failure")
@@ -305,7 +305,7 @@ class AutonomousRuntime:
                 await asyncio.sleep(self.config.restart_delay_seconds)
 
             except Exception as e:
-                logger.error(f"Failed to restart agent {agent_id}: {e}")
+                logger.error("Failed to restart agent {agent_id}: {e}")
                 self.state.total_failures += 1
 
     async def _check_memory_usage(self) -> None:
@@ -325,7 +325,7 @@ class AutonomousRuntime:
         except ImportError:
             logger.warning("psutil not available for memory monitoring")
         except Exception as e:
-            logger.error(f"Memory check error: {e}")
+            logger.error("Memory check error: {e}")
 
     async def _check_api_health(self) -> None:
         """Check API health and latency."""
@@ -347,7 +347,7 @@ class AutonomousRuntime:
                 )
 
         except Exception as e:
-            logger.error(f"API health check failed: {e}")
+            logger.error("API health check failed: {e}")
             self.state.total_failures += 1
 
     async def _scaling_loop(self) -> None:
@@ -362,7 +362,7 @@ class AutonomousRuntime:
             except asyncio.CancelledError:
                 break
             except Exception as e:
-                logger.error(f"Scaling loop error: {e}")
+                logger.error("Scaling loop error: {e}")
                 await asyncio.sleep(5)
 
     async def _check_scaling_conditions(self) -> None:
@@ -404,7 +404,7 @@ class AutonomousRuntime:
         except ImportError:
             return 0.5  # Default moderate load
         except Exception as e:
-            logger.error(f"Load calculation error: {e}")
+            logger.error("Load calculation error: {e}")
             return 0.5
 
     async def _scale_up(self) -> None:
@@ -436,9 +436,9 @@ class AutonomousRuntime:
                 await self.agent_runtime.spawn_agent(agent_name, str(config_path))
                 self.state.last_scale_event = datetime.now(UTC)
                 self._last_scale_up_time = datetime.now(UTC)
-                logger.info(f"Scaled up: Started agent {agent_name}")
+                logger.info("Scaled up: Started agent {agent_name}")
             except Exception as e:
-                logger.error(f"Failed to scale up: {e}")
+                logger.error("Failed to scale up: {e}")
 
     async def _scale_down(self) -> None:
         """Scale down by removing idle agents."""
@@ -460,9 +460,9 @@ class AutonomousRuntime:
                 await self.supervisor.terminate_actor(idle_agent)
                 self.state.last_scale_event = datetime.now(UTC)
                 self._last_scale_down_time = datetime.now(UTC)
-                logger.info(f"Scaled down: Terminated agent {idle_agent}")
+                logger.info("Scaled down: Terminated agent {idle_agent}")
             except Exception as e:
-                logger.error(f"Failed to scale down: {e}")
+                logger.error("Failed to scale down: {e}")
 
     async def _execute_scaling_result(self, result: ScalingResult) -> None:
         """
@@ -525,7 +525,7 @@ class AutonomousRuntime:
                     instance_id=instance_id,
                 )
             except Exception as e:
-                logger.error(f"Failed to spawn agent during scale up: {e}")
+                logger.error("Failed to spawn agent during scale up: {e}")
 
     async def _execute_scale_down(self, result: ScalingResult) -> None:
         """Execute scale down from pool manager result."""
@@ -563,7 +563,7 @@ class AutonomousRuntime:
                         agent_id=idle_agent,
                     )
                 except Exception as e:
-                    logger.error(f"Failed to terminate agent during scale down: {e}")
+                    logger.error("Failed to terminate agent during scale down: {e}")
 
     def _find_any_removable_agent(self) -> str | None:
         """Find any agent that can be removed (fallback when no idle agents)."""
@@ -620,7 +620,7 @@ class AutonomousRuntime:
             except asyncio.CancelledError:
                 break
             except Exception as e:
-                logger.error(f"State persistence error: {e}")
+                logger.error("State persistence error: {e}")
                 await asyncio.sleep(5)
 
     async def _save_state(self) -> None:
@@ -643,7 +643,7 @@ class AutonomousRuntime:
 
                 json.dump(state_data, f, indent=2)
         except Exception as e:
-            logger.error(f"Failed to save state: {e}")
+            logger.error("Failed to save state: {e}")
 
     async def _load_state(self) -> None:
         """Load saved state from disk."""
@@ -661,9 +661,9 @@ class AutonomousRuntime:
             self.state.total_agent_restarts = state_data.get("total_agent_restarts", 0)
             self.state.total_failures = state_data.get("total_failures", 0)
 
-            logger.info(f"Loaded state from {state_file}")
+            logger.info("Loaded state from {state_file}")
         except Exception as e:
-            logger.error(f"Failed to load state: {e}")
+            logger.error("Failed to load state: {e}")
 
     async def _metrics_collection_loop(self) -> None:
         """Metrics collection loop."""
@@ -676,7 +676,7 @@ class AutonomousRuntime:
             except asyncio.CancelledError:
                 break
             except Exception as e:
-                logger.error(f"Metrics collection error: {e}")
+                logger.error("Metrics collection error: {e}")
                 await asyncio.sleep(5)
 
     async def _collect_metrics(self) -> None:
@@ -702,7 +702,7 @@ class AutonomousRuntime:
         # P2-1 fix: Use timezone-aware datetime
         self.state.uptime_seconds = (datetime.now(UTC) - self.state.start_time).total_seconds()
 
-        logger.info(f"Collected metrics for {len(agent_metrics)} agents")
+        logger.info("Collected metrics for {len(agent_metrics)} agents")
 
     async def _report_agents_loop(self) -> None:
         """Report agent statuses to the API server periodically."""
@@ -716,7 +716,7 @@ class AutonomousRuntime:
             try:
                 await self._report_agents_to_api(api_host, api_port)
             except Exception as e:
-                logger.warning(f"Failed to report agents to API: {e}")
+                logger.warning("Failed to report agents to API: {e}")
 
             await asyncio.sleep(report_interval)
 
@@ -744,7 +744,7 @@ class AutonomousRuntime:
                     }
                 )
             except Exception as e:
-                logger.debug(f"Failed to get status for agent {agent_id}: {e}")
+                logger.debug("Failed to get status for agent {agent_id}: {e}")
 
         payload = {
             "runtime_id": "autonomous",
@@ -760,9 +760,9 @@ class AutonomousRuntime:
                     json=payload,
                 )
         except httpx.ConnectError:
-            logger.debug(f"API not available at {api_host}:{api_port}, skipping report")
+            logger.debug("API not available at {api_host}:{api_port}, skipping report")
         except Exception as e:
-            logger.warning(f"Failed to report agents to API: {e}")
+            logger.warning("Failed to report agents to API: {e}")
 
     async def _consciousness_metrics_loop(self) -> None:
         """Consciousness metrics collection loop."""
@@ -775,7 +775,7 @@ class AutonomousRuntime:
             except asyncio.CancelledError:
                 break
             except Exception as e:
-                logger.error(f"Consciousness metrics error: {e}")
+                logger.error("Consciousness metrics error: {e}")
                 await asyncio.sleep(5)
 
     async def _init_consciousness_plugin(self) -> None:
@@ -787,10 +787,10 @@ class AutonomousRuntime:
             await self._consciousness_plugin.initialize()
             logger.info("consciousness_plugin_initialized")
         except ImportError as e:
-            logger.warning(f"ConsciousnessEnhancedPlugin not available: {e}")
+            logger.warning("ConsciousnessEnhancedPlugin not available: {e}")
             self._consciousness_plugin = None
         except Exception as e:
-            logger.error(f"Failed to initialize consciousness plugin: {e}")
+            logger.error("Failed to initialize consciousness plugin: {e}")
             self._consciousness_plugin = None
 
     def _init_agency_tracker(self) -> None:
@@ -799,7 +799,7 @@ class AutonomousRuntime:
             self._agency_tracker = AgencyMetricsTracker()
             logger.info("agency_metrics_tracker_initialized")
         except Exception as e:
-            logger.error(f"Failed to initialize agency tracker: {e}")
+            logger.error("Failed to initialize agency tracker: {e}")
             self._agency_tracker = None
 
     async def _collect_consciousness_metrics(self) -> None:
@@ -862,7 +862,7 @@ class AutonomousRuntime:
                 )
 
         except Exception as e:
-            logger.error(f"Consciousness metrics collection error: {e}")
+            logger.error("Consciousness metrics collection error: {e}")
 
     async def _publish_recovery_event(
         self,
@@ -920,7 +920,7 @@ class AutonomousRuntime:
         # P2-1 fix: Use timezone-aware datetime
         self._last_alert_time[alert_type] = datetime.now(UTC)
 
-        logger.warning(f"Alert: {alert_type}", data=data)
+        logger.warning("Alert: {alert_type}", data=data)
 
         # Send to configured channels
         if self.config.alert_config.slack_channel:
@@ -938,7 +938,7 @@ class AutonomousRuntime:
         try:
             from heretek_swarm.integrations.slack_bot import SlackBot
         except ImportError as e:
-            logger.warning(f"SlackBot not available: {e}")
+            logger.warning("SlackBot not available: {e}")
             return
 
         try:
@@ -958,7 +958,7 @@ class AutonomousRuntime:
             )
 
         except Exception as e:
-            logger.error(f"Failed to send Slack alert: {e}")
+            logger.error("Failed to send Slack alert: {e}")
 
     async def _send_discord_alert(self, alert_type: str, data: dict[str, Any]) -> None:
         """Send alert to Discord."""
@@ -966,7 +966,7 @@ class AutonomousRuntime:
         try:
             from heretek_swarm.integrations.discord_bot import DiscordBot
         except ImportError as e:
-            logger.warning(f"DiscordBot not available: {e}")
+            logger.warning("DiscordBot not available: {e}")
             return
 
         try:
@@ -981,10 +981,10 @@ class AutonomousRuntime:
             message += f"```json\n{data}\n```"
 
             # Note: Discord bot would need channel reference
-            logger.info(f"Discord alert prepared: {alert_type}")
+            logger.info("Discord alert prepared: {alert_type}")
 
         except Exception as e:
-            logger.error(f"Failed to send Discord alert: {e}")
+            logger.error("Failed to send Discord alert: {e}")
 
     async def _send_email_alert(self, alert_type: str, data: dict[str, Any]) -> None:
         """Send alert via email."""
@@ -1016,10 +1016,10 @@ class AutonomousRuntime:
                     )
                 server.send_message(msg)
 
-            logger.info(f"Email alert sent: {alert_type}")
+            logger.info("Email alert sent: {alert_type}")
 
         except Exception as e:
-            logger.error(f"Failed to send email alert: {e}")
+            logger.error("Failed to send email alert: {e}")
 
     def get_status(self) -> dict[str, Any]:
         """Get current runtime status."""
@@ -1053,7 +1053,7 @@ async def start_autonomous_runtime(config: AutonomousRuntimeConfig) -> Autonomou
 
     # Setup signal handlers
     def signal_handler(signum, frame):
-        logger.info(f"Received signal {signum}, shutting down...")
+        logger.info("Received signal {signum}, shutting down...")
         asyncio.create_task(runtime.stop())
 
     signal.signal(signal.SIGINT, signal_handler)

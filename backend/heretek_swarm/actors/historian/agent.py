@@ -164,7 +164,7 @@ class HistorianAgent(
         self._writer_task: asyncio.Task | None = None
         self._using_pg: bool = False  # True → _pg_writer, False → _jsonl_writer
 
-        logger.info(f"[{self.agent_id}] Historian agent initialized")
+        logger.info("[{self.agent_id}] Historian agent initialized")
 
     async def initialize(self) -> None:
         """Initialize the Historian agent."""
@@ -177,13 +177,13 @@ class HistorianAgent(
                 memory_system=self.memory_system,
                 rag_pipeline=self.rag_pipeline,
             )
-            logger.info(f"[{self.agent_id}] Unified knowledge access initialized")
+            logger.info("[{self.agent_id}] Unified knowledge access initialized")
         else:
             self.knowledge_access = UnifiedKnowledgeAccess(
                 memory_system=self.memory_system,
                 rag_pipeline=None,
             )
-            logger.info(f"[{self.agent_id}] Knowledge access initialized (memory only)")
+            logger.info("[{self.agent_id}] Knowledge access initialized (memory only)")
 
         # Event log: create shared queue and start the appropriate writer.
         # If a db_pool is available (injected by the supervisor or constructor),
@@ -193,11 +193,11 @@ class HistorianAgent(
         if db_pool is not None:
             self._using_pg = True
             self._writer_task = asyncio.create_task(self._pg_writer(db_pool))
-            logger.info(f"[{self.agent_id}] Starting Postgres event writer")
+            logger.info("[{self.agent_id}] Starting Postgres event writer")
         else:
             self._using_pg = False
             self._writer_task = asyncio.create_task(self._jsonl_writer())
-            logger.info(f"[{self.agent_id}] Starting JSONL event writer")
+            logger.info("[{self.agent_id}] Starting JSONL event writer")
 
         # Register message handlers
         self.register_handler("store_memory", self._handle_store_memory)
@@ -208,7 +208,7 @@ class HistorianAgent(
         self.register_handler("unified_query", self._handle_unified_query)
         self.register_handler("log_event", self._handle_log_event)
 
-        logger.info(f"[{self.agent_id}] Historian initialization complete")
+        logger.info("[{self.agent_id}] Historian initialization complete")
 
     async def process_message(self, message: ActorMessage) -> None:
         """Process incoming messages."""
@@ -234,7 +234,7 @@ class HistorianAgent(
                         correlation_id=message.correlation_id,
                     )
         else:
-            logger.warning(f"[{self.agent_id}] Unhandled message type: {message.message_type}")
+            logger.warning("[{self.agent_id}] Unhandled message type: {message.message_type}")
 
     async def _handle_store_memory(self, message: ActorMessage) -> None:
         """Handle memory storage requests with validation."""
@@ -253,10 +253,10 @@ class HistorianAgent(
                 ttl = message.content.get("ttl")
                 persistent = message.content.get("persistent", False)
         except ValueError as e:
-            logger.error(f"[{self.agent_id}] Store memory validation failed: {e}")
+            logger.error("[{self.agent_id}] Store memory validation failed: {e}")
             return
 
-        logger.debug(f"[{self.agent_id}] Storing memory")
+        logger.debug("[{self.agent_id}] Storing memory")
 
         entry = await self.store_memory(
             content=content,
@@ -305,10 +305,10 @@ class HistorianAgent(
                 filters = message.content.get("filters", {})
                 window_size = message.content.get("window_size", self.context_window)
         except ValueError as e:
-            logger.error(f"[{self.agent_id}] Retrieve context validation failed: {e}")
+            logger.error("[{self.agent_id}] Retrieve context validation failed: {e}")
             return
 
-        logger.debug(f"[{self.agent_id}] Retrieving context for: {topic}")
+        logger.debug("[{self.agent_id}] Retrieving context for: {topic}")
 
         context = await self.retrieve_context(
             topic=topic,
@@ -343,10 +343,10 @@ class HistorianAgent(
                 filters = message.content.get("filters", {})
                 limit = message.content.get("limit", 10)
         except ValueError as e:
-            logger.error(f"[{self.agent_id}] Query history validation failed: {e}")
+            logger.error("[{self.agent_id}] Query history validation failed: {e}")
             return
 
-        logger.debug(f"[{self.agent_id}] Querying history: {query_text}")
+        logger.debug("[{self.agent_id}] Querying history: {query_text}")
 
         results = await self.query_history(
             query_text=query_text,
@@ -379,10 +379,10 @@ class HistorianAgent(
                 decision_id = message.content.get("decision_id")
                 parent_ids = message.content.get("parent_ids", [])
         except ValueError as e:
-            logger.error(f"[{self.agent_id}] Track lineage validation failed: {e}")
+            logger.error("[{self.agent_id}] Track lineage validation failed: {e}")
             return
 
-        logger.debug(f"[{self.agent_id}] Tracking lineage for: {decision_id}")
+        logger.debug("[{self.agent_id}] Tracking lineage for: {decision_id}")
 
         await self.track_decision_lineage(
             decision_id=decision_id,
@@ -415,10 +415,10 @@ class HistorianAgent(
                 # Fallback to unvalidated access
                 current_situation = message.content.get("situation")
         except ValueError as e:
-            logger.error(f"[{self.agent_id}] Pattern match validation failed: {e}")
+            logger.error("[{self.agent_id}] Pattern match validation failed: {e}")
             return
 
-        logger.debug(f"[{self.agent_id}] Matching patterns for: {current_situation}")
+        logger.debug("[{self.agent_id}] Matching patterns for: {current_situation}")
 
         patterns = await self.match_patterns(current_situation)
 
@@ -445,10 +445,10 @@ class HistorianAgent(
             filters = message.content.get("filters", {})
 
             if not query_text:
-                logger.error(f"[{self.agent_id}] Unified query requires query text")
+                logger.error("[{self.agent_id}] Unified query requires query text")
                 return
 
-            logger.debug(f"[{self.agent_id}] Executing unified query: {query_text[:50]}")
+            logger.debug("[{self.agent_id}] Executing unified query: {query_text[:50]}")
 
             # Execute unified query
             result = await self.knowledge_access.query(
@@ -477,7 +477,7 @@ class HistorianAgent(
             )
 
         except Exception as e:
-            logger.error(f"[{self.agent_id}] Unified query error: {e}", exc_info=True)
+            logger.error("[{self.agent_id}] Unified query error: {e}", exc_info=True)
             if message.content.get("reply_to"):
                 await self.send(
                     topic=message.content["reply_to"],
@@ -512,7 +512,7 @@ class HistorianAgent(
             KnowledgeQueryResult with merged and reranked entries
         """
         if not self.knowledge_access:
-            logger.warning(f"[{self.agent_id}] Knowledge access not initialized")
+            logger.warning("[{self.agent_id}] Knowledge access not initialized")
             return KnowledgeQueryResult(entries=[], total_results=0)
 
         return await self.knowledge_access.query(
@@ -561,7 +561,7 @@ class HistorianAgent(
             persistent=persistent,
         )
 
-        logger.debug(f"[{self.agent_id}] Stored memory {entry.id}")
+        logger.debug("[{self.agent_id}] Stored memory {entry.id}")
 
         return entry
 
@@ -586,7 +586,7 @@ class HistorianAgent(
         cache_key = f"{topic}:{window_size}"
         cached = self.context_cache.get(cache_key)
         if cached is not None:
-            logger.debug(f"[{self.agent_id}] Context cache hit for: {topic}")
+            logger.debug("[{self.agent_id}] Context cache hit for: {topic}")
             return cached
 
         # Build query filters
@@ -679,7 +679,7 @@ class HistorianAgent(
             persistent=True,
         )
 
-        logger.debug(f"[{self.agent_id}] Tracked lineage for {decision_id}: {parent_ids}")
+        logger.debug("[{self.agent_id}] Tracked lineage for {decision_id}: {parent_ids}")
 
     async def get_lineage(self, decision_id: str) -> list[str]:
         """
@@ -808,7 +808,7 @@ class HistorianAgent(
         Returns:
             Context dictionary with relevant memories and patterns
         """
-        logger.info(f"[{self.agent_id}] Providing context for deliberation: {deliberation_id}")
+        logger.info("[{self.agent_id}] Providing context for deliberation: {deliberation_id}")
 
         # Retrieve relevant context
         context_entries = await self.retrieve_context(
@@ -865,7 +865,7 @@ class HistorianAgent(
         Returns:
             Synthesized knowledge summary
         """
-        logger.info(f"[{self.agent_id}] Synthesizing knowledge for: {topic}")
+        logger.info("[{self.agent_id}] Synthesizing knowledge for: {topic}")
 
         # Retrieve relevant memories
         results = await self.memory_system.query(
@@ -898,7 +898,7 @@ class HistorianAgent(
                 }
             except TimeoutError:
                 # P2-1 fix: Use timezone-aware datetime
-                logger.error(f"[{self.agent_id}] Synthesis timed out after {timeout}s")
+                logger.error("[{self.agent_id}] Synthesis timed out after {timeout}s")
                 return {
                     "topic": topic,
                     "summary": f"Synthesis timed out after {timeout}s",
@@ -908,7 +908,7 @@ class HistorianAgent(
                     "synthesized_at": datetime.now(UTC).isoformat(),
                 }
             except Exception as e:
-                logger.error(f"[{self.agent_id}] Synthesis error: {e}")
+                logger.error("[{self.agent_id}] Synthesis error: {e}")
 
         # Fallback synthesis
         # P2-1 fix: Use timezone-aware datetime
@@ -963,7 +963,7 @@ class HistorianAgent(
                 # event loop — stdlib only, no aiofiles dependency.
                 await asyncio.to_thread(self._write_jsonl_line, self._jsonl_path, line)
             except Exception:
-                logger.exception(f"[{self.agent_id}] JSONL writer error")
+                logger.exception("[{self.agent_id}] JSONL writer error")
             finally:
                 self._jsonl_queue.task_done()
 
@@ -1007,7 +1007,7 @@ class HistorianAgent(
             async with db_pool.acquire() as conn:
                 await conn.execute(self._CREATE_HISTORIAN_EVENTS_DDL)
         except Exception:
-            logger.exception(f"[{self.agent_id}] Failed to create historian_events table")
+            logger.exception("[{self.agent_id}] Failed to create historian_events table")
             return
 
         while True:
@@ -1026,7 +1026,7 @@ class HistorianAgent(
                         record["agent_id"],
                         json.dumps(record["payload"]),
                     )
-                logger.debug(f"[{self.agent_id}] PG writer: inserted event {record['event_id']}")
+                logger.debug("[{self.agent_id}] PG writer: inserted event {record['event_id']}")
             except Exception:
                 logger.exception(
                     f"[{self.agent_id}] PG writer error for event {record.get('event_id', '?')}"
@@ -1074,7 +1074,7 @@ class HistorianAgent(
 
         db_pool = self._db_pool or self.get_state("_db_pool")
         if db_pool is None:
-            logger.warning(f"[{self.agent_id}] read_events called but no db_pool available")
+            logger.warning("[{self.agent_id}] read_events called but no db_pool available")
             return []
 
         # Build dynamic WHERE clause with parameterized placeholders
@@ -1114,7 +1114,7 @@ class HistorianAgent(
             async with db_pool.acquire() as conn:
                 rows = await conn.fetch(query, *params)
         except Exception:
-            logger.exception(f"[{self.agent_id}] read_events query failed")
+            logger.exception("[{self.agent_id}] read_events query failed")
             return []
 
         return [
@@ -1215,7 +1215,7 @@ class HistorianAgent(
                 try:
                     await db_pool.close()
                 except Exception:
-                    logger.exception(f"[{self.agent_id}] Error closing db_pool during cleanup")
+                    logger.exception("[{self.agent_id}] Error closing db_pool during cleanup")
 
         await self.memory_system.close()
-        logger.info(f"[{self.agent_id}] Historian cleanup complete")
+        logger.info("[{self.agent_id}] Historian cleanup complete")

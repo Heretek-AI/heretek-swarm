@@ -241,7 +241,7 @@ class GlobalWorkspace:
             self.workspace.sort(key=lambda x: x.priority)
             removed = self.workspace.pop(0)
             self.history.append(removed)
-            logger.debug(f"Workspace full, removed item: {removed.id}")
+            logger.debug("Workspace full, removed item: {removed.id}")
 
         # Add to workspace
         self.workspace.append(item)
@@ -291,7 +291,7 @@ class GlobalWorkspace:
         for item in self.workspace:
             if item.id == item_id:
                 item.attended = True
-                logger.debug(f"Item {item_id} marked as attended")
+                logger.debug("Item {item_id} marked as attended")
                 return True
         return False
 
@@ -318,14 +318,14 @@ class GlobalWorkspace:
         removed_count = original_count - len(active)
 
         if removed_count > 0:
-            logger.info(f"Cleaned up {removed_count} expired workspace items")
+            logger.info("Cleaned up {removed_count} expired workspace items")
 
         return removed_count
 
     def subscribe(self, subscriber_id: str) -> None:
         """Subscribe to workspace broadcasts."""
         self.subscribers.add(subscriber_id)
-        logger.debug(f"Subscriber added: {subscriber_id}")
+        logger.debug("Subscriber added: {subscriber_id}")
 
     def unsubscribe(self, subscriber_id: str) -> None:
         """Unsubscribe from workspace broadcasts."""
@@ -389,7 +389,7 @@ class AttentionSchemaManager:
         self.schemas[agent_id] = schema
         self.attention_history[agent_id] = []
 
-        logger.info(f"Created attention schema for agent: {agent_id}")
+        logger.info("Created attention schema for agent: {agent_id}")
 
         return schema
 
@@ -579,7 +579,7 @@ class ConsciousnessPlugin:
             except asyncio.CancelledError:
                 break
             except Exception as e:
-                logger.error(f"Cleanup error: {e}")
+                logger.error("Cleanup error: {e}")
                 await asyncio.sleep(10)
 
     async def shutdown(self) -> None:
@@ -864,7 +864,7 @@ class ConsciousnessPlugin:
             return phi
 
         except Exception as e:
-            logger.error(f"IIT Phi calculation error: {e}")
+            logger.error("IIT Phi calculation error: {e}")
             # Fallback to attention-based estimate
             return schema.metacognitive_awareness * 0.5 if schema else 0.2
 
@@ -956,7 +956,7 @@ class ConsciousnessPlugin:
             return min(1.0, max(0.0, integration))
 
         except Exception as e:
-            logger.error(f"Integration calculation error: {e}")
+            logger.error("Integration calculation error: {e}")
             return 0.0
 
     def _calculate_differentiation(self, agent_id: str) -> float:
@@ -1004,7 +1004,7 @@ class ConsciousnessPlugin:
             return min(1.0, max(0.0, normalized_entropy))
 
         except Exception as e:
-            logger.error(f"Differentiation calculation error: {e}")
+            logger.error("Differentiation calculation error: {e}")
             return 0.3
 
     def _calculate_fep_free_energy(self, agent_id: str) -> float:
@@ -1066,7 +1066,7 @@ class ConsciousnessPlugin:
             return min(1.0, max(0.0, fep_score))
 
         except Exception as e:
-            logger.error(f"FEP calculation error: {e}")
+            logger.error("FEP calculation error: {e}")
             return 0.5
 
     def _calculate_prediction_error(self, agent_id: str, history: list[dict[str, Any]]) -> float:

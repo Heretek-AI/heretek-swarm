@@ -179,15 +179,15 @@ class AgentRegistry:
                         metadata=announcement.metadata,
                     )
                     self._agents[announcement.agent_id] = agent_info
-                    logger.info(f"Agent joined: {announcement.name} ({announcement.agent_id})")
+                    logger.info("Agent joined: {announcement.name} ({announcement.agent_id})")
 
                 elif announcement.action == "leave":
                     if announcement.agent_id in self._agents:
                         del self._agents[announcement.agent_id]
-                        logger.info(f"Agent left: {announcement.agent_id}")
+                        logger.info("Agent left: {announcement.agent_id}")
 
         except Exception as e:
-            logger.error(f"Error handling presence: {e}")
+            logger.error("Error handling presence: {e}")
 
     async def _handle_heartbeat(self, msg: dict) -> None:
         """Handle heartbeat message from an agent."""
@@ -201,7 +201,7 @@ class AgentRegistry:
                     agent.status = heartbeat.status
 
         except Exception as e:
-            logger.error(f"Error handling heartbeat: {e}")
+            logger.error("Error handling heartbeat: {e}")
 
     async def register_agent(
         self,
@@ -247,7 +247,7 @@ class AgentRegistry:
         # Start heartbeat for this agent
         await self._start_heartbeat(agent_id)
 
-        logger.info(f"Agent registered: {name} ({agent_id})")
+        logger.info("Agent registered: {name} ({agent_id})")
 
     async def unregister_agent(self, agent_id: str) -> None:
         """
@@ -279,7 +279,7 @@ class AgentRegistry:
             )
             await self._nats.publish(self.ANNOUNCEMENT_TOPIC, announcement.to_dict())
 
-        logger.info(f"Agent unregistered: {agent_id}")
+        logger.info("Agent unregistered: {agent_id}")
 
     async def _start_heartbeat(self, agent_id: str) -> None:
         """Start heartbeat task for an agent."""
@@ -296,7 +296,7 @@ class AgentRegistry:
                 except asyncio.CancelledError:
                     break
                 except Exception as e:
-                    logger.error(f"Heartbeat error for {agent_id}: {e}")
+                    logger.error("Heartbeat error for {agent_id}: {e}")
 
         task = asyncio.create_task(heartbeat_loop())
         self._heartbeat_tasks[agent_id] = task
@@ -363,7 +363,7 @@ class AgentRegistry:
                     del self._heartbeat_tasks[agent_id]
 
         for agent_id in removed:
-            logger.warning(f"Removed stale agent: {agent_id}")
+            logger.warning("Removed stale agent: {agent_id}")
 
         return removed
 

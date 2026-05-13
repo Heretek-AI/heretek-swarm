@@ -196,7 +196,7 @@ class ActorFactory:
         if name in self._default_kwargs:
             del self._default_kwargs[name]
 
-        logger.info(f"[ActorFactory] Unregistered actor class '{name}'")
+        logger.info("[ActorFactory] Unregistered actor class '{name}'")
 
     def clear_instances(self) -> None:
         """Clear all stored actor instance configurations."""

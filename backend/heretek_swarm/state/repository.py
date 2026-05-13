@@ -317,7 +317,7 @@ class StateRepository:
             )
             return cls._pool
         except Exception as e:
-            logger.error(f"Failed to create database pool: {e}")
+            logger.error("Failed to create database pool: {e}")
             return None
 
     @classmethod
@@ -382,7 +382,7 @@ class StateRepository:
 
             return stats
         except Exception as e:
-            logger.error(f"Failed to get pool stats: {e}")
+            logger.error("Failed to get pool stats: {e}")
             return {
                 "available": True,
                 "error": str(e),
@@ -424,7 +424,7 @@ class StateRepository:
                 self._initialized = True
                 logger.info("State repository initialized with PostgreSQL")
             except (ConnectionError, OSError) as e:
-                logger.warning(f"PostgreSQL connection failed, using in-memory: {e}")
+                logger.warning("PostgreSQL connection failed, using in-memory: {e}")
                 self._db_pool = None
                 self._initialized = True
         else:
@@ -541,14 +541,14 @@ class StateRepository:
                     break
 
         # All retries failed, fall back to memory
-        logger.warning(f"Database save failed after {attempt} attempts, using memory: {last_error}")
+        logger.warning("Database save failed after {attempt} attempts, using memory: {last_error}")
         return self._save_to_memory(record)
 
     def _save_to_memory(self, record: AgentStateRecord) -> AgentStateRecord:
         """Save record to in-memory storage."""
         self._memory_store[record.agent_id] = record
         self._stats["memory_saves"] += 1
-        logger.debug(f"State saved to memory for {record.agent_id}")
+        logger.debug("State saved to memory for {record.agent_id}")
         return record
 
     async def load_state(self, agent_id: str) -> AgentStateRecord | None:
@@ -567,7 +567,7 @@ class StateRepository:
             record = self._load_from_memory(agent_id)
 
         if record:
-            logger.debug(f"State loaded for {agent_id}")
+            logger.debug("State loaded for {agent_id}")
 
         return record
 
@@ -593,7 +593,7 @@ class StateRepository:
                         is_active=row["is_active"],
                     )
         except (ConnectionError, OSError) as e:
-            logger.error(f"Database load failed: {e}")
+            logger.error("Database load failed: {e}")
 
         return None
 
@@ -623,15 +623,15 @@ class StateRepository:
                     )
                     self._stats["db_saves"] += 1
                     deleted = result != "DELETE 0"
-                    logger.debug(f"State {'deleted' if deleted else 'not found'} for {agent_id}")
+                    logger.debug("State {'deleted' if deleted else 'not found'} for {agent_id}")
                     return deleted
             except (ConnectionError, OSError) as e:
-                logger.error(f"Database delete failed: {e}")
+                logger.error("Database delete failed: {e}")
 
         # Memory fallback
         if agent_id in self._memory_store:
             del self._memory_store[agent_id]
-            logger.debug(f"Memory state deleted for {agent_id}")
+            logger.debug("Memory state deleted for {agent_id}")
             return True
 
         return False
@@ -662,7 +662,7 @@ class StateRepository:
                         for row in rows
                     ]
             except (ConnectionError, OSError) as e:
-                logger.error(f"Database list failed: {e}")
+                logger.error("Database list failed: {e}")
 
         # Memory fallback
         self._stats["memory_loads"] += len(self._memory_store)
@@ -720,7 +720,7 @@ class StateRepository:
                     )
                     return checkpoint
             except (ConnectionError, OSError) as e:
-                logger.error(f"Database checkpoint failed: {e}")
+                logger.error("Database checkpoint failed: {e}")
 
         # Memory fallback
         if agent_id not in self._checkpoints:
@@ -759,7 +759,7 @@ class StateRepository:
                             metadata=row["metadata"],
                         )
             except (ConnectionError, OSError) as e:
-                logger.error(f"Database checkpoint get failed: {e}")
+                logger.error("Database checkpoint get failed: {e}")
 
         # Memory fallback
         for checkpoints in self._checkpoints.values():
@@ -804,7 +804,7 @@ class StateRepository:
                         for row in rows
                     ]
             except (ConnectionError, OSError) as e:
-                logger.error(f"Database checkpoints list failed: {e}")
+                logger.error("Database checkpoints list failed: {e}")
 
         # Memory fallback
         checkpoints = self._checkpoints.get(agent_id, [])
@@ -827,7 +827,7 @@ class StateRepository:
         """
         checkpoint = await self.get_checkpoint(checkpoint_id)
         if not checkpoint:
-            logger.warning(f"Checkpoint not found: {checkpoint_id}")
+            logger.warning("Checkpoint not found: {checkpoint_id}")
             return False
 
         # Save the checkpoint state as current state
@@ -1025,7 +1025,7 @@ class EventSourcedRepository(StateRepository):
             initial_state=initial_state,
         )
 
-        logger.info(f"State reconstructed for {agent_id}")
+        logger.info("State reconstructed for {agent_id}")
         return state
 
     def _apply_event(
@@ -1139,7 +1139,7 @@ class EventSourcedRepository(StateRepository):
             applier: Function to apply event to state
         """
         self._event_appliers[event_type] = applier
-        logger.debug(f"Event applier registered for {event_type}")
+        logger.debug("Event applier registered for {event_type}")
 
 
 # Override get_event_store for event_sourced compatibility

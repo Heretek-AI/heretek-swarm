@@ -637,7 +637,7 @@ Return JSON with keys: valid (bool), confidence (0-1), issues (list), recommenda
                 else:
                     results[metric] = await self._estimate_metric(target, metric)
             except Exception as e:
-                logger.warning(f"Failed to measure {metric.value}", error=str(e))
+                logger.warning("Failed to measure {metric.value}", error=str(e))
                 results[metric] = 0.0
 
         return results
@@ -779,7 +779,7 @@ Return a score from 0-100."""
             )
 
             self._pattern_emitted.add(item_id)
-            logger.info(f"{item_type}_pattern_emitted", item_id=item_id, outcome=outcome)
+            logger.info("{item_type}_pattern_emitted", item_id=item_id, outcome=outcome)
         except Exception as e:
             logger.warning("failed_to_emit_pattern", item_id=item_id, error=str(e))
 

@@ -163,7 +163,7 @@ async def _ws_authenticate_and_accept(
             await websocket.close()
         except Exception:
             pass
-        logger.warning(f"websocket_{error_action}_auth_failed", error=error)
+        logger.warning("websocket_{error_action}_auth_failed", error=error)
         return False, None
     return True, user_id
 

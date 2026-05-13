@@ -154,10 +154,10 @@ class LogRotator:
                             files_to_compress.append(file_path)
 
                 except OSError as e:
-                    logger.warning(f"Failed to stat log file {file_path}: {e}")
+                    logger.warning("Failed to stat log file {file_path}: {e}")
                     self._stats["errors"] += 1
         except OSError as e:
-            logger.error(f"Failed to list log directory: {e}")
+            logger.error("Failed to list log directory: {e}")
             self._stats["errors"] += 1
 
         return files_to_remove, files_to_compress
@@ -166,16 +166,16 @@ class LogRotator:
         """Remove files marked for deletion, updating stats on success or error."""
         for file_path in files_to_remove:
             if self.config.dry_run:
-                logger.info(f"[DRY RUN] Would remove {file_path}")
+                logger.info("[DRY RUN] Would remove {file_path}")
             else:
                 try:
                     size = file_path.stat().st_size
                     file_path.unlink()
                     self._stats["files_removed"] += 1
                     self._stats["bytes_freed"] += size
-                    logger.debug(f"Removed old log file: {file_path}")
+                    logger.debug("Removed old log file: {file_path}")
                 except OSError as e:
-                    logger.error(f"Failed to remove {file_path}: {e}")
+                    logger.error("Failed to remove {file_path}: {e}")
                     self._stats["errors"] += 1
 
     async def _compress_large_files(self, files_to_compress: list[Path]) -> None:
@@ -208,7 +208,7 @@ class LogRotator:
                         f"{compressed_size / 1024 / 1024:.1f}MB)"
                     )
                 except OSError as e:
-                    logger.error(f"Failed to compress {file_path}: {e}")
+                    logger.error("Failed to compress {file_path}: {e}")
                     self._stats["errors"] += 1
 
     async def rotate(self) -> dict[str, Any]:
@@ -309,7 +309,7 @@ class DatabaseMaintenance:
             logger.warning("asyncpg not available, skipping DB maintenance")
             return self._stats
         except Exception as e:
-            logger.error(f"Failed to connect to database: {e}")
+            logger.error("Failed to connect to database: {e}")
             self._stats["errors"] += 1
             return self._stats
 
@@ -337,9 +337,9 @@ class DatabaseMaintenance:
                     # Use autovacuum-friendly VACUUM (no exclusive lock)
                     await conn.execute(f'VACUUM (ANALYZE) "{table}"')
                     self._stats["vacuum_analyze_runs"] += 1
-                    logger.debug(f"VACUUM ANALYZE completed for {table}")
+                    logger.debug("VACUUM ANALYZE completed for {table}")
             except Exception as e:
-                logger.error(f"VACUUM ANALYZE failed for {table}: {e}")
+                logger.error("VACUUM ANALYZE failed for {table}: {e}")
                 self._stats["errors"] += 1
 
     async def _prune_orphaned(self, pool: Any) -> None:
@@ -365,9 +365,9 @@ class DatabaseMaintenance:
                 # result is "UPDATE N" where N is the count
                 count = int(result.split()[-1]) if result != "UPDATE 0" else 0
                 self._stats["orphaned_deleted"] += count
-                logger.debug(f"Pruned {count} orphaned agent_states")
+                logger.debug("Pruned {count} orphaned agent_states")
         except Exception as e:
-            logger.error(f"Failed to prune orphaned records: {e}")
+            logger.error("Failed to prune orphaned records: {e}")
             self._stats["errors"] += 1
 
     async def _prune_checkpoints(self, pool: Any) -> None:
@@ -393,9 +393,9 @@ class DatabaseMaintenance:
                         self.config.checkpoint_retention_count,
                     )
                     self._stats["checkpoints_pruned"] += len(result) if result else 0
-                    logger.debug(f"Pruned excess checkpoints from {table}")
+                    logger.debug("Pruned excess checkpoints from {table}")
         except Exception as e:
-            logger.error(f"Failed to prune checkpoints: {e}")
+            logger.error("Failed to prune checkpoints: {e}")
             self._stats["errors"] += 1
 
     def get_stats(self) -> dict[str, Any]:
@@ -459,7 +459,7 @@ class ConfigDriftDetector:
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(json.dumps(baseline, indent=2))
 
-        logger.info(f"Configuration baseline stored at {path}", keys=len(baseline))
+        logger.info("Configuration baseline stored at {path}", keys=len(baseline))
         return str(path)
 
     def _read_baseline(self, baseline_path: Path) -> dict[str, Any]:
@@ -539,7 +539,7 @@ class ConfigDriftDetector:
         baseline_path = self._get_baseline_path(config_name)
 
         if not baseline_path.exists():
-            logger.warning(f"No baseline found at {baseline_path}, run store_baseline() first")
+            logger.warning("No baseline found at {baseline_path}, run store_baseline() first")
             self._last_drift_result = {
                 "has_drift": False,
                 "reason": "no_baseline",
@@ -550,7 +550,7 @@ class ConfigDriftDetector:
         try:
             baseline = self._read_baseline(baseline_path)
         except (OSError, json.JSONDecodeError) as e:
-            logger.error(f"Failed to read baseline file: {e}")
+            logger.error("Failed to read baseline file: {e}")
             self._last_drift_result = {
                 "has_drift": False,
                 "reason": "baseline_read_error",
@@ -675,7 +675,7 @@ class SelfMaintenanceScheduler:
         try:
             await self._log_rotator.rotate()
         except Exception as e:
-            logger.error(f"Final log rotation failed: {e}")
+            logger.error("Final log rotation failed: {e}")
 
     # -------------------------------------------------------------------------
     # Individual maintenance loops
@@ -711,7 +711,7 @@ class SelfMaintenanceScheduler:
             except asyncio.CancelledError:
                 break
             except Exception as e:
-                logger.error(f"Maintenance loop error: {e}")
+                logger.error("Maintenance loop error: {e}")
                 await asyncio.sleep(60)
 
     async def _run_all_tasks(self) -> None:

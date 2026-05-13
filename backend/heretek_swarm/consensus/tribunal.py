@@ -726,16 +726,16 @@ class Tribunal:
 
             if self._check_unanimous(agent_votes):
                 decision = self._create_decision(topic, agent_votes, unanimous=True)
-                logger.info(f"Tribunal: Unanimous agreement reached at round {self.current_round}")
+                logger.info("Tribunal: Unanimous agreement reached at round {self.current_round}")
                 return decision
 
             if self.current_round >= self.max_rounds:
                 break
 
-        logger.warning(f"Tribunal: max_rounds {self.max_rounds} reached for topic {topic}")
+        logger.warning("Tribunal: max_rounds {self.max_rounds} reached for topic {topic}")
         self._tiebreaker_invoked = True
         self._tiebreaker_reason = f"max_rounds_{self.max_rounds}_reached"
-        logger.warning(f"TIEBREAKER_INVOKED: round={self.current_round} topic={topic}")
+        logger.warning("TIEBREAKER_INVOKED: round={self.current_round} topic={topic}")
 
         return self._create_decision_with_tiebreaker(topic, agent_votes)
 

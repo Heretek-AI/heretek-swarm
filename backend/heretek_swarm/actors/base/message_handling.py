@@ -379,7 +379,7 @@ class AgentActorMessageHandling(AgentActor):
 
     async def _process_mailbox(self) -> None:
         """Process messages from mailbox in a loop with continuous persistence."""
-        logger.info(f"[{self.agent_id}] Starting mailbox processing")
+        logger.info("[{self.agent_id}] Starting mailbox processing")
 
         while self._running:
             try:
@@ -475,7 +475,7 @@ class AgentActorMessageHandling(AgentActor):
         if handler:
             await self._execute_handler_and_publish(message, handler)
         else:
-            logger.warning(f"[{self.agent_id}] No handler for message type: {message.message_type}")
+            logger.warning("[{self.agent_id}] No handler for message type: {message.message_type}")
 
     async def broadcast(
         self,
@@ -566,7 +566,7 @@ class AgentActorMessageHandling(AgentActor):
             else:
                 reply_topic = message.content.get("reply_to", "health")
         except ValueError as e:
-            logger.error(f"[{self.agent_id}] Health check validation failed: {e}")
+            logger.error("[{self.agent_id}] Health check validation failed: {e}")
             return
 
         status = self.get_status()
@@ -591,7 +591,7 @@ class AgentActorMessageHandling(AgentActor):
         try:
             self._validate_message_content("suspend", message.content)
         except ValueError as e:
-            logger.error(f"[{self.agent_id}] Suspend validation failed: {e}")
+            logger.error("[{self.agent_id}] Suspend validation failed: {e}")
             return
         await self.suspend()
 
@@ -601,7 +601,7 @@ class AgentActorMessageHandling(AgentActor):
         try:
             self._validate_message_content("resume", message.content)
         except ValueError as e:
-            logger.error(f"[{self.agent_id}] Resume validation failed: {e}")
+            logger.error("[{self.agent_id}] Resume validation failed: {e}")
             return
         await self.resume()
 
@@ -611,9 +611,9 @@ class AgentActorMessageHandling(AgentActor):
         try:
             validated = self._validate_message_content("terminate", message.content)
             if validated and validated.reason:
-                logger.info(f"[{self.agent_id}] Termination requested: {validated.reason}")
+                logger.info("[{self.agent_id}] Termination requested: {validated.reason}")
         except ValueError as e:
-            logger.error(f"[{self.agent_id}] Terminate validation failed: {e}")
+            logger.error("[{self.agent_id}] Terminate validation failed: {e}")
             return
         await self.terminate()
 
@@ -727,7 +727,7 @@ class AgentActorMessageHandling(AgentActor):
                 protocol = message.content.get("protocol", {})
                 reply_to = message.content.get("reply_to")
         except ValueError as e:
-            logger.error(f"[{self.agent_id}] Collective task validation failed: {e}")
+            logger.error("[{self.agent_id}] Collective task validation failed: {e}")
             return
 
         logger.info(
@@ -808,7 +808,7 @@ Please provide your analysis and recommendation for this collective task."""
                     "confidence": 0.75,
                 }
             except Exception as e:
-                logger.error(f"[{self.agent_id}] LLM contribution error: {e}")
+                logger.error("[{self.agent_id}] LLM contribution error: {e}")
 
         # Fallback contribution
         return {
@@ -907,9 +907,9 @@ Please provide your analysis and recommendation for this collective task."""
                 )
             except RuntimeError:
                 # No providers registered in router, fall through to swarms_agent
-                logger.debug(f"[{self.agent_id}] No router providers, using swarms_agent fallback")
+                logger.debug("[{self.agent_id}] No router providers, using swarms_agent fallback")
             except Exception as e:
-                logger.warning(f"[{self.agent_id}] Router failed, using swarms_agent fallback: {e}")
+                logger.warning("[{self.agent_id}] Router failed, using swarms_agent fallback: {e}")
 
         # Fallback: use the swarms Agent directly
         if self.swarms_agent is None:
@@ -927,10 +927,10 @@ Please provide your analysis and recommendation for this collective task."""
                 timeout=timeout,
             )
         except TimeoutError:
-            logger.error(f"[{self.agent_id}] LLM call timed out after {timeout}s")
+            logger.error("[{self.agent_id}] LLM call timed out after {timeout}s")
             raise
         except Exception as e:
-            logger.error(f"[{self.agent_id}] LLM call failed: {e}", exc_info=True)
+            logger.error("[{self.agent_id}] LLM call failed: {e}", exc_info=True)
             raise
 
     async def _heartbeat_loop(self) -> None:
@@ -959,13 +959,13 @@ Please provide your analysis and recommendation for this collective task."""
                             extra={"state": heartbeat_data["state"]},
                         )
                     except Exception as e:
-                        logger.warning(f"[{self.agent_id}] Failed to publish heartbeat: {e}")
+                        logger.warning("[{self.agent_id}] Failed to publish heartbeat: {e}")
 
                 await asyncio.sleep(self.heartbeat_interval)
             except asyncio.CancelledError:
                 break
             except Exception as e:
-                logger.error(f"[{self.agent_id}] Heartbeat loop error: {e}")
+                logger.error("[{self.agent_id}] Heartbeat loop error: {e}")
 
 
 # Bind message handling methods to AgentActor

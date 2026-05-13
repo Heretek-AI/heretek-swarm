@@ -232,7 +232,7 @@ class ConsensusAuditTrail:
         self.events.append(event)
         self.last_event_hash = event.hash
 
-        logger.debug(f"Audit event recorded: {event_id} ({event_type.value})")
+        logger.debug("Audit event recorded: {event_id} ({event_type.value})")
         return event
 
     # ------------------------------------------------------------------------
@@ -394,7 +394,7 @@ class ConsensusAuditTrail:
                 }
             )
 
-        logger.debug(f"Vote recorded: {agent_id} -> {decision} (confidence: {confidence:.2f})")
+        logger.debug("Vote recorded: {agent_id} -> {decision} (confidence: {confidence:.2f})")
         return vote
 
     def record_argument(
@@ -452,7 +452,7 @@ class ConsensusAuditTrail:
             },
         )
 
-        logger.debug(f"Argument recorded: {argument_id} by {agent_id} ({position})")
+        logger.debug("Argument recorded: {argument_id} by {agent_id} ({position})")
         return argument
 
     def record_decision_outcome(
@@ -470,7 +470,7 @@ class ConsensusAuditTrail:
             outcome_data: Additional outcome data
         """
         if decision_id not in self.decisions:
-            logger.warning(f"Decision not found: {decision_id}")
+            logger.warning("Decision not found: {decision_id}")
             return
 
         self.decisions[decision_id].outcome = outcome
@@ -490,7 +490,7 @@ class ConsensusAuditTrail:
                 },
             )
 
-        logger.info(f"Decision outcome recorded: {decision_id} -> {outcome.value}")
+        logger.info("Decision outcome recorded: {decision_id} -> {outcome.value}")
 
     def record_rollback(
         self,
@@ -505,7 +505,7 @@ class ConsensusAuditTrail:
             reason: Reason for rollback
         """
         if decision_id not in self.decisions:
-            logger.warning(f"Decision not found: {decision_id}")
+            logger.warning("Decision not found: {decision_id}")
             return
 
         self.decisions[decision_id].metadata["rollback_reason"] = reason
@@ -520,7 +520,7 @@ class ConsensusAuditTrail:
             },
         )
 
-        logger.info(f"Rollback recorded for {decision_id}: {reason}")
+        logger.info("Rollback recorded for {decision_id}: {reason}")
 
     # ------------------------------------------------------------------------
     # Decision Audit Recording
@@ -622,7 +622,7 @@ class ConsensusAuditTrail:
             if audit.consensus_id == consensus_id:
                 audit.add_deliberation_round(round_record)
 
-        logger.debug(f"Deliberation round recorded: {round_id} (score: {consensus_score:.2f})")
+        logger.debug("Deliberation round recorded: {round_id} (score: {consensus_score:.2f})")
         return round_record
 
     # ------------------------------------------------------------------------
@@ -824,5 +824,5 @@ class ConsensusAuditTrail:
             current_date = datetime.now(UTC)
 
         cleaned = 0
-        logger.info(f"Cleanup completed: {cleaned} records removed")
+        logger.info("Cleanup completed: {cleaned} records removed")
         return cleaned

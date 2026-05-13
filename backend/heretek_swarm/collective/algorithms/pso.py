@@ -146,7 +146,7 @@ class PSO:
                     self.global_best_position = particle.position.copy()
 
             if self._check_convergence(iteration):
-                logger.info(f"PSO converged at iteration {iteration}")
+                logger.info("PSO converged at iteration {iteration}")
                 break
 
         decision = SwarmDecision(

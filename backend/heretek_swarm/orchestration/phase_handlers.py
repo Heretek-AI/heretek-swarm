@@ -73,7 +73,7 @@ class ResearchPhaseHandler(PhaseHandler):
                 research_data["matched_patterns"] = deliberation_context.get("matched_patterns", [])
             except Exception as e:
                 errors.append(f"Historian query failed: {e}")
-                logger.warning(f"Historian query failed: {e}")
+                logger.warning("Historian query failed: {e}")
 
         # Synthesize knowledge if historian available
         if self.historian_id in self.agents:
@@ -86,7 +86,7 @@ class ResearchPhaseHandler(PhaseHandler):
                 research_data["knowledge_summary"] = knowledge.get("summary", "")
             except Exception as e:
                 errors.append(f"Knowledge synthesis failed: {e}")
-                logger.warning(f"Knowledge synthesis failed: {e}")
+                logger.warning("Knowledge synthesis failed: {e}")
 
         # Identify constraints and assumptions from context
         if context:

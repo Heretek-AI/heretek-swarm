@@ -145,7 +145,7 @@ def validate_input(validator: ZeroTrustValidator, data: Any, context: str) -> No
     we just ensure the data is present and non-empty.
     """
     if data is None or (isinstance(data, str) and not data.strip()):
-        logger.warning(f"Input validation failed: {context}")
+        logger.warning("Input validation failed: {context}")
         raise HTTPException(status_code=400, detail="Invalid input: empty or None")
 
 
@@ -1634,7 +1634,7 @@ async def create_replay_job(
             error=job.error,
         )
     except Exception as e:
-        logger.error(f"Failed to create replay job: {e}", exc_info=True)
+        logger.error("Failed to create replay job: {e}", exc_info=True)
         raise HTTPException(500, f"Failed to create replay job: {e!s}")
 
 
@@ -1667,7 +1667,7 @@ async def execute_replay_job(
             "message": "Replay job started",
         }
     except Exception as e:
-        logger.error(f"Failed to execute replay job: {e}", exc_info=True)
+        logger.error("Failed to execute replay job: {e}", exc_info=True)
         raise HTTPException(500, f"Failed to execute replay job: {e!s}")
 
 
@@ -1766,7 +1766,7 @@ async def list_replay_jobs(
             active=active_count,
         )
     except Exception as e:
-        logger.error(f"Failed to list replay jobs: {e}", exc_info=True)
+        logger.error("Failed to list replay jobs: {e}", exc_info=True)
         raise HTTPException(500, f"Failed to list replay jobs: {e!s}")
 
 
@@ -1839,7 +1839,7 @@ async def create_time_travel_request(
             "status": "created",
         }
     except Exception as e:
-        logger.error(f"Failed to create time travel request: {e}", exc_info=True)
+        logger.error("Failed to create time travel request: {e}", exc_info=True)
         raise HTTPException(500, f"Failed to create time travel request: {e!s}")
 
 
@@ -1890,7 +1890,7 @@ async def execute_time_travel(
             snapshot_used=snapshot_used,
         )
     except Exception as e:
-        logger.error(f"Failed to execute time travel: {e}", exc_info=True)
+        logger.error("Failed to execute time travel: {e}", exc_info=True)
         raise HTTPException(500, f"Failed to execute time travel: {e!s}")
 
 
@@ -1911,5 +1911,5 @@ async def get_event_stats(
     try:
         return await replay_manager.get_stats()
     except Exception as e:
-        logger.error(f"Failed to get event stats: {e}", exc_info=True)
+        logger.error("Failed to get event stats: {e}", exc_info=True)
         raise HTTPException(500, f"Failed to get event stats: {e!s}")

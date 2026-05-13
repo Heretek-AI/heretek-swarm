@@ -191,7 +191,7 @@ class AgentRegistry:
         self._agents: dict[str, AgentInfo] = {}
         self._loaded = False
 
-        logger.info(f"AgentRegistry initialized with characters_dir: {self.characters_dir}")
+        logger.info("AgentRegistry initialized with characters_dir: {self.characters_dir}")
 
     def load_all(self) -> None:
         """Load all agent definitions from character files."""
@@ -223,13 +223,13 @@ class AgentRegistry:
                     priority=priority,
                 )
 
-                logger.debug(f"Loaded agent: {name} with role {role.value}")
+                logger.debug("Loaded agent: {name} with role {role.value}")
 
             except Exception as e:
-                logger.error(f"Failed to load character from {char_file}: {e}")
+                logger.error("Failed to load character from {char_file}: {e}")
 
         self._loaded = True
-        logger.info(f"Loaded {len(self._agents)} agents into registry")
+        logger.info("Loaded {len(self._agents)} agents into registry")
 
     def _generate_topics(self, name: str, role: AgentRole, capabilities: list[str]) -> list[str]:
         """Generate message topics this agent should subscribe to."""

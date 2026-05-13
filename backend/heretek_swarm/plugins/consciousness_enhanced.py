@@ -268,7 +268,7 @@ class IITCalculator:
             return max(0.0, float(phi))
 
         except Exception as e:
-            logger.error(f"Integration calculation error: {e}")
+            logger.error("Integration calculation error: {e}")
             return 0.0
 
     def _calculate_total_information(
@@ -300,7 +300,7 @@ class IITCalculator:
             return float(entropy)
 
         except Exception as e:
-            logger.error(f"Information calculation error: {e}")
+            logger.error("Information calculation error: {e}")
             return 0.0
 
     def _calculate_causal_power(
@@ -329,7 +329,7 @@ class IITCalculator:
             return min(1.0, max(0.0, float(normalized)))
 
         except Exception as e:
-            logger.error(f"Causal power calculation error: {e}")
+            logger.error("Causal power calculation error: {e}")
             return 0.0
 
     def get_average_phi(self, window: int = 100) -> float:
@@ -491,7 +491,7 @@ class FEPTracker:
             return min(1.0, max(0.0, surprise))
 
         except Exception as e:
-            logger.error(f"Surprise calculation error: {e}")
+            logger.error("Surprise calculation error: {e}")
             return 0.5
 
     def _calculate_free_energy(
@@ -630,7 +630,7 @@ class EnhancedConsciousnessPlugin:
             except asyncio.CancelledError:
                 break
             except Exception as e:
-                logger.error(f"Cleanup error: {e}")
+                logger.error("Cleanup error: {e}")
                 await asyncio.sleep(60)
 
     async def shutdown(self) -> None:

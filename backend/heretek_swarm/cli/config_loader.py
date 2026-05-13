@@ -130,7 +130,7 @@ def _query_and_set_env(engine: Engine) -> LoadResult:
     try:
         # Query all enabled infrastructure configs
         stmt = select(InfrastructureConfigORM).where(
-            InfrastructureConfigORM.is_enabled == True
+            InfrastructureConfigORM.is_enabled
         )
         configs = session.execute(stmt).scalars().all()
 

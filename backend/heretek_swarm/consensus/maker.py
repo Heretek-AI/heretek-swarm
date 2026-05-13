@@ -145,7 +145,7 @@ class MAKERConsensus:
         """
         self.active_processes[consensus_id] = []
         self.process_states[consensus_id] = ConsensusState.GATHERING
-        logger.info(f"Started consensus process {consensus_id}")
+        logger.info("Started consensus process {consensus_id}")
 
     def add_vote(
         self,
@@ -166,7 +166,7 @@ class MAKERConsensus:
             metadata: Optional metadata
         """
         if consensus_id not in self.active_processes:
-            logger.warning(f"Unknown consensus ID: {consensus_id}")
+            logger.warning("Unknown consensus ID: {consensus_id}")
             return
 
         vote = Vote(
@@ -202,13 +202,13 @@ class MAKERConsensus:
             Consensus result or None if not enough votes
         """
         if consensus_id not in self.active_processes:
-            logger.warning(f"Unknown consensus ID: {consensus_id}")
+            logger.warning("Unknown consensus ID: {consensus_id}")
             return None
 
         votes = self.active_processes[consensus_id]
 
         if len(votes) < self.min_votes:
-            logger.info(f"Not enough votes: {len(votes)}/{self.min_votes}")
+            logger.info("Not enough votes: {len(votes)}/{self.min_votes}")
             return None
 
         self.process_states[consensus_id] = ConsensusState.AGGREGATING
@@ -234,7 +234,7 @@ class MAKERConsensus:
             )
         else:
             self.process_states[consensus_id] = ConsensusState.FAILED
-            logger.warning(f"Failed to reach consensus for {consensus_id}")
+            logger.warning("Failed to reach consensus for {consensus_id}")
 
         return result
 
@@ -344,7 +344,7 @@ class MAKERConsensus:
                 red_flags.append("Complete disagreement among agents - no consensus possible")
 
         if red_flags:
-            logger.warning(f"Red flags detected: {red_flags}")
+            logger.warning("Red flags detected: {red_flags}")
 
         return red_flags
 
@@ -418,7 +418,7 @@ class MAKERConsensus:
         new_reputation = max(min_reputation, min(max_reputation, current + delta))
         self.agent_reputation[agent_id] = new_reputation
 
-        logger.info(f"Updated reputation for {agent_id}: {current:.2f} -> {new_reputation:.2f}")
+        logger.info("Updated reputation for {agent_id}: {current:.2f} -> {new_reputation:.2f}")
 
     def get_agent_reputation(self, agent_id: str) -> float:
         """
@@ -455,7 +455,7 @@ class MAKERConsensus:
             del self.active_processes[consensus_id]
         if consensus_id in self.process_states:
             del self.process_states[consensus_id]
-        logger.debug(f"Cleaned up process {consensus_id}")
+        logger.debug("Cleaned up process {consensus_id}")
 
     async def run_consensus(
         self,
@@ -501,7 +501,7 @@ class MAKERConsensus:
             return self.compute_consensus(consensus_id)
 
         except TimeoutError:
-            logger.warning(f"Timeout for consensus {consensus_id}")
+            logger.warning("Timeout for consensus {consensus_id}")
             self.process_states[consensus_id] = ConsensusState.FAILED
             return None
         finally:
@@ -531,7 +531,7 @@ class MAKERConsensus:
                 confidence=confidence,
             )
         except Exception as e:
-            logger.error(f"Error collecting vote from {agent_id}: {e}")
+            logger.error("Error collecting vote from {agent_id}: {e}")
 
     def get_statistics(self) -> dict[str, Any]:
         """

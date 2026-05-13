@@ -259,7 +259,7 @@ class AgentExpertiseProfiler:
             Created agent profile
         """
         if agent_id in self.profiles:
-            logger.warning(f"Agent {agent_id} already registered, updating domains")
+            logger.warning("Agent {agent_id} already registered, updating domains")
             profile = self.profiles[agent_id]
             if domains:
                 for domain in domains:
@@ -277,7 +277,7 @@ class AgentExpertiseProfiler:
                 )
 
         self.profiles[agent_id] = profile
-        logger.info(f"Registered agent {agent_id} with domains: {domains or 'none'}")
+        logger.info("Registered agent {agent_id} with domains: {domains or 'none'}")
         return profile
 
     def record_outcome(
@@ -863,13 +863,13 @@ class AgentExpertiseProfiler:
             if domain in profile.domains:
                 profile.domains[domain].expertise_score = reset_value
                 profile.domains[domain].recent_outcomes = []
-                logger.info(f"Reset expertise for {agent_id} in {domain}")
+                logger.info("Reset expertise for {agent_id} in {domain}")
         else:
             for domain_expertise in profile.domains.values():
                 domain_expertise.expertise_score = reset_value
                 domain_expertise.recent_outcomes = []
             profile.overall_reputation = reset_value
-            logger.info(f"Reset all expertise for {agent_id}")
+            logger.info("Reset all expertise for {agent_id}")
 
     def export_profiles(self) -> dict[str, Any]:
         """
@@ -935,7 +935,7 @@ class AgentExpertiseProfiler:
         if "calibration_window" in data:
             self.calibration_window = data["calibration_window"]
 
-        logger.info(f"Imported {len(self.profiles)} agent profiles")
+        logger.info("Imported {len(self.profiles)} agent profiles")
 
     def save_to_file(self, filepath: str) -> None:
         """
@@ -948,7 +948,7 @@ class AgentExpertiseProfiler:
 
         with open(filepath, "w") as f:
             json.dump(self.export_profiles(), f, indent=2)
-        logger.info(f"Saved expertise profiles to {filepath}")
+        logger.info("Saved expertise profiles to {filepath}")
 
     def load_from_file(self, filepath: str) -> None:
         """
@@ -962,4 +962,4 @@ class AgentExpertiseProfiler:
         with open(filepath) as f:
             data = json.load(f)
         self.import_profiles(data)
-        logger.info(f"Loaded expertise profiles from {filepath}")
+        logger.info("Loaded expertise profiles from {filepath}")

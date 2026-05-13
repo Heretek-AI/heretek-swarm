@@ -615,11 +615,11 @@ class DeliberationEngine:
             Argument ID if accepted, None otherwise
         """
         if deliberation_id not in self.active_deliberations:
-            logger.warning(f"Unknown deliberation: {deliberation_id}")
+            logger.warning("Unknown deliberation: {deliberation_id}")
             return None
 
         if agent_id not in self.active_deliberations[deliberation_id]["participants"]:
-            logger.warning(f"Agent {agent_id} not a participant")
+            logger.warning("Agent {agent_id} not a participant")
             return None
 
         # Calculate expertise weight
@@ -938,7 +938,7 @@ class DeliberationEngine:
 
         self.dissent_records[deliberation_id].append(dissent)
 
-        logger.info(f"Dissent tracked for agent {agent_id} in {deliberation_id}")
+        logger.info("Dissent tracked for agent {agent_id} in {deliberation_id}")
 
     def calculate_consensus_confidence(
         self,
@@ -1068,7 +1068,7 @@ class DeliberationEngine:
             Final deliberation result or None if deliberation not found
         """
         if deliberation_id not in self.active_deliberations:
-            logger.warning(f"Steward tiebreaker: Unknown deliberation {deliberation_id}")
+            logger.warning("Steward tiebreaker: Unknown deliberation {deliberation_id}")
             return None
 
         invocation_count = self._tiebreaker_invocations.get(deliberation_id, 0)
@@ -1485,4 +1485,4 @@ class DeliberationEngine:
             if deliberation_id in store:
                 del store[deliberation_id]
 
-        logger.debug(f"Cleaned up deliberation {deliberation_id}")
+        logger.debug("Cleaned up deliberation {deliberation_id}")

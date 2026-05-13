@@ -52,7 +52,7 @@ async def start_agent(
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Failed to start agent: {e}", exc_info=True)
+        logger.error("Failed to start agent: {e}", exc_info=True)
         raise HTTPException(500, f"Failed to start agent: {e!s}")
 
 
@@ -86,7 +86,7 @@ async def stop_agent(
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Failed to stop agent: {e}", exc_info=True)
+        logger.error("Failed to stop agent: {e}", exc_info=True)
         raise HTTPException(500, f"Failed to stop agent: {e!s}")
 
 
@@ -120,7 +120,7 @@ async def suspend_agent(
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Failed to suspend agent: {e}", exc_info=True)
+        logger.error("Failed to suspend agent: {e}", exc_info=True)
         raise HTTPException(500, f"Failed to suspend agent: {e!s}")
 
 
@@ -154,7 +154,7 @@ async def resume_agent(
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Failed to resume agent: {e}", exc_info=True)
+        logger.error("Failed to resume agent: {e}", exc_info=True)
         raise HTTPException(500, f"Failed to resume agent: {e!s}")
 
 
@@ -195,7 +195,7 @@ async def update_agent_config(
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Failed to update config: {e}", exc_info=True)
+        logger.error("Failed to update config: {e}", exc_info=True)
         raise HTTPException(500, f"Failed to update configuration: {e!s}")
 
 

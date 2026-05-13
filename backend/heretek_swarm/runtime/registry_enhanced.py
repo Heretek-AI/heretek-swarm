@@ -110,7 +110,7 @@ class EnhancedAgentRegistry:
         self._loaded = False
         self._supervisor = None
 
-        logger.info(f"EnhancedAgentRegistry initialized with actors_dir: {self.actors_dir}")
+        logger.info("EnhancedAgentRegistry initialized with actors_dir: {self.actors_dir}")
 
     def _get_supervisor(self) -> Any | None:
         """Get the supervisor instance for actor management."""
@@ -120,7 +120,7 @@ class EnhancedAgentRegistry:
 
                 self._supervisor = get_supervisor()
             except (ImportError, Exception) as e:
-                logger.warning(f"Could not get supervisor: {e}")
+                logger.warning("Could not get supervisor: {e}")
         return self._supervisor
 
     def discover_agents(self) -> dict[str, AgentTypeMetadata]:
@@ -131,7 +131,7 @@ class EnhancedAgentRegistry:
             Dictionary mapping agent type names to their metadata
         """
         if not self.actors_dir.exists():
-            logger.warning(f"Actors directory does not exist: {self.actors_dir}")
+            logger.warning("Actors directory does not exist: {self.actors_dir}")
             return {}
 
         discovered = {}
@@ -146,13 +146,13 @@ class EnhancedAgentRegistry:
                 metadata = self._extract_agent_metadata(module_name, actor_file.stem)
                 if metadata:
                     discovered[metadata.type_name] = metadata
-                    logger.debug(f"Discovered agent type: {metadata.type_name}")
+                    logger.debug("Discovered agent type: {metadata.type_name}")
             except Exception as e:
-                logger.warning(f"Failed to discover agent from {actor_file.name}: {e}")
+                logger.warning("Failed to discover agent from {actor_file.name}: {e}")
 
         self._agent_types = discovered
         self._loaded = True
-        logger.info(f"Discovered {len(discovered)} agent types")
+        logger.info("Discovered {len(discovered)} agent types")
         return discovered
 
     def _extract_agent_metadata(
@@ -218,7 +218,7 @@ class EnhancedAgentRegistry:
             )
 
         except Exception as e:
-            logger.warning(f"Failed to extract metadata from {module_name}: {e}")
+            logger.warning("Failed to extract metadata from {module_name}: {e}")
             return None
 
     def _generate_config_schema(self, agent_class: type[AgentActor]) -> dict[str, Any]:
@@ -314,7 +314,7 @@ class EnhancedAgentRegistry:
 
         metadata = self._agent_types.get(agent_type)
         if not metadata:
-            logger.error(f"Unknown agent type: {agent_type}")
+            logger.error("Unknown agent type: {agent_type}")
             return None
 
         # Generate instance ID
@@ -343,7 +343,7 @@ class EnhancedAgentRegistry:
         )
 
         self._instances[instance_id] = instance
-        logger.info(f"Deployed agent instance: {instance_id} of type {agent_type}")
+        logger.info("Deployed agent instance: {instance_id} of type {agent_type}")
 
         return instance
 
@@ -359,7 +359,7 @@ class EnhancedAgentRegistry:
         """
         instance = self._instances.get(instance_id)
         if not instance:
-            logger.error(f"Instance not found: {instance_id}")
+            logger.error("Instance not found: {instance_id}")
             return False
 
         if instance.state not in [
@@ -367,7 +367,7 @@ class EnhancedAgentRegistry:
             AgentLifecycleState.STOPPED,
             AgentLifecycleState.SUSPENDED,
         ]:
-            logger.warning(f"Cannot start agent in state: {instance.state.value}")
+            logger.warning("Cannot start agent in state: {instance.state.value}")
             return False
 
         try:
@@ -380,7 +380,7 @@ class EnhancedAgentRegistry:
             # Import and instantiate the agent class
             metadata = instance.metadata
             if not metadata:
-                logger.error(f"No metadata for instance: {instance_id}")
+                logger.error("No metadata for instance: {instance_id}")
                 return False
 
             module = importlib.import_module(metadata.module_path)
@@ -396,11 +396,11 @@ class EnhancedAgentRegistry:
             instance.actor = agent
             instance.state = AgentLifecycleState.RUNNING
 
-            logger.info(f"Started agent instance: {instance_id}")
+            logger.info("Started agent instance: {instance_id}")
             return True
 
         except Exception as e:
-            logger.error(f"Failed to start agent {instance_id}: {e}", exc_info=True)
+            logger.error("Failed to start agent {instance_id}: {e}", exc_info=True)
             instance.state = AgentLifecycleState.ERROR
             return False
 
@@ -416,11 +416,11 @@ class EnhancedAgentRegistry:
         """
         instance = self._instances.get(instance_id)
         if not instance:
-            logger.error(f"Instance not found: {instance_id}")
+            logger.error("Instance not found: {instance_id}")
             return False
 
         if instance.state != AgentLifecycleState.RUNNING:
-            logger.warning(f"Cannot stop agent in state: {instance.state.value}")
+            logger.warning("Cannot stop agent in state: {instance.state.value}")
             return False
 
         try:
@@ -430,11 +430,11 @@ class EnhancedAgentRegistry:
             instance.actor = None
             instance.state = AgentLifecycleState.STOPPED
 
-            logger.info(f"Stopped agent instance: {instance_id}")
+            logger.info("Stopped agent instance: {instance_id}")
             return True
 
         except Exception as e:
-            logger.error(f"Failed to stop agent {instance_id}: {e}", exc_info=True)
+            logger.error("Failed to stop agent {instance_id}: {e}", exc_info=True)
             return False
 
     async def suspend_agent(self, instance_id: str) -> bool:
@@ -449,11 +449,11 @@ class EnhancedAgentRegistry:
         """
         instance = self._instances.get(instance_id)
         if not instance:
-            logger.error(f"Instance not found: {instance_id}")
+            logger.error("Instance not found: {instance_id}")
             return False
 
         if instance.state != AgentLifecycleState.RUNNING:
-            logger.warning(f"Cannot suspend agent in state: {instance.state.value}")
+            logger.warning("Cannot suspend agent in state: {instance.state.value}")
             return False
 
         try:
@@ -462,11 +462,11 @@ class EnhancedAgentRegistry:
 
             instance.state = AgentLifecycleState.SUSPENDED
 
-            logger.info(f"Suspended agent instance: {instance_id}")
+            logger.info("Suspended agent instance: {instance_id}")
             return True
 
         except Exception as e:
-            logger.error(f"Failed to suspend agent {instance_id}: {e}", exc_info=True)
+            logger.error("Failed to suspend agent {instance_id}: {e}", exc_info=True)
             return False
 
     async def resume_agent(self, instance_id: str) -> bool:
@@ -481,11 +481,11 @@ class EnhancedAgentRegistry:
         """
         instance = self._instances.get(instance_id)
         if not instance:
-            logger.error(f"Instance not found: {instance_id}")
+            logger.error("Instance not found: {instance_id}")
             return False
 
         if instance.state != AgentLifecycleState.SUSPENDED:
-            logger.warning(f"Cannot resume agent in state: {instance.state.value}")
+            logger.warning("Cannot resume agent in state: {instance.state.value}")
             return False
 
         try:
@@ -494,11 +494,11 @@ class EnhancedAgentRegistry:
 
             instance.state = AgentLifecycleState.RUNNING
 
-            logger.info(f"Resumed agent instance: {instance_id}")
+            logger.info("Resumed agent instance: {instance_id}")
             return True
 
         except Exception as e:
-            logger.error(f"Failed to resume agent {instance_id}: {e}", exc_info=True)
+            logger.error("Failed to resume agent {instance_id}: {e}", exc_info=True)
             return False
 
     async def remove_agent(self, instance_id: str) -> bool:
@@ -513,7 +513,7 @@ class EnhancedAgentRegistry:
         """
         instance = self._instances.get(instance_id)
         if not instance:
-            logger.error(f"Instance not found: {instance_id}")
+            logger.error("Instance not found: {instance_id}")
             return False
 
         # Stop if running
@@ -523,7 +523,7 @@ class EnhancedAgentRegistry:
         # Remove from instances
         del self._instances[instance_id]
 
-        logger.info(f"Removed agent instance: {instance_id}")
+        logger.info("Removed agent instance: {instance_id}")
         return True
 
     def get_instance(self, instance_id: str) -> AgentInstance | None:
@@ -572,13 +572,13 @@ class EnhancedAgentRegistry:
         """
         instance = self._instances.get(instance_id)
         if not instance:
-            logger.error(f"Instance not found: {instance_id}")
+            logger.error("Instance not found: {instance_id}")
             return False
 
         # Merge config
         instance.config.update(config)
 
-        logger.info(f"Updated config for agent instance: {instance_id}")
+        logger.info("Updated config for agent instance: {instance_id}")
         return True
 
     def get_registry_stats(self) -> dict[str, Any]:

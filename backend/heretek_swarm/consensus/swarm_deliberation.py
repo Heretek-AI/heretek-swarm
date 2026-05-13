@@ -320,11 +320,11 @@ class SwarmDeliberationEngine:
             True if position accepted, False otherwise
         """
         if deliberation_id not in self.active_deliberations:
-            logger.warning(f"Unknown deliberation: {deliberation_id}")
+            logger.warning("Unknown deliberation: {deliberation_id}")
             return False
 
         if agent_id not in self.active_deliberations[deliberation_id]["participants"]:
-            logger.warning(f"Agent {agent_id} not a participant")
+            logger.warning("Agent {agent_id} not a participant")
             return False
 
         state = self.deliberation_states.get(deliberation_id)
@@ -332,7 +332,7 @@ class SwarmDeliberationEngine:
             DeliberationState.GATHERING_POSITIONS,
             DeliberationState.DELIBERATING,
         ]:
-            logger.warning(f"Deliberation not accepting positions: {state}")
+            logger.warning("Deliberation not accepting positions: {state}")
             return False
 
         # Create or update position
@@ -451,7 +451,7 @@ class SwarmDeliberationEngine:
             Round results or None if deliberation not active
         """
         if deliberation_id not in self.active_deliberations:
-            logger.warning(f"Unknown deliberation: {deliberation_id}")
+            logger.warning("Unknown deliberation: {deliberation_id}")
             return None
 
         state = self.deliberation_states.get(deliberation_id)
@@ -459,7 +459,7 @@ class SwarmDeliberationEngine:
             DeliberationState.GATHERING_POSITIONS,
             DeliberationState.DELIBERATING,
         ]:
-            logger.warning(f"Deliberation not active: {state}")
+            logger.warning("Deliberation not active: {state}")
             return None
 
         # Increment round
@@ -516,10 +516,10 @@ class SwarmDeliberationEngine:
         # Check if consensus reached
         if consensus_score >= self.consensus_threshold:
             self.deliberation_states[deliberation_id] = DeliberationState.FINAL_VOTING
-            logger.info(f"Consensus threshold reached for {deliberation_id}: {consensus_score:.2f}")
+            logger.info("Consensus threshold reached for {deliberation_id}: {consensus_score:.2f}")
         elif current_round >= self.max_rounds:
             self.deliberation_states[deliberation_id] = DeliberationState.COMPLETED
-            logger.info(f"Max rounds reached for {deliberation_id}")
+            logger.info("Max rounds reached for {deliberation_id}")
 
         return round_result
 
@@ -705,7 +705,7 @@ class SwarmDeliberationEngine:
             Deliberation result or None
         """
         if deliberation_id not in self.active_deliberations:
-            logger.warning(f"Unknown deliberation: {deliberation_id}")
+            logger.warning("Unknown deliberation: {deliberation_id}")
             return None
 
         self.deliberation_states[deliberation_id] = DeliberationState.COMPLETED
@@ -887,7 +887,7 @@ class SwarmDeliberationEngine:
         if deliberation_id in self.round_results:
             del self.round_results[deliberation_id]
 
-        logger.debug(f"Cleaned up deliberation {deliberation_id}")
+        logger.debug("Cleaned up deliberation {deliberation_id}")
 
     def get_statistics(self) -> dict[str, Any]:
         """
@@ -935,7 +935,7 @@ class SwarmDeliberationEngine:
                     elapsed = (datetime.now(UTC) - start_time).total_seconds()
                     if elapsed >= timeout:
                         self.deliberation_states[deliberation_id] = DeliberationState.TIMEOUT
-                        logger.warning(f"Deliberation {deliberation_id} timed out after {elapsed}s")
+                        logger.warning("Deliberation {deliberation_id} timed out after {elapsed}s")
                         break
 
                 # Check if deliberation is complete
@@ -962,6 +962,6 @@ class SwarmDeliberationEngine:
             return self.finalize_deliberation(deliberation_id)
 
         except Exception as e:
-            logger.error(f"Deliberation error: {e}")
+            logger.error("Deliberation error: {e}")
             self.deliberation_states[deliberation_id] = DeliberationState.FAILED
             return None

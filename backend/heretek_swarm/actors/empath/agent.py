@@ -170,7 +170,7 @@ class EmpathAgent(
 
         self.access_analyzer = _access_analyzer or AccessPatternAnalyzer()
 
-        logger.info(f"[{self.agent_id}] Empath agent initialized")
+        logger.info("[{self.agent_id}] Empath agent initialized")
 
     async def initialize(self) -> None:
         """Initialize the Empath agent."""
@@ -183,7 +183,7 @@ class EmpathAgent(
         self.register_handler("get_collective_mood", self._handle_get_collective_mood)
         self.register_handler("on_demand_sentiment", self._handle_on_demand_sentiment)
 
-        logger.info(f"[{self.agent_id}] Empath initialization complete")
+        logger.info("[{self.agent_id}] Empath initialization complete")
 
     async def process_message(self, message: ActorMessage) -> None:
         """
@@ -214,7 +214,7 @@ class EmpathAgent(
                         correlation_id=message.correlation_id,
                     )
         else:
-            logger.warning(f"[{self.agent_id}] No handler for message type: {message.message_type}")
+            logger.warning("[{self.agent_id}] No handler for message type: {message.message_type}")
 
     def _validate_message_content(self, message_type: str, content: dict[str, Any]) -> Any:
         """
@@ -237,7 +237,7 @@ class EmpathAgent(
             raise ValueError(f"Invalid message format: {e.errors()}")
         except KeyError:
             # Unknown message type - skip validation
-            logger.debug(f"[{self.agent_id}] No validator for message type: {message_type}")
+            logger.debug("[{self.agent_id}] No validator for message type: {message_type}")
             return None
 
     async def _handle_analyze_sentiment(self, message: ActorMessage) -> None:
@@ -274,7 +274,7 @@ class EmpathAgent(
             context = content.get("context", {})
 
             if not text:
-                logger.warning(f"[{self.agent_id}] Empty text for sentiment analysis")
+                logger.warning("[{self.agent_id}] Empty text for sentiment analysis")
                 await self._send_error_response(message, "Empty text provided")
                 return
 
@@ -307,7 +307,7 @@ class EmpathAgent(
             )
 
         except Exception as e:
-            logger.error(f"[{self.agent_id}] Sentiment analysis failed: {e}", exc_info=True)
+            logger.error("[{self.agent_id}] Sentiment analysis failed: {e}", exc_info=True)
             await self._send_error_response(message, f"Sentiment analysis failed: {e}")
 
     async def _analyze_sentiment_llm(
@@ -338,10 +338,10 @@ class EmpathAgent(
             return self._analyze_sentiment_heuristic(text)
 
         except TimeoutError:
-            logger.warning(f"[{self.agent_id}] LLM sentiment analysis timed out")
+            logger.warning("[{self.agent_id}] LLM sentiment analysis timed out")
             return self._analyze_sentiment_heuristic(text)
         except Exception as e:
-            logger.error(f"[{self.agent_id}] LLM sentiment analysis error: {e}")
+            logger.error("[{self.agent_id}] LLM sentiment analysis error: {e}")
             return self._analyze_sentiment_heuristic(text)
 
     def _build_sentiment_prompt(self, text: str, context: dict[str, Any]) -> str:
@@ -376,7 +376,7 @@ Provide your analysis in this exact JSON format:
             if json_match:
                 return json.loads(json_match.group())
         except Exception as e:
-            logger.warning(f"[{self.agent_id}] Failed to parse LLM sentiment response: {e}")
+            logger.warning("[{self.agent_id}] Failed to parse LLM sentiment response: {e}")
 
         # Fallback to heuristic analysis
         return self._analyze_sentiment_heuristic(response)
@@ -608,10 +608,10 @@ Provide your analysis in this exact JSON format:
                 },
             )
 
-            logger.debug(f"[{self.agent_id}] Emotion tracked for {agent_id}: {emotion}")
+            logger.debug("[{self.agent_id}] Emotion tracked for {agent_id}: {emotion}")
 
         except Exception as e:
-            logger.error(f"[{self.agent_id}] Emotion tracking failed: {e}", exc_info=True)
+            logger.error("[{self.agent_id}] Emotion tracking failed: {e}", exc_info=True)
             await self._send_error_response(message, f"Emotion tracking failed: {e}")
 
     async def _handle_detect_conflict(self, message: ActorMessage) -> None:
@@ -670,7 +670,7 @@ Provide your analysis in this exact JSON format:
             )
 
         except Exception as e:
-            logger.error(f"[{self.agent_id}] Conflict detection failed: {e}", exc_info=True)
+            logger.error("[{self.agent_id}] Conflict detection failed: {e}", exc_info=True)
             await self._send_error_response(message, f"Conflict detection failed: {e}")
 
     def _analyze_conflict_potential(self, agents: list[str]) -> bool:
@@ -747,7 +747,7 @@ Provide your analysis in this exact JSON format:
             )
 
         except Exception as e:
-            logger.error(f"[{self.agent_id}] Emotional state query failed: {e}", exc_info=True)
+            logger.error("[{self.agent_id}] Emotional state query failed: {e}", exc_info=True)
             await self._send_error_response(message, f"Emotional state query failed: {e}")
 
     async def _handle_mediate_conflict(self, message: ActorMessage) -> None:
@@ -804,7 +804,7 @@ Provide your analysis in this exact JSON format:
             )
 
         except Exception as e:
-            logger.error(f"[{self.agent_id}] Conflict mediation failed: {e}", exc_info=True)
+            logger.error("[{self.agent_id}] Conflict mediation failed: {e}", exc_info=True)
             await self._send_error_response(message, f"Mediation failed: {e}")
 
     async def _generate_mediation(
@@ -832,7 +832,7 @@ Return as JSON: {{"resolution": "...", "reasoning": "..."}}
                 if json_match:
                     return json.loads(json_match.group())
         except Exception as e:
-            logger.warning(f"[{self.agent_id}] LLM mediation failed: {e}")
+            logger.warning("[{self.agent_id}] LLM mediation failed: {e}")
 
         # Fallback mediation
         return {
@@ -864,7 +864,7 @@ Return as JSON: {{"resolution": "...", "reasoning": "..."}}
             )
 
         except Exception as e:
-            logger.error(f"[{self.agent_id}] Collective mood query failed: {e}", exc_info=True)
+            logger.error("[{self.agent_id}] Collective mood query failed: {e}", exc_info=True)
             await self._send_error_response(message, f"Collective mood query failed: {e}")
 
     def _update_collective_mood(self) -> None:
@@ -1023,7 +1023,7 @@ Format your response as a clear analysis with these three elements.
         source_agent = message.content.get("source_agent", "unknown")
 
         if not text:
-            logger.warning(f"[{self.agent_id}] on_demand_sentiment called with empty text")
+            logger.warning("[{self.agent_id}] on_demand_sentiment called with empty text")
             if message.content.get("reply_to"):
                 await self.send(
                     topic=message.content["reply_to"],

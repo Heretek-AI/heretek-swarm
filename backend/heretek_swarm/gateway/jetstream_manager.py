@@ -385,7 +385,7 @@ class JetStreamManager:
             return True
 
         except Exception as e:
-            logger.error(f"Failed to connect to NATS: {e}")
+            logger.error("Failed to connect to NATS: {e}")
             if self.fallback_enabled:
                 return await self._enable_fallback()
             return False
@@ -532,7 +532,7 @@ class JetStreamManager:
             return True
 
         except Exception as e:
-            logger.error(f"Failed to create stream: {e}")
+            logger.error("Failed to create stream: {e}")
             await self._audit_stream_operation("create_stream", config.stream_name, False)
             return False
 
@@ -549,7 +549,7 @@ class JetStreamManager:
         )
 
         self._stats["streams_created"] += 1
-        logger.info(f"Fallback stream created: {config.stream_name}")
+        logger.info("Fallback stream created: {config.stream_name}")
         return True
 
     async def delete_stream(self, stream_name: str) -> bool:
@@ -566,7 +566,7 @@ class JetStreamManager:
             return False
 
         if stream_name not in self._streams:
-            logger.warning(f"Stream not found: {stream_name}")
+            logger.warning("Stream not found: {stream_name}")
             return False
 
         if self._fallback_mode:
@@ -577,12 +577,12 @@ class JetStreamManager:
             del self._streams[stream_name]
             self._stats["streams_deleted"] += 1
 
-            logger.info(f"JetStream deleted: {stream_name}")
+            logger.info("JetStream deleted: {stream_name}")
             await self._audit_stream_operation("delete_stream", stream_name, True)
             return True
 
         except Exception as e:
-            logger.error(f"Failed to delete stream: {e}")
+            logger.error("Failed to delete stream: {e}")
             await self._audit_stream_operation("delete_stream", stream_name, False)
             return False
 
@@ -596,7 +596,7 @@ class JetStreamManager:
             del self._streams[stream_name]
 
         self._stats["streams_deleted"] += 1
-        logger.info(f"Fallback stream deleted: {stream_name}")
+        logger.info("Fallback stream deleted: {stream_name}")
         return True
 
     async def get_stream_info(self, stream_name: str) -> StreamInfo | None:
@@ -629,7 +629,7 @@ class JetStreamManager:
             return self._streams[stream_name]
 
         except Exception as e:
-            logger.error(f"Failed to get stream info: {e}")
+            logger.error("Failed to get stream info: {e}")
             return self._streams[stream_name]
 
     async def list_streams(self) -> list[StreamInfo]:
@@ -655,7 +655,7 @@ class JetStreamManager:
             return None
 
         if config.stream_name not in self._streams:
-            logger.warning(f"Stream not found: {config.stream_name}")
+            logger.warning("Stream not found: {config.stream_name}")
             return None
 
         if self._fallback_mode:
@@ -706,7 +706,7 @@ class JetStreamManager:
             return consumer_id
 
         except Exception as e:
-            logger.error(f"Failed to create consumer: {e}")
+            logger.error("Failed to create consumer: {e}")
             return None
 
     def _create_consumer_fallback(
@@ -723,7 +723,7 @@ class JetStreamManager:
         }
 
         self._stats["consumers_created"] += 1
-        logger.info(f"Fallback consumer created: {consumer_id}")
+        logger.info("Fallback consumer created: {consumer_id}")
         return consumer_id
 
     async def _process_consumer_messages(
@@ -752,13 +752,13 @@ class JetStreamManager:
                         self._stats["messages_consumed"] += 1
 
                     except Exception as e:
-                        logger.error(f"Error processing message: {e}")
+                        logger.error("Error processing message: {e}")
                         await msg.nak()
 
             except builtins.TimeoutError:
                 continue
             except Exception as e:
-                logger.error(f"Consumer error: {e}")
+                logger.error("Consumer error: {e}")
                 await asyncio.sleep(1.0)
 
     async def publish(
@@ -784,7 +784,7 @@ class JetStreamManager:
             return False
 
         if stream_name not in self._streams:
-            logger.warning(f"Stream not found: {stream_name}")
+            logger.warning("Stream not found: {stream_name}")
             return False
 
         if self._fallback_mode:
@@ -818,7 +818,7 @@ class JetStreamManager:
             return True
 
         except Exception as e:
-            logger.error(f"Failed to publish message: {e}")
+            logger.error("Failed to publish message: {e}")
             return False
 
     def _publish_fallback(
@@ -845,7 +845,7 @@ class JetStreamManager:
         self._memory_store[stream_name].append(message)
 
         self._stats["messages_published"] += 1
-        logger.debug(f"Fallback message published: {stream_name}:{seq}")
+        logger.debug("Fallback message published: {stream_name}:{seq}")
         return True
 
     async def replay_messages(
@@ -870,7 +870,7 @@ class JetStreamManager:
             List of replayed messages
         """
         if stream_name not in self._streams:
-            logger.warning(f"Stream not found: {stream_name}")
+            logger.warning("Stream not found: {stream_name}")
             return []
 
         if self._fallback_mode:
@@ -936,17 +936,17 @@ class JetStreamManager:
                             await msg.ack()
 
                         except Exception as e:
-                            logger.error(f"Error replaying message: {e}")
+                            logger.error("Error replaying message: {e}")
                             await msg.nak()
 
                 except builtins.TimeoutError:
                     break
 
-            logger.info(f"Replayed {len(messages)} messages from {stream_name}")
+            logger.info("Replayed {len(messages)} messages from {stream_name}")
             return messages
 
         except Exception as e:
-            logger.error(f"Failed to replay messages: {e}")
+            logger.error("Failed to replay messages: {e}")
             return []
 
     def _replay_fallback(

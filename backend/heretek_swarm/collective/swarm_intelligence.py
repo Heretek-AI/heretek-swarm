@@ -250,7 +250,7 @@ class SwarmIntelligenceEngine:
         )
 
         self.decision_history.append(decision)
-        logger.info(f"ACO completed: found path with quality {decision.confidence:.2f}")
+        logger.info("ACO completed: found path with quality {decision.confidence:.2f}")
 
         return decision
 
@@ -287,7 +287,7 @@ class SwarmIntelligenceEngine:
         )
 
         self.decision_history.append(decision)
-        logger.info(f"Bee Algorithm completed: {len(decision.final_position)} tasks allocated")
+        logger.info("Bee Algorithm completed: {len(decision.final_position)} tasks allocated")
 
         return decision
 
@@ -337,7 +337,7 @@ class SwarmIntelligenceEngine:
         )
 
         self.decision_history.append(decision)
-        logger.info(f"Flocking simulation completed: {iterations} iterations")
+        logger.info("Flocking simulation completed: {iterations} iterations")
 
         return decision
 
@@ -638,7 +638,7 @@ class SwarmIntelligenceEngine:
         )
 
         self.decision_history.append(decision)
-        logger.info(f"Stigmergy simulation completed: density={trace_density:.2f}")
+        logger.info("Stigmergy simulation completed: density={trace_density:.2f}")
 
         return decision
 

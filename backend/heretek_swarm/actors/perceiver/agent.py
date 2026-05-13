@@ -171,7 +171,7 @@ class PerceiverAgent(
         self._active_deliberations: dict[str, str] = {}
         self._pattern_emitted: set[str] = set()
 
-        logger.info(f"[{self.agent_id}] Perceiver agent initialized")
+        logger.info("[{self.agent_id}] Perceiver agent initialized")
 
     async def initialize(self) -> None:
         """Initialize the Perceiver agent."""
@@ -183,7 +183,7 @@ class PerceiverAgent(
         self.register_handler("get_processing_stats", self._handle_get_processing_stats)
         self.register_handler("correlate_modalities", self._handle_correlate_modalities)
 
-        logger.info(f"[{self.agent_id}] Perceiver initialization complete")
+        logger.info("[{self.agent_id}] Perceiver initialization complete")
 
     async def process_message(self, message: ActorMessage) -> None:
         """
@@ -213,7 +213,7 @@ class PerceiverAgent(
                         correlation_id=message.correlation_id,
                     )
         else:
-            logger.warning(f"[{self.agent_id}] No handler for message type: {message.message_type}")
+            logger.warning("[{self.agent_id}] No handler for message type: {message.message_type}")
 
     def _validate_message_content(self, message_type: str, content: dict[str, Any]) -> Any:
         """Validate message content using Pydantic models."""
@@ -226,7 +226,7 @@ class PerceiverAgent(
             )
             raise ValueError(f"Invalid message format: {e.errors()}")
         except KeyError:
-            logger.debug(f"[{self.agent_id}] No validator for message type: {message_type}")
+            logger.debug("[{self.agent_id}] No validator for message type: {message_type}")
             return None
 
     async def _handle_process_input(self, message: ActorMessage) -> None:
@@ -311,7 +311,7 @@ class PerceiverAgent(
             )
 
         except Exception as e:
-            logger.error(f"[{self.agent_id}] Input processing failed: {e}", exc_info=True)
+            logger.error("[{self.agent_id}] Input processing failed: {e}", exc_info=True)
             await self._send_error_response(message, f"Input processing failed: {e}")
 
     def _validate_input_size(self, input_data: Any) -> bool:
@@ -409,7 +409,7 @@ class PerceiverAgent(
                 return self._extract_sensor_features(input_data)
             return {"error": f"Unknown modality: {modality}"}
         except Exception as e:
-            logger.error(f"[{self.agent_id}] Feature extraction failed: {e}")
+            logger.error("[{self.agent_id}] Feature extraction failed: {e}")
             return {"error": str(e)}
 
     def _extract_text_features(self, text: str) -> dict[str, Any]:
@@ -479,9 +479,9 @@ class PerceiverAgent(
                         "analyzed_by": "llm",
                     }
             except TimeoutError:
-                logger.warning(f"[{self.agent_id}] Image LLM analysis timed out")
+                logger.warning("[{self.agent_id}] Image LLM analysis timed out")
             except Exception as e:
-                logger.error(f"[{self.agent_id}] Image LLM analysis error: {e}")
+                logger.error("[{self.agent_id}] Image LLM analysis error: {e}")
 
         # Fallback: basic metadata extraction
         if isinstance(image_data, str):
@@ -692,7 +692,7 @@ class PerceiverAgent(
                 },
             )
         except Exception as e:
-            logger.warning(f"[{self.agent_id}] Failed to store in Historian: {e}")
+            logger.warning("[{self.agent_id}] Failed to store in Historian: {e}")
 
     async def _handle_extract_features(self, message: ActorMessage) -> None:
         """
@@ -727,7 +727,7 @@ class PerceiverAgent(
             )
 
         except Exception as e:
-            logger.error(f"[{self.agent_id}] Feature extraction failed: {e}", exc_info=True)
+            logger.error("[{self.agent_id}] Feature extraction failed: {e}", exc_info=True)
             await self._send_error_response(message, f"Feature extraction failed: {e}")
 
     async def _handle_classify_modality(self, message: ActorMessage) -> None:
@@ -761,7 +761,7 @@ class PerceiverAgent(
             )
 
         except Exception as e:
-            logger.error(f"[{self.agent_id}] Modality classification failed: {e}", exc_info=True)
+            logger.error("[{self.agent_id}] Modality classification failed: {e}", exc_info=True)
             await self._send_error_response(message, f"Classification failed: {e}")
 
     async def _handle_assess_quality(self, message: ActorMessage) -> None:
@@ -798,7 +798,7 @@ class PerceiverAgent(
             )
 
         except Exception as e:
-            logger.error(f"[{self.agent_id}] Quality assessment failed: {e}", exc_info=True)
+            logger.error("[{self.agent_id}] Quality assessment failed: {e}", exc_info=True)
             await self._send_error_response(message, f"Quality assessment failed: {e}")
 
     async def _handle_get_processing_stats(self, message: ActorMessage) -> None:
@@ -828,7 +828,7 @@ class PerceiverAgent(
             )
 
         except Exception as e:
-            logger.error(f"[{self.agent_id}] Stats retrieval failed: {e}", exc_info=True)
+            logger.error("[{self.agent_id}] Stats retrieval failed: {e}", exc_info=True)
             await self._send_error_response(message, f"Stats retrieval failed: {e}")
 
     async def _handle_correlate_modalities(self, message: ActorMessage) -> None:
@@ -880,7 +880,7 @@ class PerceiverAgent(
             )
 
         except Exception as e:
-            logger.error(f"[{self.agent_id}] Correlation analysis failed: {e}", exc_info=True)
+            logger.error("[{self.agent_id}] Correlation analysis failed: {e}", exc_info=True)
             await self._send_error_response(message, f"Correlation failed: {e}")
 
     # Session 44: Collective Learning, Consensus Deliberation, and Memory Optimization

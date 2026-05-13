@@ -83,7 +83,7 @@ async def _get_maker_publisher() -> NATSPublisher | None:
         try:
             _maker_publisher = await get_nats_publisher()
         except Exception as e:
-            logger.warning(f"Failed to get NATS publisher in MAKER: {e}")
+            logger.warning("Failed to get NATS publisher in MAKER: {e}")
             return None
     return _maker_publisher
 
@@ -911,7 +911,7 @@ class EnhancedMAKERConsensus(MAKERConsensus):
                 confidence=0.5,  # Placeholder
             )
 
-        logger.debug(f"Recorded decision outcome for {agent_id}: correct={was_correct}")
+        logger.debug("Recorded decision outcome for {agent_id}: correct={was_correct}")
 
     def compute_consensus(
         self,
@@ -1258,7 +1258,7 @@ class EnhancedMAKERConsensus(MAKERConsensus):
             # Clear checkpoint
             del self.rollback_checkpoints[consensus_id]
 
-            logger.info(f"Rollback completed for {consensus_id}: {reason or 'no reason provided'}")
+            logger.info("Rollback completed for {consensus_id}: {reason or 'no reason provided'}")
 
             return RollbackResult(
                 success=True,
@@ -1267,7 +1267,7 @@ class EnhancedMAKERConsensus(MAKERConsensus):
             )
 
         except Exception as e:
-            logger.error(f"Rollback failed: {e}")
+            logger.error("Rollback failed: {e}")
             return RollbackResult(
                 success=False,
                 message=f"Rollback failed: {e!s}",
@@ -1359,7 +1359,7 @@ class EnhancedMAKERConsensus(MAKERConsensus):
             pattern_data: Pattern data
         """
         self.pattern_library[pattern_id] = pattern_data
-        logger.debug(f"Registered pattern: {pattern_id}")
+        logger.debug("Registered pattern: {pattern_id}")
 
     def get_pattern(
         self,
@@ -1466,7 +1466,7 @@ class EnhancedMAKERConsensus(MAKERConsensus):
         }
         with open(filepath, "w") as f:
             json.dump(state, f, indent=2)
-        logger.info(f"Saved consensus state to {filepath}")
+        logger.info("Saved consensus state to {filepath}")
 
     def load_state(self, filepath: str) -> None:
         """
@@ -1486,6 +1486,6 @@ class EnhancedMAKERConsensus(MAKERConsensus):
 
         if "decision_provenance" in state:
             # Note: Provenance is read-only after loading
-            logger.info(f"Loaded {len(state['decision_provenance'])} provenance records")
+            logger.info("Loaded {len(state['decision_provenance'])} provenance records")
 
-        logger.info(f"Loaded consensus state from {filepath}")
+        logger.info("Loaded consensus state from {filepath}")

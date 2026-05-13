@@ -140,7 +140,7 @@ class AuditQueryMixin:
             execution_time_ms=execution_time_ms,
         )
 
-        logger.info(f"Audit query completed: {len(results)} results in {execution_time_ms:.2f}ms")
+        logger.info("Audit query completed: {len(results)} results in {execution_time_ms:.2f}ms")
         return query_result
 
     def get_vote_breakdown(self, consensus_id: str) -> dict[str, Any]:
@@ -356,7 +356,7 @@ class AuditQueryMixin:
             },
         )
 
-        logger.info(f"Audit data exported: {len(export_data.get('decisions', []))} decisions")
+        logger.info("Audit data exported: {len(export_data.get('decisions', []))} decisions")
         return export_data
 
     def export_decision_audit(self, decision_id: str, format: str = "json") -> str:

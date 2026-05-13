@@ -367,7 +367,7 @@ class EventStore:
                 self._initialized = True
                 logger.info("EventStore initialized with PostgreSQL")
             except (ConnectionError, OSError) as e:
-                logger.warning(f"PostgreSQL connection failed, using in-memory: {e}")
+                logger.warning("PostgreSQL connection failed, using in-memory: {e}")
                 self._db_pool = None
                 self._initialized = True
         else:
@@ -453,11 +453,11 @@ class EventStore:
                 # Notify handlers
                 await self._notify_handlers(event)
 
-                logger.debug(f"Event appended: {event.event_id}")
+                logger.debug("Event appended: {event.event_id}")
                 return True
 
         except (ConnectionError, OSError) as e:
-            logger.error(f"Failed to append event to database: {e}")
+            logger.error("Failed to append event to database: {e}")
             return False
 
     def _append_to_memory(self, event: DomainEvent) -> bool:
@@ -471,7 +471,7 @@ class EventStore:
         # Notify handlers
         asyncio.create_task(self._notify_handlers(event))
 
-        logger.debug(f"Event appended to memory: {event.event_id}")
+        logger.debug("Event appended to memory: {event.event_id}")
         return True
 
     async def _check_snapshot(self, aggregate_id: str, aggregate_type: str) -> None:
@@ -688,7 +688,7 @@ class EventStore:
             state = snapshot.state.copy()
             from_version = snapshot.version
             self._stats["snapshots_restored"] += 1
-            logger.debug(f"Restored from snapshot: {aggregate_id} v{from_version}")
+            logger.debug("Restored from snapshot: {aggregate_id} v{from_version}")
         else:
             state = initial_state or {}
             from_version = 0
@@ -701,7 +701,7 @@ class EventStore:
             state = applier(state, event)
             self._stats["events_replayed"] += 1
 
-        logger.debug(f"Reconstructed state for {aggregate_id} with {len(events)} events")
+        logger.debug("Reconstructed state for {aggregate_id} with {len(events)} events")
         return state
 
     def _default_applier(
@@ -788,18 +788,18 @@ class EventStore:
                 )
 
                 self._stats["snapshots_created"] += 1
-                logger.debug(f"Snapshot created: {snapshot.aggregate_id} v{snapshot.version}")
+                logger.debug("Snapshot created: {snapshot.aggregate_id} v{snapshot.version}")
                 return True
 
         except (ConnectionError, OSError) as e:
-            logger.error(f"Failed to create snapshot in database: {e}")
+            logger.error("Failed to create snapshot in database: {e}")
             return False
 
     def _create_snapshot_memory(self, snapshot: Snapshot) -> bool:
         """Create snapshot in memory."""
         self._memory_snapshots[snapshot.aggregate_id] = snapshot
         self._stats["snapshots_created"] += 1
-        logger.debug(f"Memory snapshot created: {snapshot.aggregate_id}")
+        logger.debug("Memory snapshot created: {snapshot.aggregate_id}")
         return True
 
     async def get_snapshot(self, aggregate_id: str) -> Snapshot | None:
@@ -840,7 +840,7 @@ class EventStore:
         if event_type not in self._event_handlers:
             self._event_handlers[event_type] = []
         self._event_handlers[event_type].append(handler)
-        logger.debug(f"Event handler registered for {event_type}")
+        logger.debug("Event handler registered for {event_type}")
 
     async def _notify_handlers(self, event: DomainEvent) -> None:
         """Notify registered handlers."""
@@ -853,7 +853,7 @@ class EventStore:
                 else:
                     handler(event)
             except Exception as e:
-                logger.error(f"Event handler error for {event.event_type}: {e}")
+                logger.error("Event handler error for {event.event_type}: {e}")
 
     async def get_stats(self) -> dict[str, Any]:
         """Get event store statistics."""

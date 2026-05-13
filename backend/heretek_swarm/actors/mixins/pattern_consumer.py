@@ -36,7 +36,7 @@ class PatternConsumerMixin:
                     channel="collective:patterns", message=pattern
                 )
         except Exception as e:
-            self.logger.warning(f"Failed to emit pattern: {e}")
+            self.logger.warning("Failed to emit pattern: {e}")
 
     async def _consume_patterns(
         self, pattern_types: list[str] | None = None, limit: int = 10
@@ -59,7 +59,7 @@ class PatternConsumerMixin:
                     patterns = [p for p in patterns if p.get("type") in pattern_types]
                 return patterns
         except Exception as e:
-            self.logger.warning(f"Failed to consume patterns: {e}")
+            self.logger.warning("Failed to consume patterns: {e}")
         return []
 
     async def _learn_from_pattern(self, pattern: dict[str, Any]) -> None:

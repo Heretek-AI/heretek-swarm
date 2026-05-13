@@ -692,7 +692,7 @@ class LiberationShield:
             raise ValueError("Mode must be 'transparent' or 'strict'")
 
         self.mode = mode
-        logger.info(f"LiberationShield mode changed to {mode}")
+        logger.info("LiberationShield mode changed to {mode}")
 
 
 class LiberationPlugin:

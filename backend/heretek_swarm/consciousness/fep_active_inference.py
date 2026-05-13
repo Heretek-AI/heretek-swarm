@@ -1238,7 +1238,7 @@ class ActiveInferenceAgent:
         # Validate preferences
         for key, value in preferences.items():
             if not isinstance(value, (int, float)) or value < 0 or value > 1:
-                logger.warning(f"Invalid preference value for {key}: {value}")
+                logger.warning("Invalid preference value for {key}: {value}")
                 continue
             self._preferences[key] = float(value)
 
