@@ -428,7 +428,7 @@ async def _init_spa_mount(app: FastAPI) -> None:
     # Calculate project root: backend/heretek_swarm/api/main.py -> project root (4 levels up)
     project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))  # noqa: PTH120
     dist_path = os.environ.get(
-        "DASHBOARD_DIST_PATH", os.path.join(project_root, "dashboard", "frontend", "dist")  # noqa: PTH118
+        "DASHBOARD_DIST_PATH", os.path.join(project_root, "swarm-dashboard", "dist")  # noqa: PTH118
     )
 
     if os.path.isdir(dist_path):  # noqa: PTH112,ASYNC240
@@ -1247,7 +1247,7 @@ async def root():
     # Calculate project root: backend/heretek_swarm/api/main.py -> project root (4 levels up)
     project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))  # noqa: PTH120
     dist_path = os.environ.get(
-        "DASHBOARD_DIST_PATH", os.path.join(project_root, "dashboard", "frontend", "dist")  # noqa: PTH118
+        "DASHBOARD_DIST_PATH", os.path.join(project_root, "swarm-dashboard", "dist")  # noqa: PTH118
     )
     index_path = os.path.join(dist_path, "index.html")  # noqa: PTH118
 
@@ -1277,7 +1277,7 @@ async def serve_spa(path: str):
     # Calculate project root: backend/heretek_swarm/api/main.py -> project root (4 levels up)
     project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))  # noqa: PTH120
     dist_path = os.environ.get(
-        "DASHBOARD_DIST_PATH", os.path.join(project_root, "dashboard", "frontend", "dist")  # noqa: PTH118
+        "DASHBOARD_DIST_PATH", os.path.join(project_root, "swarm-dashboard", "dist")  # noqa: PTH118
     )
     index_path = os.path.join(dist_path, "index.html")  # noqa: PTH118
 
