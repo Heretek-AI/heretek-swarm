@@ -217,7 +217,7 @@ class AuditLogger:
                     "audit_log_flushed",
                     entries_flushed=self._entries_since_flush,
                 )
-            except Exception as e:
+            except Exception:
                 logger.error("audit_log_flush_failed: {e}")
 
         self._entries_since_flush = 0

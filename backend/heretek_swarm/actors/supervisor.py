@@ -345,7 +345,7 @@ class ActorSupervisor(AuditMixin, ValidationMixin, HealthReportingMixin, Pattern
 
             except asyncio.CancelledError:
                 break
-            except Exception as e:
+            except Exception:
                 logger.error("[{self.name}] Monitor error: {e}", exc_info=True)
                 await asyncio.sleep(5.0)
 
@@ -404,7 +404,7 @@ class ActorSupervisor(AuditMixin, ValidationMixin, HealthReportingMixin, Pattern
                 extra={"restart_count": self.restart_counts[actor_id]},
             )
 
-        except Exception as e:
+        except Exception:
             logger.error("[{self.name}] Restart failed for {actor_id}: {e}", exc_info=True)
             self.restart_counts[actor_id] = restart_count + 1
 
@@ -453,7 +453,7 @@ class ActorSupervisor(AuditMixin, ValidationMixin, HealthReportingMixin, Pattern
             logger.info("[{self.name}] Actor {actor_id} successfully respawned")
             return True
 
-        except Exception as e:
+        except Exception:
             logger.error("[{self.name}] Respawn failed for {actor_id}: {e}", exc_info=True)
             return False
 

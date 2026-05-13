@@ -82,7 +82,7 @@ async def _get_maker_publisher() -> NATSPublisher | None:
     if _maker_publisher is None:
         try:
             _maker_publisher = await get_nats_publisher()
-        except Exception as e:
+        except Exception:
             logger.warning("Failed to get NATS publisher in MAKER: {e}")
             return None
     return _maker_publisher

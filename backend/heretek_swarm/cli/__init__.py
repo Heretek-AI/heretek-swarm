@@ -31,7 +31,6 @@ from heretek_swarm._cli_module import (
     _print_infrastructure_config,
     _print_startup_banner,
     _query_daemon_socket,
-    _run_consensus,
     _shutdown_event,
     _start_autonomous_swarm,
     check_compose_plugin,

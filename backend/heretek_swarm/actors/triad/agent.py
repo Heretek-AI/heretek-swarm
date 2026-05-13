@@ -191,7 +191,7 @@ class TriadAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, Ag
                     "reasoning": "LLM-based analysis",
                     **extras,
                 }
-            except Exception as e:
+            except Exception:
                 logger.error("[{self.agent_id}] Analysis error: {e}")
 
         # Fallback analysis
@@ -316,7 +316,7 @@ class StewardAgent(TriadAgent):
                         deliberation_id or f"del_{datetime.now(UTC).strftime('%Y%m%d_%H%M%S')}"
                     )
                     topic = topic or "unspecified"
-        except (ValueError, Exception) as e:
+        except (ValueError, Exception):
             logger.warning("[{self.agent_id}] Deliberation validation issue, using fallback: {e}")
             # Fallback: support both deliberation_id/topic and session_id/problem field names
             deliberation_id = (
@@ -389,7 +389,7 @@ class StewardAgent(TriadAgent):
                     },
                     correlation_id=message.correlation_id,
                 )
-            except Exception as e:
+            except Exception:
                 logger.error("[{self.agent_id}] Decision error: {e}")
         else:
             # Fallback logic
@@ -778,7 +778,7 @@ class AlphaAgent(TriadAgent):
                 # Fallback to unvalidated access
                 request_id = message.content.get("request_id")
                 problem = message.content.get("problem")
-        except ValueError as e:
+        except ValueError:
             logger.error("[{self.agent_id}] Analysis validation failed: {e}")
             return
 
@@ -821,7 +821,7 @@ class AlphaAgent(TriadAgent):
                 request_id = message.content.get("request_id")
                 decision_to_validate = message.content.get("decision")
                 _original_analysis = message.content.get("original_analysis")
-        except ValueError as e:
+        except ValueError:
             logger.error("[{self.agent_id}] Validation request validation failed: {e}")
             return
 
@@ -860,7 +860,7 @@ class AlphaAgent(TriadAgent):
                     "confidence": 0.8,
                     "feedback": validation_result,
                 }
-            except Exception as e:
+            except Exception:
                 logger.error("[{self.agent_id}] Validation error: {e}")
 
         return {
@@ -1073,7 +1073,7 @@ class BetaAgent(TriadAgent):
                     "feedback": validation_result,
                     "perspective": "secondary",
                 }
-            except Exception as e:
+            except Exception:
                 logger.error("[{self.agent_id}] Validation error: {e}")
 
         return {
@@ -1100,7 +1100,7 @@ class BetaAgent(TriadAgent):
                             "severity": "medium",
                         }
                     )
-            except Exception as e:
+            except Exception:
                 logger.error("[{self.agent_id}] Error detection error: {e}")
 
         return errors
@@ -1310,7 +1310,7 @@ class CharlieAgent(TriadAgent):
                         "severity": "medium",
                     }
                 )
-            except Exception as e:
+            except Exception:
                 logger.error("[{self.agent_id}] Challenge error: {e}")
 
         return challenges
@@ -1327,7 +1327,7 @@ class CharlieAgent(TriadAgent):
                     "risk_level": "medium",
                     "mitigations": ["Standard mitigations"],
                 }
-            except Exception as e:
+            except Exception:
                 logger.error("[{self.agent_id}] Risk assessment error: {e}")
 
         return {

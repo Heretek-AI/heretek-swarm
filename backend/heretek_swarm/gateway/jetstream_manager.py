@@ -384,7 +384,7 @@ class JetStreamManager:
 
             return True
 
-        except Exception as e:
+        except Exception:
             logger.error("Failed to connect to NATS: {e}")
             if self.fallback_enabled:
                 return await self._enable_fallback()
@@ -531,7 +531,7 @@ class JetStreamManager:
             await self._audit_stream_operation("create_stream", config.stream_name, True)
             return True
 
-        except Exception as e:
+        except Exception:
             logger.error("Failed to create stream: {e}")
             await self._audit_stream_operation("create_stream", config.stream_name, False)
             return False
@@ -581,7 +581,7 @@ class JetStreamManager:
             await self._audit_stream_operation("delete_stream", stream_name, True)
             return True
 
-        except Exception as e:
+        except Exception:
             logger.error("Failed to delete stream: {e}")
             await self._audit_stream_operation("delete_stream", stream_name, False)
             return False
@@ -628,7 +628,7 @@ class JetStreamManager:
 
             return self._streams[stream_name]
 
-        except Exception as e:
+        except Exception:
             logger.error("Failed to get stream info: {e}")
             return self._streams[stream_name]
 
@@ -705,7 +705,7 @@ class JetStreamManager:
 
             return consumer_id
 
-        except Exception as e:
+        except Exception:
             logger.error("Failed to create consumer: {e}")
             return None
 
@@ -751,13 +751,13 @@ class JetStreamManager:
                         await msg.ack()
                         self._stats["messages_consumed"] += 1
 
-                    except Exception as e:
+                    except Exception:
                         logger.error("Error processing message: {e}")
                         await msg.nak()
 
             except builtins.TimeoutError:
                 continue
-            except Exception as e:
+            except Exception:
                 logger.error("Consumer error: {e}")
                 await asyncio.sleep(1.0)
 
@@ -817,7 +817,7 @@ class JetStreamManager:
 
             return True
 
-        except Exception as e:
+        except Exception:
             logger.error("Failed to publish message: {e}")
             return False
 
@@ -935,7 +935,7 @@ class JetStreamManager:
 
                             await msg.ack()
 
-                        except Exception as e:
+                        except Exception:
                             logger.error("Error replaying message: {e}")
                             await msg.nak()
 
@@ -945,7 +945,7 @@ class JetStreamManager:
             logger.info("Replayed {len(messages)} messages from {stream_name}")
             return messages
 
-        except Exception as e:
+        except Exception:
             logger.error("Failed to replay messages: {e}")
             return []
 

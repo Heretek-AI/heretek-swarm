@@ -224,7 +224,7 @@ class PerceiverPlusAgent(
         """
         try:
             # Validate content
-            is_valid, error = self._validate_data_input(message.content)
+            is_valid, _error = self._validate_data_input(message.content)
             if not is_valid:
                 logger.error("[{self.agent_id}] Invalid data analysis request: {error}")
                 return
@@ -272,7 +272,7 @@ class PerceiverPlusAgent(
 
             logger.info("[{self.agent_id}] Completed {len(results)} analyses")
 
-        except Exception as e:
+        except Exception:
             logger.error("[{self.agent_id}] Error analyzing data: {e}", exc_info=True)
 
     async def _handle_detect_trends(self, message: ActorMessage) -> None:
@@ -283,7 +283,7 @@ class PerceiverPlusAgent(
             message: Actor message with time series data
         """
         try:
-            is_valid, error = self._validate_data_input(message.content)
+            is_valid, _error = self._validate_data_input(message.content)
             if not is_valid:
                 logger.error("[{self.agent_id}] Invalid trend detection request: {error}")
                 return
@@ -311,7 +311,7 @@ class PerceiverPlusAgent(
                     sender_id=self.agent_id,
                 )
 
-        except Exception as e:
+        except Exception:
             logger.error("[{self.agent_id}] Error detecting trends: {e}", exc_info=True)
 
     async def _handle_compute_correlations(self, message: ActorMessage) -> None:
@@ -322,7 +322,7 @@ class PerceiverPlusAgent(
             message: Actor message with variable data
         """
         try:
-            is_valid, error = self._validate_data_input(message.content)
+            is_valid, _error = self._validate_data_input(message.content)
             if not is_valid:
                 logger.error("[{self.agent_id}] Invalid correlation request: {error}")
                 return
@@ -347,7 +347,7 @@ class PerceiverPlusAgent(
                     sender_id=self.agent_id,
                 )
 
-        except Exception as e:
+        except Exception:
             logger.error("[{self.agent_id}] Error computing correlations: {e}", exc_info=True)
 
     async def _handle_run_statistical_test(self, message: ActorMessage) -> None:
@@ -379,7 +379,7 @@ class PerceiverPlusAgent(
                     sender_id=self.agent_id,
                 )
 
-        except Exception as e:
+        except Exception:
             logger.error("[{self.agent_id}] Error running statistical test: {e}", exc_info=True)
 
     async def _handle_extract_features(self, message: ActorMessage) -> None:
@@ -390,7 +390,7 @@ class PerceiverPlusAgent(
             message: Actor message with data
         """
         try:
-            is_valid, error = self._validate_data_input(message.content)
+            is_valid, _error = self._validate_data_input(message.content)
             if not is_valid:
                 logger.error("[{self.agent_id}] Invalid feature extraction request: {error}")
                 return
@@ -421,7 +421,7 @@ class PerceiverPlusAgent(
                     sender_id=self.agent_id,
                 )
 
-        except Exception as e:
+        except Exception:
             logger.error("[{self.agent_id}] Error extracting features: {e}", exc_info=True)
 
     async def _handle_forecast_values(self, message: ActorMessage) -> None:
@@ -454,7 +454,7 @@ class PerceiverPlusAgent(
                     sender_id=self.agent_id,
                 )
 
-        except Exception as e:
+        except Exception:
             logger.error("[{self.agent_id}] Error forecasting: {e}", exc_info=True)
 
     async def _handle_get_analytics_summary(self, message: ActorMessage) -> None:
@@ -485,7 +485,7 @@ class PerceiverPlusAgent(
                     sender_id=self.agent_id,
                 )
 
-        except Exception as e:
+        except Exception:
             logger.error("[{self.agent_id}] Error getting analytics summary: {e}", exc_info=True)
 
     async def _handle_signal_processing(self, message: ActorMessage) -> None:
@@ -521,7 +521,7 @@ class PerceiverPlusAgent(
                     sender_id=self.agent_id,
                 )
 
-        except Exception as e:
+        except Exception:
             logger.error("[{self.agent_id}] Error processing signal: {e}", exc_info=True)
 
     async def _handle_knowledge_enhanced_analysis(self, message: ActorMessage) -> None:

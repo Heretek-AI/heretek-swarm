@@ -310,7 +310,7 @@ class RaftElection:
 
             except asyncio.CancelledError:
                 break
-            except Exception as e:
+            except Exception:
                 logger.error("Election loop error: {e}")
 
     async def _start_election(self) -> None:
@@ -336,7 +336,7 @@ class RaftElection:
                 response = await self._request_vote_from_peer(peer_id)
                 if response and response.vote_granted:
                     vote_count += 1
-            except Exception as e:
+            except Exception:
                 logger.error("Failed to get vote from {peer_id}: {e}")
 
         # Check if won election
@@ -378,7 +378,7 @@ class RaftElection:
         if self._on_leader_change:
             try:
                 await self._on_leader_change(self.node_id)
-            except Exception as e:
+            except Exception:
                 logger.error("Leader change callback error: {e}")
 
     async def _heartbeat_loop(self) -> None:
@@ -388,14 +388,14 @@ class RaftElection:
                 for peer_id in self.peers:
                     try:
                         await self._send_heartbeat(peer_id)
-                    except Exception as e:
+                    except Exception:
                         logger.error("Failed to send heartbeat to {peer_id}: {e}")
 
                 await asyncio.sleep(self.heartbeat_interval)
 
             except asyncio.CancelledError:
                 break
-            except Exception as e:
+            except Exception:
                 logger.error("Heartbeat loop error: {e}")
 
     async def _request_vote_from_peer(
@@ -619,7 +619,7 @@ class RaftElection:
         for peer_id in self.peers:
             try:
                 await self._replicate_to_peer(peer_id, entry)
-            except Exception as e:
+            except Exception:
                 logger.error("Failed to replicate to {peer_id}: {e}")
 
         logger.debug("Appended log entry {self._log_index}")

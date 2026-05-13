@@ -119,7 +119,7 @@ class EnhancedAgentRegistry:
                 from heretek_swarm.actors.supervisor import get_supervisor
 
                 self._supervisor = get_supervisor()
-            except (ImportError, Exception) as e:
+            except (ImportError, Exception):
                 logger.warning("Could not get supervisor: {e}")
         return self._supervisor
 
@@ -147,7 +147,7 @@ class EnhancedAgentRegistry:
                 if metadata:
                     discovered[metadata.type_name] = metadata
                     logger.debug("Discovered agent type: {metadata.type_name}")
-            except Exception as e:
+            except Exception:
                 logger.warning("Failed to discover agent from {actor_file.name}: {e}")
 
         self._agent_types = discovered
@@ -217,7 +217,7 @@ class EnhancedAgentRegistry:
                 actor_type=actor_type,
             )
 
-        except Exception as e:
+        except Exception:
             logger.warning("Failed to extract metadata from {module_name}: {e}")
             return None
 
@@ -399,7 +399,7 @@ class EnhancedAgentRegistry:
             logger.info("Started agent instance: {instance_id}")
             return True
 
-        except Exception as e:
+        except Exception:
             logger.error("Failed to start agent {instance_id}: {e}", exc_info=True)
             instance.state = AgentLifecycleState.ERROR
             return False
@@ -433,7 +433,7 @@ class EnhancedAgentRegistry:
             logger.info("Stopped agent instance: {instance_id}")
             return True
 
-        except Exception as e:
+        except Exception:
             logger.error("Failed to stop agent {instance_id}: {e}", exc_info=True)
             return False
 
@@ -465,7 +465,7 @@ class EnhancedAgentRegistry:
             logger.info("Suspended agent instance: {instance_id}")
             return True
 
-        except Exception as e:
+        except Exception:
             logger.error("Failed to suspend agent {instance_id}: {e}", exc_info=True)
             return False
 
@@ -497,7 +497,7 @@ class EnhancedAgentRegistry:
             logger.info("Resumed agent instance: {instance_id}")
             return True
 
-        except Exception as e:
+        except Exception:
             logger.error("Failed to resume agent {instance_id}: {e}", exc_info=True)
             return False
 

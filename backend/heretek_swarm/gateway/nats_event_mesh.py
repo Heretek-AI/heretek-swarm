@@ -223,7 +223,7 @@ class NATSEventMesh:
                     try:
                         self._js = self._nc.jetstream()
                         logger.info("JetStream context initialized")
-                    except Exception as e:
+                    except Exception:
                         logger.warning("JetStream not available: {e}")
                         self._js = None
 
@@ -366,7 +366,7 @@ class NATSEventMesh:
             logger.info("JetStream '{name}' created", subjects=subjects)
             return True
 
-        except Exception as e:
+        except Exception:
             logger.error("Failed to create stream '{name}': {e}")
             return False
 
@@ -388,7 +388,7 @@ class NATSEventMesh:
             self._streams.pop(name, None)
             logger.info("JetStream '{name}' deleted")
             return True
-        except Exception as e:
+        except Exception:
             logger.error("Failed to delete stream '{name}': {e}")
             return False
 
@@ -420,7 +420,7 @@ class NATSEventMesh:
             ack = await self._js.publish(subject, json.dumps(data).encode("utf-8"))
             logger.debug("Published to stream '{stream_name}'", seq=ack.seq)
             return True
-        except Exception as e:
+        except Exception:
             logger.error("Failed to publish to stream: {e}")
             return False
 
@@ -479,7 +479,7 @@ class NATSEventMesh:
             logger.info("Durable consumer '{durable_name}' created on stream '{stream_name}'")
             return consumer_id
 
-        except Exception as e:
+        except Exception:
             logger.error("Failed to create durable consumer: {e}")
             return None
 
@@ -507,12 +507,12 @@ class NATSEventMesh:
                         data = json.loads(msg.data.decode("utf-8"))
                         await callback(msg.subject, data)
                         await msg.ack()
-                    except Exception as e:
+                    except Exception:
                         logger.error("Error processing message: {e}")
                         await msg.nak()
             except TimeoutError:
                 continue
-            except Exception as e:
+            except Exception:
                 logger.error("Durable consumer error: {e}")
                 await asyncio.sleep(1.0)
 
@@ -586,7 +586,7 @@ class NATSEventMesh:
             logger.info("Replayed {len(messages)} messages from stream '{stream_name}'")
             return messages
 
-        except Exception as e:
+        except Exception:
             logger.error("Failed to replay stream: {e}")
             return []
 
@@ -1079,7 +1079,7 @@ class NATSEventMeshWithJetStream(NATSEventMesh):
             logger.info("JetStream initialized")
             return True
 
-        except Exception as e:
+        except Exception:
             logger.error("Failed to initialize JetStream: {e}")
             return False
 

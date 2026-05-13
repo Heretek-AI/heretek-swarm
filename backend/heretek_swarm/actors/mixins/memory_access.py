@@ -24,7 +24,7 @@ class MemoryAccessMixin:
         try:
             if hasattr(self, "_memory_access_logger"):
                 await self._memory_access_logger.log(access_record)
-        except Exception as e:
+        except Exception:
             self.logger.debug("Memory access tracking failed: {e}")
 
     async def _get_memory_tier(self, memory_type: str = "episodic") -> str:
@@ -48,7 +48,7 @@ class MemoryAccessMixin:
                 for memory in memories:
                     await self._track_memory_access(memory_id=memory.get("id"), access_type="read")
                 return memories
-        except Exception as e:
+        except Exception:
             self.logger.warning("Memory fetch failed: {e}")
         return []
 
@@ -63,6 +63,6 @@ class MemoryAccessMixin:
                 )
                 await self._track_memory_access(memory_id=memory_id, access_type="write")
                 return memory_id
-        except Exception as e:
+        except Exception:
             self.logger.warning("Memory store failed: {e}")
         return None

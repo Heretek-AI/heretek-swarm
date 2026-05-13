@@ -961,7 +961,7 @@ class SwarmDeliberationEngine:
             # Finalize and return result
             return self.finalize_deliberation(deliberation_id)
 
-        except Exception as e:
+        except Exception:
             logger.error("Deliberation error: {e}")
             self.deliberation_states[deliberation_id] = DeliberationState.FAILED
             return None

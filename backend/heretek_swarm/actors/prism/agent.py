@@ -233,7 +233,7 @@ class PrismAgent(
         """
         try:
             # Validate content
-            is_valid, error = self._validate_analysis_request(message.content)
+            is_valid, _error = self._validate_analysis_request(message.content)
             if not is_valid:
                 logger.error("[{self.agent_id}] Invalid perspective request: {error}")
                 return
@@ -282,7 +282,7 @@ class PrismAgent(
                 f"[{self.agent_id}] Generated {len(perspectives)} perspectives for analysis: {analysis_id}"
             )
 
-        except Exception as e:
+        except Exception:
             logger.error("[{self.agent_id}] Error generating perspectives: {e}", exc_info=True)
 
     async def _generate_perspectives(
@@ -450,7 +450,7 @@ Respond in JSON format:
 
             logger.info("[{self.agent_id}] Detected {len(biases)} potential biases")
 
-        except Exception as e:
+        except Exception:
             logger.error("[{self.agent_id}] Error detecting biases: {e}", exc_info=True)
 
     async def _detect_biases_in_content(self, content: str) -> list[BiasDetection]:
@@ -541,7 +541,7 @@ Respond in JSON format:
             # Fallback: Pattern-based bias detection
             biases.extend(self._heuristic_bias_detection(content))
 
-        except Exception as e:
+        except Exception:
             logger.warning("[{self.agent_id}] LLM bias detection failed: {e}")
             biases.extend(self._heuristic_bias_detection(content))
 
@@ -556,7 +556,7 @@ Respond in JSON format:
         """
         try:
             # Validate content
-            is_valid, error = self._validate_analysis_request(message.content)
+            is_valid, _error = self._validate_analysis_request(message.content)
             if not is_valid:
                 logger.error("[{self.agent_id}] Invalid framework request: {error}")
                 return
@@ -608,7 +608,7 @@ Respond in JSON format:
 
             logger.info("[{self.agent_id}] Framework {framework.value} applied successfully")
 
-        except Exception as e:
+        except Exception:
             logger.error("[{self.agent_id}] Error applying framework: {e}", exc_info=True)
 
     async def _apply_framework_to_issue(
@@ -661,7 +661,7 @@ Respond in JSON format:
             message: Actor message with issue details
         """
         try:
-            is_valid, error = self._validate_analysis_request(message.content)
+            is_valid, _error = self._validate_analysis_request(message.content)
             if not is_valid:
                 logger.error("[{self.agent_id}] Invalid stakeholder mapping request: {error}")
                 return
@@ -693,7 +693,7 @@ Respond in JSON format:
 
             logger.info("[{self.agent_id}] Stakeholder mapping complete")
 
-        except Exception as e:
+        except Exception:
             logger.error("[{self.agent_id}] Error mapping stakeholders: {e}", exc_info=True)
 
     async def _generate_stakeholder_map(self, issue: str) -> dict[str, Any]:
@@ -792,7 +792,7 @@ Respond in JSON:
                     sender_id=self.agent_id,
                 )
 
-        except Exception as e:
+        except Exception:
             logger.error("[{self.agent_id}] Error getting analysis summary: {e}", exc_info=True)
 
     async def _handle_reframe_issue(self, message: ActorMessage) -> None:
@@ -803,7 +803,7 @@ Respond in JSON:
             message: Actor message with issue to reframe
         """
         try:
-            is_valid, error = self._validate_analysis_request(message.content)
+            is_valid, _error = self._validate_analysis_request(message.content)
             if not is_valid:
                 logger.error("[{self.agent_id}] Invalid reframe request: {error}")
                 return
@@ -830,7 +830,7 @@ Respond in JSON:
 
             logger.info("[{self.agent_id}] Issue reframed into {len(reframes)} perspectives")
 
-        except Exception as e:
+        except Exception:
             logger.error("[{self.agent_id}] Error reframing issue: {e}", exc_info=True)
 
     def get_learning_status(self) -> dict[str, Any]:
@@ -979,7 +979,7 @@ Respond in JSON:
             # Fallback
             return generate_reframe_fallback()
 
-        except Exception as e:
+        except Exception:
             logger.warning("[{self.agent_id}] Reframe generation failed: {e}")
             return []
 

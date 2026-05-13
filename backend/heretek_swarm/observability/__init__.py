@@ -355,7 +355,7 @@ class ObservabilityManager:
                 otlp_endpoint=self.otlp_endpoint,
             )
             self.logger.info("OpenTelemetry tracing initialized")
-        except Exception as e:
+        except Exception:
             self.logger.warning("Failed to initialize tracing: {e}")
 
         # Initialize Loki handler
@@ -366,7 +366,7 @@ class ObservabilityManager:
             )
             await self._loki_handler.start()
             self.logger.info("Loki logging initialized")
-        except Exception as e:
+        except Exception:
             self.logger.warning("Failed to initialize Loki handler: {e}")
 
         # Record startup

@@ -35,7 +35,7 @@ class PatternConsumerMixin:
                 await self._pattern_publisher.publish(
                     channel="collective:patterns", message=pattern
                 )
-        except Exception as e:
+        except Exception:
             self.logger.warning("Failed to emit pattern: {e}")
 
     async def _consume_patterns(
@@ -58,7 +58,7 @@ class PatternConsumerMixin:
                 if pattern_types:
                     patterns = [p for p in patterns if p.get("type") in pattern_types]
                 return patterns
-        except Exception as e:
+        except Exception:
             self.logger.warning("Failed to consume patterns: {e}")
         return []
 

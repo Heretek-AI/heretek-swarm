@@ -225,7 +225,7 @@ class AgentRegistry:
 
                 logger.debug("Loaded agent: {name} with role {role.value}")
 
-            except Exception as e:
+            except Exception:
                 logger.error("Failed to load character from {char_file}: {e}")
 
         self._loaded = True

@@ -468,7 +468,7 @@ class HeavySwarmWorkflow:
                     "relevant_memories", []
                 )
                 research_data["matched_patterns"] = deliberation_context.get("matched_patterns", [])
-            except Exception as e:
+            except Exception:
                 logger.warning("[{self.name}] Historian query failed: {e}")
 
         # Synthesize knowledge if historian available
@@ -480,7 +480,7 @@ class HeavySwarmWorkflow:
                     limit=10,
                 )
                 research_data["knowledge_summary"] = knowledge.get("summary", "")
-            except Exception as e:
+            except Exception:
                 logger.warning("[{self.name}] Knowledge synthesis failed: {e}")
 
         # Identify constraints and assumptions from context
@@ -852,7 +852,7 @@ class HeavySwarmWorkflow:
                 verification_data["error_checks"] = errors
                 if errors:
                     verification_data["overall_valid"] = False
-            except Exception as e:
+            except Exception:
                 logger.warning("[{self.name}] Beta error check failed: {e}")
 
         # Charlie: Risk assessment
@@ -862,7 +862,7 @@ class HeavySwarmWorkflow:
                 risk_assessment = await charlie_agent._assess_risks(recommended)
                 verification_data["risk_assessments"] = risk_assessment.get("risks_identified", [])
                 verification_data["risk_level"] = risk_assessment.get("risk_level", "unknown")
-            except Exception as e:
+            except Exception:
                 logger.warning("[{self.name}] Charlie risk assessment failed: {e}")
 
         # Calculate overall confidence

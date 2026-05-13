@@ -230,7 +230,7 @@ class HabitForgeAgent(
         """
         try:
             # Validate content
-            is_valid, error = self._validate_habit_request(message.content)
+            is_valid, _error = self._validate_habit_request(message.content)
             if not is_valid:
                 logger.error("[{self.agent_id}] Invalid habit creation request: {error}")
                 return
@@ -274,7 +274,7 @@ class HabitForgeAgent(
                     sender_id=self.agent_id,
                 )
 
-        except Exception as e:
+        except Exception:
             logger.error("[{self.agent_id}] Error creating habit: {e}", exc_info=True)
 
     async def _handle_track_habit(self, message: ActorMessage) -> None:
@@ -328,7 +328,7 @@ class HabitForgeAgent(
                     sender_id=self.agent_id,
                 )
 
-        except Exception as e:
+        except Exception:
             logger.error("[{self.agent_id}] Error tracking habit: {e}", exc_info=True)
 
     async def _check_stage_progression(self, habit: Habit) -> None:
@@ -412,7 +412,7 @@ class HabitForgeAgent(
 
             logger.info("[{self.agent_id}] Detected {len(patterns)} behavioral patterns")
 
-        except Exception as e:
+        except Exception:
             logger.error("[{self.agent_id}] Error analyzing patterns: {e}", exc_info=True)
 
     async def _analyze_behavior_patterns(
@@ -502,7 +502,7 @@ Respond in JSON format:
             if not patterns:
                 patterns.extend(self._heuristic_pattern_detection(behavior_data))
 
-        except Exception as e:
+        except Exception:
             logger.warning("[{self.agent_id}] LLM pattern analysis failed: {e}")
             patterns.extend(self._heuristic_pattern_detection(behavior_data))
 
@@ -645,7 +645,7 @@ Respond in JSON format:
                     sender_id=self.agent_id,
                 )
 
-        except Exception as e:
+        except Exception:
             logger.error("[{self.agent_id}] Error getting habit progress: {e}", exc_info=True)
 
     def _calculate_collective_adherence(self) -> float:
@@ -698,7 +698,7 @@ Respond in JSON format:
                     sender_id=self.agent_id,
                 )
 
-        except Exception as e:
+        except Exception:
             logger.error("[{self.agent_id}] Error modifying pattern: {e}", exc_info=True)
 
     async def _generate_modification_plan(
@@ -822,7 +822,7 @@ Respond in JSON:
                     sender_id=self.agent_id,
                 )
 
-        except Exception as e:
+        except Exception:
             logger.error("[{self.agent_id}] Error generating behavior report: {e}", exc_info=True)
 
     async def _handle_design_reinforcement(self, message: ActorMessage) -> None:
@@ -862,7 +862,7 @@ Respond in JSON:
                     sender_id=self.agent_id,
                 )
 
-        except Exception as e:
+        except Exception:
             logger.error("[{self.agent_id}] Error designing reinforcement: {e}", exc_info=True)
 
     # =========================================================================

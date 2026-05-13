@@ -282,7 +282,7 @@ async def _ws_handle_dashboard_message(
 router = APIRouter()
 
 # Authentication token description constant
-_AUTH_TOKEN_DESC = "Authentication token"
+_AUTH_TOKEN_DESC = "Authentication token"  # noqa: S105
 
 # =============================================================================
 # Connection Manager

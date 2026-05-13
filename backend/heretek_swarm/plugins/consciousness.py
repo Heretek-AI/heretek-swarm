@@ -578,7 +578,7 @@ class ConsciousnessPlugin:
                 await asyncio.sleep(60)  # Cleanup every minute
             except asyncio.CancelledError:
                 break
-            except Exception as e:
+            except Exception:
                 logger.error("Cleanup error: {e}")
                 await asyncio.sleep(10)
 
@@ -863,7 +863,7 @@ class ConsciousnessPlugin:
 
             return phi
 
-        except Exception as e:
+        except Exception:
             logger.error("IIT Phi calculation error: {e}")
             # Fallback to attention-based estimate
             return schema.metacognitive_awareness * 0.5 if schema else 0.2
@@ -955,7 +955,7 @@ class ConsciousnessPlugin:
 
             return min(1.0, max(0.0, integration))
 
-        except Exception as e:
+        except Exception:
             logger.error("Integration calculation error: {e}")
             return 0.0
 
@@ -1003,7 +1003,7 @@ class ConsciousnessPlugin:
 
             return min(1.0, max(0.0, normalized_entropy))
 
-        except Exception as e:
+        except Exception:
             logger.error("Differentiation calculation error: {e}")
             return 0.3
 
@@ -1065,7 +1065,7 @@ class ConsciousnessPlugin:
 
             return min(1.0, max(0.0, fep_score))
 
-        except Exception as e:
+        except Exception:
             logger.error("FEP calculation error: {e}")
             return 0.5
 

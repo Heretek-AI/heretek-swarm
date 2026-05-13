@@ -224,7 +224,7 @@ class MetisAgent(
                 if not objective:
                     logger.error("[{self.agent_id}] Missing objective for strategic plan")
                     return
-        except ValueError as e:
+        except ValueError:
             logger.error("[{self.agent_id}] Strategic plan validation failed: {e}")
             return
 
@@ -309,7 +309,7 @@ class MetisAgent(
                 if not plan_id:
                     logger.error("[{self.agent_id}] Missing plan_id for resource allocation")
                     return
-        except ValueError as e:
+        except ValueError:
             logger.error("[{self.agent_id}] Resource allocation validation failed: {e}")
             return
 
@@ -363,7 +363,7 @@ class MetisAgent(
                 # Fallback
                 plan_id = message.content.get("plan_id")
                 domain = message.content.get("domain", "general")
-        except ValueError as e:
+        except ValueError:
             logger.error("[{self.agent_id}] Risk assessment validation failed: {e}")
             return
 
@@ -415,7 +415,7 @@ class MetisAgent(
                 # Fallback
                 base_scenario = message.content.get("base_scenario", {})
                 variables = message.content.get("variables", [])
-        except ValueError as e:
+        except ValueError:
             logger.error("[{self.agent_id}] Scenario analysis validation failed: {e}")
             return
 
@@ -481,7 +481,7 @@ class MetisAgent(
                 if not objective:
                     logger.error("[{self.agent_id}] Missing objective")
                     return
-        except ValueError as e:
+        except ValueError:
             logger.error("[{self.agent_id}] Strategic objective validation failed: {e}")
             return
 
@@ -534,7 +534,7 @@ class MetisAgent(
                 if not plan_id:
                     logger.error("[{self.agent_id}] Missing plan_id for status request")
                     return
-        except ValueError as e:
+        except ValueError:
             logger.error("[{self.agent_id}] Plan status validation failed: {e}")
             return
 
@@ -640,7 +640,7 @@ Format as JSON with keys: summary, phases, resources, risks, metrics
                 "created_at": datetime.now(UTC).isoformat(),
             }
 
-        except Exception as e:
+        except Exception:
             logger.error("[{self.agent_id}] LLM failed for strategic planning: {e}")
             # Return minimal plan
             return {
@@ -758,7 +758,7 @@ Format each risk as JSON object.
                 for i in range(3)
             ]
 
-        except Exception as e:
+        except Exception:
             logger.error("[{self.agent_id}] LLM failed for risk assessment: {e}")
             return []
 

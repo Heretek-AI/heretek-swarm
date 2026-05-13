@@ -347,7 +347,7 @@ class RateLimiter:
     def _init_redis(self):
         """Initialize Redis connection."""
         try:
-            import redis.asyncio
+            import redis.asyncio  # noqa: F401
 
             # Will be initialized on first use
             self._redis = None  # Lazy init

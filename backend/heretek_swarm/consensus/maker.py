@@ -530,7 +530,7 @@ class MAKERConsensus:
                 decision=decision,
                 confidence=confidence,
             )
-        except Exception as e:
+        except Exception:
             logger.error("Error collecting vote from {agent_id}: {e}")
 
     def get_statistics(self) -> dict[str, Any]:

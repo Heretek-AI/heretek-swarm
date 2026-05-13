@@ -24,7 +24,6 @@ from heretek_swarm.api import (
     consciousness,
     consensus,
     emergent_intelligence,
-    memory_versions,
     observability,
     plugins,
     skills,

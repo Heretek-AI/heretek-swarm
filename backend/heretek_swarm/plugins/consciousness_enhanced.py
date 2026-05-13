@@ -267,7 +267,7 @@ class IITCalculator:
 
             return max(0.0, float(phi))
 
-        except Exception as e:
+        except Exception:
             logger.error("Integration calculation error: {e}")
             return 0.0
 
@@ -299,7 +299,7 @@ class IITCalculator:
 
             return float(entropy)
 
-        except Exception as e:
+        except Exception:
             logger.error("Information calculation error: {e}")
             return 0.0
 
@@ -328,7 +328,7 @@ class IITCalculator:
 
             return min(1.0, max(0.0, float(normalized)))
 
-        except Exception as e:
+        except Exception:
             logger.error("Causal power calculation error: {e}")
             return 0.0
 
@@ -490,7 +490,7 @@ class FEPTracker:
 
             return min(1.0, max(0.0, surprise))
 
-        except Exception as e:
+        except Exception:
             logger.error("Surprise calculation error: {e}")
             return 0.5
 
@@ -629,7 +629,7 @@ class EnhancedConsciousnessPlugin:
                 await asyncio.sleep(300)  # Cleanup every 5 minutes
             except asyncio.CancelledError:
                 break
-            except Exception as e:
+            except Exception:
                 logger.error("Cleanup error: {e}")
                 await asyncio.sleep(60)
 

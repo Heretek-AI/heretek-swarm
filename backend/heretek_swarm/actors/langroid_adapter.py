@@ -25,9 +25,7 @@ logger = structlog.get_logger("LangroidAdapter")
 # Try to import Langroid, but make it optional
 try:
     from langroid.agent import Agent as LangroidAgentBase
-    from langroid.embedding import EmbeddingConfig
     from langroid.language import LanguageModelConfig
-    from langroid.vector_store import VectorStoreConfig
 
     LANGROID_AVAILABLE = True
 except ImportError:
@@ -176,7 +174,7 @@ class LangroidAgent:
         if LANGROID_AVAILABLE and self.config:
             try:
                 self._langroid_agent = self._create_langroid_agent()
-            except Exception as e:
+            except Exception:
                 logger.warning("Failed to create Langroid agent: {e}")
 
         # Conversations
@@ -194,7 +192,7 @@ class LangroidAgent:
             "LangroidAgent initialized",
             extra={
                 "agent_id": self.agent_id,
-                "name": self.name,
+                "agent_name": self.name,
                 "langroid_available": LANGROID_AVAILABLE,
             },
         )
@@ -327,7 +325,7 @@ class LangroidAgent:
 
             return response
 
-        except Exception as e:
+        except Exception:
             logger.error("Failed to generate response: {e}")
             conversation.state = ConversationState.ERROR
             raise

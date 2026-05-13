@@ -36,7 +36,7 @@ logger = structlog.get_logger(__name__)
 # ---------------------------------------------------------------------------
 
 DEFAULT_PID_FILE = Path("/var/run/heretek-swarm.pid")
-DEFAULT_SOCKET_PATH = Path("/tmp/heretek-swarm.sock")
+DEFAULT_SOCKET_PATH = Path("/tmp/heretek-swarm.sock")  # noqa: S108
 
 
 # ---------------------------------------------------------------------------

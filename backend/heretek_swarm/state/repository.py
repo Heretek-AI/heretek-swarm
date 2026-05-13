@@ -316,7 +316,7 @@ class StateRepository:
                 max_size=config["max_size"],
             )
             return cls._pool
-        except Exception as e:
+        except Exception:
             logger.error("Failed to create database pool: {e}")
             return None
 
@@ -423,7 +423,7 @@ class StateRepository:
                 await self._create_checkpoint_table()
                 self._initialized = True
                 logger.info("State repository initialized with PostgreSQL")
-            except (ConnectionError, OSError) as e:
+            except (ConnectionError, OSError):
                 logger.warning("PostgreSQL connection failed, using in-memory: {e}")
                 self._db_pool = None
                 self._initialized = True
@@ -490,7 +490,6 @@ class StateRepository:
     async def _save_to_db(self, record: AgentStateRecord) -> AgentStateRecord:
         """Save record to database with retry logic."""
         attempt = 0
-        last_error = None
 
         while attempt < self._max_retries:
             try:
@@ -532,8 +531,7 @@ class StateRepository:
                             f"Max retries ({self._max_retries}) exceeded for agent {record.agent_id}"
                         )
 
-            except (ConnectionError, OSError, TimeoutError) as e:
-                last_error = e
+            except (ConnectionError, OSError, TimeoutError):
                 attempt += 1
                 if attempt < self._max_retries:
                     await asyncio.sleep(self._retry_delay * (2 ** (attempt - 1)))
@@ -592,7 +590,7 @@ class StateRepository:
                         updated_at=row["updated_at"],
                         is_active=row["is_active"],
                     )
-        except (ConnectionError, OSError) as e:
+        except (ConnectionError, OSError):
             logger.error("Database load failed: {e}")
 
         return None
@@ -625,7 +623,7 @@ class StateRepository:
                     deleted = result != "DELETE 0"
                     logger.debug("State {'deleted' if deleted else 'not found'} for {agent_id}")
                     return deleted
-            except (ConnectionError, OSError) as e:
+            except (ConnectionError, OSError):
                 logger.error("Database delete failed: {e}")
 
         # Memory fallback
@@ -661,7 +659,7 @@ class StateRepository:
                         )
                         for row in rows
                     ]
-            except (ConnectionError, OSError) as e:
+            except (ConnectionError, OSError):
                 logger.error("Database list failed: {e}")
 
         # Memory fallback
@@ -719,7 +717,7 @@ class StateRepository:
                         extra={"version": version},
                     )
                     return checkpoint
-            except (ConnectionError, OSError) as e:
+            except (ConnectionError, OSError):
                 logger.error("Database checkpoint failed: {e}")
 
         # Memory fallback
@@ -758,7 +756,7 @@ class StateRepository:
                             created_at=row["created_at"],
                             metadata=row["metadata"],
                         )
-            except (ConnectionError, OSError) as e:
+            except (ConnectionError, OSError):
                 logger.error("Database checkpoint get failed: {e}")
 
         # Memory fallback
@@ -803,7 +801,7 @@ class StateRepository:
                         )
                         for row in rows
                     ]
-            except (ConnectionError, OSError) as e:
+            except (ConnectionError, OSError):
                 logger.error("Database checkpoints list failed: {e}")
 
         # Memory fallback

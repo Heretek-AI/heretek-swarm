@@ -565,7 +565,7 @@ class AgentActorMessageHandling(AgentActor):
                 reply_topic = validated.reply_to
             else:
                 reply_topic = message.content.get("reply_to", "health")
-        except ValueError as e:
+        except ValueError:
             logger.error("[{self.agent_id}] Health check validation failed: {e}")
             return
 
@@ -590,7 +590,7 @@ class AgentActorMessageHandling(AgentActor):
         # P2-7 fix: Validate input before processing
         try:
             self._validate_message_content("suspend", message.content)
-        except ValueError as e:
+        except ValueError:
             logger.error("[{self.agent_id}] Suspend validation failed: {e}")
             return
         await self.suspend()
@@ -600,7 +600,7 @@ class AgentActorMessageHandling(AgentActor):
         # P2-7 fix: Validate input before processing
         try:
             self._validate_message_content("resume", message.content)
-        except ValueError as e:
+        except ValueError:
             logger.error("[{self.agent_id}] Resume validation failed: {e}")
             return
         await self.resume()
@@ -612,7 +612,7 @@ class AgentActorMessageHandling(AgentActor):
             validated = self._validate_message_content("terminate", message.content)
             if validated and validated.reason:
                 logger.info("[{self.agent_id}] Termination requested: {validated.reason}")
-        except ValueError as e:
+        except ValueError:
             logger.error("[{self.agent_id}] Terminate validation failed: {e}")
             return
         await self.terminate()
@@ -726,7 +726,7 @@ class AgentActorMessageHandling(AgentActor):
                 input_data = message.content.get("input_data", {})
                 protocol = message.content.get("protocol", {})
                 reply_to = message.content.get("reply_to")
-        except ValueError as e:
+        except ValueError:
             logger.error("[{self.agent_id}] Collective task validation failed: {e}")
             return
 
@@ -807,7 +807,7 @@ Please provide your analysis and recommendation for this collective task."""
                     },
                     "confidence": 0.75,
                 }
-            except Exception as e:
+            except Exception:
                 logger.error("[{self.agent_id}] LLM contribution error: {e}")
 
         # Fallback contribution
@@ -908,7 +908,7 @@ Please provide your analysis and recommendation for this collective task."""
             except RuntimeError:
                 # No providers registered in router, fall through to swarms_agent
                 logger.debug("[{self.agent_id}] No router providers, using swarms_agent fallback")
-            except Exception as e:
+            except Exception:
                 logger.warning("[{self.agent_id}] Router failed, using swarms_agent fallback: {e}")
 
         # Fallback: use the swarms Agent directly
@@ -929,7 +929,7 @@ Please provide your analysis and recommendation for this collective task."""
         except TimeoutError:
             logger.error("[{self.agent_id}] LLM call timed out after {timeout}s")
             raise
-        except Exception as e:
+        except Exception:
             logger.error("[{self.agent_id}] LLM call failed: {e}", exc_info=True)
             raise
 
@@ -958,13 +958,13 @@ Please provide your analysis and recommendation for this collective task."""
                             f"[{self.agent_id}] Heartbeat published",
                             extra={"state": heartbeat_data["state"]},
                         )
-                    except Exception as e:
+                    except Exception:
                         logger.warning("[{self.agent_id}] Failed to publish heartbeat: {e}")
 
                 await asyncio.sleep(self.heartbeat_interval)
             except asyncio.CancelledError:
                 break
-            except Exception as e:
+            except Exception:
                 logger.error("[{self.agent_id}] Heartbeat loop error: {e}")
 
 

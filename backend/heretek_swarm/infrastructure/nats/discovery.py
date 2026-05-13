@@ -186,7 +186,7 @@ class AgentRegistry:
                         del self._agents[announcement.agent_id]
                         logger.info("Agent left: {announcement.agent_id}")
 
-        except Exception as e:
+        except Exception:
             logger.error("Error handling presence: {e}")
 
     async def _handle_heartbeat(self, msg: dict) -> None:
@@ -200,7 +200,7 @@ class AgentRegistry:
                     agent.last_heartbeat = heartbeat.timestamp
                     agent.status = heartbeat.status
 
-        except Exception as e:
+        except Exception:
             logger.error("Error handling heartbeat: {e}")
 
     async def register_agent(
@@ -295,7 +295,7 @@ class AgentRegistry:
                     await asyncio.sleep(self.HEARTBEAT_INTERVAL)
                 except asyncio.CancelledError:
                     break
-                except Exception as e:
+                except Exception:
                     logger.error("Heartbeat error for {agent_id}: {e}")
 
         task = asyncio.create_task(heartbeat_loop())

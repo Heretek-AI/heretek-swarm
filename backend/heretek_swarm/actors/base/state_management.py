@@ -278,7 +278,7 @@ class AgentActorStateManagement(AgentActor):
                     extra={"path": state_file},
                 )
                 return
-        except Exception as e:
+        except Exception:
             logger.error("[{self.agent_id}] File system load failed: {e}", exc_info=True)
 
         # No state found - actor is starting fresh

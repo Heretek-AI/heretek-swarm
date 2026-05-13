@@ -153,10 +153,10 @@ class LogRotator:
                         elif size > compress_threshold:
                             files_to_compress.append(file_path)
 
-                except OSError as e:
+                except OSError:
                     logger.warning("Failed to stat log file {file_path}: {e}")
                     self._stats["errors"] += 1
-        except OSError as e:
+        except OSError:
             logger.error("Failed to list log directory: {e}")
             self._stats["errors"] += 1
 
@@ -174,7 +174,7 @@ class LogRotator:
                     self._stats["files_removed"] += 1
                     self._stats["bytes_freed"] += size
                     logger.debug("Removed old log file: {file_path}")
-                except OSError as e:
+                except OSError:
                     logger.error("Failed to remove {file_path}: {e}")
                     self._stats["errors"] += 1
 
@@ -207,7 +207,7 @@ class LogRotator:
                         f"({original_size / 1024 / 1024:.1f}MB -> "
                         f"{compressed_size / 1024 / 1024:.1f}MB)"
                     )
-                except OSError as e:
+                except OSError:
                     logger.error("Failed to compress {file_path}: {e}")
                     self._stats["errors"] += 1
 
@@ -308,7 +308,7 @@ class DatabaseMaintenance:
         except ImportError:
             logger.warning("asyncpg not available, skipping DB maintenance")
             return self._stats
-        except Exception as e:
+        except Exception:
             logger.error("Failed to connect to database: {e}")
             self._stats["errors"] += 1
             return self._stats
@@ -338,7 +338,7 @@ class DatabaseMaintenance:
                     await conn.execute(f'VACUUM (ANALYZE) "{table}"')
                     self._stats["vacuum_analyze_runs"] += 1
                     logger.debug("VACUUM ANALYZE completed for {table}")
-            except Exception as e:
+            except Exception:
                 logger.error("VACUUM ANALYZE failed for {table}: {e}")
                 self._stats["errors"] += 1
 
@@ -366,7 +366,7 @@ class DatabaseMaintenance:
                 count = int(result.split()[-1]) if result != "UPDATE 0" else 0
                 self._stats["orphaned_deleted"] += count
                 logger.debug("Pruned {count} orphaned agent_states")
-        except Exception as e:
+        except Exception:
             logger.error("Failed to prune orphaned records: {e}")
             self._stats["errors"] += 1
 
@@ -394,7 +394,7 @@ class DatabaseMaintenance:
                     )
                     self._stats["checkpoints_pruned"] += len(result) if result else 0
                     logger.debug("Pruned excess checkpoints from {table}")
-        except Exception as e:
+        except Exception:
             logger.error("Failed to prune checkpoints: {e}")
             self._stats["errors"] += 1
 
@@ -674,7 +674,7 @@ class SelfMaintenanceScheduler:
         # Run final rotation before shutdown
         try:
             await self._log_rotator.rotate()
-        except Exception as e:
+        except Exception:
             logger.error("Final log rotation failed: {e}")
 
     # -------------------------------------------------------------------------
@@ -710,7 +710,7 @@ class SelfMaintenanceScheduler:
                 pass
             except asyncio.CancelledError:
                 break
-            except Exception as e:
+            except Exception:
                 logger.error("Maintenance loop error: {e}")
                 await asyncio.sleep(60)
 

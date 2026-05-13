@@ -480,7 +480,7 @@ class PerceiverAgent(
                     }
             except TimeoutError:
                 logger.warning("[{self.agent_id}] Image LLM analysis timed out")
-            except Exception as e:
+            except Exception:
                 logger.error("[{self.agent_id}] Image LLM analysis error: {e}")
 
         # Fallback: basic metadata extraction
@@ -691,7 +691,7 @@ class PerceiverAgent(
                     },
                 },
             )
-        except Exception as e:
+        except Exception:
             logger.warning("[{self.agent_id}] Failed to store in Historian: {e}")
 
     async def _handle_extract_features(self, message: ActorMessage) -> None:

@@ -282,7 +282,7 @@ class AgentActor:
         logger.info(
             f"[{self.agent_id}] Actor initialized",
             extra={
-                "name": self.name,
+                "agent_name": self.name,
                 "topics": self.topics,
                 "capabilities": self.capabilities,
             },
@@ -459,7 +459,7 @@ class AgentActor:
                 f"[{self.agent_id}] Actor spawn complete",
                 extra={"mailbox_size": self.mailbox.qsize()},
             )
-        except Exception as e:
+        except Exception:
             logger.error("[{self.agent_id}] Spawn failed: {e}", exc_info=True)
             self.state = ActorState.ERROR
             self.error_count += 1
@@ -493,7 +493,7 @@ class AgentActor:
             self.state = ActorState.TERMINATED
 
             logger.info("[{self.agent_id}] Agent terminated")
-        except Exception as e:
+        except Exception:
             logger.error("[{self.agent_id}] Terminate failed: {e}", exc_info=True)
             self.state = ActorState.ERROR
             raise
