@@ -43,11 +43,17 @@ logger = structlog.get_logger("model_garage")
 # Configuration — canonical path from shared config module
 # ============================================================================
 
-HEREKET_LOGS_DIR = Path.home() / ".heretek-swarm" / "logs"
+_LOG_DIR = Path.home() / ".heretek-swarm" / "logs"
 
-# Ensure directories exist
-Path.home().as_posix()  # (keep import side-effect guard happy — Path.home is already imported)
-HEREKET_LOGS_DIR.mkdir(parents=True, exist_ok=True)
+try:
+    _LOG_DIR.mkdir(parents=True, exist_ok=True)
+except PermissionError:
+    # Container / restricted environment — use /tmp fallback
+    import tempfile
+    _LOG_DIR = Path(tempfile.gettempdir()) / ".heretek-swarm" / "logs"
+    _LOG_DIR.mkdir(parents=True, exist_ok=True)
+
+HEREKET_LOGS_DIR = _LOG_DIR
 
 # Import shared config-path after module constants to avoid circular reference.
 # This is always safe because config.__init__ only depends on its sub-modules.

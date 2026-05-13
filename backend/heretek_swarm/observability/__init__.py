@@ -46,7 +46,14 @@ if TYPE_CHECKING:
 
 HERETEK_DATA_DIR = Path(os.environ.get("HERETEK_HOME", Path.home() / ".heretek-swarm"))
 HERETEK_LOGS_DIR = HERETEK_DATA_DIR / "logs"
-HERETEK_LOGS_DIR.mkdir(parents=True, exist_ok=True)
+
+try:
+    HERETEK_LOGS_DIR.mkdir(parents=True, exist_ok=True)
+except PermissionError:
+    # Container / restricted environment — use /tmp fallback
+    HERETEK_DATA_DIR = Path("/tmp/.heretek-swarm")
+    HERETEK_LOGS_DIR = HERETEK_DATA_DIR / "logs"
+    HERETEK_LOGS_DIR.mkdir(parents=True, exist_ok=True)
 
 
 class LogLevel(StrEnum):
