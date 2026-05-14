@@ -1,67 +1,99 @@
 """
 Encryption utilities for API key encryption in configuration service.
 
-Uses Fernet symmetric encryption to safely store API keys in the database.
+Uses Fernet symmetric encryption with file-based key persistence.
+The encryption key lives at /config/encryption.key (a named Docker volume).
+On first startup, a key is auto-generated and persisted with 0o600 permissions.
+On subsequent startups, the existing key is loaded and validated.
 """
 
 from __future__ import annotations
 
-import base64
+import os
+import stat
 from typing import Any
 
 import structlog
-
-try:
-    from cryptography.fernet import Fernet
-
-    CRYPTOGRAPHY_AVAILABLE = True
-except ImportError:
-    CRYPTOGRAPHY_AVAILABLE = False
-    Fernet = None
+from cryptography.fernet import Fernet
 
 logger = structlog.get_logger("config.encryption")
+
+# Path to the persistent encryption key file (Docker named volume).
+_KEY_PATH: str = os.environ.get(
+    "HERETEK_ENCRYPTION_KEY_PATH", "/config/encryption.key"
+)
+
+
+def _write_key_file(path: str, key_bytes: bytes) -> None:
+    """Write key bytes to file with 0o600 permissions (owner-only read/write)."""
+    fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
+    try:
+        os.write(fd, key_bytes)
+    finally:
+        os.close(fd)
+
+
+def _read_key_file(path: str) -> bytes:
+    """Read key bytes from file.  Returns content on success, raises on failure."""
+    fd = os.open(path, os.O_RDONLY)
+    try:
+        return os.read(fd, 4096)  # Fernet keys are ~44 bytes, 4096 is generous
+    finally:
+        os.close(fd)
 
 
 class ApiKeyEncryptor:
     """
     Handles encryption and decryption of API keys.
 
-    Uses Fernet symmetric encryption. The encryption key should be a
-    32-byte URL-safe base64-encoded key. Generate with: Fernet.generate_key()
+    Uses Fernet symmetric encryption with file-based key persistence.
+    The key file is read from /config/encryption.key on startup.
+    If the file does not exist, a new Fernet key is generated and persisted.
     """
 
-    def __init__(self, encryption_key: str | None = None) -> None:
-        """
-        Initialize the encryptor.
+    def __init__(self) -> None:
+        """Initialize the encryptor from the persistent key file.
 
-        Args:
-            encryption_key: The encryption key. If not provided, encryption
-                is disabled (keys stored as-is).
+        Reads /config/encryption.key; generates and persists a new key if
+        the file does not exist.  Validates the loaded key with a test
+        encrypt/decrypt cycle and raises RuntimeError on failure.
         """
         self._fernet: Fernet | None = None
-        self._encryption_key = encryption_key
-        if self._encryption_key:
-            self._initialize_encryption()
+
+        # Ensure the directory for the key file exists.
+        key_dir = os.path.dirname(_KEY_PATH)
+        if key_dir:
+            os.makedirs(key_dir, exist_ok=True)
+
+        # Load or generate the key.
+        if os.path.isfile(_KEY_PATH):
+            key_bytes = _read_key_file(_KEY_PATH)
+            logger.info("encryption_key_loaded", path=_KEY_PATH)
         else:
-            logger.warning("CONFIG_ENCRYPTION_KEY not set - API keys will not be encrypted")
+            key_bytes = Fernet.generate_key()
+            _write_key_file(_KEY_PATH, key_bytes)
+            logger.info("encryption_key_generated", path=_KEY_PATH)
 
-    def _initialize_encryption(self) -> None:
-        """Initialize Fernet encryption."""
-        if not CRYPTOGRAPHY_AVAILABLE:
-            logger.error("cryptography package not installed - encryption disabled")
-            return
+        # Validate the key with a test encrypt/decrypt cycle.
+        self._initialize_with_key(key_bytes)
 
+    def _initialize_with_key(self, key_bytes: bytes) -> None:
+        """Validate the provided key bytes and set up the Fernet instance."""
         try:
-            if len(self._encryption_key) == 44 and self._encryption_key.endswith("="):
-                key = self._encryption_key.encode()
-            else:
-                key = base64.urlsafe_b64encode(self._encryption_key.encode().ljust(32))
-
-            self._fernet = Fernet(key)
-            logger.info("API key encryption initialized")
+            candidate = Fernet(key_bytes)
+            # Test encrypt/decrypt cycle to validate the key.
+            test_plaintext = b"heretek-encryption-validation"
+            ciphertext = candidate.encrypt(test_plaintext)
+            decrypted = candidate.decrypt(ciphertext)
+            if decrypted != test_plaintext:
+                raise ValueError("Encryption validation round-trip mismatch")
+            self._fernet = candidate
+            logger.info("encryption_key_validation_passed")
         except Exception as e:
-            logger.error("Failed to initialize encryption", error=str(e))
-            self._fernet = None
+            logger.error("encryption_key_validation_failed", error=str(e))
+            raise RuntimeError(
+                f"Encryption key validation failed: {e}"
+            ) from e
 
     @property
     def is_available(self) -> bool:
@@ -73,46 +105,46 @@ class ApiKeyEncryptor:
         Encrypt an API key using Fernet symmetric encryption.
 
         Args:
-            api_key: The plain text API key to encrypt
+            api_key: The plain text API key to encrypt.
 
         Returns:
-            Encrypted API key (base64 encoded)
+            Encrypted API key (base64 encoded).
 
         Raises:
-            ValueError: If encryption is not configured
+            ValueError: If encryption is not available.
         """
-        if not self._fernet:
-            return api_key
+        if self._fernet is None:
+            raise ValueError("Encryption not available — encryptor not initialized")
 
         try:
             encrypted = self._fernet.encrypt(api_key.encode())
             return encrypted.decode()
         except Exception as e:
             logger.error("Failed to encrypt API key", error=str(e))
-            raise ValueError(f"Encryption failed: {e}")
+            raise ValueError(f"Encryption failed: {e}") from e
 
     def decrypt(self, encrypted_key: str) -> str:
         """
         Decrypt an API key using Fernet symmetric encryption.
 
         Args:
-            encrypted_key: The encrypted API key to decrypt
+            encrypted_key: The encrypted API key to decrypt.
 
         Returns:
-            Decrypted plain text API key
+            Decrypted plain text API key.
 
         Raises:
-            ValueError: If decryption fails or encryption not configured
+            ValueError: If decryption fails or encryption is not available.
         """
-        if not self._fernet:
-            return encrypted_key
+        if self._fernet is None:
+            raise ValueError("Encryption not available — encryptor not initialized")
 
         try:
             decrypted = self._fernet.decrypt(encrypted_key.encode())
             return decrypted.decode()
         except Exception as e:
             logger.error("Failed to decrypt API key", error=str(e))
-            raise ValueError(f"Decryption failed: {e}")
+            raise ValueError(f"Decryption failed: {e}") from e
 
     def encrypt_config(self, config: dict[str, Any]) -> dict[str, Any]:
         """
@@ -124,10 +156,13 @@ class ApiKeyEncryptor:
             return {}
 
         sensitive_keys = {"api_key", "auth_token", "secret", "password", "credential"}
-        encrypted = {}
+        encrypted: dict[str, Any] = {}
 
         for key, value in config.items():
-            if any(sensitive in key.lower() for sensitive in sensitive_keys) and isinstance(value, str):
+            if (
+                any(sensitive in key.lower() for sensitive in sensitive_keys)
+                and isinstance(value, str)
+            ):
                 encrypted[key] = self.encrypt(value)
             else:
                 encrypted[key] = value
@@ -142,10 +177,13 @@ class ApiKeyEncryptor:
             return {}
 
         sensitive_keys = {"api_key", "auth_token", "secret", "password", "credential"}
-        decrypted = {}
+        decrypted: dict[str, Any] = {}
 
         for key, value in config.items():
-            if any(sensitive in key.lower() for sensitive in sensitive_keys) and isinstance(value, str):
+            if (
+                any(sensitive in key.lower() for sensitive in sensitive_keys)
+                and isinstance(value, str)
+            ):
                 try:
                     decrypted[key] = self.decrypt(value)
                 except ValueError:
@@ -154,17 +192,3 @@ class ApiKeyEncryptor:
                 decrypted[key] = value
 
         return decrypted
-
-
-# Global encryptor instance
-_encryptor: ApiKeyEncryptor | None = None
-
-
-def get_encryptor() -> ApiKeyEncryptor:
-    """Get or create the global encryptor instance."""
-    global _encryptor
-    if _encryptor is None:
-        import os
-        encryption_key = os.environ.get("CONFIG_ENCRYPTION_KEY")
-        _encryptor = ApiKeyEncryptor(encryption_key)
-    return _encryptor

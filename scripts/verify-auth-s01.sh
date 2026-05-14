@@ -7,7 +7,7 @@ FAILED=0
 
 # Define test endpoints for each router (one representative endpoint per router)
 ENDPOINTS=(
-  "/api/wizard/status"
+  "/api/wizard/config"
   "/api/v1/providers/llm"
   "/api/plugins"
   "/api/collective/evolution-status"

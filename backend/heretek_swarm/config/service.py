@@ -109,9 +109,8 @@ class ConfigurationService(ConfigurationServiceCrud):
         self._cache: dict[str, ConfigCacheEntry] = {}
         self._cache_ttl = timedelta(minutes=5)
 
-        # Encryption for API keys using ApiKeyEncryptor
-        self._encryptor = ApiKeyEncryptor(os.environ.get("CONFIG_ENCRYPTION_KEY"))
-        self._fernet = self._encryptor._fernet  # noqa: SLF001
+        # Encryption for API keys using ApiKeyEncryptor (file-based key persistence)
+        self._encryptor = ApiKeyEncryptor()
 
         logger.info("ConfigurationService initialized", database_url=self.database_url)
 
