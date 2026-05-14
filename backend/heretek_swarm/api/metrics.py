@@ -14,9 +14,10 @@ Features:
 """
 
 import structlog
-from fastapi import APIRouter, Response
+from fastapi import APIRouter, Depends, Response
 from fastapi.responses import PlainTextResponse
 
+from heretek_swarm.gateway.auth import verify_auth
 from heretek_swarm.observability.metrics import (
     SwarmMetricsCollector,
     get_metrics_collector,
@@ -28,7 +29,7 @@ from heretek_swarm.observability.prometheus_metrics import (
 
 logger = structlog.get_logger(__name__)
 
-router = APIRouter(tags=["metrics"])
+router = APIRouter(tags=["metrics"], dependencies=[Depends(verify_auth)])
 
 # Singleton for metrics integration
 _metrics: PrometheusMetrics | None = None

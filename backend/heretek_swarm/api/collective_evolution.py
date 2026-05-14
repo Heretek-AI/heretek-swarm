@@ -13,7 +13,7 @@ GET /api/collective/evolution-status
 from typing import Any
 
 import structlog
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 
 from heretek_swarm.collective.adaptive_learning import (
     AdaptiveLearningRateController,
@@ -21,10 +21,15 @@ from heretek_swarm.collective.adaptive_learning import (
 from heretek_swarm.collective.emergent_detection import (
     EvolutionEngine,
 )
+from heretek_swarm.gateway.auth import verify_auth
 
 logger = structlog.get_logger("api.collective_evolution")
 
-router = APIRouter(prefix="/api/collective", tags=["collective"])
+router = APIRouter(
+    prefix="/api/collective",
+    tags=["collective"],
+    dependencies=[Depends(verify_auth)],
+)
 
 
 # Global instances (will be initialized by lifespan or manually)

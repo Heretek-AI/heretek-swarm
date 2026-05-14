@@ -13,12 +13,14 @@ from datetime import UTC, datetime
 from typing import Any
 
 import structlog
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from pydantic import BaseModel
+
+from heretek_swarm.gateway.auth import verify_auth
 
 logger = structlog.get_logger("api.autonomous")
 
-router = APIRouter(prefix="/autonomous", tags=["autonomous"])
+router = APIRouter(prefix="/autonomous", tags=["autonomous"], dependencies=[Depends(verify_auth)])
 
 # In-memory cache of autonomous agent statuses
 # Key: agent_id, Value: status dict with timestamp

@@ -13,7 +13,7 @@ from enum import StrEnum
 from typing import Any
 
 import structlog
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 
 from heretek_swarm.config.models import (
@@ -22,6 +22,7 @@ from heretek_swarm.config.models import (
     InfrastructureService,
 )
 from heretek_swarm.config.service import get_config_service
+from heretek_swarm.gateway.auth import verify_auth
 from heretek_swarm.infrastructure.nats.publisher import (
     SwarmEvent,
     get_nats_publisher,
@@ -37,7 +38,11 @@ from heretek_swarm.infrastructure.provisioner import (
 
 logger = structlog.get_logger("api.provisioner")
 
-router = APIRouter(prefix="/api/wizard/provision", tags=["Provisioner"])
+router = APIRouter(
+    prefix="/api/wizard/provision",
+    tags=["Provisioner"],
+    dependencies=[Depends(verify_auth)],
+)
 
 
 # =============================================================================

@@ -18,9 +18,10 @@ from datetime import UTC, datetime
 from typing import Any
 
 import structlog
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel, Field
 
+from heretek_swarm.gateway.auth import verify_auth
 from heretek_swarm.mcp.registry import MCPToolRegistry
 
 logger = structlog.get_logger("mcp.server")
@@ -127,7 +128,7 @@ class ServerInfo(BaseModel):
 # MCP Router
 # =============================================================================
 
-router = APIRouter(prefix="/mcp", tags=["mcp"])
+router = APIRouter(prefix="/mcp", tags=["mcp"], dependencies=[Depends(verify_auth)])
 
 
 # =============================================================================

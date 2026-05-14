@@ -14,7 +14,7 @@ from typing import Any
 from uuid import UUID
 
 import structlog
-from fastapi import APIRouter, HTTPException, Response
+from fastapi import APIRouter, Depends, HTTPException, Response
 from structlog import get_logger
 
 from heretek_swarm.config.models import (
@@ -29,6 +29,7 @@ from heretek_swarm.config.service import (
     ConfigurationService,
     get_config_service,
 )
+from heretek_swarm.gateway.auth import verify_auth
 from heretek_swarm.infrastructure.health import (
     check_all_infrastructure,
     check_infrastructure_health,
@@ -42,7 +43,11 @@ logger = get_logger("api.wizard")
 
 logger = structlog.get_logger("api.wizard")
 
-router = APIRouter(prefix="/api/wizard", tags=["Configuration Wizard"])
+router = APIRouter(
+    prefix="/api/wizard",
+    tags=["Configuration Wizard"],
+    dependencies=[Depends(verify_auth)],
+)
 
 
 # =============================================================================

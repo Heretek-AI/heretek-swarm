@@ -17,12 +17,14 @@ from datetime import UTC, datetime
 from typing import Any
 
 import structlog
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
+
+from heretek_swarm.gateway.auth import verify_auth
 
 logger = structlog.get_logger("api.plugins")
 
 # Create router
-router = APIRouter(prefix="/api/plugins", tags=["plugins"])
+router = APIRouter(prefix="/api/plugins", tags=["plugins"], dependencies=[Depends(verify_auth)])
 
 # Plugin state management
 _plugin_states: dict[str, dict[str, Any]] = {}

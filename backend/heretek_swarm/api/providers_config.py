@@ -27,10 +27,11 @@ import uuid
 from typing import Any
 
 import structlog
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel, Field
 
 from heretek_swarm.config import get_config_path
+from heretek_swarm.gateway.auth import verify_auth
 from heretek_swarm.llm.model_garage import (
     ProviderConfig,
     ProviderType,
@@ -39,7 +40,11 @@ from heretek_swarm.llm.model_garage import (
 
 logger = structlog.get_logger("api.providers_config")
 
-router = APIRouter(prefix="/api/v1/providers", tags=["Providers"])
+router = APIRouter(
+    prefix="/api/v1/providers",
+    tags=["Providers"],
+    dependencies=[Depends(verify_auth)],
+)
 
 
 # =============================================================================
