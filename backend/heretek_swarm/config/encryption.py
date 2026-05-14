@@ -10,7 +10,7 @@ On subsequent startups, the existing key is loaded and validated.
 from __future__ import annotations
 
 import os
-import stat
+from pathlib import Path
 from typing import Any
 
 import structlog
@@ -61,12 +61,13 @@ class ApiKeyEncryptor:
         self._fernet: Fernet | None = None
 
         # Ensure the directory for the key file exists.
-        key_dir = os.path.dirname(_KEY_PATH)
-        if key_dir:
-            os.makedirs(key_dir, exist_ok=True)
+        key_path = Path(_KEY_PATH)
+        key_dir = key_path.parent
+        if str(key_dir):
+            key_dir.mkdir(parents=True, exist_ok=True)
 
         # Load or generate the key.
-        if os.path.isfile(_KEY_PATH):
+        if key_path.is_file():
             key_bytes = _read_key_file(_KEY_PATH)
             logger.info("encryption_key_loaded", path=_KEY_PATH)
         else:

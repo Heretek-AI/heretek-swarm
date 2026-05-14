@@ -27,10 +27,10 @@ from .db_models import (
     EmbeddingProvider as EmbeddingProviderORM,
 )
 from .db_models import (
-    LLMProvider as LLMProviderORM,
+    InfrastructureConfig as InfrastructureConfigORM,
 )
 from .db_models import (
-    InfrastructureConfig as InfrastructureConfigORM,
+    LLMProvider as LLMProviderORM,
 )
 from .db_models import (
     UserConfiguration as UserConfigurationORM,

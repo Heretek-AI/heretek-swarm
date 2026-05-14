@@ -12,7 +12,7 @@ from typing import TYPE_CHECKING
 import pytest
 from cryptography.fernet import Fernet
 
-from heretek_swarm.config.encryption import (  # type: ignore[import-untyped]
+from heretek_swarm.config.encryption import (
     ApiKeyEncryptor,
     _read_key_file,
     _write_key_file,
