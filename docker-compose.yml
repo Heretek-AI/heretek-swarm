@@ -97,6 +97,8 @@ services:
       EMBEDDING_API_KEY: ${EMBEDDING_API_KEY:-lemonade}
       EMBEDDER_MODEL: ${EMBEDDER_MODEL:-nomic-embed-text-v2-moe-GGUF}
       EMBEDDING_DIMENSIONS: ${EMBEDDING_DIMENSIONS:-768}
+    volumes:
+      - config_keys:/config
     depends_on:
       postgres:
         condition: service_healthy
@@ -139,3 +141,4 @@ volumes:
   redis_data:
   qdrant_data:
   nats_data:
+  config_keys:

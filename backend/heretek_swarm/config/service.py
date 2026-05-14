@@ -110,7 +110,7 @@ class ConfigurationService(ConfigurationServiceCrud):
         self._cache_ttl = timedelta(minutes=5)
 
         # Encryption for API keys using ApiKeyEncryptor (file-based key persistence)
-        self._encryptor = ApiKeyEncryptor()
+        self._encryptor: ApiKeyEncryptor = ApiKeyEncryptor()
 
         logger.info("ConfigurationService initialized", database_url=self.database_url)
 
