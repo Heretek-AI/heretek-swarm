@@ -21,10 +21,8 @@ from typing import Any
 
 import structlog
 from fastapi import Depends, FastAPI, HTTPException
-from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
-from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel
 
 from heretek_swarm.agents.agent_factory import build_agent_for
 from heretek_swarm.swarm_logging.config import logger as logging_logger
@@ -110,7 +108,6 @@ async def lifespan(app: FastAPI):
     await _init_memory_store()
     await _init_mem0()
     await _init_nats_bridge()
-    await _init_spa_mount(app)
 
     # Start the WebSocket status pump — must happen after supervisor init
     _ws_pump_task = asyncio.create_task(_ws_status_pump())
@@ -420,23 +417,6 @@ async def _init_nats_bridge() -> None:
     except Exception as e:
         logger.warning("NATS bridge initialization failed", error=str(e))
         _nats_mesh = None
-
-
-async def _init_spa_mount(app: FastAPI) -> None:
-    """Mount React dashboard static files if dist directory exists."""
-    import os
-
-    # Calculate project root: backend/heretek_swarm/api/main.py -> project root (4 levels up)
-    project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))  # noqa: PTH120
-    dist_path = os.environ.get(
-        "DASHBOARD_DIST_PATH", os.path.join(project_root, "swarm-dashboard", "dist")  # noqa: PTH118
-    )
-
-    if os.path.isdir(dist_path):  # noqa: PTH112,ASYNC240
-        app.mount("/assets", StaticFiles(directory=dist_path, html=True), name="dashboard_assets")
-        logger.info("dashboard_spa_mounted", dist_path=dist_path)
-    else:
-        logger.warning("dashboard_dist_not_found", dist_path=dist_path)
 
 
 async def _ws_status_pump() -> None:
@@ -1236,29 +1216,6 @@ async def get_a2a_conversation(from_agent: str, to_agent: str, limit: int = 50):
 
 
 # =============================================================================
-# OpenAPI Documentation
-# =============================================================================
-
-
-@app.get("/", include_in_schema=False)
-async def root():
-    """Root endpoint serving the React dashboard index.html."""
-    import os
-
-    # Calculate project root: backend/heretek_swarm/api/main.py -> project root (4 levels up)
-    project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))  # noqa: PTH120
-    dist_path = os.environ.get(
-        "DASHBOARD_DIST_PATH", os.path.join(project_root, "swarm-dashboard", "dist")  # noqa: PTH118
-    )
-    index_path = os.path.join(dist_path, "index.html")  # noqa: PTH118
-
-    if os.path.isfile(index_path):  # noqa: PTH113,ASYNC240
-        return FileResponse(index_path)
-    logger.warning("dashboard_dist_not_found", dist_path=dist_path)
-    raise HTTPException(404, "Dashboard not available")
-
-
-# =============================================================================
 # Prompt Endpoint — Swarm Deliberation
 # =============================================================================
 
@@ -1541,32 +1498,4 @@ def _synthesize_fallback(opinions: list[dict[str, Any]]) -> str:
 from heretek_swarm.consensus.deliberation import Position
 
 
-# =============================================================================
-# SPA Catch-all Route (must be last to not intercept API routes)
-# =============================================================================
 
-
-@app.get("/{path:path}", include_in_schema=False)
-async def serve_spa(path: str):
-    """
-    SPA catch-all route - serves index.html for any non-API, non-metrics path.
-    Must be registered after all API routes.
-    """
-    import os
-
-    # Skip API routes and metrics endpoint
-    if path.startswith(("api/", "metrics", "docs", "redoc", "openapi")):
-        raise HTTPException(404, "Not found")
-
-    # Calculate project root: backend/heretek_swarm/api/main.py -> project root (4 levels up)
-    project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))  # noqa: PTH120
-    dist_path = os.environ.get(
-        "DASHBOARD_DIST_PATH", os.path.join(project_root, "swarm-dashboard", "dist")  # noqa: PTH118
-    )
-    index_path = os.path.join(dist_path, "index.html")  # noqa: PTH118
-
-    if os.path.isfile(index_path):  # noqa: PTH113,ASYNC240
-        logger.debug("spa_fallback", path=path)
-        return FileResponse(index_path)
-    logger.warning("dashboard_dist_not_found", dist_path=dist_path)
-    raise HTTPException(404, "Dashboard not available")
