@@ -411,7 +411,8 @@ async def update_provider(
     )
 
     if not updated:
-        raise HTTPException(500, "Failed to update provider")
+        logger.error("provider_update_failed", provider_id=str(provider_uuid))
+        raise HTTPException(500, "Internal server error")
 
     logger.info(
         "provider_updated",
@@ -462,7 +463,8 @@ async def delete_provider(provider_id: str) -> Response:
     )
 
     if not deleted:
-        raise HTTPException(500, "Failed to delete provider")
+        logger.error("provider_delete_failed", provider_id=str(provider_uuid))
+        raise HTTPException(500, "Internal server error")
 
     logger.info(
         "provider_deleted",
@@ -1157,8 +1159,8 @@ async def list_infrastructure_configs() -> dict[str, Any]:
             "total": len(configs),
         }
     except Exception as e:
-        logger.error("Failed to list infrastructure configs", error=str(e))
-        raise HTTPException(500, f"Failed to list infrastructure configs: {e!s}") from e
+        logger.exception("infrastructure_config_list_failed")
+        raise HTTPException(500, "Internal server error") from e
 
 
 @router.post("/infrastructure")
@@ -1228,12 +1230,11 @@ async def create_infrastructure_config(
             "message": "Configuration created",
         }
     except Exception as e:
-        logger.error(
-            "Failed to create/update infrastructure config",
+        logger.exception(
+            "infrastructure_config_create_failed",
             service=config.service.value,
-            error=str(e),
         )
-        raise HTTPException(500, f"Failed to create/update infrastructure config: {e!s}") from e
+        raise HTTPException(500, "Internal server error") from e
 
 
 @router.get("/infrastructure/{service}")
@@ -1280,8 +1281,8 @@ async def get_infrastructure_config(service: str) -> dict[str, Any]:
     except HTTPException:
         raise
     except Exception as e:
-        logger.error("Failed to get infrastructure config", service=service, error=str(e))
-        raise HTTPException(500, f"Failed to get infrastructure config: {e!s}") from e
+        logger.exception("infrastructure_config_get_failed", service=service)
+        raise HTTPException(500, "Internal server error") from e
 
 
 @router.post("/infrastructure/{service}/health-check")
@@ -1344,8 +1345,8 @@ async def check_service_health(service: str) -> dict[str, Any]:
     except HTTPException:
         raise
     except Exception as e:
-        logger.error("Health check failed", service=service, error=str(e))
-        raise HTTPException(500, f"Health check failed: {e!s}") from e
+        logger.exception("infrastructure_health_check_failed", service=service)
+        raise HTTPException(500, "Internal server error") from e
 
 
 @router.post("/infrastructure/health-check-all")
@@ -1420,8 +1421,8 @@ async def check_all_services_health() -> dict[str, Any]:
             },
         }
     except Exception as e:
-        logger.error("Failed to run health checks", error=str(e))
-        raise HTTPException(500, f"Failed to run health checks: {e!s}") from e
+        logger.exception("infrastructure_health_check_all_failed")
+        raise HTTPException(500, "Internal server error") from e
 
 
 @router.delete("/infrastructure/{service}")
@@ -1456,8 +1457,8 @@ async def delete_infrastructure_config(service: str) -> Response:
     except HTTPException:
         raise
     except Exception as e:
-        logger.error("Failed to delete infrastructure config", service=service, error=str(e))
-        raise HTTPException(500, f"Failed to delete infrastructure config: {e!s}") from e
+        logger.exception("infrastructure_config_delete_failed", service=service)
+        raise HTTPException(500, "Internal server error") from e
 
 
 # =============================================================================
