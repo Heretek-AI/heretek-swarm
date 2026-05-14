@@ -466,7 +466,7 @@ async def list_agent_configs(
     service: ConfigurationService = Depends(get_service),  # noqa: B008
 ) -> dict[str, Any]:
     """List agent configurations."""
-    configs = await service.list_agent_configs(agent_type=agent_type, active_only=active_only)
+    configs = await service.list_agent_configs(agent_type=agent_type, include_inactive=not active_only)
     return {
         "configs": [c.model_dump() for c in configs],
         "total": len(configs),

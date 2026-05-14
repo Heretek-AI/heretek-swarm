@@ -6,6 +6,12 @@
 # =============================================================================
 FROM node:20-alpine AS builder
 
+# Accept build-time env vars for Vite
+ARG VITE_API_URL
+ARG VITE_API_HOST
+ENV VITE_API_URL=${VITE_API_URL}
+ENV VITE_API_HOST=${VITE_API_HOST}
+
 WORKDIR /app
 
 # Copy package files and local tarballs first for layer caching

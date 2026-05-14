@@ -25,6 +25,7 @@ import {
   AgentDefaultsSection,
   ImportExportSection,
   MCPToolsSection,
+  ModelGarage,
 } from '.';
 
 interface TabConfig {
@@ -39,6 +40,7 @@ interface SettingsPageProps {
 
 const tabs: TabConfig[] = [
   { id: 'system', label: 'System', icon: '⚙️' },
+  { id: 'providers', label: 'Providers', icon: '🧠' },
   { id: 'agents', label: 'Agent Defaults', icon: '👥' },
   { id: 'mcp', label: 'MCP Tools', icon: '🔧' },
   { id: 'import', label: 'Import/Export', icon: '📁' },
@@ -88,6 +90,8 @@ export function SettingsPage({ onRerunSetup }: SettingsPageProps) {
     switch (activeTab) {
       case 'system':
         return <SystemConfigSection />;
+      case 'providers':
+        return <ModelGarage />;
       case 'agents':
         return <AgentDefaultsSection />;
       case 'mcp':

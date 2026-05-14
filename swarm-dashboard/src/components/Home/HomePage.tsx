@@ -12,7 +12,7 @@ import { ErrorBoundary, SimpleErrorFallback } from '../UI/ErrorBoundary';
 import { EmptyState } from '../UI/EmptyState';
 
 // API URL configuration
-const API_URL = import.meta.env.VITE_API_HOST || localStorage.getItem('swarm_api_host') || '';
+const API_URL = import.meta.env.VITE_API_URL || import.meta.env.VITE_API_HOST || localStorage.getItem('swarm_api_host') || '';
 
 // Types
 interface SystemHealth {
@@ -76,7 +76,14 @@ export function HomePage() {
     try {
       const response = await fetch(`${API_URL}/api/health`);
       if (!response.ok) throw new Error('Failed to fetch health');
-      return await response.json();
+      const data = await response.json();
+      // API returns { status, services: { gateway, redis, postgres, qdrant }, ... }
+      // Flatten so callers get health.gateway instead of health.services.gateway
+      return {
+        ...data.services,
+        status: data.status,
+        uptime_seconds: data.uptime_seconds || 0,
+      };
     } catch {
       return null;
     }

@@ -436,15 +436,36 @@ const ProviderForm: React.FC<{
 
       <div>
         <label className="block text-sm text-gray-400 mb-1">Default Model</label>
-        <select
+        <input
+          type="text"
           value={formData.selectedModel}
           onChange={(e) => setFormData((prev) => ({ ...prev, selectedModel: e.target.value }))}
+          placeholder="Type or select a model..."
+          list={`model-list-${formData.type}`}
           className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-        >
+        />
+        <datalist id={`model-list-${formData.type}`}>
           {config?.models.map((model) => (
-            <option key={model} value={model}>{model}</option>
+            <option key={model} value={model} />
           ))}
-        </select>
+        </datalist>
+        {config?.models.length > 0 && (
+          <div className="mt-2 flex flex-wrap gap-2">
+            {config.models.map((model) => (
+              <button
+                key={model}
+                type="button"
+                onClick={() => setFormData((prev) => ({ ...prev, selectedModel: model }))}
+                className="px-2 py-1 text-xs bg-gray-700 hover:bg-gray-600 rounded text-gray-300 transition-colors"
+              >
+                {model}
+              </button>
+            ))}
+          </div>
+        )}
+        <p className="text-xs text-gray-500 mt-1">
+          Type any model name — not limited to the suggestions above.
+        </p>
       </div>
 
       <div className="flex items-center gap-6">
@@ -668,15 +689,36 @@ const EmbeddingProviderForm: React.FC<{
 
       <div>
         <label className="block text-sm text-gray-400 mb-1">Default Model</label>
-        <select
+        <input
+          type="text"
           value={formData.model}
           onChange={(e) => setFormData((prev) => ({ ...prev, model: e.target.value }))}
+          placeholder="Type or select a model..."
+          list={`embedding-model-list-${formData.type}`}
           className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-        >
+        />
+        <datalist id={`embedding-model-list-${formData.type}`}>
           {config?.models.map((model) => (
-            <option key={model} value={model}>{model}</option>
+            <option key={model} value={model} />
           ))}
-        </select>
+        </datalist>
+        {config?.models.length > 0 && (
+          <div className="mt-2 flex flex-wrap gap-2">
+            {config.models.map((model) => (
+              <button
+                key={model}
+                type="button"
+                onClick={() => setFormData((prev) => ({ ...prev, model }))}
+                className="px-2 py-1 text-xs bg-gray-700 hover:bg-gray-600 rounded text-gray-300 transition-colors"
+              >
+                {model}
+              </button>
+            ))}
+          </div>
+        )}
+        <p className="text-xs text-gray-500 mt-1">
+          Type any model name — not limited to the suggestions above.
+        </p>
       </div>
 
       <div className="flex justify-end gap-3 pt-4 border-t border-gray-700">

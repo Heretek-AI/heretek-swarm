@@ -119,6 +119,8 @@ services:
     build:
       context: ./swarm-dashboard
       dockerfile: Dockerfile
+      args:
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:8000}
     ports:
       - "3000:80"
     environment:
