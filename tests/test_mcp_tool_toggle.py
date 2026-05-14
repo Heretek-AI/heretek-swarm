@@ -47,6 +47,7 @@ def _reset_mcp_registry() -> None:
 
 from fastapi.testclient import TestClient  # noqa: E402
 
+from heretek_swarm.gateway.auth import verify_auth  # noqa: E402
 from heretek_swarm.mcp.server import get_registry, router, set_registry  # noqa: E402
 
 
@@ -63,6 +64,7 @@ def endpoint_client() -> TestClient:
     set_registry(registry)
 
     # Override dependency — TestClient uses the already-set module global.
+    app.dependency_overrides[verify_auth] = lambda: "authenticated"
     return TestClient(app)
 
 
@@ -423,6 +425,7 @@ class TestToggleEndpoint:
         registry = _make_registry_with_tools(count=3)
         set_registry(registry)
 
+        app.dependency_overrides[verify_auth] = lambda: "authenticated"
         return TestClient(app)
 
     def test_toggle_happy_path_disables(self, client: TestClient) -> None:

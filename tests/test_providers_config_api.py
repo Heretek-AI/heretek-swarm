@@ -27,6 +27,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from heretek_swarm.api.main import app
+from heretek_swarm.gateway.auth import verify_auth
 from heretek_swarm.llm.model_garage import (
     ModelGarage,
 )
@@ -72,6 +73,7 @@ def client_with_config(tmp_path: Path):
         import heretek_swarm.llm.model_garage as mg
 
         mg._model_garage = fresh
+        app.dependency_overrides[verify_auth] = lambda: "authenticated"
         yield TestClient(app)
 
 
