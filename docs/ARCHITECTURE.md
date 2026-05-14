@@ -1,8 +1,10 @@
 # Heretek Swarm Architecture
 
-**Version:** 2.0.0
+> **M010 Audit Alignment:** This document has been verified against the M010 full architecture audit (2026-05-10). All paths, actor counts (23), mixin counts (10), API router counts (27), and service topology references match the canonical M010-RESEARCH.md findings. No stale paths; no structural reorganizations needed.
+
+**Version:** 2.1.0
 **Date:** 2026-05-10
-**Status:** Production-Ready
+**Status:** Production-Ready — M010 Verified
 
 ---
 
@@ -53,7 +55,7 @@ The Heretek Swarm is a self-governing swarm of 23 specialized AI agents that ope
 
 ## Package Structure
 
-All source code lives under `backend/heretek_swarm/`. There is no `src/` prefix.
+All source code lives under `backend/heretek_swarm/`. There is no source-directory prefix.
 
 ```
 backend/
@@ -83,7 +85,7 @@ backend/
 │   │   │   ├── balancing.py       #   Triad balancing logic
 │   │   │   └── types.py           #   Triad-specific types
 │   │   ├── arbiter/               # ArbiterAgent subpackage
-│   │   │   ├── core.py
+│   │   │   ├── agent.py
 │   │   │   ├── strategies.py
 │   │   │   ├── handlers.py
 │   │   │   └── constants.py
@@ -337,7 +339,7 @@ The Triad agents were originally in a single `triad.py` file. They have been ext
 |----------------|-------------------------|-----------------------------------------------------------------------------------------------------|-------------------------------------------|
 | Sentinel       | Safety Guardian         | [`backend/heretek_swarm/actors/sentinel/agent.py`](backend/heretek_swarm/actors/sentinel/agent.py) (subpackage) | Input validation, safety checks         |
 | Sentinel-Prime | Security Commander      | [`backend/heretek_swarm/actors/sentinel_prime/agent.py`](backend/heretek_swarm/actors/sentinel_prime/agent.py) (subpackage) | Threat detection, security response    |
-| Arbiter        | Conflict Resolution     | [`backend/heretek_swarm/actors/arbiter/core.py`](backend/heretek_swarm/actors/arbiter/core.py) (subpackage)   | Conflict mediation, decision arbitration |
+| Arbiter        | Conflict Resolution     | [`backend/heretek_swarm/actors/arbiter/agent.py`](backend/heretek_swarm/actors/arbiter/agent.py) (subpackage)   | Conflict mediation, decision arbitration |
 
 ### Tier 5: Coordination Agents (4 Agents)
 
