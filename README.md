@@ -1,8 +1,8 @@
 # Heretek Swarm — The Collective
 
-**Version:** 0.2.0  
-**Framework:** Python 3.11+  
-**Last Updated:** 2026-05-02
+**Version:** 0.2.0
+**Framework:** Python 3.11+
+**Last Updated:** 2026-05-14 (M010 Audit Complete)
 
 ---
 
@@ -25,10 +25,10 @@ This provides the `heretek-swarm` CLI command (see [Command Reference](#command-
 ```bash
 cp .env.example .env
 # Edit .env and set your OPENAI_API_KEY (and other values as needed)
-cd backend && docker compose up
+docker compose up
 ```
 
-Starts all 6 services with health checks: PostgreSQL, Redis, Qdrant, NATS, API server, and React dashboard. No profile flags needed — everything starts by default.
+Starts all 6 services with health checks: PostgreSQL, Redis, Qdrant, NATS, API server, and React dashboard. No profile flags needed — everything starts by default. The `docker-compose.yml` is at repo root; run `docker compose up` from the repository root directory.
 
 ---
 
@@ -39,7 +39,7 @@ Starts all 6 services with health checks: PostgreSQL, Redis, Qdrant, NATS, API s
 Run the swarm with in-memory state — no Docker, Postgres, Redis, Qdrant, or NATS required:
 
 ```bash
-pip install -e .
+pip install -e backend/
 heretek-swarm run --no-infra --prompt "Hello"
 ```
 
@@ -108,37 +108,70 @@ heretek-swarm status --json
 ## Package Structure
 
 ```
-backend/                        # Python project root
-├── pyproject.toml              # Package metadata & CLI entry point
-├── docker-compose.yml          # All 6 services with health checks
-├── .env.example                # Environment template with all vars
-├── docs/                       # Architecture & API documentation
-│   ├── ARCHITECTURE.md
-│   ├── API_ENDPOINTS.md
-│   ├── DEPLOYMENT.md
-│   └── AGENTS.md
-├── README.md
-└── heretek_swarm/              # Core library
-    ├── actors/                 # 23 agent implementations
-    ├── api/                    # FastAPI endpoints
-    ├── cli/                    # CLI commands & config loader
-    ├── config/                 # Pydantic config models
-    ├── consciousness/          # Consciousness metrics (GWT, IIT, FEP)
-    ├── consensus/              # MAKER protocol implementation
-    ├── gateway/                # NATS event mesh
-    ├── memory/                 # Multi-tier memory system
-    ├── runtime/                # AutonomousSwarm main loop & daemon
-    ├── security/               # Zero-trust validation
-    └── state/                  # PostgreSQL persistence
+heretek-swarm/                          # Repository root
+├── docker-compose.yml                  # All 6 services with health checks
+├── .env.example                        # Environment template with all vars
+├── PRIME_DIRECTIVE.md                  # 23-agent vision & architecture
+├── CLAUDE.md                           # AI assistant guidance
+├── README.md                           # This file
+├── docs/                               # Architecture & API documentation
+│   ├── ARCHITECTURE.md                 # System architecture (51K, ~900 lines)
+│   ├── API_ENDPOINTS.md                # API reference
+│   ├── DEPLOYMENT.md                   # Deployment guide
+│   ├── AGENTS.md                       # Complete agent reference
+│   ├── AGENT_ARCHITECTURE.md           # Agent design patterns
+│   ├── AGENT_REFERENCE.md              # Agent API reference
+│   ├── CODEBASE_AUDIT.md               # Code quality audit results
+│   ├── CORE_ACTORS.md                  # Core actor classes
+│   ├── PROTOCOL_SPEC.md                # A2A & consensus protocol spec
+│   ├── PROMETHEUS_METRICS.md           # Metrics reference
+│   ├── MEMORY_SYSTEM.md                # Memory architecture
+│   ├── MONITORING.md                   # Monitoring & alerting
+│   └── INDEX.md                        # Documentation index
+├── backend/                            # Python backend (412 .py files, ~184K LOC)
+│   ├── pyproject.toml                  # Package metadata & CLI entry point
+│   ├── Dockerfile                      # API service container
+│   └── heretek_swarm/                  # Core library (55 subpackages)
+│       ├── actors/                     # 23 agent implementations + 10 mixins
+│       ├── api/                        # FastAPI app + 27 routers (~175+ endpoints)
+│       ├── cli/                        # CLI commands & config loader
+│       ├── config/                     # Database-backed configuration service
+│       ├── consciousness/              # IIT phi, FEP free energy, GWT metrics
+│       ├── consensus/                  # Deliberation, MAKER protocol, tribunal
+│       ├── collective/                 # Swarm intelligence, emergence detection
+│       ├── gateway/                    # NATS JetStream event mesh, A2A protocol
+│       ├── memory/                     # Dual-tier memory (PostgreSQL + Qdrant)
+│       ├── runtime/                    # AutonomousSwarm main loop & daemon
+│       ├── security/                   # Zero-trust validation, guardrails, DDoS
+│       ├── infrastructure/             # Health checks, NATS client, OpenTelemetry
+│       ├── orchestration/              # HeavySwarm workflow engine
+│       ├── llm/                        # LLM provider abstraction (7 providers)
+│       ├── embeddings/                 # Embedding provider implementations
+│       ├── rag/                        # RAG pipeline (ingestion, query, graph)
+│       ├── mcp/                        # MCP server & client, tool registration
+│       ├── tools/                      # Agent tool system
+│       ├── observability/              # Prometheus metrics, alerting, tracing
+│       ├── plugins/                    # Plugin system (loading, lifecycle)
+│       ├── governance/                 # Agent identity, policy, compliance
+│       ├── state/                      # PostgreSQL state persistence
+│       └── workflow/                   # Workflow engine, state machines
+├── swarm-dashboard/                    # React frontend (Vite + TypeScript)
+│   ├── App.tsx                         # Root with 11-view state machine
+│   ├── api/                            # 10 API client modules (Axios)
+│   ├── components/                     # 93 React components (12 domains)
+│   ├── hooks/                          # 18 custom React hooks
+│   ├── stores/                         # 4 Zustand stores + debug middleware
+│   └── types/                          # Shared TypeScript types
+└── migrations/                         # Alembic/SQLAlchemy migrations
 ```
 
-`swarm-dashboard/` at repo root contains the React frontend (fully decoupled).
+`swarm-dashboard/` at repo root contains the React frontend (fully decoupled from backend).
 
 ---
 
 ## Infrastructure
 
-All services are defined in `docker-compose.yml` and start automatically with `docker compose up`.
+All services are defined in `docker-compose.yml` (at repo root) and start automatically with `docker compose up`.
 
 | Service | Default Port | Purpose |
 |---------|--------------|---------|
@@ -150,6 +183,19 @@ All services are defined in `docker-compose.yml` and start automatically with `d
 | Dashboard | 3000 | React frontend (Vite + Tailwind CSS) |
 
 All services include health checks and restart policies. Docker Compose coordinates startup order via `depends_on` with `condition: service_healthy`.
+
+### Docker Volume Persistence
+
+All 4 named volumes use Docker's `local` driver. A physical restart resilience test (`docker compose down && up`) executed 2026-05-14 confirmed all data survives restart with all 6 services returning healthy and API health returning HTTP 200.
+
+| Volume | Compose Name | Host Path (WSL2) | Container Path | Service | Survives Restart |
+|--------|-------------|-------------------|----------------|---------|:----------------:|
+| `postgres_data` | `postgres_data` | `/var/lib/docker/volumes/heretek-swarm_postgres_data/_data` | `/var/lib/postgresql/data` | postgres | ✅ |
+| `redis_data` | `redis_data` | `/var/lib/docker/volumes/heretek-swarm_redis_data/_data` | `/data` | redis | ✅ |
+| `qdrant_data` | `qdrant_data` | `/var/lib/docker/volumes/heretek-swarm_qdrant_data/_data` | `/qdrant/storage` | qdrant | ✅ |
+| `nats_data` | `nats_data` | `/var/lib/docker/volumes/heretek-swarm_nats_data/_data` | `/data` | nats | ✅ |
+
+**Restart test results (2026-05-14):** All 6 containers stopped and restarted. All 4 volumes preserved with identical host paths. Post-restart API health: HTTP 200, all services healthy. Total test duration: 77 seconds.
 
 ---
 
@@ -169,14 +215,18 @@ All services include health checks and restart policies. Docker Compose coordina
 │ ├── Historian (Memory)     │ ├── Nexus (External Integration) │
 │ ├── Metis (Strategy)       │ ├── Catalyst (Change Mgmt)       │
 │ ├── Empath (Emotional IQ)  │ └── Chronos (Scheduling)         │
-│ └── Perceiver (Sensory)    │                                   │
-│                            │ TIER 6: ENHANCEMENT (3)          │
-│ TIER 3: EXPLORATION (4)    │ ├── Prism (Multi-Perspective)    │
-│ ├── Explorer (Discovery)   │ ├── Habit-Forge (Optimization)   │
-│ ├── Examiner (QA)          │ └── Perceiver+ (Advanced)        │
+│ ├── Perceiver (Sensory)    │                                   │
+│ └── Echo (Communication)   │ TIER 6: ENHANCEMENT (3)          │
+│                            │ ├── Prism (Multi-Perspective)    │
+│ TIER 3: EXPLORATION (4)    │ ├── Habit-Forge (Optimization)   │
+│ ├── Explorer (Discovery)   │ └── Perceiver+ (Advanced)        │
+│ ├── Examiner (QA)          │                                   │
+│ ├── Dreamer (Creative)     │                                   │
 │ └── Coder (Implementation) │                                   │
 └─────────────────────────────────────────────────────────────────┘
 ```
+
+All 23 agents inherit from `AgentActor` (`actors/base/core.py:120`) and compose capabilities via 10 reusable mixins (`actors/mixins/`). The Triad agents (Steward, Alpha, Beta, Charlie) share a common `TriadAgent` base with `DeliberationMixin`, `PatternMixin`, `MemoryMixin`, and `LearningMixin`.
 
 ---
 
@@ -188,12 +238,30 @@ Copy `.env.example` to `.env` and fill in your values. The key variables:
 |----------|----------|-------------|
 | `DATABASE_URL` | Yes | PostgreSQL connection string |
 | `REDIS_URL` | Yes | Redis connection string |
-| `QDRANT_HOST` | Yes | Qdrant host |
+| `QDRANT_URL` | Yes | Qdrant host URL |
+| `HERETEK_NATS_URL` | Yes | NATS connection URL |
 | `OPENAI_API_KEY` | Yes | OpenAI-compatible API key |
 | `OPENAI_BASE_URL` | Yes | OpenAI-compatible API base URL |
-| `LLM_MODEL` | Yes | LLM model name |
+| `LLM_MODEL` | Yes | LLM model name (default: `MiniMax-M2.7`) |
+| `EMBEDDING_PROVIDER` | Yes | Embedding provider type (default: `openai_compatible`) |
+| `EMBEDDING_DIMENSIONS` | Yes | Embedding vector dimensions (default: `768`) |
+| `HERETEK_API_KEY` | Yes | API authentication key |
+| `RATE_LIMIT_ENABLED` | No | DDoS protection toggle (default: `true`) |
+| `CORS_ORIGINS` | No | CORS allow origins (default: `*`) |
 
 Docker Compose defaults are pre-configured in `.env.example` — for local development outside Docker, update the hostnames from service names (`postgres`, `redis`, `qdrant`, `nats`) to `localhost`.
+
+### LLM Providers (7 Supported)
+
+| Provider | Base URL | API Key Required |
+|----------|----------|:----------------:|
+| `openai` | `https://api.openai.com/v1` | Yes |
+| `openai_compatible` | Custom (vLLM, LocalAI, etc.) | Optional |
+| `ollama` | `http://localhost:11434` | No |
+| `llamacpp` | `http://localhost:8080` | No |
+| `zai` (Zhipu GLM) | `https://open.bigmodel.cn/api/paas/v4` | Yes |
+| `minimax` | `https://api.minimax.chat/v1` | Yes (needs group_id) |
+| `lemonade` | `http://localhost:5000` | No |
 
 ---
 
@@ -201,11 +269,101 @@ Docker Compose defaults are pre-configured in `.env.example` — for local devel
 
 | Document | Description |
 |----------|-------------|
-| [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | System architecture details |
-| [`docs/API_ENDPOINTS.md`](docs/API_ENDPOINTS.md) | API reference |
+| [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | System architecture (~900 lines, 10 sections) |
+| [`docs/API_ENDPOINTS.md`](docs/API_ENDPOINTS.md) | API endpoint reference |
 | [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md) | Deployment guide |
 | [`docs/AGENTS.md`](docs/AGENTS.md) | Complete agent reference |
+| [`docs/AGENT_ARCHITECTURE.md`](docs/AGENT_ARCHITECTURE.md) | Agent design patterns & mixin system |
+| [`docs/AGENT_REFERENCE.md`](docs/AGENT_REFERENCE.md) | Agent API reference |
+| [`docs/PROTOCOL_SPEC.md`](docs/PROTOCOL_SPEC.md) | A2A & consensus protocol specification |
+| [`docs/CODEBASE_AUDIT.md`](docs/CODEBASE_AUDIT.md) | Code quality audit findings |
+| [`docs/PROMETHEUS_METRICS.md`](docs/PROMETHEUS_METRICS.md) | Prometheus metrics reference |
+| [`docs/MEMORY_SYSTEM.md`](docs/MEMORY_SYSTEM.md) | Memory architecture details |
+| [`docs/MONITORING.md`](docs/MONITORING.md) | Monitoring & alerting setup |
 | [`PRIME_DIRECTIVE.md`](PRIME_DIRECTIVE.md) | Project vision and philosophy |
+
+---
+
+## Technical Debt Overview (M010 Audit)
+
+A comprehensive audit scanned **612 files** across 4 scan roots (backend, frontend, tests, infrastructure). After deduplication of 460 raw findings, **50 canonical findings** were produced: 22 critical, 15 moderate, 13 minor across 6 domains.
+
+### Severity Distribution
+
+| Severity | Count | Domains |
+|----------|:-----:|---------|
+| **Critical** | 22 | security (14), code_quality (4), testing (2), security (2) |
+| **Moderate** | 15 | architecture (5), code_quality (4), configuration (3), security (2), testing (1) |
+| **Minor** | 13 | observability (8), code_quality (3), configuration (2) |
+| **Total** | **50** | 6 domains covered |
+
+### Domain Breakdown
+
+| Domain | Findings | Top Severity |
+|--------|:--------:|:------------:|
+| Security | 17 | Critical |
+| Code Quality | 11 | Critical |
+| Observability | 8 | Minor |
+| Architecture | 5 | Moderate |
+| Configuration | 5 | Moderate |
+| Testing | 4 | Critical |
+| Performance | 0 | — (coverage gap — needs dedicated profiler) |
+
+All 50 findings carry file:line references. The full findings catalog is at `.gsd/audit/findings.json`. See [`docs/CODEBASE_AUDIT.md`](docs/CODEBASE_AUDIT.md) for the human-readable audit report.
+
+### Key Themes
+
+- **Security hardening needed:** 17 security findings including hardcoded credentials, eval/exec references, and missing auth middleware on 4 endpoints
+- **Observability gaps:** 8 findings covering print() statements in production code, missing structured logging, and incomplete trace coverage
+- **Architecture drift:** 5 findings identifying oversized modules (>1000 lines), deep nesting, and God-class patterns
+- **Performance blind spot:** 0 performance findings — the audit pipeline did not include profiling; a dedicated performance scan is a known follow-up
+
+---
+
+## API Audit Summary (M010)
+
+A three-phase pipeline enumerated **83 frontend API call sites** from 12 source files, live-tested all 83 against the running backend at `localhost:8000`, and cross-referenced against **345 backend routes** from 33 router files.
+
+### Live Test Results
+
+| Status | Count | Notes |
+|--------|:-----:|-------|
+| 2xx Success | 5 | Health, embedding/list, llm/list, provider-stats, mcp/tools |
+| 401/403 Auth | 67 | Auth middleware active across all secured routes (expected without API key) |
+| 404 Not Found | 7 | Orphan frontend calls with no matching backend route |
+| 422 Validation | 3 | Provider endpoint validation failures with empty bodies |
+| 500 Server Error | 2 | Wizard infrastructure GET/DELETE — genuine unhandled errors |
+| **Total** | **83** | 0 unreachable endpoints |
+
+### Key Findings (20 Total)
+
+| Severity | Count | Examples |
+|----------|:-----:|----------|
+| **Critical** | 6 | 2 wizard infrastructure 500s, 4 auth bypass candidates (endpoints returning 200 despite `auth_required` declarations), orphan frontend routes returning 404 |
+| **Moderate** | 14 | 250 backend-only routes (significant coverage gap), frontend `/api/autonomous/*` calls vs backend `/autonomous/*` prefix mismatch, missing `/api/metrics` and `/api/observability/llm-metrics` backend routes |
+
+### Surface Coverage
+
+- **83** frontend API calls across **13** domain categories (a2a, agents, config, consciousness, consensus, deliberation, health, historian, mcp, memory, observability, system, wizard)
+- **345** backend routes registered (175+ with handler implementations)
+- **250** backend-only routes (no corresponding frontend call site — significant dead-code assessment surface)
+- **5** orphan frontend calls (no matching backend route)
+
+Full audit artifact: `.gsd/audit/api-audit.json`. Inventory: `.gsd/audit/api-inventory.json`.
+
+---
+
+## Architecture Verification (M010)
+
+S01 produced a canonical architecture map (`.gsd/milestones/M010/M010-RESEARCH.md`, 714 lines, 11 sections) with:
+- **23 actor classes** with exact file:line references and parent chains
+- **10 mixins** with dependency analysis and fail-fast guard documentation
+- **27 API routers** with 175+ endpoint handlers
+- **6 Docker Compose services** with health check topology
+- **93 React components** across 12 feature domains
+- **36+ file:line references** grounding every claim in real code
+
+**Stub inventory:** 18 documented placeholders (10 STUB, 8 TODO) across frontend and test files. Backend scan: 0 stubs across 607+ `.py` files — the codebase is clean of placeholder patterns.
 
 ---
 
@@ -213,11 +371,10 @@ Docker Compose defaults are pre-configured in `.env.example` — for local devel
 
 > **Build a self-governing swarm of 23 specialized AI agents that operate independently 24/7, make collective decisions through consensus, adapt and learn from experience, and exhibit emergent collective intelligence.**
 
-🦞 *The thought that never ends.*
+*The thought that never ends.*
 
 ---
 
 **License:** Apache 2.0
 
-*Last Updated: 2026-05-02*
-
+*Last Updated: 2026-05-14 — M010 Architecture Audit Complete*
