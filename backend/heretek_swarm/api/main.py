@@ -1366,8 +1366,8 @@ async def prompt_endpoint(request: PromptRequest):
                 dissent_notes.append(d.note)
             elif isinstance(d, dict) and d.get("note"):
                 dissent_notes.append(d["note"])
-    except Exception:
-        # Dissent notes are display-only -- skip inconsistent records silently
+    except Exception:  # noqa: S110
+        # Dissent notes are display-only — skip inconsistent records silently
         pass
 
     logger.info(
