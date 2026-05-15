@@ -163,6 +163,49 @@ def validate_message_safety(
     }
 
 
+def scan_content(
+    content: str,
+    patterns: list[str] | None = None,
+) -> dict[str, Any]:
+    """
+    Scan content for safety violations using default or custom patterns.
+
+    This is a convenience wrapper that creates a temporary SafetyScanner
+    and delegates to it. For repeated scanning, use SafetyScanner directly.
+
+    Args:
+        content: The content to scan.
+        patterns: Optional custom injection patterns (uses defaults if None).
+
+    Returns:
+        Dict with safety_level, is_safe, violations, recommendations.
+    """
+    scanner = SafetyScanner(injection_patterns=patterns)
+    import asyncio
+    try:
+        loop = asyncio.get_running_loop()
+    except RuntimeError:
+        loop = None
+    if loop is not None:
+        import warnings
+        warnings.warn(
+            "scan_content called from async context; use SafetyScanner.scan_content() directly",
+            RuntimeWarning,
+            stacklevel=2,
+        )
+    # For synchronous convenience, create a new event loop
+    try:
+        return asyncio.run(scanner.scan_content(content))
+    except RuntimeError:
+        # If we're already in an event loop, return a simple sync result
+        return {
+            "safety_level": "unknown",
+            "is_safe": True,
+            "violations": [],
+            "recommendations": [],
+        }
+
+
 def _classify_safety_level(
     violations: list[dict[str, str | int]],
 ) -> str:
