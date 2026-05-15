@@ -26,10 +26,9 @@ from heretek_swarm.workflow.models import (
     WorkflowEdge,
     WorkflowNode,
     WorkflowResult,
-    WorkflowState,
     WorkflowStatus,
-    merge_workflow_states,
 )
+from heretek_swarm.workflow import node_executors
 from heretek_swarm.workflow.store import FileWorkflowStore
 
 if TYPE_CHECKING:
@@ -387,32 +386,10 @@ class WorkflowEngine:
         context: WorkflowContext,
         node: WorkflowNode,
     ) -> Any:
-        """
-        Execute a node and capture the result.
-
-        Used by strategy wrappers to capture results without writing to context.
-        Returns the output directly for strategy aggregation.
-        """
-        input_data = self._get_node_input(workflow, node, context)
-        datetime.now(UTC)
-
-        try:
-            if node.type == "agent":
-                return await self._execute_agent_node(node, input_data, context)
-            if node.type == "tool":
-                return await self._execute_tool_node(node, input_data, context)
-            if node.type == "chain":
-                return await self._execute_chain_node(node, input_data, context)
-            if node.type == "memory":
-                return await self._execute_memory_node(node, input_data, context)
-            if node.type == "consensus":
-                return await self._execute_consensus_node(node, input_data, context)
-            if node.type == "llm":
-                return await self._execute_llm_node(node, input_data, context)
-            return {"error": f"Unknown node type: {node.type}"}
-        except Exception as e:
-            logger.error("node_execution_failed", node_id=node_id, error=str(e))
-            return {"error": str(e)}
+        """Execute a node and capture the result — delegates to node_executors."""
+        return await node_executors.execute_and_capture(
+            self, workflow, node_id, context, node
+        )
 
     def _strategy_result_to_result(
         self,
@@ -531,384 +508,38 @@ class WorkflowEngine:
     async def _execute_agent_node(
         self, node: WorkflowNode, input_data: dict[str, Any], context: WorkflowContext
     ) -> Any:
-        """
-        Execute an agent node.
-
-        Looks up the actor from the supervisor's actor registry and calls
-        run_with_llm() with the prompt from input_data.
-
-        Args:
-            node: Agent node
-            input_data: Input data
-            context: Execution context
-
-        Returns:
-            Agent output (string from LLM)
-
-        Raises:
-            ValueError: If agent_id is missing from node.data
-            RuntimeError: If the agent is not found or not active
-        """
-        from heretek_swarm.actors.supervisor import get_supervisor
-
-        # Get agent ID from node data
-        agent_id = node.data.get("agent_id")
-        if not agent_id:
-            raise ValueError("Agent node requires agent_id")
-
-        # Use injected supervisor or fall back to global singleton
-        supervisor = self._supervisor or get_supervisor()
-
-        # Look up the actor directly from the registry
-        actor = supervisor.actors.get(agent_id)
-        if actor is None:
-            raise RuntimeError(f"Agent not found: {agent_id}")
-
-        agent_status = await supervisor.get_actor_status(agent_id)
-        if not agent_status or agent_status.state != "active":
-            raise RuntimeError(f"Agent not active: {agent_id}")
-
-        # Build prompt from input_data — prefer explicit prompt, fall back to message
-        # then to upstream node output stored in context.variables
-        prompt = (
-            input_data.get("prompt")
-            or input_data.get("message")
-            or input_data.get(agent_id)
-            or context.variables.get("prompt")
-            or context.variables.get("message")
-        )
-        # If still no prompt, check for any upstream node output stored by _execute_node
-        if not prompt:
-            for key, val in context.variables.items():
-                if key.startswith("node_") and key.endswith("_output") and isinstance(val, str):
-                    prompt = val
-                    break
-        if not prompt:
-            raise ValueError("Agent node requires a prompt or message in input_data")
-
-        # Optional timeout override from node config
-        timeout = node.data.get("timeout", 60)
-
-        logger.info(
-            "agent_node_started",
-            workflow_id=context.workflow_id,
-            node_id=node.id,
-            agent_id=agent_id,
-            prompt_length=len(prompt),
-        )
-
-        return await actor.run_with_llm(prompt, timeout=timeout)
+        """Execute an agent node — delegates to node_executors."""
+        return await node_executors.execute_agent_node(self, node, input_data, context)
 
     async def _execute_llm_node(
-        self,
-        node: WorkflowNode,
-        input_data: dict[str, Any],
-        context: WorkflowContext,
+        self, node: WorkflowNode, input_data: dict[str, Any], context: WorkflowContext
     ) -> str:
-        """
-        Execute a standalone LLM node.
-
-        Runs a prompt through the LLM without requiring a pre-spawned actor.
-        Uses the supervisor's first available active actor as the LLM conduit,
-        or raises if none are available.
-
-        Args:
-            node: LLM node with data.prompt, optional data.model
-            input_data: Input data from upstream nodes
-            context: Execution context
-
-        Returns:
-            LLM response string
-
-        Raises:
-            ValueError: If no prompt is provided
-            RuntimeError: If no active actor is available for LLM execution
-        """
-        from heretek_swarm.actors.supervisor import get_supervisor
-
-        # Extract prompt: prefer node.data, fall back to input_data
-        prompt = (
-            node.data.get("prompt") or input_data.get("prompt") or input_data.get("message", "")
-        )
-        if not prompt:
-            raise ValueError("LLM node requires a 'prompt' in node.data or input_data")
-
-        # Optional parameters from node config
-        timeout = node.data.get("timeout", 60)
-        temperature = node.data.get("temperature")
-
-        # Use injected supervisor or fall back to global singleton
-        supervisor = self._supervisor or get_supervisor()
-
-        # Find an active actor to serve as the LLM conduit
-        actor = None
-        for actor_id, candidate in supervisor.actors.items():
-            status = await supervisor.get_actor_status(actor_id)
-            if status and status.state == "active":
-                actor = candidate
-                break
-
-        if actor is None:
-            raise RuntimeError(
-                "LLM node requires at least one active actor in the supervisor "
-                "to serve as an LLM conduit."
-            )
-
-        logger.info(
-            "llm_node_started",
-            workflow_id=context.workflow_id,
-            node_id=node.id,
-            actor_id=actor.agent_id,
-            prompt_length=len(prompt),
-            temperature=temperature,
-        )
-
-        kwargs: dict[str, Any] = {}
-        if temperature is not None:
-            kwargs["temperature"] = temperature
-
-        return await actor.run_with_llm(prompt, timeout=timeout, **kwargs)
+        """Execute a standalone LLM node — delegates to node_executors."""
+        return await node_executors.execute_llm_node(self, node, input_data, context)
 
     async def _execute_tool_node(
         self, node: WorkflowNode, input_data: dict[str, Any], context: WorkflowContext  # noqa: ARG002
     ) -> Any:
-        """
-        Execute a tool node.
-
-        Args:
-            node: Tool node
-            input_data: Input data
-            context: Execution context
-
-        Returns:
-            Tool output
-        """
-        from heretek_swarm.runtime.tools import ToolRegistry
-
-        # Get tool registry
-        tool_registry = ToolRegistry()
-
-        # Get tool name from node data
-        tool_name = node.data.get("tool_name")
-        if not tool_name:
-            raise ValueError("Tool node requires tool_name")
-
-        # Get tool parameters
-        tool_params = input_data.get("params", {})
-
-        # Execute tool
-        return await tool_registry.execute(tool_name, **tool_params)
+        """Execute a tool node — delegates to node_executors."""
+        return await node_executors.execute_tool_node(self, node, input_data, context)
 
     async def _execute_chain_node(
         self, node: WorkflowNode, input_data: dict[str, Any], context: WorkflowContext
     ) -> Any:
-        """
-        Execute a chain node (sequential processing).
-
-        Args:
-            node: Chain node
-            input_data: Input data
-            context: Execution context
-
-        Returns:
-            Chain output
-        """
-        # Get chain nodes
-        chain_nodes = node.data.get("nodes", [])
-        if not chain_nodes:
-            raise ValueError("Chain node requires nodes")
-
-        # Execute chain sequentially
-        output = input_data.get("input", "")
-
-        for chain_node_id in chain_nodes:
-            if chain_node_id in context.node_results:
-                node_result = context.node_results[chain_node_id]
-                if node_result.status == NodeStatus.COMPLETED:
-                    output = node_result.output
-                else:
-                    raise RuntimeError(f"Chain node not completed: {chain_node_id}")
-
-        return output
+        """Execute a chain node — delegates to node_executors."""
+        return await node_executors.execute_chain_node(self, node, input_data, context)
 
     async def _execute_memory_node(
         self, node: WorkflowNode, input_data: dict[str, Any], context: WorkflowContext
     ) -> Any:
-        """
-        Execute a memory node (store or retrieve).
-
-        Args:
-            node: Memory node
-            input_data: Input data
-            context: Execution context
-
-        Returns:
-            Memory operation result
-        """
-        from heretek_swarm.memory.persistent import PersistentMemoryStore
-
-        # Get operation type
-        operation = node.data.get("operation", "store")
-        if operation not in ["store", "retrieve", "search"]:
-            raise ValueError(f"Invalid memory operation: {operation}")
-
-        # Get memory store
-        memory_store = PersistentMemoryStore()
-        await memory_store.connect()
-
-        if operation == "store":
-            # Store memory
-            content = input_data.get("content", "")
-            memory_type = input_data.get("memory_type", "episodic")
-            metadata = input_data.get("metadata", {})
-
-            # Store memory
-            await memory_store.store(
-                agent_id=context.workflow_id,
-                content=content,
-                memory_type=memory_type,
-                metadata=metadata,
-            )
-
-            return {"stored": True}
-
-        if operation == "retrieve":
-            # Retrieve memory
-            query = input_data.get("query", "")
-            limit = input_data.get("limit", 10)
-
-            # Search memory
-            from heretek_swarm.memory.base import MemoryQuery
-
-            search_query = MemoryQuery(
-                query_text=query, agent_ids=[context.workflow_id], limit=limit
-            )
-
-            result = await memory_store.search(search_query)
-
-            return {
-                "results": [
-                    {
-                        "content": entry.content,
-                        "memory_type": entry.memory_type.value,
-                        "importance_score": entry.importance_score,
-                    }
-                    for entry in result.entries
-                ]
-            }
-
-        if operation == "search":
-            # Search memory (alias for retrieve)
-            return await self._execute_memory_node(node, input_data, context)
-        return None
+        """Execute a memory node — delegates to node_executors."""
+        return await node_executors.execute_memory_node(self, node, input_data, context)
 
     async def _execute_consensus_node(
-        self,
-        node: WorkflowNode,
-        input_data: dict[str, Any],
-        context: WorkflowContext,
+        self, node: WorkflowNode, input_data: dict[str, Any], context: WorkflowContext
     ) -> dict[str, Any]:
-        """
-        Execute a consensus node (MAKER voting as a workflow step).
-
-        Uses ConsensusCoordinator.run_consensus() to execute multi-agent
-        voting on a question derived from node configuration or upstream outputs.
-
-        Args:
-            node: Consensus node
-            input_data: Input data from upstream nodes and workflow variables
-            context: Execution context
-
-        Returns:
-            Dict with consensus result (decision, confidence, votes, red_flags)
-
-        Raises:
-            ValueError: If no question is provided in node.data or input_data
-            RuntimeError: If consensus_coordinator is not configured
-        """
-        if self._consensus_coordinator is None:
-            raise RuntimeError(
-                "Consensus node requires a ConsensusCoordinator. "
-                "Pass consensus_coordinator to WorkflowEngine constructor."
-            )
-
-        # Extract question from node.data or input_data
-        question = node.data.get("question") or input_data.get("question")
-        if not question:
-            raise ValueError("Consensus node requires a 'question' in node.data or input_data.")
-
-        # Extract optional parameters
-        timeout = node.data.get("timeout", 120)
-        max_rounds = node.data.get("max_rounds", 1)
-
-        logger.info(
-            "consensus_node_started",
-            workflow_id=context.workflow_id,
-            node_id=node.id,
-            question=question[:200],
-            timeout=timeout,
-            max_rounds=max_rounds,
-        )
-
-        try:
-            result = await self._consensus_coordinator.run_consensus(
-                question=question,
-                timeout=timeout,
-                max_rounds=max_rounds,
-            )
-
-            if result is None:
-                logger.warning(
-                    "consensus_node_completed",
-                    workflow_id=context.workflow_id,
-                    node_id=node.id,
-                    consensus_reached=False,
-                )
-                return {
-                    "consensus_reached": False,
-                    "decision": None,
-                    "confidence": 0.0,
-                    "votes": [],
-                    "red_flags": [],
-                }
-
-            result_dict = {
-                "consensus_reached": True,
-                "decision": result.decision,
-                "confidence": result.confidence,
-                "votes": [
-                    {
-                        "agent_id": v.agent_id,
-                        "decision": v.decision,
-                        "confidence": v.confidence,
-                        "metadata": v.metadata,
-                    }
-                    for v in result.votes
-                ],
-                "red_flags": result.red_flags,
-                "metadata": result.metadata,
-            }
-
-            logger.info(
-                "consensus_node_completed",
-                workflow_id=context.workflow_id,
-                node_id=node.id,
-                consensus_reached=True,
-                decision=result.decision,
-                confidence=result.confidence,
-                vote_count=len(result.votes),
-            )
-
-            return result_dict
-
-        except Exception as exc:
-            logger.error(
-                "consensus_node_failed",
-                workflow_id=context.workflow_id,
-                node_id=node.id,
-                error=str(exc)[:200],
-            )
-            raise
+        """Execute a consensus node — delegates to node_executors."""
+        return await node_executors.execute_consensus_node(self, node, input_data, context)
 
     def _build_graph(self, workflow: Workflow) -> dict[str, set[str]]:
         """

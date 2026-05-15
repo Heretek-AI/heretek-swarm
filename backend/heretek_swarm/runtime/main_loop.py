@@ -31,14 +31,15 @@ from heretek_swarm.actors.supervisor import ActorSupervisor
 from heretek_swarm.api.consciousness import get_consciousness_plugin
 from heretek_swarm.channels.registry import ChannelRegistry, GroupRegistry
 from heretek_swarm.consensus.maker import MAKERConsensus
-from heretek_swarm.runtime.actor_orchestrator import ActorOrchestrator
-from heretek_swarm.runtime.deliberation_orchestrator import DeliberationOrchestrator
 from heretek_swarm.gateway.nats_event_mesh import NATSEventMeshWithJetStream
 from heretek_swarm.llm.model_garage import ModelGarage
 from heretek_swarm.memory.base import DualTierMemory
 from heretek_swarm.rag.rag_pipeline import RAGPipeline
 from heretek_swarm.routing.model_router import set_global_model_garage
+from heretek_swarm.runtime.actor_orchestrator import ActorOrchestrator
+from heretek_swarm.runtime.deliberation_orchestrator import DeliberationOrchestrator
 from heretek_swarm.runtime.registry_enhanced import get_enhanced_registry
+from heretek_swarm.runtime.steward_pulse import run_steward_pulse
 from heretek_swarm.tools.mcp_tools import CoreMCPTools
 
 logger = structlog.get_logger(__name__)
@@ -871,48 +872,8 @@ class AutonomousSwarm:
         logger.debug("reported_agents_to_api", count=len(agents))
 
     async def _steward_pulse_loop(self) -> None:
-        """Steward heartbeat pulse loop.
-
-        Runs at _health_check_interval (30s) frequency. Sets
-        internal_state['_last_heartbeat'] and logs heartbeat/health data
-        via the Historian agent.  Uses the None-guard pattern — missing
-        steward or historian agents log a warning and skip gracefully.
-        """
-        while self._running:
-            try:
-                steward = self.supervisor.actors.get("steward") if self.supervisor else None
-                if steward is not None:
-                    # Record heartbeat on steward's internal state
-                    steward.internal_state["_last_heartbeat"] = datetime.now(UTC).isoformat()
-
-                    # Collect heartbeat data
-                    pulse_data = {
-                        "timestamp": datetime.now(UTC).isoformat(),
-                        "active_actors": len(self.supervisor.actors) if self.supervisor else 0,
-                        "deliberations_active": len(getattr(steward, "active_deliberations", {})),
-                        "heartbeat_healthy": True,
-                    }
-
-                    # Log via Historian
-                    historian = self.supervisor.actors.get("historian") if self.supervisor else None
-                    if historian is not None:
-                        await historian.log_event(
-                            "steward_pulse",
-                            "steward",
-                            pulse_data,
-                        )
-                        logger.info("steward_pulse_logged", pulse_data=pulse_data)
-                    else:
-                        logger.warning("steward_pulse_historian_skipped_no_historian")
-                else:
-                    logger.warning("steward_pulse_skipped_no_steward")
-
-                await asyncio.sleep(self._health_check_interval)
-            except asyncio.CancelledError:
-                break
-            except Exception as e:
-                logger.error("steward_pulse_error", error=str(e))
-                await asyncio.sleep(self._health_check_interval)
+        """Steward heartbeat pulse loop — delegates to steward_pulse module."""
+        await run_steward_pulse(self)
 
     async def shutdown(self) -> None:
         """Graceful shutdown of the autonomous swarm."""
@@ -950,51 +911,17 @@ class AutonomousSwarm:
 
 
 # ============================================================================
-# Entry Point
+# Re-exports for backward compatibility
 # ============================================================================
 
 
-async def main():
-    """Main entry point for autonomous operation."""
-    # Configure logging first, before any loggers are instantiated
-    from heretek_swarm.swarm_logging.config import setup_logging
+def _get_main():
+    """Lazy import for backward-compatible ``main`` access."""
+    from heretek_swarm.runtime.entrypoint import main as _entrypoint_main
 
-    setup_logging(json_output=False, include_caller_info=False)
-
-    config = {
-        "nats_servers": ["nats://localhost:4222"],
-        "health_check_interval": 30,
-        "loop_interval": 1,
-        "consciousness_interval": 5,
-        "memory_maintenance_interval": 300,
-        "scaling_interval": 60,
-        "ephemeral": {"ttl_seconds": 3600},
-        "persistent": {
-            "connection_string": "postgresql://heretek:password@localhost/heretek_swarm",
-        },
-        "rag": {
-            "embedding_provider": "openai",
-            "collection_name": "heretek_documents",
-        },
-        "consensus": {
-            "ahead_by_k": 2,
-            "min_votes": 3,
-            "red_flag_threshold": 0.3,
-        },
-    }
-
-    try:
-        swarm = AutonomousSwarm(config)
-        await swarm.initialize()
-        await swarm.run()
-    except Exception as exc:
-        logger.exception(
-            "autonomous_swarm_main_failed",
-            error=str(exc),
-
-        )
-        raise
+    return _entrypoint_main
 
 
-if __name__ == "__main__":
-    asyncio.run(main())
+# Keep main available via __init__.py for backward compatibility.
+# Direct execution moved to runtime/entrypoint.py.
+
