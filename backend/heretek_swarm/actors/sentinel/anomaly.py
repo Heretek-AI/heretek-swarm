@@ -18,7 +18,6 @@ Key capabilities:
 Reference: Phase 2 Plan Task 4 (SAFE-01)
 """
 
-import asyncio
 import hashlib
 import time
 from collections import defaultdict

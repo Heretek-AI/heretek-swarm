@@ -60,7 +60,7 @@ def _handle_signal(signum: int, frame: Any) -> None:
 # ---------------------------------------------------------------------------
 
 
-async def _start_autonomous_swarm(  # noqa: ASYNC109
+async def _start_autonomous_swarm(
     no_infra: bool = False,
     prompt: str | None = None,
     target_agent: str | None = None,

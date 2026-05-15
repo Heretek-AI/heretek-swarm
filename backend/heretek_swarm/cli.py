@@ -5,7 +5,7 @@ Import ``heretek_swarm.cli`` (the package) directly; this module is retained
 only for backward-compatible filesystem visibility.
 """
 
-from heretek_swarm.cli import (  # noqa: E402, F401
+from heretek_swarm.cli import (  # noqa: F401
     cli,
     config,
     config_list,

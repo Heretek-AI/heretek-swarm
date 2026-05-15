@@ -4,7 +4,7 @@ from datetime import datetime
 from typing import Any
 
 import structlog
-from fastapi import APIRouter, HTTPException, Query, WebSocket, WebSocketDisconnect
+from fastapi import APIRouter, Query, WebSocket, WebSocketDisconnect
 
 from . import (
     TraceEvent,

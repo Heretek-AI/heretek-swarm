@@ -17,7 +17,8 @@ from __future__ import annotations
 import difflib
 import sys
 import webbrowser
-from importlib.metadata import PackageNotFoundError, version as _get_version
+from importlib.metadata import PackageNotFoundError
+from importlib.metadata import version as _get_version
 from pathlib import Path
 from typing import Any
 
@@ -122,10 +123,10 @@ def cli(ctx: click.Context) -> None:
 # =============================================================================
 
 # --- Core Operations ---
+from heretek_swarm.cli.consensus import consensus  # noqa: E402
+from heretek_swarm.cli.deploy import deploy  # noqa: E402
 from heretek_swarm.cli.run import run  # noqa: E402
 from heretek_swarm.cli.serve import serve  # noqa: E402
-from heretek_swarm.cli.deploy import deploy  # noqa: E402
-from heretek_swarm.cli.consensus import consensus  # noqa: E402
 
 cli.add_command(run)
 cli.add_command(serve)
@@ -230,16 +231,6 @@ cli.add_command(goal)
 # Backward-compatible re-exports (tests and external consumers use these)
 # =============================================================================
 
-from heretek_swarm.cli.display import (  # noqa: E402
-    _display_consensus_results,
-    _display_deliberation_results,
-    _display_routed_result,
-    _print_startup_banner,
-)
-from heretek_swarm.cli.status import (  # noqa: E402
-    _display_daemon_status,
-    _query_daemon_socket,
-)
 from heretek_swarm.cli.config_wizard import (  # noqa: E402
     AVAILABLE_PROVIDERS,
     add_provider,
@@ -250,7 +241,16 @@ from heretek_swarm.cli.config_wizard import (  # noqa: E402
     set_default_provider,
     validate_provider,
 )
-
+from heretek_swarm.cli.display import (  # noqa: E402
+    _display_consensus_results,
+    _display_deliberation_results,
+    _display_routed_result,
+    _print_startup_banner,
+)
+from heretek_swarm.cli.status import (  # noqa: E402
+    _display_daemon_status,
+    _query_daemon_socket,
+)
 
 # =============================================================================
 # Convenience alias — entry point compatibility

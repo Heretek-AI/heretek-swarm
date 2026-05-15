@@ -37,13 +37,6 @@ from heretek_swarm.actors.sentinel.agent import SentinelAgent
 
 # Re-export delegate classes from new modules
 from heretek_swarm.actors.sentinel.anomaly import AnomalyMonitor
-from heretek_swarm.actors.sentinel.immune import ImmuneResponseManager
-from heretek_swarm.actors.sentinel.safety import (
-    SafetyScanner,
-    detect_injections,
-    detect_pii,
-    validate_message_safety,
-)
 
 # Re-export helpers from sentinel.helpers
 from heretek_swarm.actors.sentinel.helpers import (
@@ -51,6 +44,13 @@ from heretek_swarm.actors.sentinel.helpers import (
     check_injection_patterns,
     check_pii_patterns,
     generate_safety_report,
+)
+from heretek_swarm.actors.sentinel.immune import ImmuneResponseManager
+from heretek_swarm.actors.sentinel.safety import (
+    SafetyScanner,
+    detect_injections,
+    detect_pii,
+    validate_message_safety,
 )
 
 # Re-export types from sentinel.types

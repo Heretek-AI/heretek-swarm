@@ -17,7 +17,7 @@ from heretek_swarm.cli.display import _display_consensus_results, _print_startup
 logger = structlog.get_logger("cli.consensus")
 
 
-async def _run_consensus(  # noqa: ASYNC109
+async def _run_consensus(
     question: str, timeout: float, max_rounds: int = 1
 ) -> dict[str, Any]:
     """Async helper for the consensus CLI command."""

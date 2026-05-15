@@ -13,7 +13,6 @@ from heretek_swarm.security.zero_trust import LayerResult, ZeroTrustResult
 
 from . import (
     check_rate_limit,
-    get_metrics_collector,
     get_metrics_stream,
     get_zero_trust,
 )

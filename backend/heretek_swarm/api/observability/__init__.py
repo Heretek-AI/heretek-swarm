@@ -338,13 +338,13 @@ router = APIRouter(prefix="/api/v1/observability", tags=["observability"])
 # These imports happen at the bottom so submodules can access shared globals
 # from this package via absolute imports.
 
-from .swarm import router as _swarm_router  # noqa: E402
-from .consciousness import router as _consciousness_router  # noqa: E402
-from .stream import router as _stream_router  # noqa: E402
 from .alerts import router as _alerts_router  # noqa: E402
-from .traces import router as _traces_router  # noqa: E402
-from .external_calls import router as _external_calls_router  # noqa: E402
+from .consciousness import router as _consciousness_router  # noqa: E402
 from .events import router as _events_router  # noqa: E402
+from .external_calls import router as _external_calls_router  # noqa: E402
+from .stream import router as _stream_router  # noqa: E402
+from .swarm import router as _swarm_router  # noqa: E402
+from .traces import router as _traces_router  # noqa: E402
 
 router.include_router(_swarm_router)
 router.include_router(_consciousness_router)

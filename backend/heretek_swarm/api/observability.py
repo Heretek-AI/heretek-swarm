@@ -7,7 +7,7 @@ import router` continue to work without changes.
 """
 
 # Re-export everything from the subpackage
-from heretek_swarm.api.observability import (  # noqa: F401, E402
+from heretek_swarm.api.observability import (  # noqa: F401
     RATE_LIMIT_REQUESTS,
     RATE_LIMIT_WINDOW,
     ConnectionManager,

@@ -18,20 +18,26 @@ from pydantic import ValidationError
 
 from heretek_swarm.actors.base import ActorMessage, AgentActor
 from heretek_swarm.actors.mixins import (
-    DeliberationMixin, HealthReportingMixin, LearningMixin,
-    MemoryMixin, PatternMixin, ValidationMixin,
+    DeliberationMixin,
+    HealthReportingMixin,
+    LearningMixin,
+    MemoryMixin,
+    PatternMixin,
+    ValidationMixin,
 )
 from heretek_swarm.actors.sentinel.anomaly import AnomalyMonitor
 from heretek_swarm.actors.sentinel.helpers import SentinelHelpers
 from heretek_swarm.actors.sentinel.immune import ImmuneResponseManager
 from heretek_swarm.actors.sentinel.safety import SafetyScanner
-from heretek_swarm.actors.sentinel.types import AnomalyAlert, SafetyLevel, ViolationType
+from heretek_swarm.actors.sentinel.types import AnomalyAlert, SafetyLevel
 from heretek_swarm.actors.validation import validate_message
 from heretek_swarm.consensus.immune import (
-    ImmuneResponseBuilding, PatternClassification, ResponseOutcome,
+    ImmuneResponseBuilding,
+    PatternClassification,
+    ResponseOutcome,
 )
 from heretek_swarm.security.anomaly_detection import (
-    AnomalyDetectionConfig, ResponseStatus,
+    AnomalyDetectionConfig,
 )
 from heretek_swarm.security.behavioral_baseline import create_behavioral_baseline
 

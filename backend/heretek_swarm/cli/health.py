@@ -12,12 +12,13 @@ from __future__ import annotations
 import asyncio
 import subprocess
 import time
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
 import click
 import structlog
-from heretek_swarm.config.models import HealthStatus, InfrastructureService
+
 from heretek_swarm.cli.config_loader import load_infrastructure_config
+from heretek_swarm.config.models import HealthStatus, InfrastructureService
 
 logger = structlog.get_logger("cli.health")
 
@@ -73,7 +74,7 @@ def _make_result(
     }
 
 
-async def _check_postgres(  # noqa: ASYNC109
+async def _check_postgres(
     host: str, port: int, timeout: float, start: float
 ) -> dict[str, Any]:
     """Check PostgreSQL health via TCP socket."""
@@ -92,7 +93,7 @@ async def _check_postgres(  # noqa: ASYNC109
         return _make_result(InfrastructureService.POSTGRES, HealthStatus.UNHEALTHY, start, str(e))
 
 
-async def _check_redis(  # noqa: ASYNC109
+async def _check_redis(
     host: str, port: int, timeout: float, start: float
 ) -> dict[str, Any]:
     """Check Redis health via PING."""
@@ -107,7 +108,7 @@ async def _check_redis(  # noqa: ASYNC109
         return _make_result(InfrastructureService.REDIS, HealthStatus.UNHEALTHY, start, str(e))
 
 
-async def _check_qdrant(  # noqa: ASYNC109
+async def _check_qdrant(
     host: str, port: int, timeout: float, start: float
 ) -> dict[str, Any]:
     """Check Qdrant health via /healthz endpoint."""
@@ -132,7 +133,7 @@ async def _check_qdrant(  # noqa: ASYNC109
         return _make_result(InfrastructureService.QDRANT, HealthStatus.UNHEALTHY, start, str(e))
 
 
-async def _check_nats(  # noqa: ASYNC109
+async def _check_nats(
     host: str, port: int, timeout: float, start: float
 ) -> dict[str, Any]:
     """Check NATS health via CONNECT/PING exchange."""
@@ -176,7 +177,7 @@ async def _check_nats(  # noqa: ASYNC109
         return _make_result(InfrastructureService.NATS, HealthStatus.UNHEALTHY, start, str(e))
 
 
-async def _check_mem0(  # noqa: ASYNC109
+async def _check_mem0(
     host: str, port: int, timeout: float, start: float
 ) -> dict[str, Any]:
     """Check Mem0 health via /health endpoint."""
@@ -201,7 +202,7 @@ async def _check_mem0(  # noqa: ASYNC109
         return _make_result(InfrastructureService.MEM0, HealthStatus.UNHEALTHY, start, str(e))
 
 
-async def _check_service_health(  # noqa: ASYNC109
+async def _check_service_health(
     service: InfrastructureService,
     host: str,
     port: int,

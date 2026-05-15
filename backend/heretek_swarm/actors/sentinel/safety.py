@@ -359,7 +359,7 @@ class SafetyScanner:
     def get_active_violation_count(self) -> int:
         """Count violations not yet blocked/remediated."""
         return len([v for v in self._violations.values()
-                     if hasattr(v, 'blocked') and not v.blocked])
+                     if hasattr(v, "blocked") and not v.blocked])
 
     def get_total_violations_tracked(self) -> int:
         """Get total tracked violations."""

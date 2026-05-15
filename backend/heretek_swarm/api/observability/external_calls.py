@@ -31,7 +31,7 @@ router = APIRouter(prefix="", tags=["observability"])
 
 
 @router.get("/external-calls", response_model=ExternalCallLogListResponse)
-async def get_external_calls(  # noqa: PLR0913
+async def get_external_calls(
     request: Request,
     agent_id: str | None = Query(None, description="Filter by agent ID"),
     call_type: str | None = Query(None, description="Filter by call type (http/mcp)"),

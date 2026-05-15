@@ -11,8 +11,8 @@ from typing import Any
 
 import structlog
 
-from heretek_swarm.consensus.domain_selector import DomainSelector
 from heretek_swarm.consensus.consensus_coordinator import ConsensusCoordinator
+from heretek_swarm.consensus.domain_selector import DomainSelector
 from heretek_swarm.consensus.maker import MAKERConsensus
 
 logger = structlog.get_logger(__name__)
