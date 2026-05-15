@@ -8,10 +8,6 @@ only for backward-compatible filesystem visibility.
 from heretek_swarm.cli import (  # noqa: F401
     cli,
     config,
-    config_list,
-    config_remove,
-    config_set_default,
-    config_validate,
     config_wizard,
     consensus,
     deploy,
