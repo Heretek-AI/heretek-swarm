@@ -100,8 +100,8 @@ class TestComplexPromptAutoRoutesToConsensus:
         AsyncMock(return_value=_triad_result())
 
         with (
-            patch("heretek_swarm._cli_module._run_consensus", mock_consensus),
-            patch("heretek_swarm._cli_module._start_autonomous_swarm") as mock_start,
+            patch("heretek_swarm.cli.consensus._run_consensus", mock_consensus),
+            patch("heretek_swarm.cli.run._start_autonomous_swarm") as mock_start,
         ):
             # Patch inside _start_autonomous_swarm's scope
             mock_start.side_effect = RuntimeError("stop")
@@ -226,7 +226,7 @@ class TestMultiRoundConsensusWithArgumentExchange:
         runner = CliRunner()
         mock_run = AsyncMock(return_value=_consensus_result())
 
-        with patch("heretek_swarm._cli_module._run_consensus", mock_run):
+        with patch("heretek_swarm.cli.consensus._run_consensus", mock_run):
             runner.invoke(cli, ["consensus", "test question"])
 
         mock_run.assert_called_once()
@@ -239,7 +239,7 @@ class TestMultiRoundConsensusWithArgumentExchange:
         runner = CliRunner()
         mock_run = AsyncMock(return_value=_multi_round_consensus_result())
 
-        with patch("heretek_swarm._cli_module._run_consensus", mock_run):
+        with patch("heretek_swarm.cli.consensus._run_consensus", mock_run):
             runner.invoke(cli, ["consensus", "complex question", "--rounds", "3"])
 
         mock_run.assert_called_once()
@@ -479,7 +479,7 @@ class TestRunConsensusSingleRound:
         runner = CliRunner()
         mock_run = AsyncMock(return_value=_consensus_result(total_rounds=1))
 
-        with patch("heretek_swarm._cli_module._run_consensus", mock_run):
+        with patch("heretek_swarm.cli.consensus._run_consensus", mock_run):
             runner.invoke(cli, ["consensus", "test question"])
 
         mock_run.assert_called_once()

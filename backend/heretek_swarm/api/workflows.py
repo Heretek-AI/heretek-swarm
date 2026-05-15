@@ -23,7 +23,8 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi.responses import StreamingResponse
 
 from heretek_swarm.gateway.auth import verify_auth
-from heretek_swarm.workflow.engine import WorkflowStatus, get_workflow_engine
+from heretek_swarm.workflow.engine import get_workflow_engine
+from heretek_swarm.workflow.models import WorkflowStatus
 from heretek_swarm.workflow.validator import WorkflowValidator
 
 logger = structlog.get_logger(__name__)

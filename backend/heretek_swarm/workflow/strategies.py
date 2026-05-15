@@ -16,7 +16,7 @@ from typing import Any
 
 import structlog
 
-from heretek_swarm.workflow.engine import (
+from heretek_swarm.workflow.models import (
     Workflow,
     WorkflowNode,
 )

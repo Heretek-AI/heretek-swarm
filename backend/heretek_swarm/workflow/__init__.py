@@ -6,16 +6,19 @@ and state tracking. Inspired by Flowise workflow engine.
 """
 
 from .engine import (
+    WorkflowEngine,
+    get_cycle_detector_metrics,
+    get_workflow_engine,
+)
+from .models import (
     NodeStatus,
     Workflow,
     WorkflowContext,
     WorkflowEdge,
-    WorkflowEngine,
     WorkflowNode,
     WorkflowResult,
     WorkflowState,
     WorkflowStatus,
-    get_workflow_engine,
 )
 from .store import FileWorkflowStore
 
@@ -30,5 +33,6 @@ __all__ = [
     "WorkflowResult",
     "WorkflowState",
     "WorkflowStatus",
+    "get_cycle_detector_metrics",
     "get_workflow_engine",
 ]

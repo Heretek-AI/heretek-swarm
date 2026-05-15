@@ -1,0 +1,302 @@
+"""
+``status`` command — check Heretek Swarm health (daemon or API).
+"""
+
+from __future__ import annotations
+
+import asyncio
+import json as json_mod
+import sys
+import time
+from typing import Any
+
+import click
+import httpx
+import structlog
+
+from heretek_swarm.cli.health import _check_service_health
+from heretek_swarm.config.models import InfrastructureService
+
+logger = structlog.get_logger("cli.status")
+
+DEFAULT_API_BASE = "http://localhost:8000"
+
+
+# ---------------------------------------------------------------------------
+# Daemon socket helpers
+# ---------------------------------------------------------------------------
+
+
+def _query_daemon_socket() -> dict | None:
+    """Connect to the daemon's Unix socket and send a status query.
+
+    Returns the parsed JSON response dict, or ``None`` if the socket is
+    unreachable or the exchange fails.
+    """
+    import json
+    import socket as sock_mod
+
+    from heretek_swarm.runtime.daemon import DEFAULT_SOCKET_PATH
+
+    socket_path = DEFAULT_SOCKET_PATH
+    if not socket_path.exists():
+        return None
+
+    try:
+        s = sock_mod.socket(sock_mod.AF_UNIX, sock_mod.SOCK_STREAM)
+        s.settimeout(5.0)
+        s.connect(str(socket_path))
+        s.sendall(json.dumps({"type": "status"}).encode("utf-8") + b"\n")
+
+        data = b""
+        while True:
+            chunk = s.recv(4096)
+            if not chunk:
+                break
+            data += chunk
+            if b"\n" in data:
+                break
+        s.close()
+
+        return json.loads(data.decode("utf-8").strip())
+    except (OSError, json.JSONDecodeError) as exc:
+        logger.warning("daemon_socket_query_failed", error=str(exc))
+        return None
+
+
+def _display_daemon_status(agent_data: dict, pid: int, output_json: bool) -> None:
+    """Print agent status from the daemon to stdout."""
+    import json
+
+    agents = agent_data.get("agents", [])
+
+    if output_json:
+        click.echo(
+            json.dumps({"daemon_pid": pid, "agents": agents, "agent_count": len(agents)})
+        )
+        return
+
+    click.echo("Heretek Swarm Status (daemon)")
+    click.echo("=" * 40)
+    click.echo(f"  Daemon PID: {pid}")
+    click.echo("")
+
+    if not agents:
+        click.echo("  No agent data available from daemon.")
+        return
+
+    id_w = max(max(len(a.get("agent_id", "")) for a in agents) + 2, 12)
+    state_w = 12
+    mb_w = 8
+    msg_w = 10
+    err_w = 6
+
+    header = (
+        f"  {'Agent ID':<{id_w}} {'State':<{state_w}} "
+        f"{'Mailbox':<{mb_w}} {'Messages':<{msg_w}} {'Errors':<{err_w}} Last Activity"
+    )
+    click.echo(header)
+    click.echo("  " + "-" * len(header))
+
+    for a in agents:
+        aid = a.get("agent_id", "?")
+        state = a.get("state", "?")
+        mb = a.get("mailbox_size", 0)
+        msgs = a.get("message_count", 0)
+        errs = a.get("error_count", 0)
+        last_act = a.get("last_activity", "")
+        click.echo(
+            f"  {aid:<{id_w}} {state:<{state_w}} "
+            f"{mb:<{mb_w}} {msgs:<{msg_w}} {errs:<{err_w}} {last_act}"
+        )
+
+    click.echo("")
+    click.echo(f"  ✓ {len(agents)} agent(s) running")
+
+
+# ---------------------------------------------------------------------------
+# Click command
+# ---------------------------------------------------------------------------
+
+
+@click.command()
+@click.option("--api-base", default=DEFAULT_API_BASE, help="API base URL")
+@click.option("--timeout", default=30, type=int, help="Health check timeout in seconds")
+@click.option("--json", "output_json", is_flag=True, help="Output results as JSON")
+def status(api_base: str, timeout: int, output_json: bool) -> None:
+    """
+    Check Heretek Swarm status.
+
+    If the background daemon is running, queries it via the Unix socket
+    for agent status.  Otherwise falls back to fetching infrastructure
+    configuration from the HTTP API and performing health checks.
+    """
+    logger.info("status_command", api_base=api_base, timeout=timeout)
+
+    # --- Try daemon socket first --------------------------------------------
+    from heretek_swarm.runtime.daemon import DEFAULT_PID_FILE, read_pid_file
+
+    pid = read_pid_file(DEFAULT_PID_FILE)
+    if pid is not None:
+        agent_data = _query_daemon_socket()
+        if agent_data is not None:
+            _display_daemon_status(agent_data, pid, output_json)
+            return
+
+    # --- Fallback: API-based health check -----------------------------------
+    if not output_json:
+        click.echo("Heretek Swarm Status")
+        click.echo("=" * 40)
+
+    start_time = time.perf_counter()
+
+    if not output_json:
+        click.echo(f"\nFetching infrastructure configuration from {api_base}...")
+
+    try:
+        response = httpx.get(f"{api_base}/api/wizard/infrastructure", timeout=5.0)
+        response.raise_for_status()
+        data = response.json()
+    except httpx.ConnectError:
+        if output_json:
+            click.echo(json_mod.dumps({"error": f"Cannot connect to API server at {api_base}"}))
+            sys.exit(2)
+        click.echo("  ✗ Cannot connect to API server")
+        click.echo("  No running daemon or API server found")
+        sys.exit(1)
+    except httpx.HTTPError as e:
+        if output_json:
+            click.echo(json_mod.dumps({"error": f"API error: {e}"}))
+            sys.exit(2)
+        click.echo(f"  ✗ API error: {e}")
+        sys.exit(1)
+
+    configs = data.get("infrastructure", [])
+    if not configs:
+        if output_json:
+            result = {
+                "services": [],
+                "summary": {
+                    "total": 0,
+                    "healthy": 0,
+                    "unhealthy": 0,
+                    "unknown": 0,
+                    "duration_ms": round((time.perf_counter() - start_time) * 1000, 1),
+                },
+                "timestamp": __import__("datetime")
+                .datetime.now(__import__("datetime").timezone.utc)
+                .isoformat()
+                .replace("+00:00", "Z"),
+            }
+            click.echo(json_mod.dumps(result))
+            sys.exit(0)
+        click.echo("  ⚠ No infrastructure services configured")
+        click.echo("\nRun 'heretek-swarm deploy' or use the wizard to configure services.")
+        sys.exit(0)
+
+    if not output_json:
+        click.echo(f"  Found {len(configs)} configured service(s)")
+
+    if not output_json:
+        click.echo("\nPerforming health checks...")
+
+    async def run_health_checks() -> list[dict[str, Any]]:
+        checks = []
+        for c in configs:
+            service_str = c.get("service")
+            try:
+                svc = InfrastructureService(service_str)
+            except ValueError:
+                click.echo(f"  ⚠ Unknown service: {service_str}")
+                continue
+            checks.append(
+                _check_service_health(
+                    service=svc,
+                    host=c.get("host", "localhost"),
+                    port=c.get("port", 0),
+                    timeout=float(timeout),
+                )
+            )
+        return await asyncio.gather(*checks)
+
+    results = asyncio.run(run_health_checks())
+
+    healthy_count = sum(1 for r in results if r.get("status") == "healthy")
+    unhealthy_count = sum(1 for r in results if r.get("status") == "unhealthy")
+    unknown_count = sum(1 for r in results if r.get("status") not in ("healthy", "unhealthy"))
+
+    if output_json:
+        total_time_ms = (time.perf_counter() - start_time) * 1000
+        result = {
+            "services": [
+                {
+                    "service": r.get("service", "unknown"),
+                    "status": r.get("status", "unknown"),
+                    "latency_ms": round(r.get("latency_ms", 0), 1),
+                    "error": r.get("error"),
+                }
+                for r in results
+            ],
+            "summary": {
+                "total": len(results),
+                "healthy": healthy_count,
+                "unhealthy": unhealthy_count,
+                "unknown": unknown_count,
+                "duration_ms": round(total_time_ms, 1),
+            },
+            "timestamp": __import__("datetime")
+            .datetime.now(__import__("datetime").timezone.utc)
+            .isoformat()
+            .replace("+00:00", "Z"),
+        }
+        click.echo(json_mod.dumps(result))
+        sys.exit(1 if unhealthy_count > 0 else 0)
+
+    # Human-readable table
+    click.echo("\n" + "-" * 60)
+    click.echo(f"{'Service':<12} {'Status':<12} {'Latency':<12} Details")
+    click.echo("-" * 60)
+
+    for r in results:
+        service_val = r.get("service", "unknown")
+        status_val = r.get("status", "unknown")
+        latency = r.get("latency_ms", 0)
+        error = r.get("error")
+
+        if status_val == "healthy":
+            icon = "✓"
+        elif status_val == "unhealthy":
+            icon = "✗"
+        else:
+            icon = "?"
+
+        latency_str = f"{latency:.1f}ms" if latency < 1000 else f"{latency / 1000:.2f}s"
+        status_display = f"{icon} {status_val.upper()}"
+        click.echo(f"{service_val:<12} {status_display:<12} {latency_str:<12} {error or ''}")
+
+        logger.info(
+            "health_check_result",
+            service=service_val,
+            status=status_val,
+            latency_ms=latency,
+            error=error,
+        )
+
+    click.echo("-" * 60)
+
+    total_time = time.perf_counter() - start_time
+    click.echo(
+        f"\nSummary: {healthy_count} healthy, {unhealthy_count} unhealthy, {unknown_count} unknown"
+    )
+    click.echo(f"Total time: {total_time:.2f}s")
+
+    if unhealthy_count > 0:
+        click.echo(
+            "\n⚠ Some services are unhealthy. Run 'heretek-swarm deploy' for setup instructions."
+        )
+        sys.exit(1)
+    elif unknown_count > 0:
+        click.echo("\n⚠ Some services have unknown status.")
+        sys.exit(1)
+    else:
+        click.echo("\n✓ All services healthy")

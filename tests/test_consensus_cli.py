@@ -173,7 +173,7 @@ class TestConsensusCLI:
 
         mock_run_consensus = AsyncMock()
 
-        with patch("heretek_swarm._cli_module._run_consensus", mock_run_consensus):
+        with patch("heretek_swarm.cli.consensus._run_consensus", mock_run_consensus):
             if side_effect:
                 mock_run_consensus.side_effect = side_effect
             else:
@@ -265,7 +265,7 @@ class TestConsensusCLI:
 
         mock_run_consensus = AsyncMock(return_value=_sample_consensus_result())
 
-        with patch("heretek_swarm._cli_module._run_consensus", mock_run_consensus):
+        with patch("heretek_swarm.cli.consensus._run_consensus", mock_run_consensus):
             result_obj = runner.invoke(
                 cli,
                 ["consensus", "test question", "--timeout", "180"],
@@ -312,7 +312,7 @@ class TestConsensusRoundsFlag:
         runner = CliRunner()
         mock_run_consensus = AsyncMock(return_value=_sample_consensus_result())
 
-        with patch("heretek_swarm._cli_module._run_consensus", mock_run_consensus):
+        with patch("heretek_swarm.cli.consensus._run_consensus", mock_run_consensus):
             runner.invoke(cli, ["consensus", "test question"])
 
         # Default max_rounds=1
@@ -325,7 +325,7 @@ class TestConsensusRoundsFlag:
         runner = CliRunner()
         mock_run_consensus = AsyncMock(return_value=_sample_consensus_result())
 
-        with patch("heretek_swarm._cli_module._run_consensus", mock_run_consensus):
+        with patch("heretek_swarm.cli.consensus._run_consensus", mock_run_consensus):
             runner.invoke(cli, ["consensus", "test question", "--rounds", "3"])
 
         mock_run_consensus.assert_called_once()
@@ -345,7 +345,7 @@ class TestConsensusRoundsFlag:
         runner = CliRunner()
         mock_run_consensus = AsyncMock(return_value=result_with_rounds)
 
-        with patch("heretek_swarm._cli_module._run_consensus", mock_run_consensus):
+        with patch("heretek_swarm.cli.consensus._run_consensus", mock_run_consensus):
             result_obj = runner.invoke(cli, ["consensus", "test question", "--rounds", "3"])
 
         assert result_obj.exit_code == 0
@@ -363,7 +363,7 @@ class TestConsensusRoundsFlag:
         runner = CliRunner()
         mock_run_consensus = AsyncMock(return_value=result_multi)
 
-        with patch("heretek_swarm._cli_module._run_consensus", mock_run_consensus):
+        with patch("heretek_swarm.cli.consensus._run_consensus", mock_run_consensus):
             result_obj = runner.invoke(cli, ["consensus", "test", "--rounds", "2"])
 
         assert "Rounds: 2" in result_obj.output
