@@ -1059,8 +1059,9 @@ class ModelGarage:
         finally:
             try:  # noqa: SIM105
                 await provider.close()
-            except Exception:  # noqa: S110
-                pass  # best-effort cleanup
+            except Exception:
+                logger.debug("provider_cleanup_error", exc_info=True)
+                # best-effort cleanup
 
         logger.info(
             "provider_test_result",

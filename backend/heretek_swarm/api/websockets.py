@@ -161,8 +161,8 @@ async def _ws_authenticate_and_accept(
             await websocket.accept()
             await websocket.send_json({"type": "error", "error": f"Authentication failed: {error}"})
             await websocket.close()
-        except Exception:  # noqa: S110
-            pass
+        except Exception:
+            logger.debug("websocket_close_cleanup_error", exc_info=True)
         logger.warning("websocket_{error_action}_auth_failed", error=error)
         return False, None
     return True, user_id
@@ -583,8 +583,8 @@ async def execution_websocket(
             await websocket.accept()
             await websocket.send_json({"type": "error", "error": f"Authentication failed: {error}"})
             await websocket.close()
-        except Exception:  # noqa: S110
-            pass
+        except Exception:
+            logger.debug("websocket_close_cleanup_error", exc_info=True)
         logger.warning("websocket_execution_auth_failed", execution_id=execution_id, error=error)
         return
 
@@ -710,8 +710,8 @@ async def a2a_websocket(
             await websocket.accept()
             await websocket.send_json({"type": "error", "error": f"Authentication failed: {error}"})
             await websocket.close()
-        except Exception:  # noqa: S110
-            pass
+        except Exception:
+            logger.debug("websocket_close_cleanup_error", exc_info=True)
         logger.warning("websocket_a2a_auth_failed", error=error)
         return
 
@@ -778,8 +778,8 @@ async def agent_events_websocket(
             await websocket.accept()
             await websocket.send_json({"type": "error", "error": f"Authentication failed: {error}"})
             await websocket.close()
-        except Exception:  # noqa: S110
-            pass
+        except Exception:
+            logger.debug("websocket_close_cleanup_error", exc_info=True)
         logger.warning("websocket_agent_events_auth_failed", agent_id=agent_id, error=error)
         return
 
@@ -1161,8 +1161,8 @@ async def observability_websocket(
             await websocket.accept()
             await websocket.send_json({"type": "error", "error": f"Authentication failed: {error}"})
             await websocket.close()
-        except Exception:  # noqa: S110
-            pass
+        except Exception:
+            logger.debug("websocket_close_cleanup_error", exc_info=True)
         logger.warning("websocket_observability_auth_failed", error=error)
         return
 
@@ -1260,8 +1260,8 @@ async def all_agents_websocket(
             await websocket.accept()
             await websocket.send_json({"type": "error", "error": f"Authentication failed: {error}"})
             await websocket.close()
-        except Exception:  # noqa: S110
-            pass
+        except Exception:
+            logger.debug("websocket_close_cleanup_error", exc_info=True)
         logger.warning("websocket_all_agents_auth_failed", error=error)
         return
 

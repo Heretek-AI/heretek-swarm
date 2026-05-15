@@ -495,8 +495,9 @@ Respond in JSON format:
                                 impact_score=float(item.get("impact_score", 0.5)),
                             )
                             patterns.append(pattern)
-                except Exception:  # noqa: S110
-                    pass  # Fall through to heuristic
+                except Exception:
+                    logger.warning("habit_forge_llm_json_parse_failed", exc_info=True)
+                    # Fall through to heuristic
 
             # Fallback: Heuristic pattern detection
             if not patterns:
@@ -759,8 +760,9 @@ Respond in JSON:
                     end_idx = result.rfind("}") + 1
                     if start_idx >= 0 and end_idx > start_idx:
                         return json.loads(result[start_idx:end_idx])
-                except Exception:  # noqa: S110
-                    pass  # Fall through to fallback
+                except Exception:
+                    logger.warning("habit_forge_llm_json_parse_failed", exc_info=True)
+                    # Fall through to fallback
 
             # Fallback
             return {
@@ -1157,8 +1159,9 @@ Respond in JSON:
                     end_idx = result.rfind("}") + 1
                     if start_idx >= 0 and end_idx > start_idx:
                         return json.loads(result[start_idx:end_idx])
-                except Exception:  # noqa: S110
-                    pass  # Fall through to fallback
+                except Exception:
+                    logger.warning("habit_forge_llm_json_parse_failed", exc_info=True)
+                    # Fall through to fallback
 
             # Fallback
             return {

@@ -182,9 +182,9 @@ def stop_container(runtime: ContainerRuntime, name: str) -> None:
                 timeout=10,
             )
             logger.warning("container_force_killed", container=name)
-        except Exception:  # noqa: S110
+        except Exception:
+            logger.debug("container_cleanup_error", exc_info=True)
             # Intentionally ignored - idempotent operation
-            pass
     except Exception as e:
         # Ignore all errors - idempotent operation
         logger.debug("container_stop_ignored", container=name, error=str(e))
