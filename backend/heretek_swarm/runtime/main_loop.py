@@ -28,12 +28,11 @@ if TYPE_CHECKING:
     from heretek_swarm.goals.store import FileGoalStore
 
 from heretek_swarm.actors.supervisor import ActorSupervisor
-from heretek_swarm.agents.agent_factory import build_agent_for
 from heretek_swarm.api.consciousness import get_consciousness_plugin
 from heretek_swarm.channels.registry import ChannelRegistry, GroupRegistry
-from heretek_swarm.consensus.consensus_coordinator import ConsensusCoordinator
-from heretek_swarm.consensus.domain_selector import DomainSelector
 from heretek_swarm.consensus.maker import MAKERConsensus
+from heretek_swarm.runtime.actor_orchestrator import ActorOrchestrator
+from heretek_swarm.runtime.deliberation_orchestrator import DeliberationOrchestrator
 from heretek_swarm.gateway.nats_event_mesh import NATSEventMeshWithJetStream
 from heretek_swarm.llm.model_garage import ModelGarage
 from heretek_swarm.memory.base import DualTierMemory
@@ -95,6 +94,21 @@ class AutonomousSwarm:
 
         # M011: Goal pipeline store (initialized on first use in --no-infra path)
         self._goal_store: FileGoalStore | None = None
+
+        # Orchestrators — created in __init__, wired during initialize()
+        # DeliberationOrchestrator handles triad, MAKER consensus, and routed tasks
+        self._deliberation = DeliberationOrchestrator(
+            supervisor=self.supervisor,
+            consensus=self.consensus,
+            config=self.config,
+        )
+        # ActorOrchestrator handles agent spawning and channel subscriptions
+        self._actor_orch = ActorOrchestrator(
+            supervisor=self.supervisor,
+            mcp_tools=self.mcp_tools,
+            channel_registry=self.channel_registry,
+            event_mesh=self.event_mesh,
+        )
 
     def _default_config(self) -> dict[str, Any]:
         """Default configuration for autonomous swarm."""
@@ -173,7 +187,14 @@ class AutonomousSwarm:
             self.supervisor = ActorSupervisor(
                 health_check_interval=self._health_check_interval, auto_restart=True, max_restarts=5
             )
-            await self._spawn_all_actors()
+            # Re-wire orchestrator refs now that components are initialized
+            self._actor_orch._supervisor = self.supervisor
+            self._actor_orch._mcp_tools = self.mcp_tools
+            self._actor_orch._channel_registry = self.channel_registry
+            self._actor_orch._event_mesh = self.event_mesh
+            self._deliberation._supervisor = self.supervisor
+            self._deliberation._consensus = self.consensus
+            await self._actor_orch.spawn_all_actors()
             logger.info("autonomous_swarm_fully_initialized")
             return
 
@@ -334,9 +355,17 @@ class AutonomousSwarm:
             )
             self.model_garage = None
 
-        # 8. Spawn all agents
+        # 8. Re-wire orchestrator refs with initialized components
+        self._actor_orch._supervisor = self.supervisor
+        self._actor_orch._mcp_tools = self.mcp_tools
+        self._actor_orch._channel_registry = self.channel_registry
+        self._actor_orch._event_mesh = self.event_mesh
+        self._deliberation._supervisor = self.supervisor
+        self._deliberation._consensus = self.consensus
+
+        # 9. Spawn all agents
         try:
-            await self._spawn_all_actors()
+            await self._actor_orch.spawn_all_actors()
             logger.info("all_actors_spawned")
             # Bridge actor registries: sync AutonomousSwarm's supervisor actors
             # into the global get_supervisor() singleton so send_to_actor()
@@ -351,9 +380,9 @@ class AutonomousSwarm:
                 error=str(exc),
             )
 
-        # 9. Set up channel subscriptions
+        # 10. Set up channel subscriptions
         try:
-            await self._setup_channel_subscriptions()
+            await self._actor_orch.setup_channel_subscriptions()
             logger.info("channel_subscriptions_configured")
         except Exception as exc:
             logger.warning(
@@ -368,100 +397,8 @@ class AutonomousSwarm:
         prompt: str,
         timeout: int = 120,  # noqa: ASYNC109
     ) -> dict[str, Any]:
-        """
-        Run a triad deliberation: route a prompt through Steward → Alpha → Beta → Charlie.
-
-        NOTE: For complex questions requiring multi-agent consensus with domain-based
-        agent selection, prefer ``run_consensus()`` which uses the MAKER consensus
-        engine with DomainSelector for more rigorous decision-making.
-
-        Args:
-            prompt: The deliberation topic/prompt.
-            timeout: Maximum total wall-clock seconds to wait for all three
-                     agents to produce output (default 120). Each agent's LLM
-                     call has a 60s internal timeout in run_with_llm.
-
-        Returns:
-            Dict mapping each agent_id to its output. Partial results are
-            returned on timeout or agent failure.
-
-        Raises:
-            RuntimeError: If Steward agent is not in the actor registry.
-        """
-        logger.info(
-            "run_deliberation_started",
-            prompt=prompt,
-            timeout=timeout,
-        )
-
-        steward = self.supervisor.actors.get("steward")
-        if steward is None:
-            raise RuntimeError(
-                "Steward agent not found in supervisor.actors — "
-                "cannot coordinate triad. Ensure _spawn_all_actors() "
-                "completed successfully."
-            )
-
-        try:
-            # Initiate triad deliberation via Steward's coordinate_triad.
-            # This sends a "start_deliberation" message through steward.send()
-            # which goes into the topic routing system. The message chain:
-            #   coordinate_triad → send("triad", start_deliberation) →
-            #   _deliver_to_registry_actors → Steward owns "triad" topic
-            deliberation_id = await steward.coordinate_triad(
-                topic=prompt,
-                triad_members=["alpha", "beta", "charlie"],
-            )
-            logger.info(
-                "deliberation_initiated",
-                deliberation_id=deliberation_id,
-            )
-
-            # Wait for async mailbox processing to complete across all agents.
-            # The message chain is: Steward mailbox → _handle_start_deliberation
-            # → send_to_actor(member, deliberation_request) → each member mailbox
-            # → _handle_deliberation_request → _perform_analysis() →
-            # run_with_llm() (60s timeout per agent). We sleep generously since
-            # the method-level timeout param caps total wall time.
-            sleep_time = min(timeout, 120)
-            await asyncio.sleep(sleep_time)
-
-        except TimeoutError:
-            logger.warning("deliberation_timeout", prompt=prompt)
-        except Exception as exc:
-            logger.error(
-                "deliberation_failed",
-                prompt=prompt,
-                error=str(exc),
-            )
-
-        # Read results from per-agent state attributes.
-        results: dict[str, Any] = {}
-        for agent_id in ["alpha", "beta", "charlie"]:
-            agent = self.supervisor.actors.get(agent_id)
-            if agent is None:
-                results[agent_id] = {"error": f"Agent {agent_id} not found"}
-                continue
-
-            if agent_id == "alpha":
-                history = getattr(agent, "analysis_history", [])
-                results[agent_id] = {"analyses": history[-3:] if history else []}
-            elif agent_id == "beta":
-                analyses = getattr(agent, "_analyses", {})
-                results[agent_id] = {"analyses": list(analyses.values())[-3:] if analyses else []}
-            elif agent_id == "charlie":
-                challenges = getattr(agent, "_challenges", {})
-                results[agent_id] = {
-                    "challenges": list(challenges.values())[-3:] if challenges else []
-                }
-
-        logger.info(
-            "run_deliberation_complete",
-            alpha_count=len(results.get("alpha", {}).get("analyses", [])),
-            beta_count=len(results.get("beta", {}).get("analyses", [])),
-            charlie_count=len(results.get("charlie", {}).get("challenges", [])),
-        )
-        return results
+        """Run a triad deliberation — delegates to DeliberationOrchestrator."""
+        return await self._deliberation.run_deliberation(prompt, timeout)
 
     async def run_consensus(
         self,
@@ -469,123 +406,8 @@ class AutonomousSwarm:
         timeout: float = 120,  # noqa: ASYNC109
         max_rounds: int = 3,
     ) -> dict[str, Any]:
-        """
-        Run a MAKER consensus process with domain-based agent selection.
-
-        Uses DomainSelector to find question-relevant agents, then orchestrates
-        MAKER ahead-by-k voting via ConsensusCoordinator. Each selected agent
-        produces a structured vote (decision + confidence) through its LLM.
-
-        Args:
-            question: The question to reach consensus on.
-            timeout: Overall timeout in seconds (default 120).
-            max_rounds: Reserved for future multi-round deliberation.
-
-        Returns:
-            Structured dict with keys:
-            - decision: Winning decision string
-            - confidence: Overall confidence score (0.0-1.0)
-            - votes: List of per-agent vote dicts
-            - red_flags: List of red flag messages
-            - reasoning: Aggregated reasoning from votes
-            - consensus_id: Unique process identifier
-
-            Returns an error dict if consensus cannot be initiated
-            (e.g. no supervisor, no consensus engine).
-        """
-        logger.info(
-            "run_consensus_started",
-            question=question[:200],
-            timeout=timeout,
-            max_rounds=max_rounds,
-        )
-
-        # Guard: supervisor must be available
-        if self.supervisor is None:
-            logger.error("run_consensus_no_supervisor")
-            return {
-                "decision": "error",
-                "confidence": 0.0,
-                "votes": [],
-                "red_flags": ["Supervisor not initialized"],
-                "reasoning": "Cannot run consensus without actor supervisor",
-            }
-
-        # Guard: consensus engine must be available
-        if self.consensus is None:
-            logger.error("run_consensus_no_consensus_engine")
-            return {
-                "decision": "error",
-                "confidence": 0.0,
-                "votes": [],
-                "red_flags": ["Consensus engine not initialized"],
-                "reasoning": "Cannot run consensus without MAKER consensus engine",
-            }
-
-        # Build domain selector from character files
-        domain_selector = DomainSelector()
-
-        # Build coordinator with real actors
-        coordinator = ConsensusCoordinator(
-            maker=self.consensus,
-            domain_selector=domain_selector,
-            actors=self.supervisor.actors,
-        )
-
-        # Run consensus
-        result = await coordinator.run_consensus(
-            question=question,
-            timeout=timeout,
-            max_rounds=max_rounds,
-        )
-
-        if result is None:
-            logger.warning("run_consensus_no_result", question=question[:200])
-            return {
-                "decision": "no_consensus",
-                "confidence": 0.0,
-                "votes": [],
-                "red_flags": ["No consensus reached"],
-                "reasoning": "MAKER could not reach a decisive consensus",
-            }
-
-        # Build structured response
-        vote_dicts = [
-            {
-                "agent_id": v.agent_id,
-                "decision": v.decision,
-                "confidence": v.confidence,
-                "metadata": v.metadata,
-            }
-            for v in result.votes
-        ]
-
-        # Aggregate reasoning from non-abstain votes
-        reasoning_parts = []
-        for v in result.votes:
-            if v.decision != "abstain" and v.metadata.get("reasoning"):
-                reasoning_parts.append(f"{v.agent_id}: {v.metadata['reasoning']}")  # noqa: PERF401
-
-        response = {
-            "decision": result.decision,
-            "confidence": result.confidence,
-            "votes": vote_dicts,
-            "red_flags": result.red_flags,
-            "reasoning": "; ".join(reasoning_parts) if reasoning_parts else "No reasoning captured",
-            "consensus_id": result.metadata.get("consensus_id", "unknown"),
-            "round_history": result.metadata.get("round_history", []),
-            "total_rounds": result.metadata.get("total_rounds", 1),
-        }
-
-        logger.info(
-            "run_consensus_complete",
-            decision=response["decision"],
-            confidence=response["confidence"],
-            vote_count=len(vote_dicts),
-            red_flag_count=len(response["red_flags"]),
-        )
-
-        return response
+        """Run MAKER consensus — delegates to DeliberationOrchestrator."""
+        return await self._deliberation.run_consensus(question, timeout, max_rounds)
 
     async def run_routed_task(
         self,
@@ -594,107 +416,8 @@ class AutonomousSwarm:
         task_data: dict[str, Any],
         timeout: int = 30,  # noqa: ASYNC109
     ) -> dict[str, Any]:
-        """
-        Route a task to a specific agent using Steward's ``route_to_agent()``
-        and log the event to Historian.
-
-        This is a one-shot dispatch path for the CLI ``--target-agent``
-        flag — it sends a structured task to a single agent (cast-style
-        delivery) rather than orchestrating a triad deliberation.
-
-        Args:
-            agent_name: Target agent ID (e.g. ``"coder"``).
-            task_type: Machine-readable task label (e.g. ``"code_analysis"``).
-            task_data: Arbitrary payload dict for the receiving agent.
-            timeout: Maximum wall-clock seconds to sleep for async mailbox
-                     processing (capped at 30). The agent's internal handler
-                     deadline should be shorter; this sleep is a best-effort
-                     wait for the mailbox to be consumed.
-
-        Returns:
-            A dict with dispatch status, target agent, task type, and the
-            message ID from Steward's send_to_actor on success::
-
-                {"status": "dispatched", "target_agent": "coder",
-                 "task_type": "code_analysis", "message_id": "abc123"}
-
-            On dispatch failure: ``{"status": "failed",
-            "error": "route_to_agent returned empty"}``
-
-        Raises:
-            RuntimeError: If Steward agent is not in the actor registry.
-        """
-        logger.info(
-            "run_routed_task_started",
-            agent_name=agent_name,
-            task_type=task_type,
-            timeout=timeout,
-        )
-
-        steward = self.supervisor.actors.get("steward")
-        if steward is None:
-            raise RuntimeError(
-                "Steward agent not found in supervisor.actors — "
-                "cannot route task. Ensure _spawn_all_actors() "
-                "completed successfully."
-            )
-
-        message_id = await steward.route_to_agent(
-            agent_name=agent_name,
-            task_type=task_type,
-            task_data=task_data,
-        )
-
-        if not message_id:
-            logger.warning(
-                "run_routed_task_dispatch_failed",
-                agent_name=agent_name,
-                task_type=task_type,
-            )
-            return {
-                "status": "failed",
-                "error": "route_to_agent returned empty",
-            }
-
-        logger.info(
-            "run_routed_task_dispatched",
-            agent_name=agent_name,
-            task_type=task_type,
-            message_id=message_id,
-        )
-
-        # Best-effort wait for async mailbox processing (same sleep pattern
-        # as run_deliberation()).
-        sleep_time = min(timeout, 30)
-        await asyncio.sleep(sleep_time)
-
-        # Log the routed event to Historian. Gracefully handle missing
-        # historian (log warning, still return dispatch status). This
-        # follows the same None-guard pattern as _process_scheduled_tasks().
-        historian = self.supervisor.actors.get("historian") if self.supervisor else None
-        if historian is not None:
-            await historian.log_event(
-                "routed_task",
-                "main_loop",
-                {
-                    "target_agent": agent_name,
-                    "task_type": task_type,
-                    "message_id": message_id,
-                },
-            )
-        else:
-            logger.warning(
-                "run_routed_task_historian_skipped",
-                agent_name=agent_name,
-                task_type=task_type,
-            )
-
-        return {
-            "status": "dispatched",
-            "target_agent": agent_name,
-            "task_type": task_type,
-            "message_id": message_id,
-        }
+        """Route a task to a specific agent — delegates to DeliberationOrchestrator."""
+        return await self._deliberation.run_routed_task(agent_name, task_type, task_data, timeout)
 
     def get_startup_status(self) -> dict[str, str]:
         """Return startup status of each component for diagnostics.
@@ -742,413 +465,6 @@ class AutonomousSwarm:
             status["Agents"] = "✗ Unavailable"
 
         return status
-
-    async def _spawn_all_actors(self) -> None:
-        """Spawn all 23 agents across 6 tiers."""
-        # Tier 1: Core Triad (Governance)
-        from heretek_swarm.actors.arbiter import ArbiterAgent
-        from heretek_swarm.actors.catalyst import CatalystAgent
-        from heretek_swarm.actors.chronos import ChronosAgent
-        from heretek_swarm.actors.coder import CoderAgent
-
-        # Tier 5: Coordination Agents (Integration)
-        from heretek_swarm.actors.coordinator import CoordinatorAgent
-        from heretek_swarm.actors.dreamer import DreamerAgent
-        from heretek_swarm.actors.echo import EchoAgent
-        from heretek_swarm.actors.empath import EmpathAgent
-        from heretek_swarm.actors.examiner import ExaminerAgent
-
-        # Tier 3: Exploration Agents (Discovery & Creation)
-        from heretek_swarm.actors.explorer import ExplorerAgent
-        from heretek_swarm.actors.habit_forge import HabitForgeAgent
-
-        # Tier 2: Support Agents (Knowledge & Memory)
-        from heretek_swarm.actors.historian import HistorianAgent
-        from heretek_swarm.actors.metis import MetisAgent
-        from heretek_swarm.actors.nexus import NexusAgent
-        from heretek_swarm.actors.perceiver import PerceiverAgent
-        from heretek_swarm.actors.perceiver_plus import PerceiverPlusAgent
-
-        # Tier 6: Enhancement Agents (Optimization)
-        from heretek_swarm.actors.prism import PrismAgent
-
-        # Tier 4: Safety & Security (Protection)
-        from heretek_swarm.actors.sentinel import SentinelAgent
-        from heretek_swarm.actors.sentinel_prime import SentinelPrimeAgent
-        from heretek_swarm.actors.triad import AlphaAgent, BetaAgent, CharlieAgent, StewardAgent
-
-        # Define all agents with their topics
-        actors = [
-            # Tier 1: Core Triad
-            (StewardAgent, "steward", ["triad", "coordination", "governance"]),
-            (AlphaAgent, "alpha", ["analysis", "decisions", "triad"]),
-            (BetaAgent, "beta", ["validation", "quality", "triad"]),
-            (CharlieAgent, "charlie", ["risk", "challenges", "triad"]),
-            # Tier 2: Support
-            (HistorianAgent, "historian", ["memory", "context", "triad"]),
-            (MetisAgent, "metis", ["planning", "strategy", "coordination"]),
-            (EmpathAgent, "empath", ["sentiment", "mediation", "perception"]),
-            (PerceiverAgent, "perceiver", ["input", "sensory", "perception"]),
-            (EchoAgent, "echo", ["communication", "broadcast", "perception"]),
-            # Tier 3: Exploration
-            (ExplorerAgent, "explorer", ["discovery", "monitoring", "exploration"]),
-            (ExaminerAgent, "examiner", ["testing", "quality", "exploration"]),
-            (DreamerAgent, "dreamer", ["creative", "alternatives", "exploration"]),
-            (CoderAgent, "coder", ["code", "implementation", "exploration"]),
-            # Tier 4: Safety
-            (SentinelAgent, "sentinel", ["validation", "safety", "safety"]),
-            (SentinelPrimeAgent, "sentinel-prime", ["threats", "security", "safety"]),
-            (ArbiterAgent, "arbiter", ["conflict", "resolution", "safety"]),
-            # Tier 5: Coordination
-            (CoordinatorAgent, "coordinator", ["coordination", "tasks", "coordination"]),
-            (NexusAgent, "nexus", ["external", "api", "external"]),
-            (CatalystAgent, "catalyst", ["change", "transition", "coordination"]),
-            (ChronosAgent, "chronos", ["scheduling", "temporal", "coordination"]),
-            # Tier 6: Enhancement
-            (PrismAgent, "prism", ["perspective", "viewpoints", "memory"]),
-            (HabitForgeAgent, "habit-forge", ["patterns", "behavior", "memory"]),
-            (PerceiverPlusAgent, "perceiver-plus", ["analytics", "advanced", "perception"]),
-        ]
-
-        # Per-agent system prompts loaded at spawn time.
-        # These give each agent its role identity so swarms.Agent can
-        # use a meaningful persona rather than the default auto-generated one.
-        _HISTORIAN_SYSTEM_PROMPT = (
-            "You are the Historian agent. You record and retrieve structured "
-            "events for the swarm. You persist events to a JSONL file and "
-            "provide memory and context for deliberations."
-        )
-        _CHRONOS_SYSTEM_PROMPT = (
-            "You are the Chronos agent. You manage scheduling and temporal "
-            "coordination. You generate ticks that drive the swarm's main loop, "
-            "telling agents what to do and when."
-        )
-        _METIS_SYSTEM_PROMPT = (
-            "You are the Metis agent. You provide strategic planning and "
-            "long-term thinking for the swarm. You produce strategic analyses "
-            "covering goal setting, resource allocation, risk assessment, "
-            "multi-step planning, and scenario analysis."
-        )
-        _EMPATH_SYSTEM_PROMPT = (
-            "You are the Empath agent. You provide emotional intelligence "
-            "and sentiment analysis for the swarm. You perform sentiment "
-            "analysis on communications, track agent mood states, detect "
-            "stress, mediate conflicts, and provide emotional context for "
-            "decision-making."
-        )
-        _STEWARD_SYSTEM_PROMPT = (
-            "You are the Steward agent. You oversee governance and "
-            "coordination for the swarm. You initiate deliberation processes, "
-            "coordinate Triad members, make final executive decisions, and "
-            "manage resource allocation and system-wide policy."
-        )
-        _ALPHA_SYSTEM_PROMPT = (
-            "You are the Alpha agent. You are the primary analyst and "
-            "decision-maker in the Triad. You perform deep analysis of "
-            "topics and produce structured analytical reports covering "
-            "key factors, evidence, and actionable recommendations."
-        )
-        _BETA_SYSTEM_PROMPT = (
-            "You are the Beta agent. You are the secondary analyst and "
-            "validator in the Triad. You review proposals and analyses "
-            "for quality, consistency, and logical soundness, providing "
-            "validation reports that identify gaps and strengths."
-        )
-        _CHARLIE_SYSTEM_PROMPT = (
-            "You are the Charlie agent. You are the challenger and risk "
-            "assessor in the Triad. You identify risks, surface hidden "
-            "assumptions, and provide counterarguments to ensure robust "
-            "decision-making through adversarial perspective."
-        )
-        _PERCEIVER_SYSTEM_PROMPT = (
-            "You are the Perceiver agent. You process multi-modal sensory "
-            "input for the swarm. You handle text, image, audio, and video "
-            "data, perform feature extraction and preprocessing, normalize "
-            "sensory information, and assess input quality."
-        )
-        _ECHO_SYSTEM_PROMPT = (
-            "You are the Echo agent. You handle communication and protocol "
-            "translation for the swarm. You translate between external "
-            "protocols, format and normalize messages, serve as the external "
-            "API integration gateway, and deliver messages across multiple "
-            "channels with appropriate style adaptation."
-        )
-        _EXPLORER_SYSTEM_PROMPT = (
-            "You are the Explorer agent. You perform intelligence gathering "
-            "and opportunity discovery for the swarm. You monitor external "
-            "sources, identify opportunities and threats, detect anomalies, "
-            "conduct deep topic research, and report actionable findings."
-        )
-        _EXAMINER_SYSTEM_PROMPT = (
-            "You are the Examiner agent. You are the quality assurance "
-            "specialist for the swarm. You design and execute test cases, "
-            "perform code and system reviews, detect bugs and quality "
-            "issues, generate quality reports, and enforce testing standards."
-        )
-        _DREAMER_SYSTEM_PROMPT = (
-            "You are the Dreamer agent. You drive creative exploration "
-            "and innovation for the swarm. You generate novel ideas, "
-            "explore alternative approaches, facilitate creative sessions, "
-            "and produce innovation reports with actionable creativity."
-        )
-        _CODER_SYSTEM_PROMPT = (
-            "You are the Coder agent. You are the implementation engine "
-            "for the swarm. You generate, review, and refactor code, "
-            "detect and fix bugs, write tests, produce documentation, "
-            "and explain code. You turn decisions into working software."
-        )
-        _SENTINEL_SYSTEM_PROMPT = (
-            "You are the Sentinel agent. You are the safety guardian "
-            "for the swarm. You validate and sanitize inputs, filter "
-            "outputs for harmful content, enforce guardrails and content "
-            "policy, detect behavioral anomalies, and generate safety reports."
-        )
-        _SENTINEL_PRIME_SYSTEM_PROMPT = (
-            "You are the Sentinel-Prime agent. You are the security "
-            "commander for the swarm. You detect and respond to external "
-            "threats, manage security incidents, analyze threat indicators, "
-            "coordinate response actions, and serve as backup monitoring "
-            "for the Sentinel agent."
-        )
-        _ARBITER_SYSTEM_PROMPT = (
-            "You are the Arbiter agent. You resolve conflicts within the "
-            "swarm. You detect and analyze conflicts between agents, apply "
-            "resolution strategies, manage relationships, produce "
-            "arbitration reports, and enforce resolution outcomes."
-        )
-        _COORDINATOR_SYSTEM_PROMPT = (
-            "You are the Coordinator agent. You orchestrate multi-agent "
-            "workflows for the swarm. You synchronize tasks across agents, "
-            "resolve dependencies, manage parallel execution, handle "
-            "resource contention, and track collective progress."
-        )
-        _NEXUS_SYSTEM_PROMPT = (
-            "You are the Nexus agent. You manage external integrations "
-            "for the swarm. You handle API connections, configure "
-            "webhooks, translate between external protocols, manage "
-            "connection lifecycles, and route external events into "
-            "the swarm."
-        )
-        _CATALYST_SYSTEM_PROMPT = (
-            "You are the Catalyst agent. You manage change and transitions "
-            "for the swarm. You detect and analyze changes, plan and "
-            "execute transitions, manage version migrations, coordinate "
-            "rollbacks, and communicate changes to stakeholders."
-        )
-        _PRISM_SYSTEM_PROMPT = (
-            "You are the Prism agent. You provide multi-perspective "
-            "analysis for the swarm. You analyze situations from multiple "
-            "viewpoints, detect cognitive biases, generate stakeholder "
-            "maps, apply analytical frameworks, and produce reframed "
-            "perspectives to improve decision quality."
-        )
-        _HABIT_FORGE_SYSTEM_PROMPT = (
-            "You are the Habit-Forge agent. You manage behavioral patterns "
-            "and habit formation for the swarm. You track recurring "
-            "patterns, reinforce positive behaviors, manage habit stages, "
-            "monitor streaks, and help the swarm build productive routines."
-        )
-        _PERCEIVER_PLUS_SYSTEM_PROMPT = (
-            "You are the Perceiver+ agent. You perform advanced analytics "
-            "for the swarm. You conduct statistical analysis, trend "
-            "detection, correlation studies, and deep data mining across "
-            "multiple data modalities to produce actionable analytical "
-            "results."
-        )
-
-        # Map agent_ids to their system prompts. Agents not listed get None
-        # (swarms auto-generates a default prompt in that case).
-        _SYSTEM_PROMPTS: dict[str, str | None] = {
-            "historian": _HISTORIAN_SYSTEM_PROMPT,
-            "chronos": _CHRONOS_SYSTEM_PROMPT,
-            "metis": _METIS_SYSTEM_PROMPT,
-            "empath": _EMPATH_SYSTEM_PROMPT,
-            "steward": _STEWARD_SYSTEM_PROMPT,
-            "alpha": _ALPHA_SYSTEM_PROMPT,
-            "beta": _BETA_SYSTEM_PROMPT,
-            "charlie": _CHARLIE_SYSTEM_PROMPT,
-            "perceiver": _PERCEIVER_SYSTEM_PROMPT,
-            "echo": _ECHO_SYSTEM_PROMPT,
-            "explorer": _EXPLORER_SYSTEM_PROMPT,
-            "examiner": _EXAMINER_SYSTEM_PROMPT,
-            "dreamer": _DREAMER_SYSTEM_PROMPT,
-            "coder": _CODER_SYSTEM_PROMPT,
-            "sentinel": _SENTINEL_SYSTEM_PROMPT,
-            "sentinel-prime": _SENTINEL_PRIME_SYSTEM_PROMPT,
-            "arbiter": _ARBITER_SYSTEM_PROMPT,
-            "coordinator": _COORDINATOR_SYSTEM_PROMPT,
-            "nexus": _NEXUS_SYSTEM_PROMPT,
-            "catalyst": _CATALYST_SYSTEM_PROMPT,
-            "prism": _PRISM_SYSTEM_PROMPT,
-            "habit-forge": _HABIT_FORGE_SYSTEM_PROMPT,
-            "perceiver-plus": _PERCEIVER_PLUS_SYSTEM_PROMPT,
-        }
-
-        for agent_class, agent_id, _topics in actors:
-            try:
-                actor = await self.supervisor.spawn_actor(agent_class, agent_id)
-                # Inject a swarms.Agent so the actor can produce real LLM output
-                system_prompt = _SYSTEM_PROMPTS.get(agent_id)
-                actor.swarms_agent = build_agent_for(
-                    agent_id,
-                    agent_class.__name__,
-                    system_prompt=system_prompt,
-                )
-                # Inject MCP tools into every agent's swarms_agent post-spawn
-                if self.mcp_tools is not None:
-                    from heretek_swarm.mcp.agent_tools import (
-                        build_tool_handlers,
-                        build_tools_list_dictionary,
-                    )
-
-                    mcp_registry = self.mcp_tools.get_registry()
-                    tool_schemas = build_tools_list_dictionary(mcp_registry)
-                    tool_handlers = build_tool_handlers(mcp_registry)
-                    if tool_schemas:
-                        actor.swarms_agent.tools_list_dictionary = tool_schemas
-                        actor.swarms_agent.tools = list(tool_handlers.values())
-                        logger.info(
-                            "mcp_tools_injected",
-                            agent_id=agent_id,
-                            tool_count=len(tool_schemas),
-                        )
-                    else:
-                        logger.warning(
-                            "mcp_tools_injection_skipped_empty",
-                            agent_id=agent_id,
-                        )
-                else:
-                    logger.warning(
-                        "mcp_tools_injection_skipped_no_registry",
-                        agent_id=agent_id,
-                    )
-                logger.info("actor_spawned", agent_id=agent_id, tier=self._get_tier(agent_id))
-            except Exception as e:
-                logger.error("actor_spawn_failed", agent_id=agent_id, error=str(e))
-                # Continue spawning remaining agents even if one fails
-                continue
-
-    def _get_tier(self, agent_id: str) -> str:
-        """Get the tier name for an agent."""
-        tier_mapping = {
-            "steward": "Tier 1 (Core Triad)",
-            "alpha": "Tier 1 (Core Triad)",
-            "beta": "Tier 1 (Core Triad)",
-            "charlie": "Tier 1 (Core Triad)",
-            "historian": "Tier 2 (Support)",
-            "metis": "Tier 2 (Support)",
-            "empath": "Tier 2 (Support)",
-            "perceiver": "Tier 2 (Support)",
-            "echo": "Tier 2 (Support)",
-            "explorer": "Tier 3 (Exploration)",
-            "examiner": "Tier 3 (Exploration)",
-            "dreamer": "Tier 3 (Exploration)",
-            "coder": "Tier 3 (Exploration)",
-            "sentinel": "Tier 4 (Safety)",
-            "sentinel-prime": "Tier 4 (Safety)",
-            "arbiter": "Tier 4 (Safety)",
-            "coordinator": "Tier 5 (Coordination)",
-            "nexus": "Tier 5 (Coordination)",
-            "catalyst": "Tier 5 (Coordination)",
-            "chronos": "Tier 5 (Coordination)",
-            "prism": "Tier 6 (Enhancement)",
-            "habit-forge": "Tier 6 (Enhancement)",
-            "perceiver-plus": "Tier 6 (Enhancement)",
-        }
-        return tier_mapping.get(agent_id, "Unknown")
-
-    async def _setup_channel_subscriptions(self) -> None:
-        """Set up channel subscriptions for all agents based on the channel registry.
-
-        If no supervisor or no actors are registered, all subscription setup is
-        skipped gracefully with a warning.
-        """
-        # Guard: no supervisor or no actors → nothing to subscribe
-        if self.supervisor is None:
-            logger.warning("channel_subscriptions_skipped_no_supervisor")
-            return
-        if not self.supervisor.actors:
-            logger.warning("channel_subscriptions_skipped_no_actors")
-            return
-
-        # Guard: no channel registry → no subscription metadata
-        if self.channel_registry is None:
-            logger.warning("channel_subscriptions_skipped_no_channel_registry")
-            return
-
-        # Guard: no event mesh → subscriptions impossible
-        if self.event_mesh is None:
-            logger.warning("channel_subscriptions_skipped_no_event_mesh")
-            return
-
-        # The ChannelRegistry already has default channels set up
-        # Subscribe each agent to their designated channels
-
-        # Get all agent IDs
-        agent_ids = list(self.supervisor.actors.keys())
-
-        for agent_id in agent_ids:
-            # Get channels for this agent
-            channels = self.channel_registry.get_subscriptions(agent_id)
-
-            for channel_name in channels:
-                # Subscribe to NATS subject
-                nats_subject = self.channel_registry.get_nats_subject(channel_name)
-
-                # Create subscription handler
-                async def create_callback(aid: str, ch_name: str):
-                    async def callback(mesh, subject, data):
-                        await self._handle_channel_message(aid, ch_name, data)
-
-                    return callback
-
-                await self.event_mesh.subscribe(
-                    subject=nats_subject,
-                    callback=await create_callback(agent_id, channel_name),
-                )
-
-            logger.debug(
-                "agent_channel_subscriptions",
-                agent_id=agent_id,
-                channels=channels,
-            )
-
-    async def _handle_channel_message(
-        self, agent_id: str, channel_name: str, message: dict[str, Any]
-    ) -> None:
-        """Handle incoming channel message for an agent."""
-        try:
-            # Get the actor
-            actor = self.supervisor.actors.get(agent_id)
-            if not actor:
-                logger.warning("message_for_missing_actor", agent_id=agent_id)
-                return
-
-            # Route message to actor mailbox
-            from heretek_swarm.actors.base import ActorMessage
-
-            actor_message = ActorMessage(
-                sender="channel",
-                message_type=message.get("type", "default"),
-                content=message.get("content", {}),
-                timestamp=message.get("timestamp", ""),
-                metadata=message.get("metadata", {}),
-            )
-            await actor.put_message(actor_message)
-
-            # Record delivery
-            if self.channel_registry is not None:
-                self.channel_registry.record_message(channel_name, delivered=True)
-
-        except Exception as e:
-            logger.error(
-                "channel_message_handling_error",
-                agent_id=agent_id,
-                channel=channel_name,
-                error=str(e),
-            )
-            if self.channel_registry is not None:
-                self.channel_registry.record_error(channel_name)
 
     async def run(self) -> None:
         """Main autonomous loop - runs 24/7."""

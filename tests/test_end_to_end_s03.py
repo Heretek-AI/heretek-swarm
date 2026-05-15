@@ -66,6 +66,8 @@ def _make_swarm_with_actors(
     swarm = AutonomousSwarm(no_infra=True)
     swarm.supervisor = MagicMock()
     swarm.supervisor.actors = actors
+    # Re-wire the deliberation orchestrator so delegation stubs work
+    swarm._deliberation._supervisor = swarm.supervisor
     return swarm
 
 
@@ -237,6 +239,9 @@ class TestRoutedTaskWithRealEntrypoint:
             # The key test is that run_routed_task finds steward and calls
             # route_to_agent() successfully.
             swarm.supervisor.actors = {"steward": steward, "historian": historian}
+
+            # Re-wire deliberation orchestrator so delegation works
+            swarm._deliberation._supervisor = swarm.supervisor
 
             # Call run_routed_task on the manually populated swarm.
             # This will find steward, call route_to_agent (which will try

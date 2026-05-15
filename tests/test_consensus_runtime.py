@@ -68,6 +68,14 @@ def mock_swarm():
 
         swarm.consensus = MAKERConsensus(ahead_by_k=2, min_votes=3)
 
+        # Wire a DeliberationOrchestrator so run_consensus delegation works
+        from heretek_swarm.runtime.deliberation_orchestrator import DeliberationOrchestrator
+
+        swarm._deliberation = DeliberationOrchestrator(
+            supervisor=swarm.supervisor,
+            consensus=swarm.consensus,
+        )
+
         return swarm
 
 
@@ -178,6 +186,14 @@ class TestRunConsensus:
         swarm.supervisor = None
         swarm.consensus = MagicMock()
 
+        # Wire a DeliberationOrchestrator for delegation
+        from heretek_swarm.runtime.deliberation_orchestrator import DeliberationOrchestrator
+
+        swarm._deliberation = DeliberationOrchestrator(
+            supervisor=swarm.supervisor,
+            consensus=swarm.consensus,
+        )
+
         result = await AutonomousSwarm.run_consensus(
             swarm,
             question="test",
@@ -195,6 +211,14 @@ class TestRunConsensus:
         swarm.supervisor = MagicMock()
         swarm.supervisor.actors = {}
         swarm.consensus = None
+
+        # Wire a DeliberationOrchestrator for delegation
+        from heretek_swarm.runtime.deliberation_orchestrator import DeliberationOrchestrator
+
+        swarm._deliberation = DeliberationOrchestrator(
+            supervisor=swarm.supervisor,
+            consensus=swarm.consensus,
+        )
 
         result = await AutonomousSwarm.run_consensus(
             swarm,
@@ -219,6 +243,14 @@ class TestRunConsensus:
         actors["sentinel"] = _make_failing_mock_actor("timeout")
         actors["examiner"] = _make_failing_mock_actor("rate limited")
         swarm.supervisor.actors = actors
+
+        # Wire DeliberationOrchestrator for delegation
+        from heretek_swarm.runtime.deliberation_orchestrator import DeliberationOrchestrator
+
+        swarm._deliberation = DeliberationOrchestrator(
+            supervisor=swarm.supervisor,
+            consensus=swarm.consensus,
+        )
 
         result = await AutonomousSwarm.run_consensus(
             swarm,
@@ -245,6 +277,14 @@ class TestRunConsensus:
         swarm.consensus = MAKERConsensus(ahead_by_k=2, min_votes=3)
         swarm.supervisor = MagicMock()
         swarm.supervisor.actors = {}
+
+        # Wire DeliberationOrchestrator for delegation
+        from heretek_swarm.runtime.deliberation_orchestrator import DeliberationOrchestrator
+
+        swarm._deliberation = DeliberationOrchestrator(
+            supervisor=swarm.supervisor,
+            consensus=swarm.consensus,
+        )
 
         result = await AutonomousSwarm.run_consensus(
             swarm,
@@ -306,6 +346,14 @@ class TestRunConsensus:
 
         swarm.consensus = MAKERConsensus(ahead_by_k=2, min_votes=3)
         swarm.supervisor = MagicMock()
+
+        # Wire DeliberationOrchestrator for delegation
+        from heretek_swarm.runtime.deliberation_orchestrator import DeliberationOrchestrator
+
+        swarm._deliberation = DeliberationOrchestrator(
+            supervisor=swarm.supervisor,
+            consensus=swarm.consensus,
+        )
 
         actors = _all_mock_actors()
         # Security analysis selects: alpha, examiner, prism, sentinel

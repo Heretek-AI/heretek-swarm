@@ -163,7 +163,7 @@ _ALL_AGENT_IDS: list[str] = [
 
 
 def _extract_system_prompts_from_source() -> dict[str, str | None]:
-    """Read ``_SYSTEM_PROMPTS`` keys from the ``main_loop.py`` source file.
+    """Read ``_SYSTEM_PROMPTS`` keys from ``actor_orchestrator.py`` source.
 
     Because ``_SYSTEM_PROMPTS`` is a local variable inside an async method,
     we find it by scanning for the dict-literal pattern ``"key": name``
@@ -173,8 +173,10 @@ def _extract_system_prompts_from_source() -> dict[str, str | None]:
     """
     import re
 
+    from heretek_swarm.runtime.actor_orchestrator import ActorOrchestrator
+
     source = textwrap.dedent(
-        inspect.getsource(AutonomousSwarm._spawn_all_actors)
+        inspect.getsource(ActorOrchestrator.spawn_all_actors)
     )
 
     prompts: dict[str, str | None] = {}

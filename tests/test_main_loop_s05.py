@@ -64,6 +64,8 @@ def _make_swarm_with_actors(
     swarm = AutonomousSwarm(no_infra=True)
     swarm.supervisor = MagicMock()
     swarm.supervisor.actors = actors
+    # Re-wire deliberation orchestrator so delegation stubs work
+    swarm._deliberation._supervisor = swarm.supervisor
     return swarm
 
 
@@ -89,12 +91,13 @@ class TestContractRaisesWhenStewardMissing:
 
     @staticmethod
     async def test_raises_on_none_supervisor() -> None:
-        """When supervisor is None, .actors access raises AttributeError
-        (same behavior as ``run_deliberation()``)."""
+        """When supervisor is None or steward is missing, raises RuntimeError."""
         swarm = AutonomousSwarm(no_infra=True)
         swarm.supervisor = None
+        # Re-wire orchestrator since we bypassed initialize()
+        swarm._deliberation._supervisor = swarm.supervisor
 
-        with pytest.raises(AttributeError):
+        with pytest.raises(RuntimeError, match="Steward agent not found"):
             await swarm.run_routed_task(
                 agent_name="coder",
                 task_type="code_analysis",
