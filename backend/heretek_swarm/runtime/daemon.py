@@ -32,6 +32,21 @@ logger = structlog.get_logger(__name__)
 
 
 # ---------------------------------------------------------------------------
+# DaemonError — explicit exception for daemon lifecycle failures
+# ---------------------------------------------------------------------------
+
+
+class DaemonError(Exception):
+    """Signals a fatal daemon lifecycle error that the CLI boundary must handle.
+
+    Library code must never call ``sys.exit()`` directly — it crashes the
+    calling process with no chance for cleanup.  Every fatal daemon error
+    raises ``DaemonError`` so the CLI entry point (``cli.py``) can catch it,
+    log it, and exit cleanly.
+    """
+
+
+# ---------------------------------------------------------------------------
 # Constants — keep these central so both daemon.py and cli.py share them
 # ---------------------------------------------------------------------------
 
@@ -78,10 +93,12 @@ def daemonize(swarm: Any, pid_file: Path | None = None, socket_path: Path | None
         socket_path: Path for the Unix socket (default ``DEFAULT_SOCKET_PATH``).
 
     Raises:
-        SystemExit: Always in the parent (exit 0) or on Windows (exit 1).
-                     Never returns in the parent.
+        DaemonError: On fork OSError, PID conflict, socket bind failure,
+                     or swarm initialization failure.
+                     Never returns in the parent fork processes.
     """
     # --- Windows guard --------------------------------------------------------
+    # Pre-bootstrap — no logger available, must exit
     if sys.platform == "win32":
         sys.exit(1)
 
@@ -94,11 +111,11 @@ def daemonize(swarm: Any, pid_file: Path | None = None, socket_path: Path | None
     try:
         pid = os.fork()
     except OSError:
-        sys.exit(1)
+        raise DaemonError("First fork failed — cannot detach from terminal") from None
 
     if pid > 0:
-        # Parent — print PID and exit immediately.
-        sys.exit(0)
+        # Fork parent — no atexit handlers, no stdio flush
+        os._exit(0)
 
     # --- Child continues ------------------------------------------------------
     # Become session leader (no controlling terminal).
@@ -108,11 +125,11 @@ def daemonize(swarm: Any, pid_file: Path | None = None, socket_path: Path | None
     try:
         pid2 = os.fork()
     except OSError:
-        sys.exit(1)
+        raise DaemonError("Second fork failed — cannot guarantee terminal detachment") from None
 
     if pid2 > 0:
-        # Intermediate child exits immediately — orphaned grandchild is the daemon.
-        sys.exit(0)
+        # Fork parent — no atexit handlers, no stdio flush
+        os._exit(0)
 
     # --- Grandchild is the daemon process -------------------------------------
     _write_pid_file(pid_file)
@@ -155,7 +172,10 @@ def _write_pid_file(pid_file: Path) -> None:
         # Another daemon appears to be running — check if it's alive.
         existing = read_pid_file(pid_file)
         if existing is not None and _is_pid_alive(existing):
-            sys.exit(1)
+            raise DaemonError(
+                f"PID file {pid_file} exists with active PID {existing} — "
+                "another daemon is already running"
+            )
         # Stale PID — overwrite.
         pid_file.write_text(str(os.getpid()))
     logger.info("pid_file_written", path=str(pid_file), pid=os.getpid())
@@ -270,7 +290,7 @@ async def _run_daemon_loop(ctx: DaemonContext) -> None:
     except OSError as exc:
         logger.error("daemon_socket_bind_failed", error=str(exc))
         cleanup_daemon(pid_file, socket_path)
-        sys.exit(1)
+        raise DaemonError(f"Unix socket bind at {socket_path} failed: {exc}") from exc
 
     # --- Initialise and run the swarm ----------------------------------------
     try:
@@ -279,7 +299,7 @@ async def _run_daemon_loop(ctx: DaemonContext) -> None:
     except Exception as exc:
         logger.error("daemon_swarm_initialize_failed", error=str(exc))
         cleanup_daemon(pid_file, socket_path)
-        sys.exit(1)
+        raise DaemonError(f"Swarm initialization failed: {exc}") from exc
 
     # Run the swarm run() in a background task so we can also wait for shutdown.
     swarm_task = asyncio.create_task(swarm.run())
