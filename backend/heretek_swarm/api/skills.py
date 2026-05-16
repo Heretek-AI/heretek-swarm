@@ -12,6 +12,7 @@ Inspired by OpenClaw's SKILL.md discovery system.
 
 from typing import Any
 
+import structlog
 from fastapi import APIRouter, Depends, HTTPException
 
 from heretek_swarm.agents.skills import (
@@ -21,8 +22,6 @@ from heretek_swarm.agents.skills import (
     get_agent_skill_registry,
 )
 from heretek_swarm.gateway.auth import verify_auth
-
-import structlog
 
 logger = structlog.get_logger(__name__)
 

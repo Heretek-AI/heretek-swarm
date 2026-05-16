@@ -14,13 +14,13 @@ from dataclasses import dataclass
 from datetime import datetime
 from enum import StrEnum
 
+import structlog
+
 from heretek_swarm.security.anomaly_detection import (
     AnomalySeverity,
     AnomalyType,
     ResponseStatus,
 )
-
-import structlog
 
 logger = structlog.get_logger(__name__)
 

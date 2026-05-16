@@ -7,9 +7,8 @@ Provides agent identity models and role-based access control for the governance 
 from enum import StrEnum
 from typing import Any
 
-from pydantic import BaseModel, ConfigDict, Field
-
 import structlog
+from pydantic import BaseModel, ConfigDict, Field
 
 logger = structlog.get_logger(__name__)
 

@@ -6,6 +6,8 @@ Provides example tool implementations for testing and reference.
 
 from typing import Any
 
+import structlog
+
 from heretek_swarm.tools.base import (
     BaseTool,
     ToolContext,
@@ -13,8 +15,6 @@ from heretek_swarm.tools.base import (
     ToolMetadata,
     ToolStatus,
 )
-
-import structlog
 
 logger = structlog.get_logger(__name__)
 

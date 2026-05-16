@@ -15,6 +15,8 @@ from __future__ import annotations
 
 from typing import Any
 
+import structlog
+
 from heretek_swarm.actors.prism.types import (
     AnalyticalFramework,
     BiasDetection,
@@ -22,8 +24,6 @@ from heretek_swarm.actors.prism.types import (
     Perspective,
     PerspectiveType,
 )
-
-import structlog
 
 logger = structlog.get_logger(__name__)
 

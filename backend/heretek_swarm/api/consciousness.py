@@ -17,6 +17,7 @@ making decisions based on its specialized role."
 from datetime import UTC, datetime, timedelta
 from typing import Annotated, Any
 
+import structlog
 from fastapi import APIRouter, Depends, HTTPException, Query
 
 from heretek_swarm.collective.agency_tracking import AgencyMetricsTracker, create_sample_metrics
@@ -34,8 +35,6 @@ from heretek_swarm.plugins.consciousness_enhanced import (
     EnhancedConsciousnessPlugin,
 )
 from heretek_swarm.runtime.registry_enhanced import get_enhanced_registry
-
-import structlog
 
 logger = structlog.get_logger(__name__)
 

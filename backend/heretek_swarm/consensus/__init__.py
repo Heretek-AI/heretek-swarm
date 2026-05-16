@@ -23,6 +23,8 @@ Core Features:
 - Quorum-based baseline updates to prevent corruption
 """
 
+import structlog
+
 from heretek_swarm.consensus.audit import (
     ArgumentRecord,
     ConsensusAuditTrail,
@@ -101,8 +103,6 @@ from heretek_swarm.consensus.tribunal import (
     TribunalEvidence,
     TribunalRuling,
 )
-
-import structlog
 
 logger = structlog.get_logger(__name__)
 

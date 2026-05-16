@@ -3,13 +3,13 @@ from __future__ import annotations
 from datetime import datetime
 from typing import TYPE_CHECKING, Any
 
+import structlog
+
 from heretek_swarm.collective.emergent_detection_types import (
     EmergenceLevel,
     EmergentPatternClass,
     PatternProvenance,
 )
-
-import structlog
 
 logger = structlog.get_logger(__name__)
 

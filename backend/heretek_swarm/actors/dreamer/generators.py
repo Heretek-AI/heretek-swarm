@@ -11,14 +11,14 @@ Version: 1.0.0
 
 from __future__ import annotations
 
+import structlog
+
 from heretek_swarm.actors.dreamer.types import (
     CreativeIdea,
     CreativeSession,
     CreativityTechnique,
     NoveltyLevel,
 )
-
-import structlog
 
 logger = structlog.get_logger(__name__)
 

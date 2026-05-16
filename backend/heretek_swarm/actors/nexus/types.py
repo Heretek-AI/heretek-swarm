@@ -15,6 +15,7 @@ from datetime import UTC, datetime
 from enum import Enum
 from typing import Any
 
+
 class ConnectionStatus(Enum):
     """Status of an external connection."""
 

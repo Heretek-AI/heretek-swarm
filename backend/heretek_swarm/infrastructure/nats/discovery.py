@@ -11,9 +11,9 @@ from dataclasses import dataclass, field
 from datetime import UTC, datetime, timedelta
 from enum import Enum
 
-from heretek_swarm.infrastructure.nats.client import get_nats_client
-
 import structlog
+
+from heretek_swarm.infrastructure.nats.client import get_nats_client
 
 logger = structlog.get_logger(__name__)
 

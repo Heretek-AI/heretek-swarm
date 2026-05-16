@@ -8,14 +8,14 @@ from datetime import UTC, datetime
 from enum import StrEnum
 from typing import Any
 
+import structlog
+
 from heretek_swarm.collective.learning import (
     ExtractedPattern,
     PatternMetadata,
     PatternSource,
     PatternType,
 )
-
-import structlog
 
 logger = structlog.get_logger(__name__)
 

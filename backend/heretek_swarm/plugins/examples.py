@@ -8,9 +8,9 @@ import asyncio
 from datetime import UTC
 from typing import Any
 
-from .manager import Plugin, PluginMetadata, PluginState
-
 import structlog
+
+from .manager import Plugin, PluginMetadata, PluginState
 
 logger = structlog.get_logger(__name__)
 

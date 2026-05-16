@@ -13,6 +13,8 @@ This package provides dual-tier memory architecture with:
 # Note: Using explicit imports to avoid shadowing
 
 # Session 43: Memory Optimization Modules
+import structlog
+
 from heretek_swarm.memory.access_patterns import (
     AccessPattern,
     AccessPatternAnalyzer,
@@ -73,8 +75,6 @@ from heretek_swarm.memory.tiering import (
     TieredMemory,
     TieringStatistics,
 )
-
-import structlog
 
 logger = structlog.get_logger(__name__)
 

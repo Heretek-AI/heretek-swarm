@@ -20,9 +20,8 @@ from datetime import UTC, datetime
 from enum import Enum
 from typing import Annotated, Any, TypeVar
 
-from typing_extensions import TypedDict
-
 import structlog
+from typing_extensions import TypedDict
 
 logger = structlog.get_logger(__name__)
 

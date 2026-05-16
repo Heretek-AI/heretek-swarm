@@ -30,6 +30,8 @@ New in Session 47 (Agency/Autonomy Metrics):
 """
 
 # Session 46: Emergent Intelligence Enhancement
+import structlog
+
 from .adaptive_learning import (
     AdaptationEvent,
     AdaptationReason,
@@ -146,8 +148,6 @@ from .society import (
     EmergentBehavior,
     SocietyRole,
 )
-
-import structlog
 
 logger = structlog.get_logger(__name__)
 

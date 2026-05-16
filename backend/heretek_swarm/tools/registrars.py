@@ -7,9 +7,9 @@ registrations into maintainable, focused components.
 from collections.abc import Callable
 from typing import Any
 
-from .mcp_tools import MCPToolDefinition, MCPToolRegistry
-
 import structlog
+
+from .mcp_tools import MCPToolDefinition, MCPToolRegistry
 
 logger = structlog.get_logger(__name__)
 

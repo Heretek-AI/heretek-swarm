@@ -17,6 +17,7 @@ from typing import TYPE_CHECKING, Any
 
 import structlog
 
+from heretek_swarm.workflow import node_executors
 from heretek_swarm.workflow.models import (
     NodeResult,
     NodeStatus,
@@ -28,7 +29,6 @@ from heretek_swarm.workflow.models import (
     WorkflowResult,
     WorkflowStatus,
 )
-from heretek_swarm.workflow import node_executors
 from heretek_swarm.workflow.store import FileWorkflowStore
 
 if TYPE_CHECKING:
@@ -518,7 +518,7 @@ class WorkflowEngine:
         return await node_executors.execute_llm_node(self, node, input_data, context)
 
     async def _execute_tool_node(
-        self, node: WorkflowNode, input_data: dict[str, Any], context: WorkflowContext  # noqa: ARG002
+        self, node: WorkflowNode, input_data: dict[str, Any], context: WorkflowContext
     ) -> Any:
         """Execute a tool node — delegates to node_executors."""
         return await node_executors.execute_tool_node(self, node, input_data, context)

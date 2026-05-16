@@ -14,6 +14,8 @@ Key Components:
 Reference: EXPANSION_ROADMAP.md SH-1 Enhanced Zero-Trust Governance
 """
 
+import structlog
+
 from heretek_swarm.governance.agent_identity import (
     AgentIdentity,
     AgentRole,
@@ -32,8 +34,6 @@ from heretek_swarm.security.zero_trust import (
     ZeroTrustValidator,
     create_default_validator,
 )
-
-import structlog
 
 logger = structlog.get_logger(__name__)
 

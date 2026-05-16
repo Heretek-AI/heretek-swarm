@@ -47,6 +47,8 @@ Example Usage:
 Reference: EXPANSION_ROADMAP.md Session 47 - Integration Ecosystem
 """
 
+import structlog
+
 from .anthropic import (
     ANTHROPIC_AVAILABLE,
     AnthropicAdapter,
@@ -128,8 +130,6 @@ from .openai_assistants import (
 from .openai_assistants import (
     MessageRole as OpenAIMessageRole,
 )
-
-import structlog
 
 logger = structlog.get_logger(__name__)
 

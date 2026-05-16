@@ -18,10 +18,9 @@ from datetime import UTC, datetime
 from enum import StrEnum
 from typing import Any
 
+import structlog
 from pydantic import BaseModel, Field, ValidationError
 from pydantic import validator as pydantic_validator
-
-import structlog
 
 logger = structlog.get_logger(__name__)
 

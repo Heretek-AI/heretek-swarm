@@ -23,11 +23,10 @@ import uuid
 from datetime import UTC, datetime
 from typing import Any
 
+import structlog
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from heretek_swarm.actors.mixins.validation import ValidationMixin
-
-import structlog
 
 logger = structlog.get_logger(__name__)
 

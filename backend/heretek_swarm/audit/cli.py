@@ -6,7 +6,6 @@ import sys
 from pathlib import Path
 
 import click
-
 import structlog
 
 logger = structlog.get_logger(__name__)

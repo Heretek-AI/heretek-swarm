@@ -14,14 +14,13 @@ Inspired by Deep Lake dataset versioning.
 
 from typing import Annotated, Any
 
+import structlog
 from fastapi import APIRouter, Depends, HTTPException, Query
 
 from heretek_swarm.gateway.auth import verify_auth
 from heretek_swarm.memory.versioned import (
     get_versioned_store,
 )
-
-import structlog
 
 logger = structlog.get_logger(__name__)
 

@@ -9,6 +9,8 @@ Provides foundational infrastructure for the swarm:
 - Provisioner: Docker/Podman container provisioning
 """
 
+import structlog
+
 from heretek_swarm.infrastructure.a2a import (
     A2AMessage,
     A2AMessageType,
@@ -63,8 +65,6 @@ from heretek_swarm.infrastructure.provisioner import (
     provision_service,
     provision_service_sync,
 )
-
-import structlog
 
 logger = structlog.get_logger(__name__)
 

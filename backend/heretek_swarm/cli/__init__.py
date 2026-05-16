@@ -134,9 +134,9 @@ from heretek_swarm.cli.config import config  # noqa: E402
 cli.add_command(config)
 
 # --- Monitoring ---
-from heretek_swarm.cli.status import status  # noqa: E402
-
 import structlog
+
+from heretek_swarm.cli.status import status  # noqa: E402
 
 logger = structlog.get_logger(__name__)
 

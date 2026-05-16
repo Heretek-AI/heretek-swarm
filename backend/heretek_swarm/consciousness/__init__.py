@@ -8,6 +8,8 @@ Implements neuroscience-inspired consciousness frameworks:
 - Agency/Autonomy Metrics - Self-governance measurement
 """
 
+import structlog
+
 from heretek_swarm.consciousness.agency_metrics import (
     ActionOrigin,
     AgencyLevel,
@@ -87,8 +89,6 @@ from heretek_swarm.consciousness.iit_phi import (
     PhiCalculator,
     PhiResult,
 )
-
-import structlog
 
 logger = structlog.get_logger(__name__)
 

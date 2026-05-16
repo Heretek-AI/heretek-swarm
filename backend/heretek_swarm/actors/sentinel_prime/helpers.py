@@ -10,6 +10,8 @@ import hashlib
 from datetime import UTC, datetime
 from typing import Any
 
+import structlog
+
 from heretek_swarm.actors.sentinel_prime.types import (
     ResponseAction,
     SecurityIncident,
@@ -17,8 +19,6 @@ from heretek_swarm.actors.sentinel_prime.types import (
     ThreatLevel,
     ThreatType,
 )
-
-import structlog
 
 logger = structlog.get_logger(__name__)
 

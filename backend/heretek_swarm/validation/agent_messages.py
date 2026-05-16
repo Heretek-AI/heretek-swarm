@@ -18,6 +18,7 @@ from datetime import UTC, datetime
 from enum import StrEnum
 from typing import Any
 
+import structlog
 from pydantic import BaseModel, Field, ValidationError
 from pydantic import validator as pydantic_validator
 
@@ -26,8 +27,6 @@ from heretek_swarm.validation.llm_output import (
     ValidationResult,
     ValidationSeverity,
 )
-
-import structlog
 
 logger = structlog.get_logger(__name__)
 

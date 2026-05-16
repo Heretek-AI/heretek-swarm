@@ -4,9 +4,9 @@ This module provides default channel configurations organized by type,
 enabling cleaner separation of channel definitions from registration logic.
 """
 
-from .registry import ChannelDefinition, ChannelType, QoSLevel
-
 import structlog
+
+from .registry import ChannelDefinition, ChannelType, QoSLevel
 
 logger = structlog.get_logger(__name__)
 
