@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import os
 from datetime import UTC, datetime
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, ClassVar
 
 import structlog
 from sqlalchemy import select
@@ -1051,6 +1051,14 @@ class ConfigurationServiceCrud:
     # Validation
     # =====================================================================
 
+    # Mapping from config_type to (expected_type_or_tuple, error_message)
+    _TYPE_CHECKS: ClassVar[dict[str, tuple[type | tuple[type, ...], str]]] = {
+        "integer": (int, "Value must be an integer"),
+        "float": ((int, float), "Value must be a number"),
+        "boolean": (bool, "Value must be a boolean"),
+        "json": (dict, "Value must be a JSON object"),
+    }
+
     def _validate_config_value(
         self: ConfigurationService,
         config_type: str,
@@ -1071,23 +1079,41 @@ class ConfigurationServiceCrud:
         if validation_schema:
             return True, None
 
-        if config_type == "integer":
-            if not isinstance(value, int):
-                return False, "Value must be an integer"
-        elif config_type == "float":
-            if not isinstance(value, (int, float)):
-                return False, "Value must be a number"
-        elif config_type == "boolean":
-            if not isinstance(value, bool):
-                return False, "Value must be a boolean"
-        elif config_type == "json" and not isinstance(value, dict):
-            return False, "Value must be a JSON object"
+        type_check = self._TYPE_CHECKS.get(config_type)
+        if type_check is None:
+            return True, None
+
+        expected_type, error_msg = type_check
+        if not isinstance(value, expected_type):
+            return False, error_msg
 
         return True, None
 
     # =====================================================================
     # Migration from .env
     # =====================================================================
+
+    async def _migrate_single_env_var(
+        self: ConfigurationService,
+        key: str,
+        value: str,
+        config_key: str,
+        category: str,
+        user: str | None,
+    ) -> None:
+        """Migrate a single environment variable to database config."""
+        await self.create_config(
+            UserConfigurationCreate(
+                config_key=config_key,
+                config_value=value,
+                config_type="string",
+                category=category,
+                description=f"Migrated from {key}",
+                is_sensitive=False,
+                is_editable=True,
+            ),
+            user=user,
+        )
 
     async def migrate_from_env(
         self: ConfigurationService,
@@ -1108,26 +1134,15 @@ class ConfigurationServiceCrud:
         """
         migrated_count = 0
         skipped_count = 0
-        errors = []
+        errors: list[str] = []
 
         for key, value in os.environ.items():
             if not key.startswith(prefix):
                 continue
 
-            config_key = key[len(prefix) :].lower()
+            config_key = key[len(prefix):].lower()
             try:
-                await self.create_config(
-                    UserConfigurationCreate(
-                        config_key=config_key,
-                        config_value=value,
-                        config_type="string",
-                        category=category,
-                        description=f"Migrated from {key}",
-                        is_sensitive=False,
-                        is_editable=True,
-                    ),
-                    user=user,
-                )
+                await self._migrate_single_env_var(key, value, config_key, category, user)
                 migrated_count += 1
             except Exception as e:
                 errors.append(f"{key}: {e}")

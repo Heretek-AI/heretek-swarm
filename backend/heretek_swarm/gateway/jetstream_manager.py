@@ -739,22 +739,12 @@ class JetStreamManager:
                 for msg in msgs:
                     try:
                         data = json.loads(msg.data.decode("utf-8"))
-                        subject = msg.subject
-
-                        # Call callback
-                        if asyncio.iscoroutinefunction(callback):
-                            await callback(subject, data)
-                        else:
-                            callback(subject, data)
-
-                        # Acknowledge
+                        await self._invoke_callback(callback, msg.subject, data)
                         await msg.ack()
                         self._stats["messages_consumed"] += 1
-
                     except Exception:
                         logger.error("Error processing message: {e}")
                         await msg.nak()
-
             except builtins.TimeoutError:
                 continue
             except Exception:
@@ -848,6 +838,45 @@ class JetStreamManager:
         logger.debug("Fallback message published: {stream_name}:{seq}")
         return True
 
+    async def _replay_single_message(
+        self,
+        msg: Any,
+        subject_filter: str | None,
+        end_sequence: int | None,
+        callback: Callable[[str, dict[str, Any]], None] | None,
+    ) -> dict[str, Any] | None:
+        """Process a single message during replay. Returns the message dict or None to skip."""
+        try:
+            envelope = json.loads(msg.data.decode("utf-8"))
+            subject = msg.subject
+
+            if subject_filter and not self._match_subject(subject, subject_filter):
+                await msg.ack()
+                return None
+
+            seq = msg.metadata.sequence.stream if msg.metadata else 0
+            if end_sequence and seq > end_sequence:
+                await msg.ack()
+                return None  # caller must break
+
+            data = envelope.get("data", envelope)
+            entry: dict[str, Any] = {
+                "sequence": seq,
+                "subject": subject,
+                "data": data,
+                "timestamp": envelope.get("metadata", {}).get("timestamp"),
+            }
+
+            if callback:
+                await self._invoke_callback(callback, subject, data)
+
+            await msg.ack()
+            return entry
+        except Exception:
+            logger.error("Error replaying message: {e}")
+            await msg.nak()
+            return None
+
     async def replay_messages(
         self,
         stream_name: str,
@@ -902,43 +931,11 @@ class JetStreamManager:
                 try:
                     msgs = await consumer.fetch(batch=100, timeout=2.0)
                     for msg in msgs:
-                        try:
-                            envelope = json.loads(msg.data.decode("utf-8"))
-                            subject = msg.subject
-
-                            # Apply subject filter
-                            if subject_filter and not self._match_subject(subject, subject_filter):
-                                await msg.ack()
-                                continue
-
-                            # Check end sequence
-                            seq = msg.metadata.sequence.stream if msg.metadata else 0
-                            if end_sequence and seq > end_sequence:
-                                await msg.ack()
-                                break
-
-                            data = envelope.get("data", envelope)
-                            messages.append(
-                                {
-                                    "sequence": seq,
-                                    "subject": subject,
-                                    "data": data,
-                                    "timestamp": envelope.get("metadata", {}).get("timestamp"),
-                                }
-                            )
-
-                            if callback:
-                                if asyncio.iscoroutinefunction(callback):
-                                    await callback(subject, data)
-                                else:
-                                    callback(subject, data)
-
-                            await msg.ack()
-
-                        except Exception:
-                            logger.error("Error replaying message: {e}")
-                            await msg.nak()
-
+                        entry = await self._replay_single_message(
+                            msg, subject_filter, end_sequence, callback
+                        )
+                        if entry is not None:
+                            messages.append(entry)
                 except builtins.TimeoutError:
                     break
 
@@ -985,6 +982,18 @@ class JetStreamManager:
                     callback(msg["subject"], msg["data"])
 
         return messages
+
+    @staticmethod
+    async def _invoke_callback(
+        callback: Callable[[str, dict[str, Any]], None],
+        subject: str,
+        data: dict[str, Any],
+    ) -> None:
+        """Invoke a message callback (sync or async)."""
+        if asyncio.iscoroutinefunction(callback):
+            await callback(subject, data)
+        else:
+            callback(subject, data)
 
     def _match_subject(self, subject: str, pattern: str) -> bool:
         """Match subject against wildcard pattern."""

@@ -889,14 +889,13 @@ class DeliberationEngine:
             return 0
 
         changes = 0
-        prev_positions = {}
+        prev_positions: dict[str, str] = {}
 
         for round_result in rounds:
             for arg in round_result.arguments:
                 agent_id = arg.agent_id
-                if agent_id in prev_positions:  # noqa: SIM102
-                    if prev_positions[agent_id] != arg.position:
-                        changes += 1
+                if agent_id in prev_positions and prev_positions[agent_id] != arg.position:
+                    changes += 1
                 prev_positions[agent_id] = arg.position
 
         return changes

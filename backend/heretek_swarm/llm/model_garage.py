@@ -265,6 +265,31 @@ class LLMProvider(ABC):
             logger.debug("model_provider_health_check_failed", error=str(e))
             return False
 
+    @staticmethod
+    def _try_extract_chat_token(chunk: dict[str, Any]) -> str | None:
+        """Extract a content delta token from an OpenAI-compatible chat chunk.
+
+        Returns the token string or None.
+        """
+        choices: list[dict[str, Any]] = chunk.get("choices", [])
+        if not choices:
+            return None
+        delta: dict[str, Any] = choices[0].get("delta", {})
+        return delta.get("content") or None
+
+    @staticmethod
+    def _try_extract_anthropic_token(
+        chunk: dict[str, Any], current_event: str | None
+    ) -> str | None:
+        """Extract a text delta token from an Anthropic SSE event chunk.
+
+        Returns the token string or None.
+        """
+        if current_event in ("message_delta", "content_block_delta"):
+            delta: dict[str, Any] = chunk.get("delta", {})
+            return delta.get("text") or None
+        return None
+
     async def close(self) -> None:
         """Close the provider."""
         if self._client:
@@ -357,15 +382,15 @@ class OpenAIProvider(LLMProvider):
             async with client.stream("POST", "/chat/completions", json=payload) as response:
                 response.raise_for_status()
                 async for line in response.aiter_lines():
-                    if line:
-                        try:
-                            data = json.loads(line)
-                            if "choices" in data and len(data["choices"]) > 0:
-                                delta = data["choices"][0].get("delta", {})
-                                if "content" in delta:
-                                    yield delta["content"]
-                        except json.JSONDecodeError:
-                            continue
+                    if not line:
+                        continue
+                    try:
+                        chunk = json.loads(line)
+                    except json.JSONDecodeError:
+                        continue
+                    token = self._try_extract_chat_token(chunk)
+                    if token:
+                        yield token
 
 
 class OllamaProvider(LLMProvider):
@@ -615,26 +640,23 @@ class AnthropicProvider(LLMProvider):
                     response.raise_for_status()
                     current_event = None
                     async for line in response.aiter_lines():
-                        # Parse SSE line format: event: <type> or data: <json>
                         if line.startswith("event: "):
                             current_event = line[7:].strip()
                         elif line.startswith("data: "):
                             data_str = line[5:].strip()
-                            if data_str:
-                                try:
-                                    chunk = json.loads(data_str)
-                                    # Handle message delta events
-                                    if (current_event == "message_delta" and "delta" in chunk) or (
-                                        current_event == "content_block_delta" and "delta" in chunk
-                                    ):
-                                        delta = chunk["delta"]
-                                        if "text" in delta:
-                                            yield delta["text"]
-                                    # Stop on message stop event
-                                    elif current_event == "message_stop":
-                                        break
-                                except json.JSONDecodeError:
-                                    pass
+                            if not data_str:
+                                current_event = None
+                                continue
+                            try:
+                                chunk = json.loads(data_str)
+                            except json.JSONDecodeError:
+                                current_event = None
+                                continue
+                            token = self._try_extract_anthropic_token(chunk, current_event)
+                            if token:
+                                yield token
+                            elif current_event == "message_stop":
+                                break
                             current_event = None
             except Exception as e:
                 logger.error("Anthropic streaming failed", error=str(e))
@@ -697,20 +719,18 @@ class OpenAICompatibleProvider(LLMProvider):
                 async with client.stream("POST", "/chat/completions", json=payload) as response:
                     response.raise_for_status()
                     async for line in response.aiter_lines():
-                        if line.startswith("data: "):
-                            data = line[6:]
-                            if data.strip() == "[DONE]":
-                                break
-                            try:
-                                chunk = json.loads(data)
-                                choices = chunk.get("choices", [])
-                                if choices:
-                                    delta = choices[0].get("delta", {})
-                                    content = delta.get("content", "")
-                                    if content:
-                                        yield content
-                            except json.JSONDecodeError:
-                                continue
+                        if not line.startswith("data: "):
+                            continue
+                        data = line[6:]
+                        if data.strip() == "[DONE]":
+                            break
+                        try:
+                            chunk = json.loads(data)
+                        except json.JSONDecodeError:
+                            continue
+                        token = self._try_extract_chat_token(chunk)
+                        if token:
+                            yield token
             except Exception as e:
                 logger.error("OpenAI-compatible streaming failed", error=str(e))
                 raise
@@ -1057,7 +1077,7 @@ class ModelGarage:
                 "provider_test_failed", provider_id=provider_id, name=config.name, error=str(e)
             )
         finally:
-            try:  # noqa: SIM105
+            try:
                 await provider.close()
             except Exception:
                 logger.debug("provider_cleanup_error", exc_info=True)

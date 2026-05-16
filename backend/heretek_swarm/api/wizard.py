@@ -243,6 +243,19 @@ AGENT_TIERS = {
 }
 
 
+# Module-level provider type mapping (avoids re-creating dict inside loops)
+_PROVIDER_TYPE_MAP: dict[str, LLMProviderType] = {
+    "anthropic": LLMProviderType.OPENAI_COMPATIBLE,
+    "openai": LLMProviderType.OPENAI,
+    "ollama": LLMProviderType.OLLAMA,
+    "groq": LLMProviderType.OPENAI_COMPATIBLE,
+    "mistral": LLMProviderType.OPENAI_COMPATIBLE,
+    "deepseek": LLMProviderType.OPENAI_COMPATIBLE,
+    "local": LLMProviderType.OPENAI_COMPATIBLE,
+}
+_PROVIDER_TYPE_FALLBACK = LLMProviderType.OPENAI_COMPATIBLE
+
+
 # =============================================================================
 # Wizard State Management
 # =============================================================================
@@ -982,6 +995,45 @@ async def _emit_wizard_completed_event(tier_config: dict[str, Any]) -> None:
 
 
 @router.post("/config")
+async def _create_single_provider(
+    service: ConfigurationService,
+    provider_config: dict[str, Any],
+    provider_info: dict[str, Any],
+    provider_id: str,
+    api_key: str | None,
+    model: str,
+    is_default: bool,
+) -> tuple[dict[str, Any] | None, str | None]:
+    """Create a single LLM provider from wizard config.
+
+    Returns (result_dict, error_str) — exactly one is non-None.
+    """
+    llm_provider_type = _PROVIDER_TYPE_MAP.get(provider_id, _PROVIDER_TYPE_FALLBACK)
+
+    create_data = LLMProviderCreate(
+        provider_name=provider_info["name"],
+        provider_type=llm_provider_type,
+        base_url=provider_config.get("base_url") or provider_info["base_url"],
+        api_key=api_key,
+        api_key_hint=f"***{api_key[-4:]}" if api_key else None,
+        default_model=model,
+        is_enabled=True,
+        is_default=is_default,
+        supports_streaming=provider_info.get("supports_streaming", True),
+        supports_function_calling=provider_info.get("supports_function_calling", False),
+        supports_vision=provider_info.get("supports_vision", False),
+        extra_config=provider_config.get("extra_config", {}),
+    )
+
+    created = await service.create_llm_provider(create_data, changed_by="wizard")
+    return {
+        "id": str(created.id),
+        "name": created.provider_name,
+        "type": created.provider_type,
+        "model": created.default_model,
+    }, None
+
+
 async def submit_config(config: dict[str, Any]) -> dict[str, Any]:
     """
     Submit wizard configuration.
@@ -1001,14 +1053,13 @@ async def submit_config(config: dict[str, Any]) -> dict[str, Any]:
     wizard_state = get_wizard_state()
     service = get_service()
 
-    result = {
+    result: dict[str, Any] = {
         "success": True,
         "providers_created": [],
         "config": {},
         "errors": [],
     }
 
-    # Process each provider configuration
     providers = config.get("providers", [])
     for provider_config in providers:
         provider_id = provider_config.get("provider_id")
@@ -1025,58 +1076,20 @@ async def submit_config(config: dict[str, Any]) -> dict[str, Any]:
         provider_info = AVAILABLE_PROVIDERS[provider_id]
 
         try:
-            # Map provider type
-            provider_type_map = {
-                "anthropic": LLMProviderType.OPENAI_COMPATIBLE,
-                "openai": LLMProviderType.OPENAI,
-                "ollama": LLMProviderType.OLLAMA,
-                "groq": LLMProviderType.OPENAI_COMPATIBLE,
-                "mistral": LLMProviderType.OPENAI_COMPATIBLE,
-                "deepseek": LLMProviderType.OPENAI_COMPATIBLE,
-                "local": LLMProviderType.OPENAI_COMPATIBLE,
-            }
-
-            llm_provider_type = provider_type_map.get(
-                provider_id, LLMProviderType.OPENAI_COMPATIBLE
+            created_dict, _ = await _create_single_provider(
+                service, provider_config, provider_info,
+                provider_id, api_key, model, is_default,
             )
-
-            # Create LLM provider
-            create_data = LLMProviderCreate(
-                provider_name=provider_info["name"],
-                provider_type=llm_provider_type,
-                base_url=provider_config.get("base_url") or provider_info["base_url"],
-                api_key=api_key,
-                api_key_hint=f"***{api_key[-4:]}" if api_key else None,
-                default_model=model,
-                is_enabled=True,
-                is_default=is_default,
-                supports_streaming=provider_info.get("supports_streaming", True),
-                supports_function_calling=provider_info.get("supports_function_calling", False),
-                supports_vision=provider_info.get("supports_vision", False),
-                extra_config=provider_config.get("extra_config", {}),
-            )
-
-            created = await service.create_llm_provider(create_data, changed_by="wizard")
-
-            result["providers_created"].append(
-                {
-                    "id": str(created.id),
-                    "name": created.provider_name,
-                    "type": created.provider_type,
-                    "model": created.default_model,
-                }
-            )
-
-            # Store in wizard state
-            wizard_state.set_provider_config(
-                provider_id,
-                {
-                    "provider_id": str(created.id),
-                    "model": model,
-                    "api_key_provided": bool(api_key),
-                },
-            )
-
+            if created_dict:
+                result["providers_created"].append(created_dict)
+                wizard_state.set_provider_config(
+                    provider_id,
+                    {
+                        "provider_id": created_dict["id"],
+                        "model": model,
+                        "api_key_provided": bool(api_key),
+                    },
+                )
         except Exception as e:
             logger.error("Failed to create provider", provider=provider_id, error=str(e))
             result["errors"].append(f"Failed to create {provider_info['name']}: {e!s}")

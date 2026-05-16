@@ -628,6 +628,17 @@ class StewardAgent(TriadAgent):
         stale.sort()
         return stale
 
+    @staticmethod
+    def _is_heartbeat_stale(
+        last_seen: str, now: datetime, timeout: float
+    ) -> bool:
+        """Return True if *last_seen* is missing, malformed, or older than *timeout* seconds."""
+        try:
+            last_dt = datetime.fromisoformat(last_seen).replace(tzinfo=UTC)
+        except (ValueError, TypeError):
+            return True
+        return (now - last_dt).total_seconds() > timeout
+
     def detect_heartbeat_failure(self) -> list[str]:
         """Detect heartbeat failure via the NATS heartbeat bus.
 
@@ -643,14 +654,11 @@ class StewardAgent(TriadAgent):
         hb = getattr(self, "_agent_heartbeats", None)
         if hb:
             now = datetime.now(UTC)
-            stale: list[str] = []
-            for agent_id, last_seen in hb.items():
-                try:
-                    last_dt = datetime.fromisoformat(last_seen).replace(tzinfo=UTC)
-                    if (now - last_dt).total_seconds() > self._heartbeat_timeout:
-                        stale.append(agent_id)
-                except (ValueError, TypeError):
-                    stale.append(agent_id)
+            stale: list[str] = [
+                agent_id
+                for agent_id, last_seen in hb.items()
+                if self._is_heartbeat_stale(last_seen, now, self._heartbeat_timeout)
+            ]
             stale.sort()
             return stale
 

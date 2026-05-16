@@ -229,16 +229,17 @@ class ReasoningChain:
 
     def _check_circular_reasoning(self) -> list[str]:
         """Check for circular reasoning in the chain."""
-        errors = []
+        errors: list[str] = []
         for step in self.steps:
-            if step.step_type == "observation":
-                # Observations should not reference conclusions
-                for _validates_id in step.validates:
-                    validating_step = next((s for s in self.steps if id(s) == id(step)), None)
-                    if validating_step and validating_step.step_type == "conclusion":
-                        errors.append("Circular reasoning detected")
-                        self.status = ReasoningChainStatus.CIRCULAR
-                        break
+            if step.step_type != "observation":
+                continue
+            for _validates_id in step.validates:
+                validating_step = next((s for s in self.steps if id(s) == id(step)), None)
+                if not validating_step or validating_step.step_type != "conclusion":
+                    continue
+                errors.append("Circular reasoning detected")
+                self.status = ReasoningChainStatus.CIRCULAR
+                return errors
         return errors
 
     def _check_confidence_consistency(self) -> list[str]:
@@ -1061,6 +1062,18 @@ class EnhancedMAKERConsensus(MAKERConsensus):
 
         return validation_results
 
+    @staticmethod
+    def _build_contradiction_entry(
+        chain1: ReasoningChain, chain2: ReasoningChain, common_patterns: set[str]
+    ) -> dict[str, Any]:
+        """Build a contradiction entry for cross-validation."""
+        return {
+            "chain1": chain1.chain_id,
+            "chain2": chain2.chain_id,
+            "issue": "contradictory_conclusions",
+            "shared_patterns": list(common_patterns),
+        }
+
     def _check_chain_contradictions(
         self,
         chains: list[ReasoningChain],
@@ -1089,28 +1102,20 @@ class EnhancedMAKERConsensus(MAKERConsensus):
 
         # Check for contradictory reasoning supporting same decision
         for i, chain1 in enumerate(chains):
-            for chain2 in chains[i + 1 :]:
-                if (
-                    chain1.status == ReasoningChainStatus.VALID
-                    and chain2.status == ReasoningChainStatus.VALID
-                ):
-                    # Check if chains reference contradictory patterns
-                    common_patterns = set(chain1.pattern_references) & set(
-                        chain2.pattern_references
+            for chain2 in chains[i + 1:]:
+                if chain1.status != ReasoningChainStatus.VALID:
+                    continue
+                if chain2.status != ReasoningChainStatus.VALID:
+                    continue
+                common_patterns = set(chain1.pattern_references) & set(chain2.pattern_references)
+                if not common_patterns:
+                    continue
+                decision1 = decisions_by_chain.get(chain1.chain_id)
+                decision2 = decisions_by_chain.get(chain2.chain_id)
+                if decision1 != decision2:
+                    contradictions.append(
+                        self._build_contradiction_entry(chain1, chain2, common_patterns)
                     )
-                    if common_patterns:
-                        # Chains share pattern references - check consistency
-                        decision1 = decisions_by_chain.get(chain1.chain_id)
-                        decision2 = decisions_by_chain.get(chain2.chain_id)
-                        if decision1 != decision2:
-                            contradictions.append(
-                                {
-                                    "chain1": chain1.chain_id,
-                                    "chain2": chain2.chain_id,
-                                    "issue": "contradictory_conclusions",
-                                    "shared_patterns": list(common_patterns),
-                                }
-                            )
 
         return contradictions
 
