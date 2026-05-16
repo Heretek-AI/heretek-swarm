@@ -17,6 +17,10 @@ from .agent_runtime import AgentContext, AgentRuntime, AgentState
 from .characters import CHARACTERS, get_character
 from .tools import ToolRegistry
 
+import structlog
+
+logger = structlog.get_logger(__name__)
+
 
 @dataclass
 class CharacterStyle:

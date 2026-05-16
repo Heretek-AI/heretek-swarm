@@ -35,6 +35,10 @@ from heretek_swarm.plugins.consciousness_enhanced import (
 )
 from heretek_swarm.runtime.registry_enhanced import get_enhanced_registry
 
+import structlog
+
+logger = structlog.get_logger(__name__)
+
 router = APIRouter(prefix="/api/consciousness", tags=["consciousness"])
 
 

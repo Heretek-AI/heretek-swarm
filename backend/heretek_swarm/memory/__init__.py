@@ -74,6 +74,10 @@ from heretek_swarm.memory.tiering import (
     TieringStatistics,
 )
 
+import structlog
+
+logger = structlog.get_logger(__name__)
+
 __all__ = [
     "AccessPattern",
     # Session 43: Memory Optimization

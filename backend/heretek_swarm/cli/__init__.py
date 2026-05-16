@@ -29,11 +29,9 @@ try:
 except PackageNotFoundError:
     __version__ = "0.0.0-dev"
 
-
 # =============================================================================
 # GroupedGroup — organises commands into labelled sections in help output
 # =============================================================================
-
 
 class GroupedGroup(click.Group):
     """Custom Click group that organizes commands into labeled sections."""
@@ -87,11 +85,9 @@ class GroupedGroup(click.Group):
             )
         raise click.UsageError(f"No such command '{cmd_name}'.", ctx=ctx)
 
-
 # =============================================================================
 # CLI group
 # =============================================================================
-
 
 @click.group(
     cls=GroupedGroup,
@@ -117,7 +113,6 @@ def cli(ctx: click.Context) -> None:
     if ctx.invoked_subcommand is None:
         click.echo(ctx.get_help())
 
-
 # =============================================================================
 # Register subcommands from per-command modules
 # =============================================================================
@@ -141,13 +136,15 @@ cli.add_command(config)
 # --- Monitoring ---
 from heretek_swarm.cli.status import status  # noqa: E402
 
-cli.add_command(status)
+import structlog
 
+logger = structlog.get_logger(__name__)
+
+cli.add_command(status)
 
 # =============================================================================
 # Leaf commands defined inline (small enough not to warrant separate modules)
 # =============================================================================
-
 
 @cli.command()
 def wizard() -> None:
@@ -158,7 +155,6 @@ def wizard() -> None:
         click.echo(f"Opening {url} in browser...")
     except Exception:
         click.echo(f"No browser available. Navigate to: {url}")
-
 
 @cli.command()
 def init() -> None:
@@ -192,7 +188,6 @@ def init() -> None:
     shutil.copy2(example_path, config_file)
     click.echo(f"Initialized: {config_file}")
 
-
 @cli.command()
 def stop() -> None:
     """
@@ -220,12 +215,10 @@ def stop() -> None:
 
     cleanup_daemon(DEFAULT_PID_FILE, DEFAULT_SOCKET_PATH)
 
-
 # --- Goal commands ---
 from heretek_swarm.cli.goal_commands import goal  # noqa: E402
 
 cli.add_command(goal)
-
 
 # =============================================================================
 # Backward-compatible re-exports (tests and external consumers use these)

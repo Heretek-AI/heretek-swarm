@@ -11,6 +11,10 @@ from typing import Any
 
 import click
 
+import structlog
+
+logger = structlog.get_logger(__name__)
+
 
 def _print_startup_banner(swarm: Any) -> None:
     """Print a formatted startup status table showing component health."""

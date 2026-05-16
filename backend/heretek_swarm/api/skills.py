@@ -22,6 +22,10 @@ from heretek_swarm.agents.skills import (
 )
 from heretek_swarm.gateway.auth import verify_auth
 
+import structlog
+
+logger = structlog.get_logger(__name__)
+
 router = APIRouter(prefix="/api/skills", tags=["skills"])
 
 

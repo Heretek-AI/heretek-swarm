@@ -190,3 +190,7 @@ __all__ = [
     "create_strict_validator",
 ]
 from heretek_swarm.security.threat_detection import ThreatLevel  # noqa: F811
+
+import structlog
+
+logger = structlog.get_logger(__name__)

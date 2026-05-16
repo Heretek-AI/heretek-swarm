@@ -20,6 +20,10 @@ from heretek_swarm.security.anomaly_detection import (
     ResponseStatus,
 )
 
+import structlog
+
+logger = structlog.get_logger(__name__)
+
 
 class SafetyLevel(StrEnum):
     """Safety violation severity levels."""

@@ -18,6 +18,10 @@ from heretek_swarm.actors.dreamer.types import (
     NoveltyLevel,
 )
 
+import structlog
+
+logger = structlog.get_logger(__name__)
+
 
 class DreamerGeneratorsMixin:
     """

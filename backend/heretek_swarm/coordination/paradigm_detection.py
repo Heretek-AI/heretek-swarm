@@ -7,6 +7,9 @@ from datetime import UTC, datetime, timedelta
 from enum import Enum
 from typing import Any
 
+import structlog
+
+logger = structlog.get_logger(__name__)
 
 class ShiftType(Enum):
     """Types of paradigm shifts."""
@@ -17,7 +20,6 @@ class ShiftType(Enum):
     PROTOCOL = "protocol"
     OPERATIONAL = "operational"
 
-
 class ShiftMagnitude(Enum):
     """Magnitude of detected shift."""
 
@@ -25,7 +27,6 @@ class ShiftMagnitude(Enum):
     MODERATE = "moderate"
     MAJOR = "major"
     CRITICAL = "critical"
-
 
 class ShiftConfidence(Enum):
     """Confidence level of shift detection."""
@@ -36,7 +37,6 @@ class ShiftConfidence(Enum):
     PROBABLE = "probable"
     CONFIRMED = "confirmed"
 
-
 class ShiftStatus(Enum):
     """Status of a detected paradigm shift."""
 
@@ -46,7 +46,6 @@ class ShiftStatus(Enum):
     FALSE_POSITIVE = "false_positive"
     MITIGATED = "mitigated"
     ESCALATED = "escalated"
-
 
 class ChangeType(Enum):
     """Type of change request."""
@@ -59,7 +58,6 @@ class ChangeType(Enum):
     HOTFIX = "hotfix"
     ROLLBACK = "rollback"
 
-
 @dataclass
 class ChangeRequest:
     """A change request under management."""
@@ -71,7 +69,6 @@ class ChangeRequest:
     requested_by: str = ""
     affected_components: list[str] = field(default_factory=list)
     metadata: dict[str, Any] = field(default_factory=dict)
-
 
 @dataclass
 class ShiftIndicator:
@@ -97,7 +94,6 @@ class ShiftIndicator:
             "affected_components": self.affected_components,
             "confidence_boost": self.confidence_boost,
         }
-
 
 @dataclass
 class ParadigmShift:
@@ -143,7 +139,6 @@ class ParadigmShift:
             "core_triad_notified": self.core_triad_notified,
             "resolution_notes": self.resolution_notes,
         }
-
 
 class ParadigmDetector:
     """Detects paradigm shifts in swarm behavior and operations."""

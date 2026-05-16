@@ -13,6 +13,10 @@ import os
 import re
 from pathlib import Path
 
+import structlog
+
+logger = structlog.get_logger(__name__)
+
 logger = logging.getLogger("domain_selector")
 
 # Default fallback agents when topic matching yields too few results

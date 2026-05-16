@@ -10,6 +10,10 @@ from typing import Any
 
 from .manager import Plugin, PluginMetadata, PluginState
 
+import structlog
+
+logger = structlog.get_logger(__name__)
+
 
 class LoggingPlugin(Plugin):
     """

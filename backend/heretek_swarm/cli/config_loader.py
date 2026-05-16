@@ -26,6 +26,10 @@ from heretek_swarm.config.db_models import (
 if TYPE_CHECKING:
     from sqlalchemy.engine import Engine
 
+import structlog
+
+logger = structlog.get_logger(__name__)
+
 
 class LoadResult(TypedDict):
     """Result of loading infrastructure configuration."""

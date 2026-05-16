@@ -15,6 +15,10 @@ import unicodedata
 from datetime import UTC, datetime
 from typing import Any
 
+import structlog
+
+logger = structlog.get_logger(__name__)
+
 
 class NexusRoutingHelpers:
     """

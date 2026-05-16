@@ -102,6 +102,10 @@ from heretek_swarm.consensus.tribunal import (
     TribunalRuling,
 )
 
+import structlog
+
+logger = structlog.get_logger(__name__)
+
 __all__ = [
     # Domain Selection
     "DEFAULT_FALLBACK_AGENTS",

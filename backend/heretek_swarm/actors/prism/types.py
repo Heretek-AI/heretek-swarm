@@ -16,6 +16,10 @@ from datetime import UTC, datetime
 from enum import StrEnum
 from typing import Any
 
+import structlog
+
+logger = structlog.get_logger(__name__)
+
 
 class PerspectiveType(StrEnum):
     """Types of perspectives Prism can generate."""

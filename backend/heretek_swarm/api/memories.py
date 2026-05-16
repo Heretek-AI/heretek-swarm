@@ -15,6 +15,10 @@ from fastapi import APIRouter, Depends, Header, HTTPException
 from fastapi.responses import RedirectResponse
 from pydantic import BaseModel, Field
 
+import structlog
+
+logger = structlog.get_logger(__name__)
+
 # Auth configuration
 ADMIN_API_KEY = os.environ.get("ADMIN_API_KEY", "")
 

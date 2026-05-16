@@ -15,6 +15,10 @@ from datetime import datetime
 from enum import StrEnum
 from typing import Any
 
+import structlog
+
+logger = structlog.get_logger(__name__)
+
 
 class OpportunityType(StrEnum):
     """Types of opportunities Explorer can identify."""

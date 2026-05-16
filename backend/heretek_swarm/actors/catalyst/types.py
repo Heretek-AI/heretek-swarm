@@ -5,6 +5,9 @@ from datetime import UTC, datetime
 from enum import Enum
 from typing import Any
 
+import structlog
+
+logger = structlog.get_logger(__name__)
 
 class ChangeStatus(Enum):
     """Status of a change request."""
@@ -19,7 +22,6 @@ class ChangeStatus(Enum):
     ROLLED_BACK = "rolled_back"
     FAILED = "failed"
 
-
 class ChangeType(Enum):
     """Type of change."""
 
@@ -31,7 +33,6 @@ class ChangeType(Enum):
     HOTFIX = "hotfix"
     ROLLBACK = "rollback"
 
-
 class ImpactLevel(Enum):
     """Change impact level."""
 
@@ -39,7 +40,6 @@ class ImpactLevel(Enum):
     MEDIUM = "medium"
     HIGH = "high"
     CRITICAL = "critical"
-
 
 @dataclass
 class ChangeRequest:
@@ -83,7 +83,6 @@ class ChangeRequest:
             "required_approvals": self.required_approvals,
             "approval_count": sum(1 for v in self.approval_status.values() if v),
         }
-
 
 @dataclass
 class ChangeNotification:

@@ -29,6 +29,10 @@ class RouterProviderConfig:
     This is a standalone config for use when ModelGarage is not wired.
     When ModelGarage is connected, the router derives its provider info
     from the garage's ProviderConfigs instead.
+
+import structlog
+
+logger = structlog.get_logger(__name__)
     """
 
     provider_id: str

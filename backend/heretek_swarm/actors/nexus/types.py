@@ -15,7 +15,6 @@ from datetime import UTC, datetime
 from enum import Enum
 from typing import Any
 
-
 class ConnectionStatus(Enum):
     """Status of an external connection."""
 
@@ -24,7 +23,6 @@ class ConnectionStatus(Enum):
     ERROR = "error"
     RATE_LIMITED = "rate_limited"
     AUTH_FAILED = "auth_failed"
-
 
 class ProtocolType(Enum):
     """Supported external protocols."""
@@ -35,7 +33,6 @@ class ProtocolType(Enum):
     GRPC = "grpc"
     WEBHOOK = "webhook"
     MQTT = "mqtt"
-
 
 @dataclass
 class ExternalConnection:
@@ -75,7 +72,6 @@ class ExternalConnection:
             "metadata": self.metadata,
         }
 
-
 @dataclass
 class WebhookConfig:
     """Configuration for a webhook endpoint."""
@@ -105,7 +101,6 @@ class WebhookConfig:
             "created_at": self.created_at.isoformat(),
         }
 
-
 @dataclass
 class ApiResponse:
     """Standardized API response."""
@@ -130,6 +125,10 @@ class ApiResponse:
             "latency_ms": self.latency_ms,
         }
 
-
 # Import uuid only for ApiResponse.request_id default factory
 import uuid  # noqa: E402
+
+import structlog
+
+logger = structlog.get_logger(__name__)
+

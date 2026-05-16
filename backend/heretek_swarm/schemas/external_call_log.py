@@ -14,6 +14,10 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
+import structlog
+
+logger = structlog.get_logger(__name__)
+
 
 def extract_domain(url: str) -> str:
     """Extract domain from a URL."""

@@ -20,6 +20,10 @@ from typing import TYPE_CHECKING, Any
 if TYPE_CHECKING:
     from collections.abc import Callable
 
+import structlog
+
+logger = structlog.get_logger(__name__)
+
 
 class TimeDomain(Enum):
     """Time domains for perception management."""

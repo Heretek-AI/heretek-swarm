@@ -11,6 +11,10 @@ from dataclasses import asdict, dataclass, field
 from datetime import UTC, datetime
 from typing import Any, Literal
 
+import structlog
+
+logger = structlog.get_logger(__name__)
+
 GoalStatus = Literal[
     "proposed", "voting", "accepted", "rejected", "error", "executing", "completed"
 ]

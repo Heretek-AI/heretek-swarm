@@ -5,6 +5,10 @@ Character System - Agent Definitions
 Reference: MiniMax Audit + elizaOS character patterns
 """
 
+import structlog
+
+logger = structlog.get_logger(__name__)
+
 
 # =============================================================================
 # STEWARD - Orchestrator Agent

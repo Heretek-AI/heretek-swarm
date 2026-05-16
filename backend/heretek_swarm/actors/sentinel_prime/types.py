@@ -9,6 +9,10 @@ from datetime import datetime
 from enum import StrEnum
 from typing import Any
 
+import structlog
+
+logger = structlog.get_logger(__name__)
+
 
 class ThreatLevel(StrEnum):
     """Threat severity classification."""

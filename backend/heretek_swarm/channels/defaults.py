@@ -6,6 +6,10 @@ enabling cleaner separation of channel definitions from registration logic.
 
 from .registry import ChannelDefinition, ChannelType, QoSLevel
 
+import structlog
+
+logger = structlog.get_logger(__name__)
+
 
 def get_internal_channels() -> list[ChannelDefinition]:
     """Get default internal agent channels.

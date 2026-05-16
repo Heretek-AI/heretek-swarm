@@ -21,6 +21,10 @@ from heretek_swarm.memory.versioned import (
     get_versioned_store,
 )
 
+import structlog
+
+logger = structlog.get_logger(__name__)
+
 router = APIRouter(prefix="/api/memory/versions", tags=["memory versions"])
 
 

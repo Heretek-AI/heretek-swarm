@@ -8,6 +8,10 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+import structlog
+
+logger = structlog.get_logger(__name__)
+
 # ---------------------------------------------------------------------------
 # Pattern definitions
 # ---------------------------------------------------------------------------

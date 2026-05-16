@@ -14,6 +14,10 @@ from uuid import UUID, uuid4
 
 from pydantic import BaseModel, Field
 
+import structlog
+
+logger = structlog.get_logger(__name__)
+
 
 class ConfigType(StrEnum):
     """Configuration value types."""

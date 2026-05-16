@@ -15,6 +15,10 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from heretek_swarm.actors.coordinator.types import CoordinatedTask
 
+import structlog
+
+logger = structlog.get_logger(__name__)
+
 
 class DependencyResolutionStrategy:
     """Strategy for resolving task dependencies and determining execution order."""

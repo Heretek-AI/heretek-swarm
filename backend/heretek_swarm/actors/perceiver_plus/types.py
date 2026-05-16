@@ -15,6 +15,10 @@ from datetime import UTC, datetime
 from enum import StrEnum
 from typing import Any
 
+import structlog
+
+logger = structlog.get_logger(__name__)
+
 
 class AnalyticsType(StrEnum):
     """Types of analytics Perceiver+ can perform."""

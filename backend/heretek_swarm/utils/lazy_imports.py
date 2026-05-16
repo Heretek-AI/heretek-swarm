@@ -22,6 +22,10 @@ class LazyImport:
     Use this to avoid circular imports when module A needs to import
     from module B but module B might import from module A at the top level.
 
+import structlog
+
+logger = structlog.get_logger(__name__)
+
     Example:
         # Instead of: from foo import Bar
         # Use:

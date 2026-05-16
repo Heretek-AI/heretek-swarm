@@ -18,6 +18,10 @@ from datetime import UTC, datetime, timedelta
 from enum import StrEnum
 from typing import Any
 
+import structlog
+
+logger = structlog.get_logger(__name__)
+
 
 class HabitStage(StrEnum):
     """Stages of habit formation."""

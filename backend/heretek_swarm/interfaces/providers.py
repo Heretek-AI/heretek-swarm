@@ -7,6 +7,10 @@ enabling dependency inversion and breaking circular import dependencies.
 from abc import ABC, abstractmethod
 from typing import Any
 
+import structlog
+
+logger = structlog.get_logger(__name__)
+
 
 class LLMProviderInterface(ABC):
     """Abstract interface for LLM providers.

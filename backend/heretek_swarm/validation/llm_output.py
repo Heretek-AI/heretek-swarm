@@ -21,6 +21,10 @@ from typing import Any
 from pydantic import BaseModel, Field, ValidationError
 from pydantic import validator as pydantic_validator
 
+import structlog
+
+logger = structlog.get_logger(__name__)
+
 
 class ValidationSeverity(StrEnum):
     """Severity levels for validation issues."""

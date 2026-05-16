@@ -18,6 +18,10 @@ from heretek_swarm.actors.sentinel_prime.types import (
     ThreatType,
 )
 
+import structlog
+
+logger = structlog.get_logger(__name__)
+
 
 class SentinelPrimeHelpers:
     """

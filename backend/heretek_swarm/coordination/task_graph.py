@@ -6,19 +6,20 @@ from datetime import UTC, datetime
 from enum import Enum
 from typing import Any
 
+import structlog
+
+logger = structlog.get_logger(__name__)
 
 class GraphNodeType(Enum):
     TASK = "task"
     MILESTONE = "milestone"
     BARRIER = "barrier"
 
-
 class EdgeType(Enum):
     DEPENDENCY = "dependency"
     BLOCKS = "blocks"
     WAITS_FOR = "waits_for"
     PART_OF = "part_of"
-
 
 @dataclass
 class GraphNode:
@@ -41,7 +42,6 @@ class GraphNode:
             "depth": self.depth,
         }
 
-
 @dataclass
 class GraphEdge:
     edge_id: str
@@ -58,7 +58,6 @@ class GraphEdge:
             "edge_type": self.edge_type.value,
             "weight": self.weight,
         }
-
 
 class TaskGraph:
     def __init__(self, max_nodes: int = 10000):

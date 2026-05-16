@@ -10,6 +10,9 @@ from typing import Any
 
 import aiohttp
 
+import structlog
+
+logger = structlog.get_logger(__name__)
 
 class RetryStrategy(Enum):
     """Retry backoff strategies."""
@@ -18,14 +21,12 @@ class RetryStrategy(Enum):
     LINEAR = "linear"
     FIBONACCI = "fibonacci"
 
-
 class CircuitState(Enum):
     """Circuit breaker states."""
 
     CLOSED = "closed"
     OPEN = "open"
     HALF_OPEN = "half_open"
-
 
 class ApiResponse:
     """Standardized API response for external requests."""
@@ -71,7 +72,6 @@ class ApiResponse:
             "total_retries": self.total_retries,
         }
 
-
 @dataclass
 class RetryConfig:
     """Configuration for retry behavior."""
@@ -86,7 +86,6 @@ class RetryConfig:
     def jitter_factor(self) -> float:
         return 0.1 if self.jitter else 0.0
 
-
 @dataclass
 class RateLimitConfig:
     """Configuration for rate limit handling."""
@@ -97,7 +96,6 @@ class RateLimitConfig:
     backoff_multiplier: float = 2.0
     max_backoff_ms: int = 60000
 
-
 @dataclass
 class CircuitBreakerConfig:
     """Configuration for circuit breaker."""
@@ -107,7 +105,6 @@ class CircuitBreakerConfig:
     timeout_seconds: float = 30.0
     excluded_status_codes: list[int] = field(default_factory=lambda: [400, 401, 403, 404])
 
-
 @dataclass
 class FallbackConfig:
     """Configuration for fallback endpoints."""
@@ -116,7 +113,6 @@ class FallbackConfig:
     fallback_endpoints: list[str] = field(default_factory=list)
     health_check_interval_seconds: float = 30.0
     require_all_healthy: bool = False
-
 
 @dataclass
 class APIRequestMetrics:
@@ -146,7 +142,6 @@ class APIRequestMetrics:
             "fallback_used": self.fallback_used,
             "timestamp": self.timestamp.isoformat(),
         }
-
 
 class RateLimitHandler:
     """Handles rate limiting with automatic backoff."""
@@ -224,7 +219,6 @@ class RateLimitHandler:
             "current_backoff_ms": self._current_backoff_ms,
         }
 
-
 class CircuitBreaker:
     """Circuit breaker pattern implementation for API resilience."""
 
@@ -290,7 +284,6 @@ class CircuitBreaker:
             "last_failure": self._last_failure_time.get(endpoint),
         }
 
-
 class FallbackManager:
     """Manages fallback endpoints for API resilience."""
 
@@ -349,7 +342,6 @@ class FallbackManager:
         for endpoint in self._endpoints:
             self._endpoints[endpoint]["healthy"] = True
             self._endpoints[endpoint]["consecutive_failures"] = 0
-
 
 class ResilientAPIClient:
     """External API client with automatic retry, rate limiting, circuit breaker, and fallback support."""  # noqa: E501

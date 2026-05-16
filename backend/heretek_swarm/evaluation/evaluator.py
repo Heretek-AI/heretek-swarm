@@ -6,6 +6,10 @@ from datetime import datetime
 from enum import Enum
 from typing import Any, Optional
 
+import structlog
+
+logger = structlog.get_logger(__name__)
+
 
 class EvaluationStatus(Enum):
     PENDING = "pending"

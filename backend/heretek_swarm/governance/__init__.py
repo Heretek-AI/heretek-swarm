@@ -33,6 +33,10 @@ from heretek_swarm.security.zero_trust import (
     create_default_validator,
 )
 
+import structlog
+
+logger = structlog.get_logger(__name__)
+
 __all__ = [
     # Agent Identity
     "AgentIdentity",

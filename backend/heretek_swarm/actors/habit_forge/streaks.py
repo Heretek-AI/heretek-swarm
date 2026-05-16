@@ -14,6 +14,10 @@ from __future__ import annotations
 from datetime import UTC, datetime
 from typing import TYPE_CHECKING, Any
 
+import structlog
+
+logger = structlog.get_logger(__name__)
+
 if TYPE_CHECKING:
     from heretek_swarm.actors.habit_forge.types import Habit
 

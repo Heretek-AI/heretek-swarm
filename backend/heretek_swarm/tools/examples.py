@@ -14,6 +14,10 @@ from heretek_swarm.tools.base import (
     ToolStatus,
 )
 
+import structlog
+
+logger = structlog.get_logger(__name__)
+
 
 class HealthCheckTool(BaseTool):
     """Tool for checking system health."""

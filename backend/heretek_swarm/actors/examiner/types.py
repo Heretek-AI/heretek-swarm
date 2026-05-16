@@ -17,6 +17,10 @@ from datetime import UTC, datetime
 from enum import StrEnum
 from typing import Any
 
+import structlog
+
+logger = structlog.get_logger(__name__)
+
 
 class TestType(StrEnum):
     """Types of tests Examiner can execute."""

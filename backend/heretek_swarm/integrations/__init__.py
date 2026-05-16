@@ -129,6 +129,10 @@ from .openai_assistants import (
     MessageRole as OpenAIMessageRole,
 )
 
+import structlog
+
+logger = structlog.get_logger(__name__)
+
 __all__ = [
     "ANTHROPIC_AVAILABLE",
     "AUTOGEN_AVAILABLE",

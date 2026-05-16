@@ -15,6 +15,10 @@ from heretek_swarm.collective.learning import (
     PatternType,
 )
 
+import structlog
+
+logger = structlog.get_logger(__name__)
+
 
 class EmergentPatternClass(StrEnum):
     """Classification of emergent patterns."""

@@ -6,6 +6,9 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any
 
+import structlog
+
+logger = structlog.get_logger(__name__)
 
 class DocumentType(Enum):
     """Document type enumeration."""
@@ -18,7 +21,6 @@ class DocumentType(Enum):
     JSON = "json"
     UNKNOWN = "unknown"
 
-
 class ChunkStrategy(Enum):
     """Chunking strategy enumeration."""
 
@@ -28,7 +30,6 @@ class ChunkStrategy(Enum):
     SENTENCE = "sentence"
     PARAGRAPH = "paragraph"
     SEMANTIC = "semantic"
-
 
 @dataclass
 class ProcessingConfig:
@@ -41,7 +42,6 @@ class ProcessingConfig:
     enable_heuristics: bool = True
     max_metadata_length: int = 500
 
-
 @dataclass
 class ProcessedDocument:
     """Processed document with chunks and metadata."""
@@ -51,7 +51,6 @@ class ProcessedDocument:
     chunks: list[str] = field(default_factory=list)
     metadata: dict[str, Any] = field(default_factory=dict)
     document_type: DocumentType = DocumentType.TEXT
-
 
 class DocumentProcessor:
     """Document processing and chunking."""

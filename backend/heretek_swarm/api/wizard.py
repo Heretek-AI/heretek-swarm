@@ -15,7 +15,6 @@ from uuid import UUID
 
 import structlog
 from fastapi import APIRouter, Depends, HTTPException, Response
-from structlog import get_logger
 
 from heretek_swarm.config.models import (
     InfrastructureConfigCreate,
@@ -38,8 +37,6 @@ from heretek_swarm.infrastructure.nats.publisher import (
     SwarmEvent,
     get_nats_publisher,
 )
-
-logger = get_logger("api.wizard")
 
 logger = structlog.get_logger("api.wizard")
 

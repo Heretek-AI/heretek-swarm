@@ -20,6 +20,11 @@ from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from typing import Any
 
+import structlog
+
+logger = structlog.get_logger(__name__)
+
+
 # ---------------------------------------------------------------------------
 # Stub data containers (kept here to avoid importing real types at runtime)
 # ---------------------------------------------------------------------------

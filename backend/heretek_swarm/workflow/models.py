@@ -22,6 +22,10 @@ from typing import Annotated, Any, TypeVar
 
 from typing_extensions import TypedDict
 
+import structlog
+
+logger = structlog.get_logger(__name__)
+
 # Safe operators for comparison and boolean logic
 SAFE_OPERATORS = {
     ast.Eq: operator.eq,

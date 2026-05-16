@@ -9,6 +9,10 @@ from datetime import UTC, datetime, timedelta
 from enum import Enum
 from typing import Any
 
+import structlog
+
+logger = structlog.get_logger(__name__)
+
 
 class ScheduleStatus(Enum):
     """Status of a scheduled item."""

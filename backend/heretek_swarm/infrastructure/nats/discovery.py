@@ -13,6 +13,10 @@ from enum import Enum
 
 from heretek_swarm.infrastructure.nats.client import get_nats_client
 
+import structlog
+
+logger = structlog.get_logger(__name__)
+
 logger = __import__("logging").getLogger(__name__)
 
 

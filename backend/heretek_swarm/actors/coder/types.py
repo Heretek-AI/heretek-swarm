@@ -5,6 +5,9 @@ from datetime import UTC, datetime
 from enum import StrEnum
 from typing import Any
 
+import structlog
+
+logger = structlog.get_logger(__name__)
 
 class CodeLanguage(StrEnum):
     """Supported programming languages."""
@@ -22,7 +25,6 @@ class CodeLanguage(StrEnum):
     JSON = "json"
     MARKDOWN = "markdown"
 
-
 class CodeTask(StrEnum):
     """Types of coding tasks."""
 
@@ -35,7 +37,6 @@ class CodeTask(StrEnum):
     EXPLAIN = "explain"
     OPTIMIZE = "optimize"
 
-
 class ReviewSeverity(StrEnum):
     """Code review issue severity."""
 
@@ -44,7 +45,6 @@ class ReviewSeverity(StrEnum):
     WARNING = "warning"  # Code smell, potential issue
     INFO = "info"  # Suggestion, style note
     HINT = "hint"  # Minor improvement
-
 
 @dataclass
 class CodeSnippet:
@@ -61,7 +61,6 @@ class CodeSnippet:
     test_coverage: float = 0.0  # 0-1 test coverage
     metadata: dict[str, Any] = field(default_factory=dict)
 
-
 @dataclass
 class ReviewIssue:
     """Code review issue."""
@@ -73,7 +72,6 @@ class ReviewIssue:
     message: str
     suggestion: str | None = None
     code_context: str | None = None
-
 
 @dataclass
 class CodeReview:
@@ -90,7 +88,6 @@ class CodeReview:
     warning_count: int = 0
     recommendations: list[str] = field(default_factory=list)
 
-
 @dataclass
 class DebugSession:
     """Debugging session record."""
@@ -105,7 +102,6 @@ class DebugSession:
     started_at: datetime = field(default_factory=lambda: datetime.now(UTC))
     resolved_at: datetime | None = None
     status: str = "investigating"  # investigating/identified/fixed/cannot_reproduce
-
 
 @dataclass
 class ImplementationTask:

@@ -15,6 +15,10 @@ from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, String, Text, Ind
 from sqlalchemy import JSON, func
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
+import structlog
+
+logger = structlog.get_logger(__name__)
+
 
 class Base(DeclarativeBase):
     """Base class for all ORM models."""

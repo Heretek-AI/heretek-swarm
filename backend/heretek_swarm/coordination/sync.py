@@ -6,6 +6,9 @@ from datetime import UTC, datetime, timedelta
 from enum import Enum
 from typing import Any
 
+import structlog
+
+logger = structlog.get_logger(__name__)
 
 class DeadlockState(Enum):
     NONE = "none"
@@ -14,14 +17,12 @@ class DeadlockState(Enum):
     RESOLVING = "resolving"
     RESOLVED = "resolved"
 
-
 class EscalationLevel(Enum):
     NONE = "none"
     COORDINATOR = "coordinator"
     STEWARD = "steward"
     ARBITER = "arbiter"
     HUMAN = "human"
-
 
 @dataclass
 class AgentDependency:
@@ -41,7 +42,6 @@ class AgentDependency:
     @property
     def is_expired(self) -> bool:
         return self.wait_duration > self.timeout
-
 
 @dataclass
 class CoordinationMetrics:
@@ -65,7 +65,6 @@ class CoordinationMetrics:
             "cycles_detected": self.cycles_detected,
             "last_updated": self.last_updated.isoformat(),
         }
-
 
 class TaskSynchronizer:
     def __init__(

@@ -23,6 +23,10 @@ from heretek_swarm.actors.prism.types import (
     PerspectiveType,
 )
 
+import structlog
+
+logger = structlog.get_logger(__name__)
+
 # Perspective-specific heuristic templates
 VIEWPOINT_TEMPLATES: dict[PerspectiveType, str] = {
     PerspectiveType.TECHNICAL: "From a technical standpoint, this issue involves implementation considerations...",  # noqa: E501

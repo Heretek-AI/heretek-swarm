@@ -7,6 +7,11 @@ from pathlib import Path
 
 import click
 
+import structlog
+
+logger = structlog.get_logger(__name__)
+
+
 # Ensure the heretek_swarm package is importable from the repo root.
 # When invoked as `python audit/cli.py` from the repo root, we need to add
 # `heretek-swarm/` to the path so `import heretek_swarm` works.

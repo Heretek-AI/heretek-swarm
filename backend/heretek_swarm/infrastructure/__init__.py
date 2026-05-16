@@ -64,6 +64,10 @@ from heretek_swarm.infrastructure.provisioner import (
     provision_service_sync,
 )
 
+import structlog
+
+logger = structlog.get_logger(__name__)
+
 __all__ = [
     # A2A Protocol
     "A2AMessage",

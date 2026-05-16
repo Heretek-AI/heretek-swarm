@@ -88,6 +88,10 @@ from heretek_swarm.consciousness.iit_phi import (
     PhiResult,
 )
 
+import structlog
+
+logger = structlog.get_logger(__name__)
+
 __all__ = [
     # Wave 2: Consciousness Frameworks
     # AST Self-Modeling

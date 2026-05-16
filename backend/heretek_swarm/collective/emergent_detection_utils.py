@@ -9,6 +9,10 @@ from heretek_swarm.collective.emergent_detection_types import (
     PatternProvenance,
 )
 
+import structlog
+
+logger = structlog.get_logger(__name__)
+
 if TYPE_CHECKING:
     from .emergent_detection import (
         AgentBehaviorSnapshot,

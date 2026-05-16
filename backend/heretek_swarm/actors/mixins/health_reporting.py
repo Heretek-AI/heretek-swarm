@@ -4,6 +4,9 @@ import asyncio
 import time
 from typing import Any
 
+import structlog
+
+logger = structlog.get_logger(__name__)
 
 class HealthReportingMixin:
     """Mixin for health reporting and error handling.

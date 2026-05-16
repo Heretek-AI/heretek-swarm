@@ -27,6 +27,10 @@ from heretek_swarm.validation.llm_output import (
     ValidationSeverity,
 )
 
+import structlog
+
+logger = structlog.get_logger(__name__)
+
 
 class MessageType(StrEnum):
     """Standard message types in the swarm system."""

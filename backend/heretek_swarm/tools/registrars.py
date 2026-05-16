@@ -9,6 +9,10 @@ from typing import Any
 
 from .mcp_tools import MCPToolDefinition, MCPToolRegistry
 
+import structlog
+
+logger = structlog.get_logger(__name__)
+
 
 class BaseToolRegistrar:
     """Base class for tool registrars."""
