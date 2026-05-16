@@ -994,7 +994,6 @@ async def _emit_wizard_completed_event(tier_config: dict[str, Any]) -> None:
 # =============================================================================
 
 
-@router.post("/config")
 async def _create_single_provider(
     service: ConfigurationService,
     provider_config: dict[str, Any],
