@@ -15,6 +15,11 @@ Provides:
   ``Unclosed client session`` messages — these are emitted by the event
   loop's default exception handler during teardown when background tasks
   created ``aiohttp.ClientSession`` objects that were not explicitly closed.
+* ``--run-slow`` CLI option: when passed, ``@pytest.mark.slow`` tests are
+  collected and run normally.  Without it, slow tests are skipped via
+  ``-m "not slow"`` (the default ``addopts`` does *not* include this skip,
+  so slow tests are collected but skipped by the ``conftest`` auto-skip
+  fixture below).
 """
 
 import logging
@@ -92,3 +97,35 @@ def _clear_supervisor_actors() -> Generator[None, None, None]:
     yield
     supervisor = get_supervisor()
     supervisor.actors.clear()
+
+
+# ---------------------------------------------------------------------------
+# --run-slow CLI option: gate @pytest.mark.slow tests behind an explicit flag
+# ---------------------------------------------------------------------------
+
+def pytest_addoption(parser: pytest.Parser) -> None:
+    """Register ``--run-slow`` so slow tests are opt-in."""
+    parser.addoption(
+        "--run-slow",
+        action="store_true",
+        default=False,
+        help="Run tests marked @pytest.mark.slow (skipped by default)",
+    )
+
+
+def pytest_configure(config: pytest.Config) -> None:
+    """Ensure 'slow' marker is known at runtime (also declared in pyproject.toml)."""
+    config.addinivalue_line("markers", "slow: Tests that take >5s")
+
+
+def pytest_collection_modifyitems(
+    config: pytest.Config,
+    items: list[pytest.Item],
+) -> None:
+    """Skip @pytest.mark.slow tests unless ``--run-slow`` is passed."""
+    if config.getoption("--run-slow"):
+        return
+    slow_marker = pytest.mark.skip(reason="need --run-slow option to run")
+    for item in items:
+        if item.get_closest_marker("slow"):
+            item.add_marker(slow_marker)
