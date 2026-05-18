@@ -131,6 +131,9 @@ services:
     depends_on:
       - api
     restart: unless-stopped
+    healthcheck:
+      <<: *healthcheck-defaults
+      test: ["CMD", "curl", "-sf", "http://localhost:80/"]
 
 # =============================================================================
 # Volumes

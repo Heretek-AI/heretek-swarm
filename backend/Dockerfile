@@ -24,7 +24,7 @@ COPY pyproject.toml uv.lock ./
 COPY backend ./backend
 
 # Install uv and project dependencies into a venv
-RUN pip install uv && \
+RUN pip install --no-cache-dir uv && \
     uv sync --frozen --no-dev --no-editable && \
     uv pip install prometheus-client>=0.19.0 psycopg2-binary>=2.9.0 asyncpg>=0.29.0
 
