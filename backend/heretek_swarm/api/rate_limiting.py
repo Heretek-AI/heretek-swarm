@@ -124,7 +124,7 @@ RATE_LIMITS = {
     # A2A messaging - high for real-time
     "/api/a2a/messages": "300/minute",
     # Provider CRUD - moderate
-    "/api/v1/providers": "100/minute",
+    "/api/providers": "100/minute",
     # Consensus - moderate
     "/api/consensus": "60/minute",
     "/api/consensus/{consensus_id}/vote": "30/minute",

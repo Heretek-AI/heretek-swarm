@@ -41,7 +41,7 @@ from heretek_swarm.llm.model_garage import (
 logger = structlog.get_logger("api.providers_config")
 
 router = APIRouter(
-    prefix="/api/v1/providers",
+    prefix="/api/providers",
     tags=["Providers"],
     dependencies=[Depends(verify_auth)],
 )

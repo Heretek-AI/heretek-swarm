@@ -29,7 +29,7 @@ from heretek_swarm.observability.prometheus_metrics import (
 
 logger = structlog.get_logger(__name__)
 
-router = APIRouter(tags=["metrics"], dependencies=[Depends(verify_auth)])
+router = APIRouter(prefix="/api/metrics", tags=["metrics"], dependencies=[Depends(verify_auth)])
 
 # Singleton for metrics integration
 _metrics: PrometheusMetrics | None = None
@@ -82,7 +82,7 @@ def sync_with_swarm_collector(collector: SwarmMetricsCollector) -> None:
 
 
 @router.get(
-    "/metrics",
+    "",
     response_class=PlainTextResponse,
     summary="Prometheus Metrics Endpoint",
     description="""
@@ -178,7 +178,7 @@ async def get_prometheus_metrics_endpoint() -> Response:
 
 
 @router.get(
-    "/metrics/json",
+    "/json",
     summary="Prometheus Metrics (JSON format)",
     description="Returns current metrics values in JSON format for debugging.",
     responses={

@@ -128,7 +128,7 @@ class ServerInfo(BaseModel):
 # MCP Router
 # =============================================================================
 
-router = APIRouter(prefix="/mcp", tags=["mcp"], dependencies=[Depends(verify_auth)])
+router = APIRouter(prefix="/api/mcp", tags=["mcp"], dependencies=[Depends(verify_auth)])
 
 
 # =============================================================================
@@ -267,7 +267,7 @@ async def toggle_tool(
     caller_ip = request.client.host if request.client else "unknown"
     logger.info(
         "mcp_tool_toggle_endpoint",
-        endpoint="/mcp/tools/toggle/{name}",
+        endpoint="/api/mcp/tools/toggle/{name}",
         method="PUT",
         caller_ip=caller_ip,
         tool_name=tool_name,

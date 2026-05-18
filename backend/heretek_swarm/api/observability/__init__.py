@@ -332,7 +332,7 @@ class TimeTravelResponse(BaseModel):
 # Main Router
 # =============================================================================
 
-router = APIRouter(prefix="/api/v1/observability", tags=["observability"])
+router = APIRouter(prefix="/api/observability", tags=["observability"])
 
 # Import submodule routers and include them.
 # These imports happen at the bottom so submodules can access shared globals

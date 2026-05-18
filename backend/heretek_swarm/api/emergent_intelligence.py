@@ -29,7 +29,7 @@ from heretek_swarm.gateway.auth import verify_auth
 
 logger = structlog.get_logger(__name__)
 
-router = APIRouter(prefix="/api/v1/emergent-intelligence", tags=["emergent-intelligence"])
+router = APIRouter(prefix="/api/emergent-intelligence", tags=["emergent-intelligence"])
 
 # Global instances (initialized on first use)
 _metrics_instance: CollectiveIntelligenceMetrics | None = None

@@ -401,12 +401,12 @@ class TestPersistenceRoundTrip:
 
 
 # ---------------------------------------------------------------------------
-# Tests: PUT /mcp/tools/toggle/{name} endpoint
+# Tests: PUT /api/mcp/tools/toggle/{name} endpoint
 # ---------------------------------------------------------------------------
 
 
 class TestToggleEndpoint:
-    """Suite for the ``PUT /mcp/tools/toggle/{name}`` endpoint."""
+    """Suite for the ``PUT /api/mcp/tools/toggle/{name}`` endpoint."""
 
     @pytest.fixture(autouse=True)
     def _patch_state_file(self, tmp_path: Path) -> None:
@@ -431,7 +431,7 @@ class TestToggleEndpoint:
     def test_toggle_happy_path_disables(self, client: TestClient) -> None:
         """toggle test_tool_0 → disabled, returns 200 with enabled=False."""
         response = client.put(
-            "/mcp/tools/toggle/test_tool_0",
+            "/api/mcp/tools/toggle/test_tool_0",
             json={"enabled": False},
         )
         assert response.status_code == 200
@@ -443,14 +443,14 @@ class TestToggleEndpoint:
     def test_toggle_happy_path_re_enables(self, client: TestClient) -> None:
         """Disable then re-enable → both requests return 200."""
         r1 = client.put(
-            "/mcp/tools/toggle/test_tool_1",
+            "/api/mcp/tools/toggle/test_tool_1",
             json={"enabled": False},
         )
         assert r1.status_code == 200
         assert r1.json()["enabled"] is False
 
         r2 = client.put(
-            "/mcp/tools/toggle/test_tool_1",
+            "/api/mcp/tools/toggle/test_tool_1",
             json={"enabled": True},
         )
         assert r2.status_code == 200
@@ -459,7 +459,7 @@ class TestToggleEndpoint:
     def test_toggle_unknown_tool_returns_404(self, client: TestClient) -> None:
         """Unknown tool name → 404 with clear message."""
         response = client.put(
-            "/mcp/tools/toggle/nonexistent_xyz",
+            "/api/mcp/tools/toggle/nonexistent_xyz",
             json={"enabled": True},
         )
         assert response.status_code == 404
@@ -470,7 +470,7 @@ class TestToggleEndpoint:
     def test_toggle_missing_body_returns_422(self, client: TestClient) -> None:
         """Request without 'enabled' field → 422 (Pydantic validation)."""
         response = client.put(
-            "/mcp/tools/toggle/test_tool_0",
+            "/api/mcp/tools/toggle/test_tool_0",
             json={},
         )
         assert response.status_code == 422
@@ -478,7 +478,7 @@ class TestToggleEndpoint:
     def test_toggle_wrong_type_body_returns_422(self, client: TestClient) -> None:
         """Request with 'enabled' as a list → 422 (Pydantic rejects non-scalar types)."""
         response = client.put(
-            "/mcp/tools/toggle/test_tool_0",
+            "/api/mcp/tools/toggle/test_tool_0",
             json={"enabled": [1, 2, 3]},
         )
         assert response.status_code == 422
@@ -487,12 +487,12 @@ class TestToggleEndpoint:
         """Successful toggle emits mcp_tool_toggle_endpoint audit log."""
         with patch("heretek_swarm.mcp.server.logger") as mock_logger:
             client.put(
-                "/mcp/tools/toggle/test_tool_2",
+                "/api/mcp/tools/toggle/test_tool_2",
                 json={"enabled": False},
             )
             mock_logger.info.assert_any_call(
                 "mcp_tool_toggle_endpoint",
-                endpoint="/mcp/tools/toggle/{name}",
+                endpoint="/api/mcp/tools/toggle/{name}",
                 method="PUT",
                 caller_ip="testclient",
                 tool_name="test_tool_2",
@@ -503,7 +503,7 @@ class TestToggleEndpoint:
     def test_toggle_persists_to_file(self, client: TestClient, tmp_path: Path) -> None:
         """After toggle, tools_state.json reflects the new state."""
         client.put(
-            "/mcp/tools/toggle/test_tool_0",
+            "/api/mcp/tools/toggle/test_tool_0",
             json={"enabled": False},
         )
 

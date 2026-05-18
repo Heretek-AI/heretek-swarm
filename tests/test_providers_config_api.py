@@ -1,4 +1,4 @@
-"""Tests for /api/v1/providers endpoints — LLM and embedding provider CRUD.
+"""Tests for /api/providers endpoints — LLM and embedding provider CRUD.
 
 Tests against the FastAPI TestClient with temp config.json isolation
 (via HEREKET_CONFIG_PATH env var).  All persistence goes through the
@@ -83,17 +83,17 @@ def client_with_config(tmp_path: Path):
 
 
 class TestListLLMProviders:
-    """``GET /api/v1/providers/llm``"""
+    """``GET /api/providers/llm``"""
 
     def test_empty_list_returns_empty_array(self, client_with_config: TestClient) -> None:
-        resp = client_with_config.get("/api/v1/providers/llm")
+        resp = client_with_config.get("/api/providers/llm")
         assert resp.status_code == 200
         data = resp.json()
         assert "providers" in data
         assert data["providers"] == []
 
     def test_rate_limit_header_present(self, client_with_config: TestClient) -> None:
-        resp = client_with_config.get("/api/v1/providers/llm")
+        resp = client_with_config.get("/api/providers/llm")
         assert "X-RateLimit-Limit" in resp.headers
         assert "X-RateLimit-Remaining" in resp.headers
         assert "X-RateLimit-Reset" in resp.headers
@@ -122,7 +122,7 @@ class TestListLLMProviders:
 
         mg._model_garage = fresh
 
-        resp = client_with_config.get("/api/v1/providers/llm")
+        resp = client_with_config.get("/api/providers/llm")
         assert resp.status_code == 200
         providers = resp.json()["providers"]
         assert len(providers) == 1
@@ -135,7 +135,7 @@ class TestListLLMProviders:
 
 
 class TestCreateLLMProvider:
-    """``POST /api/v1/providers/llm``"""
+    """``POST /api/providers/llm``"""
 
     def test_create_returns_created_shape(self, client_with_config: TestClient) -> None:
         body = {
@@ -144,7 +144,7 @@ class TestCreateLLMProvider:
             "baseUrl": "http://localhost:11434",
             "defaultModel": "llama3.1",
         }
-        resp = client_with_config.post("/api/v1/providers/llm", json=body)
+        resp = client_with_config.post("/api/providers/llm", json=body)
         assert resp.status_code == 200
         data = resp.json()
         assert data["name"] == "Test Ollama"
@@ -155,7 +155,7 @@ class TestCreateLLMProvider:
 
     def test_create_persists_in_list(self, client_with_config: TestClient) -> None:
         client_with_config.post(
-            "/api/v1/providers/llm",
+            "/api/providers/llm",
             json={
                 "type": "openai",
                 "name": "OpenAI Prod",
@@ -164,14 +164,14 @@ class TestCreateLLMProvider:
                 "defaultModel": "gpt-4o",
             },
         )
-        resp = client_with_config.get("/api/v1/providers/llm")
+        resp = client_with_config.get("/api/providers/llm")
         providers = resp.json()["providers"]
         assert len(providers) == 1
         assert providers[0]["name"] == "OpenAI Prod"
 
     def test_auto_generates_unique_ids(self, client_with_config: TestClient) -> None:
         p1 = client_with_config.post(
-            "/api/v1/providers/llm",
+            "/api/providers/llm",
             json={
                 "type": "ollama",
                 "name": "A",
@@ -179,7 +179,7 @@ class TestCreateLLMProvider:
             },
         ).json()
         p2 = client_with_config.post(
-            "/api/v1/providers/llm",
+            "/api/providers/llm",
             json={
                 "type": "ollama",
                 "name": "B",
@@ -195,7 +195,7 @@ class TestCreateLLMProvider:
             "baseUrl": "http://localhost:11434",
             "isEnabled": False,
         }
-        resp = client_with_config.post("/api/v1/providers/llm", json=body)
+        resp = client_with_config.post("/api/providers/llm", json=body)
         assert resp.json()["is_enabled"] is False
 
 
@@ -205,11 +205,11 @@ class TestCreateLLMProvider:
 
 
 class TestUpdateLLMProvider:
-    """``PUT /api/v1/providers/llm/{provider_id}``"""
+    """``PUT /api/providers/llm/{provider_id}``"""
 
     def test_update_changes_name(self, client_with_config: TestClient) -> None:
         created = client_with_config.post(
-            "/api/v1/providers/llm",
+            "/api/providers/llm",
             json={
                 "type": "ollama",
                 "name": "Original",
@@ -218,17 +218,17 @@ class TestUpdateLLMProvider:
         ).json()
         pid = created["id"]
 
-        resp = client_with_config.put(f"/api/v1/providers/llm/{pid}", json={"name": "Renamed"})
+        resp = client_with_config.put(f"/api/providers/llm/{pid}", json={"name": "Renamed"})
         assert resp.status_code == 200
         assert resp.json()["name"] == "Renamed"
 
         # Confirm via list
-        providers = client_with_config.get("/api/v1/providers/llm").json()["providers"]
+        providers = client_with_config.get("/api/providers/llm").json()["providers"]
         assert providers[0]["name"] == "Renamed"
 
     def test_update_persists_across_requests(self, client_with_config: TestClient) -> None:
         created = client_with_config.post(
-            "/api/v1/providers/llm",
+            "/api/providers/llm",
             json={
                 "type": "ollama",
                 "name": "Persist Me",
@@ -238,20 +238,20 @@ class TestUpdateLLMProvider:
         pid = created["id"]
 
         client_with_config.put(
-            f"/api/v1/providers/llm/{pid}",
+            f"/api/providers/llm/{pid}",
             json={
                 "baseUrl": "http://localhost:11435",
                 "defaultModel": "llama3.2",
             },
         )
 
-        providers = client_with_config.get("/api/v1/providers/llm").json()["providers"]
+        providers = client_with_config.get("/api/providers/llm").json()["providers"]
         p = providers[0]
         assert p["base_url"] == "http://localhost:11435"
         assert p["default_model"] == "llama3.2"
 
     def test_404_for_unknown_provider(self, client_with_config: TestClient) -> None:
-        resp = client_with_config.put("/api/v1/providers/llm/nonexistent", json={"name": "No"})
+        resp = client_with_config.put("/api/providers/llm/nonexistent", json={"name": "No"})
         assert resp.status_code == 404
 
 
@@ -261,11 +261,11 @@ class TestUpdateLLMProvider:
 
 
 class TestDeleteLLMProvider:
-    """``DELETE /api/v1/providers/llm/{provider_id}``"""
+    """``DELETE /api/providers/llm/{provider_id}``"""
 
     def test_delete_removes_provider(self, client_with_config: TestClient) -> None:
         created = client_with_config.post(
-            "/api/v1/providers/llm",
+            "/api/providers/llm",
             json={
                 "type": "ollama",
                 "name": "To Delete",
@@ -274,15 +274,15 @@ class TestDeleteLLMProvider:
         ).json()
         pid = created["id"]
 
-        resp = client_with_config.delete(f"/api/v1/providers/llm/{pid}")
+        resp = client_with_config.delete(f"/api/providers/llm/{pid}")
         assert resp.status_code == 200
         assert resp.json() == {"deleted": pid}
 
-        providers = client_with_config.get("/api/v1/providers/llm").json()["providers"]
+        providers = client_with_config.get("/api/providers/llm").json()["providers"]
         assert len(providers) == 0
 
     def test_404_for_unknown_delete(self, client_with_config: TestClient) -> None:
-        resp = client_with_config.delete("/api/v1/providers/llm/does-not-exist")
+        resp = client_with_config.delete("/api/providers/llm/does-not-exist")
         assert resp.status_code == 404
 
 
@@ -292,11 +292,11 @@ class TestDeleteLLMProvider:
 
 
 class TestLLMProviderTest:
-    """``POST /api/v1/providers/llm/{provider_id}/test``"""
+    """``POST /api/providers/llm/{provider_id}/test``"""
 
     def test_test_returns_structure(self, client_with_config: TestClient) -> None:
         created = client_with_config.post(
-            "/api/v1/providers/llm",
+            "/api/providers/llm",
             json={
                 "type": "ollama",
                 "name": "Testable",
@@ -314,7 +314,7 @@ class TestLLMProviderTest:
             with patch(
                 "heretek_swarm.llm.model_garage.instrumented_httpx_client", return_value=mock_client
             ):
-                resp = client_with_config.post(f"/api/v1/providers/llm/{pid}/test")
+                resp = client_with_config.post(f"/api/providers/llm/{pid}/test")
 
         assert resp.status_code == 200
         data = resp.json()
@@ -323,7 +323,7 @@ class TestLLMProviderTest:
         assert "error" in data
 
     def test_404_for_unknown_test(self, client_with_config: TestClient) -> None:
-        resp = client_with_config.post("/api/v1/providers/llm/nope/test")
+        resp = client_with_config.post("/api/providers/llm/nope/test")
         assert resp.status_code == 404
 
 
@@ -333,16 +333,16 @@ class TestLLMProviderTest:
 
 
 class TestEmbeddingProviders:
-    """Embedding endpoints under ``/api/v1/providers/embedding``"""
+    """Embedding endpoints under ``/api/providers/embedding``"""
 
     def test_list_empty(self, client_with_config: TestClient) -> None:
-        resp = client_with_config.get("/api/v1/providers/embedding")
+        resp = client_with_config.get("/api/providers/embedding")
         assert resp.status_code == 200
         assert resp.json()["providers"] == []
 
     def test_create_and_list(self, client_with_config: TestClient) -> None:
         resp = client_with_config.post(
-            "/api/v1/providers/embedding",
+            "/api/providers/embedding",
             json={
                 "type": "ollama",
                 "name": "Ollama Embeddings",
@@ -355,13 +355,13 @@ class TestEmbeddingProviders:
         assert data["name"] == "Ollama Embeddings"
         assert "id" in data
 
-        providers = client_with_config.get("/api/v1/providers/embedding").json()["providers"]
+        providers = client_with_config.get("/api/providers/embedding").json()["providers"]
         assert len(providers) == 1
         assert providers[0]["name"] == "Ollama Embeddings"
 
     def test_delete(self, client_with_config: TestClient) -> None:
         created = client_with_config.post(
-            "/api/v1/providers/embedding",
+            "/api/providers/embedding",
             json={
                 "type": "openai",
                 "name": "OpenAI Emb",
@@ -370,16 +370,16 @@ class TestEmbeddingProviders:
         ).json()
         pid = created["id"]
 
-        resp = client_with_config.delete(f"/api/v1/providers/embedding/{pid}")
+        resp = client_with_config.delete(f"/api/providers/embedding/{pid}")
         assert resp.status_code == 200
         assert resp.json()["deleted"] == pid
 
-        providers = client_with_config.get("/api/v1/providers/embedding").json()["providers"]
+        providers = client_with_config.get("/api/providers/embedding").json()["providers"]
         assert len(providers) == 0
 
     def test_update(self, client_with_config: TestClient) -> None:
         created = client_with_config.post(
-            "/api/v1/providers/embedding",
+            "/api/providers/embedding",
             json={
                 "type": "ollama",
                 "name": "Original Emb",
@@ -389,22 +389,22 @@ class TestEmbeddingProviders:
         pid = created["id"]
 
         resp = client_with_config.put(
-            f"/api/v1/providers/embedding/{pid}", json={"name": "Renamed Emb"}
+            f"/api/providers/embedding/{pid}", json={"name": "Renamed Emb"}
         )
         assert resp.status_code == 200
         assert resp.json()["name"] == "Renamed Emb"
 
     def test_404_for_unknown_update(self, client_with_config: TestClient) -> None:
-        resp = client_with_config.put("/api/v1/providers/embedding/nope", json={"name": "No"})
+        resp = client_with_config.put("/api/providers/embedding/nope", json={"name": "No"})
         assert resp.status_code == 404
 
     def test_404_for_unknown_delete(self, client_with_config: TestClient) -> None:
-        resp = client_with_config.delete("/api/v1/providers/embedding/nope")
+        resp = client_with_config.delete("/api/providers/embedding/nope")
         assert resp.status_code == 404
 
     def test_test_endpoint_returns_structure(self, client_with_config: TestClient) -> None:
         created = client_with_config.post(
-            "/api/v1/providers/embedding",
+            "/api/providers/embedding",
             json={
                 "type": "ollama",
                 "name": "Emb Test",
@@ -415,7 +415,7 @@ class TestEmbeddingProviders:
 
         with patch("httpx.AsyncClient.get", new_callable=AsyncMock) as mock_get:
             mock_get.return_value = MagicMock(status_code=200)
-            resp = client_with_config.post(f"/api/v1/providers/embedding/{pid}/test")
+            resp = client_with_config.post(f"/api/providers/embedding/{pid}/test")
 
         assert resp.status_code == 200
         data = resp.json()
@@ -424,11 +424,11 @@ class TestEmbeddingProviders:
         assert "error" in data
 
     def test_test_404_unknown(self, client_with_config: TestClient) -> None:
-        resp = client_with_config.post("/api/v1/providers/embedding/nope/test")
+        resp = client_with_config.post("/api/providers/embedding/nope/test")
         assert resp.status_code == 404
 
     def test_rate_limit_header_present(self, client_with_config: TestClient) -> None:
-        resp = client_with_config.get("/api/v1/providers/embedding")
+        resp = client_with_config.get("/api/providers/embedding")
         assert "X-RateLimit-Limit" in resp.headers
 
 
@@ -442,7 +442,7 @@ class TestNegativeInputs:
 
     def test_invalid_provider_type_returns_400(self, client_with_config: TestClient) -> None:
         resp = client_with_config.post(
-            "/api/v1/providers/llm",
+            "/api/providers/llm",
             json={
                 "type": "not-a-real-type",
                 "name": "Bad",
@@ -454,7 +454,7 @@ class TestNegativeInputs:
 
     def test_empty_name_returns_422(self, client_with_config: TestClient) -> None:
         resp = client_with_config.post(
-            "/api/v1/providers/llm",
+            "/api/providers/llm",
             json={
                 "type": "ollama",
                 "name": "",
@@ -465,7 +465,7 @@ class TestNegativeInputs:
 
     def test_missing_base_url_returns_422(self, client_with_config: TestClient) -> None:
         resp = client_with_config.post(
-            "/api/v1/providers/llm",
+            "/api/providers/llm",
             json={
                 "type": "ollama",
                 "name": "Missing URL",
@@ -477,7 +477,7 @@ class TestNegativeInputs:
         """Names longer than 200 chars should be 422."""
         long_name = "A" * 201
         resp = client_with_config.post(
-            "/api/v1/providers/llm",
+            "/api/providers/llm",
             json={
                 "type": "ollama",
                 "name": long_name,
@@ -488,7 +488,7 @@ class TestNegativeInputs:
 
     def test_negative_priority_rejected(self, client_with_config: TestClient) -> None:
         resp = client_with_config.post(
-            "/api/v1/providers/llm",
+            "/api/providers/llm",
             json={
                 "type": "ollama",
                 "name": "Bad Priority",
@@ -499,12 +499,12 @@ class TestNegativeInputs:
         assert resp.status_code == 422
 
     def test_whitespace_only_provider_id_returns_400(self, client_with_config: TestClient) -> None:
-        resp = client_with_config.put("/api/v1/providers/llm/   ", json={"name": "Nope"})
+        resp = client_with_config.put("/api/providers/llm/   ", json={"name": "Nope"})
         assert resp.status_code == 400
 
     def test_embedding_missing_type_returns_422(self, client_with_config: TestClient) -> None:
         resp = client_with_config.post(
-            "/api/v1/providers/embedding",
+            "/api/providers/embedding",
             json={
                 "name": "NoType",
                 "baseUrl": "http://localhost:11434",
@@ -514,7 +514,7 @@ class TestNegativeInputs:
 
     def test_embedding_empty_name_returns_422(self, client_with_config: TestClient) -> None:
         resp = client_with_config.post(
-            "/api/v1/providers/embedding",
+            "/api/providers/embedding",
             json={
                 "type": "ollama",
                 "name": "",
