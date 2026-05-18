@@ -61,7 +61,7 @@ export class ComponentErrorBoundary extends Component<ComponentErrorBoundaryProp
       const apiKey = localStorage.getItem('api_key');
       const apiUrl = localStorage.getItem('api_url') || '';
       
-      await fetch(`${apiUrl}/api/v1/logs`, {
+      await fetch(`${apiUrl}/api/logs`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -61,7 +61,7 @@ export function AgentMetricsGrid({
   // Fetch agents
   const fetchAgents = useCallback(async () => {
     try {
-      const response = await fetch(`${apiBaseUrl}/api/v1/observability/agents`, {
+      const response = await fetch(`${apiBaseUrl}/api/observability/agents`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },

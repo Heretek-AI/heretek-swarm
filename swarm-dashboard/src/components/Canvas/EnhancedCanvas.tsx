@@ -335,10 +335,10 @@ export function EnhancedCanvas() {
     setMetricsLoading(true);
     try {
       const [healthResponse, consciousnessResponse] = await Promise.all([
-        fetch(`${API_URL}/api/v1/observability/swarm`, {
+        fetch(`${API_URL}/api/observability/swarm`, {
           headers: { Authorization: `Bearer ${localStorage.getItem('api_key')}` },
         }),
-        fetch(`${API_URL}/api/v1/observability/consciousness`, {
+        fetch(`${API_URL}/api/observability/consciousness`, {
           headers: { Authorization: `Bearer ${localStorage.getItem('api_key')}` },
         }),
       ]);

@@ -21,7 +21,7 @@ const POLL_INTERVAL = 10000; // 10 seconds
 
 // Try observability endpoint first (no auth), then consciousness (may require auth)
 const CONSCIOUSNESS_ENDPOINTS = [
-  '/api/v1/observability/consciousness',
+  '/api/observability/consciousness',
   '/api/consciousness/statistics',
 ];
 

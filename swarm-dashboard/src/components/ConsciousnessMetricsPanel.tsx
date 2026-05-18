@@ -55,7 +55,7 @@ export function ConsciousnessMetricsPanel({
   // Fetch consciousness metrics
   const fetchMetrics = useCallback(async () => {
     try {
-      const response = await fetch(`${apiBaseUrl}/api/v1/observability/consciousness`, {
+      const response = await fetch(`${apiBaseUrl}/api/observability/consciousness`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },

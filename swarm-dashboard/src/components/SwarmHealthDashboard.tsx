@@ -77,7 +77,7 @@ export function SwarmHealthDashboard({
   // Fetch swarm health
   const fetchSwarmHealth = useCallback(async () => {
     try {
-      const response = await fetch(`${apiBaseUrl}/api/v1/observability/swarm`, {
+      const response = await fetch(`${apiBaseUrl}/api/observability/swarm`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -100,7 +100,7 @@ export function SwarmHealthDashboard({
   // Fetch all agents
   const fetchAgents = useCallback(async () => {
     try {
-      const response = await fetch(`${apiBaseUrl}/api/v1/observability/agents`, {
+      const response = await fetch(`${apiBaseUrl}/api/observability/agents`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -122,7 +122,7 @@ export function SwarmHealthDashboard({
     if (!showAlerts) return;
     
     try {
-      const response = await fetch(`${apiBaseUrl}/api/v1/observability/alerts`, {
+      const response = await fetch(`${apiBaseUrl}/api/observability/alerts`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },

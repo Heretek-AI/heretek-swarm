@@ -3,7 +3,7 @@
  *
  * LLM Provider Management Interface for Heretek Swarm.
  * Manages connections to OpenAI, Ollama, MiniMax, Z.AI and embedding services
- * via the config.json-backed /api/v1/providers API.
+ * via the config.json-backed /api/providers API.
  *
  * Features:
  * - Add/test connections to LLM providers

@@ -2,7 +2,7 @@
  * Configuration API Client
  *
  * TypeScript client for interacting with the configuration API endpoints.
- * LLM and embedding provider management now routes through /api/v1/providers
+ * LLM and embedding provider management now routes through /api/providers
  * backed by config.json (zero Postgres dependency).
  *
  * Types match the API response shapes:
@@ -16,7 +16,7 @@ import apiClient from './client';
 // Raw API Response Types (match on-wire JSON)
 // =============================================================================
 
-/** LLM provider as returned by GET /api/v1/providers/llm */
+/** LLM provider as returned by GET /api/providers/llm */
 export interface LLMProviderRaw {
   id: string;
   name: string;
@@ -33,7 +33,7 @@ export interface LLMProviderRaw {
   health_status: string;
 }
 
-/** Embedding provider as returned by GET /api/v1/providers/embedding */
+/** Embedding provider as returned by GET /api/providers/embedding */
 export interface EmbeddingProviderRaw {
   id: string;
   type: string;
@@ -124,7 +124,7 @@ export interface AgentConfig {
   updated_at: string;
 }
 
-/** Request body for creating an LLM provider (matches API POST /api/v1/providers/llm) */
+/** Request body for creating an LLM provider (matches API POST /api/providers/llm) */
 export interface LLMProviderCreate {
   type: string;
   name: string;
@@ -138,7 +138,7 @@ export interface LLMProviderCreate {
   priority?: number;
 }
 
-/** Request body for creating an embedding provider (matches API POST /api/v1/providers/embedding) */
+/** Request body for creating an embedding provider (matches API POST /api/providers/embedding) */
 export interface EmbeddingProviderCreate {
   type: string;
   name: string;
@@ -241,10 +241,10 @@ function _embeddingToRequestBody(data: EmbeddingProviderCreate | Partial<Embeddi
 // =============================================================================
 
 export const configurationApi = {
-  // ---- LLM Providers (config.json via /api/v1/providers) ----
+  // ---- LLM Providers (config.json via /api/providers) ----
 
   fetchLLMProviders: async (): Promise<LLMProvider[]> => {
-    const response = await apiClient.get('/api/v1/providers/llm');
+    const response = await apiClient.get('/api/providers/llm');
     const providers: LLMProviderRaw[] = response.data.providers;
     return providers.map(_transformLLM);
   },
@@ -255,21 +255,21 @@ export const configurationApi = {
   },
 
   createLLMProvider: async (provider: LLMProviderCreate): Promise<LLMProvider> => {
-    const response = await apiClient.post('/api/v1/providers/llm', _llmToRequestBody(provider));
+    const response = await apiClient.post('/api/providers/llm', _llmToRequestBody(provider));
     return _transformLLM(response.data);
   },
 
   updateLLMProvider: async (id: string, provider: Partial<LLMProviderCreate>): Promise<LLMProvider> => {
-    const response = await apiClient.put(`/api/v1/providers/llm/${id}`, _llmToRequestBody(provider));
+    const response = await apiClient.put(`/api/providers/llm/${id}`, _llmToRequestBody(provider));
     return _transformLLM(response.data);
   },
 
   deleteLLMProvider: async (id: string): Promise<void> => {
-    await apiClient.delete(`/api/v1/providers/llm/${id}`);
+    await apiClient.delete(`/api/providers/llm/${id}`);
   },
 
   testLLMProvider: async (id: string, _prompt?: string, _model?: string): Promise<ProviderTestResult> => {
-    const response = await apiClient.post(`/api/v1/providers/llm/${id}/test`);
+    const response = await apiClient.post(`/api/providers/llm/${id}/test`);
     const data: LLMTestResult = response.data;
     // Map test result to shape expected by callers
     return {
@@ -281,10 +281,10 @@ export const configurationApi = {
     };
   },
 
-  // ---- Embedding Providers (config.json via /api/v1/providers) ----
+  // ---- Embedding Providers (config.json via /api/providers) ----
 
   fetchEmbeddingProviders: async (): Promise<EmbeddingProvider[]> => {
-    const response = await apiClient.get('/api/v1/providers/embedding');
+    const response = await apiClient.get('/api/providers/embedding');
     const providers: EmbeddingProviderRaw[] = response.data.providers;
     return providers.map(_transformEmbedding);
   },
@@ -295,21 +295,21 @@ export const configurationApi = {
   },
 
   createEmbeddingProvider: async (provider: EmbeddingProviderCreate): Promise<EmbeddingProvider> => {
-    const response = await apiClient.post('/api/v1/providers/embedding', _embeddingToRequestBody(provider));
+    const response = await apiClient.post('/api/providers/embedding', _embeddingToRequestBody(provider));
     return _transformEmbedding(response.data);
   },
 
   updateEmbeddingProvider: async (id: string, provider: Partial<EmbeddingProviderCreate>): Promise<EmbeddingProvider> => {
-    const response = await apiClient.put(`/api/v1/providers/embedding/${id}`, _embeddingToRequestBody(provider));
+    const response = await apiClient.put(`/api/providers/embedding/${id}`, _embeddingToRequestBody(provider));
     return _transformEmbedding(response.data);
   },
 
   deleteEmbeddingProvider: async (id: string): Promise<void> => {
-    await apiClient.delete(`/api/v1/providers/embedding/${id}`);
+    await apiClient.delete(`/api/providers/embedding/${id}`);
   },
 
   testEmbeddingProvider: async (id: string, _text?: string, _model?: string): Promise<EmbeddingProviderTestResult> => {
-    const response = await apiClient.post(`/api/v1/providers/embedding/${id}/test`);
+    const response = await apiClient.post(`/api/providers/embedding/${id}/test`);
     const data: EmbeddingTestResult = response.data;
     return {
       success: data.reachable,
