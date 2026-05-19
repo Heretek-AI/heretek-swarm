@@ -136,6 +136,10 @@ node_modules/*
 node_modules/.bin/*
 .playwright-mcp/*
 
+# Bench result artifacts (ephemeral)
+scripts/bench/results/
+.benchmarks/
+
 # ── GSD baseline (auto-generated) ──
 .gsd
 .gsd-id

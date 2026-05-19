@@ -16,6 +16,10 @@ from typing import Any
 import structlog
 
 from heretek_swarm.actors.base.core import ActorMessage, AgentActor
+from heretek_swarm.observability.prometheus_metrics import (
+    heretek_swarm_actor_processing_duration_seconds,
+)
+from heretek_swarm.observability.timing import TimedContext
 
 logger = structlog.get_logger("AgentActor")
 
@@ -393,8 +397,20 @@ class AgentActorMessageHandling(AgentActor):
                 self._messages_since_persist += 1  # P0-1: Track for auto-persist
                 self.last_activity = datetime.now(UTC).isoformat()
 
-                # Process message
-                await self.process_message(message)
+                # Process message with timing instrumentation
+                actor_type = getattr(self, "actor_type", "unknown")
+                with TimedContext(
+                    "actor_message_processed",
+                    histogram=heretek_swarm_actor_processing_duration_seconds,
+                    histogram_labels={"actor_type": actor_type},
+                    agent_id=self.agent_id,
+                    message_type=message.message_type,
+                ) as ctx:
+                    await self.process_message(message)
+
+                # Wire execution timing into SwarmMetricsCollector (populates avg_task_duration_ms)
+                from heretek_swarm.observability.metrics import record_actor_execution
+                record_actor_execution(self.agent_id, ctx.elapsed_ms)
 
                 # P0-1: Auto-persist if interval configured and threshold reached
                 if (
@@ -881,11 +897,21 @@ Please provide your analysis and recommendation for this collective task."""
                         temperature=kwargs.pop("temperature", 0.7),
                         max_tokens=kwargs.pop("max_tokens", None),
                     )
-                    response = await model_garage.complete(
-                        messages=request.messages,
+                    actor_type = getattr(self, "actor_type", "unknown")
+                    with TimedContext(
+                        "llm_call_completed",
+                        histogram=heretek_swarm_actor_processing_duration_seconds,
+                        histogram_labels={"actor_type": actor_type},
+                        agent_id=self.agent_id,
+                        provider="garage",
                         model=decision.model,
-                        provider_id=decision.provider_id,
-                    )
+                        complexity=decision.complexity.value,
+                    ):
+                        response = await model_garage.complete(
+                            messages=request.messages,
+                            model=decision.model,
+                            provider_id=decision.provider_id,
+                        )
                     logger.info(
                         f"[{self.agent_id}] Routed via garage",  # noqa: G004
                         extra={
@@ -918,14 +944,22 @@ Please provide your analysis and recommendation for this collective task."""
             )
 
         try:
-            return await asyncio.wait_for(
-                asyncio.to_thread(
-                    self.swarms_agent.run,
-                    prompt,
-                    **kwargs,
-                ),
-                timeout=timeout,
-            )
+            actor_type = getattr(self, "actor_type", "unknown")
+            with TimedContext(
+                "llm_call_completed",
+                histogram=heretek_swarm_actor_processing_duration_seconds,
+                histogram_labels={"actor_type": actor_type},
+                agent_id=self.agent_id,
+                provider="swarms_agent",
+            ):
+                return await asyncio.wait_for(
+                    asyncio.to_thread(
+                        self.swarms_agent.run,
+                        prompt,
+                        **kwargs,
+                    ),
+                    timeout=timeout,
+                )
         except TimeoutError:
             logger.error("[{self.agent_id}] LLM call timed out after {timeout}s")
             raise

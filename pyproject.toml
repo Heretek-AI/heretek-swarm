@@ -158,6 +158,7 @@ markers = [
     "a2a: Agent-to-Agent messaging tests",
     "consensus: Consensus mechanism tests",
     "latency: Latency benchmark tests (<100ms baseline)",
+    "bench: Benchmark tests (pytest-benchmark throughput)",
     "security: Security-focused tests",
 ]
 

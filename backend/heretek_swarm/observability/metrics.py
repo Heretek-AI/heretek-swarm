@@ -193,14 +193,39 @@ class SwarmMetricsCollector:
         # Update health score
         self._update_health_score(metrics)
 
-    def record_agent_error(self, agent_id: str, _error_type: str = "general") -> None:
-        """Record an error for an agent.
+    def record_actor_execution(self, agent_id: str, duration_ms: float) -> None:
+        """
+        Record actor message processing duration.
+
+        Appends duration to the rolling task_durations window, recomputes
+        avg_task_duration_ms and avg_task_duration_seconds on the agent's
+        AgentMetrics entry.  Unlike record_agent_activity, this does NOT
+        increment task counters — it is for passive timing instrumentation.
+
+        Rolling window: capped at 10 000 entries; trimmed to the most recent
+        5 000 when the cap is exceeded.
 
         Args:
-            agent_id: The agent ID to record error for
-            error_type: Type of error that occurred
+            agent_id: The agent identifier.
+            duration_ms: Processing duration in milliseconds.
         """
-        self.record_agent_activity(agent_id, error=True)
+        # Ensure agent metrics entry exists
+        if agent_id not in self._agent_metrics:
+            self._agent_metrics[agent_id] = AgentMetrics(agent_id=agent_id)
+
+        metrics = self._agent_metrics[agent_id]
+        metrics.last_activity = datetime.now(UTC)
+
+        # Append to rolling window
+        self._task_durations.append(duration_ms)
+        if len(self._task_durations) > 10000:
+            self._task_durations = self._task_durations[-5000:]
+
+        # Recompute averages
+        if self._task_durations:
+            avg_ms = sum(self._task_durations) / len(self._task_durations)
+            metrics.avg_task_duration_ms = avg_ms
+            metrics.avg_task_duration_seconds = avg_ms / 1000.0
 
     def update_agent_state(self, agent_id: str, state: str) -> None:
         """Update agent state (alias for backward compatibility)."""
@@ -708,6 +733,20 @@ def get_metrics_collector() -> SwarmMetricsCollector:
     if _metrics_collector is None:
         _metrics_collector = SwarmMetricsCollector()
     return _metrics_collector
+
+
+def record_actor_execution(agent_id: str, duration_ms: float) -> None:
+    """
+    Convenience function to record actor execution duration via the singleton collector.
+
+    Safe for use from actor hot paths — no per-call Collector allocation.
+    Uses the module-level singleton from get_metrics_collector().
+
+    Args:
+        agent_id: The agent identifier.
+        duration_ms: Processing duration in milliseconds.
+    """
+    get_metrics_collector().record_actor_execution(agent_id, duration_ms)
 
 
 @dataclass

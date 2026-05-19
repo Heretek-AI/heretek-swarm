@@ -194,6 +194,18 @@ heretek_swarm_encryption_latency_seconds = Histogram(
 )
 
 # ============================================================================
+# Actor Processing Metrics (Histogram)
+# ============================================================================
+
+heretek_swarm_actor_processing_duration_seconds = Histogram(
+    "heretek_swarm_actor_processing_duration_seconds",
+    "Actor message processing duration in seconds",
+    ["actor_type"],
+    buckets=(0.001, 0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1.0, 2.5, 5.0),
+    registry=_swarm_registry,
+)
+
+# ============================================================================
 # Health Metrics (Gauges)
 # ============================================================================
 
@@ -361,6 +373,28 @@ class PrometheusMetrics:
                 operation=operation,
                 field_type=field_type,
             ).observe(duration_seconds)
+
+    def record_actor_processing(
+        self,
+        agent_id: str,  # noqa: ARG002 — part of API contract, used by callers
+        actor_type: str = "unknown",
+        duration_seconds: float = 0.0,
+    ) -> None:
+        """
+        Record actor message processing duration.
+
+        Observes heretek_swarm_actor_processing_duration_seconds with actor_type label.
+        agent_id is accepted for call-site convenience but is NOT used as a histogram
+        label (to avoid cardinality explosion).
+
+        Args:
+            agent_id: Agent identifier (logged via structlog, not used as label).
+            actor_type: Actor type label (e.g. 'executor', 'steward').
+            duration_seconds: Processing duration in seconds.
+        """
+        heretek_swarm_actor_processing_duration_seconds.labels(
+            actor_type=actor_type,
+        ).observe(duration_seconds)
 
     def record_health_score(self, score: float) -> None:
         """Record the overall health score."""
@@ -533,6 +567,26 @@ def record_encryption_latency(
     get_metrics().record_encryption_latency(
         operation=operation,
         field_type=field_type,
+        duration_seconds=duration_seconds,
+    )
+
+
+def record_actor_processing(
+    agent_id: str,
+    actor_type: str = "unknown",
+    duration_seconds: float = 0.0,
+) -> None:
+    """
+    Convenience function to record actor processing duration.
+
+    Args:
+        agent_id: Agent identifier (logged via structlog, not used as label).
+        actor_type: Actor type label (e.g. 'executor', 'steward').
+        duration_seconds: Processing duration in seconds.
+    """
+    get_metrics().record_actor_processing(
+        agent_id=agent_id,
+        actor_type=actor_type,
         duration_seconds=duration_seconds,
     )
 
