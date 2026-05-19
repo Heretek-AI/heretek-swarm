@@ -125,7 +125,7 @@ class RateLimitConfig:
     enable_token_bucket: bool = True
     enable_sliding_window: bool = True
     enable_redis_backend: bool = True
-    redis_url: str = "redis://localhost:6379"
+    redis_url: str | None = None
     fallback_to_memory: bool = True
     key_prefix: str = "heretek_swarm:ratelimit:"
 

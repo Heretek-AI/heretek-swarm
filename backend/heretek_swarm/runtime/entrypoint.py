@@ -7,6 +7,7 @@ Extracted from runtime/main_loop.py to keep that module under 800 lines.
 from __future__ import annotations
 
 import asyncio
+import os
 
 import structlog
 
@@ -21,8 +22,23 @@ async def main() -> None:
 
     setup_logging(json_output=False, include_caller_info=False)
 
+    database_url = os.getenv("DATABASE_URL")
+    if not database_url:
+        raise RuntimeError(
+            "DATABASE_URL is required. Set it to postgresql://user:pass@host:port/db "
+            "or use docker compose."
+        )
+
+    nats_url = os.getenv("HERETEK_NATS_URL")
+    if not nats_url:
+        raise RuntimeError(
+            "HERETEK_NATS_URL is required. Set it to nats://host:port "
+            "or use docker compose."
+        )
+    nats_servers = [s.strip() for s in nats_url.split(",")]
+
     config = {
-        "nats_servers": ["nats://localhost:4222"],
+        "nats_servers": nats_servers,
         "health_check_interval": 30,
         "loop_interval": 1,
         "consciousness_interval": 5,
@@ -30,7 +46,7 @@ async def main() -> None:
         "scaling_interval": 60,
         "ephemeral": {"ttl_seconds": 3600},
         "persistent": {
-            "connection_string": "postgresql://heretek:password@localhost/heretek_swarm",
+            "connection_string": database_url,
         },
         "rag": {
             "embedding_provider": "openai",

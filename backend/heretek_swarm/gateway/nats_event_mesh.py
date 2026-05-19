@@ -17,6 +17,7 @@ Reference: MiniMax Audit Lines 11-30 (EventMesh bug fix)
 import asyncio
 import contextlib
 import json
+import os
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
@@ -129,7 +130,16 @@ class NATSEventMesh:
             ping_interval: Ping interval in seconds
             max_outstanding_pings: Max outstanding pings
         """
-        self.servers = servers or ["nats://localhost:4222"]
+        if servers:
+            self.servers = servers
+        else:
+            nats_url = os.getenv("HERETEK_NATS_URL")
+            if not nats_url:
+                raise RuntimeError(
+                    "HERETEK_NATS_URL is required. Set it to nats://host:port "
+                    "or use docker compose."
+                )
+            self.servers = [s.strip() for s in nats_url.split(",")]
         self.client_name = name or "heretek-swarm"
         self.fallback = fallback
         self.max_reconnect_attempts = max_reconnect_attempts

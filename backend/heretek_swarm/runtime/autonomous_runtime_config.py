@@ -83,8 +83,8 @@ class AutonomousRuntimeConfig:
 
     # Database Configuration
     database_url: str | None = None
-    redis_url: str = "redis://localhost:6379"
-    qdrant_url: str = "http://localhost:6333"
+    redis_url: str | None = None
+    qdrant_url: str | None = None
 
     # Memory Configuration
     mem0_enabled: bool = True
@@ -208,11 +208,11 @@ async def load_config_from_env() -> AutonomousRuntimeConfig:
             database_url = await loader.get_async("database.url", default=os.getenv("DATABASE_URL"))
             redis_url = await loader.get_async(
                 "redis.url",
-                default=os.getenv("REDIS_URL", "redis://localhost:6379"),
+                default=os.getenv("REDIS_URL"),
             )
             qdrant_url = await loader.get_async(
                 "qdrant.url",
-                default=os.getenv("QDRANT_URL", "http://localhost:6333"),
+                default=os.getenv("QDRANT_URL"),
             )
             log_level = await loader.get_async(
                 "logging.level",
@@ -234,6 +234,18 @@ async def load_config_from_env() -> AutonomousRuntimeConfig:
                 telegram_enabled = telegram_enabled.lower() == "true"
             if isinstance(slack_enabled, str):
                 slack_enabled = slack_enabled.lower() == "true"
+
+            # Fail fast if REDIS_URL is not set
+            if not redis_url:
+                raise RuntimeError(
+                    "REDIS_URL is required. Set it to redis://host:port or use docker compose."
+                )
+
+            # Fail fast if QDRANT_URL is not set
+            if not qdrant_url:
+                raise RuntimeError(
+                    "QDRANT_URL is required. Set it to http://host:port or use docker compose."
+                )
 
             return AutonomousRuntimeConfig(
                 monitoring_enabled=monitoring_enabled,
@@ -259,6 +271,14 @@ async def load_config_from_env() -> AutonomousRuntimeConfig:
         )
 
     # Fallback to direct environment variable loading
+    redis_url = os.getenv("REDIS_URL")
+    if not redis_url:
+        raise RuntimeError("REDIS_URL is required. Set it to redis://host:port or use docker compose.")
+
+    qdrant_url = os.getenv("QDRANT_URL")
+    if not qdrant_url:
+        raise RuntimeError("QDRANT_URL is required. Set it to http://host:port or use docker compose.")
+
     return AutonomousRuntimeConfig(
         monitoring_enabled=os.getenv("MONITORING_ENABLED", "true").lower() == "true",
         auto_restart_enabled=os.getenv("AUTO_RESTART_ENABLED", "true").lower() == "true",
@@ -270,8 +290,8 @@ async def load_config_from_env() -> AutonomousRuntimeConfig:
         api_host=os.getenv("API_HOST", "0.0.0.0"),  # noqa: S104
         api_port=int(os.getenv("API_PORT", "8000")),
         database_url=os.getenv("DATABASE_URL"),
-        redis_url=os.getenv("REDIS_URL", "redis://localhost:6379"),
-        qdrant_url=os.getenv("QDRANT_URL", "http://localhost:6333"),
+        redis_url=redis_url,
+        qdrant_url=qdrant_url,
         log_level=os.getenv("LOG_LEVEL", "INFO"),
     )
 
@@ -304,6 +324,14 @@ def _load_config_from_env_sync_fallback() -> AutonomousRuntimeConfig:
     Returns:
         AutonomousRuntimeConfig instance
     """
+    redis_url = os.getenv("REDIS_URL")
+    if not redis_url:
+        raise RuntimeError("REDIS_URL is required. Set it to redis://host:port or use docker compose.")
+
+    qdrant_url = os.getenv("QDRANT_URL")
+    if not qdrant_url:
+        raise RuntimeError("QDRANT_URL is required. Set it to http://host:port or use docker compose.")
+
     return AutonomousRuntimeConfig(
         monitoring_enabled=os.getenv("MONITORING_ENABLED", "true").lower() == "true",
         auto_restart_enabled=os.getenv("AUTO_RESTART_ENABLED", "true").lower() == "true",
@@ -315,7 +343,7 @@ def _load_config_from_env_sync_fallback() -> AutonomousRuntimeConfig:
         api_host=os.getenv("API_HOST", "0.0.0.0"),  # noqa: S104
         api_port=int(os.getenv("API_PORT", "8000")),
         database_url=os.getenv("DATABASE_URL"),
-        redis_url=os.getenv("REDIS_URL", "redis://localhost:6379"),
-        qdrant_url=os.getenv("QDRANT_URL", "http://localhost:6333"),
+        redis_url=redis_url,
+        qdrant_url=qdrant_url,
         log_level=os.getenv("LOG_LEVEL", "INFO"),
     )

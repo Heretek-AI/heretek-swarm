@@ -1,9 +1,9 @@
-"""
-NATS Client for Heretek Swarm.
+"""NATS Client for Heretek Swarm.
 
 Provides async NATS connection management with OTel distributed tracing.
 """
 
+import os
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
@@ -37,7 +37,7 @@ class ConnectionState(Enum):
 class NATSConfig:
     """Configuration for NATS connection."""
 
-    url: str = "nats://localhost:4222"
+    url: str = ""
     name: str = "heretek-swarm"
     max_reconnect_attempts: int = 60
     reconnect_time_wait: float = 2.0
@@ -45,6 +45,17 @@ class NATSConfig:
     user_credentials: str | None = None
     nkey_seed: str | None = None
     tracing_config: "TracingConfig | None" = None
+
+    def __post_init__(self) -> None:
+        """Resolve NATS URL from env var when not explicitly set."""
+        if not self.url:
+            nats_url = os.getenv("HERETEK_NATS_URL")
+            if not nats_url:
+                raise RuntimeError(
+                    "HERETEK_NATS_URL is required. Set it to nats://host:port "
+                    "or use docker compose."
+                )
+            self.url = nats_url
 
 
 @dataclass

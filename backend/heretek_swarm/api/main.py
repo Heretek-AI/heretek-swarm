@@ -299,8 +299,12 @@ async def _init_mem0() -> None:
     if MEM0_AVAILABLE:
         try:
             qdrant_host = await get_config(
-                "qdrant.url", default=os.environ.get("QDRANT_HOST", "localhost")
+                "qdrant.url", default=os.environ.get("QDRANT_HOST")
             )
+            if not qdrant_host:
+                raise RuntimeError(
+                    "QDRANT_HOST is required for Mem0 initialization. Set QDRANT_HOST env var."
+                )
             qdrant_port = await get_config(
                 "qdrant.port", default=int(os.environ.get("QDRANT_PORT", "6333"))
             )
@@ -571,7 +575,9 @@ async def check_redis() -> dict[str, Any]:
         import redis.asyncio as redis
 
         # Try to connect to Redis
-        redis_url = os.environ.get("REDIS_URL", "redis://localhost:6379")
+        redis_url = os.getenv("REDIS_URL")
+        if not redis_url:
+            raise RuntimeError("REDIS_URL is required. Set it to redis://host:port or use docker compose.")
         client = redis.from_url(redis_url)
         await client.ping()
         info = await client.info("server")
@@ -634,12 +640,8 @@ async def check_qdrant() -> dict[str, Any]:
         # Check multiple environment variables for compatibility
         qdrant_url = os.environ.get("QDRANT_URL")
         if not qdrant_url:
-            qdrant_host = os.environ.get("QDRANT_HOST", "localhost")
-            qdrant_port = os.environ.get("QDRANT_PORT", "6333")
-            qdrant_url = (
-                f"https://{qdrant_host}:{qdrant_port}"
-                if os.environ.get("ENVIRONMENT") == "production"
-                else f"http://{qdrant_host}:{qdrant_port}"
+            raise RuntimeError(
+                "QDRANT_URL is required. Set it to http://host:port or use docker compose."
             )
         async with httpx.AsyncClient() as client:
             response = await client.get(f"{qdrant_url}/collections")
@@ -1140,7 +1142,9 @@ async def get_a2a_messages(limit: int = 100, authenticated: str = Depends(verify
 
         import redis.asyncio as redis
 
-        redis_url = os.environ.get("REDIS_URL", "redis://localhost:6379")
+        redis_url = os.getenv("REDIS_URL")
+        if not redis_url:
+            raise RuntimeError("REDIS_URL is required. Set it to redis://host:port or use docker compose.")
         r = redis.from_url(redis_url)
 
         # Get recent messages from Redis list
@@ -1179,7 +1183,9 @@ async def get_a2a_conversation(from_agent: str, to_agent: str, limit: int = 50):
 
         import redis.asyncio as redis
 
-        redis_url = os.environ.get("REDIS_URL", "redis://localhost:6379")
+        redis_url = os.getenv("REDIS_URL")
+        if not redis_url:
+            raise RuntimeError("REDIS_URL is required. Set it to redis://host:port or use docker compose.")
         r = redis.from_url(redis_url)
 
         # Get messages and filter

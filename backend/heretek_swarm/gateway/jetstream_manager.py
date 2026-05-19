@@ -19,6 +19,7 @@ import asyncio
 import builtins
 import contextlib
 import json
+import os
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
@@ -297,7 +298,16 @@ class JetStreamManager:
             zero_trust_enabled: Enable zero-trust security
             fallback_enabled: Enable in-memory fallback
         """
-        self.servers = servers or ["nats://localhost:4222"]
+        if servers:
+            self.servers = servers
+        else:
+            nats_url = os.getenv("HERETEK_NATS_URL")
+            if not nats_url:
+                raise RuntimeError(
+                    "HERETEK_NATS_URL is required. Set it to nats://host:port "
+                    "or use docker compose."
+                )
+            self.servers = [s.strip() for s in nats_url.split(",")]
         self.client_name = name
         self.zero_trust_enabled = zero_trust_enabled
         self.fallback_enabled = fallback_enabled
@@ -1074,7 +1084,7 @@ async def setup_jetstream(
         Initialized JetStreamManager
     """
     global _manager
-    _manager = JetStreamManager(servers=servers or ["nats://localhost:4222"])
+    _manager = JetStreamManager(servers=servers)
     await _manager.connect()
 
     if create_default_streams:

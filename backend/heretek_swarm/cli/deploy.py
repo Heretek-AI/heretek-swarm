@@ -56,7 +56,7 @@ def _fetch_wizard_config(api_base: str) -> dict[str, Any]:
 )
 @click.option("--production", is_flag=True, help="Deploy to production mode")
 @click.option("--scale", default=1, type=int, help="Number of agent instances (default: 1)")
-@click.option("--nats-url", default="nats://localhost:4222", help="NATS server URL")
+@click.option("--nats-url", envvar="HERETEK_NATS_URL", required=True, help="NATS server URL")
 @click.option("--api-base", default=DEFAULT_API_BASE, help="API base URL")
 @click.option(
     "--check-runtime/--no-check-runtime",

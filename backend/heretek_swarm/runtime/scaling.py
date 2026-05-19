@@ -12,6 +12,7 @@ Reference: EXPANSION_ROADMAP.md S-1 Horizontal Scaling
 
 import asyncio
 import contextlib
+import os
 import time
 from collections import defaultdict
 from dataclasses import dataclass, field
@@ -836,10 +837,15 @@ class StateSynchronizer:
 
     def __init__(
         self,
-        redis_url: str = "redis://localhost:6379",
-        postgres_url: str = "postgresql://localhost/heretek_swarm",
+        redis_url: str,
+        postgres_url: str = "",
         channel_prefix: str = "heretek_swarm:state:",
     ):
+        if not postgres_url:
+            raise RuntimeError(
+                "DATABASE_URL is required. Set it to postgresql://user:pass@host:port/db "
+                "or use docker compose."
+            )
         self.redis_url = redis_url
         self.postgres_url = postgres_url
         self.channel_prefix = channel_prefix
@@ -1008,7 +1014,17 @@ class HorizontalScaling:
 
         self.pool_manager = AgentPoolManager(self.config)
         self.load_balancer = LoadBalancer()
-        self.state_sync = StateSynchronizer()
+
+        redis_url = os.getenv("REDIS_URL")
+        if not redis_url:
+            raise RuntimeError("REDIS_URL is required. Set it to redis://host:port or use docker compose.")
+        database_url = os.getenv("DATABASE_URL")
+        if not database_url:
+            raise RuntimeError(
+                "DATABASE_URL is required. Set it to postgresql://user:pass@host:port/db "
+                "or use docker compose."
+            )
+        self.state_sync = StateSynchronizer(redis_url=redis_url, postgres_url=database_url)
 
         # Background tasks
         self._running = False

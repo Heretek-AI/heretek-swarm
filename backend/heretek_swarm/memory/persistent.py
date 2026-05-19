@@ -27,9 +27,18 @@ class Mem0Config:
     vector_store_provider: str = "qdrant"
 
     # Qdrant configuration
-    qdrant_host: str = field(default_factory=lambda: os.getenv("QDRANT_HOST", "localhost"))
+    qdrant_host: str | None = field(default_factory=lambda: os.getenv("QDRANT_HOST"))
     qdrant_port: int = field(default_factory=lambda: int(os.getenv("QDRANT_PORT", "6333")))
     qdrant_collection: str = "heretek_swarm_memories"
+
+    def __post_init__(self) -> None:
+        """Validate required configuration."""
+        if not self.qdrant_host:
+            raise RuntimeError(
+                "QDRANT_HOST is required. Set it to the Qdrant host address or use docker compose."
+            )
+        if self.vector_store_provider != "qdrant":
+            raise ValueError(f"Unsupported vector store provider: {self.vector_store_provider}")
 
     # LLM provider
     llm_provider: str = "openai"
@@ -43,7 +52,7 @@ class Mem0Config:
     )
 
     # PostgreSQL fallback (if using pgvector)
-    postgres_host: str = field(default_factory=lambda: os.getenv("POSTGRES_HOST", "localhost"))
+    postgres_host: str = field(default_factory=lambda: os.getenv("POSTGRES_HOST"))
     postgres_port: int = field(default_factory=lambda: int(os.getenv("POSTGRES_PORT", "5432")))
     postgres_user: str = field(default_factory=lambda: os.getenv("POSTGRES_USER", "heretek"))
     postgres_password: str = field(

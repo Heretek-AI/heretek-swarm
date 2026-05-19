@@ -72,8 +72,20 @@ async def _start_autonomous_swarm(
 
     setup_logging(json_output=False, include_caller_info=False)
 
-    nats_servers_str = os.getenv("HERETEK_NATS_URL", "nats://localhost:4222")
+    nats_servers_str = os.getenv("HERETEK_NATS_URL")
+    if not nats_servers_str:
+        raise RuntimeError(
+            "HERETEK_NATS_URL is required. Set it to nats://host:port "
+            "or use docker compose."
+        )
     nats_servers = [s.strip() for s in nats_servers_str.split(",")]
+
+    database_url = os.getenv("DATABASE_URL")
+    if not database_url:
+        raise RuntimeError(
+            "DATABASE_URL is required. Set it to postgresql://user:pass@host:port/db "
+            "or use docker compose."
+        )
 
     config: dict[str, Any] = {
         "nats_servers": nats_servers,
@@ -84,9 +96,7 @@ async def _start_autonomous_swarm(
         "scaling_interval": 60,
         "ephemeral": {"ttl_seconds": 3600},
         "persistent": {
-            "connection_string": os.getenv(
-                "DATABASE_URL", "postgresql://heretek:password@localhost/heretek_swarm"
-            ),
+            "connection_string": database_url,
         },
         "rag": {
             "embedding_provider": os.getenv("RAG_EMBEDDING_PROVIDER", "openai"),
@@ -177,6 +187,13 @@ def _build_config(nats_url: str, no_infra: bool) -> dict[str, Any]:
     """Build the daemon-mode config dict shared by --detach path."""
     nats_servers = [s.strip() for s in nats_url.split(",")]
 
+    database_url = os.getenv("DATABASE_URL")
+    if not database_url:
+        raise RuntimeError(
+            "DATABASE_URL is required. Set it to postgresql://user:pass@host:port/db "
+            "or use docker compose."
+        )
+
     config: dict[str, Any] = {
         "nats_servers": nats_servers,
         "health_check_interval": 30,
@@ -186,9 +203,7 @@ def _build_config(nats_url: str, no_infra: bool) -> dict[str, Any]:
         "scaling_interval": 60,
         "ephemeral": {"ttl_seconds": 3600},
         "persistent": {
-            "connection_string": os.getenv(
-                "DATABASE_URL", "postgresql://heretek:password@localhost/heretek_swarm"
-            ),
+            "connection_string": database_url,
         },
         "rag": {
             "embedding_provider": os.getenv("RAG_EMBEDDING_PROVIDER", "openai"),
@@ -226,7 +241,6 @@ def _build_config(nats_url: str, no_infra: bool) -> dict[str, Any]:
 @click.option(
     "--nats-url",
     envvar="HERETEK_NATS_URL",
-    default="nats://localhost:4222",
     help="NATS server URL(s), comma-separated for multiple servers",
 )
 @click.option(

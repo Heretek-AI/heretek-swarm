@@ -113,8 +113,23 @@ class AutonomousSwarm:
 
     def _default_config(self) -> dict[str, Any]:
         """Default configuration for autonomous swarm."""
+        database_url = os.getenv("DATABASE_URL")
+        if not database_url:
+            raise RuntimeError(
+                "DATABASE_URL is required. Set it to postgresql://user:pass@host:port/db "
+                "or use docker compose."
+            )
+
+        nats_url = os.getenv("HERETEK_NATS_URL")
+        if not nats_url:
+            raise RuntimeError(
+                "HERETEK_NATS_URL is required. Set it to nats://host:port "
+                "or use docker compose."
+            )
+        nats_servers = [s.strip() for s in nats_url.split(",")]
+
         return {
-            "nats_servers": ["nats://localhost:4222"],
+            "nats_servers": nats_servers,
             "health_check_interval": 30,
             "loop_interval": 1,
             "consciousness_interval": 5,
@@ -122,9 +137,7 @@ class AutonomousSwarm:
             "scaling_interval": 60,
             "ephemeral": {"ttl_seconds": 3600},
             "persistent": {
-                "connection_string": os.getenv(
-                    "DATABASE_URL", "postgresql://heretek:password@localhost/heretek_swarm"
-                ),
+                "connection_string": database_url,
             },
             "rag": {
                 "embedding_provider": "openai",
@@ -266,8 +279,18 @@ class AutonomousSwarm:
 
         # 5. Initialize event mesh (NATS)
         try:
+            servers = self.config.get("nats_servers")
+            if not servers:
+                nats_url = os.getenv("HERETEK_NATS_URL")
+                if not nats_url:
+                    raise RuntimeError(
+                        "HERETEK_NATS_URL is required. Set it to nats://host:port "
+                        "or use docker compose."
+                    )
+                servers = [s.strip() for s in nats_url.split(",")]
+
             self.event_mesh = NATSEventMeshWithJetStream(
-                servers=self.config.get("nats_servers", ["nats://localhost:4222"]),
+                servers=servers,
                 fallback=True,
             )
             await self.event_mesh.connect()

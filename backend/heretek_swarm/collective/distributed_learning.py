@@ -21,6 +21,7 @@ Zero-Trust Principles:
 import asyncio
 import contextlib
 import json
+import os
 import uuid
 from collections.abc import Callable
 from dataclasses import dataclass, field
@@ -127,7 +128,7 @@ class MergeResult:
 class DistributedLearningConfig:
     """Configuration for distributed learning."""
 
-    redis_url: str = "redis://localhost:6379"
+    redis_url: str
     pubsub_channel: str = "heretek:collective:learning"
     pattern_channel: str = "heretek:collective:patterns"
     signal_channel: str = "heretek:collective:signals"
@@ -164,7 +165,10 @@ class DistributedLearningEngine:
             config: Configuration options
             agent_id: This agent's identifier
         """
-        self.config = config or DistributedLearningConfig()
+        redis_url = os.getenv("REDIS_URL")
+        if not redis_url:
+            raise RuntimeError("REDIS_URL is required. Set it to redis://host:port or use docker compose.")
+        self.config = config or DistributedLearningConfig(redis_url=redis_url)
         self.agent_id = agent_id or f"agent_{uuid.uuid4().hex[:8]}"
 
         self.local_learning = CollectiveLearning()
