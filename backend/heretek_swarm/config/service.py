@@ -105,6 +105,11 @@ class ConfigurationService(ConfigurationServiceCrud):
             expire_on_commit=False,
         )
 
+        # Lazy-attach DB timing listener — zero cost until ConfigurationService is instantiated
+        from heretek_swarm.observability.db_timing import attach_db_timing
+
+        attach_db_timing(self._engine)
+
         # In-memory cache for frequently accessed configurations
         self._cache: dict[str, ConfigCacheEntry] = {}
         self._cache_ttl = timedelta(minutes=5)

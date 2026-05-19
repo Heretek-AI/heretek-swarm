@@ -79,6 +79,10 @@ def _get_external_call_log_session_factory() -> async_sessionmaker[AsyncSession]
             class_=AsyncSession,
             expire_on_commit=False,
         )
+        # Lazy-attach DB timing listener — zero cost until this factory is first used
+        from heretek_swarm.observability.db_timing import attach_db_timing
+
+        attach_db_timing(_external_call_log_engine)
         logger.info("ExternalCallLog database session factory initialized")
     return _external_call_log_session_factory
 
