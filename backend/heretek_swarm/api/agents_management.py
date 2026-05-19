@@ -13,6 +13,7 @@ Submodules:
 - profiling: Behavior profiling endpoints
 - routing_rules: Content routing rules
 - routing_control: Routing rule control (enable/disable)
+- supervisor: Supervisor-based agent management (wins GET /{param} path collision)
 """
 
 import structlog
@@ -27,6 +28,7 @@ from heretek_swarm.api.agents import (
     profiling,
     routing_control,
     routing_rules,
+    supervisor,
 )
 
 logger = structlog.get_logger()
@@ -34,6 +36,8 @@ logger = structlog.get_logger()
 router = APIRouter(prefix="/api/agents")
 
 # Include routers from submodules
+# Supervisor must be first to win the GET /{param} path collision
+router.include_router(supervisor.router, tags=["supervisor"])
 router.include_router(chat.router, tags=["chat"])
 router.include_router(core.router, tags=["core"])
 router.include_router(lifecycle.router, tags=["lifecycle"])
