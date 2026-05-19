@@ -30,6 +30,7 @@
 | 19 | `api/memory_versions.py` | `/api/memory/versions` | 8 | 3 | 0 | 0 | 0 | 0 | ❌ | ✅ | — |
 | 20 | `api/collective_evolution.py` | `/api/collective` | 24 | 3 | 0 | 0 | 0 | 0 | ✅ | ✅ | — |
 | 21 | `mcp/server.py` | `/api/mcp` | 5 | 1 | 1 | 0 | 0 | 0 | ❌ | ❌ | — |
+| — | `main.py` (direct app) | `/api/prompt` | 0 | 1 | 0 | 0 | 0 | 0 | N/A | ✅ | — |
 
 ### Observability Sub-Routers (mounted under `/api/observability`)
 
@@ -74,6 +75,7 @@ These routers had prefix modifications during this slice:
 | `providers_config.py` | `/api/v1/providers` | `/api/providers` | T02 | Flatten version prefix |
 | `metrics.py` | `""` (no prefix) | `/api/metrics` | T02 | Add `/api/` prefix for consistency |
 | `websockets.py` | `""` (no prefix) | `/api/ws` | T02 | Add `/api/` prefix for consistency |
+| `main.py` (prompt) | `/v1/prompt` | `/api/prompt` | S03/T02 | Normalize from `/v1/` to `/api/` convention; add auth gate |
 
 ---
 
@@ -112,15 +114,30 @@ These routers had prefix modifications during this slice:
 
 ## Dead / Unmounted Endpoints
 
-### `api/alerts.py` — Router defined but **not mounted** in `main.py`
-- File: `backend/heretek_swarm/api/alerts.py`
-- Router has `prefix="/api/alerts"`, tags=["alerts"], and 5 endpoints (3 GET, 2 POST, 1 PUT)
-- Endpoints: `GET /api/alerts/`, `GET /api/alerts/{alert_id}`, `PUT /api/alerts/{alert_id}/resolve`, `POST /api/alerts/test`, `POST /api/alerts/`
-- **Not imported or included in main.py** — dead code
-- The observability alerts (`observability/alerts.py`) is the active alerts router, mounted under `/api/observability/`
-
-### `api/mcp.py` — Deleted in T01
+### `api/mcp.py` — Deleted in M014/S01/T01
 - Was dead code; all MCP endpoints served by `mcp/server.py`
+
+### Removed in S03
+
+- **`api/alerts.py`** — Deleted in M014/S03/T01. Defined 5 endpoints (GET /api/alerts/, GET /api/alerts/{alert_id}, PUT /api/alerts/{alert_id}/resolve, POST /api/alerts/test, POST /api/alerts/) on a router with prefix `/api/alerts` but was never imported or mounted in `main.py`. The active alerts router is `observability/alerts.py` under `/api/observability/`. Zero imports confirmed before deletion.
+
+---
+
+## S03 Changes (Route Surface Audit)
+
+| # | Change | Task | Before | After | Impact |
+|---|--------|------|--------|-------|--------|
+| 1 | Delete dead `api/alerts.py` | T01 | 5 unmounted endpoints defined, never imported | File deleted; endpoints removed from catalog | No runtime impact — router was never mounted |
+| 2 | Rename `/v1/prompt` → `/api/prompt` + add auth | T02 | `POST /v1/prompt` — public, no auth | `POST /api/prompt` — auth-gated via `verify_auth` | Previously any caller could trigger LLM-backed swarm deliberation |
+| 3 | Add auth to A2A conversation endpoint | T03 | `GET /api/a2a/messages/{from}/{to}` — public | Now requires `verify_auth` (matching sibling `GET /api/a2a/messages`) | A2A message content between agents is now auth-gated |
+
+### `/v1/` Cleanup Verification
+
+Zero `/v1/` routes remain in production code. All former `/v1/` prefixes were flattened to `/api/`:
+- `observability`: `/api/v1/observability` → `/api/observability` (M014/S01/T02)
+- `emergent_intelligence`: `/api/v1/emergent-intelligence` → `/api/emergent-intelligence` (M014/S01/T02)
+- `providers_config`: `/api/v1/providers` → `/api/providers` (M014/S01/T02)
+- `main.py` (prompt): `/v1/prompt` → `/api/prompt` (M014/S03/T02)
 
 ---
 
@@ -244,19 +261,26 @@ These routers had prefix modifications during this slice:
 - **Prefix change (T01):** Changed from `/mcp` → `/api/mcp`
 - **Auth gap:** ⚠️ All MCP tool endpoints are unauthenticated — tool invocation, toggling, and stats are publicly accessible
 
+### 22. main.py (direct app routes) — various
+- **Endpoints:** 1 POST (`POST /api/prompt`), 2 GET (`GET /api/a2a/messages`, `GET /api/a2a/messages/{from}/{to}`), plus health checks and agent management
+- **Auth:** `Depends(verify_auth)` on protected endpoints
+- **Prefix change (S03/T02):** Changed prompt endpoint from `/v1/prompt` → `/api/prompt`
+- **Auth fix (S03/T03):** Added `verify_auth` to `get_a2a_conversation` — was the only A2A endpoint without auth; now matches sibling `get_a2a_messages`
+- **Auth status:** ✅ Protected
+- **Description:** Submits a user prompt for swarm deliberation across available agents. Returns structured JSON with agent opinions, votes, synthesis, and consensus score.
+- **Auth gap resolved (S03/T02):** Was previously `/v1/prompt` with zero authentication — any caller could trigger LLM-backed swarm deliberation. Now requires a valid API key.
+
 ---
 
 ## Open Questions
 
-1. **`api/alerts.py` — intentional or dead code?** This file defines a router with 5 endpoints but is never imported or mounted in `main.py`. The active alerts router is `observability/alerts.py`. Was this a planned replacement that was never wired up?
+1. **WebSocket auth:** `websockets.py` has 10 WebSocket endpoints with zero authentication. Is this intentional (public status streams) or an oversight? WebSocket upgrade requests bypass HTTP middleware auth.
 
-2. **WebSocket auth:** `websockets.py` has 10 WebSocket endpoints with zero authentication. Is this intentional (public status streams) or an oversight? WebSocket upgrade requests bypass HTTP middleware auth.
-
-3. **Consensus auth:** `consensus.py` has 60 endpoints with no auth whatsoever. Deliberation sessions and verdicts are publicly exposed.
+2. **Consensus auth:** `consensus.py` has 60 endpoints with no auth whatsoever. Deliberation sessions and verdicts are publicly exposed.
 
 4. **Observability auth:** 6 of 7 sub-routers under `/api/observability` have no auth. Metrics, traces, and swarm status are publicly readable.
 
-5. **Prometheus scrape config:** The metrics path changed from `/metrics` to `/api/metrics`. The Prometheus scrape target in deployment infrastructure must be updated. This is outside the scope of this repo.
+4. **Prometheus scrape config:** The metrics path changed from `/metrics` to `/api/metrics`. The Prometheus scrape target in deployment infrastructure must be updated. This is outside the scope of this repo.
 
 ---
 

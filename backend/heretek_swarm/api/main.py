@@ -1166,7 +1166,7 @@ async def get_a2a_messages(limit: int = 100, authenticated: str = Depends(verify
 
 
 @app.get("/api/a2a/messages/{from_agent}/{to_agent}")
-async def get_a2a_conversation(from_agent: str, to_agent: str, limit: int = 50):
+async def get_a2a_conversation(from_agent: str, to_agent: str, limit: int = 50, authenticated: str = Depends(verify_auth)):
     """
     Get A2A messages between two agents.
 
@@ -1247,8 +1247,8 @@ class PromptResponse(BaseModel):
     llm_available: bool
 
 
-@app.post("/v1/prompt", response_model=PromptResponse)
-async def prompt_endpoint(request: PromptRequest):
+@app.post("/api/prompt", response_model=PromptResponse)
+async def prompt_endpoint(request: PromptRequest, authenticated: str = Depends(verify_auth)):
     """
     Submit a prompt for swarm deliberation.
 
