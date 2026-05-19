@@ -56,8 +56,9 @@
 | A6 | `agents/profiling.py` | `""` | 6 | 2 | 0 | 0 | ✅ | `agents_management.py` |
 | A7 | `agents/routing_control.py` | `""` | 1 | 3 | 0 | 0 | ✅ | `agents_management.py` |
 | A8 | `agents/routing_rules.py` | `""` | 3 | 1 | 1 | 1 | ✅ | `agents_management.py` |
+| A9 | `agents/supervisor.py` | `""` | 3 | 1 | 0 | 0 | ✅ | `agents_management.py` |
 
-**Total:** 21 top-level routers + 7 observability sub-routers + 8 agents sub-routers = **36 APIRouter definitions** (the original task plan estimated 26; the actual count is 36 when counting observability/agents sub-routers separately).
+**Total:** 21 top-level routers + 7 observability sub-routers + 9 agents sub-routers = **37 APIRouter definitions** (the original task plan estimated 26; the actual count is 36 when counting observability/agents sub-routers separately).
 
 ---
 
@@ -141,6 +142,23 @@ Zero `/v1/` routes remain in production code. All former `/v1/` prefixes were fl
 
 ---
 
+## S04 Changes (Agent Route Consolidation)
+
+| # | Change | Task | Before | After | Impact |
+|---|--------|------|--------|-------|--------|
+| 1 | Add `agents/supervisor.py` sub-router | T01 | No supervisor-based agent endpoints under `/api/agents` | 4 new routes: GET `/`, GET `/{agent_id}`, GET `/{agent_id}/metrics`, POST `/{agent_id}/terminate` | Agent management now served via supervisor.actors; returns `{id, type, status}` shape |
+| 2 | Wire supervisor.py into agents_management.py | T02 | Supervisor routes existed but not mounted | Registered as first sub-router in `agents_management.py` to win GET `/{param}` path collision over `instances.py` | `GET /api/agents/{id}` now resolves to supervisor instead of instances |
+| 3 | Remove overlapping routes from main.py | T03 | 4 agent management routes + 3 mem0 routes defined directly on `app` in main.py | All 7 routes removed; agent management served by `agents_management.py`, mem0 by `memories.py` | Zero route overlap between main.py and sub-routers |
+| 4 | Update route catalog for S04 | T04 | Catalog reflected pre-S04 state with 8 agents sub-routers | Added A9 row for supervisor.py; updated entry #22 to reflect cleanup | Route catalog now matches actual runtime surface |
+
+### S04 Sub-Router Changes
+
+- **Added:** `agents/supervisor.py` (A9) — 3 GET, 1 POST, auth-gated via `Depends(verify_auth)`
+- **Updated:** `agents_management.py` (#11) now has 9 sub-routers (was 8)
+- **Updated:** `main.py` (#22) no longer includes agent management or mem0 endpoint mentions
+
+---
+
 ## Detailed Router Entries
 
 ### 1. websockets.py — `/api/ws`
@@ -200,7 +218,7 @@ Zero `/v1/` routes remain in production code. All former `/v1/` prefixes were fl
 
 ### 11. agents_management.py — `/api/agents` (parent router)
 - **Own endpoints:** None (aggregation router only)
-- **Sub-routers:** 8 (see sub-router table above)
+- **Sub-routers:** 9 (see sub-router table above)
 - **Auth:** Per-route `verify_auth` in sub-router endpoints
 - **Auth status:** ✅ Protected (sub-routers enforce auth individually)
 
@@ -262,13 +280,14 @@ Zero `/v1/` routes remain in production code. All former `/v1/` prefixes were fl
 - **Auth gap:** ⚠️ All MCP tool endpoints are unauthenticated — tool invocation, toggling, and stats are publicly accessible
 
 ### 22. main.py (direct app routes) — various
-- **Endpoints:** 1 POST (`POST /api/prompt`), 2 GET (`GET /api/a2a/messages`, `GET /api/a2a/messages/{from}/{to}`), plus health checks and agent management
+- **Endpoints:** 1 POST (`POST /api/prompt`), 2 GET (`GET /api/a2a/messages`, `GET /api/a2a/messages/{from}/{to}`), plus health checks (`/api/health`, `/api/health/live`, `/api/health/ready`), historian events, supervisor status, memory stats, and LiteLLM metrics
 - **Auth:** `Depends(verify_auth)` on protected endpoints
 - **Prefix change (S03/T02):** Changed prompt endpoint from `/v1/prompt` → `/api/prompt`
 - **Auth fix (S03/T03):** Added `verify_auth` to `get_a2a_conversation` — was the only A2A endpoint without auth; now matches sibling `get_a2a_messages`
 - **Auth status:** ✅ Protected
 - **Description:** Submits a user prompt for swarm deliberation across available agents. Returns structured JSON with agent opinions, votes, synthesis, and consensus score.
 - **Auth gap resolved (S03/T02):** Was previously `/v1/prompt` with zero authentication — any caller could trigger LLM-backed swarm deliberation. Now requires a valid API key.
+- **S04/T03 cleanup:** Removed 4 agent management endpoints (now served by `agents_management.py` → `agents/supervisor.py`) and 3 mem0 memory endpoints (now served by `memories.py`). Zero route overlap between main.py and sub-routers.
 
 ---
 
