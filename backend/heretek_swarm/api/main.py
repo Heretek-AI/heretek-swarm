@@ -414,7 +414,7 @@ async def _init_nats_bridge() -> None:
             await _nats_mesh.subscribe("swarm.metrics.consciousness", consciousness_event_handler)
 
             logger.info(
-                "NATS subscriptions registered for A2A events, external calls, and consciousness events"  # noqa: E501
+                "NATS subscriptions registered for A2A events, external calls, and consciousness events"
             )
         else:
             logger.warning("NATS EventMesh not available, WebSocket bridge using fallback")
