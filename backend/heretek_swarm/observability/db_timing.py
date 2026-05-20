@@ -22,6 +22,7 @@ from typing import TYPE_CHECKING
 import structlog
 
 if TYPE_CHECKING:
+    from prometheus_client import Histogram
     from sqlalchemy.engine import Engine
     from sqlalchemy.ext.asyncio import AsyncEngine
 
@@ -32,6 +33,8 @@ def attach_db_timing(
     engine_or_async_engine: Engine | AsyncEngine,
     logger_name: str = "db_timing",
     slow_query_threshold_ms: float = 500.0,
+    histogram: Histogram | None = None,
+    histogram_labels: dict[str, str] | None = None,
 ) -> None:
     """
     Attach ``before_cursor_execute`` / ``after_cursor_execute`` event
@@ -45,6 +48,9 @@ def attach_db_timing(
     - ``db_query_executed`` (DEBUG): truncated statement, params_summary, duration_ms
     - ``db_slow_query`` (WARNING): emitted when duration >= slow_query_threshold_ms
 
+    When a Prometheus Histogram is provided, the ``after_cursor_execute``
+    listener also observes the query duration on the histogram.
+
     Args:
         engine_or_async_engine: A sync :class:`~sqlalchemy.engine.Engine` or
             async :class:`~sqlalchemy.ext.asyncio.AsyncEngine`.
@@ -52,6 +58,11 @@ def attach_db_timing(
         slow_query_threshold_ms: Queries taking longer than this emit a
             WARNING-level ``db_slow_query`` event instead of the DEBUG-level
             ``db_query_executed``.
+        histogram: Optional Prometheus Histogram to observe query durations.
+            When provided, ``histogram.labels(**histogram_labels or {}).observe()``
+            is called in ``after_cursor_execute``.
+        histogram_labels: Labels dictionary for the histogram (e.g.
+            ``{'db_name': 'config'}``). Ignored when histogram is None.
 
     Security:
         Params summary records type and count only (e.g. ``"3 keys"``, ``"5 rows"``,
@@ -133,6 +144,12 @@ def attach_db_timing(
                 params_summary=params_summary,
                 duration_ms=duration_ms,
             )
+
+        # Observe histogram if provided
+        if histogram is not None:
+            duration_seconds = duration_ms / 1000.0
+            labels = histogram_labels if histogram_labels is not None else {}
+            histogram.labels(**labels).observe(duration_seconds)
 
     setattr(sync_engine, DB_TIMING_ENGINE_ATTR, True)
     logger.debug(

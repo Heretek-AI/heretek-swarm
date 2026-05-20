@@ -107,8 +107,15 @@ class ConfigurationService(ConfigurationServiceCrud):
 
         # Lazy-attach DB timing listener — zero cost until ConfigurationService is instantiated
         from heretek_swarm.observability.db_timing import attach_db_timing
+        from heretek_swarm.observability.prometheus_metrics import (
+            heretek_swarm_db_query_duration_seconds,
+        )
 
-        attach_db_timing(self._engine)
+        attach_db_timing(
+            self._engine,
+            histogram=heretek_swarm_db_query_duration_seconds,
+            histogram_labels={"db_name": "config"},
+        )
 
         # In-memory cache for frequently accessed configurations
         self._cache: dict[str, ConfigCacheEntry] = {}

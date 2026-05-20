@@ -7,9 +7,11 @@
  * - A2A message flow
  * - Consensus state
  * - System health
+ * - Performance metrics (actor processing + DB query latency)
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
+import { PerformancePanel } from '../PerformancePanel';
 
 /**
  * Validates that a URL is safe for use in client-side requests.
@@ -428,6 +430,11 @@ export function Dashboard() {
             )}
           </div>
         </div>
+      </div>
+
+      {/* Performance Metrics (full-width below main grid) */}
+      <div className="mt-6">
+        <PerformancePanel />
       </div>
     </div>
   );
