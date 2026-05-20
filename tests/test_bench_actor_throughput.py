@@ -20,6 +20,7 @@ Usage:
 from __future__ import annotations
 
 import asyncio
+from datetime import datetime, timezone
 from typing import Any
 
 import pytest
@@ -72,6 +73,7 @@ async def test_bench_mailbox_throughput(benchmark: Any) -> None:
             sender="bench",
             message_type="bench_test",
             content={"index": i},
+            timestamp=datetime.now(timezone.utc).isoformat(),
         ))
 
     async def process_one_batch() -> int:
@@ -122,6 +124,7 @@ async def test_bench_process_message_isolated(benchmark: Any) -> None:
         sender="bench",
         message_type="bench_test",
         content={"test": True},
+        timestamp=datetime.now(timezone.utc).isoformat(),
     )
 
     async def bench_call() -> str:
