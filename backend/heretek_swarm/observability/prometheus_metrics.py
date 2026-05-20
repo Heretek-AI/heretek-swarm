@@ -206,6 +206,18 @@ heretek_swarm_actor_processing_duration_seconds = Histogram(
 )
 
 # ============================================================================
+# DB Query Metrics (Histogram)
+# ============================================================================
+
+heretek_swarm_db_query_duration_seconds = Histogram(
+    "heretek_swarm_db_query_duration_seconds",
+    "Database query duration in seconds",
+    ["db_name"],
+    buckets=(0.0005, 0.001, 0.0025, 0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1.0),
+    registry=_swarm_registry,
+)
+
+# ============================================================================
 # Health Metrics (Gauges)
 # ============================================================================
 
@@ -394,6 +406,25 @@ class PrometheusMetrics:
         """
         heretek_swarm_actor_processing_duration_seconds.labels(
             actor_type=actor_type,
+        ).observe(duration_seconds)
+
+    def record_db_query(
+        self,
+        duration_seconds: float = 0.0,
+        db_name: str = "unknown",
+    ) -> None:
+        """
+        Record database query duration.
+
+        Observes heretek_swarm_db_query_duration_seconds with db_name label.
+        Buckets are tuned for DB query times (0.5ms to 1s).
+
+        Args:
+            duration_seconds: Query execution duration in seconds.
+            db_name: Logical database name (e.g. 'config', 'external_call_log').
+        """
+        heretek_swarm_db_query_duration_seconds.labels(
+            db_name=db_name,
         ).observe(duration_seconds)
 
     def record_health_score(self, score: float) -> None:
@@ -588,6 +619,23 @@ def record_actor_processing(
         agent_id=agent_id,
         actor_type=actor_type,
         duration_seconds=duration_seconds,
+    )
+
+
+def record_db_query_duration(
+    duration_seconds: float = 0.0,
+    db_name: str = "unknown",
+) -> None:
+    """
+    Convenience function to record database query duration.
+
+    Args:
+        duration_seconds: Query execution duration in seconds.
+        db_name: Logical database name (e.g. 'config', 'external_call_log').
+    """
+    get_metrics().record_db_query(
+        duration_seconds=duration_seconds,
+        db_name=db_name,
     )
 
 
