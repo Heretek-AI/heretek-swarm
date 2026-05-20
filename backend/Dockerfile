@@ -52,8 +52,8 @@ COPY --from=builder --chown=appuser:appgroup /app/backend /app/backend
 # Copy migrations from build context root
 COPY --chown=appuser:appgroup migrations /app/migrations
 
-# Create agent_workspace and heretek_data directories owned by appuser
-RUN mkdir -p /app/agent_workspace /app/heretek_data && chown appuser:appgroup /app/agent_workspace /app/heretek_data
+# Create agent_workspace, heretek_data, and config directories owned by appuser
+RUN mkdir -p /app/agent_workspace /app/heretek_data /config && chown appuser:appgroup /app/agent_workspace /app/heretek_data /config
 
 # Set up environment
 ENV PATH="/app/.venv/bin:$PATH" \
