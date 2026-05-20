@@ -18,7 +18,7 @@ echo "=== DB Query Latency Benchmark ==="
 echo "Repeats: $REPEATS"
 echo ""
 
-python3 - "$REPEATS" "$OUTPUT_FILE" << 'PYEOF'
+python - "$REPEATS" "$OUTPUT_FILE" << 'PYEOF'
 import asyncio
 import json
 import os
@@ -37,7 +37,7 @@ async def run_bench() -> None:
 
     DATABASE_URL = os.getenv(
         "DATABASE_URL",
-        "postgresql+asyncpg://heretek:heretek@localhost:5432/heretek_swarm",
+        "postgresql+asyncpg://postgres:postgres-placeholder-for-local-dev@localhost:5432/heretek_swarm",
     )
 
     engine = create_async_engine(DATABASE_URL, echo=False)
