@@ -15,6 +15,11 @@
 import { useState } from 'react';
 import { useAgentDetail } from './useAgentDetail';
 import { useConsciousnessWebSocket } from '../../hooks/useConsciousnessWebSocket';
+import type {
+  AgentMemoryResponse,
+  AgentToolsResponse,
+  AgentTasksResponse,
+} from '../../api/agents';
 
 interface AgentDetailDrawerProps {
   /** The selected agent ID. Pass null to hide the drawer. */
@@ -57,6 +62,50 @@ function getConsciousnessStateColor(state: string): string {
     case 'dormant':      return 'bg-gray-800 text-gray-400 border-gray-600';
     default:            return 'bg-gray-800 text-gray-400 border-gray-600';
   }
+}
+
+function getTaskStatusColor(status: string): string {
+  switch (status) {
+    case 'active':     return 'bg-green-900 text-green-300 border-green-600';
+    case 'running':    return 'bg-green-900 text-green-300 border-green-600';
+    case 'not_running':return 'bg-gray-800 text-gray-400 border-gray-600';
+    case 'error':      return 'bg-red-900 text-red-300 border-red-600';
+    case 'stopped':    return 'bg-yellow-900 text-yellow-300 border-yellow-600';
+    default:           return 'bg-gray-800 text-gray-400 border-gray-600';
+  }
+}
+
+function getMemoryTypeColor(type: string): string {
+  const colors: Record<string, string> = {
+    episodic:    'bg-blue-900 text-blue-300',
+    semantic:    'bg-purple-900 text-purple-300',
+    procedural:  'bg-green-900 text-green-300',
+    working:     'bg-yellow-900 text-yellow-300',
+    declarative: 'bg-cyan-900 text-cyan-300',
+    reflection:  'bg-indigo-900 text-indigo-300',
+  };
+  return colors[type] ?? 'bg-gray-700 text-gray-300';
+}
+
+function relativeTime(iso: string | null): string {
+  if (!iso) return '—';
+  const diff = Date.now() - new Date(iso).getTime();
+  const sec = Math.floor(diff / 1000);
+  if (sec < 60) return `${sec}s ago`;
+  const min = Math.floor(sec / 60);
+  if (min < 60) return `${min}m ago`;
+  const hrs = Math.floor(min / 60);
+  if (hrs < 24) return `${hrs}h ago`;
+  return `${Math.floor(hrs / 24)}d ago`;
+}
+
+function formatUptime(seconds: number | null): string {
+  if (seconds == null) return '—';
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  if (h > 0 && m > 0) return `${h} hours, ${m} minutes`;
+  if (h > 0) return `${h} hours`;
+  return `${m} minutes`;
 }
 
 // ----------------------------------------------------------------------------
@@ -235,10 +284,325 @@ function ConsciousnessTabContent({
   );
 }
 
-function PlaceholderTab({ message }: { message: string }) {
+// ----------------------------------------------------------------------------
+// Memory tab
+// ----------------------------------------------------------------------------
+function MemoryTabContent({
+  memory,
+  loading,
+  error,
+}: {
+  memory: AgentMemoryResponse | null;
+  loading: boolean;
+  error?: string;
+}) {
+  if (error && memory == null) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-gray-500 text-sm">Memory unavailable</p>
+        <p className="text-gray-600 text-xs mt-1">{error}</p>
+      </div>
+    );
+  }
+
+  if (loading && memory == null) {
+    return (
+      <div className="space-y-3 px-1">
+        <SkeletonBar className="h-12 w-full" />
+        <SkeletonBar className="h-4 w-3/4" />
+        <SkeletonBar className="h-4 w-2/3" />
+        <SkeletonBar className="h-4 w-4/5" />
+        <SkeletonBar className="h-4 w-1/2" />
+      </div>
+    );
+  }
+
+  if (memory == null) return null;
+
+  if (memory.status === 'unavailable') {
+    return (
+      <div className="text-center py-8">
+        <p className="text-gray-500 text-sm">Memory backend not available</p>
+      </div>
+    );
+  }
+
+  const { total_memories, by_type, recent_entries } = memory;
+
+  if (total_memories === 0 && !Object.keys(by_type ?? {}).length) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-gray-500 text-sm">No memories recorded</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="text-center py-8">
-      <p className="text-gray-500 text-sm">{message}</p>
+    <div className="space-y-4 px-1">
+      {/* Hero number */}
+      <div className="text-center py-2">
+        <div className="text-5xl font-bold text-white">{total_memories}</div>
+        <div className="text-gray-400 text-sm mt-1">
+          {total_memories === 1 ? 'memory' : 'memories'}
+        </div>
+      </div>
+
+      {/* By type */}
+      {by_type && Object.keys(by_type).length > 0 && (
+        <div>
+          <h4 className="text-gray-400 text-xs font-semibold uppercase tracking-wide mb-2">
+            By Type
+          </h4>
+          <div className="bg-gray-800 rounded-lg p-3 space-y-1.5">
+            {Object.entries(by_type).map(([type, count]) => (
+              <div key={type} className="flex justify-between items-center">
+                <span className={`px-2 py-0.5 rounded text-xs font-medium ${getMemoryTypeColor(type)}`}>
+                  {type}
+                </span>
+                <span className="text-white font-mono text-sm">{count}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Recent entries */}
+      {recent_entries && recent_entries.length > 0 && (
+        <div>
+          <h4 className="text-gray-400 text-xs font-semibold uppercase tracking-wide mb-2">
+            Recent
+          </h4>
+          <div className="bg-gray-800 rounded-lg divide-y divide-gray-700 max-h-64 overflow-y-auto">
+            {recent_entries.slice(0, 10).map((entry) => (
+              <div key={entry.id} className="p-2.5">
+                <p className="text-gray-200 text-xs leading-relaxed truncate" title={entry.content}>
+                  {entry.content.length > 80
+                    ? entry.content.slice(0, 80) + '...'
+                    : entry.content}
+                </p>
+                <div className="flex items-center gap-2 mt-1.5">
+                  <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${getMemoryTypeColor(entry.memory_type)}`}>
+                    {entry.memory_type}
+                  </span>
+                  <span className="text-gray-600 text-[10px]">
+                    {relativeTime(entry.created_at)}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ----------------------------------------------------------------------------
+// Tools tab
+// ----------------------------------------------------------------------------
+function ToolsTabContent({
+  tools,
+  loading,
+  error,
+}: {
+  tools: AgentToolsResponse | null;
+  loading: boolean;
+  error?: string;
+}) {
+  if (error && tools == null) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-gray-500 text-sm">Tools unavailable</p>
+        <p className="text-gray-600 text-xs mt-1">{error}</p>
+      </div>
+    );
+  }
+
+  if (loading && tools == null) {
+    return (
+      <div className="space-y-3 px-1">
+        <SkeletonBar className="h-12 w-full" />
+        <SkeletonBar className="h-4 w-3/4" />
+        <SkeletonBar className="h-4 w-2/3" />
+        <SkeletonBar className="h-4 w-4/5" />
+      </div>
+    );
+  }
+
+  if (tools == null) return null;
+
+  const { skills, plugins } = tools;
+
+  return (
+    <div className="space-y-4 px-1">
+      {/* Header */}
+      <div className="text-center py-2">
+        <div className="text-2xl font-bold text-white">
+          {skills.length} skills, {plugins.length} plugins
+        </div>
+      </div>
+
+      {/* Skills section */}
+      {skills.length > 0 && (
+        <div>
+          <h4 className="text-gray-400 text-xs font-semibold uppercase tracking-wide mb-2">
+            Skills
+          </h4>
+          <div className="bg-gray-800 rounded-lg divide-y divide-gray-700 max-h-64 overflow-y-auto">
+            {skills.map((skill, idx) => (
+              <div key={`${skill.name}-${idx}`} className="p-2.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-white text-sm font-semibold">{skill.name}</span>
+                  <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-blue-900 text-blue-300">
+                    {skill.category}
+                  </span>
+                </div>
+                {skill.description && (
+                  <p className="text-gray-400 text-xs mt-1">{skill.description}</p>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Plugins section */}
+      {plugins.length > 0 && (
+        <div>
+          <h4 className="text-gray-400 text-xs font-semibold uppercase tracking-wide mb-2">
+            Plugins
+          </h4>
+          <div className="bg-gray-800 rounded-lg divide-y divide-gray-700 max-h-64 overflow-y-auto">
+            {plugins.map((plugin, idx) => (
+              <div key={`${plugin.name}-${idx}`} className="p-2.5">
+                <span className="text-white text-sm font-semibold">{plugin.name}</span>
+                <div className="flex items-center gap-2 mt-0.5">
+                  {plugin.author && (
+                    <span className="text-gray-500 text-xs">{plugin.author}</span>
+                  )}
+                </div>
+                {plugin.description && (
+                  <p className="text-gray-400 text-xs mt-1">{plugin.description}</p>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Both empty */}
+      {skills.length === 0 && plugins.length === 0 && (
+        <div className="text-center py-8">
+          <p className="text-gray-500 text-sm">No skills or plugins configured</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ----------------------------------------------------------------------------
+// Tasks tab
+// ----------------------------------------------------------------------------
+function TasksTabContent({
+  tasks,
+  loading,
+  error,
+}: {
+  tasks: AgentTasksResponse | null;
+  loading: boolean;
+  error?: string;
+}) {
+  if (error && tasks == null) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-gray-500 text-sm">Tasks unavailable</p>
+        <p className="text-gray-600 text-xs mt-1">{error}</p>
+      </div>
+    );
+  }
+
+  if (loading && tasks == null) {
+    return (
+      <div className="space-y-3 px-1">
+        <SkeletonBar className="h-12 w-full" />
+        <SkeletonBar className="h-4 w-3/4" />
+        <SkeletonBar className="h-4 w-2/3" />
+        <SkeletonBar className="h-4 w-4/5" />
+      </div>
+    );
+  }
+
+  if (tasks == null) return null;
+
+  const {
+    status,
+    capabilities,
+    topics,
+    message_count,
+    error_count,
+    last_activity,
+    uptime_seconds,
+  } = tasks;
+
+  const isRunning = status === 'active' || status === 'running';
+
+  return (
+    <div className="space-y-4 px-1">
+      {/* Status badge */}
+      <div className="flex justify-center">
+        <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${getTaskStatusColor(status)}`}>
+          {status === 'not_running' ? 'Not Running' : status.charAt(0).toUpperCase() + status.slice(1)}
+        </span>
+      </div>
+
+      {!isRunning && (
+        <div className="text-center">
+          <p className="text-gray-500 text-sm">Agent is not currently running</p>
+        </div>
+      )}
+
+      {/* Stat boxes */}
+      <div className="grid grid-cols-2 gap-3">
+        <div className="bg-gray-800 rounded-lg p-3 text-center">
+          <div className="text-2xl font-bold text-white">{message_count}</div>
+          <div className="text-gray-400 text-xs mt-0.5">Messages</div>
+        </div>
+        <div className="bg-gray-800 rounded-lg p-3 text-center">
+          <div className="text-2xl font-bold text-red-400">{error_count}</div>
+          <div className="text-gray-400 text-xs mt-0.5">Errors</div>
+        </div>
+      </div>
+
+      {/* Capabilities */}
+      {capabilities && capabilities.length > 0 && (
+        <div>
+          <h4 className="text-gray-400 text-xs font-semibold uppercase tracking-wide mb-2">
+            Capabilities
+          </h4>
+          <div className="flex flex-wrap gap-1.5">
+            {capabilities.map((cap) => (
+              <span
+                key={cap}
+                className="px-2 py-0.5 rounded-full text-xs font-medium bg-blue-900 text-blue-300"
+              >
+                {cap}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Uptime */}
+      <div className="flex justify-between items-center bg-gray-800 rounded-lg p-3">
+        <span className="text-gray-400 text-sm">Uptime</span>
+        <span className="text-white font-mono text-sm">{formatUptime(uptime_seconds)}</span>
+      </div>
+
+      {/* Last activity */}
+      <div className="flex justify-between items-center bg-gray-800 rounded-lg p-3">
+        <span className="text-gray-400 text-sm">Last Activity</span>
+        <span className="text-gray-300 text-sm">{relativeTime(last_activity)}</span>
+      </div>
     </div>
   );
 }
@@ -326,13 +690,25 @@ export function AgentDetailDrawer({ agentId, onClose }: AgentDetailDrawerProps) 
           />
         )}
         {activeTab === 'memory' && (
-          <PlaceholderTab message="Memory metrics not available" />
+          <MemoryTabContent
+            memory={data?.memory ?? null}
+            loading={loading}
+            error={errors.memory}
+          />
         )}
         {activeTab === 'tools' && (
-          <PlaceholderTab message="Tools/MCP not available" />
+          <ToolsTabContent
+            tools={data?.tools ?? null}
+            loading={loading}
+            error={errors.tools}
+          />
         )}
         {activeTab === 'tasks' && (
-          <PlaceholderTab message="Tasks not available" />
+          <TasksTabContent
+            tasks={data?.tasks ?? null}
+            loading={loading}
+            error={errors.tasks}
+          />
         )}
       </div>
 
