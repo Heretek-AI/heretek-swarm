@@ -168,6 +168,286 @@ async def get_agent_logs(
 
 
 # =============================================================================
+# Agent Memory Endpoint
+# =============================================================================
+
+
+@router.get("/{instance_id}/memory")
+async def get_agent_memory(
+    instance_id: str,
+    registry: Annotated[EnhancedAgentRegistry, Depends(get_registry)],
+    authenticated: Annotated[str, Depends(verify_auth)],
+    limit: int = 20,
+):
+    """
+    Get per-agent memory statistics.
+
+    Queries the persistent memory store for memory entries belonging to
+    a specific agent instance. Falls back gracefully through multiple
+    backends: SQLAlchemy (memory_store), mem0, and finally returns
+    status 'unavailable'.
+
+    Args:
+        instance_id: Agent instance ID
+        limit: Maximum recent entries to return (default 20)
+
+    Returns:
+        agent_id, total_memories, by_type breakdown, recent_entries, and status
+    """
+    # Verify agent exists
+    instance = registry.get_instance(instance_id)
+    if not instance:
+        raise HTTPException(404, f"Agent instance '{instance_id}' not found")
+
+    # Lazy import to avoid circular import at module level
+    from heretek_swarm.api.main import mem0_backend, memory_store
+
+    # ---- SQLAlchemy path (primary, when memory_store is available) ------------------
+    if memory_store is not None:
+        try:
+            from sqlalchemy import func, select
+
+            from heretek_swarm.memory.persistent import MemoryEntryModel
+
+            async with memory_store._session_factory() as session:  # noqa: SLF001
+                # Total count for this agent
+                count_stmt = (
+                    select(func.count())
+                    .select_from(MemoryEntryModel)
+                    .where(MemoryEntryModel.agent_id == instance_id)
+                )
+                result = await session.execute(count_stmt)
+                total = result.scalar() or 0
+
+                # By type breakdown
+                type_stmt = (
+                    select(MemoryEntryModel.memory_type, func.count())
+                    .where(MemoryEntryModel.agent_id == instance_id)
+                    .group_by(MemoryEntryModel.memory_type)
+                )
+                type_result = await session.execute(type_stmt)
+                by_type: dict[str, int] = {row[0]: row[1] for row in type_result.all()}
+
+                # Recent entries (newest first)
+                recent_stmt = (
+                    select(MemoryEntryModel)
+                    .where(MemoryEntryModel.agent_id == instance_id)
+                    .order_by(MemoryEntryModel.created_at.desc())
+                    .limit(limit)
+                )
+                recent_result = await session.execute(recent_stmt)
+                recent_entries = [
+                    {
+                        "id": row.id,
+                        "content": row.content,
+                        "memory_type": row.memory_type,
+                        "created_at": row.created_at.isoformat() if row.created_at else None,
+                    }
+                    for row in recent_result.scalars().all()
+                ]
+
+            logger.info(
+                "agent_memory_fetched",
+                agent_id=instance_id,
+                total=total,
+                source="sqlalchemy",
+            )
+            return {
+                "agent_id": instance_id,
+                "total_memories": total,
+                "by_type": by_type,
+                "recent_entries": recent_entries,
+                "status": "available",
+            }
+        except Exception as e:
+            logger.error(
+                "agent_memory_failed",
+                agent_id=instance_id,
+                error=str(e),
+                source="sqlalchemy",
+            )
+            return {
+                "agent_id": instance_id,
+                "total_memories": 0,
+                "by_type": {},
+                "recent_entries": [],
+                "status": "error",
+                "error": str(e),
+            }
+
+    # ---- mem0 backend path (fallback) -----------------------------------------------
+    if mem0_backend is not None:
+        try:
+            entries = mem0_backend.get_all(agent_id=instance_id)
+            total = len(entries)
+
+            # Build by_type breakdown
+            by_type = {}
+            for entry in entries:
+                mt = str(entry.memory_type) if entry.memory_type else "unknown"
+                by_type[mt] = by_type.get(mt, 0) + 1
+
+            # Recent entries sorted by created_at descending
+            sorted_entries = sorted(
+                entries, key=lambda e: e.created_at or "", reverse=True
+            )[:limit]
+            recent_entries = [
+                {
+                    "id": e.id,
+                    "content": e.content if isinstance(e.content, str) else str(e.content),
+                    "memory_type": str(e.memory_type) if e.memory_type else "unknown",
+                    "created_at": e.created_at,
+                }
+                for e in sorted_entries
+            ]
+
+            logger.info(
+                "agent_memory_fetched",
+                agent_id=instance_id,
+                total=total,
+                source="mem0",
+            )
+            return {
+                "agent_id": instance_id,
+                "total_memories": total,
+                "by_type": by_type,
+                "recent_entries": recent_entries,
+                "status": "available",
+            }
+        except Exception as e:
+            logger.error(
+                "agent_memory_failed",
+                agent_id=instance_id,
+                error=str(e),
+                source="mem0",
+            )
+            return {
+                "agent_id": instance_id,
+                "total_memories": 0,
+                "by_type": {},
+                "recent_entries": [],
+                "status": "error",
+                "error": str(e),
+            }
+
+    # ---- Neither backend available --------------------------------------------------
+    logger.info(
+        "agent_memory_fetched",
+        agent_id=instance_id,
+        total=0,
+        status="unavailable",
+    )
+    return {
+        "agent_id": instance_id,
+        "total_memories": 0,
+        "by_type": {},
+        "recent_entries": [],
+        "status": "unavailable",
+    }
+
+
+# =============================================================================
+# Agent Tools Endpoint
+# =============================================================================
+
+
+@router.get("/{instance_id}/tools")
+async def get_agent_tools(
+    instance_id: str,
+    registry: Annotated[EnhancedAgentRegistry, Depends(get_registry)],
+    authenticated: Annotated[str, Depends(verify_auth)],
+):
+    """
+    Get aggregated tools and skills for an agent instance.
+
+    Combines per-agent skills (from AgentSkillRegistry) with system-wide
+    plugins (from PluginRuntime) into a single response.
+
+    Args:
+        instance_id: Agent instance ID
+
+    Returns:
+        agent_id, skills list, plugins list, and total count
+    """
+    # Verify agent exists
+    instance = registry.get_instance(instance_id)
+    if not instance:
+        raise HTTPException(404, f"Agent instance '{instance_id}' not found")
+
+    # Lazy imports to avoid circular import at module level
+    from heretek_swarm.agents.skills import get_agent_skill_registry
+    from heretek_swarm.plugins.manager import get_plugin_runtime
+
+    skills: list[dict] = []
+    plugins: list[dict] = []
+
+    # ---- Per-agent skills --------------------------------------------------
+    try:
+        skill_registry = get_agent_skill_registry()
+        agent_skills = skill_registry.get_agent_skills(instance_id)
+        skills = [
+            {
+                "name": s.name,
+                "category": s.category.value,
+                "description": s.description,
+                "version": s.version,
+                "tags": s.tags,
+                "source": s.source,
+            }
+            for s in agent_skills
+        ]
+
+        logger.info(
+            "agent_tools_fetched",
+            agent_id=instance_id,
+            skills_count=len(skills),
+            source="skill_registry",
+        )
+    except Exception as e:
+        logger.error(
+            "agent_tools_failed",
+            agent_id=instance_id,
+            error=str(e),
+            source="skill_registry",
+        )
+
+    # ---- System-wide plugins -----------------------------------------------
+    try:
+        plugin_runtime = get_plugin_runtime()
+        plugin_list = plugin_runtime.list_plugins()
+        plugins = [
+            {
+                "name": p.name,
+                "version": p.version,
+                "description": p.description,
+                "author": p.author,
+            }
+            for p in plugin_list
+        ]
+
+        logger.info(
+            "agent_tools_fetched",
+            agent_id=instance_id,
+            plugins_count=len(plugins),
+            source="plugin_runtime",
+        )
+    except Exception as e:
+        logger.error(
+            "agent_tools_failed",
+            agent_id=instance_id,
+            error=str(e),
+            source="plugin_runtime",
+        )
+
+    return {
+        "agent_id": instance_id,
+        "skills": skills,
+        "plugins": plugins,
+        "total": len(skills) + len(plugins),
+    }
+
+
+# =============================================================================
 # Registry Statistics Endpoint
 # =============================================================================
 
