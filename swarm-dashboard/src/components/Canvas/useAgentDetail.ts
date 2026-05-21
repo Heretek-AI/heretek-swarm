@@ -9,7 +9,16 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { AgentMetrics, getAgentMetrics } from '../../api/consciousness';
 import { AgencyMetrics, getAgencyMetrics } from '../../api/consciousness';
-import { Agent, getAgent } from '../../api/agents';
+import {
+  Agent,
+  getAgent,
+  getAgentMemory,
+  getAgentTools,
+  getAgentTasks,
+  type AgentMemoryResponse,
+  type AgentToolsResponse,
+  type AgentTasksResponse,
+} from '../../api/agents';
 
 const POLL_INTERVAL = 10000; // 10 seconds
 const FETCH_TIMEOUT = 5000;  // 5 second timeout per request
@@ -21,18 +30,21 @@ export interface AgentDetailData {
   agency: AgencyMetrics | null;
   /** Agent info (type, status, etc.). null on error/404. */
   agent: Agent | null;
-  /** Memory stats placeholder — always null in this slice. */
-  memory: null;
-  /** Active tools/MCP placeholder — always null in this slice. */
-  tools: null;
-  /** Current tasks placeholder — always null in this slice. */
-  tasks: null;
+  /** Memory stats — agent memory store data. null if not available (404). */
+  memory: AgentMemoryResponse | null;
+  /** Active tools/MCP — skills and plugins. null if not available (404). */
+  tools: AgentToolsResponse | null;
+  /** Current tasks/activity status from supervisor. null if not available (404). */
+  tasks: AgentTasksResponse | null;
 }
 
 export interface AgentDetailErrors {
   consciousness?: string;
   agency?: string;
   agent?: string;
+  memory?: string;
+  tools?: string;
+  tasks?: string;
 }
 
 export interface UseAgentDetailReturn {
@@ -88,11 +100,21 @@ export function useAgentDetail(agentId: string | null): UseAgentDetailReturn {
     setLoading(true);
     setErrors({});
 
-    // Fetch all three endpoints in parallel
-    const [consciousnessResult, agencyResult, agentResult] = await Promise.allSettled([
+    // Fetch all six endpoints in parallel
+    const [
+      consciousnessResult,
+      agencyResult,
+      agentResult,
+      memoryResult,
+      toolsResult,
+      tasksResult,
+    ] = await Promise.allSettled([
       fetchWithTimeout(() => getAgentMetrics(id), FETCH_TIMEOUT),
       fetchWithTimeout(() => getAgencyMetrics(id), FETCH_TIMEOUT),
       fetchWithTimeout(() => getAgent(id), FETCH_TIMEOUT),
+      fetchWithTimeout(() => getAgentMemory(id), FETCH_TIMEOUT),
+      fetchWithTimeout(() => getAgentTools(id), FETCH_TIMEOUT),
+      fetchWithTimeout(() => getAgentTasks(id), FETCH_TIMEOUT),
     ]);
 
     // Process consciousness — 404 is "no metrics yet", not an error
@@ -140,19 +162,76 @@ export function useAgentDetail(agentId: string | null): UseAgentDetailReturn {
       agentInfo = agentResult.value.data as Agent;
     }
 
+    // Process memory — 404 is "no memory store available", not an error
+    let memory: AgentMemoryResponse | null = null;
+    let memoryError: string | undefined;
+    if (memoryResult.status === 'rejected') {
+      memoryError = String(memoryResult.reason);
+      console.error('[useAgentDetail] memory fetch failed:', memoryError);
+    } else if (memoryResult.value.error) {
+      const errMsg = memoryResult.value.error;
+      if (errMsg.includes('404') || errMsg.includes('Request failed with status code 404')) {
+        // null = no memory store available
+      } else {
+        memoryError = errMsg;
+        console.error('[useAgentDetail] memory fetch error:', errMsg);
+      }
+    } else {
+      memory = memoryResult.value.data as AgentMemoryResponse;
+    }
+
+    // Process tools — 404 is "no tools data available", not an error
+    let tools: AgentToolsResponse | null = null;
+    let toolsError: string | undefined;
+    if (toolsResult.status === 'rejected') {
+      toolsError = String(toolsResult.reason);
+      console.error('[useAgentDetail] tools fetch failed:', toolsError);
+    } else if (toolsResult.value.error) {
+      const errMsg = toolsResult.value.error;
+      if (errMsg.includes('404') || errMsg.includes('Request failed with status code 404')) {
+        // null = no tools data available
+      } else {
+        toolsError = errMsg;
+        console.error('[useAgentDetail] tools fetch error:', errMsg);
+      }
+    } else {
+      tools = toolsResult.value.data as AgentToolsResponse;
+    }
+
+    // Process tasks — 404 is "agent not managed by supervisor", not an error
+    let tasks: AgentTasksResponse | null = null;
+    let tasksError: string | undefined;
+    if (tasksResult.status === 'rejected') {
+      tasksError = String(tasksResult.reason);
+      console.error('[useAgentDetail] tasks fetch failed:', tasksError);
+    } else if (tasksResult.value.error) {
+      const errMsg = tasksResult.value.error;
+      if (errMsg.includes('404') || errMsg.includes('Request failed with status code 404')) {
+        // null = agent not managed by supervisor
+      } else {
+        tasksError = errMsg;
+        console.error('[useAgentDetail] tasks fetch error:', errMsg);
+      }
+    } else {
+      tasks = tasksResult.value.data as AgentTasksResponse;
+    }
+
     setData({
       consciousness,
       agency,
       agent: agentInfo,
-      memory: null,
-      tools: null,
-      tasks: null,
+      memory,
+      tools,
+      tasks,
     });
 
     setErrors({
       ...(consciousnessError ? { consciousness: consciousnessError } : {}),
       ...(agencyError ? { agency: agencyError } : {}),
       ...(agentError ? { agent: agentError } : {}),
+      ...(memoryError ? { memory: memoryError } : {}),
+      ...(toolsError ? { tools: toolsError } : {}),
+      ...(tasksError ? { tasks: tasksError } : {}),
     });
 
     setLoading(false);

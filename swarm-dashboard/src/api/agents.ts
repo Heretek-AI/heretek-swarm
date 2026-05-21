@@ -117,6 +117,62 @@ export interface AgentLogsResponse {
   total: number;
 }
 
+// ---- Memory endpoint types --------------------------------------------------
+
+export interface MemoryEntry {
+  id: string;
+  content: string;
+  memory_type: string;
+  created_at: string | null;
+}
+
+export interface AgentMemoryResponse {
+  agent_id: string;
+  total_memories: number;
+  by_type: Record<string, number>;
+  recent_entries: MemoryEntry[];
+  status: string;
+  error?: string;
+}
+
+// ---- Tools endpoint types ----------------------------------------------------
+
+export interface SkillItem {
+  name: string;
+  category: string;
+  description: string;
+  version: string;
+  tags: string[];
+  source: string;
+}
+
+export interface PluginItem {
+  name: string;
+  version: string;
+  description: string;
+  author: string;
+}
+
+export interface AgentToolsResponse {
+  agent_id: string;
+  skills: SkillItem[];
+  plugins: PluginItem[];
+  total: number;
+}
+
+// ---- Tasks endpoint types ----------------------------------------------------
+
+export interface AgentTasksResponse {
+  agent_id: string;
+  status: string;
+  capabilities: string[];
+  topics: string[];
+  message_count: number;
+  error_count: number;
+  last_activity: string | null;
+  uptime_seconds: number | null;
+}
+
 // =============================================================================
 // Legacy Agent Endpoints (for existing agents managed by supervisor)
 // =============================================================================
@@ -304,6 +360,48 @@ export const getAgentLogs = async (
   const response = await api.get(`/api/agents/${instanceId}/logs`, {
     params: { limit },
   });
+  return response.data;
+};
+
+/**
+ * Get per-agent memory statistics.
+ *
+ * Queries persistent memory store entries belonging to this agent instance.
+ * Returns status 'unavailable' when no memory backend is configured.
+ */
+export const getAgentMemory = async (
+  instanceId: string,
+  limit: number = 20
+): Promise<AgentMemoryResponse> => {
+  const response = await api.get(`/api/agents/${instanceId}/memory`, {
+    params: { limit },
+  });
+  return response.data;
+};
+
+/**
+ * Get aggregated tools and skills for an agent instance.
+ *
+ * Combines per-agent skills from the AgentSkillRegistry with system-wide
+ * plugins from the PluginRuntime.
+ */
+export const getAgentTools = async (
+  instanceId: string
+): Promise<AgentToolsResponse> => {
+  const response = await api.get(`/api/agents/${instanceId}/tools`);
+  return response.data;
+};
+
+/**
+ * Get agent task/activity status from the supervisor.
+ *
+ * Reads the ActorStatus from the ActorSupervisor. Agents not managed
+ * by the supervisor return status 'not_running'.
+ */
+export const getAgentTasks = async (
+  instanceId: string
+): Promise<AgentTasksResponse> => {
+  const response = await api.get(`/api/agents/${instanceId}/tasks`);
   return response.data;
 };
 

@@ -351,6 +351,19 @@ async def get_agent_memory(
 # =============================================================================
 
 
+# Testable dependency for supervisor injection — tests override this
+def _get_tasks_supervisor():
+    """Lazily import and return the global supervisor."""
+    from heretek_swarm.actors.supervisor import get_supervisor
+
+    return get_supervisor()
+
+
+# =============================================================================
+# Agent Tools Endpoint (continued)
+# =============================================================================
+
+
 @router.get("/{instance_id}/tools")
 async def get_agent_tools(
     instance_id: str,
@@ -445,6 +458,149 @@ async def get_agent_tools(
         "plugins": plugins,
         "total": len(skills) + len(plugins),
     }
+
+
+# =============================================================================
+# Agent Tasks Endpoint
+# =============================================================================
+
+
+@router.get("/{instance_id}/tasks")
+async def get_agent_tasks(
+    instance_id: str,
+    registry: Annotated[EnhancedAgentRegistry, Depends(get_registry)],
+    authenticated: Annotated[str, Depends(verify_auth)],
+):
+    """
+    Get agent task/activity status from the supervisor.
+
+    Reads the ActorStatus for a given agent from the ActorSupervisor.
+    Agents that exist in the registry but are not managed by the
+    supervisor return status:'not_running'.
+
+    Args:
+        instance_id: Agent instance ID
+
+    Returns:
+        agent_id, status, capabilities, topics, message_count,
+        error_count, last_activity, uptime_seconds
+    """
+    # Verify agent exists
+    instance = registry.get_instance(instance_id)
+    if not instance:
+        raise HTTPException(404, f"Agent instance '{instance_id}' not found")
+
+    try:
+        supervisor = _get_tasks_supervisor()
+    except Exception as e:
+        logger.error(
+            "agent_tasks_failed",
+            agent_id=instance_id,
+            error=str(e),
+            stage="supervisor_import",
+        )
+        return {
+            "agent_id": instance_id,
+            "status": "not_running",
+            "capabilities": [],
+            "topics": [],
+            "message_count": 0,
+            "error_count": 0,
+            "last_activity": None,
+            "uptime_seconds": 0,
+        }
+
+    # Check supervisor is initialized and has actors
+    if supervisor is None or not getattr(supervisor, "actors", None):
+        logger.info(
+            "agent_tasks_fetched",
+            agent_id=instance_id,
+            status="not_running",
+            reason="supervisor_not_ready",
+        )
+        return {
+            "agent_id": instance_id,
+            "status": "not_running",
+            "capabilities": [],
+            "topics": [],
+            "message_count": 0,
+            "error_count": 0,
+            "last_activity": None,
+            "uptime_seconds": 0,
+        }
+
+    # Try to get actor from supervisor
+    try:
+        actor = supervisor.actors.get(instance_id)
+        if actor is None:
+            logger.info(
+                "agent_tasks_fetched",
+                agent_id=instance_id,
+                status="not_running",
+                reason="actor_not_found",
+            )
+            return {
+                "agent_id": instance_id,
+                "status": "not_running",
+                "capabilities": [],
+                "topics": [],
+                "message_count": 0,
+                "error_count": 0,
+                "last_activity": None,
+                "uptime_seconds": 0,
+            }
+
+        status = actor.get_status()
+
+        uptime_seconds = _uptime_seconds(status.created_at)
+
+        logger.info(
+            "agent_tasks_fetched",
+            agent_id=instance_id,
+            status=status.state.value,
+            message_count=status.message_count,
+            error_count=status.error_count,
+        )
+        return {
+            "agent_id": instance_id,
+            "status": status.state.value,
+            "capabilities": status.capabilities,
+            "topics": status.topics,
+            "message_count": status.message_count,
+            "error_count": status.error_count,
+            "last_activity": status.last_activity,
+            "uptime_seconds": uptime_seconds,
+        }
+    except Exception as e:
+        logger.error(
+            "agent_tasks_failed",
+            agent_id=instance_id,
+            error=str(e),
+        )
+        return {
+            "agent_id": instance_id,
+            "status": "not_running",
+            "capabilities": [],
+            "topics": [],
+            "message_count": 0,
+            "error_count": 0,
+            "last_activity": None,
+            "uptime_seconds": 0,
+        }
+
+
+def _uptime_seconds(created_at: str | None) -> int | None:
+    """Compute uptime seconds from an ISO datetime string.
+
+    Returns None if created_at is None or unparseable.
+    """
+    if not created_at:
+        return None
+    try:
+        created = datetime.fromisoformat(created_at)
+        return int((datetime.now(UTC) - created).total_seconds())
+    except (ValueError, TypeError):
+        return None
 
 
 # =============================================================================

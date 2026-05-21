@@ -92167,3 +92167,4 @@ Failed to export traces to otel-collector:4317, error code: StatusCode.UNAVAILAB
 =======
 >>>>>>> 4680be63adb0ca1615ad58efda5ccbd15fee0198
 Failed to export traces to otel-collector:4317, error code: StatusCode.UNAVAILABLE
+{"agent_id": "test-instance-01", "error": "cannot import name 'MemoryEntryModel' from 'heretek_swarm.memory.persistent' (C:\\Users\\Derek\\Desktop\\heretek-swarm\\backend\\heretek_swarm\\memory\\persistent.py)", "source": "sqlalchemy", "event": "agent_memory_failed", "level": "error", "logger": "heretek_swarm.api.agents.instances", "timestamp": "2026-05-21T01:54:14.676221Z", "service": "heretek-swarm", "environment": "development", "lineno": 263, "func_name": "get_agent_memory", "filename": "instances.py"}
