@@ -5,6 +5,9 @@ import time
 
 import pytest
 
+
+pytestmark = [pytest.mark.unit]
+
 from heretek_swarm.consensus.domain_selector import (
     DEFAULT_FALLBACK_AGENTS,
     DomainSelector,

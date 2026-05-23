@@ -24,10 +24,13 @@ import pytest
 # This integration test requires a running infrastructure stack (Postgres,
 # Redis, etc.) and a real API server.  Skip unconditionally unless the
 # HERETEK_RUN_INTEGRATION env-var is set.
-pytestmark = pytest.mark.skipif(
-    not os.environ.get("HERETEK_RUN_INTEGRATION"),
-    reason="Integration test requires running infrastructure (set HERETEK_RUN_INTEGRATION=1 to enable)",  # noqa: E501
-)
+pytestmark = [
+    pytest.mark.integration,
+    pytest.mark.skipif(
+        not os.environ.get("HERETEK_RUN_INTEGRATION"),
+        reason="Integration test requires running infrastructure (set HERETEK_RUN_INTEGRATION=1 to enable)",  # noqa: E501
+    ),
+]
 
 # ---------------------------------------------------------------------------
 # Helpers

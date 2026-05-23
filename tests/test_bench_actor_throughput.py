@@ -25,6 +25,9 @@ from typing import Any
 
 import pytest
 
+
+pytestmark = [pytest.mark.integration]
+
 from heretek_swarm.actors.base.core import ActorMessage, AgentActor
 from heretek_swarm.observability.timing import TimedContext
 

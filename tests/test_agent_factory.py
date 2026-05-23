@@ -15,6 +15,9 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
+
+pytestmark = [pytest.mark.unit]
+
 from heretek_swarm.runtime.main_loop import AutonomousSwarm
 
 # ---------------------------------------------------------------------------

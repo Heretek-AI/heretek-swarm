@@ -4,6 +4,9 @@ from __future__ import annotations
 
 import pytest
 
+
+pytestmark = [pytest.mark.unit]
+
 from heretek_swarm.llm.model_garage import LLMResponse, ProviderType
 from heretek_swarm.routing.model_router import (
     AgentModelRouter,

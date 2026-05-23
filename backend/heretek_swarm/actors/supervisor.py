@@ -15,6 +15,7 @@ import structlog
 
 from heretek_swarm.actors.base import ActorState, ActorStatus, AgentActor
 from heretek_swarm.actors.factory import ActorConfig
+from heretek_swarm.actors.circuit_breaker import TierCircuitBreaker
 from heretek_swarm.actors.mixins import (
     AuditMixin,
     HealthReportingMixin,
@@ -79,6 +80,7 @@ class ActorSupervisor(AuditMixin, ValidationMixin, HealthReportingMixin, Pattern
         max_restarts: int = 3,
         db_pool: Any | None = None,
         pattern_extractor: PatternExtractor | None = None,
+        event_mesh: Any | None = None,
     ) -> None:
         """
         Initialize the supervisor.
@@ -89,6 +91,7 @@ class ActorSupervisor(AuditMixin, ValidationMixin, HealthReportingMixin, Pattern
             auto_restart: Automatically restart failed actors
             max_restarts: Maximum restart attempts per actor
             db_pool: Optional asyncpg database connection pool for state persistence
+            event_mesh: Optional NATS event mesh for message routing via Tier 1
         """
         # P1-7: Configuration validation
         if health_check_interval <= 0:
@@ -109,6 +112,12 @@ class ActorSupervisor(AuditMixin, ValidationMixin, HealthReportingMixin, Pattern
             agent_id=name or "ActorSupervisor",
             name=self.name,
         )
+
+        # Override with the injected event_mesh (AgentActor defaults to a stub)
+        self._event_mesh = event_mesh
+
+        # Tier-based circuit breaker for cascading restart storm prevention (D003)
+        self._circuit_breaker = TierCircuitBreaker()
 
         self.actors: dict[str, AgentActor] = {}
         self.actor_configs: dict[str, ActorConfig] = {}
@@ -171,6 +180,10 @@ class ActorSupervisor(AuditMixin, ValidationMixin, HealthReportingMixin, Pattern
             # Inject database pool for state persistence
             if self.db_pool is not None:
                 actor.update_state("_db_pool", self.db_pool)
+
+            # Inject event mesh for Tier 1 message routing (NATS)
+            if self._event_mesh is not None:
+                actor.update_state("_event_mesh", self._event_mesh)
 
             # Spawn the actor
             await actor.spawn()
@@ -368,6 +381,19 @@ class ActorSupervisor(AuditMixin, ValidationMixin, HealthReportingMixin, Pattern
             await self.terminate_actor(actor_id)
             return
 
+        # --- D003: Tier-based circuit breaker gate ---
+        tier = TierCircuitBreaker.classify_tier(actor_id)
+        if self._circuit_breaker.is_open(tier):
+            logger.warning(
+                "circuit_broken_restart_blocked",
+                extra={
+                    "actor_id": actor_id,
+                    "tier": tier,
+                    "supervisor": self.name,
+                },
+            )
+            return
+
         logger.info(
             f"[{self.name}] Attempting restart {restart_count + 1}/{self.max_restarts} for {actor_id}",  # noqa: G004,E501
         )
@@ -395,6 +421,13 @@ class ActorSupervisor(AuditMixin, ValidationMixin, HealthReportingMixin, Pattern
             new_actor = actor_class(**init_kwargs)
             await new_actor.spawn()
 
+            # Inject registry, db_pool, and event_mesh into restarted actor
+            new_actor.update_state("_actor_registry", self.actors)
+            if self.db_pool is not None:
+                new_actor.update_state("_db_pool", self.db_pool)
+            if self._event_mesh is not None:
+                new_actor.update_state("_event_mesh", self._event_mesh)
+
             # Register new actor
             self.actors[actor_id] = new_actor
             self.restart_counts[actor_id] = restart_count + 1
@@ -407,6 +440,21 @@ class ActorSupervisor(AuditMixin, ValidationMixin, HealthReportingMixin, Pattern
         except Exception:
             logger.exception("[{self.name}] Restart failed for {actor_id}: {e}")
             self.restart_counts[actor_id] = restart_count + 1
+
+            # D003: Record failure for circuit breaker; log if circuit just opened
+            just_opened = self._circuit_breaker.record_failure(tier)
+            if just_opened:
+                tier_windows = self._circuit_breaker._windows  # noqa: SLF001
+                logger.error(
+                    "circuit_open",
+                    extra={
+                        "tier": tier,
+                        "failure_count": len(tier_windows.get(tier, [])),
+                        "window_seconds": self._circuit_breaker.window_seconds,
+                        "threshold": self._circuit_breaker.failure_threshold,
+                        "supervisor": self.name,
+                    },
+                )
 
     async def respawn_actor(self, actor_id: str) -> bool:
         """
@@ -446,6 +494,13 @@ class ActorSupervisor(AuditMixin, ValidationMixin, HealthReportingMixin, Pattern
             # Create new instance
             new_actor = actor_class(**init_kwargs)
             await new_actor.spawn()
+
+            # Inject registry, db_pool, and event_mesh into respawned actor
+            new_actor.update_state("_actor_registry", self.actors)
+            if self.db_pool is not None:
+                new_actor.update_state("_db_pool", self.db_pool)
+            if self._event_mesh is not None:
+                new_actor.update_state("_event_mesh", self._event_mesh)
 
             # Register new actor
             self.actors[actor_id] = new_actor

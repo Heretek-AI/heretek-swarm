@@ -24,6 +24,9 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
+
+pytestmark = [pytest.mark.unit]
+
 from heretek_swarm.consensus.consensus_coordinator import ConsensusCoordinator
 from heretek_swarm.consensus.maker import ConsensusResult, ConsensusState
 from heretek_swarm.consensus.maker import Vote as MAKERVote

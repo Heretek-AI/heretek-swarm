@@ -25,6 +25,10 @@ from unittest.mock import AsyncMock
 from heretek_swarm.actors.base.core import ActorMessage
 from heretek_swarm.actors.triad.agent import AlphaAgent, BetaAgent, CharlieAgent
 
+import pytest
+
+pytestmark = [pytest.mark.unit]
+
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------

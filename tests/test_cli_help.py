@@ -8,6 +8,9 @@ suggestions using difflib.get_close_matches().
 from __future__ import annotations
 
 import pytest
+
+pytestmark = [pytest.mark.unit]
+
 from click.testing import CliRunner
 
 from heretek_swarm.cli import cli

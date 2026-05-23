@@ -14,6 +14,11 @@ from click.testing import CliRunner
 from heretek_swarm.cli import cli
 from heretek_swarm.goals.models import Goal
 
+import pytest
+
+
+
+pytestmark = [pytest.mark.unit]
 
 class TestGoalCLIGroup:
     """Verify the ``goal`` command group is registered and invocable."""

@@ -23,6 +23,10 @@ from heretek_swarm.actors.chronos.types import (
     Tick,
 )
 
+import pytest
+
+pytestmark = [pytest.mark.unit]
+
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------

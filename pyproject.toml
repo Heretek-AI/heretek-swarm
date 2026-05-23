@@ -88,6 +88,9 @@ full = [
 ]
 dev = [
     "heretek-swarm[full]",
+    # Database drivers (for observability/db_timing tests)
+    "sqlalchemy>=2.0.0",
+    "aiosqlite>=0.20.0",
     # Testing
     "pytest>=8.0.0",
     "pytest-asyncio>=0.23.0",
@@ -148,6 +151,8 @@ addopts = [
     "-q",
     "--strict-markers",
     "--strict-config",
+    "-m",
+    "not integration",
 ]
 asyncio_mode = "auto"
 markers = [

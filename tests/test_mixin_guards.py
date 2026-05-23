@@ -15,6 +15,9 @@ from unittest.mock import MagicMock
 
 import pytest
 
+
+pytestmark = [pytest.mark.unit]
+
 from heretek_swarm.actors.mixins.learning import LearningMixin
 from heretek_swarm.actors.mixins.memory import MemoryMixin
 from heretek_swarm.actors.mixins.pattern import PatternMixin

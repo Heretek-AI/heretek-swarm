@@ -28,6 +28,10 @@ from heretek_swarm.runtime.daemon import (
     send_stop,
 )
 
+import pytest
+
+pytestmark = [pytest.mark.unit]
+
 # =========================================================================
 # read_pid_file
 # =========================================================================

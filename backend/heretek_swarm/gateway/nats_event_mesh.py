@@ -694,6 +694,41 @@ class NATSEventMesh:
             logger.error("publish_to_nats_error", topic=topic, error=str(e))
             return False
 
+    async def send_to_json(self, subject: str, data_dict: dict[str, Any], **kwargs: Any) -> bool:
+        """
+        Send a message to a subject with JSON-serializable data.
+
+        Thin delegation wrapper around publish() for API compatibility with
+        StubEventMesh / EventMesh interface. All agents call send_to_json
+        instead of publish directly.
+
+        Args:
+            subject: NATS subject to send to
+            data_dict: JSON-serializable message data
+            **kwargs: Additional arguments (forwarded for interface compatibility)
+
+        Returns:
+            True if sent successfully
+        """
+        logger.debug("send_to_json", subject=subject)
+        return await self.publish(subject, data_dict)
+
+    async def broadcast_json(self, data_dict: dict[str, Any]) -> bool:
+        """
+        Broadcast a message to all connected actors.
+
+        Thin delegation wrapper around publish() to the "broadcast" subject.
+        All agents call broadcast_json instead of publish("broadcast", ...)
+        directly.
+
+        Args:
+            data_dict: JSON-serializable message data
+
+        Returns:
+            True if broadcast successfully
+        """
+        return await self.publish("broadcast", data_dict)
+
     async def subscribe(
         self,
         subject: str,
@@ -874,6 +909,14 @@ class _InMemoryFallback:
                 with contextlib.suppress(Exception):
                     await sub(None, subject, data)
         return True
+
+    async def send_to_json(self, subject: str, data_dict: dict[str, Any], **kwargs: Any) -> bool:
+        """Send a message via in-memory fallback (delegates to publish)."""
+        return await self.publish(subject, data_dict)
+
+    async def broadcast_json(self, data_dict: dict[str, Any]) -> bool:
+        """Broadcast via in-memory fallback (delegates to publish on "broadcast")."""
+        return await self.publish("broadcast", data_dict)
 
     async def subscribe(
         self,

@@ -15,6 +15,9 @@ import asyncio
 from unittest.mock import MagicMock
 
 import pytest
+
+pytestmark = [pytest.mark.unit]
+
 from prometheus_client import Histogram
 
 from heretek_swarm.observability.timing import TimedContext, format_duration_ms, timed

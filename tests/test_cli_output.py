@@ -18,6 +18,11 @@ from heretek_swarm.cli import (
     _query_daemon_socket,
 )
 
+import pytest
+
+
+pytestmark = [pytest.mark.unit]
+
 if TYPE_CHECKING:
     import pytest
 

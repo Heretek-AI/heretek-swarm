@@ -479,7 +479,17 @@ class SnapshotManager:
         agent_states_dict = {}
         if agent_states:
             for agent_id, state in agent_states.items():
-                agent_states_dict[agent_id] = state.working_memory
+                agent_states_dict[agent_id] = {
+                    "agent_id": state.agent_id,
+                    "agent_type": state.agent_type,
+                    "status": state.status.value,
+                    "version": state.version,
+                    "created_at": state.created_at,
+                    "updated_at": state.updated_at,
+                    "working_memory": state.working_memory,
+                    "context": state.context,
+                    "metadata": state.metadata,
+                }
 
         snapshot = StateSnapshot(
             agent_id="system",
@@ -646,6 +656,9 @@ class StateManager:
                 agent_type=state_data.get("agent_type", "worker"),
                 status=StateStatus(state_data.get("status", "active")),
                 version=state_data.get("version", 1),
+                working_memory=state_data.get("working_memory", {}),
+                context=state_data.get("context", {}),
+                metadata=state_data.get("metadata", {}),
             )
             self._states[agent_id] = state
         return True

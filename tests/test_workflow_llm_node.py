@@ -16,6 +16,9 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
+
+pytestmark = [pytest.mark.unit]
+
 from heretek_swarm.workflow.engine import (
     NodeStatus,
     Workflow,

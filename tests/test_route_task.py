@@ -22,6 +22,10 @@ from unittest.mock import AsyncMock, MagicMock, patch
 from heretek_swarm.actors.base import ActorMessage
 from heretek_swarm.actors.steward import StewardAgent
 
+import pytest
+
+pytestmark = [pytest.mark.unit]
+
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------

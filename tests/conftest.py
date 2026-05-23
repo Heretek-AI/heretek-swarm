@@ -100,32 +100,44 @@ def _clear_supervisor_actors() -> Generator[None, None, None]:
 
 
 # ---------------------------------------------------------------------------
-# --run-slow CLI option: gate @pytest.mark.slow tests behind an explicit flag
+# --run-slow / --integration CLI options: gate slow and integration tests
+# behind explicit flags
 # ---------------------------------------------------------------------------
 
 def pytest_addoption(parser: pytest.Parser) -> None:
-    """Register ``--run-slow`` so slow tests are opt-in."""
+    """Register ``--run-slow`` and ``--integration`` so slow/integration
+    tests are opt-in."""
     parser.addoption(
         "--run-slow",
         action="store_true",
         default=False,
         help="Run tests marked @pytest.mark.slow (skipped by default)",
     )
+    parser.addoption(
+        "--integration",
+        action="store_true",
+        default=False,
+        help="Run tests marked @pytest.mark.integration (skipped by default)",
+    )
 
 
 def pytest_configure(config: pytest.Config) -> None:
-    """Ensure 'slow' marker is known at runtime (also declared in pyproject.toml)."""
+    """Ensure runtime markers are known (also declared in pyproject.toml)."""
     config.addinivalue_line("markers", "slow: Tests that take >5s")
+    config.addinivalue_line("markers", "integration: Integration tests that require external services")
 
 
 def pytest_collection_modifyitems(
     config: pytest.Config,
     items: list[pytest.Item],
 ) -> None:
-    """Skip @pytest.mark.slow tests unless ``--run-slow`` is passed."""
-    if config.getoption("--run-slow"):
-        return
-    slow_marker = pytest.mark.skip(reason="need --run-slow option to run")
+    """Skip ``@pytest.mark.slow`` and ``@pytest.mark.integration`` tests
+    unless the corresponding CLI flag is passed."""
+    skip_slow = not config.getoption("--run-slow")
+    skip_integration = not config.getoption("--integration")
+
     for item in items:
-        if item.get_closest_marker("slow"):
-            item.add_marker(slow_marker)
+        if skip_slow and item.get_closest_marker("slow"):
+            item.add_marker(pytest.mark.skip(reason="need --run-slow option to run"))
+        if skip_integration and item.get_closest_marker("integration"):
+            item.add_marker(pytest.mark.skip(reason="need --integration option to run"))

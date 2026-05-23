@@ -24,6 +24,9 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
+
+pytestmark = [pytest.mark.integration]
+
 from heretek_swarm.runtime.main_loop import AutonomousSwarm
 
 # ---------------------------------------------------------------------------

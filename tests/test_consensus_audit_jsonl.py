@@ -11,6 +11,9 @@ from pathlib import Path
 
 import pytest
 
+
+pytestmark = [pytest.mark.integration]
+
 from heretek_swarm.consensus.audit_trail import (
     ConsensusAuditTrail,
 )

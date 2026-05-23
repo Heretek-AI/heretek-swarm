@@ -67,8 +67,11 @@ class AutonomousSwarm:
     """
 
     def __init__(self, config: dict[str, Any] | None = None, no_infra: bool = False):
-        self.config = config or self._default_config()
         self._no_infra = no_infra
+        if no_infra:
+            self.config = config or {}
+        else:
+            self.config = config or self._default_config()
 
         # Core components (initialized in initialize())
         self.supervisor: ActorSupervisor | None = None
@@ -386,6 +389,10 @@ class AutonomousSwarm:
         self._actor_orch._event_mesh = self.event_mesh
         self._deliberation._supervisor = self.supervisor
         self._deliberation._consensus = self.consensus
+
+        # 8a. Thread event_mesh into supervisor so spawned agents inherit it
+        if self.event_mesh is not None:
+            self.supervisor._event_mesh = self.event_mesh
 
         # 9. Spawn all agents
         try:

@@ -25,6 +25,10 @@ from heretek_swarm.mcp.agent_tools import (
 from heretek_swarm.routing.model_router import AgentModelRouter
 from heretek_swarm.tools.mcp_tools import CoreMCPTools, MCPToolDefinition
 
+import pytest
+
+pytestmark = [pytest.mark.integration]
+
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------

@@ -21,6 +21,10 @@ from unittest.mock import AsyncMock, MagicMock
 from heretek_swarm.actors.chronos.types import ScheduleStatus, Tick
 from heretek_swarm.runtime.main_loop import AutonomousSwarm
 
+import pytest
+
+pytestmark = [pytest.mark.integration]
+
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------

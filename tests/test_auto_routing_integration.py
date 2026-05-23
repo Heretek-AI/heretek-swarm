@@ -15,6 +15,9 @@ the full CLI → heuristic → coordinator → MAKER pipeline.
 from unittest.mock import AsyncMock, patch
 
 import pytest
+
+pytestmark = [pytest.mark.integration]
+
 from click.testing import CliRunner
 
 from heretek_swarm.cli import _display_consensus_results, cli

@@ -9,6 +9,11 @@ from __future__ import annotations
 
 import importlib.metadata
 
+import pytest
+
+
+
+pytestmark = [pytest.mark.unit]
 
 def test_version_accessible() -> None:
     """The top-level package exposes __version__ matching pyproject.toml."""

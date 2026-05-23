@@ -16,6 +16,9 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
+
+pytestmark = [pytest.mark.integration]
+
 from heretek_swarm.actors.historian import HistorianAgent
 
 # ---------------------------------------------------------------------------

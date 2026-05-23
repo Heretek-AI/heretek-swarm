@@ -25,6 +25,11 @@ from heretek_swarm.observability.db_timing import (
     attach_db_timing,
 )
 
+import pytest
+
+
+pytestmark = [pytest.mark.integration]
+
 _DB_TIMING_MODULE = "heretek_swarm.observability.db_timing"
 
 
@@ -39,6 +44,7 @@ class TestAttachDbTiming:
 
     def test_attaches_to_async_engine_sync_engine(self) -> None:
         """attach_db_timing resolves async engine to sync_engine and attaches."""
+        pytest.importorskip("aiosqlite")
         async_engine = create_async_engine("sqlite+aiosqlite:///:memory:")
         attach_db_timing(async_engine)
         assert getattr(async_engine.sync_engine, DB_TIMING_ENGINE_ATTR) is True
@@ -226,6 +232,7 @@ class TestAttachDbTiming:
     @patch(f"{_DB_TIMING_MODULE}.structlog.get_logger")
     def test_async_engine_listeners_fire(self, mock_get_logger: MagicMock) -> None:
         """Listeners fire correctly on async engine queries."""
+        pytest.importorskip("aiosqlite")
         import asyncio
 
         mock_logger = MagicMock()

@@ -12,6 +12,9 @@ from unittest.mock import AsyncMock
 
 import pytest
 
+
+pytestmark = [pytest.mark.unit]
+
 from heretek_swarm.goals.models import Goal
 from heretek_swarm.goals.translator import GoalToWorkflowTranslator
 

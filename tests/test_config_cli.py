@@ -13,6 +13,9 @@ from typing import TYPE_CHECKING
 from unittest.mock import MagicMock, patch
 
 import pytest
+
+pytestmark = [pytest.mark.unit]
+
 from click.testing import CliRunner
 
 from heretek_swarm.cli import cli

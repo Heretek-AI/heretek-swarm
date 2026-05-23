@@ -506,7 +506,7 @@ class AgentActorMessageHandling(AgentActor):
             message_type: Message type identifier
         """
         # Use event mesh broadcast if available
-        event_mesh = self.get_state("_event_mesh")
+        event_mesh = self._event_mesh or self.get_state("_event_mesh")
         if event_mesh is not None:
             try:
                 await event_mesh.broadcast_json(

@@ -13,6 +13,11 @@ from __future__ import annotations
 
 from heretek_swarm.llm.model_garage import LLMResponse, ModelGarage, ProviderType
 
+import pytest
+
+
+
+pytestmark = [pytest.mark.unit]
 
 def make_garage() -> ModelGarage:
     """Return a ModelGarage instance without initialising providers."""

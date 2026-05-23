@@ -13,6 +13,9 @@ from __future__ import annotations
 
 import pytest
 
+
+pytestmark = [pytest.mark.unit]
+
 from heretek_swarm.actors import AgentActor, AlphaAgent
 from heretek_swarm.actors.stubs import (
     StubAccessAnalyzer,

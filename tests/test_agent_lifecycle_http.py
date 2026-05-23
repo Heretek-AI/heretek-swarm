@@ -20,6 +20,9 @@ from __future__ import annotations
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
+
+pytestmark = [pytest.mark.integration]
+
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 

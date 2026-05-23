@@ -7,6 +7,9 @@ threshold configuration, edge cases, and determinism.
 
 import pytest
 
+
+pytestmark = [pytest.mark.unit]
+
 from heretek_swarm.consensus.complexity import (
     ComplexityHeuristic,
     ComplexityResult,

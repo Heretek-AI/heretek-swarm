@@ -14,6 +14,9 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
+
+pytestmark = [pytest.mark.unit]
+
 from heretek_swarm.actors.base.core import ActorState, ActorStatus
 
 # ---------------------------------------------------------------------------

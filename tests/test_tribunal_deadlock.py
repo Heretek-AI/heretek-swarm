@@ -17,6 +17,9 @@ import time
 
 import pytest
 
+
+pytestmark = [pytest.mark.unit]
+
 from heretek_swarm.consensus.tribunal import Tribunal
 
 # ---------------------------------------------------------------------------

@@ -3,6 +3,9 @@
 from unittest.mock import AsyncMock, patch
 
 import pytest
+
+pytestmark = [pytest.mark.unit]
+
 from click.testing import CliRunner
 
 from heretek_swarm.cli import _display_consensus_results, cli

@@ -24,6 +24,9 @@ from typing import TYPE_CHECKING
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
+
+pytestmark = [pytest.mark.integration]
+
 from fastapi.testclient import TestClient
 
 from heretek_swarm.api.main import app

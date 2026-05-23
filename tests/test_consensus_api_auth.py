@@ -15,6 +15,9 @@ from datetime import UTC, datetime, timedelta
 from unittest.mock import AsyncMock, patch
 
 import pytest
+
+pytestmark = [pytest.mark.integration]
+
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 

@@ -13,6 +13,9 @@ from unittest.mock import AsyncMock, patch
 
 import pytest
 
+
+pytestmark = [pytest.mark.unit]
+
 from heretek_swarm.goals.models import Goal, Vote
 from heretek_swarm.goals.pipeline import run_goal_cycle
 from heretek_swarm.goals.store import FileGoalStore

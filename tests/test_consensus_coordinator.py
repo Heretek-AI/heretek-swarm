@@ -7,6 +7,9 @@ from unittest.mock import AsyncMock
 
 import pytest
 
+
+pytestmark = [pytest.mark.unit]
+
 from heretek_swarm.consensus.consensus_coordinator import (
     ConsensusCoordinator,
     _extract_decision_confidence,

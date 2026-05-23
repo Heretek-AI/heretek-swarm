@@ -6,6 +6,9 @@ import subprocess
 
 import pytest
 
+
+pytestmark = [pytest.mark.integration]
+
 _docker_missing = pytest.mark.skipif(
     not shutil.which("docker"),
     reason="Docker not available in this environment",

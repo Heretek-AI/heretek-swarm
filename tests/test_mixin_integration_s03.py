@@ -37,6 +37,10 @@ from heretek_swarm.actors.stubs import (
     StubPatternExtractor,
 )
 
+import pytest
+
+pytestmark = [pytest.mark.integration]
+
 # ===================================================================
 # Integration helpers
 # ===================================================================

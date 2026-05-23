@@ -17,6 +17,9 @@ from typing import Any
 
 import pytest
 
+
+pytestmark = [pytest.mark.unit]
+
 from heretek_swarm.actors import (
     AgentActor,
     AlphaAgent,

@@ -18,6 +18,9 @@ from typing import TYPE_CHECKING, Any
 
 import pytest
 
+
+pytestmark = [pytest.mark.unit]
+
 from heretek_swarm.actors.historian import HistorianAgent
 
 if TYPE_CHECKING:

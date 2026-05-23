@@ -17,6 +17,9 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
+
+pytestmark = [pytest.mark.integration]
+
 from heretek_swarm.config import get_config_path
 from heretek_swarm.llm.model_garage import (
     ModelGarage,

@@ -33,6 +33,11 @@ from heretek_swarm.actors.supervisor import get_supervisor
 from heretek_swarm.runtime.daemon import _build_status_response
 from heretek_swarm.runtime.main_loop import AutonomousSwarm
 
+import pytest
+
+
+pytestmark = [pytest.mark.integration]
+
 if TYPE_CHECKING:
     from pathlib import Path
 

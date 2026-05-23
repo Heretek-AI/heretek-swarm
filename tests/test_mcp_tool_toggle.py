@@ -18,6 +18,9 @@ from unittest.mock import patch
 
 import pytest
 
+
+pytestmark = [pytest.mark.unit]
+
 from heretek_swarm.mcp.bridge import sync_mcp_registries
 from heretek_swarm.mcp.registry import (
     MCPToolMetadata,

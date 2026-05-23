@@ -19,6 +19,10 @@ from heretek_swarm.actors.base.core import ActorMessage
 from heretek_swarm.actors.empath import EmpathAgent
 from heretek_swarm.actors.metis import MetisAgent
 
+import pytest
+
+pytestmark = [pytest.mark.integration]
+
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
