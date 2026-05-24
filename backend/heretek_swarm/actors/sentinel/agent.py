@@ -36,6 +36,7 @@ from heretek_swarm.consensus.immune import (
     PatternClassification,
     ResponseOutcome,
 )
+from heretek_swarm.consensus.tribunal import Tribunal
 from heretek_swarm.security.anomaly_detection import (
     AnomalyDetectionConfig,
 )
@@ -100,6 +101,9 @@ class SentinelAgent(
         self._enable_injection_detection = self._safety_scanner.enable_injection_detection
         self._auto_block_critical = self._safety_scanner.auto_block_critical
 
+        # ── Tribunal (CONS-01: case creation for immune loop) ──────────
+        self.tribunal = Tribunal()
+
         # ── Anomaly monitor (SAFE-01) ───────────────────────────────────
         anomaly_config = AnomalyDetectionConfig(
             z_score_threshold=cfg.get("anomaly_z_score_threshold", 3.0),
@@ -122,7 +126,7 @@ class SentinelAgent(
             anomaly_config=anomaly_config,
             behavioral_baseline=behavioral_baseline,
             agent_id=self.agent_id,
-            on_pattern_detected=self._emit_pattern,
+            on_pattern_detected=self._on_anomaly_for_tribunal,
         )
 
         # ── Immune response manager (CONS-02) ───────────────────────────
@@ -152,6 +156,73 @@ class SentinelAgent(
             auto_learn=self._immune_manager.auto_learn_enabled,
             preserve_novel_patterns=self._immune_manager.preserve_novel_patterns,
         )
+    # ---- Immune Loop Bridge: Sentinel → Tribunal → Steward ----------------
+    async def _on_anomaly_for_tribunal(
+        self,
+        item_id: str,
+        item_type: str,
+        outcome: str,
+        content: dict[str, Any],
+    ) -> None:
+        """Callback for AnomalyMonitor: emit pattern for collective learning,
+        then create Tribunal case for HIGH/CRITICAL severity anomalies.
+
+        The anomaly_id (item_id) serves as the original_decision_id for the
+        Tribunal case, establishing the trace chain for the immune loop.
+        """
+        # Always emit for collective learning (PatternMixin)
+        await self._emit_pattern(
+            item_id=item_id,
+            item_type=item_type,
+            outcome=outcome,
+            content=content,
+        )
+
+        # Create Tribunal case only for HIGH/CRITICAL anomalies
+        severity = content.get("severity", "low")
+        if severity not in ("high", "critical"):
+            return
+
+        # Signal: anomaly classified as HIGH/CRITICAL — immune loop entry point
+        logger.warning(
+            "sentinel_anomaly_classified",
+            anomaly_id=item_id,
+            severity=severity,
+            anomaly_type=content.get("anomaly_type"),
+            agent_id=content.get("agent_id"),
+            z_score=content.get("z_score"),
+        )
+
+        try:
+            case = self.tribunal.create_case(
+                original_decision_id=item_id,
+                appellant_agent_id=self.agent_id,
+                grounds=f"Anomaly detected: {content.get('anomaly_type', 'unknown')} "
+                        f"(severity={severity}, z_score={content.get('z_score', 0)})",
+                description=(
+                    f"Auto-generated case from anomaly detection. "
+                    f"Agent {content.get('agent_id', 'unknown')} triggered "
+                    f"metric {content.get('trigger_metric', 'unknown')} "
+                    f"at severity {severity}."
+                ),
+            )
+
+            # Signal: tribunal_case_created
+            logger.warning(
+                "tribunal_case_created",
+                case_id=case.case_id,
+                anomaly_id=item_id,
+                agent_id=content.get("agent_id"),
+                severity=severity,
+                anomaly_type=content.get("anomaly_type"),
+            )
+        except Exception as e:
+            logger.error(
+                "tribunal_case_creation_failed",
+                anomaly_id=item_id,
+                error=str(e),
+            )
+
     # ---- CONS-02: Immune Response Building (delegated) --------------------
     async def record_anomaly_response_outcome(
         self, anomaly_id: str, response_id: str, outcome: ResponseOutcome,

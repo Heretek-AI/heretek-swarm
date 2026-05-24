@@ -477,6 +477,16 @@ class Tribunal:
             confidence=confidence,
         )
 
+        # Structured immune-loop signal: tribunal_ruling_issued
+        logger.info(
+            "tribunal_ruling_issued",
+            ruling_id=ruling.ruling_id,
+            case_id=case_id,
+            ruling_type=ruling_type.value,
+            issued_by=issued_by,
+            confidence=confidence,
+        )
+
         return ruling
 
     def get_ruling(self, ruling_id: str) -> TribunalRuling | None:

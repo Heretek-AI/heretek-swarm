@@ -11,7 +11,7 @@ pulse never delays its heartbeat interval waiting for Sentinel.
 from __future__ import annotations
 
 import asyncio
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from typing import TYPE_CHECKING, Any
 
 import structlog
@@ -24,6 +24,9 @@ logger = structlog.get_logger(__name__)
 # Per D002: anomaly detection is allowed to run for at most this many
 # seconds before we give up and continue the pulse loop.
 _ANOMALY_SCAN_TIMEOUT = 5.0  # seconds
+
+# Per D002: rulings older than this many seconds are skipped (fire-and-forget).
+_RULING_EXPIRY_SECONDS = 60.0  # seconds
 
 
 async def _collect_swarm_metrics(supervisor: Any) -> dict[str, float]:
@@ -95,6 +98,108 @@ async def _run_anomaly_scan(
     return alert_count
 
 
+async def _apply_pending_tribunal_rulings(
+    steward: Any,
+    sentinel: Any,
+) -> None:
+    """Apply pending Tribunal rulings to the behavioral baseline.
+
+    Iterates sentinel.tribunal._rulings to find rulings not yet applied.
+    Tracks applied rulings in steward.internal_state to avoid re-application.
+
+    Per D002:
+    - Rulings older than _RULING_EXPIRY_SECONDS are skipped (expired).
+    - Each applied ruling logs ``steward_baseline_updated``.
+    - Expired rulings log ``tribunal_ruling_expired`` at WARNING.
+    """
+    applied: set[str] = steward.internal_state.setdefault(
+        "_applied_tribunal_rulings", set()
+    )
+    now = datetime.now(UTC)
+
+    try:
+        rulings = dict(sentinel.tribunal._rulings)
+    except Exception:
+        return  # Tribunal not yet populated
+
+    for ruling_id, ruling in rulings.items():
+        if ruling_id in applied:
+            continue
+
+        # Parse timestamp — may be ISO string or datetime object
+        ruling_ts = ruling.timestamp
+        if isinstance(ruling_ts, str):
+            ruling_ts = datetime.fromisoformat(
+                ruling_ts.replace("Z", "+00:00")
+            )
+
+        # D002: skip expired rulings
+        if (now - ruling_ts) > timedelta(seconds=_RULING_EXPIRY_SECONDS):
+            logger.warning(
+                "tribunal_ruling_expired",
+                ruling_id=ruling_id,
+                case_id=ruling.case_id,
+                ruling_age_seconds=(now - ruling_ts).total_seconds(),
+            )
+            applied.add(ruling_id)
+            continue
+
+        # Apply ruling to behavioral baseline via immune manager
+        try:
+            if hasattr(sentinel, "_immune_manager"):
+                immune_mgr = sentinel._immune_manager
+                if hasattr(immune_mgr, "_immune_system"):
+                    immune_system = immune_mgr._immune_system
+                    # Extract pattern_id from the case/anomaly context if available
+                    # The anomaly_id from the case's original_decision_id maps back
+                    # to the pattern that triggered this.
+                    case = sentinel.tribunal._cases.get(ruling.case_id)
+                    anomaly_id = (
+                        case.original_decision_id if case else ruling.case_id
+                    )
+
+                    # Request a baseline update from the immune system
+                    # Use the anomaly_id as the pattern lookup key
+                    immune_system.request_baseline_update(
+                        pattern_id=anomaly_id,
+                        requesting_agent_id="steward",
+                    )
+
+                    logger.info(
+                        "steward_baseline_updated",
+                        ruling_id=ruling_id,
+                        case_id=ruling.case_id,
+                        ruling_type=(
+                            ruling.ruling_type.value
+                            if hasattr(ruling.ruling_type, "value")
+                            else str(ruling.ruling_type)
+                        ),
+                        anomaly_id=anomaly_id,
+                    )
+                    applied.add(ruling_id)
+                else:
+                    # No immune system, still mark as applied
+                    logger.debug(
+                        "steward_baseline_update_skipped_no_immune",
+                        ruling_id=ruling_id,
+                    )
+                    applied.add(ruling_id)
+            else:
+                logger.debug(
+                    "steward_baseline_update_skipped_no_manager",
+                    ruling_id=ruling_id,
+                )
+                applied.add(ruling_id)
+        except Exception as e:
+            logger.error(
+                "steward_baseline_update_failed",
+                ruling_id=ruling_id,
+                error=str(e),
+            )
+            # Still mark as applied to avoid repeated failures
+            applied.add(ruling_id)
+
+
 async def run_steward_pulse(swarm: AutonomousSwarm) -> None:
     """Steward heartbeat pulse loop.
 
@@ -145,6 +250,13 @@ async def run_steward_pulse(swarm: AutonomousSwarm) -> None:
                     logger.warning("steward_pulse_sentinel_skipped_no_sentinel")
                 # else: sentinel present but no _anomaly_monitor (unlikely
                 # but not an error — monitor may be disabled by config)
+
+                # ── Tribunal ruling application (D002: fire-and-forget) ──
+                if sentinel is not None and hasattr(sentinel, "tribunal"):
+                    await _apply_pending_tribunal_rulings(
+                        steward=steward,
+                        sentinel=sentinel,
+                    )
 
                 # Log via Historian
                 historian = (

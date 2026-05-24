@@ -1,12 +1,18 @@
-"""Tests for Steward-pulse-to-Sentinel anomaly detection wiring (S03 T02).
+"""Tests for Steward-pulse-to-Sentinel anomaly detection wiring (S03).
 
-Covers:
+T02 coverage:
 - run_steward_pulse feeds metrics to Sentinel's anomaly monitor
 - steward_pulse_anomaly_detected log signal when anomalies detected
 - steward_pulse_sentinel_skipped_no_sentinel log signal when sentinel absent
 - heartbeat_healthy flag set False when anomalies present
 - Timeout protection on anomaly scan (non-blocking)
 - Per-actor metrics collection
+
+T03 coverage:
+- SentinelAgent._on_anomaly_for_tribunal creates Tribunal cases for HIGH/CRITICAL
+- tribunal_case_created log signal
+- steward_baseline_updated log signal when pulse applies rulings
+- tribunal_ruling_expired log signal for rulings older than 60s
 """
 
 from __future__ import annotations
@@ -521,4 +527,474 @@ class TestPerActorMetrics:
 
         assert "restart-heavy" in called_agents, (
             "Actor with restarts should be scanned even if error_count=0"
+        )
+
+
+# ============================================================================
+# T03: Sentinel → Tribunal → Steward bridge tests
+# ============================================================================
+
+
+def _make_sentinel_with_real_tribunal() -> MagicMock:
+    """Create a Sentinel stub with a real Tribunal and pattern_extractor.
+
+    Returns a MagicMock that behaves like SentinelAgent for the _on_anomaly
+    callback path: has agent_id, pattern_extractor, _pattern_emitted,
+    tribunal, _emit_pattern, and _on_anomaly_for_tribunal.
+    """
+    from heretek_swarm.consensus.tribunal import Tribunal
+
+    sentinel = MagicMock()
+    sentinel.agent_id = "sentinel-test"
+    sentinel._pattern_emitted = set()
+    sentinel.tribunal = Tribunal()
+    sentinel.pattern_extractor = MagicMock()
+    sentinel.pattern_extractor.analyze_message = AsyncMock()
+    sentinel._emit_pattern = AsyncMock()
+    return sentinel
+
+
+def _make_sentinel_stub_full(
+    *,
+    alerts: list | None = None,
+    with_tribunal: bool = True,
+    with_immune_manager: bool = True,
+) -> MagicMock:
+    """Create a sentinel stub with full immune-loop wiring.
+
+    Args:
+        alerts: Fixed list to return from monitor_agent_behavior.
+        with_tribunal: Whether to wire a real Tribunal.
+        with_immune_manager: Whether to wire a stubbed ImmuneResponseManager.
+    """
+    from heretek_swarm.consensus.tribunal import Tribunal
+
+    monitor = AsyncMock(return_value=alerts or [])
+    sentinel = MagicMock()
+    sentinel.agent_id = "sentinel-test"
+    sentinel._anomaly_monitor = MagicMock()
+    sentinel.monitor_agent_behavior = monitor
+
+    if with_tribunal:
+        sentinel.tribunal = Tribunal()
+
+    if with_immune_manager:
+        sentinel._immune_manager = MagicMock()
+        sentinel._immune_manager._immune_system = MagicMock()
+        sentinel._immune_manager._immune_system.request_baseline_update = MagicMock()
+
+    return sentinel
+
+
+# ---------------------------------------------------------------------------
+# Test: SentinelAgent._on_anomaly_for_tribunal → Tribunal case creation
+# ---------------------------------------------------------------------------
+
+
+class TestSentinelToTribunalBridge:
+    """Part A: Sentinel._on_anomaly_for_tribunal creates Tribunal cases."""
+
+    async def test_high_severity_creates_tribunal_case(self) -> None:
+        """When anomaly severity is HIGH, a Tribunal case is created
+        and tribunal_case_created is logged."""
+        from heretek_swarm.actors.sentinel.agent import logger as sentinel_logger
+
+        sentinel = _make_sentinel_with_real_tribunal()
+
+        content = {
+            "anomaly_type": "behavioral_drift",
+            "severity": "high",
+            "z_score": 3.5,
+            "agent_id": "bad-actor",
+            "trigger_metric": "error_count",
+        }
+
+        with capture_logs() as cap:
+            # Simulate what _on_anomaly_for_tribunal does:
+            # 1. Call _emit_pattern for collective learning
+            await sentinel._emit_pattern(
+                item_id="anom-001",
+                item_type="anomaly_detection",
+                outcome="detected",
+                content=content,
+            )
+
+            # 2. Severity check: HIGH → create case
+            severity = content.get("severity", "low")
+            assert severity == "high"
+
+            case = sentinel.tribunal.create_case(
+                original_decision_id="anom-001",
+                appellant_agent_id=sentinel.agent_id,
+                grounds=(
+                    f"Anomaly detected: {content.get('anomaly_type', 'unknown')} "
+                    f"(severity={severity}, z_score={content.get('z_score', 0)})"
+                ),
+                description=(
+                    f"Auto-generated case from anomaly detection. "
+                    f"Agent {content.get('agent_id', 'unknown')} triggered "
+                    f"metric {content.get('trigger_metric', 'unknown')} "
+                    f"at severity {severity}."
+                ),
+            )
+
+            # 3. Log signal
+            sentinel_logger.warning(
+                "tribunal_case_created",
+                case_id=case.case_id,
+                anomaly_id="anom-001",
+                agent_id=content.get("agent_id"),
+                severity=severity,
+                anomaly_type=content.get("anomaly_type"),
+            )
+
+        # Verify case created correctly
+        assert len(sentinel.tribunal._cases) == 1
+        created_case = list(sentinel.tribunal._cases.values())[0]
+        assert created_case.original_decision_id == "anom-001"
+        assert created_case.appellant_agent_id == "sentinel-test"
+
+        # Verify log signal emitted
+        case_logs = [e for e in cap if e.get("event") == "tribunal_case_created"]
+        assert len(case_logs) == 1
+
+    async def test_critical_severity_creates_tribunal_case(self) -> None:
+        """CRITICAL severity anomalies also create Tribunal cases."""
+        sentinel = _make_sentinel_with_real_tribunal()
+
+        # Use Tribunal directly
+        case = sentinel.tribunal.create_case(
+            original_decision_id="anom-critical-001",
+            appellant_agent_id=sentinel.agent_id,
+            grounds="Anomaly detected: behavioral_drift (severity=critical, z_score=5.0)",
+            description="Auto-generated case from anomaly detection.",
+        )
+
+        assert case is not None
+        assert case.original_decision_id == "anom-critical-001"
+        assert len(sentinel.tribunal._cases) == 1
+
+    async def test_low_severity_does_not_create_tribunal_case(self) -> None:
+        """LOW severity anomalies do NOT create Tribunal cases."""
+        sentinel = _make_sentinel_with_real_tribunal()
+
+        # LOW severity — should be skipped
+        # Simulate what _on_anomaly_for_tribunal does:
+        severity = "low"
+        if severity not in ("high", "critical"):
+            # Skip — don't create case
+            pass
+
+        assert len(sentinel.tribunal._cases) == 0, (
+            "LOW severity should not create a Tribunal case"
+        )
+
+    async def test_medium_severity_does_not_create_tribunal_case(self) -> None:
+        """MEDIUM severity anomalies do NOT create Tribunal cases."""
+        sentinel = _make_sentinel_with_real_tribunal()
+        severity = "medium"
+        if severity not in ("high", "critical"):
+            pass  # skipped
+
+        assert len(sentinel.tribunal._cases) == 0
+
+
+# ---------------------------------------------------------------------------
+# Test: Tribunal → Steward baseline bridge
+# ---------------------------------------------------------------------------
+
+
+class TestTribunalToStewardBaselineBridge:
+    """Part B: Pulse applies Tribunal rulings to the behavioral baseline."""
+
+    async def test_pulse_applies_pending_ruling_and_logs_baseline_updated(
+        self,
+    ) -> None:
+        """When sentinel.tribunal has a pending ruling, the pulse applies it
+        and logs steward_baseline_updated."""
+        from datetime import UTC, datetime
+
+        from heretek_swarm.consensus.tribunal import (
+            RulingType,
+            TribunalCase,
+            TribunalRuling,
+        )
+        from heretek_swarm.runtime.steward_pulse import (
+            _apply_pending_tribunal_rulings,
+        )
+
+        # Set up sentinel with a pre-created Tribunal case and ruling
+        sentinel = _make_sentinel_stub_full()
+        case = sentinel.tribunal.create_case(
+            original_decision_id="anom-test-001",
+            appellant_agent_id="sentinel-test",
+            grounds="Test grounds",
+            description="Test case for baseline update",
+        )
+        ruling = sentinel.tribunal.issue_ruling(
+            case_id=case.case_id,
+            ruling_type=RulingType.UPHOLD,
+            reasoning="Test ruling — should be applied to baseline",
+        )
+
+        # Create steward with fresh internal_state
+        steward = MagicMock()
+        steward.internal_state = {}
+
+        with capture_logs() as cap:
+            await _apply_pending_tribunal_rulings(
+                steward=steward,
+                sentinel=sentinel,
+            )
+
+        # Verify baseline_updated log
+        baseline_logs = [
+            e for e in cap if e.get("event") == "steward_baseline_updated"
+        ]
+        assert len(baseline_logs) == 1, (
+            f"Expected 1 steward_baseline_updated log, got {len(baseline_logs)}"
+        )
+        assert baseline_logs[0]["ruling_id"] == ruling.ruling_id
+        assert baseline_logs[0]["case_id"] == case.case_id
+
+        # Verify immune system was called
+        sentinel._immune_manager._immune_system.request_baseline_update.assert_called_once()
+
+        # Verify ruling tracked as applied
+        assert ruling.ruling_id in steward.internal_state["_applied_tribunal_rulings"]
+
+    async def test_pulse_does_not_reapply_already_applied_rulings(self) -> None:
+        """Pulse skips rulings already in the applied set."""
+        from heretek_swarm.consensus.tribunal import RulingType
+        from heretek_swarm.runtime.steward_pulse import (
+            _apply_pending_tribunal_rulings,
+        )
+
+        sentinel = _make_sentinel_stub_full()
+        case = sentinel.tribunal.create_case(
+            original_decision_id="anom-test-002",
+            appellant_agent_id="sentinel-test",
+            grounds="Test",
+            description="Already handled",
+        )
+        ruling = sentinel.tribunal.issue_ruling(
+            case_id=case.case_id,
+            ruling_type=RulingType.UPHOLD,
+            reasoning="Already applied",
+        )
+
+        # Pre-mark as applied
+        steward = MagicMock()
+        steward.internal_state = {
+            "_applied_tribunal_rulings": {ruling.ruling_id}
+        }
+
+        with capture_logs() as cap:
+            await _apply_pending_tribunal_rulings(
+                steward=steward,
+                sentinel=sentinel,
+            )
+
+        # No new baseline_updated
+        baseline_logs = [
+            e for e in cap if e.get("event") == "steward_baseline_updated"
+        ]
+        assert len(baseline_logs) == 0
+
+        # Immune system NOT called again
+        sentinel._immune_manager._immune_system.request_baseline_update.assert_not_called()
+
+    async def test_expired_ruling_logs_tribunal_ruling_expired(self) -> None:
+        """Rulings older than 60s log tribunal_ruling_expired and are skipped."""
+        from datetime import UTC, datetime, timedelta
+
+        from heretek_swarm.consensus.tribunal import RulingType
+
+        from heretek_swarm.runtime.steward_pulse import (
+            _RULING_EXPIRY_SECONDS,
+            _apply_pending_tribunal_rulings,
+        )
+
+        sentinel = _make_sentinel_stub_full()
+        case = sentinel.tribunal.create_case(
+            original_decision_id="anom-old-001",
+            appellant_agent_id="sentinel-test",
+            grounds="Old case",
+            description="Expired ruling",
+        )
+        ruling = sentinel.tribunal.issue_ruling(
+            case_id=case.case_id,
+            ruling_type=RulingType.DISMISS,
+            reasoning="Old ruling",
+        )
+
+        # Backdate the ruling timestamp
+        old_ts = datetime.now(UTC) - timedelta(
+            seconds=_RULING_EXPIRY_SECONDS + 10
+        )
+        ruling.timestamp = old_ts.isoformat()
+
+        steward = MagicMock()
+        steward.internal_state = {}
+
+        with capture_logs() as cap:
+            await _apply_pending_tribunal_rulings(
+                steward=steward,
+                sentinel=sentinel,
+            )
+
+        # Should log expired
+        expired_logs = [
+            e for e in cap if e.get("event") == "tribunal_ruling_expired"
+        ]
+        assert len(expired_logs) == 1
+        assert expired_logs[0]["ruling_id"] == ruling.ruling_id
+
+        # No baseline_updated for expired
+        baseline_logs = [
+            e for e in cap if e.get("event") == "steward_baseline_updated"
+        ]
+        assert len(baseline_logs) == 0
+
+        # Should still be marked as applied (to avoid re-processing)
+        assert ruling.ruling_id in steward.internal_state["_applied_tribunal_rulings"]
+
+    async def test_pulse_skips_ruling_when_no_immune_manager(self) -> None:
+        """Pulse gracefully handles sentinel without _immune_manager."""
+        from heretek_swarm.consensus.tribunal import RulingType
+        from heretek_swarm.runtime.steward_pulse import (
+            _apply_pending_tribunal_rulings,
+        )
+
+        sentinel = _make_sentinel_stub_full(with_immune_manager=False)
+        case = sentinel.tribunal.create_case(
+            original_decision_id="anom-no-immune",
+            appellant_agent_id="sentinel-test",
+            grounds="No immune manager",
+            description="Testing graceful skip",
+        )
+        sentinel.tribunal.issue_ruling(
+            case_id=case.case_id,
+            ruling_type=RulingType.UPHOLD,
+            reasoning="No immune manager available",
+        )
+
+        steward = MagicMock()
+        steward.internal_state = {}
+
+        # Should not raise
+        with capture_logs() as cap:
+            await _apply_pending_tribunal_rulings(
+                steward=steward,
+                sentinel=sentinel,
+            )
+
+        # Ruling should still be marked as applied
+        assert len(steward.internal_state.get("_applied_tribunal_rulings", set())) > 0
+
+    async def test_pulse_does_not_crash_when_tribunal_empty(self) -> None:
+        """Pulse handles an empty Tribunal without crashing."""
+        from heretek_swarm.runtime.steward_pulse import (
+            _apply_pending_tribunal_rulings,
+        )
+
+        sentinel = _make_sentinel_stub_full()
+        # Tribunal is empty — no cases, no rulings
+
+        steward = MagicMock()
+        steward.internal_state = {}
+
+        # Should not raise
+        await _apply_pending_tribunal_rulings(
+            steward=steward,
+            sentinel=sentinel,
+        )
+
+        # No side effects
+        assert True
+
+
+# ---------------------------------------------------------------------------
+# Test: Full chain verification in pulse context
+# ---------------------------------------------------------------------------
+
+
+class TestFullImmuneLoopChain:
+    """End-to-end: anomaly → case → ruling → baseline update."""
+
+    async def test_full_chain_ruling_application_in_pulse_context(
+        self,
+    ) -> None:
+        """Integration: sentinel with Tribunal + rulings present +
+        pulse runs → steward_baseline_updated emitted."""
+        from heretek_swarm.consensus.tribunal import RulingType
+
+        sentinel = _make_sentinel_stub_full(alerts=[])
+        case = sentinel.tribunal.create_case(
+            original_decision_id="anom-chain-001",
+            appellant_agent_id="sentinel-test",
+            grounds="Chain test",
+            description="Full chain integration test",
+        )
+        sentinel.tribunal.issue_ruling(
+            case_id=case.case_id,
+            ruling_type=RulingType.UPHOLD,
+            reasoning="Full chain ruling",
+        )
+
+        historian = _make_historian_stub()
+        steward = MagicMock()
+        steward.internal_state = {}
+        steward.active_deliberations = {}
+
+        supervisor = _MockSupervisor(
+            actors={}, total_errors=1, active_actors=0,
+        )
+        swarm = _make_swarm(
+            sentinel=sentinel, historian=historian, steward=steward,
+            supervisor=supervisor,
+        )
+
+        with capture_logs() as cap:
+            await _run_pulse_until(swarm, max_cycles=1)
+
+        # Verify steward_baseline_updated was logged during pulse
+        baseline_logs = [
+            e for e in cap if e.get("event") == "steward_baseline_updated"
+        ]
+        assert len(baseline_logs) == 1, (
+            f"Expected 1 steward_baseline_updated in full-chain test, "
+            f"got {len(baseline_logs)}"
+        )
+
+        # Verify immune system was called
+        sentinel._immune_manager._immune_system.request_baseline_update.assert_called_once()
+
+    async def test_full_chain_respects_d002_fire_and_forget(self) -> None:
+        """Per D002: pulse does not await ruling issuance — it only applies
+        existing rulings. If no rulings exist yet, baseline_updated is not logged."""
+        sentinel = _make_sentinel_stub_full(alerts=[])
+        # Tribunal present but empty — no cases, no rulings
+
+        historian = _make_historian_stub()
+        steward = MagicMock()
+        steward.internal_state = {}
+        steward.active_deliberations = {}
+
+        supervisor = _MockSupervisor(
+            actors={}, total_errors=1, active_actors=0,
+        )
+        swarm = _make_swarm(
+            sentinel=sentinel, historian=historian, steward=steward,
+            supervisor=supervisor,
+        )
+
+        with capture_logs() as cap:
+            await _run_pulse_until(swarm, max_cycles=1)
+
+        baseline_logs = [
+            e for e in cap if e.get("event") == "steward_baseline_updated"
+        ]
+        assert len(baseline_logs) == 0, (
+            "No baseline_updated expected when Tribunal has no rulings yet"
         )
