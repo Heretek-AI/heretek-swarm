@@ -5,18 +5,40 @@
 import '@testing-library/jest-dom';
 import { vi } from 'vitest';
 
-// Bridge Jest globals → vitest for pre-existing test files written in Jest style
+// Bridge Jest globals → vitest for pre-existing test files written in Jest style.
+// IMPORTANT: Do NOT overwrite vitest-native globals (describe, it, test, expect,
+// beforeEach, afterEach). Vitest injects those automatically via globals: true.
+//
+// jest.fn(), jest.mock(), jest.spyOn(), jest.clearAllMocks(), etc. are bridged
+// through `(global as any).jest = vi` and manual aliases below for Jest-only APIs.
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 (global as any).jest = vi;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-(global as any).beforeEach = vi.beforeEach;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-(global as any).afterEach = vi.afterEach;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-(global as any).describe = vi.describe;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-(global as any).it = vi.it;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-(global as any).test = vi.test;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-(global as any).expect = vi.expect;
+
+// jest only: jest.requireActual / jest.requireMock → vitest equivalents
+if (!(vi as any).requireActual) {
+  (vi as any).requireActual = vi.importActual;
+}
+if (!(vi as any).requireMock) {
+  (vi as any).requireMock = <T>(path: string): T => {
+    // vitest mocks are hoisted; return the module as-is after mock resolution
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    return require(path) as T;
+  };
+}
+
+// Polyfill localStorage for jsdom — useWebSocket reads from it
+if (typeof globalThis.localStorage === 'undefined') {
+  const store = new Map<string, string>();
+  Object.defineProperty(globalThis, 'localStorage', {
+    value: {
+      getItem: (key: string) => store.get(key) ?? null,
+      setItem: (key: string, value: string) => { store.set(key, value); },
+      removeItem: (key: string) => { store.delete(key); },
+      clear: () => { store.clear(); },
+      get length() { return store.size; },
+      key: (index: number) => [...store.keys()][index] ?? null,
+    },
+    writable: true,
+  });
+}

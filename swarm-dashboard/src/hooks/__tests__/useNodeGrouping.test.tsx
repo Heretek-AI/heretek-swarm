@@ -10,11 +10,16 @@
 
 import { renderHook, act } from '@testing-library/react';
 import { useNodeGrouping, GroupFunction, NodeGroup } from '../useNodeGrouping';
-import { Node } from 'reactflow';
+import { vi } from 'vitest';
+
+// reactflow imports fail in jsdom without this mock
+vi.mock('reactflow', () => ({
+  Node: () => null,
+}));
 
 describe('useNodeGrouping', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should initialize with empty groups', () => {

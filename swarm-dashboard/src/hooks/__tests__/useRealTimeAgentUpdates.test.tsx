@@ -12,24 +12,43 @@
  */
 
 import { renderHook, act, waitFor } from '@testing-library/react';
+import { vi } from 'vitest';
 import { useRealTimeAgentUpdates, useAgentStatus, useWorkflowProgress, useAgentMetrics } from '../useRealTimeAgentUpdates';
+import type { WebSocketMessage } from '../useWebSocket';
+
+// Collect options for test access
+type WsOptions = {
+  onMessage?: (msg: WebSocketMessage) => void;
+  onOpen?: () => void;
+  onClose?: () => void;
+  onError?: (err: Event) => void;
+  reconnectInterval?: number;
+  maxReconnectAttempts?: number;
+};
+
+let lastWsOptions: WsOptions | null = null;
 
 // Mock the useWebSocket hook
-jest.mock('../useWebSocket', () => ({
-  useWebSocket: jest.fn(() => ({
-    connected: true,
-    lastMessage: null,
-    sendMessage: jest.fn(),
-    disconnect: jest.fn(),
-    reconnectAttempts: 0,
-  })),
+vi.mock('../useWebSocket', () => ({
+  useWebSocket: vi.fn((_channel: string, options: WsOptions = {}) => {
+    lastWsOptions = options;
+    return {
+      connected: true,
+      lastMessage: null,
+      sendMessage: vi.fn().mockReturnValue(true),
+      disconnect: vi.fn(),
+      reconnectAttempts: 0,
+    };
+  }),
 }));
 
-const mockUseWebSocket = jest.requireMock('../useWebSocket').useWebSocket;
+import { useWebSocket } from '../useWebSocket';
+const mockUseWebSocket = useWebSocket as ReturnType<typeof vi.fn>;
 
 describe('useRealTimeAgentUpdates', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
+    lastWsOptions = null;
   });
 
   it('should initialize with empty state', () => {
@@ -54,11 +73,7 @@ describe('useRealTimeAgentUpdates', () => {
     };
 
     act(() => {
-      // Simulate receiving message through useWebSocket
-      const mockCallback = mockUseWebSocket.mock.calls[0][1]?.onMessage;
-      if (mockCallback) {
-        mockCallback(agentStatusMessage);
-      }
+      lastWsOptions?.onMessage?.(agentStatusMessage);
     });
 
     expect(result.current.agentStatuses['agent-1']).toEqual({
@@ -82,10 +97,7 @@ describe('useRealTimeAgentUpdates', () => {
     };
 
     act(() => {
-      const mockCallback = mockUseWebSocket.mock.calls[0][1]?.onMessage;
-      if (mockCallback) {
-        mockCallback(progressMessage);
-      }
+      lastWsOptions?.onMessage?.(progressMessage);
     });
 
     expect(result.current.workflowProgress['workflow-1']).toEqual({
@@ -112,10 +124,7 @@ describe('useRealTimeAgentUpdates', () => {
     };
 
     act(() => {
-      const mockCallback = mockUseWebSocket.mock.calls[0][1]?.onMessage;
-      if (mockCallback) {
-        mockCallback(metricsMessage);
-      }
+      lastWsOptions?.onMessage?.(metricsMessage);
     });
 
     expect(result.current.agentMetrics['agent-1']).toEqual({
@@ -144,12 +153,9 @@ describe('useRealTimeAgentUpdates', () => {
 
     // Send multiple messages rapidly
     act(() => {
-      const mockCallback = mockUseWebSocket.mock.calls[0][1]?.onMessage;
-      if (mockCallback) {
-        mockCallback(agentStatusMessage);
-        mockCallback({ ...agentStatusMessage, status: 'idle' });
-        mockCallback({ ...agentStatusMessage, status: 'processing' });
-      }
+      lastWsOptions?.onMessage?.(agentStatusMessage);
+      lastWsOptions?.onMessage?.({ ...agentStatusMessage, status: 'idle' });
+      lastWsOptions?.onMessage?.({ ...agentStatusMessage, status: 'processing' });
     });
 
     // Should have processed at least one update
@@ -160,8 +166,8 @@ describe('useRealTimeAgentUpdates', () => {
     mockUseWebSocket.mockReturnValueOnce({
       connected: false,
       lastMessage: null,
-      sendMessage: jest.fn(),
-      disconnect: jest.fn(),
+      sendMessage: vi.fn(),
+      disconnect: vi.fn(),
       reconnectAttempts: 2,
     });
 
@@ -172,11 +178,11 @@ describe('useRealTimeAgentUpdates', () => {
   });
 
   it('should provide disconnect function', () => {
-    const mockDisconnect = jest.fn();
+    const mockDisconnect = vi.fn();
     mockUseWebSocket.mockReturnValueOnce({
       connected: true,
       lastMessage: null,
-      sendMessage: jest.fn(),
+      sendMessage: vi.fn(),
       disconnect: mockDisconnect,
       reconnectAttempts: 0,
     });
@@ -191,12 +197,12 @@ describe('useRealTimeAgentUpdates', () => {
   });
 
   it('should provide sendMessage function', () => {
-    const mockSendMessage = jest.fn().mockReturnValue(true);
+    const mockSendMessage = vi.fn().mockReturnValue(true);
     mockUseWebSocket.mockReturnValueOnce({
       connected: true,
       lastMessage: null,
       sendMessage: mockSendMessage,
-      disconnect: jest.fn(),
+      disconnect: vi.fn(),
       reconnectAttempts: 0,
     });
 
@@ -215,7 +221,8 @@ describe('useRealTimeAgentUpdates', () => {
 
 describe('useAgentStatus', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
+    lastWsOptions = null;
   });
 
   it('should return only agent statuses', () => {
@@ -229,7 +236,8 @@ describe('useAgentStatus', () => {
 
 describe('useWorkflowProgress', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
+    lastWsOptions = null;
   });
 
   it('should return only workflow progress', () => {
@@ -243,7 +251,8 @@ describe('useWorkflowProgress', () => {
 
 describe('useAgentMetrics', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
+    lastWsOptions = null;
   });
 
   it('should return only agent metrics', () => {

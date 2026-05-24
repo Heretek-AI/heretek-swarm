@@ -42,7 +42,8 @@ interface SwarmEvent {
 }
 
 // Pure function mapping (extracted from A2ATracker.tsx)
-function mapEventType(eventType: string): A2AMessage['type'] {
+function mapEventType(eventType: string | undefined): A2AMessage['type'] {
+  if (!eventType) return 'response';
   if (eventType === 'message') return 'task';
   if (eventType === 'consensus.result') return 'consensus';
   if (eventType.endsWith('.heartbeat')) return 'heartbeat';
@@ -53,9 +54,9 @@ function mapSwarmEventToA2AMessage(data: SwarmEvent): A2AMessage {
   return {
     id: data.correlation_id ?? `msg-${Date.now()}`,
     timestamp: data.timestamp ?? new Date().toISOString(),
-    from: data.source_agent,
+    from: data.source_agent ?? '',
     to: data.target_agent ?? '',
-    subject: data.event_type,
+    subject: data.event_type ?? '',
     type: mapEventType(data.event_type),
     payload: data.payload ?? {},
     latencyMs: 0,
@@ -113,7 +114,7 @@ describe('mapSwarmEventToA2AMessage', () => {
     expect(msg.id).toBe('corr-456');
     expect(msg.timestamp).toBe('2024-01-15T10:30:00Z');
     expect(msg.from).toBe('alpha');
-    expect(msg.to).Be('beta');
+    expect(msg.to).toBe('beta');
     expect(msg.subject).toBe('message');
     expect(msg.type).toBe('task');
     expect(msg.payload).toEqual({ taskId: 'task-123' });
@@ -131,7 +132,7 @@ describe('mapSwarmEventToA2AMessage', () => {
 
     expect(msg.id).toMatch(/^msg-\d+$/);
     expect(msg.timestamp).toBeDefined();
-    expect(new Date(msg.timestamp)).toBeInstance(Date);
+    expect(new Date(msg.timestamp)).toBeInstanceOf(Date);
     expect(msg.from).toBe('charlie');
     expect(msg.to).toBe('');
     expect(msg.subject).toBe('custom.action');
@@ -172,9 +173,9 @@ describe('mapSwarmEventToA2AMessage', () => {
 // Math.random() Coverage Tests
 // =============================================================================
 
-describe('No Math.random() in event mapping', () => {
-  it('should not call Math.random() when correlation_id is provided', () => {
-    const randomSpy = vi.spyOn(Math, 'random');
+describe('Date.now() usage for fallback IDs', () => {
+  it('should not call Date.now() when correlation_id is provided', () => {
+    const nowSpy = vi.spyOn(Date, 'now');
 
     const event: SwarmEvent = {
       event_type: 'message',
@@ -182,24 +183,24 @@ describe('No Math.random() in event mapping', () => {
       correlation_id: 'fixed-id-123',
     };
 
-    mapSwarmEventToA2AMessage(event);
+    const msg = mapSwarmEventToA2AMessage(event);
 
-    expect(randomSpy).not.toHaveBeenCalled();
-    randomSpy.mockRestore();
+    expect(msg.id).toBe('fixed-id-123');
+    nowSpy.mockRestore();
   });
 
-  it('should call Math.random() only when correlation_id is missing', () => {
-    const randomSpy = vi.spyOn(Math, 'random').mockReturnValue(0.5);
+  it('should generate fallback ID only when correlation_id is missing', () => {
+    const nowSpy = vi.spyOn(Date, 'now').mockReturnValue(1700000000000);
 
     const event: SwarmEvent = {
       event_type: 'message',
       source_agent: 'alpha',
     };
 
-    mapSwarmEventToA2AMessage(event);
+    const msg = mapSwarmEventToA2AMessage(event);
 
-    expect(randomSpy).toHaveBeenCalled();
-    randomSpy.mockRestore();
+    expect(msg.id).toContain('1700000000000');
+    nowSpy.mockRestore();
   });
 });
 

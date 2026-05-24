@@ -11,19 +11,27 @@
  * Run: npm install -D @testing-library/react vitest @testing-library/jest-dom
  */
 
+import { vi } from 'vitest';
+import { renderHook, act, waitFor } from '@testing-library/react';
+
+// reactflow Position enum used directly in test assertions — mock it
+vi.mock('reactflow', () => ({
+  Position: { Top: 'top', Bottom: 'bottom', Left: 'left', Right: 'right' },
+}));
 import { Position } from 'reactflow';
 
 import {
   getHandleColor,
   getHandlePosition,
+  useAgentHandles,
   type AgentHandle,
   type ChannelType,
   type ChannelSubscription,
 } from '../useAgentHandles';
 
-// Mock fetch globally
-const mockFetch: jest.Mock = jest.fn();
-(typeof global as any).fetch = mockFetch;
+// Mock fetch globally — use vi.stubGlobal to bypass jsdom readonly protection
+const mockFetch = vi.fn();
+vi.stubGlobal('fetch', mockFetch);
 
 // =============================================================================
 // getHandleColor Tests
