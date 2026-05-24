@@ -180,6 +180,147 @@ class DeliberationOrchestrator:
             beta_count=len(results.get("beta", {}).get("analyses", [])),
             charlie_count=len(results.get("charlie", {}).get("challenges", [])),
         )
+
+        # --- Specialist handoff to Coder (best-effort) -----------------------
+        # Synthesize a task description from the triad results and route to
+        # Coder for implementation.  The handoff is best-effort: if Coder is
+        # unavailable, the route fails, or the task times out, we log
+        # ``specialist_handoff_failed`` and still return triad results.
+        # --------------------------------------------------------------------
+        coder = supervisor_actors.get("coder")
+        if coder is not None:
+            try:
+                # Build a structured task from the triad's collective output.
+                alpha_analyses = results.get("alpha", {}).get("analyses", [])
+                beta_validations = results.get("beta", {}).get("analyses", [])
+                charlie_challenges = results.get("charlie", {}).get("challenges", [])
+
+                requirements: list[str] = []
+                for entry in alpha_analyses[-2:]:
+                    if isinstance(entry, dict):
+                        for key in ("decision", "analysis", "summary"):
+                            if key in entry:
+                                requirements.append(f"Alpha {key}: {entry[key]}")
+                                break
+                for entry in beta_validations[-2:]:
+                    if isinstance(entry, dict):
+                        for key in ("analysis", "validation", "decision"):
+                            if key in entry:
+                                requirements.append(f"Beta {key}: {entry[key]}")
+                                break
+                for entry in charlie_challenges[-2:]:
+                    if isinstance(entry, dict):
+                        if "challenges" in entry:
+                            requirements.append(f"Charlie flags: {entry['challenges']}")
+                        elif "challenge" in entry:
+                            requirements.append(f"Charlie: {entry['challenge']}")
+
+                task_data: dict[str, Any] = {
+                    "description": prompt,
+                    "requirements": requirements if requirements else ["Implement as described"],
+                    "language": "python",
+                    "include_tests": True,
+                    "include_docs": True,
+                }
+
+                logger.info(
+                    "specialist_handoff_initiated",
+                    target_agent="coder",
+                    task_type="implement_task",
+                    prompt_preview=prompt[:200],
+                )
+
+                # Record pre-counter *before* route_to_agent so we can
+                # detect the increment when Coder processes the task.
+                pre_counter: int = getattr(coder, "_task_counter", 0)
+
+                message_id = await steward.route_to_agent(
+                    agent_name="coder",
+                    task_type="implement_task",
+                    task_data=task_data,
+                )
+
+                if not message_id:
+                    logger.warning(
+                        "specialist_handoff_failed",
+                        reason="route_to_agent returned empty",
+                    )
+                else:
+                    # Poll Coder for task completion using _task_counter
+                    # increment (same 0.5 s pattern as triad polling).
+                    # pre_counter was recorded before route_to_agent.
+                    # Use up to half the overall timeout, at least 5s,
+                    # capped at 60s.
+                    coder_timeout = min(max(timeout / 2, 5), 60)
+                    coder_elapsed = 0.0
+                    coder_done = False
+
+                    while coder_elapsed < coder_timeout:
+                        await asyncio.sleep(interval)
+                        coder_elapsed += interval
+                        # Re-fetch coder from the registry each iteration
+                        # to reflect any in-place mutations.
+                        coder = supervisor_actors.get("coder")
+                        if coder is None:
+                            break
+                        post_counter = getattr(coder, "_task_counter", 0)
+                        coder_done = isinstance(post_counter, int) and post_counter > pre_counter
+                        if coder_done:
+                            break
+
+                    if coder_done:
+                        # Collect output from Coder's _tasks and _code_snippets.
+                        tasks: dict = getattr(coder, "_tasks", {})
+                        snippets: dict = getattr(coder, "_code_snippets", {})
+
+                        specialist_output: dict[str, Any] = {}
+                        if tasks:
+                            last_key = sorted(tasks.keys())[-1]
+                            last_task = tasks[last_key]
+                            specialist_output = {
+                                "task_id": getattr(last_task, "id", last_key),
+                                "status": getattr(last_task, "status", "unknown"),
+                                "code": getattr(last_task, "generated_code", ""),
+                                "tests": getattr(last_task, "tests", None),
+                                "documentation": getattr(last_task, "documentation", None),
+                            }
+
+                        # Fallback: use latest code snippet if task output is empty.
+                        if not specialist_output.get("code") and snippets:
+                            last_key = sorted(snippets.keys())[-1]
+                            last_snippet = snippets[last_key]
+                            specialist_output = {
+                                "code": getattr(last_snippet, "code", ""),
+                                "language": str(getattr(last_snippet, "language", "")),
+                                "purpose": getattr(last_snippet, "purpose", ""),
+                            }
+
+                        results["specialist_output"] = specialist_output
+
+                        logger.info(
+                            "specialist_handoff_complete",
+                            target_agent="coder",
+                            elapsed=round(coder_elapsed, 1),
+                            has_code=bool(specialist_output.get("code")),
+                        )
+                    else:
+                        logger.warning(
+                            "specialist_handoff_failed",
+                            reason="Coder task timed out",
+                            elapsed=round(coder_elapsed, 1),
+                        )
+
+            except Exception as exc:
+                logger.warning(
+                    "specialist_handoff_failed",
+                    reason=str(exc),
+                )
+        else:
+            logger.info(
+                "specialist_handoff_failed",
+                reason="Coder agent not in supervisor.actors",
+            )
+
         return results
 
     async def run_consensus(

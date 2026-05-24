@@ -216,3 +216,160 @@ class TestRunDeliberation:
             assert result["charlie"]["challenges"] == []
         finally:
             await _teardown_swarm(swarm)
+
+    # ------------------------------------------------------------------
+    # Test 5: Specialist handoff — Coder receives task from triad results
+    # ------------------------------------------------------------------
+
+    @staticmethod
+    async def test_specialist_handoff_to_coder() -> None:
+        """When Coder is available in ``supervisor.actors``, the result
+        dict includes a ``specialist_output`` key with the Coder's
+        implementation output."""
+        swarm = AutonomousSwarm(no_infra=True)
+        try:
+            await swarm.initialize()
+            swarm.supervisor.actors.clear()
+            _get_supervisor().actors.clear()
+
+            steward = MagicMock()
+            steward.coordinate_triad = AsyncMock(return_value="delib-005")
+
+            alpha = MagicMock()
+            alpha.analysis_history = [{"decision": "build_string_reverser"}]
+            beta = MagicMock()
+            beta._analyses = {"delib-005": {"analysis": {"decision": "validated"}}}
+            charlie = MagicMock()
+            charlie._challenges = {"delib-005": {"challenges": ["check_edge_cases"]}}
+
+            coder = MagicMock()
+            coder._task_counter = 0
+            task_mock = MagicMock()
+            task_mock.id = "task_1"
+            task_mock.status = "completed"
+            task_mock.generated_code = "def reverse(s): return s[::-1]"
+            task_mock.tests = "def test_reverse(): pass"
+            task_mock.documentation = "Reverse a string."
+            coder._tasks = {"task_1": task_mock}
+            coder._code_snippets = {}
+
+            async def _fake_route(**kwargs: object) -> str:
+                coder._task_counter += 1
+                return "msg-005"
+
+            steward.route_to_agent = AsyncMock(side_effect=_fake_route)
+
+            swarm.supervisor.actors.update(
+                {
+                    "steward": steward,
+                    "alpha": alpha,
+                    "beta": beta,
+                    "charlie": charlie,
+                    "coder": coder,
+                }
+            )
+
+            result = await swarm.run_deliberation("test prompt", timeout=2)
+
+            assert "specialist_output" in result
+            specialist = result["specialist_output"]
+            assert specialist["task_id"] == "task_1"
+            assert specialist["status"] == "completed"
+            assert "reverse" in specialist["code"]
+            assert specialist["tests"] is not None
+            assert specialist["documentation"] == "Reverse a string."
+            # Triad results still present
+            assert "alpha" in result
+            assert "beta" in result
+            assert "charlie" in result
+        finally:
+            await _teardown_swarm(swarm)
+
+    # ------------------------------------------------------------------
+    # Test 6: Specialist handoff — no Coder, no error
+    # ------------------------------------------------------------------
+
+    @staticmethod
+    async def test_specialist_handoff_coder_absent() -> None:
+        """When Coder is absent from ``supervisor.actors``, triad results
+        are returned normally and no ``specialist_output`` key is present."""
+        swarm = AutonomousSwarm(no_infra=True)
+        try:
+            await swarm.initialize()
+            swarm.supervisor.actors.clear()
+            _get_supervisor().actors.clear()
+
+            steward = MagicMock(spec=StewardAgent)
+            steward.coordinate_triad = AsyncMock(return_value="delib-006")
+            alpha = MagicMock()
+            alpha.analysis_history = [{"decision": "alpha_ok"}]
+            beta = MagicMock()
+            beta._analyses = {"delib-006": {"analysis": {"decision": "beta_ok"}}}
+            charlie = MagicMock()
+            charlie._challenges = {"delib-006": {"challenges": ["red_flag"]}}
+
+            swarm.supervisor.actors.update(
+                {
+                    "steward": steward,
+                    "alpha": alpha,
+                    "beta": beta,
+                    "charlie": charlie,
+                }
+            )
+
+            result = await swarm.run_deliberation("test prompt", timeout=0.01)
+
+            assert "specialist_output" not in result
+            assert "alpha" in result
+            assert "beta" in result
+            assert "charlie" in result
+            assert result["alpha"]["analyses"] == [{"decision": "alpha_ok"}]
+        finally:
+            await _teardown_swarm(swarm)
+
+    # ------------------------------------------------------------------
+    # Test 7: Specialist handoff — route_to_agent returns empty
+    # ------------------------------------------------------------------
+
+    @staticmethod
+    async def test_specialist_handoff_route_fails() -> None:
+        """When ``route_to_agent`` returns an empty message ID, the handoff
+        is logged as failed but triad results are still returned without
+        ``specialist_output``."""
+        swarm = AutonomousSwarm(no_infra=True)
+        try:
+            await swarm.initialize()
+            swarm.supervisor.actors.clear()
+            _get_supervisor().actors.clear()
+
+            steward = MagicMock(spec=StewardAgent)
+            steward.coordinate_triad = AsyncMock(return_value="delib-007")
+            steward.route_to_agent = AsyncMock(return_value="")
+
+            alpha = MagicMock()
+            alpha.analysis_history = [{"decision": "alpha_ok"}]
+            beta = MagicMock()
+            beta._analyses = {"delib-007": {"analysis": {"decision": "validated"}}}
+            charlie = MagicMock()
+            charlie._challenges = {"delib-007": {"challenges": ["red_flag"]}}
+
+            coder = MagicMock()
+            coder._task_counter = 0
+
+            swarm.supervisor.actors.update(
+                {
+                    "steward": steward,
+                    "alpha": alpha,
+                    "beta": beta,
+                    "charlie": charlie,
+                    "coder": coder,
+                }
+            )
+
+            result = await swarm.run_deliberation("test prompt", timeout=0.01)
+
+            assert "specialist_output" not in result
+            assert "alpha" in result
+            assert "beta" in result
+        finally:
+            await _teardown_swarm(swarm)
