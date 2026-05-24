@@ -17,7 +17,7 @@ class Severity(Enum):
         swallowing, never-true conditionals.
 
     INFO: Code style concerns, maintainability hints, or documentation gaps.
-        Examples: duplicate definitions, TODO comments, complexity concerns.
+        Examples: duplicate definitions, to-do comments, complexity concerns.
     """
 
     CRITICAL = auto()

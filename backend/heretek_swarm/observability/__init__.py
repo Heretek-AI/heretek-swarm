@@ -50,8 +50,8 @@ HERETEK_LOGS_DIR = HERETEK_DATA_DIR / "logs"
 try:
     HERETEK_LOGS_DIR.mkdir(parents=True, exist_ok=True)
 except PermissionError:
-    # Container / restricted environment — use /tmp fallback
-    HERETEK_DATA_DIR = Path("/tmp/.heretek-swarm")
+    # Container / restricted environment - use /tmp fallback
+    HERETEK_DATA_DIR = Path("/tmp/.heretek-swarm")  # noqa: S108
     HERETEK_LOGS_DIR = HERETEK_DATA_DIR / "logs"
     HERETEK_LOGS_DIR.mkdir(parents=True, exist_ok=True)
 

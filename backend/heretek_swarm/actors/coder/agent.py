@@ -138,7 +138,7 @@ class CoderAgent(
         """
         payload: dict[str, Any] = message.content if isinstance(message.content, dict) else {}
         logger.info(
-            f"[{self.agent_id}] route_task handler invoked",
+            "[%s] route_task handler invoked", self.agent_id,
             extra={
                 "sender": message.sender,
                 "task_type": payload.get("task_type"),
@@ -201,7 +201,7 @@ class CoderAgent(
         handler = self.get_handlers().get(handler_key)
         if handler is None:
             logger.error(
-                f"[{self.agent_id}] Handler {handler_key} not registered",  # noqa: G004
+                "[%s] Handler %s not registered", self.agent_id, handler_key,
                 extra={"task_type": task_type},
             )
             return {"status": "error", "error": f"Handler {handler_key} not available"}

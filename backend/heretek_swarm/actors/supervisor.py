@@ -14,8 +14,8 @@ from typing import Any, Optional
 import structlog
 
 from heretek_swarm.actors.base import ActorState, ActorStatus, AgentActor
-from heretek_swarm.actors.factory import ActorConfig
 from heretek_swarm.actors.circuit_breaker import TierCircuitBreaker
+from heretek_swarm.actors.factory import ActorConfig
 from heretek_swarm.actors.mixins import (
     AuditMixin,
     HealthReportingMixin,

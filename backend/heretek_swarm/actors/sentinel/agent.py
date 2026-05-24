@@ -207,7 +207,6 @@ class SentinelAgent(
                 ),
             )
 
-            # Signal: tribunal_case_created
             logger.warning(
                 "tribunal_case_created",
                 case_id=case.case_id,
@@ -373,7 +372,8 @@ class SentinelAgent(
             content = message.content
             anomaly_id = content.get("anomaly_id")
             if not anomaly_id:
-                await self._send_error(message, "Missing anomaly_id"); return
+                await self._send_error(message, "Missing anomaly_id")
+                return
             outcome = ResponseOutcome(content.get("outcome", "success"))
             result = await self.report_response_outcome(anomaly_id, outcome)
             await self._send_response(message, {
@@ -387,7 +387,8 @@ class SentinelAgent(
             content = message.content
             pc = content.get("pattern_content", {})
             if not pc:
-                await self._send_error(message, "Missing pattern_content"); return
+                await self._send_error(message, "Missing pattern_content")
+                return
             classification, confidence = self.check_pattern_immunity(pc)
             await self._send_response(message, {
                 "classification": classification.value, "confidence": confidence,
@@ -413,7 +414,8 @@ class SentinelAgent(
                 c.get("disposition"), c.get("notes"),
             )
             if not all([pid, rid, disp]):
-                await self._send_error(message, "Missing required fields"); return
+                await self._send_error(message, "Missing required fields")
+                return
             result = await self.submit_human_review(
                 preservation_id=pid, reviewer_id=rid,
                 disposition=disp, notes=notes,
@@ -445,7 +447,8 @@ class SentinelAgent(
                 c.get("request_id"), c.get("agent_id"), c.get("approve", True),
             )
             if not all([rid, aid]):
-                await self._send_error(message, "Missing required fields"); return
+                await self._send_error(message, "Missing required fields")
+                return
             result = self.submit_baseline_vote(rid, aid, approve)
             await self._send_response(message, {
                 "request_id": rid, "vote_recorded": result,
@@ -459,7 +462,8 @@ class SentinelAgent(
             c = message.content
             agent_id = c.get("agent_id")
             if not agent_id:
-                await self._send_error(message, _MISSING_AGENT_ID); return
+                await self._send_error(message, _MISSING_AGENT_ID)
+                return
             alerts = await self.monitor_agent_behavior(
                 agent_id, c.get("metrics", {}), c.get("context"),
             )
@@ -484,7 +488,8 @@ class SentinelAgent(
             c = message.content
             agent_id = c.get("agent_id")
             if not agent_id:
-                await self._send_error(message, _MISSING_AGENT_ID); return
+                await self._send_error(message, _MISSING_AGENT_ID)
+                return
             alert = await self.check_agent_rate(
                 agent_id, c.get("current_rate", 0.0), c.get("time_window", 1.0),
             )
@@ -510,7 +515,8 @@ class SentinelAgent(
             c = message.content
             agent_id = c.get("agent_id")
             if not agent_id:
-                await self._send_error(message, _MISSING_AGENT_ID); return
+                await self._send_error(message, _MISSING_AGENT_ID)
+                return
             alert = await self.check_agent_response_time(
                 agent_id, c.get("response_time_ms", 0.0),
             )
@@ -536,7 +542,8 @@ class SentinelAgent(
             c = message.content
             agent_id = c.get("agent_id")
             if not agent_id:
-                await self._send_error(message, _MISSING_AGENT_ID); return
+                await self._send_error(message, _MISSING_AGENT_ID)
+                return
             alert = await self.check_agent_validation(
                 agent_id, c.get("validation_success", True),
                 c.get("failure_reason"),
@@ -562,7 +569,8 @@ class SentinelAgent(
         try:
             anomaly_id = message.content.get("anomaly_id")
             if not anomaly_id:
-                await self._send_error(message, "Missing anomaly_id"); return
+                await self._send_error(message, "Missing anomaly_id")
+                return
             found = await self.report_false_positive(anomaly_id)
             await self._send_response(message, {
                 "anomaly_id": anomaly_id, "recorded": found,
@@ -750,7 +758,8 @@ class SentinelAgent(
             c = message.content
             violation_id = c.get("violation_id")
             if not violation_id:
-                await self._send_error(message, "Missing violation_id"); return
+                await self._send_error(message, "Missing violation_id")
+                return
             validate_message({
                 "sender_id": message.sender_id,
                 "message_type": "get_violation_details",

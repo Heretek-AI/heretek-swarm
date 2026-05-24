@@ -144,8 +144,6 @@ class AnomalyMonitor:
         Returns:
             List of anomaly alerts (empty if no anomalies detected).
         """
-        from heretek_swarm.actors.sentinel.types import AnomalyAlert
-
         alerts: list[AnomalyAlert] = []
 
         # Analyze behavior

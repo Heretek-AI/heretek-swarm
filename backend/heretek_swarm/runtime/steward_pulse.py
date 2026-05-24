@@ -83,13 +83,13 @@ async def _run_anomaly_scan(
                         timeout=_ANOMALY_SCAN_TIMEOUT,
                     )
                     alert_count += len(alerts)
-                except asyncio.TimeoutError:
+                except TimeoutError:
                     logger.debug(
                         "steward_pulse_anomaly_scan_timeout_per_actor",
                         agent_id=actor_id,
                         timeout_s=_ANOMALY_SCAN_TIMEOUT,
                     )
-    except asyncio.TimeoutError:
+    except TimeoutError:
         logger.debug(
             "steward_pulse_anomaly_scan_timeout",
             timeout_s=_ANOMALY_SCAN_TIMEOUT,

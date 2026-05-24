@@ -126,10 +126,5 @@ class ApiResponse:
             "latency_ms": self.latency_ms,
         }
 
-# Import uuid only for ApiResponse.request_id default factory
-import uuid  # noqa: E402
-
-import structlog
-
 logger = structlog.get_logger(__name__)
 

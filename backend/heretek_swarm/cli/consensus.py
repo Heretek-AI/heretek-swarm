@@ -91,7 +91,12 @@ async def _run_consensus(
     ),
 )
 @click.argument("question")
-@click.option("--timeout", default=120, type=float, help="Consensus timeout in seconds (default: 120)")
+@click.option(
+    "--timeout",
+    default=120,
+    type=float,
+    help="Consensus timeout in seconds (default: 120)",
+)
 @click.option(
     "--participants",
     default=None,

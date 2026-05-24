@@ -58,8 +58,8 @@ from heretek_swarm.api import (  # noqa: E402
     wizard,
     workflows,
 )
-from heretek_swarm.api.websockets import manager  # noqa: E402
 from heretek_swarm.api.rate_limiting import setup_rate_limiting  # noqa: E402
+from heretek_swarm.api.websockets import manager  # noqa: E402
 from heretek_swarm.config.loader import (  # noqa: E402
     get_config,
     initialize_config_loader,
@@ -69,6 +69,7 @@ from heretek_swarm.config.service import (  # noqa: E402
     initialize_config_service,
     shutdown_config_service,
 )
+from heretek_swarm.consensus.deliberation import Position  # noqa: E402
 from heretek_swarm.gateway.auth import verify_auth  # noqa: E402
 from heretek_swarm.gateway.nats_event_mesh import NATSEventMesh  # noqa: E402
 from heretek_swarm.mcp.server import router as mcp_router  # noqa: E402
@@ -1325,9 +1326,6 @@ def _synthesize_fallback(opinions: list[dict[str, Any]]) -> str:
         f"Deliberation inconclusive: {support_count}/{total} agents favor. "
         "Further rounds may be needed to resolve divergent positions."
     )
-
-
-from heretek_swarm.consensus.deliberation import Position
 
 
 

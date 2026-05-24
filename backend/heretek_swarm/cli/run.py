@@ -246,7 +246,10 @@ def _build_config(nats_url: str, no_infra: bool) -> dict[str, Any]:
 @click.option(
     "--no-infra",
     is_flag=True,
-    help="Skip external infrastructure connections (Postgres, Redis, Qdrant, NATS); use in-memory state only",
+    help=(
+        "Skip external infrastructure connections (Postgres, Redis, Qdrant, NATS); "
+        "use in-memory state only"
+    ),
 )
 @click.option(
     "--prompt",

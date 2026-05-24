@@ -20,7 +20,7 @@ import webbrowser
 from importlib.metadata import PackageNotFoundError
 from importlib.metadata import version as _get_version
 from pathlib import Path
-from typing import Any
+from typing import Any, ClassVar
 
 import click
 
@@ -36,7 +36,7 @@ except PackageNotFoundError:
 class GroupedGroup(click.Group):
     """Custom Click group that organizes commands into labeled sections."""
 
-    COMMAND_GROUPS: dict[str, list[str]] = {
+    COMMAND_GROUPS: ClassVar[dict[str, list[str]]] = {
         "Core Operations": ["run", "serve", "deploy", "wizard", "consensus"],
         "Configuration": ["config", "init"],
         "Monitoring": ["status", "stop"],
@@ -134,11 +134,7 @@ from heretek_swarm.cli.config import config  # noqa: E402
 cli.add_command(config)
 
 # --- Monitoring ---
-import structlog
-
 from heretek_swarm.cli.status import status  # noqa: E402
-
-logger = structlog.get_logger(__name__)
 
 cli.add_command(status)
 

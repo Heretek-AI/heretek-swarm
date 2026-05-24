@@ -173,9 +173,9 @@ def _write_pid_file(pid_file: Path) -> None:
         existing = read_pid_file(pid_file)
         if existing is not None and _is_pid_alive(existing):
             raise DaemonError(
-                f"PID file {pid_file} exists with active PID {existing} — "
+                f"PID file {pid_file} exists with active PID {existing} - "
                 "another daemon is already running"
-            )
+            ) from None
         # Stale PID — overwrite.
         pid_file.write_text(str(os.getpid()))
     logger.info("pid_file_written", path=str(pid_file), pid=os.getpid())
