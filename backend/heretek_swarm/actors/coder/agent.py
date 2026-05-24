@@ -126,7 +126,26 @@ class CoderAgent(
             "refactor_code": self._handle_refactor_code,
             "explain_code": self._handle_explain_code,
             "implement_task": self._handle_implement_task,
+            "route_task": self._handle_route_task,
         }
+
+    async def _handle_route_task(self, message: ActorMessage) -> dict[str, Any]:
+        """
+        Handle a route_task message by delegating to _process_route_task.
+
+        Extracts the payload from ``message.content`` and passes it to
+        :meth:`_process_route_task`.
+        """
+        payload: dict[str, Any] = message.content if isinstance(message.content, dict) else {}
+        logger.info(
+            f"[{self.agent_id}] route_task handler invoked",
+            extra={
+                "sender": message.sender,
+                "task_type": payload.get("task_type"),
+                "correlation_id": message.correlation_id,
+            },
+        )
+        return await self._process_route_task(payload)
 
     async def _process_route_task(
         self,

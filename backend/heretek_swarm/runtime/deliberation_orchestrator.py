@@ -82,23 +82,68 @@ class DeliberationOrchestrator:
             # which goes into the topic routing system. The message chain:
             #   coordinate_triad → send("triad", start_deliberation) →
             #   _deliver_to_registry_actors → Steward owns "triad" topic
-            deliberation_id = await steward.coordinate_triad(
+            deliberation_record = await steward.coordinate_triad(
                 topic=prompt,
                 triad_members=["alpha", "beta", "charlie"],
             )
+            # coordinate_triad returns a dict (real code) or a string (mock).
+            # Normalise to a string key used by Beta._analyses / Charlie._challenges.
+            delib_id: str = (
+                deliberation_record
+                if isinstance(deliberation_record, str)
+                else deliberation_record.get("session_id", "")
+            )
             logger.info(
                 "deliberation_initiated",
-                deliberation_id=deliberation_id,
+                deliberation_id=delib_id,
             )
 
-            # Wait for async mailbox processing to complete across all agents.
-            # The message chain is: Steward mailbox → _handle_start_deliberation
-            # → send_to_actor(member, deliberation_request) → each member mailbox
-            # → _handle_deliberation_request → _perform_analysis() →
-            # run_with_llm() (60s timeout per agent). We sleep generously since
-            # the method-level timeout param caps total wall time.
-            sleep_time = min(timeout, 120)
-            await asyncio.sleep(sleep_time)
+            # Poll at 0.5 s intervals for per-agent completion instead of
+            # sleeping the full timeout.  Each agent writes to its own state
+            # attribute once its async handler finishes:
+            #   Alpha → analysis_history (list)
+            #   Beta  → _analyses[delib_id]
+            #   Charlie → _challenges[delib_id]
+            elapsed = 0.0
+            interval = 0.5
+            while elapsed < timeout:
+                await asyncio.sleep(interval)
+                elapsed += interval
+
+                alpha = supervisor_actors.get("alpha")
+                beta = supervisor_actors.get("beta")
+                charlie = supervisor_actors.get("charlie")
+
+                alpha_done = (
+                    len(getattr(alpha, "analysis_history", [])) > 0
+                    if alpha
+                    else False
+                )
+                beta_done = (
+                    delib_id in getattr(beta, "_analyses", {})
+                    if beta and delib_id
+                    else False
+                )
+                charlie_done = (
+                    delib_id in getattr(charlie, "_challenges", {})
+                    if charlie and delib_id
+                    else False
+                )
+
+                logger.info(
+                    "deliberation_polling",
+                    elapsed=round(elapsed, 1),
+                    alpha_done=alpha_done,
+                    beta_done=beta_done,
+                    charlie_done=charlie_done,
+                )
+
+                if alpha_done and beta_done and charlie_done:
+                    logger.info(
+                        "deliberation_all_agents_complete",
+                        elapsed=round(elapsed, 1),
+                    )
+                    break
 
         except TimeoutError:
             logger.warning("deliberation_timeout", prompt=prompt)
@@ -338,10 +383,56 @@ class DeliberationOrchestrator:
             message_id=message_id,
         )
 
-        # Best-effort wait for async mailbox processing (same sleep pattern
-        # as run_deliberation()).
-        sleep_time = min(timeout, 30)
-        await asyncio.sleep(sleep_time)
+        # Poll at 0.5 s intervals for the target agent to process the
+        # routed task.  For Coder we watch _task_counter increment; for
+        # other agents we check a generic state attribute.  Timeout at
+        # the configured limit; return partial/empty results on timeout.
+        target_agent = supervisor_actors.get(agent_name)
+        pre_counter: int | None = None
+        if target_agent is not None:
+            pre_counter = getattr(target_agent, "_task_counter", None)
+            if isinstance(pre_counter, int):
+                # Initial counter — task is complete when it increases.
+                pass
+            else:
+                # Fallback: track _last_analysis / _last_challenge presence.
+                pass
+
+        elapsed = 0.0
+        interval = 0.5
+        while elapsed < timeout:
+            await asyncio.sleep(interval)
+            elapsed += interval
+
+            target = supervisor_actors.get(agent_name)
+            done = False
+            if target is not None:
+                counter = getattr(target, "_task_counter", None)
+                if isinstance(counter, int) and pre_counter is not None:
+                    done = counter > pre_counter
+                elif agent_name in ("alpha", "beta", "charlie"):
+                    # Triad agents: check their standard output attrs.
+                    if agent_name == "alpha":
+                        done = len(getattr(target, "analysis_history", [])) > 0
+                    elif agent_name == "beta":
+                        done = len(getattr(target, "_analyses", {})) > 0
+                    elif agent_name == "charlie":
+                        done = len(getattr(target, "_challenges", {})) > 0
+
+            logger.info(
+                "routed_task_polling",
+                agent_name=agent_name,
+                elapsed=round(elapsed, 1),
+                done=done,
+            )
+
+            if done:
+                logger.info(
+                    "routed_task_complete",
+                    agent_name=agent_name,
+                    elapsed=round(elapsed, 1),
+                )
+                break
 
         # Log the routed event to Historian. Gracefully handle missing
         # historian (log warning, still return dispatch status). This
