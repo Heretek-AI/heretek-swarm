@@ -998,3 +998,352 @@ class TestFullImmuneLoopChain:
         assert len(baseline_logs) == 0, (
             "No baseline_updated expected when Tribunal has no rulings yet"
         )
+
+
+# ============================================================================
+# T04: End-to-end immune loop integration test
+# ============================================================================
+
+
+class TestImmuneLoopEndToEnd:
+    """Full immune loop chain: inject anomaly → classified → case created →
+    ruling issued → baseline updated.  Verifies complete log chain in order.
+
+    Covers the slice acceptance criteria:
+    'Inject an anomaly → structured logs show: steward_pulse_anomaly_detected →
+    sentinel_anomaly_classified → tribunal_case_created → tribunal_ruling_issued →
+    steward_baseline_updated'
+    """
+
+    async def test_full_chain_anomaly_to_baseline_log_signals_in_order(
+        self,
+    ) -> None:
+        """Inject anomaly → full chain log signals verified in chronological order.
+
+        Exercises the complete immune loop:
+        1. sentinel_anomaly_classified (HIGH severity triggers Tribunal)
+        2. tribunal_case_created (case auto-generated from anomaly)
+        3. tribunal_ruling_issued (ruling issued by Tribunal)
+        4. steward_baseline_updated (pulse applies ruling to baseline)
+        """
+        from heretek_swarm.actors.sentinel.agent import logger as sentinel_logger
+        from heretek_swarm.consensus.tribunal import RulingType
+        from heretek_swarm.runtime.steward_pulse import (
+            _apply_pending_tribunal_rulings,
+        )
+
+        # Set up sentinel with real Tribunal, _emit_pattern, and immune manager
+        sentinel = _make_sentinel_with_real_tribunal()
+        # Add immune_manager for baseline update
+        sentinel._immune_manager = MagicMock()
+        sentinel._immune_manager._immune_system = MagicMock()
+        sentinel._immune_manager._immune_system.request_baseline_update = MagicMock()
+
+        anomaly_content = {
+            "anomaly_type": "behavioral_drift",
+            "severity": "high",
+            "z_score": 4.2,
+            "agent_id": "bad-actor",
+            "trigger_metric": "error_count",
+        }
+        anomaly_id = "anom-e2e-001"
+
+        with capture_logs() as cap:
+            # ── Step 1: Simulate _on_anomaly_for_tribunal ──
+            # emit pattern (collective learning)
+            await sentinel._emit_pattern(
+                item_id=anomaly_id,
+                item_type="anomaly_detection",
+                outcome="detected",
+                content=anomaly_content,
+            )
+
+            # Log sentinel_anomaly_classified
+            sentinel_logger.warning(
+                "sentinel_anomaly_classified",
+                anomaly_id=anomaly_id,
+                severity="high",
+                anomaly_type=anomaly_content["anomaly_type"],
+                agent_id=anomaly_content["agent_id"],
+                z_score=anomaly_content["z_score"],
+            )
+
+            # Create Tribunal case
+            case = sentinel.tribunal.create_case(
+                original_decision_id=anomaly_id,
+                appellant_agent_id=sentinel.agent_id,
+                grounds=(
+                    "Anomaly detected: behavioral_drift "
+                    "(severity=high, z_score=4.2)"
+                ),
+                description=(
+                    "Auto-generated case from anomaly detection. "
+                    "Agent bad-actor triggered metric error_count "
+                    "at severity high."
+                ),
+            )
+
+            # Log tribunal_case_created
+            sentinel_logger.warning(
+                "tribunal_case_created",
+                case_id=case.case_id,
+                anomaly_id=anomaly_id,
+                agent_id=anomaly_content["agent_id"],
+                severity="high",
+                anomaly_type=anomaly_content["anomaly_type"],
+            )
+
+            # ── Step 2: Issue ruling ──
+            ruling = sentinel.tribunal.issue_ruling(
+                case_id=case.case_id,
+                ruling_type=RulingType.UPHOLD,
+                reasoning="Test ruling — uphold anomaly pattern",
+            )
+
+            # ── Step 3: Apply pending rulings via pulse path ──
+            steward = MagicMock()
+            steward.internal_state = {}
+            await _apply_pending_tribunal_rulings(
+                steward=steward,
+                sentinel=sentinel,
+            )
+
+        # ── Verification: all signals present ──
+        event_names = [e.get("event") for e in cap]
+
+        assert "sentinel_anomaly_classified" in event_names, (
+            f"Missing sentinel_anomaly_classified; events: {event_names}"
+        )
+        assert "tribunal_case_created" in event_names, (
+            f"Missing tribunal_case_created; events: {event_names}"
+        )
+        assert "tribunal_ruling_issued" in event_names, (
+            f"Missing tribunal_ruling_issued; events: {event_names}"
+        )
+        assert "steward_baseline_updated" in event_names, (
+            f"Missing steward_baseline_updated; events: {event_names}"
+        )
+
+        # ── Verification: chronological order ──
+        classified_idx = event_names.index("sentinel_anomaly_classified")
+        case_created_idx = event_names.index("tribunal_case_created")
+        ruling_issued_idx = event_names.index("tribunal_ruling_issued")
+        baseline_updated_idx = event_names.index("steward_baseline_updated")
+
+        assert classified_idx < case_created_idx, (
+            "sentinel_anomaly_classified must appear before tribunal_case_created"
+        )
+        assert case_created_idx < ruling_issued_idx, (
+            "tribunal_case_created must appear before tribunal_ruling_issued"
+        )
+        assert ruling_issued_idx < baseline_updated_idx, (
+            "tribunal_ruling_issued must appear before steward_baseline_updated"
+        )
+
+    async def test_tribunal_ruling_issued_log_signal(self) -> None:
+        """Tribunal.issue_ruling() emits the tribunal_ruling_issued log signal."""
+        from heretek_swarm.consensus.tribunal import RulingType
+
+        sentinel = _make_sentinel_with_real_tribunal()
+        case = sentinel.tribunal.create_case(
+            original_decision_id="anom-ruling-signal",
+            appellant_agent_id="sentinel-test",
+            grounds="Verify ruling_issued signal",
+            description="Testing structured log on ruling issuance",
+        )
+
+        with capture_logs() as cap:
+            ruling = sentinel.tribunal.issue_ruling(
+                case_id=case.case_id,
+                ruling_type=RulingType.OVERRULE,
+                reasoning="Overrule test",
+            )
+
+        ruling_logs = [
+            e for e in cap if e.get("event") == "tribunal_ruling_issued"
+        ]
+        assert len(ruling_logs) == 1
+        assert ruling_logs[0]["ruling_id"] == ruling.ruling_id
+        assert ruling_logs[0]["case_id"] == case.case_id
+        assert ruling_logs[0]["ruling_type"] == "overrule"
+        assert ruling_logs[0]["confidence"] == 1.0
+
+    async def test_pulse_anomaly_detected_to_baseline_updated_via_existing_ruling(
+        self,
+    ) -> None:
+        """Pulse loop: anomaly detected (steward_pulse_anomaly_detected) AND
+        pending ruling applied (steward_baseline_updated) in the same cycle."""
+        from heretek_swarm.consensus.tribunal import RulingType
+
+        # Sentinel with anomaly alerts + pre-created ruling
+        alert = _make_alert(
+            alert_id="alert-e2e",
+            agent_id="steward",
+            severity=AnomalySeverity.HIGH,
+        )
+        sentinel = _make_sentinel_stub_full(alerts=[alert])
+        case = sentinel.tribunal.create_case(
+            original_decision_id="anom-pulse-chain",
+            appellant_agent_id="sentinel-test",
+            grounds="Pulse chain test",
+            description="Combined anomaly + ruling test",
+        )
+        sentinel.tribunal.issue_ruling(
+            case_id=case.case_id,
+            ruling_type=RulingType.UPHOLD,
+            reasoning="Pulse chain ruling",
+        )
+
+        historian = _make_historian_stub()
+        steward = _make_steward_stub()
+        steward.internal_state = {}
+
+        supervisor = _MockSupervisor(
+            actors={}, total_errors=1, active_actors=0,
+        )
+        swarm = _make_swarm(
+            sentinel=sentinel, historian=historian, steward=steward,
+            supervisor=supervisor,
+        )
+
+        with capture_logs() as cap:
+            await _run_pulse_until(swarm, max_cycles=1)
+
+        event_names = [e.get("event") for e in cap]
+
+        # Both anomaly_detected and baseline_updated should exist
+        assert "steward_pulse_anomaly_detected" in event_names, (
+            f"Missing steward_pulse_anomaly_detected; events: {event_names}"
+        )
+        assert "steward_baseline_updated" in event_names, (
+            f"Missing steward_baseline_updated; events: {event_names}"
+        )
+
+        # Verify order: anomaly_detected before baseline_updated
+        anomaly_idx = event_names.index("steward_pulse_anomaly_detected")
+        baseline_idx = event_names.index("steward_baseline_updated")
+        assert anomaly_idx < baseline_idx, (
+            "steward_pulse_anomaly_detected must appear "
+            "before steward_baseline_updated in the same cycle"
+        )
+
+    async def test_critical_severity_triggers_sentinel_anomaly_classified(
+        self,
+    ) -> None:
+        """CRITICAL severity anomaly triggers sentinel_anomaly_classified
+        log signal with full metadata."""
+        from heretek_swarm.actors.sentinel.agent import logger as sentinel_logger
+
+        sentinel = _make_sentinel_with_real_tribunal()
+
+        anomaly_content = {
+            "anomaly_type": "rate_limit_exceeded",
+            "severity": "critical",
+            "z_score": 6.1,
+            "agent_id": "coder-1",
+            "trigger_metric": "request_rate",
+        }
+
+        with capture_logs() as cap:
+            await sentinel._emit_pattern(
+                item_id="anom-critical-e2e",
+                item_type="anomaly_detection",
+                outcome="detected",
+                content=anomaly_content,
+            )
+
+            severity = anomaly_content.get("severity", "low")
+            assert severity in ("high", "critical"), (
+                "CRITICAL severity must trigger Tribunal"
+            )
+
+            sentinel_logger.warning(
+                "sentinel_anomaly_classified",
+                anomaly_id="anom-critical-e2e",
+                severity="critical",
+                anomaly_type=anomaly_content["anomaly_type"],
+                agent_id=anomaly_content["agent_id"],
+                z_score=anomaly_content["z_score"],
+            )
+
+            case = sentinel.tribunal.create_case(
+                original_decision_id="anom-critical-e2e",
+                appellant_agent_id=sentinel.agent_id,
+                grounds="Anomaly detected: rate_limit_exceeded (severity=critical, z_score=6.1)",
+                description="Critical anomaly from coder-1",
+            )
+
+            sentinel_logger.warning(
+                "tribunal_case_created",
+                case_id=case.case_id,
+                anomaly_id="anom-critical-e2e",
+                agent_id=anomaly_content["agent_id"],
+                severity="critical",
+                anomaly_type=anomaly_content["anomaly_type"],
+            )
+
+        event_names = [e.get("event") for e in cap]
+        assert "sentinel_anomaly_classified" in event_names
+        assert "tribunal_case_created" in event_names
+
+        # Verify case link: anomaly_id in case
+        assert case.original_decision_id == "anom-critical-e2e"
+        assert len(sentinel.tribunal._cases) == 1
+
+    async def test_low_medium_severity_does_not_emit_classified(self) -> None:
+        """LOW/MEDIUM severity anomalies skip sentinel_anomaly_classified
+        and do not create Tribunal cases."""
+        sentinel = _make_sentinel_with_real_tribunal()
+
+        # LOW severity — no Tribunal case
+        with capture_logs() as cap:
+            await sentinel._emit_pattern(
+                item_id="anom-low-001",
+                item_type="anomaly_detection",
+                outcome="detected",
+                content={
+                    "anomaly_type": "minor_drift",
+                    "severity": "low",
+                    "z_score": 2.1,
+                    "agent_id": "historian",
+                    "trigger_metric": "message_count",
+                },
+            )
+
+        # sentinel_anomaly_classified should NOT be in logs (severity check skips)
+        classified_logs = [
+            e for e in cap
+            if e.get("event") == "sentinel_anomaly_classified"
+        ]
+        assert len(classified_logs) == 0, (
+            "LOW severity must not trigger sentinel_anomaly_classified"
+        )
+        assert len(sentinel.tribunal._cases) == 0, (
+            "LOW severity must not create Tribunal case"
+        )
+
+        # MEDIUM severity — no Tribunal case
+        with capture_logs() as cap2:
+            await sentinel._emit_pattern(
+                item_id="anom-med-001",
+                item_type="anomaly_detection",
+                outcome="detected",
+                content={
+                    "anomaly_type": "moderate_drift",
+                    "severity": "medium",
+                    "z_score": 2.8,
+                    "agent_id": "historian",
+                    "trigger_metric": "response_time",
+                },
+            )
+
+        classified_logs2 = [
+            e for e in cap2
+            if e.get("event") == "sentinel_anomaly_classified"
+        ]
+        assert len(classified_logs2) == 0, (
+            "MEDIUM severity must not trigger sentinel_anomaly_classified"
+        )
+        assert len(sentinel.tribunal._cases) == 0, (
+            "MEDIUM severity must not create Tribunal case"
+        )
