@@ -18,11 +18,13 @@ Key capabilities:
 Reference: Phase 2 Plan Task 4 (SAFE-01)
 """
 
+from __future__ import annotations
+
 import hashlib
 import time
 from collections import defaultdict
 from datetime import UTC, datetime
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import structlog
 
@@ -36,7 +38,10 @@ from heretek_swarm.security.anomaly_detection import (
     ResponseStatus,
     create_anomaly_detector,
 )
-from heretek_swarm.security.behavioral_baseline import BehavioralBaseline
+
+if TYPE_CHECKING:
+    from heretek_swarm.actors.sentinel.types import AnomalyAlert
+    from heretek_swarm.security.behavioral_baseline import BehavioralBaseline
 
 logger = structlog.get_logger("AnomalyMonitor")
 

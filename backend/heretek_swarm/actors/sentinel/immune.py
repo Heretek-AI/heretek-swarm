@@ -92,7 +92,7 @@ class ImmuneResponseManager:
     async def record_anomaly_response_outcome(
         self,
         anomaly_id: str,
-        response_id: str,
+        _response_id: str,
         outcome: ResponseOutcome,
         pattern_content: dict[str, Any],
         pattern_type: str,

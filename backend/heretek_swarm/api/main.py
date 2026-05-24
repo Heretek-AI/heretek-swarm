@@ -691,7 +691,7 @@ async def health_check():
             "qdrant": await check_qdrant(),
         },
         "pool": StateRepository.get_pool_stats(),
-        "timestamp": datetime.utcnow().isoformat(),  # noqa: DTZ003
+        "timestamp": datetime.utcnow().isoformat(),
     }
 
 
@@ -1072,7 +1072,7 @@ async def prompt_endpoint(request: PromptRequest, authenticated: str = Depends(v
     )
 
     # Broadcast deliberation_started to dashboard WebSocket clients
-    try:
+    with suppress(Exception):
         await manager.broadcast_dashboard({
             "type": "deliberation_started",
             "deliberation_id": deliberation_id,
@@ -1080,8 +1080,6 @@ async def prompt_endpoint(request: PromptRequest, authenticated: str = Depends(v
             "participant_count": len(participants),
             "timestamp": datetime.utcnow().isoformat(),
         })
-    except Exception:
-        pass  # fire-and-forget, never crash deliberation
 
     # Gather positions from each participant via submit_argument
     opinions: list[dict[str, Any]] = []
@@ -1132,7 +1130,7 @@ async def prompt_endpoint(request: PromptRequest, authenticated: str = Depends(v
         })
 
         # Broadcast agent position to dashboard WebSocket clients
-        try:
+        with suppress(Exception):
             await manager.broadcast_dashboard({
                 "type": "agent_position_submitted",
                 "deliberation_id": deliberation_id,
@@ -1141,8 +1139,6 @@ async def prompt_endpoint(request: PromptRequest, authenticated: str = Depends(v
                 "confidence": confidence,
                 "timestamp": datetime.utcnow().isoformat(),
             })
-        except Exception:
-            pass  # fire-and-forget, never crash deliberation
 
     # Run a deliberation round to synthesize
     consensus_score = 0.0
@@ -1164,15 +1160,13 @@ async def prompt_endpoint(request: PromptRequest, authenticated: str = Depends(v
         round_count = 1
 
         # Broadcast deliberation failure to dashboard WebSocket clients
-        try:
+        with suppress(Exception):
             await manager.broadcast_dashboard({
                 "type": "deliberation_round_failed",
                 "deliberation_id": deliberation_id,
                 "error": "deliberation_round_engine_failed",
                 "timestamp": datetime.utcnow().isoformat(),
             })
-        except Exception:
-            pass  # fire-and-forget
 
     # Collect dissent notes
     dissent_notes: list[str] = []
@@ -1183,12 +1177,12 @@ async def prompt_endpoint(request: PromptRequest, authenticated: str = Depends(v
                 dissent_notes.append(d.note)
             elif isinstance(d, dict) and d.get("note"):
                 dissent_notes.append(d["note"])
-    except Exception:  # noqa: S110
+    except Exception:
         # Dissent notes are display-only — skip inconsistent records silently
         pass
 
     # Broadcast deliberation_completed to dashboard WebSocket clients
-    try:
+    with suppress(Exception):
         await manager.broadcast_dashboard({
             "type": "deliberation_completed",
             "deliberation_id": deliberation_id,
@@ -1199,8 +1193,6 @@ async def prompt_endpoint(request: PromptRequest, authenticated: str = Depends(v
             "llm_available": llm_available,
             "timestamp": datetime.utcnow().isoformat(),
         })
-    except Exception:
-        pass  # fire-and-forget, never crash deliberation
 
     logger.info(
         "prompt_completed",
@@ -1326,6 +1318,3 @@ def _synthesize_fallback(opinions: list[dict[str, Any]]) -> str:
         f"Deliberation inconclusive: {support_count}/{total} agents favor. "
         "Further rounds may be needed to resolve divergent positions."
     )
-
-
-

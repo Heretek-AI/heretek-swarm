@@ -843,7 +843,7 @@ class SentinelAgent(
             logger.exception("Error getting statistics", error=str(e))
             await self._send_error(message, _STAT_RETRIEVAL_FAILED, str(e))
     async def _check_policy_rule(
-        self, content: str, policy: str, context: dict[str, Any],
+        self, _content: str, _policy: str, _context: dict[str, Any],
     ) -> dict[str, Any] | None:
         """Check content against a specific policy rule (extension point)."""
         return None

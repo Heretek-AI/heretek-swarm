@@ -10,10 +10,13 @@ Version: 1.0.0
 
 from __future__ import annotations
 
+import uuid
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from enum import Enum
 from typing import Any
+
+import structlog
 
 
 class ConnectionStatus(Enum):

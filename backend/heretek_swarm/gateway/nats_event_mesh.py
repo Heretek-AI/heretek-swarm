@@ -694,7 +694,7 @@ class NATSEventMesh:
             logger.error("publish_to_nats_error", topic=topic, error=str(e))
             return False
 
-    async def send_to_json(self, subject: str, data_dict: dict[str, Any], **kwargs: Any) -> bool:
+    async def send_to_json(self, subject: str, data_dict: dict[str, Any], **_kwargs: Any) -> bool:
         """
         Send a message to a subject with JSON-serializable data.
 
@@ -910,7 +910,7 @@ class _InMemoryFallback:
                     await sub(None, subject, data)
         return True
 
-    async def send_to_json(self, subject: str, data_dict: dict[str, Any], **kwargs: Any) -> bool:
+    async def send_to_json(self, subject: str, data_dict: dict[str, Any], **_kwargs: Any) -> bool:
         """Send a message via in-memory fallback (delegates to publish)."""
         return await self.publish(subject, data_dict)
 

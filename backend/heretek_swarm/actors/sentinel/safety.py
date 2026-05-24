@@ -303,8 +303,8 @@ class SafetyScanner:
     async def scan_content(
         self,
         content: str,
-        content_type: str = "text",
-        strict_mode: bool = False,
+        _content_type: str = "text",
+        _strict_mode: bool = False,
     ) -> dict[str, Any]:
         """
         Scan content for safety violations.
@@ -416,7 +416,7 @@ class SafetyScanner:
 
     def generate_safety_report(
         self,
-        time_range: str = "24h",
+        _time_range: str = "24h",
         include_recommendations: bool = True,
     ) -> Any:
         """
@@ -508,3 +508,4 @@ class SafetyScanner:
             self._violations.pop(oldest, None)
 
         self._stats["violations_blocked"] += 1
+
