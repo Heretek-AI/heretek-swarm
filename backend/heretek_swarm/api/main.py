@@ -58,6 +58,7 @@ from heretek_swarm.api import (  # noqa: E402
     wizard,
     workflows,
 )
+from heretek_swarm.api.websockets import manager  # noqa: E402
 from heretek_swarm.api.rate_limiting import setup_rate_limiting  # noqa: E402
 from heretek_swarm.config.loader import (  # noqa: E402
     get_config,
@@ -1069,6 +1070,18 @@ async def prompt_endpoint(request: PromptRequest, authenticated: str = Depends(v
         participants=participants,
     )
 
+    # Broadcast deliberation_started to dashboard WebSocket clients
+    try:
+        await manager.broadcast_dashboard({
+            "type": "deliberation_started",
+            "deliberation_id": deliberation_id,
+            "topic": request.prompt[:200],
+            "participant_count": len(participants),
+            "timestamp": datetime.utcnow().isoformat(),
+        })
+    except Exception:
+        pass  # fire-and-forget, never crash deliberation
+
     # Gather positions from each participant via submit_argument
     opinions: list[dict[str, Any]] = []
     votes: dict[str, int] = {"for": 0, "against": 0, "neutral": 0}
@@ -1117,6 +1130,19 @@ async def prompt_endpoint(request: PromptRequest, authenticated: str = Depends(v
             "reasoning": reasoning,
         })
 
+        # Broadcast agent position to dashboard WebSocket clients
+        try:
+            await manager.broadcast_dashboard({
+                "type": "agent_position_submitted",
+                "deliberation_id": deliberation_id,
+                "agent_id": agent_id,
+                "position": position_str,
+                "confidence": confidence,
+                "timestamp": datetime.utcnow().isoformat(),
+            })
+        except Exception:
+            pass  # fire-and-forget, never crash deliberation
+
     # Run a deliberation round to synthesize
     consensus_score = 0.0
     round_count = 0
@@ -1136,6 +1162,17 @@ async def prompt_endpoint(request: PromptRequest, authenticated: str = Depends(v
         consensus_score = 0.5
         round_count = 1
 
+        # Broadcast deliberation failure to dashboard WebSocket clients
+        try:
+            await manager.broadcast_dashboard({
+                "type": "deliberation_round_failed",
+                "deliberation_id": deliberation_id,
+                "error": "deliberation_round_engine_failed",
+                "timestamp": datetime.utcnow().isoformat(),
+            })
+        except Exception:
+            pass  # fire-and-forget
+
     # Collect dissent notes
     dissent_notes: list[str] = []
     try:
@@ -1148,6 +1185,21 @@ async def prompt_endpoint(request: PromptRequest, authenticated: str = Depends(v
     except Exception:  # noqa: S110
         # Dissent notes are display-only — skip inconsistent records silently
         pass
+
+    # Broadcast deliberation_completed to dashboard WebSocket clients
+    try:
+        await manager.broadcast_dashboard({
+            "type": "deliberation_completed",
+            "deliberation_id": deliberation_id,
+            "consensus_score": round(consensus_score, 3),
+            "votes": votes,
+            "participant_count": len(participants),
+            "rounds": max(round_count, 1),
+            "llm_available": llm_available,
+            "timestamp": datetime.utcnow().isoformat(),
+        })
+    except Exception:
+        pass  # fire-and-forget, never crash deliberation
 
     logger.info(
         "prompt_completed",
