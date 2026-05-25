@@ -40,6 +40,7 @@ from heretek_swarm.api import (  # noqa: E402
     agents_management,
     autonomous,
     collective_evolution,
+    compute_tier,
     configuration,
     consciousness,
     consensus,
@@ -519,6 +520,7 @@ app.include_router(configuration.router)
 app.include_router(providers_config.router)
 app.include_router(wizard.router)
 app.include_router(provisioner.router)
+app.include_router(compute_tier.router)
 app.include_router(metrics.router)
 app.include_router(memories.router)
 app.include_router(memory_versions.router)
