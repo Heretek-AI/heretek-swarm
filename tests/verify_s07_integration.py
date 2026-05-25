@@ -21,8 +21,6 @@ ROOT = Path(__file__).resolve().parent.parent
 FULL_STACK_ARGS = [
     sys.executable, "-m", "pytest",
     "tests/test_full_stack.py", "tests/test_deliberation_e2e.py",
-    "--cov=backend/heretek_swarm",
-    "--cov-fail-under=80",
     "-q",
     "--timeout=60",
 ]

@@ -50,7 +50,15 @@ interface UseA2AMessagesReturn {
 /** Parse message type from A2A message */
 function getMessageType(msg: A2AMessage): MessageType {
   if (msg.message_type) return msg.message_type;
-  // Infer from message type string if available
+  // Infer from message body field (used in a2a_messages from backend)
+  const message = ((msg as unknown) as Record<string, unknown>).message;
+  if (typeof message === 'string') {
+    const lower = message.toLowerCase();
+    if (lower.includes('task')) return 'task';
+    if (lower.includes('consensus') || lower.includes('vote')) return 'consensus';
+    if (lower.includes('alert') || lower.includes('error')) return 'alert';
+  }
+  // Fall back to checking the type string (e.g. 'a2a_message' from WebSocket)
   const type = msg.type?.toLowerCase() ?? '';
   if (type.includes('task')) return 'task';
   if (type.includes('consensus') || type.includes('vote')) return 'consensus';
@@ -75,23 +83,24 @@ export function useA2AMessages(options: UseA2AMessagesOptions = {}): UseA2AMessa
   // Refs for throttling state
   const pendingUpdates = useRef<Map<string, A2AEdgeState>>(new Map());
   const throttleTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const isProcessing = useRef(false);
 
   /** Flush accumulated edge updates to state */
   const flushUpdates = useCallback(() => {
-    if (isProcessing.current || pendingUpdates.current.size === 0) return;
-    isProcessing.current = true;
+    if (pendingUpdates.current.size === 0) return;
+
+    // Capture entries before scheduling state update — React 18 batches
+    // setState, so the updater function runs later, after pendingUpdates
+    // may have been cleared. Snapshot first, clear, then update.
+    const entries = new Map(pendingUpdates.current);
+    pendingUpdates.current.clear();
 
     setActiveEdges((prev) => {
       const next = new Map(prev);
-      pendingUpdates.current.forEach((state, key) => {
+      entries.forEach((state, key) => {
         next.set(key, state);
       });
       return next;
     });
-
-    pendingUpdates.current.clear();
-    isProcessing.current = false;
   }, []);
 
   /** Handle incoming WebSocket message */
@@ -154,6 +163,11 @@ export function useA2AMessages(options: UseA2AMessagesOptions = {}): UseA2AMessa
     maxReconnectAttempts: 5,
   });
 
+  // Keep a stable ref to disconnect so the cleanup effect doesn't re-run
+  // when the mock or useWebSocket returns a new function identity.
+  const disconnectRef = useRef(disconnect);
+  disconnectRef.current = disconnect;
+
   // Cleanup on unmount
   useEffect(() => {
     return () => {
@@ -161,9 +175,9 @@ export function useA2AMessages(options: UseA2AMessagesOptions = {}): UseA2AMessa
         clearTimeout(throttleTimeout.current);
         throttleTimeout.current = null;
       }
-      disconnect();
+      disconnectRef.current();
     };
-  }, [disconnect]);
+  }, []);
 
   return {
     activeEdges,

@@ -408,8 +408,8 @@ export function ExternalCallsPanel({
   // WebSocket connection
   const handleMessage = useCallback((message: WebSocketMessage) => {
     // Handle external_call events from dashboard channel
-    // Backend broadcasts 'external_call' (see main.py external_call_handler)
-    if (message.type === 'external_call') {
+    // Backend broadcasts 'external_call' and 'externalCallLog' (see main.py external_call_handler)
+    if (message.type === 'external_call' || message.type === 'externalCallLog') {
       const data = message.data as Partial<ExternalCallEntry> | undefined;
       if (data) {
         const entry: ExternalCallEntry = {

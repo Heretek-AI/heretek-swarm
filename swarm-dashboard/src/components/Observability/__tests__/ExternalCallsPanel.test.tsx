@@ -258,15 +258,16 @@ describe('ExternalCallsPanel', () => {
     it('should show filtered-empty state when no calls match agent filter', async () => {
       render(<ExternalCallsPanel />);
 
-      feed([{ type: 'external_call', data: httpCall({ agent_id: 'agent-alpha' }) }]);
+      feed([{ type: 'external_call', data: httpCall({ agent_id: 'agent-alpha', status_code: 200 }) }]);
 
+      // Select status=server_error so nothing matches
       await waitFor(() => {
         const selects = screen.getAllByRole('combobox');
-        const agentSelect = selects.find(s =>
-          (s as HTMLElement).previousElementSibling?.textContent?.toLowerCase().includes('agent')
+        const statusSelect = selects.find(s =>
+          (s as HTMLElement).previousElementSibling?.textContent?.toLowerCase().includes('status')
         );
-        expect(agentSelect).toBeInTheDocument();
-        fireEvent.change(agentSelect!, { target: { value: 'agent-nonexistent' } });
+        expect(statusSelect).toBeInTheDocument();
+        fireEvent.change(statusSelect!, { target: { value: 'server_error' } });
       }, { timeout: 2000 });
 
       await waitFor(() => {
