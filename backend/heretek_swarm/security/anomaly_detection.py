@@ -58,6 +58,7 @@ class ResponseStatus(StrEnum):
     PENDING = "pending"
     RATE_LIMITED = "rate_limited"
     EXECUTED = "executed"
+    BLOCKED = "blocked"
     HUMAN_NOTIFICATION = "human_notification"
     SENTINEL_PRIME_ESCALATED = "sentinel_prime_escalated"
 

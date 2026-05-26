@@ -64,6 +64,7 @@ class AnomalyMonitor:
         behavioral_baseline: BehavioralBaseline,
         agent_id: str | None = None,
         on_pattern_detected: Any = None,
+        compute_tier_client: Any = None,
     ):
         """
         Initialize the anomaly monitor.
@@ -74,11 +75,15 @@ class AnomalyMonitor:
             agent_id: ID of the owning SentinelAgent (for self-monitoring).
             on_pattern_detected: Optional async callback(item_id, item_type, outcome, content)
                 invoked after each anomaly is processed (for collective learning).
+            compute_tier_client: Optional ComputeTierClient for tier-gated
+                anomaly responses. When None, tier-gating is skipped and the
+                full response path is used (backward-compatible default).
         """
         self.config = anomaly_config
         self._behavioral_baseline = behavioral_baseline
         self._agent_id = agent_id
         self._on_pattern_detected = on_pattern_detected
+        self._compute_tier_client = compute_tier_client
 
         # Core anomaly detector
         self._anomaly_detector = create_anomaly_detector(anomaly_config)
@@ -379,6 +384,9 @@ class AnomalyMonitor:
         Implements the 30-second response deadline requirement.
         Also records the response for immune learning.
 
+        Tier-gating: when a ComputeTierClient is available, the response
+        path is chosen based on the host's compute capacity (Tier 1, 2, or 3).
+
         Args:
             anomaly: The detected anomaly.
 
@@ -415,9 +423,88 @@ class AnomalyMonitor:
             self._anomaly_alerts.append(alert)
             return alert
 
-        # Execute automated response
-        response = await self._anomaly_detector.execute_automated_response(anomaly)
-        self._active_responses[response.response_id] = response
+        # ── Tier-gated response ────────────────────────────────────
+        # Query compute tier if a client is available; skip if None.
+        tier_result = None
+        if self._compute_tier_client is not None:
+            tier_result = await self._compute_tier_client.get_tier()
+
+        if tier_result is not None:
+            tier = tier_result.tier
+            cpu_count = tier_result.cpu_count
+            total_ram_gb = tier_result.total_ram_gb
+            gpu_available = tier_result.gpu_available
+
+            if tier == 1:
+                # Tier 1 — hard freeze: skip automated response entirely
+                logger.warning(
+                    "anomaly_response",
+                    anomaly_id=anomaly.anomaly_id,
+                    agent_id=anomaly.agent_id,
+                    anomaly_type=anomaly.anomaly_type.value,
+                    severity=anomaly.severity.value,
+                    tier=tier,
+                    response_mode="hard_freeze",
+                    cpu_count=cpu_count,
+                    total_ram_gb=total_ram_gb,
+                    gpu_available=gpu_available,
+                )
+
+                alert = AnomalyAlert(
+                    alert_id=self._generate_alert_id(),
+                    anomaly_id=anomaly.anomaly_id,
+                    agent_id=anomaly.agent_id,
+                    anomaly_type=anomaly.anomaly_type,
+                    severity=anomaly.severity,
+                    timestamp=anomaly.timestamp,
+                    response_status=ResponseStatus.BLOCKED,
+                    response_latency_ms=(time.perf_counter() - start_time) * 1000,
+                    sentinel_prime_escalated=False,
+                    false_positive=False,
+                )
+                self._anomaly_alerts.append(alert)
+                return alert
+
+            if tier == 2:
+                # Tier 2 — fast-track: execute response with reduced metadata
+                logger.warning(
+                    "anomaly_response",
+                    anomaly_id=anomaly.anomaly_id,
+                    agent_id=anomaly.agent_id,
+                    anomaly_type=anomaly.anomaly_type.value,
+                    severity=anomaly.severity.value,
+                    tier=tier,
+                    response_mode="fast_track",
+                    cpu_count=cpu_count,
+                    total_ram_gb=total_ram_gb,
+                    gpu_available=gpu_available,
+                )
+                # Execute response (the existing path)
+                response = await self._anomaly_detector.execute_automated_response(anomaly)
+                self._active_responses[response.response_id] = response
+
+            else:
+                # Tier 3 — full: execute full response (existing behavior)
+                logger.warning(
+                    "anomaly_response",
+                    anomaly_id=anomaly.anomaly_id,
+                    agent_id=anomaly.agent_id,
+                    anomaly_type=anomaly.anomaly_type.value,
+                    severity=anomaly.severity.value,
+                    tier=tier,
+                    response_mode="full",
+                    cpu_count=cpu_count,
+                    total_ram_gb=total_ram_gb,
+                    gpu_available=gpu_available,
+                )
+                # Execute full response (existing path)
+                response = await self._anomaly_detector.execute_automated_response(anomaly)
+                self._active_responses[response.response_id] = response
+
+        else:
+            # No tier client — execute full response (backward compatible)
+            response = await self._anomaly_detector.execute_automated_response(anomaly)
+            self._active_responses[response.response_id] = response
 
         # Track escalation count for Sentinel-Prime
         if response.status == ResponseStatus.EXECUTED:

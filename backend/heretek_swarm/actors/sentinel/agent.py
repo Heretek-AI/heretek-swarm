@@ -74,6 +74,7 @@ class SentinelAgent(
         config: dict[str, Any] | None = None,
         db_pool: Any | None = None,
         redis_client: Any | None = None,
+        compute_tier_client: Any = None,
     ):
         super().__init__(
             agent_id=agent_id, name=name, description=description,
@@ -127,6 +128,7 @@ class SentinelAgent(
             behavioral_baseline=behavioral_baseline,
             agent_id=self.agent_id,
             on_pattern_detected=self._on_anomaly_for_tribunal,
+            compute_tier_client=compute_tier_client,
         )
 
         # ── Immune response manager (CONS-02) ───────────────────────────
