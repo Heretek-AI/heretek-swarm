@@ -169,6 +169,9 @@ class HabitForgeAgent(
         self.register_handler("get_behavior_report", self._handle_get_behavior_report)
         self.register_handler("design_reinforcement", self._handle_design_reinforcement)
 
+        # Start NATS listeners for precedent chain
+        await self._start_nats_listeners()
+
         logger.info("[{self.agent_id}] Habit-Forge initialization complete")
 
     async def process_message(self, message: ActorMessage) -> None:
@@ -866,6 +869,100 @@ Respond in JSON:
 
         except Exception:
             logger.exception("[{self.agent_id}] Error designing reinforcement: {e}")
+
+    # =========================================================================
+    # Precedent Chain Integration — NATS subscription & pattern synthesis
+    # =========================================================================
+
+    async def _start_nats_listeners(self) -> None:
+        """Subscribe to NATS precedent_recorded events for operational pattern synthesis."""
+        if self._event_mesh is None:
+            logger.debug("nats_subscriber_not_available", reason="event_mesh_is_none")
+            return
+
+        try:
+            sub_id = await self._event_mesh.subscribe(
+                "precedent_recorded",
+                self._on_precedent_recorded,
+            )
+            if sub_id is not None:
+                logger.info(
+                    "habit_forge_precedent_subscribed",
+                    subscription_id=sub_id,
+                )
+            else:
+                logger.error("nats_subscribe_failed", subject="precedent_recorded")
+        except Exception as e:
+            logger.error(
+                "nats_subscribe_failed",
+                subject="precedent_recorded",
+                error=str(e),
+            )
+
+    async def _on_precedent_recorded(
+        self,
+        nats_mesh: Any,  # noqa: ARG002
+        subject: str,  # noqa: ARG002
+        data: dict[str, Any],
+    ) -> None:
+        """Handle incoming precedent_recorded NATS event.
+
+        Args:
+            nats_mesh: The NATSEventMesh instance (unused in callback signature)
+            subject: NATS subject (precedent_recorded)
+            data: Decoded JSON payload from the event mesh
+        """
+        try:
+            self._synthesize_operational_pattern(data)
+        except Exception:
+            logger.exception("precedent_event_parse_failed", raw_data_keys=list(data.keys()) if data else [])
+
+    def _synthesize_operational_pattern(self, precedent_data: dict[str, Any]) -> None:
+        """Synthesize a BehavioralPattern from a precedent_recorded event and store it.
+
+        Args:
+            precedent_data: Payload from the precedent_recorded NATS event,
+                containing ruling_id, case_id, ruling_type, reasoning,
+                confidence, anomaly_id, precedent_id, timestamp.
+        """
+        ruling_id = precedent_data.get("ruling_id", "unknown")
+        reasoning = precedent_data.get("reasoning", "")
+        confidence = precedent_data.get("confidence", 0.5)
+        case_id = precedent_data.get("case_id", "")
+        ruling_type = precedent_data.get("ruling_type", "")
+        anomaly_id = precedent_data.get("anomaly_id", "")
+        precedent_id = precedent_data.get("precedent_id")
+
+        pattern = BehavioralPattern(
+            pattern_id=f"precedent_{ruling_id}",
+            pattern_type=PatternType.SUCCESS,
+            description=f"Tribunal {ruling_type} ruling: {reasoning[:300]}",
+            triggers=[f"anomaly:{anomaly_id}"],
+            behaviors=[f"tribunal.ruling.{ruling_type}"],
+            outcomes=[f"ruling_{ruling_id}"],
+            frequency="eventual",
+            impact_score=confidence,
+            evidence=[
+                {
+                    "source": "tribunal",
+                    "case_id": case_id,
+                    "ruling_id": ruling_id,
+                    "precedent_id": precedent_id,
+                }
+            ],
+            category="immune_precedent",
+            confidence=confidence,
+        )
+
+        self.detected_patterns[pattern.pattern_id] = pattern
+
+        logger.info(
+            "habit_forge_precedent_synthesized",
+            ruling_id=ruling_id,
+            pattern_id=pattern.pattern_id,
+            confidence=confidence,
+            category="immune_precedent",
+        )
 
     # =========================================================================
     # Session 44: Collective Learning Integration Methods

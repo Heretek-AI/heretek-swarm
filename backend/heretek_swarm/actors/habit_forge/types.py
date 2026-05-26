@@ -153,6 +153,9 @@ class BehavioralPattern:
         outcomes: list[str],
         frequency: str = "unknown",
         impact_score: float = 0.0,
+        evidence: list[dict[str, Any]] | None = None,
+        category: str | None = None,
+        confidence: float | None = None,
     ) -> None:
         self.pattern_id = pattern_id
         self.pattern_type = pattern_type
@@ -162,11 +165,14 @@ class BehavioralPattern:
         self.outcomes = outcomes
         self.frequency = frequency
         self.impact_score = impact_score
+        self.evidence = evidence or []
+        self.category = category
+        self.confidence = confidence
         self.detected_at = datetime.now(UTC)
 
     def to_dict(self) -> dict[str, Any]:
         """Convert pattern to dictionary."""
-        return {
+        result = {
             "pattern_id": self.pattern_id,
             "pattern_type": self.pattern_type.value,
             "description": self.description,
@@ -175,5 +181,9 @@ class BehavioralPattern:
             "outcomes": self.outcomes,
             "frequency": self.frequency,
             "impact_score": self.impact_score,
+            "evidence": self.evidence,
+            "category": self.category,
+            "confidence": self.confidence,
             "detected_at": self.detected_at.isoformat(),
         }
+        return result
