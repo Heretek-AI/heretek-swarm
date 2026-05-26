@@ -44,6 +44,10 @@ from heretek_swarm.consensus.domain_selector import (
     DEFAULT_FALLBACK_AGENTS,
     DomainSelector,
 )
+from heretek_swarm.consensus.election_manager import (
+    ElectionManager,
+    GOVERNANCE_AGENT_IDS,
+)
 from heretek_swarm.consensus.expertise import (
     AgentExpertiseProfile,
     AgentExpertiseProfiler,
@@ -135,6 +139,9 @@ __all__ = [
     "DeliberationState",
     "DomainExpertise",
     "DomainSelector",
+    # Election Manager
+    "ElectionManager",
+    "GOVERNANCE_AGENT_IDS",
     # Enhanced MAKER
     "EnhancedMAKERConsensus",
     "EnhancedVote",
