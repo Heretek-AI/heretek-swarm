@@ -158,6 +158,30 @@ class SentinelAgent(
             auto_learn=self._immune_manager.auto_learn_enabled,
             preserve_novel_patterns=self._immune_manager.preserve_novel_patterns,
         )
+
+    # ---- S03: Election event logging -------------------------------------
+    def log_election_started(self) -> None:
+        """Log a RAFT election start event via structured logging."""
+        logger.info("raft_election_started", agent_id=self.agent_id)
+
+    def log_leader_elected(
+        self, leader_id: str, term: int | None, vote_count: int
+    ) -> None:
+        """Log a RAFT leader elected event via structured logging."""
+        logger.info(
+            "raft_leader_elected",
+            leader_id=leader_id,
+            term=term,
+            vote_count=vote_count,
+        )
+
+    def log_election_failed(self, cycles: int) -> None:
+        """Log a tribunal election failure via structured logging."""
+        logger.error(
+            "tribunal_election_failed",
+            cycles_attempted=cycles,
+        )
+
     # ---- Immune Loop Bridge: Sentinel → Tribunal → Steward ----------------
     async def _on_anomaly_for_tribunal(
         self,

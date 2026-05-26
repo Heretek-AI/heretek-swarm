@@ -31,6 +31,7 @@ from heretek_swarm.actors.supervisor import ActorSupervisor
 from heretek_swarm.api.consciousness import get_consciousness_plugin
 from heretek_swarm.channels.registry import ChannelRegistry, GroupRegistry
 from heretek_swarm.consensus.maker import MAKERConsensus
+from heretek_swarm.consensus.election_manager import ElectionManager
 from heretek_swarm.gateway.nats_event_mesh import NATSEventMeshWithJetStream
 from heretek_swarm.llm.model_garage import ModelGarage
 from heretek_swarm.memory.base import DualTierMemory
@@ -95,6 +96,9 @@ class AutonomousSwarm:
 
         # S04: Periodic analysis cycle counter — triggers Metis/Empath every 30 cycles
         self._analysis_cycle_count = 0
+
+        # S03: RAFT election manager (initialized in initialize() unless --no-infra)
+        self._election_manager = None  # ElectionManager | None
 
         # M011: Goal pipeline store (initialized on first use in --no-infra path)
         self._goal_store: FileGoalStore | None = None
@@ -201,6 +205,9 @@ class AutonomousSwarm:
             await self.model_garage.initialize()
             set_global_model_garage(self.model_garage)
             logger.info("model_garage_initialized")
+            # S03: ElectionManager skipped in --no-infra mode
+            self._election_manager = None
+            logger.info("election_manager_skipped_no_infra")
             self.supervisor = ActorSupervisor(
                 health_check_interval=self._health_check_interval, auto_restart=True, max_restarts=5
             )
@@ -381,6 +388,20 @@ class AutonomousSwarm:
                 error=str(exc),
             )
             self.model_garage = None
+
+        # 7b. S03: Initialize ElectionManager for RAFT leadership elections
+        try:
+            self._election_manager = ElectionManager()
+            logger.info(
+                "election_manager_initialized",
+                governance_agents=sorted(self._election_manager._rafts.keys()),
+            )
+        except Exception as exc:
+            logger.warning(
+                "election_manager_init_failed",
+                error=str(exc),
+            )
+            self._election_manager = None
 
         # 8. Re-wire orchestrator refs with initialized components
         self._actor_orch._supervisor = self.supervisor

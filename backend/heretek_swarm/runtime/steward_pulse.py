@@ -28,6 +28,11 @@ _ANOMALY_SCAN_TIMEOUT = 5.0  # seconds
 # Per D002: rulings older than this many seconds are skipped (fire-and-forget).
 _RULING_EXPIRY_SECONDS = 60.0  # seconds
 
+# S03: Heartbeat timeout threshold for triggering RAFT leadership elections.
+# If no steward heartbeat is recorded within this window, the governance
+# agents initiate a RAFT election to select a new Steward.
+HEARTBEAT_TIMEOUT = 10.0  # seconds
+
 
 async def _collect_swarm_metrics(supervisor: Any) -> dict[str, float]:
     """Collect swarm-level metrics for anomaly monitoring.
@@ -200,6 +205,134 @@ async def _apply_pending_tribunal_rulings(
             applied.add(ruling_id)
 
 
+async def _check_heartbeat_timeout(
+    swarm: AutonomousSwarm,
+    steward: Any,
+) -> None:
+    """Check whether the steward heartbeat has timed out and trigger an election.
+
+    Compares the current heartbeat timestamp with the previously stored one
+    on ``steward.internal_state["_last_seen_heartbeat"]``.  If the gap exceeds
+    ``HEARTBEAT_TIMEOUT`` and an ``ElectionManager`` is available, starts a
+    RAFT election and replaces the steward with the elected leader.
+    """
+    # Guard: only run if ElectionManager is wired
+    if not hasattr(swarm, "_election_manager") or swarm._election_manager is None:
+        return
+
+    now = datetime.now(UTC)
+    last_heartbeat_str = steward.internal_state.get("_last_heartbeat")
+    if last_heartbeat_str is None:
+        # First pulse — seed and bail
+        steward.internal_state["_last_seen_heartbeat"] = last_heartbeat_str
+        return
+
+    try:
+        last_heartbeat = datetime.fromisoformat(last_heartbeat_str)
+    except (ValueError, TypeError):
+        steward.internal_state["_last_seen_heartbeat"] = last_heartbeat_str
+        return
+
+    # Compare against previously seen heartbeat to detect a gap
+    prev_seen_str = steward.internal_state.get("_last_seen_heartbeat")
+    if prev_seen_str is None:
+        steward.internal_state["_last_seen_heartbeat"] = last_heartbeat_str
+        return
+
+    try:
+        prev_seen = datetime.fromisoformat(prev_seen_str)
+    except (ValueError, TypeError):
+        steward.internal_state["_last_seen_heartbeat"] = last_heartbeat_str
+        return
+
+    gap = (now - last_heartbeat).total_seconds()
+    if gap <= HEARTBEAT_TIMEOUT:
+        # Heartbeat is fresh — update the cursor
+        steward.internal_state["_last_seen_heartbeat"] = last_heartbeat_str
+        return
+
+    # --- Timeout detected ---
+    logger.error(
+        "steward_heartbeat_timeout_detected",
+        extra={
+            "last_heartbeat": last_heartbeat_str,
+            "gap_seconds": gap,
+            "timeout_threshold": HEARTBEAT_TIMEOUT,
+        },
+    )
+
+    # Log raft_election_started via Sentinel if available
+    sentinel = (
+        swarm.supervisor.actors.get("sentinel")
+        if swarm.supervisor else None
+    )
+    if sentinel is not None and hasattr(sentinel, "log_election_started"):
+        sentinel.log_election_started()
+    else:
+        logger.info("raft_election_started")
+
+    try:
+        leader = await swarm._election_manager.trigger_election()
+    except Exception:
+        logger.exception("election_trigger_failed")
+        leader = None
+
+    if leader is not None:
+        leader_status = swarm._election_manager.get_status()
+        leader_term = (
+            leader_status["nodes"][leader].get("term")
+            if leader in leader_status.get("nodes", {})
+            else None
+        )
+        vote_count = len(leader_status.get("nodes", {}))
+
+        if sentinel is not None and hasattr(sentinel, "log_leader_elected"):
+            sentinel.log_leader_elected(
+                leader_id=leader,
+                term=leader_term,
+                vote_count=vote_count,
+            )
+        else:
+            logger.info(
+                "raft_leader_elected",
+                extra={
+                    "leader_id": leader,
+                    "term": leader_term,
+                    "vote_count": vote_count,
+                },
+            )
+
+        # Terminate old steward + spawn new one
+        try:
+            await swarm.supervisor.terminate_actor("steward")
+        except Exception:
+            logger.exception("terminate_old_steward_failed")
+
+        try:
+            from heretek_swarm.actors.triad.agent import StewardAgent
+            await swarm.supervisor.spawn_actor(StewardAgent, "steward")
+            logger.info("new_steward_spawned", leader_id=leader)
+        except Exception:
+            logger.exception("spawn_new_steward_failed")
+    else:
+        # All cycles exhausted — no leader elected
+        if sentinel is not None and hasattr(sentinel, "log_election_failed"):
+            sentinel.log_election_failed(
+                cycles=swarm._election_manager._max_cycles
+            )
+        else:
+            logger.error(
+                "tribunal_election_failed",
+                extra={
+                    "cycles_attempted": swarm._election_manager._max_cycles,
+                },
+            )
+
+    # Update the cursor even after a timeout to prevent re-triggering
+    # on every subsequent pulse while election resolution is in progress
+    steward.internal_state["_last_seen_heartbeat"] = last_heartbeat_str
+
+
 async def run_steward_pulse(swarm: AutonomousSwarm) -> None:
     """Steward heartbeat pulse loop.
 
@@ -219,6 +352,9 @@ async def run_steward_pulse(swarm: AutonomousSwarm) -> None:
             if steward is not None:
                 # Record heartbeat on steward's internal state
                 steward.internal_state["_last_heartbeat"] = datetime.now(UTC).isoformat()
+
+                # ── S03: Heartbeat timeout detection ─────────────────────
+                await _check_heartbeat_timeout(swarm, steward)
 
                 # Collect heartbeat data
                 pulse_data = {
