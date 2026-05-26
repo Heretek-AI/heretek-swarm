@@ -103,7 +103,7 @@ class SentinelAgent(
         self._auto_block_critical = self._safety_scanner.auto_block_critical
 
         # ── Tribunal (CONS-01: case creation for immune loop) ──────────
-        self.tribunal = Tribunal()
+        self.tribunal = Tribunal(event_mesh=self._event_mesh)
 
         # ── Anomaly monitor (SAFE-01) ───────────────────────────────────
         anomaly_config = AnomalyDetectionConfig(

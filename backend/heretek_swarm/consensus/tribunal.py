@@ -32,6 +32,7 @@ Example:
     ```
 """
 
+import asyncio
 import hashlib
 import json
 import uuid
@@ -213,6 +214,7 @@ class Tribunal:
         max_rounds: int = 3,
         round_timeout_seconds: float = 15.0,
         tiebreaker_role: str = "steward",
+        event_mesh: Any | None = None,
     ) -> None:
         """
         Initialize the Tribunal.
@@ -223,6 +225,9 @@ class Tribunal:
             max_rounds: Maximum deliberation rounds before tiebreaker (GOV-05-M)
             round_timeout_seconds: Timeout per round for convoy mitigation
             tiebreaker_role: Role to invoke as tiebreaker
+            event_mesh: Optional EventMesh for NATS precedent publishing.
+                        When provided, binding rulings (UPHOLD/OVERRULE)
+                        fire precedent_recorded events via NATS.
         """
         self.case_retention_days = case_retention_days
         self.enable_precedent = enable_precedent
@@ -230,6 +235,7 @@ class Tribunal:
         self.round_timeout_seconds = round_timeout_seconds
         self.tiebreaker_role = tiebreaker_role
         self.current_round: int = 0
+        self._event_mesh = event_mesh  # Optional NATS event mesh
 
         # Storage
         self._cases: dict[str, TribunalCase] = {}
@@ -468,6 +474,40 @@ class Tribunal:
             RulingType.OVERRULE,
         ):
             self._precedents.append(ruling.ruling_id)
+
+        # Fire-and-forget NATS publish for binding precedents
+        if (
+            self._event_mesh is not None
+            and ruling_type in (RulingType.UPHOLD, RulingType.OVERRULE)
+        ):
+            try:
+                self._event_mesh.publish_to_nats(
+                    event_type="precedent_recorded",
+                    source_agent="tribunal",
+                    payload={
+                        "ruling_id": ruling.ruling_id,
+                        "case_id": case_id,
+                        "ruling_type": ruling_type.value,
+                        "reasoning": reasoning,
+                        "confidence": confidence,
+                        "anomaly_id": case.original_decision_id,
+                        "precedent_id": precedent_id,
+                        "timestamp": ruling.timestamp,
+                    },
+                )
+                logger.info(
+                    "tribunal_precedent_published",
+                    ruling_id=ruling.ruling_id,
+                    case_id=case_id,
+                    ruling_type=ruling_type.value,
+                )
+            except Exception as e:
+                logger.debug(
+                    "nats_publisher_not_available",
+                    error=str(e),
+                    ruling_id=ruling.ruling_id,
+                    case_id=case_id,
+                )
 
         logger.info(
             "Tribunal ruling issued",
