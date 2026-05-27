@@ -468,14 +468,14 @@ class PhiCalculator:
 
         # Calculate cause information (phi_cause)
         phi_cause = self.calculate_cause_info(
-            state={"repertoire": cause_repertoire, "element": element},
-            element=element,
+            {"repertoire": cause_repertoire, "element": element},
+            element,
         )
 
         # Calculate effect information (phi_effect)
         phi_effect = self.calculate_effect_info(
-            state={"repertoire": effect_repertoire, "element": element},
-            element=element,
+            {"repertoire": effect_repertoire, "element": element},
+            element,
         )
 
         # Total phi is minimum of cause and effect (IIT 3.0)

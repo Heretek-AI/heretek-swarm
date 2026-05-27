@@ -586,7 +586,11 @@ class HeavySwarmWorkflow:
         analysis_type: str = "deep_analysis",
     ) -> dict[str, dict[str, Any]]:
         """
-        Collect analyses from all triad members.
+        Collect analyses from all triad members via NATS request-reply.
+
+        Per D004, uses send_with_reply with a 30s timeout to await real
+        agent responses. Falls back to confidence=0.0 with empty insights
+        on timeout, and emits structured log events for observability.
 
         Args:
             workflow_id: Workflow identifier
@@ -597,7 +601,7 @@ class HeavySwarmWorkflow:
         Returns:
             Dictionary of agent_id -> analysis results
         """
-        analyses = {}
+        analyses: dict[str, dict[str, Any]] = {}
 
         for agent_id in self.triad_agents:
             if agent_id not in self.agents:
@@ -607,9 +611,9 @@ class HeavySwarmWorkflow:
             agent = self.agents[agent_id]
 
             try:
-                # Send analysis request
-                await agent.send_to_actor(
-                    target_actor_id=agent_id,
+                # Send request via NATS request-reply (D004) and await real agent analysis
+                reply = await agent.send_with_reply(
+                    recipient=agent_id,
                     message_type="analysis_request",
                     content={
                         "workflow_id": workflow_id,
@@ -617,26 +621,49 @@ class HeavySwarmWorkflow:
                         "research_data": research_data,
                         "analysis_type": analysis_type,
                     },
+                    timeout=30,
                 )
 
-                # For now, use placeholder analysis
-                # In full implementation, would wait for agent response
-                analyses[agent_id] = {
-                    "agent_id": agent_id,
-                    "decision": f"{agent_id}_analysis_complete",
-                    "confidence": 0.8,
-                    "insights": [
-                        f"Key insight from {agent_id}",
-                        "Analysis based on research data",
-                    ],
-                    "reasoning": f"Analysis by {agent_id}",
-                }
+                if reply is not None:
+                    # Successful response — extract real analysis data
+                    analyses[agent_id] = {
+                        "agent_id": agent_id,
+                        "decision": reply.get("decision", f"{agent_id}_analysis_complete"),
+                        "confidence": reply.get("confidence", 0.0),
+                        "insights": reply.get("insights", []),
+                        "reasoning": reply.get("reasoning", ""),
+                    }
+                else:
+                    # Timeout — honest fallback with confidence=0.0
+                    logger.warning(
+                        "heavyswarm_analysis_timeout",
+                        extra={
+                            "agent_id": agent_id,
+                            "workflow_id": workflow_id,
+                            "timeout_s": 30,
+                        },
+                    )
+                    analyses[agent_id] = {
+                        "agent_id": agent_id,
+                        "decision": "analysis_timeout",
+                        "confidence": 0.0,
+                        "insights": [],
+                        "reasoning": f"Request to {agent_id} timed out after 30s",
+                    }
 
             except Exception as e:
-                logger.error("[{self.name}] Error collecting analysis from {agent_id}: {e}")
+                logger.error(
+                    "heavyswarm_analysis_error",
+                    extra={
+                        "agent_id": agent_id,
+                        "workflow_id": workflow_id,
+                        "error": str(e),
+                    },
+                    exc_info=True,
+                )
                 analyses[agent_id] = {
                     "agent_id": agent_id,
-                    "decision": "analysis_failed",
+                    "decision": "analysis_error",
                     "confidence": 0.0,
                     "insights": [],
                     "reasoning": f"Error: {e}",

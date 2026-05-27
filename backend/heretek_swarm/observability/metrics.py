@@ -29,6 +29,24 @@ except ImportError:
     CYCLE_DETECTOR_AVAILABLE = False
     PhiTrainingEnvironment = None
 
+# Mapping from PhiCalculator qualitative labels to numeric values
+_MAPPING_INTEGRATION = {
+    "very_high": 1.0,
+    "high": 0.75,
+    "moderate": 0.5,
+    "low": 0.25,
+    "minimal": 0.1,
+    "unknown": 0.0,
+}
+_MAPPING_DIFFERENTIATION = {
+    "very_high": 1.0,
+    "high": 0.75,
+    "moderate": 0.5,
+    "low": 0.25,
+    "minimal": 0.1,
+    "unknown": 0.0,
+}
+
 
 @dataclass
 class AgentMetrics:
@@ -478,12 +496,20 @@ class SwarmMetricsCollector:
         return max(0, min(100, avg_health - failure_penalty))
 
     def collect_consciousness_metrics(self) -> ConsciousnessMetricsData:
-        """
-        Collect consciousness metrics.
+        """Collect consciousness metrics computed from IIT Phi and FEP calculators.
 
-        Note: This is a placeholder implementation. In production,
-        this would integrate with the IIT Phi and FEP calculators.
+        Replaces dead-coded placeholders with values computed from the
+        consciousness subpackage (PhiCalculator, FreeEnergyCalculator).
+        Empty-agent edge case returns honest 0.0 values with a structured
+        warning log, never a placeholder constant.
         """
+        from heretek_swarm.consciousness.fep_active_inference import FreeEnergyCalculator
+        from heretek_swarm.consciousness.iit_phi import PhiCalculator
+
+        import structlog
+
+        _log = structlog.get_logger(__name__)
+
         # Call consciousness callback if registered
         callback_result = None
         if self._consciousness_callback:
@@ -511,18 +537,111 @@ class SwarmMetricsCollector:
                 health_factor = metrics.health_score / 100
                 agent_fep_scores[agent_id] = error_factor * health_factor
 
+        # ---- Wire IIT Phi calculator for integration / differentiation levels ----
+        integration_level = 0.0
+        differentiation_level = 0.0
+
+        if agent_phi_scores:
+            try:
+                phi_calc = PhiCalculator(strict_validation=False)
+                # Build a cause-effect structure from agent data
+                elements = list(agent_phi_scores.keys())
+                connectivity: dict[str, dict[str, float]] = {}
+                for aid, metrics in self._agent_metrics.items():
+                    if aid in elements:
+                        total_interactions = metrics.messages_sent + metrics.messages_received
+                        if total_interactions > 0:
+                            connectivity[aid] = {
+                                other: min(1.0, total_interactions / 100)
+                                for other in elements
+                                if other != aid
+                            }
+                        else:
+                            connectivity[aid] = {
+                                other: 0.1 for other in elements if other != aid
+                            }
+                psi_state = agent_phi_scores.get(elements[0], 0.5) if elements else 0.5
+                current_state = {aid: psi_state for aid in elements}
+                ces = {
+                    "system_id": "swarm-metrics",
+                    "elements": elements,
+                    "connectivity": connectivity,
+                    "current_state": current_state,
+                }
+                phi_result = phi_calc.calculate_phi(ces)
+                integration_level = _MAPPING_INTEGRATION.get(
+                    phi_result.integration_level, 0.5
+                )
+                differentiation_level = _MAPPING_DIFFERENTIATION.get(
+                    phi_result.differentiation_level, 0.5
+                )
+            except Exception:
+                _log.warning("phi_calculator_failed", exc_info=True)
+        else:
+            _log.warning(
+                "consciousness_metrics_empty_agents",
+                reason="no_agent_phi_scores_available",
+            )
+
+        # ---- Wire FEP calculator for free-energy variance ----
+        free_energy_values: list[float] = []
+        fep_calc = FreeEnergyCalculator(strict_validation=False)
+        for agent_id, metrics in self._agent_metrics.items():
+            try:
+                observations = {
+                    "agent_id": agent_id,
+                    "task_success": 1 if metrics.tasks_completed > metrics.tasks_failed else 0,
+                    "active": 1 if metrics.messages_sent > 0 else 0,
+                }
+                generative_model = {
+                    "likelihood": {
+                        "task_success": {"1": 0.8, "0": 0.2},
+                        "active": {"1": 0.7, "0": 0.3},
+                    },
+                    "prior": {
+                        "task_success": {"1": 0.5, "0": 0.5},
+                        "active": {"1": 0.5, "0": 0.5},
+                    },
+                }
+                fe = fep_calc.calculate_free_energy(observations, generative_model)
+                free_energy_values.append(fe)
+            except Exception:
+                _log.warning("fep_calculator_failed", agent_id=agent_id, exc_info=True)
+
+        # Compute free_energy_avg and free_energy_variance
+        if free_energy_values:
+            free_energy_avg = sum(free_energy_values) / len(free_energy_values)
+            mean = free_energy_avg
+            free_energy_variance = sum((v - mean) ** 2 for v in free_energy_values) / len(
+                free_energy_values
+            )
+        elif agent_fep_scores:
+            fe_values = list(agent_fep_scores.values())
+            free_energy_avg = sum(fe_values) / len(fe_values)
+            mean = free_energy_avg
+            free_energy_variance = sum((v - mean) ** 2 for v in fe_values) / len(fe_values)
+            _log.warning(
+                "free_energy_calculator_fallback",
+                reason="using_agent_fep_scores_fallback",
+            )
+        else:
+            free_energy_avg = 0.0
+            free_energy_variance = 0.0
+            _log.warning(
+                "free_energy_calculator_empty",
+                reason="no_agent_fep_scores_or_calculations",
+            )
+
         phi_values = list(agent_phi_scores.values()) if agent_phi_scores else [0]
 
         result = ConsciousnessMetricsData(
             phi_avg=sum(phi_values) / len(phi_values) if phi_values else 0,
             phi_max=max(phi_values) if phi_values else 0,
             phi_min=min(phi_values) if phi_values else 0,
-            integration_level=0.5,  # Placeholder
-            differentiation_level=0.5,  # Placeholder
-            free_energy_avg=sum(agent_fep_scores.values()) / len(agent_fep_scores)
-            if agent_fep_scores
-            else 0,
-            free_energy_variance=0.1,  # Placeholder
+            integration_level=integration_level,
+            differentiation_level=differentiation_level,
+            free_energy_avg=free_energy_avg,
+            free_energy_variance=free_energy_variance,
             agent_phi_scores=agent_phi_scores,
             agent_fep_scores=agent_fep_scores,
         )
