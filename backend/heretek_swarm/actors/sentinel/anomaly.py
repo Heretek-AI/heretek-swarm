@@ -127,6 +127,12 @@ class AnomalyMonitor:
         # Pending outcome tracking for immune learning
         self._pending_outcome_tracking: dict[str, dict[str, Any]] = {}
 
+        # FP-rate tracking window (last-100-response outcomes)
+        self._response_window: list[bool] = []  # True = FP, False = not FP
+        self._response_window_max = 100
+        # Minimum entries before FP rate is considered statistically meaningful
+        self._response_window_eligibility = 50
+
         logger.info(
             "AnomalyMonitor_initialized",
             response_deadline=anomaly_config.response_deadline_seconds,
@@ -275,6 +281,9 @@ class AnomalyMonitor:
             "outcome": ResponseOutcome.FALSE_POSITIVE,
         }
 
+        # Record outcome in FP-rate window
+        self._record_response_outcome(anomaly_id, is_fp=True)
+
         # Update any pending alert
         for alert in self._anomaly_alerts:
             if alert.anomaly_id == anomaly_id:
@@ -328,6 +337,60 @@ class AnomalyMonitor:
     def clear_pending_outcome(self, anomaly_id: str) -> None:
         """Remove a pending outcome tracking entry."""
         self._pending_outcome_tracking.pop(anomaly_id, None)
+
+    # ---- FP-rate tracking window -------------------------------------------
+
+    def _record_response_outcome(self, anomaly_id: str, is_fp: bool) -> None:
+        """
+        Record a response outcome in the sliding FP-rate window.
+
+        Args:
+            anomaly_id: ID of the anomaly.
+            is_fp: True if the response was a false positive.
+        """
+        self._response_window.append(is_fp)
+        if len(self._response_window) > self._response_window_max:
+            self._response_window = self._response_window[
+                -self._response_window_max:
+            ]
+        logger.debug(
+            "response_outcome_recorded",
+            anomaly_id=anomaly_id,
+            is_fp=is_fp,
+            window_size=len(self._response_window),
+        )
+
+    def get_fp_rate(self) -> float:
+        """
+        Compute the false-positive rate over the response window.
+
+        Returns:
+            FP rate as a float in [0.0, 1.0]; 0.0 if the window is empty.
+        """
+        if not self._response_window:
+            return 0.0
+        return sum(self._response_window) / len(self._response_window)
+
+    def get_fp_rate_window_stats(self) -> dict[str, Any]:
+        """
+        Return window-level FP-rate statistics for hysteresis logic.
+
+        Returns:
+            Dict with keys:
+            - window_size: number of entries currently in the window.
+            - fp_count: number of false positives in the window.
+            - fp_rate: current FP rate (0.0 if empty).
+            - is_eligible: True when window has enough entries for
+              statistically meaningful FP rate.
+        """
+        window_size = len(self._response_window)
+        fp_count = sum(self._response_window)
+        return {
+            "window_size": window_size,
+            "fp_count": fp_count,
+            "fp_rate": fp_count / window_size if window_size > 0 else 0.0,
+            "is_eligible": window_size >= self._response_window_eligibility,
+        }
 
     # ---- Self-monitoring ---------------------------------------------------
 
@@ -587,6 +650,10 @@ class AnomalyMonitor:
                 outcome="detected",
                 content=pattern_content,
             )
+
+        # Record outcome in FP-rate window (not FP at creation —
+        # FPs are reported later via report_false_positive)
+        self._record_response_outcome(anomaly.anomaly_id, is_fp=False)
 
         return alert
 
