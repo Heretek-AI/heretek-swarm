@@ -45,13 +45,8 @@ from heretek_swarm.consensus.domain_selector import (
     DomainSelector,
 )
 from heretek_swarm.consensus.election_manager import (
-<<<<<<< HEAD
     ElectionManager,
     GOVERNANCE_AGENT_IDS,
-=======
-    GOVERNANCE_AGENT_IDS,
-    ElectionManager,
->>>>>>> 5074e2e (fix: Full test suite regression: 0 failures (~1160 tests). Ruff lint: 0…)
 )
 from heretek_swarm.consensus.expertise import (
     AgentExpertiseProfile,
