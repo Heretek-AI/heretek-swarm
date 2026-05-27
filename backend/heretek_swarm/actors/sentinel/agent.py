@@ -159,6 +159,110 @@ class SentinelAgent(
             preserve_novel_patterns=self._immune_manager.preserve_novel_patterns,
         )
 
+    # ---- S04: Baseline NATS listeners (precedent → pattern catalog) ------
+    async def initialize(self) -> None:
+        """Initialize SentinelAgent — registers NATS listeners for
+        precedent_recorded events to feed the baseline pattern catalog."""
+        await super().initialize()
+        await self._start_baseline_nats_listeners()
+
+    async def _start_baseline_nats_listeners(self) -> None:
+        """Subscribe to precedent_recorded NATS events so Tribunal rulings
+        organically populate the BehavioralBaseline pattern catalog."""
+        if self._event_mesh is None:
+            logger.debug(
+                "baseline_nats_not_available",
+                agent_id=self.agent_id,
+                reason="event_mesh_is_none",
+            )
+            return
+
+        try:
+            sub_id = await self._event_mesh.subscribe(
+                "precedent_recorded",
+                self._on_baseline_precedent_recorded,
+            )
+            if sub_id is not None:
+                logger.info(
+                    "sentinel_baseline_precedent_subscribed",
+                    agent_id=self.agent_id,
+                    subscription_id=sub_id,
+                )
+            else:
+                logger.error(
+                    "baseline_nats_subscribe_failed",
+                    agent_id=self.agent_id,
+                    subject="precedent_recorded",
+                )
+        except Exception as e:
+            logger.error(
+                "baseline_nats_subscribe_failed",
+                agent_id=self.agent_id,
+                subject="precedent_recorded",
+                error=str(e),
+            )
+
+    async def _on_baseline_precedent_recorded(
+        self,
+        nats_mesh: Any,  # noqa: ARG002 — unused callback parameter
+        subject: str,    # noqa: ARG002 — unused callback parameter
+        data: dict[str, Any],
+    ) -> None:
+        """Handle incoming precedent_recorded NATS events.
+
+        Extracts ruling payload fields and calls
+        ``BehavioralBaseline.add_baseline_pattern()`` to organically grow
+        the immutable baseline pattern catalog.
+
+        Malformed payloads log ERROR without crashing; missing
+        ``_behavioral_baseline`` is a no-op.
+        """
+        try:
+            ruling_id = data.get("ruling_id")
+            if not ruling_id:
+                logger.error(
+                    "baseline_precedent_event_parse_failed",
+                    agent_id=self.agent_id,
+                    reason="missing_ruling_id",
+                    data_keys=list(data.keys()) if data else [],
+                )
+                return
+
+            ruling_type = data.get("ruling_type", "unknown")
+            reasoning = data.get("reasoning", "")
+            confidence = float(data.get("confidence", 0.5))
+
+            pattern_id = self._behavioral_baseline.add_baseline_pattern(
+                pattern_type="immune_precedent",
+                description=(
+                    f"Tribunal {ruling_type}: {reasoning[:200]}"
+                ),
+                content={
+                    "ruling_id": ruling_id,
+                    "ruling_type": ruling_type,
+                    "reasoning": reasoning,
+                    "confidence": confidence,
+                    "source": "precedent_recorded",
+                },
+                confidence=confidence,
+                requester_id=self.agent_id,
+            )
+
+            logger.info(
+                "baseline_pattern_from_precedent",
+                ruling_id=ruling_id,
+                pattern_id=pattern_id,
+                ruling_type=ruling_type,
+                agent_id=self.agent_id,
+            )
+
+        except Exception:
+            logger.exception(
+                "baseline_precedent_event_parse_failed",
+                agent_id=self.agent_id,
+                data_keys=list(data.keys()) if data else [],
+            )
+
     # ---- S03: Election event logging -------------------------------------
     def log_election_started(self) -> None:
         """Log a RAFT election start event via structured logging."""

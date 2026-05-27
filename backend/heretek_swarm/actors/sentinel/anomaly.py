@@ -133,6 +133,15 @@ class AnomalyMonitor:
         # Minimum entries before FP rate is considered statistically meaningful
         self._response_window_eligibility = 50
 
+        # Hysteresis configuration for adaptive threshold drift
+        self.fp_rate_drift_threshold = 0.05   # 5% FP rate triggers upward drift
+        self.drift_consecutive_windows = 3    # must be sustained for 3 windows
+        self.drift_delta_per_step = 0.05      # sigma to drift per step
+
+        # Hysteresis counters — reset when FP rate falls between thresholds
+        self._consecutive_elevated_fp_windows: int = 0
+        self._consecutive_zero_fp_windows: int = 0
+
         logger.info(
             "AnomalyMonitor_initialized",
             response_deadline=anomaly_config.response_deadline_seconds,
@@ -284,6 +293,9 @@ class AnomalyMonitor:
         # Record outcome in FP-rate window
         self._record_response_outcome(anomaly_id, is_fp=True)
 
+        # Evaluate hysteresis: sustained FP rate may trigger threshold drift
+        self._maybe_drift_threshold()
+
         # Update any pending alert
         for alert in self._anomaly_alerts:
             if alert.anomaly_id == anomaly_id:
@@ -391,6 +403,70 @@ class AnomalyMonitor:
             "fp_rate": fp_count / window_size if window_size > 0 else 0.0,
             "is_eligible": window_size >= self._response_window_eligibility,
         }
+
+    # ---- Hysteresis: threshold drift based on sustained FP rate -------------
+
+    def _maybe_drift_threshold(self) -> None:
+        """
+        Evaluate the FP-rate window and adjust z_score_threshold if
+        the FP rate has been elevated or zero for enough consecutive
+        windows to satisfy hysteresis.
+
+        Drift is rate-capped at ``drift_delta_per_step`` (default 0.05 sigma)
+        and further clamped by ``BehavioralBaseline.adjust_z_score_threshold``
+        to ±0.1 sigma per call.
+        """
+        stats = self.get_fp_rate_window_stats()
+        fp_rate = stats["fp_rate"]
+
+        if fp_rate > self.fp_rate_drift_threshold:
+            # Elevated FP rate — count toward upward drift
+            self._consecutive_elevated_fp_windows += 1
+            self._consecutive_zero_fp_windows = 0
+
+            if (self._consecutive_elevated_fp_windows >= self.drift_consecutive_windows
+                    and stats["is_eligible"]):
+                old_threshold = self._behavioral_baseline.z_score_threshold
+                new_threshold = self._behavioral_baseline.adjust_z_score_threshold(
+                    +self.drift_delta_per_step,
+                    agent_id=self._agent_id,
+                )
+                self._consecutive_elevated_fp_windows = 0
+                logger.warning(
+                    "threshold_drift_upward",
+                    fp_rate=fp_rate,
+                    consecutive_windows=self.drift_consecutive_windows,
+                    previous_threshold=old_threshold,
+                    new_threshold=new_threshold,
+                    agent_id=self._agent_id,
+                )
+
+        elif fp_rate == 0.0:
+            # Zero FP rate — count toward downward drift
+            self._consecutive_zero_fp_windows += 1
+            self._consecutive_elevated_fp_windows = 0
+
+            if (self._consecutive_zero_fp_windows >= self.drift_consecutive_windows
+                    and stats["is_eligible"]):
+                old_threshold = self._behavioral_baseline.z_score_threshold
+                new_threshold = self._behavioral_baseline.adjust_z_score_threshold(
+                    -self.drift_delta_per_step,
+                    agent_id=self._agent_id,
+                )
+                self._consecutive_zero_fp_windows = 0
+                logger.warning(
+                    "threshold_drift_downward",
+                    fp_rate=fp_rate,
+                    consecutive_windows=self.drift_consecutive_windows,
+                    previous_threshold=old_threshold,
+                    new_threshold=new_threshold,
+                    agent_id=self._agent_id,
+                )
+
+        else:
+            # Intermediate FP rate — reset both counters (not sustained)
+            self._consecutive_elevated_fp_windows = 0
+            self._consecutive_zero_fp_windows = 0
 
     # ---- Self-monitoring ---------------------------------------------------
 
@@ -654,6 +730,9 @@ class AnomalyMonitor:
         # Record outcome in FP-rate window (not FP at creation —
         # FPs are reported later via report_false_positive)
         self._record_response_outcome(anomaly.anomaly_id, is_fp=False)
+
+        # Evaluate hysteresis: sustained zero-FP rate may trigger downward drift
+        self._maybe_drift_threshold()
 
         return alert
 
