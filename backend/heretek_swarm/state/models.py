@@ -7,13 +7,19 @@ interfaces expected by tests and legacy code.
 These are compatibility shims that wrap the actual repository implementations.
 """
 
+import asyncio
+import dataclasses
 import hashlib
 import json
+import os
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from enum import Enum
+from pathlib import Path
 from typing import Any
 from uuid import UUID, uuid4
+
+import structlog
 
 
 class StateStatus(Enum):
@@ -95,6 +101,37 @@ class StateSnapshot:
     system_state: SystemState | None = None
     agent_states: dict[str, Any] = field(default_factory=dict)
     metadata: dict[str, Any] = field(default_factory=dict)
+
+    def to_dict(self) -> dict[str, Any]:
+        """Serialize this snapshot to a JSON-compatible dict."""
+        return {
+            "snapshot_id": str(self.snapshot_id),
+            "agent_id": self.agent_id,
+            "state": self.state,
+            "version": self.version,
+            "created_at": self.created_at.isoformat(),
+            "trigger": self.trigger,
+            "description": self.description,
+            "system_state": dataclasses.asdict(self.system_state) if self.system_state else None,
+            "agent_states": self.agent_states,
+            "metadata": self.metadata,
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> "StateSnapshot":
+        """Deserialize a snapshot from a JSON-compatible dict."""
+        return cls(
+            snapshot_id=UUID(data["snapshot_id"]),
+            agent_id=data.get("agent_id", "system"),
+            state=data.get("state", {}),
+            version=data.get("version", 1),
+            created_at=datetime.fromisoformat(data["created_at"]),
+            trigger=data.get("trigger", "manual"),
+            description=data.get("description", ""),
+            system_state=SystemState(**data["system_state"]) if data.get("system_state") else None,
+            agent_states=data.get("agent_states", {}),
+            metadata=data.get("metadata", {}),
+        )
 
 
 @dataclass
@@ -430,41 +467,147 @@ class LineageTracker:
         }
 
 
+logger = structlog.get_logger(__name__)
+
+
 class SnapshotManager:
-    """Manages state snapshots for rollback."""
+    """Manages state snapshots for rollback.
+
+    Provides create, read, list, delete, and diff operations on state snapshots.
+    Snapshots are persisted to disk as individual JSON files in the configured
+    storage directory so they survive restarts.
+    """
 
     def __init__(self, config: SnapshotConfig | None = None) -> None:
         self.config = config or SnapshotConfig()
         self._snapshots: dict[str, list[StateSnapshot]] = {}
         self._system_snapshots: list[StateSnapshot] = []
+        self._cleanup_task: asyncio.Task[Any] | None = None
+        self._storage_path: Path | None = None
+
+    def _resolve_storage_path(self) -> Path:
+        """Resolve the storage directory, expanding ~ if needed."""
+        raw = self.config.storage_path
+        return Path(raw).expanduser().resolve()
 
     async def initialize(self) -> None:
         """Initialize the snapshot manager.
 
-        This is a stub/placeholder method.
-
-        What needs to be implemented:
-        - Initialize underlying storage (database, file system, etc.)
-        - Set up snapshot cleanup scheduled task
-        - Restore any pending snapshots from previous sessions
-
-        Returns:
-            None
+        Creates the storage directory, loads any existing snapshots from disk,
+        and starts a background cleanup task that periodically prunes old snapshots.
         """
+        self._storage_path = self._resolve_storage_path()
+        self._storage_path.mkdir(parents=True, exist_ok=True)
+
+        # Restore snapshots from disk
+        loaded_count = 0
+        for file in sorted(self._storage_path.glob("*.json")):
+            try:
+                data = json.loads(file.read_text(encoding="utf-8"))
+                snapshot = StateSnapshot.from_dict(data)
+                self._system_snapshots.append(snapshot)
+                loaded_count += 1
+            except (json.JSONDecodeError, KeyError, ValueError) as exc:
+                logger.warning(
+                    "snapshot_load_error",
+                    file=str(file),
+                    error=str(exc),
+                )
+
+        logger.info(
+            "snapshot_manager_initialized",
+            storage_path=str(self._storage_path),
+            max_snapshots=self.config.max_snapshots,
+            loaded_count=loaded_count,
+        )
+
+        # Start periodic cleanup task
+        self._cleanup_task = asyncio.create_task(self._cleanup_loop())
+
+    async def _cleanup_loop(self) -> None:
+        """Background task that periodically prunes old snapshots."""
+        import asyncio
+
+        SECONDS_PER_HOUR = 3600
+        while True:
+            await asyncio.sleep(SECONDS_PER_HOUR)
+            await self._prune_old_snapshots()
+
+    async def _prune_old_snapshots(self) -> None:
+        """Remove snapshots exceeding max_snapshots (oldest first)."""
+        max_count = self.config.max_snapshots
+        if max_count <= 0 or not self._storage_path:
+            return
+
+        existing = sorted(self._system_snapshots, key=lambda s: s.created_at)
+        if len(existing) <= max_count:
+            return
+
+        to_remove = existing[: len(existing) - max_count]
+        for snap in to_remove:
+            file_path = self._storage_path / f"{snap.snapshot_id}.json"
+            try:
+                if file_path.exists():
+                    file_path.unlink()
+                self._system_snapshots.remove(snap)
+            except OSError as exc:
+                logger.warning(
+                    "snapshot_prune_error",
+                    snapshot_id=str(snap.snapshot_id),
+                    error=str(exc),
+                )
+
+        if to_remove:
+            logger.info(
+                "snapshot_prune_complete",
+                removed_count=len(to_remove),
+                remaining_count=len(self._system_snapshots),
+            )
+
+    def _persist_snapshot(self, snapshot: StateSnapshot) -> None:
+        """Serialize a snapshot to JSON and write to disk.
+
+        Errors are logged as warnings; they do not crash the manager.
+        """
+        if not self._storage_path:
+            return
+        file_path = self._storage_path / f"{snapshot.snapshot_id}.json"
+        try:
+            data = snapshot.to_dict()
+            file_path.write_text(json.dumps(data, indent=2, default=str), encoding="utf-8")
+        except (OSError, TypeError, ValueError) as exc:
+            logger.warning(
+                "snapshot_persist_error",
+                snapshot_id=str(snapshot.snapshot_id),
+                error=str(exc),
+            )
 
     async def shutdown(self) -> None:
         """Shutdown the snapshot manager.
 
-        This is a stub/placeholder method.
-
-        What needs to be implemented:
-        - Gracefully close underlying storage connections
-        - Flush any pending snapshots to disk
-        - Cancel any scheduled cleanup tasks
-
-        Returns:
-            None
+        Flushes all in-memory snapshots to disk, cancels the background cleanup
+        task, and logs a structured shutdown event.
         """
+        # Cancel cleanup task
+        if self._cleanup_task is not None:
+            self._cleanup_task.cancel()
+            try:
+                await self._cleanup_task
+            except asyncio.CancelledError:
+                pass
+            self._cleanup_task = None
+
+        # Flush all snapshots to disk
+        flushed_count = 0
+        for snap in self._system_snapshots:
+            self._persist_snapshot(snap)
+            flushed_count += 1
+
+        logger.info(
+            "snapshot_manager_shutdown",
+            flushed_count=flushed_count,
+            storage_path=str(self._storage_path) if self._storage_path else "",
+        )
 
     async def create_snapshot(
         self,
@@ -510,6 +653,7 @@ class SnapshotManager:
             },
         )
         self._system_snapshots.append(snapshot)
+        self._persist_snapshot(snapshot)
         return snapshot
 
     async def get_snapshot(self, snapshot_id: UUID) -> StateSnapshot | None:

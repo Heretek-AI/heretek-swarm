@@ -506,12 +506,46 @@ class PerceiverAgent(
             "analyzed_by": "metadata",
         }
 
-    async def _describe_image_llm(self, _image_data: str) -> str:
-        """Use LLM to describe an image."""
-        prompt = "Describe this image in detail, including any text, objects, people, colors, and the overall scene."  # noqa: E501
-        # Note: Actual implementation would depend on LLM capabilities
-        # This is a placeholder for vision-capable LLM integration
-        return f"Image analysis requested with prompt: {prompt}"
+    async def _describe_image_llm(self, image_data: str) -> str:
+        """Use LLM to describe an image via the provider chain.
+
+        Routes a vision-oriented prompt (including the image data) through
+        ``run_with_llm()`` → ModelGarage → provider → model.  Falls back to a
+        metadata-only string when the LLM path is unavailable.
+        """
+        size_bytes = len(image_data.encode())
+        fmt = "base64"
+        if image_data.startswith("data:"):
+            try:
+                mime = image_data.split(":")[1].split(";")[0]
+            except IndexError:
+                mime = "unknown"
+            fmt = mime.split("/")[-1] if "/" in mime else mime
+
+        prompt = (
+            "You are a vision analysis assistant.  Describe the following image in detail, "
+            "including any text, objects, people, colors, and the overall scene.  "
+            f"Image data ({fmt}, {size_bytes} bytes):\n{image_data}"
+        )
+
+        try:
+            response = await self.run_with_llm(prompt, timeout=60)
+            logger.info(
+                f"[{self.agent_id}] Image description generated via LLM",
+                extra={"size_bytes": size_bytes, "format": fmt},
+            )
+            return response
+        except Exception:
+            logger.warning(
+                f"[{self.agent_id}] LLM unavailable for image description",
+                extra={
+                    "event": "perceiver_llm_unavailable",
+                    "size_bytes": size_bytes,
+                    "format": fmt,
+                },
+                exc_info=True,
+            )
+            return f"[LLM unavailable] Image analysis requested ({size_bytes} bytes, {fmt})"
 
     async def _extract_audio_features(
         self, audio_data: Any, format_hint: str | None
