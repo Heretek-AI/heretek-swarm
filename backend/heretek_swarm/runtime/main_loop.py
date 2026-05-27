@@ -32,7 +32,7 @@ from heretek_swarm.api.consciousness import get_consciousness_plugin
 from heretek_swarm.channels.registry import ChannelRegistry, GroupRegistry
 from heretek_swarm.consensus.election_manager import ElectionManager
 from heretek_swarm.consensus.maker import MAKERConsensus
-from heretek_swarm.consensus.election_manager import ElectionManager
+from heretek_swarm.actors.stubs import StubEventMesh
 from heretek_swarm.gateway.nats_event_mesh import NATSEventMeshWithJetStream
 from heretek_swarm.llm.model_garage import ModelGarage
 from heretek_swarm.memory.base import DualTierMemory
@@ -212,6 +212,13 @@ class AutonomousSwarm:
             self.supervisor = ActorSupervisor(
                 health_check_interval=self._health_check_interval, auto_restart=True, max_restarts=5
             )
+            # T01: Create a StubEventMesh for the no-infra path so that all agents
+            # exercise the real Tier-1 code path (_send_via_event_mesh) instead of
+            # skipping it.  The stub publishes to in-memory subjects for inspection.
+            self.event_mesh = StubEventMesh()
+            await self.event_mesh.connect()
+            # Thread stub mesh into supervisor so spawned agents get it via spawn_actor()
+            self.supervisor._event_mesh = self.event_mesh
             # Re-wire orchestrator refs now that components are initialized
             self._actor_orch._supervisor = self.supervisor
             self._actor_orch._mcp_tools = self.mcp_tools
@@ -220,7 +227,7 @@ class AutonomousSwarm:
             self._deliberation._supervisor = self.supervisor
             self._deliberation._consensus = self.consensus
             await self._actor_orch.spawn_all_actors()
-            logger.info("autonomous_swarm_fully_initialized")
+            logger.info("autonomous_swarm_fully_initialized", event_mesh_type="StubEventMesh")
             return
 
         # 1. Initialize channel registry
@@ -413,8 +420,19 @@ class AutonomousSwarm:
         self._deliberation._consensus = self.consensus
 
         # 8a. Thread event_mesh into supervisor so spawned agents inherit it
+        # T01: Guard — verify connection state before threading; a mesh that exists
+        # but is not connected is effectively unavailable.  Log a warning and keep
+        # reference as None so the tier-1 path falls through rather than failing.
         if self.event_mesh is not None:
-            self.supervisor._event_mesh = self.event_mesh
+            if self.event_mesh.is_connected:
+                self.supervisor._event_mesh = self.event_mesh
+                logger.info("event_mesh_threaded_to_supervisor", mesh_type="NATSEventMeshWithJetStream")
+            else:
+                logger.warning(
+                    "event_mesh_not_connected_at_spawn_time",
+                    message="Event mesh exists but is_connected is False — agents will use stubs.",
+                )
+                self.supervisor._event_mesh = None
 
         # 9. Spawn all agents
         try:
@@ -433,7 +451,31 @@ class AutonomousSwarm:
                 error=str(exc),
             )
 
-        # 10. Set up channel subscriptions
+        # 10. Create per-agent JetStream streams for durable agent messaging
+        # T02: After all agents are spawned, create one JetStream stream per agent
+        # so that each agent's subject (agent.<id>.>) is backed by a JetStream
+        # stream.  This makes the 23 per-agent streams visible in nats stream ls.
+        try:
+            if self.event_mesh is not None and self.event_mesh.jetstream_enabled:
+                agent_ids = list(self.supervisor.actors.keys()) if self.supervisor else []
+                stream_result = await self.event_mesh.ensure_agent_streams(agent_ids)
+                logger.info(
+                    "per_agent_jetstream_streams_created",
+                    created=stream_result.get("created", 0),
+                    skipped=stream_result.get("skipped", 0),
+                )
+            else:
+                logger.warning(
+                    "per_agent_streams_skipped",
+                    message="No event mesh or JetStream not enabled — skipping per-agent streams",
+                )
+        except Exception as exc:
+            logger.warning(
+                "per_agent_streams_init_failed",
+                error=str(exc),
+            )
+
+        # 11. Set up channel subscriptions
         try:
             await self._actor_orch.setup_channel_subscriptions()
             logger.info("channel_subscriptions_configured")

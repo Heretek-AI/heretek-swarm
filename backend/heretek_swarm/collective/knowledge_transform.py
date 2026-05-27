@@ -594,7 +594,7 @@ class KnowledgeTransformer:
             recency_bonus = max(0, 0.3 - (age_hours / 100))  # Decay over 30 hours
             priority += recency_bonus
         except (ValueError, TypeError):
-            pass
+            logger.debug("Knowledge transform parsing fallback", exc_info=True)
 
         # Agent type relevance
         if self._agent_type_in_list(target_agent_type, pattern.metadata.agents_involved):

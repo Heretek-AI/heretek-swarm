@@ -107,7 +107,7 @@ def _add_trace_context(
             event_dict["trace_id"] = ctx.trace_id
             event_dict["span_id"] = ctx.span_id
     except ImportError:
-        pass
+        logger.debug("OpenTelemetry import unavailable, using standard logging fallback")
 
     # Add service name
     if _log_config:

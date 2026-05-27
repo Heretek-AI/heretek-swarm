@@ -437,7 +437,7 @@ async def _handle_get_active_conflicts(agent: ArbiterAgent, message: ActorMessag
                     c for c in active_conflicts if severity_order.get(c.severity, 0) >= min_order
                 ]
             except ValueError:
-                pass
+                logger.debug("Arbiter handler value parsing fallback", exc_info=True)
 
         if party_filter:
             active_conflicts = [c for c in active_conflicts if party_filter in c.parties]

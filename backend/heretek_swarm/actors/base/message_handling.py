@@ -42,7 +42,7 @@ class AgentActorMessageHandling(AgentActor):
             plugin.record_interaction(from_agent, to_agent)
         except Exception:  # noqa: S110
             # Consciousness tracking is non-fatal — do not break message delivery
-            pass
+            logger.debug("Consciousness tracking unavailable, continuing message delivery", exc_info=True)
 
     async def send(
         self,
@@ -80,8 +80,25 @@ class AgentActorMessageHandling(AgentActor):
         )
 
         # Tier 1: Route through event mesh if available
+        mesh_type = getattr(self, "mesh_type", "none")
         if await self._send_via_event_mesh(topic, message, message_id, message_type):
+            logger.info(
+                f"[{self.agent_id}] Tier-1 mesh route succeeded",  # noqa: G004
+                extra={
+                    "mesh_type": mesh_type,
+                    "topic": topic,
+                    "message_id": message_id,
+                    "message_type": message_type,
+                },
+            )
             return message_id
+
+        # Tier 1 unavailable or failed — log the reason at warning level
+        if mesh_type == "none":
+            logger.warning(
+                f"[{self.agent_id}] Tier-1 mesh unavailable (no event mesh configured)",  # noqa: G004
+                extra={"mesh_type": mesh_type, "topic": topic, "message_id": message_id},
+            )
 
         # Tier 2: Direct delivery to actors subscribed to topic
         if await self._deliver_to_registry_actors(topic, message, message_id, message_type):

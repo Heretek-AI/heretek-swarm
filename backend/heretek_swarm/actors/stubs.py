@@ -601,6 +601,11 @@ class StubEventMesh:
         """Return all registered subscription IDs."""
         return {sub["id"] for subs in self._subscriptions.values() for sub in subs}
 
+    @property
+    def mesh_type(self) -> str:
+        """Return the mesh type identifier for observability."""
+        return "StubEventMesh"
+
     def client_count(self) -> int:
         """Return stub client count."""
         return 1 if self._connected else 0

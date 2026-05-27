@@ -435,7 +435,7 @@ class GoalConsensus:
                             confidence = float(data.get("confidence", 0.5))
                             reasoning = str(data.get("reasoning", ""))
                         except (json.JSONDecodeError, ValueError):
-                            pass
+                            logger.debug("Goal consensus JSON parse fallback", exc_info=True)
 
                 tie_votes.append(
                     Vote(

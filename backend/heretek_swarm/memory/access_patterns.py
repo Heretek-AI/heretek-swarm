@@ -406,7 +406,7 @@ class AccessPatternAnalyzer:
             hour = dt.hour
             agent_data["preferred_times"].append(hour)
         except (ValueError, TypeError):
-            pass
+            logger.debug("Memory access pattern parse fallback", exc_info=True)
 
         # Track session patterns
         if session_id:

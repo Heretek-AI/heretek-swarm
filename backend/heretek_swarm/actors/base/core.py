@@ -104,6 +104,7 @@ class ActorStatus:
         mailbox_size: Current mailbox queue size
         last_activity: Last activity timestamp
         error_count: Number of errors encountered
+        mesh_type: Event mesh type ('real', 'stub', or 'none')
     """
 
     agent_id: str
@@ -115,6 +116,7 @@ class ActorStatus:
     mailbox_size: int
     last_activity: str | None = None
     error_count: int = 0
+    mesh_type: str = "none"
 
 
 class AgentActor:
@@ -292,6 +294,44 @@ class AgentActor:
     def is_alive(self) -> bool:
         """Return True if the actor is in ACTIVE state."""
         return self.state == ActorState.ACTIVE
+
+    @property
+    def mesh_type(self) -> str:
+        """
+        Return the mesh type for observability.
+
+        Returns:
+            'real' if ``_event_mesh`` is a NATS-based mesh instance,
+            'stub' if it is a ``StubEventMesh``, or ``'none'`` if None.
+        """
+        mesh = self._event_mesh
+        if mesh is None:
+            return "none"
+        # StubEventMesh check using the already-imported stubs module
+        if isinstance(mesh, _actor_stubs.StubEventMesh):
+            return "stub"
+        # NATSEventMesh check via lazy import to avoid circular dependency
+        try:
+            from heretek_swarm.gateway.nats_event_mesh import NATSEventMesh
+
+            if isinstance(mesh, NATSEventMesh):
+                return "real"
+        except ImportError:
+            logger.debug("NATSEventMesh import unavailable, falling back to class-name mesh type detection")
+        # Fallback: check class name for NATS substring (supports mocks)
+        mesh_type_name = type(mesh).__name__
+        if "NATS" in mesh_type_name:
+            return "real"
+        if "Stub" in mesh_type_name:
+            return "stub"
+        # Final fallback: inspect mesh_type attribute string
+        mesh_type_attr = getattr(mesh, "mesh_type", "")
+        if isinstance(mesh_type_attr, str):
+            if "NATS" in mesh_type_attr:
+                return "real"
+            if "Stub" in mesh_type_attr:
+                return "stub"
+        return "real"  # assume non-stub, non-None mesh is real
 
     async def initialize(self) -> None:
         """Initialize the actor. Override in subclass for custom setup."""
@@ -516,7 +556,7 @@ class AgentActor:
                 await asyncio.gather(*tasks_to_cancel, return_exceptions=True)
             except asyncio.CancelledError:
                 # Expected during task cancellation
-                pass
+                logger.debug("Task cancellation complete during actor teardown")
             except Exception as e:
                 # P1-10d fix: Log any other exceptions during task cancellation
                 logger.exception(

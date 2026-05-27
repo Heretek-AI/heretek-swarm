@@ -732,7 +732,7 @@ async def a2a_websocket(
             await asyncio.sleep(5)
 
     except WebSocketDisconnect:
-        pass
+        logger.debug("WebSocket client disconnected")
     finally:
         manager.disconnect_a2a(websocket)
 
@@ -1223,7 +1223,7 @@ async def logs_websocket(
             )
             await asyncio.sleep(30)
     except WebSocketDisconnect:
-        pass
+        logger.debug("WebSocket client disconnected")
     finally:
         manager.disconnect_logs(websocket)
 

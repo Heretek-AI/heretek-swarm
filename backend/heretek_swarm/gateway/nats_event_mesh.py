@@ -203,6 +203,11 @@ class NATSEventMesh:
         return count
 
     @property
+    def mesh_type(self) -> str:
+        """Return the mesh type identifier for observability."""
+        return type(self).__name__
+
+    @property
     def stream_count(self) -> int:
         """Get number of created streams."""
         return len(self._streams)
@@ -1135,6 +1140,66 @@ class NATSEventMeshWithJetStream(NATSEventMesh):
         except Exception:
             logger.error("Failed to initialize JetStream: {e}")
             return False
+
+    async def ensure_agent_streams(
+        self,
+        agent_ids: list[str] | None = None,
+    ) -> dict[str, int]:
+        """
+        Create one JetStream stream per agent ID for durable agent messaging.
+
+        Each stream covers subject ``agent.{agent_id}.>`` so all messages
+        directed at a specific agent are persisted.  Idempotent — already
+        existing streams are logged as warnings and counted as skipped.
+
+        Args:
+            agent_ids: List of agent IDs (e.g. ``["alpha", "beta", ...]``).
+                       Defaults to empty list.
+
+        Returns:
+            Dict with ``created`` and ``skipped`` counts.
+        """
+        agent_ids = agent_ids or []
+        created = 0
+        skipped = 0
+
+        if not self.jetstream_enabled:
+            logger.warning("ensure_agent_streams_skipped_jetstream_not_enabled")
+            return {"created": 0, "skipped": 0}
+
+        for agent_id in agent_ids:
+            stream_name = f"agent_{agent_id}"
+            try:
+                import nats.js.api as js_api
+
+                config = js_api.StreamConfig(
+                    name=stream_name,
+                    subjects=[f"agent.{agent_id}.>"],
+                    storage=js_api.StorageType.FILE,
+                    retention=js_api.RetentionPolicy.LIMITS,
+                    max_msgs=10000,
+                    max_age=24 * 3600 * 1_000_000_000,  # 24h in nanoseconds
+                )
+                await self._js.add_stream(config=config)
+                self._streams[stream_name] = {
+                    "name": stream_name,
+                    "subjects": [f"agent.{agent_id}.>"],
+                    "storage": "file",
+                    "retention": "limits",
+                    "max_msgs": 10000,
+                    "max_age": 86400,
+                    "created": datetime.now(UTC).isoformat(),
+                }
+                logger.info("agent_stream_created", stream_name=stream_name, agent_id=agent_id)
+                created += 1
+            except Exception:
+                logger.warning(
+                    "agent_stream_already_exists", stream_name=stream_name, agent_id=agent_id
+                )
+                skipped += 1
+
+        logger.info("ensure_agent_streams_complete", created=created, skipped=skipped)
+        return {"created": created, "skipped": skipped}
 
     async def publish_event(
         self,

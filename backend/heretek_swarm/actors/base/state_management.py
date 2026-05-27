@@ -423,6 +423,7 @@ class AgentActorStateManagement(AgentActor):
             mailbox_size=self.mailbox.qsize(),
             last_activity=self.last_activity,
             error_count=self.error_count,
+            mesh_type=getattr(self, "mesh_type", "none"),
         )
 
     async def suspend(self) -> None:

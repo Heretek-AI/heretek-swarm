@@ -183,7 +183,25 @@ class ActorSupervisor(AuditMixin, ValidationMixin, HealthReportingMixin, Pattern
 
             # Inject event mesh for Tier 1 message routing (NATS)
             if self._event_mesh is not None:
+                # Set both the attribute (checked first by _send_via_event_mesh)
+                # and internal_state (for get_state("_event_mesh") fallback)
+                actor._event_mesh = self._event_mesh
                 actor.update_state("_event_mesh", self._event_mesh)
+                logger.info(
+                    "agent_spawned_with_mesh",
+                    agent_id=actor_id,
+                    mesh_type=type(self._event_mesh).__name__,
+                )
+            else:
+                # When supervisor has no mesh, the agent already has a
+                # StubEventMesh from AgentActor.__init__ fallback.
+                agent_mesh = actor._event_mesh or actor.get_state("_event_mesh")
+                logger.info(
+                    "agent_spawned_without_supervisor_mesh",
+                    agent_id=actor_id,
+                    has_stub_fallback=agent_mesh is not None,
+                    stub_type=type(agent_mesh).__name__ if agent_mesh is not None else None,
+                )
 
             # Spawn the actor
             await actor.spawn()
@@ -312,7 +330,7 @@ class ActorSupervisor(AuditMixin, ValidationMixin, HealthReportingMixin, Pattern
             try:
                 await self._monitor_task
             except asyncio.CancelledError:
-                pass
+                logger.debug("Monitor task cancelled during actor shutdown")
             finally:
                 # P1-10h fix: Reset _monitor_task to None after cancellation
                 self._monitor_task = None
@@ -426,7 +444,13 @@ class ActorSupervisor(AuditMixin, ValidationMixin, HealthReportingMixin, Pattern
             if self.db_pool is not None:
                 new_actor.update_state("_db_pool", self.db_pool)
             if self._event_mesh is not None:
+                new_actor._event_mesh = self._event_mesh
                 new_actor.update_state("_event_mesh", self._event_mesh)
+                logger.info(
+                    "agent_restarted_with_mesh",
+                    agent_id=actor_id,
+                    mesh_type=type(self._event_mesh).__name__,
+                )
 
             # Register new actor
             self.actors[actor_id] = new_actor
@@ -500,7 +524,13 @@ class ActorSupervisor(AuditMixin, ValidationMixin, HealthReportingMixin, Pattern
             if self.db_pool is not None:
                 new_actor.update_state("_db_pool", self.db_pool)
             if self._event_mesh is not None:
+                new_actor._event_mesh = self._event_mesh
                 new_actor.update_state("_event_mesh", self._event_mesh)
+                logger.info(
+                    "agent_respawned_with_mesh",
+                    agent_id=actor_id,
+                    mesh_type=type(self._event_mesh).__name__,
+                )
 
             # Register new actor
             self.actors[actor_id] = new_actor

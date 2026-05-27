@@ -484,7 +484,7 @@ class ChronosHandlersMixin:
                     status = ScheduleStatus(status_filter)
                     tasks = [t for t in tasks if t.status == status]
                 except ValueError:
-                    pass
+                    logger.debug("Chronos handler value parsing fallback", exc_info=True)
 
             # Sort by scheduled_at
             tasks.sort(key=lambda t: t.scheduled_at)
