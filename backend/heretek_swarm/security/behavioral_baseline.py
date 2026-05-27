@@ -555,6 +555,64 @@ class BehavioralBaseline:
 
         return (is_anomaly, z_score)
 
+    def adjust_z_score_threshold(
+        self,
+        delta: float,
+        agent_id: str | None = None,
+    ) -> float:
+        """
+        Adjust the z-score threshold for anomaly detection.
+
+        The delta is rate-capped at ±0.1 sigma per call to prevent
+        oscillation — values outside this range are silently clamped.
+        The threshold is clamped to a minimum of 1.0.
+
+        Each adjustment records an immutable audit entry and emits a
+        structured log signal at INFO level.
+
+        Args:
+            delta: Amount to adjust the threshold (silently clamped to
+                ``[-0.1, 0.1]``).
+            agent_id: Optional ID of the agent triggering the adjustment.
+
+        Returns:
+            The new z_score_threshold value.
+        """
+        # Clamp delta to the rate-capped range
+        clamped_delta = max(-0.1, min(0.1, delta))
+
+        old_threshold = self.z_score_threshold
+        new_threshold = old_threshold + clamped_delta
+
+        # Enforce minimum sane threshold of 1.0
+        if new_threshold < 1.0:
+            new_threshold = 1.0
+            clamped_delta = new_threshold - old_threshold
+
+        self.z_score_threshold = new_threshold
+
+        # Record immutable audit entry
+        self._record_audit(
+            event_type="baseline_threshold_adjusted",
+            agent_id=agent_id,
+            details={
+                "previous_threshold": old_threshold,
+                "new_threshold": new_threshold,
+                "delta": clamped_delta,
+            },
+        )
+
+        # Emit structured log signal
+        logger.info(
+            "baseline_threshold_adjusted",
+            previous_threshold=old_threshold,
+            new_threshold=new_threshold,
+            delta=clamped_delta,
+            agent_id=agent_id,
+        )
+
+        return new_threshold
+
     def add_baseline_pattern(
         self,
         pattern_type: str,
@@ -929,6 +987,32 @@ class BehavioralBaseline:
                 for status in BaselineStatus
             },
         }
+
+
+def validate_threshold_delta(delta: float) -> float:
+    """
+    Validate and return a threshold delta for use with
+    ``adjust_z_score_threshold``.
+
+    This is the input-validation layer — callers **must** use this before
+    passing a delta if they want early rejection of out-of-range values.
+    Values whose absolute magnitude exceeds the rate cap are rejected
+    with ``ValueError``.
+
+    Args:
+        delta: Proposed delta value.
+
+    Returns:
+        The validated (possibly clamped) delta value.
+
+    Raises:
+        ValueError: If ``abs(delta) > 0.1``.
+    """
+    if delta < -0.1 or delta > 0.1:
+        raise ValueError(
+            f"delta={delta} exceeds rate cap of ±0.1 per call"
+        )
+    return max(-0.1, min(0.1, delta))
 
 
 def create_behavioral_baseline(
