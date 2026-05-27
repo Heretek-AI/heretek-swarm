@@ -268,13 +268,13 @@ class ConfigLoader:
         try:
             return int(value)
         except ValueError:
-            pass
+            logger.debug(f"Config value '{value}' is not an int, trying next type")
 
         # Float
         try:
             return float(value)
         except ValueError:
-            pass
+            logger.debug(f"Config value '{value}' is not a float, trying next type")
 
         # JSON array/object
         if value.startswith(("[", "{")):
@@ -282,7 +282,7 @@ class ConfigLoader:
             try:
                 return json.loads(value)
             except json.JSONDecodeError:
-                pass
+                logger.debug("Config value is not valid JSON, defaulting to string")
 
         # Default to string
         return value

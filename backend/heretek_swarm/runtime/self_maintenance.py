@@ -707,7 +707,7 @@ class SelfMaintenanceScheduler:
 
             except TimeoutError:
                 # Normal interval elapsed, loop continues
-                pass
+                logger.debug("Maintenance interval elapsed, looping")
             except asyncio.CancelledError:
                 break
             except Exception:

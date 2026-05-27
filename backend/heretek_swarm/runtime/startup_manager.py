@@ -81,7 +81,7 @@ class StartupManager:
                 )
             except NotImplementedError:
                 # Windows doesn't support add_signal_handler
-                pass
+                logger.debug("Signal handler setup not supported on this platform (Windows)")
 
         logger.info("startup_manager_started")
 
@@ -253,7 +253,7 @@ async def run_startup_manager() -> None:
         while manager._running:  # noqa: SLF001,ASYNC110
             await asyncio.sleep(1)
     except asyncio.CancelledError:
-        pass
+        logger.debug("Startup manager run loop cancelled")
     finally:
         await manager.stop()
 

@@ -103,7 +103,7 @@ async def websocket_metrics(websocket: WebSocket, interval: int = 5):
                         if message == "stop":
                             break
                 except TimeoutError:
-                    pass
+                    logger.debug("Stream timeout during wait, continuing")
 
             except WebSocketDisconnect:
                 logger.info("websocket_disconnected")

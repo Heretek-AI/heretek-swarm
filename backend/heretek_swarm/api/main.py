@@ -1181,7 +1181,7 @@ async def prompt_endpoint(request: PromptRequest, authenticated: str = Depends(v
                 dissent_notes.append(d["note"])
     except Exception:
         # Dissent notes are display-only — skip inconsistent records silently
-        pass
+        logger.debug("Malformed dissent note skipped", exc_info=True)
 
     # Broadcast deliberation_completed to dashboard WebSocket clients
     with suppress(Exception):

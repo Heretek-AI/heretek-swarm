@@ -1020,7 +1020,7 @@ class ModelGarage:
                 loop = asyncio.get_running_loop()
                 loop.create_task(old_provider.close())  # noqa: RUF006
             except RuntimeError:
-                pass  # no event loop in this thread — close on next initialization
+                logger.exception("No event loop in thread, connection close deferred to next initialization")
             del self._providers[provider_id]
 
         self._save_config()
