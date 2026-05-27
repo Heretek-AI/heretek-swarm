@@ -294,12 +294,46 @@ class SentinelAgent(
         outcome: str,
         content: dict[str, Any],
     ) -> None:
-        """Callback for AnomalyMonitor: emit pattern for collective learning,
-        then create Tribunal case for HIGH/CRITICAL severity anomalies.
+        """Callback for AnomalyMonitor: check immune memory for precedents,
+        emit pattern for collective learning, then create Tribunal case for
+        HIGH/CRITICAL severity anomalies.
 
         The anomaly_id (item_id) serves as the original_decision_id for the
         Tribunal case, establishing the trace chain for the immune loop.
+
+        Known-pattern short-circuit (S05/T01):
+        If check_pattern_immunity() returns KNOWN_BENIGN or KNOWN_MALICIOUS,
+        the anomaly is a repeat of a previously learned pattern.  We log
+        immune_pattern_classified and return early — no redundant Tribunal
+        case, no _emit_pattern re-emission.  This is the final seam closing
+        the immune-loop memory chain (S02 precedents → S04 immunity check
+        → S05 wired into the anomaly pipeline).
         """
+        classification, immune_pattern = (
+            self._immune_manager._immune_system.check_pattern_immunity(content)
+        )
+
+        if classification in (
+            PatternClassification.KNOWN_BENIGN,
+            PatternClassification.KNOWN_MALICIOUS,
+        ):
+            confidence = (
+                immune_pattern.confidence if immune_pattern else 0.0
+            )
+            pattern_id = (
+                immune_pattern.pattern_id if immune_pattern else "unknown"
+            )
+            logger.info(
+                "immune_pattern_classified",
+                classification=classification.value,
+                confidence=confidence,
+                pattern_id=pattern_id,
+                anomaly_id=item_id,
+                anomaly_type=content.get("anomaly_type"),
+                agent_id=content.get("agent_id"),
+            )
+            return
+
         # Always emit for collective learning (PatternMixin)
         await self._emit_pattern(
             item_id=item_id,

@@ -45,8 +45,13 @@ from heretek_swarm.consensus.domain_selector import (
     DomainSelector,
 )
 from heretek_swarm.consensus.election_manager import (
+<<<<<<< HEAD
     ElectionManager,
     GOVERNANCE_AGENT_IDS,
+=======
+    GOVERNANCE_AGENT_IDS,
+    ElectionManager,
+>>>>>>> 5074e2e (fix: Full test suite regression: 0 failures (~1160 tests). Ruff lint: 0…)
 )
 from heretek_swarm.consensus.expertise import (
     AgentExpertiseProfile,
@@ -111,22 +116,18 @@ from heretek_swarm.consensus.tribunal import (
 logger = structlog.get_logger(__name__)
 
 __all__ = [
-    # Domain Selection
     "DEFAULT_FALLBACK_AGENTS",
+    "GOVERNANCE_AGENT_IDS",
     "AgentExpertiseProfile",
-    # Expertise Profiling
     "AgentExpertiseProfiler",
     "AgentPosition",
     "AppendEntriesRequest",
     "AppendEntriesResponse",
     "Argument",
     "ArgumentRecord",
-    # Tribunal
     "CaseStatus",
-    # Complexity Heuristic
     "ComplexityHeuristic",
     "ComplexityResult",
-    # Audit Trail
     "ConsensusAuditTrail",
     "ConsensusCoordinator",
     "ConsensusResult",
@@ -147,21 +148,18 @@ __all__ = [
     "EnhancedVote",
     "EvidenceType",
     "ExpertiseLevel",
-    # Immune Response Building (CONS-02)
     "ImmunePattern",
     "ImmuneQuorum",
     "ImmuneResponse",
     "ImmuneResponseBuilding",
     "LeaderState",
     "LogEntry",
-    # Base MAKER
     "MAKERConsensus",
     "MAKERConsensusWithRaft",
     "NovelPatternPreservation",
     "PatternClassification",
     "Position",
     "QueryResult",
-    # Raft Election
     "RaftElection",
     "RaftState",
     "ReasoningChain",
@@ -172,7 +170,6 @@ __all__ = [
     "ResponseOutcome",
     "RollbackResult",
     "RulingType",
-    # Swarm Deliberation
     "SwarmDeliberationEngine",
     "Tribunal",
     "TribunalCase",

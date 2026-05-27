@@ -1001,6 +1001,336 @@ class TestFullImmuneLoopChain:
 
 
 # ============================================================================
+# T05: Precedent classification wiring — known-pattern short-circuit
+# ============================================================================
+
+
+class TestPrecedentClassificationWiring:
+    """S05/T01: _on_anomaly_for_tribunal checks immune memory first.
+
+    When a pattern is already known (KNOWN_BENIGN or KNOWN_MALICIOUS),
+    the anomaly pipeline short-circuits: no _emit_pattern, no Tribunal case.
+    UNCLASSIFIED / NOVEL_* proceed with the existing path.
+    """
+
+    def _make_sentinel_with_immune_mock(
+        self,
+        classification: PatternClassification | str,
+        confidence: float = 0.85,
+        pattern_id: str = "PATTERN_abc123",
+    ) -> MagicMock:
+        """Build a SentinelAgent-like stub with a mocked immune system
+        returning the given classification.
+
+        Uses a MagicMock for the full sentinel agent so we can spy on
+        _emit_pattern.  The immune system check is wired through
+        _immune_manager._immune_system.check_pattern_immunity.
+        """
+        from heretek_swarm.consensus.immune import (
+            ImmunePattern,
+            PatternClassification as PC,
+        )
+        from heretek_swarm.consensus.tribunal import Tribunal
+
+        sentinel = MagicMock()
+        sentinel.agent_id = "sentinel-test"
+        sentinel._pattern_emitted = set()
+        sentinel.tribunal = Tribunal()
+        sentinel._emit_pattern = AsyncMock()
+
+        # Build an ImmunePattern for the mock to return
+        mock_pattern = ImmunePattern(
+            pattern_id=pattern_id,
+            pattern_hash="abc123",
+            pattern_type="test_type",
+            severity="high",
+            first_seen=datetime.now(UTC),
+            last_seen=datetime.now(UTC),
+            approved=(classification == PC.KNOWN_MALICIOUS),
+            confidence=confidence,
+            occurrence_count=4,
+        )
+
+        # Wire _immune_manager with a mocked _immune_system
+        sentinel._immune_manager = MagicMock()
+        sentinel._immune_manager._immune_system = MagicMock()
+        sentinel._immune_manager._immune_system.check_pattern_immunity = MagicMock(
+            return_value=(classification, mock_pattern),
+        )
+
+        return sentinel
+
+    # ------------------------------------------------------------------
+    # KNOWN_BENIGN: no case, no emit, just immune_pattern_classified
+    # ------------------------------------------------------------------
+
+    @pytest.mark.parametrize("classification_str", ["known_benign", "KNOWN_BENIGN"])
+    async def test_known_benign_short_circuits_tribunal(
+        self, classification_str: str,
+    ) -> None:
+        """When immune memory returns KNOWN_BENIGN, the anomaly path
+        logs immune_pattern_classified and does NOT emit or create a case."""
+        from heretek_swarm.consensus.immune import PatternClassification
+
+        sentinel = self._make_sentinel_with_immune_mock(
+            PatternClassification.KNOWN_BENIGN, confidence=0.90,
+            pattern_id="PATTERN_benign_01",
+        )
+
+        from heretek_swarm.actors.sentinel.agent import SentinelAgent
+        content = {
+            "anomaly_type": "rate_drop",
+            "severity": "high",
+            "z_score": 4.0,
+            "agent_id": "worker-1",
+            "trigger_metric": "throughput",
+        }
+
+        with capture_logs() as cap:
+            # Directly call the production method
+            await SentinelAgent._on_anomaly_for_tribunal(
+                sentinel,
+                item_id="anom-known-benign-01",
+                item_type="anomaly_detection",
+                outcome="detected",
+                content=content,
+            )
+
+        # _emit_pattern must NOT be called
+        sentinel._emit_pattern.assert_not_called()
+
+        # No tribunal cases created
+        assert len(sentinel.tribunal._cases) == 0
+
+        # Verify immune_pattern_classified log
+        classified_logs = [
+            e for e in cap if e.get("event") == "immune_pattern_classified"
+        ]
+        assert len(classified_logs) == 1, (
+            f"Expected 1 immune_pattern_classified, got {len(classified_logs)}"
+        )
+        log = classified_logs[0]
+        assert log["classification"] == "known_benign"
+        assert log["confidence"] == 0.90
+        assert log["pattern_id"] == "PATTERN_benign_01"
+        assert log["anomaly_id"] == "anom-known-benign-01"
+        assert log["anomaly_type"] == "rate_drop"
+        assert log["agent_id"] == "worker-1"
+
+    # ------------------------------------------------------------------
+    # KNOWN_MALICIOUS: no case, no emit, just immune_pattern_classified
+    # ------------------------------------------------------------------
+
+    async def test_known_malicious_short_circuits_tribunal(self) -> None:
+        """When immune memory returns KNOWN_MALICIOUS, the anomaly path
+        logs immune_pattern_classified and does NOT emit or create a case."""
+        from heretek_swarm.consensus.immune import PatternClassification
+
+        sentinel = self._make_sentinel_with_immune_mock(
+            PatternClassification.KNOWN_MALICIOUS, confidence=0.95,
+            pattern_id="PATTERN_mal_02",
+        )
+
+        from heretek_swarm.actors.sentinel.agent import SentinelAgent
+        content = {
+            "anomaly_type": "injection_attempt",
+            "severity": "critical",
+            "z_score": 7.2,
+            "agent_id": "external-input",
+            "trigger_metric": "suspicious_content",
+        }
+
+        with capture_logs() as cap:
+            await SentinelAgent._on_anomaly_for_tribunal(
+                sentinel,
+                item_id="anom-known-malicious-01",
+                item_type="anomaly_detection",
+                outcome="detected",
+                content=content,
+            )
+
+        sentinel._emit_pattern.assert_not_called()
+        assert len(sentinel.tribunal._cases) == 0
+
+        classified_logs = [
+            e for e in cap if e.get("event") == "immune_pattern_classified"
+        ]
+        assert len(classified_logs) == 1
+        log = classified_logs[0]
+        assert log["classification"] == "known_malicious"
+        assert log["confidence"] == 0.95
+        assert log["pattern_id"] == "PATTERN_mal_02"
+        assert log["anomaly_id"] == "anom-known-malicious-01"
+
+    # ------------------------------------------------------------------
+    # UNCLASSIFIED: proceeds with existing path (non-breaking)
+    # ------------------------------------------------------------------
+
+    async def test_unclassified_proceeds_with_existing_path(self) -> None:
+        """When immune returns UNCLASSIFIED, the existing path runs:
+        _emit_pattern is called and HIGH severity creates a Tribunal case."""
+        from heretek_swarm.consensus.immune import PatternClassification
+
+        sentinel = self._make_sentinel_with_immune_mock(
+            PatternClassification.UNCLASSIFIED, confidence=0.3,
+        )
+
+        from heretek_swarm.actors.sentinel.agent import SentinelAgent
+        content = {
+            "anomaly_type": "unknown_drift",
+            "severity": "high",
+            "z_score": 3.8,
+            "agent_id": "mystery-agent",
+            "trigger_metric": "deviation",
+        }
+
+        with capture_logs() as cap:
+            await SentinelAgent._on_anomaly_for_tribunal(
+                sentinel,
+                item_id="anom-unclassified-01",
+                item_type="anomaly_detection",
+                outcome="detected",
+                content=content,
+            )
+
+        # _emit_pattern IS called for UNCLASSIFIED
+        sentinel._emit_pattern.assert_called_once()
+
+        # Tribunal case IS created (HIGH severity)
+        assert len(sentinel.tribunal._cases) == 1
+
+        # No immune_pattern_classified log
+        classified_logs = [
+            e for e in cap if e.get("event") == "immune_pattern_classified"
+        ]
+        assert len(classified_logs) == 0
+
+        # Standard logs present
+        case_logs = [e for e in cap if e.get("event") == "tribunal_case_created"]
+        assert len(case_logs) == 1
+
+    async def test_novel_malicious_proceeds_with_existing_path(self) -> None:
+        """NOVEL_MALICIOUS also proceeds with emit + case creation."""
+        from heretek_swarm.consensus.immune import PatternClassification
+
+        sentinel = self._make_sentinel_with_immune_mock(
+            PatternClassification.NOVEL_MALICIOUS, confidence=0.5,
+        )
+
+        from heretek_swarm.actors.sentinel.agent import SentinelAgent
+        content = {
+            "anomaly_type": "brand_new_attack",
+            "severity": "critical",
+            "z_score": 8.1,
+            "agent_id": "new-threat",
+            "trigger_metric": "exploit_attempt",
+        }
+
+        with capture_logs() as cap:
+            await SentinelAgent._on_anomaly_for_tribunal(
+                sentinel,
+                item_id="anom-novel-01",
+                item_type="anomaly_detection",
+                outcome="detected",
+                content=content,
+            )
+
+        sentinel._emit_pattern.assert_called_once()
+        assert len(sentinel.tribunal._cases) == 1
+
+        classified_logs = [
+            e for e in cap if e.get("event") == "immune_pattern_classified"
+        ]
+        assert len(classified_logs) == 0
+
+    # ------------------------------------------------------------------
+    # LOW severity with known pattern: still short-circuited
+    # ------------------------------------------------------------------
+
+    async def test_low_severity_known_pattern_still_short_circuits(self) -> None:
+        """Even with LOW severity, a KNOWN pattern still short-circuits
+        (immune check runs before severity gate)."""
+        from heretek_swarm.consensus.immune import PatternClassification
+
+        sentinel = self._make_sentinel_with_immune_mock(
+            PatternClassification.KNOWN_BENIGN, confidence=0.75,
+            pattern_id="PATTERN_low",
+        )
+
+        from heretek_swarm.actors.sentinel.agent import SentinelAgent
+        content = {
+            "anomaly_type": "minor_blip",
+            "severity": "low",
+            "z_score": 1.2,
+            "agent_id": "quiet-agent",
+            "trigger_metric": "noise",
+        }
+
+        with capture_logs() as cap:
+            await SentinelAgent._on_anomaly_for_tribunal(
+                sentinel,
+                item_id="anom-known-low",
+                item_type="anomaly_detection",
+                outcome="detected",
+                content=content,
+            )
+
+        sentinel._emit_pattern.assert_not_called()
+        assert len(sentinel.tribunal._cases) == 0
+
+        classified_logs = [
+            e for e in cap if e.get("event") == "immune_pattern_classified"
+        ]
+        assert len(classified_logs) == 1
+
+    # ------------------------------------------------------------------
+    # Immune pattern is None (edge case)
+    # ------------------------------------------------------------------
+
+    async def test_known_malicious_with_none_pattern(self) -> None:
+        """Edge case: immune system returns KNOWN_MALICIOUS but pattern is None.
+        Graceful fallback — still logs with fallback values."""
+        from heretek_swarm.consensus.immune import PatternClassification
+
+        sentinel = self._make_sentinel_with_immune_mock(
+            PatternClassification.KNOWN_MALICIOUS, confidence=0.0,
+            pattern_id="unknown",
+        )
+        # Override to return None pattern
+        sentinel._immune_manager._immune_system.check_pattern_immunity = MagicMock(
+            return_value=(PatternClassification.KNOWN_MALICIOUS, None),
+        )
+
+        from heretek_swarm.actors.sentinel.agent import SentinelAgent
+        content = {
+            "anomaly_type": "test",
+            "severity": "high",
+            "z_score": 5.0,
+            "agent_id": "test-agent",
+            "trigger_metric": "metric",
+        }
+
+        with capture_logs() as cap:
+            await SentinelAgent._on_anomaly_for_tribunal(
+                sentinel,
+                item_id="anom-none-pattern",
+                item_type="anomaly_detection",
+                outcome="detected",
+                content=content,
+            )
+
+        sentinel._emit_pattern.assert_not_called()
+        assert len(sentinel.tribunal._cases) == 0
+
+        classified_logs = [
+            e for e in cap if e.get("event") == "immune_pattern_classified"
+        ]
+        assert len(classified_logs) == 1
+        assert classified_logs[0]["confidence"] == 0.0
+        assert classified_logs[0]["pattern_id"] == "unknown"
+
+
+# ============================================================================
 # T04: End-to-end immune loop integration test
 # ============================================================================
 

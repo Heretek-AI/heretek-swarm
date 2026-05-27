@@ -30,6 +30,7 @@ if TYPE_CHECKING:
 from heretek_swarm.actors.supervisor import ActorSupervisor
 from heretek_swarm.api.consciousness import get_consciousness_plugin
 from heretek_swarm.channels.registry import ChannelRegistry, GroupRegistry
+from heretek_swarm.consensus.election_manager import ElectionManager
 from heretek_swarm.consensus.maker import MAKERConsensus
 from heretek_swarm.consensus.election_manager import ElectionManager
 from heretek_swarm.gateway.nats_event_mesh import NATSEventMeshWithJetStream
