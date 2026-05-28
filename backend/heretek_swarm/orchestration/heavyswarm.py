@@ -652,14 +652,13 @@ class HeavySwarmWorkflow:
                     }
 
             except Exception as e:
-                logger.error(
+                logger.exception(
                     "heavyswarm_analysis_error",
                     extra={
                         "agent_id": agent_id,
                         "workflow_id": workflow_id,
                         "error": str(e),
                     },
-                    exc_info=True,
                 )
                 analyses[agent_id] = {
                     "agent_id": agent_id,

@@ -4,25 +4,28 @@ Validates that the placeholder analysis (hardcoded confidence=0.8, fabricated
 insights) is replaced with real send_with_reply calls and honest fallback values.
 """
 
-import asyncio
 import pytest
 
 from heretek_swarm.actors.base import AgentActor
-from heretek_swarm.consensus.maker import MAKERConsensus
 from heretek_swarm.orchestration.heavyswarm import HeavySwarmWorkflow
 
 
 class FakeAgent(AgentActor):
     """Test double that simulates NATS send_with_reply without a real broker."""
 
-    def __init__(self, agent_id: str, reply_content: dict | None = None, should_timeout: bool = False):
+    def __init__(
+        self,
+        agent_id: str,
+        reply_content: dict[str, object] | None = None,
+        should_timeout: bool = False,
+    ):
         super().__init__(agent_id=agent_id, role="worker")
         self._reply_content = reply_content
         self._should_timeout = should_timeout
-        self.sent_messages: list[dict] = []
+        self.sent_messages: list[dict[str, object]] = []
         self.send_with_reply_called = False
 
-    async def send_with_reply(self, recipient, message_type, content, timeout=30):
+    async def send_with_reply(self, recipient, message_type, content, timeout=30):  # noqa: ASYNC109
         self.send_with_reply_called = True
         self.sent_messages.append({
             "recipient": recipient,
@@ -46,7 +49,7 @@ class FakeAgent(AgentActor):
 class FakeAgentError(FakeAgent):
     """Test double that always raises during send_with_reply."""
 
-    async def send_with_reply(self, recipient, message_type, content, timeout=30):
+    async def send_with_reply(self, recipient, message_type, content, timeout=30):  # noqa: ASYNC109
         self.send_with_reply_called = True
         raise Exception("NATS connection lost")
 
@@ -210,8 +213,10 @@ async def test_real_agent_receives_correct_payload():
     msg = agent.sent_messages[0]
     assert msg["recipient"] == "alpha"
     assert msg["message_type"] == "analysis_request"
-    assert msg["content"]["workflow_id"] == "wf-123"
-    assert msg["content"]["topic"] == "deploy decision"
-    assert msg["content"]["research_data"] == {"facts": ["staging is green"]}
-    assert msg["content"]["analysis_type"] == "deep_analysis"
+    assert msg["content"]["workflow_id"] == "wf-123"  # type: ignore[index]
+    assert msg["content"]["topic"] == "deploy decision"  # type: ignore[index]
+    content = msg["content"]
+    assert isinstance(content, dict)
+    assert content["research_data"] == {"facts": ["staging is green"]}
+    assert content["analysis_type"] == "deep_analysis"
     assert msg["timeout"] == 30

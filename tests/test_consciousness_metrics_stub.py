@@ -4,13 +4,12 @@ Validates that collect_consciousness_metrics() returns values computed from
 real calculators instead of hardcoded placeholders (0.5, 0.1).
 """
 
-import pytest
 
 from heretek_swarm.observability.metrics import (
-    ConsciousnessMetricsData,
-    SwarmMetricsCollector,
     _MAPPING_DIFFERENTIATION,
     _MAPPING_INTEGRATION,
+    ConsciousnessMetricsData,
+    SwarmMetricsCollector,
 )
 
 
@@ -131,9 +130,9 @@ class TestCollectConsciousnessMetrics:
         assert set(_MAPPING_INTEGRATION.keys()) == expected_levels
         assert set(_MAPPING_DIFFERENTIATION.keys()) == expected_levels
 
-        for k, v in _MAPPING_INTEGRATION.items():
+        for v in _MAPPING_INTEGRATION.values():
             assert isinstance(v, float)
-        for k, v in _MAPPING_DIFFERENTIATION.items():
+        for v in _MAPPING_DIFFERENTIATION.values():
             assert isinstance(v, float)
 
     def test_fep_calculator_produces_variance(self):
@@ -160,7 +159,6 @@ class TestCollectConsciousnessMetrics:
 
     def test_callback_override_integration(self):
         """Callback-provided phi scores should be used when available."""
-        from heretek_swarm.consciousness.iit_phi import PhiResult
 
         collector = SwarmMetricsCollector()
 

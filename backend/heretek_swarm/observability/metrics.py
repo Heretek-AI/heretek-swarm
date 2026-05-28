@@ -155,7 +155,7 @@ class SwarmMetricsCollector:
     - Real-time metrics collection
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._agent_metrics: dict[str, AgentMetrics] = {}
         self._agent_states: dict[str, str] = {}
         self._message_latencies: list[float] = []
@@ -503,10 +503,10 @@ class SwarmMetricsCollector:
         Empty-agent edge case returns honest 0.0 values with a structured
         warning log, never a placeholder constant.
         """
+        import structlog
+
         from heretek_swarm.consciousness.fep_active_inference import FreeEnergyCalculator
         from heretek_swarm.consciousness.iit_phi import PhiCalculator
-
-        import structlog
 
         _log = structlog.get_logger(__name__)
 
@@ -561,7 +561,7 @@ class SwarmMetricsCollector:
                                 other: 0.1 for other in elements if other != aid
                             }
                 psi_state = agent_phi_scores.get(elements[0], 0.5) if elements else 0.5
-                current_state = {aid: psi_state for aid in elements}
+                current_state = dict.fromkeys(elements, psi_state)
                 ces = {
                     "system_id": "swarm-metrics",
                     "elements": elements,

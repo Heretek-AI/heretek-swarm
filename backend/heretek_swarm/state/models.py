@@ -8,10 +8,10 @@ These are compatibility shims that wrap the actual repository implementations.
 """
 
 import asyncio
+import contextlib
 import dataclasses
 import hashlib
 import json
-import os
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from enum import Enum
@@ -591,10 +591,8 @@ class SnapshotManager:
         # Cancel cleanup task
         if self._cleanup_task is not None:
             self._cleanup_task.cancel()
-            try:
+            with contextlib.suppress(asyncio.CancelledError):
                 await self._cleanup_task
-            except asyncio.CancelledError:
-                pass
             self._cleanup_task = None
 
         # Flush all snapshots to disk

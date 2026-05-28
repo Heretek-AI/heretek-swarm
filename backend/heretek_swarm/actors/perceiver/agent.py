@@ -531,13 +531,15 @@ class PerceiverAgent(
         try:
             response = await self.run_with_llm(prompt, timeout=60)
             logger.info(
-                f"[{self.agent_id}] Image description generated via LLM",
+                "[%s] Image description generated via LLM",
+                self.agent_id,
                 extra={"size_bytes": size_bytes, "format": fmt},
             )
             return response
         except Exception:
             logger.warning(
-                f"[{self.agent_id}] LLM unavailable for image description",
+                "[%s] LLM unavailable for image description",
+                self.agent_id,
                 extra={
                     "event": "perceiver_llm_unavailable",
                     "size_bytes": size_bytes,
