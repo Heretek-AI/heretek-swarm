@@ -16,7 +16,7 @@ import base64
 import hashlib
 import tempfile
 from datetime import UTC, datetime
-from typing import Any
+from typing import Any, ClassVar
 
 import structlog
 from swarms import Agent
@@ -1018,33 +1018,402 @@ class PerceiverAgent(
                 with contextlib.suppress(OSError):
                     Path(tmp_path).unlink()  # noqa: ASYNC240 — sync unlink in async finally (same pattern as T01/T02)
 
+    # --- Text file extensions handled by text-stat parser ---
+    _TEXT_FORMATS: ClassVar[set[str]] = {"txt", "md", "json", "xml", "html", "csv", "yaml", "yml"}
+
+    # --- Binary document handlers keyed by extension ---
+    _BINARY_PARSERS: ClassVar[dict[str, str]] = {
+        "pdf": "PyPDF2",
+        "docx": "python-docx",
+        "xlsx": "openpyxl",
+    }
+
+    @staticmethod
+    def _detect_text_structure(text: str, fmt: str) -> dict[str, Any]:
+        """Detect document structure from text content.
+
+        Returns a ``structure`` dict with format-specific markers.
+        """
+        structure: dict[str, Any] = {}
+
+        if fmt == "json":
+            # Attempt JSON parse — count top-level keys/items
+            import json as _json
+
+            try:
+                parsed = _json.loads(text)
+                if isinstance(parsed, dict):
+                    structure["json_keys"] = len(parsed)
+                    structure["json_type"] = "object"
+                elif isinstance(parsed, list):
+                    structure["json_items"] = len(parsed)
+                    structure["json_type"] = "array"
+                else:
+                    structure["json_type"] = type(parsed).__name__
+                structure["json_valid"] = True
+            except (_json.JSONDecodeError, ValueError):
+                structure["json_valid"] = False
+
+        elif fmt == "xml" or fmt == "html":
+            # Count XML/HTML tags with a simple regex
+            import re as _re
+
+            tags = _re.findall(r"<\s*/?\s*(\w+)", text)
+            if tags:
+                tag_counts: dict[str, int] = {}
+                for t in tags:
+                    tag_counts[t] = tag_counts.get(t, 0) + 1
+                structure["tag_count"] = len(tags)
+                structure["unique_tags"] = len(tag_counts)
+                # Show top-5 most frequent tags
+                top_tags = sorted(tag_counts.items(), key=lambda x: -x[1])[:5]
+                structure["top_tags"] = dict(top_tags)
+
+        elif fmt == "csv":
+            import csv as _csv
+            import io as _io
+
+            try:
+                reader = _csv.reader(_io.StringIO(text))
+                rows = list(reader)
+                structure["csv_rows"] = len(rows)
+                if rows:
+                    structure["csv_columns"] = len(rows[0])
+                    structure["csv_headers"] = rows[0]
+            except Exception:
+                structure["csv_parse_failed"] = True
+
+        elif fmt == "md":
+            import re as _re
+
+            # Count markdown headings
+            headings = _re.findall(r"^(#{1,6})\s", text, _re.MULTILINE)
+            structure["heading_count"] = len(headings)
+            # Count fenced code blocks
+            fences = _re.findall(r"^```", text, _re.MULTILINE)
+            structure["code_block_count"] = len(fences) // 2
+            # Count links [text](url)
+            links = _re.findall(r"\[([^\]]*)\]\([^)]*\)", text)
+            structure["link_count"] = len(links)
+
+        return structure
+
     async def _extract_document_features(
         self, doc_data: Any, format_hint: str | None
     ) -> dict[str, Any]:
-        """Extract features from document input."""
-        # Placeholder for document feature extraction
-        # In production, would use libraries like:
-        # - PyPDF2 for PDFs
-        # - python-docx for Word documents
-        # - openpyxl for Excel spreadsheets
+        """Extract features from document input.
 
-        if isinstance(doc_data, str):
-            size_bytes = len(doc_data.encode())
-            preview = doc_data[:500] if len(doc_data) > 500 else doc_data
-        elif isinstance(doc_data, bytes):
-            size_bytes = len(doc_data)
-            preview = "binary data"
+        Text formats (txt, md, json, xml, html, csv, yaml):
+            word/sentence/line/char counts, structure detection, text preview.
+
+        Binary formats (pdf, docx, xlsx):
+            Optional library-based parsing with graceful ImportError fallback.
+        """
+        fmt = (format_hint or "").lower()
+
+        # ---- Binary format path (bytes or str that could be base64) ----
+        if fmt in self._BINARY_PARSERS:
+            parser_name = self._BINARY_PARSERS[fmt]
+
+            # Decode bytes if needed
+            if isinstance(doc_data, bytes):
+                file_bytes = doc_data
+            elif isinstance(doc_data, str):
+                # Could be a base64-encoded file
+                file_bytes = self._decode_image_bytes(doc_data)
+            else:
+                file_bytes = b""
+
+            return await self._extract_binary_document_features(
+                file_bytes, fmt, parser_name
+            )
+
+        # ---- Text format path ----
+        if isinstance(doc_data, bytes):
+            try:
+                text = doc_data.decode("utf-8")
+            except UnicodeDecodeError:
+                text = doc_data.decode("utf-8", errors="replace")
+        elif isinstance(doc_data, str):
+            text = doc_data
         else:
-            size_bytes = 0
-            preview = "unknown format"
+            text = str(doc_data)
 
-        return {
-            "format": format_hint or "unknown",
+        size_bytes = len(text.encode("utf-8"))
+        lines = text.splitlines()
+        line_count = len(lines)
+
+        # Word count (non-empty alphanumeric tokens)
+        import re as _re
+
+        words = [w for w in _re.split(r"\s+", text) if w]
+        word_count = len(words)
+
+        # Sentence count (split on .!? but avoid decimals and abbreviations)
+        sentence_tokens = _re.split(r"[.!?]+", text)
+        sentences = [s.strip() for s in sentence_tokens if s.strip()]
+        sentence_count = len(sentences)
+
+        char_count = len(text)
+
+        # Structure detection
+        structure = self._detect_text_structure(text, fmt)
+
+        # Text preview (truncated to 1000 chars)
+        text_preview = text[:1000] if len(text) > 1000 else text
+
+        result: dict[str, Any] = {
+            "format": fmt or "unknown",
             "size_bytes": size_bytes,
-            "preview": preview,
-            "analyzed_by": "metadata",
-            "note": "Full document analysis requires PyPDF2/python-docx/openpyxl",
+            "word_count": word_count,
+            "sentence_count": sentence_count,
+            "line_count": line_count,
+            "char_count": char_count,
+            "text_preview": text_preview,
         }
+        if structure:
+            result["structure"] = structure
+
+        result["analyzed_by"] = "text-stat"
+        return result
+
+    async def _extract_binary_document_features(
+        self, file_bytes: bytes, fmt: str, parser_name: str
+    ) -> dict[str, Any]:
+        """Extract features from binary documents using optional libraries.
+
+        Args:
+            file_bytes: Raw file content.
+            fmt: Lower-cased format extension (pdf, docx, xlsx).
+            parser_name: Canonical library name for ImportError messages.
+
+        Returns:
+            Dict with format-specific fields plus ``analyzed_by``.
+        """
+        import contextlib
+        import tempfile
+        from pathlib import Path
+
+        base: dict[str, Any] = {
+            "format": fmt,
+            "size_bytes": len(file_bytes),
+        }
+
+        tmp_path: str | None = None
+        try:
+            with tempfile.NamedTemporaryFile(
+                suffix=f".{fmt}", delete=False
+            ) as tmpf:
+                tmpf.write(file_bytes)
+                tmpf.flush()
+                tmp_path = tmpf.name
+
+            if fmt == "pdf":
+                return await self._extract_pdf_features(tmp_path, base)
+            if fmt == "docx":
+                return await self._extract_docx_features(tmp_path, base)
+            if fmt == "xlsx":
+                return await self._extract_xlsx_features(tmp_path, base)
+
+            # Unknown binary format — shouldn't reach here
+            return {**base, "analyzed_by": "metadata", "note": f"Unknown binary format: {fmt}"}
+
+        except ImportError as exc:
+            logger.warning(
+                "[%s] %s not available for %s parsing — falling back to metadata",
+                self.agent_id,
+                parser_name,
+                fmt,
+                extra={
+                    "event": "perceiver_doc_lib_unavailable",
+                    "parser": parser_name,
+                    "format": fmt,
+                },
+            )
+            return {
+                **base,
+                "analyzed_by": "metadata",
+                "note": f"{parser_name} not installed: {exc}",
+            }
+        except Exception as exc:
+            logger.warning(
+                "[%s] %s parse failed for %s — falling back to metadata",
+                self.agent_id,
+                parser_name,
+                fmt,
+                extra={
+                    "event": "perceiver_doc_parse_failed",
+                    "parser": parser_name,
+                    "format": fmt,
+                    "error": str(exc)[:200],
+                },
+            )
+            return {
+                **base,
+                "analyzed_by": "metadata",
+                "note": f"{parser_name} parse error: {str(exc)[:200]}",
+            }
+        finally:
+            if tmp_path:
+                with contextlib.suppress(OSError):
+                    Path(tmp_path).unlink()  # noqa: ASYNC240
+
+    async def _extract_pdf_features(
+        self, path: str, base: dict[str, Any]
+    ) -> dict[str, Any]:
+        """Extract PDF features using PyPDF2."""
+        from PyPDF2 import PdfReader  # type: ignore[import-untyped]
+
+        reader = PdfReader(path)
+        page_count = len(reader.pages)
+
+        # Extract text from first 5 pages (limit for performance)
+        pages_text: list[str] = []
+        for _i, page in enumerate(reader.pages[:5]):
+            try:
+                extracted = page.extract_text()
+                if extracted:
+                    pages_text.append(extracted.strip())
+            except Exception as exc:
+                logger.debug(
+                    "[%s] PyPDF2 page text extraction skipped",
+                    "perceiver",
+                    extra={"error": str(exc)[:200]},
+                )
+
+        preview = "\n".join(pages_text)[:1000] if pages_text else ""
+
+        result: dict[str, Any] = dict(base)
+        result.update({
+            "page_count": page_count,
+            "analyzed_by": "PyPDF2",
+        })
+        if preview:
+            result["text_preview"] = preview
+
+        # Metadata (title, author, etc.)
+        meta = reader.metadata
+        if meta:
+            doc_meta: dict[str, Any] = {}
+            for key in ("title", "author", "creator", "producer", "subject"):
+                val = getattr(meta, key, None)
+                if val:
+                    doc_meta[key] = str(val)
+            if doc_meta:
+                result["metadata"] = doc_meta
+
+        return result
+
+    async def _extract_docx_features(
+        self, path: str, base: dict[str, Any]
+    ) -> dict[str, Any]:
+        """Extract DOCX features using python-docx."""
+        from docx import Document  # type: ignore[import-untyped]
+
+        doc = Document(path)
+        paragraphs = [p.text for p in doc.paragraphs if p.text.strip()]
+        paragraph_count = len(paragraphs)
+
+        # Concatenate first paragraphs for preview (up to 1000 chars)
+        preview_parts: list[str] = []
+        char_budget = 1000
+        for p_text in paragraphs:
+            preview_parts.append(p_text)
+            char_budget -= len(p_text) + 1
+            if char_budget <= 0:
+                break
+        preview = "\n".join(preview_parts)[:1000]
+
+        result: dict[str, Any] = dict(base)
+        result.update({
+            "paragraph_count": paragraph_count,
+            "analyzed_by": "python-docx",
+        })
+        if preview:
+            result["text_preview"] = preview
+
+        # Tables count
+        tables = doc.tables
+        if tables:
+            result["table_count"] = len(tables)
+
+        # Optional core properties
+        try:
+            props = doc.core_properties
+            doc_props: dict[str, Any] = {}
+            for attr in ("title", "author", "subject", "keywords"):
+                val = getattr(props, attr, None)
+                if val:
+                    doc_props[attr] = str(val)
+            if doc_props:
+                result["metadata"] = doc_props
+        except Exception as exc:
+            logger.debug(
+                "[%s] DOCX core properties unavailable",
+                self.agent_id,
+                extra={"error": str(exc)[:200]},
+            )
+
+        return result
+
+    async def _extract_xlsx_features(
+        self, path: str, base: dict[str, Any]
+    ) -> dict[str, Any]:
+        """Extract XLSX features using openpyxl (read-only mode)."""
+        from openpyxl import load_workbook  # type: ignore[import-untyped]
+
+        wb = load_workbook(path, read_only=True, data_only=True)
+        sheet_names = wb.sheetnames
+        sheets_info: list[dict[str, Any]] = []
+
+        for sname in sheet_names:
+            ws = wb[sname]
+            info: dict[str, Any] = {"name": sname}
+            # Dimensions / max_row / max_column may not be available in read_only mode
+            try:
+                dimensions = getattr(ws, "dimensions", None)
+                if dimensions:
+                    info["dimensions"] = str(dimensions)
+            except Exception as exc:
+                logger.debug(
+                    "[%s] XLSX dimensions unavailable for sheet %s: %s",
+                    self.agent_id,
+                    sname,
+                    str(exc)[:200],
+                )
+            try:
+                if ws.max_row:
+                    info["rows"] = ws.max_row
+            except Exception as exc:
+                logger.debug(
+                    "[%s] XLSX max_row unavailable for sheet %s: %s",
+                    self.agent_id,
+                    sname,
+                    str(exc)[:200],
+                )
+            try:
+                if ws.max_column:
+                    info["columns"] = ws.max_column
+            except Exception as exc:
+                logger.debug(
+                    "[%s] XLSX max_column unavailable for sheet %s: %s",
+                    self.agent_id,
+                    sname,
+                    str(exc)[:200],
+                )
+            sheets_info.append(info)
+
+        wb.close()
+
+        result: dict[str, Any] = dict(base)
+        result.update({
+            "sheet_names": sheet_names,
+            "sheet_count": len(sheet_names),
+            "sheets": sheets_info,
+            "analyzed_by": "openpyxl",
+        })
+
+        return result
 
     def _extract_sensor_features(self, sensor_data: dict[str, Any]) -> dict[str, Any]:
         """Extract features from sensor data."""

@@ -50,6 +50,7 @@ from heretek_swarm.api import (  # noqa: E402
     memory_versions,
     metrics,
     observability,
+    perceiver,
     plugins,
     providers_config,
     provisioner,
@@ -513,6 +514,7 @@ app.include_router(evaluation.router)
 app.include_router(rag.router)
 app.include_router(consciousness.router)
 app.include_router(skills.router)
+app.include_router(perceiver.router)
 app.include_router(emergent_intelligence.router)
 app.include_router(agents_management.router)
 app.include_router(autonomous.router)

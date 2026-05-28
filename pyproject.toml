@@ -76,6 +76,12 @@ agents = [
     "opentelemetry-sdk>=1.22.0",
     "opentelemetry-exporter-otlp>=1.22.0",
 ]
+perception = [
+    # Document perception libraries for PDF, DOCX, XLSX extraction
+    "PyPDF2>=3.0.0",
+    "python-docx>=1.1.0",
+    "openpyxl>=3.1.0",
+]
 postgres = [
     # Postgres-backed event store (optional)
     "asyncpg>=0.29.0",
