@@ -275,7 +275,7 @@ def status(api_base: str, timeout: int, output_json: bool) -> None:
             from heretek_swarm.observability.metrics import get_metrics_collector
 
             collector = get_metrics_collector()
-            if collector._agent_metrics:  # Only if real agent data exists
+            if collector.get_all_agent_metrics():  # Only if real agent data exists
                 consciousness = collector.collect_consciousness_metrics()
                 agent_phi = consciousness.agent_phi_scores
                 top_phi = dict(

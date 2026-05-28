@@ -2,6 +2,15 @@
 Phase Handlers for HeavySwarm Workflow
 
 Provides handler classes for each phase of the workflow.
+
+**Important:** These handlers are currently unused extension points.
+HeavySwarmWorkflow calls phase logic via instance methods directly
+(_research_phase, _analysis_phase, _alternatives_phase, etc.) rather
+than through these PhaseHandler classes. The handlers below exist as
+placeholders for future phase handler injection (ADR-008). All hardcoded
+scores are set to 0.0 with structured ``phase_handler_*_hardcoded`` log
+warnings so future developers understand these are not the active code
+path. See heavyswarm.py for the real phase implementations.
 """
 
 from abc import ABC, abstractmethod
@@ -155,12 +164,26 @@ class AnalysisPhaseHandler(PhaseHandler):
                     },
                 )
 
+                # Phase handler is unused — honest zero confidence with structured log
+                logger.warning(
+                    "phase_handler_analysis_hardcoded",
+                    extra={
+                        "agent_id": agent_id,
+                        "workflow_id": workflow_id,
+                        "reason": "PhaseHandler analysis path is not the active code path; "
+                        "HeavySwarmWorkflow._analysis_phase() bypasses this handler",
+                    },
+                )
+
                 triad_analyses[agent_id] = {
                     "agent_id": agent_id,
                     "decision": f"{agent_id}_analysis_complete",
-                    "confidence": 0.8,
-                    "insights": [f"Key insight from {agent_id}"],
-                    "reasoning": f"Analysis by {agent_id}",
+                    "confidence": 0.0,
+                    "insights": [],
+                    "reasoning": (
+                        "Phase handler analysis path unused —"
+                        " see heavyswarm._analysis_phase"
+                    ),
                 }
             except Exception as e:
                 errors.append(f"Error collecting analysis from {agent_id}: {e}")
@@ -199,9 +222,9 @@ class AlternativesPhaseHandler(PhaseHandler):
 
     async def execute(
         self,
-        workflow_id: str,  # noqa: ARG002
+        workflow_id: str,
         topic: str,
-        context: dict[str, Any] | None = None,  # noqa: ARG002
+        _context: dict[str, Any] | None = None,
         previous_output: dict[str, Any] | None = None,
     ) -> tuple[bool, dict[str, Any], list[str]]:
         """Execute alternatives phase"""
@@ -218,55 +241,40 @@ class AlternativesPhaseHandler(PhaseHandler):
 
         errors = []
 
-        # Generate alternatives
-        alternatives = [
-            {
-                "id": "alt_1",
-                "name": "Conservative Approach",
-                "description": "Minimal change, low risk",
-                "type": "conservative",
+        # Phase handler is unused — honest zero values with structured log
+        # HeavySwarmWorkflow._alternatives_phase() is the active code path
+        logger.warning(
+            "phase_handler_alternatives_hardcoded",
+            extra={
+                "workflow_id": workflow_id,
+                "topic": topic,
+                "reason": "PhaseHandler alternatives path is not the active code path; "
+                "HeavySwarmWorkflow._alternatives_phase() bypasses this handler",
             },
-            {
-                "id": "alt_2",
-                "name": "Balanced Approach",
-                "description": "Moderate change, balanced risk/reward",
-                "type": "balanced",
-            },
-            {
-                "id": "alt_3",
-                "name": "Aggressive Approach",
-                "description": "Significant change, high risk/reward",
-                "type": "aggressive",
-            },
-        ]
-
-        # Evaluate each alternative
-        for alt in alternatives:
-            alt["evaluation"] = {
-                "feasibility": 0.8,
-                "impact": 0.7,
-                "risk": 0.3,
-                "cost": 0.5,
-                "time_to_implement": 0.6,
-                "total_score": 0.58,
-            }
-
-        # Rank alternatives
-        ranked = sorted(
-            alternatives, key=lambda x: x.get("evaluation", {}).get("total_score", 0), reverse=True
         )
 
-        if ranked:
-            alternatives_data["recommended_alternative"] = ranked[0]
-            alternatives_data["alternatives"] = ranked
+        # Empty alternatives — no hardcoded synthetic data
+        alternatives_data["alternatives"] = []
 
-        # Trade-offs
-        alternatives_data["trade_offs"] = [
-            {
-                "alternative_1": "Conservative Approach",
-                "alternative_2": "Balanced Approach",
-                "trade_off": "Different risk/reward profiles",
-            }
+        logger.warning(
+            "phase_handler_evaluation_hardcoded",
+            extra={
+                "workflow_id": workflow_id,
+                "topic": topic,
+                "reason": "All evaluation scores set to 0.0 — "
+                "HeavySwarmWorkflow._alternatives_phase() is the active code path",
+            },
+        )
+
+        alternatives_data["recommended_alternative"] = None
+        alternatives_data["alternatives"] = []
+
+        alternatives_data["evaluation_criteria"] = [
+            "feasibility",
+            "impact",
+            "risk",
+            "cost",
+            "time_to_implement",
         ]
 
         return True, alternatives_data, errors
@@ -369,12 +377,24 @@ class DecisionPhaseHandler(PhaseHandler):
             if agent_id not in self.agents:
                 continue
 
+            # Phase handler is unused — honest zero confidence with structured log
+            logger.warning(
+                "phase_handler_vote_hardcoded",
+                extra={
+                    "agent_id": agent_id,
+                    "consensus_id": consensus_id,
+                    "workflow_id": workflow_id,
+                    "reason": "PhaseHandler vote path is not the active code path; "
+                    "HeavySwarmWorkflow._decision_phase() bypasses this handler",
+                },
+            )
+
             vote = {
                 "agent_id": agent_id,
                 "decision": previous_output.get("recommended_alternative", {}).get(
                     "name", "unknown"
                 ),
-                "confidence": 0.8,
+                "confidence": 0.0,
             }
 
             self.consensus_engine.add_vote(

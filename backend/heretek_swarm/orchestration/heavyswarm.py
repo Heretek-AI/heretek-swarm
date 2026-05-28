@@ -804,9 +804,12 @@ Respond ONLY with a JSON array of 3 objects, each with these keys:
 
 Example response format:
 [
-  {{"id": "alt_1", "name": "Conservative Approach", "description": "Minimal change, low risk", "type": "conservative"}},
-  {{"id": "alt_2", "name": "Balanced Approach", "description": "Moderate change, balanced risk/reward", "type": "balanced"}},
-  {{"id": "alt_3", "name": "Aggressive Approach", "description": "Significant change, high risk/reward", "type": "aggressive"}}
+  {{"id": "alt_1", "name": "Conserve", "description": "Minimal change, low risk",
+    "type": "conservative"}},
+  {{"id": "alt_2", "name": "Balance", "description": "Moderate change, balanced",
+    "type": "balanced"}},
+  {{"id": "alt_3", "name": "Aggressive", "description": "Major change, high risk",
+    "type": "aggressive"}}
 ]"""
 
         try:
@@ -894,13 +897,13 @@ Example response format:
     async def _evaluate_alternative(
         self,
         alternative: dict[str, Any],
-        analysis_data: dict[str, Any],
+        _analysis_data: dict[str, Any],
     ) -> dict[str, Any]:
         """
         Evaluate a single alternative via alpha agent LLM scoring.
 
         Routes through alpha agent with a prompt requesting
-        feasibility/impact/risk/cost/time_to_implement scoring (0.0–1.0).
+        feasibility/impact/risk/cost/time_to_implement scoring (0.0-1.0).
         On failure or timeout (60s), returns an honest fallback with all
         zero scores and logs ``heavyswarm_evaluation_llm_failed``.
         On success, logs ``heavyswarm_evaluation_llm_success``.
@@ -930,11 +933,12 @@ Evaluation criteria (score each from 0.0 to 1.0):
 - risk: How risky is this? (0.0 = very low risk, 1.0 = extremely risky)
 - cost: How expensive? (0.0 = free, 1.0 = prohibitive)
 - time_to_implement: How quickly? (0.0 = instant, 1.0 = forever)
-- total_score: Weighted overall score (0.0–1.0)
+- total_score: Weighted overall score (0.0-1.0)
 
 Respond ONLY with a JSON object with these exact numeric keys.
 Example:
-{{"feasibility": 0.75, "impact": 0.80, "risk": 0.25, "cost": 0.40, "time_to_implement": 0.35, "total_score": 0.62}}"""
+{{"feasibility": 0.75, "impact": 0.80, "risk": 0.25, "cost": 0.40,
+ "time_to_implement": 0.35, "total_score": 0.62}}"""
 
         try:
             response = await agent.run_with_llm(prompt, timeout=60)
