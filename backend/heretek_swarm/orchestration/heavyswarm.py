@@ -757,11 +757,91 @@ class HeavySwarmWorkflow:
 
     async def _generate_alternatives(
         self,
-        topic: str,  # noqa: ARG002
-        analysis_data: dict[str, Any],  # noqa: ARG002
+        topic: str,
+        analysis_data: dict[str, Any],
     ) -> list[dict[str, Any]]:
-        """Generate alternative solutions."""
-        # Placeholder - would use LLM in full implementation
+        """
+        Generate alternative solutions via LLM agent deliberation.
+
+        Routes through dreamer agent (or alpha as fallback) with a structured
+        prompt requesting 3 alternative solutions. On timeout (60s) or LLM
+        failure, falls back to the hardcoded list and logs the structured event
+        ``heavyswarm_alternatives_llm_failed``. On success, logs
+        ``heavyswarm_alternatives_llm_success``.
+        """
+        # Select agent: dreamer preferred, alpha as fallback
+        agent = self.agents.get("dreamer") or self.agents.get("alpha")
+        if agent is None:
+            logger.warning(
+                "heavyswarm_alternatives_llm_failed",
+                extra={
+                    "reason": "no_agent_available",
+                    "topic": topic,
+                },
+            )
+            return self._generate_alternatives_fallback()
+
+        # Build a structured prompt requesting JSON output
+        insights = analysis_data.get("key_insights", []) if analysis_data else []
+        perspectives = analysis_data.get("perspectives", []) if analysis_data else []
+
+        prompt = f"""You are generating alternative solutions for a complex decision.
+
+Problem/Topic: {topic}
+
+Key insights from analysis:
+{chr(10).join(f'- {i}' for i in insights) if insights else '- None provided'}
+
+Agent perspectives:
+{chr(10).join(f'- {p}' for p in perspectives) if perspectives else '- None provided'}
+
+Generate exactly 3 alternative solutions with distinct risk/reward profiles.
+Respond ONLY with a JSON array of 3 objects, each with these keys:
+- id (string, e.g. "alt_1")
+- name (string, descriptive label)
+- description (string, 1-2 sentence summary)
+- type (string, one of: "conservative", "balanced", "aggressive")
+
+Example response format:
+[
+  {{"id": "alt_1", "name": "Conservative Approach", "description": "Minimal change, low risk", "type": "conservative"}},
+  {{"id": "alt_2", "name": "Balanced Approach", "description": "Moderate change, balanced risk/reward", "type": "balanced"}},
+  {{"id": "alt_3", "name": "Aggressive Approach", "description": "Significant change, high risk/reward", "type": "aggressive"}}
+]"""
+
+        try:
+            response = await agent.run_with_llm(prompt, timeout=60)
+            alternatives = self._parse_alternatives_json(response)
+            if alternatives:
+                logger.info(
+                    "heavyswarm_alternatives_llm_success",
+                    extra={
+                        "topic": topic,
+                        "alternative_count": len(alternatives),
+                    },
+                )
+                return alternatives
+        except Exception as e:
+            logger.error(
+                "heavyswarm_alternatives_llm_failed",
+                extra={
+                    "reason": str(e),
+                    "topic": topic,
+                },
+            )
+
+        # Fallback to hardcoded alternatives on any failure
+        logger.warning(
+            "heavyswarm_alternatives_llm_failed",
+            extra={
+                "reason": "fallback_to_hardcoded",
+                "topic": topic,
+            },
+        )
+        return self._generate_alternatives_fallback()
+
+    def _generate_alternatives_fallback(self) -> list[dict[str, Any]]:
+        """Return hardcoded alternatives when LLM is unavailable."""
         return [
             {
                 "id": "alt_1",
@@ -783,21 +863,146 @@ class HeavySwarmWorkflow:
             },
         ]
 
+    @staticmethod
+    def _parse_alternatives_json(response: str) -> list[dict[str, Any]] | None:
+        """Parse LLM response into a list of alternative dicts.
+
+        Handles common LLM response quirks: leading/trailing markdown fences,
+        extra whitespace, and wrapping in a code block.
+        """
+        import json
+        import re
+
+        # Strip markdown code fences if present
+        cleaned = response.strip()
+        # Remove ```json ... ``` or ``` ... ``` wrappers
+        cleaned = re.sub(r"^```(?:json)?\s*", "", cleaned)
+        cleaned = re.sub(r"\s*```$", "", cleaned)
+
+        try:
+            parsed = json.loads(cleaned)
+            if isinstance(parsed, list) and len(parsed) >= 1:
+                # Validate each alternative has required keys
+                for alt in parsed:
+                    if not isinstance(alt, dict):
+                        return None
+                return parsed
+            return None
+        except json.JSONDecodeError:
+            return None
+
     async def _evaluate_alternative(
         self,
-        alternative: dict[str, Any],  # noqa: ARG002
-        analysis_data: dict[str, Any],  # noqa: ARG002
+        alternative: dict[str, Any],
+        analysis_data: dict[str, Any],
     ) -> dict[str, Any]:
-        """Evaluate a single alternative."""
-        # Placeholder scoring
+        """
+        Evaluate a single alternative via alpha agent LLM scoring.
+
+        Routes through alpha agent with a prompt requesting
+        feasibility/impact/risk/cost/time_to_implement scoring (0.0–1.0).
+        On failure or timeout (60s), returns an honest fallback with all
+        zero scores and logs ``heavyswarm_evaluation_llm_failed``.
+        On success, logs ``heavyswarm_evaluation_llm_success``.
+        """
+        agent = self.agents.get("alpha")
+        if agent is None:
+            logger.warning(
+                "heavyswarm_evaluation_llm_failed",
+                extra={
+                    "reason": "no_alpha_agent_available",
+                    "alternative": alternative.get("name", "unknown"),
+                },
+            )
+            return self._evaluate_alternative_fallback(alternative)
+
+        alt_name = alternative.get("name", "unknown")
+        alt_desc = alternative.get("description", "")
+
+        prompt = f"""Evaluate the following alternative solution for a complex decision.
+
+Alternative: {alt_name}
+Description: {alt_desc}
+
+Evaluation criteria (score each from 0.0 to 1.0):
+- feasibility: How practical is this solution to implement?
+- impact: How much positive impact will this have?
+- risk: How risky is this? (0.0 = very low risk, 1.0 = extremely risky)
+- cost: How expensive? (0.0 = free, 1.0 = prohibitive)
+- time_to_implement: How quickly? (0.0 = instant, 1.0 = forever)
+- total_score: Weighted overall score (0.0–1.0)
+
+Respond ONLY with a JSON object with these exact numeric keys.
+Example:
+{{"feasibility": 0.75, "impact": 0.80, "risk": 0.25, "cost": 0.40, "time_to_implement": 0.35, "total_score": 0.62}}"""
+
+        try:
+            response = await agent.run_with_llm(prompt, timeout=60)
+            evaluation = self._parse_evaluation_json(response)
+            if evaluation:
+                logger.info(
+                    "heavyswarm_evaluation_llm_success",
+                    extra={
+                        "alternative": alt_name,
+                        "total_score": evaluation.get("total_score", 0.0),
+                    },
+                )
+                return evaluation
+        except Exception as e:
+            logger.error(
+                "heavyswarm_evaluation_llm_failed",
+                extra={
+                    "reason": str(e),
+                    "alternative": alt_name,
+                },
+            )
+
+        logger.warning(
+            "heavyswarm_evaluation_llm_failed",
+            extra={
+                "reason": "fallback_to_zero_scores",
+                "alternative": alt_name,
+            },
+        )
+        return self._evaluate_alternative_fallback(alternative)
+
+    def _evaluate_alternative_fallback(
+        self, alternative: dict[str, Any]  # noqa: ARG002
+    ) -> dict[str, Any]:
+        """Return zero-score fallback when LLM evaluation is unavailable."""
         return {
-            "feasibility": 0.8,
-            "impact": 0.7,
-            "risk": 0.3,
-            "cost": 0.5,
-            "time_to_implement": 0.6,
-            "total_score": 0.58,
+            "feasibility": 0.0,
+            "impact": 0.0,
+            "risk": 0.0,
+            "cost": 0.0,
+            "time_to_implement": 0.0,
+            "total_score": 0.0,
         }
+
+    @staticmethod
+    def _parse_evaluation_json(response: str) -> dict[str, Any] | None:
+        """Parse LLM evaluation response into a scores dict."""
+        import json
+        import re
+
+        cleaned = response.strip()
+        cleaned = re.sub(r"^```(?:json)?\s*", "", cleaned)
+        cleaned = re.sub(r"\s*```$", "", cleaned)
+
+        try:
+            parsed = json.loads(cleaned)
+            if isinstance(parsed, dict):
+                required_keys = {"feasibility", "impact", "risk", "cost", "time_to_implement"}
+                # Accept if it has at least some of the required keys
+                if any(k in parsed for k in required_keys):
+                    # Ensure all expected keys exist, defaulting missing ones to 0.0
+                    for k in required_keys | {"total_score"}:
+                        if k not in parsed:
+                            parsed[k] = 0.0
+                    return parsed
+            return None
+        except json.JSONDecodeError:
+            return None
 
     async def _identify_trade_offs(
         self,
@@ -989,11 +1194,17 @@ class HeavySwarmWorkflow:
     async def _collect_triad_votes(
         self,
         consensus_id: str,
-        topic: str,  # noqa: ARG002
+        topic: str,
         verification_data: dict[str, Any],
     ) -> list[dict[str, Any]]:
         """
-        Collect votes from triad members.
+        Collect votes from triad members via NATS request-reply.
+
+        Each triad agent receives a vote request and returns its own
+        decision and confidence score. On timeout (30s), falls back to
+        ``confidence=0.0`` and logs ``heavyswarm_vote_timeout``. On error,
+        logs ``heavyswarm_vote_error``. On success, logs
+        ``heavyswarm_vote_collected``.
 
         Args:
             consensus_id: Consensus process identifier
@@ -1001,24 +1212,87 @@ class HeavySwarmWorkflow:
             verification_data: Verification phase output
 
         Returns:
-            List of votes
+            List of votes with real agent-deliberated confidence scores
         """
-        votes = []
+        votes: list[dict[str, Any]] = []
+        recommended = verification_data.get("recommended_alternative", {})
+        recommended_name = recommended.get("name", "unknown") if recommended else "unknown"
 
         for agent_id in self.triad_agents:
             if agent_id not in self.agents:
+                logger.warning("[{self.name}] Triad agent not found for voting: {agent_id}")
                 continue
 
-            self.agents[agent_id]
+            agent = self.agents[agent_id]
 
-            # Simulate vote (would be real agent vote in full implementation)
-            vote = {
-                "agent_id": agent_id,
-                "decision": verification_data.get("recommended_alternative", {}).get(
-                    "name", "unknown"
-                ),
-                "confidence": 0.8,
-            }
+            try:
+                reply = await agent.send_with_reply(
+                    recipient=agent_id,
+                    message_type="vote_request",
+                    content={
+                        "consensus_id": consensus_id,
+                        "topic": topic,
+                        "recommended_alternative": recommended,
+                        "verification_data": {
+                            "overall_valid": verification_data.get("overall_valid", True),
+                            "confidence": verification_data.get("confidence", 0.0),
+                            "error_checks": verification_data.get("error_checks", []),
+                            "risk_assessments": verification_data.get("risk_assessments", []),
+                        },
+                    },
+                    timeout=30,
+                )
+
+                if reply is not None:
+                    # Successful response — extract real agent vote
+                    vote_decision = reply.get("decision", recommended_name)
+                    vote_confidence = reply.get("confidence", 0.0)
+
+                    logger.info(
+                        "heavyswarm_vote_collected",
+                        extra={
+                            "agent_id": agent_id,
+                            "consensus_id": consensus_id,
+                            "decision": vote_decision,
+                            "confidence": vote_confidence,
+                        },
+                    )
+
+                    vote = {
+                        "agent_id": agent_id,
+                        "decision": vote_decision,
+                        "confidence": vote_confidence,
+                    }
+                else:
+                    # Timeout — honest fallback with confidence=0.0
+                    logger.warning(
+                        "heavyswarm_vote_timeout",
+                        extra={
+                            "agent_id": agent_id,
+                            "consensus_id": consensus_id,
+                            "timeout_s": 30,
+                        },
+                    )
+                    vote = {
+                        "agent_id": agent_id,
+                        "decision": "vote_timeout",
+                        "confidence": 0.0,
+                    }
+
+            except Exception as e:
+                logger.exception(
+                    "heavyswarm_vote_error",
+                    extra={
+                        "agent_id": agent_id,
+                        "consensus_id": consensus_id,
+                        "error": str(e),
+                    },
+                )
+                vote = {
+                    "agent_id": agent_id,
+                    "decision": "vote_error",
+                    "confidence": 0.0,
+                }
 
             # Add to consensus engine
             self.consensus_engine.add_vote(

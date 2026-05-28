@@ -389,6 +389,11 @@ def _build_status_response(swarm: Any) -> dict[str, Any]:
     Returns a dict with an ``"agents"`` list, each containing:
     ``agent_id``, ``state``, ``mailbox_size``, ``message_count``,
     ``last_activity``, ``error_count``.
+
+    Also includes a ``"consciousness"`` dict with live IIT Phi / FEP
+    metrics collected via ``SwarmMetricsCollector.collect_consciousness_metrics()``.
+    On collection failure, the field is an empty dict and a structured
+    ``consciousness_collection_failed`` warning is emitted.
     """
     if swarm is None or swarm.supervisor is None:
         return {"agents": [], "error": "Swarm supervisor not available"}
@@ -414,7 +419,43 @@ def _build_status_response(swarm: Any) -> dict[str, Any]:
             }
         )
 
-    return {"agents": agents}
+    response: dict[str, Any] = {"agents": agents}
+
+    # --- Collect consciousness metrics (IIT Phi + FEP) ---------------------
+    try:
+        from heretek_swarm.observability.metrics import get_metrics_collector
+
+        collector = get_metrics_collector()
+        consciousness = collector.collect_consciousness_metrics()
+
+        # Top-5 agent phi scores (descending)
+        agent_phi = consciousness.agent_phi_scores
+        top_phi = dict(
+            sorted(agent_phi.items(), key=lambda kv: kv[1], reverse=True)[:5]
+        )
+
+        # Top-5 agent FEP scores (descending)
+        agent_fep = consciousness.agent_fep_scores
+        top_fep = dict(
+            sorted(agent_fep.items(), key=lambda kv: kv[1], reverse=True)[:5]
+        )
+
+        response["consciousness"] = {
+            "phi_avg": consciousness.phi_avg,
+            "phi_max": consciousness.phi_max,
+            "phi_min": consciousness.phi_min,
+            "integration_level": consciousness.integration_level,
+            "differentiation_level": consciousness.differentiation_level,
+            "free_energy_avg": consciousness.free_energy_avg,
+            "free_energy_variance": consciousness.free_energy_variance,
+            "agent_phi_scores": top_phi,
+            "agent_fep_scores": top_fep,
+        }
+    except Exception as exc:
+        logger.warning("consciousness_collection_failed", error=str(exc))
+        response["consciousness"] = {}
+
+    return response
 
 
 def _write_json_line(writer: asyncio.StreamWriter, data: dict[str, Any]) -> None:

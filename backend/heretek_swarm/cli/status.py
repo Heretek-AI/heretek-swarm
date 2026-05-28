@@ -69,11 +69,17 @@ def _display_daemon_status(agent_data: dict, pid: int, output_json: bool) -> Non
     import json
 
     agents = agent_data.get("agents", [])
+    consciousness = agent_data.get("consciousness", {})
 
     if output_json:
-        click.echo(
-            json.dumps({"daemon_pid": pid, "agents": agents, "agent_count": len(agents)})
-        )
+        result: dict[str, Any] = {
+            "daemon_pid": pid,
+            "agents": agents,
+            "agent_count": len(agents),
+        }
+        if consciousness:
+            result["consciousness"] = consciousness
+        click.echo(json.dumps(result))
         return
 
     click.echo("Heretek Swarm Status (daemon)")
@@ -112,6 +118,20 @@ def _display_daemon_status(agent_data: dict, pid: int, output_json: bool) -> Non
 
     click.echo("")
     click.echo(f"  ✓ {len(agents)} agent(s) running")
+
+    # --- Consciousness Metrics section (human-readable) --------------------
+    if consciousness and consciousness.get("phi_avg", 0) > 0:
+        click.echo("")
+        click.echo("Consciousness Metrics:")
+        click.echo("-" * 30)
+        click.echo(f"  Phi (avg/max/min): "
+                   f"{consciousness['phi_avg']:.3f} / "
+                   f"{consciousness['phi_max']:.3f} / "
+                   f"{consciousness['phi_min']:.3f}")
+        click.echo(f"  Integration:       {consciousness['integration_level']:.3f}")
+        click.echo(f"  Differentiation:   {consciousness['differentiation_level']:.3f}")
+        click.echo(f"  Free Energy (avg): {consciousness['free_energy_avg']:.3f}")
+        click.echo(f"  Free Energy (var): {consciousness['free_energy_variance']:.3f}")
 
 
 # ---------------------------------------------------------------------------
@@ -227,7 +247,7 @@ def status(api_base: str, timeout: int, output_json: bool) -> None:
 
     if output_json:
         total_time_ms = (time.perf_counter() - start_time) * 1000
-        result = {
+        result: dict[str, Any] = {
             "services": [
                 {
                     "service": r.get("service", "unknown"),
@@ -249,6 +269,36 @@ def status(api_base: str, timeout: int, output_json: bool) -> None:
             .isoformat()
             .replace("+00:00", "Z"),
         }
+
+        # --- Include consciousness metrics if collector has agent data -----
+        try:
+            from heretek_swarm.observability.metrics import get_metrics_collector
+
+            collector = get_metrics_collector()
+            if collector._agent_metrics:  # Only if real agent data exists
+                consciousness = collector.collect_consciousness_metrics()
+                agent_phi = consciousness.agent_phi_scores
+                top_phi = dict(
+                    sorted(agent_phi.items(), key=lambda kv: kv[1], reverse=True)[:5]
+                )
+                agent_fep = consciousness.agent_fep_scores
+                top_fep = dict(
+                    sorted(agent_fep.items(), key=lambda kv: kv[1], reverse=True)[:5]
+                )
+                result["consciousness"] = {
+                    "phi_avg": consciousness.phi_avg,
+                    "phi_max": consciousness.phi_max,
+                    "phi_min": consciousness.phi_min,
+                    "integration_level": consciousness.integration_level,
+                    "differentiation_level": consciousness.differentiation_level,
+                    "free_energy_avg": consciousness.free_energy_avg,
+                    "free_energy_variance": consciousness.free_energy_variance,
+                    "agent_phi_scores": top_phi,
+                    "agent_fep_scores": top_fep,
+                }
+        except Exception:
+            logger.warning("api_fallback_consciousness_failed", exc_info=True)
+
         click.echo(json_mod.dumps(result))
         sys.exit(1 if unhealthy_count > 0 else 0)
 
