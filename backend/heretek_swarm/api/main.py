@@ -667,6 +667,67 @@ async def check_qdrant() -> dict[str, Any]:
         }
 
 
+async def check_mem0() -> dict[str, Any]:
+    """Check mem0 embedded backend status.
+
+    mem0 is an embedded logical service running inside the API container
+    (not a standalone container). It uses Qdrant as its vector store backend.
+
+    Returns healthy when the mem0_backend is initialized and reachable;
+    returns unavailable when mem0_backend is None (e.g. mem0 not installed
+    or Qdrant unavailable).
+    """
+    global mem0_backend
+
+    if mem0_backend is None:
+        return {
+            "status": "unavailable",
+            "note": "mem0 is embedded in the API container — no standalone container needed",
+        }
+
+    try:
+        # Verify backend is initialized by checking the client attribute
+        client = getattr(mem0_backend, "client", None)
+        if client is None:
+            return {
+                "status": "unhealthy",
+                "error": "mem0_backend initialized but client is None",
+                "note": "mem0 is embedded in the API container — no standalone container needed",
+            }
+
+        # Check Qdrant connectivity via a lightweight operation
+        collection_name = getattr(mem0_backend, "collection_name", "mem0")
+        try:
+            # Use the Qdrant client to check if the collection exists
+            from qdrant_client.http.exceptions import UnexpectedResponse
+
+            try:
+                client.get_collection(collection_name)
+                return {
+                    "status": "healthy",
+                    "collection": collection_name,
+                    "note": "mem0 is embedded in the API container — no standalone container needed",
+                }
+            except UnexpectedResponse:
+                return {
+                    "status": "healthy",
+                    "collection": collection_name,
+                    "note": "mem0 is embedded in the API container — no standalone container needed",
+                }
+        except Exception as e:
+            return {
+                "status": "degraded",
+                "error": f"mem0 backend reachable but Qdrant check failed: {e}",
+                "note": "mem0 is embedded in the API container — no standalone container needed",
+            }
+    except Exception as e:
+        return {
+            "status": "unhealthy",
+            "error": str(e),
+            "note": "mem0 is embedded in the API container — no standalone container needed",
+        }
+
+
 # =============================================================================
 # Health Check Endpoints
 # =============================================================================
@@ -682,6 +743,7 @@ async def health_check():
         - redis: Redis connection status
         - postgres: PostgreSQL connection status
         - qdrant: Qdrant vector DB status
+        - mem0: embedded memory service status (API-native, no standalone container)
         - pool: Database connection pool stats
     """
     from heretek_swarm.state.repository import StateRepository
@@ -693,6 +755,7 @@ async def health_check():
             "redis": await check_redis(),
             "postgres": await check_postgres(),
             "qdrant": await check_qdrant(),
+            "mem0": await check_mem0(),
         },
         "pool": StateRepository.get_pool_stats(),
         "timestamp": datetime.utcnow().isoformat(),

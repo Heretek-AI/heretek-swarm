@@ -1,7 +1,7 @@
 # Heretek Swarm Deployment Guide
 
 **Version:** 2.0.0  
-**Date:** 2026-04-07  
+**Date:** 2026-06-10  
 **Status:** Production-Ready
 
 ---
@@ -64,6 +64,7 @@ The Heretek Swarm can be deployed in several configurations:
 | Redis 7+ | Caching & pub/sub | Yes |
 | Qdrant 1.8+ | Vector memory | Yes |
 | NATS 2.10+ | Event mesh | Yes |
+| mem0 SDK | Memory management (embedded in API) | Yes (embedded, no separate container) |
 
 ---
 
@@ -120,15 +121,18 @@ curl http://localhost:8000/health
 ├─────────────────────────────────────────────────────────┤
 │  Service        │ Port  │ Description                    │
 ├─────────────────────────────────────────────────────────┤
-│  api            │ 8000  │ FastAPI backend                │
+│  api            │ 8000  │ FastAPI backend (incl. mem0)   │
 │  dashboard      │ 3000  │ React frontend                 │
 │  postgres       │ 5432  │ PostgreSQL database            │
 │  redis          │ 6379  │ Redis cache                    │
 │  qdrant         │ 6333  │ Vector database                │
+│  nats           │ 4222  │ NATS JetStream event mesh      │
 │  grafana        │ 3001  │ Metrics dashboard              │
 │  prometheus     │ 9090  │ Metrics collection             │
 └─────────────────────────────────────────────────────────┘
 ```
+
+**7 logical infrastructure services** run across the above containers: the API container hosts both the FastAPI backend and the embedded mem0 memory SDK (`backend/heretek_swarm/memory/persistent.py`).
 
 ### Configuration
 

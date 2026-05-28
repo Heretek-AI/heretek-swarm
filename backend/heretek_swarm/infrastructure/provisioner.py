@@ -2,7 +2,7 @@
 Docker/Podman Provisioner for Heretek Swarm.
 
 Provides container provisioning for infrastructure services:
-- PostgreSQL, Redis, Qdrant, NATS (mem0 excluded until Dockerfile is built)
+- PostgreSQL, Redis, Qdrant, NATS (mem0 is embedded in the API container)
 
 Uses subprocess to invoke podman/docker CLI (same pattern as CLI, no new Docker SDK dependency).
 Idempotent: stops any existing heretek-* containers before re-provisioning.
@@ -447,16 +447,16 @@ async def provision_service(
     runtime_config = runtime_config or {}
     start_time = time.monotonic()
 
-    logger.info("provisioning_service", service=service.value, runtime=runtime.value)
-
-    # Skip mem0 - not yet implemented
+    # Skip mem0 — embedded in the API container, no standalone container needed
     if service == InfrastructureService.MEM0:
-        logger.warning("mem0_excluded_from_provisioning")
+        logger.info("mem0_is_embedded_service")
         return ConnectionStringResult(
             service=service,
-            success=False,
-            error="mem0 not yet implemented - mem0_server/Dockerfile not built",
+            success=True,
+            error="mem0 is embedded in the API container — no standalone container needed",
         )
+
+    logger.info("provisioning_service", service=service.value, runtime=runtime.value)
 
     # Get image and default configuration
     image = runtime_config.get("image", DEFAULT_IMAGES.get(service))
@@ -617,13 +617,13 @@ async def provision_all(
     results: dict[InfrastructureService, ConnectionStringResult] = {}
 
     for service in services:
-        # Skip mem0
+        # Skip mem0 — embedded in the API container
         if service == InfrastructureService.MEM0:
-            logger.info("skipping_mem0")
+            logger.info("mem0_is_embedded_service")
             results[service] = ConnectionStringResult(
                 service=service,
-                success=False,
-                error="mem0 excluded from provisioning",
+                success=True,
+                error="mem0 is embedded in the API container — no standalone container needed",
             )
             continue
 
@@ -655,7 +655,7 @@ async def provision_infrastructure(
     redis: bool = True,
     qdrant: bool = True,
     nats: bool = True,
-    mem0: bool = False,  # Disabled by default
+    mem0: bool = False,  # mem0 is embedded in API container — no standalone provisioning needed
     runtime_config: dict[str, Any] | None = None,
 ) -> dict[InfrastructureService, ConnectionStringResult]:
     """
@@ -666,7 +666,7 @@ async def provision_infrastructure(
         redis: Provision Redis
         qdrant: Provision Qdrant
         nats: Provision NATS
-        mem0: Provision Mem0 (default False - not yet implemented)
+        mem0: Provision Mem0 (default False — mem0 is embedded, no standalone container)
         runtime_config: Optional configuration overrides
 
     Returns:

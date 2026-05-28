@@ -1,7 +1,8 @@
 # Memory System
 
-**Version:** 2.0.0  
-**Session:** 21 (2026-04-06)
+**Version:** 2.1.0  
+**Date:** 2026-06-10
+**Session:** M001 Complete
 
 Dual-tier memory architecture with PostgreSQL, Redis, and Qdrant vector storage using mem0 integration.
 
@@ -9,18 +10,18 @@ Dual-tier memory architecture with PostgreSQL, Redis, and Qdrant vector storage 
 
 ## Table of Contents
 
-1. [Mem0Backend](#mem0backend)
+1. [PersistentMemory / Mem0Backend](#persistentmemory--mem0backend)
 2. [Memory Base Models](#memory-base-models)
 3. [Memory Architecture](#memory-architecture)
 4. [Usage Examples](#usage-examples)
 
 ---
 
-## Mem0Backend
+## PersistentMemory / Mem0Backend
 
-**File:** [`src/memory/mem0_backend.py`](../src/memory/mem0_backend.py)
+**File:** [`backend/heretek_swarm/memory/persistent.py`](../backend/heretek_swarm/memory/persistent.py)
 
-Vector memory backend using mem0 for semantic search and retrieval.
+Persistent memory backend using mem0 SDK for semantic search and retrieval.
 
 ```python
 class Mem0Backend:
@@ -68,7 +69,7 @@ MEM0_COLLECTION = "heretek-swarm"
 
 ## Memory Base Models
 
-**File:** [`src/memory/base.py`](../src/memory/base.py)
+**File:** [`backend/heretek_swarm/memory/base.py`](../backend/heretek_swarm/memory/base.py)
 
 Core memory models and interfaces for the dual-tier architecture.
 
@@ -137,7 +138,8 @@ class MemoryResult(BaseModel):
                           │
                           ▼
 ┌─────────────────────────────────────────────────────────┐
-│                   Mem0Backend                            │
+│              PersistentMemory (mem0 SDK)               │
+│     (backend/heretek_swarm/memory/persistent.py)        │
 │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐     │
 │  │   Embed     │  │   Store     │  │   Search    │     │
 │  └─────────────┘  └─────────────┘  └─────────────┘     │

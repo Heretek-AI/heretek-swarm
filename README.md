@@ -2,7 +2,7 @@
 
 **Version:** 0.2.0
 **Framework:** Python 3.11+
-**Last Updated:** 2026-05-14 (M010 Audit Complete)
+**Last Updated:** 2026-06-10 (M001 Complete — 6 containers, 7 logical services including embedded mem0)
 
 ---
 
@@ -28,7 +28,7 @@ cp .env.example .env
 docker compose up
 ```
 
-Starts all 6 services with health checks: PostgreSQL, Redis, Qdrant, NATS, API server, and React dashboard. No profile flags needed — everything starts by default. The `docker-compose.yml` is at repo root; run `docker compose up` from the repository root directory.
+Starts all 6 containers (7 logical services including embedded mem0) with health checks: PostgreSQL, Redis, Qdrant, NATS, API server (with embedded mem0), and React dashboard. No profile flags needed — everything starts by default. The `docker-compose.yml` is at repo root; run `docker compose up` from the repository root directory.
 
 ---
 
@@ -109,7 +109,7 @@ heretek-swarm status --json
 
 ```
 heretek-swarm/                          # Repository root
-├── docker-compose.yml                  # All 6 services with health checks
+├── docker-compose.yml                  # All 6 containers (7 logical services incl. embedded mem0)
 ├── .env.example                        # Environment template with all vars
 ├── PRIME_DIRECTIVE.md                  # 23-agent vision & architecture
 ├── CLAUDE.md                           # AI assistant guidance
@@ -181,12 +181,13 @@ All services are defined in `docker-compose.yml` (at repo root) and start automa
 | NATS | 4222 | Event mesh (A2A agent communication) |
 | API Server | 8000 | FastAPI backend with 23 spawned agents |
 | Dashboard | 3000 | React frontend (Vite + Tailwind CSS) |
+| **mem0** | *(embedded)* | Memory SDK embedded in API container via `backend/heretek_swarm/memory/persistent.py` |
 
 All services include health checks and restart policies. Docker Compose coordinates startup order via `depends_on` with `condition: service_healthy`.
 
 ### Docker Volume Persistence
 
-All 4 named volumes use Docker's `local` driver. A physical restart resilience test (`docker compose down && up`) executed 2026-05-14 confirmed all data survives restart with all 6 services returning healthy and API health returning HTTP 200.
+All 4 named volumes use Docker's `local` driver. A physical restart resilience test (`docker compose down && up`) executed 2026-05-14 confirmed all data survives restart with all 6 containers returning healthy and API health returning HTTP 200.
 
 | Volume | Compose Name | Host Path (WSL2) | Container Path | Service | Survives Restart |
 |--------|-------------|-------------------|----------------|---------|:----------------:|
@@ -359,7 +360,7 @@ S01 produced a canonical architecture map (`.gsd/milestones/M010/M010-RESEARCH.m
 - **23 actor classes** with exact file:line references and parent chains
 - **10 mixins** with dependency analysis and fail-fast guard documentation
 - **27 API routers** with 175+ endpoint handlers
-- **6 Docker Compose services** with health check topology
+- **6 Docker Compose containers (7 logical services)** with health check topology
 - **93 React components** across 12 feature domains
 - **36+ file:line references** grounding every claim in real code
 

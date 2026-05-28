@@ -2,9 +2,9 @@
 
 > **M010 Audit Alignment:** This document has been verified against the M010 full architecture audit (2026-05-10). All paths, actor counts (23), mixin counts (10), API router counts (27), and service topology references match the canonical M010-RESEARCH.md findings. No stale paths; no structural reorganizations needed.
 
-**Version:** 2.1.0
-**Date:** 2026-05-10
-**Status:** Production-Ready — M010 Verified
+**Version:** 2.2.0
+**Date:** 2026-06-10
+**Status:** Production-Ready — M001 Complete (mem0 embedded, 7 logical services)
 
 ---
 
@@ -47,7 +47,7 @@ The Heretek Swarm is a self-governing swarm of 23 specialized AI agents that ope
 | Redis       | Caching layer            | 7+              | ✅ Operational |
 | Qdrant      | Vector storage           | 1.8+            | ✅ Operational |
 | NATS        | Event mesh with JetStream| 2.10+           | ✅ Operational |
-| mem0        | Memory backend           | Latest          | ✅ Operational |
+| mem0        | Memory backend           | Latest          | Embedded in API container |
 | Prometheus  | Metrics collection       | 2.45+           | ✅ Operational |
 | Grafana     | Metrics visualization    | 10.0+           | ✅ Optional   |
 

@@ -92,7 +92,7 @@ The [`MemorySystem`](../backend/heretek_swarm/memory/base.py:69) is the abstract
 
 ### Ephemeral Memory
 
-**Location**: [`src/memory/ephemeral.py`](../src/memory/ephemeral.py)
+**Location**: [`backend/heretek_swarm/memory/base.py`](../../backend/heretek_swarm/memory/base.py)
 
 Fast, in-memory storage with TTL support.
 
@@ -130,7 +130,7 @@ results = await memory.query(
 
 ### Persistent Memory
 
-**Location**: [`src/memory/persistent.py`](../src/memory/persistent.py)
+**Location**: [`backend/heretek_swarm/memory/persistent.py`](../../backend/heretek_swarm/memory/persistent.py)
 
 Long-term storage with vector embeddings for semantic search.
 
@@ -168,7 +168,7 @@ results = await memory.query(
 
 ### DualTierMemory
 
-**Location**: [`src/memory/unified.py`](../src/memory/unified.py)
+**Location**: [`backend/heretek_swarm/memory/base.py`](../../backend/heretek_swarm/memory/base.py)
 
 Unified interface that automatically routes memories to appropriate tier.
 
@@ -505,15 +505,15 @@ See [`backend/heretek_swarm/memory/base.py`](../backend/heretek_swarm/memory/bas
 
 ### EphemeralMemory
 
-See [`src/memory/ephemeral.py`](../src/memory/ephemeral.py) for complete API documentation.
+See [`backend/heretek_swarm/memory/base.py`](../../backend/heretek_swarm/memory/base.py) for complete API documentation.
 
 ### PersistentMemory
 
-See [`src/memory/persistent.py`](../src/memory/persistent.py) for complete API documentation.
+See [`backend/heretek_swarm/memory/persistent.py`](../../backend/heretek_swarm/memory/persistent.py) for complete API documentation.
 
 ### DualTierMemory
 
-See [`src/memory/unified.py`](../src/memory/unified.py) for complete API documentation.
+See [`backend/heretek_swarm/memory/base.py`](../../backend/heretek_swarm/memory/base.py) for complete API documentation.
 
 ## Session 43: Memory Optimization
 
