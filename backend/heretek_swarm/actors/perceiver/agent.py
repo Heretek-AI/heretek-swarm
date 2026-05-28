@@ -12,7 +12,9 @@ Named for the ability to perceive and process sensory information from multiple 
 """
 
 import asyncio
+import base64
 import hashlib
+import tempfile
 from datetime import UTC, datetime
 from typing import Any
 
@@ -463,48 +465,180 @@ class PerceiverAgent(
     async def _extract_image_features(
         self, image_data: Any, format_hint: str | None
     ) -> dict[str, Any]:
-        """Extract features from image input."""
-        # If LLM with vision capabilities is available, use it
+        """Extract features from image input.
+
+        Uses PIL/Pillow for structured visual features (dimensions, mode,
+        channels, color_stats, dominant_color_rgb).  Optionally enriches with
+        LLM description when vision-capable providers are available.
+        Falls back to metadata-only when PIL is not importable.
+        """
+        # Decode image bytes (handle data URL or raw bytes)
+        image_bytes = self._decode_image_bytes(image_data)
+        mime_type = self._detect_image_mime(image_data)
+
+        # Base metadata fields present in every result
+        base: dict[str, Any] = {
+            "format": format_hint or "unknown",
+            "mime_type": mime_type,
+            "size_bytes": len(image_bytes),
+        }
+
+        # --- PIL extraction ---
+        pil_features: dict[str, Any] = {}
+        try:
+            from PIL import Image, ImageStat
+            _ = Image, ImageStat  # mark as used
+            pil_features = self._extract_image_pil(image_bytes)
+        except ImportError:
+            logger.warning(
+                "[%s] PIL/Pillow not available — falling back to metadata",
+                self.agent_id,
+                extra={"event": "perceiver_pil_unavailable"},
+            )
+        except Exception:
+            logger.exception(
+                "[%s] PIL image decode failed",
+                self.agent_id,
+                extra={"event": "perceiver_pil_decode_failed"},
+            )
+
+        # --- LLM description (best-effort, parallel-adjacent) ---
+        llm_description: str | None = None
         if self.swarms_agent and self.swarms_agent.llm:
             try:
-                # For base64 encoded images
-                if isinstance(image_data, str) and image_data.startswith("data:"):
-                    description = await asyncio.wait_for(
+                if isinstance(image_data, str):
+                    llm_description = await asyncio.wait_for(
                         self._describe_image_llm(image_data),
                         timeout=60,
                     )
-                    return {
-                        "description": description,
-                        "format": format_hint or "unknown",
-                        "analyzed_by": "llm",
-                    }
             except TimeoutError:
-                logger.warning("[{self.agent_id}] Image LLM analysis timed out")
+                logger.warning(
+                    "[%s] Image LLM analysis timed out",
+                    self.agent_id,
+                    extra={"event": "perceiver_llm_timeout"},
+                )
             except Exception:
-                logger.error("[{self.agent_id}] Image LLM analysis error: {e}")
+                logger.exception(
+                    "[%s] Image LLM analysis error",
+                    self.agent_id,
+                    extra={"event": "perceiver_llm_error"},
+                )
 
-        # Fallback: basic metadata extraction
-        if isinstance(image_data, str):
-            if image_data.startswith("data:"):
-                # Extract MIME type from data URL
-                mime_type = image_data.split(":")[1].split(";")[0]
-                size_bytes = len(image_data.encode())
+        # --- Merge results ---
+        result = dict(base)
+
+        if pil_features:
+            result.update(pil_features)
+            if llm_description:
+                result["description"] = llm_description
+                result["analyzed_by"] = "pil+llm"
             else:
-                mime_type = "unknown"
-                size_bytes = len(image_data.encode())
-        elif isinstance(image_data, bytes):
-            mime_type = "unknown"
-            size_bytes = len(image_data)
+                result["analyzed_by"] = "pil"
+        elif llm_description:
+            result["description"] = llm_description
+            result["analyzed_by"] = "llm"
         else:
-            mime_type = "unknown"
-            size_bytes = 0
+            result["analyzed_by"] = "metadata"
 
-        return {
-            "format": format_hint or "unknown",
-            "mime_type": mime_type,
-            "size_bytes": size_bytes,
-            "analyzed_by": "metadata",
-        }
+        return result
+
+    @staticmethod
+    def _decode_image_bytes(image_data: Any) -> bytes:
+        """Decode ``image_data`` to raw bytes regardless of input format.
+
+        Handles:
+        - ``data:image/xxx;base64,...`` data URLs
+        - plain base64 strings
+        - ``bytes``
+        """
+        if isinstance(image_data, bytes):
+            return image_data
+        if not isinstance(image_data, str):
+            return b""
+        payload = image_data
+        if payload.startswith("data:"):
+            # Strip the "data:image/xxx;base64," prefix
+            try:
+                payload = payload.split(",", 1)[1]
+            except IndexError:
+                payload = ""
+        try:
+            return base64.b64decode(payload)
+        except Exception:
+            return image_data.encode("utf-8")
+
+    @staticmethod
+    def _detect_image_mime(image_data: Any) -> str:
+        """Infer a MIME type string from the input shape."""
+        if isinstance(image_data, str) and image_data.startswith("data:"):
+            try:
+                return image_data.split(":")[1].split(";")[0]
+            except IndexError:
+                return "unknown"
+        if isinstance(image_data, bytes):
+            # Sniff magic bytes
+            if image_data.startswith(b"\xff\xd8\xff"):
+                return "image/jpeg"
+            if image_data.startswith(b"\x89PNG"):
+                return "image/png"
+            if image_data.startswith((b"GIF87a", b"GIF89a")):
+                return "image/gif"
+            return "application/octet-stream"
+        return "unknown"
+
+    @staticmethod
+    def _extract_image_pil(image_bytes: bytes) -> dict[str, Any]:
+        """Decode *image_bytes* with Pillow and return structured features.
+
+        Returns a dict with *dimensions*, *mode*, *channels*, *color_stats*,
+        and *dominant_color_rgb*.  Raises on decode failure — callers must
+        handle PIL unavailability and decode errors.
+        """
+        import contextlib
+        from pathlib import Path
+
+        from PIL import Image, ImageStat
+
+        with tempfile.NamedTemporaryFile(suffix=".img", delete=False) as tmpf:
+            tmpf.write(image_bytes)
+            tmpf.flush()
+            tmp_path = tmpf.name
+
+        try:
+            img = Image.open(tmp_path)
+            img.load()  # Force decode
+            width, height = img.size
+            mode = img.mode
+            channels = len(img.getbands())
+
+            stat = ImageStat.Stat(img)
+            color_stats: dict[str, dict[str, float]] = {}
+            band_names = img.getbands()
+            for i, band_name in enumerate(band_names):
+                mean_val = round(stat.mean[i], 2) if i < len(stat.mean) else 0.0
+                stddev_val = round(stat.stddev[i], 2) if i < len(stat.stddev) else 0.0
+                color_stats[band_name] = {"mean": mean_val, "stddev": stddev_val}
+
+            # Dominant color (fast quantize to 1 color)
+            dominant_color_rgb: list[int] = []
+            try:
+                quantized = img.quantize(colors=1) if img.mode != "P" else img
+                palette = quantized.getpalette()
+                if palette:
+                    dominant_color_rgb = list(palette[:3])
+            except Exception:
+                dominant_color_rgb = []
+
+            return {
+                "dimensions": {"width": width, "height": height},
+                "mode": mode,
+                "channels": channels,
+                "color_stats": color_stats,
+                "dominant_color_rgb": dominant_color_rgb,
+            }
+        finally:
+            with contextlib.suppress(OSError):
+                Path(tmp_path).unlink()
 
     async def _describe_image_llm(self, image_data: str) -> str:
         """Use LLM to describe an image via the provider chain.
@@ -549,56 +683,340 @@ class PerceiverAgent(
             )
             return f"[LLM unavailable] Image analysis requested ({size_bytes} bytes, {fmt})"
 
+    @staticmethod
+    def _decode_audio_bytes(audio_data: Any) -> tuple[bytes, str]:
+        """Decode ``audio_data`` to raw bytes and infer a MIME type.
+
+        Returns ``(bytes, mime_type)``.
+        """
+        if isinstance(audio_data, bytes):
+            return audio_data, "application/octet-stream"
+        if not isinstance(audio_data, str):
+            return b"", "unknown"
+
+        payload = audio_data
+        mime_type = "application/octet-stream"
+        if payload.startswith("data:"):
+            try:
+                header, payload = payload.split(",", 1)
+                mime_type = header.split(":")[1].split(";")[0]
+            except (IndexError, ValueError):
+                pass
+
+        try:
+            return base64.b64decode(payload), mime_type
+        except Exception:
+            return audio_data.encode("utf-8"), mime_type
+
+    @staticmethod
+    def _audio_suffix_from_format(format_hint: str | None, mime_type: str) -> str:
+        """Return a file extension (with dot) for a known audio format or mime."""
+        format_lower = (format_hint or "").lower()
+        mime_ext_map = {
+            "audio/wav": ".wav", "audio/wave": ".wav", "audio/x-wav": ".wav",
+            "audio/mpeg": ".mp3", "audio/mp3": ".mp3",
+            "audio/ogg": ".ogg", "audio/vorbis": ".ogg",
+            "audio/flac": ".flac",
+            "audio/aac": ".aac", "audio/x-aac": ".aac",
+            "audio/webm": ".webm",
+        }
+        # Known bare extensions
+        if format_lower in {"wav", "mp3", "ogg", "flac", "aac", "webm"}:
+            return f".{format_lower}"
+        # MIME type lookup (only when we actually have a non-empty mime)
+        if mime_type and mime_type != "application/octet-stream":
+            for mime_key, ext in mime_ext_map.items():
+                if mime_type == mime_key or mime_type.startswith(mime_key):
+                    return ext
+        if format_lower:
+            return f".{format_lower}"
+        return ".audio"
+
     async def _extract_audio_features(
         self, audio_data: Any, format_hint: str | None
     ) -> dict[str, Any]:
-        """Extract features from audio input."""
-        # Placeholder for audio feature extraction
-        # In production, would use libraries like librosa for:
-        # - Duration
-        # - Sample rate
-        # - Spectral features (MFCCs, chroma, etc.)
-        # - Tempo and rhythm analysis
+        """Extract features from audio input using ffprobe + ffmpeg volumedetect.
 
-        if isinstance(audio_data, str):
-            size_bytes = len(audio_data.encode())
-        elif isinstance(audio_data, bytes):
-            size_bytes = len(audio_data)
-        else:
-            size_bytes = 0
+        Decodes data URL, bytes, or str; writes to a temp file; runs ffprobe
+        for stream metadata and ffmpeg volumedetect for volume stats.
+        Falls back to size-only metadata when tools are unavailable or fail.
+        """
+        import contextlib
+        import json
+        import re
+        from pathlib import Path
 
-        return {
+        audio_bytes, mime_type = self._decode_audio_bytes(audio_data)
+        suffix = self._audio_suffix_from_format(format_hint, mime_type)
+        size_bytes = len(audio_bytes)
+
+        base_meta: dict[str, Any] = {
             "format": format_hint or "unknown",
+            "mime_type": mime_type,
             "size_bytes": size_bytes,
-            "analyzed_by": "metadata",
-            "note": "Full audio analysis requires librosa or similar library",
         }
+
+        tmp_path: str | None = None
+        try:
+            with tempfile.NamedTemporaryFile(suffix=suffix, delete=False) as tmpf:
+                tmpf.write(audio_bytes)
+                tmpf.flush()
+                tmp_path = tmpf.name
+
+            # ----- ffprobe stream metadata -----
+            proc = await asyncio.create_subprocess_exec(
+                "ffprobe", "-v", "quiet", "-print_format", "json",
+                "-show_format", "-show_streams", tmp_path,
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE,
+            )
+            stdout, stderr = await proc.communicate()
+            if proc.returncode != 0:
+                raise RuntimeError(
+                    f"ffprobe exited {proc.returncode}: {stderr.decode()[:200]}"
+                )
+
+            parsed = json.loads(stdout.decode())
+            audio_streams = [
+                s for s in parsed.get("streams", []) if s.get("codec_type") == "audio"
+            ]
+            if not audio_streams:
+                raise RuntimeError("No audio stream found in file")
+
+            stream = audio_streams[0]
+            fmt = parsed.get("format", {})
+
+            # ----- ffmpeg volumedetect -----
+            # NOTE: volumedetect filter output goes to stderr at *info* level,
+            # so we use "-v info" instead of "-v quiet".
+            vproc = await asyncio.create_subprocess_exec(
+                "ffmpeg", "-v", "info", "-i", tmp_path,
+                "-af", "volumedetect", "-f", "null", "/dev/null",
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE,
+            )
+            _vout, verr = await vproc.communicate()
+            verr_text = verr.decode()
+
+            mean_match = re.search(r"mean_volume:\s*(-?\d+\.?\d*)\s*dB", verr_text)
+            max_match = re.search(r"max_volume:\s*(-?\d+\.?\d*)\s*dB", verr_text)
+
+            features: dict[str, Any] = {
+                "sample_rate": int(stream.get("sample_rate", 0)),
+                "channels": int(stream.get("channels", 0)),
+                "codec_name": stream.get("codec_name", "unknown"),
+                "bit_rate": int(stream.get("bit_rate", 0)) or int(fmt.get("bit_rate", 0)),
+                "duration": float(fmt.get("duration", 0)),
+                "mean_volume": float(mean_match.group(1)) if mean_match else None,
+                "max_volume": float(max_match.group(1)) if max_match else None,
+            }
+
+            result = dict(base_meta)
+            result.update(features)
+            result["analyzed_by"] = "ffprobe"
+            return result
+
+        except Exception as exc:
+            logger.warning(
+                "[%s] ffprobe audio extraction failed — falling back to metadata",
+                self.agent_id,
+                extra={"event": "perceiver_ffprobe_failed", "error": str(exc)[:200]},
+            )
+            return {
+                **base_meta,
+                "analyzed_by": "metadata",
+                "note": f"ffprobe unavailable or failed: {str(exc)[:200]}",
+            }
+
+        finally:
+            if tmp_path:
+                with contextlib.suppress(OSError):
+                    Path(tmp_path).unlink()  # noqa: ASYNC240 — cleanup must be sync in finally
+
+    @staticmethod
+    def _decode_video_bytes(video_data: Any) -> tuple[bytes, str]:
+        """Decode ``video_data`` to raw bytes and infer a MIME type.
+
+        Returns ``(bytes, mime_type)``.
+        """
+        if isinstance(video_data, bytes):
+            return video_data, "application/octet-stream"
+        if not isinstance(video_data, str):
+            return b"", "unknown"
+
+        payload = video_data
+        mime_type = "application/octet-stream"
+        if payload.startswith("data:"):
+            try:
+                header, payload = payload.split(",", 1)
+                mime_type = header.split(":")[1].split(";")[0]
+            except (IndexError, ValueError):
+                pass
+
+        try:
+            return base64.b64decode(payload), mime_type
+        except Exception:
+            return video_data.encode("utf-8"), mime_type
+
+    @staticmethod
+    def _video_suffix_from_format(format_hint: str | None, mime_type: str) -> str:
+        """Return a file extension (with dot) for a known video format or mime."""
+        format_lower = (format_hint or "").lower()
+        mime_ext_map: dict[str, str] = {
+            "video/mp4": ".mp4",
+            "video/mpeg": ".mpg",
+            "video/avi": ".avi",
+            "video/x-msvideo": ".avi",
+            "video/quicktime": ".mov",
+            "video/webm": ".webm",
+            "video/x-matroska": ".mkv",
+        }
+        if format_lower in {"mp4", "avi", "mov", "webm", "mkv", "mpg", "mpeg"}:
+            return f".{format_lower}"
+        if mime_type and mime_type != "application/octet-stream":
+            for mime_key, ext in mime_ext_map.items():
+                if mime_type == mime_key or mime_type.startswith(mime_key):
+                    return ext
+        if format_lower:
+            return f".{format_lower}"
+        return ".video"
+
+    @staticmethod
+    def _parse_r_frame_rate(r_frame_rate: str | None) -> float | None:
+        """Convert ``r_frame_rate`` string (e.g. "30/1" or "30000/1001") to float.
+
+        Returns None when input is empty, malformed, or zero-denominator.
+        """
+        if not r_frame_rate:
+            return None
+        try:
+            num, denom = r_frame_rate.split("/", 1)
+            n = int(num)
+            d = int(denom)
+            if d == 0:
+                return None
+            return round(n / d, 2)
+        except (ValueError, ZeroDivisionError):
+            return None
 
     async def _extract_video_features(
         self, video_data: Any, format_hint: str | None
     ) -> dict[str, Any]:
-        """Extract features from video input."""
-        # Placeholder for video feature extraction
-        # In production, would use libraries like opencv-python for:
-        # - Duration and frame count
-        # - Resolution and aspect ratio
-        # - Frame rate
-        # - Key frame extraction
-        # - Motion analysis
+        """Extract features from video input using ffprobe.
 
-        if isinstance(video_data, str):
-            size_bytes = len(video_data.encode())
-        elif isinstance(video_data, bytes):
-            size_bytes = len(video_data)
-        else:
-            size_bytes = 0
+        Decodes data URL, bytes, or str; writes to a temp file; runs ffprobe
+        for stream metadata and format info.  Falls back to size-only metadata
+        when ffprobe is unavailable or fails.
+        """
+        import contextlib
+        import json
+        from pathlib import Path
 
-        return {
+        video_bytes, mime_type = self._decode_video_bytes(video_data)
+        suffix = self._video_suffix_from_format(format_hint, mime_type)
+        size_bytes = len(video_bytes)
+
+        base_meta: dict[str, Any] = {
             "format": format_hint or "unknown",
+            "mime_type": mime_type,
             "size_bytes": size_bytes,
-            "analyzed_by": "metadata",
-            "note": "Full video analysis requires opencv-python or similar library",
         }
+
+        tmp_path: str | None = None
+        try:
+            with tempfile.NamedTemporaryFile(suffix=suffix, delete=False) as tmpf:
+                tmpf.write(video_bytes)
+                tmpf.flush()
+                tmp_path = tmpf.name
+
+            # ----- ffprobe stream + format metadata -----
+            proc = await asyncio.create_subprocess_exec(
+                "ffprobe", "-v", "quiet", "-print_format", "json",
+                "-show_format", "-show_streams", tmp_path,
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE,
+            )
+            stdout, stderr = await proc.communicate()
+            if proc.returncode != 0:
+                raise RuntimeError(
+                    f"ffprobe exited {proc.returncode}: {stderr.decode()[:200]}"
+                )
+
+            parsed = json.loads(stdout.decode())
+            video_streams = [
+                s for s in parsed.get("streams", []) if s.get("codec_type") == "video"
+            ]
+            if not video_streams:
+                raise RuntimeError("No video stream found in file")
+
+            stream = video_streams[0]
+            fmt = parsed.get("format", {})
+
+            r_frame_rate_str: str | None = stream.get("r_frame_rate")
+            fps: float | None = self._parse_r_frame_rate(r_frame_rate_str)
+
+            nb_frames_raw: str | None = stream.get("nb_frames")
+            nb_frames: int | None
+            try:
+                nb_frames = int(nb_frames_raw) if nb_frames_raw else None
+            except (ValueError, TypeError):
+                nb_frames = None
+
+            duration_raw = fmt.get("duration") or stream.get("duration")
+            duration: float | None
+            try:
+                duration = float(duration_raw) if duration_raw else None
+            except (ValueError, TypeError):
+                duration = None
+
+            bit_rate_raw = stream.get("bit_rate") or fmt.get("bit_rate")
+            bit_rate: int | None
+            try:
+                bit_rate = int(bit_rate_raw) if bit_rate_raw else None
+            except (ValueError, TypeError):
+                bit_rate = None
+
+            width = stream.get("width")
+            height = stream.get("height")
+
+            features: dict[str, Any] = {
+                "codec_name": stream.get("codec_name", "unknown"),
+                "pix_fmt": stream.get("pix_fmt", "unknown"),
+                "bit_rate": bit_rate,
+            }
+            if width is not None:
+                features["width"] = int(width)
+            if height is not None:
+                features["height"] = int(height)
+            if fps is not None:
+                features["fps"] = fps
+                features["frame_rate_raw"] = r_frame_rate_str
+            if nb_frames is not None:
+                features["frame_count"] = nb_frames
+            if duration is not None:
+                features["duration"] = duration
+
+            result = dict(base_meta)
+            result.update(features)
+            result["analyzed_by"] = "ffprobe"
+            return result
+
+        except Exception as exc:
+            logger.warning(
+                "[%s] ffprobe video extraction failed — falling back to metadata",
+                self.agent_id,
+                extra={"event": "perceiver_video_ffprobe_failed", "error": str(exc)[:200]},
+            )
+            return {
+                **base_meta,
+                "analyzed_by": "metadata",
+                "note": f"ffprobe unavailable or failed: {str(exc)[:200]}",
+            }
+
+        finally:
+            if tmp_path:
+                with contextlib.suppress(OSError):
+                    Path(tmp_path).unlink()  # noqa: ASYNC240 — sync unlink in async finally (same pattern as T01/T02)
 
     async def _extract_document_features(
         self, doc_data: Any, format_hint: str | None
