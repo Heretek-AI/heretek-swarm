@@ -25,6 +25,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from heretek_swarm.agents.agent_factory import build_agent_for
+from heretek_swarm.config.secrets_loader import SecretsLoader
 from heretek_swarm.swarm_logging.config import logger as logging_logger
 
 # Initialize logging with JSON output for Loki/Promtail
@@ -106,6 +107,14 @@ async def lifespan(app: FastAPI):
 
     # Startup
     logger.info("Starting Heretek Swarm API...")
+
+    # Step 0: Decrypt SOPS secrets (must run BEFORE any other init)
+    try:
+        loader = SecretsLoader()
+        await loader.load_secrets()
+    except Exception as e:
+        logger.critical("secrets_startup_failed", error=str(e))
+        raise
 
     await _init_config_service()
     await _init_supervisor()

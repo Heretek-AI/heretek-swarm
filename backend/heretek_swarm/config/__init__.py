@@ -4,9 +4,10 @@ Configuration module for Heretek Swarm.
 Provides:
 - get_config_path(): canonical config file location (env-var-overridable)
 - ConfigurationService, ConfigLoader, ConfigCache: database-backed config management
+- SecretsLoader: SOPS-encrypted secrets decryption at startup
 
 Usage:
-    from heretek_swarm.config import get_config_path, ConfigurationService
+    from heretek_swarm.config import get_config_path, ConfigurationService, SecretsLoader
 """
 
 from __future__ import annotations
@@ -23,6 +24,7 @@ from .loader import (
     initialize_config_loader,
     reload_config,
 )
+from .secrets_loader import SecretsLoader, get_secrets_loader
 from .service import (
     ConfigurationService,
     get_config_service,
@@ -70,6 +72,9 @@ __all__ = [
     "get_config_with_source",
     "initialize_config_loader",
     "reload_config",
+    # Secrets
+    "SecretsLoader",
+    "get_secrets_loader",
     # Service
     "ConfigurationService",
     "get_config_service",

@@ -119,7 +119,17 @@ dev = [
     "locust-plugins>=4.0.0",
     # Observability Testing
     "testcontainers>=3.7.0",
+    # Secrets management (SOPS CLI is a Go binary — install separately:
+    #   https://github.com/getsops/sops/releases)
+    #   pip's 'sops' package is a boto3/KMS library, NOT Mozilla SOPS.
+    #   The real binary provides `sops --encrypt` / `sops --decrypt`.
 ]
+# SOPS is a Go binary, not a pip package.  Install:
+#   curl -sLo ~/.local/bin/sops https://github.com/getsops/sops/releases/download/v3.9.4/sops-v3.9.4.linux.amd64
+#   chmod +x ~/.local/bin/sops
+# Age (encryption backend):
+#   curl -sLo age.tar.gz https://github.com/FiloSottile/age/releases/download/v1.2.0/age-v1.2.0-linux-amd64.tar.gz
+#   tar xzf age.tar.gz && cp age/age-keygen age/age ~/.local/bin/
 
 [project.scripts]
 heretek-swarm = "heretek_swarm.cli:cli"

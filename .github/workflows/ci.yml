@@ -17,10 +17,34 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Install SOPS
+        uses: nhedger/setup-sops@v2
+        with:
+          version: latest
+
+      - name: Decrypt CI secrets
+        env:
+          SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
+        run: |
+          if [ -f secrets/ci.yaml ]; then
+            sops --decrypt secrets/ci.yaml > secrets/ci_decrypted.yaml
+            echo "✅ CI secrets decrypted"
+          else
+            echo "⚠️  secrets/ci.yaml not found — skipping decryption"
+          fi
+
       - name: Run Bandit Security Scan
         run: |
           pip install bandit[toml]
-          bandit -r backend/ -f json -o bandit-report.json || true
+          bandit -r backend/ -f json -o bandit-report.json -ll || {
+            echo "❌ Bandit found HIGH-severity issues — see bandit-report.json"
+            exit 1
+          }
+
+      - name: Run TruffleHog Secrets Scan
+        uses: trufflesecurity/trufflehog@main
+        with:
+          extra_args: --only-verified
 
   lint-python:
     name: Python Linting
@@ -96,6 +120,22 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -e ".[dev]"
+
+      - name: Install SOPS
+        uses: nhedger/setup-sops@v2
+        with:
+          version: latest
+
+      - name: Decrypt CI secrets for tests
+        env:
+          SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
+        run: |
+          if [ -f secrets/ci.yaml ]; then
+            sops --decrypt secrets/ci.yaml > secrets/ci_decrypted.yaml
+            echo "✅ CI secrets decrypted for test suite"
+          else
+            echo "⚠️  secrets/ci.yaml not found — skipping decryption"
+          fi
 
       - name: Run unit tests with coverage
         run: |

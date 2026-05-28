@@ -64,7 +64,7 @@ repos:
     hooks:
       - id: detect-secrets
         args: ['--baseline', '.secrets.baseline']
-        exclude: ^(package-lock.json|pnpm-lock.yaml|yarn.lock|\.roo/|agent_workspace/|\.benchmarks/|\.dist-rig/)
+        exclude: ^(package-lock.json|pnpm-lock.yaml|yarn.lock|secrets/.*\.ya?ml$|secrets/.*\.env$|\.roo/|agent_workspace/|\.benchmarks/|\.dist-rig/)
 
   # Frontend hooks
   - repo: https://github.com/pre-commit/mirrors-eslint

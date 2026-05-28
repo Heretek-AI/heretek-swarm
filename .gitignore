@@ -49,7 +49,8 @@ config/
 *.key
 *.pem
 *.p12
-secrets/
+# SOPS-encrypted secrets are safe to commit; unencrypted suffixes are not
+secrets/*_unencrypted
 credentials/
 
 # Specific secrets (exact filenames)
