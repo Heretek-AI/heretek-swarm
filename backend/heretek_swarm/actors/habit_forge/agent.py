@@ -915,7 +915,10 @@ Respond in JSON:
         try:
             self._synthesize_operational_pattern(data)
         except Exception:
-            logger.exception("precedent_event_parse_failed", raw_data_keys=list(data.keys()) if data else [])
+            logger.exception(
+                "precedent_event_parse_failed",
+                raw_data_keys=list(data.keys()) if data else [],
+            )
 
     def _synthesize_operational_pattern(self, precedent_data: dict[str, Any]) -> None:
         """Synthesize a BehavioralPattern from a precedent_recorded event and store it.

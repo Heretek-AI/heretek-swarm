@@ -75,7 +75,7 @@ class StartupManager:
         # Setup signal handlers for graceful shutdown
         loop = asyncio.get_event_loop()
         for sig in (signal.SIGINT, signal.SIGTERM):
-            try:  # noqa: SIM105
+            try:
                 loop.add_signal_handler(
                     sig, lambda s=sig: asyncio.create_task(self._handle_signal(s))
                 )

@@ -2,10 +2,12 @@
  * AgentDetailDrawer - Slide-in detail panel for agent inspection
  *
  * Slides in from the right when an agent is selected. Displays four tabs:
- * - Consciousness: phi score, FEP metrics, consciousness state badge
- * - Memory: placeholder (backend endpoint not yet confirmed)
- * - Tools/MCP: placeholder (backend endpoint not yet confirmed)
- * - Tasks: placeholder (backend endpoint not yet confirmed)
+ * - Consciousness: phi score, FEP metrics, consciousness state badge, agency metrics
+ * - Memory: total memory count, breakdown by type (episodic, semantic, procedural,
+ *   working, declarative, reflection), recent memory entries with content previews
+ * - Tools/MCP: skills and plugins lists with names, categories, authors, and descriptions
+ * - Tasks: agent status badge, message/error counts, capabilities tags, uptime,
+ *   last activity timestamp
  *
  * Data refreshes via polling every 10s while open (via useAgentDetail hook).
  * Gracefully degrades: individual sections show "unavailable" when their endpoint fails,

@@ -317,7 +317,9 @@ class AgentActor:
             if isinstance(mesh, NATSEventMesh):
                 return "real"
         except ImportError:
-            logger.debug("NATSEventMesh import unavailable, falling back to class-name mesh type detection")
+            logger.debug(
+                "NATSEventMesh import unavailable, falling back to class-name mesh type detection"
+            )
         # Fallback: check class name for NATS substring (supports mocks)
         mesh_type_name = type(mesh).__name__
         if "NATS" in mesh_type_name:

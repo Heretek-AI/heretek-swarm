@@ -40,9 +40,12 @@ class AgentActorMessageHandling(AgentActor):
 
             plugin = get_consciousness_plugin()
             plugin.record_interaction(from_agent, to_agent)
-        except Exception:  # noqa: S110
+        except Exception:
             # Consciousness tracking is non-fatal — do not break message delivery
-            logger.debug("Consciousness tracking unavailable, continuing message delivery", exc_info=True)
+            logger.debug(
+                "Consciousness tracking unavailable, continuing message delivery",
+                exc_info=True,
+            )
 
     async def send(
         self,

@@ -240,7 +240,7 @@ async def _check_heartbeat_timeout(
         return
 
     try:
-        prev_seen = datetime.fromisoformat(prev_seen_str)
+        _prev_seen = datetime.fromisoformat(prev_seen_str)
     except (ValueError, TypeError):
         steward.internal_state["_last_seen_heartbeat"] = last_heartbeat_str
         return

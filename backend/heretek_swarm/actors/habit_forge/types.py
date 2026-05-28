@@ -172,7 +172,7 @@ class BehavioralPattern:
 
     def to_dict(self) -> dict[str, Any]:
         """Convert pattern to dictionary."""
-        result = {
+        return {
             "pattern_id": self.pattern_id,
             "pattern_type": self.pattern_type.value,
             "description": self.description,
@@ -186,4 +186,3 @@ class BehavioralPattern:
             "confidence": self.confidence,
             "detected_at": self.detected_at.isoformat(),
         }
-        return result

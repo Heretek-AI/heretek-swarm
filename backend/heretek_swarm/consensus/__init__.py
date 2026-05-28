@@ -45,8 +45,8 @@ from heretek_swarm.consensus.domain_selector import (
     DomainSelector,
 )
 from heretek_swarm.consensus.election_manager import (
-    ElectionManager,
     GOVERNANCE_AGENT_IDS,
+    ElectionManager,
 )
 from heretek_swarm.consensus.expertise import (
     AgentExpertiseProfile,
@@ -113,6 +113,7 @@ logger = structlog.get_logger(__name__)
 __all__ = [
     "DEFAULT_FALLBACK_AGENTS",
     "GOVERNANCE_AGENT_IDS",
+    "GOVERNANCE_AGENT_IDS",
     "AgentExpertiseProfile",
     "AgentExpertiseProfiler",
     "AgentPosition",
@@ -137,7 +138,6 @@ __all__ = [
     "DomainSelector",
     # Election Manager
     "ElectionManager",
-    "GOVERNANCE_AGENT_IDS",
     # Enhanced MAKER
     "EnhancedMAKERConsensus",
     "EnhancedVote",

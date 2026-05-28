@@ -27,12 +27,12 @@ import structlog
 if TYPE_CHECKING:
     from heretek_swarm.goals.store import FileGoalStore
 
+from heretek_swarm.actors.stubs import StubEventMesh
 from heretek_swarm.actors.supervisor import ActorSupervisor
 from heretek_swarm.api.consciousness import get_consciousness_plugin
 from heretek_swarm.channels.registry import ChannelRegistry, GroupRegistry
 from heretek_swarm.consensus.election_manager import ElectionManager
 from heretek_swarm.consensus.maker import MAKERConsensus
-from heretek_swarm.actors.stubs import StubEventMesh
 from heretek_swarm.gateway.nats_event_mesh import NATSEventMeshWithJetStream
 from heretek_swarm.llm.model_garage import ModelGarage
 from heretek_swarm.memory.base import DualTierMemory
@@ -426,7 +426,10 @@ class AutonomousSwarm:
         if self.event_mesh is not None:
             if self.event_mesh.is_connected:
                 self.supervisor._event_mesh = self.event_mesh
-                logger.info("event_mesh_threaded_to_supervisor", mesh_type="NATSEventMeshWithJetStream")
+                logger.info(
+                    "event_mesh_threaded_to_supervisor",
+                    mesh_type="NATSEventMeshWithJetStream",
+                )
             else:
                 logger.warning(
                     "event_mesh_not_connected_at_spawn_time",
