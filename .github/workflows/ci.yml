@@ -36,15 +36,16 @@ jobs:
       - name: Run Bandit Security Scan
         run: |
           pip install bandit[toml]
-          bandit -r backend/ -f json -o bandit-report.json -ll || {
-            echo "❌ Bandit found HIGH-severity issues — see bandit-report.json"
-            exit 1
-          }
+          bandit -r backend/ -f json -o bandit-report.json -ll
+
+      - name: Bandit Severity Gate (HIGH only)
+        run: |
+          python3 scripts/check-bandit-severity.py --input bandit-report.json --severity HIGH --verbose
 
       - name: Run TruffleHog Secrets Scan
         uses: trufflesecurity/trufflehog@main
         with:
-          extra_args: --only-verified
+          extra_args: --only-verified --no-update
 
   lint-python:
     name: Python Linting

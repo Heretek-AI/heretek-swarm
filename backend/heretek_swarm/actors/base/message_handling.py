@@ -894,7 +894,11 @@ Please provide your analysis and recommendation for this collective task."""
         Raises:
             RuntimeError: If no LLM path is available
             asyncio.TimeoutError: If LLM call times out
+            ValueError: If LLM output fails validation
         """
+        raw_response: str | None = None
+        model_name: str = "unknown"
+
         # Try routing through AgentModelRouter when providers are available
         router = getattr(self, "_model_router", None)
         if router is not None:
@@ -944,13 +948,15 @@ Please provide your analysis and recommendation for this collective task."""
                         },
                     )
                     router.record_usage(decision.provider_id, response)
-                    return response.content
+                    raw_response = response.content
+                    model_name = decision.model
 
                 # Router exists but no garage — fall back to swarms_agent
-                logger.info(
-                    f"[{self.agent_id}] Router available, falling back to swarms_agent",  # noqa: G004
-                    extra={"provider": decision.provider_id, "model": decision.model},
-                )
+                if raw_response is None:
+                    logger.info(
+                        f"[{self.agent_id}] Router available, falling back to swarms_agent",  # noqa: G004
+                        extra={"provider": decision.provider_id, "model": decision.model},
+                    )
             except RuntimeError:
                 # No providers registered in router, fall through to swarms_agent
                 logger.debug("[{self.agent_id}] No router providers, using swarms_agent fallback")
@@ -958,34 +964,66 @@ Please provide your analysis and recommendation for this collective task."""
                 logger.warning("[{self.agent_id}] Router failed, using swarms_agent fallback: {e}")
 
         # Fallback: use the swarms Agent directly
-        if self.swarms_agent is None:
-            raise RuntimeError(
-                "No LLM path available — configure providers or provide a swarms_agent"
+        if raw_response is None:
+            if self.swarms_agent is None:
+                raise RuntimeError(
+                    "No LLM path available — configure providers or provide a swarms_agent"
+                )
+
+            try:
+                actor_type = getattr(self, "actor_type", "unknown")
+                with TimedContext(
+                    "llm_call_completed",
+                    histogram=heretek_swarm_actor_processing_duration_seconds,
+                    histogram_labels={"actor_type": actor_type},
+                    agent_id=self.agent_id,
+                    provider="swarms_agent",
+                ):
+                    raw_response = await asyncio.wait_for(
+                        asyncio.to_thread(
+                            self.swarms_agent.run,
+                            prompt,
+                            **kwargs,
+                        ),
+                        timeout=timeout,
+                    )
+                model_name = "swarms_agent"
+            except TimeoutError:
+                logger.error("[{self.agent_id}] LLM call timed out after {timeout}s")
+                raise
+            except Exception:
+                logger.exception("[{self.agent_id}] LLM call failed: {e}")
+                raise
+
+        # --- LLM output validation (S04: single choke point for all agent responses) ---
+        from heretek_swarm.validation.llm_output import validate_llm_text
+
+        validation_result = validate_llm_text(raw_response)
+        if not validation_result.valid:
+            truncated = raw_response[:500] if len(raw_response) > 500 else raw_response
+            logger.error(
+                "llm_output_validation_failed",
+                extra={
+                    "truncated_output": truncated,
+                    "model": model_name,
+                    "agent_id": self.agent_id,
+                    "errors": validation_result.errors,
+                    "warnings": validation_result.warnings,
+                },
+            )
+            raise ValueError(
+                f"LLM output validation failed for agent '{self.agent_id}' "
+                f"(model={model_name}): {'; '.join(validation_result.errors)}"
             )
 
-        try:
-            actor_type = getattr(self, "actor_type", "unknown")
-            with TimedContext(
-                "llm_call_completed",
-                histogram=heretek_swarm_actor_processing_duration_seconds,
-                histogram_labels={"actor_type": actor_type},
-                agent_id=self.agent_id,
-                provider="swarms_agent",
-            ):
-                return await asyncio.wait_for(
-                    asyncio.to_thread(
-                        self.swarms_agent.run,
-                        prompt,
-                        **kwargs,
-                    ),
-                    timeout=timeout,
-                )
-        except TimeoutError:
-            logger.error("[{self.agent_id}] LLM call timed out after {timeout}s")
-            raise
-        except Exception:
-            logger.exception("[{self.agent_id}] LLM call failed: {e}")
-            raise
+        logger.debug(
+            "llm_output_validation_passed",
+            extra={
+                "model": model_name,
+                "agent_id": self.agent_id,
+            },
+        )
+        return raw_response
 
     async def _heartbeat_loop(self) -> None:
         """Send periodic heartbeats to maintain actor liveness via NATS."""
