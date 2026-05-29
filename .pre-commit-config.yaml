@@ -105,6 +105,18 @@ repos:
         stages: [commit-msg]
         args: []
 
+  # Local repo hooks (SOPS encryption verification)
+  - repo: local
+    hooks:
+      - id: sops-verify
+        name: SOPS encryption verification
+        description: Verify SOPS-encrypted files are valid, keys match .sops.yaml, and no plaintext secrets are committed
+        entry: scripts/verify-sops-encryption.sh
+        language: script
+        types: [text]
+        pass_filenames: false
+        verbose: true
+
 # CI configuration
 ci:
   autofix_commit_msg: |

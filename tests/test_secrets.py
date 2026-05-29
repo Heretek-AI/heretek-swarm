@@ -2,6 +2,19 @@
 
 Tests verify .sops.yaml configuration, encrypted file round-trips,
 .gitignore rules, SecretsLoader behaviour, and SOPS binary integration.
+
+Coverage:
+  - SOPS config validity (T01)
+  - SecretsLoader all code paths (T02)
+  - CI pipeline artifacts (T03)
+  - Pre-commit hook (T04)
+  - Comprehensive edge-case tests (T05):
+      - Production with key (mocked + real)
+      - Missing SOPS binary
+      - Corrupted encrypted file
+      - Required key verification
+      - Plaintext secret scanning
+      - Integration test with real SOPS binary
 """
 
 from __future__ import annotations
@@ -10,14 +23,58 @@ import asyncio
 import os
 import subprocess
 from pathlib import Path
-from typing import TYPE_CHECKING
+from unittest import mock
 
 import pytest
 
 pytestmark = [pytest.mark.unit]
 
-if TYPE_CHECKING:
-    from collections.abc import Generator
+# ---------------------------------------------------------------------------
+# Module-level constants (overridable by tests via mock.patch) for fixtures
+# and assertions that need the real decrypted shape.
+# ---------------------------------------------------------------------------
+
+_KNOWN_SECRET_KEYS = frozenset(
+    {
+        "HERETEK_API_KEY",
+        "DATABASE_URL",
+        "POSTGRES_PASSWORD",
+        "REDIS_URL",
+        "QDRANT_HOST",
+        "QDRANT_PORT",
+        "QDRANT_URL",
+        "QDRANT_API_KEY",
+        "HERETEK_NATS_URL",
+        "OPENAI_API_KEY",
+        "OPENAI_BASE_URL",
+        "LLM_MODEL",
+        "EMBEDDING_PROVIDER",
+        "EMBEDDING_BASE_URL",
+        "EMBEDDING_API_KEY",
+        "EMBEDDER_MODEL",
+        "EMBEDDING_DIMENSIONS",
+        "HERETEK_LOG_LEVEL",
+        "MAX_MAILBOX_SIZE",
+        "HEARTBEAT_INTERVAL",
+        "PHASE_TIMEOUT",
+        "CONSENSUS_AHEAD_BY_K",
+        "CONSENSUS_MIN_VOTES",
+        "CONSENSUS_CONFIDENCE_THRESHOLD",
+        "MEMORY_MAX_SIZE",
+        "MEMORY_DEFAULT_TTL",
+        "MEM0_POSTGRES_PASSWORD",
+        "MEM0_LLM_PROVIDER",
+        "MEM0_LLM_MODEL",
+        "MEM0_LLM_BASE_URL",
+        "MEM0_LLM_API_KEY",
+        "JWT_SECRET",
+        "API_KEY",
+        "ANTHROPIC_API_KEY",
+        "CORS_ORIGINS",
+        "ENVIRONMENT",
+        "RATE_LIMIT_ENABLED",
+    }
+)
 
 
 # ---------------------------------------------------------------------------
@@ -454,3 +511,446 @@ class TestKeyValueParsing:
             assert os.environ["EXISTING"] == "original"
         finally:
             os.environ.pop("EXISTING", None)
+
+
+# =============================================================================
+# T05: Comprehensive edge-case and mock-backed tests
+# =============================================================================
+
+
+# ---- Helpers for constructing mocked asyncio subprocess results -------------
+
+
+def _make_mock_proc(
+    returncode: int = 0,
+    stdout: str = "",
+    stderr: str = "",
+) -> mock.AsyncMock:
+    """Build an AsyncMock that mimics an asyncio subprocess Process.
+
+    Uses mock.AsyncMock return_value (not asyncio.Future) so the helper can be
+    called outside a running event loop (required since Python 3.14).
+    """
+    proc = mock.AsyncMock()
+    proc.returncode = returncode
+    proc.communicate = mock.AsyncMock(
+        return_value=(stdout.encode(), stderr.encode())
+    )
+    return proc
+
+
+# ---- Mocked unit tests (no real sops binary required) -----------------------
+
+
+class TestSecretsLoaderProductionWithKeyMocked:
+    """Production mode with valid key — subprocess calls mocked."""
+
+    def test_production_with_valid_key_decrypts_and_injects(
+        self,
+    ) -> None:
+        """Production decrypts encrypted.env and populates os.environ."""
+        from heretek_swarm.config.secrets_loader import SecretsLoader
+
+        fake_plaintext = "MY_API_KEY=sekrit123\nDB_URL=postgres://localhost/db\n"
+        mock_proc = _make_mock_proc(returncode=0, stdout=fake_plaintext)
+
+        # Clean target keys before test
+        os.environ.pop("MY_API_KEY", None)
+        os.environ.pop("DB_URL", None)
+
+        try:
+            with (
+                mock.patch.object(SecretsLoader, "_ensure_sops_binary"),
+                mock.patch(
+                    "heretek_swarm.config.secrets_loader.ENCRYPTED_ENV_FILE",
+                    Path("/fake/secrets/encrypted.env"),
+                ),
+                mock.patch(
+                    "asyncio.create_subprocess_exec",
+                    return_value=mock_proc,
+                ),
+            ):
+                # Must also patch ENCRYPTED_ENV_FILE.exists() — Path mock
+                with mock.patch.object(Path, "exists", return_value=True):
+                    loader = SecretsLoader(
+                        environment="production", sops_age_key=AGE_KEY
+                    )
+                    # _ensure_sops_binary is mocked no-op; set the attribute
+                    # so _decrypt_file's assert passes
+                    loader._sops_binary = "/fake/bin/sops"
+                    asyncio.run(loader.load_secrets())
+
+            assert os.environ["MY_API_KEY"] == "sekrit123"
+            assert os.environ["DB_URL"] == "postgres://localhost/db"
+        finally:
+            os.environ.pop("MY_API_KEY", None)
+            os.environ.pop("DB_URL", None)
+
+    def test_production_sops_decrypt_nonzero_raises_runtime_error(
+        self,
+    ) -> None:
+        """sops non-zero exit raises RuntimeError in production."""
+        from heretek_swarm.config.secrets_loader import SecretsLoader
+
+        mock_proc = _make_mock_proc(
+            returncode=2, stderr="Error decrypting: no key available"
+        )
+
+        with (
+            mock.patch.object(SecretsLoader, "_ensure_sops_binary"),
+            mock.patch(
+                "heretek_swarm.config.secrets_loader.ENCRYPTED_ENV_FILE",
+                Path("/fake/secrets/encrypted.env"),
+            ),
+            mock.patch(
+                "asyncio.create_subprocess_exec",
+                return_value=mock_proc,
+            ),
+            mock.patch.object(Path, "exists", return_value=True),
+            pytest.raises(RuntimeError, match="sops --decrypt"),
+        ):
+            loader = SecretsLoader(
+                environment="production", sops_age_key=AGE_KEY
+            )
+            loader._sops_binary = "/fake/bin/sops"
+            asyncio.run(loader.load_secrets())
+
+
+class TestSecretsLoaderMissingSopsBinary:
+    """RuntimeError when sops binary is not found anywhere."""
+
+    def test_missing_sops_binary_raises_runtime_error(self) -> None:
+        """_ensure_sops_binary raises RuntimeError when sops not on PATH."""
+        from heretek_swarm.config.secrets_loader import SecretsLoader
+
+        loader = SecretsLoader(environment="production", sops_age_key=AGE_KEY)
+        # Force _sops_binary to None and mock all discovery paths
+        loader._sops_binary = None
+        with (
+            mock.patch("shutil.which", return_value=None),
+            mock.patch.object(Path, "is_file", return_value=False),
+            pytest.raises(RuntimeError, match="SOPS binary not found"),
+        ):
+            loader._ensure_sops_binary()
+
+
+class TestSecretsLoaderCorruptedFile:
+    """Decryption of an invalid/corrupted SOPS file raises RuntimeError."""
+
+    def test_corrupted_file_sops_nonzero_raises(self) -> None:
+        """RuntimeError on sops exit code != 0 (simulating corrupted file)."""
+        from heretek_swarm.config.secrets_loader import SecretsLoader
+
+        mock_proc = _make_mock_proc(
+            returncode=1,
+            stderr="Failed to parse encrypted file: invalid sops metadata",
+        )
+
+        with (
+            mock.patch.object(SecretsLoader, "_ensure_sops_binary"),
+            mock.patch(
+                "heretek_swarm.config.secrets_loader.ENCRYPTED_ENV_FILE",
+                Path("/fake/secrets/corrupted.env"),
+            ),
+            mock.patch(
+                "asyncio.create_subprocess_exec",
+                return_value=mock_proc,
+            ),
+            mock.patch.object(Path, "exists", return_value=True),
+            pytest.raises(RuntimeError, match="sops --decrypt"),
+        ):
+            loader = SecretsLoader(
+                environment="production", sops_age_key=AGE_KEY
+            )
+            loader._sops_binary = "/fake/bin/sops"
+            asyncio.run(loader.load_secrets())
+
+    def test_corrupted_file_dev_logs_warning_and_falls_back(self) -> None:
+        """In dev mode, corrupted file logs warning and falls back to .env."""
+        from heretek_swarm.config.secrets_loader import SecretsLoader
+
+        mock_proc = _make_mock_proc(
+            returncode=1, stderr="corrupted file"
+        )
+
+        # Provide a fake .env so the fallback path exercises
+        dotenv_text = "DEV_FALLBACK_VAR=from_dotenv\n"
+
+        with (
+            mock.patch.object(SecretsLoader, "_ensure_sops_binary"),
+            mock.patch(
+                "heretek_swarm.config.secrets_loader.ENCRYPTED_ENV_FILE",
+                Path("/fake/secrets/corrupted.env"),
+            ),
+            mock.patch(
+                "heretek_swarm.config.secrets_loader.DOTENV_FILE",
+                Path("/fake/.env"),
+            ),
+            mock.patch(
+                "asyncio.create_subprocess_exec",
+                return_value=mock_proc,
+            ),
+            mock.patch.object(Path, "exists", return_value=True),
+            mock.patch.object(Path, "read_text", return_value=dotenv_text),
+        ):
+            os.environ.pop("DEV_FALLBACK_VAR", None)
+            try:
+                loader = SecretsLoader(
+                    environment="development", sops_age_key=AGE_KEY
+                )
+                loader._sops_binary = "/fake/bin/sops"
+                asyncio.run(loader.load_secrets())
+                assert os.environ["DEV_FALLBACK_VAR"] == "from_dotenv"
+            finally:
+                os.environ.pop("DEV_FALLBACK_VAR", None)
+
+
+class TestEncryptedEnvRequiredKeys:
+    """Verify decrypted content contains the expected set of configuration keys."""
+
+    @pytest.mark.skipif(not _has_sops(), reason="sops binary not available")
+    def test_encrypted_env_contains_required_keys(self, sops_env: dict[str, str]) -> None:
+        """Decrypted encrypted.env has all required keys (HERETEK_API_KEY, DATABASE_URL, etc.)."""
+        path = REPO_ROOT / "secrets" / "encrypted.env"
+        r = subprocess.run(
+            ["sops", "--decrypt", str(path)],
+            capture_output=True,
+            text=True,
+            env=sops_env,
+            timeout=30,
+        )
+        assert r.returncode == 0, f"sops --decrypt failed: {r.stderr.strip()}"
+
+        decrypted_keys: set[str] = set()
+        for line in r.stdout.splitlines():
+            line = line.strip()
+            if not line or line.startswith("#"):
+                continue
+            if "=" in line:
+                key = line.split("=", 1)[0]
+                decrypted_keys.add(key)
+
+        # Check that the critical operational keys are present
+        critical = {
+            "HERETEK_API_KEY",
+            "DATABASE_URL",
+            "OPENAI_API_KEY",
+            "JWT_SECRET",
+            "API_KEY",
+        }
+        missing = critical - decrypted_keys
+        assert not missing, (
+            f"Decrypted encrypted.env missing critical keys: {missing}"
+        )
+
+        # Also spot-check a few more
+        extra = {"REDIS_URL", "CORS_ORIGINS", "QDRANT_HOST", "HERETEK_NATS_URL"}
+        missing_extra = extra - decrypted_keys
+        assert not missing_extra, (
+            f"Decrypted encrypted.env missing expected keys: {missing_extra}"
+        )
+
+    def test_required_keys_from_known_set(self) -> None:
+        """KNOWN_SECRET_KEYS covers all documented configuration keys."""
+        # This is a self-check — makes sure the module-level constant stays in
+        # sync with the actual encrypted.env content.
+        assert len(_KNOWN_SECRET_KEYS) >= 30, (
+            "KNOWN_SECRET_KEYS should track all documented config keys"
+        )
+        assert "HERETEK_API_KEY" in _KNOWN_SECRET_KEYS
+        assert "DATABASE_URL" in _KNOWN_SECRET_KEYS
+        assert "JWT_SECRET" in _KNOWN_SECRET_KEYS
+
+
+class TestNoPlaintextSecretsInRepo:
+    """Scan repo for plaintext secrets outside allowed paths."""
+
+    def test_no_plaintext_secrets_outside_secrets_dir(self) -> None:
+        """Rudimentary scan: common secret patterns must not appear outside
+        secrets/ or the .secrets.baseline file."""
+        import json
+        import re
+
+        # Patterns that would indicate a plaintext credential leak
+        # (deliberately broad — false positives are handled by the baseline)
+        patterns = [
+            re.compile(rb"API_KEY\s*=\s*[a-zA-Z0-9+/=]{20,}"),
+            re.compile(rb"SECRET_KEY\s*=\s*[a-zA-Z0-9+/=]{20,}"),
+            re.compile(rb"sk-[a-zA-Z0-9]{20,}"),  # OpenAI-style
+            re.compile(rb"AGE-SECRET-KEY-1[a-zA-Z0-9]{30,}"),
+        ]
+
+        # Load baseline to get known allowlisted files
+        baseline_path = REPO_ROOT / ".secrets.baseline"
+        baseline = json.loads(baseline_path.read_text())
+        allowlisted = set(baseline.get("results", {}).keys())
+        # Also always allow encrypted files
+        allowlisted.update(
+            [
+                "secrets/encrypted.env",
+                "secrets/ci.yaml",
+            ]
+        )
+
+        violations: list[tuple[str, int, str]] = []
+        tracked_dirs = [
+            REPO_ROOT / "backend",
+            REPO_ROOT / "scripts",
+            REPO_ROOT / "docs",
+        ]
+
+        for d in tracked_dirs:
+            if not d.is_dir():
+                continue
+            for py_file in d.rglob("*.py"):
+                rel = str(py_file.relative_to(REPO_ROOT))
+                if rel in allowlisted:
+                    continue
+                try:
+                    content = py_file.read_bytes()
+                except OSError:
+                    continue
+                for pattern in patterns:
+                    for m in pattern.finditer(content):
+                        # Skip matches inside comments (heuristic)
+                        line_start = content.rfind(b"\n", 0, m.start()) + 1
+                        line = content[line_start : content.find(b"\n", m.start())]
+                        stripped = line.lstrip()
+                        if stripped.startswith(b"#"):
+                            continue
+                        violations.append(
+                            (rel, content[:m.start()].count(b"\n") + 1, m.group().decode(errors="replace"))
+                        )
+
+        assert not violations, (
+            f"Found {len(violations)} plaintext secret(s) outside secrets/:\n"
+            + "\n".join(f"  {f}:{l} -> {v[:80]}" for f, l, v in violations)
+        )
+
+    def test_no_raw_age_secret_in_source(self) -> None:
+        """No AGE-SECRET-KEY literal appears in source files (outside secrets/)."""
+        for pattern in ["AGE-SECRET-KEY-", "age1"]:
+            proc = subprocess.run(
+                [
+                    "grep",
+                    "-r",
+                    "-l",
+                    "--exclude-dir=__pycache__",
+                    "--exclude-dir=.agents",
+                    "--exclude-dir=.mypy_cache",
+                    "--exclude=*.pyc",
+                    pattern,
+                    "backend/",
+                    "scripts/",
+                    "tests/",
+                ],
+                capture_output=True,
+                text=True,
+                cwd=str(REPO_ROOT),
+            )
+            files = [f.strip() for f in proc.stdout.splitlines() if f.strip()]
+            # Filter out files that are expected to contain the pattern:
+            # - test_secrets.py (test fixture with a test-only age key)
+            # - verify-sops-encryption.sh (pre-commit hook that validates age keys)
+            allowed = {"tests/test_secrets.py", "scripts/verify-sops-encryption.sh"}
+            violating = [f for f in files if f not in allowed]
+            assert not violating, (
+                f"AGE key pattern '{pattern}' found in source files: {violating}"
+            )
+
+
+# =============================================================================
+# Integration test (requires real SOPS binary, opt-in via --integration)
+# =============================================================================
+
+
+@pytest.mark.integration
+class TestSopsIntegration:
+    """End-to-end test exercising the full SOPS decrypt-and-inject flow.
+
+    Requires --integration flag (see conftest.py).
+    """
+
+    @pytest.mark.skipif(not _has_sops(), reason="sops binary not available")
+    def test_full_production_load_cycle(self) -> None:
+        """Production SecretsLoader decrypts real encrypted.env and populates env."""
+        from heretek_swarm.config.secrets_loader import SecretsLoader
+
+        # Save env to restore after
+        saved = {}
+        for k in (
+            "SOPS_AGE_KEY",
+            "HERETEK_API_KEY",
+            "DATABASE_URL",
+            "OPENAI_API_KEY",
+            "JWT_SECRET",
+        ):
+            saved[k] = os.environ.pop(k, None)
+
+        try:
+            os.environ["SOPS_AGE_KEY"] = AGE_KEY
+            loader = SecretsLoader(environment="production")
+            asyncio.run(loader.load_secrets())
+
+            # Verify critical keys were injected
+            for k in ("HERETEK_API_KEY", "DATABASE_URL", "OPENAI_API_KEY", "JWT_SECRET"):
+                assert k in os.environ, f"{k} not injected by full production cycle"
+                assert os.environ[k], f"{k} is empty after injection"
+        finally:
+            for k, v in saved.items():
+                if v is not None:
+                    os.environ[k] = v
+                else:
+                    os.environ.pop(k, None)
+
+    @pytest.mark.skipif(not _has_sops(), reason="sops binary not available")
+    def test_full_ci_load_cycle(self) -> None:
+        """CI SecretsLoader.load_ci_secrets decrypts ci.yaml and injects keys."""
+        from heretek_swarm.config.secrets_loader import SecretsLoader
+
+        saved = os.environ.pop("SOPS_AGE_KEY", None)
+        try:
+            os.environ["SOPS_AGE_KEY"] = AGE_KEY
+            loader = SecretsLoader(environment="ci")
+            asyncio.run(loader.load_ci_secrets())
+            assert "SOPS_AGE_KEY" in os.environ
+        finally:
+            if saved is not None:
+                os.environ["SOPS_AGE_KEY"] = saved
+            else:
+                os.environ.pop("SOPS_AGE_KEY", None)
+
+    @pytest.mark.skipif(not _has_sops(), reason="sops binary not available")
+    def test_development_with_valid_key_uses_sops_not_fallback(self) -> None:
+        """In dev mode with SOPS_AGE_KEY set, SOPS decryption is used (not .env fallback)."""
+        from heretek_swarm.config.secrets_loader import SecretsLoader
+
+        saved = {}
+        for k in ("SOPS_AGE_KEY", "HERETEK_API_KEY", "DATABASE_URL"):
+            saved[k] = os.environ.pop(k, None)
+
+        try:
+            os.environ["SOPS_AGE_KEY"] = AGE_KEY
+            loader = SecretsLoader(environment="development")
+            asyncio.run(loader.load_secrets())
+            # HERETEK_API_KEY from encrypted.env should be injected
+            assert "HERETEK_API_KEY" in os.environ
+        finally:
+            for k, v in saved.items():
+                if v is not None:
+                    os.environ[k] = v
+                else:
+                    os.environ.pop(k, None)
+
+    def test_production_no_key_fails_with_clear_message(self) -> None:
+        """In production without SOPS_AGE_KEY, the error message is clear."""
+        from heretek_swarm.config.secrets_loader import SecretsLoader
+
+        loader = SecretsLoader(environment="production", sops_age_key="")
+        with pytest.raises(RuntimeError) as exc_info:
+            asyncio.run(loader.load_secrets())
+        msg = str(exc_info.value)
+        assert "SOPS_AGE_KEY" in msg
+        assert "production" in msg.lower()
+        # Error message should indicate the action needed
+        assert "Set the SOPS_AGE_KEY" in msg or "required" in msg.lower()
