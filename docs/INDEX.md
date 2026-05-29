@@ -3,7 +3,7 @@
 **Version:** 2.0.0  
 **Date:** 2026-04-10  
 **Health Score:** 98/100  
-**Phase:** Phase 1 Complete - Phase 2 Ready  
+**Phase:** Phase 1-2 Complete — Audit & Remediation  
 **Agents:** 23/23 Implemented
 
 Welcome to the Heretek Swarm documentation. This index provides navigation to all documentation sections.
@@ -88,8 +88,8 @@ docs/
 
 - **Version**: 2.0.0
 - **Date**: 2026-04-10
-- **Health Score**: 98/100 (Production-Ready)
-- **Phase**: Phase 1 Complete - Phase 2 Ready
+- **Health Score**: 98/100 (Active Development)
+- **Phase**: Phase 1-2 Complete — Audit & Remediation
 - **Agents Implemented**: 23/23 (100%)
 - **Zero-Trust Compliance**: Verified
 
@@ -97,11 +97,11 @@ docs/
 
 | Priority | Feature | Status |
 |----------|---------|--------|
-| P1 | Consciousness Metrics (IIT Phi, FEP) | ✅ IMPLEMENTED |
-| P1 | Event Mesh (NATS JetStream) | ✅ IMPLEMENTED |
-| P1 | Zero-Trust Validation | ✅ VERIFIED |
-| P2 | WebUI (ReactFlow) | ⏳ Pending |
-| P2 | Integration Testing | 🔄 Active |
+| P1 | Consciousness Metrics (IIT Phi, FEP) | ✅ Wired in main loop |
+| P1 | Event Mesh (NATS JetStream) | ✅ Operational |
+| P1 | Zero-Trust Validation | ✅ Active |
+| P2 | WebUI Dashboard | ✅ Implemented |
+| P2 | Tribunal Integration | ✅ Wired (M029) |
 | P3 | Load Testing | ⏳ Pending |
 
 > Development priorities are tracked via GSD milestones in `.gsd/milestones/`.

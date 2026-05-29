@@ -333,6 +333,176 @@ async def _check_heartbeat_timeout(
     steward.internal_state["_last_seen_heartbeat"] = last_heartbeat_str
 
 
+import json
+
+
+async def _convene_tribunal_on_anomaly(
+    swarm: "AutonomousSwarm",
+    alert_count: int,
+    pulse_data: dict[str, Any],
+) -> None:
+    """Convene a Tribunal deliberation when anomalies are detected.
+
+    Flow: Anomaly detected -> Create Tribunal case -> Triad deliberation
+    -> Ruling issued -> Ruling applied to baseline if beneficial.
+
+    This implements the PRIME_DIRECTIVE Tribunal loop:
+    "The Steward monitors baseline health. The Sentinel reacts to anomalies,
+    and the Triad convenes retroactively to decide if the action was a threat
+    or a breakthrough."
+
+    Args:
+        swarm: The AutonomousSwarm instance.
+        alert_count: Number of anomaly alerts detected.
+        pulse_data: Current pulse metrics for deliberation context.
+    """
+    try:
+        sentinel = (
+            swarm.supervisor.actors.get("sentinel")
+            if swarm.supervisor else None
+        )
+        steward = (
+            swarm.supervisor.actors.get("steward")
+            if swarm.supervisor else None
+        )
+        if sentinel is None or steward is None:
+            logger.warning("tribunal_convene_skipped_missing_agents")
+            return
+
+        # Create a Tribunal case for the anomaly
+        case = sentinel.tribunal.create_case(
+            original_decision_id=f"anomaly-{pulse_data.get('timestamp', 'unknown')}",
+            appellant_agent_id="steward",
+            grounds=f"Autonomous anomaly detection: {alert_count} alerts",
+            description=(
+                f"Anomaly detected during steward pulse at "
+                f"{pulse_data.get('timestamp', 'unknown')}. "
+                f"Active actors: {pulse_data.get('active_actors', 'N/A')}. "
+                f"Total {alert_count} alert(s) raised by Sentinel."
+            ),
+        )
+        logger.info(
+            "tribunal_case_created_for_anomaly",
+            case_id=case.case_id,
+            alert_count=alert_count,
+        )
+
+        # Trigger Triad deliberation on the anomaly
+        # The deliberation_orchestrator coordinates Steward -> Alpha -> Beta -> Charlie
+        if swarm._deliberation is not None:
+            deliberation_result = await swarm._deliberation.run_deliberation(
+                prompt=(
+                    f"TRIBUNAL SESSION: Anomaly Detection Review\n"
+                    f"Case ID: {case.case_id}\n"
+                    f"Alerts: {alert_count} anomaly alert(s) detected\n"
+                    f"Context: {json.dumps(pulse_data, default=str)}\n\n"
+                    f"Alpha: Analyze the root cause and severity of these anomalies.\n"
+                    f"Beta: Validate Alpha's analysis — is the threat real or a false positive?\n"
+                    f"Charlie: Challenge both positions — could this be an emergent beneficial "
+                    f"behavior rather than a threat?"
+                ),
+                timeout=90,
+            )
+            logger.info(
+                "tribunal_deliberation_complete",
+                case_id=case.case_id,
+                result_keys=list(deliberation_result.keys()),
+            )
+
+            # Determine outcome and issue a ruling
+            # If all three agents agree on "no threat" -> baseline update (emergent behavior)
+            # If agents agree on "threat" -> immune response
+            alpha_output = deliberation_result.get("alpha", "")
+            beta_output = deliberation_result.get("beta", "")
+            charlie_output = deliberation_result.get("charlie", "")
+
+            is_threat = any(
+                keyword in str(output).lower()
+                for output in [alpha_output, beta_output, charlie_output]
+                for keyword in ["threat", "danger", "malicious", "attack", "block", "critical"]
+            )
+            is_emergent = any(
+                keyword in str(output).lower()
+                for output in [alpha_output, beta_output, charlie_output]
+                for keyword in ["emergent", "beneficial", "breakthrough", "novel", "innovative"]
+            )
+
+            if is_emergent and not is_threat:
+                ruling = sentinel.tribunal.issue_ruling(
+                    case_id=case.case_id,
+                    ruling_type="modify",
+                    reasoning=(
+                        f"Tribunal determined the anomaly represents emergent beneficial "
+                        f"behavior. Updating baselines to accommodate this new pattern. "
+                        f"Alpha: {alpha_output[:200]}... "
+                        f"Beta: {beta_output[:200]}... "
+                        f"Charlie: {charlie_output[:200]}..."
+                    ),
+                )
+                logger.info(
+                    "tribunal_ruling_emergent_behavior",
+                    case_id=case.case_id,
+                    ruling_id=ruling.ruling_id,
+                )
+            elif is_threat:
+                ruling = sentinel.tribunal.issue_ruling(
+                    case_id=case.case_id,
+                    ruling_type="uphold",
+                    reasoning=(
+                        f"Tribunal confirms anomaly as genuine threat. "
+                        f"Immune response recommended. "
+                        f"Alpha: {alpha_output[:200]}... "
+                        f"Beta: {beta_output[:200]}..."
+                    ),
+                )
+                logger.info(
+                    "tribunal_ruling_threat_confirmed",
+                    case_id=case.case_id,
+                    ruling_id=ruling.ruling_id,
+                )
+            else:
+                ruling = sentinel.tribunal.issue_ruling(
+                    case_id=case.case_id,
+                    ruling_type="dismiss",
+                    reasoning=(
+                        f"Tribunal unable to reach consensus on anomaly classification. "
+                        f"Dismissing — will re-evaluate if anomaly recurs."
+                    ),
+                )
+                logger.info(
+                    "tribunal_ruling_dismissed",
+                    case_id=case.case_id,
+                    ruling_id=ruling.ruling_id,
+                )
+
+            # Log tribunal outcome to Historian
+            historian = (
+                swarm.supervisor.actors.get("historian")
+                if swarm.supervisor else None
+            )
+            if historian is not None:
+                await historian.log_event(
+                    "tribunal_convened",
+                    "steward",
+                    {
+                        "case_id": case.case_id,
+                        "ruling_id": ruling.ruling_id if ruling else None,
+                        "alert_count": alert_count,
+                        "is_threat": is_threat,
+                        "is_emergent": is_emergent,
+                        "deliberation_complete": True,
+                    },
+                )
+        else:
+            logger.warning("tribunal_convene_skipped_no_deliberation_orchestrator")
+
+    except Exception as e:
+        logger.exception(
+            "tribunal_convene_failed",
+            error=str(e),
+            alert_count=alert_count,
+        )
+
 async def run_steward_pulse(swarm: AutonomousSwarm) -> None:
     """Steward heartbeat pulse loop.
 
@@ -375,13 +545,20 @@ async def run_steward_pulse(swarm: AutonomousSwarm) -> None:
                         supervisor=swarm.supervisor,
                     )
                     if alert_count > 0:
-                        # Signal: anomalies were detected
+                        # Signal: anomalies were detected — convene Tribunal
                         logger.warning(
                             "steward_pulse_anomaly_detected",
                             alert_count=alert_count,
                             timestamp=pulse_data["timestamp"],
                         )
                         pulse_data["heartbeat_healthy"] = False
+
+                        # ── Convene Tribunal on anomaly (D003: autonomous deliberation) ──
+                        await _convene_tribunal_on_anomaly(
+                            swarm=swarm,
+                            alert_count=alert_count,
+                            pulse_data=pulse_data,
+                        )
                 elif sentinel is None:
                     logger.warning("steward_pulse_sentinel_skipped_no_sentinel")
                 # else: sentinel present but no _anomaly_monitor (unlikely

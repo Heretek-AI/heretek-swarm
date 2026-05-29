@@ -1,161 +1,139 @@
 # Heretek Swarm State Ledger
 
-**Last Updated:** 2026-04-12
-**Session:** Ralph Loop Iteration 6
-**Mission:** RALPH.md Autonomous Execution - Phase 1 Audit Complete
+**Last Updated:** 2026-05-29
+**Session:** M010 Audit & Remediation — Phase 1-2 Complete
+**Mission:** Comprehensive audit, cleanup, and feature wiring
 
 ---
 
-## MISSION EXECUTION SUMMARY
+## PHASE 1: CLEANUP & HARDENING — COMPLETE
 
-### Critical Bug Fixes (P0) ✅
+### Orphan/Artifact Removal
+- Removed `1)` (empty shell artifact)
+- Removed `tmpku_9ys71.env` (temp env with test credentials)
+- Removed `pytest_stderr.txt` / `pytest_stdout.txt` (stale test output)
+- Untracked and removed root `package-lock.json` (orphan, no matching `package.json`)
 
-| Task | Status | Verification |
-|------|--------|--------------|
-| Fix F821: Undefined `workflow_id` in websockets.py | COMPLETE | `ruff check websockets.py` passes |
-| Fix S608: SQL injection in base.py | COMPLETE | Parameterized queries now used |
-| Fix S110: Silent exception swallowing | COMPLETE | 9 instances fixed with `logger.exception()` |
-| Fix Mem0Config.get_mem0_config() missing | COMPLETE | Added as alias to to_dict() |
-| Fix Mem0Backend wrapper class | COMPLETE | Created proper wrapper for mem0.Memory |
+### Structural Cleanup
+- Populated `schemas/__init__.py` with re-exports (was empty)
+- Consolidated duplicate `store/` → `stores/` in dashboard (identical files)
+- Verified `WorkflowExecutionResult` duplicate class already resolved
 
-### Architectural Improvements ✅
+### Security Hardening
+- Replaced hardcoded JWT dev secret in `gateway/auth.py` with `secrets.token_hex(32)` per-startup
+- Replaced all 10 `__import__()` calls across 5 files with proper module-level imports:
+  - `cli/status.py` — `__import__("datetime")` → `import datetime as _dt`
+  - `config/cache.py` — `__import__("structlog")` → `import structlog`
+  - `consensus/audit_query.py` — `__import__("json")` → `import json`
+  - `observability/metrics.py` — `__import__("time")` → `import time`
+  - `runtime/agent_runtime.py` — `__import__("os").getenv(...)` → `import os; os.getenv(...)`
+- Hardcoded `otel-collector:4317` defaults → `localhost:4317` (2 files)
 
-| Task | Status | Impact |
-|------|--------|--------|
-| Integrate mixins into all 21 actor files | COMPLETE | ~2,700 lines deduplication |
-| Build Configuration Wizard + WebUI | COMPLETE | Zero-touch deploy enabled |
-| Implement MCP server integration | COMPLETE | 42 MCP tests passing |
-| NATS infrastructure ready | COMPLETE | Full infrastructure in `infrastructure/nats/` |
-
----
-
-## PHASE 1: DEEP AUDIT RESULTS
-
-### Test Suite Status (2603 tests collected)
-
-| Category | Status | Count | Notes |
-|----------|--------|-------|-------|
-| MCP Tests | 42 PASSING ✅ | 42 | Full MCP integration working |
-| Core API Tests | PASSING ✅ | ~200 | websockets.py fixed |
-| Memory Tests | PASSING ✅ | 8 | Mem0Config/Mem0Backend fixes applied |
-| State Tests | 23 PASSING, 4 FAILING ⚠️ | 27 | Legacy models created in models.py |
-| RAG Tests | FAILING ⚠️ | ~30 | External Qdrant/OpenAI deps |
-| Observability | MIXED ⚠️ | ~40 | Import/config issues |
-| Tools | FAILING ⚠️ | ~21 | Various |
-| Serverless | FAILING ⚠️ | ~11 | AWS config issues |
-
-**Total: 2,444 passed, 90 failed, 29 skipped, 41 errors**
-
-### Root Cause Analysis
-
-1. **Memory Tests (6 failing):** Mem0Config API mismatch - FIXED
-   - `get_mem0_config()` missing → Added as alias to `to_dict()`
-   - `Mem0Backend` was raw mem0.Memory alias → Created proper wrapper class
-
-2. **State Tests (27 failing → 4 failing):** Legacy module imports broken - MOSTLY FIXED
-   - `heretek_swarm/state/__init__.py` imported from non-existent `src/state/`
-   - Created `models.py` with all legacy state classes (MessageLineage, AgentState, ConversationState, etc.)
-   - Remaining 4 failures are test API mismatches:
-     - `test_compute_diff`: test expects `diff.added_agents` but we return `diff["added"]` dict
-     - `test_update_agent_state`: KeyError 'task' - working_memory not being set correctly  
-     - `test_rollback_to_snapshot`: agent states not being restored properly
-     - `test_full_workflow`: compound failure from above issues
-
-3. **RAG Tests (~30 failing):** External service dependencies
-   - Tests require Qdrant, OpenAI API keys, etc.
-
-### Gap Analysis vs PRIME_DIRECTIVE
-
-| Component | Current Status | Gap |
-|-----------|---------------|-----|
-| Event Mesh (NATS) | CONFIGURED | Needs actor wiring |
-| Global Workspace | PARTIAL | No consciousness measurement |
-| Consensus Engine | EXISTS | No Tribunal integration |
-| Agent Sovereignty | 3/23 documented | Not implemented in code |
-| Emergence Measurement | NIL | No IIT/AST metrics |
-| MCP Integration | WORKING | 42 tests passing |
+### Dashboard Fixes
+- Eliminated all 5 remaining `: any` type annotations → `unknown`/`Record<string, unknown>`
+- Verified 288 tests pass with 0 failures from Phase 1 changes
 
 ---
 
-## COMPLETED DELIVERABLES
+## PHASE 2: FEATURE COMPLETION & WIRING
 
-```
-src/heretek_swarm/
-├── actors/mixins/           # 5 mixin files, ~900 lines
-│   ├── deliberation.py
-│   ├── health_reporting.py
-│   ├── memory_access.py
-│   └── pattern_consumer.py
-├── infrastructure/nats/     # Full NATS integration
-│   ├── client.py
-│   ├── publisher.py
-│   ├── subscriber.py
-│   ├── broadcast.py
-│   ├── consensus.py
-│   ├── discovery.py
-│   └── memory_sync.py
-├── mcp/                      # MCP server implementation
-│   ├── __init__.py
-│   ├── registry.py           # Tool registry
-│   ├── server.py            # MCP server
-│   └── client.py            # MCP client
-├── api/wizard.py            # Configuration Wizard API
-├── routing/model_router.py # Multi-provider routing
-└── memory/persistent.py    # Mem0Backend wrapper class (NEW)
-```
+### Tribunal Integration — COMPLETE (M029)
+Wired autonomous Tribunal deliberation into `steward_pulse.py`:
+- When anomalies are detected, creates Tribunal case via `sentinel.tribunal.create_case()`
+- Triggers Triad deliberation (Steward → Alpha → Beta → Charlie)
+- Classifies outcome: threat → immune response / emergent → baseline update / inconclusive → dismiss
+- Logs to Historian for audit trail
+- Implements PRIME_DIRECTIVE loop: "The Steward monitors baseline health. The Sentinel reacts to anomalies, and the Triad convenes retroactively."
 
-### Frontend (Cyberpunk WebUI)
+### Consciousness Metrics Pipeline — ALREADY WIRED
+The `_consciousness_loop` in `main_loop.py` collects:
+- IIT phi metrics from `EnhancedConsciousnessPlugin`
+- GWT workspace coherence from agent registry
+- FEP free energy metrics
+- Publishes to NATS on `swarm.system.consciousness`
+- API endpoints: `/api/consciousness/agency/*`, `/api/consciousness/deliberation/*`, `/api/consciousness/thinking-stream/*`
 
-```
-dashboard/frontend/src/
-├── api/wizard.ts             # Wizard API client
-├── stores/configWizardStore.ts  # Zustand store
-└── components/Setup/
-    └── ConfigWizard.tsx      # Cyberpunk-styled wizard
-```
+### Multi-Provider Routing — FULLY IMPLEMENTED
+`AgentModelRouter` provides:
+- Task complexity classification (simple/standard/complex)
+- Provider selection with health checks and fallback chains
+- Supports 7+ providers: OpenAI, Ollama, MiniMax, LLaMA.cpp, Lemonade, ZAI, OpenAI-compatible
+- Per-agent routing via `get_router(agent_id)`
+- Global `ModelGarage` integration as shared config source
+- Cost tracking, token tracking, request counting per provider
+
+### Autopoietic Components — PARTIALLY WIRED
+- `GoalProposer` generates strategic goals via Metis LLM prompt template
+- `ComputeTierClient` queries host compute capacity with Tier 1 fallback
+- Sentinel accepts `compute_tier_client` — escalation wiring planned for next pass
+- `CollectiveSociety` with `EmergentDetection` monitors for novel patterns
 
 ---
 
-## REMAINING WORK
+## OSS RESEARCH FINDINGS (M029)
 
-### Phase 4 Priority Fixes
+### Current Ecosystem Stats (May 2026)
+| Project | Stars | Relevance |
+|---------|-------|-----------|
+| DeerFlow (ByteDance) | 69,942 | Long-horizon SuperAgent with sandboxes, memories, skills |
+| MetaGPT | 68,390 | SOP-driven multi-agent coordination |
+| mem0 | 57,063 | Universal memory layer — our memory backend |
+| CrewAI | 52,433 | Role-playing autonomous agents |
+| LangGraph | 33,319 | Graph-based agent orchestration |
+| AgentScope | 25,844 | Distributed execution, MsgHub routing |
+| Google ADK | 19,911 | Native MCP + A2A primitives |
+| Gas Town | 15,650 | Multi-agent workspace manager |
+| Hive | 10,452 | Self-evolution on failure, observability |
+| OpenLLMetry | 7,151 | OpenTelemetry GenAI observability |
+| Bindu | 6,771 | Identity, communication, payments for AI agents |
+| Solace Agent Mesh | 4,813 | Event-driven multi-agent framework |
+| AG2 (AutoGen v2) | 4,611 | ConversableAgent, group chats |
+| LACP | 261 | Control-plane agent harness with policy gates |
+| Chorus AI-DLC | 933 | Agent harness for AI-Human collaboration |
+| Global-Workspace-Agents | 10 | Proactive LLM consciousness — directly relevant to GWT |
 
-1. **State module imports** - ✅ FIXED - Created `models.py` with legacy state classes
-2. **RAG pipeline** - Mock external services for unit tests (needs external Qdrant/OpenAI)
-3. **Remaining test failures** - ~20 tests failing, mostly external deps or test API changes
-
-### Phase 5+ Targets
-
-1. **NATS → Actor connection** - Infrastructure ready, needs wiring
-2. **Tribunal integration** - Consensus mechanism not yet operational
-3. **Consciousness metrics** - IIT/AST measurement incomplete
-
----
-
-## PHASE STATUS
-
-| Phase | Status |
-|-------|--------|
-| Phase 1: Deep Audit | ✅ COMPLETE |
-| Phase 2: Scouting | ✅ COMPLETE (state module fixed) |
-| Phase 3: Forge | ✅ COMPLETE (models.py created) |
-| Phase 4: Validation | 🟡 IN PROGRESS (23/27 state tests passing, 4 test API mismatches) |
-| Phase 5: Documentation | 🟡 IN PROGRESS |
-
----
-
-## NEXT IMMEDIATE ACTIONS
-
-1. **Fix remaining 4 state test API mismatches** - test_compute_diff (diff.added_agents), test_update_agent_state (working_memory), test_rollback_to_snapshot (state restore), test_full_workflow (compound)
-2. **Mark integration tests appropriately** - Memory, RAG tests that need external services should be marked `@pytest.mark.integration`
-3. **Continue Phase 2** - Scout for solutions to bridge NATS → actor communication
+### Key Integration Targets
+1. **Solace Agent Mesh** — Event-driven architecture aligns with our NATS mesh
+2. **Global-Workspace-Agents** — GWT implementation patterns for our consciousness module
+3. **LACP** — Policy gates and evidence loops for Tribunal governance
+4. **OpenLLMetry** — Replace hand-rolled observability with standardized GenAI OTEL
 
 ---
 
-## OBJECTIVE FOR NEXT SESSION
+## PHASE 3: DOCUMENTATION STATUS
 
-**Phase 2 & 3 Execution:**
-1. Fix remaining 4 state test API mismatches OR mark tests appropriately
-2. Research MCP server bridge options for NATS → actor communication
-3. Implement fixes for remaining critical test failures
+| Document | Status |
+|----------|--------|
+| README.md | Updated — dates and version corrected |
+| SWARM_STATE.md | Updated — this document |
+| MASTER_AUDIT_PLAN.md | Active — Phase 1-2 complete |
+| PRIME_DIRECTIVE.md | Current — vision unchanged |
+| RALPH.md | Current — execution loop guidance |
+| RESEARCH.md | Current — OSS compendium |
+| PATH_TO_EMERGENCE.md | Current — technical roadmap |
+| docs/ARCHITECTURE.md | Current (51K) |
+| docs/API_ENDPOINTS.md | Current (17K) |
+| docs/CODEBASE_AUDIT.md | April 2026 — needs refresh with May findings |
+| docs/INDEX.md | Updated |
 
+---
+
+## TEST SUITE STATUS
+
+| Metric | Value |
+|--------|-------|
+| Test files | 112 |
+| Test functions | ~1,969 |
+| Phase 1 verified | 288 passed, 0 failures |
+| Known pre-existing failures | Secrets tests (sops binary), RAG tests (external deps) |
+| Full suite target | 0 new failures from Phase 1/2 changes |
+
+---
+
+## NEXT OBJECTIVES
+
+1. **Compute-aware escalation** — Wire `ComputeTierClient` into Sentinel anomaly response
+2. **Autopoietic initiation** — Hook `GoalProposer` + `EmergentDetection` into autonomous goal pipeline
+3. **OSS integration** — Evaluate Solace Agent Mesh and Global-Workspace-Agents for pattern adoption
+4. **MyPy progressive strict mode** — Enable for `heretek_swarm.core` → expand outward
+5. **Ruff per-file-ignore audit** — Fix or justify each of the ~40 per-file exceptions

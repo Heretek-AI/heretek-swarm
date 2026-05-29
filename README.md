@@ -378,4 +378,4 @@ S01 produced a canonical architecture map (`.gsd/milestones/M010/M010-RESEARCH.m
 
 **License:** Apache 2.0
 
-*Last Updated: 2026-05-14 — M010 Architecture Audit Complete*
+*Last Updated: 2026-05-29 — M010-M029 Audit & Remediation — Phase 1-2 Complete*
