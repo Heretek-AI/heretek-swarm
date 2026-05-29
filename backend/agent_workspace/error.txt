@@ -100022,3 +100022,67 @@ TypeError: Object of type CoderAgent is not JSON serializable
 when serializing dict item 'sender-a'
 when serializing dict item '_actor_registry'
 when serializing dict item 'internal_state'
+Exception while exporting Span.
+Traceback (most recent call last):
+  File "/home/john/.local/lib/python3.14/site-packages/opentelemetry/sdk/_shared_internal/__init__.py", line 182, in _export
+    self._exporter.export(
+    ~~~~~~~~~~~~~~~~~~~~~^
+        [
+        ^
+    ...<3 lines>...
+        ]
+        ^
+    )
+    ^
+  File "/home/john/.local/lib/python3.14/site-packages/opentelemetry/sdk/trace/export/__init__.py", line 341, in export
+    self.out.write(self.formatter(span))
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+ValueError: I/O operation on closed file.
+Exception while exporting Span.
+Traceback (most recent call last):
+  File "/home/john/.local/lib/python3.14/site-packages/opentelemetry/sdk/_shared_internal/__init__.py", line 182, in _export
+    self._exporter.export(
+    ~~~~~~~~~~~~~~~~~~~~~^
+        [
+        ^
+    ...<3 lines>...
+        ]
+        ^
+    )
+    ^
+  File "/home/john/.local/lib/python3.14/site-packages/opentelemetry/sdk/trace/export/__init__.py", line 341, in export
+    self.out.write(self.formatter(span))
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+ValueError: I/O operation on closed file.
+Exception while exporting Span.
+Traceback (most recent call last):
+  File "/home/john/.local/lib/python3.14/site-packages/opentelemetry/sdk/_shared_internal/__init__.py", line 182, in _export
+    self._exporter.export(
+    ~~~~~~~~~~~~~~~~~~~~~^
+        [
+        ^
+    ...<3 lines>...
+        ]
+        ^
+    )
+    ^
+  File "/home/john/.local/lib/python3.14/site-packages/opentelemetry/sdk/trace/export/__init__.py", line 341, in export
+    self.out.write(self.formatter(span))
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+ValueError: I/O operation on closed file.
+Exception while exporting Span.
+Traceback (most recent call last):
+  File "/home/john/.local/lib/python3.14/site-packages/opentelemetry/sdk/_shared_internal/__init__.py", line 182, in _export
+    self._exporter.export(
+    ~~~~~~~~~~~~~~~~~~~~~^
+        [
+        ^
+    ...<3 lines>...
+        ]
+        ^
+    )
+    ^
+  File "/home/john/.local/lib/python3.14/site-packages/opentelemetry/sdk/trace/export/__init__.py", line 341, in export
+    self.out.write(self.formatter(span))
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+ValueError: I/O operation on closed file.
