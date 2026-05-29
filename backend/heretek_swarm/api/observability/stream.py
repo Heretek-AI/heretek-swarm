@@ -6,9 +6,18 @@ from datetime import UTC, datetime
 from typing import Any
 
 import structlog
-from fastapi import APIRouter, HTTPException, Query, Request, WebSocket, WebSocketDisconnect
+from fastapi import (
+    APIRouter,
+    Depends,
+    HTTPException,
+    Query,
+    Request,
+    WebSocket,
+    WebSocketDisconnect,
+)
 from fastapi.responses import PlainTextResponse
 
+from heretek_swarm.gateway.auth import verify_auth
 from heretek_swarm.security.zero_trust import LayerResult, ZeroTrustResult
 
 from . import (
@@ -25,6 +34,7 @@ router = APIRouter(prefix="", tags=["observability"])
 async def stream_metrics(
     request: Request,
     interval: int = Query(default=5, ge=1, le=60, description="Stream interval in seconds"),
+    authenticated: str = Depends(verify_auth),
 ) -> dict[str, Any]:
     """Get real-time metrics snapshot (non-streaming HTTP version).
 
@@ -131,7 +141,9 @@ async def websocket_metrics(websocket: WebSocket, interval: int = 5):
 
 
 @router.get("/metrics/prometheus")
-async def get_prometheus_metrics(request: Request) -> PlainTextResponse:
+async def get_prometheus_metrics(
+    request: Request, authenticated: str = Depends(verify_auth)
+) -> PlainTextResponse:
     """Get metrics in Prometheus text format."""
     client_id = request.client.host if request.client else "unknown"
     if not check_rate_limit(client_id):
@@ -147,7 +159,7 @@ async def get_prometheus_metrics(request: Request) -> PlainTextResponse:
 
 
 @router.get("/metrics/legacy")
-async def get_legacy_metrics() -> dict[str, Any]:
+async def get_legacy_metrics(authenticated: str = Depends(verify_auth)) -> dict[str, Any]:
     """Get legacy observability metrics (backward compatibility)."""
     from . import _traces, connection_manager
 

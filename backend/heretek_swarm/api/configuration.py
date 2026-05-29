@@ -177,7 +177,9 @@ def _get_llm_provider_info(provider_type: str) -> dict[str, Any]:
 
 
 @router.get("/llm/types")
-async def list_llm_provider_types() -> dict[str, Any]:
+async def list_llm_provider_types(
+    authenticated: str = Depends(verify_auth),
+) -> dict[str, Any]:
     """List available LLM provider types."""
     types = _list_llm_provider_types()
     info = [_get_llm_provider_info(t) for t in types]
@@ -324,7 +326,9 @@ def _get_embedding_provider_info(provider_type: str) -> dict[str, Any]:
 
 
 @router.get("/embedding/types")
-async def list_embedding_provider_types() -> dict[str, Any]:
+async def list_embedding_provider_types(
+    authenticated: str = Depends(verify_auth),
+) -> dict[str, Any]:
     """List available embedding provider types."""
     types = _list_embedding_provider_types()
     info = [_get_embedding_provider_info(t) for t in types]
@@ -664,6 +668,7 @@ async def reload_configurations(
 
 @router.get("/health")
 async def configuration_health(
+    authenticated: str = Depends(verify_auth),
     service: ConfigurationService = Depends(get_service),  # noqa: B008
 ) -> dict[str, Any]:
     """
@@ -764,3 +769,4 @@ async def import_configuration_bundle(
         "imported_by": authenticated,
         "imported_at": datetime.now(UTC).isoformat(),
     }
+

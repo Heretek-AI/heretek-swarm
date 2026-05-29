@@ -29,7 +29,7 @@ from heretek_swarm.observability.prometheus_metrics import (
 
 logger = structlog.get_logger(__name__)
 
-router = APIRouter(prefix="/api/metrics", tags=["metrics"], dependencies=[Depends(verify_auth)])
+router = APIRouter(prefix="/api/metrics", tags=["metrics"])
 
 # Singleton for metrics integration
 _metrics: PrometheusMetrics | None = None
@@ -200,7 +200,7 @@ async def get_prometheus_metrics_endpoint() -> Response:
         }
     },
 )
-async def get_metrics_json():
+async def get_metrics_json(authenticated: str = Depends(verify_auth)):
     """
     Get current metrics in JSON format for debugging and monitoring.
 

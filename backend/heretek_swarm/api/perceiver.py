@@ -16,11 +16,12 @@ from datetime import UTC, datetime
 from typing import Any
 
 import structlog
-from fastapi import APIRouter, File, Form, HTTPException, UploadFile
+from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
 from pydantic import BaseModel, Field
 
 from heretek_swarm.actors.base import ActorMessage
 from heretek_swarm.actors.supervisor import get_supervisor
+from heretek_swarm.gateway.auth import verify_auth
 
 logger = structlog.get_logger(__name__)
 
@@ -100,6 +101,7 @@ def _build_data_url(file_bytes: bytes, mime_type: str) -> str:
     },
 )
 async def analyze_file(
+    authenticated: str = Depends(verify_auth),
     file: UploadFile = File(
         ..., description="File to analyze (text, image, audio, video, or document)"
     ),

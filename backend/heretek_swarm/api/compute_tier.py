@@ -4,7 +4,7 @@ Compute Tier Detection API
 Provides a FastAPI APIRouter with a single endpoint that classifies the host
 machine's compute capacity into one of three tiers based on CPU count, RAM,
 and GPU availability.  Intended for internal service-to-service use by the
-Sentinel's AnomalyMonitor — no authentication is required.
+Sentinel's AnomalyMonitor.
 
 Tier classification rules
 --------------------------
@@ -20,11 +20,17 @@ from __future__ import annotations
 
 import psutil
 import structlog
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
+
+from heretek_swarm.gateway.auth import verify_auth
 
 logger = structlog.get_logger("api.compute_tier")
 
-router = APIRouter(prefix="/api/compute", tags=["compute"])
+router = APIRouter(
+    prefix="/api/compute",
+    tags=["compute"],
+    dependencies=[Depends(verify_auth)],
+)
 
 
 def _detect_gpu() -> bool:
@@ -88,10 +94,8 @@ async def get_compute_tier() -> dict:
 
     Notes
     -----
-    This endpoint is designed for internal service-to-service use and
-    deliberately omits authentication.  It is only exposed on the local
-    loopback interface (or inside the swarm's container network) — ensure
-    your firewall / ingress rules reflect that constraint.
+    This endpoint is designed for internal service-to-service use.
+    Ensure your firewall / ingress rules reflect that constraint.
     """
     try:
         cpu_count = psutil.cpu_count() or 1

@@ -5,8 +5,9 @@ from datetime import UTC, datetime
 from typing import Any
 
 import structlog
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException, Request
 
+from heretek_swarm.gateway.auth import verify_auth
 from heretek_swarm.security.zero_trust import LayerResult, ZeroTrustResult
 
 from . import (
@@ -20,7 +21,9 @@ router = APIRouter(prefix="", tags=["observability"])
 
 
 @router.get("/swarm")
-async def get_swarm_health(request: Request) -> dict[str, Any]:
+async def get_swarm_health(
+    request: Request, authenticated: str = Depends(verify_auth)
+) -> dict[str, Any]:
     """Get swarm health overview.
 
     Returns aggregate metrics including:
@@ -75,7 +78,9 @@ async def get_swarm_health(request: Request) -> dict[str, Any]:
 
 
 @router.get("/agents/{agent_id}")
-async def get_agent_metrics(agent_id: str, request: Request) -> dict[str, Any]:
+async def get_agent_metrics(
+    agent_id: str, request: Request, authenticated: str = Depends(verify_auth)
+) -> dict[str, Any]:
     """Get individual agent metrics.
 
     Returns per-agent performance metrics including:
@@ -121,7 +126,9 @@ async def get_agent_metrics(agent_id: str, request: Request) -> dict[str, Any]:
 
 
 @router.get("/agents")
-async def get_all_agents(request: Request) -> dict[str, Any]:
+async def get_all_agents(
+    request: Request, authenticated: str = Depends(verify_auth)
+) -> dict[str, Any]:
     """Get metrics for all agents.
 
     Returns:

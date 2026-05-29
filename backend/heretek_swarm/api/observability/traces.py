@@ -4,7 +4,9 @@ from datetime import datetime
 from typing import Any
 
 import structlog
-from fastapi import APIRouter, Query, WebSocket, WebSocketDisconnect
+from fastapi import APIRouter, Depends, Query, WebSocket, WebSocketDisconnect
+
+from heretek_swarm.gateway.auth import verify_auth
 
 from . import (
     TraceEvent,
@@ -25,6 +27,7 @@ async def get_traces(
     start_time: str | None = None,
     end_time: str | None = None,
     limit: int = Query(default=100, ge=1, le=1000),
+    authenticated: str = Depends(verify_auth),
 ) -> dict[str, Any]:
     """Get trace events with optional filtering."""
     filtered_traces = []
@@ -62,7 +65,7 @@ async def get_traces(
 
 
 @router.get("/traces/{trace_id}")
-async def get_trace(trace_id: str) -> dict[str, Any]:
+async def get_trace(trace_id: str, authenticated: str = Depends(verify_auth)) -> dict[str, Any]:
     """Get a specific trace by ID."""
     for agent_traces in _traces.values():
         for trace in agent_traces:
@@ -78,6 +81,7 @@ async def create_trace(
     agent_id: str,
     data: dict[str, Any],
     duration: float | None = None,
+    authenticated: str = Depends(verify_auth),
 ) -> dict[str, Any]:
     """Create a new trace event."""
     validator = get_zero_trust()
@@ -136,7 +140,7 @@ async def websocket_traces(websocket: WebSocket, agent_id: str):
 
 
 @router.delete("/traces/{agent_id}")
-async def clear_traces(agent_id: str) -> dict[str, Any]:
+async def clear_traces(agent_id: str, authenticated: str = Depends(verify_auth)) -> dict[str, Any]:
     """Clear all traces for an agent."""
     if agent_id in _traces:
         count = len(_traces[agent_id])
