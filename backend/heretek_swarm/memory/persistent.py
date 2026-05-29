@@ -151,6 +151,10 @@ class PersistentMemory:
         user_id: str | None = None,
         agent_id: str | None = None,
         metadata: dict[str, Any] | None = None,
+        org_id: str | None = None,
+        project_id: str | None = None,
+        session_id: str | None = None,
+        scope: str | None = None,
     ) -> str:
         """
         Store a memory entry with semantic embedding.
@@ -160,6 +164,10 @@ class PersistentMemory:
             user_id: User identifier (defaults to self.user_id)
             agent_id: Agent identifier for the memory
             metadata: Additional metadata
+            org_id: Organization identifier
+            project_id: Project identifier
+            session_id: Session identifier
+            scope: Water's hierarchy scope (org, project, user, session, auto_learned)
 
         Returns:
             Memory ID if successful, empty string otherwise
@@ -169,6 +177,15 @@ class PersistentMemory:
 
         user_id = user_id or self.user_id
         meta = {"agent_id": agent_id} if agent_id else {}
+        if org_id:
+            meta["org_id"] = org_id
+        if project_id:
+            meta["project_id"] = project_id
+        if session_id:
+            meta["session_id"] = session_id
+        if scope:
+            meta["scope"] = scope
+
         if metadata:
             meta.update(metadata)
 
@@ -184,6 +201,7 @@ class PersistentMemory:
                 memory_id=memory_id,
                 user_id=user_id,
                 agent_id=agent_id,
+                scope=scope,
             )
             return memory_id
 
@@ -200,7 +218,8 @@ class PersistentMemory:
         Store multiple memories efficiently.
 
         Args:
-            memories: List of memory dicts with 'content', optional 'agent_id', 'metadata'
+            memories: List of memory dicts with 'content', optional 'agent_id',
+                      'metadata', 'org_id', 'project_id', 'session_id', 'scope'
             user_id: User identifier (defaults to self.user_id)
 
         Returns:
@@ -216,15 +235,31 @@ class PersistentMemory:
             content = mem.get("content", "")
             agent_id = mem.get("agent_id")
             metadata = mem.get("metadata", {})
+            org_id = mem.get("org_id")
+            project_id = mem.get("project_id")
+            session_id = mem.get("session_id")
+            scope = mem.get("scope")
 
+            meta = {}
             if agent_id:
-                metadata = {"agent_id": agent_id, **metadata}
+                meta["agent_id"] = agent_id
+            if org_id:
+                meta["org_id"] = org_id
+            if project_id:
+                meta["project_id"] = project_id
+            if session_id:
+                meta["session_id"] = session_id
+            if scope:
+                meta["scope"] = scope
+
+            if metadata:
+                meta.update(metadata)
 
             try:
                 result = self._memory.add(
                     content,
                     user_id=user_id,
-                    metadata=metadata,
+                    metadata=meta,
                 )
                 memory_ids.append(result.get("id", ""))
             except Exception as e:
@@ -240,6 +275,10 @@ class PersistentMemory:
         user_id: str | None = None,
         agent_id: str | None = None,
         limit: int = 10,
+        org_id: str | None = None,
+        project_id: str | None = None,
+        session_id: str | None = None,
+        scope: str | None = None,
     ) -> list[dict[str, Any]]:
         """
         Search memories using semantic similarity.
@@ -249,6 +288,10 @@ class PersistentMemory:
             user_id: User identifier (defaults to self.user_id)
             agent_id: Optional agent filter
             limit: Maximum results to return
+            org_id: Optional organization filter
+            project_id: Optional project filter
+            session_id: Optional session filter
+            scope: Optional Water's hierarchy scope filter
 
         Returns:
             List of memory entries with scores
@@ -262,16 +305,39 @@ class PersistentMemory:
             filters = {}
             if agent_id:
                 filters["agent_id"] = agent_id
+            if org_id:
+                filters["org_id"] = org_id
+            if project_id:
+                filters["project_id"] = project_id
+            if session_id:
+                filters["session_id"] = session_id
+            if scope:
+                filters["scope"] = scope
 
             results = self._memory.search(
                 query=query,
                 user_id=user_id,
                 limit=limit,
+                filters=filters if filters else None,
             )
 
-            # Filter by agent_id if specified (mem0 doesn't support this directly)
-            if agent_id:
-                results = [r for r in results if r.get("metadata", {}).get("agent_id") == agent_id]
+            # Apply programmatic fallback filters for safety
+            if agent_id or org_id or project_id or session_id or scope:
+                filtered_results = []
+                for r in results:
+                    meta = r.get("metadata", {})
+                    if agent_id and meta.get("agent_id") != agent_id:
+                        continue
+                    if org_id and meta.get("org_id") != org_id:
+                        continue
+                    if project_id and meta.get("project_id") != project_id:
+                        continue
+                    if session_id and meta.get("session_id") != session_id:
+                        continue
+                    if scope and meta.get("scope") != scope:
+                        continue
+                    filtered_results.append(r)
+                results = filtered_results
 
             logger.debug(
                 "memory_searched",
@@ -464,8 +530,8 @@ class Mem0Backend:
         self._user_id = "default"
         self._latency_stats: list[float] = []
 
-    async def initialize(self) -> None:
-        """Initialize the mem0 memory instance."""
+    def initialize_sync(self) -> None:
+        """Initialize the mem0 memory instance synchronously."""
         if self._initialized:
             return
 
@@ -487,6 +553,10 @@ class Mem0Backend:
             logger.error("mem0_init_failed", error=str(e))
             raise
 
+    async def initialize(self) -> None:
+        """Initialize the mem0 memory instance asynchronously."""
+        self.initialize_sync()
+
     async def shutdown(self) -> None:
         """Shutdown the mem0 backend."""
         self._initialized = False
@@ -504,18 +574,24 @@ class Mem0Backend:
             Memory ID if successful
         """
         if not self._initialized:
-            await self.initialize()
+            self.initialize_sync()
 
         start = time.perf_counter()
         try:
+            # Water's hierarchy metadata mapping
+            metadata = {
+                "agent_id": entry.agent_id,
+                "memory_type": str(entry.memory_type) if entry.memory_type else None,
+                "tags": entry.tags,
+            }
+            if entry.metadata:
+                # Inherit all existing metadata fields (including org_id, project_id, etc.)
+                metadata.update(entry.metadata)
+
             result = self._memory.add(
                 entry.content if isinstance(entry.content, str) else str(entry.content),
                 user_id=self._user_id,
-                metadata={
-                    "agent_id": entry.agent_id,
-                    "memory_type": str(entry.memory_type) if entry.memory_type else None,
-                    "tags": entry.tags,
-                },
+                metadata=metadata,
             )
             memory_id = result.get("id", "")
             self._latency_stats.append(time.perf_counter() - start)
@@ -535,7 +611,7 @@ class Mem0Backend:
             MemoryResult with entries and total_count
         """
         if not self._initialized:
-            self.initialize()
+            self.initialize_sync()
 
         start = time.perf_counter()
         try:
@@ -544,10 +620,14 @@ class Mem0Backend:
 
             # Build filters dict - mem0 uses "agent_id" at top level for filtering
             filters = {}
-            if query.filters:  # noqa: SIM102
-                # Extract agent_id from filters if present
-                if "agent_id" in query.filters:
-                    filters["agent_id"] = query.filters["agent_id"]
+            if query.filters:
+                # Extract agent_id and Water's hierarchy filters
+                keys = [
+                    "agent_id", "org_id", "project_id", "session_id", "scope", "memory_scope"
+                ]
+                for key in keys:
+                    if key in query.filters:
+                        filters[key] = query.filters[key]
 
             results = self._memory.search(
                 query=query_text,
@@ -556,6 +636,35 @@ class Mem0Backend:
                 filters=filters if filters else None,
             )
             self._latency_stats.append(time.perf_counter() - start)
+
+            # Programmatic fallback filters for Water's hierarchy safety
+            if query.filters:
+                filtered_results = []
+                for r in results:
+                    meta = r.get("metadata", {})
+                    # Standard agent_id filter
+                    if (
+                        "agent_id" in query.filters
+                        and meta.get("agent_id") != query.filters["agent_id"]
+                    ):
+                        continue
+                    # Water's hierarchy filters
+                    if "org_id" in query.filters and meta.get("org_id") != query.filters["org_id"]:
+                        continue
+                    if (
+                        "project_id" in query.filters
+                        and meta.get("project_id") != query.filters["project_id"]
+                    ):
+                        continue
+                    if (
+                        "session_id" in query.filters
+                        and meta.get("session_id") != query.filters["session_id"]
+                    ):
+                        continue
+                    if "scope" in query.filters and meta.get("scope") != query.filters["scope"]:
+                        continue
+                    filtered_results.append(r)
+                results = filtered_results
 
             entries = []
             for r in results:
@@ -587,7 +696,7 @@ class Mem0Backend:
             List of MemoryEntry objects
         """
         if not self._initialized:
-            self.initialize()
+            self.initialize_sync()
 
         try:
             results = self._memory.get_all(user_id=self._user_id)
@@ -624,7 +733,7 @@ class Mem0Backend:
             True if deleted
         """
         if not self._initialized:
-            self.initialize()
+            self.initialize_sync()
 
         try:
             self._memory.delete(memory_id)
@@ -644,7 +753,7 @@ class Mem0Backend:
             List of memory IDs
         """
         if not self._initialized:
-            self.initialize()
+            self.initialize_sync()
 
         memory_ids = []
         for entry in entries:
@@ -704,7 +813,7 @@ class Mem0Backend:
             Raw mem0 API response dict
         """
         if not self._initialized:
-            self.initialize()
+            self.initialize_sync()
 
         params = {
             k: v
@@ -747,7 +856,7 @@ class Mem0Backend:
             List of memory dicts
         """
         if not self._initialized:
-            self.initialize()
+            self.initialize_sync()
 
         params = {
             k: v
@@ -776,7 +885,7 @@ class Mem0Backend:
             Raw mem0 API response dict
         """
         if not self._initialized:
-            self.initialize()
+            self.initialize_sync()
 
         return self._memory.update(memory_id=memory_id, data=data, metadata=metadata)
 
@@ -791,7 +900,7 @@ class Mem0Backend:
             Raw mem0 API response dict
         """
         if not self._initialized:
-            self.initialize()
+            self.initialize_sync()
 
         return self._memory.get(memory_id)
 
@@ -813,7 +922,7 @@ class Mem0Backend:
             List of memory dicts
         """
         if not self._initialized:
-            self.initialize()
+            self.initialize_sync()
 
         params = {
             k: v
@@ -830,7 +939,7 @@ class Mem0Backend:
             memory_id: Memory identifier
         """
         if not self._initialized:
-            self.initialize()
+            self.initialize_sync()
 
         self._memory.delete(memory_id)
 
@@ -849,7 +958,7 @@ class Mem0Backend:
             agent_id: Agent identifier
         """
         if not self._initialized:
-            self.initialize()
+            self.initialize_sync()
 
         params = {
             k: v
@@ -869,14 +978,14 @@ class Mem0Backend:
             List of history entries
         """
         if not self._initialized:
-            self.initialize()
+            self.initialize_sync()
 
         return self._memory.history(memory_id=memory_id)
 
     def reset(self) -> None:
         """Reset ALL memories."""
         if not self._initialized:
-            self.initialize()
+            self.initialize_sync()
 
         self._memory.reset()
 

@@ -17,21 +17,12 @@ from fastapi import APIRouter, Depends, HTTPException, UploadFile
 
 if TYPE_CHECKING:
     from heretek_swarm.rag.knowledge_graph import KnowledgeGraphRetriever
+    from heretek_swarm.rag.rag_pipeline import RAGPipeline
 
 from heretek_swarm.gateway.auth import verify_auth
 from heretek_swarm.rag.document_processor import DocumentType
-from heretek_swarm.rag.rag_pipeline import RAGPipeline
 
-# Stub imports - rag module is Phase 1 infrastructure
-try:
-    from rag.document_processor import ProcessingConfig
-    from rag.rag_pipeline import RAGPipeline
-
-    RAG_AVAILABLE = True
-except ImportError:
-    RAG_AVAILABLE = False
-    ProcessingConfig = None
-    RAGPipeline = None
+# RAG is fully integrated inside heretek_swarm.rag
 
 logger = structlog.get_logger(__name__)
 

@@ -13,6 +13,7 @@ Coder is the "implementation engine" of the Collective, translating
 decisions and designs into working, tested, and documented code.
 """
 
+import asyncio
 import uuid
 from datetime import UTC, datetime
 from typing import Any
@@ -127,6 +128,7 @@ class CoderAgent(
             "explain_code": self._handle_explain_code,
             "implement_task": self._handle_implement_task,
             "route_task": self._handle_route_task,
+            "code_execution_request": self._handle_code_execution_request,
         }
 
     async def _handle_route_task(self, message: ActorMessage) -> dict[str, Any]:
@@ -185,6 +187,8 @@ class CoderAgent(
             "refactor_code": "refactor_code",
             "explain_code": "explain_code",
             "implement_task": "implement_task",
+            "code_execution_request": "code_execution_request",
+            "execute_code": "code_execution_request",
         }
 
         handler_key = type_to_handler.get(task_type)
@@ -238,6 +242,110 @@ class CoderAgent(
                     "error": str(e),
                 },
             )
+            return {"status": "error", "error": str(e)}
+
+    async def _handle_code_execution_request(self, message: ActorMessage) -> dict[str, Any] | None:
+        """
+        Execute generated code inside a secure Docker sandbox.
+
+        Content expected:
+        {
+            "code": "code to execute",
+            "language": "python",
+            "timeout": 30,
+            "sandbox": true
+        }
+        """
+        try:
+            content = message.content if isinstance(message.content, dict) else {}
+
+            code = content.get("code", "")
+            language = content.get("language", "python").lower()
+            timeout = int(content.get("timeout", 30))
+            use_sandbox = bool(content.get("sandbox", True))
+
+            if not code:
+                return {"status": "error", "error": "Code content is empty"}
+
+            # Security validation for code content before execution
+            if not is_code_safe(code):
+                logger.warning("unsafe_code_rejected", code_preview=code[:100])
+                return {"status": "error", "error": "Unsafe code rejected - contains dangerous patterns"}
+
+            if not use_sandbox:
+                logger.warning("non_sandbox_execution_refused", reason="Zero-Trust Prime Directive requires sandboxing")
+                return {
+                    "status": "error",
+                    "error": "Non-sandboxed execution is refused under the Zero-Trust Prime Directive.",
+                }
+
+            logger.info("executing_code_in_sandbox", language=language, timeout=timeout)
+
+            # Map programming language to Docker image and command
+            image_map = {
+                "python": ("python:3.11-slim", ["python", "-"]),
+                "javascript": ("node:20-slim", ["node", "-"]),
+                "js": ("node:20-slim", ["node", "-"]),
+                "bash": ("alpine:latest", ["sh"]),
+                "sh": ("alpine:latest", ["sh"]),
+            }
+
+            if language not in image_map:
+                return {"status": "error", "error": f"Unsupported language: {language}"}
+
+            image, cmd = image_map[language]
+
+            # Build and execute docker run CLI using asyncio subprocess
+            # Enforce network isolation, memory limits, read-only rootfs, and non-root user
+            docker_cmd = ["docker", "run", "--rm", "--network", "none", "--memory", "128m", "--cpus", "0.5", "--read-only", "-i", image, *cmd]
+
+            proc = await asyncio.create_subprocess_exec(
+                *docker_cmd,
+                stdin=asyncio.subprocess.PIPE,
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE,
+            )
+
+            # Write code to stdin and read output with timeout
+            try:
+                stdout, stderr = await asyncio.wait_for(
+                    proc.communicate(input=code.encode("utf-8")),
+                    timeout=float(timeout),
+                )
+                success = proc.returncode == 0
+                stdout_str = stdout.decode("utf-8", errors="replace")
+                stderr_str = stderr.decode("utf-8", errors="replace")
+
+                logger.info(
+                    "sandbox_execution_complete",
+                    success=success,
+                    returncode=proc.returncode,
+                )
+
+                return {
+                    "status": "success" if success else "failed",
+                    "success": success,
+                    "returncode": proc.returncode,
+                    "stdout": stdout_str,
+                    "stderr": stderr_str,
+                }
+
+            except TimeoutError:
+                # Terminate the process if it times out
+                try:
+                    proc.kill()
+                    await proc.wait()
+                except Exception:
+                    pass
+                logger.error("sandbox_execution_timeout", timeout=timeout)
+                return {
+                    "status": "timeout",
+                    "success": False,
+                    "error": f"Execution timed out after {timeout} seconds",
+                }
+
+        except Exception as e:
+            logger.error("sandbox_execution_exception", error=str(e))
             return {"status": "error", "error": str(e)}
 
     async def _handle_generate_code(self, message: ActorMessage) -> dict[str, Any] | None:

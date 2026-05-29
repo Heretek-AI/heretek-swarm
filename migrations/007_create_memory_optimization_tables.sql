@@ -598,7 +598,7 @@ SELECT
     AVG(decompression_time_ms) AS avg_decompression_time,
     SUM(original_size_bytes) AS total_original_bytes,
     SUM(compressed_size_bytes) AS total_compressed_bytes,
-    ROUND(100.0 * (1 - SUM(compressed_size_bytes)::FLOAT / NULLIF(SUM(original_size_bytes), 0)), 2) AS space_saved_percent
+    ROUND((100.0 * (1 - SUM(compressed_size_bytes)::NUMERIC / NULLIF(SUM(original_size_bytes), 0)))::NUMERIC, 2) AS space_saved_percent
 FROM compression_metadata
 WHERE is_compressed = TRUE
 GROUP BY compression_algorithm;
@@ -610,7 +610,7 @@ SELECT
     COUNT(*) AS entry_count,
     SUM(hit_count) AS total_hits,
     SUM(miss_count) AS total_misses,
-    ROUND(100.0 * SUM(hit_count) / NULLIF(SUM(hit_count) + SUM(miss_count), 0), 2) AS hit_rate_percent,
+    ROUND((100.0 * SUM(hit_count) / NULLIF(SUM(hit_count) + SUM(miss_count), 0))::NUMERIC, 2) AS hit_rate_percent,
     AVG(prediction_confidence) AS avg_confidence,
     SUM(total_size_bytes) AS total_cached_bytes
 FROM prefetch_cache
@@ -620,7 +620,7 @@ GROUP BY cache_type;
 CREATE OR REPLACE VIEW low_performing_prefetch AS
 SELECT 
     *,
-    ROUND(100.0 * hit_count / NULLIF(hit_count + miss_count, 0), 2) AS hit_rate_percent
+    ROUND((100.0 * hit_count / NULLIF(hit_count + miss_count, 0))::NUMERIC, 2) AS hit_rate_percent
 FROM prefetch_cache
 WHERE hit_count + miss_count > 5
   AND (hit_count::FLOAT / NULLIF(hit_count + miss_count, 0)) < 0.3
@@ -633,7 +633,7 @@ SELECT
     access_type,
     COUNT(*) AS access_count,
     AVG(access_duration_ms) AS avg_duration_ms,
-    ROUND(100.0 * SUM(CASE WHEN cache_hit THEN 1 ELSE 0 END) / COUNT(*), 2) AS cache_hit_rate
+    ROUND((100.0 * SUM(CASE WHEN cache_hit THEN 1 ELSE 0 END) / COUNT(*))::NUMERIC, 2) AS cache_hit_rate
 FROM memory_access_logs
 WHERE access_timestamp >= NOW() - INTERVAL '1 hour'
 GROUP BY agent_id, access_type;

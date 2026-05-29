@@ -14,7 +14,7 @@ venv/
 .gsd/
 .planning/
 .audits/
-tests/
+# tests/
 *.md
 *.pyc
 .pytest_cache/

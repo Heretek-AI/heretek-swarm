@@ -3,10 +3,12 @@
 Provides async NATS connection management with OTel distributed tracing.
 """
 
+import contextlib
 import os
 import ssl
 import tempfile
 from collections.abc import Callable
+from pathlib import Path
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from enum import Enum
@@ -207,12 +209,9 @@ class NATSClient:
             and self.config.tls_cert_file
             and self.config.tls_key_file
         ):
-            with open(self.config.tls_ca_file) as f:
-                ca_cert_str = f.read()
-            with open(self.config.tls_cert_file) as f:
-                cert_str = f.read()
-            with open(self.config.tls_key_file) as f:
-                key_str = f.read()
+            ca_cert_str = Path(self.config.tls_ca_file).read_text(encoding="utf-8")
+            cert_str = Path(self.config.tls_cert_file).read_text(encoding="utf-8")
+            key_str = Path(self.config.tls_key_file).read_text(encoding="utf-8")
         else:
             ca = CertificateAuthority()
             agent_id = self.config.name
@@ -279,10 +278,8 @@ class NATSClient:
                 self._state = ConnectionState.DISCONNECTED
                 # Cleanup temp cert files
                 for tmp_path in self._temp_cert_files:
-                    try:
-                        os.unlink(tmp_path)
-                    except OSError:
-                        pass
+                    with contextlib.suppress(OSError):
+                        Path(tmp_path).unlink()
                 self._temp_cert_files.clear()
                 span.set_status(SpanStatus.OK)
 

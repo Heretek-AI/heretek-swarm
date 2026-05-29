@@ -62,22 +62,22 @@ __all__ = [
     # Config path
     "HEREKET_CONFIG_DIR",
     "HEREKET_CONFIG_FILE",
-    "get_config_path",
     # Cache
     "ConfigCache",
     # Loader
     "ConfigLoader",
-    "get_config",
-    "get_config_loader",
-    "get_config_with_source",
-    "initialize_config_loader",
-    "reload_config",
-    # Secrets
-    "SecretsLoader",
-    "get_secrets_loader",
     # Service
     "ConfigurationService",
+    # Secrets
+    "SecretsLoader",
+    "get_config",
+    "get_config_loader",
+    "get_config_path",
     "get_config_service",
+    "get_config_with_source",
+    "get_secrets_loader",
+    "initialize_config_loader",
     "initialize_config_service",
+    "reload_config",
     "shutdown_config_service",
 ]

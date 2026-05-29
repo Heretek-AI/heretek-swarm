@@ -52,6 +52,13 @@ COPY --from=builder --chown=appuser:appgroup /app/backend /app/backend
 # Copy migrations from build context root
 COPY --chown=appuser:appgroup migrations /app/migrations
 
+# Copy scripts (includes run_migrations.py)
+COPY --chown=appuser:appgroup scripts /app/scripts
+
+# Copy entrypoint
+COPY --chown=appuser:appgroup backend/entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
+
 # Create agent_workspace, heretek_data, and config directories owned by appuser
 RUN mkdir -p /app/agent_workspace /app/heretek_data /config && chown appuser:appgroup /app/agent_workspace /app/heretek_data /config
 
@@ -66,6 +73,9 @@ USER appuser
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --retries=3 --start-period=15s \
     CMD curl -sf http://localhost:8000/api/health || exit 1
+
+# Entrypoint runs migrations, then exec's CMD
+ENTRYPOINT ["/app/entrypoint.sh"]
 
 # Default: run the API server via heretek-swarm serve
 CMD ["heretek-swarm", "serve", "--host", "0.0.0.0", "--port", "8000"]

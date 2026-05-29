@@ -161,6 +161,24 @@ def _query_and_set_env(engine: Engine) -> LoadResult:
 
         return result
 
+    except Exception as exc:
+        # Gracefully handle missing table (first-run before migrations)
+        exc_str = str(exc)
+        if "UndefinedTable" in exc_str or "does not exist" in exc_str:
+            logger.warning(
+                "infrastructure_config_table_missing",
+                hint="Run migrations to create the infrastructure_config table. "
+                     "Falling back to environment variables.",
+            )
+            warnings.warn(
+                "infrastructure_config table does not exist yet. "
+                "Run migrations or the setup wizard. Falling back to environment variables.",
+                stacklevel=3,
+            )
+            session.rollback()
+            return result
+        raise
+
     finally:
         session.close()
 

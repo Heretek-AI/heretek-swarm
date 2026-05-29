@@ -896,8 +896,20 @@ Please provide your analysis and recommendation for this collective task."""
             asyncio.TimeoutError: If LLM call times out
             ValueError: If LLM output fails validation
         """
+        import time
+
+        from heretek_swarm.observability.prometheus_metrics import (
+            record_llm_call,
+            record_llm_tokens,
+        )
+
+        start_time = time.perf_counter()
         raw_response: str | None = None
         model_name: str = "unknown"
+        provider_name: str = "unknown"
+        prompt_tokens: int = 0
+        completion_tokens: int = 0
+        total_tokens: int = 0
 
         # Try routing through AgentModelRouter when providers are available
         router = getattr(self, "_model_router", None)
@@ -950,6 +962,10 @@ Please provide your analysis and recommendation for this collective task."""
                     router.record_usage(decision.provider_id, response)
                     raw_response = response.content
                     model_name = decision.model
+                    provider_name = decision.provider_id
+                    prompt_tokens = response.prompt_tokens
+                    completion_tokens = response.completion_tokens
+                    total_tokens = response.total_tokens
 
                 # Router exists but no garage — fall back to swarms_agent
                 if raw_response is None:
@@ -988,6 +1004,11 @@ Please provide your analysis and recommendation for this collective task."""
                         timeout=timeout,
                     )
                 model_name = "swarms_agent"
+                provider_name = "swarms_agent"
+                # Estimate token counts using the ~4 characters per token baseline approximation
+                prompt_tokens = len(prompt) // 4
+                completion_tokens = len(raw_response) // 4
+                total_tokens = prompt_tokens + completion_tokens
             except TimeoutError:
                 logger.error("[{self.agent_id}] LLM call timed out after {timeout}s")
                 raise
@@ -1023,6 +1044,47 @@ Please provide your analysis and recommendation for this collective task."""
                 "agent_id": self.agent_id,
             },
         )
+
+        # Record LLM call duration and token usage metrics
+        duration = time.perf_counter() - start_time
+        try:
+            record_llm_call(
+                agent_id=self.agent_id,
+                provider=provider_name,
+                model=model_name,
+                duration_seconds=duration,
+            )
+            record_llm_tokens(
+                agent_id=self.agent_id,
+                provider=provider_name,
+                model=model_name,
+                prompt_tokens=prompt_tokens,
+                completion_tokens=completion_tokens,
+                total_tokens=total_tokens,
+            )
+        except Exception as e:
+            logger.debug("failed_to_record_llm_telemetry_metrics", error=str(e))
+
+        # Instrument standard OpenTelemetry / OpenLLMetry trace span for cognitive tracing
+        try:
+            from opentelemetry import trace
+            tracer = trace.get_tracer("heretek_swarm.cognitive_telemetry")
+            with tracer.start_as_current_span(
+                "llm.call",
+                attributes={
+                    "gen_ai.client.name": "heretek_swarm",
+                    "gen_ai.system": provider_name,
+                    "gen_ai.request.model": model_name,
+                    "gen_ai.usage.prompt_tokens": prompt_tokens,
+                    "gen_ai.usage.completion_tokens": completion_tokens,
+                    "gen_ai.usage.total_tokens": total_tokens,
+                    "agent_id": self.agent_id,
+                    "duration_seconds": duration,
+                },
+            ):
+                pass
+        except Exception as e:
+            logger.debug("failed_to_emit_otel_gen_ai_trace_span", error=str(e))
         return raw_response
 
     async def _heartbeat_loop(self) -> None:

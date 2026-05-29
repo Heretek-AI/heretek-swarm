@@ -7,22 +7,19 @@ They are separate from Pydantic models (models.py) which handle validation.
 
 from __future__ import annotations
 
+import uuid
 from datetime import datetime
 from uuid import UUID
-import uuid
-
-from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, String, Text, Index
-from sqlalchemy import JSON, func
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 import structlog
+from sqlalchemy import JSON, Boolean, DateTime, ForeignKey, Index, Integer, String, Text, func
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 logger = structlog.get_logger(__name__)
 
 
 class Base(DeclarativeBase):
     """Base class for all ORM models."""
-    pass
 
 
 class UserConfiguration(Base):
@@ -87,7 +84,7 @@ class LLMProvider(Base):
     )
 
     # Relationships
-    agent_configs: Mapped[list["AgentConfig"]] = relationship(back_populates="llm_provider")
+    agent_configs: Mapped[list[AgentConfig]] = relationship(back_populates="llm_provider")
 
 
 class EmbeddingProvider(Base):
@@ -123,7 +120,7 @@ class EmbeddingProvider(Base):
     )
 
     # Relationships
-    agent_configs: Mapped[list["AgentConfig"]] = relationship(back_populates="embedding_provider")
+    agent_configs: Mapped[list[AgentConfig]] = relationship(back_populates="embedding_provider")
 
 
 class AgentConfig(Base):
@@ -154,8 +151,8 @@ class AgentConfig(Base):
     )
 
     # Relationships
-    llm_provider: Mapped["LLMProvider | None"] = relationship(back_populates="agent_configs")
-    embedding_provider: Mapped["EmbeddingProvider | None"] = relationship(back_populates="agent_configs")
+    llm_provider: Mapped[LLMProvider | None] = relationship(back_populates="agent_configs")
+    embedding_provider: Mapped[EmbeddingProvider | None] = relationship(back_populates="agent_configs")
 
 
 class ConfigAuditLog(Base):

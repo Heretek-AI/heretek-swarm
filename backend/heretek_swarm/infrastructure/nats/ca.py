@@ -848,7 +848,7 @@ async def check_and_renew_certs(
         new_agent = ca.renew_agent_cert(agent_id)
 
         # Also re-issue server cert
-        new_server = ca.issue_server_cert()
+        ca.issue_server_cert()
 
         # Update the in-memory data
         data["agents"][agent_id] = {"cert": new_agent["cert"], "key": new_agent["key"]}

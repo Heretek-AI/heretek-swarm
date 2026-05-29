@@ -6,21 +6,11 @@ This package provides comprehensive consensus mechanisms for multi-agent decisio
 - Enhanced MAKER with reasoning chains and rollback
 - Swarm Deliberation Engine with multi-round voting
 - Agent Expertise Profiling for confidence weighting
-- Decision Audit Trail for complete追溯 ability
+- Decision Audit Trail for complete traceability
 - Raft-based leader election
 - Immune Response Building for pattern learning (CONS-02)
 - Behavioral Baseline with quorum updates (CONS-03)
-
-Core Features:
-- First-to-ahead-by-k voting
-- Reputation-weighted voting
-- Red-flagging for anomalous outputs
-- Multi-round deliberation with argument exchange
-- Confidence-weighted voting based on expertise
-- Dissent tracking and minority report preservation
-- Complete decision provenance tracking
-- Immune system for learning from anomaly responses
-- Quorum-based baseline updates to prevent corruption
+- HXA Connect deliberation mesh for structured debates
 """
 
 import structlog
@@ -39,6 +29,11 @@ from heretek_swarm.consensus.complexity import (
 )
 from heretek_swarm.consensus.consensus_coordinator import (
     ConsensusCoordinator,
+)
+from heretek_swarm.consensus.deliberation_mesh import (
+    HXADebateCycle,
+    HXADebateState,
+    NATSDeliberationMesh,
 )
 from heretek_swarm.consensus.domain_selector import (
     DEFAULT_FALLBACK_AGENTS,
@@ -113,7 +108,6 @@ logger = structlog.get_logger(__name__)
 __all__ = [
     "DEFAULT_FALLBACK_AGENTS",
     "GOVERNANCE_AGENT_IDS",
-    "GOVERNANCE_AGENT_IDS",
     "AgentExpertiseProfile",
     "AgentExpertiseProfiler",
     "AgentPosition",
@@ -136,13 +130,13 @@ __all__ = [
     "DeliberationState",
     "DomainExpertise",
     "DomainSelector",
-    # Election Manager
     "ElectionManager",
-    # Enhanced MAKER
     "EnhancedMAKERConsensus",
     "EnhancedVote",
     "EvidenceType",
     "ExpertiseLevel",
+    "HXADebateCycle",
+    "HXADebateState",
     "ImmunePattern",
     "ImmuneQuorum",
     "ImmuneResponse",
@@ -151,6 +145,7 @@ __all__ = [
     "LogEntry",
     "MAKERConsensus",
     "MAKERConsensusWithRaft",
+    "NATSDeliberationMesh",
     "NovelPatternPreservation",
     "PatternClassification",
     "Position",

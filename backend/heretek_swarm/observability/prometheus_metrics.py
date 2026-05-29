@@ -218,6 +218,25 @@ heretek_swarm_db_query_duration_seconds = Histogram(
 )
 
 # ============================================================================
+# LLM Telemetry Metrics (Histogram + Counter)
+# ============================================================================
+
+heretek_swarm_llm_call_duration_seconds = Histogram(
+    "heretek_swarm_llm_call_duration_seconds",
+    "Duration of LLM call invocations in seconds",
+    ["agent_id", "provider", "model"],
+    buckets=(0.1, 0.25, 0.5, 1.0, 2.5, 5.0, 10.0, 20.0, 30.0, 60.0),
+    registry=_swarm_registry,
+)
+
+heretek_swarm_llm_tokens_total = Counter(
+    "heretek_swarm_llm_tokens_total",
+    "Total token consumption for LLM requests and completions",
+    ["agent_id", "provider", "model", "token_type"],
+    registry=_swarm_registry,
+)
+
+# ============================================================================
 # Health Metrics (Gauges)
 # ============================================================================
 
@@ -426,6 +445,27 @@ class PrometheusMetrics:
         heretek_swarm_db_query_duration_seconds.labels(
             db_name=db_name,
         ).observe(duration_seconds)
+
+    def record_llm_call_duration(
+        self, agent_id: str, provider: str, model: str, duration_seconds: float
+    ) -> None:
+        """Record the duration of an LLM invocation."""
+        heretek_swarm_llm_call_duration_seconds.labels(
+            agent_id=agent_id,
+            provider=provider,
+            model=model,
+        ).observe(duration_seconds)
+
+    def record_llm_tokens_consumed(
+        self, agent_id: str, provider: str, model: str, token_type: str, count: int
+    ) -> None:
+        """Record the number of tokens consumed by type."""
+        heretek_swarm_llm_tokens_total.labels(
+            agent_id=agent_id,
+            provider=provider,
+            model=model,
+            token_type=token_type,
+        ).inc(count)
 
     def record_health_score(self, score: float) -> None:
         """Record the overall health score."""
@@ -637,6 +677,26 @@ def record_db_query_duration(
         duration_seconds=duration_seconds,
         db_name=db_name,
     )
+
+
+def record_llm_call(agent_id: str, provider: str, model: str, duration_seconds: float) -> None:
+    """Record LLM call invocation duration."""
+    get_metrics().record_llm_call_duration(agent_id, provider, model, duration_seconds)
+
+
+def record_llm_tokens(
+    agent_id: str,
+    provider: str,
+    model: str,
+    prompt_tokens: int,
+    completion_tokens: int,
+    total_tokens: int,
+) -> None:
+    """Record LLM token usage details."""
+    metrics = get_metrics()
+    metrics.record_llm_tokens_consumed(agent_id, provider, model, "prompt", prompt_tokens)
+    metrics.record_llm_tokens_consumed(agent_id, provider, model, "completion", completion_tokens)
+    metrics.record_llm_tokens_consumed(agent_id, provider, model, "total", total_tokens)
 
 
 # ============================================================================

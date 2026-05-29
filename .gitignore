@@ -41,7 +41,7 @@ ENV/
 
 # Secrets and credentials
 # Config directory (user-specific overrides)
-config/
+/config/
 # Exception: keep template files
 !config/*.example.json
 !config/litellm_config.yaml

@@ -23,7 +23,10 @@ from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from enum import Enum
+from pathlib import Path
 from typing import Any
+
+from heretek_swarm.infrastructure.nats.ca import CertificateAuthority
 
 import structlog
 
@@ -38,9 +41,6 @@ try:
 except ImportError:
     NATS_AVAILABLE = False
     NatsError = Exception
-
-# Import CertificateAuthority for mTLS support
-from heretek_swarm.infrastructure.nats.ca import CertificateAuthority
 
 
 class ConnectionState(Enum):
@@ -380,12 +380,9 @@ class NATSEventMesh:
 
         if self.tls_ca_file and self.tls_cert_file and self.tls_key_file:
             # Use explicitly-provided paths
-            with open(self.tls_ca_file) as f:
-                ca_cert_str = f.read()
-            with open(self.tls_cert_file) as f:
-                cert_str = f.read()
-            with open(self.tls_key_file) as f:
-                key_str = f.read()
+            ca_cert_str = Path(self.tls_ca_file).read_text(encoding="utf-8")
+            cert_str = Path(self.tls_cert_file).read_text(encoding="utf-8")
+            key_str = Path(self.tls_key_file).read_text(encoding="utf-8")
         else:
             # Load from secrets/certs.yaml via CertificateAuthority
             ca = CertificateAuthority()
@@ -462,10 +459,8 @@ class NATSEventMesh:
 
             # Clean up temp cert files
             for tmp_path in self._temp_cert_files:
-                try:
-                    os.unlink(tmp_path)
-                except OSError:
-                    pass
+                with contextlib.suppress(OSError):
+                    Path(tmp_path).unlink()
             self._temp_cert_files.clear()
 
             self._state = ConnectionState.DISCONNECTED

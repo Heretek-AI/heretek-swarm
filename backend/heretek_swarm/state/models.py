@@ -470,6 +470,22 @@ class LineageTracker:
 logger = structlog.get_logger(__name__)
 
 
+class SnapshotDiff(dict):
+    """Snapshot difference result with both dict-like and attribute-like access."""
+
+    @property
+    def added_agents(self) -> dict[str, Any]:
+        return self.get("added", {})
+
+    @property
+    def removed_agents(self) -> dict[str, Any]:
+        return self.get("removed", {})
+
+    @property
+    def changed_agents(self) -> dict[str, Any]:
+        return self.get("changed", {})
+
+
 class SnapshotManager:
     """Manages state snapshots for rollback.
 
@@ -673,19 +689,19 @@ class SnapshotManager:
                 return True
         return False
 
-    async def compute_diff(self, snapshot1_id: UUID, snapshot2_id: UUID) -> dict[str, Any]:
+    async def compute_diff(self, snapshot1_id: UUID, snapshot2_id: UUID) -> SnapshotDiff:
         """Compute diff between two snapshots."""
         snap1 = await self.get_snapshot(snapshot1_id)
         snap2 = await self.get_snapshot(snapshot2_id)
 
         if not snap1 or not snap2:
-            return {"error": "Snapshot not found"}
+            return SnapshotDiff({"error": "Snapshot not found"})
 
-        diff = {
+        diff = SnapshotDiff({
             "added": {},
             "removed": {},
             "changed": {},
-        }
+        })
 
         s1_agents = snap1.state.get("agents", {})
         s2_agents = snap2.state.get("agents", {})
@@ -793,15 +809,43 @@ class StateManager:
         agent_states_data = snapshot.state.get("agents", {})
         self._states.clear()
         for agent_id, state_data in agent_states_data.items():
+            status_data = state_data.get("status", "active")
+            if isinstance(status_data, str):
+                try:
+                    status = StateStatus(status_data)
+                except ValueError:
+                    status = StateStatus.ACTIVE
+            elif isinstance(status_data, StateStatus):
+                status = status_data
+            else:
+                status = StateStatus.ACTIVE
+
             state = AgentState(
                 agent_id=agent_id,
                 agent_type=state_data.get("agent_type", "worker"),
-                status=StateStatus(state_data.get("status", "active")),
+                status=status,
                 version=state_data.get("version", 1),
                 working_memory=state_data.get("working_memory", {}),
                 context=state_data.get("context", {}),
                 metadata=state_data.get("metadata", {}),
             )
+
+            if "created_at" in state_data:
+                ca = state_data["created_at"]
+                if isinstance(ca, str):
+                    with contextlib.suppress(ValueError):
+                        state.created_at = datetime.fromisoformat(ca)
+                elif isinstance(ca, datetime):
+                    state.created_at = ca
+
+            if "updated_at" in state_data:
+                ua = state_data["updated_at"]
+                if isinstance(ua, str):
+                    with contextlib.suppress(ValueError):
+                        state.updated_at = datetime.fromisoformat(ua)
+                elif isinstance(ua, datetime):
+                    state.updated_at = ua
+
             self._states[agent_id] = state
         return True
 
@@ -832,9 +876,27 @@ class StateManager:
         state = self._states.get(agent_id)
         if not state:
             return None
+
+        core_attrs = {
+            "agent_id",
+            "agent_type",
+            "status",
+            "version",
+            "created_at",
+            "updated_at",
+            "working_memory",
+            "context",
+            "metadata",
+        }
+
         for key, value in kwargs.items():
-            if hasattr(state, key):
+            if key in core_attrs:
                 setattr(state, key, value)
+            else:
+                if state.working_memory is None:
+                    state.working_memory = {}
+                state.working_memory[key] = value
+
         state.touch()
         return state
 

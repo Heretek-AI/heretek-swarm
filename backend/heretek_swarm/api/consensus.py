@@ -375,10 +375,10 @@ async def submit_vote(
         Vote confirmation with current vote count
     """
     # Use authenticated agent ID
-    agent_id = x_agent_id or authenticated_agent_id
+    agent_id = authenticated_agent_id
 
     # Check permission
-    if not consensus_auth_manager.check_permission(authenticated_agent_id, "vote"):
+    if not consensus_auth_manager.check_permission(agent_id, "vote"):
         raise HTTPException(403, "Permission denied. Agent cannot vote.")
 
     if consensus_id not in _active_rounds:

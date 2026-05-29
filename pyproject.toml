@@ -503,6 +503,7 @@ ignore = [
     "PT011",  # pytest.raises - too broad
     "ARG001", # unused function argument (common in callbacks)
     "S608",   # SQL injection (handled by parameterized queries)
+    "EXE002", # shebang missing on executable file (conflicts with Windows git checkouts running in Linux containers)
 ]
 
 [tool.ruff.lint.per-file-ignores]
