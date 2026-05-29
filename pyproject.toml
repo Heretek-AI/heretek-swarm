@@ -46,6 +46,8 @@ dependencies = [
     "prometheus-client>=0.19.0",
     # NATS messaging
     "nats-py>=2.0.0",
+    # Certificate generation (X.509 TLS for NATS)
+    "cryptography>=42.0",
     # JWT authentication
     "PyJWT>=2.8",
 ]

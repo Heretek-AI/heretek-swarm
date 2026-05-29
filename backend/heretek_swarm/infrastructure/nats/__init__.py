@@ -11,6 +11,13 @@ Topics:
 - swarm.* - Swarm-wide events
 """
 
+from heretek_swarm.infrastructure.nats.ca import (
+    CertificateAuthority,
+    decrypt_certs,
+    encrypt_certs,
+    load_certificates,
+    write_temp_cert_files,
+)
 from heretek_swarm.infrastructure.nats.client import NATSClient, get_nats_client
 from heretek_swarm.infrastructure.nats.discovery import (
     AgentInfo,
@@ -28,12 +35,17 @@ __all__ = [
     "AgentInfo",
     "AgentRegistry",
     "AgentStatus",
+    "CertificateAuthority",
     "HeartbeatMessage",
     "NATSClient",
     "NATSPublisher",
     "NATSSubscriber",
     "PresenceAnnouncement",
+    "decrypt_certs",
+    "encrypt_certs",
     "get_discovery_registry",
     "get_nats_client",
+    "load_certificates",
     "shutdown_discovery_registry",
+    "write_temp_cert_files",
 ]
