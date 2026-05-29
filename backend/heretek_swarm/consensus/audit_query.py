@@ -17,6 +17,8 @@ from typing import Any
 
 import structlog
 
+import json
+
 from .audit_models import (
     AuditEventType,
     DecisionOutcome,
@@ -381,7 +383,7 @@ class AuditQueryMixin:
             raise ValueError(f"Decision audit not found: {decision_id}")
 
         if format == "json":
-            return __import__("json").dumps(audit.to_dict(), indent=2, sort_keys=True)
+            return json.dumps(audit.to_dict(), indent=2, sort_keys=True)
         raise ValueError(f"Unsupported export format: {format}")
 
     def export_all_audits(self, format: str = "json") -> str:  # noqa: A002
@@ -401,7 +403,7 @@ class AuditQueryMixin:
                 "total_audits": len(trail.decision_audits),
                 "audits": [audit.to_dict() for audit in trail.decision_audits.values()],
             }
-            return __import__("json").dumps(data, indent=2, sort_keys=True)
+            return json.dumps(data, indent=2, sort_keys=True)
         raise ValueError(f"Unsupported export format: {format}")
 
 

@@ -44,10 +44,10 @@ def _get_jwt_secret() -> str:
                 "Generate with: export JWT_SECRET=$(openssl rand -hex 32)"
             )
         # Development fallback — use a static dev secret so JWT works out of the box
-        secret = "heretek-dev-jwt-secret-do-not-use-in-production"  # noqa: S105
+        secret = secrets.token_hex(32)
         logger.warning(
             "jwt_secret_default_development",
-            message="Using default JWT_SECRET for development. Set JWT_SECRET env var.",
+            message="Using auto-generated JWT_SECRET for development. Set JWT_SECRET env var for persistence.",
         )
 
     return secret

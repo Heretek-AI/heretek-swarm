@@ -98,7 +98,7 @@ export interface EmbeddingProvider {
 export interface UserConfiguration {
   id: string;
   config_key: string;
-  config_value: any;
+  config_value: unknown;
   config_type: 'string' | 'integer' | 'float' | 'boolean' | 'json' | 'array';
   description?: string;
   category: string;
@@ -333,7 +333,7 @@ export const configurationApi = {
     return response.data;
   },
 
-  updateConfig: async (key: string, value: any): Promise<UserConfiguration> => {
+  updateConfig: async (key: string, value: unknown): Promise<UserConfiguration> => {
     const response = await apiClient.put(`/api/config/${key}`, { config_value: value });
     return response.data;
   },
@@ -383,7 +383,7 @@ export const configurationApi = {
     return response.data;
   },
 
-  importConfigurations: async (data: any, options?: any): Promise<any> => {
+  importConfigurations: async (data: unknown, options?: Record<string, unknown>): Promise<unknown> => {
     const response = await apiClient.post('/api/config/import', {
       import_data: data,
       options: options || {},

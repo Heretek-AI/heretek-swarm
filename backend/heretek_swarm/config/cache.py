@@ -12,7 +12,8 @@ from typing import Any
 
 from heretek_swarm.config.models import ConfigCacheEntry
 
-logger = __import__("structlog").get_logger("config.cache")
+import structlog
+logger = structlog.get_logger(__name__)
 
 
 class ConfigCache:

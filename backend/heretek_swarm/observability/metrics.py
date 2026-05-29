@@ -16,6 +16,7 @@ Features:
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from typing import Any
+import time
 
 # Import cycle detector and phi training for metrics integration
 try:
@@ -878,7 +879,7 @@ class MetricsSnapshot:
     )
     agent_metrics: dict[str, AgentMetrics] = field(default_factory=dict)
     health_score: float = 0.0
-    timestamp: float = field(default_factory=lambda: __import__("time").time())
+    timestamp: float = field(default_factory=lambda: time.time())
     metadata: dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

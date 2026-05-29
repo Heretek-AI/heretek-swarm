@@ -12,6 +12,7 @@ from enum import Enum
 from typing import Any
 
 import structlog
+import os
 
 logger = structlog.get_logger(__name__)
 
@@ -233,7 +234,7 @@ class AgentRuntime:
         try:
             import litellm
 
-            litellm.api_key = __import__("os").getenv("OPENAI_API_KEY")
+            litellm.api_key = os.getenv("OPENAI_API_KEY")
 
             response = await litellm.acompletion(
                 model=f"{self.model_provider}/{self.model_name}",

@@ -324,7 +324,7 @@ export async function checkAgentHealth(apiUrl: string, apiKey?: string): Promise
     const data = await response.json();
     const instances = data.instances || data.agents || [];
     
-    return instances.map((instance: any): AgentHealthResult => ({
+    return instances.map((instance: Record<string, unknown>): AgentHealthResult => ({
       agentId: instance.instance_id || instance.id,
       agentType: instance.agent_type || instance.type,
       status: mapAgentStatus(instance.state || instance.status),

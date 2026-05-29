@@ -114,7 +114,7 @@ def init_tracing(config: TracingConfig | None = None) -> TracingConfig:
     exporter_type = _tracer_config.exporter.lower()
     if exporter_type == "otlp":
         endpoint = _tracer_config.endpoint or os.getenv(
-            "OTEL_EXPORTER_OTLP_ENDPOINT", "http://otel-collector:4317"
+            "OTEL_EXPORTER_OTLP_ENDPOINT", "http://localhost:4317"
         )
         try:
             otlp_exporter = OTLPSpanExporter(

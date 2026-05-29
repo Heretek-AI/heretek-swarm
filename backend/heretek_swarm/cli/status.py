@@ -16,6 +16,7 @@ import structlog
 
 from heretek_swarm.cli.health import _check_service_health
 from heretek_swarm.config.models import InfrastructureService
+import datetime as _dt
 
 logger = structlog.get_logger("cli.status")
 
@@ -203,8 +204,8 @@ def status(api_base: str, timeout: int, output_json: bool) -> None:
                     "unknown": 0,
                     "duration_ms": round((time.perf_counter() - start_time) * 1000, 1),
                 },
-                "timestamp": __import__("datetime")
-                .datetime.now(__import__("datetime").timezone.utc)
+                "timestamp": _dt
+                .datetime.now(_dt.timezone.utc)
                 .isoformat()
                 .replace("+00:00", "Z"),
             }
@@ -264,8 +265,8 @@ def status(api_base: str, timeout: int, output_json: bool) -> None:
                 "unknown": unknown_count,
                 "duration_ms": round(total_time_ms, 1),
             },
-            "timestamp": __import__("datetime")
-            .datetime.now(__import__("datetime").timezone.utc)
+            "timestamp": _dt
+            .datetime.now(_dt.timezone.utc)
             .isoformat()
             .replace("+00:00", "Z"),
         }

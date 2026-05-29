@@ -5,7 +5,7 @@
  */
 
 import { create } from 'zustand';
-import { withDebugMiddleware } from '../store/middleware/debugMiddleware';
+import { withDebugMiddleware } from './middleware/debugMiddleware';
 
 export interface ConsciousnessMetrics {
   average_gwt_score: number;

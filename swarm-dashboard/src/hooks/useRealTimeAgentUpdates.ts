@@ -115,7 +115,7 @@ export interface UseRealTimeAgentUpdatesState {
  * Creates a throttled function that limits execution to once per interval.
  * Uses trailing edge invocation (executes at end of interval).
  */
-function createThrottledCallback<T extends (...args: any[]) => void>(
+function createThrottledCallback<T extends (...args: unknown[]) => void>(
   callback: T,
   interval: number
 ): T {
