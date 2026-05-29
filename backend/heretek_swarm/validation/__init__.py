@@ -34,8 +34,10 @@ from heretek_swarm.validation.agent_messages import (
     validate_message,
 )
 from heretek_swarm.validation.llm_output import (
+    CodeBlock,
     CodeLanguage,
     LLMOutputValidator,
+    TextOutput,
     ValidationResult,
     ValidationSeverity,
     is_code_safe,
@@ -49,6 +51,7 @@ __all__ = [
     "ActorMessage",
     # Agent Messages
     "AgentMessageBase",
+    "CodeBlock",
     "CodeExecutionRequest",
     # LLM Output Validation
     "CodeLanguage",
@@ -61,6 +64,7 @@ __all__ = [
     "MessageType",
     "StateUpdate",
     "TaskMessage",
+    "TextOutput",
     "ToolRequest",
     "ToolResponse",
     "ValidationResult",

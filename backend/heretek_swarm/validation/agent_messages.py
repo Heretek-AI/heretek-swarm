@@ -1,13 +1,13 @@
 """
 Agent Message Validation Module
 
-This module provides Pydantic models for validating all types of agent messages
+This module provides Pydantic v2 strict models for validating all types of agent messages
 in the Heretek Swarm system. It ensures message structure integrity and content
 safety before messages are processed or state updates are applied.
 
 Author: Heretek Swarm Collective
 Date: 2026-04-07
-Version: 1.0.0
+Version: 2.0.0
 """
 
 from __future__ import annotations
@@ -19,8 +19,18 @@ from enum import StrEnum
 from typing import Any
 
 import structlog
-from pydantic import BaseModel, Field, ValidationError
-from pydantic import validator as pydantic_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    StrictBool,
+    StrictFloat,
+    StrictInt,
+    StrictStr,
+    ValidationError,
+    ValidationInfo,
+    field_validator,
+)
 
 from heretek_swarm.validation.llm_output import (
     LLMOutputValidator,
@@ -107,19 +117,16 @@ class MessagePriority(StrEnum):
 class AgentMessageBase(BaseModel):
     """Base class for all agent messages."""
 
-    message_id: str = Field(default_factory=lambda: f"msg_{uuid.uuid4().hex[:12]}")
-    message_type: str = Field(..., description="Type of the message")
-    sender_id: str = Field(..., description="ID of the sending agent")
-    recipient_id: str | None = Field(None, description="ID of the recipient agent")
+    message_id: StrictStr = Field(default_factory=lambda: f"msg_{uuid.uuid4().hex[:12]}")
+    message_type: StrictStr = Field(..., description="Type of the message")
+    sender_id: StrictStr = Field(..., description="ID of the sending agent")
+    recipient_id: StrictStr | None = Field(None, description="ID of the recipient agent")
     timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
     priority: MessagePriority = Field(default=MessagePriority.NORMAL)
-    correlation_id: str | None = Field(None, description="ID to correlate related messages")
+    correlation_id: StrictStr | None = Field(None, description="ID to correlate related messages")
     metadata: dict[str, Any] = Field(default_factory=dict, description="Additional metadata")
 
-    # pydantic-config: Nested Config block scoped to parent model — not same-scope shadowing.
-    class Config:
-        extra = "allow"  # Allow extra fields for flexibility
-        validate_assignment = True
+    model_config = ConfigDict(extra="allow", validate_assignment=True)
 
 
 class ActorMessage(AgentMessageBase):
@@ -129,11 +136,12 @@ class ActorMessage(AgentMessageBase):
     This is the primary message type used for inter-agent communication.
     """
 
-    message_type: str = Field(default=MessageType.ACTOR_MESSAGE.value)
+    message_type: StrictStr = Field(default=MessageType.ACTOR_MESSAGE.value)
     content: dict[str, Any] = Field(..., description="Message content payload")
 
-    @pydantic_validator("content")
-    def validate_content_safety(cls, v: dict[str, Any]) -> dict[str, Any]:
+    @field_validator("content")
+    @classmethod
+    def validate_content_safety(cls, v: dict[str, Any], _info: ValidationInfo) -> dict[str, Any]:
         """Validate that message content doesn't contain dangerous patterns."""
         if not v:
             return v
@@ -156,9 +164,7 @@ class ActorMessage(AgentMessageBase):
         check_value(v)
         return v
 
-    # pydantic-config: Nested Config block scoped to parent model — not same-scope shadowing.
-    class Config:
-        extra = "allow"
+    model_config = ConfigDict(extra="allow")
 
 
 class StateUpdate(AgentMessageBase):
@@ -168,25 +174,27 @@ class StateUpdate(AgentMessageBase):
     State updates are critical and require strict validation before application.
     """
 
-    message_type: str = Field(default=MessageType.STATE_UPDATE.value)
-    state_key: str = Field(
+    message_type: StrictStr = Field(default=MessageType.STATE_UPDATE.value)
+    state_key: StrictStr = Field(
         ..., min_length=1, max_length=256, description="Key identifying the state to update"
     )
     state_value: Any = Field(..., description="New value for the state")
-    operation: str = Field(
+    operation: StrictStr = Field(
         default="set", description="Operation to perform (set, append, delete, merge)"
     )
-    version: int | None = Field(None, description="Expected version for optimistic locking")
+    version: StrictInt | None = Field(None, description="Expected version for optimistic locking")
 
-    @pydantic_validator("state_key")
-    def validate_state_key(cls, v: str) -> str:
+    @field_validator("state_key")
+    @classmethod
+    def validate_state_key(cls, v: str, _info: ValidationInfo) -> str:
         """Validate state key format."""
         if not re.match(r"^[a-zA-Z_][a-zA-Z0-9_.]*$", v):
             raise ValueError(f"Invalid state key format: {v}")
         return v
 
-    @pydantic_validator("state_value")
-    def validate_state_value_safety(cls, v: Any) -> Any:
+    @field_validator("state_value")
+    @classmethod
+    def validate_state_value_safety(cls, v: Any, _info: ValidationInfo) -> Any:
         """Validate that state value doesn't contain dangerous patterns."""
         validator = LLMOutputValidator(strict_mode=True)
 
@@ -198,7 +206,6 @@ class StateUpdate(AgentMessageBase):
                     raise ValueError(
                         f"Unsafe state value at path '{path}': {', '.join(result.errors)}"
                     )
-                # Return sanitized version if available
                 return result.sanitized_content or value
             if isinstance(value, dict):
                 return {
@@ -210,17 +217,16 @@ class StateUpdate(AgentMessageBase):
 
         return check_value(v)
 
-    @pydantic_validator("operation")
-    def validate_operation(cls, v: str) -> str:
+    @field_validator("operation")
+    @classmethod
+    def validate_operation(cls, v: str, _info: ValidationInfo) -> str:
         """Validate operation type."""
         valid_operations = {"set", "append", "delete", "merge", "increment", "decrement"}
         if v not in valid_operations:
             raise ValueError(f"Invalid operation: {v}. Must be one of {valid_operations}")
         return v
 
-    # pydantic-config: Nested Config block scoped to parent model — not same-scope shadowing.
-    class Config:
-        extra = "forbid"
+    model_config = ConfigDict(extra="forbid")
 
 
 class ToolRequest(AgentMessageBase):
@@ -230,21 +236,21 @@ class ToolRequest(AgentMessageBase):
     Tool requests require validation of both the tool name and arguments.
     """
 
-    message_type: str = Field(default=MessageType.TOOL_REQUEST.value)
-    tool_name: str = Field(
+    message_type: StrictStr = Field(default=MessageType.TOOL_REQUEST.value)
+    tool_name: StrictStr = Field(
         ..., min_length=1, max_length=100, description="Name of the tool to execute"
     )
     arguments: dict[str, Any] = Field(default_factory=dict, description="Arguments for the tool")
-    timeout: int = Field(default=30, ge=1, le=300, description="Execution timeout in seconds")
-    execution_id: str = Field(default_factory=lambda: f"exec_{uuid.uuid4().hex[:8]}")
+    timeout: StrictInt = Field(default=30, ge=1, le=300, description="Execution timeout in seconds")
+    execution_id: StrictStr = Field(default_factory=lambda: f"exec_{uuid.uuid4().hex[:8]}")
 
-    @pydantic_validator("tool_name")
-    def validate_tool_name(cls, v: str) -> str:
+    @field_validator("tool_name")
+    @classmethod
+    def validate_tool_name(cls, v: str, _info: ValidationInfo) -> str:
         """Validate tool name format."""
         if not re.match(r"^[a-zA-Z_][a-zA-Z0-9_]*$", v):
             raise ValueError(f"Invalid tool name format: {v}")
 
-        # Block dangerous tool names
         dangerous_tools = {
             "eval",
             "exec",
@@ -266,8 +272,9 @@ class ToolRequest(AgentMessageBase):
 
         return v
 
-    @pydantic_validator("arguments")
-    def validate_arguments_safety(cls, v: dict[str, Any]) -> dict[str, Any]:
+    @field_validator("arguments")
+    @classmethod
+    def validate_arguments_safety(cls, v: dict[str, Any], _info: ValidationInfo) -> dict[str, Any]:
         """Validate that tool arguments don't contain dangerous patterns."""
         validator = LLMOutputValidator(strict_mode=True)
 
@@ -279,9 +286,7 @@ class ToolRequest(AgentMessageBase):
 
         return v
 
-    # pydantic-config: Nested Config block scoped to parent model — not same-scope shadowing.
-    class Config:
-        extra = "forbid"
+    model_config = ConfigDict(extra="forbid")
 
 
 class ToolResponse(AgentMessageBase):
@@ -291,15 +296,18 @@ class ToolResponse(AgentMessageBase):
     Contains the result or error from tool execution.
     """
 
-    message_type: str = Field(default=MessageType.TOOL_RESPONSE.value)
-    execution_id: str = Field(..., description="ID of the executed tool request")
-    success: bool = Field(..., description="Whether the tool execution succeeded")
+    message_type: StrictStr = Field(default=MessageType.TOOL_RESPONSE.value)
+    execution_id: StrictStr = Field(..., description="ID of the executed tool request")
+    success: StrictBool = Field(..., description="Whether the tool execution succeeded")
     result: Any | None = Field(None, description="Result of the tool execution")
-    error: str | None = Field(None, description="Error message if execution failed")
-    execution_time_ms: int = Field(default=0, ge=0, description="Execution time in milliseconds")
+    error: StrictStr | None = Field(None, description="Error message if execution failed")
+    execution_time_ms: StrictInt = Field(
+        default=0, ge=0, description="Execution time in milliseconds"
+    )
 
-    @pydantic_validator("error")
-    def validate_error_safety(cls, v: str | None) -> str | None:
+    @field_validator("error")
+    @classmethod
+    def validate_error_safety(cls, v: str | None, _info: ValidationInfo) -> str | None:
         """Validate that error messages don't contain dangerous patterns."""
         if not v:
             return v
@@ -312,9 +320,7 @@ class ToolResponse(AgentMessageBase):
 
         return v
 
-    # pydantic-config: Nested Config block scoped to parent model — not same-scope shadowing.
-    class Config:
-        extra = "forbid"
+    model_config = ConfigDict(extra="forbid")
 
 
 class CoordinationRequest(AgentMessageBase):
@@ -324,19 +330,20 @@ class CoordinationRequest(AgentMessageBase):
     Used for inter-agent coordination and task delegation.
     """
 
-    message_type: str = Field(default=MessageType.COORDINATION_REQUEST.value)
-    request_type: str = Field(..., description="Type of coordination request")
-    description: str = Field(
+    message_type: StrictStr = Field(default=MessageType.COORDINATION_REQUEST.value)
+    request_type: StrictStr = Field(..., description="Type of coordination request")
+    description: StrictStr = Field(
         ..., max_length=2000, description="Description of the coordination needed"
     )
-    required_capabilities: list[str] = Field(
+    required_capabilities: list[StrictStr] = Field(
         default_factory=list, description="Required agent capabilities"
     )
     deadline: datetime | None = Field(None, description="Optional deadline for the request")
     payload: dict[str, Any] | None = Field(None, description="Additional payload for the request")
 
-    @pydantic_validator("description")
-    def validate_description_safety(cls, v: str) -> str:
+    @field_validator("description")
+    @classmethod
+    def validate_description_safety(cls, v: str, _info: ValidationInfo) -> str:
         """Validate description safety."""
         validator = LLMOutputValidator(strict_mode=True)
         result = validator.validate_text(v)
@@ -344,8 +351,11 @@ class CoordinationRequest(AgentMessageBase):
             raise ValueError(f"Unsafe description: {', '.join(result.errors)}")
         return v
 
-    @pydantic_validator("payload")
-    def validate_payload_safety(cls, v: dict[str, Any] | None) -> dict[str, Any] | None:
+    @field_validator("payload")
+    @classmethod
+    def validate_payload_safety(
+        cls, v: dict[str, Any] | None, _info: ValidationInfo
+    ) -> dict[str, Any] | None:
         """Validate payload safety."""
         if not v:
             return v
@@ -368,9 +378,7 @@ class CoordinationRequest(AgentMessageBase):
 
         return check_value(v)
 
-    # pydantic-config: Nested Config block scoped to parent model — not same-scope shadowing.
-    class Config:
-        extra = "forbid"
+    model_config = ConfigDict(extra="forbid")
 
 
 class ConsensusProposal(AgentMessageBase):
@@ -380,17 +388,20 @@ class ConsensusProposal(AgentMessageBase):
     Used in swarm consensus mechanisms for decision making.
     """
 
-    message_type: str = Field(default=MessageType.CONSENSUS_PROPOSAL.value)
-    proposal_id: str = Field(default_factory=lambda: f"prop_{uuid.uuid4().hex[:12]}")
-    title: str = Field(..., min_length=1, max_length=200, description="Title of the proposal")
-    description: str = Field(
+    message_type: StrictStr = Field(default=MessageType.CONSENSUS_PROPOSAL.value)
+    proposal_id: StrictStr = Field(default_factory=lambda: f"prop_{uuid.uuid4().hex[:12]}")
+    title: StrictStr = Field(..., min_length=1, max_length=200, description="Title of the proposal")
+    description: StrictStr = Field(
         ..., max_length=5000, description="Detailed description of the proposal"
     )
-    options: list[str] = Field(default_factory=list, description="Available options for voting")
-    proposer_id: str = Field(..., description="ID of the proposing agent")
+    options: list[StrictStr] = Field(
+        default_factory=list, description="Available options for voting"
+    )
+    proposer_id: StrictStr = Field(..., description="ID of the proposing agent")
 
-    @pydantic_validator("title", "description")
-    def validate_text_safety(cls, v: str) -> str:
+    @field_validator("title", "description")
+    @classmethod
+    def validate_text_safety(cls, v: str, _info: ValidationInfo) -> str:
         """Validate text safety."""
         validator = LLMOutputValidator(strict_mode=True)
         result = validator.validate_text(v)
@@ -398,9 +409,7 @@ class ConsensusProposal(AgentMessageBase):
             raise ValueError(f"Unsafe text: {', '.join(result.errors)}")
         return v
 
-    # pydantic-config: Nested Config block scoped to parent model — not same-scope shadowing.
-    class Config:
-        extra = "forbid"
+    model_config = ConfigDict(extra="forbid")
 
 
 class ConsensusVote(AgentMessageBase):
@@ -408,18 +417,19 @@ class ConsensusVote(AgentMessageBase):
     Vote in a consensus deliberation.
     """
 
-    message_type: str = Field(default=MessageType.CONSENSUS_VOTE.value)
-    proposal_id: str = Field(..., description="ID of the proposal being voted on")
-    vote: str = Field(..., description="The vote value (option name or yes/no)")
-    confidence: float = Field(
+    message_type: StrictStr = Field(default=MessageType.CONSENSUS_VOTE.value)
+    proposal_id: StrictStr = Field(..., description="ID of the proposal being voted on")
+    vote: StrictStr = Field(..., description="The vote value (option name or yes/no)")
+    confidence: StrictFloat = Field(
         default=1.0, ge=0.0, le=1.0, description="Confidence in the vote (0-1)"
     )
-    reasoning: str | None = Field(
+    reasoning: StrictStr | None = Field(
         None, max_length=1000, description="Optional reasoning for the vote"
     )
 
-    @pydantic_validator("reasoning")
-    def validate_reasoning_safety(cls, v: str | None) -> str | None:
+    @field_validator("reasoning")
+    @classmethod
+    def validate_reasoning_safety(cls, v: str | None, _info: ValidationInfo) -> str | None:
         """Validate reasoning safety."""
         if not v:
             return v
@@ -430,9 +440,7 @@ class ConsensusVote(AgentMessageBase):
             raise ValueError(f"Unsafe reasoning: {', '.join(result.errors)}")
         return v
 
-    # pydantic-config: Nested Config block scoped to parent model — not same-scope shadowing.
-    class Config:
-        extra = "forbid"
+    model_config = ConfigDict(extra="forbid")
 
 
 class ErrorMessage(AgentMessageBase):
@@ -440,14 +448,15 @@ class ErrorMessage(AgentMessageBase):
     Error message from an agent.
     """
 
-    message_type: str = Field(default=MessageType.ERROR.value)
-    error_code: str = Field(..., description="Error code for categorization")
-    error_message: str = Field(..., description="Human-readable error message")
-    stack_trace: str | None = Field(None, description="Optional stack trace")
+    message_type: StrictStr = Field(default=MessageType.ERROR.value)
+    error_code: StrictStr = Field(..., description="Error code for categorization")
+    error_message: StrictStr = Field(..., description="Human-readable error message")
+    stack_trace: StrictStr | None = Field(None, description="Optional stack trace")
     context: dict[str, Any] | None = Field(None, description="Context information about the error")
 
-    @pydantic_validator("error_message", "stack_trace")
-    def validate_error_safety(cls, v: str | None) -> str | None:
+    @field_validator("error_message", "stack_trace")
+    @classmethod
+    def validate_error_safety(cls, v: str | None, _info: ValidationInfo) -> str | None:
         """Validate and sanitize error messages."""
         if not v:
             return v
@@ -456,9 +465,7 @@ class ErrorMessage(AgentMessageBase):
         result = validator.validate_text(v)
         return result.sanitized_content or v
 
-    # pydantic-config: Nested Config block scoped to parent model — not same-scope shadowing.
-    class Config:
-        extra = "forbid"
+    model_config = ConfigDict(extra="forbid")
 
 
 class TaskMessage(AgentMessageBase):
@@ -466,13 +473,16 @@ class TaskMessage(AgentMessageBase):
     Message related to task management.
     """
 
-    message_type: str = Field(..., description="Specific task message type")
-    task_id: str = Field(..., description="ID of the task")
-    task_status: str = Field(default="pending", description="Status of the task")
+    message_type: StrictStr = Field(..., description="Specific task message type")
+    task_id: StrictStr = Field(..., description="ID of the task")
+    task_status: StrictStr = Field(default="pending", description="Status of the task")
     task_data: dict[str, Any] | None = Field(None, description="Task-related data")
 
-    @pydantic_validator("task_data")
-    def validate_task_data_safety(cls, v: dict[str, Any] | None) -> dict[str, Any] | None:
+    @field_validator("task_data")
+    @classmethod
+    def validate_task_data_safety(
+        cls, v: dict[str, Any] | None, _info: ValidationInfo
+    ) -> dict[str, Any] | None:
         """Validate task data safety."""
         if not v:
             return v
@@ -495,9 +505,7 @@ class TaskMessage(AgentMessageBase):
 
         return check_value(v)
 
-    # pydantic-config: Nested Config block scoped to parent model — not same-scope shadowing.
-    class Config:
-        extra = "forbid"
+    model_config = ConfigDict(extra="forbid")
 
 
 class CodeExecutionRequest(AgentMessageBase):
@@ -508,14 +516,15 @@ class CodeExecutionRequest(AgentMessageBase):
     additional validation for code content.
     """
 
-    message_type: str = Field(default="code_execution_request")
-    code: str = Field(..., min_length=1, description="Code to execute")
-    language: str = Field(default="python", description="Programming language")
-    timeout: int = Field(default=30, ge=1, le=300, description="Execution timeout in seconds")
-    sandbox: bool = Field(default=True, description="Whether to execute in sandbox")
+    message_type: StrictStr = Field(default="code_execution_request")
+    code: StrictStr = Field(..., min_length=1, description="Code to execute")
+    language: StrictStr = Field(default="python", description="Programming language")
+    timeout: StrictInt = Field(default=30, ge=1, le=300, description="Execution timeout in seconds")
+    sandbox: StrictBool = Field(default=True, description="Whether to execute in sandbox")
 
-    @pydantic_validator("code")
-    def validate_code_safety(cls, v: str) -> str:
+    @field_validator("code")
+    @classmethod
+    def validate_code_safety(cls, v: str, _info: ValidationInfo) -> str:
         """Validate code for dangerous patterns."""
         validator = LLMOutputValidator(strict_mode=True)
         result = validator.validate_code(v)
@@ -525,9 +534,7 @@ class CodeExecutionRequest(AgentMessageBase):
 
         return v
 
-    # pydantic-config: Nested Config block scoped to parent model — not same-scope shadowing.
-    class Config:
-        extra = "forbid"
+    model_config = ConfigDict(extra="forbid")
 
 
 # Message type registry for dynamic validation
@@ -580,7 +587,7 @@ def validate_message(message_type: str, content: dict[str, Any]) -> ValidationRe
 
         return ValidationResult(
             valid=True,
-            content=model.dict(),
+            content=model.model_dump(),
             errors=[],
             warnings=[],
             severity=ValidationSeverity.INFO,

@@ -2,12 +2,12 @@
 LLM Output Validation Module
 
 This module provides comprehensive validation and sanitization for LLM-generated outputs.
-It uses Pydantic for schema validation and implements security patterns to block
-dangerous code execution patterns.
+It uses Pydantic v2 strict mode for schema validation and implements security patterns
+to block dangerous code execution patterns.
 
 Author: Heretek Swarm Collective
 Date: 2026-04-07
-Version: 1.0.0
+Version: 2.0.0
 """
 
 from __future__ import annotations
@@ -19,8 +19,15 @@ from enum import StrEnum
 from typing import Any
 
 import structlog
-from pydantic import BaseModel, Field, ValidationError
-from pydantic import validator as pydantic_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    StrictStr,
+    ValidationError,
+    ValidationInfo,
+    field_validator,
+)
 
 logger = structlog.get_logger(__name__)
 
@@ -155,23 +162,21 @@ class ValidationResult:
 class LLMOutputBase(BaseModel):
     """Base class for all LLM output models."""
 
-    # pydantic-config: Nested Config block scoped to parent model — not same-scope shadowing.
-    class Config:
-        extra = "forbid"  # Reject extra fields by default
-        validate_assignment = True
+    model_config = ConfigDict(extra="forbid", validate_assignment=True)
 
 
 class CodeBlock(LLMOutputBase):
     """Validated code block from LLM output."""
 
     language: CodeLanguage = Field(..., description="Programming language of the code")
-    code: str = Field(..., min_length=1, description="The actual code content")
-    description: str | None = Field(
+    code: StrictStr = Field(..., min_length=1, description="The actual code content")
+    description: StrictStr | None = Field(
         None, max_length=500, description="Brief description of what the code does"
     )
 
-    @pydantic_validator("code")
-    def validate_code_safety(cls, v: str) -> str:
+    @field_validator("code")
+    @classmethod
+    def validate_code_safety(cls, v: str, _info: ValidationInfo) -> str:
         """Validate that code doesn't contain dangerous patterns."""
         if not v:
             return v
@@ -182,21 +187,20 @@ class CodeBlock(LLMOutputBase):
 
         return v
 
-    # pydantic-config: Nested Config block scoped to parent model — not same-scope shadowing.
-    class Config:
-        extra = "ignore"  # Allow extra fields for flexibility
+    model_config = ConfigDict(extra="ignore")
 
 
 class TextOutput(LLMOutputBase):
     """Validated text output from LLM."""
 
-    content: str = Field(..., min_length=1, max_length=100000, description="The text content")
-    content_type: str = Field(
+    content: StrictStr = Field(..., min_length=1, max_length=100000, description="The text content")
+    content_type: StrictStr = Field(
         default="text", description="Type of content (text, markdown, json, etc.)"
     )
 
-    @pydantic_validator("content")
-    def validate_text_safety(cls, v: str) -> str:
+    @field_validator("content")
+    @classmethod
+    def validate_text_safety(cls, v: str, _info: ValidationInfo) -> str:
         """Validate that text doesn't contain dangerous patterns."""
         if not v:
             return v
@@ -212,19 +216,18 @@ class TextOutput(LLMOutputBase):
 
         return v
 
-    # pydantic-config: Nested Config block scoped to parent model — not same-scope shadowing.
-    class Config:
-        extra = "ignore"
+    model_config = ConfigDict(extra="ignore")
 
 
 class StructuredResponse(LLMOutputBase):
     """Validated structured JSON response from LLM."""
 
     data: dict[str, Any] = Field(..., description="The structured data")
-    schema_version: str = Field(default="1.0", description="Schema version for validation")
+    schema_version: StrictStr = Field(default="1.0", description="Schema version for validation")
 
-    @pydantic_validator("data")
-    def validate_data_safety(cls, v: dict[str, Any]) -> dict[str, Any]:
+    @field_validator("data")
+    @classmethod
+    def validate_data_safety(cls, v: dict[str, Any], _info: ValidationInfo) -> dict[str, Any]:
         """Validate that structured data doesn't contain dangerous patterns."""
         if not v:
             return v
@@ -247,32 +250,32 @@ class StructuredResponse(LLMOutputBase):
         check_value(v)
         return v
 
-    # pydantic-config: Nested Config block scoped to parent model — not same-scope shadowing.
-    class Config:
-        extra = "allow"  # Allow extra fields in structured data
+    model_config = ConfigDict(extra="allow")
 
 
 class ToolCall(LLMOutputBase):
     """Validated tool/function call from LLM."""
 
-    tool_name: str = Field(
+    tool_name: StrictStr = Field(
         ..., min_length=1, max_length=100, description="Name of the tool to call"
     )
     arguments: dict[str, Any] = Field(default_factory=dict, description="Arguments for the tool")
-    call_id: str = Field(
+    call_id: StrictStr = Field(
         default_factory=lambda: f"call_{datetime.now(UTC).timestamp()}",
         description="Unique call identifier",
     )
 
-    @pydantic_validator("tool_name")
-    def validate_tool_name(cls, v: str) -> str:
+    @field_validator("tool_name")
+    @classmethod
+    def validate_tool_name(cls, v: str, _info: ValidationInfo) -> str:
         """Validate tool name format."""
         if not re.match(r"^[a-zA-Z_][a-zA-Z0-9_]*$", v):
             raise ValueError(f"Invalid tool name format: {v}")
         return v
 
-    @pydantic_validator("arguments")
-    def validate_arguments_safety(cls, v: dict[str, Any]) -> dict[str, Any]:
+    @field_validator("arguments")
+    @classmethod
+    def validate_arguments_safety(cls, v: dict[str, Any], _info: ValidationInfo) -> dict[str, Any]:
         """Validate that arguments don't contain dangerous patterns."""
         if not v:
             return v
@@ -285,9 +288,7 @@ class ToolCall(LLMOutputBase):
 
         return v
 
-    # pydantic-config: Nested Config block scoped to parent model — not same-scope shadowing.
-    class Config:
-        extra = "forbid"
+    model_config = ConfigDict(extra="forbid")
 
 
 class LLMOutputValidator:
