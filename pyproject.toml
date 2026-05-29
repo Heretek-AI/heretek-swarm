@@ -46,6 +46,8 @@ dependencies = [
     "prometheus-client>=0.19.0",
     # NATS messaging
     "nats-py>=2.0.0",
+    # JWT authentication
+    "PyJWT>=2.8",
 ]
 
 [project.optional-dependencies]
@@ -517,6 +519,7 @@ ignore = [
 "backend/heretek_swarm/actors/base/state_management.py" = ["E501"]
 "backend/heretek_swarm/actors/examiner/__init__.py" = ["E501"]
 "backend/heretek_swarm/actors/examiner/agent.py" = ["E501", "E402"]
+"backend/heretek_swarm/gateway/auth.py" = ["UP017"]
 "backend/heretek_swarm/api/perceiver.py" = ["B008"]
 "backend/heretek_swarm/actors/perceiver_plus/__init__.py" = ["E501"]
 "backend/heretek_swarm/api/main.py" = ["E501", "DTZ003", "S110"]
