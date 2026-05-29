@@ -59,9 +59,11 @@ services:
     ports:
       - "4222:4222"
       - "8222:8222"
-    command: ["-js"]
+    command: ["-c", "/etc/nats/nats-server.conf"]
     volumes:
       - nats_data:/data
+      - ./nats-server.conf:/etc/nats/nats-server.conf:ro
+      - ./certs:/etc/nats/certs:ro
     healthcheck:
       <<: *healthcheck-defaults
       test: ["CMD-SHELL", "nc -z localhost 4222 || exit 1"]
@@ -87,6 +89,8 @@ services:
       QDRANT_URL: ${QDRANT_URL:-http://qdrant:6333}
       QDRANT_API_KEY: ${QDRANT_API_KEY:-}
       HERETEK_NATS_URL: ${HERETEK_NATS_URL:-nats://nats:4222}
+      # When HERETEK_MTLS_ENABLED=true, set HERETEK_NATS_URL=tls://nats:4222
+      HERETEK_MTLS_ENABLED: ${HERETEK_MTLS_ENABLED:-false}
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
       OPENAI_BASE_URL: ${OPENAI_BASE_URL:-https://api.minimax.io/v1}
       LLM_MODEL: ${LLM_MODEL:-MiniMax-M2.7}

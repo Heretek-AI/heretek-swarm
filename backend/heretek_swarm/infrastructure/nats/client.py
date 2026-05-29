@@ -4,6 +4,8 @@ Provides async NATS connection management with OTel distributed tracing.
 """
 
 import os
+import ssl
+import tempfile
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
@@ -12,6 +14,7 @@ from typing import TYPE_CHECKING, Any
 
 import structlog
 
+from heretek_swarm.infrastructure.nats.ca import CertificateAuthority
 from heretek_swarm.infrastructure.otel.tracing import (
     SpanStatus,
     get_tracer,
@@ -45,6 +48,10 @@ class NATSConfig:
     user_credentials: str | None = None
     nkey_seed: str | None = None
     tracing_config: "TracingConfig | None" = None
+    tls_enabled: bool | None = None
+    tls_ca_file: str | None = None
+    tls_cert_file: str | None = None
+    tls_key_file: str | None = None
 
     def __post_init__(self) -> None:
         """Resolve NATS URL from env var when not explicitly set."""
@@ -56,6 +63,11 @@ class NATSConfig:
                     "or use docker compose."
                 )
             self.url = nats_url
+        # Resolve TLS toggle from env if not explicitly set
+        if self.tls_enabled is None:
+            self.tls_enabled = (
+                os.getenv("HERETEK_MTLS_ENABLED", "false").lower() == "true"
+            )
 
 
 @dataclass
@@ -72,6 +84,7 @@ class NATSClient:
     _state: ConnectionState = field(default=ConnectionState.DISCONNECTED)
     _subscriptions: dict[str, Any] = field(default_factory=dict)
     _tracer: Any = field(default=None)
+    _temp_cert_files: list[str] = field(default_factory=list)
 
     def __post_init__(self) -> None:
         """Initialize tracer after dataclass initialization."""
@@ -79,7 +92,7 @@ class NATSClient:
 
     async def connect(self) -> bool:
         """
-        Establish NATS connection with tracing.
+        Establish NATS connection with tracing and optional mTLS.
 
         Returns:
             True if connection successful
@@ -90,6 +103,7 @@ class NATSClient:
             attributes={
                 "nats.url": self.config.url,
                 "nats.client_name": self.config.name,
+                "nats.tls_enabled": self.config.tls_enabled,
             },
         ) as span:
             try:
@@ -108,27 +122,143 @@ class NATSClient:
                     self._state = ConnectionState.FAILED
                     return False
 
+                # Build connect kwargs
+                connect_kwargs: dict[str, Any] = {
+                    "name": self.config.name,
+                    "max_reconnect_attempts": self.config.max_reconnect_attempts,
+                    "reconnect_time_wait": self.config.reconnect_time_wait,
+                }
+
+                server_url = self.config.url
+
+                if self.config.tls_enabled:
+                    ssl_ctx = self._build_ssl_context()
+                    connect_kwargs["tls"] = ssl_ctx
+                    if server_url.startswith("nats://"):
+                        server_url = server_url.replace("nats://", "tls://", 1)
+                    logger.debug("mTLS enabled — using tls:// URL", server=server_url)
+
                 self._connection = await nats.connect(
-                    self.config.url,
-                    name=self.config.name,
-                    max_reconnect_attempts=self.config.max_reconnect_attempts,
-                    reconnect_time_wait=self.config.reconnect_time_wait,
+                    server_url,
+                    **connect_kwargs,
                 )
+
+                if self.config.tls_enabled:
+                    peer_cert_subject = "unknown"
+                    try:
+                        transport = getattr(
+                            self._connection, "_io_reader", None
+                        ) or getattr(self._connection, "_transport", None)
+                        if transport is not None:
+                            get_info = getattr(transport, "get_extra_info", None)
+                            if get_info is not None:
+                                peer_cert = get_info("peercert")
+                                if peer_cert is not None:
+                                    subject_attrs = peer_cert.get("subject", [])
+                                    cn = next(
+                                        (
+                                            v
+                                            for t, v in subject_attrs
+                                            if t == "commonName"
+                                        ),
+                                        "unknown",
+                                    )
+                                    peer_cert_subject = cn
+                    except Exception:
+                        logger.debug("Could not extract peer certificate subject")
+
+                    logger.info(
+                        "nats_tls_connection_established",
+                        server=server_url,
+                        peer_cert_subject=peer_cert_subject,
+                    )
+                else:
+                    logger.info("nats_connected", url=server_url)
 
                 self._state = ConnectionState.CONNECTED
                 span.set_status(SpanStatus.OK)
-                logger.info("nats_connected", url=self.config.url)
                 return True
 
             except Exception as e:
+                if self.config.tls_enabled:
+                    logger.error(
+                        "nats_tls_connection_failed",
+                        server=self.config.url,
+                        error=str(e),
+                    )
                 logger.error("nats_connection_failed", error=str(e))
                 span.record_exception(e)
                 span.set_status(SpanStatus.ERROR, str(e))
                 self._state = ConnectionState.FAILED
                 return False
 
+    def _build_ssl_context(self) -> ssl.SSLContext:
+        """Build an SSL context for mTLS.
+
+        Uses explicitly-provided file paths when available; otherwise loads
+        from secrets/certs.yaml via CertificateAuthority.
+        """
+        ca_cert_str: str
+        cert_str: str
+        key_str: str
+
+        if (
+            self.config.tls_ca_file
+            and self.config.tls_cert_file
+            and self.config.tls_key_file
+        ):
+            with open(self.config.tls_ca_file) as f:
+                ca_cert_str = f.read()
+            with open(self.config.tls_cert_file) as f:
+                cert_str = f.read()
+            with open(self.config.tls_key_file) as f:
+                key_str = f.read()
+        else:
+            ca = CertificateAuthority()
+            agent_id = self.config.name
+            agent_result = ca.issue_agent_cert(agent_id)
+            ca_cert_str = ca.ca_cert_pem
+            cert_str = agent_result["cert"]
+            key_str = agent_result["key"]
+
+        # Write PEM data to temp files
+        ca_cert_fd, ca_cert_path = tempfile.mkstemp(
+            suffix=".pem", prefix="heretek_client_ca_"
+        )
+        with os.fdopen(ca_cert_fd, "w") as f:
+            f.write(ca_cert_str)
+        self._temp_cert_files.append(ca_cert_path)
+
+        cert_fd, cert_path = tempfile.mkstemp(
+            suffix=".pem", prefix="heretek_client_cert_"
+        )
+        with os.fdopen(cert_fd, "w") as f:
+            f.write(cert_str)
+        self._temp_cert_files.append(cert_path)
+
+        key_fd, key_path = tempfile.mkstemp(
+            suffix=".pem", prefix="heretek_client_key_"
+        )
+        with os.fdopen(key_fd, "w") as f:
+            f.write(key_str)
+        self._temp_cert_files.append(key_path)
+
+        ssl_ctx = ssl.create_default_context(purpose=ssl.Purpose.SERVER_AUTH)
+        ssl_ctx.check_hostname = False
+        ssl_ctx.verify_mode = ssl.CERT_REQUIRED
+        ssl_ctx.load_verify_locations(cafile=ca_cert_path)
+        ssl_ctx.load_cert_chain(certfile=cert_path, keyfile=key_path)
+
+        logger.debug(
+            "ssl_context_built_for_mtls",
+            ca_cert_path=ca_cert_path,
+            cert_path=cert_path,
+            key_path=key_path,
+        )
+        return ssl_ctx
+
     async def disconnect(self) -> None:
-        """Close NATS connection with tracing."""
+        """Close NATS connection with tracing and temp cert cleanup."""
         with self._tracer.start_as_current_span(
             "nats.disconnect",
             kind="client",
@@ -147,6 +277,13 @@ class NATSClient:
             finally:
                 self._connection = None
                 self._state = ConnectionState.DISCONNECTED
+                # Cleanup temp cert files
+                for tmp_path in self._temp_cert_files:
+                    try:
+                        os.unlink(tmp_path)
+                    except OSError:
+                        pass
+                self._temp_cert_files.clear()
                 span.set_status(SpanStatus.OK)
 
     async def publish(

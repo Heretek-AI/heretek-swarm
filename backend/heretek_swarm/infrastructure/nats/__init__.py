@@ -13,8 +13,10 @@ Topics:
 
 from heretek_swarm.infrastructure.nats.ca import (
     CertificateAuthority,
+    check_and_renew_certs,
     decrypt_certs,
     encrypt_certs,
+    generate_cert_files,
     load_certificates,
     write_temp_cert_files,
 )
@@ -41,8 +43,10 @@ __all__ = [
     "NATSPublisher",
     "NATSSubscriber",
     "PresenceAnnouncement",
+    "check_and_renew_certs",
     "decrypt_certs",
     "encrypt_certs",
+    "generate_cert_files",
     "get_discovery_registry",
     "get_nats_client",
     "load_certificates",

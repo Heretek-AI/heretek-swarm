@@ -18,6 +18,7 @@ import asyncio
 import contextlib
 import json
 import os
+import ssl
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
@@ -37,6 +38,9 @@ try:
 except ImportError:
     NATS_AVAILABLE = False
     NatsError = Exception
+
+# Import CertificateAuthority for mTLS support
+from heretek_swarm.infrastructure.nats.ca import CertificateAuthority
 
 
 class ConnectionState(Enum):
@@ -117,6 +121,10 @@ class NATSEventMesh:
         reconnect_time_wait: float = 1.0,
         ping_interval: int = 30,
         max_outstanding_pings: int = 1000,
+        tls_enabled: bool | None = None,
+        tls_ca_file: str | None = None,
+        tls_cert_file: str | None = None,
+        tls_key_file: str | None = None,
     ) -> None:
         """
         Initialize NATS EventMesh.
@@ -129,6 +137,10 @@ class NATSEventMesh:
             reconnect_time_wait: Time to wait between reconnect attempts
             ping_interval: Ping interval in seconds
             max_outstanding_pings: Max outstanding pings
+            tls_enabled: Enable mTLS. Default reads HERETEK_MTLS_ENABLED env var.
+            tls_ca_file: Path to CA certificate PEM file.
+            tls_cert_file: Path to client certificate PEM file.
+            tls_key_file: Path to client key PEM file.
         """
         if servers:
             self.servers = servers
@@ -146,6 +158,19 @@ class NATSEventMesh:
         self.reconnect_time_wait = reconnect_time_wait
         self.ping_interval = ping_interval
         self.max_outstanding_pings = max_outstanding_pings
+
+        # TLS / mTLS config
+        self.tls_enabled = (
+            tls_enabled
+            if tls_enabled is not None
+            else os.getenv("HERETEK_MTLS_ENABLED", "false").lower() == "true"
+        )
+        self.tls_ca_file = tls_ca_file
+        self.tls_cert_file = tls_cert_file
+        self.tls_key_file = tls_key_file
+
+        # Temp cert file tracking for cleanup
+        self._temp_cert_files: list[str] = []
 
         # Connection state
         self._state = ConnectionState.DISCONNECTED
@@ -255,36 +280,156 @@ class NATSEventMesh:
             return False
 
     async def _connect_to_server(self) -> Any | None:
-        """Connect to a NATS server with retry."""
+        """Connect to a NATS server with retry and optional mTLS."""
         last_error = None
 
         for server in self.servers:
             for attempt in range(self.max_reconnect_attempts):
                 try:
-                    logger.debug("Connecting to {server} (attempt {attempt + 1})")
+                    server_display = server
+                    logger.debug("Connecting to %s (attempt %d)", server, attempt + 1)
 
-                    nc = await nats.connect(
-                        server,
-                        name=self.client_name,
-                        reconnect_time_wait=self.reconnect_time_wait,
-                        ping_interval=self.ping_interval,
-                        max_outstanding_pings=self.max_outstanding_pings,
-                        max_reconnect_attempts=1,  # Fail fast, we handle retries
-                    )
+                    # Build kwargs for nats.connect()
+                    kwargs: dict[str, Any] = {
+                        "name": self.client_name,
+                        "reconnect_time_wait": self.reconnect_time_wait,
+                        "ping_interval": self.ping_interval,
+                        "max_outstanding_pings": self.max_outstanding_pings,
+                        "max_reconnect_attempts": 1,  # Fail fast, we handle retries
+                    }
 
-                    logger.info("Connected to {server}")
+                    if self.tls_enabled:
+                        ssl_ctx = self._build_ssl_context()
+                        kwargs["tls"] = ssl_ctx
+                        # Switch URL prefix from nats:// to tls://
+                        if server.startswith("nats://"):
+                            server = server.replace("nats://", "tls://", 1)
+                            server_display = server
+                            logger.debug(
+                                "mTLS enabled — using tls:// URL", server=server
+                            )
+
+                    nc = await nats.connect(server, **kwargs)
+
+                    if self.tls_enabled:
+                        peer_cert_subject = "unknown"
+                        try:
+                            # Extract peer certificate subject for logging
+                            transport = getattr(nc, "_io_reader", None) or getattr(
+                                nc, "_transport", None
+                            )
+                            if transport is not None:
+                                sock = getattr(transport, "get_extra_info", None)
+                                if sock is not None:
+                                    peer_cert = sock("peercert")
+                                    if peer_cert is not None:
+                                        subject_attrs = peer_cert.get("subject", [])
+                                        cn = next(
+                                            (
+                                                v
+                                                for t, v in subject_attrs
+                                                if t == "commonName"
+                                            ),
+                                            "unknown",
+                                        )
+                                        peer_cert_subject = cn
+                        except Exception:
+                            logger.debug(
+                                "Could not extract peer certificate subject"
+                            )
+
+                        logger.info(
+                            "nats_tls_connection_established",
+                            server=server_display,
+                            peer_cert_subject=peer_cert_subject,
+                        )
+                    else:
+                        logger.info("Connected to %s", server_display)
+
                     return nc
 
                 except Exception as e:
                     last_error = e
+                    if self.tls_enabled:
+                        logger.error(
+                            "nats_tls_connection_failed",
+                            server=server_display,
+                            error=str(e),
+                        )
                     logger.warning(
-                        f"Failed to connect to {server}",  # noqa: G004
+                        "Failed to connect to %s",
+                        server_display,
                         error=str(e),
                         attempt=attempt + 1,
                     )
                     await asyncio.sleep(self.reconnect_time_wait)
 
         raise last_error or Exception("No servers available")
+
+    def _build_ssl_context(self) -> ssl.SSLContext:
+        """Build an SSL context for mTLS.
+
+        Reads certs from secrets/certs.yaml via CertificateAuthority when
+        tls_ca_file/tls_cert_file/tls_key_file are not explicitly provided.
+        """
+        import tempfile
+
+        ca_cert_str: str
+        cert_str: str
+        key_str: str
+
+        if self.tls_ca_file and self.tls_cert_file and self.tls_key_file:
+            # Use explicitly-provided paths
+            with open(self.tls_ca_file) as f:
+                ca_cert_str = f.read()
+            with open(self.tls_cert_file) as f:
+                cert_str = f.read()
+            with open(self.tls_key_file) as f:
+                key_str = f.read()
+        else:
+            # Load from secrets/certs.yaml via CertificateAuthority
+            ca = CertificateAuthority()
+            agent_id = self.client_name
+            agent_result = ca.issue_agent_cert(agent_id)
+            ca_cert_str = ca.ca_cert_pem
+            cert_str = agent_result["cert"]
+            key_str = agent_result["key"]
+
+        # Write PEM data to temp files
+        ca_cert_fd, ca_cert_path = tempfile.mkstemp(
+            suffix=".pem", prefix="heretek_mesh_ca_"
+        )
+        with os.fdopen(ca_cert_fd, "w") as f:
+            f.write(ca_cert_str)
+        self._temp_cert_files.append(ca_cert_path)
+
+        cert_fd, cert_path = tempfile.mkstemp(
+            suffix=".pem", prefix="heretek_mesh_cert_"
+        )
+        with os.fdopen(cert_fd, "w") as f:
+            f.write(cert_str)
+        self._temp_cert_files.append(cert_path)
+
+        key_fd, key_path = tempfile.mkstemp(
+            suffix=".pem", prefix="heretek_mesh_key_"
+        )
+        with os.fdopen(key_fd, "w") as f:
+            f.write(key_str)
+        self._temp_cert_files.append(key_path)
+
+        ssl_ctx = ssl.create_default_context(purpose=ssl.Purpose.SERVER_AUTH)
+        ssl_ctx.check_hostname = False  # Allow IP/hostname mismatch in dev
+        ssl_ctx.verify_mode = ssl.CERT_REQUIRED
+        ssl_ctx.load_verify_locations(cafile=ca_cert_path)
+        ssl_ctx.load_cert_chain(certfile=cert_path, keyfile=key_path)
+
+        logger.debug(
+            "ssl_context_built_for_mtls",
+            ca_cert_path=ca_cert_path,
+            cert_path=cert_path,
+            key_path=key_path,
+        )
+        return ssl_ctx
 
     async def _enable_fallback(self) -> bool:
         """Enable in-memory fallback mesh."""
@@ -314,6 +459,14 @@ class NATSEventMesh:
                     logger.error("Error closing NATS connection", error=str(e))
                 finally:
                     self._nc = None
+
+            # Clean up temp cert files
+            for tmp_path in self._temp_cert_files:
+                try:
+                    os.unlink(tmp_path)
+                except OSError:
+                    pass
+            self._temp_cert_files.clear()
 
             self._state = ConnectionState.DISCONNECTED
             self._subscriptions.clear()

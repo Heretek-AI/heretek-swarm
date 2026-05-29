@@ -116,6 +116,14 @@ async def lifespan(app: FastAPI):
         logger.critical("secrets_startup_failed", error=str(e))
         raise
 
+    # Step 0.5: Certificate auto-renewal check (after secrets loaded)
+    try:
+        from heretek_swarm.infrastructure.nats.ca import check_and_renew_certs
+
+        await check_and_renew_certs()
+    except Exception as e:
+        logger.warning("cert_auto_renewal_check_failed", error=str(e))
+
     await _init_config_service()
     await _init_supervisor()
     await _init_memory_store()
