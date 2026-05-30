@@ -516,7 +516,7 @@ class TestSopsEncryptDecrypt:
                 )
                 mock_exec.return_value = mock_proc
 
-                await encrypt_certs(Path("/tmp/test.yaml"))
+                await encrypt_certs(Path("/tmp/test.yaml"))  # noqa: S108
 
                 mock_exec.assert_called_once()
                 args = mock_exec.call_args[0]
@@ -541,7 +541,7 @@ class TestSopsEncryptDecrypt:
                 mock_exec.return_value = mock_proc
 
                 with pytest.raises(RuntimeError, match="encryption error"):
-                    await encrypt_certs(Path("/tmp/bad.yaml"))
+                    await encrypt_certs(Path("/tmp/bad.yaml"))  # noqa: S108
 
     @pytest.mark.asyncio
     async def test_decrypt_certs_success(self) -> None:
@@ -563,7 +563,7 @@ class TestSopsEncryptDecrypt:
                 mock_exec.return_value = mock_proc
 
                 with mock.patch.object(Path, "exists", return_value=True):
-                    result = await decrypt_certs(Path("/tmp/enc.yaml"))
+                    result = await decrypt_certs(Path("/tmp/enc.yaml"))  # noqa: S108
 
                 assert isinstance(result, dict)
                 assert result["ca"]["cert"] == "fake-ca"
@@ -587,7 +587,7 @@ class TestSopsEncryptDecrypt:
 
                 with mock.patch.object(Path, "exists", return_value=True):
                     with pytest.raises(RuntimeError, match="decrypt failure"):
-                        await decrypt_certs(Path("/tmp/bad.yaml"))
+                        await decrypt_certs(Path("/tmp/bad.yaml"))  # noqa: S108
 
     @pytest.mark.asyncio
     async def test_decrypt_certs_file_not_found(self) -> None:
@@ -598,7 +598,7 @@ class TestSopsEncryptDecrypt:
         ):
             with mock.patch.object(Path, "exists", return_value=False):
                 with pytest.raises(FileNotFoundError, match="Certs file not found"):
-                    await decrypt_certs(Path("/tmp/nonexistent.yaml"))
+                    await decrypt_certs(Path("/tmp/nonexistent.yaml"))  # noqa: S108
 
     @pytest.mark.asyncio
     async def test_decrypt_certs_non_dict_raises(self) -> None:
@@ -621,7 +621,7 @@ class TestSopsEncryptDecrypt:
                     with pytest.raises(
                         ValueError, match="not a YAML mapping"
                     ):
-                        await decrypt_certs(Path("/tmp/list.yaml"))
+                        await decrypt_certs(Path("/tmp/list.yaml"))  # noqa: S108
 
 
 # ---------------------------------------------------------------------------
@@ -856,7 +856,7 @@ class TestCheckAndRenewCerts:
     async def test_no_file_skips(self) -> None:
         """Returns False when certs file not found."""
         with mock.patch.object(Path, "exists", return_value=False):
-            result = await check_and_renew_certs(Path("/tmp/nonexistent.yaml"))
+            result = await check_and_renew_certs(Path("/tmp/nonexistent.yaml"))  # noqa: S108
         assert result is False
 
     @pytest.mark.asyncio
@@ -864,7 +864,7 @@ class TestCheckAndRenewCerts:
         """Returns False when SOPS_AGE_KEY is not set."""
         with mock.patch.object(Path, "exists", return_value=True):
             with mock.patch.dict(os.environ, {}, clear=True):
-                result = await check_and_renew_certs(Path("/tmp/test.yaml"))
+                result = await check_and_renew_certs(Path("/tmp/test.yaml"))  # noqa: S108
         assert result is False
 
     @pytest.mark.asyncio
@@ -876,7 +876,7 @@ class TestCheckAndRenewCerts:
                     "heretek_swarm.infrastructure.nats.ca.decrypt_certs",
                     side_effect=RuntimeError("decrypt fail"),
                 ):
-                    result = await check_and_renew_certs(Path("/tmp/test.yaml"))
+                    result = await check_and_renew_certs(Path("/tmp/test.yaml"))  # noqa: S108
         assert result is False
 
     @pytest.mark.asyncio
@@ -889,7 +889,7 @@ class TestCheckAndRenewCerts:
                     "heretek_swarm.infrastructure.nats.ca.decrypt_certs",
                     return_value=data,
                 ):
-                    result = await check_and_renew_certs(Path("/tmp/test.yaml"))
+                    result = await check_and_renew_certs(Path("/tmp/test.yaml"))  # noqa: S108
         assert result is False
 
     @pytest.mark.asyncio
@@ -906,7 +906,7 @@ class TestCheckAndRenewCerts:
                     "heretek_swarm.infrastructure.nats.ca.decrypt_certs",
                     return_value=data,
                 ):
-                    result = await check_and_renew_certs(Path("/tmp/test.yaml"))
+                    result = await check_and_renew_certs(Path("/tmp/test.yaml"))  # noqa: S108
         assert result is False
 
     @pytest.mark.asyncio
@@ -954,7 +954,7 @@ class TestCheckAndRenewCerts:
                     with mock.patch(
                         "heretek_swarm.infrastructure.nats.ca.encrypt_certs",
                     ) as mock_encrypt:
-                        result = await check_and_renew_certs(Path("/tmp/test.yaml"))
+                        result = await check_and_renew_certs(Path("/tmp/test.yaml"))  # noqa: S108
 
         assert result is True
         mock_encrypt.assert_called_once()
@@ -972,5 +972,5 @@ class TestCheckAndRenewCerts:
                     "heretek_swarm.infrastructure.nats.ca.decrypt_certs",
                     return_value=data,
                 ):
-                    result = await check_and_renew_certs(Path("/tmp/test.yaml"))
+                    result = await check_and_renew_certs(Path("/tmp/test.yaml"))  # noqa: S108
         assert result is False

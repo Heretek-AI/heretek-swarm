@@ -435,7 +435,7 @@ class TestToolRequest:
         tr = ToolRequest(
             sender_id="agent-1",
             tool_name="list_files",
-            arguments={"path": "/tmp"},
+            arguments={"path": "/tmp"},  # noqa: S108
         )
         assert tr.tool_name == "list_files"
         assert tr.timeout == 30  # default
@@ -922,13 +922,13 @@ class TestFactoryFunctions:
     def test_create_tool_request(self) -> None:
         msg = create_tool_request(
             tool_name="read_file",
-            arguments={"path": "/tmp/test.txt"},
+            arguments={"path": "/tmp/test.txt"},  # noqa: S108
             sender_id="coder-1",
             timeout=60,
         )
         assert msg.tool_name == "read_file"
         assert msg.timeout == 60
-        assert msg.arguments == {"path": "/tmp/test.txt"}
+        assert msg.arguments == {"path": "/tmp/test.txt"}  # noqa: S108
 
     def test_create_tool_response_success(self) -> None:
         msg = create_tool_response(
