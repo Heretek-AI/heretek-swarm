@@ -43,125 +43,85 @@ class DeliberationOrchestrator:
     ) -> dict[str, Any]:
         """
         Run a triad deliberation: route a prompt through Steward → Alpha → Beta → Charlie.
-
-        NOTE: For complex questions requiring multi-agent consensus with domain-based
-        agent selection, prefer ``run_consensus()`` which uses the MAKER consensus
-        engine with DomainSelector for more rigorous decision-making.
-
-        Args:
-            prompt: The deliberation topic/prompt.
-            timeout: Maximum total wall-clock seconds to wait for all three
-                     agents to produce output (default 120). Each agent's LLM
-                     call has a 60s internal timeout in run_with_llm.
-
-        Returns:
-            Dict mapping each agent_id to its output. Partial results are
-            returned on timeout or agent failure.
-
-        Raises:
-            RuntimeError: If Steward agent is not in the actor registry.
         """
-        logger.info(
-            "run_deliberation_started",
-            prompt=prompt,
-            timeout=timeout,
-        )
+        logger.info("run_deliberation_started", prompt=prompt, timeout=timeout)
 
         supervisor_actors = self._supervisor.actors if self._supervisor else {}
         steward = supervisor_actors.get("steward")
         if steward is None:
             raise RuntimeError(
                 "Steward agent not found in supervisor.actors — "
-                "cannot coordinate triad. Ensure spawn_all_actors() "
-                "completed successfully."
+                "cannot coordinate triad. Ensure spawn_all_actors() completed successfully."
             )
 
         try:
-            # Initiate triad deliberation via Steward's coordinate_triad.
-            # This sends a "start_deliberation" message through steward.send()
-            # which goes into the topic routing system. The message chain:
-            #   coordinate_triad → send("triad", start_deliberation) →
-            #   _deliver_to_registry_actors → Steward owns "triad" topic
-            deliberation_record = await steward.coordinate_triad(
-                topic=prompt,
-                triad_members=["alpha", "beta", "charlie"],
-            )
-            # coordinate_triad returns a dict (real code) or a string (mock).
-            # Normalise to a string key used by Beta._analyses / Charlie._challenges.
-            delib_id: str = (
-                deliberation_record
-                if isinstance(deliberation_record, str)
-                else deliberation_record.get("session_id", "")
-            )
-            logger.info(
-                "deliberation_initiated",
-                deliberation_id=delib_id,
-            )
-
-            # Poll at 0.5 s intervals for per-agent completion instead of
-            # sleeping the full timeout.  Each agent writes to its own state
-            # attribute once its async handler finishes:
-            #   Alpha → analysis_history (list)
-            #   Beta  → _analyses[delib_id]
-            #   Charlie → _challenges[delib_id]
-            elapsed = 0.0
-            interval = 0.5
-            while elapsed < timeout:
-                await asyncio.sleep(interval)
-                elapsed += interval
-
-                alpha = supervisor_actors.get("alpha")
-                beta = supervisor_actors.get("beta")
-                charlie = supervisor_actors.get("charlie")
-
-                alpha_done = (
-                    len(getattr(alpha, "analysis_history", [])) > 0
-                    if alpha
-                    else False
-                )
-                beta_done = (
-                    delib_id in getattr(beta, "_analyses", {})
-                    if beta and delib_id
-                    else False
-                )
-                charlie_done = (
-                    delib_id in getattr(charlie, "_challenges", {})
-                    if charlie and delib_id
-                    else False
-                )
-
-                logger.info(
-                    "deliberation_polling",
-                    elapsed=round(elapsed, 1),
-                    alpha_done=alpha_done,
-                    beta_done=beta_done,
-                    charlie_done=charlie_done,
-                )
-
-                if alpha_done and beta_done and charlie_done:
-                    logger.info(
-                        "deliberation_all_agents_complete",
-                        elapsed=round(elapsed, 1),
-                    )
-                    break
-
+            delib_id = await self._initiate_triad(steward, prompt)
+            await self._poll_triad_completion(supervisor_actors, delib_id, timeout)
         except TimeoutError:
             logger.warning("deliberation_timeout", prompt=prompt)
         except Exception as exc:
-            logger.error(
-                "deliberation_failed",
-                prompt=prompt,
-                error=str(exc),
+            logger.error("deliberation_failed", prompt=prompt, error=str(exc))
+
+        results = self._collect_triad_results(supervisor_actors)
+        logger.info(
+            "run_deliberation_complete",
+            alpha_count=len(results.get("alpha", {}).get("analyses", [])),
+            beta_count=len(results.get("beta", {}).get("analyses", [])),
+            charlie_count=len(results.get("charlie", {}).get("challenges", [])),
+        )
+
+        await self._handoff_to_coder(supervisor_actors, steward, results, prompt, timeout)
+        return results
+
+    async def _initiate_triad(self, steward: Any, prompt: str) -> str:
+        """Initiate triad deliberation and return the deliberation ID."""
+        deliberation_record = await steward.coordinate_triad(
+            topic=prompt, triad_members=["alpha", "beta", "charlie"],
+        )
+        delib_id: str = (
+            deliberation_record
+            if isinstance(deliberation_record, str)
+            else deliberation_record.get("session_id", "")
+        )
+        logger.info("deliberation_initiated", deliberation_id=delib_id)
+        return delib_id
+
+    async def _poll_triad_completion(
+        self, actors: dict[str, Any], delib_id: str, timeout: int
+    ) -> None:
+        """Poll at 0.5s intervals until all triad agents complete or timeout."""
+        elapsed = 0.0
+        interval = 0.5
+        while elapsed < timeout:
+            await asyncio.sleep(interval)
+            elapsed += interval
+
+            alpha = actors.get("alpha")
+            beta = actors.get("beta")
+            charlie = actors.get("charlie")
+
+            alpha_done = bool(alpha and len(getattr(alpha, "analysis_history", [])) > 0)
+            beta_done = bool(beta and delib_id and delib_id in getattr(beta, "_analyses", {}))
+            charlie_done = bool(charlie and delib_id and delib_id in getattr(charlie, "_challenges", {}))
+
+            logger.info(
+                "deliberation_polling", elapsed=round(elapsed, 1),
+                alpha_done=alpha_done, beta_done=beta_done, charlie_done=charlie_done,
             )
 
-        # Read results from per-agent state attributes.
+            if alpha_done and beta_done and charlie_done:
+                logger.info("deliberation_all_agents_complete", elapsed=round(elapsed, 1))
+                break
+
+    @staticmethod
+    def _collect_triad_results(actors: dict[str, Any]) -> dict[str, Any]:
+        """Read results from per-agent state attributes."""
         results: dict[str, Any] = {}
         for agent_id in ["alpha", "beta", "charlie"]:
-            agent = supervisor_actors.get(agent_id)
+            agent = actors.get(agent_id)
             if agent is None:
                 results[agent_id] = {"error": f"Agent {agent_id} not found"}
                 continue
-
             if agent_id == "alpha":
                 history = getattr(agent, "analysis_history", [])
                 results[agent_id] = {"analyses": history[-3:] if history else []}
@@ -170,158 +130,122 @@ class DeliberationOrchestrator:
                 results[agent_id] = {"analyses": list(analyses.values())[-3:] if analyses else []}
             elif agent_id == "charlie":
                 challenges = getattr(agent, "_challenges", {})
-                results[agent_id] = {
-                    "challenges": list(challenges.values())[-3:] if challenges else []
-                }
+                results[agent_id] = {"challenges": list(challenges.values())[-3:] if challenges else []}
+        return results
 
-        logger.info(
-            "run_deliberation_complete",
-            alpha_count=len(results.get("alpha", {}).get("analyses", [])),
-            beta_count=len(results.get("beta", {}).get("analyses", [])),
-            charlie_count=len(results.get("charlie", {}).get("challenges", [])),
-        )
+    async def _handoff_to_coder(
+        self, actors: dict[str, Any], steward: Any,
+        results: dict[str, Any], prompt: str, timeout: int,
+    ) -> None:
+        """Best-effort specialist handoff to Coder agent."""
+        coder = actors.get("coder")
+        if coder is None:
+            logger.info("specialist_handoff_failed", reason="Coder agent not in supervisor.actors")
+            return
 
-        # --- Specialist handoff to Coder (best-effort) -----------------------
-        # Synthesize a task description from the triad results and route to
-        # Coder for implementation.  The handoff is best-effort: if Coder is
-        # unavailable, the route fails, or the task times out, we log
-        # ``specialist_handoff_failed`` and still return triad results.
-        # --------------------------------------------------------------------
-        coder = supervisor_actors.get("coder")
-        if coder is not None:
-            try:
-                # Build a structured task from the triad's collective output.
-                alpha_analyses = results.get("alpha", {}).get("analyses", [])
-                beta_validations = results.get("beta", {}).get("analyses", [])
-                charlie_challenges = results.get("charlie", {}).get("challenges", [])
+        try:
+            requirements = self._extract_requirements(results)
+            task_data: dict[str, Any] = {
+                "description": prompt,
+                "requirements": requirements if requirements else ["Implement as described"],
+                "language": "python", "include_tests": True, "include_docs": True,
+            }
 
-                requirements: list[str] = []
-                for entry in alpha_analyses[-2:]:
-                    if isinstance(entry, dict):
-                        for key in ("decision", "analysis", "summary"):
-                            if key in entry:
-                                requirements.append(f"Alpha {key}: {entry[key]}")
-                                break
-                for entry in beta_validations[-2:]:
-                    if isinstance(entry, dict):
-                        for key in ("analysis", "validation", "decision"):
-                            if key in entry:
-                                requirements.append(f"Beta {key}: {entry[key]}")
-                                break
-                for entry in charlie_challenges[-2:]:
-                    if isinstance(entry, dict):
-                        if "challenges" in entry:
-                            requirements.append(f"Charlie flags: {entry['challenges']}")
-                        elif "challenge" in entry:
-                            requirements.append(f"Charlie: {entry['challenge']}")
+            logger.info("specialist_handoff_initiated", target_agent="coder",
+                        task_type="implement_task", prompt_preview=prompt[:200])
 
-                task_data: dict[str, Any] = {
-                    "description": prompt,
-                    "requirements": requirements if requirements else ["Implement as described"],
-                    "language": "python",
-                    "include_tests": True,
-                    "include_docs": True,
-                }
-
-                logger.info(
-                    "specialist_handoff_initiated",
-                    target_agent="coder",
-                    task_type="implement_task",
-                    prompt_preview=prompt[:200],
-                )
-
-                # Record pre-counter *before* route_to_agent so we can
-                # detect the increment when Coder processes the task.
-                pre_counter: int = getattr(coder, "_task_counter", 0)
-
-                message_id = await steward.route_to_agent(
-                    agent_name="coder",
-                    task_type="implement_task",
-                    task_data=task_data,
-                )
-
-                if not message_id:
-                    logger.warning(
-                        "specialist_handoff_failed",
-                        reason="route_to_agent returned empty",
-                    )
-                else:
-                    # Poll Coder for task completion using _task_counter
-                    # increment (same 0.5 s pattern as triad polling).
-                    # pre_counter was recorded before route_to_agent.
-                    # Use up to half the overall timeout, at least 5s,
-                    # capped at 60s.
-                    coder_timeout = min(max(timeout / 2, 5), 60)
-                    coder_elapsed = 0.0
-                    coder_done = False
-
-                    while coder_elapsed < coder_timeout:
-                        await asyncio.sleep(interval)
-                        coder_elapsed += interval
-                        # Re-fetch coder from the registry each iteration
-                        # to reflect any in-place mutations.
-                        coder = supervisor_actors.get("coder")
-                        if coder is None:
-                            break
-                        post_counter = getattr(coder, "_task_counter", 0)
-                        coder_done = isinstance(post_counter, int) and post_counter > pre_counter
-                        if coder_done:
-                            break
-
-                    if coder_done:
-                        # Collect output from Coder's _tasks and _code_snippets.
-                        tasks: dict = getattr(coder, "_tasks", {})
-                        snippets: dict = getattr(coder, "_code_snippets", {})
-
-                        specialist_output: dict[str, Any] = {}
-                        if tasks:
-                            last_key = sorted(tasks.keys())[-1]
-                            last_task = tasks[last_key]
-                            specialist_output = {
-                                "task_id": getattr(last_task, "id", last_key),
-                                "status": getattr(last_task, "status", "unknown"),
-                                "code": getattr(last_task, "generated_code", ""),
-                                "tests": getattr(last_task, "tests", None),
-                                "documentation": getattr(last_task, "documentation", None),
-                            }
-
-                        # Fallback: use latest code snippet if task output is empty.
-                        if not specialist_output.get("code") and snippets:
-                            last_key = sorted(snippets.keys())[-1]
-                            last_snippet = snippets[last_key]
-                            specialist_output = {
-                                "code": getattr(last_snippet, "code", ""),
-                                "language": str(getattr(last_snippet, "language", "")),
-                                "purpose": getattr(last_snippet, "purpose", ""),
-                            }
-
-                        results["specialist_output"] = specialist_output
-
-                        logger.info(
-                            "specialist_handoff_complete",
-                            target_agent="coder",
-                            elapsed=round(coder_elapsed, 1),
-                            has_code=bool(specialist_output.get("code")),
-                        )
-                    else:
-                        logger.warning(
-                            "specialist_handoff_failed",
-                            reason="Coder task timed out",
-                            elapsed=round(coder_elapsed, 1),
-                        )
-
-            except Exception as exc:
-                logger.warning(
-                    "specialist_handoff_failed",
-                    reason=str(exc),
-                )
-        else:
-            logger.info(
-                "specialist_handoff_failed",
-                reason="Coder agent not in supervisor.actors",
+            pre_counter: int = getattr(coder, "_task_counter", 0)
+            message_id = await steward.route_to_agent(
+                agent_name="coder", task_type="implement_task", task_data=task_data,
             )
 
-        return results
+            if not message_id:
+                logger.warning("specialist_handoff_failed", reason="route_to_agent returned empty")
+                return
+
+            specialist_output = await self._poll_coder_completion(
+                actors, pre_counter, timeout
+            )
+            if specialist_output:
+                results["specialist_output"] = specialist_output
+                logger.info("specialist_handoff_complete", target_agent="coder",
+                            has_code=bool(specialist_output.get("code")))
+            else:
+                logger.warning("specialist_handoff_failed", reason="Coder task timed out")
+
+        except Exception as exc:
+            logger.warning("specialist_handoff_failed", reason=str(exc))
+
+    @staticmethod
+    def _extract_requirements(results: dict[str, Any]) -> list[str]:
+        """Extract requirements from triad results."""
+        requirements: list[str] = []
+        for entry in results.get("alpha", {}).get("analyses", [])[-2:]:
+            if isinstance(entry, dict):
+                for key in ("decision", "analysis", "summary"):
+                    if key in entry:
+                        requirements.append(f"Alpha {key}: {entry[key]}")
+                        break
+        for entry in results.get("beta", {}).get("analyses", [])[-2:]:
+            if isinstance(entry, dict):
+                for key in ("analysis", "validation", "decision"):
+                    if key in entry:
+                        requirements.append(f"Beta {key}: {entry[key]}")
+                        break
+        for entry in results.get("charlie", {}).get("challenges", [])[-2:]:
+            if isinstance(entry, dict):
+                if "challenges" in entry:
+                    requirements.append(f"Charlie flags: {entry['challenges']}")
+                elif "challenge" in entry:
+                    requirements.append(f"Charlie: {entry['challenge']}")
+        return requirements
+
+    async def _poll_coder_completion(
+        self, actors: dict[str, Any], pre_counter: int, timeout: int
+    ) -> dict[str, Any] | None:
+        """Poll Coder for task completion, return specialist output or None."""
+        coder_timeout = min(max(timeout / 2, 5), 60)
+        coder_elapsed = 0.0
+        interval = 0.5
+
+        while coder_elapsed < coder_timeout:
+            await asyncio.sleep(interval)
+            coder_elapsed += interval
+            coder = actors.get("coder")
+            if coder is None:
+                break
+            post_counter = getattr(coder, "_task_counter", 0)
+            if isinstance(post_counter, int) and post_counter > pre_counter:
+                return self._collect_coder_output(coder)
+        return None
+
+    @staticmethod
+    def _collect_coder_output(coder: Any) -> dict[str, Any]:
+        """Collect output from Coder's _tasks and _code_snippets."""
+        tasks: dict = getattr(coder, "_tasks", {})
+        snippets: dict = getattr(coder, "_code_snippets", {})
+
+        if tasks:
+            last_key = sorted(tasks.keys())[-1]
+            last_task = tasks[last_key]
+            return {
+                "task_id": getattr(last_task, "id", last_key),
+                "status": getattr(last_task, "status", "unknown"),
+                "code": getattr(last_task, "generated_code", ""),
+                "tests": getattr(last_task, "tests", None),
+                "documentation": getattr(last_task, "documentation", None),
+            }
+
+        if snippets:
+            last_key = sorted(snippets.keys())[-1]
+            last_snippet = snippets[last_key]
+            return {
+                "code": getattr(last_snippet, "code", ""),
+                "language": str(getattr(last_snippet, "language", "")),
+                "purpose": getattr(last_snippet, "purpose", ""),
+            }
+
+        return {}
 
     async def run_consensus(
         self,
