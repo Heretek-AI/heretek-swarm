@@ -530,10 +530,6 @@ function ApiKeyStep({
       // If test succeeded, fetch provider info from backend
       if (result.success) {
         try {
-          // Save api_key to localStorage BEFORE fetching provider info
-          // so apiClient can authenticate the subsequent requests
-          localStorage.setItem('api_key', localValue);
-
           const configModule = await import('../../api/configuration');
           const api = configModule.default || configModule.configurationApi;
           const llmProviders = await api.listLLMProviders();

@@ -105,7 +105,6 @@ function DashboardContent() {
         if (envApiKey && envApiHost) {
           // Both env vars present — pre-populate and skip wizard
           localStorage.setItem('swarm_api_host', envApiHost);
-          localStorage.setItem('api_key', envApiKey);
           localStorage.setItem('swarm_configured', 'true');
 
           useSetupStore.getState().setConfig({
@@ -124,7 +123,7 @@ function DashboardContent() {
         if (!config.apiHost) {
           useSetupStore.getState().setConfig({
             apiHost: storedApiHost,
-            apiKey: localStorage.getItem('api_key') || '',
+            apiKey: '',
             wsHost: localStorage.getItem('swarm_ws_host') || '',
           });
         }

@@ -48,15 +48,14 @@ const tabs: TabConfig[] = [
 
 export function SettingsPage({ onRerunSetup }: SettingsPageProps) {
   const [activeTab, setActiveTab] = useState<string>('system');
-  const [apiKey, setApiKey] = useState(localStorage.getItem('api_key') || '');
+  const [apiKey, setApiKey] = useState('');
   const [apiUrl, setApiUrl] = useState(localStorage.getItem('swarm_api_host') || '');
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const toast = useToast();
 
   const handleSaveApiKey = useCallback(() => {
-    localStorage.setItem('api_key', apiKey);
-    toast.success('API Key Saved', 'Your API key has been stored locally');
-  }, [apiKey, toast]);
+    toast.success('API Key Saved', 'Your API key is available for this session');
+  }, [toast]);
 
   const handleSaveApiUrl = useCallback(() => {
     const validatedUrl = _safeUrl(apiUrl);
