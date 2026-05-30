@@ -457,7 +457,7 @@ class LiberationShield:
                     context,
                 )
 
-        if result.safe and self.mode == "transparent":
+        if result.threats:
             result.warnings = [f"{i['type']}: {i['severity']}" for i in result.threats]
 
         return result
