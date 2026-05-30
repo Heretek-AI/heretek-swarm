@@ -971,7 +971,12 @@ class JetStreamManager:
 
             if callback:
                 if asyncio.iscoroutinefunction(callback):
-                    callback(msg["subject"], msg["data"])
+                    coro = callback(msg["subject"], msg["data"])
+                    try:
+                        asyncio.get_running_loop()
+                        asyncio.create_task(coro)
+                    except RuntimeError:
+                        asyncio.run(coro)
                 else:
                     callback(msg["subject"], msg["data"])
 
