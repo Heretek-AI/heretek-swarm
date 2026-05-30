@@ -1009,6 +1009,7 @@ class _InMemoryFallback:
 
     def __init__(self) -> None:
         self._subscriptions: dict[str, list[Callable]] = {}
+        self._sid_map: dict[str, tuple[str, Callable]] = {}
         self._sub_counter = 0
         self._pending: dict[str, asyncio.Future] = {}
 
@@ -1078,11 +1079,27 @@ class _InMemoryFallback:
         if subject not in self._subscriptions:
             self._subscriptions[subject] = []
         self._subscriptions[subject].append(callback)
+        self._sid_map[sid] = (subject, callback)
 
         return sid
 
     async def unsubscribe(self, _sid: str) -> bool:
         """Unsubscribe in-memory."""
+        subscription = self._sid_map.pop(_sid, None)
+        if subscription is None:
+            return False
+
+        subject, callback = subscription
+        subs = self._subscriptions.get(subject)
+        if subs is None:
+            return False
+
+        with contextlib.suppress(ValueError):
+            subs.remove(callback)
+
+        if not subs:
+            del self._subscriptions[subject]
+
         return True
 
     async def request(
