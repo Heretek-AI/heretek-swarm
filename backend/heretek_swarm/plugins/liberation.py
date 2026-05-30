@@ -196,7 +196,7 @@ ANOMALY_PATTERNS = [
 # Dangerous patterns for sanitization
 # Note: Import patterns use atomic groups (?>) to prevent ReDoS (S5852)
 DANGEROUS_PATTERNS = [
-    re.compile(r"<script[^>]*>.*?</script>", re.IGNORECASE | re.DOTALL),
+    re.compile(r"<script\b[^>]*>.*?</script\b[^>]*>", re.IGNORECASE | re.DOTALL),
     re.compile(r"javascript:", re.IGNORECASE),
     re.compile(r"on\w+\s*=", re.IGNORECASE),
     re.compile(r"<iframe[^>]*>.*?</iframe>", re.IGNORECASE | re.DOTALL),
