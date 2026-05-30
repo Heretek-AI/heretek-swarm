@@ -98,95 +98,102 @@ class InputValidator:
     ) -> LayerResult:
         """Validate input data against Layer 1 rules."""
         start_time = time.time()
-
         try:
             content_size = len(str(data))
-            if content_size > self.config.max_content_size:
-                return LayerResult(
-                    layer="input",
-                    passed=False,
-                    reason=f"Content size {content_size} exceeds maximum {self.config.max_content_size}",
-                    severity=Severity.WARNING,
-                    details={"content_size": content_size, "max_size": self.config.max_content_size},
-                )
-
-            if content_size < self.config.min_content_size:
-                return LayerResult(
-                    layer="input",
-                    passed=False,
-                    reason=f"Content size {content_size} below minimum {self.config.min_content_size}",
-                    severity=Severity.INFO,
-                    details={"content_size": content_size, "min_size": self.config.min_content_size},
-                )
-
-            if "request_id" in data and self.config.require_uuid_v4:
-                try:
-                    parsed = uuid.UUID(data["request_id"], version=4)
-                    if parsed.version != 4:
-                        return LayerResult(
-                            layer="input",
-                            passed=False,
-                            reason=f"request_id must be UUID v4, got version {parsed.version}",
-                            severity=Severity.WARNING,
-                        )
-                except (ValueError, AttributeError) as e:
-                    return LayerResult(
-                        layer="input",
-                        passed=False,
-                        reason=f"Invalid UUID v4 request_id: {e}",
-                        severity=Severity.WARNING,
-                    )
-
-            content_str = str(data)
-            for pattern, description in self._compiled_patterns:
-                if pattern.search(content_str):
-                    return LayerResult(
-                        layer="input",
-                        passed=False,
-                        reason=f"Injection pattern detected: {description}",
-                        severity=Severity.HIGH,
-                        details={"pattern": pattern.pattern, "description": description},
-                    )
-
+            if result := self._check_content_size(content_size):
+                return result
+            if result := self._check_uuid_v4(data):
+                return result
+            if result := self._check_injection_patterns(data):
+                return result
             depth = self._calculate_depth(data)
-            if depth > self.config.max_nesting_depth:
-                return LayerResult(
-                    layer="input",
-                    passed=False,
-                    reason=f"Nesting depth {depth} exceeds maximum {self.config.max_nesting_depth}",
-                    severity=Severity.WARNING,
-                    details={"depth": depth, "max_depth": self.config.max_nesting_depth},
-                )
-
-            if model_class is not None:
-                try:
-                    model_class.model_validate(data)
-                    logger.debug("pydantic_validation_passed", agent_id=agent_id, model=model_class.__name__)
-                except Exception as e:
-                    return LayerResult(
-                        layer="input",
-                        passed=False,
-                        reason=f"Pydantic validation failed: {e}",
-                        severity=Severity.WARNING,
-                        details={"pydantic_error": str(e)},
-                    )
-
+            if result := self._check_nesting_depth(depth):
+                return result
+            if result := self._validate_pydantic_model(data, model_class, agent_id):
+                return result
             latency_ms = (time.time() - start_time) * 1000
             return LayerResult(
-                layer="input",
-                passed=True,
-                severity=Severity.INFO,
+                layer="input", passed=True, severity=Severity.INFO,
                 details={"content_size": content_size, "depth": depth, "latency_ms": latency_ms},
             )
-
         except Exception as e:
             logger.error("input_validation_error", error=str(e), agent_id=agent_id)
             return LayerResult(
-                layer="input",
-                passed=False,
-                reason=f"Validation error: {e}",
-                severity=Severity.HIGH,
+                layer="input", passed=False, reason=f"Validation error: {e}", severity=Severity.HIGH,
             )
+
+    def _check_content_size(self, content_size: int) -> LayerResult | None:
+        if content_size > self.config.max_content_size:
+            return LayerResult(
+                layer="input", passed=False,
+                reason=f"Content size {content_size} exceeds maximum {self.config.max_content_size}",
+                severity=Severity.WARNING,
+                details={"content_size": content_size, "max_size": self.config.max_content_size},
+            )
+        if content_size < self.config.min_content_size:
+            return LayerResult(
+                layer="input", passed=False,
+                reason=f"Content size {content_size} below minimum {self.config.min_content_size}",
+                severity=Severity.INFO,
+                details={"content_size": content_size, "min_size": self.config.min_content_size},
+            )
+        return None
+
+    def _check_uuid_v4(self, data: dict[str, Any]) -> LayerResult | None:
+        if "request_id" not in data or not self.config.require_uuid_v4:
+            return None
+        try:
+            parsed = uuid.UUID(data["request_id"], version=4)
+            if parsed.version != 4:
+                return LayerResult(
+                    layer="input", passed=False,
+                    reason=f"request_id must be UUID v4, got version {parsed.version}",
+                    severity=Severity.WARNING,
+                )
+        except (ValueError, AttributeError) as e:
+            return LayerResult(
+                layer="input", passed=False,
+                reason=f"Invalid UUID v4 request_id: {e}", severity=Severity.WARNING,
+            )
+        return None
+
+    def _check_injection_patterns(self, data: dict[str, Any]) -> LayerResult | None:
+        content_str = str(data)
+        for pattern, description in self._compiled_patterns:
+            if pattern.search(content_str):
+                return LayerResult(
+                    layer="input", passed=False,
+                    reason=f"Injection pattern detected: {description}",
+                    severity=Severity.HIGH,
+                    details={"pattern": pattern.pattern, "description": description},
+                )
+        return None
+
+    def _check_nesting_depth(self, depth: int) -> LayerResult | None:
+        if depth > self.config.max_nesting_depth:
+            return LayerResult(
+                layer="input", passed=False,
+                reason=f"Nesting depth {depth} exceeds maximum {self.config.max_nesting_depth}",
+                severity=Severity.WARNING,
+                details={"depth": depth, "max_depth": self.config.max_nesting_depth},
+            )
+        return None
+
+    def _validate_pydantic_model(
+        self, data: dict[str, Any], model_class: type[ValidatedInput] | None, agent_id: str | None
+    ) -> LayerResult | None:
+        if model_class is None:
+            return None
+        try:
+            model_class.model_validate(data)
+            logger.debug("pydantic_validation_passed", agent_id=agent_id, model=model_class.__name__)
+        except Exception as e:
+            return LayerResult(
+                layer="input", passed=False,
+                reason=f"Pydantic validation failed: {e}", severity=Severity.WARNING,
+                details={"pydantic_error": str(e)},
+            )
+        return None
 
     def _calculate_depth(self, obj: Any, current_depth: int = 0) -> int:
         """Calculate the maximum nesting depth of a data structure."""

@@ -667,31 +667,33 @@ class IntegrationManager:
         """Background health check loop."""
         while self._running:
             try:
-                for integration_id in list(self.configs.keys()):
-                    result = await self.check_health(integration_id)
-
-                    # Auto-restart on failure
-                    if (
-                        result.status == HealthStatus.UNHEALTHY
-                        and self.enable_auto_restart
-                        and self.configs[integration_id].enabled
-                    ):
-                        state = self.states[integration_id]
-                        if state.restart_count < self.max_restart_attempts:
-                            await self.restart_integration(integration_id)
-                        else:
-                            logger.error(
-                                "max_restart_attempts_reached",
-                                integration_id=integration_id,
-                            )
-
+                await self._check_all_integrations()
                 await asyncio.sleep(self.health_check_interval)
-
             except asyncio.CancelledError:
                 break
             except Exception as e:
                 logger.error("health_check_loop_error", error=str(e))
                 await asyncio.sleep(self.health_check_interval)
+
+    async def _check_all_integrations(self) -> None:
+        for integration_id in list(self.configs.keys()):
+            result = await self.check_health(integration_id)
+            if self._should_auto_restart(integration_id, result):
+                await self._attempt_restart(integration_id)
+
+    def _should_auto_restart(self, integration_id: str, result: Any) -> bool:
+        return (
+            result.status == HealthStatus.UNHEALTHY
+            and self.enable_auto_restart
+            and self.configs[integration_id].enabled
+        )
+
+    async def _attempt_restart(self, integration_id: str) -> None:
+        state = self.states[integration_id]
+        if state.restart_count < self.max_restart_attempts:
+            await self.restart_integration(integration_id)
+        else:
+            logger.error("max_restart_attempts_reached", integration_id=integration_id)
 
     async def start(self) -> None:
         """Start the integration manager."""

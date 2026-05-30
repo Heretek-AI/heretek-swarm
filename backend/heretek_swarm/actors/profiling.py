@@ -949,33 +949,27 @@ class BehaviorProfiler(ValidationMixin, PatternMixin, HealthReportingMixin, Agen
         severity: AlertSeverity | None = None,
         unacknowledged_only: bool = False,
     ) -> list[Alert]:
-        """
-        Get alerts with optional filtering.
+        """Get alerts with optional filtering."""
+        if not (agent_id or severity or unacknowledged_only):
+            return self._alerts
+        return sorted(
+            self._filter_alerts(agent_id, severity, unacknowledged_only),
+            key=lambda a: a.timestamp, reverse=True,
+        )
 
-        Args:
-            agent_id: Filter by agent
-            severity: Filter by severity
-            unacknowledged_only: Only return unacknowledged alerts
-
-        Returns:
-            List of matching alerts (filtering applied but modifications will persist)
-        """
-        # Create filtered copy but ensure modifications persist
-        # by returning the original list if no filtering is applied
-        if agent_id or severity or unacknowledged_only:
-            alerts = []
-            for a in self._alerts:
-                if agent_id and a.agent_id != agent_id:
-                    continue
-                if severity and a.anomaly.severity != severity:
-                    continue
-                if unacknowledged_only and a.acknowledged:
-                    continue
-                alerts.append(a)
-            return sorted(alerts, key=lambda a: a.timestamp, reverse=True)
-
-        # No filtering - return original list to allow modifications to persist
-        return self._alerts
+    def _filter_alerts(
+        self, agent_id: str | None, severity: AlertSeverity | None, unacknowledged_only: bool
+    ) -> list[Alert]:
+        alerts: list[Alert] = []
+        for a in self._alerts:
+            if agent_id and a.agent_id != agent_id:
+                continue
+            if severity and a.anomaly.severity != severity:
+                continue
+            if unacknowledged_only and a.acknowledged:
+                continue
+            alerts.append(a)
+        return alerts
 
     def acknowledge_alert(self, alert_index: int, acknowledged_by: str) -> bool:
         """

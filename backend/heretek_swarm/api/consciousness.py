@@ -807,54 +807,43 @@ async def get_timeseries_data(
     hours: int = Query(24, ge=1, le=168, description="Hours of data"),
     authenticated: str = Depends(verify_auth),
 ) -> dict[str, Any]:
-    """
-    Get time-series data for a specific metric.
-
-    Returns data points suitable for line charts.
-    """
+    """Get time-series data for a specific metric."""
     plugin = get_consciousness_plugin()
-    iit_calculator = plugin.iit_calculator
-    fep_tracker = plugin.fep_tracker
-
     cutoff_time = datetime.now(UTC) - timedelta(hours=hours)
-    data_points = []
 
     if metric == "phi":
-        # Get phi over time from connectivity history
-        for entry in iit_calculator.connectivity_history:
-            entry_time = datetime.fromisoformat(entry.timestamp)
-            if entry_time >= cutoff_time:
-                data_points.append(
-                    {
-                        "timestamp": entry.timestamp,
-                        "value": entry.phi,
-                    }
-                )
-    elif metric in ["free_energy", "surprise"]:
-        # Get FEP metrics from prediction history
-        agent_predictions = fep_tracker.prediction_history.get(agent_id, [])
-        for pred in agent_predictions:
-            pred_time = datetime.fromtimestamp(pred["timestamp"], tz=UTC)
-            if pred_time >= cutoff_time:
-                value = (
-                    pred.get("prediction", {}).get(metric, 0)
-                    if isinstance(pred.get("prediction"), dict)
-                    else 0
-                )
-                data_points.append(
-                    {
-                        "timestamp": pred_time.isoformat(),
-                        "value": value,
-                    }
-                )
+        data_points = _collect_phi_points(plugin.iit_calculator, cutoff_time)
+    elif metric in ("free_energy", "surprise"):
+        data_points = _collect_fep_points(plugin.fep_tracker, agent_id, metric, cutoff_time)
+    else:
+        data_points = []
 
-    return {
-        "agent_id": agent_id,
-        "metric": metric,
-        "hours": hours,
-        "data_points": data_points,
-        "count": len(data_points),
-    }
+    return {"agent_id": agent_id, "metric": metric, "hours": hours,
+            "data_points": data_points, "count": len(data_points)}
+
+
+def _collect_phi_points(iit_calculator: Any, cutoff_time: datetime) -> list[dict[str, Any]]:
+    data_points: list[dict[str, Any]] = []
+    for entry in iit_calculator.connectivity_history:
+        if datetime.fromisoformat(entry.timestamp) >= cutoff_time:
+            data_points.append({"timestamp": entry.timestamp, "value": entry.phi})
+    return data_points
+
+
+def _collect_fep_points(
+    fep_tracker: Any, agent_id: str, metric: str, cutoff_time: datetime
+) -> list[dict[str, Any]]:
+    data_points: list[dict[str, Any]] = []
+    for pred in fep_tracker.prediction_history.get(agent_id, []):
+        pred_time = datetime.fromtimestamp(pred["timestamp"], tz=UTC)
+        if pred_time >= cutoff_time:
+            value = (
+                pred.get("prediction", {}).get(metric, 0)
+                if isinstance(pred.get("prediction"), dict)
+                else 0
+            )
+            data_points.append({"timestamp": pred_time.isoformat(), "value": value})
+    return data_points
 
 
 # =============================================================================
