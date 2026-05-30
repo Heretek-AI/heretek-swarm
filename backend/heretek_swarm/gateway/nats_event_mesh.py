@@ -1712,7 +1712,7 @@ class NATStoActorBridge:
             correlation_id = str(uuid.uuid4())
             message["correlation_id"] = correlation_id
             # Create a future to wait for response
-            future: asyncio.Future = asyncio.get_event_loop().create_future()
+            future: asyncio.Future = asyncio.get_running_loop().create_future()
             self._pending_requests[correlation_id] = future
 
         try:
