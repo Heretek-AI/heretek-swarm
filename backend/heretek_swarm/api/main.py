@@ -520,6 +520,28 @@ app.add_middleware(
     allow_headers=["Authorization", "Content-Type", "X-Requested-With", "X-API-Key"],
 )
 
+
+async def security_headers_middleware(request, call_next):
+    """Adds security headers to every response.
+    
+    Covers:
+    - X-Content-Type-Options: nosniff  (prevents MIME sniffing)
+    - X-Frame-Options: DENY          (clickjacking protection)
+    - X-XSS-Protection: 1; mode=block (legacy browser XSS filter)
+    - Referrer-Policy: strict-origin-when-cross-origin
+    - Content-Security-Policy: default-src 'none' (CSP header)
+    """
+    response = await call_next(request)
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["X-XSS-Protection"] = "1; mode=block"
+    response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    response.headers["Content-Security-Policy"] = "default-src 'none'"
+    return response
+
+
+app.middleware("http")(security_headers_middleware)
+
 # Setup logging middleware for request tracking
 setup_logging_middleware(app)
 logging_logger.info("Logging middleware configured")
