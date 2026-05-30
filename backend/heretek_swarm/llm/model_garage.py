@@ -39,6 +39,10 @@ if TYPE_CHECKING:
 
 logger = structlog.get_logger("model_garage")
 
+_DEFAULT_OPENAI_MODEL = "gpt-4o"
+_DEFAULT_OLLAMA_MODEL = "llama3.1"
+_DEFAULT_MINIMAX_MODEL = "abab6.5s"
+
 # ============================================================================
 # Configuration — canonical path from shared config module
 # ============================================================================
@@ -338,7 +342,7 @@ class OpenAIProvider(LLMProvider):
             client = await self._get_client()
             start_time = time.time()
 
-            model = request.model or self.config.default_model or "gpt-4o"
+            model = request.model or self.config.default_model or _DEFAULT_OPENAI_MODEL
             payload = request.to_dict()
             payload["model"] = model
 
@@ -374,7 +378,7 @@ class OpenAIProvider(LLMProvider):
         await self._rate_limit()
         async with self._rate_limiter:
             client = await self._get_client()
-            model = request.model or self.config.default_model or "gpt-4o"
+            model = request.model or self.config.default_model or _DEFAULT_OPENAI_MODEL
             payload = request.to_dict()
             payload["model"] = model
             payload["stream"] = True
@@ -402,7 +406,7 @@ class OllamaProvider(LLMProvider):
             client = await self._get_client()
             start_time = time.time()
 
-            model = request.model or self.config.default_model or "llama3.1"
+            model = request.model or self.config.default_model or _DEFAULT_OLLAMA_MODEL
             payload = {
                 "model": model,
                 "messages": [m.to_dict() for m in request.messages],
@@ -441,7 +445,7 @@ class OllamaProvider(LLMProvider):
         await self._rate_limit()
         async with self._rate_limiter:
             client = await self._get_client()
-            model = request.model or self.config.default_model or "llama3.1"
+            model = request.model or self.config.default_model or _DEFAULT_OLLAMA_MODEL
             payload = {
                 "model": model,
                 "messages": [m.to_dict() for m in request.messages],
@@ -472,7 +476,7 @@ class MiniMaxProvider(LLMProvider):
             client = await self._get_client()
             start_time = time.time()
 
-            model = request.model or self.config.default_model or "abab6.5s"
+            model = request.model or self.config.default_model or _DEFAULT_MINIMAX_MODEL
             payload = {
                 "model": model,
                 "messages": [m.to_dict() for m in request.messages],
@@ -509,7 +513,7 @@ class MiniMaxProvider(LLMProvider):
         await self._rate_limit()
         async with self._rate_limiter:
             client = await self._get_client()
-            model = request.model or self.config.default_model or "abab6.5s"
+            model = request.model or self.config.default_model or _DEFAULT_MINIMAX_MODEL
 
             # Convert messages to MiniMax format
             messages = []
@@ -778,7 +782,7 @@ class ModelGarage:
     _PRICING_TABLE: dict[str, tuple[float, float]] = {  # noqa: RUF012
         "gpt-4o-mini": (0.15, 0.60),
         "gpt-4-turbo": (10.0, 30.0),
-        "gpt-4o": (2.50, 10.0),
+        _DEFAULT_OPENAI_MODEL: (2.50, 10.0),
         "gpt-3.5-turbo": (0.50, 1.50),
         "o1-preview": (15.0, 60.0),
         "claude-3-5-sonnet": (3.0, 15.0),
@@ -846,7 +850,7 @@ class ModelGarage:
                     "type": "ollama",
                     "name": "Local Ollama",
                     "baseUrl": "http://localhost:11434",
-                    "defaultModel": "llama3.1",
+                    "defaultModel": _DEFAULT_OLLAMA_MODEL,
                     "isEnabled": True,
                     "isDefault": True,
                     "priority": 1,
@@ -878,7 +882,7 @@ class ModelGarage:
             return 0.0
 
         # Try most-specific (longest) keys first so "gpt-4o-mini" matches
-        # before "gpt-4o".
+        # before _DEFAULT_OPENAI_MODEL.
         for key in sorted(self._PRICING_TABLE, key=len, reverse=True):
             if key in model_name:
                 input_rate, output_rate = self._PRICING_TABLE[key]
