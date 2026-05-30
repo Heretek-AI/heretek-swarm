@@ -62,89 +62,57 @@ async def _collect_vote_responses(
     expected_agents: list[str],
     timeout_seconds: int = COLLECTION_TIMEOUT_SECONDS,
 ) -> tuple[list[Contribution], bool]:
-    """
-    Collect vote responses from triad agents.
-
-    Args:
-        deliberation_id: Deliberation session ID
-        expected_agents: List of expected agent IDs
-        timeout_seconds: Seconds to wait for responses
-
-    Returns:
-        Tuple of (contributions list, timed_out boolean)
-    """
+    """Collect vote responses from triad agents."""
     contributions: list[Contribution] = []
     received_agents: set[str] = set()
     timed_out = False
-
     try:
-        # Use asyncio.wait_for with a future to collect responses
-        async def collect_task() -> list[Contribution]:
-            collected: list[Contribution] = []
-            # Poll until we have all responses or timeout
-            deadline = asyncio.get_event_loop().time() + timeout_seconds
-
-            while len(collected) < len(expected_agents):
-                remaining = deadline - asyncio.get_event_loop().time()
-                if remaining <= 0:
-                    break
-
-                # Small sleep to avoid busy-waiting
-                await asyncio.sleep(0.1)
-
-            return collected
-
-        # Create a queue for collecting responses
         response_queue: asyncio.Queue[Contribution] = asyncio.Queue()
-
-        # Subscribe to triad topic for vote responses
-        # The triad agents send to "triad" topic with vote_response message type
-        async def on_vote_response(data: dict[str, Any]) -> None:
-            """Handle incoming vote response."""
-            if (
-                data.get("message_type") == "vote_response"
-                and data.get("deliberation_id") == deliberation_id
-            ):
-                contribution = Contribution(
-                    agent_id=data.get("agent_id", "unknown"),
-                    role=_get_agent_role(data.get("agent_id", "")),
-                    content=data.get("decision", ""),
-                    timestamp=datetime.now(UTC).isoformat(),
-                )
-                await response_queue.put(contribution)
-
-        # Start collection task
-        collect_task_handle = asyncio.create_task(collect_task())
-
-        # Wait for responses with timeout
-        deadline = asyncio.get_event_loop().time() + timeout_seconds
-        while len(contributions) < len(expected_agents):
-            remaining = deadline - asyncio.get_event_loop().time()
-            if remaining <= 0:
-                timed_out = True
-                break
-
-            try:
-                contribution = await asyncio.wait_for(
-                    response_queue.get(),
-                    timeout=min(remaining, 0.5),
-                )
-                if contribution.agent_id not in received_agents:
-                    contributions.append(contribution)
-                    received_agents.add(contribution.agent_id)
-            except TimeoutError:
-                continue
-
-        # Cancel the collection task if still running
+        collect_task_handle = asyncio.create_task(
+            _poll_for_responses(response_queue, expected_agents, timeout_seconds)
+        )
+        contributions, timed_out = await _drain_response_queue(
+            response_queue, expected_agents, timeout_seconds
+        )
         if not collect_task_handle.done():
             collect_task_handle.cancel()
             with suppress(asyncio.CancelledError):
                 await collect_task_handle
-
     except Exception as e:
         logger.warning("Error collecting vote responses: %s", e)
-
     return contributions, timed_out
+
+
+async def _poll_for_responses(
+    queue: asyncio.Queue[Contribution], expected_agents: list[str], timeout_seconds: int
+) -> list[Contribution]:
+    collected: list[Contribution] = []
+    deadline = asyncio.get_event_loop().time() + timeout_seconds
+    while len(collected) < len(expected_agents):
+        if asyncio.get_event_loop().time() >= deadline:
+            break
+        await asyncio.sleep(0.1)
+    return collected
+
+
+async def _drain_response_queue(
+    queue: asyncio.Queue[Contribution], expected_agents: list[str], timeout_seconds: int
+) -> tuple[list[Contribution], bool]:
+    contributions: list[Contribution] = []
+    received_agents: set[str] = set()
+    deadline = asyncio.get_event_loop().time() + timeout_seconds
+    while len(contributions) < len(expected_agents):
+        remaining = deadline - asyncio.get_event_loop().time()
+        if remaining <= 0:
+            return contributions, True
+        try:
+            contribution = await asyncio.wait_for(queue.get(), timeout=min(remaining, 0.5))
+            if contribution.agent_id not in received_agents:
+                contributions.append(contribution)
+                received_agents.add(contribution.agent_id)
+        except TimeoutError:
+            continue
+    return contributions, False
 
 
 def _get_agent_role(agent_id: str) -> str:
