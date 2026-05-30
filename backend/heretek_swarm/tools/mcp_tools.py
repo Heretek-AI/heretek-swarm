@@ -357,7 +357,7 @@ class MCPToolRegistry:
         return True
 
     def _validate_property(
-        self, _key: str, value: Any, prop_schema: dict[str, Any]
+        self, key: str, value: Any, prop_schema: dict[str, Any]
     ) -> bool:
         """Validate a single property against its schema."""
         expected_type = prop_schema.get("type")
@@ -380,10 +380,6 @@ class MCPToolRegistry:
 # ============================================================================
 # Core MCP Tools
 # ============================================================================
-
-
-# Error message constants (extracted to avoid duplicate literals)
-_EVENT_MESH_NOT_INITIALIZED = "Event mesh not initialized"
 
 
 class CoreMCPTools:
@@ -451,7 +447,7 @@ class CoreMCPTools:
 
         query = arguments.get("query")
         limit = arguments.get("limit", 10)
-        _ = arguments.get("tier", "all")
+        arguments.get("tier", "all")
 
         results = await self.memory.query(
             query_text=query,
@@ -478,7 +474,7 @@ class CoreMCPTools:
         content = arguments.get("content")
 
         if not self.event_mesh:
-            return {"error": _EVENT_MESH_NOT_INITIALIZED}
+            return {"error": "Event mesh not initialized"}
 
         await self.event_mesh.publish(
             f"agent.{target}",
@@ -500,7 +496,7 @@ class CoreMCPTools:
         reason = arguments.get("reason", "task_transfer")
 
         if not self.event_mesh:
-            return {"error": _EVENT_MESH_NOT_INITIALIZED}
+            return {"error": "Event mesh not initialized"}
 
         await self.event_mesh.publish(
             f"agent.{to_agent}",
@@ -514,15 +510,15 @@ class CoreMCPTools:
 
         return {"handoff_initiated": True, "to_agent": to_agent}
 
-    def _handle_consensus_propose(
+    async def _handle_consensus_propose(
         self, arguments: dict[str, Any], context: dict | None = None  # noqa: ARG002
     ) -> dict:
         """Handle consensus propose request."""
         if not self.consensus:
             return {"error": "Consensus engine not initialized"}
 
-        _ = arguments.get("proposal")
-        _ = arguments.get("context", {})
+        arguments.get("proposal")
+        arguments.get("context", {})
         urgency = arguments.get("urgency", "medium")
 
         # Submit to consensus engine
@@ -534,7 +530,7 @@ class CoreMCPTools:
             "urgency": urgency,
         }
 
-    def _handle_consensus_vote(
+    async def _handle_consensus_vote(
         self, arguments: dict[str, Any], context: dict | None = None
     ) -> dict:
         """Handle consensus vote request."""
@@ -542,9 +538,9 @@ class CoreMCPTools:
             return {"error": "Consensus engine not initialized"}
 
         proposal_id = arguments.get("proposal_id")
-        _ = arguments.get("vote")
-        _ = arguments.get("confidence")
-        _ = arguments.get("reasoning")
+        arguments.get("vote")
+        arguments.get("confidence")
+        arguments.get("reasoning")
 
         # Cast vote
         return {
@@ -561,7 +557,7 @@ class CoreMCPTools:
             return {"error": "RAG pipeline not initialized"}
 
         query = arguments.get("query")
-        _ = arguments.get("mode", "hybrid")
+        arguments.get("mode", "hybrid")
         top_k = arguments.get("top_k", 10)
 
         result = await self.rag.query(
@@ -580,16 +576,16 @@ class CoreMCPTools:
             ]
         }
 
-    def _handle_rag_ingest(
+    async def _handle_rag_ingest(
         self, arguments: dict[str, Any], context: dict | None = None  # noqa: ARG002
     ) -> dict:
         """Handle RAG ingest request."""
         if not self.rag:
             return {"error": "RAG pipeline not initialized"}
 
-        _ = arguments.get("content")
+        arguments.get("content")
         source = arguments.get("source", "unknown")
-        _ = arguments.get("metadata", {})
+        arguments.get("metadata", {})
 
         # Ingest document
         return {"ingested": True, "source": source}
@@ -600,7 +596,7 @@ class CoreMCPTools:
         """Handle external API call request."""
         import httpx
 
-        _ = arguments.get("connection_id")
+        arguments.get("connection_id")
         endpoint = arguments.get("endpoint")
         method = arguments.get("method", "GET")
         payload = arguments.get("payload")
@@ -626,7 +622,7 @@ class CoreMCPTools:
         priority = arguments.get("priority", "info")
 
         if not self.event_mesh:
-            return {"error": _EVENT_MESH_NOT_INITIALIZED}
+            return {"error": "Event mesh not initialized"}
 
         await self.event_mesh.publish(
             f"notification.{channel}",
@@ -649,7 +645,7 @@ class CoreMCPTools:
 
         # Start workflow via event mesh
         if not self.event_mesh:
-            return {"error": _EVENT_MESH_NOT_INITIALIZED}
+            return {"error": "Event mesh not initialized"}
 
         workflow_id = f"workflow_{datetime.now(UTC).timestamp()}"
 
@@ -665,7 +661,7 @@ class CoreMCPTools:
 
         return {"workflow_id": workflow_id, "status": "started"}
 
-    def _handle_workflow_status(
+    async def _handle_workflow_status(
         self, arguments: dict[str, Any], context: dict | None = None  # noqa: ARG002
     ) -> dict:
         """Handle workflow status request."""
@@ -678,8 +674,8 @@ class CoreMCPTools:
             "phase": "analysis",
         }
 
-    def _handle_system_health(
-        self, _arguments: dict[str, Any], context: dict | None = None  # noqa: ARG002
+    async def _handle_system_health(
+        self, arguments: dict[str, Any], context: dict | None = None  # noqa: ARG002
     ) -> dict:
         """Handle system health request."""
         return {

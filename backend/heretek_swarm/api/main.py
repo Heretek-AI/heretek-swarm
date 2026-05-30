@@ -590,11 +590,13 @@ async def check_gateway() -> dict[str, Any]:
             "messages_processed": 0,
         }
     except Exception as e:
-        logger.error("gateway_check_failed", error=str(e))
         return {
             "status": "unhealthy",
-            "error": "Gateway health check failed",
+            "error": str(e),
         }
+
+
+async def check_redis() -> dict[str, Any]:
     """Check Redis connection status."""
     try:
         import redis.asyncio as redis
@@ -612,11 +614,13 @@ async def check_gateway() -> dict[str, Any]:
             "version": info.get("redis_version", "unknown"),
         }
     except Exception as e:
-        logger.error("redis_check_failed", error=str(e))
         return {
             "status": "unhealthy",
-            "error": "Redis health check failed",
+            "error": str(e),
         }
+
+
+async def check_postgres() -> dict[str, Any]:
     """Check PostgreSQL connection status."""
     try:
         if not memory_store:
@@ -649,11 +653,13 @@ async def check_gateway() -> dict[str, Any]:
             "error": "Not connected",
         }
     except Exception as e:
-        logger.error("postgres_check_failed", error=str(e))
         return {
             "status": "unhealthy",
-            "error": "PostgreSQL health check failed",
+            "error": str(e),
         }
+
+
+async def check_qdrant() -> dict[str, Any]:
     """Check Qdrant vector database status."""
     try:
         import httpx
@@ -674,11 +680,13 @@ async def check_gateway() -> dict[str, Any]:
             "error": "Connection failed",
         }
     except Exception as e:
-        logger.error("qdrant_check_failed", error=str(e))
         return {
             "status": "unhealthy",
-            "error": "Qdrant health check failed",
+            "error": str(e),
         }
+
+
+async def check_mem0() -> dict[str, Any]:
     """Check mem0 embedded backend status.
 
     mem0 is an embedded logical service running inside the API container
@@ -734,10 +742,9 @@ async def check_gateway() -> dict[str, Any]:
                 "note": _MEM0_NOTE,
             }
     except Exception as e:
-        logger.error("mem0_check_failed", error=str(e))
         return {
             "status": "unhealthy",
-            "error": "mem0 health check failed",
+            "error": str(e),
             "note": _MEM0_NOTE,
         }
 
@@ -844,7 +851,7 @@ async def get_historian_events(
             error=str(e),
 
         )
-        return {"events": [], "mode": "error", "detail": "Failed to fetch events"}
+        return {"events": [], "mode": "error", "detail": str(e)}
 
 
 # =============================================================================
@@ -928,7 +935,7 @@ async def get_memory_stats(authenticated: str = Depends(verify_auth)):
             "by_agent": {},
             "by_type": {},
             "status": "error",
-            "error": "Failed to retrieve memory statistics",
+            "error": str(e),
         }
 
 
@@ -971,10 +978,9 @@ async def get_litellm_metrics(authenticated: str = Depends(verify_auth)):
                 "message": "Failed to fetch metrics",
             }
     except Exception as e:
-        logger.error("litellm_metrics_failed", error=str(e))
         return {
             "status": "unavailable",
-            "error": "Failed to fetch LiteLLM metrics",
+            "error": str(e),
         }
 
 
@@ -1018,7 +1024,7 @@ async def get_a2a_messages(limit: int = 100, authenticated: str = Depends(verify
         return {
             "messages": [],
             "count": 0,
-            "error": "An internal error occurred.",
+            "error": str(e),
         }
 
 
@@ -1074,7 +1080,7 @@ async def get_a2a_conversation(from_agent: str, to_agent: str, limit: int = 50, 
             "to_agent": to_agent,
             "messages": [],
             "count": 0,
-            "error": "An internal error occurred.",
+            "error": str(e),
         }
 
 
@@ -1350,7 +1356,7 @@ def _classify_position(reasoning: str) -> str:
     return "neutral"
 
 
-def _build_synthesis(round_result: Any, votes: dict[str, int], _participant_count: int) -> str:
+def _build_synthesis(round_result: Any, votes: dict[str, int], participant_count: int) -> str:
     """Build a human-readable synthesis from a deliberation round result."""
     outcome = getattr(round_result, "outcome", None)
     outcome_str = outcome.value if outcome else "unknown"

@@ -3,7 +3,7 @@
 import json
 import uuid as uuid_module
 from datetime import UTC, datetime
-from typing import Annotated, Any
+from typing import Any
 
 import structlog
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
@@ -31,47 +31,10 @@ from . import (
 logger = structlog.get_logger(__name__)
 router = APIRouter(prefix="", tags=["observability"])
 
-# Error detail constants (extracted to avoid duplicate literals)
-_RATE_LIMIT_EXCEEDED = "Rate limit exceeded"
-_DB_UNAVAILABLE = "External call log database unavailable"
-
-
-def _apply_status_filter(query, count_query, status: str, model):
-    """Apply status filter to both query and count_query."""
-    if status == "success":
-        query = query.where(model.status_code >= 200)
-        query = query.where(model.status_code < 300)
-        count_query = count_query.where(model.status_code >= 200)
-        count_query = count_query.where(model.status_code < 300)
-    elif status == "error":
-        query = query.where(
-            (model.status_code < 200)
-            | (model.status_code >= 300)
-            | (model.error_message.isnot(None))
-        )
-        count_query = count_query.where(
-            (model.status_code < 200)
-            | (model.status_code >= 300)
-            | (model.error_message.isnot(None))
-        )
-    return query, count_query
-
-
-def _apply_time_filter(query, count_query, start_time, end_time, model):
-    """Apply time range filters to both query and count_query."""
-    if start_time:
-        query = query.where(model.created_at >= start_time)
-        count_query = count_query.where(model.created_at >= start_time)
-    if end_time:
-        query = query.where(model.created_at <= end_time)
-        count_query = count_query.where(model.created_at <= end_time)
-    return query, count_query
-
 
 @router.get("/external-calls", response_model=ExternalCallLogListResponse)
 async def get_external_calls(
     request: Request,
-    authenticated: Annotated[str, Depends(verify_auth)],
     agent_id: str | None = Query(None, description="Filter by agent ID"),
     call_type: str | None = Query(None, description="Filter by call type (http/mcp)"),
     status: str = Query("all", description="Filter by status: success, error, or all"),
@@ -83,11 +46,12 @@ async def get_external_calls(
     ),
     limit: int = Query(default=100, ge=1, le=1000, description="Maximum records to return"),
     offset: int = Query(default=0, ge=0, description="Number of records to skip"),
+    authenticated: str = Depends(verify_auth),
 ) -> ExternalCallLogListResponse:
     """Get external call logs with optional filtering and pagination."""
     client_id = request.client.host if request.client else "unknown"
     if not check_rate_limit(client_id):
-        raise HTTPException(status_code=429, detail=_RATE_LIMIT_EXCEEDED)
+        raise HTTPException(status_code=429, detail="Rate limit exceeded")
 
     try:
         session_factory = _get_external_call_log_session_factory()
@@ -95,7 +59,7 @@ async def get_external_calls(
         raise
     except Exception as e:
         logger.error("external_calls_db_error", error=str(e))
-        raise HTTPException(status_code=503, detail=_DB_UNAVAILABLE) from e
+        raise HTTPException(status_code=503, detail="External call log database unavailable") from e
 
     async with session_factory() as session:
         try:
@@ -110,8 +74,30 @@ async def get_external_calls(
                 query = query.where(ExternalCallLog.call_type == call_type)
                 count_query = count_query.where(ExternalCallLog.call_type == call_type)
 
-            query, count_query = _apply_status_filter(query, count_query, status, ExternalCallLog)
-            query, count_query = _apply_time_filter(query, count_query, start_time, end_time, ExternalCallLog)
+            if status == "success":
+                query = query.where(ExternalCallLog.status_code >= 200)
+                query = query.where(ExternalCallLog.status_code < 300)
+                count_query = count_query.where(ExternalCallLog.status_code >= 200)
+                count_query = count_query.where(ExternalCallLog.status_code < 300)
+            elif status == "error":
+                query = query.where(
+                    (ExternalCallLog.status_code < 200)
+                    | (ExternalCallLog.status_code >= 300)
+                    | (ExternalCallLog.error_message.isnot(None))
+                )
+                count_query = count_query.where(
+                    (ExternalCallLog.status_code < 200)
+                    | (ExternalCallLog.status_code >= 300)
+                    | (ExternalCallLog.error_message.isnot(None))
+                )
+
+            if start_time:
+                query = query.where(ExternalCallLog.created_at >= start_time)
+                count_query = count_query.where(ExternalCallLog.created_at >= start_time)
+
+            if end_time:
+                query = query.where(ExternalCallLog.created_at <= end_time)
+                count_query = count_query.where(ExternalCallLog.created_at <= end_time)
 
             total_result = await session.execute(count_query)
             total = total_result.scalar() or 0
@@ -177,7 +163,7 @@ async def create_external_call(
     """Create a new external call log entry."""
     client_id = request.client.host if request.client else "unknown"
     if not check_rate_limit(client_id):
-        raise HTTPException(status_code=429, detail=_RATE_LIMIT_EXCEEDED)
+        raise HTTPException(status_code=429, detail="Rate limit exceeded")
 
     validator = get_zero_trust()
     validate_input(validator, {"agent_id": log_data.agent_id}, "external_call")
@@ -189,7 +175,7 @@ async def create_external_call(
         raise
     except Exception as e:
         logger.error("external_calls_db_error", error=str(e))
-        raise HTTPException(status_code=503, detail=_DB_UNAVAILABLE) from e
+        raise HTTPException(status_code=503, detail="External call log database unavailable") from e
 
     encryptor = get_encryptor()
 
@@ -291,7 +277,7 @@ async def get_external_call(
     """Get a single external call log entry by ID."""
     client_id = request.client.host if request.client else "unknown"
     if not check_rate_limit(client_id):
-        raise HTTPException(status_code=429, detail=_RATE_LIMIT_EXCEEDED)
+        raise HTTPException(status_code=429, detail="Rate limit exceeded")
 
     try:
         call_uuid = uuid_module.UUID(call_id)

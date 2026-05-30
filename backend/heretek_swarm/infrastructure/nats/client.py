@@ -27,12 +27,6 @@ if TYPE_CHECKING:
 
 logger = structlog.get_logger("nats.client")
 
-# OpenTelemetry span attribute keys (extracted to avoid duplicate literals)
-_OTEL_MESSAGING_SYSTEM = "messaging.system"
-_OTEL_MESSAGING_DESTINATION = "messaging.destination"
-_OTEL_MESSAGING_OPERATION = "messaging.operation"
-_OTEL_NOT_CONNECTED = "not connected"
-
 
 class ConnectionState(Enum):
     """NATS connection states."""
@@ -151,65 +145,54 @@ class NATSClient:
                     **connect_kwargs,
                 )
 
-                self._log_tls_connection(server_url)
+                if self.config.tls_enabled:
+                    peer_cert_subject = "unknown"
+                    try:
+                        transport = getattr(
+                            self._connection, "_io_reader", None
+                        ) or getattr(self._connection, "_transport", None)
+                        if transport is not None:
+                            get_info = getattr(transport, "get_extra_info", None)
+                            if get_info is not None:
+                                peer_cert = get_info("peercert")
+                                if peer_cert is not None:
+                                    subject_attrs = peer_cert.get("subject", [])
+                                    cn = next(
+                                        (
+                                            v
+                                            for t, v in subject_attrs
+                                            if t == "commonName"
+                                        ),
+                                        "unknown",
+                                    )
+                                    peer_cert_subject = cn
+                    except Exception:
+                        logger.debug("Could not extract peer certificate subject")
+
+                    logger.info(
+                        "nats_tls_connection_established",
+                        server=server_url,
+                        peer_cert_subject=peer_cert_subject,
+                    )
+                else:
+                    logger.info("nats_connected", url=server_url)
 
                 self._state = ConnectionState.CONNECTED
                 span.set_status(SpanStatus.OK)
                 return True
 
             except Exception as e:
-                self._log_connection_failure(e, span)
+                if self.config.tls_enabled:
+                    logger.error(
+                        "nats_tls_connection_failed",
+                        server=self.config.url,
+                        error=str(e),
+                    )
+                logger.error("nats_connection_failed", error=str(e))
+                span.record_exception(e)
+                span.set_status(SpanStatus.ERROR, str(e))
+                self._state = ConnectionState.FAILED
                 return False
-
-    def _log_tls_connection(self, server_url: str) -> None:
-        """Log TLS connection details including peer certificate subject."""
-        if not self.config.tls_enabled:
-            logger.info("nats_connected", url=server_url)
-            return
-
-        peer_cert_subject = self._extract_peer_cert_subject()
-        logger.info(
-            "nats_tls_connection_established",
-            server=server_url,
-            peer_cert_subject=peer_cert_subject,
-        )
-
-    def _extract_peer_cert_subject(self) -> str:
-        """Extract the peer certificate common name from the NATS connection."""
-        try:
-            transport = getattr(
-                self._connection, "_io_reader", None
-            ) or getattr(self._connection, "_transport", None)
-            if transport is None:
-                return "unknown"
-            get_info = getattr(transport, "get_extra_info", None)
-            if get_info is None:
-                return "unknown"
-            peer_cert = get_info("peercert")
-            if peer_cert is None:
-                return "unknown"
-            subject_attrs = peer_cert.get("subject", [])
-            cn = next(
-                (v for t, v in subject_attrs if t == "commonName"),
-                "unknown",
-            )
-            return cn
-        except Exception:
-            logger.debug("Could not extract peer certificate subject")
-            return "unknown"
-
-    def _log_connection_failure(self, e: Exception, span: Any) -> None:
-        """Log NATS connection failure with appropriate error details."""
-        if self.config.tls_enabled:
-            logger.error(
-                "nats_tls_connection_failed",
-                server=self.config.url,
-                error=str(e),
-            )
-        logger.error("nats_connection_failed", error=str(e))
-        span.record_exception(e)
-        span.set_status(SpanStatus.ERROR, str(e))
-        self._state = ConnectionState.FAILED
 
     def _build_ssl_context(self) -> ssl.SSLContext:
         """Build an SSL context for mTLS.
@@ -258,6 +241,8 @@ class NATSClient:
         with os.fdopen(key_fd, "w") as f:
             f.write(key_str)
         self._temp_cert_files.append(key_path)
+
+        import os
 
         skip_verify = os.getenv("HERETEK_TLS_SKIP_HOSTNAME_VERIFY", "").lower() in (
             "1",
@@ -327,14 +312,14 @@ class NATSClient:
             "nats.publish",
             kind="producer",
             attributes={
-                _OTEL_MESSAGING_SYSTEM: "nats",
-                _OTEL_MESSAGING_DESTINATION: subject,
-                _OTEL_MESSAGING_OPERATION: "publish",
+                "messaging.system": "nats",
+                "messaging.destination": subject,
+                "messaging.operation": "publish",
             },
         ) as span:
             if self._state != ConnectionState.CONNECTED:
                 logger.warning("nats_not_connected", state=self._state.value)
-                span.set_status(SpanStatus.ERROR, _OTEL_NOT_CONNECTED)
+                span.set_status(SpanStatus.ERROR, "not connected")
                 return False
 
             try:
@@ -394,15 +379,15 @@ class NATSClient:
             "nats.subscribe",
             kind="consumer",
             attributes={
-                _OTEL_MESSAGING_SYSTEM: "nats",
-                _OTEL_MESSAGING_DESTINATION: subject,
-                _OTEL_MESSAGING_OPERATION: "subscribe",
+                "messaging.system": "nats",
+                "messaging.destination": subject,
+                "messaging.operation": "subscribe",
                 "messaging.queue": queue or "",
             },
         ) as span:
             if self._state != ConnectionState.CONNECTED:
                 logger.warning("nats_not_connected", state=self._state.value)
-                span.set_status(SpanStatus.ERROR, _OTEL_NOT_CONNECTED)
+                span.set_status(SpanStatus.ERROR, "not connected")
                 return None
 
             try:
@@ -481,14 +466,14 @@ class NATSClient:
             "nats.request",
             kind="client",
             attributes={
-                _OTEL_MESSAGING_SYSTEM: "nats",
-                _OTEL_MESSAGING_DESTINATION: subject,
-                _OTEL_MESSAGING_OPERATION: "request",
+                "messaging.system": "nats",
+                "messaging.destination": subject,
+                "messaging.operation": "request",
                 "messaging.timeout_ms": int(timeout_sec * 1000),
             },
         ) as span:
             if self._state != ConnectionState.CONNECTED:
-                span.set_status(SpanStatus.ERROR, _OTEL_NOT_CONNECTED)
+                span.set_status(SpanStatus.ERROR, "not connected")
                 return None
 
             try:

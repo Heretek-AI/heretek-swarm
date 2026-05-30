@@ -50,7 +50,6 @@ logger = structlog.get_logger("PerceiverAgent")
 
 # Module-level constant for repeated MIME type
 _OCTET_STREAM_MIME = "application/octet-stream"
-_DATA_URL_PREFIX = "data:"
 
 
 class PerceiverAgent(
@@ -338,6 +337,9 @@ class PerceiverAgent(
             return True  # Fail open on validation errors
 
     # Modality detection lookup tables
+    _TEXT_FORMATS: ClassVar[frozenset[str]] = frozenset(
+        ["txt", "md", "json", "xml", "html"]
+    )
     _IMAGE_FORMATS: ClassVar[frozenset[str]] = frozenset(
         ["jpg", "jpeg", "png", "gif", "bmp", "webp", "svg"]
     )
@@ -386,7 +388,7 @@ class PerceiverAgent(
 
     def _detect_string_modality(self, data: str) -> str:
         """Detect modality from string content."""
-        if data.startswith(_DATA_URL_PREFIX):
+        if data.startswith("data:"):
             mime_type = data.split(":")[1].split(";")[0]
             if "image" in mime_type:
                 return ModalityType.IMAGE.value
@@ -561,7 +563,7 @@ class PerceiverAgent(
         if not isinstance(image_data, str):
             return b""
         payload = image_data
-        if payload.startswith(_DATA_URL_PREFIX):
+        if payload.startswith("data:"):
             # Strip the "data:image/xxx;base64," prefix
             try:
                 payload = payload.split(",", 1)[1]
@@ -575,7 +577,7 @@ class PerceiverAgent(
     @staticmethod
     def _detect_image_mime(image_data: Any) -> str:
         """Infer a MIME type string from the input shape."""
-        if isinstance(image_data, str) and image_data.startswith(_DATA_URL_PREFIX):
+        if isinstance(image_data, str) and image_data.startswith("data:"):
             try:
                 return image_data.split(":")[1].split(";")[0]
             except IndexError:
@@ -654,7 +656,7 @@ class PerceiverAgent(
         """
         size_bytes = len(image_data.encode())
         fmt = "base64"
-        if image_data.startswith(_DATA_URL_PREFIX):
+        if image_data.startswith("data:"):
             try:
                 mime = image_data.split(":")[1].split(";")[0]
             except IndexError:
@@ -701,7 +703,7 @@ class PerceiverAgent(
 
         payload = audio_data
         mime_type = _OCTET_STREAM_MIME
-        if payload.startswith(_DATA_URL_PREFIX):
+        if payload.startswith("data:"):
             try:
                 header, payload = payload.split(",", 1)
                 mime_type = header.split(":")[1].split(";")[0]
@@ -851,7 +853,7 @@ class PerceiverAgent(
 
         payload = video_data
         mime_type = _OCTET_STREAM_MIME
-        if payload.startswith(_DATA_URL_PREFIX):
+        if payload.startswith("data:"):
             try:
                 header, payload = payload.split(",", 1)
                 mime_type = header.split(":")[1].split(";")[0]
@@ -1056,7 +1058,7 @@ class PerceiverAgent(
                 else:
                     structure["json_type"] = type(parsed).__name__
                 structure["json_valid"] = True
-            except _json.JSONDecodeError:
+            except (_json.JSONDecodeError, ValueError):
                 structure["json_valid"] = False
 
         elif fmt == "xml" or fmt == "html":

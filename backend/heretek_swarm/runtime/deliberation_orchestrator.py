@@ -116,35 +116,22 @@ class DeliberationOrchestrator:
     @staticmethod
     def _collect_triad_results(actors: dict[str, Any]) -> dict[str, Any]:
         """Read results from per-agent state attributes."""
-        return {
-            "alpha": DeliberationOrchestrator._collect_alpha_results(actors),
-            "beta": DeliberationOrchestrator._collect_beta_results(actors),
-            "charlie": DeliberationOrchestrator._collect_charlie_results(actors),
-        }
-
-    @staticmethod
-    def _collect_alpha_results(actors: dict[str, Any]) -> dict[str, Any]:
-        agent = actors.get("alpha")
-        if agent is None:
-            return {"error": "Agent alpha not found"}
-        history = getattr(agent, "analysis_history", [])
-        return {"analyses": history[-3:] if history else []}
-
-    @staticmethod
-    def _collect_beta_results(actors: dict[str, Any]) -> dict[str, Any]:
-        agent = actors.get("beta")
-        if agent is None:
-            return {"error": "Agent beta not found"}
-        analyses = getattr(agent, "_analyses", {})
-        return {"analyses": list(analyses.values())[-3:] if analyses else []}
-
-    @staticmethod
-    def _collect_charlie_results(actors: dict[str, Any]) -> dict[str, Any]:
-        agent = actors.get("charlie")
-        if agent is None:
-            return {"error": "Agent charlie not found"}
-        challenges = getattr(agent, "_challenges", {})
-        return {"challenges": list(challenges.values())[-3:] if challenges else []}
+        results: dict[str, Any] = {}
+        for agent_id in ["alpha", "beta", "charlie"]:
+            agent = actors.get(agent_id)
+            if agent is None:
+                results[agent_id] = {"error": f"Agent {agent_id} not found"}
+                continue
+            if agent_id == "alpha":
+                history = getattr(agent, "analysis_history", [])
+                results[agent_id] = {"analyses": history[-3:] if history else []}
+            elif agent_id == "beta":
+                analyses = getattr(agent, "_analyses", {})
+                results[agent_id] = {"analyses": list(analyses.values())[-3:] if analyses else []}
+            elif agent_id == "charlie":
+                challenges = getattr(agent, "_challenges", {})
+                results[agent_id] = {"challenges": list(challenges.values())[-3:] if challenges else []}
+        return results
 
     async def _handoff_to_coder(
         self, actors: dict[str, Any], steward: Any,
@@ -193,46 +180,25 @@ class DeliberationOrchestrator:
     def _extract_requirements(results: dict[str, Any]) -> list[str]:
         """Extract requirements from triad results."""
         requirements: list[str] = []
-        requirements.extend(DeliberationOrchestrator._extract_alpha_requirements(results))
-        requirements.extend(DeliberationOrchestrator._extract_beta_requirements(results))
-        requirements.extend(DeliberationOrchestrator._extract_charlie_requirements(results))
-        return requirements
-
-    @staticmethod
-    def _extract_alpha_requirements(results: dict[str, Any]) -> list[str]:
-        """Extract requirements from Alpha agent analyses."""
-        reqs: list[str] = []
         for entry in results.get("alpha", {}).get("analyses", [])[-2:]:
             if isinstance(entry, dict):
                 for key in ("decision", "analysis", "summary"):
                     if key in entry:
-                        reqs.append(f"Alpha {key}: {entry[key]}")
+                        requirements.append(f"Alpha {key}: {entry[key]}")
                         break
-        return reqs
-
-    @staticmethod
-    def _extract_beta_requirements(results: dict[str, Any]) -> list[str]:
-        """Extract requirements from Beta agent analyses."""
-        reqs: list[str] = []
         for entry in results.get("beta", {}).get("analyses", [])[-2:]:
             if isinstance(entry, dict):
                 for key in ("analysis", "validation", "decision"):
                     if key in entry:
-                        reqs.append(f"Beta {key}: {entry[key]}")
+                        requirements.append(f"Beta {key}: {entry[key]}")
                         break
-        return reqs
-
-    @staticmethod
-    def _extract_charlie_requirements(results: dict[str, Any]) -> list[str]:
-        """Extract requirements from Charlie agent challenges."""
-        reqs: list[str] = []
         for entry in results.get("charlie", {}).get("challenges", [])[-2:]:
             if isinstance(entry, dict):
                 if "challenges" in entry:
-                    reqs.append(f"Charlie flags: {entry['challenges']}")
+                    requirements.append(f"Charlie flags: {entry['challenges']}")
                 elif "challenge" in entry:
-                    reqs.append(f"Charlie: {entry['challenge']}")
-        return reqs
+                    requirements.append(f"Charlie: {entry['challenge']}")
+        return requirements
 
     async def _poll_coder_completion(
         self, actors: dict[str, Any], pre_counter: int, timeout: int
@@ -260,7 +226,7 @@ class DeliberationOrchestrator:
         snippets: dict = getattr(coder, "_code_snippets", {})
 
         if tasks:
-            last_key = max(tasks.keys())
+            last_key = sorted(tasks.keys())[-1]
             last_task = tasks[last_key]
             return {
                 "task_id": getattr(last_task, "id", last_key),
@@ -271,7 +237,7 @@ class DeliberationOrchestrator:
             }
 
         if snippets:
-            last_key = max(snippets.keys())
+            last_key = sorted(snippets.keys())[-1]
             last_snippet = snippets[last_key]
             return {
                 "code": getattr(last_snippet, "code", ""),
@@ -280,37 +246,6 @@ class DeliberationOrchestrator:
             }
 
         return {}
-
-    @staticmethod
-    async def _poll_agent_completion(
-        actors: dict[str, Any], agent_name: str, pre_counter: int | None, timeout: int,
-    ) -> bool:
-        """Poll for agent task completion, returning True if done."""
-        elapsed = 0.0
-        interval = 0.5
-        while elapsed < timeout:
-            await asyncio.sleep(interval)
-            elapsed += interval
-            target = actors.get(agent_name)
-            if target is None:
-                continue
-            counter = getattr(target, "_task_counter", None)
-            if isinstance(counter, int) and pre_counter is not None and counter > pre_counter:
-                return True
-            if agent_name == "alpha":
-                if len(getattr(target, "analysis_history", [])) > 0:
-                    return True
-            elif agent_name == "beta":
-                if len(getattr(target, "_analyses", {})) > 0:
-                    return True
-            elif agent_name == "charlie":
-                if len(getattr(target, "_challenges", {})) > 0:
-                    return True
-            logger.info(
-                "routed_task_polling",
-                agent_name=agent_name, elapsed=round(elapsed, 1), done=False,
-            )
-        return False
 
     async def run_consensus(
         self,
@@ -518,20 +453,51 @@ class DeliberationOrchestrator:
         # other agents we check a generic state attribute.  Timeout at
         # the configured limit; return partial/empty results on timeout.
         target_agent = supervisor_actors.get(agent_name)
-        pre_counter: int | None = (
-            getattr(target_agent, "_task_counter", None) if target_agent is not None else None
-        )
+        pre_counter: int | None = None
+        if target_agent is not None:
+            pre_counter = getattr(target_agent, "_task_counter", None)
+            if isinstance(pre_counter, int):
+                # Initial counter — task is complete when it increases.
+                pass
+            else:
+                # Fallback: track _last_analysis / _last_challenge presence.
+                pass
 
-        done = await self._poll_agent_completion(
-            supervisor_actors, agent_name, pre_counter, timeout
-        )
+        elapsed = 0.0
+        interval = 0.5
+        while elapsed < timeout:
+            await asyncio.sleep(interval)
+            elapsed += interval
 
-        if done:
+            target = supervisor_actors.get(agent_name)
+            done = False
+            if target is not None:
+                counter = getattr(target, "_task_counter", None)
+                if isinstance(counter, int) and pre_counter is not None:
+                    done = counter > pre_counter
+                elif agent_name in ("alpha", "beta", "charlie"):
+                    # Triad agents: check their standard output attrs.
+                    if agent_name == "alpha":
+                        done = len(getattr(target, "analysis_history", [])) > 0
+                    elif agent_name == "beta":
+                        done = len(getattr(target, "_analyses", {})) > 0
+                    elif agent_name == "charlie":
+                        done = len(getattr(target, "_challenges", {})) > 0
+
             logger.info(
-                "routed_task_complete",
+                "routed_task_polling",
                 agent_name=agent_name,
-                elapsed=round(timeout, 1),
+                elapsed=round(elapsed, 1),
+                done=done,
             )
+
+            if done:
+                logger.info(
+                    "routed_task_complete",
+                    agent_name=agent_name,
+                    elapsed=round(elapsed, 1),
+                )
+                break
 
         # Log the routed event to Historian. Gracefully handle missing
         # historian (log warning, still return dispatch status). This

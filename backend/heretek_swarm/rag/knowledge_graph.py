@@ -12,7 +12,6 @@ Inspired by RAGFlow's knowledge graph retrieval patterns.
 
 from dataclasses import dataclass, field
 from enum import StrEnum
-import re
 from typing import Any
 
 import structlog
@@ -78,27 +77,6 @@ class SubQuestionDecomposer:
     - Comparative: "Compare X and Y" → [X properties, Y properties]
     """
 
-    # Pre-compiled regex patterns to prevent ReDoS (CWE-1333).
-    # Input length is validated before any regex is applied.
-    _MAX_QUERY_LENGTH = 4096
-
-    _SEQUENTIAL_RE = re.compile(
-        r"\s+(?:and then|followed by|next|after that|secondly|thirdly)\s+",
-        flags=re.IGNORECASE,
-    )
-    _COMPARATIVE_RE = re.compile(
-        r"\s+(?:vs|versus|compared to|against)\s+",
-        flags=re.IGNORECASE,
-    )
-    _CAUSAL_RE = re.compile(
-        r"\s+(?:because|therefore|as a result|consequently|since)\s+",
-        flags=re.IGNORECASE,
-    )
-    _HIERARCHICAL_RE = re.compile(
-        r",\s+(?:including|specifically|such as)\s+",
-        flags=re.IGNORECASE,
-    )
-
     def decompose(self, query: str) -> list[str]:
         """
         Decompose a query into sub-questions.
@@ -109,26 +87,27 @@ class SubQuestionDecomposer:
         Returns:
             List of sub-question strings
         """
-        # Guard against ReDoS: reject excessively long inputs before any regex.
-        if len(query) > self._MAX_QUERY_LENGTH:
-            logger.warning(
-                "query_too_long_for_decomposition",
-                length=len(query),
-                max_length=self._MAX_QUERY_LENGTH,
-            )
-            return [query]
+        import re
 
-        sub_questions: list[str] = []
+        sub_questions = []
 
         # Sequential decomposition: split on "and then", "followed by"
-        sequential_split = self._SEQUENTIAL_RE.split(query)
+        sequential_split = re.split(
+            r"\s+(?:and then|followed by|next|after that|secondly|thirdly)\s+",
+            query,
+            flags=re.IGNORECASE,
+        )
         if len(sequential_split) > 1:
             sub_questions.extend(
                 s.strip().capitalize() + "?" for s in sequential_split if s.strip()
             )
 
         # Comparative decomposition: split on "vs", "versus", "compared to", "X vs Y"
-        comparative_split = self._COMPARATIVE_RE.split(query)
+        comparative_split = re.split(
+            r"\s+(?:vs|versus|compared to|against)\s+",
+            query,
+            flags=re.IGNORECASE,
+        )
         if len(comparative_split) > 1:
             # Reconstruct comparative sub-questions
             parts = comparative_split
@@ -138,39 +117,41 @@ class SubQuestionDecomposer:
                     sub_questions.append(f"{parts[i + 1].strip()}?")
 
         # Causal decomposition: split on "because", "therefore", "resulted in"
-        causal_split = self._CAUSAL_RE.split(query)
+        causal_split = re.split(
+            r"\s+(?:because|therefore|as a result|consequently|since)\s+",
+            query,
+            flags=re.IGNORECASE,
+        )
         if len(causal_split) > 1:
             sub_questions.extend(s.strip().capitalize() + "?" for s in causal_split if s.strip())
 
         # Hierarchical decomposition: split on ", including", ", specifically"
-        self._decompose_hierarchical(query, sub_questions)
-
-        # If no decomposition worked, return original query
-        if not sub_questions:
-            return [query]
-
-        return self._deduplicate(sub_questions)
-
-    def _decompose_hierarchical(self, query: str, sub_questions: list[str]) -> None:
-        """Decompose hierarchical patterns: ', including', ', specifically'."""
-        hierarchical_split = self._HIERARCHICAL_RE.split(query)
+        hierarchical_split = re.split(
+            r",\s+(?:including|specifically|such as)\s+",
+            query,
+            flags=re.IGNORECASE,
+        )
         if len(hierarchical_split) > 1:
             for i, part in enumerate(hierarchical_split):
                 if i == 0:
                     sub_questions.append(part.strip().rstrip("?") + "?")
                 else:
+                    # Each sub-part gets its own query
                     sub_questions.append(f"{part.strip().rstrip('.')}?")
 
-    @staticmethod
-    def _deduplicate(questions: list[str]) -> list[str]:
-        """Deduplicate sub-questions while preserving order."""
+        # If no decomposition worked, return original query
+        if not sub_questions:
+            return [query]
+
+        # Deduplicate while preserving order
         seen: set[str] = set()
         deduped: list[str] = []
-        for q in questions:
+        for q in sub_questions:
             normalized = q.lower().strip()
             if normalized not in seen:
                 seen.add(normalized)
                 deduped.append(q)
+
         return deduped
 
 
@@ -343,75 +324,66 @@ class KnowledgeGraphRetriever:
         top_k: int = 5,
         seed_chunk_ids: list[str] | None = None,
     ) -> list[GraphRetrievalResult]:
-        """Retrieve chunks using graph-based traversal."""
+        """
+        Retrieve chunks using graph-based traversal.
+
+        Args:
+            query: Search query
+            top_k: Number of results to return
+            seed_chunk_ids: Optional seed chunks to expand from
+
+        Returns:
+            List of graph retrieval results with traversal metadata
+        """
         results: list[GraphRetrievalResult] = []
 
+        # Step 1: Sub-question decomposition
         sub_questions = (
             self._decomposer.decompose(query) if self.config.sub_question_enabled else [query]
         )
+
         if len(sub_questions) > 1:
             logger.info(
                 "[KnowledgeGraphRetriever] Query decomposed",
-                original=query[:80], sub_questions=sub_questions,
+                original=query[:80],
+                sub_questions=sub_questions,
             )
 
-        base_results = await self._fetch_base_results(query, top_k)
-        self._add_graph_traversal_results(results, seed_chunk_ids)
-        self._add_base_retriever_results(results, base_results, top_k)
-
-        results.sort(key=lambda x: x.score, reverse=True)
-        return results[:top_k]
-
-    async def _fetch_base_results(self, query: str, top_k: int) -> list[dict[str, Any]]:
-        """Fetch results from the base retriever if available."""
-        if not self._base_retriever:
-            return []
-        try:
-            return await self._base_retriever.retrieve(
-                query, top_k=top_k * self.config.expansion_factor
-            )
-        except Exception as e:
-            logger.warning("base_retriever_failed", error=str(e))
-            return []
-
-    def _add_graph_traversal_results(
-        self, results: list[GraphRetrievalResult], seed_chunk_ids: list[str] | None,
-    ) -> None:
-        """Add results from graph traversal starting from seed chunks."""
-        if not seed_chunk_ids or not self.config.graph_traversal_enabled:
-            return
-        existing_ids = {r.chunk_id for r in results}
-        for seed_id in seed_chunk_ids:
-            traversed = self.expand_by_heading(seed_id, self.config.max_hops)
-            for hop_depth, chunk in enumerate(traversed):
-                if chunk.chunk_id in existing_ids:
-                    continue
-                existing_ids.add(chunk.chunk_id)
-                results.append(
-                    GraphRetrievalResult(
-                        chunk_id=chunk.chunk_id,
-                        content=chunk.content,
-                        score=1.0 - (hop_depth * 0.1),
-                        heading_path=chunk.heading_path,
-                        traversal_path=[c.chunk_id for c in traversed[: hop_depth + 1]],
-                        hop_depth=hop_depth,
-                        graph_edges_count=len(chunk.child_chunk_ids),
-                        document_id=chunk.document_id,
-                    )
+        # Step 2: Base retrieval (if available)
+        base_results: list[dict[str, Any]] = []
+        if self._base_retriever:
+            try:
+                base_results = await self._base_retriever.retrieve(
+                    query, top_k=top_k * self.config.expansion_factor
                 )
+            except Exception as e:
+                logger.warning("base_retriever_failed", error=str(e))
 
-    @staticmethod
-    def _add_base_retriever_results(
-        results: list[GraphRetrievalResult],
-        base_results: list[dict[str, Any]],
-        top_k: int,
-    ) -> None:
-        """Add base retriever results, skipping duplicates."""
-        existing_ids = {r.chunk_id for r in results}
+        # Step 3: Graph traversal from seed chunks
+        if seed_chunk_ids and self.config.graph_traversal_enabled:
+            for seed_id in seed_chunk_ids:
+                traversed = self.expand_by_heading(seed_id, self.config.max_hops)
+                for hop_depth, chunk in enumerate(traversed):
+                    if chunk.chunk_id in [r.chunk_id for r in results]:
+                        continue
+
+                    results.append(
+                        GraphRetrievalResult(
+                            chunk_id=chunk.chunk_id,
+                            content=chunk.content,
+                            score=1.0 - (hop_depth * 0.1),  # Score degrades with depth
+                            heading_path=chunk.heading_path,
+                            traversal_path=[c.chunk_id for c in traversed[: hop_depth + 1]],
+                            hop_depth=hop_depth,
+                            graph_edges_count=len(chunk.child_chunk_ids),
+                            document_id=chunk.document_id,
+                        )
+                    )
+
+        # Step 4: Add base retriever results
         for item in base_results[:top_k]:
             chunk_id = item.get("chunk_id", "")
-            if chunk_id and chunk_id not in existing_ids:
-                existing_ids.add(chunk_id)
+            if chunk_id and chunk_id not in [r.chunk_id for r in results]:
                 results.append(
                     GraphRetrievalResult(
                         chunk_id=chunk_id,
@@ -424,6 +396,10 @@ class KnowledgeGraphRetriever:
                         document_id=item.get("document_id"),
                     )
                 )
+
+        # Step 5: Sort by score and limit to top_k
+        results.sort(key=lambda x: x.score, reverse=True)
+        return results[:top_k]
 
     # -------------------------------------------------------------------------
     # Utility

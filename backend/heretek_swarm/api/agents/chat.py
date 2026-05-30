@@ -58,12 +58,13 @@ def _get_supervisor() -> Any:
 
 
 async def _collect_vote_responses(
-    _deliberation_id: str,
+    deliberation_id: str,
     expected_agents: list[str],
     timeout_seconds: int = COLLECTION_TIMEOUT_SECONDS,
 ) -> tuple[list[Contribution], bool]:
     """Collect vote responses from triad agents."""
     contributions: list[Contribution] = []
+    received_agents: set[str] = set()
     timed_out = False
     try:
         response_queue: asyncio.Queue[Contribution] = asyncio.Queue()
@@ -83,7 +84,7 @@ async def _collect_vote_responses(
 
 
 async def _poll_for_responses(
-    _queue: asyncio.Queue[Contribution], expected_agents: list[str], timeout_seconds: int
+    queue: asyncio.Queue[Contribution], expected_agents: list[str], timeout_seconds: int
 ) -> list[Contribution]:
     collected: list[Contribution] = []
     deadline = asyncio.get_event_loop().time() + timeout_seconds

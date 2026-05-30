@@ -978,7 +978,7 @@ class ConfigurationServiceCrud:
     # Audit Logging
     # =====================================================================
 
-    def get_audit_log(
+    async def get_audit_log(
         self: ConfigurationService,
         entity_type: str | None = None,
         entity_id: str | None = None,
@@ -1009,7 +1009,7 @@ class ConfigurationServiceCrud:
 
     async def export_configurations(
         self: ConfigurationService,
-        _config_type: ConfigType | None = None,
+        config_type: ConfigType | None = None,  # noqa: ARG002
         include_sensitive: bool = False,
         exported_by: str | None = None,
     ) -> ConfigurationExport:
@@ -1026,7 +1026,7 @@ class ConfigurationServiceCrud:
         """
         llm_providers = await self.list_llm_providers(include_disabled=True)
         embedding_providers = await self.list_embedding_providers(include_disabled=True)
-        agent_configs = await self.list_agent_configs(include_inactive=True)
+        agent_configs = await self.list_agent_configs(include_disabled=True)
         user_configs = await self.list_configs(include_sensitive=include_sensitive)
 
         if not include_sensitive:
