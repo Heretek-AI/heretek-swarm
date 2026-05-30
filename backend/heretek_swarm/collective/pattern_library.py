@@ -40,6 +40,14 @@ logger = structlog.get_logger(__name__)
 _PATTERN_PARSE_FALLBACK_MSG = "Pattern parsing fallback"
 
 
+def _is_date_after(date_str: str, cutoff: datetime) -> bool:
+    """Check if a date string is after a cutoff datetime. Returns True if parse fails."""
+    try:
+        return datetime.fromisoformat(date_str) >= cutoff
+    except (ValueError, TypeError):
+        return True  # Fail open on unparseable dates
+
+
 class StorageBackend(StrEnum):
     """Storage backend options."""
 
@@ -361,19 +369,6 @@ class PatternLibrary:
     ) -> QueryResult:
         """
         Query patterns with filters.
-
-        Args:
-            pattern_type: Filter by pattern type
-            category: Filter by category
-            tags: Filter by tags (must have all specified tags)
-            min_confidence: Minimum confidence threshold
-            max_age_days: Maximum age in days
-            limit: Maximum results to return
-            offset: Results offset for pagination
-            include_inactive: Include inactive patterns
-
-        Returns:
-            QueryResult with matching patterns
         """
         start_time = datetime.now(UTC)
         filters_applied = {
@@ -386,100 +381,80 @@ class PatternLibrary:
             "offset": offset,
             "include_inactive": include_inactive,
         }
-        warnings = []
 
-        # Start with all pattern IDs or use index
-        candidate_ids: set[str] = set(self._patterns.keys())
-
-        # Apply category filter using index
-        if category and category in self._category_index:
-            candidate_ids &= self._category_index[category]
-
-        # Apply type filter using index
-        if pattern_type and pattern_type in self._type_index:
-            candidate_ids &= self._type_index[pattern_type]
-
-        # Apply tag filter using index
-        if tags:
-            for tag in tags:
-                if tag in self._tag_index:
-                    candidate_ids &= self._tag_index[tag]
-                else:
-                    candidate_ids = set()  # Tag not found
-                    break
-
-        # Filter remaining candidates
-        filtered = []
-        cutoff_date = None
-        if max_age_days:
-            cutoff_date = datetime.now(UTC) - timedelta(days=max_age_days)
-
-        for entry_id in candidate_ids:
-            entry = self._patterns.get(entry_id)
-            if not entry:
-                continue
-
-            # Skip inactive patterns
-            if not include_inactive and not entry.is_active:
-                continue
-
-            # Check confidence
-            if entry.pattern and entry.pattern.metadata.confidence < min_confidence:
-                continue
-
-            # Check age
-            if cutoff_date and entry.stored_at:
-                try:
-                    stored_date = datetime.fromisoformat(entry.stored_at)
-                    if stored_date < cutoff_date:
-                        continue
-                except (ValueError, TypeError):
-                    logger.debug(_PATTERN_PARSE_FALLBACK_MSG, exc_info=True)
-
-            # Check expiration
-            if entry.expiration_date:
-                try:
-                    exp_date = datetime.fromisoformat(entry.expiration_date)
-                    if exp_date < datetime.now(UTC):
-                        continue
-                except (ValueError, TypeError):
-                    logger.debug(_PATTERN_PARSE_FALLBACK_MSG, exc_info=True)
-
-            filtered.append(entry)
-
-        # Sort by confidence (descending)
-        filtered.sort(
-            key=lambda e: e.pattern.metadata.confidence if e.pattern else 0,
-            reverse=True,
+        candidate_ids = self._resolve_candidate_ids(pattern_type, category, tags)
+        cutoff_date = datetime.now(UTC) - timedelta(days=max_age_days) if max_age_days else None
+        filtered = self._filter_candidates(
+            candidate_ids, min_confidence, cutoff_date, include_inactive
         )
 
-        # Apply pagination
+        filtered.sort(
+            key=lambda e: e.pattern.metadata.confidence if e.pattern else 0, reverse=True,
+        )
         total_count = len(filtered)
         paginated = filtered[offset : offset + limit]
-
         query_time = (datetime.now(UTC) - start_time).total_seconds() * 1000
 
         result = QueryResult(
-            patterns=paginated,
-            total_count=total_count,
-            query_time_ms=query_time,
-            filters_applied=filters_applied,
-            warnings=warnings,
+            patterns=paginated, total_count=total_count, query_time_ms=query_time,
+            filters_applied=filters_applied, warnings=[],
         )
-
-        # Store query history
         self._query_history.append(result)
         if len(self._query_history) > 1000:
             self._query_history = self._query_history[-500:]
 
         logger.debug(
-            "query_executed",
-            total_count=total_count,
-            returned_count=len(paginated),
-            query_time_ms=query_time,
+            "query_executed", total_count=total_count,
+            returned_count=len(paginated), query_time_ms=query_time,
         )
-
         return result
+
+    def _resolve_candidate_ids(
+        self,
+        pattern_type: PatternType | None,
+        category: PatternCategory | None,
+        tags: list[str] | None,
+    ) -> set[str]:
+        """Resolve candidate pattern IDs using indexes."""
+        candidate_ids: set[str] = set(self._patterns.keys())
+
+        if category and category in self._category_index:
+            candidate_ids &= self._category_index[category]
+        if pattern_type and pattern_type in self._type_index:
+            candidate_ids &= self._type_index[pattern_type]
+        if tags:
+            for tag in tags:
+                if tag in self._tag_index:
+                    candidate_ids &= self._tag_index[tag]
+                else:
+                    return set()
+        return candidate_ids
+
+    def _filter_candidates(
+        self,
+        candidate_ids: set[str],
+        min_confidence: float,
+        cutoff_date: datetime | None,
+        include_inactive: bool,
+    ) -> list[PatternEntry]:
+        """Filter candidate patterns by confidence, age, expiration, and active status."""
+        filtered: list[PatternEntry] = []
+        for entry_id in candidate_ids:
+            entry = self._patterns.get(entry_id)
+            if not entry:
+                continue
+            if not include_inactive and not entry.is_active:
+                continue
+            if entry.pattern and entry.pattern.metadata.confidence < min_confidence:
+                continue
+            if cutoff_date and entry.stored_at:
+                if not _is_date_after(entry.stored_at, cutoff_date):
+                    continue
+            if entry.expiration_date:
+                if not _is_date_after(entry.expiration_date, datetime.now(UTC)):
+                    continue
+            filtered.append(entry)
+        return filtered
 
     async def delete_pattern(self, entry_id: str) -> bool:
         """
