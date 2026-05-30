@@ -650,31 +650,48 @@ class SwarmIntelligenceEngine:
     ) -> tuple[int, int]:
         """Move agent based on stigmergic traces."""
         x, y = current_pos
-
-        nearby_traces = []
-        search_radius = STIGMERGY_SEARCH_RADIUS
-
-        for dx in range(-search_radius, search_radius + 1):
-            for dy in range(-search_radius, search_radius + 1):
-                nx, ny = x + dx, y + dy
-                if 0 <= nx < environment_size[0] and 0 <= ny < environment_size[1]:  # noqa: SIM102
-                    if nx in self.traces:
-                        for trace in self.traces[nx]:
-                            if abs(trace.content.get("position", (0, 0))[1] - ny) <= search_radius:
-                                nearby_traces.append(trace)  # noqa: PERF401
+        nearby_traces = self._find_nearby_traces(x, y, environment_size)
 
         if nearby_traces:
-            strongest = max(nearby_traces, key=lambda t: t.strength)
-            target_x, target_y = strongest.content.get("position", (x, y))
+            return self._move_toward_strongest_trace(x, y, nearby_traces)
 
-            new_x = x + (1 if target_x > x else (-1 if target_x < x else 0))
-            new_y = y + (1 if target_y > y else (-1 if target_y < y else 0))
+        return self._random_move(x, y, environment_size)
 
-            return (new_x, new_y)
+    def _find_nearby_traces(
+        self, x: int, y: int, environment_size: tuple[int, int]
+    ) -> list[Any]:
+        """Find traces within search radius of position."""
+        nearby: list[Any] = []
+        for dx in range(-STIGMERGY_SEARCH_RADIUS, STIGMERGY_SEARCH_RADIUS + 1):
+            for dy in range(-STIGMERGY_SEARCH_RADIUS, STIGMERGY_SEARCH_RADIUS + 1):
+                nx, ny = x + dx, y + dy
+                if not (0 <= nx < environment_size[0] and 0 <= ny < environment_size[1]):
+                    continue
+                if nx not in self.traces:
+                    continue
+                for trace in self.traces[nx]:
+                    if abs(trace.content.get("position", (0, 0))[1] - ny) <= STIGMERGY_SEARCH_RADIUS:
+                        nearby.append(trace)
+        return nearby
 
+    @staticmethod
+    def _move_toward_strongest_trace(
+        x: int, y: int, nearby_traces: list[Any]
+    ) -> tuple[int, int]:
+        """Move one step toward the strongest nearby trace."""
+        strongest = max(nearby_traces, key=lambda t: t.strength)
+        target_x, target_y = strongest.content.get("position", (x, y))
+        new_x = x + (1 if target_x > x else (-1 if target_x < x else 0))
+        new_y = y + (1 if target_y > y else (-1 if target_y < y else 0))
+        return (new_x, new_y)
+
+    @staticmethod
+    def _random_move(
+        x: int, y: int, environment_size: tuple[int, int]
+    ) -> tuple[int, int]:
+        """Move randomly within environment bounds."""
         new_x = max(0, min(environment_size[0] - 1, x + random.randint(-1, 1)))  # noqa: S311
         new_y = max(0, min(environment_size[1] - 1, y + random.randint(-1, 1)))  # noqa: S311
-
         return (new_x, new_y)
 
     def _decay_traces(self) -> None:
