@@ -851,7 +851,7 @@ async def get_historian_events(
             error=str(e),
 
         )
-        return {"events": [], "mode": "error", "detail": str(e)}
+        return {"events": [], "mode": "error", "detail": "Failed to fetch events"}
 
 
 # =============================================================================
