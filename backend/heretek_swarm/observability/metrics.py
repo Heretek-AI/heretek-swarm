@@ -497,95 +497,132 @@ class SwarmMetricsCollector:
         return max(0, min(100, avg_health - failure_penalty))
 
     def collect_consciousness_metrics(self) -> ConsciousnessMetricsData:
-        """Collect consciousness metrics computed from IIT Phi and FEP calculators.
-
-        Replaces dead-coded placeholders with values computed from the
-        consciousness subpackage (PhiCalculator, FreeEnergyCalculator).
-        Empty-agent edge case returns honest 0.0 values with a structured
-        warning log, never a placeholder constant.
-        """
+        """Collect consciousness metrics computed from IIT Phi and FEP calculators."""
         import structlog
-
         from heretek_swarm.consciousness.fep_active_inference import FreeEnergyCalculator
         from heretek_swarm.consciousness.iit_phi import PhiCalculator
 
         _log = structlog.get_logger(__name__)
 
-        # Call consciousness callback if registered
-        callback_result = None
-        if self._consciousness_callback:
-            callback_result = self._consciousness_callback()
+        callback_result = self._consciousness_callback() if self._consciousness_callback else None
+        agent_phi_scores = self._compute_phi_scores(callback_result)
+        agent_fep_scores = self._compute_fep_scores(callback_result)
 
-        agent_phi_scores = {}
-        agent_fep_scores = {}
+        integration_level, differentiation_level = self._compute_phi_levels(
+            agent_phi_scores, PhiCalculator, _log
+        )
 
-        # Use callback results if available
+        free_energy_avg, free_energy_variance = self._compute_free_energy(
+            agent_fep_scores, FreeEnergyCalculator, _log
+        )
+
+        phi_values = list(agent_phi_scores.values()) if agent_phi_scores else [0]
+        result = ConsciousnessMetricsData(
+            phi_avg=sum(phi_values) / len(phi_values) if phi_values else 0,
+            phi_max=max(phi_values) if phi_values else 0,
+            phi_min=min(phi_values) if phi_values else 0,
+            integration_level=integration_level,
+            differentiation_level=differentiation_level,
+            free_energy_avg=free_energy_avg,
+            free_energy_variance=free_energy_variance,
+            agent_phi_scores=agent_phi_scores,
+            agent_fep_scores=agent_fep_scores,
+        )
+        self._consciousness_metrics_history.append(result)
+        return result
+
+    def _compute_phi_scores(self, callback_result: dict | None) -> dict[str, float]:
+        """Compute agent phi scores from callback or agent metrics."""
         if callback_result and "phi_scores" in callback_result:
-            agent_phi_scores = callback_result["phi_scores"]
-        else:
-            for agent_id, metrics in self._agent_metrics.items():
-                # Simplified phi calculation based on activity
-                activity_score = min(1.0, (metrics.messages_sent + metrics.messages_received) / 100)
-                health_factor = metrics.health_score / 100
-                agent_phi_scores[agent_id] = activity_score * health_factor
+            return callback_result["phi_scores"]
+        scores: dict[str, float] = {}
+        for agent_id, metrics in self._agent_metrics.items():
+            activity_score = min(1.0, (metrics.messages_sent + metrics.messages_received) / 100)
+            health_factor = metrics.health_score / 100
+            scores[agent_id] = activity_score * health_factor
+        return scores
 
+    def _compute_fep_scores(self, callback_result: dict | None) -> dict[str, float]:
+        """Compute agent FEP scores from callback or agent metrics."""
         if callback_result and "fep_scores" in callback_result:
-            agent_fep_scores = callback_result["fep_scores"]
-        else:
-            for agent_id, metrics in self._agent_metrics.items():
-                # Simplified FEP calculation
-                error_factor = 1 / (1 + metrics.error_count)
-                health_factor = metrics.health_score / 100
-                agent_fep_scores[agent_id] = error_factor * health_factor
+            return callback_result["fep_scores"]
+        scores: dict[str, float] = {}
+        for agent_id, metrics in self._agent_metrics.items():
+            error_factor = 1 / (1 + metrics.error_count)
+            health_factor = metrics.health_score / 100
+            scores[agent_id] = error_factor * health_factor
+        return scores
 
-        # ---- Wire IIT Phi calculator for integration / differentiation levels ----
-        integration_level = 0.0
-        differentiation_level = 0.0
+    def _compute_phi_levels(
+        self, agent_phi_scores: dict[str, float], PhiCalculator: type, _log: Any
+    ) -> tuple[float, float]:
+        """Compute integration and differentiation levels via PhiCalculator."""
+        if not agent_phi_scores:
+            _log.warning("consciousness_metrics_empty_agents", reason="no_agent_phi_scores_available")
+            return 0.0, 0.0
 
-        if agent_phi_scores:
-            try:
-                phi_calc = PhiCalculator(strict_validation=False)
-                # Build a cause-effect structure from agent data
-                elements = list(agent_phi_scores.keys())
-                connectivity: dict[str, dict[str, float]] = {}
-                for aid, metrics in self._agent_metrics.items():
-                    if aid in elements:
-                        total_interactions = metrics.messages_sent + metrics.messages_received
-                        if total_interactions > 0:
-                            connectivity[aid] = {
-                                other: min(1.0, total_interactions / 100)
-                                for other in elements
-                                if other != aid
-                            }
-                        else:
-                            connectivity[aid] = {
-                                other: 0.1 for other in elements if other != aid
-                            }
-                psi_state = agent_phi_scores.get(elements[0], 0.5) if elements else 0.5
-                current_state = dict.fromkeys(elements, psi_state)
-                ces = {
-                    "system_id": "swarm-metrics",
-                    "elements": elements,
-                    "connectivity": connectivity,
-                    "current_state": current_state,
-                }
-                phi_result = phi_calc.calculate_phi(ces)
-                integration_level = _MAPPING_INTEGRATION.get(
-                    phi_result.integration_level, 0.5
-                )
-                differentiation_level = _MAPPING_DIFFERENTIATION.get(
-                    phi_result.differentiation_level, 0.5
-                )
-            except Exception:
-                _log.warning("phi_calculator_failed", exc_info=True)
-        else:
-            _log.warning(
-                "consciousness_metrics_empty_agents",
-                reason="no_agent_phi_scores_available",
+        try:
+            phi_calc = PhiCalculator(strict_validation=False)
+            elements = list(agent_phi_scores.keys())
+            connectivity = self._build_connectivity(elements)
+            psi_state = agent_phi_scores.get(elements[0], 0.5) if elements else 0.5
+            ces = {
+                "system_id": "swarm-metrics",
+                "elements": elements,
+                "connectivity": connectivity,
+                "current_state": dict.fromkeys(elements, psi_state),
+            }
+            phi_result = phi_calc.calculate_phi(ces)
+            return (
+                _MAPPING_INTEGRATION.get(phi_result.integration_level, 0.5),
+                _MAPPING_DIFFERENTIATION.get(phi_result.differentiation_level, 0.5),
             )
+        except Exception:
+            _log.warning("phi_calculator_failed", exc_info=True)
+            return 0.0, 0.0
 
-        # ---- Wire FEP calculator for free-energy variance ----
-        free_energy_values: list[float] = []
+    def _build_connectivity(self, elements: list[str]) -> dict[str, dict[str, float]]:
+        """Build connectivity matrix from agent metrics."""
+        connectivity: dict[str, dict[str, float]] = {}
+        for aid, metrics in self._agent_metrics.items():
+            if aid not in elements:
+                continue
+            total_interactions = metrics.messages_sent + metrics.messages_received
+            if total_interactions > 0:
+                connectivity[aid] = {
+                    other: min(1.0, total_interactions / 100)
+                    for other in elements if other != aid
+                }
+            else:
+                connectivity[aid] = {other: 0.1 for other in elements if other != aid}
+        return connectivity
+
+    def _compute_free_energy(
+        self, agent_fep_scores: dict[str, float], FreeEnergyCalculator: type, _log: Any
+    ) -> tuple[float, float]:
+        """Compute free energy avg and variance via FEP calculator."""
+        free_energy_values = self._calculate_free_energy_values(FreeEnergyCalculator, _log)
+
+        if free_energy_values:
+            avg = sum(free_energy_values) / len(free_energy_values)
+            variance = sum((v - avg) ** 2 for v in free_energy_values) / len(free_energy_values)
+            return avg, variance
+
+        if agent_fep_scores:
+            fe_values = list(agent_fep_scores.values())
+            avg = sum(fe_values) / len(fe_values)
+            variance = sum((v - avg) ** 2 for v in fe_values) / len(fe_values)
+            _log.warning("free_energy_calculator_fallback", reason="using_agent_fep_scores_fallback")
+            return avg, variance
+
+        _log.warning("free_energy_calculator_empty", reason="no_agent_fep_scores_or_calculations")
+        return 0.0, 0.0
+
+    def _calculate_free_energy_values(
+        self, FreeEnergyCalculator: type, _log: Any
+    ) -> list[float]:
+        """Calculate free energy for each agent."""
+        values: list[float] = []
         fep_calc = FreeEnergyCalculator(strict_validation=False)
         for agent_id, metrics in self._agent_metrics.items():
             try:
@@ -605,49 +642,10 @@ class SwarmMetricsCollector:
                     },
                 }
                 fe = fep_calc.calculate_free_energy(observations, generative_model)
-                free_energy_values.append(fe)
+                values.append(fe)
             except Exception:
                 _log.warning("fep_calculator_failed", agent_id=agent_id, exc_info=True)
-
-        # Compute free_energy_avg and free_energy_variance
-        if free_energy_values:
-            free_energy_avg = sum(free_energy_values) / len(free_energy_values)
-            mean = free_energy_avg
-            free_energy_variance = sum((v - mean) ** 2 for v in free_energy_values) / len(
-                free_energy_values
-            )
-        elif agent_fep_scores:
-            fe_values = list(agent_fep_scores.values())
-            free_energy_avg = sum(fe_values) / len(fe_values)
-            mean = free_energy_avg
-            free_energy_variance = sum((v - mean) ** 2 for v in fe_values) / len(fe_values)
-            _log.warning(
-                "free_energy_calculator_fallback",
-                reason="using_agent_fep_scores_fallback",
-            )
-        else:
-            free_energy_avg = 0.0
-            free_energy_variance = 0.0
-            _log.warning(
-                "free_energy_calculator_empty",
-                reason="no_agent_fep_scores_or_calculations",
-            )
-
-        phi_values = list(agent_phi_scores.values()) if agent_phi_scores else [0]
-
-        result = ConsciousnessMetricsData(
-            phi_avg=sum(phi_values) / len(phi_values) if phi_values else 0,
-            phi_max=max(phi_values) if phi_values else 0,
-            phi_min=min(phi_values) if phi_values else 0,
-            integration_level=integration_level,
-            differentiation_level=differentiation_level,
-            free_energy_avg=free_energy_avg,
-            free_energy_variance=free_energy_variance,
-            agent_phi_scores=agent_phi_scores,
-            agent_fep_scores=agent_fep_scores,
-        )
-        self._consciousness_metrics_history.append(result)
-        return result
+        return values
 
 
 class RealTimeMetricsStream:
