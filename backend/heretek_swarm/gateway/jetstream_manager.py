@@ -543,7 +543,7 @@ class JetStreamManager:
         )
 
         self._stats["streams_created"] += 1
-        logger.info("Fallback stream created: {config.stream_name}")
+        logger.info("Fallback stream created", stream_name=config.stream_name)
         return True
 
     async def delete_stream(self, stream_name: str) -> bool:
@@ -560,7 +560,7 @@ class JetStreamManager:
             return False
 
         if stream_name not in self._streams:
-            logger.warning("Stream not found: {stream_name}")
+            logger.warning("Stream not found", stream_name=stream_name)
             return False
 
         if self._fallback_mode:
@@ -571,12 +571,12 @@ class JetStreamManager:
             del self._streams[stream_name]
             self._stats["streams_deleted"] += 1
 
-            logger.info("JetStream deleted: {stream_name}")
+            logger.info("JetStream deleted", stream_name=stream_name)
             await self._audit_stream_operation("delete_stream", stream_name, True)
             return True
 
-        except Exception:
-            logger.error("Failed to delete stream: {e}")
+        except Exception as e:
+            logger.error("Failed to delete stream", stream_name=stream_name, error=str(e))
             await self._audit_stream_operation("delete_stream", stream_name, False)
             return False
 
