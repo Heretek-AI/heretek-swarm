@@ -181,23 +181,26 @@ class TaskGraph:
         if strategy == "notify":
             return {"resolved": False, "action": "notify", "details": "Steward notified of cycle"}
         if strategy == "remove":
-            if len(cycle) >= 2:
-                source, target = cycle[0], cycle[1]
-                for edge_id, edge in list(self._edges.items()):
-                    if edge.source_id == source and edge.target_id == target:
-                        self.remove_edge(edge_id)
-                        return {
-                            "resolved": True,
-                            "action": "remove",
-                            "details": f"Removed edge {edge_id}",
-                        }
-            return {"resolved": False, "action": "remove", "details": "No edge to remove"}
+            return self._resolve_cycle_by_remove(cycle)
         if strategy == "break":
-            if cycle:
-                self.remove_node(cycle[0])
-                return {"resolved": True, "action": "break", "details": f"Removed node {cycle[0]}"}
-            return {"resolved": False, "action": "break", "details": "No node to remove"}
+            return self._resolve_cycle_by_break(cycle)
         return {"resolved": False, "action": "none", "details": "Unknown strategy"}
+
+    def _resolve_cycle_by_remove(self, cycle: list[str]) -> dict[str, Any]:
+        if len(cycle) < 2:
+            return {"resolved": False, "action": "remove", "details": "No edge to remove"}
+        source, target = cycle[0], cycle[1]
+        for edge_id, edge in list(self._edges.items()):
+            if edge.source_id == source and edge.target_id == target:
+                self.remove_edge(edge_id)
+                return {"resolved": True, "action": "remove", "details": f"Removed edge {edge_id}"}
+        return {"resolved": False, "action": "remove", "details": "No edge to remove"}
+
+    def _resolve_cycle_by_break(self, cycle: list[str]) -> dict[str, Any]:
+        if cycle:
+            self.remove_node(cycle[0])
+            return {"resolved": True, "action": "break", "details": f"Removed node {cycle[0]}"}
+        return {"resolved": False, "action": "break", "details": "No node to remove"}
 
     def get_topological_order(self) -> list[str]:
         if self._topo_order_cache is not None:
