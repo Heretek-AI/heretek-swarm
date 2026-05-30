@@ -14,8 +14,6 @@ from uuid import UUID
 import structlog
 from fastapi import APIRouter, Depends, HTTPException, Query
 
-logger = structlog.get_logger(__name__)
-
 from heretek_swarm.config.models import (
     AgentConfigCreate,
     AgentConfigUpdate,
