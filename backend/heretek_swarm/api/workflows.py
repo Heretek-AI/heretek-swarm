@@ -130,7 +130,7 @@ async def get_workflow(
 
     workflow = engine.get_workflow(workflow_id)
     if workflow is None:
-        raise HTTPException(status_code=404, detail="Workflow not found")
+        raise HTTPException(status_code=404, detail=_WORKFLOW_NOT_FOUND)
 
     return {
         "id": workflow.id,
@@ -186,7 +186,7 @@ async def execute_workflow(
     engine = await get_workflow_engine()
 
     if engine.get_workflow(workflow_id) is None:
-        raise HTTPException(status_code=404, detail="Workflow not found")
+        raise HTTPException(status_code=404, detail=_WORKFLOW_NOT_FOUND)
 
     result = await engine.execute_workflow(
         workflow_id=workflow_id,
@@ -236,7 +236,7 @@ async def update_workflow(
     try:
         workflow = await engine.update_workflow(workflow_id, workflow_definition)
     except ValueError:
-        raise HTTPException(status_code=404, detail="Workflow not found")  # noqa: B904
+        raise HTTPException(status_code=404, detail=_WORKFLOW_NOT_FOUND)  # noqa: B904
 
     logger.info("workflow_updated", workflow_id=workflow.id, name=workflow.name)
 
@@ -263,7 +263,7 @@ async def delete_workflow(workflow_id: str, authenticated: Annotated[str, Depend
     engine = await get_workflow_engine()
 
     if not engine.delete_workflow(workflow_id):
-        raise HTTPException(status_code=404, detail="Workflow not found")
+        raise HTTPException(status_code=404, detail=_WORKFLOW_NOT_FOUND)
 
     return
 
@@ -357,7 +357,7 @@ async def validate_workflow_endpoint(
 
     workflow = engine.get_workflow(workflow_id)
     if workflow is None:
-        raise HTTPException(status_code=404, detail="Workflow not found")
+        raise HTTPException(status_code=404, detail=_WORKFLOW_NOT_FOUND)
 
     # Convert workflow to validation format
     workflow_definition = {
@@ -558,7 +558,7 @@ async def workflow_specific_events_stream(
     """
     engine = await get_workflow_engine()
     if workflow_id not in engine.workflows:
-        raise HTTPException(status_code=404, detail="Workflow not found")
+        raise HTTPException(status_code=404, detail=_WORKFLOW_NOT_FOUND)
 
     return StreamingResponse(
         _stream_workflow_events(workflow_id=workflow_id, execution_id=execution_id),
@@ -569,3 +569,6 @@ async def workflow_specific_events_stream(
             "X-Accel-Buffering": "no",
         },
     )
+# Error detail constants (extracted to avoid duplicate literals)
+_WORKFLOW_NOT_FOUND = _WORKFLOW_NOT_FOUND
+

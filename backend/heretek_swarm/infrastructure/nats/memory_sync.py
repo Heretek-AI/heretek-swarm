@@ -420,7 +420,7 @@ class MemorySync:
         except Exception as e:
             logger.error("memory_update_handler_failed", error=str(e))
 
-    async def _handle_sync_response(self, _subject: str, data: bytes) -> None:
+    def _handle_sync_response(self, _subject: str, data: bytes) -> None:
         """Handle sync response from another agent."""
         try:
             import json
@@ -440,7 +440,7 @@ class MemorySync:
         except Exception as e:
             logger.error("sync_response_handler_failed", error=str(e))
 
-    async def _handle_conflict_notification(self, _subject: str, data: bytes) -> None:
+    def _handle_conflict_notification(self, _subject: str, data: bytes) -> None:
         """Handle conflict resolution notification."""
         try:
             import json
@@ -526,7 +526,7 @@ class MemorySync:
 
         return success
 
-    async def subscribe_memory_updates(self, callback: Callable[[MemoryUpdate], None]) -> None:
+    def subscribe_memory_updates(self, callback: Callable[[MemoryUpdate], None]) -> None:
         """
         Subscribe to memory updates from other agents.
 
@@ -537,7 +537,7 @@ class MemorySync:
         self._update_callbacks.append(callback)
         logger.debug("memory_update_subscriber_added")
 
-    async def unsubscribe_memory_updates(self, callback: Callable[[MemoryUpdate], None]) -> None:
+    def unsubscribe_memory_updates(self, callback: Callable[[MemoryUpdate], None]) -> None:
         """Unsubscribe from memory updates."""
         if callback in self._update_callbacks:
             self._update_callbacks.remove(callback)
@@ -553,7 +553,7 @@ class MemorySync:
             pending_futures[memory_id] = future
         return pending_futures
 
-    async def _collect_sync_results(
+    def _collect_sync_results(
         self,
         memory_ids: list[str],
         done: set[asyncio.Future],

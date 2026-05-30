@@ -34,8 +34,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install -e .
-          pip install locust pytest
+          pip install --only-binary :all: -e .
+          pip install --only-binary :all: locust pytest
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
@@ -83,7 +83,7 @@ jobs:
           cache: 'pip'
 
       - name: Install Locust
-        run: pip install locust
+        run: pip install --only-binary=":all:" locust
 
       - name: Run Baseline Load Test (Locust)
         run: |

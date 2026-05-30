@@ -83,49 +83,56 @@ class ExternalInputValidator:
         threat_indicators: list[str] = []
         severity = Severity.INFO
 
-        if self.config.enable_prompt_injection_detection:
-            for pattern, threat_type in self._compiled_prompt:
-                if pattern.search(content_str):
-                    threat_indicators.append(threat_type)
-                    severity = Severity.HIGH
-
-        if self.config.enable_exfiltration_detection:
-            for pattern, threat_type in self._compiled_exfil:
-                if pattern.search(content_str):
-                    threat_indicators.append(threat_type)
-                    severity = Severity.HIGH
-
-        if self.config.enable_dos_detection:
-            for pattern, threat_type in self._compiled_dos:
-                if pattern.search(content_str):
-                    threat_indicators.append(threat_type)
-                    if severity != Severity.HIGH:
-                        severity = Severity.WARNING
-
-        if self.config.enable_reputation_check:
-            rep_passed, _score, _rep_reason = self.check_reputation(source)
-            if not rep_passed:
-                threat_indicators.append("low_reputation")
-                severity = Severity.HIGH
+        severity = self._scan_threat_patterns(content_str, threat_indicators, severity)
+        severity = self._check_reputation(source, threat_indicators, severity)
 
         passed = len(threat_indicators) < self.config.min_signals_for_block
-
         if not passed and self.config.alert_on_validation_failure:
             self._validation_failures[source].append(time.time())
 
         details = {
-            "source": source,
-            "source_type": source_type,
-            "threat_indicators": threat_indicators,
-            "severity": severity.value,
+            "source": source, "source_type": source_type,
+            "threat_indicators": threat_indicators, "severity": severity.value,
             "reputation_score": self._source_reputation.get(source, 0.5),
         }
-
-        reason = "passed"
-        if not passed:
-            reason = f"threats_detected: {', '.join(set(threat_indicators))}"
-
+        reason = "passed" if passed else f"threats_detected: {', '.join(set(threat_indicators))}"
         return passed, reason, details
+
+    def _scan_threat_patterns(
+        self, content: str, indicators: list[str], severity: Severity,
+    ) -> Severity:
+        """Scan content against all compiled threat patterns."""
+        if self.config.enable_prompt_injection_detection:
+            severity = self._scan_patterns(self._compiled_prompt, content, indicators, severity, Severity.HIGH)
+        if self.config.enable_exfiltration_detection:
+            severity = self._scan_patterns(self._compiled_exfil, content, indicators, severity, Severity.HIGH)
+        if self.config.enable_dos_detection:
+            severity = self._scan_patterns(self._compiled_dos, content, indicators, severity, Severity.WARNING)
+        return severity
+
+    @staticmethod
+    def _scan_patterns(
+        compiled: list[tuple[re.Pattern, str]], content: str,
+        indicators: list[str], current: Severity, new_severity: Severity,
+    ) -> Severity:
+        """Scan content with compiled patterns, update indicators and severity."""
+        for pattern, threat_type in compiled:
+            if pattern.search(content):
+                indicators.append(threat_type)
+                if current == Severity.INFO:
+                    current = new_severity
+        return current
+
+    def _check_reputation(
+        self, source: str, indicators: list[str], severity: Severity,
+    ) -> Severity:
+        """Check source reputation and update indicators/severity."""
+        if self.config.enable_reputation_check:
+            rep_passed, _score, _rep_reason = self.check_reputation(source)
+            if not rep_passed:
+                indicators.append("low_reputation")
+                return Severity.HIGH
+        return severity
 
     def get_validation_failures(self, source: str, window_seconds: int = 300) -> int:
         now = time.time()

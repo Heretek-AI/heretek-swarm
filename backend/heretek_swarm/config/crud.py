@@ -978,7 +978,7 @@ class ConfigurationServiceCrud:
     # Audit Logging
     # =====================================================================
 
-    async def get_audit_log(
+    def get_audit_log(
         self: ConfigurationService,
         entity_type: str | None = None,
         entity_id: str | None = None,
@@ -1009,7 +1009,7 @@ class ConfigurationServiceCrud:
 
     async def export_configurations(
         self: ConfigurationService,
-        config_type: ConfigType | None = None,  # noqa: ARG002
+        _config_type: ConfigType | None = None,
         include_sensitive: bool = False,
         exported_by: str | None = None,
     ) -> ConfigurationExport:

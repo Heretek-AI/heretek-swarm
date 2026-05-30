@@ -768,11 +768,18 @@ class TestNoPlaintextSecretsInRepo:
     def test_no_plaintext_secrets_outside_secrets_dir(self) -> None:
         """Rudimentary scan: common secret patterns must not appear outside
         secrets/ or the .secrets.baseline file."""
+        violations = self._scan_for_secret_patterns()
+        assert not violations, (
+            f"Found {len(violations)} plaintext secret(s) outside secrets/:\n"
+            + "\n".join(f"  {f}:{l} -> {v[:80]}" for f, l, v in violations)
+        )
+
+    @staticmethod
+    def _scan_for_secret_patterns() -> list[tuple[str, int, str]]:
+        """Scan tracked directories for plaintext secret patterns."""
         import json
         import re
 
-        # Patterns that would indicate a plaintext credential leak
-        # (deliberately broad — false positives are handled by the baseline)
         patterns = [
             re.compile(rb"API_KEY\s*=\s*[a-zA-Z0-9+/=]{20,}"),
             re.compile(rb"SECRET_KEY\s*=\s*[a-zA-Z0-9+/=]{20,}"),
@@ -780,11 +787,9 @@ class TestNoPlaintextSecretsInRepo:
             re.compile(rb"AGE-SECRET-KEY-1[a-zA-Z0-9]{30,}"),
         ]
 
-        # Load baseline to get known allowlisted files
         baseline_path = REPO_ROOT / ".secrets.baseline"
         baseline = json.loads(baseline_path.read_text())
         allowlisted = set(baseline.get("results", {}).keys())
-        # Also always allow encrypted files
         allowlisted.update(
             [
                 "secrets/encrypted.env",
@@ -812,7 +817,6 @@ class TestNoPlaintextSecretsInRepo:
                     continue
                 for pattern in patterns:
                     for m in pattern.finditer(content):
-                        # Skip matches inside comments (heuristic)
                         line_start = content.rfind(b"\n", 0, m.start()) + 1
                         line = content[line_start : content.find(b"\n", m.start())]
                         stripped = line.lstrip()
@@ -821,11 +825,7 @@ class TestNoPlaintextSecretsInRepo:
                         violations.append(
                             (rel, content[:m.start()].count(b"\n") + 1, m.group().decode(errors="replace"))
                         )
-
-        assert not violations, (
-            f"Found {len(violations)} plaintext secret(s) outside secrets/:\n"
-            + "\n".join(f"  {f}:{l} -> {v[:80]}" for f, l, v in violations)
-        )
+        return violations
 
     def test_no_raw_age_secret_in_source(self) -> None:
         """No AGE-SECRET-KEY literal appears in source files (outside secrets/)."""

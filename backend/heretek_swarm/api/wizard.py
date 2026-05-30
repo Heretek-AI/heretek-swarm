@@ -255,6 +255,9 @@ _PROVIDER_TYPE_MAP: dict[str, LLMProviderType] = {
 }
 _PROVIDER_TYPE_FALLBACK = LLMProviderType.OPENAI_COMPATIBLE
 
+# Common HTTP error detail (extracted to avoid duplicate literals)
+_INTERNAL_SERVER_ERROR = "Internal server error"
+
 
 # =============================================================================
 # Wizard State Management
@@ -422,7 +425,7 @@ async def update_provider(
 
     if not updated:
         logger.error("provider_update_failed", provider_id=str(provider_uuid))
-        raise HTTPException(500, "Internal server error")
+        raise HTTPException(500, _INTERNAL_SERVER_ERROR)
 
     logger.info(
         "provider_updated",
@@ -1169,7 +1172,7 @@ async def list_infrastructure_configs() -> dict[str, Any]:
         }
     except Exception as e:
         logger.exception("infrastructure_config_list_failed")
-        raise HTTPException(500, "Internal server error") from e
+        raise HTTPException(500, _INTERNAL_SERVER_ERROR) from e
 
 
 @router.post("/infrastructure")
@@ -1243,7 +1246,7 @@ async def create_infrastructure_config(
             "infrastructure_config_create_failed",
             service=config.service.value,
         )
-        raise HTTPException(500, "Internal server error") from e
+        raise HTTPException(500, _INTERNAL_SERVER_ERROR) from e
 
 
 @router.get("/infrastructure/{service}")
@@ -1257,7 +1260,7 @@ async def get_infrastructure_config(service: str) -> dict[str, Any]:
     Returns:
         Infrastructure config with health status
     """
-    service = get_service()
+    config_service = get_service()
 
     try:
         infra_service = InfrastructureService(service.lower())
@@ -1268,7 +1271,7 @@ async def get_infrastructure_config(service: str) -> dict[str, Any]:
         )
 
     try:
-        config = await service.get_infrastructure_config_by_service(infra_service.value)
+        config = await config_service.get_infrastructure_config_by_service(infra_service.value)
 
         if not config:
             raise HTTPException(404, f"No configuration found for service: {service}")
@@ -1291,7 +1294,7 @@ async def get_infrastructure_config(service: str) -> dict[str, Any]:
         raise
     except Exception as e:
         logger.exception("infrastructure_config_get_failed", service=service)
-        raise HTTPException(500, "Internal server error") from e
+        raise HTTPException(500, _INTERNAL_SERVER_ERROR) from e
 
 
 @router.post("/infrastructure/{service}/health-check")
@@ -1305,7 +1308,7 @@ async def check_service_health(service: str) -> dict[str, Any]:
     Returns:
         Health check result
     """
-    service_obj = get_service()
+    config_service = get_service()
 
     try:
         infra_service = InfrastructureService(service.lower())
@@ -1316,7 +1319,7 @@ async def check_service_health(service: str) -> dict[str, Any]:
         )
 
     try:
-        config = await service_obj.get_infrastructure_config_by_service(infra_service.value)
+        config = await config_service.get_infrastructure_config_by_service(infra_service.value)
 
         if not config:
             raise HTTPException(404, f"No configuration found for service: {service}")
@@ -1330,7 +1333,7 @@ async def check_service_health(service: str) -> dict[str, Any]:
         )
 
         # Update health status in database
-        await service_obj.update_infrastructure_health(
+        await config_service.update_infrastructure_health(
             config_id=config.id,
             health_status=result.status.value,
             latency_ms=result.latency_ms,
@@ -1355,7 +1358,7 @@ async def check_service_health(service: str) -> dict[str, Any]:
         raise
     except Exception as e:
         logger.exception("infrastructure_health_check_failed", service=service)
-        raise HTTPException(500, "Internal server error") from e
+        raise HTTPException(500, _INTERNAL_SERVER_ERROR) from e
 
 
 @router.post("/infrastructure/health-check-all")
@@ -1366,10 +1369,10 @@ async def check_all_services_health() -> dict[str, Any]:
     Returns:
         Health check results for all services
     """
-    service = get_service()
+    config_service = get_service()
 
     try:
-        configs = await service.list_infrastructure_configs(include_disabled=False)
+        configs = await config_service.list_infrastructure_configs(include_disabled=False)
 
         if not configs:
             return {
@@ -1393,7 +1396,7 @@ async def check_all_services_health() -> dict[str, Any]:
         # Update health status in database for each service
         for i, result in enumerate(results):
             config = configs[i]
-            await service.update_infrastructure_health(
+            await config_service.update_infrastructure_health(
                 config_id=config.id,
                 health_status=result.status.value,
                 latency_ms=result.latency_ms,
@@ -1431,7 +1434,7 @@ async def check_all_services_health() -> dict[str, Any]:
         }
     except Exception as e:
         logger.exception("infrastructure_health_check_all_failed")
-        raise HTTPException(500, "Internal server error") from e
+        raise HTTPException(500, _INTERNAL_SERVER_ERROR) from e
 
 
 @router.delete("/infrastructure/{service}")
@@ -1445,7 +1448,7 @@ async def delete_infrastructure_config(service: str) -> Response:
     Returns:
         204 No Content on success
     """
-    service = get_service()
+    config_service = get_service()
 
     try:
         infra_service = InfrastructureService(service.lower())
@@ -1453,12 +1456,12 @@ async def delete_infrastructure_config(service: str) -> Response:
         raise HTTPException(400, f"Invalid service type: {service}")  # noqa: B904
 
     try:
-        config = await service.get_infrastructure_config_by_service(infra_service.value)
+        config = await config_service.get_infrastructure_config_by_service(infra_service.value)
 
         if not config:
             raise HTTPException(404, f"No configuration found for service: {service}")
 
-        await service.delete_infrastructure_config(config.id)
+        await config_service.delete_infrastructure_config(config.id)
 
         logger.info("infrastructure_config_deleted", service=service)
 
@@ -1467,7 +1470,7 @@ async def delete_infrastructure_config(service: str) -> Response:
         raise
     except Exception as e:
         logger.exception("infrastructure_config_delete_failed", service=service)
-        raise HTTPException(500, "Internal server error") from e
+        raise HTTPException(500, _INTERNAL_SERVER_ERROR) from e
 
 
 # =============================================================================

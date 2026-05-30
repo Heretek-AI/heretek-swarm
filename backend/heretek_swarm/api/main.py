@@ -1350,7 +1350,7 @@ def _classify_position(reasoning: str) -> str:
     return "neutral"
 
 
-def _build_synthesis(round_result: Any, votes: dict[str, int], participant_count: int) -> str:
+def _build_synthesis(round_result: Any, votes: dict[str, int], _participant_count: int) -> str:
     """Build a human-readable synthesis from a deliberation round result."""
     outcome = getattr(round_result, "outcome", None)
     outcome_str = outcome.value if outcome else "unknown"

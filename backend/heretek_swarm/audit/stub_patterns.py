@@ -211,53 +211,60 @@ def _scan_ast(
     active_pattern_names = set(patterns) if patterns else set(AST_PATTERNS)
 
     for node in ast.walk(tree):
-        # NotImplementedModule: module-level raise NotImplementedError
-        if (
-            "NotImplementedModule" in active_pattern_names
-            and isinstance(node, ast.Raise)
-            and isinstance(node.exc, ast.Name)
-            and node.exc.id == "NotImplementedError"
-            and getattr(node, "col_offset", -1) == 0
-        ):
-            findings.append(
-                AuditFinding(
-                    file=filename,
-                    line=node.lineno or 0,
-                    pattern_name="NotImplementedModule",
-                    severity="CRITICAL",
-                    description=(
-                        "Module-level `raise NotImplementedError` detected — "
-                        "entire module is unimplemented."
-                    ),
-                )
+        _check_not_implemented_module(node, active_pattern_names, filename, findings)
+        _check_duplicate_class(node, active_pattern_names, filename, tree, findings)
+        _check_sample_data_generator(node, active_pattern_names, filename, findings)
+
+    return findings
+
+
+def _check_not_implemented_module(
+    node: ast.AST, active: set[str], filename: str, findings: list[AuditFinding],
+) -> None:
+    """Check for module-level raise NotImplementedError."""
+    if (
+        "NotImplementedModule" in active
+        and isinstance(node, ast.Raise)
+        and isinstance(node.exc, ast.Name)
+        and node.exc.id == "NotImplementedError"
+        and getattr(node, "col_offset", -1) == 0
+    ):
+        findings.append(
+            AuditFinding(
+                file=filename, line=node.lineno or 0,
+                pattern_name="NotImplementedModule", severity="CRITICAL",
+                description="Module-level `raise NotImplementedError` detected — entire module is unimplemented.",
             )
+        )
 
-        # DuplicateClassDefinition: same class name defined multiple times at module level
-        # Nested classes (e.g. Pydantic's `class Config:` inside model classes) are excluded
-        # because they are scoped to their parent class, not the module
-        if "DuplicateClassDefinition" in active_pattern_names and isinstance(node, ast.ClassDef):
-            # Module-level classes have col_offset == 0 and appear directly in tree.body
-            # Nested classes (e.g. `class Config:` inside `class UserConfiguration:`)
-            # have col_offset > 0 or are not in tree.body
-            is_module_level = node in tree.body
-            if is_module_level:
-                # Count module-level classes with the same name
-                class_count = sum(
-                    1 for n in tree.body if isinstance(n, ast.ClassDef) and n.name == node.name
-                )
-                if class_count > 1:
-                    findings.append(
-                        AuditFinding(
-                            file=filename,
-                            line=node.lineno or 0,
-                            pattern_name="DuplicateClassDefinition",
-                            severity="INFO",
-                            description=f"Class `{node.name}` defined multiple times at module scope.",  # noqa: E501
-                        )
-                    )
 
-        # SampleDataGenerator: function named create_sample_* or _sample_*
-        if "SampleDataGenerator" in active_pattern_names and isinstance(
+def _check_duplicate_class(
+    node: ast.AST, active: set[str], filename: str,
+    tree: ast.Module, findings: list[AuditFinding],
+) -> None:
+    """Check for duplicate class definitions at module level."""
+    if "DuplicateClassDefinition" not in active or not isinstance(node, ast.ClassDef):
+        return
+    if node not in tree.body:
+        return
+    class_count = sum(
+        1 for n in tree.body if isinstance(n, ast.ClassDef) and n.name == node.name
+    )
+    if class_count > 1:
+        findings.append(
+            AuditFinding(
+                file=filename, line=node.lineno or 0,
+                pattern_name="DuplicateClassDefinition", severity="INFO",
+                description=f"Class `{node.name}` defined multiple times at module scope.",
+            )
+        )
+
+
+def _check_sample_data_generator(
+    node: ast.AST, active: set[str], filename: str, findings: list[AuditFinding],
+) -> None:
+    """Check for sample data generator functions."""
+    if "SampleDataGenerator" in active and isinstance(node, ast.FunctionDef):
             node, (ast.FunctionDef, ast.AsyncFunctionDef)
         ):
             name = node.name

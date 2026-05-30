@@ -247,7 +247,7 @@ class DeliberationOrchestrator:
         snippets: dict = getattr(coder, "_code_snippets", {})
 
         if tasks:
-            last_key = sorted(tasks.keys())[-1]
+            last_key = max(tasks.keys())
             last_task = tasks[last_key]
             return {
                 "task_id": getattr(last_task, "id", last_key),
@@ -258,7 +258,7 @@ class DeliberationOrchestrator:
             }
 
         if snippets:
-            last_key = sorted(snippets.keys())[-1]
+            last_key = max(snippets.keys())
             last_snippet = snippets[last_key]
             return {
                 "code": getattr(last_snippet, "code", ""),
@@ -477,12 +477,6 @@ class DeliberationOrchestrator:
         pre_counter: int | None = None
         if target_agent is not None:
             pre_counter = getattr(target_agent, "_task_counter", None)
-            if isinstance(pre_counter, int):
-                # Initial counter — task is complete when it increases.
-                pass
-            else:
-                # Fallback: track _last_analysis / _last_challenge presence.
-                pass
 
         elapsed = 0.0
         interval = 0.5
