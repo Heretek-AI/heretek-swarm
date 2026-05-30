@@ -281,6 +281,37 @@ class DeliberationOrchestrator:
 
         return {}
 
+    @staticmethod
+    async def _poll_agent_completion(
+        actors: dict[str, Any], agent_name: str, pre_counter: int | None, timeout: int,
+    ) -> bool:
+        """Poll for agent task completion, returning True if done."""
+        elapsed = 0.0
+        interval = 0.5
+        while elapsed < timeout:
+            await asyncio.sleep(interval)
+            elapsed += interval
+            target = actors.get(agent_name)
+            if target is None:
+                continue
+            counter = getattr(target, "_task_counter", None)
+            if isinstance(counter, int) and pre_counter is not None and counter > pre_counter:
+                return True
+            if agent_name == "alpha":
+                if len(getattr(target, "analysis_history", [])) > 0:
+                    return True
+            elif agent_name == "beta":
+                if len(getattr(target, "_analyses", {})) > 0:
+                    return True
+            elif agent_name == "charlie":
+                if len(getattr(target, "_challenges", {})) > 0:
+                    return True
+            logger.info(
+                "routed_task_polling",
+                agent_name=agent_name, elapsed=round(elapsed, 1), done=False,
+            )
+        return False
+
     async def run_consensus(
         self,
         question: str,
@@ -487,45 +518,20 @@ class DeliberationOrchestrator:
         # other agents we check a generic state attribute.  Timeout at
         # the configured limit; return partial/empty results on timeout.
         target_agent = supervisor_actors.get(agent_name)
-        pre_counter: int | None = None
-        if target_agent is not None:
-            pre_counter = getattr(target_agent, "_task_counter", None)
+        pre_counter: int | None = (
+            getattr(target_agent, "_task_counter", None) if target_agent is not None else None
+        )
 
-        elapsed = 0.0
-        interval = 0.5
-        while elapsed < timeout:
-            await asyncio.sleep(interval)
-            elapsed += interval
+        done = await self._poll_agent_completion(
+            supervisor_actors, agent_name, pre_counter, timeout
+        )
 
-            target = supervisor_actors.get(agent_name)
-            done = False
-            if target is not None:
-                counter = getattr(target, "_task_counter", None)
-                if isinstance(counter, int) and pre_counter is not None:
-                    done = counter > pre_counter
-                elif agent_name in ("alpha", "beta", "charlie"):
-                    # Triad agents: check their standard output attrs.
-                    if agent_name == "alpha":
-                        done = len(getattr(target, "analysis_history", [])) > 0
-                    elif agent_name == "beta":
-                        done = len(getattr(target, "_analyses", {})) > 0
-                    elif agent_name == "charlie":
-                        done = len(getattr(target, "_challenges", {})) > 0
-
+        if done:
             logger.info(
-                "routed_task_polling",
+                "routed_task_complete",
                 agent_name=agent_name,
-                elapsed=round(elapsed, 1),
-                done=done,
+                elapsed=round(timeout, 1),
             )
-
-            if done:
-                logger.info(
-                    "routed_task_complete",
-                    agent_name=agent_name,
-                    elapsed=round(elapsed, 1),
-                )
-                break
 
         # Log the routed event to Historian. Gracefully handle missing
         # historian (log warning, still return dispatch status). This
