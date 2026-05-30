@@ -341,23 +341,8 @@ class ConfigurationService(ConfigurationServiceCrud):
     async def seed_from_env(self) -> SeedResult:
         """
         Seed LLM providers, embedding providers, and system configs from
-        docker-compose environment variables.
-
-        Reads the following env vars and creates DB records when present:
-        - OPENAI_API_KEY, OPENAI_BASE_URL, LLM_MODEL
-        - EMBEDDING_PROVIDER, EMBEDDING_BASE_URL, EMBEDDING_API_KEY, EMBEDDER_MODEL
-        - ENVIRONMENT, CORS_ORIGINS, RATE_LIMIT_ENABLED
-
-        Idempotent: skips providers/configs that already exist.
-        First seeded LLM or embedding provider is marked is_default=True.
-        Raw API keys are passed to create_*_provider() which handles Fernet
-        encryption internally. The key hint (last 4 chars) is logged instead
-        of the full key value.
-
-        Returns:
-            SeedResult with providers_created, embedding_providers_created,
-            configs_created, skipped_reasons counts.
-            Never raises — all exceptions are caught and logged as warnings.
+        docker-compose environment variables. Idempotent — skips existing.
+        Never raises — all exceptions are caught and logged as warnings.
         """
         result: SeedResult = {
             "providers_created": 0,
@@ -367,115 +352,9 @@ class ConfigurationService(ConfigurationServiceCrud):
         }
 
         try:
-            # ── LLM Provider ──────────────────────────────────────────────
-            openai_key = os.environ.get("OPENAI_API_KEY")
-            llm_model = os.environ.get("LLM_MODEL")
-
-            if openai_key:
-                llm_existing = await self.get_llm_provider_by_name("openai")
-                if llm_existing:
-                    result["skipped_reasons"].append(
-                        "LLM provider 'openai' already exists"
-                    )
-                else:
-                    api_key_hint = f"...{openai_key[-4:]}" if len(openai_key) >= 4 else openai_key
-                    extra_config = {}
-                    if llm_model:
-                        extra_config["llm_model"] = llm_model
-
-                    await self.create_llm_provider(
-                        LLMProviderCreate(
-                            provider_name="openai",
-                            provider_type=LLMProviderType.OPENAI,
-                            base_url=os.environ.get(
-                                "OPENAI_BASE_URL", "https://api.openai.com/v1"
-                            ),
-                            api_key=openai_key,
-                            api_key_hint=api_key_hint,
-                            default_model=llm_model,
-                            is_default=True,
-                            extra_config=extra_config or None,
-                        ),
-                        user="env_seed",
-                    )
-                    result["providers_created"] += 1
-
-            # ── Embedding Provider ────────────────────────────────────────
-            emb_provider = os.environ.get("EMBEDDING_PROVIDER", "openai")
-            emb_key = os.environ.get("EMBEDDING_API_KEY")
-            embedder_model = os.environ.get("EMBEDDER_MODEL")
-
-            if emb_key:
-                emb_existing = await self.get_embedding_provider_by_name(emb_provider)
-                if emb_existing:
-                    result["skipped_reasons"].append(
-                        f"Embedding provider '{emb_provider}' already exists"
-                    )
-                else:
-                    api_key_hint = f"...{emb_key[-4:]}" if len(emb_key) >= 4 else emb_key
-                    extra_config = {}
-                    if embedder_model:
-                        extra_config["embedder_model"] = embedder_model
-
-                    await self.create_embedding_provider(
-                        EmbeddingProviderCreate(
-                            provider_name=emb_provider,
-                            provider_type=EmbeddingProviderType.OPENAI_COMPATIBLE,
-                            base_url=os.environ.get(
-                                "EMBEDDING_BASE_URL", "https://api.openai.com/v1"
-                            ),
-                            api_key=emb_key,
-                            api_key_hint=api_key_hint,
-                            default_model=embedder_model,
-                            is_default=True,
-                            extra_config=extra_config or None,
-                        ),
-                        user="env_seed",
-                    )
-                    result["embedding_providers_created"] += 1
-
-            # ── System UserConfigurations ────────────────────────────────
-            system_configs = [
-                ("environment", "ENVIRONMENT"),
-                ("cors_origins", "CORS_ORIGINS"),
-                ("rate_limit_enabled", "RATE_LIMIT_ENABLED"),
-            ]
-
-            for config_key, env_var in system_configs:
-                raw = os.environ.get(env_var)
-                if raw is None:
-                    continue
-
-                try:
-                    config_existing = await self.get_config(config_key)
-                    if config_existing:
-                        result["skipped_reasons"].append(
-                            f"Config '{config_key}' already exists"
-                        )
-                    else:
-                        is_rate_limit = env_var == "RATE_LIMIT_ENABLED"
-                        config_type = ConfigType.BOOLEAN if is_rate_limit else ConfigType.STRING
-                        config_value: bool | str = (
-                            raw.lower() in ("true", "1", "yes") if is_rate_limit else raw
-                        )
-                        await self.create_config(
-                            UserConfigurationCreate(
-                                config_key=config_key,
-                                config_value=config_value,
-                                config_type=config_type,
-                                description=f"Seeded from {env_var} env var",
-                                category="system",
-                                is_sensitive=False,
-                                is_editable=True,
-                            ),
-                            user="env_seed",
-                        )
-                        result["configs_created"] += 1
-                except Exception as e:
-                    result["skipped_reasons"].append(
-                        f"Failed to seed config '{config_key}': {e}"
-                    )
-
+            await self._seed_llm_provider(result)
+            await self._seed_embedding_provider(result)
+            await self._seed_system_configs(result)
         except Exception as e:
             result["skipped_reasons"].append(f"seed_from_env failed: {e}")
             logger.warning("env_seeding_failed", reason=str(e))
@@ -487,8 +366,111 @@ class ConfigurationService(ConfigurationServiceCrud):
             configs_created=result["configs_created"],
             skipped_count=len(result["skipped_reasons"]),
         )
-
         return result
+
+    async def _seed_llm_provider(self, result: SeedResult) -> None:
+        """Seed the OpenAI LLM provider from env vars."""
+        openai_key = os.environ.get("OPENAI_API_KEY")
+        if not openai_key:
+            return
+
+        llm_existing = await self.get_llm_provider_by_name("openai")
+        if llm_existing:
+            result["skipped_reasons"].append("LLM provider 'openai' already exists")
+            return
+
+        llm_model = os.environ.get("LLM_MODEL")
+        api_key_hint = f"...{openai_key[-4:]}" if len(openai_key) >= 4 else openai_key
+        extra_config = {"llm_model": llm_model} if llm_model else {}
+
+        await self.create_llm_provider(
+            LLMProviderCreate(
+                provider_name="openai",
+                provider_type=LLMProviderType.OPENAI,
+                base_url=os.environ.get("OPENAI_BASE_URL", "https://api.openai.com/v1"),
+                api_key=openai_key,
+                api_key_hint=api_key_hint,
+                default_model=llm_model,
+                is_default=True,
+                extra_config=extra_config or None,
+            ),
+            user="env_seed",
+        )
+        result["providers_created"] += 1
+
+    async def _seed_embedding_provider(self, result: SeedResult) -> None:
+        """Seed the embedding provider from env vars."""
+        emb_provider = os.environ.get("EMBEDDING_PROVIDER", "openai")
+        emb_key = os.environ.get("EMBEDDING_API_KEY")
+        if not emb_key:
+            return
+
+        emb_existing = await self.get_embedding_provider_by_name(emb_provider)
+        if emb_existing:
+            result["skipped_reasons"].append(
+                f"Embedding provider '{emb_provider}' already exists"
+            )
+            return
+
+        embedder_model = os.environ.get("EMBEDDER_MODEL")
+        api_key_hint = f"...{emb_key[-4:]}" if len(emb_key) >= 4 else emb_key
+        extra_config = {"embedder_model": embedder_model} if embedder_model else {}
+
+        await self.create_embedding_provider(
+            EmbeddingProviderCreate(
+                provider_name=emb_provider,
+                provider_type=EmbeddingProviderType.OPENAI_COMPATIBLE,
+                base_url=os.environ.get("EMBEDDING_BASE_URL", "https://api.openai.com/v1"),
+                api_key=emb_key,
+                api_key_hint=api_key_hint,
+                default_model=embedder_model,
+                is_default=True,
+                extra_config=extra_config or None,
+            ),
+            user="env_seed",
+        )
+        result["embedding_providers_created"] += 1
+
+    async def _seed_system_configs(self, result: SeedResult) -> None:
+        """Seed system UserConfigurations from env vars."""
+        system_configs = [
+            ("environment", "ENVIRONMENT"),
+            ("cors_origins", "CORS_ORIGINS"),
+            ("rate_limit_enabled", "RATE_LIMIT_ENABLED"),
+        ]
+        for config_key, env_var in system_configs:
+            raw = os.environ.get(env_var)
+            if raw is None:
+                continue
+            try:
+                config_existing = await self.get_config(config_key)
+                if config_existing:
+                    result["skipped_reasons"].append(
+                        f"Config '{config_key}' already exists"
+                    )
+                else:
+                    is_rate_limit = env_var == "RATE_LIMIT_ENABLED"
+                    config_type = ConfigType.BOOLEAN if is_rate_limit else ConfigType.STRING
+                    config_value: bool | str = (
+                        raw.lower() in ("true", "1", "yes") if is_rate_limit else raw
+                    )
+                    await self.create_config(
+                        UserConfigurationCreate(
+                            config_key=config_key,
+                            config_value=config_value,
+                            config_type=config_type,
+                            description=f"Seeded from {env_var} env var",
+                            category="system",
+                            is_sensitive=False,
+                            is_editable=True,
+                        ),
+                        user="env_seed",
+                    )
+                    result["configs_created"] += 1
+            except Exception as e:
+                result["skipped_reasons"].append(
+                    f"Failed to seed config '{config_key}': {e}"
+                )
 
 
 # =============================================================================

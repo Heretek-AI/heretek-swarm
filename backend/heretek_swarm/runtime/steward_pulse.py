@@ -506,86 +506,32 @@ async def _convene_tribunal_on_anomaly(
 async def run_steward_pulse(swarm: AutonomousSwarm) -> None:
     """Steward heartbeat pulse loop.
 
-    Runs at health_check_interval frequency. Sets
-    internal_state['_last_heartbeat'] and logs heartbeat/health data
-    via the Historian agent.  Uses the None-guard pattern — missing
-    steward or historian agents log a warning and skip gracefully.
-
-    Also feeds collected metrics to Sentinel's anomaly monitor on
-    each pulse (D002 fire-and-forget).  Anomaly detection is
-    non-blocking — the pulse never delays its heartbeat interval
-    waiting for Sentinel.
+    Runs at health_check_interval frequency. Uses the None-guard pattern —
+    missing steward or historian agents log a warning and skip gracefully.
     """
     while swarm._running:
         try:
             steward = swarm.supervisor.actors.get("steward") if swarm.supervisor else None
-            if steward is not None:
-                # Record heartbeat on steward's internal state
-                steward.internal_state["_last_heartbeat"] = datetime.now(UTC).isoformat()
-
-                # ── S03: Heartbeat timeout detection ─────────────────────
-                await _check_heartbeat_timeout(swarm, steward)
-
-                # Collect heartbeat data
-                pulse_data = {
-                    "timestamp": datetime.now(UTC).isoformat(),
-                    "active_actors": len(swarm.supervisor.actors) if swarm.supervisor else 0,
-                    "deliberations_active": len(getattr(steward, "active_deliberations", {})),
-                    "heartbeat_healthy": True,
-                }
-
-                # ── Sentinel anomaly detection (D002 fire-and-forget) ───
-                sentinel = (
-                    swarm.supervisor.actors.get("sentinel")
-                    if swarm.supervisor else None
-                )
-                if sentinel is not None and hasattr(sentinel, "_anomaly_monitor"):
-                    alert_count = await _run_anomaly_scan(
-                        sentinel=sentinel,
-                        supervisor=swarm.supervisor,
-                    )
-                    if alert_count > 0:
-                        # Signal: anomalies were detected — convene Tribunal
-                        logger.warning(
-                            "steward_pulse_anomaly_detected",
-                            alert_count=alert_count,
-                            timestamp=pulse_data["timestamp"],
-                        )
-                        pulse_data["heartbeat_healthy"] = False
-
-                        # ── Convene Tribunal on anomaly (D003: autonomous deliberation) ──
-                        await _convene_tribunal_on_anomaly(
-                            swarm=swarm,
-                            alert_count=alert_count,
-                            pulse_data=pulse_data,
-                        )
-                elif sentinel is None:
-                    logger.warning("steward_pulse_sentinel_skipped_no_sentinel")
-                # else: sentinel present but no _anomaly_monitor (unlikely
-                # but not an error — monitor may be disabled by config)
-
-                # ── Tribunal ruling application (D002: fire-and-forget) ──
-                if sentinel is not None and hasattr(sentinel, "tribunal"):
-                    await _apply_pending_tribunal_rulings(
-                        steward=steward,
-                        sentinel=sentinel,
-                    )
-
-                # Log via Historian
-                historian = (
-                    swarm.supervisor.actors.get("historian") if swarm.supervisor else None
-                )
-                if historian is not None:
-                    await historian.log_event(
-                        "steward_pulse",
-                        "steward",
-                        pulse_data,
-                    )
-                    logger.info("steward_pulse_logged", pulse_data=pulse_data)
-                else:
-                    logger.warning("steward_pulse_historian_skipped_no_historian")
-            else:
+            if steward is None:
                 logger.warning("steward_pulse_skipped_no_steward")
+                await asyncio.sleep(swarm._health_check_interval)
+                continue
+
+            steward.internal_state["_last_heartbeat"] = datetime.now(UTC).isoformat()
+            await _check_heartbeat_timeout(swarm, steward)
+
+            pulse_data = _build_pulse_data(swarm, steward)
+            sentinel = _get_sentinel(swarm)
+
+            if sentinel is not None and hasattr(sentinel, "_anomaly_monitor"):
+                await _process_anomaly_scan(swarm, sentinel, pulse_data)
+            elif sentinel is None:
+                logger.warning("steward_pulse_sentinel_skipped_no_sentinel")
+
+            if sentinel is not None and hasattr(sentinel, "tribunal"):
+                await _apply_pending_tribunal_rulings(steward=steward, sentinel=sentinel)
+
+            await _log_pulse_to_historian(swarm, pulse_data)
 
             await asyncio.sleep(swarm._health_check_interval)
         except asyncio.CancelledError:
@@ -593,3 +539,53 @@ async def run_steward_pulse(swarm: AutonomousSwarm) -> None:
         except Exception as e:
             logger.error("steward_pulse_error", error=str(e))
             await asyncio.sleep(swarm._health_check_interval)
+
+
+def _build_pulse_data(swarm: AutonomousSwarm, steward: Any) -> dict[str, Any]:
+    """Build the pulse data dict for a heartbeat."""
+    return {
+        "timestamp": datetime.now(UTC).isoformat(),
+        "active_actors": len(swarm.supervisor.actors) if swarm.supervisor else 0,
+        "deliberations_active": len(getattr(steward, "active_deliberations", {})),
+        "heartbeat_healthy": True,
+    }
+
+
+def _get_sentinel(swarm: AutonomousSwarm) -> Any:
+    """Get the sentinel actor, or None."""
+    if swarm.supervisor is None:
+        return None
+    return swarm.supervisor.actors.get("sentinel")
+
+
+async def _process_anomaly_scan(
+    swarm: AutonomousSwarm, sentinel: Any, pulse_data: dict[str, Any]
+) -> None:
+    """Run anomaly scan and convene tribunal if anomalies detected."""
+    alert_count = await _run_anomaly_scan(
+        sentinel=sentinel, supervisor=swarm.supervisor,
+    )
+    if alert_count > 0:
+        logger.warning(
+            "steward_pulse_anomaly_detected",
+            alert_count=alert_count,
+            timestamp=pulse_data["timestamp"],
+        )
+        pulse_data["heartbeat_healthy"] = False
+        await _convene_tribunal_on_anomaly(
+            swarm=swarm, alert_count=alert_count, pulse_data=pulse_data,
+        )
+
+
+async def _log_pulse_to_historian(
+    swarm: AutonomousSwarm, pulse_data: dict[str, Any]
+) -> None:
+    """Log pulse data via the Historian agent."""
+    historian = (
+        swarm.supervisor.actors.get("historian") if swarm.supervisor else None
+    )
+    if historian is not None:
+        await historian.log_event("steward_pulse", "steward", pulse_data)
+        logger.info("steward_pulse_logged", pulse_data=pulse_data)
+    else:
+        logger.warning("steward_pulse_historian_skipped_no_historian")
