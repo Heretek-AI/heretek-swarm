@@ -171,56 +171,74 @@ def _split_sql(sql: str) -> list[str]:
     for line in sql.splitlines():
         stripped = line.strip()
 
-        # Skip pure comment lines outside of function bodies
         if not in_dollar_quote and (stripped.startswith("--") or stripped == ""):
             current.append(line)
             continue
 
-        # Check for dollar-quoting
         if not in_dollar_quote:
-            # Look for opening $$ or $tag$
-            match = re.search(r"(\$[a-zA-Z_]*\$)", line)
-            if match:
-                dollar_tag = match.group(1)
-                # Count occurrences — if odd, we're entering; if even, paired open+close
-                count = line.count(dollar_tag)
-                if count % 2 == 1:
-                    in_dollar_quote = True
-                current.append(line)
-                continue
-        else:
-            # Inside dollar-quoted block, look for closing tag
-            if dollar_tag in line:
-                in_dollar_quote = False
-                current.append(line)
-                # Check if statement ends with ; after the closing tag
-                after_close = line.split(dollar_tag)[-1].strip()
-                if after_close.endswith(";"):
-                    statements.append("\n".join(current))
-                    current = []
+            in_dollar_quote, dollar_tag = _check_dollar_open(line, current)
+            if dollar_tag:
                 continue
 
         if in_dollar_quote:
-            current.append(line)
+            in_dollar_quote = _check_dollar_close(line, dollar_tag, current, statements)
             continue
 
-        # Normal statement splitting on semicolons
-        if stripped.endswith(";"):
-            current.append(line)
-            statements.append("\n".join(current))
-            current = []
-        else:
-            current.append(line)
+        _handle_regular_line(stripped, line, current, statements)
 
-    # Any remaining content
+    _flush_remaining(current, statements)
+    return statements
+
+
+def _check_dollar_open(line: str, current: list[str]) -> tuple[bool, str]:
+    """Check for opening dollar-quote tag. Returns (in_quote, tag)."""
+    match = re.search(r"(\$[a-zA-Z_]*\$)", line)
+    if match:
+        tag = match.group(1)
+        count = line.count(tag)
+        if count % 2 == 1:
+            current.append(line)
+            return True, tag
+        current.append(line)
+        return False, tag
+    return False, ""
+
+
+def _check_dollar_close(
+    line: str, dollar_tag: str, current: list[str], statements: list[str]
+) -> bool:
+    """Check for closing dollar-quote tag. Returns whether still in quote."""
+    if dollar_tag in line:
+        current.append(line)
+        after_close = line.split(dollar_tag)[-1].strip()
+        if after_close.endswith(";"):
+            statements.append("\n".join(current))
+            current.clear()
+        return False
+    current.append(line)
+    return True
+
+
+def _handle_regular_line(
+    stripped: str, line: str, current: list[str], statements: list[str]
+) -> None:
+    """Handle a regular (non-dollar-quoted) line."""
+    if stripped.endswith(";"):
+        current.append(line)
+        statements.append("\n".join(current))
+        current.clear()
+    else:
+        current.append(line)
+
+
+def _flush_remaining(current: list[str], statements: list[str]) -> None:
+    """Flush any remaining content as a final statement."""
     if current:
         remaining = "\n".join(current).strip()
         if remaining and not all(
             l.strip().startswith("--") or l.strip() == "" for l in current
         ):
             statements.append(remaining)
-
-    return statements
 
 
 # ---------------------------------------------------------------------------

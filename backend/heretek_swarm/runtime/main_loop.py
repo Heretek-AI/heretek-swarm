@@ -163,87 +163,91 @@ class AutonomousSwarm:
 
         Each component is wrapped in an independent try/except so a failure
         in one step (e.g. NATS unavailable) does not crash the entire swarm.
-        Failed components are set to ``None`` and a warning is logged with
-        the component name and error string.
         """
         logger.info("initializing_autonomous_swarm", no_infra=self._no_infra)
 
-        # When --no-infra is set, only initialize in-memory components
         if self._no_infra:
-            logger.warning("infra_skipped_no_infra_flag")
-            self.channel_registry = ChannelRegistry()
-            self.group_registry = GroupRegistry(self.channel_registry)
-            from heretek_swarm.rag.rag_pipeline import RAGPipelineConfig
-
-            rag_cfg = RAGPipelineConfig(
-                embedding_provider=self.config.get("rag", {}).get("embedding_provider", "openai"),
-                embedding_model="text-embedding-3-small",
-                llm_provider="openai",
-                llm_model="gpt-4o-mini",
-                top_k=5,
-            )
-            self.rag = RAGPipeline(config=rag_cfg)
-            consensus_config = self.config.get("consensus", {})
-            self.consensus = MAKERConsensus(
-                ahead_by_k=consensus_config.get("ahead_by_k", 2),
-                min_votes=consensus_config.get("min_votes", 3),
-                confidence_threshold=consensus_config.get("red_flag_threshold", 0.3),
-            )
-            self.mcp_tools = CoreMCPTools(
-                memory_system=None,
-                rag_pipeline=self.rag,
-                consensus_engine=self.consensus,
-                event_mesh=None,
-            )
-            # Bridge CoreMCPTools into mcp/ server registry so the HTTP API
-            # can serve these tool definitions.
-            from heretek_swarm.mcp.bridge import sync_mcp_registries
-
-            bridged = sync_mcp_registries(self.mcp_tools)
-            logger.info("mcp_bridge_applied", tool_count=bridged)
-            # Initialize ModelGarage and wire into global router registry
-            self.model_garage = ModelGarage()
-            await self.model_garage.initialize()
-            set_global_model_garage(self.model_garage)
-            logger.info("model_garage_initialized")
-            # S03: ElectionManager skipped in --no-infra mode
-            self._election_manager = None
-            logger.info("election_manager_skipped_no_infra")
-            self.supervisor = ActorSupervisor(
-                health_check_interval=self._health_check_interval, auto_restart=True, max_restarts=5
-            )
-            # T01: Create a StubEventMesh for the no-infra path so that all agents
-            # exercise the real Tier-1 code path (_send_via_event_mesh) instead of
-            # skipping it.  The stub publishes to in-memory subjects for inspection.
-            self.event_mesh = StubEventMesh()
-            await self.event_mesh.connect()
-            # Thread stub mesh into supervisor so spawned agents get it via spawn_actor()
-            self.supervisor._event_mesh = self.event_mesh
-            # Re-wire orchestrator refs now that components are initialized
-            self._actor_orch._supervisor = self.supervisor
-            self._actor_orch._mcp_tools = self.mcp_tools
-            self._actor_orch._channel_registry = self.channel_registry
-            self._actor_orch._event_mesh = self.event_mesh
-            self._deliberation._supervisor = self.supervisor
-            self._deliberation._consensus = self.consensus
-            await self._actor_orch.spawn_all_actors()
-            logger.info("autonomous_swarm_fully_initialized", event_mesh_type="StubEventMesh")
+            await self._initialize_no_infra()
             return
 
-        # 1. Initialize channel registry
+        await self._initialize_channel_registry()
+        await self._initialize_memory()
+        await self._initialize_rag()
+        await self._initialize_consensus()
+        await self._initialize_event_mesh()
+        await self._initialize_jetstream()
+        await self._initialize_mcp_tools()
+        await self._initialize_supervisor()
+        await self._initialize_model_garage()
+        await self._initialize_election_manager()
+        self._rewire_orchestrator_refs()
+        self._thread_event_mesh_to_supervisor()
+        await self._spawn_all_actors()
+        await self._create_per_agent_streams()
+        await self._setup_channel_subscriptions()
+
+        logger.info("autonomous_swarm_fully_initialized")
+
+    async def _initialize_no_infra(self) -> None:
+        """Initialize in-memory components when --no-infra is set."""
+        logger.warning("infra_skipped_no_infra_flag")
+        self.channel_registry = ChannelRegistry()
+        self.group_registry = GroupRegistry(self.channel_registry)
+        from heretek_swarm.rag.rag_pipeline import RAGPipelineConfig
+
+        rag_cfg = RAGPipelineConfig(
+            embedding_provider=self.config.get("rag", {}).get("embedding_provider", "openai"),
+            embedding_model="text-embedding-3-small",
+            llm_provider="openai",
+            llm_model="gpt-4o-mini",
+            top_k=5,
+        )
+        self.rag = RAGPipeline(config=rag_cfg)
+        consensus_config = self.config.get("consensus", {})
+        self.consensus = MAKERConsensus(
+            ahead_by_k=consensus_config.get("ahead_by_k", 2),
+            min_votes=consensus_config.get("min_votes", 3),
+            confidence_threshold=consensus_config.get("red_flag_threshold", 0.3),
+        )
+        self.mcp_tools = CoreMCPTools(
+            memory_system=None, rag_pipeline=self.rag,
+            consensus_engine=self.consensus, event_mesh=None,
+        )
+        from heretek_swarm.mcp.bridge import sync_mcp_registries
+        bridged = sync_mcp_registries(self.mcp_tools)
+        logger.info("mcp_bridge_applied", tool_count=bridged)
+        self.model_garage = ModelGarage()
+        await self.model_garage.initialize()
+        set_global_model_garage(self.model_garage)
+        logger.info("model_garage_initialized")
+        self._election_manager = None
+        logger.info("election_manager_skipped_no_infra")
+        self.supervisor = ActorSupervisor(
+            health_check_interval=self._health_check_interval, auto_restart=True, max_restarts=5
+        )
+        self.event_mesh = StubEventMesh()
+        await self.event_mesh.connect()
+        self.supervisor._event_mesh = self.event_mesh
+        self._actor_orch._supervisor = self.supervisor
+        self._actor_orch._mcp_tools = self.mcp_tools
+        self._actor_orch._channel_registry = self.channel_registry
+        self._actor_orch._event_mesh = self.event_mesh
+        self._deliberation._supervisor = self.supervisor
+        self._deliberation._consensus = self.consensus
+        await self._actor_orch.spawn_all_actors()
+        logger.info("autonomous_swarm_fully_initialized", event_mesh_type="StubEventMesh")
+
+    async def _initialize_channel_registry(self) -> None:
         try:
             self.channel_registry = ChannelRegistry()
             self.group_registry = GroupRegistry(self.channel_registry)
             logger.info("channel_registry_initialized")
         except Exception as exc:
-            logger.warning(
-                "channel_registry_init_failed",
-                error=str(exc),
-            )
+            logger.warning("channel_registry_init_failed", error=str(exc))
             self.channel_registry = None
             self.group_registry = None
 
-        # 2. Initialize memory system
+    async def _initialize_memory(self) -> None:
         try:
             self.memory = DualTierMemory(
                 ephemeral_config=self.config.get("ephemeral", {}),
@@ -252,16 +256,12 @@ class AutonomousSwarm:
             await self.memory.initialize()
             logger.info("memory_system_initialized")
         except Exception as exc:
-            logger.warning(
-                "memory_init_failed",
-                error=str(exc),
-            )
+            logger.warning("memory_init_failed", error=str(exc))
             self.memory = None
 
-        # 3. Initialize RAG pipeline
+    async def _initialize_rag(self) -> None:
         try:
             from heretek_swarm.rag.rag_pipeline import RAGPipelineConfig
-
             rag_config_dict = self.config.get("rag", {})
             rag_cfg = RAGPipelineConfig(
                 embedding_provider=rag_config_dict.get("embedding_provider", "openai"),
@@ -273,13 +273,10 @@ class AutonomousSwarm:
             self.rag = RAGPipeline(config=rag_cfg)
             logger.info("rag_pipeline_initialized")
         except Exception as exc:
-            logger.warning(
-                "rag_init_failed",
-                error=str(exc),
-            )
+            logger.warning("rag_init_failed", error=str(exc))
             self.rag = None
 
-        # 4. Initialize consensus engine
+    async def _initialize_consensus(self) -> None:
         try:
             consensus_config = self.config.get("consensus", {})
             self.consensus = MAKERConsensus(
@@ -289,13 +286,10 @@ class AutonomousSwarm:
             )
             logger.info("maker_consensus_initialized")
         except Exception as exc:
-            logger.warning(
-                "consensus_init_failed",
-                error=str(exc),
-            )
+            logger.warning("consensus_init_failed", error=str(exc))
             self.consensus = None
 
-        # 5. Initialize event mesh (NATS)
+    async def _initialize_event_mesh(self) -> None:
         try:
             servers = self.config.get("nats_servers")
             if not servers:
@@ -306,56 +300,33 @@ class AutonomousSwarm:
                         "or use docker compose."
                     )
                 servers = [s.strip() for s in nats_url.split(",")]
-
-            self.event_mesh = NATSEventMeshWithJetStream(
-                servers=servers,
-                fallback=True,
-            )
+            self.event_mesh = NATSEventMeshWithJetStream(servers=servers, fallback=True)
             await self.event_mesh.connect()
             logger.info("event_mesh_connected")
         except Exception as exc:
-            logger.warning(
-                "event_mesh_init_failed",
-                error=str(exc),
-            )
+            logger.warning("event_mesh_init_failed", error=str(exc))
             self.event_mesh = None
 
-        # 5a. Initialize JetStream streams (durable message delivery)
-        if self.event_mesh is not None:
-            try:
-                jetstream_initialized = await self.event_mesh.initialize_jetstream(
-                    create_default_streams=True,
-                )
-                if jetstream_initialized:
-                    logger.info("jetstream_streams_initialized")
-                else:
-                    logger.warning(
-                        "jetstream_initialization_failed",
-                        message="Continuing without durable streams",
-                    )
-            except Exception as exc:
-                logger.warning(
-                    "jetstream_init_failed",
-                    error=str(exc),
-                )
-        else:
-            logger.warning(
-                "jetstream_skipped",
-                message="No event mesh available — skipping JetStream initialization",
-            )
+    async def _initialize_jetstream(self) -> None:
+        if self.event_mesh is None:
+            logger.warning("jetstream_skipped", message="No event mesh available")
+            return
+        try:
+            ok = await self.event_mesh.initialize_jetstream(create_default_streams=True)
+            if ok:
+                logger.info("jetstream_streams_initialized")
+            else:
+                logger.warning("jetstream_initialization_failed", message="Continuing without durable streams")
+        except Exception as exc:
+            logger.warning("jetstream_init_failed", error=str(exc))
 
-        # 6. Initialize MCP tools
+    async def _initialize_mcp_tools(self) -> None:
         try:
             self.mcp_tools = CoreMCPTools(
-                memory_system=self.memory,
-                rag_pipeline=self.rag,
-                consensus_engine=self.consensus,
-                event_mesh=self.event_mesh,
+                memory_system=self.memory, rag_pipeline=self.rag,
+                consensus_engine=self.consensus, event_mesh=self.event_mesh,
             )
-            # Bridge CoreMCPTools into mcp/ server registry so the HTTP API
-            # can serve these tool definitions.
             from heretek_swarm.mcp.bridge import sync_mcp_registries
-
             bridged = sync_mcp_registries(self.mcp_tools)
             logger.info(
                 "mcp_tools_initialized",
@@ -363,41 +334,31 @@ class AutonomousSwarm:
                 bridged_count=bridged,
             )
         except Exception as exc:
-            logger.warning(
-                "mcp_tools_init_failed",
-                error=str(exc),
-            )
+            logger.warning("mcp_tools_init_failed", error=str(exc))
             self.mcp_tools = None
 
-        # 7. Initialize supervisor
+    async def _initialize_supervisor(self) -> None:
         try:
             self.supervisor = ActorSupervisor(
                 health_check_interval=self._health_check_interval,
-                auto_restart=True,
-                max_restarts=5,
+                auto_restart=True, max_restarts=5,
             )
             logger.info("actor_supervisor_initialized")
         except Exception as exc:
-            logger.warning(
-                "supervisor_init_failed",
-                error=str(exc),
-            )
+            logger.warning("supervisor_init_failed", error=str(exc))
             self.supervisor = None
 
-        # 7a. Initialize ModelGarage and wire into global router registry
+    async def _initialize_model_garage(self) -> None:
         try:
             self.model_garage = ModelGarage()
             await self.model_garage.initialize()
             set_global_model_garage(self.model_garage)
             logger.info("model_garage_initialized")
         except Exception as exc:
-            logger.warning(
-                "model_garage_init_failed",
-                error=str(exc),
-            )
+            logger.warning("model_garage_init_failed", error=str(exc))
             self.model_garage = None
 
-        # 7b. S03: Initialize ElectionManager for RAFT leadership elections
+    async def _initialize_election_manager(self) -> None:
         try:
             self._election_manager = ElectionManager()
             logger.info(
@@ -405,13 +366,10 @@ class AutonomousSwarm:
                 governance_agents=sorted(self._election_manager._rafts.keys()),
             )
         except Exception as exc:
-            logger.warning(
-                "election_manager_init_failed",
-                error=str(exc),
-            )
+            logger.warning("election_manager_init_failed", error=str(exc))
             self._election_manager = None
 
-        # 8. Re-wire orchestrator refs with initialized components
+    def _rewire_orchestrator_refs(self) -> None:
         self._actor_orch._supervisor = self.supervisor
         self._actor_orch._mcp_tools = self.mcp_tools
         self._actor_orch._channel_registry = self.channel_registry
@@ -419,17 +377,11 @@ class AutonomousSwarm:
         self._deliberation._supervisor = self.supervisor
         self._deliberation._consensus = self.consensus
 
-        # 8a. Thread event_mesh into supervisor so spawned agents inherit it
-        # T01: Guard — verify connection state before threading; a mesh that exists
-        # but is not connected is effectively unavailable.  Log a warning and keep
-        # reference as None so the tier-1 path falls through rather than failing.
+    def _thread_event_mesh_to_supervisor(self) -> None:
         if self.event_mesh is not None:
             if self.event_mesh.is_connected:
                 self.supervisor._event_mesh = self.event_mesh
-                logger.info(
-                    "event_mesh_threaded_to_supervisor",
-                    mesh_type="NATSEventMeshWithJetStream",
-                )
+                logger.info("event_mesh_threaded_to_supervisor", mesh_type="NATSEventMeshWithJetStream")
             else:
                 logger.warning(
                     "event_mesh_not_connected_at_spawn_time",
@@ -437,27 +389,17 @@ class AutonomousSwarm:
                 )
                 self.supervisor._event_mesh = None
 
-        # 9. Spawn all agents
+    async def _spawn_all_actors(self) -> None:
         try:
             await self._actor_orch.spawn_all_actors()
             logger.info("all_actors_spawned")
-            # Bridge actor registries: sync AutonomousSwarm's supervisor actors
-            # into the global get_supervisor() singleton so send_to_actor()
-            # (used by triad deliberation) can find them.
             from heretek_swarm.actors.supervisor import get_supervisor
-
             get_supervisor().actors.update(self.supervisor.actors)
             logger.info("actor_registry_bridged", total_actors=len(self.supervisor.actors))
         except Exception as exc:
-            logger.warning(
-                "actor_spawn_init_failed",
-                error=str(exc),
-            )
+            logger.warning("actor_spawn_init_failed", error=str(exc))
 
-        # 10. Create per-agent JetStream streams for durable agent messaging
-        # T02: After all agents are spawned, create one JetStream stream per agent
-        # so that each agent's subject (agent.<id>.>) is backed by a JetStream
-        # stream.  This makes the 23 per-agent streams visible in nats stream ls.
+    async def _create_per_agent_streams(self) -> None:
         try:
             if self.event_mesh is not None and self.event_mesh.jetstream_enabled:
                 agent_ids = list(self.supervisor.actors.keys()) if self.supervisor else []
@@ -470,25 +412,17 @@ class AutonomousSwarm:
             else:
                 logger.warning(
                     "per_agent_streams_skipped",
-                    message="No event mesh or JetStream not enabled — skipping per-agent streams",
+                    message="No event mesh or JetStream not enabled",
                 )
         except Exception as exc:
-            logger.warning(
-                "per_agent_streams_init_failed",
-                error=str(exc),
-            )
+            logger.warning("per_agent_streams_init_failed", error=str(exc))
 
-        # 11. Set up channel subscriptions
+    async def _setup_channel_subscriptions(self) -> None:
         try:
             await self._actor_orch.setup_channel_subscriptions()
             logger.info("channel_subscriptions_configured")
         except Exception as exc:
-            logger.warning(
-                "channel_subscriptions_init_failed",
-                error=str(exc),
-            )
-
-        logger.info("autonomous_swarm_fully_initialized")
+            logger.warning("channel_subscriptions_init_failed", error=str(exc))
 
     async def run_deliberation(
         self,

@@ -493,6 +493,9 @@ class ContentRouter:
         self._rate_window.append(now)
         return True
 
+    # Operator dispatch table: maps FilterOperator to evaluation function
+    _OPERATOR_EVALUATORS: ClassVar[dict] = {}  # populated in __init_subclass__ or lazily
+
     def _evaluate_filter(self, filter: ContentFilter, payload: dict[str, Any]) -> tuple[bool, Any]:  # noqa: A002
         """
         Evaluate a single content filter against payload.
@@ -500,9 +503,7 @@ class ContentRouter:
         Returns:
             Tuple of (matched, extracted_value)
         """
-        # Extract value using JSONPath
         success, result = SafeJSONPath.extract(payload, filter.field)
-
         if not success:
             logger.debug("jsonpath_extraction_failed", field=filter.field, error=result)
             return False, None
@@ -510,59 +511,51 @@ class ContentRouter:
         value = result
         self._metrics.record_filter_evaluation(filter.operator)
 
-        # Evaluate based on operator
         try:
-            if filter.operator == FilterOperator.EQ:
-                return value == filter.value, value
-
-            if filter.operator == FilterOperator.NE:
-                return value != filter.value, value
-
-            if filter.operator == FilterOperator.CONTAINS:
-                if not isinstance(value, str):
-                    return False, value
-                return str(filter.value) in value, value
-
-            if filter.operator == FilterOperator.REGEX:
-                if not isinstance(value, str):
-                    return False, value
-                # Use pre-compiled regex from filter
-                return bool(filter._compiled_regex.search(value)), value  # noqa: SLF001
-
-            if filter.operator == FilterOperator.GT:
-                return value > filter.value, value
-
-            if filter.operator == FilterOperator.LT:
-                return value < filter.value, value
-
-            if filter.operator == FilterOperator.GTE:
-                return value >= filter.value, value
-
-            if filter.operator == FilterOperator.LTE:
-                return value <= filter.value, value
-
-            if filter.operator == FilterOperator.IN:
-                if not isinstance(filter.value, (list, tuple, set)):
-                    return False, value
-                return value in filter.value, value
-
-            if filter.operator == FilterOperator.NOT_IN:
-                if not isinstance(filter.value, (list, tuple, set)):
-                    return True, value
-                return value not in filter.value, value
-
-            if filter.operator == FilterOperator.EXISTS:
-                return value is not None, value
-
-            if filter.operator == FilterOperator.NOT_EXISTS:
-                return value is None, value
-
-            logger.warning("unknown_filter_operator", operator=filter.operator)
-            return False, value
-
+            return self._apply_operator(filter.operator, value, filter)
         except Exception as e:
             logger.debug("filter_evaluation_error", filter=filter.field, error=str(e))
             return False, value
+
+    def _apply_operator(
+        self, operator: FilterOperator, value: Any, filter: ContentFilter  # noqa: A002
+    ) -> tuple[bool, Any]:
+        """Apply a filter operator to a value."""
+        if operator == FilterOperator.EQ:
+            return value == filter.value, value
+        if operator == FilterOperator.NE:
+            return value != filter.value, value
+        if operator == FilterOperator.CONTAINS:
+            if not isinstance(value, str):
+                return False, value
+            return str(filter.value) in value, value
+        if operator == FilterOperator.REGEX:
+            if not isinstance(value, str):
+                return False, value
+            return bool(filter._compiled_regex.search(value)), value  # noqa: SLF001
+        if operator == FilterOperator.GT:
+            return value > filter.value, value
+        if operator == FilterOperator.LT:
+            return value < filter.value, value
+        if operator == FilterOperator.GTE:
+            return value >= filter.value, value
+        if operator == FilterOperator.LTE:
+            return value <= filter.value, value
+        if operator == FilterOperator.IN:
+            if not isinstance(filter.value, (list, tuple, set)):
+                return False, value
+            return value in filter.value, value
+        if operator == FilterOperator.NOT_IN:
+            if not isinstance(filter.value, (list, tuple, set)):
+                return True, value
+            return value not in filter.value, value
+        if operator == FilterOperator.EXISTS:
+            return value is not None, value
+        if operator == FilterOperator.NOT_EXISTS:
+            return value is None, value
+
+        logger.warning("unknown_filter_operator", operator=operator)
+        return False, value
 
     def route(
         self,
