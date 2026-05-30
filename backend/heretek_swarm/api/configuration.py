@@ -14,6 +14,8 @@ from uuid import UUID
 import structlog
 from fastapi import APIRouter, Depends, HTTPException, Query
 
+logger = structlog.get_logger(__name__)
+
 from heretek_swarm.config.models import (
     AgentConfigCreate,
     AgentConfigUpdate,
@@ -453,12 +455,17 @@ async def test_embedding_provider(
             "latency_ms": latency_ms,
         }
 
-    except Exception as e:
+    except Exception:
+        logger.exception(
+            "Embedding provider connectivity test failed",
+            provider_id=str(provider_id),
+            provider_name=provider.provider_name,
+        )
         return {
             "provider_id": str(provider_id),
             "provider_name": provider.provider_name,
             "success": False,
-            "error": str(e),
+            "error": "Embedding provider test failed",
         }
 
 
