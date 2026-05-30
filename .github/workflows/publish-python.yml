@@ -71,12 +71,12 @@ jobs:
 
       - name: Install and test wheel
         run: |
-          pip install dist/*.whl --force-reinstall --no-deps || true
+          pip install --only-binary=":all:" dist/*.whl --force-reinstall --no-deps || true
           heretek-swarm --help || true
 
       - name: Install and test tarball
         run: |
-          pip install dist/*.tar.gz --force-reinstall --no-deps || true
+          pip install --only-binary=":all:" dist/*.tar.gz --force-reinstall --no-deps || true
           python -c "import heretek_swarm; print('Import successful')" || echo "Import may have failed but package was built"
 
   publish:

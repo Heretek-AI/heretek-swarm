@@ -116,22 +116,35 @@ class DeliberationOrchestrator:
     @staticmethod
     def _collect_triad_results(actors: dict[str, Any]) -> dict[str, Any]:
         """Read results from per-agent state attributes."""
-        results: dict[str, Any] = {}
-        for agent_id in ["alpha", "beta", "charlie"]:
-            agent = actors.get(agent_id)
-            if agent is None:
-                results[agent_id] = {"error": f"Agent {agent_id} not found"}
-                continue
-            if agent_id == "alpha":
-                history = getattr(agent, "analysis_history", [])
-                results[agent_id] = {"analyses": history[-3:] if history else []}
-            elif agent_id == "beta":
-                analyses = getattr(agent, "_analyses", {})
-                results[agent_id] = {"analyses": list(analyses.values())[-3:] if analyses else []}
-            elif agent_id == "charlie":
-                challenges = getattr(agent, "_challenges", {})
-                results[agent_id] = {"challenges": list(challenges.values())[-3:] if challenges else []}
-        return results
+        return {
+            "alpha": DeliberationOrchestrator._collect_alpha_results(actors),
+            "beta": DeliberationOrchestrator._collect_beta_results(actors),
+            "charlie": DeliberationOrchestrator._collect_charlie_results(actors),
+        }
+
+    @staticmethod
+    def _collect_alpha_results(actors: dict[str, Any]) -> dict[str, Any]:
+        agent = actors.get("alpha")
+        if agent is None:
+            return {"error": "Agent alpha not found"}
+        history = getattr(agent, "analysis_history", [])
+        return {"analyses": history[-3:] if history else []}
+
+    @staticmethod
+    def _collect_beta_results(actors: dict[str, Any]) -> dict[str, Any]:
+        agent = actors.get("beta")
+        if agent is None:
+            return {"error": "Agent beta not found"}
+        analyses = getattr(agent, "_analyses", {})
+        return {"analyses": list(analyses.values())[-3:] if analyses else []}
+
+    @staticmethod
+    def _collect_charlie_results(actors: dict[str, Any]) -> dict[str, Any]:
+        agent = actors.get("charlie")
+        if agent is None:
+            return {"error": "Agent charlie not found"}
+        challenges = getattr(agent, "_challenges", {})
+        return {"challenges": list(challenges.values())[-3:] if challenges else []}
 
     async def _handoff_to_coder(
         self, actors: dict[str, Any], steward: Any,

@@ -475,7 +475,7 @@ async def _stream_workflow_events(
     try:
         while True:
             emitted = False
-            for exec_id in list(watch_ids):
+            for exec_id in watch_ids:
                 for event in bus.get_history(exec_id):
                     key = (exec_id, event.get("timestamp", ""))
                     if key in seen:

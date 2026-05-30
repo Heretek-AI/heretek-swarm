@@ -24,22 +24,20 @@ COPY pyproject.toml uv.lock ./
 COPY backend ./backend
 
 # Install uv and project dependencies into a venv
-RUN pip install --no-cache-dir uv && \
-    uv sync --frozen --no-dev --no-editable && \
-    uv pip install prometheus-client>=0.19.0 psycopg2-binary>=2.9.0 asyncpg>=0.29.0
+RUN pip install --no-cache-dir --only-binary=":all:" uv && \
+    uv sync --frozen --no-dev --no-editable --no-build && \
+    uv pip install --only-binary=":all:" prometheus-client>=0.19.0 psycopg2-binary>=2.9.0 asyncpg>=0.29.0
 
 # =============================================================================
 # Stage 2: Production runtime
 # =============================================================================
 FROM python:3.15-rc-alpine3.22 AS production
 
-# Install curl for HEALTHCHECK
+# Install curl for HEALTHCHECK and create non-root user
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
-    && rm -rf /var/lib/apt/lists/*
-
-# Security: run as non-root user
-RUN groupadd -g 1001 appgroup && useradd -u 1001 -g appgroup -s /bin/bash -m appuser
+    && rm -rf /var/lib/apt/lists/* \
+    && groupadd -g 1001 appgroup && useradd -u 1001 -g appgroup -s /bin/bash -m appuser
 
 WORKDIR /app
 

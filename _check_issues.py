@@ -32,35 +32,35 @@ for f, c in by_file2.most_common():
 
 # S5727 by file
 s5727 = [i for i in issues if i['rule'] == 'python:S5727']
-by_file3 = Counter(i['component'].split('heretek-swarm/')[-1] for i in s5727)
+by_file3 = Counter(i['component'].split(_REPO_PREFIX)[-1] for i in s5727)
 print("\n=== S5727 by File ===")
 for f, c in by_file3.most_common():
     print(f"{c:3d}  {f}")
 
 # S1192 by file
 s1192 = [i for i in issues if i['rule'] == 'python:S1192']
-by_file4 = Counter(i['component'].split('heretek-swarm/')[-1] for i in s1192)
+by_file4 = Counter(i['component'].split(_REPO_PREFIX)[-1] for i in s1192)
 print("\n=== S1192 by File ===")
 for f, c in by_file4.most_common():
     print(f"{c:3d}  {f}")
 
 # S5443 by file
 s5443 = [i for i in issues if i['rule'] == 'python:S5443']
-by_file5 = Counter(i['component'].split('heretek-swarm/')[-1] for i in s5443)
+by_file5 = Counter(i['component'].split(_REPO_PREFIX)[-1] for i in s5443)
 print("\n=== S5443 by File ===")
 for f, c in by_file5.most_common():
     print(f"{c:3d}  {f}")
 
 # S1186 by file
 s1186 = [i for i in issues if i['rule'] == 'python:S1186']
-by_file6 = Counter(i['component'].split('heretek-swarm/')[-1] for i in s1186)
+by_file6 = Counter(i['component'].split(_REPO_PREFIX)[-1] for i in s1186)
 print("\n=== S1186 by File ===")
 for f, c in by_file6.most_common():
     print(f"{c:3d}  {f}")
 
 # S2638 by file
 s2638 = [i for i in issues if i['rule'] == 'python:S2638']
-by_file7 = Counter(i['component'].split('heretek-swarm/')[-1] for i in s2638)
+by_file7 = Counter(i['component'].split(_REPO_PREFIX)[-1] for i in s2638)
 print("\n=== S2638 by File ===")
 for f, c in by_file7.most_common():
     print(f"{c:3d}  {f}")
