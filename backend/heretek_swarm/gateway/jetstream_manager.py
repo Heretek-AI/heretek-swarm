@@ -832,14 +832,22 @@ class JetStreamManager:
         logger.debug("Fallback message published: {stream_name}:{seq}")
         return True
 
+    _REPLAY_STOP = builtins.object()
+
     async def _replay_single_message(
         self,
         msg: Any,
         subject_filter: str | None,
         end_sequence: int | None,
         callback: Callable[[str, dict[str, Any]], None] | None,
-    ) -> dict[str, Any] | None:
-        """Process a single message during replay. Returns the message dict or None to skip."""
+    ) -> dict[str, Any] | None | builtins.object:
+        """Process a single message during replay.
+
+        Returns:
+            dict: processed message entry
+            None: skip this message and continue replay
+            _REPLAY_STOP: stop replay loop (end_sequence exceeded)
+        """
         try:
             envelope = json.loads(msg.data.decode("utf-8"))
             subject = msg.subject
@@ -851,7 +859,7 @@ class JetStreamManager:
             seq = msg.metadata.sequence.stream if msg.metadata else 0
             if end_sequence and seq > end_sequence:
                 await msg.ack()
-                return None  # caller must break
+                return self._REPLAY_STOP
 
             data = envelope.get("data", envelope)
             entry: dict[str, Any] = {
