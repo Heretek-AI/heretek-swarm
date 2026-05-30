@@ -331,7 +331,7 @@ class LiberationShield:
                     "message": message,
                 }
                 result.threats.append(threat)
-                result.safe = self.mode == "transparent"
+                result.safe = result.safe and (self.mode == "transparent")
                 self._log_event(event_type, threat, context)
                 if self.mode == "transparent":
                     result.sanitized = self._sanitize_input(input_text)
@@ -371,8 +371,6 @@ class LiberationShield:
             result.score = sum(
                 severity_scores.get(t["severity"], 0.5) for t in result.threats
             ) / len(result.threats)
-
-        return result
 
     def _sanitize_input(self, input_text: str) -> str:
         """
@@ -457,7 +455,7 @@ class LiberationShield:
                     context,
                 )
 
-        if result.safe and self.mode == "transparent":
+        if result.threats:
             result.warnings = [f"{i['type']}: {i['severity']}" for i in result.threats]
 
         return result
@@ -596,8 +594,8 @@ class LiberationShield:
             self.threat_counts["security_alert"] += 1
 
         # Trim log if needed
-        while len(self.audit_log) > self.max_log_entries:
-            self.audit_log.pop(0)
+        if len(self.audit_log) > self.max_log_entries:
+            self.audit_log = self.audit_log[-self.max_log_entries :]
 
         logger.debug(
             f"Security event logged: {event_type.value}",  # noqa: G004
@@ -684,7 +682,7 @@ class LiberationShield:
             raise ValueError("Mode must be 'transparent' or 'strict'")
 
         self.mode = mode
-        logger.info("LiberationShield mode changed to {mode}")
+        logger.info("LiberationShield mode changed", mode=mode)
 
 
 class LiberationPlugin:
