@@ -331,7 +331,7 @@ class LiberationShield:
                     "message": message,
                 }
                 result.threats.append(threat)
-                result.safe = self.mode == "transparent"
+                result.safe = result.safe and (self.mode == "transparent")
                 self._log_event(event_type, threat, context)
                 if self.mode == "transparent":
                     result.sanitized = self._sanitize_input(input_text)
