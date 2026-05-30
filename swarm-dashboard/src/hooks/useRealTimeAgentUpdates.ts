@@ -274,14 +274,14 @@ export function useRealTimeAgentUpdates(
 
   // Create throttled message processor
   const throttledProcessMessage = useRef(
-    createThrottledCallback(processMessage, throttleInterval)
+    createThrottledCallback(processMessage as (...args: unknown[]) => void, throttleInterval)
   );
 
   // Update throttled processor when dependencies change
   useEffect(() => {
-    (throttledProcessMessage.current as any).cancel?.();
+    (throttledProcessMessage.current as { cancel?: () => void }).cancel?.();
     throttledProcessMessage.current = createThrottledCallback(
-      processMessage,
+      processMessage as (...args: unknown[]) => void,
       throttleInterval
     );
   }, [processMessage, throttleInterval]);

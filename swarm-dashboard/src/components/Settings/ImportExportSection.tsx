@@ -69,11 +69,11 @@ export function ImportExportSection({ onImportExport }: ImportExportSectionProps
       }
       
       // Import configurations
-      const result = await configurationApi.importConfigurations(importData, importOptions);
+      const result = await configurationApi.importConfigurations(importData, importOptions) as Record<string, unknown>;
       
-      const totalImported = Object.values(result.imported_count || {}).reduce((a, b) => Number(a) + Number(b), 0);
-      const totalSkipped = Object.values(result.skipped_count || {}).reduce((a, b) => Number(a) + Number(b), 0);
-      const totalErrors = Object.values(result.error_count || {}).reduce((a, b) => Number(a) + Number(b), 0);
+      const totalImported = Object.values((result.imported_count as Record<string, unknown>) || {}).reduce((a, b) => Number(a) + Number(b), 0);
+      const totalSkipped = Object.values((result.skipped_count as Record<string, unknown>) || {}).reduce((a, b) => Number(a) + Number(b), 0);
+      const totalErrors = Object.values((result.error_count as Record<string, unknown>) || {}).reduce((a, b) => Number(a) + Number(b), 0);
       
       if (result.success) {
         toast.success(

@@ -324,16 +324,19 @@ export async function checkAgentHealth(apiUrl: string, apiKey?: string): Promise
     const data = await response.json();
     const instances = data.instances || data.agents || [];
     
-    return instances.map((instance: Record<string, unknown>): AgentHealthResult => ({
-      agentId: instance.instance_id || instance.id,
-      agentType: instance.agent_type || instance.type,
-      status: mapAgentStatus(instance.state || instance.status),
-      messageCount: instance.actor_status?.message_count,
-      lastActivity: instance.actor_status?.last_activity,
-      error: instance.actor_status?.error_count > 0 
-        ? `${instance.actor_status.error_count} errors recorded`
-        : undefined,
-    }));
+    return instances.map((instance: Record<string, unknown>): AgentHealthResult => {
+      const actorStatus = (instance.actor_status as Record<string, unknown>) || {};
+      return {
+        agentId: (instance.instance_id || instance.id) as string,
+        agentType: (instance.agent_type || instance.type) as string,
+        status: mapAgentStatus((instance.state || instance.status) as string),
+        messageCount: actorStatus.message_count as number | undefined,
+        lastActivity: actorStatus.last_activity as string | undefined,
+        error: (actorStatus.error_count as number) > 0 
+          ? `${actorStatus.error_count} errors recorded`
+          : undefined,
+      };
+    });
   } catch (error) {
     return [{
       agentId: 'connection',
