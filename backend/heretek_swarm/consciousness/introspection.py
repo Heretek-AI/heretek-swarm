@@ -20,7 +20,7 @@ from typing import Any
 
 import structlog
 
-from .self_model import Belief, GoalStatus, SelfModel
+from .self_model import Belief, Goal, GoalStatus, SelfModel
 
 logger = structlog.get_logger("IntrospectionModule")
 
