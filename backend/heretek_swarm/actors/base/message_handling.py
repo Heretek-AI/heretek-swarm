@@ -1092,34 +1092,39 @@ Please provide your analysis and recommendation for this collective task."""
         while self._running:
             try:
                 self.last_activity = datetime.now(UTC).isoformat()
-
-                # Publish heartbeat to NATS event mesh for Steward monitoring
-                if self._event_mesh is not None:
-                    heartbeat_data = {
-                        "agent_id": self.agent_id,
-                        "actor_type": getattr(self, "actor_type", "AgentActor"),
-                        "state": self.state.value if hasattr(self, "state") else "active",
-                        "timestamp": self.last_activity,
-                        "error_count": getattr(self, "error_count", 0),
-                        "mailbox_size": self.mailbox.qsize() if hasattr(self, "mailbox") else 0,
-                    }
-                    try:
-                        await self._event_mesh.publish(
-                            f"system.health.heartbeat.{self.agent_id}",
-                            heartbeat_data,
-                        )
-                        logger.debug(
-                            f"[{self.agent_id}] Heartbeat published",  # noqa: G004
-                            extra={"state": heartbeat_data["state"]},
-                        )
-                    except Exception:
-                        logger.warning(f"[{self.agent_id}] Failed to publish heartbeat: {e}")
-
+                await self._publish_heartbeat_if_connected()
                 await asyncio.sleep(self.heartbeat_interval)
             except asyncio.CancelledError:
                 break
             except Exception:
                 logger.error(f"[{self.agent_id}] Heartbeat loop error: {e}")
+
+    async def _publish_heartbeat_if_connected(self) -> None:
+        """Publish heartbeat to NATS event mesh if connected."""
+        if self._event_mesh is None:
+            return
+        heartbeat_data = self._build_heartbeat_data()
+        try:
+            await self._event_mesh.publish(
+                f"system.health.heartbeat.{self.agent_id}",
+                heartbeat_data,
+            )
+            logger.debug(
+                f"[{self.agent_id}] Heartbeat published",  # noqa: G004
+                extra={"state": heartbeat_data["state"]},
+            )
+        except Exception:
+            logger.warning(f"[{self.agent_id}] Failed to publish heartbeat: {e}")
+
+    def _build_heartbeat_data(self) -> dict[str, object]:
+        return {
+            "agent_id": self.agent_id,
+            "actor_type": getattr(self, "actor_type", "AgentActor"),
+            "state": self.state.value if hasattr(self, "state") else "active",
+            "timestamp": self.last_activity,
+            "error_count": getattr(self, "error_count", 0),
+            "mailbox_size": self.mailbox.qsize() if hasattr(self, "mailbox") else 0,
+        }
 
 
 # Bind message handling methods to AgentActor
