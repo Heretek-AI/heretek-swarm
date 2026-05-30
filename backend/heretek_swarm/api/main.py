@@ -1024,7 +1024,7 @@ async def get_a2a_messages(limit: int = 100, authenticated: str = Depends(verify
         return {
             "messages": [],
             "count": 0,
-            "error": str(e),
+            "error": "An internal error occurred.",
         }
 
 
@@ -1080,7 +1080,7 @@ async def get_a2a_conversation(from_agent: str, to_agent: str, limit: int = 50, 
             "to_agent": to_agent,
             "messages": [],
             "count": 0,
-            "error": str(e),
+            "error": "An internal error occurred.",
         }
 
 
