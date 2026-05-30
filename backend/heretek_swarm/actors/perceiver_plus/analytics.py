@@ -128,68 +128,53 @@ class PerceiverAnalyticsMixinImpl:
         )
 
     async def _descriptive_analysis(
-        self,
-        data: list | dict,
-        analysis_id: str,
+        self, data: list | dict, analysis_id: str,
     ) -> AnalyticsResult:
         """Perform descriptive statistics analysis."""
-        findings = []
-        metrics = {}
-
         if isinstance(data, list) and all(isinstance(x, (int, float)) for x in data):
-            # Numeric descriptive stats
-            n = len(data)
-            if n > 0:
-                mean = sum(data) / n
-                variance = sum((x - mean) ** 2 for x in data) / n if n > 1 else 0
-                std_dev = math.sqrt(variance)
-                sorted_data = sorted(data)
-                median = (
-                    sorted_data[n // 2]
-                    if n % 2 == 1
-                    else (sorted_data[n // 2 - 1] + sorted_data[n // 2]) / 2
-                )
-                min_val = min(data)
-                max_val = max(data)
-
-                metrics = {
-                    "count": n,
-                    "mean": mean,
-                    "std_dev": std_dev,
-                    "median": median,
-                    "min": min_val,
-                    "max": max_val,
-                    "range": max_val - min_val,
-                    "variance": variance,
-                }
-
-                findings = [
-                    f"Dataset contains {n} numeric values",
-                    f"Mean: {mean:.4f}, Median: {median:.4f}",
-                    f"Standard deviation: {std_dev:.4f}",
-                    f"Range: [{min_val:.4f}, {max_val:.4f}]",
-                ]
-
-                confidence = 0.95
-            else:
-                confidence = 0.0
+            findings, metrics, confidence = self._numeric_descriptive_stats(data)
         else:
-            # General description
-            findings = [
-                f"Data type: {type(data).__name__}",
-                f"Data length/size: {len(data) if hasattr(data, '__len__') else 'N/A'}",
-            ]
-            metrics = {"size": len(data) if hasattr(data, "__len__") else 1}
-            confidence = 0.7
-
+            findings, metrics, confidence = self._general_description(data)
         return AnalyticsResult(
-            analysis_id=analysis_id,
-            analytics_type=AnalyticsType.DESCRIPTIVE,
+            analysis_id=analysis_id, analytics_type=AnalyticsType.DESCRIPTIVE,
             title="Descriptive Statistics Analysis",
-            findings=findings,
-            metrics=metrics,
-            confidence=confidence,
+            findings=findings, metrics=metrics, confidence=confidence,
         )
+
+    @staticmethod
+    def _numeric_descriptive_stats(data: list[float]) -> tuple[list[str], dict[str, float], float]:
+        n = len(data)
+        if n == 0:
+            return [], {}, 0.0
+        mean = sum(data) / n
+        variance = sum((x - mean) ** 2 for x in data) / n if n > 1 else 0
+        std_dev = math.sqrt(variance)
+        sorted_data = sorted(data)
+        median = (
+            sorted_data[n // 2] if n % 2 == 1
+            else (sorted_data[n // 2 - 1] + sorted_data[n // 2]) / 2
+        )
+        min_val, max_val = min(data), max(data)
+        metrics = {
+            "count": n, "mean": mean, "std_dev": std_dev, "median": median,
+            "min": min_val, "max": max_val, "range": max_val - min_val, "variance": variance,
+        }
+        findings = [
+            f"Dataset contains {n} numeric values",
+            f"Mean: {mean:.4f}, Median: {median:.4f}",
+            f"Standard deviation: {std_dev:.4f}",
+            f"Range: [{min_val:.4f}, {max_val:.4f}]",
+        ]
+        return findings, metrics, 0.95
+
+    @staticmethod
+    def _general_description(data: list | dict) -> tuple[list[str], dict[str, int], float]:
+        findings = [
+            f"Data type: {type(data).__name__}",
+            f"Data length/size: {len(data) if hasattr(data, '__len__') else 'N/A'}",
+        ]
+        metrics = {"size": len(data) if hasattr(data, "__len__") else 1}
+        return findings, metrics, 0.7
 
     async def _diagnostic_analysis(
         self,

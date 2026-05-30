@@ -717,44 +717,38 @@ class OpenAIAssistantsAdapter:
                     )
 
     async def _execute_function(
-        self,
-        call_request: FunctionCallRequest,
+        self, call_request: FunctionCallRequest,
     ) -> Any:
         """Execute a function call."""
-        # Check registered functions
         if call_request.name in self._registered_functions:
-            func = self._registered_functions[call_request.name]
-            try:
-                if asyncio.iscoroutinefunction(func):
-                    return await func(**call_request.arguments)
-                return func(**call_request.arguments)
-            except Exception as e:
-                logger.error(
-                    "function_execution_error",
-                    function=call_request.name,
-                    error=str(e),
-                )
-                return {"error": str(e)}
-
-        # Try to route to Heretek agent
+            return await self._execute_registered_function(call_request)
         if self.enable_heretek_bridge and self._agent_runtime:
-            heretek_agent_id = call_request.heretek_agent_id or call_request.name
+            return await self._route_to_heretek_agent(call_request)
+        return {"error": f"Function {call_request.name} not found"}
 
-            if heretek_agent_id in self._agent_runtime:
-                try:
-                    runtime = self._agent_runtime[heretek_agent_id]
-                    if hasattr(runtime, "think"):
-                        response = await runtime.think(
-                            f"Execute: {call_request.name}({json.dumps(call_request.arguments)})"
-                        )
-                        return {"response": response}
-                except Exception as e:
-                    logger.error(
-                        "heretek_routing_error",
-                        agent_id=heretek_agent_id,
-                        error=str(e),
-                    )
+    async def _execute_registered_function(self, call_request: FunctionCallRequest) -> Any:
+        func = self._registered_functions[call_request.name]
+        try:
+            if asyncio.iscoroutinefunction(func):
+                return await func(**call_request.arguments)
+            return func(**call_request.arguments)
+        except Exception as e:
+            logger.error("function_execution_error", function=call_request.name, error=str(e))
+            return {"error": str(e)}
 
+    async def _route_to_heretek_agent(self, call_request: FunctionCallRequest) -> Any:
+        heretek_agent_id = call_request.heretek_agent_id or call_request.name
+        if heretek_agent_id not in self._agent_runtime:
+            return {"error": f"Function {call_request.name} not found"}
+        try:
+            runtime = self._agent_runtime[heretek_agent_id]
+            if hasattr(runtime, "think"):
+                response = await runtime.think(
+                    f"Execute: {call_request.name}({json.dumps(call_request.arguments)})"
+                )
+                return {"response": response}
+        except Exception as e:
+            logger.error("heretek_routing_error", agent_id=heretek_agent_id, error=str(e))
         return {"error": f"Function {call_request.name} not found"}
 
     async def execute_chat(

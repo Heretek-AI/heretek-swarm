@@ -98,78 +98,50 @@ class ElectionManager:
         self._on_leader_elected = callback
 
     async def trigger_election(self) -> str | None:
-        """Run a full election cycle and return the elected leader ID.
-
-        Starts all RaftElection instances (if not already running), triggers
-        elections on every node, and polls until one node achieves leader
-        status or the maximum number of cycles is exhausted.
-
-        Returns:
-            The leader's agent ID (e.g. "steward"), or None if no leader
-            could be elected within the allotted cycles.
-        """
+        """Run a full election cycle and return the elected leader ID."""
         self._cycle_count = 0
-
-        if not self._started:
-            await asyncio.gather(
-                *[raft.start() for raft in self._rafts.values()]
-            )
-            self._started = True
-
-        # Brief settling period so election loops are all active
+        await self._ensure_rafts_started()
         await asyncio.sleep(0.05)
-
         logger.info("raft_election_started", extra={"cycle": 0})
-
         for cycle in range(self._max_cycles):
             self._cycle_count = cycle
+            await self._kick_off_voting()
+            leader_id = await self._poll_for_leader(cycle)
+            if leader_id is not None:
+                return leader_id
+            logger.warning("Election cycle {cycle} produced no leader — retrying", extra={"cycle": cycle})
+        logger.error("tribunal_election_failed", extra={
+            "cycles_attempted": self._max_cycles,
+            "governance_agents": sorted(GOVERNANCE_AGENT_IDS),
+        })
+        return None
 
-            # Fire _start_election on every node to kick off voting
-            await asyncio.gather(
-                *[raft._start_election() for raft in self._rafts.values()]  # noqa: SLF001
-            )
+    async def _ensure_rafts_started(self) -> None:
+        if not self._started:
+            await asyncio.gather(*[raft.start() for raft in self._rafts.values()])
+            self._started = True
 
-            # Poll at 0.1 s intervals until timeout or leader emerges
-            deadline = self._election_timeout_max
-            elapsed = 0.0
-            step = 0.1
-            while elapsed < deadline:
-                await asyncio.sleep(step)
-                elapsed += step
+    async def _kick_off_voting(self) -> None:
+        await asyncio.gather(*[raft._start_election() for raft in self._rafts.values()])  # noqa: SLF001
 
-                leader_id = self._current_leader()
-                if leader_id is not None:
-                    logger.info(
-                        "raft_leader_elected",
-                        extra={
-                            "leader_id": leader_id,
-                            "cycle": cycle,
-                            "term": self._rafts[leader_id].term,
-                        },
-                    )
-                    if self._on_leader_elected:
-                        try:
-                            await self._on_leader_elected(leader_id)
-                        except Exception:
-                            logger.exception(
-                                "Leader elected callback failed"
-                            )
-                    return leader_id
-
-            # No leader this cycle — log and retry
-            logger.warning(
-                "Election cycle {cycle} produced no leader — retrying",
-                extra={"cycle": cycle},
-            )
-
-        # All cycles exhausted
-        logger.error(
-            "tribunal_election_failed",
-            extra={
-                "cycles_attempted": self._max_cycles,
-                "governance_agents": sorted(GOVERNANCE_AGENT_IDS),
-            },
-        )
+    async def _poll_for_leader(self, cycle: int) -> str | None:
+        deadline = self._election_timeout_max
+        elapsed = 0.0
+        step = 0.1
+        while elapsed < deadline:
+            await asyncio.sleep(step)
+            elapsed += step
+            leader_id = self._current_leader()
+            if leader_id is not None:
+                logger.info("raft_leader_elected", extra={
+                    "leader_id": leader_id, "cycle": cycle, "term": self._rafts[leader_id].term,
+                })
+                if self._on_leader_elected:
+                    try:
+                        await self._on_leader_elected(leader_id)
+                    except Exception:
+                        logger.exception("Leader elected callback failed")
+                return leader_id
         return None
 
     async def stop_all(self) -> None:
