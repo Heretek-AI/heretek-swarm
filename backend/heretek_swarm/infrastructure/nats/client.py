@@ -250,6 +250,7 @@ class NATSClient:
             "yes",
         )
         ssl_ctx = ssl.create_default_context(purpose=ssl.Purpose.SERVER_AUTH)
+        ssl_ctx.minimum_version = ssl.TLSVersion.TLSv1_2
         ssl_ctx.check_hostname = not skip_verify
         ssl_ctx.verify_mode = ssl.CERT_REQUIRED
         ssl_ctx.load_verify_locations(cafile=ca_cert_path)
