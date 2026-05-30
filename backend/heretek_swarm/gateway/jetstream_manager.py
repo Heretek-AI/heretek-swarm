@@ -394,8 +394,8 @@ class JetStreamManager:
 
             return True
 
-        except Exception:
-            logger.error("Failed to connect to NATS: {e}")
+        except Exception as e:
+            logger.error("Failed to connect to NATS: %s", e, exc_info=True)
             if self.fallback_enabled:
                 return await self._enable_fallback()
             return False
@@ -543,7 +543,7 @@ class JetStreamManager:
         )
 
         self._stats["streams_created"] += 1
-        logger.info("Fallback stream created: {config.stream_name}")
+        logger.info("Fallback stream created", stream_name=config.stream_name)
         return True
 
     async def delete_stream(self, stream_name: str) -> bool:
@@ -560,7 +560,7 @@ class JetStreamManager:
             return False
 
         if stream_name not in self._streams:
-            logger.warning("Stream not found: {stream_name}")
+            logger.warning("Stream not found", stream_name=stream_name)
             return False
 
         if self._fallback_mode:
@@ -571,12 +571,12 @@ class JetStreamManager:
             del self._streams[stream_name]
             self._stats["streams_deleted"] += 1
 
-            logger.info("JetStream deleted: {stream_name}")
+            logger.info("JetStream deleted", stream_name=stream_name)
             await self._audit_stream_operation("delete_stream", stream_name, True)
             return True
 
-        except Exception:
-            logger.error("Failed to delete stream: {e}")
+        except Exception as e:
+            logger.error("Failed to delete stream", stream_name=stream_name, error=str(e))
             await self._audit_stream_operation("delete_stream", stream_name, False)
             return False
 
@@ -673,14 +673,18 @@ class JetStreamManager:
             )
 
             # Create consumer
-            consumer = await self._js.pull_subscribe(
-                stream=config.stream_name,
-                durable=config.durable_name,
+            consumer_config = js_api.ConsumerConfig(
+                durable_name=config.durable_name,
                 deliver_policy=deliver_policy,
                 ack_policy=ack_policy,
                 max_deliver=config.max_deliver,
                 ack_wait=config.ack_wait,
                 filter_subject=config.filter_subject,
+            )
+            consumer = await self._js.pull_subscribe(
+                stream=config.stream_name,
+                durable=config.durable_name,
+                config=consumer_config,
             )
 
             consumer_id = f"{config.stream_name}_{config.durable_name}"
@@ -832,14 +836,22 @@ class JetStreamManager:
         logger.debug("Fallback message published: {stream_name}:{seq}")
         return True
 
+    _REPLAY_STOP = builtins.object()
+
     async def _replay_single_message(
         self,
         msg: Any,
         subject_filter: str | None,
         end_sequence: int | None,
         callback: Callable[[str, dict[str, Any]], None] | None,
-    ) -> dict[str, Any] | None:
-        """Process a single message during replay. Returns the message dict or None to skip."""
+    ) -> dict[str, Any] | None | builtins.object:
+        """Process a single message during replay.
+
+        Returns:
+            dict: processed message entry
+            None: skip this message and continue replay
+            _REPLAY_STOP: stop replay loop (end_sequence exceeded)
+        """
         try:
             envelope = json.loads(msg.data.decode("utf-8"))
             subject = msg.subject
@@ -851,7 +863,7 @@ class JetStreamManager:
             seq = msg.metadata.sequence.stream if msg.metadata else 0
             if end_sequence and seq > end_sequence:
                 await msg.ack()
-                return None  # caller must break
+                return self._REPLAY_STOP
 
             data = envelope.get("data", envelope)
             entry: dict[str, Any] = {
@@ -971,7 +983,12 @@ class JetStreamManager:
 
             if callback:
                 if asyncio.iscoroutinefunction(callback):
-                    callback(msg["subject"], msg["data"])
+                    coro = callback(msg["subject"], msg["data"])
+                    try:
+                        asyncio.get_running_loop()
+                        asyncio.create_task(coro)
+                    except RuntimeError:
+                        asyncio.run(coro)
                 else:
                     callback(msg["subject"], msg["data"])
 
