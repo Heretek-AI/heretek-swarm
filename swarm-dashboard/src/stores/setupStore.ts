@@ -215,10 +215,9 @@ export const useSetupStore = create<SetupState>()(
       completeSetup: () => {
         const { config } = get();
 
-        // Persist to localStorage - use 'api_key' so apiClient can read it
+        // Persist non-sensitive setup values only
         localStorage.setItem('swarm_api_host', config.apiHost);
         localStorage.setItem('swarm_ws_host', config.wsHost);
-        localStorage.setItem('api_key', config.apiKey); // Must match apiClient's expected key
         localStorage.setItem('swarm_configured', 'true');
 
         set({
@@ -264,7 +263,10 @@ export const useSetupStore = create<SetupState>()(
       name: 'heretek-setup-storage',
       partialize: (state) => ({
         isConfigured: state.isConfigured,
-        config: state.config,
+        config: {
+          ...state.config,
+          apiKey: '',
+        },
         isRerunning: state.isRerunning,
       }),
     }
