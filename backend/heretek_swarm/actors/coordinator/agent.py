@@ -286,16 +286,7 @@ class CoordinatorAgent(
             )
 
     async def _handle_update_task(self, message: ActorMessage) -> None:
-        """
-        Update task status or metadata.
-
-        Content:
-        - task_id: str - Task to update
-        - status: Optional[str] - New status
-        - progress: Optional[float] - Progress 0.0-1.0
-        - metadata: Optional[Dict] - Metadata updates
-        - error_message: Optional[str] - Error if failed
-        """
+        """Update task status or metadata."""
         try:
             content = await self._validate_message(message)
             task_id = content.get("task_id")
@@ -309,47 +300,9 @@ class CoordinatorAgent(
                 return
 
             task = self._tasks[task_id]
-            updates = []
+            updates = self._apply_task_updates(task, content)
 
-            # Update status
-            if "status" in content:
-                old_status = task.status
-                task.status = TaskStatus(content["status"])
-                updates.append(f"status: {old_status.value} -> {task.status.value}")
-
-                # Track timestamps
-                if task.status == TaskStatus.IN_PROGRESS and not task.started_at:
-                    task.started_at = datetime.now(UTC)
-                elif task.status in (TaskStatus.COMPLETED, TaskStatus.FAILED, TaskStatus.CANCELLED):
-                    task.completed_at = datetime.now(UTC)
-
-                    # Unblock dependent tasks
-                    if task.status == TaskStatus.COMPLETED:
-                        await self._unblock_dependents(task_id)
-
-            # Update progress
-            if "progress" in content:
-                progress = float(content["progress"])
-                if 0.0 <= progress <= 1.0:
-                    task.progress = progress
-                    updates.append(f"progress: {task.progress}")
-
-            # Update metadata
-            if "metadata" in content:
-                task.metadata.update(content["metadata"])
-                updates.append("metadata updated")
-
-            # Update error message
-            if "error_message" in content:
-                task.error_message = content["error_message"]
-                updates.append("error_message set")
-
-            logger.info(
-                "task_updated",
-                task_id=task_id,
-                updates=updates,
-            )
-
+            logger.info("task_updated", task_id=task_id, updates=updates)
             await self.send(
                 message.sender_id,
                 ActorMessage(
@@ -358,7 +311,6 @@ class CoordinatorAgent(
                     sender_id=self.agent_id,
                 ),
             )
-
         except Exception as e:
             logger.error("update_task_failed", error=str(e))
             await self._send_error(
@@ -366,6 +318,35 @@ class CoordinatorAgent(
                 f"Failed to update task: {e!s}",
                 message.message_type,
             )
+
+    def _apply_task_updates(self, task: CoordinatedTask, content: dict[str, Any]) -> list[str]:
+        """Apply updates from content dict to task, returning list of change descriptions."""
+        updates: list[str] = []
+        if "status" in content:
+            updates.extend(self._apply_status_update(task, content["status"]))
+        if "progress" in content:
+            progress = float(content["progress"])
+            if 0.0 <= progress <= 1.0:
+                task.progress = progress
+                updates.append(f"progress: {task.progress}")
+        if "metadata" in content:
+            task.metadata.update(content["metadata"])
+            updates.append("metadata updated")
+        if "error_message" in content:
+            task.error_message = content["error_message"]
+            updates.append("error_message set")
+        return updates
+
+    def _apply_status_update(self, task: CoordinatedTask, status_str: str) -> list[str]:
+        """Apply status change and track timestamps."""
+        old_status = task.status
+        task.status = TaskStatus(status_str)
+        updates = [f"status: {old_status.value} -> {task.status.value}"]
+        if task.status == TaskStatus.IN_PROGRESS and not task.started_at:
+            task.started_at = datetime.now(UTC)
+        elif task.status in (TaskStatus.COMPLETED, TaskStatus.FAILED, TaskStatus.CANCELLED):
+            task.completed_at = datetime.now(UTC)
+        return updates
 
     async def _handle_get_task_status(self, message: ActorMessage) -> None:
         """
