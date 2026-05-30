@@ -30,6 +30,7 @@ from heretek_swarm.workflow.models import (
     WorkflowStatus,
 )
 from heretek_swarm.workflow.store import FileWorkflowStore
+from heretek_swarm.workflow.execution_events import get_execution_event_bus
 
 if TYPE_CHECKING:
     from heretek_swarm.workflow.strategies import WorkflowExecutionResult
@@ -93,6 +94,48 @@ class WorkflowEngine:
         # Consensus integration (optional)
         self._consensus_coordinator = consensus_coordinator
         self._supervisor = supervisor
+
+    def _emit_progress(
+        self,
+        workflow: Workflow,
+        context: WorkflowContext,
+        *,
+        current_node: str | None = None,
+        status: str = "running",
+        message: str = "",
+    ) -> None:
+        """Publish execution progress for SSE consumers."""
+        total = max(len(workflow.nodes), 1)
+        completed = sum(
+            1
+            for result in context.node_results.values()
+            if result.status == NodeStatus.COMPLETED
+        )
+        progress = 100 if context.state == WorkflowStatus.COMPLETED else int((completed / total) * 100)
+        if status == "completed":
+            progress = 100
+
+        node_results = {
+            node_id: {
+                "status": result.status.value,
+                "duration_ms": int((result.execution_time or 0) * 1000),
+            }
+            for node_id, result in context.node_results.items()
+        }
+
+        get_execution_event_bus().emit(
+            context.execution_id,
+            {
+                "status": status,
+                "currentNode": current_node,
+                "progress": progress,
+                "message": message or f"Workflow {workflow.name}",
+                "timestamp": datetime.now(UTC).isoformat(),
+                "workflow_id": context.workflow_id,
+                "execution_id": context.execution_id,
+                "node_results": node_results,
+            },
+        )
 
     async def load_workflow(self, workflow_definition: dict[str, Any]) -> Workflow:
         """
@@ -185,6 +228,13 @@ class WorkflowEngine:
         # Initialize cycle detection for this workflow
         self.cycle_detector.start_workflow_tracking(execution_id)
 
+        self._emit_progress(
+            workflow,
+            context,
+            status="started",
+            message=f"Workflow {workflow.name} started",
+        )
+
         logger.info("workflow_started", workflow_id=workflow_id, execution_id=execution_id)
 
         try:
@@ -265,10 +315,23 @@ class WorkflowEngine:
                 )
 
                 await self._execute_node(workflow, node_id, context)
+                self._emit_progress(
+                    workflow,
+                    context,
+                    current_node=node_id,
+                    message=f"Completed node {node_id}",
+                )
 
             # Mark workflow as completed
             context.state = WorkflowStatus.COMPLETED
             context.end_time = datetime.now(UTC)
+
+            self._emit_progress(
+                workflow,
+                context,
+                status="completed",
+                message=f"Workflow {workflow.name} completed",
+            )
 
             logger.info("workflow_completed", workflow_id=workflow_id, execution_id=execution_id)
 
