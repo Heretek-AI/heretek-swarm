@@ -283,69 +283,24 @@ class ConsciousnessMetricsCalculator:
         agent_observations: dict[str, dict[str, Any]] | None = None,
         agent_models: dict[str, dict[str, Any]] | None = None,
     ) -> CollectiveMetrics:
-        """
-        Calculate collective consciousness metrics for multi-agent system.
-
-        Args:
-            agent_data: List of agent consciousness data
-            connection_matrix: Inter-agent connection strengths
-            agent_observations: Optional observations per agent for FEP
-            agent_models: Optional generative models per agent for FEP
-
-        Returns:
-            CollectiveMetrics for the system
-        """
+        """Calculate collective consciousness metrics for multi-agent system."""
         if not agent_data:
             return CollectiveMetrics()
-
-        # Calculate collective Phi (sum of individual Phi values)
         collective_phi = sum(a.phi_score for a in agent_data)
-
-        # Calculate synchronization (correlation of Phi values)
         phi_values = [a.phi_score for a in agent_data]
         synchronization = self._compute_synchronization(phi_values)
-
-        # Calculate emergence score
         emergence_score = self._compute_emergence(agent_data, synchronization)
-
-        # Determine integration level
-        if connection_matrix:
-            integration_level = self._determine_integration_level(connection_matrix)
-        else:
-            integration_level = self._estimate_integration_level(agent_data)
-
-        # Determine collective state
+        integration_level = (
+            self._determine_integration_level(connection_matrix)
+            if connection_matrix
+            else self._estimate_integration_level(agent_data)
+        )
         collective_state = self._determine_collective_state(
             collective_phi, integration_level, emergence_score
         )
-
-        # Calculate FEP metrics if observations and models provided
-        fep_free_energy = 0.0
-        fep_surprise = 0.0
-
-        if agent_observations and agent_models:
-            fep_values = []
-            surprise_values = []
-
-            for agent in agent_data:
-                agent_id = agent.agent_id
-                if agent_id in agent_observations and agent_id in agent_models:
-                    obs = agent_observations[agent_id]
-                    model = agent_models[agent_id]
-
-                    free_energy = self._fep_calculator.calculate_free_energy(obs, model)
-                    surprise = self._fep_calculator.calculate_surprise(
-                        obs, model.get("predictions", {})
-                    )
-
-                    fep_values.append(free_energy)
-                    surprise_values.append(surprise)
-
-            if fep_values:
-                fep_free_energy = sum(fep_values) / len(fep_values)
-            if surprise_values:
-                fep_surprise = sum(surprise_values) / len(surprise_values)
-
+        fep_free_energy, fep_surprise = self._compute_fep_metrics(
+            agent_data, agent_observations, agent_models
+        )
         return CollectiveMetrics(
             collective_phi=collective_phi,
             integration_level=integration_level,
@@ -359,6 +314,29 @@ class ConsciousnessMetricsCalculator:
             fep_free_energy=fep_free_energy,
             fep_surprise=fep_surprise,
         )
+
+    def _compute_fep_metrics(
+        self,
+        agent_data: list[AgentConsciousnessData],
+        agent_observations: dict[str, dict[str, Any]] | None,
+        agent_models: dict[str, dict[str, Any]] | None,
+    ) -> tuple[float, float]:
+        if not (agent_observations and agent_models):
+            return 0.0, 0.0
+        fep_values: list[float] = []
+        surprise_values: list[float] = []
+        for agent in agent_data:
+            agent_id = agent.agent_id
+            if agent_id in agent_observations and agent_id in agent_models:
+                obs = agent_observations[agent_id]
+                model = agent_models[agent_id]
+                fep_values.append(self._fep_calculator.calculate_free_energy(obs, model))
+                surprise_values.append(
+                    self._fep_calculator.calculate_surprise(obs, model.get("predictions", {}))
+                )
+        fep_free_energy = sum(fep_values) / len(fep_values) if fep_values else 0.0
+        fep_surprise = sum(surprise_values) / len(surprise_values) if surprise_values else 0.0
+        return fep_free_energy, fep_surprise
 
     def update_temporal_metrics(
         self,
