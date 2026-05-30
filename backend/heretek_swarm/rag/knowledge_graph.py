@@ -216,41 +216,29 @@ class KnowledgeGraphRetriever:
     # -------------------------------------------------------------------------
 
     def register_chunks(self, chunks: list[GraphChunkNode]) -> int:
-        """
-        Register document chunks in the knowledge graph.
-
-        Automatically builds parent-child heading relationships based on
-        the heading_path hierarchy.
-
-        Args:
-            chunks: List of chunk nodes to register
-
-        Returns:
-            Number of chunks registered
-        """
+        """Register document chunks in the knowledge graph."""
         for chunk in chunks:
             self._chunk_graph[chunk.chunk_id] = chunk
-
-            # Index by heading
-            if chunk.heading_path:
-                heading_key = " > ".join(chunk.heading_path)
-                if heading_key not in self._heading_chunks:
-                    self._heading_chunks[heading_key] = []
-                if chunk.chunk_id not in self._heading_chunks[heading_key]:
-                    self._heading_chunks[heading_key].append(chunk.chunk_id)
-
-            # Set parent-child relationships
-            if chunk.level > 0 and chunk.parent_chunk_id:
-                parent = self._chunk_graph.get(chunk.parent_chunk_id)
-                if parent and chunk.chunk_id not in parent.child_chunk_ids:
-                    parent.child_chunk_ids.append(chunk.chunk_id)
-
-        logger.info(
-            "[KnowledgeGraphRetriever] Chunks registered",
-            total=len(chunks),
-            graph_size=len(self._chunk_graph),
-        )
+            self._index_chunk_by_heading(chunk)
+            self._link_chunk_parent(chunk)
+        logger.info("[KnowledgeGraphRetriever] Chunks registered",
+                     total=len(chunks), graph_size=len(self._chunk_graph))
         return len(chunks)
+
+    def _index_chunk_by_heading(self, chunk: GraphChunkNode) -> None:
+        if not chunk.heading_path:
+            return
+        heading_key = " > ".join(chunk.heading_path)
+        self._heading_chunks.setdefault(heading_key, [])
+        if chunk.chunk_id not in self._heading_chunks[heading_key]:
+            self._heading_chunks[heading_key].append(chunk.chunk_id)
+
+    def _link_chunk_parent(self, chunk: GraphChunkNode) -> None:
+        if chunk.level <= 0 or not chunk.parent_chunk_id:
+            return
+        parent = self._chunk_graph.get(chunk.parent_chunk_id)
+        if parent and chunk.chunk_id not in parent.child_chunk_ids:
+            parent.child_chunk_ids.append(chunk.chunk_id)
 
     def get_chunk(self, chunk_id: str) -> GraphChunkNode | None:
         """Get a chunk node by ID."""

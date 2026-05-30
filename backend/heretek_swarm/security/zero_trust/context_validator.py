@@ -68,68 +68,61 @@ class ContextValidator:
         ]
 
     def validate(
-        self,
-        data: dict[str, Any],
-        context: dict[str, Any] | None = None,
+        self, data: dict[str, Any], context: dict[str, Any] | None = None,
         agent_id: str | None = None,
     ) -> LayerResult:
         """Validate request context against Layer 2 rules."""
         start_time = time.time()
         context = context or {}
         anomalies_detected: list[str] = []
-
         try:
             content_str = str(data)
-
-            if self.config.enable_injection_detection:
-                for pattern, description in self._compiled_patterns:
-                    if pattern.search(content_str):
-                        return LayerResult(
-                            layer="context",
-                            passed=False,
-                            reason=f"Context injection detected: {description}",
-                            severity=Severity.HIGH,
-                            details={"pattern": pattern.pattern, "description": description},
-                        )
-
+            if result := self._check_context_injection(content_str):
+                return result
             if self.config.enable_behavioral_analysis and agent_id:
                 baseline = self._get_or_create_baseline(agent_id)
                 behavioral_result = self._analyze_behavior(data, baseline)
                 if behavioral_result:
                     anomalies_detected.extend(behavioral_result)
-
-            if self.config.enable_anomaly_detection and anomalies_detected:
-                severity = Severity.WARNING
-                if len(anomalies_detected) >= 3:
-                    severity = Severity.HIGH
-                return LayerResult(
-                    layer="context",
-                    passed=False,
-                    reason=f"Anomalies detected: {'; '.join(anomalies_detected)}",
-                    severity=severity,
-                    details={"anomalies": anomalies_detected},
-                )
-
+            if result := self._check_anomalies(anomalies_detected):
+                return result
             latency_ms = (time.time() - start_time) * 1000
             return LayerResult(
-                layer="context",
-                passed=True,
-                severity=Severity.INFO,
-                details={
-                    "latency_ms": latency_ms,
-                    "behavioral_analysis": self.config.enable_behavioral_analysis,
-                    "injection_detection": self.config.enable_injection_detection,
-                },
+                layer="context", passed=True, severity=Severity.INFO,
+                details={"latency_ms": latency_ms,
+                         "behavioral_analysis": self.config.enable_behavioral_analysis,
+                         "injection_detection": self.config.enable_injection_detection},
             )
-
         except Exception as e:
             logger.error("context_validation_error", error=str(e), agent_id=agent_id)
             return LayerResult(
-                layer="context",
-                passed=False,
-                reason=f"Context validation error: {e}",
-                severity=Severity.HIGH,
+                layer="context", passed=False,
+                reason=f"Context validation error: {e}", severity=Severity.HIGH,
             )
+
+    def _check_context_injection(self, content_str: str) -> LayerResult | None:
+        if not self.config.enable_injection_detection:
+            return None
+        for pattern, description in self._compiled_patterns:
+            if pattern.search(content_str):
+                return LayerResult(
+                    layer="context", passed=False,
+                    reason=f"Context injection detected: {description}",
+                    severity=Severity.HIGH,
+                    details={"pattern": pattern.pattern, "description": description},
+                )
+        return None
+
+    @staticmethod
+    def _check_anomalies(anomalies_detected: list[str]) -> LayerResult | None:
+        if not anomalies_detected:
+            return None
+        severity = Severity.HIGH if len(anomalies_detected) >= 3 else Severity.WARNING
+        return LayerResult(
+            layer="context", passed=False,
+            reason=f"Anomalies detected: {'; '.join(anomalies_detected)}",
+            severity=severity, details={"anomalies": anomalies_detected},
+        )
 
     def _get_or_create_baseline(self, agent_id: str) -> BehavioralBaseline:
         if agent_id not in self._baselines:
