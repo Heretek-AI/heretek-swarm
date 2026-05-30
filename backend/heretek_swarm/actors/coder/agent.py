@@ -593,7 +593,7 @@ class CoderAgent(
         }
         """
         try:
-            content = validate_message(message.content, "CoderGenerateTests")
+            content = validate_message("CoderGenerateTests", message.content)
             code = content.get("code", "")
             language = CodeLanguage(content.get("language", self._default_language.value))
             framework = content.get("framework", "pytest")
@@ -627,7 +627,7 @@ class CoderAgent(
         }
         """
         try:
-            content = validate_message(message.content, "CoderGenerateDocs")
+            content = validate_message("CoderGenerateDocs", message.content)
             code = content.get("code", "")
             doc_type = content.get("doc_type", "api")
             style = content.get("style", "google")
@@ -659,7 +659,7 @@ class CoderAgent(
         }
         """
         try:
-            content = validate_message(message.content, "CoderRefactorCode")
+            content = validate_message("CoderRefactorCode", message.content)
             code = content.get("code", "")
             goals = content.get("goals", ["readability"])
             constraints = content.get("constraints", [])
@@ -694,7 +694,7 @@ class CoderAgent(
         }
         """
         try:
-            content = validate_message(message.content, "CoderExplainCode")
+            content = validate_message("CoderExplainCode", message.content)
             code = content.get("code", "")
             audience = content.get("audience", "intermediate")
             detail_level = content.get("detail_level", "medium")
@@ -729,7 +729,7 @@ class CoderAgent(
         }
         """
         try:
-            content = validate_message(message.content, "CoderImplementTask")
+            content = validate_message("CoderImplementTask", message.content)
             description = content.get("description", "")
             requirements = content.get("requirements", [])
             language = CodeLanguage(content.get("language", self._default_language.value))

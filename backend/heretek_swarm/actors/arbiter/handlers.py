@@ -75,12 +75,8 @@ async def _handle_report_conflict(agent: ArbiterAgent, message: ActorMessage) ->
 
         # Validate
         validate_message(
-            {
-                "sender_id": message.sender_id,
-                "message_type": "report_conflict",
-                "content": content,
-                "timestamp": message.timestamp,
-            }
+            "report_conflict",
+            content,
         )
 
         # Convert enums
@@ -180,12 +176,8 @@ async def _handle_request_arbitration(agent: ArbiterAgent, message: ActorMessage
 
         # Validate
         validate_message(
-            {
-                "sender_id": message.sender_id,
-                "message_type": "request_arbitration",
-                "content": content,
-                "timestamp": message.timestamp,
-            }
+            "request_arbitration",
+            content,
         )
 
         # Get or create conflict
@@ -257,12 +249,8 @@ async def _handle_mediate_dispute(agent: ArbiterAgent, message: ActorMessage) ->
 
         # Validate
         validate_message(
-            {
-                "sender_id": message.sender_id,
-                "message_type": "mediate_dispute",
-                "content": content,
-                "timestamp": message.timestamp,
-            }
+            "mediate_dispute",
+            content,
         )
 
         # Perform mediation
@@ -310,12 +298,8 @@ async def _handle_resolve_contention(agent: ArbiterAgent, message: ActorMessage)
 
         # Validate
         validate_message(
-            {
-                "sender_id": message.sender_id,
-                "message_type": "resolve_contention",
-                "content": content,
-                "timestamp": message.timestamp,
-            }
+            "resolve_contention",
+            content,
         )
 
         # Resolve based on contention type

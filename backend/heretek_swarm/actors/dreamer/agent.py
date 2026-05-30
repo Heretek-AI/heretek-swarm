@@ -182,7 +182,7 @@ class DreamerAgent(
     async def _handle_generate_ideas(self, message: ActorMessage) -> dict[str, Any] | None:
         """Handle idea generation request."""
         try:
-            content = validate_message(message.content, "DreamerGenerateIdeas")
+            content = validate_message("DreamerGenerateIdeas", message.content)
             problem = content.get("problem", "")
             constraints = content.get("constraints", [])
             technique = CreativityTechnique(content.get("technique", self._default_technique.value))
@@ -235,7 +235,7 @@ class DreamerAgent(
     async def _handle_start_creative_session(self, message: ActorMessage) -> dict[str, Any] | None:
         """Handle creative session start request."""
         try:
-            content = validate_message(message.content, "DreamerStartCreativeSession")
+            content = validate_message("DreamerStartCreativeSession", message.content)
             problem_statement = content.get("problem_statement", "")
             technique = CreativityTechnique(content.get("technique", self._default_technique.value))
             constraints = content.get("constraints", [])
@@ -279,7 +279,7 @@ class DreamerAgent(
     async def _handle_explore_alternatives(self, message: ActorMessage) -> dict[str, Any] | None:
         """Handle alternative exploration request."""
         try:
-            content = validate_message(message.content, "DreamerExploreAlternatives")
+            content = validate_message("DreamerExploreAlternatives", message.content)
             current_solution = content.get("current_solution", "")
             domain = content.get("domain", "general")
             divergence_level = content.get("divergence_level", "medium")
@@ -311,7 +311,7 @@ class DreamerAgent(
     ) -> dict[str, Any] | None:
         """Handle technique application request."""
         try:
-            content = validate_message(message.content, "DreamerApplyTechnique")
+            content = validate_message("DreamerApplyTechnique", message.content)
             problem = content.get("problem", "")
             technique = CreativityTechnique(content.get("technique", self._default_technique.value))
             context = content.get("context", {})
@@ -338,7 +338,7 @@ class DreamerAgent(
     async def _handle_get_innovation_report(self, message: ActorMessage) -> dict[str, Any] | None:
         """Handle innovation report generation request."""
         try:
-            content = validate_message(message.content, "DreamerInnovationReport")
+            content = validate_message("DreamerInnovationReport", message.content)
             problem_area = content.get("problem_area", "all")
             include_sessions = content.get("include_sessions", True)
             content.get("time_range_days", 7)
@@ -381,7 +381,7 @@ class DreamerAgent(
     async def _handle_get_idea_details(self, message: ActorMessage) -> dict[str, Any] | None:
         """Handle idea details retrieval request."""
         try:
-            content = validate_message(message.content, "DreamerGetIdeaDetails")
+            content = validate_message("DreamerGetIdeaDetails", message.content)
             idea_id = content.get("idea_id")
 
             if not idea_id:
@@ -414,7 +414,7 @@ class DreamerAgent(
     async def _handle_combine_ideas(self, message: ActorMessage) -> dict[str, Any] | None:
         """Handle idea combination request."""
         try:
-            content = validate_message(message.content, "DreamerCombineIdeas")
+            content = validate_message("DreamerCombineIdeas", message.content)
             idea_ids = content.get("idea_ids", [])
             combination_method = content.get("combination_method", "synthesis")
 
@@ -462,7 +462,7 @@ class DreamerAgent(
     ) -> dict[str, Any] | None:
         """Handle novel connections generation request."""
         try:
-            content = validate_message(message.content, "DreamerNovelConnections")
+            content = validate_message("DreamerNovelConnections", message.content)
             concepts = content.get("concepts", [])
             technique_str = content.get("technique", ConnectionTechnique.RANDOM_ASSOCIATION.value)
             technique = ConnectionTechnique(technique_str)
@@ -527,7 +527,7 @@ class DreamerAgent(
     ) -> dict[str, Any] | None:
         """Handle lateral thinking metrics request."""
         try:
-            content = validate_message(message.content, "DreamerGetLateralMetrics")
+            content = validate_message("DreamerGetLateralMetrics", message.content)
             session_id = content.get("session_id")
 
             if session_id:
@@ -574,7 +574,7 @@ class DreamerAgent(
     ) -> dict[str, Any] | None:
         """Handle deliberation contribution tracking request."""
         try:
-            content = validate_message(message.content, "DreamerDeliberationContribution")
+            content = validate_message("DreamerDeliberationContribution", message.content)
             deliberation_id = content.get("deliberation_id")
             idea_ids = content.get("idea_ids", [])
             outcome = content.get("outcome")

@@ -232,7 +232,7 @@ class ExplorerPathfindingMixins:
         try:
             from heretek_swarm.actors.validation import validate_message
 
-            validated = validate_message(message.content, "start_monitoring")
+            validated = validate_message("start_monitoring", message.content)
             content = validated.content
 
             source_id = content.get("source_id")
@@ -276,7 +276,7 @@ class ExplorerPathfindingMixins:
         try:
             from heretek_swarm.actors.validation import validate_message
 
-            validated = validate_message(message.content, "stop_monitoring")
+            validated = validate_message("stop_monitoring", message.content)
             content = validated.content
 
             source_id = content.get("source_id")
@@ -314,7 +314,7 @@ class ExplorerPathfindingMixins:
         try:
             from heretek_swarm.actors.validation import validate_message
 
-            validated = validate_message(message.content, "get_opportunities")
+            validated = validate_message("get_opportunities", message.content)
             content = validated.content
 
             limit = content.get("limit", 10)
@@ -380,7 +380,7 @@ class ExplorerPathfindingMixins:
         try:
             from heretek_swarm.actors.validation import validate_message
 
-            validated = validate_message(message.content, "get_anomalies")
+            validated = validate_message("get_anomalies", message.content)
             content = validated.content
 
             limit = content.get("limit", 10)
@@ -454,7 +454,7 @@ class ExplorerPathfindingMixins:
         try:
             from heretek_swarm.actors.validation import validate_message
 
-            validated = validate_message(message.content, "generate_report")
+            validated = validate_message("generate_report", message.content)
             content = validated.content
 
             time_range_hours = content.get("time_range_hours", 24)
@@ -534,7 +534,7 @@ class ExplorerPathfindingMixins:
         try:
             from heretek_swarm.actors.validation import validate_message
 
-            validated = validate_message(message.content, "report_opportunity")
+            validated = validate_message("report_opportunity", message.content)
             content = validated.content
 
             opportunity = Opportunity(
@@ -580,7 +580,7 @@ class ExplorerPathfindingMixins:
         try:
             from heretek_swarm.actors.validation import validate_message
 
-            validated = validate_message(message.content, "report_anomaly")
+            validated = validate_message("report_anomaly", message.content)
             content = validated.content
 
             anomaly = Anomaly(
@@ -785,7 +785,7 @@ the most significant findings and recommended focus areas."""
             from heretek_swarm.actors.validation import validate_message
             from heretek_swarm.knowledge.research import ResearchDepth, ResearchQuery
 
-            validated = validate_message(message.content, "ExplorerResearchTopic")
+            validated = validate_message("ExplorerResearchTopic", message.content)
             content = validated.content
 
             topic = content.get("topic", "")
@@ -908,7 +908,7 @@ the most significant findings and recommended focus areas."""
         try:
             from heretek_swarm.actors.validation import validate_message
 
-            validated = validate_message(message.content, "ExplorerGetResearchResults")
+            validated = validate_message("ExplorerGetResearchResults", message.content)
             content = validated.content
 
             query_id = content.get("query_id")

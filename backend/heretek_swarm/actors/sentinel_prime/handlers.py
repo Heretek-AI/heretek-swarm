@@ -71,12 +71,8 @@ class SentinelPrimeHandlers:
 
             # Validate
             validate_message(
-                {
-                    "sender_id": message.sender_id,
-                    "message_type": "detect_external_threat",
-                    "content": content,
-                    "timestamp": message.timestamp,
-                }
+                "detect_external_threat",
+                content,
             )
 
             # Convert threat type if specified
@@ -302,12 +298,8 @@ class SentinelPrimeHandlers:
 
             # Validate
             validate_message(
-                {
-                    "sender_id": message.sender_id,
-                    "message_type": "report_threat",
-                    "content": content,
-                    "timestamp": message.timestamp,
-                }
+                "report_threat",
+                content,
             )
 
             # Convert enums

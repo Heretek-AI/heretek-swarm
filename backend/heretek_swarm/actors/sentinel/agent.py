@@ -767,11 +767,10 @@ class SentinelAgent(
             input_content = c.get("content", "")
             content_type = c.get("content_type", "text")
             strict_mode = c.get("strict_mode", False)
-            validate_message({
-                "sender_id": message.sender_id,
-                "message_type": "validate_input",
-                "content": c, "timestamp": message.timestamp,
-            })
+            validate_message(
+                "validate_input",
+                c,
+            )
             scan_result = await self._safety_scanner.scan_content(
                 input_content, content_type, strict_mode=strict_mode,
             )
@@ -800,11 +799,10 @@ class SentinelAgent(
             output_content = c.get("content", "")
             content_type = c.get("content_type", "text")
             strict_mode = c.get("strict_mode", False)
-            validate_message({
-                "sender_id": message.sender_id,
-                "message_type": "validate_output",
-                "content": c, "timestamp": message.timestamp,
-            })
+            validate_message(
+                "validate_output",
+                c,
+            )
             scan_result = await self._safety_scanner.scan_content(
                 output_content, content_type, strict_mode=strict_mode,
             )
@@ -832,11 +830,10 @@ class SentinelAgent(
             c = message.content
             scan_content = c.get("content", "")
             scan_types = c.get("scan_types", ["all"])
-            validate_message({
-                "sender_id": message.sender_id,
-                "message_type": "scan_content",
-                "content": c, "timestamp": message.timestamp,
-            })
+            validate_message(
+                "scan_content",
+                c,
+            )
             violations: list[dict[str, Any]] = []
             if "injection" in scan_types or "all" in scan_types:
                 violations.extend(self._safety_scanner.check_injection_patterns(scan_content))
@@ -865,11 +862,10 @@ class SentinelAgent(
             c = message.content
             check_content = c.get("content", "")
             policies = c.get("policies", [])
-            validate_message({
-                "sender_id": message.sender_id,
-                "message_type": "check_policy",
-                "content": c, "timestamp": message.timestamp,
-            })
+            validate_message(
+                "check_policy",
+                c,
+            )
             violations = [
                 v for v in [
                     await self._check_policy_rule(check_content, p, c.get("context", {}))
@@ -892,11 +888,10 @@ class SentinelAgent(
         try:
             c = message.content
             include_recs = c.get("include_recommendations", True)
-            validate_message({
-                "sender_id": message.sender_id,
-                "message_type": "get_safety_report",
-                "content": c, "timestamp": message.timestamp,
-            })
+            validate_message(
+                "get_safety_report",
+                c,
+            )
             report = self._safety_scanner.generate_safety_report(
                 time_range=c.get("time_range", "24h"),
                 include_recommendations=include_recs,
@@ -924,11 +919,10 @@ class SentinelAgent(
             if not violation_id:
                 await self._send_error(message, "Missing violation_id")
                 return
-            validate_message({
-                "sender_id": message.sender_id,
-                "message_type": "get_violation_details",
-                "content": c, "timestamp": message.timestamp,
-            })
+            validate_message(
+                "get_violation_details",
+                c,
+            )
             violation = self._safety_scanner.get_violation(violation_id)
             if not violation:
                 await self._send_error(message, "Violation not found", f"ID: {violation_id}")
@@ -953,11 +947,10 @@ class SentinelAgent(
     async def _handle_update_guardrails(self, message: ActorMessage) -> None:
         try:
             c = message.content
-            validate_message({
-                "sender_id": message.sender_id,
-                "message_type": "update_guardrails",
-                "content": c, "timestamp": message.timestamp,
-            })
+            validate_message(
+                "update_guardrails",
+                c,
+            )
             updates: list[str] = []
             for key, attr in [
                 ("max_content_size", "max_content_size"),
@@ -988,11 +981,10 @@ class SentinelAgent(
             await self._send_error(message, "Guardrail update failed", str(e))
     async def _handle_get_statistics(self, message: ActorMessage) -> None:
         try:
-            validate_message({
-                "sender_id": message.sender_id,
-                "message_type": "get_statistics",
-                "content": {}, "timestamp": message.timestamp,
-            })
+            validate_message(
+                "get_statistics",
+                {},
+            )
             await self._send_response(message, {
                 "safety_statistics": self._safety_scanner.get_stats(),
                 "active_violations": self._safety_scanner.get_active_violation_count(),
