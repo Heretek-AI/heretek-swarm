@@ -1,12 +1,17 @@
 """Tests for the evaluation API."""
 
 import warnings
+
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
-import starlette.exceptions
 
-warnings.filterwarnings("ignore", category=starlette.exceptions.StarletteDeprecationWarning)
+# StarletteDeprecationWarning may not exist in all versions
+try:
+    import starlette.exceptions
+    warnings.filterwarnings("ignore", category=starlette.exceptions.StarletteDeprecationWarning)
+except AttributeError:
+    pass
 
 from fastapi.testclient import TestClient
 

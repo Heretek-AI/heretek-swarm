@@ -74,7 +74,7 @@ export function useWebSocket(
         setConnected(false);
         onClose?.();
 
-        // Attempt reconnection
+        // Attempt reconnection with function reference (safe, not string eval)
         if (reconnectAttempts.current < maxReconnectAttempts) {
           reconnectAttempts.current += 1;
           reconnectTimeout.current = setTimeout(connect, reconnectInterval);
