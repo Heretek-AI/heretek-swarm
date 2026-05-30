@@ -596,8 +596,8 @@ class LiberationShield:
             self.threat_counts["security_alert"] += 1
 
         # Trim log if needed
-        while len(self.audit_log) > self.max_log_entries:
-            self.audit_log.pop(0)
+        if len(self.audit_log) > self.max_log_entries:
+            self.audit_log = self.audit_log[-self.max_log_entries :]
 
         logger.debug(
             f"Security event logged: {event_type.value}",  # noqa: G004
