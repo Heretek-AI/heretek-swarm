@@ -28,10 +28,12 @@ class HXADebateState(StrEnum):
     RESOLVED = "resolved"
 
 
+_DELIBERATION_ID_PATTERN = r"^del_[0-9]{8}_[0-9]{6}$"
+
 class DeliberationBlockedPayload(BaseModel):
     """Schema for blocking/suspending an active debate."""
 
-    deliberation_id: str = Field(..., pattern=r"^del_[0-9]{8}_[0-9]{6}$")
+    deliberation_id: str = Field(..., pattern=_DELIBERATION_ID_PATTERN)
     reason: str = Field(..., min_length=1, max_length=512)
     blocked_by: str = Field(..., min_length=1, max_length=128)
 
@@ -39,14 +41,14 @@ class DeliberationBlockedPayload(BaseModel):
 class DeliberationReviewingPayload(BaseModel):
     """Schema for placing a debate under tribunal/triad review."""
 
-    deliberation_id: str = Field(..., pattern=r"^del_[0-9]{8}_[0-9]{6}$")
+    deliberation_id: str = Field(..., pattern=_DELIBERATION_ID_PATTERN)
     reviewer_id: str = Field(..., min_length=1, max_length=128)
 
 
 class DeliberationResolvedPayload(BaseModel):
     """Schema for successful debate consensus resolution."""
 
-    deliberation_id: str = Field(..., pattern=r"^del_[0-9]{8}_[0-9]{6}$")
+    deliberation_id: str = Field(..., pattern=_DELIBERATION_ID_PATTERN)
     resolution: str = Field(..., min_length=1, max_length=10000)
     consensus_score: float = Field(..., ge=0.0, le=1.0)
     dissenting_opinions: list[str] = Field(default_factory=list)

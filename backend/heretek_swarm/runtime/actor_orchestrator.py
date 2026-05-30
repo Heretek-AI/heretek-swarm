@@ -13,6 +13,14 @@ import structlog
 from heretek_swarm.actors.supervisor import ActorSupervisor
 from heretek_swarm.agents.agent_factory import build_agent_for
 
+# Module-level constants for repeated tier labels
+_TIER1_LABEL = "Tier 1 (Core Triad)"
+_TIER2_LABEL = "Tier 2 (Support)"
+_TIER3_LABEL = "Tier 3 (Exploration)"
+_TIER4_LABEL = "Tier 4 (Safety)"
+_TIER5_LABEL = "Tier 5 (Coordination)"
+_TIER6_LABEL = "Tier 6 (Enhancement)"
+
 logger = structlog.get_logger(__name__)
 
 
@@ -325,29 +333,29 @@ class ActorOrchestrator:
     def _get_tier(agent_id: str) -> str:
         """Get the tier name for an agent."""
         tier_mapping = {
-            "steward": "Tier 1 (Core Triad)",
-            "alpha": "Tier 1 (Core Triad)",
-            "beta": "Tier 1 (Core Triad)",
-            "charlie": "Tier 1 (Core Triad)",
-            "historian": "Tier 2 (Support)",
-            "metis": "Tier 2 (Support)",
-            "empath": "Tier 2 (Support)",
-            "perceiver": "Tier 2 (Support)",
-            "echo": "Tier 2 (Support)",
-            "explorer": "Tier 3 (Exploration)",
-            "examiner": "Tier 3 (Exploration)",
-            "dreamer": "Tier 3 (Exploration)",
-            "coder": "Tier 3 (Exploration)",
-            "sentinel": "Tier 4 (Safety)",
-            "sentinel-prime": "Tier 4 (Safety)",
-            "arbiter": "Tier 4 (Safety)",
-            "coordinator": "Tier 5 (Coordination)",
-            "nexus": "Tier 5 (Coordination)",
-            "catalyst": "Tier 5 (Coordination)",
-            "chronos": "Tier 5 (Coordination)",
-            "prism": "Tier 6 (Enhancement)",
-            "habit-forge": "Tier 6 (Enhancement)",
-            "perceiver-plus": "Tier 6 (Enhancement)",
+            "steward": _TIER1_LABEL,
+            "alpha": _TIER1_LABEL,
+            "beta": _TIER1_LABEL,
+            "charlie": _TIER1_LABEL,
+            "historian": _TIER2_LABEL,
+            "metis": _TIER2_LABEL,
+            "empath": _TIER2_LABEL,
+            "perceiver": _TIER2_LABEL,
+            "echo": _TIER2_LABEL,
+            "explorer": _TIER3_LABEL,
+            "examiner": _TIER3_LABEL,
+            "dreamer": _TIER3_LABEL,
+            "coder": _TIER3_LABEL,
+            "sentinel": _TIER4_LABEL,
+            "sentinel-prime": _TIER4_LABEL,
+            "arbiter": _TIER4_LABEL,
+            "coordinator": _TIER5_LABEL,
+            "nexus": _TIER5_LABEL,
+            "catalyst": _TIER5_LABEL,
+            "chronos": _TIER5_LABEL,
+            "prism": _TIER6_LABEL,
+            "habit-forge": _TIER6_LABEL,
+            "perceiver-plus": _TIER6_LABEL,
         }
         return tier_mapping.get(agent_id, "Unknown")
 

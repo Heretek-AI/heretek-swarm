@@ -16,7 +16,7 @@ Reference: MiniMax Audit Lines 585-725
 import asyncio
 import os
 from contextlib import asynccontextmanager, suppress
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any
 
 import structlog
@@ -91,6 +91,10 @@ except ImportError:
 from heretek_swarm.api.logging_middleware import setup_logging_middleware  # noqa: E402
 
 logger = structlog.get_logger("api.main")
+
+# Module-level constants for repeated string literals
+_REDIS_URL_REQUIRED_MSG = "REDIS_URL is required. Set it to redis://host:port or use docker compose."
+_QDRANT_URL_REQUIRED_MSG = "QDRANT_URL is required. Set it to http://host:port or use docker compose."
 
 # Global supervisor instance
 supervisor: ActorSupervisor | None = None
@@ -600,7 +604,7 @@ async def check_redis() -> dict[str, Any]:
         # Try to connect to Redis
         redis_url = os.getenv("REDIS_URL")
         if not redis_url:
-            raise RuntimeError("REDIS_URL is required. Set it to redis://host:port or use docker compose.")
+            raise RuntimeError(_REDIS_URL_REQUIRED_MSG)
         client = redis.from_url(redis_url)
         await client.ping()
         info = await client.info("server")
@@ -663,9 +667,7 @@ async def check_qdrant() -> dict[str, Any]:
         # Check multiple environment variables for compatibility
         qdrant_url = os.environ.get("QDRANT_URL")
         if not qdrant_url:
-            raise RuntimeError(
-                "QDRANT_URL is required. Set it to http://host:port or use docker compose."
-            )
+            raise RuntimeError(_QDRANT_URL_REQUIRED_MSG)
         async with httpx.AsyncClient() as client:
             response = await client.get(f"{qdrant_url}/collections")
             if response.status_code == 200:
@@ -696,10 +698,12 @@ async def check_mem0() -> dict[str, Any]:
     """
     global mem0_backend
 
+    _MEM0_NOTE = "mem0 is embedded in the API container — no standalone container needed"
+
     if mem0_backend is None:
         return {
             "status": "unavailable",
-            "note": "mem0 is embedded in the API container — no standalone container needed",
+            "note": _MEM0_NOTE,
         }
 
     try:
@@ -709,7 +713,7 @@ async def check_mem0() -> dict[str, Any]:
             return {
                 "status": "unhealthy",
                 "error": "mem0_backend initialized but client is None",
-                "note": "mem0 is embedded in the API container — no standalone container needed",
+                "note": _MEM0_NOTE,
             }
 
         # Check Qdrant connectivity via a lightweight operation
@@ -723,25 +727,25 @@ async def check_mem0() -> dict[str, Any]:
                 return {
                     "status": "healthy",
                     "collection": collection_name,
-                    "note": "mem0 is embedded in the API container — no standalone container needed",
+                    "note": _MEM0_NOTE,
                 }
             except UnexpectedResponse:
                 return {
                     "status": "healthy",
                     "collection": collection_name,
-                    "note": "mem0 is embedded in the API container — no standalone container needed",
+                    "note": _MEM0_NOTE,
                 }
         except Exception as e:
             return {
                 "status": "degraded",
                 "error": f"mem0 backend reachable but Qdrant check failed: {e}",
-                "note": "mem0 is embedded in the API container — no standalone container needed",
+                "note": _MEM0_NOTE,
             }
     except Exception as e:
         return {
             "status": "unhealthy",
             "error": str(e),
-            "note": "mem0 is embedded in the API container — no standalone container needed",
+            "note": _MEM0_NOTE,
         }
 
 
@@ -775,7 +779,7 @@ async def health_check():
             "mem0": await check_mem0(),
         },
         "pool": StateRepository.get_pool_stats(),
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
     }
 
 
@@ -1003,7 +1007,7 @@ async def get_a2a_messages(limit: int = 100, authenticated: str = Depends(verify
 
         redis_url = os.getenv("REDIS_URL")
         if not redis_url:
-            raise RuntimeError("REDIS_URL is required. Set it to redis://host:port or use docker compose.")
+            raise RuntimeError(_REDIS_URL_REQUIRED_MSG)
         r = redis.from_url(redis_url)
 
         # Get recent messages from Redis list
@@ -1044,7 +1048,7 @@ async def get_a2a_conversation(from_agent: str, to_agent: str, limit: int = 50, 
 
         redis_url = os.getenv("REDIS_URL")
         if not redis_url:
-            raise RuntimeError("REDIS_URL is required. Set it to redis://host:port or use docker compose.")
+            raise RuntimeError(_REDIS_URL_REQUIRED_MSG)
         r = redis.from_url(redis_url)
 
         # Get messages and filter
@@ -1156,7 +1160,7 @@ async def prompt_endpoint(request: PromptRequest, authenticated: str = Depends(v
             "deliberation_id": deliberation_id,
             "topic": request.prompt[:200],
             "participant_count": len(participants),
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
         })
 
     # Gather positions from each participant via submit_argument
@@ -1215,7 +1219,7 @@ async def prompt_endpoint(request: PromptRequest, authenticated: str = Depends(v
                 "agent_id": agent_id,
                 "position": position_str,
                 "confidence": confidence,
-                "timestamp": datetime.utcnow().isoformat(),
+                "timestamp": datetime.now(timezone.utc).isoformat(),
             })
 
     # Run a deliberation round to synthesize
@@ -1243,7 +1247,7 @@ async def prompt_endpoint(request: PromptRequest, authenticated: str = Depends(v
                 "type": "deliberation_round_failed",
                 "deliberation_id": deliberation_id,
                 "error": "deliberation_round_engine_failed",
-                "timestamp": datetime.utcnow().isoformat(),
+                "timestamp": datetime.now(timezone.utc).isoformat(),
             })
 
     # Collect dissent notes
@@ -1269,7 +1273,7 @@ async def prompt_endpoint(request: PromptRequest, authenticated: str = Depends(v
             "participant_count": len(participants),
             "rounds": max(round_count, 1),
             "llm_available": llm_available,
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
         })
 
     logger.info(

@@ -48,6 +48,9 @@ from heretek_swarm.workflow.validator import ValidationError
 
 logger = structlog.get_logger("PerceiverAgent")
 
+# Module-level constant for repeated MIME type
+_OCTET_STREAM_MIME = "application/octet-stream"
+
 
 class PerceiverAgent(
     HealthReportingMixin,
@@ -583,7 +586,7 @@ class PerceiverAgent(
                 return "image/png"
             if image_data.startswith((b"GIF87a", b"GIF89a")):
                 return "image/gif"
-            return "application/octet-stream"
+            return _OCTET_STREAM_MIME
         return "unknown"
 
     @staticmethod
@@ -690,12 +693,12 @@ class PerceiverAgent(
         Returns ``(bytes, mime_type)``.
         """
         if isinstance(audio_data, bytes):
-            return audio_data, "application/octet-stream"
+            return audio_data, _OCTET_STREAM_MIME
         if not isinstance(audio_data, str):
             return b"", "unknown"
 
         payload = audio_data
-        mime_type = "application/octet-stream"
+        mime_type = _OCTET_STREAM_MIME
         if payload.startswith("data:"):
             try:
                 header, payload = payload.split(",", 1)
@@ -724,7 +727,7 @@ class PerceiverAgent(
         if format_lower in {"wav", "mp3", "ogg", "flac", "aac", "webm"}:
             return f".{format_lower}"
         # MIME type lookup (only when we actually have a non-empty mime)
-        if mime_type and mime_type != "application/octet-stream":
+        if mime_type and mime_type != _OCTET_STREAM_MIME:
             for mime_key, ext in mime_ext_map.items():
                 if mime_type == mime_key or mime_type.startswith(mime_key):
                     return ext
@@ -840,12 +843,12 @@ class PerceiverAgent(
         Returns ``(bytes, mime_type)``.
         """
         if isinstance(video_data, bytes):
-            return video_data, "application/octet-stream"
+            return video_data, _OCTET_STREAM_MIME
         if not isinstance(video_data, str):
             return b"", "unknown"
 
         payload = video_data
-        mime_type = "application/octet-stream"
+        mime_type = _OCTET_STREAM_MIME
         if payload.startswith("data:"):
             try:
                 header, payload = payload.split(",", 1)
@@ -873,7 +876,7 @@ class PerceiverAgent(
         }
         if format_lower in {"mp4", "avi", "mov", "webm", "mkv", "mpg", "mpeg"}:
             return f".{format_lower}"
-        if mime_type and mime_type != "application/octet-stream":
+        if mime_type and mime_type != _OCTET_STREAM_MIME:
             for mime_key, ext in mime_ext_map.items():
                 if mime_type == mime_key or mime_type.startswith(mime_key):
                     return ext

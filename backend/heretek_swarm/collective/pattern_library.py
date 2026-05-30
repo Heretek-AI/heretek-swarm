@@ -36,6 +36,9 @@ from .learning import ExtractedPattern, PatternMetadata, PatternSource, PatternT
 
 logger = structlog.get_logger(__name__)
 
+# Module-level constant for repeated log message
+_PATTERN_PARSE_FALLBACK_MSG = "Pattern parsing fallback"
+
 
 class StorageBackend(StrEnum):
     """Storage backend options."""
@@ -431,7 +434,7 @@ class PatternLibrary:
                     if stored_date < cutoff_date:
                         continue
                 except (ValueError, TypeError):
-                    logger.debug("Pattern parsing fallback", exc_info=True)
+                    logger.debug(_PATTERN_PARSE_FALLBACK_MSG, exc_info=True)
 
             # Check expiration
             if entry.expiration_date:
@@ -440,7 +443,7 @@ class PatternLibrary:
                     if exp_date < datetime.now(UTC):
                         continue
                 except (ValueError, TypeError):
-                    logger.debug("Pattern parsing fallback", exc_info=True)
+                    logger.debug(_PATTERN_PARSE_FALLBACK_MSG, exc_info=True)
 
             filtered.append(entry)
 
@@ -582,7 +585,7 @@ class PatternLibrary:
                     if exp_date < now:
                         expired.append(entry_id)
                 except (ValueError, TypeError):
-                    logger.debug("Pattern parsing fallback", exc_info=True)
+                    logger.debug(_PATTERN_PARSE_FALLBACK_MSG, exc_info=True)
 
         removed = 0
         for entry_id in expired:

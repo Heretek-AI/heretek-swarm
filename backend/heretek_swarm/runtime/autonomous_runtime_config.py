@@ -9,6 +9,10 @@ import os
 from dataclasses import dataclass, field
 from pathlib import Path
 
+# Module-level constants for repeated error messages
+_REDIS_URL_REQUIRED_MSG = _REDIS_URL_REQUIRED_MSG
+_QDRANT_URL_REQUIRED_MSG = "QDRANT_URL is required. Set it to http://host:port or use docker compose."
+
 
 @dataclass
 class AutonomousRuntimeConfig:
@@ -238,13 +242,13 @@ async def load_config_from_env() -> AutonomousRuntimeConfig:
             # Fail fast if REDIS_URL is not set
             if not redis_url:
                 raise RuntimeError(
-                    "REDIS_URL is required. Set it to redis://host:port or use docker compose."
+                    _REDIS_URL_REQUIRED_MSG
                 )
 
             # Fail fast if QDRANT_URL is not set
             if not qdrant_url:
                 raise RuntimeError(
-                    "QDRANT_URL is required. Set it to http://host:port or use docker compose."
+                    _QDRANT_URL_REQUIRED_MSG
                 )
 
             return AutonomousRuntimeConfig(
@@ -273,11 +277,11 @@ async def load_config_from_env() -> AutonomousRuntimeConfig:
     # Fallback to direct environment variable loading
     redis_url = os.getenv("REDIS_URL")
     if not redis_url:
-        raise RuntimeError("REDIS_URL is required. Set it to redis://host:port or use docker compose.")
+        raise RuntimeError(_REDIS_URL_REQUIRED_MSG)
 
     qdrant_url = os.getenv("QDRANT_URL")
     if not qdrant_url:
-        raise RuntimeError("QDRANT_URL is required. Set it to http://host:port or use docker compose.")
+        raise RuntimeError(_QDRANT_URL_REQUIRED_MSG)
 
     return AutonomousRuntimeConfig(
         monitoring_enabled=os.getenv("MONITORING_ENABLED", "true").lower() == "true",
@@ -326,11 +330,11 @@ def _load_config_from_env_sync_fallback() -> AutonomousRuntimeConfig:
     """
     redis_url = os.getenv("REDIS_URL")
     if not redis_url:
-        raise RuntimeError("REDIS_URL is required. Set it to redis://host:port or use docker compose.")
+        raise RuntimeError(_REDIS_URL_REQUIRED_MSG)
 
     qdrant_url = os.getenv("QDRANT_URL")
     if not qdrant_url:
-        raise RuntimeError("QDRANT_URL is required. Set it to http://host:port or use docker compose.")
+        raise RuntimeError(_QDRANT_URL_REQUIRED_MSG)
 
     return AutonomousRuntimeConfig(
         monitoring_enabled=os.getenv("MONITORING_ENABLED", "true").lower() == "true",

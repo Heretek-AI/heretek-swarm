@@ -26,6 +26,9 @@ from heretek_swarm.consensus.maker import ConsensusResult, MAKERConsensus
 
 logger = structlog.get_logger("ConsensusCoordinator")
 
+# Module-level constant for repeated log message
+_JSON_PARSE_FALLBACK_MSG = "JSON parse fallback in consensus"
+
 
 # Prompt template sent to each agent for voting
 _VOTE_PROMPT = """You are participating in a multi-agent consensus process.
@@ -453,7 +456,7 @@ class ConsensusCoordinator:
             data = json.loads(text)
             return _extract_decision_confidence(data)
         except (json.JSONDecodeError, ValueError):
-            logger.warning("JSON parse fallback in consensus", exc_info=True)
+            logger.warning(_JSON_PARSE_FALLBACK_MSG, exc_info=True)
 
         # Try 2: Regex extract JSON substring
         match = _JSON_PATTERN.search(text)
@@ -462,7 +465,7 @@ class ConsensusCoordinator:
                 data = json.loads(match.group())
                 return _extract_decision_confidence(data)
             except (json.JSONDecodeError, ValueError):
-                logger.warning("JSON parse fallback in consensus", exc_info=True)
+                logger.warning(_JSON_PARSE_FALLBACK_MSG, exc_info=True)
 
         # Try 3: Look for common decision patterns in free text
         lower = text.lower()
@@ -499,7 +502,7 @@ class ConsensusCoordinator:
             data = json.loads(text)
             return str(data.get("reasoning", ""))
         except (json.JSONDecodeError, ValueError):
-            logger.warning("JSON parse fallback in consensus", exc_info=True)
+            logger.warning(_JSON_PARSE_FALLBACK_MSG, exc_info=True)
 
         # Try regex JSON extraction
         match = _JSON_PATTERN.search(text)
@@ -508,7 +511,7 @@ class ConsensusCoordinator:
                 data = json.loads(match.group())
                 return str(data.get("reasoning", ""))
             except (json.JSONDecodeError, ValueError):
-                logger.warning("JSON parse fallback in consensus", exc_info=True)
+                logger.warning(_JSON_PARSE_FALLBACK_MSG, exc_info=True)
 
         return ""
 

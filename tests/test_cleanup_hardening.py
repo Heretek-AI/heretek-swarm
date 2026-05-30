@@ -67,10 +67,10 @@ class TestAuditMixin:
         mixin = AuditMixin()
         mixin.set_audit_enabled(False)
         stats = mixin.get_audit_stats()
-        assert stats["audit_enabled"] is False
+        assert stats["audit_enabled"] == False
         mixin.set_audit_enabled(True)
         stats = mixin.get_audit_stats()
-        assert stats["audit_enabled"] is True
+        assert stats["audit_enabled"] == True
 
 
 # =============================================================================
@@ -277,7 +277,7 @@ class TestWorkflowValidator:
         validator = WorkflowValidator()
         result = validator.validate({})
         # ValidationResult is a dataclass/attrs object
-        assert result.valid is True or result.valid is False
+        assert result.valid == True or result.valid == False
         assert hasattr(result, "errors")
 
 
