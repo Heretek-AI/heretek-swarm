@@ -394,8 +394,8 @@ class JetStreamManager:
 
             return True
 
-        except Exception:
-            logger.error("Failed to connect to NATS: {e}")
+        except Exception as e:
+            logger.error("Failed to connect to NATS: %s", e, exc_info=True)
             if self.fallback_enabled:
                 return await self._enable_fallback()
             return False
