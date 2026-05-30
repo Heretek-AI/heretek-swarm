@@ -10,7 +10,7 @@
 # =============================================================================
 # Stage 1: Builder
 # =============================================================================
-FROM python:3.11-slim AS builder
+FROM python:3.15-rc-alpine3.22 AS builder
 
 WORKDIR /app
 
@@ -31,7 +31,7 @@ RUN pip install --no-cache-dir uv && \
 # =============================================================================
 # Stage 2: Production runtime
 # =============================================================================
-FROM python:3.11-slim AS production
+FROM python:3.15-rc-alpine3.22 AS production
 
 # Install curl for HEALTHCHECK
 RUN apt-get update && apt-get install -y --no-install-recommends \
