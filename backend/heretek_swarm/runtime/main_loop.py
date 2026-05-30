@@ -773,54 +773,43 @@ class AutonomousSwarm:
         """Consciousness metrics update loop — wires live agent telemetry to NATS."""
         while self._running:
             try:
-                # Get consciousness plugin and registry
                 plugin = get_consciousness_plugin()
                 registry = get_enhanced_registry()
-
-                # Real phi from IIT calculator
                 phi_stats = plugin.get_statistics()
-                avg_phi = phi_stats.get("average_phi", 0.0)
-
-                # Real attention distribution from agent registry
-                all_instances = registry.get_all_instances()
-                attention_distribution = {}
-                active_count = 0
-                total_count = len(all_instances)
-                for agent_id, instance in all_instances.items():
-                    state = getattr(instance, "state", None)
-                    attention_distribution[agent_id] = {
-                        "state": str(state.value) if hasattr(state, "value") else str(state),
-                        "type": getattr(instance, "agent_type", "unknown"),
-                    }
-                    if state and hasattr(state, "value"):
-                        # ACTIVE is the desired state; count it as "conscious" for coherence
-                        active_count += 1
-
-                # Workspace coherence: ratio of active agents
+                attention_distribution, active_count, total_count = self._build_attention_distribution(registry)
                 workspace_coherence = active_count / total_count if total_count > 0 else 0.0
-
                 consciousness_data = {
                     "timestamp": datetime.now(UTC).isoformat(),
                     "workspace_coherence": workspace_coherence,
                     "attention_distribution": attention_distribution,
-                    "phi_metric": avg_phi,
+                    "phi_metric": phi_stats.get("average_phi", 0.0),
                     "total_agents": total_count,
                     "active_agents": active_count,
                     "average_free_energy": phi_stats.get("average_free_energy", 0.0),
                     "conscious_agents": phi_stats.get("conscious_agents", 0),
                 }
-
-                await self.event_mesh.publish(
-                    "swarm.system.consciousness",
-                    consciousness_data,
-                )
-
+                await self.event_mesh.publish("swarm.system.consciousness", consciousness_data)
                 await asyncio.sleep(self._consciousness_interval)
             except asyncio.CancelledError:
                 break
             except Exception as e:
                 logger.error("consciousness_loop_error", error=str(e))
                 await asyncio.sleep(self._consciousness_interval)
+
+    @staticmethod
+    def _build_attention_distribution(registry: Any) -> tuple[dict[str, dict[str, str]], int, int]:
+        all_instances = registry.get_all_instances()
+        attention_distribution: dict[str, dict[str, str]] = {}
+        active_count = 0
+        for agent_id, instance in all_instances.items():
+            state = getattr(instance, "state", None)
+            attention_distribution[agent_id] = {
+                "state": str(state.value) if hasattr(state, "value") else str(state),
+                "type": getattr(instance, "agent_type", "unknown"),
+            }
+            if state and hasattr(state, "value"):
+                active_count += 1
+        return attention_distribution, active_count, len(all_instances)
 
     async def _task_processing_loop(self) -> None:
         """Task processing loop - polls for new tasks."""
