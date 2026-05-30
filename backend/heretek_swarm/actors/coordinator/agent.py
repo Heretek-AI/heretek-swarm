@@ -178,112 +178,61 @@ class CoordinatorAgent(
             return message.content
 
     async def _handle_create_task(self, message: ActorMessage) -> None:
-        """
-        Create a new coordinated task.
-
-        Content:
-        - task_id: Optional[str] - If not provided, generated
-        - name: str - Task name
-        - description: str - Task description
-        - assigned_agents: List[str] - Agents assigned to this task
-        - dependencies: Optional[List[str]] - Task IDs this depends on
-        - dependency_type: Optional[str] - sequential|parallel|conditional|resource
-        - priority: Optional[int] - 1-10 scale, default 5
-        - metadata: Optional[Dict] - Additional metadata
-        """
+        """Create a new coordinated task."""
         try:
             content = await self._validate_message(message)
-            # Create TaskRequest from content - inline construction
-            request_data = {
-                "task_id": content.get("task_id"),
-                "name": content.get("name", "unnamed"),
-                "description": content.get("description", ""),
-                "assigned_agents": content.get("assigned_agents", []),
-            }
-            request = CoordinatedTask(**request_data)
-
-            # Check task limit
+            request = CoordinatedTask(
+                task_id=content.get("task_id"),
+                name=content.get("name", "unnamed"),
+                description=content.get("description", ""),
+                assigned_agents=content.get("assigned_agents", []),
+            )
             if len(self._tasks) >= self._max_tasks:
-                await self._send_error(
-                    message.sender_id,
-                    "Task limit reached",
-                    message.message_type,
-                )
+                await self._send_error(message.sender_id, "Task limit reached", message.message_type)
                 return
-
             task_id = request.task_id or f"task_{uuid.uuid4().hex[:12]}"
-
-            # Check for duplicate
             if task_id in self._tasks:
-                await self._send_error(
-                    message.sender_id,
-                    f"Task {task_id} already exists",
-                    message.message_type,
-                )
+                await self._send_error(message.sender_id, f"Task {task_id} already exists", message.message_type)
                 return
-
-            # Create task
-            dep_type = DependencyType(request.dependency_type or "sequential")
-            task = CoordinatedTask(
-                task_id=task_id,
-                name=request.name,
-                description=request.description,
-                assigned_agents=request.assigned_agents or [],
-                dependencies=request.dependencies or [],
-                dependency_type=dep_type,
-                priority=request.priority or 5,
-                metadata=request.metadata or {},
-            )
-
-            # Validate dependencies exist
-            for dep_id in task.dependencies:
-                if dep_id not in self._tasks:
-                    await self._send_error(
-                        message.sender_id,
-                        f"Dependency {dep_id} does not exist",
-                        message.message_type,
-                    )
-                    return
-
+            task = self._build_coordinated_task(task_id, request)
+            if not await self._validate_task_dependencies(task, message):
+                return
             self._tasks[task_id] = task
-
-            # Update dependency graph
-            self._dependency_graph[task_id] = set()
-            self._reverse_deps[task_id] = set(task.dependencies)
-            for dep_id in task.dependencies:
-                if dep_id in self._dependency_graph:
-                    self._dependency_graph[dep_id].add(task_id)
-
-            # Determine initial status
-            if task.dependencies:
-                task.status = TaskStatus.BLOCKED
-            else:
-                task.status = TaskStatus.READY
-
-            logger.info(
-                "task_created",
-                task_id=task_id,
-                name=request.name,
-                dependencies=len(task.dependencies),
-                status=task.status.value,
-            )
-
-            await self.send(
-                message.sender_id,
-                ActorMessage(
-                    message_type="task_created",
-                    content={"task_id": task_id, "status": task.status.value},
-                    sender_id=self.agent_id,
-                ),
-            )
-
+            self._update_dependency_graph(task_id, task.dependencies)
+            task.status = TaskStatus.BLOCKED if task.dependencies else TaskStatus.READY
+            logger.info("task_created", task_id=task_id, name=request.name,
+                         dependencies=len(task.dependencies), status=task.status.value)
+            await self.send(message.sender_id, ActorMessage(
+                message_type="task_created",
+                content={"task_id": task_id, "status": task.status.value},
+                sender_id=self.agent_id,
+            ))
         except Exception as e:
             logger.error("create_task_failed", error=str(e))
-            await self._send_error(
-                message.sender_id,
-                f"Failed to create task: {e!s}",
-                message.message_type,
-            )
+            await self._send_error(message.sender_id, f"Failed to create task: {e!s}", message.message_type)
+
+    def _build_coordinated_task(self, task_id: str, request: CoordinatedTask) -> CoordinatedTask:
+        dep_type = DependencyType(request.dependency_type or "sequential")
+        return CoordinatedTask(
+            task_id=task_id, name=request.name, description=request.description,
+            assigned_agents=request.assigned_agents or [],
+            dependencies=request.dependencies or [], dependency_type=dep_type,
+            priority=request.priority or 5, metadata=request.metadata or {},
+        )
+
+    async def _validate_task_dependencies(self, task: CoordinatedTask, message: ActorMessage) -> bool:
+        for dep_id in task.dependencies:
+            if dep_id not in self._tasks:
+                await self._send_error(message.sender_id, f"Dependency {dep_id} does not exist", message.message_type)
+                return False
+        return True
+
+    def _update_dependency_graph(self, task_id: str, dependencies: list[str]) -> None:
+        self._dependency_graph[task_id] = set()
+        self._reverse_deps[task_id] = set(dependencies)
+        for dep_id in dependencies:
+            if dep_id in self._dependency_graph:
+                self._dependency_graph[dep_id].add(task_id)
 
     async def _handle_update_task(self, message: ActorMessage) -> None:
         """Update task status or metadata."""
