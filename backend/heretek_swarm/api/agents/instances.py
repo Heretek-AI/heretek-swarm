@@ -327,7 +327,7 @@ async def get_agent_memory(
                 "by_type": {},
                 "recent_entries": [],
                 "status": "error",
-                "error": str(e),
+                "error": "Failed to fetch agent memory",
             }
 
     # ---- Neither backend available --------------------------------------------------
