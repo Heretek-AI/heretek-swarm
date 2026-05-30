@@ -302,95 +302,86 @@ async def get_external_call(
             if log is None:
                 raise HTTPException(status_code=404, detail="External call log not found")
 
-            response_data = {
-                "id": log.id,
-                "agent_id": log.agent_id,
-                "agent_type": log.agent_type,
-                "call_type": log.call_type,
-                "url": log.url,
-                "url_domain": log.url.split("://", 1)[1].split("/")[0]
-                if "://" in log.url
-                else log.url.split("/")[0],
-                "url_full": log.url,
-                "method": log.method,
-                "status_code": log.status_code,
-                "duration_ms": log.duration_ms,
-                "tool_name": log.tool_name,
-                "error_message": log.error_message,
-                "created_at": log.created_at,
-            }
+            response_data = _build_log_response_data(log)
 
             if include_bodies:
-                encryptor = get_encryptor()
-
-                decrypted_headers = None
-                if log.request_headers_encrypted:
-                    try:
-                        decrypted_data = encryptor.decrypt(log.request_headers_encrypted)
-                        if isinstance(decrypted_data, dict):
-                            decrypted_headers = encryptor.sanitize(decrypted_data)
-                        elif isinstance(decrypted_data, str):
-                            decrypted_headers = encryptor.sanitize(json.loads(decrypted_data))
-                    except Exception as e:
-                        logger.warning(
-                            "failed_to_decrypt_headers",
-                            call_id=str(call_id),
-                            error=str(e),
-                        )
-                        decrypted_headers = {"_error": "Failed to decrypt"}
-
-                decrypted_request_body = None
-                if log.request_body_encrypted:
-                    try:
-                        decrypted_data = encryptor.decrypt(log.request_body_encrypted)
-                        if isinstance(decrypted_data, dict) and "body" in decrypted_data:
-                            decrypted_request_body = decrypted_data["body"]
-                        elif isinstance(decrypted_data, str):
-                            decrypted_request_body = decrypted_data
-                    except Exception as e:
-                        logger.warning(
-                            "failed_to_decrypt_request_body",
-                            call_id=str(call_id),
-                            error=str(e),
-                        )
-                        decrypted_request_body = "[decryption failed]"
-
-                decrypted_response_body = None
-                if log.response_body_encrypted:
-                    try:
-                        decrypted_data = encryptor.decrypt(log.response_body_encrypted)
-                        if isinstance(decrypted_data, dict) and "body" in decrypted_data:
-                            decrypted_response_body = decrypted_data["body"]
-                        elif isinstance(decrypted_data, str):
-                            decrypted_response_body = decrypted_data
-                    except Exception as e:
-                        logger.warning(
-                            "failed_to_decrypt_response_body",
-                            call_id=str(call_id),
-                            error=str(e),
-                        )
-                        decrypted_response_body = "[decryption failed]"
-
-                response_data["request_headers"] = decrypted_headers
-                response_data["request_body"] = decrypted_request_body
-                response_data["response_body"] = decrypted_response_body
+                _decrypt_log_bodies(response_data, log, str(call_id))
             else:
                 response_data["request_headers"] = None
                 response_data["request_body"] = None
                 response_data["response_body"] = None
 
-            logger.info(
-                "external_call_retrieved",
-                call_id=str(call_id),
-                include_bodies=include_bodies,
-            )
-
+            logger.info("external_call_retrieved", call_id=str(call_id), include_bodies=include_bodies)
             return ExternalCallLogResponse(**response_data)
 
         except HTTPException:
             raise
         except Exception as e:
             logger.exception("external_call_get_error", error=str(e))
-            raise HTTPException(
-                status_code=500, detail="Failed to retrieve external call log"
-            ) from e
+            raise HTTPException(status_code=500, detail="Failed to retrieve external call log") from e
+
+
+def _build_log_response_data(log: ExternalCallLog) -> dict[str, Any]:
+    """Build the base response data dict from a log entry."""
+    return {
+        "id": log.id,
+        "agent_id": log.agent_id,
+        "agent_type": log.agent_type,
+        "call_type": log.call_type,
+        "url": log.url,
+        "url_domain": log.url.split("://", 1)[1].split("/")[0]
+        if "://" in log.url else log.url.split("/")[0],
+        "url_full": log.url,
+        "method": log.method,
+        "status_code": log.status_code,
+        "duration_ms": log.duration_ms,
+        "tool_name": log.tool_name,
+        "error_message": log.error_message,
+        "created_at": log.created_at,
+    }
+
+
+def _decrypt_log_bodies(
+    response_data: dict[str, Any], log: ExternalCallLog, call_id: str
+) -> None:
+    """Decrypt and attach request/response bodies to response_data."""
+    encryptor = get_encryptor()
+    response_data["request_headers"] = _decrypt_headers(encryptor, log, call_id)
+    response_data["request_body"] = _decrypt_body(
+        encryptor, log.request_body_encrypted, call_id, "request_body"
+    )
+    response_data["response_body"] = _decrypt_body(
+        encryptor, log.response_body_encrypted, call_id, "response_body"
+    )
+
+
+def _decrypt_headers(encryptor: Any, log: ExternalCallLog, call_id: str) -> Any:
+    """Decrypt and sanitize request headers."""
+    if not log.request_headers_encrypted:
+        return None
+    try:
+        decrypted_data = encryptor.decrypt(log.request_headers_encrypted)
+        if isinstance(decrypted_data, dict):
+            return encryptor.sanitize(decrypted_data)
+        if isinstance(decrypted_data, str):
+            return encryptor.sanitize(json.loads(decrypted_data))
+    except Exception as e:
+        logger.warning("failed_to_decrypt_headers", call_id=call_id, error=str(e))
+        return {"_error": "Failed to decrypt"}
+
+
+def _decrypt_body(
+    encryptor: Any, encrypted: Any, call_id: str, label: str
+) -> Any:
+    """Decrypt a single body field."""
+    if not encrypted:
+        return None
+    try:
+        decrypted_data = encryptor.decrypt(encrypted)
+        if isinstance(decrypted_data, dict) and "body" in decrypted_data:
+            return decrypted_data["body"]
+        if isinstance(decrypted_data, str):
+            return decrypted_data
+    except Exception as e:
+        logger.warning(f"failed_to_decrypt_{label}", call_id=call_id, error=str(e))
+        return "[decryption failed]"
