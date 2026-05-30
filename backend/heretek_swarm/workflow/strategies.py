@@ -126,51 +126,73 @@ class DAGStrategy(ExecutionStrategy):
         ready: list[str] = [node_id for node_id, degree in in_degree.items() if degree == 0]
 
         while ready:
-            # Batch nodes that can run in parallel (within max_parallel limit)
-            batch = ready[: self.max_parallel]
-            ready = ready[self.max_parallel :]
-
-            # Execute batch concurrently
-            async def run_node(node_id: str) -> tuple[str, Any | None, str | None]:
-                node = next(n for n in workflow.nodes if n.id == node_id)
-                try:
-                    result = await asyncio.wait_for(
-                        node_executor(node_id, node.data),
-                        timeout=self.timeout_seconds,
-                    )
-                    return node_id, result, None
-                except TimeoutError:
-                    return node_id, None, f"Timeout after {self.timeout_seconds}s"
-                except Exception as e:
-                    return node_id, None, str(e)
-
-            results = await asyncio.gather(*[run_node(nid) for nid in batch])
-
-            # Process results
-            newly_ready: list[str] = []
-            for node_id, result, error in results:
-                if error:
-                    failed_nodes.append(node_id)
-                    node_results[node_id] = {"error": error}
-                    logger.warning(
-                        "dag_node_failed",
-                        node_id=node_id,
-                        error=error,
-                        execution_id=context.get("execution_id"),
-                    )
-                else:
-                    node_results[node_id] = result
-
-                # Decrement in-degree of dependent nodes
-                for other_node in workflow.nodes:
-                    if node_id in other_node.inputs:
-                        in_degree[other_node.id] -= 1
-                        if in_degree[other_node.id] == 0:
-                            newly_ready.append(other_node.id)
-
+            newly_ready = await self._execute_batch(
+                ready, workflow, node_executor, context, node_results, failed_nodes, in_degree
+            )
             ready = newly_ready
 
-        # Check for remaining nodes (cycles in a non-cycle graph = broken)
+        return self._build_dag_result(workflow, node_results, failed_nodes, in_degree, context)
+
+    async def _execute_batch(
+        self,
+        ready: list[str],
+        workflow: Workflow,
+        node_executor: callable,
+        context: dict[str, Any],
+        node_results: dict[str, Any],
+        failed_nodes: list[str],
+        in_degree: dict[str, int],
+    ) -> list[str]:
+        """Execute a batch of ready nodes in parallel."""
+        batch = ready[: self.max_parallel]
+        ready = ready[self.max_parallel :]
+
+        async def run_node(node_id: str) -> tuple[str, Any | None, str | None]:
+            node = next(n for n in workflow.nodes if n.id == node_id)
+            try:
+                result = await asyncio.wait_for(
+                    node_executor(node_id, node.data),
+                    timeout=self.timeout_seconds,
+                )
+                return node_id, result, None
+            except TimeoutError:
+                return node_id, None, f"Timeout after {self.timeout_seconds}s"
+            except Exception as e:
+                return node_id, None, str(e)
+
+        results = await asyncio.gather(*[run_node(nid) for nid in batch])
+
+        newly_ready: list[str] = []
+        for node_id, result, error in results:
+            if error:
+                failed_nodes.append(node_id)
+                node_results[node_id] = {"error": error}
+                logger.warning(
+                    "dag_node_failed",
+                    node_id=node_id,
+                    error=error,
+                    execution_id=context.get("execution_id"),
+                )
+            else:
+                node_results[node_id] = result
+
+            for other_node in workflow.nodes:
+                if node_id in other_node.inputs:
+                    in_degree[other_node.id] -= 1
+                    if in_degree[other_node.id] == 0:
+                        newly_ready.append(other_node.id)
+
+        return newly_ready
+
+    def _build_dag_result(
+        self,
+        workflow: Workflow,
+        node_results: dict[str, Any],
+        failed_nodes: list[str],
+        in_degree: dict[str, int],
+        context: dict[str, Any],
+    ) -> WorkflowExecutionResult:
+        """Build the final DAG execution result."""
         remaining = [nid for nid, deg in in_degree.items() if deg > 0]
         if remaining and not failed_nodes:
             return WorkflowExecutionResult(
@@ -183,7 +205,6 @@ class DAGStrategy(ExecutionStrategy):
             )
 
         success = len(failed_nodes) == 0 and len(remaining) == 0
-
         return WorkflowExecutionResult(
             workflow_id=workflow.id,
             success=success,
@@ -225,81 +246,33 @@ class CycleStrategy(ExecutionStrategy):
         last_state: dict[str, Any] = {}
         status = "running"
 
-        # Identify cycle edges (edges where target has already run)
         cycle_edges = self._find_cycle_edges(workflow)
+        node_timeout = self.timeout_seconds / self.max_iterations
 
         while iteration_count < self.max_iterations and status == "running":
             iteration_count += 1
-
             logger.info(
                 "cycle_iteration",
                 iteration=iteration_count,
                 execution_id=context.get("execution_id"),
             )
 
-            # Execute non-cycle nodes first
-            for node in workflow.nodes:
-                if node.id not in cycle_edges:
-                    try:
-                        result = await asyncio.wait_for(
-                            node_executor(node.id, node.data),
-                            timeout=self.timeout_seconds / self.max_iterations,
-                        )
-                        node_results[node.id] = result
-                    except Exception as e:
-                        logger.error("cycle_node_failed", node_id=node.id, error=str(e))
-                        node_results[node.id] = {"error": str(e)}
+            await self._execute_non_cycle_nodes(workflow, cycle_edges, node_executor, node_timeout, node_results)
+            cycle_state_changed = await self._execute_cycle_nodes(
+                workflow, cycle_edges, node_executor, node_timeout, node_results
+            )
 
-            # Execute cycle nodes (may update state)
-            cycle_state_changed = False
-            for node_id in cycle_edges:
-                node = next(n for n in workflow.nodes if n.id == node_id)
-                try:
-                    result = await asyncio.wait_for(
-                        node_executor(node_id, node.data),
-                        timeout=self.timeout_seconds / self.max_iterations,
-                    )
-                    old_val = node_results.get(node_id, {})
-                    node_results[node_id] = result
-
-                    # Check if state changed significantly
-                    if isinstance(result, dict):
-                        delta = self._compute_state_delta(old_val, result)
-                        if delta > self.convergence_threshold:
-                            cycle_state_changed = True
-
-                except Exception as e:
-                    logger.error("cycle_node_failed", node_id=node_id, error=str(e))
-
-            # Check convergence
-            if not cycle_state_changed:
-                status = "converged"
-                logger.info(
-                    "cycle_converged",
-                    iterations=iteration_count,
-                    execution_id=context.get("execution_id"),
-                )
+            status = self._check_cycle_status(
+                cycle_state_changed, iteration_count, last_state, node_results, context
+            )
+            if status != "running":
                 break
-
-            # Check divergence
-            total_change = self._compute_state_delta(last_state, node_results)
-            if total_change > self.divergence_threshold * iteration_count:
-                status = "diverging"
-                logger.warning(
-                    "cycle_diverging",
-                    iterations=iteration_count,
-                    total_change=total_change,
-                    execution_id=context.get("execution_id"),
-                )
-                break
-
             last_state = dict(node_results)
 
         if iteration_count >= self.max_iterations and status == "running":
             status = "max_iterations"
 
         success = status in ("converged", "completed")
-
         return WorkflowExecutionResult(
             workflow_id=workflow.id,
             success=success,
@@ -308,6 +281,81 @@ class CycleStrategy(ExecutionStrategy):
             error_message=None if success else f"Status: {status} at iteration {iteration_count}",
             node_status=dict.fromkeys(node_results, status),
         )
+
+    async def _execute_non_cycle_nodes(
+        self,
+        workflow: Workflow,
+        cycle_edges: set[str],
+        node_executor: callable,
+        timeout: float,
+        node_results: dict[str, Any],
+    ) -> None:
+        """Execute nodes that are not part of cycles."""
+        for node in workflow.nodes:
+            if node.id not in cycle_edges:
+                try:
+                    result = await asyncio.wait_for(
+                        node_executor(node.id, node.data), timeout=timeout
+                    )
+                    node_results[node.id] = result
+                except Exception as e:
+                    logger.error("cycle_node_failed", node_id=node.id, error=str(e))
+                    node_results[node.id] = {"error": str(e)}
+
+    async def _execute_cycle_nodes(
+        self,
+        workflow: Workflow,
+        cycle_edges: set[str],
+        node_executor: callable,
+        timeout: float,
+        node_results: dict[str, Any],
+    ) -> bool:
+        """Execute cycle nodes and return whether state changed."""
+        cycle_state_changed = False
+        for node_id in cycle_edges:
+            node = next(n for n in workflow.nodes if n.id == node_id)
+            try:
+                result = await asyncio.wait_for(
+                    node_executor(node_id, node.data), timeout=timeout
+                )
+                old_val = node_results.get(node_id, {})
+                node_results[node_id] = result
+                if isinstance(result, dict):
+                    delta = self._compute_state_delta(old_val, result)
+                    if delta > self.convergence_threshold:
+                        cycle_state_changed = True
+            except Exception as e:
+                logger.error("cycle_node_failed", node_id=node_id, error=str(e))
+        return cycle_state_changed
+
+    def _check_cycle_status(
+        self,
+        cycle_state_changed: bool,
+        iteration_count: int,
+        last_state: dict[str, Any],
+        node_results: dict[str, Any],
+        context: dict[str, Any],
+    ) -> str:
+        """Check convergence/divergence and return status."""
+        if not cycle_state_changed:
+            logger.info(
+                "cycle_converged",
+                iterations=iteration_count,
+                execution_id=context.get("execution_id"),
+            )
+            return "converged"
+
+        total_change = self._compute_state_delta(last_state, node_results)
+        if total_change > self.divergence_threshold * iteration_count:
+            logger.warning(
+                "cycle_diverging",
+                iterations=iteration_count,
+                total_change=total_change,
+                execution_id=context.get("execution_id"),
+            )
+            return "diverging"
+
+        return "running"
 
     def _find_cycle_edges(self, workflow: Workflow) -> set[str]:
         """Identify nodes involved in cycles."""

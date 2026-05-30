@@ -59,33 +59,29 @@ class OutputValidator:
         detected_sensitive: list[str] = []
 
         try:
-            if len(output_str) > self.config.max_output_size:
-                return LayerResult(
-                    layer="output",
-                    passed=False,
-                    reason=f"Output size {len(output_str)} exceeds maximum {self.config.max_output_size}",
-                    severity=Severity.WARNING,
-                    details={"output_size": len(output_str), "max_size": self.config.max_output_size},
-                )
+            size_result = self._check_output_size(output_str)
+            if size_result:
+                return size_result
 
             if self.config.enable_pii_detection:
-                for pattern, replacement in self._compiled_pii:
-                    matches = pattern.findall(output_str)
-                    if matches:
-                        detected_pii.append(pattern.pattern)
-                        if self.config.redact_pii:
-                            sanitized_output = pattern.sub(replacement, sanitized_output)
+                detected_pii = self._scan_patterns(
+                    self._compiled_pii, output_str, sanitized_output
+                )
+                if detected_pii and self.config.redact_pii:
+                    sanitized_output = self._apply_redactions(
+                        self._compiled_pii, sanitized_output
+                    )
 
             if self.config.enable_sensitive_data_filtering:
-                for pattern, replacement in self._compiled_sensitive:
-                    matches = pattern.findall(output_str)
-                    if matches:
-                        detected_sensitive.append(pattern.pattern)
-                        if self.config.redact_pii:
-                            sanitized_output = pattern.sub(replacement, sanitized_output)
+                detected_sensitive = self._scan_patterns(
+                    self._compiled_sensitive, output_str, sanitized_output
+                )
+                if detected_sensitive and self.config.redact_pii:
+                    sanitized_output = self._apply_redactions(
+                        self._compiled_sensitive, sanitized_output
+                    )
 
             latency_ms = (time.time() - start_time) * 1000
-
             passed = True
             reason = None
             if (detected_pii or detected_sensitive) and not self.config.redact_pii:
@@ -114,6 +110,39 @@ class OutputValidator:
                 reason=f"Output validation error: {e}",
                 severity=Severity.HIGH,
             )
+
+    def _check_output_size(self, output_str: str) -> LayerResult | None:
+        """Check if output exceeds max size; return LayerResult if too large."""
+        if len(output_str) > self.config.max_output_size:
+            return LayerResult(
+                layer="output",
+                passed=False,
+                reason=f"Output size {len(output_str)} exceeds maximum {self.config.max_output_size}",
+                severity=Severity.WARNING,
+                details={"output_size": len(output_str), "max_size": self.config.max_output_size},
+            )
+        return None
+
+    @staticmethod
+    def _scan_patterns(
+        compiled: list[tuple[re.Pattern, str]], text: str, _sanitized: str
+    ) -> list[str]:
+        """Scan text for compiled patterns, return list of matched pattern strings."""
+        detected: list[str] = []
+        for pattern, _replacement in compiled:
+            if pattern.findall(text):
+                detected.append(pattern.pattern)
+        return detected
+
+    @staticmethod
+    def _apply_redactions(
+        compiled: list[tuple[re.Pattern, str]], text: str
+    ) -> str:
+        """Apply all redaction patterns to text."""
+        result = text
+        for pattern, replacement in compiled:
+            result = pattern.sub(replacement, result)
+        return result
 
     def sanitize(self, output: str) -> str:
         """Sanitize output by redacting PII and sensitive data."""

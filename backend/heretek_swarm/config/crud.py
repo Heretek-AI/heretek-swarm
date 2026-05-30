@@ -1063,40 +1063,60 @@ class ConfigurationServiceCrud:
         _ = user
         opts = options or ImportOptions()
         payload = import_data.model_dump() if hasattr(import_data, "model_dump") else import_data
-        imported: dict[str, int] = {"user_configurations": 0, "llm_providers": 0, "embedding_providers": 0, "agent_configs": 0}
+        imported: dict[str, int] = {
+            "user_configurations": 0, "llm_providers": 0,
+            "embedding_providers": 0, "agent_configs": 0,
+        }
         errors: list[str] = []
 
         if opts.import_llm_providers and payload.get("llm_providers"):
-            for row in payload["llm_providers"]:
-                try:
-                    await self.create_llm_provider(LLMProviderCreate(**row), user=user)
-                    imported["llm_providers"] += 1
-                except Exception as e:
-                    errors.append(f"llm_provider: {e}")
+            await self._import_rows(
+                payload["llm_providers"], LLMProviderCreate,
+                self.create_llm_provider, imported, "llm_providers", errors, user,
+            )
 
         if opts.import_embedding_providers and payload.get("embedding_providers"):
-            for row in payload["embedding_providers"]:
-                try:
-                    await self.create_embedding_provider(EmbeddingProviderCreate(**row), user=user)
-                    imported["embedding_providers"] += 1
-                except Exception as e:
-                    errors.append(f"embedding_provider: {e}")
+            await self._import_rows(
+                payload["embedding_providers"], EmbeddingProviderCreate,
+                self.create_embedding_provider, imported, "embedding_providers", errors, user,
+            )
 
         if opts.import_agent_configs and payload.get("agent_configs"):
-            for row in payload["agent_configs"]:
-                try:
-                    await self.create_agent_config(AgentConfigCreate(**row), user=user)
-                    imported["agent_configs"] += 1
-                except Exception as e:
-                    errors.append(f"agent_config: {e}")
+            await self._import_rows(
+                payload["agent_configs"], AgentConfigCreate,
+                self.create_agent_config, imported, "agent_configs", errors, user,
+            )
 
         if opts.import_user_configs and payload.get("user_configurations"):
-            for row in payload["user_configurations"]:
-                try:
-                    await self.create_config(UserConfigurationCreate(**row), user=user)
-                    imported["user_configurations"] += 1
-                except Exception as e:
-                    errors.append(f"user_configuration: {e}")
+            await self._import_rows(
+                payload["user_configurations"], UserConfigurationCreate,
+                self.create_config, imported, "user_configurations", errors, user,
+            )
+
+        return ImportResult(
+            success=len(errors) == 0,
+            imported_count=imported,
+            errors=errors,
+        )
+
+    async def _import_rows(
+        self: ConfigurationService,
+        rows: list[dict[str, Any]],
+        create_type: type,
+        create_fn: callable,
+        imported: dict[str, int],
+        key: str,
+        errors: list[str],
+        user: str | None,
+    ) -> None:
+        """Import a list of rows using the given create function."""
+        label = key.rstrip("s")  # "llm_providers" -> "llm_provider"
+        for row in rows:
+            try:
+                await create_fn(create_type(**row), user=user)
+                imported[key] += 1
+            except Exception as e:
+                errors.append(f"{label}: {e}")
 
         return ImportResult(
             success=len(errors) == 0,

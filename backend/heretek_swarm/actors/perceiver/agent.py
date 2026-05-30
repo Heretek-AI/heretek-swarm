@@ -336,47 +336,77 @@ class PerceiverAgent(
             logger.debug("perceiver_validation_failed", error=str(e))
             return True  # Fail open on validation errors
 
+    # Modality detection lookup tables
+    _TEXT_FORMATS: ClassVar[frozenset[str]] = frozenset(
+        ["txt", "md", "json", "xml", "html"]
+    )
+    _IMAGE_FORMATS: ClassVar[frozenset[str]] = frozenset(
+        ["jpg", "jpeg", "png", "gif", "bmp", "webp", "svg"]
+    )
+    _AUDIO_FORMATS: ClassVar[frozenset[str]] = frozenset(
+        ["mp3", "wav", "ogg", "flac", "aac"]
+    )
+    _VIDEO_FORMATS: ClassVar[frozenset[str]] = frozenset(
+        ["mp4", "avi", "mov", "webm", "mkv"]
+    )
+    _DOCUMENT_FORMATS: ClassVar[frozenset[str]] = frozenset(
+        ["pdf", "doc", "docx", "ppt", "pptx", "xls", "xlsx"]
+    )
+
     def _detect_modality(self, input_data: Any, format_hint: str | None = None) -> str:
         """Auto-detect input modality."""
         if format_hint:
-            format_lower = format_hint.lower()
-            if format_lower in ["txt", "md", "json", "xml", "html"]:
-                return ModalityType.TEXT.value
-            if format_lower in ["jpg", "jpeg", "png", "gif", "bmp", "webp", "svg"]:
-                return ModalityType.IMAGE.value
-            if format_lower in ["mp3", "wav", "ogg", "flac", "aac"]:
-                return ModalityType.AUDIO.value
-            if format_lower in ["mp4", "avi", "mov", "webm", "mkv"]:
-                return ModalityType.VIDEO.value
-            if format_lower in ["pdf", "doc", "docx", "ppt", "pptx", "xls", "xlsx"]:
-                return ModalityType.DOCUMENT.value
+            modality = self._detect_from_format_hint(format_hint)
+            if modality:
+                return modality
+        return self._detect_from_content(input_data)
 
-        # Content-based detection
-        if isinstance(input_data, str):
-            # Check if it's base64 encoded
-            if input_data.startswith("data:"):
-                # Data URL format
-                mime_type = input_data.split(":")[1].split(";")[0]
-                if "image" in mime_type:
-                    return ModalityType.IMAGE.value
-                if "audio" in mime_type:
-                    return ModalityType.AUDIO.value
-                if "video" in mime_type:
-                    return ModalityType.VIDEO.value
-            # Plain text
+    def _detect_from_format_hint(self, format_hint: str) -> str | None:
+        """Detect modality from format hint string."""
+        fmt = format_hint.lower()
+        if fmt in self._TEXT_FORMATS:
             return ModalityType.TEXT.value
+        if fmt in self._IMAGE_FORMATS:
+            return ModalityType.IMAGE.value
+        if fmt in self._AUDIO_FORMATS:
+            return ModalityType.AUDIO.value
+        if fmt in self._VIDEO_FORMATS:
+            return ModalityType.VIDEO.value
+        if fmt in self._DOCUMENT_FORMATS:
+            return ModalityType.DOCUMENT.value
+        return None
+
+    def _detect_from_content(self, input_data: Any) -> str:
+        """Detect modality from content inspection."""
+        if isinstance(input_data, str):
+            return self._detect_string_modality(input_data)
         if isinstance(input_data, bytes):
-            # Try to detect from magic bytes
-            if input_data.startswith(b"\xff\xd8\xff"):
-                return ModalityType.IMAGE.value  # JPEG
-            if input_data.startswith(b"\x89PNG"):
-                return ModalityType.IMAGE.value  # PNG
-            if input_data.startswith(b"RIFF") and input_data[8:12] == b"WAVE":
-                return ModalityType.AUDIO.value  # WAV
-            return ModalityType.TEXT.value  # Default to text
+            return self._detect_bytes_modality(input_data)
         if isinstance(input_data, dict):
             return ModalityType.SENSOR.value
+        return ModalityType.TEXT.value
 
+    def _detect_string_modality(self, data: str) -> str:
+        """Detect modality from string content."""
+        if data.startswith("data:"):
+            mime_type = data.split(":")[1].split(";")[0]
+            if "image" in mime_type:
+                return ModalityType.IMAGE.value
+            if "audio" in mime_type:
+                return ModalityType.AUDIO.value
+            if "video" in mime_type:
+                return ModalityType.VIDEO.value
+        return ModalityType.TEXT.value
+
+    @staticmethod
+    def _detect_bytes_modality(data: bytes) -> str:
+        """Detect modality from bytes magic numbers."""
+        if data.startswith(b"\xff\xd8\xff"):
+            return ModalityType.IMAGE.value  # JPEG
+        if data.startswith(b"\x89PNG"):
+            return ModalityType.IMAGE.value  # PNG
+        if data.startswith(b"RIFF") and data[8:12] == b"WAVE":
+            return ModalityType.AUDIO.value  # WAV
         return ModalityType.TEXT.value
 
     def _generate_input_id(self, input_data: Any, modality: str) -> str:

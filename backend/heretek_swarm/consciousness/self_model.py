@@ -522,19 +522,34 @@ class SelfModel:
         }
 
     def generate_self_description(self) -> str:
-        beliefs_by_type: dict[str, int] = {}
-        for belief in self.beliefs.values():
-            type_name = belief.belief_type.value
-            beliefs_by_type[type_name] = beliefs_by_type.get(type_name, 0) + 1
-
-        goals_by_status: dict[str, int] = {}
-        for goal in self.goals.values():
-            status_name = goal.status.value
-            goals_by_status[status_name] = goals_by_status.get(status_name, 0) + 1
-
+        beliefs_by_type = self._count_beliefs_by_type()
+        goals_by_status = self._count_goals_by_status()
         metrics = self.get_metrics()
 
-        lines = [
+        lines = self._build_identity_section(metrics)
+        lines.extend(self._build_beliefs_section(beliefs_by_type, metrics))
+        lines.extend(self._build_goals_section(goals_by_status, metrics))
+        lines.extend(self._build_capabilities_section(metrics))
+        lines.extend(self._build_limitations_section())
+        lines.extend(self._build_history_section())
+        return "\n".join(lines)
+
+    def _count_beliefs_by_type(self) -> dict[str, int]:
+        result: dict[str, int] = {}
+        for belief in self.beliefs.values():
+            type_name = belief.belief_type.value
+            result[type_name] = result.get(type_name, 0) + 1
+        return result
+
+    def _count_goals_by_status(self) -> dict[str, int]:
+        result: dict[str, int] = {}
+        for goal in self.goals.values():
+            status_name = goal.status.value
+            result[status_name] = result.get(status_name, 0) + 1
+        return result
+
+    def _build_identity_section(self, metrics: SelfModelMetrics) -> list[str]:
+        return [
             f"Self-Model Report for Agent {self.agent_id}",
             "=" * 50,
             "",
@@ -548,69 +563,71 @@ class SelfModel:
             f"- Average Confidence: {metrics.belief_confidence_avg:.2f}",
         ]
 
+    def _build_beliefs_section(
+        self, beliefs_by_type: dict[str, int], _metrics: SelfModelMetrics
+    ) -> list[str]:
+        lines: list[str] = []
         if beliefs_by_type:
             lines.append("  By Type:")
             for btype, count in beliefs_by_type.items():
                 lines.append(f"    - {btype}: {count}")
+        return lines
 
-        lines.extend(
-            [
-                "",
-                "GOALS",
-                f"- Total Goals: {len(self.goals)}",
-                f"- Goal Clarity: {metrics.goal_clarity:.2f}",
-                f"- Progress Rate: {metrics.goal_progress_rate:.2f}",
-            ]
-        )
-
+    def _build_goals_section(
+        self, goals_by_status: dict[str, int], metrics: SelfModelMetrics
+    ) -> list[str]:
+        lines: list[str] = [
+            "",
+            "GOALS",
+            f"- Total Goals: {len(self.goals)}",
+            f"- Goal Clarity: {metrics.goal_clarity:.2f}",
+            f"- Progress Rate: {metrics.goal_progress_rate:.2f}",
+        ]
         if goals_by_status:
             lines.append("  By Status:")
             for status_name, count in goals_by_status.items():
                 lines.append(f"    - {status_name}: {count}")
+        return lines
 
-        lines.extend(
-            [
-                "",
-                "CAPABILITIES",
-                f"- Total Capabilities: {len(self.capabilities)}",
-                f"- Reliability: {metrics.capability_reliability:.2f}",
-            ]
-        )
-
+    def _build_capabilities_section(self, metrics: SelfModelMetrics) -> list[str]:
+        lines: list[str] = [
+            "",
+            "CAPABILITIES",
+            f"- Total Capabilities: {len(self.capabilities)}",
+            f"- Reliability: {metrics.capability_reliability:.2f}",
+        ]
         if self.capabilities:
             lines.append("  Top Capabilities:")
             sorted_caps = sorted(
-                self.capabilities.values(), key=lambda c: c.level * c.experience_count, reverse=True
+                self.capabilities.values(),
+                key=lambda c: c.level * c.experience_count, reverse=True,
             )[:3]
             for cap in sorted_caps:
-                lines.append(f"    - {cap.name}: {cap.level:.2f} (exp: {cap.experience_count})")  # noqa: PERF401
+                lines.append(f"    - {cap.name}: {cap.level:.2f} (exp: {cap.experience_count})")
+        return lines
 
-        lines.extend(
-            [
-                "",
-                "LIMITATIONS",
-                f"- Total Limitations: {len(self.limitations)}",
-            ]
-        )
-
+    def _build_limitations_section(self) -> list[str]:
+        lines: list[str] = [
+            "",
+            "LIMITATIONS",
+            f"- Total Limitations: {len(self.limitations)}",
+        ]
         if self.limitations:
             critical_limits = [l for l in self.limitations.values() if l.severity > 0.7]  # noqa: E741
             if critical_limits:
                 lines.append("  Critical Limitations:")
                 for lim in critical_limits[:3]:
-                    lines.append(f"    - {lim.description} (severity: {lim.severity:.2f})")  # noqa: PERF401
+                    lines.append(f"    - {lim.description} (severity: {lim.severity:.2f})")
+        return lines
 
-        lines.extend(
-            [
-                "",
-                "HISTORY",
-                f"- Snapshots: {len(self.history)}",
-                f"- Update Count: {self._update_count}",
-                "",
-            ]
-        )
-
-        return "\n".join(lines)
+    def _build_history_section(self) -> list[str]:
+        return [
+            "",
+            "HISTORY",
+            f"- Snapshots: {len(self.history)}",
+            f"- Update Count: {self._update_count}",
+            "",
+        ]
 
     def get_metrics(self) -> SelfModelMetrics:
         self_coherence = self._calculate_self_coherence()
