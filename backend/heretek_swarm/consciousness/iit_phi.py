@@ -354,29 +354,35 @@ class PhiCalculator:
     ) -> ValidationResult:
         """
         Validate cause-effect structure input.
-
-        Uses zero-trust validation to ensure input is safe and well-formed.
-
-        Args:
-            structure: Structure to validate
-
-        Returns:
-            ValidationResult with validation status
         """
         errors: list[str] = []
         warnings: list[str] = []
 
-        # Check for required fields
         if not isinstance(structure, dict):
             errors.append("Cause-effect structure must be a dictionary")
             return ValidationResult(
-                valid=False,
-                content=structure,
-                errors=errors,
+                valid=False, content=structure, errors=errors,
                 severity=ValidationSeverity.CRITICAL,
             )
 
-        # Validate elements list
+        self._validate_elements(structure, errors)
+        self._validate_connectivity(structure, errors, warnings)
+        self._validate_current_state(structure, errors)
+        self._validate_safety(structure, errors)
+
+        severity = (
+            ValidationSeverity.CRITICAL if errors
+            else (ValidationSeverity.WARNING if warnings else ValidationSeverity.INFO)
+        )
+        return ValidationResult(
+            valid=len(errors) == 0, content=structure,
+            errors=errors, warnings=warnings, severity=severity,
+        )
+
+    def _validate_elements(
+        self, structure: dict[str, Any], errors: list[str]
+    ) -> None:
+        """Validate the elements list in the structure."""
         elements = structure.get("elements")
         if elements is not None:
             if not isinstance(elements, list):
@@ -384,49 +390,45 @@ class PhiCalculator:
             elif not all(isinstance(e, str) for e in elements):
                 errors.append("All elements must be strings")
 
-        # Validate connectivity matrix
+    def _validate_connectivity(
+        self, structure: dict[str, Any], errors: list[str], warnings: list[str]
+    ) -> None:
+        """Validate the connectivity matrix."""
         connectivity = structure.get("connectivity")
-        if connectivity is not None:
-            if not isinstance(connectivity, dict):
-                errors.append("'connectivity' must be a dictionary")
-            else:
-                for source, targets in connectivity.items():
-                    if not isinstance(targets, dict):
-                        errors.append(f"Connectivity targets for '{source}' must be a dictionary")
-                        break
-                    for target, weight in targets.items():
-                        if not isinstance(weight, (int, float)):
-                            errors.append(f"Connection weight must be numeric: {source}->{target}")
-                            break
-                        if weight < 0 or weight > 1:
-                            warnings.append(
-                                f"Connection weight outside [0,1] range: {source}->{target}={weight}"
-                            )
+        if connectivity is None:
+            return
+        if not isinstance(connectivity, dict):
+            errors.append("'connectivity' must be a dictionary")
+            return
+        for source, targets in connectivity.items():
+            if not isinstance(targets, dict):
+                errors.append(f"Connectivity targets for '{source}' must be a dictionary")
+                break
+            for target, weight in targets.items():
+                if not isinstance(weight, (int, float)):
+                    errors.append(f"Connection weight must be numeric: {source}->{target}")
+                    break
+                if weight < 0 or weight > 1:
+                    warnings.append(
+                        f"Connection weight outside [0,1] range: {source}->{target}={weight}"
+                    )
 
-        # Validate current state
+    def _validate_current_state(
+        self, structure: dict[str, Any], errors: list[str]
+    ) -> None:
+        """Validate the current_state field."""
         current_state = structure.get("current_state")
         if current_state is not None and not isinstance(current_state, dict):
             errors.append("'current_state' must be a dictionary")
 
-        # Check for dangerous patterns using zero-trust validator
+    def _validate_safety(
+        self, structure: dict[str, Any], errors: list[str]
+    ) -> None:
+        """Check for dangerous patterns using zero-trust validator."""
         structure_str = str(structure)
         safety_result = self._validator.validate_text(structure_str, content_type="json")
         if not safety_result.valid:
             errors.extend(safety_result.errors)
-
-        severity = (
-            ValidationSeverity.CRITICAL
-            if errors
-            else (ValidationSeverity.WARNING if warnings else ValidationSeverity.INFO)
-        )
-
-        return ValidationResult(
-            valid=len(errors) == 0,
-            content=structure,
-            errors=errors,
-            warnings=warnings,
-            severity=severity,
-        )
 
     def _calculate_element_cause_effect(
         self,
