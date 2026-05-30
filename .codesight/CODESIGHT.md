@@ -1,0 +1,2737 @@
+# heretek-swarm — AI Context Map
+
+> **Stack:** fastapi | none | react | python
+> **Microservices:** copilotkit-langgraph-template, @heretek-ai/swarm-dashboard
+
+> 290 routes | 25 models | 89 components | 389 lib files | 121 env vars | 12 middleware | 7 events | 9% test coverage
+> **Token savings:** this file is ~38,300 tokens. Without it, AI exploration would cost ~319,900 tokens. **Saves ~281,600 tokens per conversation.**
+> **Last scanned:** 2026-05-30 19:59 — re-run after significant changes
+
+---
+
+# Routes
+
+## CRUD Resources
+
+- **``** GET | POST | GET/:id | PUT/:id | DELETE/:id
+- **`/{instance_id}/channels`** GET | POST | GET/:id | DELETE/:id → Channel
+- **`/jetstream/streams`** GET | POST | GET/:id | DELETE/:id → Stream
+- **`/routing/rules`** GET | POST | GET/:id | PUT/:id | DELETE/:id → Rule
+- **`/agents`** GET | POST | GET/:id → Agent
+- **`/llm/providers`** GET | POST | GET/:id | DELETE/:id → Provider
+- **`/embedding/providers`** GET | POST | GET/:id | DELETE/:id → Provider
+- **`/agent/configs`** GET | POST | GET/:id | DELETE/:id → Config
+- **`/test-cases`** GET | POST | GET/:id | DELETE/:id → Test-case
+- **`/memories`** GET | POST | GET/:id | PUT/:id | DELETE/:id → Memorie
+- **`/api/observability/events/replay`** GET | POST | GET/:id → Replay
+- **`/api/observability/external-calls`** GET | POST | GET/:id → External-call
+- **`/api/observability/traces`** GET | POST | GET/:id | DELETE/:id → Trace
+- **`/llm`** GET | POST | GET/:id | PUT/:id | DELETE/:id → Llm
+- **`/embedding`** GET | POST | GET/:id | PUT/:id | DELETE/:id → Embedding
+- **`/documents`** GET | GET/:id | DELETE/:id → Document
+- **`/providers`** GET | GET/:id | PUT/:id | DELETE/:id → Provider
+- **`/infrastructure`** GET | POST | GET/:id | DELETE/:id → Infrastructure
+
+## Other Routes
+
+- `POST` `/{agent_id}/chat` params(agent_id) → out: ChatResponse [auth, queue]
+- `GET` `/available` params() → in: Annotated [auth, db]
+- `GET` `/types/{agent_type}` params(agent_type) → in: Annotated [auth, db]
+- `POST` `/deploy` params() → in: DeployAgentRequest [auth, db]
+- `GET` `/instances` params() → in: Annotated [auth, db]
+- `GET` `/{instance_id}/logs` params(instance_id) → in: Annotated [auth, db]
+- `GET` `/{instance_id}/memory` params(instance_id) → in: Annotated [auth, db]
+- `GET` `/{instance_id}/tools` params(instance_id) → in: Annotated [auth, db]
+- `GET` `/{instance_id}/tasks` params(instance_id) → in: Annotated [auth, db]
+- `GET` `/stats` params() → in: Annotated [auth, db]
+- `POST` `/jetstream/streams/{stream_name}/replay` params(stream_name) → in: JetStreamConfigCreate [auth, db, queue]
+- `GET` `/jetstream/stats` params() → in: Annotated [auth, db, queue]
+- `POST` `/jetstream/initialize` params() → in: JetStreamConfigCreate [auth, db, queue]
+- `POST` `/{instance_id}/start` params(instance_id) [auth]
+- `POST` `/{instance_id}/stop` params(instance_id) [auth]
+- `POST` `/{instance_id}/suspend` params(instance_id) [auth]
+- `POST` `/{instance_id}/resume` params(instance_id) [auth]
+- `PUT` `/{instance_id}/config` params(instance_id) [auth]
+- `GET` `/{instance_id}/profiling/metrics` params(instance_id) [auth]
+- `GET` `/{instance_id}/profiling/profile` params(instance_id) [auth]
+- `GET` `/{instance_id}/profiling/anomalies` params(instance_id) [auth]
+- `GET` `/profiling/alerts` params() [auth]
+- `POST` `/profiling/alerts/{index}/acknowledge` params(index) [auth]
+- `GET` `/profiling/stats` params() [auth]
+- `GET` `/profiling/prometheus` params() [auth]
+- `POST` `/{instance_id}/profiling/record` params(instance_id) [auth]
+- `POST` `/routing/rules/{rule_id}/enable` params(rule_id) [auth]
+- `POST` `/routing/rules/{rule_id}/disable` params(rule_id) [auth]
+- `GET` `/routing/stats` params() → in: Annotated [auth]
+- `POST` `/routing/evaluate` params() [auth]
+- `GET` `/` params() → in: st [auth] ✓
+- `GET` `/{agent_id}/metrics` params(agent_id) → in: st [auth]
+- `POST` `/{agent_id}/terminate` params(agent_id) [auth]
+- `GET` `/status` params() [auth, cache]
+- `GET` `/evolution-status` params() [auth]
+- `GET` `/capabilities` params() [auth]
+- `GET` `/capabilities/{capability_id}` params(capability_id) [auth]
+- `GET` `/agent/{agent_id}/evolution` params(agent_id) [auth]
+- `GET` `/fitness-landscape` params() [auth]
+- `GET` `/adaptability` params() [auth]
+- `POST` `/agent/{agent_id}/evolve` params(agent_id) [auth]
+- `POST` `/record-capability` params() [auth]
+- `POST` `/detect-evolution` params() [auth]
+- `GET` `/tier` params() [auth]
+- `GET` `/llm/types` params() [auth, db, cache, ai]
+- `POST` `/llm/providers/{provider_id}/test` params(provider_id) → in: UserConfigurationCreate [auth, db, cache, ai]
+- `GET` `/embedding/types` params() [auth, db, cache, ai]
+- `POST` `/embedding/providers/{provider_id}/test` params(provider_id) → in: UserConfigurationCreate [auth, db, cache, ai]
+- `GET` `/audit-log` params() [auth, db, cache, ai]
+- `GET` `/export` params() [auth, db, cache, ai]
+- `POST` `/import` params() → in: UserConfigurationCreate [auth, db, cache, ai]
+- `POST` `/migrate-from-env` params() → in: UserConfigurationCreate [auth, db, cache, ai]
+- `POST` `/seed-from-env` params() → in: UserConfigurationCreate [auth, db, cache, ai]
+- `POST` `/reload` params() → in: UserConfigurationCreate [auth, db, cache, ai]
+- `GET` `/health` params() [auth, db, cache, ai] ✓
+- `GET` `/export/bundle` params() [auth, db, cache, ai]
+- `POST` `/import/bundle` params() → in: UserConfigurationCreate [auth, db, cache, ai]
+- `GET` `/api/observability/agency/swarm` params() → in: Annotated [auth]
+- `GET` `/api/observability/agency/swarm/compliance` params() → in: Annotated [auth]
+- `GET` `/api/observability/agency/evolution` params() → in: Annotated [auth]
+- `GET` `/api/observability/agency/distribution` params() → in: Annotated [auth]
+- `POST` `/api/observability/agency/record` params() → in: dict [auth]
+- `POST` `/api/observability/agency/generate-sample` params() → in: dict [auth]
+- `GET` `/api/observability/agency/all` params() → in: Annotated [auth]
+- `GET` `/api/observability/agency/{agent_id}` params(agent_id) → in: Annotated [auth]
+- `GET` `/api/observability/agency/{agent_id}/compliance` params(agent_id) → in: Annotated [auth]
+- `GET` `/api/observability/statistics` params() → in: Annotated [auth]
+- `GET` `/api/observability/agents/{agent_id}` params(agent_id) → in: Annotated [auth]
+- `GET` `/api/observability/agents/{agent_id}/iit` params(agent_id) → in: Annotated [auth]
+- `GET` `/api/observability/agents/{agent_id}/fep` params(agent_id) → in: Annotated [auth]
+- `GET` `/api/observability/connectivity` params() → in: Annotated [auth]
+- `GET` `/api/observability/states` params() → in: Annotated [auth]
+- `GET` `/api/observability/history` params() → in: Annotated [auth]
+- `POST` `/api/observability/record-interaction` params() → in: dict [auth]
+- `POST` `/api/observability/record-prediction` params() → in: dict [auth]
+- `POST` `/api/observability/record-outcome` params() → in: dict [auth]
+- `GET` `/api/observability/metrics/{agent_id}` params(agent_id) → in: Annotated [auth]
+- `GET` `/api/observability/visualization/network` params() → in: Annotated [auth]
+- `GET` `/api/observability/visualization/timeseries` params() → in: Annotated [auth]
+- `GET` `/api/observability/deliberation/{deliberation_id}` params(deliberation_id) → in: Annotated [auth]
+- `GET` `/api/observability/thinking-stream/{agent_id}` params(agent_id) → in: Annotated [auth]
+- `GET` `/api/observability/thinking-stream/all` params() → in: Annotated [auth]
+- `GET` `/history` params() → in: st [auth, db, cache] ✓
+- `POST` `/{consensus_id}/vote` params(consensus_id) [auth, db, cache]
+- `POST` `/{consensus_id}/aggregate` params(consensus_id) [auth, db, cache]
+- `GET` `/{consensus_id}/results` params(consensus_id) → in: st [auth, db, cache]
+- `GET` `/config` params() → in: st [auth, db, cache]
+- `POST` `/auth/token` params() [auth, db, cache]
+- `POST` `/auth/revoke` params() [auth, db, cache]
+- `POST` `/deliberation/start` params() [auth, db, cache]
+- `POST` `/deliberation/{deliberation_id}/submit_position` params(deliberation_id) [auth, db, cache]
+- `POST` `/deliberation/{deliberation_id}/submit_argument` params(deliberation_id) [auth, db, cache]
+- `POST` `/deliberation/{deliberation_id}/submit_evidence` params(deliberation_id) [auth, db, cache]
+- `POST` `/deliberation/{deliberation_id}/run_round` params(deliberation_id) [auth, db, cache]
+- `GET` `/deliberation/{deliberation_id}/state` params(deliberation_id) → in: st [auth, db, cache]
+- `GET` `/deliberation/{deliberation_id}/history` params(deliberation_id) → in: st [auth, db, cache]
+- `POST` `/deliberation/{deliberation_id}/finalize` params(deliberation_id) [auth, db, cache]
+- `DELETE` `/deliberation/{deliberation_id}` params(deliberation_id) [auth, db, cache]
+- `GET` `/audit/decision/{decision_id}` params(decision_id) → in: st [auth, db, cache]
+- `GET` `/audit/decision/{decision_id}/export` params(decision_id) → in: st [auth, db, cache]
+- `GET` `/audit/decision/{decision_id}/verify` params(decision_id) → in: st [auth, db, cache]
+- `GET` `/audit/statistics` params() → in: st [auth, db, cache] ✓
+- `GET` `/audit/failed` params() → in: st [auth, db, cache]
+- `GET` `/audit/successful` params() → in: st [auth, db, cache]
+- `GET` `/audit/deliberation/{consensus_id}/history` params(consensus_id) → in: st [auth, db, cache]
+- `POST` `/tribunal/cases` params() [auth, db, cache]
+- `GET` `/tribunal/cases/{case_id}` params(case_id) → in: st [auth, db, cache]
+- `POST` `/tribunal/cases/{case_id}/evidence` params(case_id) [auth, db, cache]
+- `POST` `/tribunal/cases/{case_id}/rule` params(case_id) [auth, db, cache]
+- `GET` `/tribunal/precedents` params() → in: st [auth, db, cache]
+- `GET` `/tribunal/cases/{case_id}/precedents` params(case_id) → in: st [auth, db, cache]
+- `GET` `/dashboard` params() → in: dic [auth]
+- `GET` `/siq` params() → in: dic [auth]
+- `GET` `/efficiency` params() → in: dic [auth]
+- `GET` `/knowledge-transfer` params() → in: dic [auth]
+- `GET` `/emergence-coefficient` params() → in: dic [auth]
+- `GET` `/emergent-patterns` params() → in: dic [auth]
+- `GET` `/learning-rates` params() → in: dic [auth]
+- `GET` `/agent-adaptation` params() → in: dic [auth]
+- `GET` `/metrics-definitions` params() → in: dic [auth]
+- `GET` `/metrics/{metric_id}/timeseries` params(metric_id) → in: dic [auth]
+- `GET` `/export/summary` params() → in: dic [auth]
+- `POST` `/test-cases/batch` params() → in: dict [auth, db]
+- `POST` `/agents/{agent_id}/evaluate` params(agent_id) → in: dict [auth, db]
+- `GET` `/agents/{agent_id}/summary` params(agent_id) → in: Annotated [auth, db]
+- `GET` `/summaries` params() → in: Annotated [auth, db]
+- `GET` `/api/health` params() → out: PromptResponse [auth, db, cache, ai] ✓
+- `GET` `/api/health/live` params() → out: PromptResponse [auth, db, cache, ai] ✓
+- `GET` `/api/health/ready` params() → out: PromptResponse [auth, db, cache, ai] ✓
+- `GET` `/api/historian/events` params() → out: PromptResponse [auth, db, cache, ai] ✓
+- `GET` `/api/supervisor/status` params() → out: PromptResponse [auth, db, cache, ai] ✓
+- `GET` `/api/memory` params() → out: PromptResponse [auth, db, cache, ai] ✓
+- `GET` `/api/litellm/metrics` params() → out: PromptResponse [auth, db, cache, ai] ✓
+- `GET` `/api/a2a/messages` params() → out: PromptResponse [auth, db, cache, ai] ✓
+- `GET` `/api/a2a/messages/{from_agent}/{to_agent}` params(from_agent, to_agent) → out: PromptResponse [auth, db, cache, ai]
+- `POST` `/api/prompt` params() → in: PromptRequest, out: PromptResponse [auth, db, cache, ai] ✓
+- `POST` `/configure` params() → in: dict [auth, db]
+- `GET` `/memories/{memory_id}/history` params(memory_id) [auth, db]
+- `POST` `/search` params() → in: dict [auth, db]
+- `POST` `/reset` params() → in: dict [auth, db]
+- `POST` `/snapshot` params() → in: Annotated [auth]
+- `GET` `/labels` params() → in: dic [auth]
+- `GET` `/head` params() → in: dic [auth]
+- `GET` `/{version_id}/entries` params(version_id) → in: dic [auth]
+- `GET` `/diff/{from_version}/{to_version}` params(from_version, to_version) → in: dic [auth]
+- `POST` `/{version_id}/restore` params(version_id) → in: Annotated [auth]
+- `POST` `/{version_id}/label/{label}` params(version_id, label) → in: Annotated [auth]
+- `GET` `/label/{label}` params(label) → in: dic [auth]
+- `GET` `/statistics` params() → in: dic [auth]
+- `GET` `/json` params() [auth, cache]
+- `GET` `/api/observability/alerts` params() [auth]
+- `GET` `/api/observability/provider-stats` params() [auth]
+- `GET` `/consciousness` params()
+- `GET` `/consciousness/agent/{agent_id}` params(agent_id)
+- `POST` `/api/observability/events/replay/{job_id}/execute` params(job_id) → in: ReplayJobCreate [auth, db]
+- `POST` `/api/observability/events/replay/{job_id}/pause` params(job_id) → in: ReplayJobCreate [auth, db]
+- `POST` `/api/observability/events/replay/{job_id}/resume` params(job_id) → in: ReplayJobCreate [auth, db]
+- `POST` `/api/observability/events/replay/{job_id}/cancel` params(job_id) → in: ReplayJobCreate [auth, db]
+- `POST` `/api/observability/events/time-travel` params() → in: ReplayJobCreate [auth, db] ✓
+- `POST` `/api/observability/events/time-travel/{request_id}/execute` params(request_id) → in: ReplayJobCreate [auth, db]
+- `GET` `/api/observability/events/stats` params() [auth, db]
+- `GET` `/api/observability/metrics/stream` params() [auth]
+- `GET` `/api/observability/metrics/prometheus` params() [auth]
+- `GET` `/api/observability/metrics/legacy` params() [auth]
+- `GET` `/api/observability/swarm` params() [auth] ✓
+- `GET` `/api/observability/agents` params() [auth]
+- `POST` `/analyze` params() → in: st, out: PerceiverResponse [auth, queue, upload]
+- `POST` `/{plugin_id}/enable` params(plugin_id) [auth, db]
+- `POST` `/{plugin_id}/disable` params(plugin_id) [auth, db]
+- `GET` `/{plugin_id}/config` params(plugin_id) [auth, db]
+- `PUT` `/{plugin_id}/config` params(plugin_id) [auth, db]
+- `GET` `/{plugin_id}/metrics` params(plugin_id) [auth, db]
+- `GET` `/{plugin_id}/status` params(plugin_id) [auth, db]
+- `POST` `/{plugin_id}/reset` params(plugin_id) [auth, db]
+- `POST` `/llm/{provider_id}/test` params(provider_id) [auth, db, cache, ai]
+- `POST` `/embedding/{provider_id}/test` params(provider_id) [auth, db, cache, ai]
+- `POST` `/stop` params() → in: ProvisionRequest [auth, db, cache]
+- `POST` `/ingest` params() → in: UploadFile [auth, db, upload]
+- `POST` `/ingest/batch` params() → in: UploadFile [auth, db, upload]
+- `POST` `/query` params() → in: UploadFile [auth, db, upload]
+- `POST` `/config` params() → in: UploadFile [auth, db, upload]
+- `POST` `/graph/query` params() → in: UploadFile [auth, db, upload]
+- `POST` `/graph/chunks` params() → in: UploadFile [auth, db, upload]
+- `GET` `/graph/statistics` params() [auth, db, upload]
+- `GET` `/graph/document/{document_id}/headings` params(document_id) [auth, db, upload]
+- `POST` `/graph/decompose` params() → in: UploadFile [auth, db, upload]
+- `GET` `/api/endpoint` [cache]
+- `GET` `/agents/by-skill/{skill_name}` params(skill_name) → in: SkillCategory [auth, db]
+- `GET` `/agents/by-category/{category}` params(category) → in: SkillCategory [auth, db]
+- `GET` `/agents/by-tag/{tag}` params(tag) → in: SkillCategory [auth, db]
+- `DELETE` `/{agent_id}/{skill_name}` params(agent_id, skill_name) [auth, db]
+- `POST` `/workspace` params() → in: dict [auth, db]
+- `GET` `/workspace/{workspace_id}` params(workspace_id) → in: SkillCategory [auth, db]
+- `POST` `/workspace/inject` params() → in: dict [auth, db]
+- `GET` `/tiers` params() [auth, db, cache, ai]
+- `GET` `/tiers/{tier_id}` params(tier_id) [auth, db, cache, ai]
+- `POST` `/validate` params() [auth, db, cache, ai]
+- `POST` `/infrastructure/{service}/health-check` params(service) [auth, db, cache, ai]
+- `POST` `/infrastructure/health-check-all` params() [auth, db, cache, ai]
+- `POST` `/{workflow_id}/execute` params(workflow_id) → in: dict [auth, db, cache]
+- `GET` `/{workflow_id}/status` params(workflow_id) → in: Annotated [auth, db, cache]
+- `POST` `/{workflow_id}/cancel` params(workflow_id) → in: dict [auth, db, cache]
+- `POST` `/{workflow_id}/validate` params(workflow_id) → in: dict [auth, db, cache]
+- `GET` `/events` params() → in: Annotated [auth, db, cache]
+- `GET` `/{workflow_id}/events` params(workflow_id) → in: Annotated [auth, db, cache]
+- `GET` `/tools` params() [auth]
+- `GET` `/tools/{tool_name}` params(tool_name) [auth]
+- `POST` `/tools/call` params() → in: ToolCallRequest [auth]
+- `PUT` `/tools/toggle/{tool_name}` params(tool_name) [auth]
+- `GET` `/tools/{tool_name}/stats` params(tool_name) [auth]
+- `GET` `/info` params() [auth]
+
+---
+
+# Schema
+
+### swarm_memories
+- session_id: uuid (fk)
+- content_type: varchar (default)
+- metadata: jsonb (default)
+- tier: varchar (required)
+
+### agent_states
+- agent_type: varchar (required)
+- tier: varchar (required)
+- health_status: varchar (required)
+- health_score: float (default)
+- integrated_information: float (default)
+- free_energy: float (default)
+- attention_focus: float (default)
+- global_workspace_activity: float (default)
+- messages_per_second: float (default)
+- avg_response_time_ms: float (default)
+- error_count: integer (default)
+- last_error_at: timestamp with time zone
+- cpu_usage_percent: float (default)
+- last_heartbeat: timestamp with time zone
+- last_active: timestamp with time zone
+
+### workflow_states
+- workflow_version: varchar (required)
+- workflow_type: varchar (required)
+- status: varchar (required)
+- progress_percent: float (default)
+- output_data: jsonb (default)
+- context: jsonb (default)
+- root_workflow_id: uuid (fk)
+- trace_id: uuid (fk)
+- span_id: uuid (fk)
+- current_agent: varchar
+- last_checkpoint_at: timestamp with time zone
+- completed_at: timestamp with time zone
+- duration_ms: integer
+- error_stack: text
+- retry_count: integer (default)
+- max_retries: integer (default)
+
+### consensus_proposals
+- proposal_title: varchar (required)
+- proposal_description: text
+- context: jsonb (default)
+- result: varchar
+- voting_end: timestamp with time zone
+- voting_timeout_seconds: integer (default)
+- required_quorum: float (default)
+- required_majority: float (default)
+- votes_against: integer (default)
+- votes_abstain: integer (default)
+- total_votes: integer (default)
+- proposer_agent: varchar (required)
+- resolved_at: timestamp with time zone
+
+### consensus_votes
+- vote: varchar (required)
+- vote_weight: float (default)
+- vote_data: jsonb (default)
+
+### collective_patterns
+- pattern_type: varchar (required)
+- pattern_category: varchar
+- description: text
+- metadata: jsonb (default)
+- validation_count: integer (default)
+- validation_threshold: float (default)
+- parent_pattern_id: uuid (fk)
+- embedding_model: varchar (default)
+- last_used_at: timestamp with time zone
+- expires_at: timestamp with time zone
+
+### knowledge_transformations
+- source_knowledge_type: varchar
+- target_knowledge_id: uuid (fk)
+- target_knowledge_type: varchar
+- transformation_description: text
+- fidelity_score: float (default)
+- downstream_transformations: integer (default)
+- validated_at: timestamp with time zone
+
+### pattern_subscriptions
+- subscription_type: varchar (default)
+- notification_frequency: varchar (default)
+- matches_applied: integer (default)
+- last_match_at: timestamp with time zone
+- expires_at: timestamp with time zone
+
+### deliberation_arguments
+- proposal_id: uuid (required, fk)
+- argument_data: jsonb (default)
+- agent_role: varchar
+- relevance_score: float (default)
+- upvotes: integer (default)
+- downvotes: integer (default)
+
+### agent_expertise_profiles
+- agent_name: varchar (required)
+- subdomain: varchar
+- peer_endorsed: boolean (default)
+- system_calculated: boolean (default)
+- decay_rate: float (default)
+- expires_at: timestamp with time zone
+
+### consensus_audit_trail
+- event_type: varchar (required)
+- deliberation_round_id: uuid (fk)
+- vote_id: uuid (fk)
+- argument_id: uuid (fk)
+- actor_role: varchar
+- event_description: text
+- state_after: jsonb
+- recorded_at: timestamp with time zone (default)
+
+### memory_access_logs
+- memory_type: varchar (required)
+- session_id: uuid (fk)
+- workflow_id: uuid (fk)
+- access_duration_ms: float
+- query_vector: vector
+
+### memory_tier_state
+- memory_type: varchar (required)
+- tier_changes: integer (default)
+- last_tier_change_at: timestamp with time zone
+- compression_algorithm: varchar
+- compressed_size_bytes: integer
+
+### compression_metadata
+- memory_type: varchar (required)
+- compression_algorithm: varchar
+- compressed_size_bytes: integer
+- compression_ratio: float (default)
+- decompression_time_ms: float
+- expires_at: timestamp with time zone
+
+### prefetch_cache
+- cache_type: varchar (required)
+- miss_count: integer (default)
+- last_hit_at: timestamp with time zone
+- expires_at: timestamp with time zone
+
+### agent_learning_state
+- agent_name: varchar (required)
+- agent_type: varchar
+- learning_state: varchar (default)
+- can_teach: boolean (default)
+- can_share_knowledge: boolean (default)
+- patterns_learned: integer (default)
+- retention_score: float (default)
+- adaptation_score: float (default)
+- expertise_levels: jsonb (default)
+- collaborative: learning_goals jsonb (default)
+- last_learning_session_at: timestamp with time zone
+- successful_learnings: integer (default)
+- failed_learnings: integer (default)
+- last_active_at: timestamp with time zone (default)
+
+### agent_memory_config
+- max_memory_size_bytes: bigint (default)
+- warm_tier_threshold: float (default)
+- cold_tier_threshold: float (default)
+- base_decay_rate: float (default)
+- decay_interval_seconds: integer (default)
+- compression_algorithm: varchar (default)
+- compression_threshold_bytes: integer (default)
+- prefetch_lookahead: integer (default)
+- prefetch_confidence_threshold: float (default)
+- vector_index_type: varchar (default)
+- vector_search_k: integer (default)
+- auto_cleanup_enabled: boolean (default)
+- cleanup_interval_seconds: integer (default)
+- semantic_enabled: boolean (default)
+- working_enabled: boolean (default)
+- require_encryption: boolean (default)
+
+### agent_consensus_config
+- can_propose: boolean (default)
+- can_vote: boolean (default)
+- can_deliberate: boolean (default)
+- use_expertise_weighting: boolean (default)
+- max_vote_weight: float (default)
+- min_vote_weight: float (default)
+- min_rounds_to_participate: integer (default)
+- max_arguments_per_round: integer (default)
+- proposal_threshold: float (default)
+- aggressive: deliberation_style varchar (default)
+- quorum_participation_weight: float (default)
+- notify_on_vote: boolean (default)
+- notify_on_consensus: boolean (default)
+- votes_cast: integer (default)
+- arguments_submitted: integer (default)
+- consensus_participations: integer (default)
+- voting_accuracy: float (default)
+- last_participation_at: timestamp with time zone
+
+### llm_providers
+- provider_type: varchar (required)
+- api_key_encrypted: text
+- api_key_hint: varchar
+- available_models: jsonb (default)
+- model_aliases: jsonb (default)
+- supports_function_calling: boolean (default)
+- supports_vision: boolean (default)
+- max_tokens: integer
+- max_context_length: integer
+- rate_limit_tokens_per_minute: integer
+- is_default: boolean (default)
+- health_status: varchar (default)
+- last_health_check: timestamp with time zone
+- health_check_error: text
+
+### embedding_providers
+- provider_type: varchar (required)
+- api_key_encrypted: text
+- api_key_hint: varchar
+- available_models: jsonb (default)
+- supported_input_formats: jsonb (default)
+- max_batch_size: integer (default)
+- max_tokens_per_batch: integer (default)
+- is_default: boolean (default)
+- health_status: varchar (default)
+- last_health_check: timestamp with time zone
+- health_check_error: text
+
+### agent_configs
+- agent_id: varchar (fk)
+- config_data: jsonb (required)
+- embedding_provider_id: uuid (fk)
+- is_default_for_type: boolean (default)
+- created_by: varchar
+- updated_by: varchar(255
+
+### config_audit_log
+- entity_id: uuid (required, fk)
+- action: varchar (required)
+- new_value: jsonb
+- change_reason: text
+- ip_address: inet
+
+### config_cache
+- access_count: integer (default)
+- last_accessed_at: timestamp with time zone (default)
+
+### external_call_logs
+- agent_type: varchar (required)
+- url: varchar (required)
+- method: varchar (required)
+- status_code: integer
+- duration_ms: integer
+
+### infrastructure_config
+- id: uuid (pk)
+- service: varchar (required)
+- host: varchar (required)
+- port: integer (required)
+- connection_url: text
+- is_enabled: boolean (required)
+- health_status: varchar (default)
+- last_health_check: timestamp with time zone
+- health_check_latency_ms: integer
+- health_check_error: text
+- extra_config: jsonb (default)
+
+---
+
+# Components
+
+- **App** — `heretek-swarm\apps\app\src\App.tsx`
+- **ExampleCanvas** [client] — `heretek-swarm\apps\app\src\components\example-canvas\index.tsx`
+- **TodoCard** [client] — props: todo, onToggleStatus, onDelete, onUpdateTitle, onUpdateDescription, onUpdateEmoji — `heretek-swarm\apps\app\src\components\example-canvas\todo-card.tsx`
+- **TodoColumn** [client] — props: title, todos, emptyMessage, showAddButton, onAddTodo, onToggleStatus, onDelete, onUpdateTitle, onUpdateDescription, onUpdateEmoji — `heretek-swarm\apps\app\src\components\example-canvas\todo-column.tsx`
+- **TodoList** [client] — props: todos, onUpdate, isAgentRunning — `heretek-swarm\apps\app\src\components\example-canvas\todo-list.tsx`
+- **ExampleLayout** [client] — props: chatContent, appContent — `heretek-swarm\apps\app\src\components\example-layout\index.tsx`
+- **ModeToggle** — props: mode, onModeChange — `heretek-swarm\apps\app\src\components\example-layout\mode-toggle.tsx`
+- **BarChart** — props: title, description, data — `heretek-swarm\apps\app\src\components\generative-ui\charts\bar-chart.tsx`
+- **PieChart** — props: title, description, data — `heretek-swarm\apps\app\src\components\generative-ui\charts\pie-chart.tsx`
+- **MeetingTimePicker** — props: status, respond, reasonForScheduling, meetingDuration, title, timeSlots — `heretek-swarm\apps\app\src\components\generative-ui\meeting-time-picker.tsx`
+- **HeadlessChat** — `heretek-swarm\apps\app\src\components\headless-chat.tsx`
+- **ThreadsDrawer** [client] — props: agentId, threadId, onThreadChange — `heretek-swarm\apps\app\src\components\threads-drawer\threads-drawer.tsx`
+- **ToolReasoning** [client] — props: name, args, status — `heretek-swarm\apps\app\src\components\tool-rendering.tsx`
+- **Spinner** — props: className, size — `heretek-swarm\apps\app\src\components\ui\spinner.tsx`
+- **ActionButton** [client] — props: label, doneLabel, action — `heretek-swarm\apps\app\src\declarative-generative-ui\renderers.tsx`
+- **ThemeProvider** [client] — `heretek-swarm\apps\app\src\hooks\use-theme.tsx`
+- **DashboardContent** — `swarm-dashboard\src\App.tsx`
+- **AgentMetricsGrid** — props: apiBaseUrl, refreshInterval, showFilters, showPagination, pageSize, onAgentSelect — `swarm-dashboard\src\components\AgentMetricsGrid.tsx`
+- **AgentCard** — props: agent, instances, onDeploy, onStart, onStop, onSelect, compact — `swarm-dashboard\src\components\Agents\AgentCard.tsx`
+- **AgentConfigPanel** — props: instanceId, config, onUpdate, onClose — `swarm-dashboard\src\components\Agents\AgentConfigPanel.tsx`
+- **AgentControls** — props: instanceId, state, onStart, onStop, onSuspend, onResume, onRemove, compact — `swarm-dashboard\src\components\Agents\AgentControls.tsx`
+- **AgentsPage** — `swarm-dashboard\src\components\Agents\AgentsPage.tsx`
+- **DeployAgentModal** — props: agentType, isOpen, onClose, onDeploy — `swarm-dashboard\src\components\Agents\DeployAgentModal.tsx`
+- **AgentDetailDrawer** — props: agentId, onClose — `swarm-dashboard\src\components\Canvas\AgentDetailDrawer.tsx`
+- **AgentNode** — props: id, data, selected — `swarm-dashboard\src\components\Canvas\AgentNode.tsx`
+- **CollectiveCanvas** — `swarm-dashboard\src\components\Canvas\Canvas.tsx`
+- **CanvasToolbar** — props: onZoomIn, onZoomOut, onFitView, onSaveWorkflow, onLoadWorkflow, onExecuteWorkflow, onClearCanvas, onToggleGrid, gridEnabled, isExecuting — `swarm-dashboard\src\components\Canvas\CanvasToolbar.tsx`
+- **ConnectionEdge** — props: id, sourceX, sourceY, targetX, targetY, sourcePosition, targetPosition, style — `swarm-dashboard\src\components\Canvas\ConnectionEdge.tsx`
+- **EnhancedCanvas** — `swarm-dashboard\src\components\Canvas\EnhancedCanvas.tsx`
+- **TRIAD_CONFIGS** — props: initialNodes, initialEdges, onSave, onExecute — `swarm-dashboard\src\components\Canvas\FlowCanvas.tsx`
+- **MetricsOverlay** — props: consciousness, swarmHealth, metricsLoading, onClose — `swarm-dashboard\src\components\Canvas\MetricsOverlay.tsx`
+- **NodeConfigPanel** — props: node, onClose, onSave — `swarm-dashboard\src\components\Canvas\NodeConfigPanel.tsx`
+- **NodePalette** — props: onDragStart, searchPlaceholder, showTierHeaders — `swarm-dashboard\src\components\Canvas\NodePalette.tsx`
+- **ChatInterface** — `swarm-dashboard\src\components\Chat\ChatInterface.tsx`
+- **MessageInput** — props: onSendMessage, agents, disabled, placeholder, showAgentSelector, showTypeSelector, defaultAgentId, defaultMessageType, minRows, maxRows — `swarm-dashboard\src\components\Chat\MessageInput.tsx`
+- **MessageList** — props: messages, onMessageClick, showTimestamps, showAgentIcons, showFilter, autoScroll, loading — `swarm-dashboard\src\components\Chat\MessageList.tsx`
+- **AgentStatusGrid** — props: agents, onAgentClick, showDescriptions, compact — `swarm-dashboard\src\components\Consciousness\AgentStatusGrid.tsx`
+- **ConsciousnessDashboard** — `swarm-dashboard\src\components\Consciousness\ConsciousnessDashboard.tsx`
+- **ConsciousnessGauge** — props: gwtValue, iitValue, astValue, fepValue, size, showLabels, animated — `swarm-dashboard\src\components\Consciousness\ConsciousnessGauge.tsx`
+- **ConsciousnessPage** — `swarm-dashboard\src\components\Consciousness\ConsciousnessPage.tsx`
+- **RealTimeAgentPanel** — props: refreshInterval, showConsciousness — `swarm-dashboard\src\components\Consciousness\RealTimeAgentPanel.tsx`
+- **ConsciousnessMetricsPanel** — props: apiBaseUrl, refreshInterval, onMetricsUpdate — `swarm-dashboard\src\components\ConsciousnessMetricsPanel.tsx`
+- **Dashboard** — `swarm-dashboard\src\components\Dashboard\Dashboard.tsx`
+- **DashboardLayout** — props: activeNav, onNavClick, navItems, systemStatus, userName, showHeader, showFooter — `swarm-dashboard\src\components\Dashboard\Layout.tsx`
+- **UnifiedDashboard** — `swarm-dashboard\src\components\Dashboard\UnifiedDashboard.tsx`
+- **DeliberationPage** — `swarm-dashboard\src\components\Deliberation\DeliberationPage.tsx`
+- **HistoricalDeliberations** — `swarm-dashboard\src\components\Deliberation\HistoricalDeliberations.tsx`
+- **LiveDeliberationPanel** — props: className — `swarm-dashboard\src\components\Deliberation\LiveDeliberationPanel.tsx`
+- **HomePage** — `swarm-dashboard\src\components\Home\HomePage.tsx`
+- **LogsPage** — `swarm-dashboard\src\components\Logs\LogsPage.tsx`
+- **A2AMessageFlow** — props: agentId, timeRange — `swarm-dashboard\src\components\Observability\A2AMessageFlow.tsx`
+- **A2ATracker** — props: natsUrl, refreshInterval, maxMessages — `swarm-dashboard\src\components\Observability\A2ATracker.tsx`
+- **ExternalCallsPanel** — props: maxEntries, refreshInterval — `swarm-dashboard\src\components\Observability\ExternalCallsPanel.tsx`
+- **LLMTrace** — props: agentId, timeRange — `swarm-dashboard\src\components\Observability\LLMTrace.tsx`
+- **Observability** — `swarm-dashboard\src\components\Observability\Observability.tsx`
+- **ObservabilityPage** — `swarm-dashboard\src\components\Observability\ObservabilityPage.tsx`
+- **PerformancePanel** — `swarm-dashboard\src\components\PerformancePanel.tsx`
+- **AgentDefaultsSection** — props: onConfigChange — `swarm-dashboard\src\components\Settings\AgentDefaultsSection.tsx`
+- **DeveloperModeToggle** — props: onDeveloperModeChange — `swarm-dashboard\src\components\Settings\DeveloperModeToggle.tsx`
+- **ImportExportSection** — props: onImportExport — `swarm-dashboard\src\components\Settings\ImportExportSection.tsx`
+- **MCPToolsSection** — `swarm-dashboard\src\components\Settings\MCPToolsSection.tsx`
+- **ModelGarage** — `swarm-dashboard\src\components\Settings\ModelGarage.tsx`
+- **SettingsPage** — props: onRerunSetup — `swarm-dashboard\src\components\Settings\SettingsPage.tsx`
+- **SystemConfigSection** — props: onConfigChange — `swarm-dashboard\src\components\Settings\SystemConfigSection.tsx`
+- **SetupWizard** — props: onComplete — `swarm-dashboard\src\components\Setup\SetupWizard.tsx`
+- **SwarmControlCenter** — props: defaultView, natsUrl, apiUrl — `swarm-dashboard\src\components\SwarmControlCenter.tsx`
+- **SwarmHealthDashboard** — props: apiBaseUrl, refreshInterval, showAgentDetails, showAlerts — `swarm-dashboard\src\components\SwarmHealthDashboard.tsx`
+- **ErrorFallback** — props: fallback, onError, className, componentName, logToBackend, retryable — `swarm-dashboard\src\components\UI\ComponentErrorBoundary.tsx`
+- **DataTable** — `swarm-dashboard\src\components\UI\DataTable.tsx`
+- **DebugPanel** — props: className — `swarm-dashboard\src\components\UI\DebugPanel.tsx`
+- **EmptyState** — props: icon, title, description, action, label, onClick — `swarm-dashboard\src\components\UI\EmptyState.tsx`
+- **SimpleErrorFallback** — props: fallback, onError, className — `swarm-dashboard\src\components\UI\ErrorBoundary.tsx`
+- **LoadingSpinner** — props: size, message, fullScreen, className — `swarm-dashboard\src\components\UI\LoadingSpinner.tsx`
+- **MetricCard** — props: title, value, change, changeLabel, icon, sparklineData, color, size, className, tooltip — `swarm-dashboard\src\components\UI\MetricCard.tsx`
+- **PerformanceOverlay** — props: className, position — `swarm-dashboard\src\components\UI\PerformanceOverlay.tsx`
+- **StatusBadge** — props: status, size, showLabel, className — `swarm-dashboard\src\components\UI\StatusBadge.tsx`
+- **LLM_PROVIDERS** — props: node, id, type, data, agentId, agentType, config — `swarm-dashboard\src\components\Workflow\NodeConfigPanel.tsx`
+- **AgentNode** — props: data, selected — `swarm-dashboard\src\components\WorkflowBuilder\AgentNode.tsx`
+- **ConnectorNode** — props: data, selected — `swarm-dashboard\src\components\WorkflowBuilder\ConnectorNode.tsx`
+- **DecisionNode** — props: data, selected — `swarm-dashboard\src\components\WorkflowBuilder\DecisionNode.tsx`
+- **HandleTooltip** — props: channelName, channelType, dataType, description — `swarm-dashboard\src\components\WorkflowBuilder\DynamicHandles.tsx`
+- **LLMNode** — props: data, selected — `swarm-dashboard\src\components\WorkflowBuilder\LLMNode.tsx`
+- **MemoryNode** — props: data, selected — `swarm-dashboard\src\components\WorkflowBuilder\MemoryNode.tsx`
+- **CollapseIcon** — props: group, selected, onClick, onDelete, onNameChange, onToggleCollapse, colorScheme — `swarm-dashboard\src\components\WorkflowBuilder\NodeGroup.tsx`
+- **ToolNode** — props: data, selected — `swarm-dashboard\src\components\WorkflowBuilder\ToolNode.tsx`
+- **ValidationPanel** — props: result, isOpen, onClose, onNodeSelect, onEdgeSelect — `swarm-dashboard\src\components\WorkflowBuilder\ValidationPanel.tsx`
+- **WorkflowBuilder** — props: nodes, edges, onNodesChange, onEdgesChange, onConnect, onNodeClick, onPaneClick, nodeTypes, onDrop — `swarm-dashboard\src\components\WorkflowBuilder\WorkflowBuilder.tsx`
+- **WorkflowList** — props: isOpen, onClose, onLoad, onReExecute, onRefresh — `swarm-dashboard\src\components\WorkflowBuilder\WorkflowList.tsx`
+- **DockerStatusIndicator** — props: status, size — `swarm-dashboard\src\hooks\useDockerDetection.tsx`
+
+---
+
+# Libraries
+
+- `backend\heretek_swarm\actors\arbiter\agent.py`
+  - class ConflictType
+  - class ConflictSeverity
+  - class ResolutionStrategy
+  - class ResolutionStatus
+  - class Conflict
+  - class Relationship
+  - _...2 more_
+- `backend\heretek_swarm\actors\arbiter\handlers.py` — function register_handlers: (agent) -> None
+- `backend\heretek_swarm\actors\arbiter\strategies.py` — function register_strategies: (agent) -> None
+- `backend\heretek_swarm\actors\base\core.py`
+  - class ActorState
+  - class ActorMessage
+  - class ActorStatus
+  - class AgentActor
+- `backend\heretek_swarm\actors\base\message_handling.py` — class AgentActorMessageHandling
+- `backend\heretek_swarm\actors\base\state_management.py` — class AgentActorStateManagement
+- `backend\heretek_swarm\actors\catalyst\agent.py` — class CatalystAgent
+- `backend\heretek_swarm\actors\catalyst\types.py`
+  - class ChangeStatus
+  - class ChangeType
+  - class ImpactLevel
+  - class ChangeRequest
+  - class ChangeNotification
+- `backend\heretek_swarm\actors\chronos\agent.py` — class ChronosAgent
+- `backend\heretek_swarm\actors\chronos\handlers.py` — class ChronosHandlersMixin
+- `backend\heretek_swarm\actors\chronos\scheduler.py` — class ChronosSchedulerMixin
+- `backend\heretek_swarm\actors\chronos\types.py`
+  - class ScheduleStatus
+  - class RecurrenceType
+  - class Priority
+  - class ScheduledTask
+  - class Tick
+  - class Deadline
+- `backend\heretek_swarm\actors\circuit_breaker.py` — class TierCircuitBreaker
+- `backend\heretek_swarm\actors\coder\agent.py` — class CoderAgent
+- `backend\heretek_swarm\actors\coder\types.py`
+  - class CodeLanguage
+  - class CodeTask
+  - class ReviewSeverity
+  - class CodeSnippet
+  - class ReviewIssue
+  - class CodeReview
+  - _...2 more_
+- `backend\heretek_swarm\actors\coordinator\agent.py` — class CoordinatorAgent
+- `backend\heretek_swarm\actors\coordinator\strategies.py`
+  - class DependencyResolutionStrategy
+  - class ParallelExecutionStrategy
+  - class ResourceAllocationStrategy
+- `backend\heretek_swarm\actors\coordinator\types.py`
+  - class TaskStatus
+  - class DependencyType
+  - class CoordinatedTask
+  - class AgentState
+- `backend\heretek_swarm\actors\dreamer\agent.py` — class DreamerAgent
+- `backend\heretek_swarm\actors\dreamer\generators.py`
+  - function get_technique_prompt: (technique) -> str
+  - function calculate_innovation_score: (ideas, sessions) -> float
+  - class DreamerGeneratorsMixin
+- `backend\heretek_swarm\actors\dreamer\types.py`
+  - class CreativityTechnique
+  - class IdeaCategory
+  - class NoveltyLevel
+  - class CreativeIdea
+  - class CreativeSession
+  - class InnovationReport
+- `backend\heretek_swarm\actors\echo\agent.py` — class EchoAgent
+- `backend\heretek_swarm\actors\echo\types.py`
+  - class CommunicationChannel
+  - class MessagePriority
+  - class CommunicationStyle
+  - class TranslationRule
+- `backend\heretek_swarm\actors\empath\agent.py` — class EmpathAgent
+- `backend\heretek_swarm\actors\examiner\agent.py` — class ExaminerAgent
+- `backend\heretek_swarm\actors\examiner\testing.py` — class ExaminingTestingMixin, class ExaminingValidationMixin
+- `backend\heretek_swarm\actors\examiner\types.py`
+  - class TestType
+  - class TestStatus
+  - class QualityMetric
+  - class SeverityLevel
+  - class TestCase
+  - class TestSuite
+  - _...2 more_
+- `backend\heretek_swarm\actors\explorer\agent.py` — class ExplorerAgent
+- `backend\heretek_swarm\actors\explorer\pathfinding.py` — class ExplorerPathfindingMixins
+- `backend\heretek_swarm\actors\explorer\types.py`
+  - class OpportunityType
+  - class ThreatLevel
+  - class AnomalyType
+  - class ResearchState
+  - class Opportunity
+  - class Anomaly
+  - _...3 more_
+- `backend\heretek_swarm\actors\factory.py`
+  - function get_factory: () -> ActorFactory
+  - class ActorConfig
+  - class ActorFactory
+- `backend\heretek_swarm\actors\habit_forge\agent.py` — class HabitForgeAgent
+- `backend\heretek_swarm\actors\habit_forge\streaks.py`
+  - function is_within_streak_threshold: (last_completion, threshold_days) -> bool
+  - function should_reset_streak: (last_completion, current_time, threshold_days) -> bool
+  - function get_stage_for_adherence: (adherence_rate, streak_current) -> str
+  - function calculate_longest_streak: (completions, Any]]) -> int
+  - class HabitForgeStreaksMixin
+- `backend\heretek_swarm\actors\habit_forge\tracking.py`
+  - function validate_habit_fields: (name, trigger, routine, reward) -> tuple[bool, str]
+  - function summarize_habit_progress: (name, stage, adherence_rate, streak_current, streak_longest, completions_count, created_at, last_completion) -> dict[str, Any]
+  - class HabitForgeTrackingMixin
+- `backend\heretek_swarm\actors\habit_forge\types.py`
+  - class HabitStage
+  - class ReinforcementType
+  - class Habit
+  - class BehavioralPattern
+- `backend\heretek_swarm\actors\handoff\handlers.py`
+  - class HandoffValidationHandler
+  - class HandoffRateLimitHandler
+  - class HandoffTransferHandler
+  - class HandoffLoggingHandler
+  - class HandoffProcessor
+- `backend\heretek_swarm\actors\handoff\orchestrator.py`
+  - class HandoffStrategy
+  - class TaskTypeStrategy
+  - class PerformanceStrategy
+  - class LoadBalancingStrategy
+  - class HandoffOrchestrator
+- `backend\heretek_swarm\actors\handoff\types.py`
+  - class HandoffContext
+  - class HandoffResult
+  - class HandoffValidator
+  - class AgentHandoff
+- `backend\heretek_swarm\actors\historian\agent.py` — class HistorianAgent
+- `backend\heretek_swarm\actors\historian\types.py` — class LRUCache
+- `backend\heretek_swarm\actors\langroid_adapter.py`
+  - class ConversationState
+  - class AgentConversation
+  - class LangroidConfig
+  - class LangroidAgent
+  - class ConversationHandlerMixin
+- `backend\heretek_swarm\actors\metis\agent.py` — class MetisAgent
+- `backend\heretek_swarm\actors\mixins\audit.py` — function audit_messages_wrapper: (cls), class AuditMixin
+- `backend\heretek_swarm\actors\mixins\deliberation.py` — class DeliberationMixin
+- `backend\heretek_swarm\actors\mixins\health_reporting.py` — class HealthReportingMixin
+- `backend\heretek_swarm\actors\mixins\learning.py` — class LearningState, class LearningMixin
+- `backend\heretek_swarm\actors\mixins\memory.py` — class MemoryMixin
+- `backend\heretek_swarm\actors\mixins\memory_access.py` — class MemoryAccessMixin
+- `backend\heretek_swarm\actors\mixins\pattern.py` — class PatternMixin
+- `backend\heretek_swarm\actors\mixins\pattern_consumer.py` — class PatternConsumerMixin
+- `backend\heretek_swarm\actors\mixins\tribunal.py` — class TribunalMixin
+- `backend\heretek_swarm\actors\mixins\validation.py` — class ValidationMixin
+- `backend\heretek_swarm\actors\nexus\agent.py` — class NexusAgent
+- `backend\heretek_swarm\actors\nexus\routing.py` — class NexusRoutingHelpers
+- `backend\heretek_swarm\actors\nexus\types.py`
+  - class ConnectionStatus
+  - class ProtocolType
+  - class ExternalConnection
+  - class WebhookConfig
+  - class ApiResponse
+- `backend\heretek_swarm\actors\perceiver\agent.py` — class PerceiverAgent
+- `backend\heretek_swarm\actors\perceiver\types.py` — class ModalityType
+- `backend\heretek_swarm\actors\perceiver_plus\agent.py` — class PerceiverPlusAgent
+- `backend\heretek_swarm\actors\perceiver_plus\analytics.py` — class PerceiverAnalyticsMixin, class PerceiverAnalyticsMixinImpl
+- `backend\heretek_swarm\actors\perceiver_plus\types.py`
+  - class AnalyticsType
+  - class DataModality
+  - class StatisticalTest
+  - class AnalyticsResult
+  - class TrendAnalysis
+  - class CorrelationMatrix
+- `backend\heretek_swarm\actors\prism\agent.py` — class PrismAgent
+- `backend\heretek_swarm\actors\prism\transforms.py`
+  - function generate_heuristic_perspective: (issue, perspective_type) -> Perspective
+  - function detect_biases_heuristic: (content) -> list[BiasDetection]
+  - function get_framework_prompt: (framework, issue) -> str
+  - function apply_framework_fallback: (framework, error) -> dict[str, Any]
+  - function generate_stakeholder_map_fallback: (error) -> dict[str, Any]
+  - function generate_reframe_fallback: () -> list[dict[str, Any]]
+  - _...1 more_
+- `backend\heretek_swarm\actors\prism\types.py`
+  - class PerspectiveType
+  - class BiasType
+  - class AnalyticalFramework
+  - class Perspective
+  - class BiasDetection
+- `backend\heretek_swarm\actors\profiling.py`
+  - function get_profiler: () -> BehaviorProfiler
+  - function initialize_profiler: (config) -> BehaviorProfiler
+  - class ActionType
+  - class AnomalyType
+  - class AlertSeverity
+  - class ActivityRecord
+  - _...7 more_
+- `backend\heretek_swarm\actors\sentinel\agent.py` — class SentinelAgent
+- `backend\heretek_swarm\actors\sentinel\anomaly.py` — class AnomalyMonitor
+- `backend\heretek_swarm\actors\sentinel\helpers.py`
+  - function check_injection_patterns: (content, patterns) -> list[dict[str, str]]
+  - function check_pii_patterns: (content, patterns) -> list[dict[str, str]]
+  - function generate_safety_report: (total_scans, violations_detected, violations_blocked, violations_by_type, int], violations_by_severity, int], _time_range, include_recommendations) -> dict[str, Any]
+  - class SentinelHelpers
+- `backend\heretek_swarm\actors\sentinel\immune.py` — class ImmuneResponseManager
+- `backend\heretek_swarm\actors\sentinel\safety.py`
+  - function detect_injections: (content, compiled_patterns) -> list[dict[str, str | int]]
+  - function detect_pii: (content, compiled_patterns) -> list[dict[str, str | int]]
+  - function validate_message_safety: (message, max_size, compiled_injection, compiled_pii) -> dict[str, Any]
+  - function scan_content: (content, patterns) -> dict[str, Any]
+  - class SafetyScanner
+- `backend\heretek_swarm\actors\sentinel\types.py`
+  - class SafetyLevel
+  - class ViolationType
+  - class ContentCategory
+  - class SafetyViolation
+  - class SafetyReport
+  - class AnomalyAlert
+- `backend\heretek_swarm\actors\sentinel_prime\agent.py` — class SentinelPrimeAgent
+- `backend\heretek_swarm\actors\sentinel_prime\handlers.py` — class SentinelPrimeHandlers
+- `backend\heretek_swarm\actors\sentinel_prime\helpers.py` — class SentinelPrimeHelpers
+- `backend\heretek_swarm\actors\sentinel_prime\types.py`
+  - class ThreatLevel
+  - class ThreatType
+  - class IncidentStatus
+  - class ResponseAction
+  - class ThreatIndicator
+  - class SecurityIncident
+  - _...1 more_
+- `backend\heretek_swarm\actors\stubs.py`
+  - function get_nats_event_mesh: () -> StubEventMesh | None
+  - function get_llm_provider: () -> StubLLMProvider | None
+  - function get_db_pool: () -> None
+  - class StubAccessAnalyzer
+  - class StubPatternExtractor
+  - class StubTribunal
+  - _...3 more_
+- `backend\heretek_swarm\actors\supervisor.py` — function get_supervisor: () -> "ActorSupervisor", class ActorSupervisor
+- `backend\heretek_swarm\actors\triad\agent.py`
+  - class TriadAgent
+  - class StewardAgent
+  - class AlphaAgent
+  - class BetaAgent
+  - class CharlieAgent
+- `backend\heretek_swarm\actors\triad\balancing.py` — function calculate_deliberation_weight: (agent_type, confidence, role_weights, float] | None) -> float, function aggregate_votes: (votes, Any]], weights, float] | None) -> dict[str, Any]
+- `backend\heretek_swarm\actors\validation.py`
+  - function get_immutable_rules: () -> list[dict[str, Any]]
+  - function get_baseline_config: () -> dict[str, Any]
+  - function validate_message: (message_type, content, Any]) -> BaseModel
+  - class MessageContent
+  - class DeliberationRequest
+  - class MemoryStoreRequest
+  - _...11 more_
+- `backend\heretek_swarm\agents\agent_factory.py` — function build_agent_for: (agent_id, agent_class_name, system_prompt) -> "Agent"
+- `backend\heretek_swarm\agents\skills.py`
+  - function get_agent_skill_registry: () -> AgentSkillRegistry
+  - class SkillCategory
+  - class SkillMetadata
+  - class WorkspaceContext
+  - class AgentSkillRegistry
+- `backend\heretek_swarm\api\agents\chat.py`
+  - class ChatRequest
+  - class Contribution
+  - class ChatResponse
+- `backend\heretek_swarm\api\agents\core.py` — function get_registry: () -> EnhancedAgentRegistry, class DeployAgentRequest
+- `backend\heretek_swarm\api\agents\instances.py`
+  - function get_registry: () -> EnhancedAgentRegistry
+  - function get_channel_registry_instance: () -> ChannelRegistry
+  - class ChannelType
+  - class ChannelDirection
+  - class ChannelSubscriptionCreate
+  - class ChannelSubscriptionResponse
+  - _...1 more_
+- `backend\heretek_swarm\api\agents\jetstream.py`
+  - function get_jetstream_manager: () -> Any | None
+  - class JetStreamConfigCreate
+  - class JetStreamConsumerCreate
+  - class StreamInfoResponse
+  - class StreamListResponse
+- `backend\heretek_swarm\api\agents\lifecycle.py` — function get_registry: () -> EnhancedAgentRegistry
+- `backend\heretek_swarm\api\agents\profiling.py`
+  - function get_registry: () -> EnhancedAgentRegistry
+  - function get_profiler_instance: () -> "BehaviorProfiler | None"
+  - class ProfilingMetricsResponse
+  - class ProfilingProfileResponse
+  - class AnomalyResponse
+  - class AlertResponse
+  - _...1 more_
+- `backend\heretek_swarm\api\agents\routing_control.py` — class RoutingStatsResponse
+- `backend\heretek_swarm\api\agents\routing_rules.py`
+  - function get_router_instance: () -> ContentRouter
+  - class RoutingRuleCreate
+  - class RoutingRuleResponse
+  - class RoutingRulesListResponse
+  - class RoutingStatsResponse
+- `backend\heretek_swarm\api\autonomous.py`
+  - function get_autonomous_agent_count_sync: () -> int
+  - function register_autonomous_agents: (update) -> dict[str, str]
+  - function get_autonomous_agents: () -> AutonomousAgentsResponse
+  - function get_autonomous_status: () -> dict[str, Any]
+  - class AutonomousAgentStatus
+  - class AutonomousStatusUpdate
+  - _...1 more_
+- `backend\heretek_swarm\api\collective_evolution.py`
+  - function set_evolution_engine: (engine) -> None
+  - function set_adaptive_learning: (controller) -> None
+  - function get_evolution_engine: () -> EvolutionEngine
+  - function get_adaptive_learning: () -> AdaptiveLearningRateController
+  - function get_evolution_status: () -> dict[str, Any]
+  - function get_capabilities: (capability_type, min_fitness, stabilized_only, limit) -> dict[str, Any]
+  - _...7 more_
+- `backend\heretek_swarm\api\compute_tier.py` — function classify_tier: (cpu_count, total_ram_gb, gpu_available) -> int, function get_compute_tier: () -> dict
+- `backend\heretek_swarm\api\configuration.py` — function get_service: () -> ConfigurationService
+- `backend\heretek_swarm\api\consciousness.py` — function get_consciousness_plugin: () -> EnhancedConsciousnessPlugin, function get_agency_tracker: () -> AgencyMetricsTracker
+- `backend\heretek_swarm\api\consensus.py`
+  - function get_tribunal: () -> Tribunal | None
+  - function generate_auth_token: (agent_id, permissions)
+  - function revoke_auth_token: (token)
+  - class ConsensusAuthManager
+- `backend\heretek_swarm\api\emergent_intelligence.py` — function get_metrics_instance: () -> CollectiveIntelligenceMetrics, function get_exporter_instance: () -> MetricsExporter
+- `backend\heretek_swarm\api\errors.py` — function sanitized_error: (exc, *, context) -> dict[str, Any]
+- `backend\heretek_swarm\api\logging_middleware.py` — function setup_logging_middleware: (app), class LoggingMiddleware
+- `backend\heretek_swarm\api\main.py`
+  - function lifespan: (app)
+  - function check_gateway: () -> dict[str, Any]
+  - function check_redis: () -> dict[str, Any]
+  - function check_postgres: () -> dict[str, Any]
+  - function check_qdrant: () -> dict[str, Any]
+  - function check_mem0: () -> dict[str, Any]
+  - _...5 more_
+- `backend\heretek_swarm\api\memories.py`
+  - function memories_home: () -> RedirectResponse
+  - class Message
+  - class MemoryCreate
+  - class MemoryUpdate
+  - class SearchRequest
+- `backend\heretek_swarm\api\metrics.py`
+  - function get_prometheus_metrics: () -> PrometheusMetrics
+  - function sync_with_swarm_collector: (collector) -> None
+  - function get_prometheus_metrics_endpoint: () -> Response
+- `backend\heretek_swarm\api\observability\alerts.py` — function get_provider_stats: (request) -> dict[str, Any]
+- `backend\heretek_swarm\api\observability\consciousness.py` — function get_consciousness_metrics: (request) -> dict[str, Any], function get_agent_consciousness: (agent_id, request) -> dict[str, Any]
+- `backend\heretek_swarm\api\observability\external_calls.py` — function create_external_call: (request, log_data) -> dict[str, Any]
+- `backend\heretek_swarm\api\observability\stream.py` — function websocket_metrics: (websocket, interval)
+- `backend\heretek_swarm\api\observability\traces.py` — function websocket_traces: (websocket, agent_id)
+- `backend\heretek_swarm\api\observability\__init__.py`
+  - function get_metrics_collector: () -> SwarmMetricsCollector
+  - function get_metrics_stream: () -> RealTimeMetricsStream
+  - function get_zero_trust: () -> ZeroTrustValidator
+  - function check_rate_limit: (client_id) -> bool
+  - function validate_input: (validator, data, context) -> None
+  - function get_replay_manager: () -> Any | None
+  - _...7 more_
+- `backend\heretek_swarm\api\perceiver.py` — class PerceiverResponse, class PerceiverError
+- `backend\heretek_swarm\api\plugins.py`
+  - function get_all_plugins: ()
+  - function get_plugin: (plugin_id)
+  - function enable_plugin: (plugin_id)
+  - function disable_plugin: (plugin_id)
+  - function get_plugin_config: (plugin_id)
+  - function update_plugin_config: (plugin_id, config, Any])
+  - _...3 more_
+- `backend\heretek_swarm\api\providers_config.py`
+  - function list_llm_providers: (request) -> dict[str, Any]
+  - function create_llm_provider: (request, body) -> dict[str, Any]
+  - function update_llm_provider: (request, provider_id, body) -> dict[str, Any]
+  - function delete_llm_provider: (request, provider_id) -> dict[str, Any]
+  - function test_llm_provider: (request, provider_id) -> dict[str, Any]
+  - function list_embedding_providers: (request) -> dict[str, Any]
+  - _...8 more_
+- `backend\heretek_swarm\api\provisioner.py`
+  - function provision_services: (request) -> ProvisionResponse
+  - function get_provision_status: () -> dict[str, Any]
+  - function stop_infrastructure: () -> dict[str, Any]
+  - class RuntimeChoice
+  - class ProvisionRequest
+  - class ProvisionResponse
+  - _...1 more_
+- `backend\heretek_swarm\api\rag.py` — function get_knowledge_graph_retriever: () -> KnowledgeGraphRetriever, function get_rag_pipeline: () -> RAGPipeline
+- `backend\heretek_swarm\api\rate_limiting.py`
+  - function get_client_ip: (request) -> str
+  - function setup_rate_limiting: (app, enabled) -> None
+  - function rate_limit: (limit)
+  - class InMemoryRateLimiter
+  - class RateLimitMiddleware
+- `backend\heretek_swarm\api\websockets.py`
+  - function authenticate_websocket: (websocket, token) -> tuple[bool, str | None, str | None]
+  - function get_execution_update: (execution_id) -> dict[str, Any]
+  - function logs_websocket: (websocket) -> None
+  - function send_agent_status_update: (agent_id, status, current_task)
+  - function send_workflow_progress_update: (workflow_id, current_node, phase, progress)
+  - function send_agent_metrics_update: (agent_id, phi, coherence, load, queue_size)
+  - _...2 more_
+- `backend\heretek_swarm\api\wizard.py`
+  - function get_service: () -> ConfigurationService
+  - function get_wizard_state: () -> WizardState
+  - function list_providers: () -> dict[str, Any]
+  - function get_provider: (provider_id) -> dict[str, Any]
+  - function update_provider: (provider_id, updates, Any]) -> dict[str, Any]
+  - function delete_provider: (provider_id) -> Response
+  - _...13 more_
+- `backend\heretek_swarm\audit\cli.py` — function cli: (directory, output, severity, format, # noqa) -> None
+- `backend\heretek_swarm\audit\report.py`
+  - function group_by_severity: (findings) -> dict[str, list[AuditFinding]]
+  - function generate_report: (findings, title) -> str
+  - class AuditFinding
+- `backend\heretek_swarm\audit\severity.py`
+  - function is_critical: (severity) -> bool
+  - function is_warning: (severity) -> bool
+  - function is_info: (severity) -> bool
+  - class Severity
+- `backend\heretek_swarm\audit\stub_patterns.py`
+  - function scan_file: (path, patterns) -> list[AuditFinding]
+  - function scan_directory: (root, patterns, extensions) -> list[AuditFinding]
+  - class Pattern
+- `backend\heretek_swarm\channels\defaults.py`
+  - function get_internal_channels: () -> list[ChannelDefinition]
+  - function get_system_channels: () -> list[ChannelDefinition]
+  - function get_external_channels: () -> list[ChannelDefinition]
+  - function get_all_default_channels: () -> list[ChannelDefinition]
+- `backend\heretek_swarm\channels\registry.py`
+  - function get_channel_registry: () -> ChannelRegistry
+  - class ChannelType
+  - class QoSLevel
+  - class ChannelDefinition
+  - class ChannelMessage
+  - class ChannelRegistry
+  - _...2 more_
+- `backend\heretek_swarm\cli\config.py`
+  - function config: () -> None
+  - function config_wizard: () -> None
+  - function config_list: () -> None
+  - function config_remove: (provider_id) -> None
+  - function config_set_default: (provider_id) -> None
+  - function config_validate: (provider_id) -> None
+- `backend\heretek_swarm\cli\config_loader.py` — function load_infrastructure_config: () -> LoadResult, class LoadResult
+- `backend\heretek_swarm\cli\config_wizard.py`
+  - function validate_provider: (provider_id, api_key, base_url, model) -> dict[str, Any]
+  - function prompt_for_provider: () -> dict[str, Any] | None
+  - function list_configured_providers: () -> list[dict[str, Any]]
+  - function add_provider: (entry, Any]) -> dict[str, Any]
+  - function remove_provider: (provider_id) -> bool
+  - function set_default_provider: (provider_id) -> bool
+  - _...1 more_
+- `backend\heretek_swarm\cli\consensus.py` — function consensus: (question, timeout, participants, max_rounds) -> None
+- `backend\heretek_swarm\cli\deploy.py` — function deploy: (production, scale, nats_url, api_base, check_runtime) -> None
+- `backend\heretek_swarm\cli\goal_commands.py`
+  - function goal: () -> None
+  - function goal_propose: () -> None
+  - function goal_list: (status_filter) -> None
+- `backend\heretek_swarm\cli\health.py` — function check_container_runtime: () -> tuple[str | None, str], function check_compose_plugin: (runtime) -> bool
+- `backend\heretek_swarm\cli\run.py` — function run: (detach, nats_url, no_infra, prompt, target_agent, force_consensus) -> None
+- `backend\heretek_swarm\cli\serve.py` — function serve: (host, port, workers) -> None
+- `backend\heretek_swarm\cli\status.py` — function status: (api_base, timeout, output_json) -> None
+- `backend\heretek_swarm\cli\__init__.py`
+  - function cli: (ctx) -> None
+  - function wizard: () -> None
+  - function init: () -> None
+  - function stop: () -> None
+  - class GroupedGroup
+- `backend\heretek_swarm\collective\adaptive_learning.py`
+  - class LearningRateStrategy
+  - class AdaptationReason
+  - class MutationType
+  - class BehaviorFitness
+  - class EnvironmentProfile
+  - class LearningRateConfig
+  - _...6 more_
+- `backend\heretek_swarm\collective\agency_tracking.py`
+  - function create_sample_metrics: (agent_id, high_autonomy, high_agency) -> AgentAgencyMetrics
+  - class AgencyHealthStatus
+  - class AgencyMetricsSnapshot
+  - class AgencyEvolutionData
+  - class AgencyThresholds
+  - class AgencyMetricsTracker
+- `backend\heretek_swarm\collective\agent_adaptation.py`
+  - class AdaptationTarget
+  - class AdaptationStrategy
+  - class BehavioralWeight
+  - class StrategyProfile
+  - class AgentAdaptationState
+  - class AdaptationEvent
+  - _...2 more_
+- `backend\heretek_swarm\collective\algorithms\abc.py`
+  - class BeeAgent
+  - class SwarmDecision
+  - class ABC
+- `backend\heretek_swarm\collective\algorithms\aco.py`
+  - class PheromoneTrail
+  - class SwarmDecision
+  - class ACO
+- `backend\heretek_swarm\collective\algorithms\pso.py`
+  - class Particle
+  - class SwarmDecision
+  - class PSO
+- `backend\heretek_swarm\collective\distributed_learning.py`
+  - class SyncOperation
+  - class MergeStrategy
+  - class SyncMessage
+  - class MergeResult
+  - class DistributedLearningConfig
+  - class DistributedLearningEngine
+  - _...1 more_
+- `backend\heretek_swarm\collective\emergence_analyzer.py` — class EmergenceAnalyzer
+- `backend\heretek_swarm\collective\emergent_detection.py` — class EmergentPatternDetector, class EmergenceAnalyzer
+- `backend\heretek_swarm\collective\emergent_detection_types.py`
+  - class EmergentPatternClass
+  - class EmergenceLevel
+  - class PatternProvenance
+  - class EvolutionPhase
+  - class CapabilityRecord
+  - class EvolutionMetrics
+  - _...6 more_
+- `backend\heretek_swarm\collective\emergent_detection_utils.py`
+  - function calculate_window_metrics: (window) -> dict[str, float]
+  - function analyze_temporal_windows: (agent_snapshots, list[AgentBehaviorSnapshot]], window_size_seconds) -> list[list[AgentBehaviorSnapshot]]
+  - function calculate_shift_score: (prev_metrics, float], curr_metrics, float]) -> float
+  - function classify_emergence_level: (score) -> EmergenceLevel
+  - function measure_collective_capability: (behaviors) -> float
+  - function calculate_temporal_span: (behaviors) -> float
+  - _...8 more_
+- `backend\heretek_swarm\collective\evolution_engine.py` — class EvolutionEngine
+- `backend\heretek_swarm\collective\knowledge_transform.py`
+  - class AgentType
+  - class TransformationType
+  - class TransformedKnowledge
+  - class TransformationResult
+  - class AgentCapabilityProfile
+  - class KnowledgeTransformer
+  - _...2 more_
+- `backend\heretek_swarm\collective\learning.py`
+  - class PatternType
+  - class PatternSource
+  - class PatternStatus
+  - class TemporalPatternData
+  - class CrossAgentCorrelation
+  - class PatternEvolution
+  - _...6 more_
+- `backend\heretek_swarm\collective\metrics.py`
+  - class MetricCategory
+  - class MetricAggregation
+  - class MetricDefinition
+  - class MetricValue
+  - class MetricTimeSeries
+  - class SwarmIntelligenceQuotient
+  - _...6 more_
+- `backend\heretek_swarm\collective\pattern_library.py`
+  - class StorageBackend
+  - class PatternCategory
+  - class PatternEntry
+  - class QueryResult
+  - class StorageStats
+  - class PatternLibrary
+  - _...1 more_
+- `backend\heretek_swarm\collective\pattern_validation.py`
+  - class ValidationStatus
+  - class CoreTriadRole
+  - class ValidationEvidence
+  - class PatternValidation
+  - class ImpactScoreFactors
+  - class PatternValidator
+  - _...1 more_
+- `backend\heretek_swarm\collective\society.py`
+  - class ContributionCache
+  - class SocietyRole
+  - class CollectiveTaskType
+  - class CollectiveTask
+  - class CollectiveResult
+  - class AgentContribution
+  - _...3 more_
+- `backend\heretek_swarm\collective\swarm_intelligence.py`
+  - class FlockingAgent
+  - class StigmergicTrace
+  - class SwarmDecision
+  - class SwarmConfig
+  - class SwarmIntelligenceEngine
+- `backend\heretek_swarm\collective\swarm_patterns.py` — class SwarmPattern, class FlockingRule
+- `backend\heretek_swarm\compute_tier\client.py` — class ComputeTierResult, class ComputeTierClient
+- `backend\heretek_swarm\config\cache.py` — class ConfigCache
+- `backend\heretek_swarm\config\crud.py` — class ConfigurationServiceCrud
+- `backend\heretek_swarm\config\db_models.py`
+  - class Base
+  - class UserConfiguration
+  - class LLMProvider
+  - class EmbeddingProvider
+  - class AgentConfig
+  - class ConfigAuditLog
+  - _...2 more_
+- `backend\heretek_swarm\config\encryption.py` — class ApiKeyEncryptor
+- `backend\heretek_swarm\config\loader.py`
+  - function get_config_loader: () -> ConfigLoader
+  - function initialize_config_loader: () -> None
+  - function get_config: (config_key, default) -> Any
+  - function get_config_with_source: (config_key, default) -> tuple[Any, str]
+  - function reload_config: () -> dict[str, Any]
+  - class CacheEntry
+  - _...1 more_
+- `backend\heretek_swarm\config\models.py`
+  - class ConfigType
+  - class HealthStatus
+  - class LLMProviderType
+  - class EmbeddingProviderType
+  - class UserConfiguration
+  - class UserConfigurationCreate
+  - _...33 more_
+- `backend\heretek_swarm\config\secrets_loader.py` — function get_secrets_loader: () -> SecretsLoader, class SecretsLoader
+- `backend\heretek_swarm\config\service.py`
+  - function get_config_service: () -> ConfigurationService
+  - function initialize_config_service: () -> None
+  - function shutdown_config_service: () -> None
+  - class SeedResult
+  - class ConfigurationService
+- `backend\heretek_swarm\config\__init__.py` — function get_config_path: () -> Path
+- `backend\heretek_swarm\consciousness\agency_metrics.py`
+  - function create_decision_point: (agent_id, options_considered, choice_made, origin, external_prompt, decision_confidence, time_taken_ms) -> DecisionPoint
+  - function create_resource_control: (resource_type, total_capacity, agent_controlled, externally_allocated) -> ResourceControl
+  - class AgencyLevel
+  - class AutonomyLevel
+  - class ActionOrigin
+  - class DecisionPoint
+  - _...4 more_
+- `backend\heretek_swarm\consciousness\ast.py`
+  - function calculate_complexity_metrics: (entity_id, state_components, connections, str]], hierarchical_depth) -> ComplexityMetrics
+  - function calculate_emergence_score: (entity_id, micro_states, Any]], macro_properties, previous_emergence) -> EmergenceScore
+  - function calculate_self_organization: (entity_id, local_rules, global_patterns, interaction_strength) -> SelfOrganizationMetrics
+  - function calculate_resilience_score: (entity_id, successful_recoveries, total_perturbations, recovery_time, max_recovery_time) -> ResilienceScore
+  - function create_ast_self_model: (entity_id, entity_type, agent_state, Any]) -> ASTSelfModel
+  - function update_self_model: (entity_id, self_model) -> None
+  - _...11 more_
+- `backend\heretek_swarm\consciousness\fep.py`
+  - function calculate_surprise: (observations, Any], predictions, Any]) -> tuple[float, SurpriseLevel]
+  - function calculate_expected_free_energy: (policy_outcomes, float], preferences, float]) -> tuple[float, float, float]
+  - function calculate_free_energy: (observations, Any], generative_model, Any]) -> float
+  - function create_fep_metrics: (entity_id, agent_state, Any]) -> FEPMetrics
+  - function update_fep_metrics: (entity_id, metrics) -> None
+  - function get_fep_metrics: (entity_id) -> FEPMetrics | None
+  - _...8 more_
+- `backend\heretek_swarm\consciousness\fep_active_inference.py`
+  - class BeliefState
+  - class Action
+  - class Policy
+  - class FEPResult
+  - class FreeEnergyCalculator
+  - class ActiveInferenceAgent
+- `backend\heretek_swarm\consciousness\gwt.py`
+  - function calculate_salience: (novelty, relevance, urgency, impact, confidence) -> GWTSalienceMetrics
+  - function create_gwt_content: (source_agent, content_type, payload, Any], novelty, relevance, urgency, impact, confidence) -> GWTContent
+  - class SalienceLevel
+  - class GWTSalienceMetrics
+  - class GWTContent
+  - class DeliberationBroadcast
+  - _...4 more_
+- `backend\heretek_swarm\consciousness\gwt_deliberation.py`
+  - function integrate_gwt_with_agent: (agent, gwt_broadcast, subscribe_to_deliberations, subscribe_to_broadcasts, content_types, min_salience) -> dict[str, Any]
+  - class GWTSalienceCalculator
+  - class DeliberationGWTIntegrator
+  - class GWTDeliberationMixin
+- `backend\heretek_swarm\consciousness\iit.py`
+  - function calculate_phi: (agent_state, Any]) -> float
+  - function calculate_phi_for_system: (system_state, Any]) -> PhiResult
+  - function calculate_cause_effect_structure: (system_id, connections, str]], states, Any]]) -> CauseEffectStructure
+  - function calculate_integration_metrics: (system_id, internal_connections, external_connections, partition_count, total_possible_partitions) -> IntegrationMetrics
+  - function calculate_integrated_information: (system_id, system_state, Any]) -> PhiResult
+  - function update_agent_phi: (agent_id, phi_result) -> None
+  - _...7 more_
+- `backend\heretek_swarm\consciousness\iit_phi.py`
+  - class CauseEffectStructure
+  - class SystemPartition
+  - class PhiResult
+  - class PhiCalculator
+- `backend\heretek_swarm\consciousness\introspection.py`
+  - class ConflictResolutionStrategy
+  - class BeliefEvolutionRecord
+  - class GoalEvolutionRecord
+  - class BeliefInsight
+  - class ConflictPair
+  - class IntrospectionReport
+  - _...1 more_
+- `backend\heretek_swarm\consciousness\metrics\ast.py`
+  - function measure_complexity: (state_components, connections, str]]) -> float
+  - function measure_emergence: (micro_states, Any]], macro_properties) -> tuple[float, EmergenceLevel]
+  - function measure_self_organization: (local_rules, global_patterns, interaction_strength) -> float
+  - function measure_resilience: (successful_recoveries, total_perturbations, recovery_time, max_recovery_time) -> float
+  - function measure_adaptive_metrics: (entity_state, Any]) -> AdaptiveMetrics
+  - function update_entity_metrics: (entity_id, metrics) -> None
+  - _...4 more_
+- `backend\heretek_swarm\consciousness\metrics\iit.py`
+  - function measure_phi: (agent_state, Any]) -> float
+  - function measure_phi_for_system: (system_state, Any]) -> PhiResult
+  - function get_agent_metrics: (agent_id) -> ConsciousnessMetrics | None
+  - function update_agent_metrics: (agent_id, phi, autonomy) -> ConsciousnessMetrics
+  - function get_all_metrics: () -> dict[str, ConsciousnessMetrics]
+  - class PhiResult
+  - _...1 more_
+- `backend\heretek_swarm\consciousness\phi_training.py`
+  - class TrainingMode
+  - class ScenarioType
+  - class TrainingEpisode
+  - class TrainingScenario
+  - class TrainingResult
+  - class AgentActor
+  - _...4 more_
+- `backend\heretek_swarm\consciousness\self_model.py`
+  - class GoalStatus
+  - class BeliefType
+  - class Belief
+  - class Goal
+  - class Capability
+  - class Limitation
+  - _...4 more_
+- `backend\heretek_swarm\consensus\audit_models.py`
+  - class AuditEventType
+  - class DecisionOutcome
+  - class AuditEvent
+  - class VoteRecord
+  - class ArgumentRecord
+  - class DecisionRecord
+  - _...3 more_
+- `backend\heretek_swarm\consensus\audit_query.py`
+  - function query_decisions: (trail, start_date, end_date, consensus_type, min_confidence, outcome, participants) -> QueryResult
+  - function export_audit_data: (trail, format, # noqa, include_events, include_votes, include_arguments) -> dict[str, Any]
+  - function get_vote_breakdown: (trail, consensus_id) -> dict[str, Any]
+  - function get_decision_timeline: (trail, consensus_id) -> list[dict[str, Any]]
+  - class AuditQueryMixin
+- `backend\heretek_swarm\consensus\audit_trail.py` — class ConsensusAuditTrail
+- `backend\heretek_swarm\consensus\complexity.py` — class ComplexityResult, class ComplexityHeuristic
+- `backend\heretek_swarm\consensus\cons01_dispute_resolution.py`
+  - class DisputeType
+  - class DisputeState
+  - class Evidence
+  - class PositionChangeRecord
+  - class MinorityReport
+  - class DisputeSubmission
+  - _...2 more_
+- `backend\heretek_swarm\consensus\consensus_coordinator.py` — class ConsensusCoordinator
+- `backend\heretek_swarm\consensus\deliberation.py`
+  - class Position
+  - class DeliberationOutcome
+  - class ArgumentType
+  - class EvidenceType
+  - class Evidence
+  - class Argument
+  - _...8 more_
+- `backend\heretek_swarm\consensus\deliberation_mesh.py`
+  - class HXADebateState
+  - class DeliberationBlockedPayload
+  - class DeliberationReviewingPayload
+  - class DeliberationResolvedPayload
+  - class HXADebateCycle
+  - class NATSDeliberationMesh
+- `backend\heretek_swarm\consensus\domain_selector.py` — class DomainSelector
+- `backend\heretek_swarm\consensus\election_manager.py` — class ElectionManager
+- `backend\heretek_swarm\consensus\expertise.py`
+  - class ExpertiseLevel
+  - class DomainExpertise
+  - class AgentExpertiseProfile
+  - class AgentExpertiseProfiler
+- `backend\heretek_swarm\consensus\immune.py`
+  - class ImmuneStatus
+  - class PatternClassification
+  - class ResponseOutcome
+  - class ImmunePattern
+  - class ImmuneResponse
+  - class NovelPatternPreservation
+  - _...6 more_
+- `backend\heretek_swarm\consensus\maker.py`
+  - class ConsensusState
+  - class Vote
+  - class ConsensusResult
+  - class MAKERConsensus
+- `backend\heretek_swarm\consensus\maker_enhanced.py`
+  - class ReasoningChainStatus
+  - class ReasoningStep
+  - class ReasoningChain
+  - class EvidenceQuality
+  - class EnhancedVote
+  - class DecisionProvenance
+  - _...2 more_
+- `backend\heretek_swarm\consensus\mediation.py`
+  - function create_mediation_engine: (config, Any] | None) -> MediationEngine
+  - class MediationOutcome
+  - class MediationState
+  - class PositionType
+  - class AgentPosition
+  - class MediationSession
+  - _...5 more_
+- `backend\heretek_swarm\consensus\raft_election.py`
+  - class RaftState
+  - class Vote
+  - class RequestVoteRequest
+  - class RequestVoteResponse
+  - class AppendEntriesRequest
+  - class AppendEntriesResponse
+  - _...4 more_
+- `backend\heretek_swarm\consensus\swarm_deliberation.py`
+  - class DeliberationState
+  - class Position
+  - class Argument
+  - class AgentPosition
+  - class DeliberationRound
+  - class DeliberationResult
+  - _...1 more_
+- `backend\heretek_swarm\consensus\tribunal.py`
+  - class TribunalConfig
+  - class CaseStatus
+  - class RulingType
+  - class EvidenceType
+  - class TribunalEvidence
+  - class TribunalCase
+  - _...2 more_
+- `backend\heretek_swarm\coordination\paradigm_detection.py`
+  - class ShiftType
+  - class ShiftMagnitude
+  - class ShiftConfidence
+  - class ShiftStatus
+  - class ChangeType
+  - class ChangeRequest
+  - _...3 more_
+- `backend\heretek_swarm\coordination\sync.py`
+  - class DeadlockState
+  - class EscalationLevel
+  - class AgentDependency
+  - class CoordinationMetrics
+  - class TaskSynchronizer
+- `backend\heretek_swarm\coordination\task_graph.py`
+  - class GraphNodeType
+  - class EdgeType
+  - class GraphNode
+  - class GraphEdge
+  - class TaskGraph
+- `backend\heretek_swarm\coordination\time_dilation.py`
+  - class TimeDomain
+  - class OverloadState
+  - class AnchorSource
+  - class ExecutionContext
+  - class TimePerceptionMetrics
+  - class AdaptiveTimeout
+  - _...3 more_
+- `backend\heretek_swarm\creativity\novel_connections.py`
+  - class ConnectionTechnique
+  - class NoveltyLevel
+  - class NovelConnection
+  - class AssociationDistance
+  - class LateralThinkingMetrics
+  - class HarmfulContentFilter
+  - _...2 more_
+- `backend\heretek_swarm\embeddings\providers\base.py`
+  - class EmbeddingRequest
+  - class EmbeddingResponse
+  - class EmbeddingProviderCapabilities
+  - class EmbeddingProviderBase
+  - class EmbeddingProviderError
+  - class EmbeddingConfigurationError
+  - _...3 more_
+- `backend\heretek_swarm\embeddings\providers\factory.py`
+  - function register_provider: (provider_type, provider_class) -> None
+  - function unregister_provider: (provider_type) -> None
+  - function get_provider_class: (provider_type) -> type[EmbeddingProviderBase]
+  - function list_available_providers: () -> list[str]
+  - function create_embedding_provider: (provider_type, config, Any]) -> EmbeddingProviderBase
+  - function create_embedding_provider_from_db_config: (db_config, api_key_decrypt_func) -> EmbeddingProviderBase
+  - _...2 more_
+- `backend\heretek_swarm\embeddings\providers\ollama_provider.py` — class OllamaEmbeddingProvider
+- `backend\heretek_swarm\embeddings\providers\openai_provider.py` — class OpenAIEmbeddingProvider
+- `backend\heretek_swarm\evaluation\evaluator.py`
+  - function get_evaluator: () -> AgentEvaluator
+  - class EvaluationMetric
+  - class EvaluationStatus
+  - class OutputConstraints
+  - class TestCase
+  - class MetricResult
+  - _...6 more_
+- `backend\heretek_swarm\gateway\a2a_protocol.py`
+  - class MessageType
+  - class A2AMessage
+  - class A2AProtocol
+- `backend\heretek_swarm\gateway\a2a_server.py`
+  - class AuthTokenManager
+  - class MessageType
+  - class AgentInfo
+  - class A2AServer
+- `backend\heretek_swarm\gateway\auth.py`
+  - function create_jwt_token: (username, expiry_hours) -> str
+  - function verify_jwt: (token) -> str | None
+  - function generate_api_key: () -> str
+  - function get_api_key_from_env: () -> str
+  - function get_api_key_header: () -> dict
+- `backend\heretek_swarm\gateway\content_router.py`
+  - function get_content_router: () -> ContentRouter
+  - function reset_content_router: () -> None
+  - class FilterOperator
+  - class RouteDecision
+  - class ContentFilter
+  - class RoutingRule
+  - _...4 more_
+- `backend\heretek_swarm\gateway\event_mesh.py` — class EventMesh
+- `backend\heretek_swarm\gateway\external_api.py`
+  - class RetryStrategy
+  - class CircuitState
+  - class ApiResponse
+  - class RetryConfig
+  - class RateLimitConfig
+  - class CircuitBreakerConfig
+  - _...6 more_
+- `backend\heretek_swarm\gateway\jetstream_manager.py`
+  - function get_jetstream_manager: () -> JetStreamManager
+  - function setup_jetstream: (servers, create_default_streams) -> JetStreamManager
+  - class RetentionPolicy
+  - class StorageType
+  - class DeliverPolicy
+  - class AckPolicy
+  - _...4 more_
+- `backend\heretek_swarm\gateway\message_replay.py`
+  - function get_replay_manager: () -> MessageReplayManager
+  - function setup_replay_manager: (jetstream_manager, event_store) -> MessageReplayManager
+  - class ReplayStatus
+  - class ReplayJob
+  - class TimeTravelRequest
+  - class MessageReplayManager
+- `backend\heretek_swarm\gateway\nats_event_mesh.py`
+  - function get_nats_bridge: (mesh) -> NATStoActorBridge
+  - function init_nats_bridge: (config) -> NATStoActorBridge
+  - function shutdown_nats_bridge: () -> None
+  - class ConnectionState
+  - class Subscription
+  - class NATSMessage
+  - _...5 more_
+- `backend\heretek_swarm\goals\consensus.py` — class GoalConsensus
+- `backend\heretek_swarm\goals\models.py` — class Vote, class Goal
+- `backend\heretek_swarm\goals\pipeline.py` — function run_goal_cycle: (store, metis, coordinator, actors, Any], historian) -> Goal | None
+- `backend\heretek_swarm\goals\proposer.py` — class GoalProposer
+- `backend\heretek_swarm\goals\store.py` — class FileGoalStore
+- `backend\heretek_swarm\goals\translator.py` — class GoalToWorkflowTranslator
+- `backend\heretek_swarm\governance\agent_identity.py`
+  - class AgentRole
+  - class TrustLevel
+  - class AgentIdentity
+- `backend\heretek_swarm\governance\coordinator.py` — class GovernanceSecurityError, class GovernanceCoordinator
+- `backend\heretek_swarm\governance\integrations\collective_governance.py` — class GovernanceAgentSociety
+- `backend\heretek_swarm\governance\integrations\consensus_governance.py` — class GovernanceSecurityError, class GovernanceDeliberationEngine
+- `backend\heretek_swarm\governance\protocol.py`
+  - class ValidationStatus
+  - class GovernanceProtocol
+  - class GovernanceContext
+- `backend\heretek_swarm\governance\__init__.py`
+  - function create_coordinator: (validator) -> GovernanceCoordinator
+  - function GovernanceAgentSociety: (*args, **kwargs) -> "GovernanceAgentSociety"
+  - function GovernanceDeliberationEngine: (*args, **kwargs) -> "GovernanceDeliberationEngine"
+- `backend\heretek_swarm\infrastructure\a2a\protocol.py`
+  - function create_task_request: (task_id, task_type, description, source_agent, target_agent, priority, params, Any] | None) -> A2AMessage
+  - function create_task_response: (task_id, accepted, response_message, agent_id, result, correlation_id) -> A2AMessage
+  - function create_delegation_message: (task_id, source_agent, target_agent, delegation_type, context, Any] | None, priority) -> A2AMessage
+  - function create_consensus_message: (topic, message_type, proposer, payload, Any], term, priority) -> A2AMessage
+  - function get_protocol: () -> A2AProtocol
+  - class A2AMessageType
+  - _...4 more_
+- `backend\heretek_swarm\infrastructure\audit.py`
+  - function get_audit_logger: () -> AuditLogger
+  - function init_audit_logger: (max_entries, flush_interval_entries, flush_interval_seconds) -> AuditLogger
+  - class AuditEntry
+  - class AuditLogger
+- `backend\heretek_swarm\infrastructure\health.py`
+  - function check_postgres_health: (host, port, timeout) -> HealthCheckResult
+  - function check_redis_health: (host, port, timeout) -> HealthCheckResult
+  - function check_qdrant_health: (host, port, timeout) -> HealthCheckResult
+  - function check_nats_health: (host, port, timeout) -> HealthCheckResult
+  - function check_mem0_health: (host, port, timeout) -> HealthCheckResult
+  - function check_infrastructure_health: (service, host, port, timeout, # noqa) -> HealthCheckResult
+  - _...2 more_
+- `backend\heretek_swarm\infrastructure\nats\broadcast.py` — class BroadcastConfig, class PatternBroadcast
+- `backend\heretek_swarm\infrastructure\nats\ca.py`
+  - function write_temp_cert_files: (ca_cert, ca_key, agent_certs, dict[str, str]], agent_id) -> tuple[str, str, str | None, str | None]
+  - function generate_cert_files: (output_dir, ca) -> dict[str, Path]
+  - function encrypt_certs: (path) -> None
+  - function decrypt_certs: (path) -> dict[str, object]
+  - function load_certificates: (path) -> tuple[str, str, dict[str, dict[str, str]]]
+  - function check_and_renew_certs: (certs_path) -> bool
+  - _...1 more_
+- `backend\heretek_swarm\infrastructure\nats\client.py`
+  - function get_nats_client: (config) -> NATSClient
+  - function shutdown_nats_client: () -> None
+  - class ConnectionState
+  - class NATSConfig
+  - class NATSClient
+- `backend\heretek_swarm\infrastructure\nats\consensus.py`
+  - class VoteStatus
+  - class QuorumState
+  - class Vote
+  - class VoteResult
+  - class DecisionFinalization
+  - class ConsensusVoting
+- `backend\heretek_swarm\infrastructure\nats\discovery.py`
+  - function get_discovery_registry: () -> AgentRegistry
+  - function shutdown_discovery_registry: () -> None
+  - class AgentStatus
+  - class AgentInfo
+  - class HeartbeatMessage
+  - class PresenceAnnouncement
+  - _...1 more_
+- `backend\heretek_swarm\infrastructure\nats\memory_sync.py`
+  - class MemoryOperation
+  - class VectorClock
+  - class MemoryUpdate
+  - class MemoryConflict
+  - class MemorySync
+- `backend\heretek_swarm\infrastructure\nats\publisher.py`
+  - function get_nats_publisher: () -> NATSPublisher
+  - class EventPriority
+  - class SwarmEvent
+  - class NATSPublisher
+- `backend\heretek_swarm\infrastructure\nats\subscriber.py`
+  - function get_subscriber: () -> NATSSubscriber
+  - class SubscriptionState
+  - class SubscriptionConfig
+  - class Subscription
+  - class NATSSubscriber
+- `backend\heretek_swarm\infrastructure\otel\logging.py`
+  - function init_logging: (config) -> LoggingConfig
+  - function get_log_config: () -> LoggingConfig | None
+  - function get_logger: (name) -> structlog.BoundLogger
+  - function get_structured_logger: (name) -> StructuredLogger
+  - class LogLevel
+  - class LoggingConfig
+  - _...1 more_
+- `backend\heretek_swarm\infrastructure\otel\metrics.py`
+  - function init_metrics: (config) -> MetricsConfig
+  - function get_meter: (service_name) -> "Meter"
+  - function record_metric: (name, value, metric_type, labels, str] | None) -> None
+  - class MetricType
+  - class MetricsConfig
+  - class MetricPoint
+  - _...3 more_
+- `backend\heretek_swarm\infrastructure\otel\tracing.py`
+  - function init_tracing: (config) -> TracingConfig
+  - function get_tracer: (service_name) -> trace.Tracer
+  - function create_tracing_config: (service_name, exporter, endpoint, sample_rate) -> TracingConfig
+  - function create_span: (name, trace_id, parent_id, kind) -> Span
+  - function with_span: (name) -> Callable
+  - function span_context: (name, attributes, Any] | None, kind)
+  - _...11 more_
+- `backend\heretek_swarm\infrastructure\provisioner.py`
+  - function detect_runtime: () -> ContainerRuntime
+  - function pull_image: (runtime, image) -> bool
+  - function stop_container: (runtime, name) -> None
+  - function start_container: (runtime, config) -> bool
+  - function generate_postgres_connection_string: (host, port, password, user, database) -> str
+  - function generate_redis_connection_string: (host, port, password) -> str
+  - _...13 more_
+- `backend\heretek_swarm\integrations\anthropic.py`
+  - function get_anthropic_adapter: (api_key, base_url) -> AnthropicAdapter
+  - function create_conversation: (conversation_id, system_prompt, tools, Any]] | None) -> ConversationContext
+  - class AnthropicMessageRole
+  - class StopReason
+  - class ToolDefinition
+  - class ConversationMessage
+  - _...3 more_
+- `backend\heretek_swarm\integrations\autogen.py`
+  - function get_autogen_adapter: () -> AutoGenAdapter
+  - function create_assistant_agent: (agent_id, name, system_message, llm_config, Any] | None, tools) -> Any
+  - class AgentRole
+  - class MessageRole
+  - class AutoGenMessage
+  - class AutoGenAgentConfig
+  - _...3 more_
+- `backend\heretek_swarm\integrations\crewai.py`
+  - function get_crewai_adapter: () -> CrewAIAdapter
+  - function create_sequential_crew: (crew_id, name, agents, str]], tasks, str]]) -> CrewAIAdapter
+  - class CrewProcess
+  - class TaskStatus
+  - class AgentRole
+  - class CrewAgentConfig
+  - _...4 more_
+- `backend\heretek_swarm\integrations\discord_bot.py`
+  - function get_discord_bot: () -> Optional["DiscordBot"]
+  - function start_discord_bot: (agent_runtime, handoff_manager) -> None
+  - function stop_discord_bot: () -> None
+  - class DiscordBot
+- `backend\heretek_swarm\integrations\langgraph.py`
+  - function get_langgraph_adapter: () -> LangGraphAdapter
+  - function create_workflow_graph: (graph_id, nodes, Any]], edges, Any]], entry_point, state_schema, Any] | None) -> LangGraphAdapter
+  - class GraphState
+  - class NodeStatus
+  - class GraphNode
+  - class GraphEdge
+  - _...3 more_
+- `backend\heretek_swarm\integrations\manager.py`
+  - function get_integration_manager: () -> IntegrationManager
+  - function initialize_integrations: (configs, Any]], agent_runtime) -> IntegrationManager
+  - class IntegrationType
+  - class IntegrationStatus
+  - class HealthStatus
+  - class IntegrationConfig
+  - _...4 more_
+- `backend\heretek_swarm\integrations\openai_assistants.py`
+  - function get_openai_assistants_adapter: (api_key, base_url) -> OpenAIAssistantsAdapter
+  - function create_assistant: (assistant_id, name, model, instructions, tools, Any]] | None, heretek_agent_id) -> AssistantConfig
+  - class RunStatus
+  - class MessageRole
+  - class AssistantConfig
+  - class ThreadContext
+  - _...3 more_
+- `backend\heretek_swarm\integrations\praison_handoffs.py`
+  - function create_handoff_sync: (task_id, source_agent, target_agent, task_description, **kwargs) -> str
+  - class HandoffStatus
+  - class HandoffContext
+  - class AgentHandoff
+- `backend\heretek_swarm\integrations\slack_bot.py` — class SlackBot
+- `backend\heretek_swarm\integrations\telegram_bot.py`
+  - function get_telegram_bot: () -> TelegramBot | None
+  - function start_telegram_bot: (agent_runtime, handoff_manager) -> None
+  - function stop_telegram_bot: () -> None
+  - class TelegramBot
+- `backend\heretek_swarm\interfaces\providers.py` — class LLMProviderInterface, class EmbeddingProviderInterface
+- `backend\heretek_swarm\interfaces\registry.py` — class ProviderRegistryInterface
+- `backend\heretek_swarm\knowledge\research.py`
+  - class ResearchDepth
+  - class FindingType
+  - class SourceCredibility
+  - class ResearchSource
+  - class ResearchFinding
+  - class ResearchResult
+  - _...2 more_
+- `backend\heretek_swarm\knowledge\unified_access.py`
+  - function create_unified_knowledge_access: (memory_system, rag_pipeline, embedding_provider, vector_store, sparse_index, cross_encoder, config) -> UnifiedKnowledgeAccess
+  - class KnowledgeEntry
+  - class KnowledgeQueryResult
+  - class UnifiedKnowledgeAccess
+  - class KnowledgeQueryBuilder
+- `backend\heretek_swarm\llm\model_garage.py`
+  - function register_provider_class: (provider_type, provider_class) -> None
+  - function get_model_garage: () -> ModelGarage
+  - function initialize_model_garage: () -> ModelGarage
+  - function main: ()
+  - class ProviderType
+  - class ModelInfo
+  - _...11 more_
+- `backend\heretek_swarm\llm\providers\base.py`
+  - class Message
+  - class LLMRequest
+  - class ToolCall
+  - class LLMResponse
+  - class ProviderCapabilities
+  - class LLMProviderBase
+  - _...6 more_
+- `backend\heretek_swarm\llm\providers\factory.py`
+  - function register_provider: (provider_type, provider_class) -> None
+  - function unregister_provider: (provider_type) -> None
+  - function get_provider_class: (provider_type) -> type[LLMProviderBase]
+  - function list_available_providers: () -> list[str]
+  - function create_llm_provider: (provider_type, config, Any]) -> LLMProviderBase
+  - function create_llm_provider_from_db_config: (db_config, api_key_decrypt_func) -> LLMProviderBase
+  - _...2 more_
+- `backend\heretek_swarm\llm\providers\lemonade_provider.py` — class LemonadeProvider
+- `backend\heretek_swarm\llm\providers\llamacpp_provider.py` — class LlamaCppProvider
+- `backend\heretek_swarm\llm\providers\minimax_provider.py` — class MiniMaxProvider
+- `backend\heretek_swarm\llm\providers\ollama_provider.py` — class OllamaProvider
+- `backend\heretek_swarm\llm\providers\openai_compatible.py` — class OpenAICompatibleProvider
+- `backend\heretek_swarm\llm\providers\openai_provider.py` — class OpenAIProvider
+- `backend\heretek_swarm\llm\providers\zai_provider.py` — class ZAIProvider
+- `backend\heretek_swarm\mcp\agent_tools.py` — function build_tools_list_dictionary: (registry) -> list[dict[str, Any]], function build_tool_handlers: (registry) -> dict[str, Callable[[dict[str, Any], dict[str, Any] | None], dict[str, Any]]]
+- `backend\heretek_swarm\mcp\bridge.py` — function sync_mcp_registries: (core_tools) -> int
+- `backend\heretek_swarm\mcp\client.py` — class MCPClient, class MCPClientManager
+- `backend\heretek_swarm\mcp\registry.py`
+  - class ToolProviderType
+  - class ToolStatus
+  - class MCPToolMetadata
+  - class MCPToolInvocation
+  - class MCPToolRegistry
+  - class MCPServerRegistry
+- `backend\heretek_swarm\mcp\server.py`
+  - function get_registry: () -> MCPToolRegistry
+  - function set_registry: (registry) -> None
+  - function list_tools: (category) -> ToolListResponse
+  - function get_tool: (tool_name) -> ToolDetailResponse
+  - function call_tool: (request) -> ToolCallResponse
+  - function toggle_tool: (tool_name, body, request) -> dict[str, Any]
+  - _...12 more_
+- `backend\heretek_swarm\memory\access_patterns.py`
+  - class AccessTier
+  - class AccessPattern
+  - class MemoryAccessRecord
+  - class AccessStatistics
+  - class MemoryAccessProfile
+  - class AccessPatternReport
+  - _...1 more_
+- `backend\heretek_swarm\memory\base.py`
+  - class MemoryTier
+  - class MemoryType
+  - class MemoryEntry
+  - class MemoryQuery
+  - class MemorySystem
+  - class EphemeralMemory
+  - _...3 more_
+- `backend\heretek_swarm\memory\compression.py`
+  - class CompressionAlgorithm
+  - class CompressionLevel
+  - class CompressionStatus
+  - class CompressedMemory
+  - class CompressionResult
+  - class DecompressionResult
+  - _...4 more_
+- `backend\heretek_swarm\memory\eliza_memory.py`
+  - function create_memory_manager: (agent_id, use_mem0) -> MemoryManager
+  - class ElizaMemoryEntry
+  - class MemoryManagerConfig
+  - class MemoryManager
+- `backend\heretek_swarm\memory\migration_strategies.py`
+  - class MigrationPhase
+  - class MigrationValidationPhase
+  - class MigrationRemovalPhase
+  - class MigrationUpdatePhase
+  - class MigrationAdditionPhase
+  - class MigrationVerificationPhase
+  - _...2 more_
+- `backend\heretek_swarm\memory\persistent.py`
+  - function create_memory_store: (provider, user_id) -> PersistentMemory
+  - class Mem0Config
+  - class PersistentMemory
+  - class MemoryResult
+  - class Mem0Backend
+- `backend\heretek_swarm\memory\prefetcher.py`
+  - class PreFetchStrategy
+  - class PreFetchPriority
+  - class PreFetchRequest
+  - class PreFetchResult
+  - class CacheStatistics
+  - class LRUCacheEntry
+  - _...5 more_
+- `backend\heretek_swarm\memory\tiering.py`
+  - class MemoryTier
+  - class TierMigrationStatus
+  - class MigrationTrigger
+  - class TierConfig
+  - class TieredMemory
+  - class MigrationRecord
+  - _...3 more_
+- `backend\heretek_swarm\memory\versioned.py`
+  - function get_versioned_store: () -> VersionedMemoryStore
+  - class MemorySnapshot
+  - class MemoryVersion
+  - class MemoryDiff
+  - class VersionedMemoryStore
+- `backend\heretek_swarm\models\external_call_log.py` — class Base, class ExternalCallLog
+- `backend\heretek_swarm\models\external_call_log_encryption.py` — function get_encryptor: () -> ExternalCallLogEncryptor, class ExternalCallLogEncryptor
+- `backend\heretek_swarm\observability\alerting.py`
+  - function get_alert_manager: () -> AlertManager
+  - class AlertSeverity
+  - class AlertStatus
+  - class Alert
+  - class AlertManager
+- `backend\heretek_swarm\observability\db_timing.py` — function attach_db_timing: (engine_or_async_engine, logger_name, slow_query_threshold_ms, histogram, histogram_labels, str] | None) -> None
+- `backend\heretek_swarm\observability\metrics.py`
+  - function get_metrics_collector: () -> SwarmMetricsCollector
+  - function record_actor_execution: (agent_id, duration_ms) -> None
+  - function record_consensus_round: (round_id, result, Any]) -> None
+  - function record_message_sent: (message_id, agent_id, metadata, Any]) -> None
+  - function record_task_completion: (task_id, agent_id, success, metadata, Any]) -> None
+  - class AgentMetrics
+  - _...5 more_
+- `backend\heretek_swarm\observability\prometheus_metrics.py`
+  - function get_metrics: () -> PrometheusMetrics
+  - function reset_metrics: () -> None
+  - function increment_tasks_completed: (agent_id, task_type) -> None
+  - function increment_tasks_failed: (agent_id, task_type) -> None
+  - function increment_messages_sent: (message_type) -> None
+  - function increment_messages_received: (message_type) -> None
+  - _...13 more_
+- `backend\heretek_swarm\observability\timing.py`
+  - function timed: (label, histogram, histogram_labels, str] | None) -> Any
+  - function format_duration_ms: (duration_ms) -> str
+  - class TimedContext
+- `backend\heretek_swarm\observability\tracing.py`
+  - function initialize_tracing: (service_name, service_version, otlp_endpoint, enable_console_export) -> trace.Tracer
+  - function get_tracer: () -> trace.Tracer
+  - function create_span: (name, attributes, Any] | None, kind) -> Callable
+  - function span_context: (name, attributes, Any] | None, kind)
+  - function get_current_span: () -> Span | None
+  - function get_trace_context: () -> dict[str, str]
+  - _...8 more_
+- `backend\heretek_swarm\observability\__init__.py`
+  - function get_observability: () -> ObservabilityManager
+  - function initialize_observability: () -> ObservabilityManager
+  - function main: ()
+  - class LogLevel
+  - class ServiceStatus
+  - class LogEntry
+  - _...2 more_
+- `backend\heretek_swarm\orchestration\heavyswarm.py`
+  - class WorkflowPhase
+  - class PhaseResult
+  - class WorkflowResult
+  - class HeavySwarmWorkflow
+  - class WorkflowPhaseError
+- `backend\heretek_swarm\orchestration\phase_handlers.py`
+  - class PhaseHandler
+  - class ResearchPhaseHandler
+  - class AnalysisPhaseHandler
+  - class AlternativesPhaseHandler
+  - class VerificationPhaseHandler
+  - class DecisionPhaseHandler
+  - _...1 more_
+- `backend\heretek_swarm\plugins\consciousness.py`
+  - class ConsciousnessState
+  - class GlobalWorkspaceItem
+  - class AttentionSchema
+  - class FEPMetrics
+  - class IITConnectivity
+  - class ConsciousnessMetrics
+  - _...3 more_
+- `backend\heretek_swarm\plugins\consciousness_enhanced.py`
+  - class ConsciousnessState
+  - class FEPMetrics
+  - class IITConnectivity
+  - class ConsciousnessMetrics
+  - class IITCalculator
+  - class FEPTracker
+  - _...1 more_
+- `backend\heretek_swarm\plugins\consciousness_metrics.py`
+  - class IntegrationLevel
+  - class CausalAnalysis
+  - class TemporalMetrics
+  - class CollectiveMetrics
+  - class AgentConsciousnessData
+  - class ConsciousnessMetricsCalculator
+- `backend\heretek_swarm\plugins\examples.py`
+  - function get_plugin: (plugin_name) -> type | None
+  - function list_available_plugins: () -> list[str]
+  - class LoggingPlugin
+  - class MemoryEnhancementPlugin
+  - class HealthMonitorPlugin
+- `backend\heretek_swarm\plugins\liberation.py`
+  - class Severity
+  - class SecurityEventType
+  - class SecurityEvent
+  - class ThreatAnalysis
+  - class AnomalyResult
+  - class LiberationShield
+  - _...1 more_
+- `backend\heretek_swarm\plugins\manager.py`
+  - function get_plugin_runtime: () -> PluginRuntime
+  - function load_plugin_from_file: (plugin_path) -> Plugin | None
+  - class PluginState
+  - class PluginMetadata
+  - class Plugin
+  - class PluginRuntime
+- `backend\heretek_swarm\rag\document_processor.py`
+  - class DocumentType
+  - class ChunkStrategy
+  - class ProcessingConfig
+  - class ProcessedDocument
+  - class DocumentProcessor
+- `backend\heretek_swarm\rag\hybrid_retriever.py`
+  - function create_hybrid_retriever: (config, embedding_provider, vector_store, sparse_index, cross_encoder) -> HybridRetriever
+  - class FusionMethod
+  - class RetrieverState
+  - class HybridRetrieverConfig
+  - class RetrievalMetrics
+  - class QueryHistoryEntry
+  - _...5 more_
+- `backend\heretek_swarm\rag\knowledge_graph.py`
+  - class GraphRelationshipType
+  - class GraphChunkNode
+  - class GraphRetrievalResult
+  - class SubQuestionDecomposer
+  - class KnowledgeGraphConfig
+  - class KnowledgeGraphRetriever
+- `backend\heretek_swarm\rag\rag_pipeline.py`
+  - class RAGPipelineConfig
+  - class IngestedDocument
+  - class RAGResponse
+  - class RAGPipeline
+- `backend\heretek_swarm\rag\retriever.py` — class RetrievalConfig, class SearchResult
+- `backend\heretek_swarm\rag\strategies.py`
+  - function create_default_strategies: (config) -> dict[RetrievalStrategyType, BaseRetrievalStrategy]
+  - function create_strategy_selector: (config, embedding_provider, vector_store, sparse_index, cross_encoder) -> StrategySelector
+  - class RetrievalStrategyType
+  - class QueryType
+  - class RetrievalResult
+  - class QueryCacheEntry
+  - _...9 more_
+- `backend\heretek_swarm\routing\model_router.py`
+  - function set_global_model_garage: (garage) -> None
+  - function get_router: (agent_id) -> AgentModelRouter
+  - function get_all_provider_stats: () -> dict[str, Any]
+  - class TaskComplexity
+  - class RouterProviderConfig
+  - class RoutingDecision
+  - _...1 more_
+- `backend\heretek_swarm\runtime\actor_orchestrator.py` — class ActorOrchestrator
+- `backend\heretek_swarm\runtime\agent_runtime.py`
+  - class AgentState
+  - class AgentContext
+  - class AgentRuntime
+- `backend\heretek_swarm\runtime\autonomous_runtime.py`
+  - function start_autonomous_runtime: (config) -> AutonomousRuntime
+  - class RuntimeState
+  - class AutonomousRuntime
+- `backend\heretek_swarm\runtime\autonomous_runtime_config.py`
+  - function load_config_from_env_sync: () -> AutonomousRuntimeConfig
+  - function load_config_from_env: () -> AutonomousRuntimeConfig
+  - class AutonomousRuntimeConfig
+  - class AlertConfig
+  - class ScalingPolicy
+- `backend\heretek_swarm\runtime\characters.py`
+  - function get_character: (agent_id) -> dict
+  - function get_all_characters: () -> dict[str, dict]
+  - function character_to_system_prompt: (character) -> str
+- `backend\heretek_swarm\runtime\daemon.py`
+  - function daemonize: (swarm, pid_file, socket_path) -> None
+  - function read_pid_file: (pid_file) -> int | None
+  - function send_stop: (pid) -> bool
+  - function cleanup_daemon: (pid_file, socket_path) -> None
+  - function handle_daemon_connection: (reader, writer, swarm) -> None
+  - class DaemonError
+  - _...1 more_
+- `backend\heretek_swarm\runtime\deliberation_orchestrator.py` — class DeliberationOrchestrator
+- `backend\heretek_swarm\runtime\entrypoint.py` — function main: () -> None
+- `backend\heretek_swarm\runtime\main_loop.py` — class AutonomousSwarm
+- `backend\heretek_swarm\runtime\registry.py`
+  - function get_registry: (characters_dir) -> AgentRegistry
+  - class AgentRole
+  - class AgentInfo
+  - class AgentRegistry
+- `backend\heretek_swarm\runtime\registry_enhanced.py`
+  - function get_enhanced_registry: (actors_dir) -> EnhancedAgentRegistry
+  - class AgentLifecycleState
+  - class AgentTypeMetadata
+  - class AgentInstance
+  - class EnhancedAgentRegistry
+- `backend\heretek_swarm\runtime\scaling.py`
+  - function create_default_scaling: () -> HorizontalScaling
+  - function create_production_scaling: () -> HorizontalScaling
+  - class ScalingAction
+  - class LoadBalancingStrategy
+  - class AgentStatus
+  - class ScalingConfig
+  - _...9 more_
+- `backend\heretek_swarm\runtime\self_maintenance.py`
+  - class LogRotationConfig
+  - class DatabaseMaintenanceConfig
+  - class ConfigDriftConfig
+  - class SelfMaintenanceConfig
+  - class LogRotator
+  - class DatabaseMaintenance
+  - _...2 more_
+- `backend\heretek_swarm\runtime\startup_manager.py`
+  - function get_startup_manager: () -> StartupManager
+  - function run_startup_manager: () -> None
+  - class StartupManager
+- `backend\heretek_swarm\runtime\steward_pulse.py` — function run_steward_pulse: (swarm) -> None
+- `backend\heretek_swarm\runtime\tools.py`
+  - function register_builtin_tools: (registry, memory_backend, a2a_server) -> None
+  - function search_memory: (query, agent_id, limit, memory_backend)
+  - function call_agent: (agent_id, message, target_agent, a2a_server)
+  - function read_file: (path, allowed_base_paths) -> dict
+  - function write_file: (path, content, allowed_base_paths) -> dict
+  - function run_command: (command, timeout) -> dict
+  - _...2 more_
+- `backend\heretek_swarm\runtime\__init__.py`
+  - class CharacterStyle
+  - class Character
+  - class CharacterRegistry
+- `backend\heretek_swarm\schemas\external_call_log.py`
+  - function extract_domain: (url) -> str
+  - class ExternalCallLogBase
+  - class ExternalCallLogCreate
+  - class ExternalCallLogResponse
+  - class ExternalCallLogListItem
+  - class ExternalCallLogListResponse
+- `backend\heretek_swarm\security\adversarial.py`
+  - function create_default_detector: () -> AdversarialDetector
+  - function create_strict_detector: () -> AdversarialDetector
+  - class ThreatLevel
+  - class AttackCategory
+  - class OWASPCategory
+  - class DetectionMatch
+  - _...5 more_
+- `backend\heretek_swarm\security\anomaly_detection.py`
+  - function create_anomaly_detector: (config) -> BehavioralAnomalyDetector
+  - class AnomalyType
+  - class AnomalySeverity
+  - class ResponseStatus
+  - class AgentBehaviorProfile
+  - class AnomalyDetectionResult
+  - _...3 more_
+- `backend\heretek_swarm\security\baseline_update.py`
+  - function create_baseline_update_service: (config, Any] | None) -> BaselineUpdateService
+  - class RollbackReason
+  - class RollbackStatus
+  - class BaselineChangeType
+  - class VoteDecision
+  - class BaselineChangeStatus
+  - _...9 more_
+- `backend\heretek_swarm\security\behavioral_baseline.py`
+  - function validate_threshold_delta: (delta) -> float
+  - function create_behavioral_baseline: (config, Any] | None) -> BehavioralBaseline
+  - class BaselineStatus
+  - class BaselineChangeType
+  - class QuorumStatus
+  - class BaselinePattern
+  - _...4 more_
+- `backend\heretek_swarm\security\ddos_protection.py`
+  - function create_default_protection: () -> DDoSProtection
+  - function create_strict_protection: () -> DDoSProtection
+  - class UserTier
+  - class DDoSSeverity
+  - class MitigationAction
+  - class TierConfig
+  - _...10 more_
+- `backend\heretek_swarm\security\guardrails.py`
+  - function create_default_guardrails: () -> GuardrailsSystem
+  - class GuardrailsAction
+  - class BlockedPattern
+  - class ValidationResult
+  - class FilterResult
+  - class GuardrailsConfig
+  - _...1 more_
+- `backend\heretek_swarm\security\safe01_anomaly_response.py`
+  - function create_safe01_anomaly_response: (config, sentinel_prime_client) -> SAFE01AnomalyResponse
+  - class Safe01ResponseAction
+  - class Safe01AnomalyResponse
+  - class Safe01Statistics
+  - class SAFE01AnomalyResponse
+- `backend\heretek_swarm\security\threat_detection.py`
+  - function create_default_detector: (config) -> ExternalThreatDetector
+  - function create_strict_detector: () -> ExternalThreatDetector
+  - class ExternalThreatType
+  - class ThreatSource
+  - class ContainmentAction
+  - class AlertPriority
+  - _...4 more_
+- `backend\heretek_swarm\security\validators.py`
+  - class InputValidator
+  - class LengthValidator
+  - class BlockedPatternValidator
+  - class PersonalInfoValidator
+  - class CodeExecutionValidator
+  - class AllowedPatternsValidator
+  - _...1 more_
+- `backend\heretek_swarm\security\zero_trust\audit_logger.py` — class AuditLogConfig, class AuditLogger
+- `backend\heretek_swarm\security\zero_trust\context_validator.py`
+  - class BehavioralBaseline
+  - class ContextValidationConfig
+  - class ContextValidator
+- `backend\heretek_swarm\security\zero_trust\exceptions.py`
+  - function get_exception_rule: (topic_or_source) -> dict[str, Any] | None
+  - function is_exception_topic: (topic) -> bool
+  - function should_sanitize: (topic) -> bool
+- `backend\heretek_swarm\security\zero_trust\external_validator.py` — class ExternalThreatConfig, class ExternalInputValidator
+- `backend\heretek_swarm\security\zero_trust\input_validator.py`
+  - class ValidatedInput
+  - class InputValidationConfig
+  - class InputValidator
+- `backend\heretek_swarm\security\zero_trust\orchestrator.py`
+  - function create_default_validator: () -> ZeroTrustValidator
+  - function create_strict_validator: () -> ZeroTrustValidator
+  - function create_external_validator: () -> ExternalInputValidator
+  - class ZeroTrustValidator
+- `backend\heretek_swarm\security\zero_trust\output_validator.py` — class OutputValidationConfig, class OutputValidator
+- `backend\heretek_swarm\security\zero_trust\result_types.py`
+  - class Severity
+  - class LayerResult
+  - class ZeroTrustResult
+- `backend\heretek_swarm\state\event_store.py`
+  - function create_event_applier: (state_field, value_field) -> Callable[[dict[str, Any], DomainEvent], dict[str, Any]]
+  - function get_event_store: () -> EventStore
+  - function setup_event_store: (db_pool, snapshot_interval) -> EventStore
+  - class EventType
+  - class DomainEvent
+  - class Snapshot
+  - _...1 more_
+- `backend\heretek_swarm\state\models.py`
+  - class StateStatus
+  - class TransitionType
+  - class MessageType
+  - class SystemState
+  - class StateSnapshot
+  - class StateTransition
+  - _...11 more_
+- `backend\heretek_swarm\state\repository.py`
+  - function get_event_sourced_repository: () -> EventSourcedRepository
+  - class AgentStateRecord
+  - class StateCheckpoint
+  - class StateRepository
+  - class ConcurrencyError
+  - class EventSourcedRepository
+- `backend\heretek_swarm\swarm_logging\config.py`
+  - function get_request_id: () -> str | None
+  - function get_agent_id: () -> str | None
+  - function get_trace_id: () -> str | None
+  - function set_request_id: (request_id) -> str
+  - function set_agent_id: (agent_id) -> None
+  - function set_trace_id: (trace_id) -> str
+  - _...8 more_
+- `backend\heretek_swarm\testing\stress_testing.py`
+  - class StressTestType
+  - class StressTestStatus
+  - class StressTestConfig
+  - class StressTestCase
+  - class StressTestSuite
+  - class StressTestResult
+  - _...7 more_
+- `backend\heretek_swarm\tools\base.py`
+  - class ToolStatus
+  - class ToolMetadata
+  - class ToolContext
+  - class ToolExecutionResult
+  - class ToolExecutionError
+  - class BaseTool
+  - _...1 more_
+- `backend\heretek_swarm\tools\examples.py`
+  - class HealthCheckTool
+  - class MemorySearchTool
+  - class ConsensusVoteTool
+  - class LegacyWrapperTool
+- `backend\heretek_swarm\tools\mcp_tools.py`
+  - class MCPToolDefinition
+  - class MCPToolRegistry
+  - class CoreMCPTools
+- `backend\heretek_swarm\tools\registrars.py`
+  - function get_handler_methods: (obj) -> dict[str, Callable]
+  - function register_all_tools: (registry, handlers, Callable]) -> None
+  - class BaseToolRegistrar
+  - class MemoryToolsRegistrar
+  - class CommunicationToolsRegistrar
+  - class ConsensusToolsRegistrar
+  - _...4 more_
+- `backend\heretek_swarm\tools\registry.py`
+  - function get_registry: () -> ToolRegistry
+  - function initialize_registry: (config) -> ToolRegistry
+  - class ToolRegistryConfig
+  - class ToolRegistryEntry
+  - class ToolRegistry
+- `backend\heretek_swarm\utils\lazy_imports.py`
+  - function lazy_import: (import_path) -> Callable[[Callable[..., T]], Callable[..., T]]
+  - function lazy_import_module: (module_path) -> Any
+  - function get_lazy_import: (import_path, attr) -> LazyImport
+  - function clear_lazy_import_cache: () -> None
+  - class LazyImport
+  - class LazyModule
+- `backend\heretek_swarm\validation\agent_messages.py`
+  - function validate_message: (message_type, content, Any]) -> ValidationResult
+  - function create_actor_message: (content, Any], sender_id, recipient_id, priority, correlation_id) -> ActorMessage
+  - function create_state_update: (state_key, state_value, sender_id, operation, version) -> StateUpdate
+  - function create_tool_request: (tool_name, arguments, Any], sender_id, timeout) -> ToolRequest
+  - function create_tool_response: (execution_id, success, sender_id, result, error, execution_time_ms) -> ToolResponse
+  - class MessageType
+  - _...12 more_
+- `backend\heretek_swarm\validation\llm_output.py`
+  - function validate_llm_code: (code, language, strict) -> ValidationResult
+  - function validate_llm_text: (text, content_type) -> ValidationResult
+  - function validate_llm_structured: (data, Any]) -> ValidationResult
+  - function is_code_safe: (code) -> bool
+  - function is_text_safe: (text) -> bool
+  - class ValidationSeverity
+  - _...8 more_
+- `backend\heretek_swarm\workflow\cycle_detector.py`
+  - class CycleBreakingStrategy
+  - class CycleDetectionEvent
+  - class ExecutionPath
+  - class WorkflowCycleDetector
+  - class FivePhaseWorkflowTracker
+- `backend\heretek_swarm\workflow\engine.py`
+  - function get_cycle_detector_metrics: () -> dict[str, Any]
+  - function export_cycle_detector_prometheus: () -> str
+  - function get_workflow_engine: (cycle_detector, max_iterations, timeout_seconds, consensus_coordinator, supervisor, store) -> WorkflowEngine
+  - class WorkflowEngine
+- `backend\heretek_swarm\workflow\execution_events.py` — function get_execution_event_bus: () -> WorkflowExecutionEventBus, class WorkflowExecutionEventBus
+- `backend\heretek_swarm\workflow\models.py`
+  - function merge_workflow_states: (current, update) -> WorkflowState
+  - class SafeExpressionEvaluator
+  - class WorkflowState
+  - class WorkflowStatus
+  - class NodeStatus
+  - class WorkflowNode
+  - _...5 more_
+- `backend\heretek_swarm\workflow\node_executors.py`
+  - function execute_agent_node: (engine, node, input_data, Any], context) -> Any
+  - function execute_llm_node: (engine, node, input_data, Any], context) -> str
+  - function execute_tool_node: (engine, node, input_data, Any], context) -> Any
+  - function execute_chain_node: (engine, node, input_data, Any], context) -> Any
+  - function execute_memory_node: (engine, node, input_data, Any], context) -> Any
+  - function execute_consensus_node: (engine, node, input_data, Any], context) -> dict[str, Any]
+  - _...1 more_
+- `backend\heretek_swarm\workflow\store.py` — class FileWorkflowStore
+- `backend\heretek_swarm\workflow\strategies.py`
+  - class WorkflowExecutionResult
+  - class ExecutionStrategy
+  - class DAGStrategy
+  - class CycleStrategy
+  - class MajorityVoteStrategy
+- `backend\heretek_swarm\workflow\validator.py`
+  - function validate_workflow: (workflow_definition, Any]) -> ValidationResult
+  - function validate_workflow_strict: (workflow_definition, Any]) -> ValidationResult
+  - class ValidationErrorSeverity
+  - class ValidationError
+  - class ValidationResult
+  - class ErrorCodes
+  - _...1 more_
+- `heretek-swarm\apps\agent\src\a2ui_dynamic_schema.py` — function render_a2ui: (surfaceId, catalogId, components, data) -> str, function generate_a2ui: (runtime) -> str
+- `heretek-swarm\apps\agent\src\a2ui_fixed_schema.py` — function search_flights: (flights) -> str, class Flight
+- `heretek-swarm\apps\agent\src\query.py` — function query_data: (query)
+- `heretek-swarm\apps\agent\src\todos.py`
+  - function manage_todos: (todos, runtime) -> Command
+  - function get_todos: (runtime)
+  - class Todo
+  - class AgentState
+- `heretek-swarm\serve.py` — function health: ()
+- `migrations\scripts\setup_qdrant_collections.py`
+  - function get_qdrant_url: () -> str
+  - function get_api_key: () -> str | None
+  - function create_collection_if_not_exists: (client, collection_name, vector_size, distance, description) -> bool
+  - function setup_collections: () -> dict
+  - function main: ()
+- `scripts\bench\compute_percentiles.py` — function pct: (idx)
+- `scripts\bench\verify_findings.py` — function main: () -> int
+- `scripts\check-bandit-severity.py`
+  - function parse_args: (argv) -> argparse.Namespace
+  - function load_report: (path) -> Dict[str, Any]
+  - function severity_at_or_above: (severity, threshold) -> bool
+  - function run: (args) -> int
+  - function main: () -> None
+- `scripts\run_migrations.py` — function run_migrations: (database_url, *, dry_run, migrations_dir) -> int
+- `scripts\verify-s03-loggers.py` — function main: () -> int
+- `swarm-dashboard\src\api\agents.ts`
+  - function getAgents
+  - function getAgent
+  - function sendChatMessage
+  - function getAgentStatus
+  - function getAvailableAgentTypes
+  - function getAgentTypeMetadata
+  - _...34 more_
+- `swarm-dashboard\src\api\client.ts`
+  - function setToastInstance: (toast, message?) => void
+  - function withRetry: (fn) => void
+  - class ApiError
+  - enum ApiErrorCode
+  - const api
+- `swarm-dashboard\src\api\consciousness.ts`
+  - function getConsciousnessStatistics
+  - function getAgentMetrics
+  - function getAgencyMetrics
+  - function getTimeSeriesData
+  - function getNetworkVisualization
+  - function getAgentStates
+  - _...9 more_
+- `swarm-dashboard\src\api\consensus.ts`
+  - function getActiveConsensusRounds: () => Promise<
+  - function getConsensusHistory: (limit) => Promise<
+  - function getConsensusRound: (consensusId) => Promise<ConsensusRoundDetail>
+  - function createConsensusRound: (topic, description) => Promise<
+  - function submitVote: (consensusId, decision, confidence, metadata?, unknown>) => Promise<
+  - function aggregateConsensus: (consensusId) => Promise<ConsensusResult>
+  - _...10 more_
+- `swarm-dashboard\src\api\deliberation.ts`
+  - function startDeliberation: (proposal, participants, options?) => Promise<
+  - function submitDeliberationPosition: (deliberationId, position, confidence, reasoning?) => Promise<
+  - function submitDeliberationArgument: (deliberationId, position, reasoning, evidenceRefs?, confidence) => Promise<
+  - function submitDeliberationEvidence: (deliberationId, argumentId, content, source?, qualityScore) => Promise<
+  - function runDeliberationRound: (deliberationId) => Promise<DeliberationRoundResult>
+  - function getDeliberationState: (deliberationId) => Promise<DeliberationStateResponse>
+  - _...18 more_
+- `swarm-dashboard\src\api\events.ts`
+  - function getHistorianEvents
+  - interface HistorianEvent
+  - interface GetHistorianEventsParams
+  - interface GetHistorianEventsResponse
+- `swarm-dashboard\src\api\metrics.ts`
+  - function fetchMetricsJson: () => Promise<MetricsJsonResponse>
+  - function fetchAgentMetrics: () => Promise<AgentMetricsResponse>
+  - interface SwarmMetrics
+  - interface ConsciousnessMetrics
+  - interface MetricsJsonResponse
+  - interface AgentMetrics
+  - _...1 more_
+- `swarm-dashboard\src\api\observability.ts`
+  - function fetchProviderStats: () => Promise<ProviderStatsResponse>
+  - interface ProviderStats
+  - interface ProviderStatsResponse
+- `swarm-dashboard\src\api\wizard.ts`
+  - function getProviders: () => Promise<
+  - function getProvider: (providerId) => Promise<Provider>
+  - function getTiers: () => Promise<
+  - function getTier: (tierId) => Promise<AgentTier>
+  - function getConfigStatus: () => Promise<ConfigStatus>
+  - function validateCredentials: (providerId, apiKey?, baseUrl?) => Promise<ValidationResult>
+  - _...23 more_
+- `swarm-dashboard\src\hooks\useA2AMessages.ts`
+  - function useA2AMessages: (options) => UseA2AMessagesReturn
+  - interface A2AEdgeState
+  - interface A2AMessage
+  - type MessageType
+- `swarm-dashboard\src\hooks\useAgentHandles.ts`
+  - function getHandleColor: (channelType) => string
+  - function getHandlePosition: (type, index, total) => Position
+  - function useAgentHandles: ({...}, enabled, pollingInterval, // 30 seconds
+  apiUrl, }) => UseAgentHandlesResult
+  - interface AgentHandle
+  - interface ChannelSubscription
+  - type ChannelType
+- `swarm-dashboard\src\hooks\useConsciousnessWebSocket.ts` — function useConsciousnessWebSocket: (options) => UseConsciousnessWebSocketReturn, interface ConsciousnessAgentState
+- `swarm-dashboard\src\hooks\useConsensusWebSocket.ts`
+  - function useConsensusWebSocket: (options) => UseConsensusWebSocketReturn
+  - interface ConsensusVoteEvent
+  - interface ConsensusStateChangeEvent
+  - interface ConsensusCompleteEvent
+  - interface DeliberationRoundEvent
+  - interface DeliberationPositionEvent
+  - _...6 more_
+- `swarm-dashboard\src\hooks\useNodeGrouping.ts`
+  - function useNodeGrouping: (options) => UseNodeGroupingReturn
+  - interface NodeGroup
+  - interface GroupColorScheme
+  - interface UseNodeGroupingOptions
+  - interface UseNodeGroupingReturn
+  - enum GroupFunction
+  - _...1 more_
+- `swarm-dashboard\src\hooks\useRealTimeAgentUpdates.ts`
+  - function useRealTimeAgentUpdates: (options) => UseRealTimeAgentUpdatesState
+  - function useAgentStatus: (options?) => void
+  - function useWorkflowProgress: (options?) => void
+  - function useAgentMetrics: (options?) => void
+  - interface AgentStatusUpdate
+  - interface WorkflowProgressUpdate
+  - _...4 more_
+- `swarm-dashboard\src\hooks\useWebSocket.ts`
+  - function useWebSocket: (channel, options) => void
+  - function useAgentEvents: (onMessage?) => void
+  - function useMetricsStream: (onMessage?) => void
+  - function useExecutionStream: (executionId, onMessage?) => void
+  - interface WebSocketMessage
+- `swarm-dashboard\src\hooks\useWorkflowProgress.ts`
+  - function useWorkflowProgress: () => UseWorkflowProgressReturn
+  - interface NodeResult
+  - interface WorkflowProgressMessage
+  - type ExecutionState
+- `swarm-dashboard\src\stores\middleware\debugMiddleware.ts`
+  - function withDebugMiddleware: (config, [], []>, options) => StateCreator<T, [], []>
+  - function logStateTransition: (actionType, previousState, unknown>, nextState, unknown>) => void
+  - interface DebugMiddlewareOptions
+- `swarm-dashboard\src\stores\setupStore.ts`
+  - function useCurrentStep
+  - function useIsConfigured
+  - function useConfig
+  - function useApiConnection
+  - function useWsConnection
+  - function useAgentHealth
+  - _...11 more_
+- `swarm-dashboard\src\utils\logger.ts`
+  - function createLogger: (component) => Logger
+  - function getLogHistory: () => LogEntry[]
+  - function clearLogHistory: () => void
+  - interface LogEntry
+  - interface Logger
+  - type LogLevel
+- `swarm-dashboard\src\utils\setupValidation.ts`
+  - function isValidUrl: (url) => boolean
+  - function normalizeUrl: (url) => string
+  - function deriveWsUrl: (httpUrl) => string
+  - function testApiHealth: (apiUrl, apiKey?) => Promise<ConnectionTestResult>
+  - function testWebSocket: (wsUrl, apiKey?) => Promise<ConnectionTestResult>
+  - function testApiKey: (apiUrl, apiKey) => Promise<ConnectionTestResult>
+  - _...6 more_
+
+---
+
+# Config
+
+## Environment Variables
+
+- `A2A_SECRET_KEY` **required** — backend\heretek_swarm\gateway\a2a_server.py
+- `ADMIN_API_KEY` **required** — backend\heretek_swarm\api\memories.py
+- `AGENT_PORT` **required** — heretek-swarm\serve.py
+- `ANTHROPIC_API_KEY` (has default) — .env.example
+- `API_HOST` **required** — backend\heretek_swarm\runtime\autonomous_runtime_config.py
+- `API_KEY` (has default) — .env.example
+- `API_PORT` **required** — backend\heretek_swarm\runtime\autonomous_runtime_config.py
+- `AUTO_RESTART_ENABLED` **required** — backend\heretek_swarm\runtime\autonomous_runtime_config.py
+- `CI` **required** — swarm-dashboard\playwright.config.ts
+- `CONSCIOUSNESS_ENABLED` **required** — backend\heretek_swarm\runtime\autonomous_runtime_config.py
+- `CONSENSUS_AHEAD_BY_K` (has default) — .env.example
+- `CONSENSUS_CONFIDENCE_THRESHOLD` (has default) — .env.example
+- `CONSENSUS_MIN_VOTES` (has default) — .env.example
+- `CONSENSUS_RED_FLAG_THRESHOLD` **required** — backend\heretek_swarm\api\consensus.py
+- `CONSENSUS_VOTING_TIMEOUT` **required** — backend\heretek_swarm\api\consensus.py
+- `COPILOTKIT_LICENSE_TOKEN` **required** — heretek-swarm\.env.example
+- `COPILOTKIT_RUNTIME_URL` (has default) — heretek-swarm\.env.example
+- `CORS_ORIGINS` (has default) — .env.example
+- `DATABASE_URL` (has default) — .env.example
+- `DB_URL` **required** — tests\test_secrets.py
+- `DEV_FALLBACK_VAR` **required** — tests\test_secrets.py
+- `DISCORD_BOT_ENABLED` **required** — backend\heretek_swarm\runtime\autonomous_runtime_config.py
+- `DISCORD_BOT_TOKEN` **required** — backend\heretek_swarm\integrations\discord_bot.py
+- `E2E_API_KEY` **required** — swarm-dashboard\tests\e2e\m011-regression.spec.ts
+- `EMBEDDER_MODEL` (has default) — .env.example
+- `EMBEDDING_API_KEY` (has default) — .env.example
+- `EMBEDDING_BASE_URL` (has default) — .env.example
+- `EMBEDDING_DIMENSIONS` (has default) — .env.example
+- `EMBEDDING_PROVIDER` (has default) — .env.example
+- `ENVIRONMENT` (has default) — .env.example
+- `EXISTING` **required** — tests\test_secrets.py
+- `EXTERNAL_CALL_LOG_ENCRYPTION_KEY` **required** — backend\heretek_swarm\models\external_call_log_encryption.py
+- `GWT_ATTENTION_THRESHOLD` **required** — backend\heretek_swarm\api\plugins.py
+- `GWT_BROADCAST_ENABLED` **required** — backend\heretek_swarm\api\plugins.py
+- `GWT_WORKSPACE_CAPACITY` **required** — backend\heretek_swarm\api\plugins.py
+- `HEARTBEAT_INTERVAL` (has default) — .env.example
+- `HEREKET_CONFIG_PATH` **required** — backend\heretek_swarm\config\__init__.py
+- `HERETEK_API_HOST` **required** — backend\heretek_swarm\runtime\autonomous_runtime.py
+- `HERETEK_API_KEY` (has default) — .env.example
+- `HERETEK_API_PORT` **required** — backend\heretek_swarm\runtime\main_loop.py
+- `HERETEK_HOME` **required** — backend\heretek_swarm\observability\__init__.py
+- `HERETEK_LOG_LEVEL` (has default) — .env.example
+- `HERETEK_MAX_DELIBERATION_PARTICIPANTS` **required** — backend\heretek_swarm\api\main.py
+- `HERETEK_MTLS_ENABLED` (has default) — .env.example
+- `HERETEK_NATS_URL` (has default) — .env.example
+- `HERETEK_RUN_INTEGRATION` **required** — tests\test_ws_status_pump_integration.py
+- `HERETEK_TLS_SKIP_HOSTNAME_VERIFY` **required** — backend\heretek_swarm\gateway\nats_event_mesh.py
+- `INTELLIGENCE_API_KEY` (has default) — heretek-swarm\.env.example
+- `INTELLIGENCE_API_URL` (has default) — heretek-swarm\.env.example
+- `INTELLIGENCE_GATEWAY_WS_URL` (has default) — heretek-swarm\.env.example
+- `INTELLIGENCE_ORGANIZATION_ID` (has default) — heretek-swarm\.env.example
+- `JWT_SECRET` (has default) — .env.example
+- `LANGGRAPH_DEPLOYMENT_URL` **required** — heretek-swarm\apps\bff\src\server.ts
+- `LANGSMITH_API_KEY` **required** — heretek-swarm\apps\bff\src\server.ts
+- `LIBERATION_AUDIT_ENABLED` **required** — backend\heretek_swarm\api\plugins.py
+- `LIBERATION_SENSITIVITY` **required** — backend\heretek_swarm\api\plugins.py
+- `LIBERATION_THREAT_DETECTION` **required** — backend\heretek_swarm\api\plugins.py
+- `LITELLM_MASTER_KEY` **required** — backend\heretek_swarm\api\main.py
+- `LITELLM_URL` **required** — backend\heretek_swarm\api\main.py
+- `LLM_MODEL` (has default) — .env.example
+- `LOG_FORMAT` **required** — backend\heretek_swarm\api\main.py
+- `LOG_LEVEL` **required** — backend\heretek_swarm\api\main.py
+- `LOKI_URL` **required** — backend\heretek_swarm\observability\__init__.py
+- `MAX_MAILBOX_SIZE` (has default) — .env.example
+- `MCP_SERVER_URL` (has default) — heretek-swarm\.env.example
+- `MEM0_LLM_API_KEY` (has default) — .env.example
+- `MEM0_LLM_BASE_URL` (has default) — .env.example
+- `MEM0_LLM_MODEL` (has default) — .env.example
+- `MEM0_LLM_PROVIDER` (has default) — .env.example
+- `MEM0_POSTGRES_PASSWORD` (has default) — .env.example
+- `MEMORY_DEFAULT_TTL` (has default) — .env.example
+- `MEMORY_MAX_SIZE` (has default) — .env.example
+- `MONITORING_ENABLED` **required** — backend\heretek_swarm\runtime\autonomous_runtime_config.py
+- `MY_API_KEY` **required** — tests\test_secrets.py
+- `MY_KEY` **required** — tests\test_secrets.py
+- `NODE_ID` **required** — backend\heretek_swarm\infrastructure\otel\tracing.py
+- `OPENAI_API_KEY` **required** — heretek-swarm\.env.example
+- `OPENAI_BASE_URL` (has default) — .env.example
+- `OPSGENIE_API_KEY` **required** — backend\heretek_swarm\observability\alerting.py
+- `OTEL_DEBUG` **required** — backend\heretek_swarm\observability\tracing.py
+- `OTEL_EXPORTER_OTLP_INSECURE` **required** — backend\heretek_swarm\infrastructure\otel\tracing.py
+- `OTHER_KEY` **required** — tests\test_secrets.py
+- `PAGERDUTY_API_KEY` **required** — backend\heretek_swarm\observability\alerting.py
+- `PHASE_TIMEOUT` (has default) — .env.example
+- `PLUGIN_CONSCIOUSNESS_ENABLED` **required** — backend\heretek_swarm\api\plugins.py
+- `PLUGIN_LIBERATION_ENABLED` **required** — backend\heretek_swarm\api\plugins.py
+- `PORT` **required** — heretek-swarm\apps\app\server.mjs
+- `POSTGRES_DB` **required** — backend\heretek_swarm\memory\persistent.py
+- `POSTGRES_HOST` **required** — backend\heretek_swarm\memory\persistent.py
+- `POSTGRES_PASSWORD` (has default) — .env.example
+- `POSTGRES_PORT` **required** — backend\heretek_swarm\memory\persistent.py
+- `POSTGRES_USER` **required** — backend\heretek_swarm\memory\persistent.py
+- `QDRANT_API_KEY` (has default) — .env.example
+- `QDRANT_HOST` (has default) — .env.example
+- `QDRANT_PORT` (has default) — .env.example
+- `QDRANT_URL` (has default) — .env.example
+- `RAG_COLLECTION` **required** — backend\heretek_swarm\cli\consensus.py
+- `RAG_EMBEDDING_MODEL` **required** — backend\heretek_swarm\cli\consensus.py
+- `RAG_EMBEDDING_PROVIDER` **required** — backend\heretek_swarm\cli\consensus.py
+- `RAG_ENABLED` **required** — backend\heretek_swarm\runtime\autonomous_runtime_config.py
+- `RAG_LLM_MODEL` **required** — backend\heretek_swarm\cli\consensus.py
+- `RAG_LLM_PROVIDER` **required** — backend\heretek_swarm\cli\consensus.py
+- `RATE_LIMIT_ENABLED` (has default) — .env.example
+- `REDIS_URL` (has default) — .env.example
+- `RUN_WITH_REAL_BACKEND` **required** — swarm-dashboard\tests\e2e\m029-workflow-strategies.spec.ts
+- `SECRET` **required** — tests\test_secrets.py
+- `SLACK_BOT_ENABLED` **required** — backend\heretek_swarm\runtime\autonomous_runtime_config.py
+- `SLACK_BOT_TOKEN` **required** — backend\heretek_swarm\integrations\slack_bot.py
+- `SLACK_SIGNING_SECRET` **required** — backend\heretek_swarm\runtime\autonomous_runtime.py
+- `SLACK_STATUS_CHANNEL` **required** — backend\heretek_swarm\integrations\slack_bot.py
+- `SMTP_FROM` **required** — backend\heretek_swarm\runtime\autonomous_runtime.py
+- `SMTP_HOST` **required** — backend\heretek_swarm\runtime\autonomous_runtime.py
+- `SMTP_PASSWORD` **required** — backend\heretek_swarm\runtime\autonomous_runtime.py
+- `SMTP_PORT` **required** — backend\heretek_swarm\runtime\autonomous_runtime.py
+- `SMTP_USERNAME` **required** — backend\heretek_swarm\runtime\autonomous_runtime.py
+- `SOPS_AGE_KEY` **required** — backend\heretek_swarm\config\secrets_loader.py
+- `TELEGRAM_BOT_ENABLED` **required** — backend\heretek_swarm\runtime\autonomous_runtime_config.py
+- `TELEGRAM_BOT_TOKEN` **required** — backend\heretek_swarm\integrations\telegram_bot.py
+- `VITE_API_HOST` **required** — swarm-dashboard\src\api\agents.ts
+- `VITE_API_KEY` **required** — swarm-dashboard\src\api\agents.ts
+- `VITE_API_URL` **required** — swarm-dashboard\src\components\Home\HomePage.tsx
+
+## Config Files
+
+- `.env.example`
+- `docker-compose.yml`
+- `heretek-swarm\.env.example`
+- `heretek-swarm\apps\app\vite.config.ts`
+- `pyproject.toml`
+- `swarm-dashboard\tailwind.config.js`
+- `swarm-dashboard\vite.config.ts`
+
+---
+
+# Middleware
+
+## logging
+- strategies — `backend\heretek_swarm\actors\arbiter\strategies.py`
+- logging_middleware — `backend\heretek_swarm\api\logging_middleware.py`
+- migration_strategies — `backend\heretek_swarm\memory\migration_strategies.py`
+- debugMiddleware — `swarm-dashboard\src\stores\middleware\debugMiddleware.ts`
+
+## auth
+- strategies — `backend\heretek_swarm\actors\coordinator\strategies.py`
+- auth — `backend\heretek_swarm\gateway\auth.py`
+
+## rate-limit
+- rate_limiting — `backend\heretek_swarm\api\rate_limiting.py`
+
+## custom
+- strategies — `backend\heretek_swarm\rag\strategies.py`
+- strategies — `backend\heretek_swarm\workflow\strategies.py`
+- m029-workflow-strategies.spec — `swarm-dashboard\tests\e2e\m029-workflow-strategies.spec.ts`
+- test_mixin_guards — `tests\test_mixin_guards.py`
+
+## validation
+- guardrails — `backend\heretek_swarm\security\guardrails.py`
+
+---
+
+# Dependency Graph
+
+## Most Imported Files (change these carefully)
+
+- `swarm-dashboard\src\components\UI\Toast.tsx` — imported by **15** files
+- `/base.py` — imported by **13** files
+- `swarm-dashboard\src\hooks\useWebSocket.ts` — imported by **11** files
+- `/db_models.py` — imported by **10** files
+- `swarm-dashboard\src\api\client.ts` — imported by **9** files
+- `swarm-dashboard\src\components\UI\StatusBadge.tsx` — imported by **9** files
+- `swarm-dashboard\src\components\UI\EmptyState.tsx` — imported by **8** files
+- `/learning.py` — imported by **7** files
+- `/result_types.py` — imported by **7** files
+- `swarm-dashboard\src\components\UI\MetricCard.tsx` — imported by **6** files
+- `swarm-dashboard\src\components\UI\LoadingSpinner.tsx` — imported by **6** files
+- `swarm-dashboard\src\hooks\useConsciousnessWebSocket.ts` — imported by **6** files
+- `swarm-dashboard\src\api\consciousness.ts` — imported by **6** files
+- `/models.py` — imported by **5** files
+- `swarm-dashboard\src\api\configuration.ts` — imported by **5** files
+- `/emergent_detection_types.py` — imported by **4** files
+- `swarm-dashboard\src\components\UI\ErrorBoundary.tsx` — imported by **4** files
+- `swarm-dashboard\src\components\Agents\AgentCard.tsx` — imported by **4** files
+- `swarm-dashboard\src\components\Observability\ExternalCallsPanel.tsx` — imported by **4** files
+- `swarm-dashboard\src\components\Settings\DeveloperModeToggle.tsx` — imported by **4** files
+
+## Import Map (who imports what)
+
+- `swarm-dashboard\src\components\UI\Toast.tsx` ← `swarm-dashboard\src\api\client.ts`, `swarm-dashboard\src\App.tsx`, `swarm-dashboard\src\components\Agents\AgentsPage.tsx`, `swarm-dashboard\src\components\Consciousness\ConsciousnessPage.tsx`, `swarm-dashboard\src\components\Deliberation\HistoricalDeliberations.tsx` +10 more
+- `/base.py` ← `backend\heretek_swarm\embeddings\providers\factory.py`, `backend\heretek_swarm\embeddings\providers\ollama_provider.py`, `backend\heretek_swarm\embeddings\providers\openai_provider.py`, `backend\heretek_swarm\embeddings\providers\__init__.py`, `backend\heretek_swarm\llm\providers\factory.py` +8 more
+- `swarm-dashboard\src\hooks\useWebSocket.ts` ← `swarm-dashboard\src\components\Consciousness\RealTimeAgentPanel.tsx`, `swarm-dashboard\src\components\Logs\LogsPage.tsx`, `swarm-dashboard\src\components\Observability\ExternalCallsPanel.tsx`, `swarm-dashboard\src\hooks\useA2AMessages.ts`, `swarm-dashboard\src\hooks\useConsciousnessWebSocket.ts` +6 more
+- `/db_models.py` ← `backend\heretek_swarm\config\crud.py`, `backend\heretek_swarm\config\crud.py`, `backend\heretek_swarm\config\crud.py`, `backend\heretek_swarm\config\crud.py`, `backend\heretek_swarm\config\crud.py` +5 more
+- `swarm-dashboard\src\api\client.ts` ← `swarm-dashboard\src\api\configuration.ts`, `swarm-dashboard\src\api\consensus.ts`, `swarm-dashboard\src\api\deliberation.ts`, `swarm-dashboard\src\api\events.ts`, `swarm-dashboard\src\api\mcp.ts` +4 more
+- `swarm-dashboard\src\components\UI\StatusBadge.tsx` ← `swarm-dashboard\src\components\Agents\AgentCard.tsx`, `swarm-dashboard\src\components\Agents\AgentControls.tsx`, `swarm-dashboard\src\components\Agents\AgentsPage.tsx`, `swarm-dashboard\src\components\Consciousness\ConsciousnessPage.tsx`, `swarm-dashboard\src\components\Dashboard\Layout.tsx` +4 more
+- `swarm-dashboard\src\components\UI\EmptyState.tsx` ← `swarm-dashboard\src\components\Agents\AgentsPage.tsx`, `swarm-dashboard\src\components\Consciousness\ConsciousnessPage.tsx`, `swarm-dashboard\src\components\Deliberation\HistoricalDeliberations.tsx`, `swarm-dashboard\src\components\Deliberation\LiveDeliberationPanel.tsx`, `swarm-dashboard\src\components\Home\HomePage.tsx` +3 more
+- `/learning.py` ← `backend\heretek_swarm\actors\mixins\__init__.py`, `backend\heretek_swarm\collective\adaptive_learning.py`, `backend\heretek_swarm\collective\agent_adaptation.py`, `backend\heretek_swarm\collective\distributed_learning.py`, `backend\heretek_swarm\collective\knowledge_transform.py` +2 more
+- `/result_types.py` ← `backend\heretek_swarm\security\zero_trust\audit_logger.py`, `backend\heretek_swarm\security\zero_trust\context_validator.py`, `backend\heretek_swarm\security\zero_trust\external_validator.py`, `backend\heretek_swarm\security\zero_trust\input_validator.py`, `backend\heretek_swarm\security\zero_trust\orchestrator.py` +2 more
+- `swarm-dashboard\src\components\UI\MetricCard.tsx` ← `swarm-dashboard\src\components\Agents\AgentsPage.tsx`, `swarm-dashboard\src\components\Consciousness\ConsciousnessPage.tsx`, `swarm-dashboard\src\components\Deliberation\LiveDeliberationPanel.tsx`, `swarm-dashboard\src\components\Home\HomePage.tsx`, `swarm-dashboard\src\components\UI\index.ts` +1 more
+
+---
+
+# Events & Queues
+
+## redis-pub-sub
+
+- `precedent_recorded` [channel] — `backend/heretek_swarm/actors/sentinel/agent.py`
+- `swarm.events` [channel] — `backend/heretek_swarm/api/main.py`
+- `agent.>.messages` [channel] — `backend/heretek_swarm/api/main.py`
+- `swarm.external_call` [channel] — `backend/heretek_swarm/api/main.py`
+- `swarm.metrics.consciousness` [channel] — `backend/heretek_swarm/api/main.py`
+
+## eventemitter
+
+- `exec-1` [event] — `tests/test_execution_events.py`
+- `exec-2` [event] — `tests/test_execution_events.py`
+
+---
+
+# Test Coverage
+
+> **9%** of routes and models are covered by tests
+> 134 test files found
+
+## Covered Routes
+
+- GET:/
+- GET:
+- POST:
+- GET:/health
+- GET:/history
+- GET:/audit/statistics
+- GET:/api/health
+- GET:/api/health/live
+- GET:/api/health/ready
+- GET:/api/historian/events
+- GET:/api/supervisor/status
+- GET:/api/memory
+- GET:/api/litellm/metrics
+- GET:/api/a2a/messages
+- POST:/api/prompt
+- POST:/api/observability/events/replay
+- GET:/api/observability/events/replay
+- POST:/api/observability/events/time-travel
+- GET:/api/observability/swarm
+
+## Covered Models
+
+- swarm_memories
+- agent_states
+- workflow_states
+- consensus_votes
+- llm_providers
+- agent_configs
+- external_call_logs
+- infrastructure_config
+
+---
+
+_Generated by [codesight](https://github.com/Houseofmvps/codesight) — see your codebase clearly_

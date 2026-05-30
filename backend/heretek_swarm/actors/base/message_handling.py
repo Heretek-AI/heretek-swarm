@@ -1096,7 +1096,7 @@ Please provide your analysis and recommendation for this collective task."""
                 await asyncio.sleep(self.heartbeat_interval)
             except asyncio.CancelledError:
                 break
-            except Exception:
+            except Exception as e:
                 logger.error(f"[{self.agent_id}] Heartbeat loop error: {e}")
 
     async def _publish_heartbeat_if_connected(self) -> None:

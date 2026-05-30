@@ -183,3 +183,6 @@ backend/agent_workspace/
 .github-scheduler-backups/
 .github/cockpit-prompt-backups/
 .github/scheduler-prompt-backups/
+
+# repowise API keys (local)
+.repowise/.env

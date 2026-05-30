@@ -1,0 +1,457 @@
+<!--
+  AI Readiness Report — canonical template
+  --------------------------------------------
+  This file is the single source of truth for the look & feel of the
+  reports/index.html output. The @ai-readiness-reporter agent MUST load
+  this file, substitute the {{placeholders}} with real data from
+  `agentrc readiness --json`, and write the result to reports/index.html.
+
+  Rules for the agent:
+  - Do NOT change the HTML structure, class names, CSS variables or the
+    inline <style> block. The template is intentionally fixed so every
+    consumer of this plugin gets an identical-looking report.
+  - Replace every {{placeholder}} with concrete data. Repeat the marked
+    blocks (pillar cards, plan rows, maturity rows, extra rows) for
+    each item. Remove blocks that don't apply (e.g. policy section if
+    no policy is active).
+  - Keep the file self-contained: no external CSS/JS, no network fonts.
+  - Preserve the <script type="application/json" id="raw-data"> block
+    and embed the compact AgentRC JSON inside it.
+
+  Placeholders used:
+    {{repoName}}       repository name
+    {{date}}           ISO date the report was generated
+    {{level}}          maturity level number (1-5)
+    {{levelName}}      maturity level name (Functional, Documented, ...)
+    {{overallPct}}     overall readiness as integer percent
+    {{grade}}          letter grade A-F
+    {{passRatePct}}    pass rate as integer percent (or "—" if N/A)
+    {{thresholdPct}}   policy pass-rate threshold (or "—")
+    {{policyName}}     active policy name (omit policy section if none)
+    {{policySummary}}  one-paragraph summary of disabled/overridden criteria
+    {{rawJsonCompact}} compact JSON for embedding
+    {{rawJsonPretty}}  pretty JSON for the <details> view
+
+  Pillar card placeholders (repeat per pillar):
+    {{pillarName}} {{pillarScore}} {{pillarRelevance}} (high|medium|low)
+    {{pillarStatus}} (good|warn|bad — drives bar + dot colour)
+    {{pillarWhat}} {{pillarWhyAi}} {{pillarCurrent}} {{pillarRecommendation}}
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI Readiness — heretek-swarm</title>
+  <style>
+    :root {
+      --bg:#0f1115; --panel:#161a22; --panel-2:#1d2230; --border:#262c3a;
+      --text:#e6e9ef; --muted:#8a93a6; --accent:#6ea8ff;
+      --good:#4ade80; --warn:#fbbf24; --bad:#f87171;
+    }
+    * { box-sizing: border-box; }
+    html,body { margin:0; background:var(--bg); color:var(--text);
+      font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; }
+    a { color: var(--accent); }
+    header { padding: 28px 32px; border-bottom: 1px solid var(--border);
+      background: linear-gradient(180deg,#141823,#0f1115); }
+    header h1 { margin: 0 0 4px; font-size: 22px; }
+    header .meta { color: var(--muted); font-size: 13px; }
+    main { max-width: 1180px; margin: 0 auto; padding: 24px 32px 80px; }
+    .panel { background:var(--panel); border:1px solid var(--border);
+      border-radius:10px; padding:20px; margin-bottom:18px; }
+    .grid { display:grid; gap:16px; }
+    .grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+    .grid.cols-2 { grid-template-columns: 1fr 1fr; }
+    .kpi .num { font-size: 30px; font-weight: 700; }
+    .kpi .lbl { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .8px; }
+    .badge { display:inline-block; padding:3px 10px; border-radius:999px;
+      font-size:12px; font-weight:600; }
+    .lvl-0 { background:#3a1f24; color:#f87171; }
+    .lvl-1 { background:#3a1f24; color:#f87171; }
+    .lvl-2 { background:#3b2c1d; color:#fbbf24; }
+    .lvl-3 { background:#2c3119; color:#d3e85e; }
+    .lvl-4 { background:#1d3325; color:#4ade80; }
+    .lvl-5 { background:#1c2c3d; color:#6ea8ff; }
+    .bar { height:8px; background:var(--panel-2); border-radius:4px; overflow:hidden; }
+    .bar > span { display:block; height:100%; background: var(--accent); }
+    .bar.good > span { background: var(--good); }
+    .bar.warn > span { background: var(--warn); }
+    .bar.bad  > span { background: var(--bad); }
+    table { width:100%; border-collapse:collapse; }
+    th,td { text-align:left; padding:8px 10px; border-bottom:1px solid var(--border); font-size:13px; }
+    th { color:var(--muted); font-weight:500; text-transform:uppercase; font-size:11px; letter-spacing:.8px; }
+    code { background:#0a0c11; padding:1px 6px; border-radius:4px; }
+    h2 { font-size:14px; color:var(--muted); text-transform:uppercase; letter-spacing:.8px; margin:0 0 12px; }
+    .dot { width:8px; height:8px; border-radius:50%; display:inline-block; }
+    .dot.good { background:var(--good); } .dot.warn { background:var(--warn); } .dot.bad { background:var(--bad); }
+    footer { color: var(--muted); font-size: 12px; text-align: center; padding: 20px; }
+
+    /* Pillar cards */
+    .pillar { background:var(--panel-2); border:1px solid var(--border);
+      border-radius:8px; padding:14px 16px; }
+    .pillar h3 { margin:0 0 6px; font-size:15px; display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+    .pillar .why  { color:var(--muted); font-size:13px; margin:8px 0 0; }
+    .pillar .what { font-size:13px; margin:6px 0 0; }
+    .pillar .rec  { font-size:13px; margin:8px 0 0; }
+    .rel { font-size:10px; padding:2px 8px; border-radius:999px; text-transform:uppercase; letter-spacing:.6px; font-weight:600; }
+    .rel.high   { background:#1c2c3d; color:#6ea8ff; }
+    .rel.medium { background:#2c3119; color:#d3e85e; }
+    .rel.low    { background:#262c3a; color:#8a93a6; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>AI Readiness Report</h1>
+    <div class="meta">
+      <strong>heretek-swarm</strong> · Assessed 2026-05-30 ·
+      <span class="badge lvl-0">L0 — Pre-Functional</span> ·
+      Overall <strong>51%</strong> · Grade <strong>F</strong>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- 1. What is AI Readiness? -->
+    <section class="panel">
+      <h2>What is AI Readiness?</h2>
+      <p>AI coding agents are only as effective as the context they receive. AgentRC measures how AI-ready a repo is across <strong>9 pillars</strong> in two categories — Repo Health and AI Setup — and maps the result to a <strong>5-level maturity model</strong>. This report is the <em>Measure</em> step in AgentRC's <em>Measure → Generate → Maintain</em> loop.</p>
+      <p style="color:var(--muted);font-size:13px;margin-top:8px">Each pillar carries an <strong>AI relevance</strong> rating (High / Medium / Low) so you can tell at a glance which gaps most directly affect Copilot's output and which are general engineering hygiene.</p>
+    </section>
+
+    <!-- 2. KPIs -->
+    <section class="grid cols-3">
+      <div class="panel kpi"><span class="lbl">Maturity</span><div class="num"><span class="badge lvl-0">L0 — Pre-Functional</span></div></div>
+      <div class="panel kpi"><span class="lbl">Overall Score</span><div class="num">51%</div><div style="color:var(--muted);font-size:12px">Grade F</div></div>
+      <div class="panel kpi"><span class="lbl">Pass rate</span><div class="num">50%</div><div style="color:var(--muted);font-size:12px">Threshold —</div></div>
+    </section>
+
+    <!-- 3. Maturity progression -->
+    <section class="panel">
+      <h2>Maturity Progression</h2>
+      <table>
+        <thead><tr><th>Level</th><th>Name</th><th>What it means</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>L5</td><td>Autonomous</td><td>Full AI-native development with minimal human oversight</td><td>◻ Not yet</td></tr>
+          <tr><td>L4</td><td>Optimized</td><td>MCP servers, custom agents, AI skills configured</td><td>◻ Not yet</td></tr>
+          <tr><td>L3</td><td>Standardized</td><td>CI/CD, security policies, CODEOWNERS, observability</td><td>◻ 40% (2/5)</td></tr>
+          <tr><td>L2</td><td>Documented</td><td>README, CONTRIBUTING, custom instructions exist</td><td>◻ 50% (4/8)</td></tr>
+          <tr><td>L1</td><td>Functional</td><td>Builds, tests, basic tooling in place</td><td>◻ 60% (3/5)</td></tr>
+          <tr style="background:var(--panel-2)"><td><strong>L0</strong></td><td><strong>Pre-Functional</strong></td><td>Below the minimum bar — critical gaps in every level</td><td>◼ You are here</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 4. Active policy — omitted, no policy active -->
+
+    <!-- 5. Repo Health Breakdown -->
+    <section class="panel">
+      <h2>Repo Health Breakdown</h2>
+      <div class="grid cols-2">
+
+        <div class="pillar">
+          <h3>
+            <span class="dot bad"></span>
+            Style &amp; Validation
+            <span class="rel medium">AI relevance: medium</span>
+            <span style="margin-left:auto;color:var(--muted);font-size:13px">50%</span>
+          </h3>
+          <div class="bar bad"><span style="width:50%"></span></div>
+          <p class="what"><strong>What it measures:</strong> Linter config (ESLint/Biome/Prettier), type-checking (TypeScript/Mypy).</p>
+          <p class="why"><strong>Why it matters for AI:</strong> Lint and type rules are the most explicit form of "house style" an agent can read. With them in place, Copilot generates code that passes review on the first try; without them, the agent has to guess at conventions and PRs churn on style nits.</p>
+          <p class="rec"><strong>Current state:</strong> Type checking is configured (mypy via <code>pyproject.toml</code> with <code>gen_mypy_overrides.py</code>), but no linter config (ESLint, Biome, or Prettier) is present. The repo has Python (<code>pyproject.toml</code>) and JavaScript (<code>swarm-dashboard/package.json</code>) codebases but neither has a linter configuration file.</p>
+          <p class="rec"><strong>Recommendation:</strong> Add a <code>ruff.toml</code> or <code>pyproject.toml [tool.ruff]</code> section for Python linting, and a <code>.prettierrc</code> or <code>biome.json</code> for the frontend. Ruff is the modern Python linter that replaces Flake8/isort/pydocstyle in one tool.</p>
+        </div>
+
+        <div class="pillar">
+          <h3>
+            <span class="dot good"></span>
+            Build System
+            <span class="rel high">AI relevance: high</span>
+            <span style="margin-left:auto;color:var(--muted);font-size:13px">100%</span>
+          </h3>
+          <div class="bar good"><span style="width:100%"></span></div>
+          <p class="what"><strong>What it measures:</strong> Build script in package.json, CI workflow config.</p>
+          <p class="why"><strong>Why it matters for AI:</strong> An agent without a build command cannot self-verify. A canonical build command (and a CI workflow that mirrors it) lets the agent compile, catch type errors, and iterate before opening a PR — the difference between "works on my machine" and a clean check run.</p>
+          <p class="rec"><strong>Current state:</strong> CI workflows are well-configured with 12 workflow files in <code>.github/workflows/</code> including CI, CodeQL, Semgrep, Snyk, Super-Linter, and publish pipelines. The build-script criterion was skipped (no application package detected), but the CI infrastructure is strong.</p>
+          <p class="rec"><strong>Recommendation:</strong> Add explicit <code>build</code> scripts to <code>swarm-dashboard/package.json</code> and document the Python build command (<code>pip install -e backend/</code>) in a way AgentRC can detect. Consider adding a top-level <code>Makefile</code> or <code>justfile</code> with canonical build/test/lint targets.</p>
+        </div>
+
+        <div class="pillar">
+          <h3>
+            <span class="dot bad"></span>
+            Testing
+            <span class="rel high">AI relevance: high</span>
+            <span style="margin-left:auto;color:var(--muted);font-size:13px">0%</span>
+          </h3>
+          <div class="bar bad"><span style="width:0%"></span></div>
+          <p class="what"><strong>What it measures:</strong> Test script, area-scoped test scripts.</p>
+          <p class="why"><strong>Why it matters for AI:</strong> Tests are the agent's automated quality gate. With a <code>test</code> script the agent can run TDD loops and prove behaviour; with area-scoped tests it can run only what's relevant and stay fast. No tests = no objective signal for the agent to know when it's done.</p>
+          <p class="rec"><strong>Current state:</strong> The test-script criterion was skipped because AgentRC didn't detect an application package. However, the repo has a <code>tests/</code> directory with test files and <code>test-results/</code> output. There is no top-level test script or documented test command that AgentRC can discover.</p>
+          <p class="rec"><strong>Recommendation:</strong> Add a <code>[tool.pytest.ini_options]</code> section to <code>pyproject.toml</code> with <code>testpaths = ["tests"]</code> and document <code>pytest</code> as the test command. Add a <code>"test"</code> script to <code>swarm-dashboard/package.json</code>. Consider area-scoped scripts like <code>test:backend</code> and <code>test:frontend</code>.</p>
+        </div>
+
+        <div class="pillar">
+          <h3>
+            <span class="dot bad"></span>
+            Documentation
+            <span class="rel high">AI relevance: high</span>
+            <span style="margin-left:auto;color:var(--muted);font-size:13px">50%</span>
+          </h3>
+          <div class="bar bad"><span style="width:50%"></span></div>
+          <p class="what"><strong>What it measures:</strong> README, CONTRIBUTING, area-scoped READMEs.</p>
+          <p class="why"><strong>Why it matters for AI:</strong> Docs are the agent's primary <em>context source</em>. README explains the stack, CONTRIBUTING explains the process, area READMEs explain local conventions. Repos with rich docs see dramatically better Copilot suggestions because the model is grounded in real intent instead of guessing from filenames.</p>
+          <p class="rec"><strong>Current state:</strong> README.md is present and comprehensive (covers installation, Docker Compose, quick start, CLI reference). The <code>docs/</code> directory has 15+ architecture and reference documents. However, CONTRIBUTING.md is missing — there's no documented contributor workflow for new developers or AI agents.</p>
+          <p class="rec"><strong>Recommendation:</strong> Create <code>CONTRIBUTING.md</code> documenting: local dev setup, branch naming conventions, PR process, testing requirements, and code style expectations. This is the single most important doc for AI agents to understand <em>how</em> to contribute correctly.</p>
+        </div>
+
+        <div class="pillar">
+          <h3>
+            <span class="dot good"></span>
+            Dev Environment
+            <span class="rel medium">AI relevance: medium</span>
+            <span style="margin-left:auto;color:var(--muted);font-size:13px">100%</span>
+          </h3>
+          <div class="bar good"><span style="width:100%"></span></div>
+          <p class="what"><strong>What it measures:</strong> Lockfile, <code>.env.example</code>.</p>
+          <p class="why"><strong>Why it matters for AI:</strong> A lockfile pins versions so the agent's install matches CI. <code>.env.example</code> tells the agent which env vars exist without leaking secrets. Together they make the agent's local runs reproducible and stop it from inventing config that doesn't apply.</p>
+          <p class="rec"><strong>Current state:</strong> Lockfile is present (AgentRC detected it). An environment example file is present (likely <code>.env.example</code> referenced in README.md for Docker Compose setup). Both criteria pass.</p>
+          <p class="rec"><strong>Recommendation:</strong> No action needed. Consider adding a <code>.env.example</code> comment header explaining each variable's purpose for AI agent context.</p>
+        </div>
+
+        <div class="pillar">
+          <h3>
+            <span class="dot bad"></span>
+            Code Quality
+            <span class="rel medium">AI relevance: medium</span>
+            <span style="margin-left:auto;color:var(--muted);font-size:13px">0%</span>
+          </h3>
+          <div class="bar bad"><span style="width:0%"></span></div>
+          <p class="what"><strong>What it measures:</strong> Formatter config (Prettier/Biome).</p>
+          <p class="why"><strong>Why it matters for AI:</strong> A formatter config means the agent's output lands pre-formatted — no diff noise, no review comments about whitespace. Without it, AI-generated PRs trigger style discussions that drown out real feedback.</p>
+          <p class="rec"><strong>Current state:</strong> No formatter configuration detected. Neither the Python backend nor the JavaScript frontend has a Prettier, Biome, or equivalent formatter config. The Super-Linter CI workflow provides some linting in CI, but there's no local formatter for agents to use.</p>
+          <p class="rec"><strong>Recommendation:</strong> Add <code>.prettierrc</code> at repo root for the frontend and configure <code>ruff format</code> (or <code>black</code>) for the Python backend. Document the format command in CONTRIBUTING.md so agents know to run it before committing.</p>
+        </div>
+
+        <div class="pillar">
+          <h3>
+            <span class="dot bad"></span>
+            Observability
+            <span class="rel low">AI relevance: low</span>
+            <span style="margin-left:auto;color:var(--muted);font-size:13px">0%</span>
+          </h3>
+          <div class="bar bad"><span style="width:0%"></span></div>
+          <p class="what"><strong>What it measures:</strong> OpenTelemetry / Pino / Winston / Bunyan.</p>
+          <p class="why"><strong>Why it matters for AI:</strong> When logging/tracing libraries are visible in the dependency graph, the agent instruments new code with the same patterns instead of <code>console.log</code>. Lower leverage than docs/tests because the agent only needs it for the subset of work that touches runtime instrumentation.</p>
+          <p class="rec"><strong>Current state:</strong> AgentRC did not detect observability dependencies. However, <code>pyproject.toml</code> actually lists <code>opentelemetry-api</code>, <code>opentelemetry-sdk</code>, <code>opentelemetry-exporter-otlp</code>, <code>structlog</code>, and <code>prometheus-client</code>. This appears to be a false negative — the dependencies exist but AgentRC may not have detected them from the Python project format. The <code>docs/PROMETHEUS_METRICS.md</code> and <code>docs/MONITORING.md</code> files confirm observability is a first-class concern.</p>
+          <p class="rec"><strong>Recommendation:</strong> Verify that OpenTelemetry is properly initialized in the application entrypoint. Consider adding a <code>logging.yaml</code> or <code>otel-config.yaml</code> at the repo root to make the observability setup explicitly discoverable by AgentRC.</p>
+        </div>
+
+        <div class="pillar">
+          <h3>
+            <span class="dot bad"></span>
+            Security &amp; Governance
+            <span class="rel low">AI relevance: low</span>
+            <span style="margin-left:auto;color:var(--muted);font-size:13px">25%</span>
+          </h3>
+          <div class="bar bad"><span style="width:25%"></span></div>
+          <p class="what"><strong>What it measures:</strong> LICENSE, CODEOWNERS, SECURITY.md, Dependabot.</p>
+          <p class="why"><strong>Why it matters for AI:</strong> CODEOWNERS routes AI-generated PRs to the right reviewers automatically. SECURITY.md and Dependabot tell the agent how to handle vulnerability reports and dependency bumps. Important for governance, but rarely changes what code the agent writes day-to-day.</p>
+          <p class="rec"><strong>Current state:</strong> LICENSE is present (MIT). However, CODEOWNERS, SECURITY.md, and Dependabot are all missing. The repo has strong security scanning in CI (CodeQL, Semgrep, Snyk) but lacks the governance files that tell humans and agents <em>who</em> reviews what and <em>how</em> to report vulnerabilities.</p>
+          <p class="rec"><strong>Recommendation:</strong> Create <code>CODEOWNERS</code> assigning ownership of <code>backend/</code>, <code>swarm-dashboard/</code>, <code>docs/</code>, and <code>.github/</code>. Create <code>SECURITY.md</code> with vulnerability reporting instructions. Add <code>.github/dependabot.yml</code> for automated dependency updates (pip and npm).</p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 6. AI Setup Breakdown -->
+    <section class="panel">
+      <h2>AI Setup Breakdown</h2>
+      <div class="grid cols-2">
+
+        <div class="pillar">
+          <h3>
+            <span class="dot warn"></span>
+            AI Tooling
+            <span class="rel high">AI relevance: high</span>
+            <span style="margin-left:auto;color:var(--muted);font-size:13px">60%</span>
+          </h3>
+          <div class="bar warn"><span style="width:60%"></span></div>
+          <p class="what"><strong>What it measures:</strong> Custom instructions (<code>.github/copilot-instructions.md</code>, <code>AGENTS.md</code>, <code>CLAUDE.md</code>), MCP servers, agent configs, AI skills.</p>
+          <p class="why"><strong>Why it matters for AI:</strong> The direct interface between repo and AI agents — the highest-leverage pillar in the entire model. A good <code>AGENTS.md</code> is worth more than every other pillar combined: it tells the agent your stack, conventions, build commands, test commands, and review expectations in one place. MCP servers and custom skills extend the agent's reach into your tools.</p>
+          <p class="rec"><strong>Current state:</strong> Strong on advanced tooling — MCP config is present, custom agents exist in <code>.github/agents/</code>, and Copilot/Claude skills are configured in <code>.github/skills/</code> (30+ skills including acreadiness-assess, code-review-excellence, etc.). However, the foundational piece is missing: no <code>AGENTS.md</code>, <code>.github/copilot-instructions.md</code>, or <code>CLAUDE.md</code> at the repo root. The <code>docs/AGENTS.md</code> exists but describes the swarm agents themselves, not instructions for AI coding agents. The <code>heretek-swarm/CLAUDE.md</code> is a CopilotKit demo file, not repo-level agent guidance. APM (<code>apm.yml</code>) is also missing.</p>
+          <p class="rec"><strong>Recommendation:</strong> Create <code>AGENTS.md</code> at the repo root with: stack overview (Python 3.11+/FastAPI/React), build commands, test commands, code conventions, and the 23-agent architecture summary. This single file will have more impact on AI agent output quality than any other change. Also create <code>apm.yml</code> for shared agent package management.</p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 7. Extras -->
+    <section class="panel">
+      <h2>Extras (informational, do not affect score)</h2>
+      <table>
+        <thead><tr><th></th><th>Extra</th><th>Status</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>◻</td><td>AGENTS.md present</td><td>Missing</td><td style="color:var(--muted)">No AGENTS.md at repo root to guide coding agents. docs/AGENTS.md exists but describes swarm agents, not AI coding instructions.</td></tr>
+          <tr><td>◻</td><td>Pull request template</td><td>Missing</td><td style="color:var(--muted)">No PR template for consistent review submissions.</td></tr>
+          <tr><td>✅</td><td>Pre-commit hooks</td><td>Configured</td><td style="color:var(--muted)">Pre-commit hooks are set up and active.</td></tr>
+          <tr><td>✅</td><td>Architecture guide</td><td>Present</td><td style="color:var(--muted)">docs/ARCHITECTURE.md, docs/AGENT_ARCHITECTURE.md, and 15+ docs provide strong architectural documentation.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 8. Prioritised Remediation Plan -->
+    <section class="panel">
+      <h2>Prioritised Remediation Plan</h2>
+
+      <h3 style="color:var(--bad)">🔴 Fix First (high impact / low effort)</h3>
+      <table><thead><tr><th>#</th><th>Finding</th><th>File / config</th><th>Why it matters</th></tr></thead><tbody>
+        <tr>
+          <td>1</td>
+          <td>Missing AI agent instructions</td>
+          <td><code>AGENTS.md</code> (repo root)</td>
+          <td>Highest-leverage fix. Tells every AI coding agent your stack, conventions, build/test commands, and architecture. Without it, agents guess — and get it wrong. Create one file with: Python 3.11+/FastAPI stack, pytest for tests, ruff for linting, the 23-agent swarm architecture, and the Docker Compose dev workflow.</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>No linter configuration</td>
+          <td><code>pyproject.toml [tool.ruff]</code> + <code>.prettierrc</code></td>
+          <td>Without lint rules, AI-generated code arrives with inconsistent style. Ruff for Python (replaces flake8/isort/pydocstyle) and Prettier for the React frontend will eliminate style churn in PRs.</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>Missing security policy</td>
+          <td><code>SECURITY.md</code></td>
+          <td>Tells security researchers and AI agents how to report vulnerabilities. Required for responsible disclosure. Simple file with email/process for reporting.</td>
+        </tr>
+      </tbody></table>
+
+      <h3 style="color:var(--warn)">🟡 Fix Next (medium impact / low effort)</h3>
+      <table><thead><tr><th>#</th><th>Finding</th><th>File / config</th><th>Why</th></tr></thead><tbody>
+        <tr>
+          <td>4</td>
+          <td>Missing contributor guide</td>
+          <td><code>CONTRIBUTING.md</code></td>
+          <td>Essential for AI agents to understand the PR process, branch naming, testing requirements, and code review expectations. Without it, agents submit PRs that don't match your workflow.</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td>No formatter config</td>
+          <td><code>.prettierrc</code> or <code>biome.json</code></td>
+          <td>AI-generated code lands with inconsistent formatting, creating diff noise. A shared formatter config eliminates this class of review comment entirely.</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td>Missing CODEOWNERS</td>
+          <td><code>CODEOWNERS</code></td>
+          <td>Routes AI-generated PRs to the right reviewers automatically. Without it, PRs may sit unreviewed or go to the wrong people.</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td>Missing APM manifest</td>
+          <td><code>apm.yml</code></td>
+          <td>Enables shared agent package management across repos. Low effort to create, enables future AI tooling consistency.</td>
+        </tr>
+      </tbody></table>
+
+      <h3 style="color:var(--accent)">🔵 Plan (medium impact / medium effort)</h3>
+      <table><thead><tr><th>#</th><th>Finding</th><th>File / config</th><th>Why</th></tr></thead><tbody>
+        <tr>
+          <td>8</td>
+          <td>Missing Dependabot config</td>
+          <td><code>.github/dependabot.yml</code></td>
+          <td>Automates dependency updates for pip and npm. Reduces the burden of keeping dependencies current and secure. Configure with weekly schedules for both ecosystems.</td>
+        </tr>
+        <tr>
+          <td>9</td>
+          <td>Observability config not discoverable</td>
+          <td><code>otel-config.yaml</code> or logging init</td>
+          <td>Dependencies exist (OpenTelemetry, structlog, Prometheus) but aren't surfaced in a way AgentRC detects. Add an explicit config file or document the initialization pattern so agents instrument new code correctly.</td>
+        </tr>
+        <tr>
+          <td>10</td>
+          <td>Test scripts not discoverable</td>
+          <td><code>pyproject.toml [tool.pytest.ini_options]</code></td>
+          <td>Tests exist but AgentRC can't find them. Add pytest config to pyproject.toml and a <code>"test"</code> script to <code>swarm-dashboard/package.json</code> so agents can run tests autonomously.</td>
+        </tr>
+      </tbody></table>
+    </section>
+
+    <!-- 9. Next steps -->
+    <section class="panel">
+      <h2>Next Steps</h2>
+      <ol>
+        <li><strong>Generate instructions:</strong> Run <code>agentrc instructions --output .github/copilot-instructions.md</code> (or use the <code>acreadiness-generate-instructions</code> skill) to auto-generate tailored AI agent guidance from your codebase.</li>
+        <li><strong>Create AGENTS.md:</strong> Write a concise AGENTS.md at the repo root — this is the single highest-leverage action you can take. Include stack, conventions, build/test commands, and architecture overview.</li>
+        <li><strong>Address 🔴 Fix First items:</strong> AGENTS.md, linter config (ruff + prettier), and SECURITY.md — all three are single-file additions with outsized impact.</li>
+        <li><strong>Re-run this report</strong> after addressing Fix First items to confirm score improvement. Target L1 (Functional) as the immediate milestone.</li>
+        <li><strong>Codify standards:</strong> Create an <code>agentrc.config.json</code> with a policy (e.g., <code>strict.json</code>) and wire <code>agentrc readiness --fail-level 1</code> into CI to prevent regressions.</li>
+      </ol>
+    </section>
+
+    <!-- 10. Raw data -->
+    <details class="panel">
+      <summary style="cursor:pointer;color:var(--muted)">Raw AgentRC JSON</summary>
+      <pre style="overflow:auto;font-size:11px;color:#b8c0d2">{
+  "ok": true,
+  "status": "success",
+  "data": {
+    "repoPath": "C:\\Users\\derek\\Desktop\\heretek-swarm",
+    "generatedAt": "2026-05-30T19:31:29.706Z",
+    "isMonorepo": false,
+    "apps": [],
+    "pillars": [
+      {"id": "style-validation", "name": "Style & Validation", "passed": 1, "total": 2, "passRate": 0.5},
+      {"id": "build-system", "name": "Build System", "passed": 1, "total": 1, "passRate": 1},
+      {"id": "testing", "name": "Testing", "passed": 0, "total": 0, "passRate": 0},
+      {"id": "documentation", "name": "Documentation", "passed": 1, "total": 2, "passRate": 0.5},
+      {"id": "dev-environment", "name": "Dev Environment", "passed": 2, "total": 2, "passRate": 1},
+      {"id": "code-quality", "name": "Code Quality", "passed": 0, "total": 1, "passRate": 0},
+      {"id": "observability", "name": "Observability", "passed": 0, "total": 1, "passRate": 0},
+      {"id": "security-governance", "name": "Security & Governance", "passed": 1, "total": 4, "passRate": 0.25},
+      {"id": "ai-tooling", "name": "AI Tooling", "passed": 3, "total": 5, "passRate": 0.6}
+    ],
+    "achievedLevel": 0,
+    "criteria": [
+      {"id": "lint-config", "status": "fail", "impact": "high"},
+      {"id": "typecheck-config", "status": "pass", "impact": "medium"},
+      {"id": "build-script", "status": "skip"},
+      {"id": "ci-config", "status": "pass", "impact": "high"},
+      {"id": "test-script", "status": "skip"},
+      {"id": "readme", "status": "pass", "impact": "high"},
+      {"id": "contributing", "status": "fail", "impact": "medium"},
+      {"id": "lockfile", "status": "pass", "impact": "high"},
+      {"id": "env-example", "status": "pass", "impact": "medium"},
+      {"id": "format-config", "status": "fail", "impact": "medium"},
+      {"id": "codeowners", "status": "fail", "impact": "medium"},
+      {"id": "license", "status": "pass", "impact": "medium"},
+      {"id": "security-policy", "status": "fail", "impact": "high"},
+      {"id": "dependabot", "status": "fail", "impact": "medium"},
+      {"id": "observability", "status": "fail", "impact": "medium"},
+      {"id": "custom-instructions", "status": "fail", "impact": "high"},
+      {"id": "instructions-consistency", "status": "skip"},
+      {"id": "mcp-config", "status": "pass", "impact": "high"},
+      {"id": "custom-agents", "status": "pass", "impact": "medium"},
+      {"id": "copilot-skills", "status": "pass", "impact": "medium"},
+      {"id": "apm-config", "status": "fail", "impact": "medium"},
+      {"id": "apm-locked-deps", "status": "skip"},
+      {"id": "apm-ci-integration", "status": "skip"}
+    ],
+    "extras": [
+      {"id": "agents-doc", "status": "fail"},
+      {"id": "pr-template", "status": "fail"},
+      {"id": "pre-commit", "status": "pass"},
+      {"id": "architecture-doc", "status": "pass"}
+    ]
+  }
+}</pre>
+    </details>
+    <script type="application/json" id="raw-data">{"ok":true,"status":"success","data":{"repoPath":"C:\\Users\\derek\\Desktop\\heretek-swarm","generatedAt":"2026-05-30T19:31:29.706Z","isMonorepo":false,"apps":[],"pillars":[{"id":"style-validation","name":"Style & Validation","passed":1,"total":2,"passRate":0.5},{"id":"build-system","name":"Build System","passed":1,"total":1,"passRate":1},{"id":"testing","name":"Testing","passed":0,"total":0,"passRate":0},{"id":"documentation","name":"Documentation","passed":1,"total":2,"passRate":0.5},{"id":"dev-environment","name":"Dev Environment","passed":2,"total":2,"passRate":1},{"id":"code-quality","name":"Code Quality","passed":0,"total":1,"passRate":0},{"id":"observability","name":"Observability","passed":0,"total":1,"passRate":0},{"id":"security-governance","name":"Security & Governance","passed":1,"total":4,"passRate":0.25},{"id":"ai-tooling","name":"AI Tooling","passed":3,"total":5,"passRate":0.6}],"achievedLevel":0,"criteria":[{"id":"lint-config","status":"fail","impact":"high"},{"id":"typecheck-config","status":"pass","impact":"medium"},{"id":"build-script","status":"skip"},{"id":"ci-config","status":"pass","impact":"high"},{"id":"test-script","status":"skip"},{"id":"readme","status":"pass","impact":"high"},{"id":"contributing","status":"fail","impact":"medium"},{"id":"lockfile","status":"pass","impact":"high"},{"id":"env-example","status":"pass","impact":"medium"},{"id":"format-config","status":"fail","impact":"medium"},{"id":"codeowners","status":"fail","impact":"medium"},{"id":"license","status":"pass","impact":"medium"},{"id":"security-policy","status":"fail","impact":"high"},{"id":"dependabot","status":"fail","impact":"medium"},{"id":"observability","status":"fail","impact":"medium"},{"id":"custom-instructions","status":"fail","impact":"high"},{"id":"instructions-consistency","status":"skip"},{"id":"mcp-config","status":"pass","impact":"high"},{"id":"custom-agents","status":"pass","impact":"medium"},{"id":"copilot-skills","status":"pass","impact":"medium"},{"id":"apm-config","status":"fail","impact":"medium"},{"id":"apm-locked-deps","status":"skip"},{"id":"apm-ci-integration","status":"skip"}],"extras":[{"id":"agents-doc","status":"fail"},{"id":"pr-template","status":"fail"},{"id":"pre-commit","status":"pass"},{"id":"architecture-doc","status":"pass"}]}}<\/script>
+  </main>
+
+  <footer>
+    Generated by <a href="https://github.com/github/awesome-copilot/tree/main/plugins/acreadiness-cockpit">acreadiness-cockpit</a>
+    · powered by <a href="https://github.com/microsoft/agentrc">microsoft/agentrc</a>.
+  </footer>
+</body>
+</html>
