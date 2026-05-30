@@ -285,19 +285,55 @@ class ResearchModule:
 
         return result
 
-    async def _gather_findings(self, _query: ResearchQuery) -> list[ResearchFinding]:
+    async def _gather_findings(self, query: ResearchQuery) -> list[ResearchFinding]:
         """
-        Gather findings for a research query.
-
-        Args:
-            query: Research query specification
-
-        Returns:
-            List of research findings
+        Gather findings for a research query via hybrid RAG retrieval.
         """
-        # This is a placeholder that would integrate with actual data sources
-        # In production, this would query APIs, databases, web sources, etc.
-        return []
+        findings: list[ResearchFinding] = []
+        try:
+            from heretek_swarm.rag.hybrid_retriever import HybridRetriever
+
+            retriever = HybridRetriever()
+            await retriever.initialize()
+            chunks = await retriever.retrieve(query.topic, top_k=query.max_sources or 10)
+            for i, chunk in enumerate(chunks):
+                source_name = getattr(chunk, "source", None) or chunk.metadata.get("source", "rag")
+                findings.append(
+                    ResearchFinding(
+                        finding_id=f"finding_{i}",
+                        topic=query.topic,
+                        content=getattr(chunk, "content", str(chunk)),
+                        finding_type=FindingType.FACT,
+                        source=ResearchSource(
+                            source_id=str(source_name),
+                            source_type="rag",
+                            name=str(source_name),
+                            credibility=SourceCredibility.MEDIUM,
+                        ),
+                        confidence=float(getattr(chunk, "score", 0.7)),
+                        metadata={"query_depth": query.depth.value},
+                    )
+                )
+        except Exception as e:
+            logger.warning("research_rag_unavailable", error=str(e), topic=query.topic)
+
+        if not findings and query.topic:
+            findings.append(
+                ResearchFinding(
+                    finding_id="finding_0",
+                    topic=query.topic,
+                    content=f"No external sources retrieved for: {query.topic}",
+                    finding_type=FindingType.OPINION,
+                    source=ResearchSource(
+                        source_id="internal",
+                        source_type="internal",
+                        name="internal",
+                        credibility=SourceCredibility.LOW,
+                    ),
+                    confidence=0.3,
+                )
+            )
+        return findings
 
     def _detect_contradictions(self, findings: list[ResearchFinding]) -> list[ResearchFinding]:
         """

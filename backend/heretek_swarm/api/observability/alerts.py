@@ -5,9 +5,11 @@ from datetime import UTC, datetime
 from typing import Any
 
 import structlog
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException, Query, Request
 
 from heretek_swarm.security.zero_trust import LayerResult, ZeroTrustResult
+
+from heretek_swarm.gateway.auth import verify_auth
 
 from . import (
     check_rate_limit,
@@ -20,7 +22,10 @@ router = APIRouter(prefix="", tags=["observability"])
 
 
 @router.get("/alerts")
-async def get_alerts(request: Request) -> dict[str, Any]:
+async def get_alerts(
+    request: Request,
+    authenticated: str = Depends(verify_auth),
+) -> dict[str, Any]:
     """Get active alerts and anomalies.
 
     Returns alerts for:

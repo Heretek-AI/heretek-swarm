@@ -1127,22 +1127,16 @@ async def prompt_endpoint(request: PromptRequest, authenticated: str = Depends(v
     # Determine active participants from the supervisor
     participants: list[str] = []
     if supervisor is not None and supervisor.actors:
-        participants = [
-            agent_id
-            for agent_id in supervisor.actors
-            if agent_id.startswith(("agent", "agent_"))
-        ]
-        if not participants:
-            # Grab any 5 actors as fallback
-            participants = list(supervisor.actors.keys())[:5]
+        max_participants = int(os.environ.get("HERETEK_MAX_DELIBERATION_PARTICIPANTS", "5"))
+        participants = list(supervisor.actors.keys())[:max_participants]
         logger.info("prompt_participants", count=len(participants), agents=participants)
 
-    # If no supervisor actors exist, use archetype placeholders
+    # If no supervisor actors exist, return empty — client should spawn agents first
     if not participants:
-        participants = [
-            "analyst_agent", "critic_agent", "synthesizer_agent",
-            "explorer_agent", "validator_agent",
-        ]
+        raise HTTPException(
+            status_code=503,
+            detail="No agents available in supervisor registry. Deploy agents before starting deliberation.",
+        )
 
     # Check whether we have a working LLM provider
     llm_available = bool(

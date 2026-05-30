@@ -541,7 +541,7 @@ async def get_config_status() -> dict[str, Any]:
     # Check what's already configured in the database
     configured_providers = []
     try:
-        providers = await service.list_llm_providers(enabled_only=False)
+        providers = await service.list_llm_providers(include_disabled=True)
         configured_providers = [
             {
                 "id": str(p.id),
@@ -1024,7 +1024,7 @@ async def _create_single_provider(
         extra_config=provider_config.get("extra_config", {}),
     )
 
-    created = await service.create_llm_provider(create_data, changed_by="wizard")
+    created = await service.create_llm_provider(create_data, user="wizard")
     return {
         "id": str(created.id),
         "name": created.provider_name,

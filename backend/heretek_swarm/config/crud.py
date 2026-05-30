@@ -44,6 +44,9 @@ from .models import (
     UserConfiguration,
     UserConfigurationCreate,
     UserConfigurationUpdate,
+    ConfigurationExport,
+    ImportOptions,
+    ImportResult,
 )
 
 if TYPE_CHECKING:
@@ -1007,45 +1010,99 @@ class ConfigurationServiceCrud:
     async def export_configurations(
         self: ConfigurationService,
         config_type: ConfigType | None = None,  # noqa: ARG002
-        include_sensitive: bool = False,  # noqa: ARG002
-    ) -> dict[str, Any]:
+        include_sensitive: bool = False,
+        exported_by: str | None = None,
+    ) -> ConfigurationExport:
         """
         Export configurations.
 
         Args:
             config_type: Optional type filter
             include_sensitive: Whether to include sensitive data
+            exported_by: User performing the export
 
         Returns:
-            Export data dictionary
+            ConfigurationExport bundle
         """
-        return {
-            "version": "1.0",
-            "exported_at": datetime.now(UTC).isoformat(),
-            "configurations": [],
-        }
+        llm_providers = await self.list_llm_providers(include_disabled=True)
+        embedding_providers = await self.list_embedding_providers(include_disabled=True)
+        agent_configs = await self.list_agent_configs(include_disabled=True)
+        user_configs = await self.list_configs(include_sensitive=include_sensitive)
+
+        if not include_sensitive:
+            for provider in llm_providers:
+                provider.api_key = None
+            for provider in embedding_providers:
+                provider.api_key = None
+
+        return ConfigurationExport(
+            exported_by=exported_by,
+            user_configurations=user_configs,
+            llm_providers=llm_providers,
+            embedding_providers=embedding_providers,
+            agent_configs=agent_configs,
+        )
 
     async def import_configurations(
         self: ConfigurationService,
-        import_data: dict[str, Any],  # noqa: ARG002
-        options: dict[str, Any] | None = None,  # noqa: ARG002
-    ) -> dict[str, Any]:
+        import_data: Any,
+        options: ImportOptions | None = None,
+        user: str | None = None,  # noqa: ARG002
+    ) -> ImportResult:
         """
         Import configurations.
 
         Args:
-            import_data: Data to import
+            import_data: Data to import (ConfigurationImport or dict)
             options: Import options
+            user: User performing import
 
         Returns:
-            Import result
+            ImportResult
         """
-        return {
-            "imported": 0,
-            "updated": 0,
-            "failed": 0,
-            "errors": [],
-        }
+        _ = user
+        opts = options or ImportOptions()
+        payload = import_data.model_dump() if hasattr(import_data, "model_dump") else import_data
+        imported: dict[str, int] = {"user_configurations": 0, "llm_providers": 0, "embedding_providers": 0, "agent_configs": 0}
+        errors: list[str] = []
+
+        if opts.import_llm_providers and payload.get("llm_providers"):
+            for row in payload["llm_providers"]:
+                try:
+                    await self.create_llm_provider(LLMProviderCreate(**row), user=user)
+                    imported["llm_providers"] += 1
+                except Exception as e:
+                    errors.append(f"llm_provider: {e}")
+
+        if opts.import_embedding_providers and payload.get("embedding_providers"):
+            for row in payload["embedding_providers"]:
+                try:
+                    await self.create_embedding_provider(EmbeddingProviderCreate(**row), user=user)
+                    imported["embedding_providers"] += 1
+                except Exception as e:
+                    errors.append(f"embedding_provider: {e}")
+
+        if opts.import_agent_configs and payload.get("agent_configs"):
+            for row in payload["agent_configs"]:
+                try:
+                    await self.create_agent_config(AgentConfigCreate(**row), user=user)
+                    imported["agent_configs"] += 1
+                except Exception as e:
+                    errors.append(f"agent_config: {e}")
+
+        if opts.import_user_configs and payload.get("user_configurations"):
+            for row in payload["user_configurations"]:
+                try:
+                    await self.create_config(UserConfigurationCreate(**row), user=user)
+                    imported["user_configurations"] += 1
+                except Exception as e:
+                    errors.append(f"user_configuration: {e}")
+
+        return ImportResult(
+            success=len(errors) == 0,
+            imported_count=imported,
+            errors=errors,
+        )
 
     # =====================================================================
     # Validation

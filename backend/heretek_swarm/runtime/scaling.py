@@ -953,13 +953,30 @@ class StateSynchronizer:
             logger.warning("state_broadcast_failed", error=str(e))
 
     async def _persist_state(self, key: str, value: Any):
-        """Persist state to PostgreSQL."""
-        # Simulated persistence
-        # In real implementation, would use asyncpg or similar
+        """Persist state to Redis (or local fallback)."""
+        import json
 
-    async def _fetch_state(self, _key: str) -> Any | None:
-        """Fetch state from PostgreSQL."""
-        # Simulated fetch
+        try:
+            if self._redis:
+                await self._redis.set(
+                    f"{self.channel_prefix}persist:{key}",
+                    json.dumps({"value": value, "version": self._state_version}),
+                )
+        except Exception as e:
+            logger.warning("state_persist_failed", key=key, error=str(e))
+
+    async def _fetch_state(self, key: str) -> Any | None:
+        """Fetch state from Redis."""
+        import json
+
+        try:
+            if self._redis:
+                raw = await self._redis.get(f"{self.channel_prefix}persist:{key}")
+                if raw:
+                    payload = json.loads(raw)
+                    return payload.get("value")
+        except Exception as e:
+            logger.warning("state_fetch_failed", key=key, error=str(e))
         return None
 
     async def recover_state(self) -> dict[str, Any]:

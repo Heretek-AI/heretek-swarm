@@ -287,6 +287,7 @@ class SparseRetrievalStrategy(BaseRetrievalStrategy):
         self._document_lengths: dict[str, int] = {}
         self._avg_doc_length: float = 0.0
         self._num_documents: int = 0
+        self._term_document_freq: dict[str, int] = {}
         self._idf_cache: dict[str, float] = {}
 
     @property
@@ -299,6 +300,20 @@ class SparseRetrievalStrategy(BaseRetrievalStrategy):
 
         # Simple tokenization - can be enhanced with stemming, lemmatization
         return re.findall(r"\b[a-zA-Z][a-zA-Z0-9-]*[a-zA-Z0-9]\b|\b[a-zA-Z]\b", text.lower())
+
+    def _register_document(self, doc_id: str, content: str) -> None:
+        """Update corpus statistics for BM25 IDF from a document."""
+        if doc_id in self._document_lengths:
+            return
+        tokens = self._tokenize(content)
+        self._document_lengths[doc_id] = len(tokens)
+        self._num_documents = len(self._document_lengths)
+        if self._num_documents:
+            self._avg_doc_length = sum(self._document_lengths.values()) / self._num_documents
+        unique_terms = set(tokens)
+        for term in unique_terms:
+            self._term_document_freq[term] = self._term_document_freq.get(term, 0) + 1
+        self._idf_cache.clear()
 
     def _calculate_bm25_score(
         self,
@@ -322,13 +337,11 @@ class SparseRetrievalStrategy(BaseRetrievalStrategy):
         if self._num_documents == 0:
             return 0.0
 
-        # Calculate IDF
+        # Calculate IDF using Robertson–Spark Jones BM25 IDF
         if term not in self._idf_cache:
-            # IDF would be calculated from document frequency
-            # This is a simplified version
-            self._idf_cache[term] = math.log(
-                (self._num_documents + 1) / (1 + 1)  # Placeholder
-            )
+            df = self._term_document_freq.get(term, 0)
+            n = max(self._num_documents, 1)
+            self._idf_cache[term] = math.log((n - df + 0.5) / (df + 0.5) + 1.0)
 
         idf = self._idf_cache[term]
 
@@ -377,9 +390,12 @@ class SparseRetrievalStrategy(BaseRetrievalStrategy):
                 b=self.b,
             )
 
-            # Convert to RetrievalResult
+            # Convert to RetrievalResult and refresh corpus stats from hits
             retrieval_results = []
             for doc in results:
+                content = doc.get("content", "")
+                doc_id = doc.get("id", doc.get("source", "unknown"))
+                self._register_document(doc_id, content)
                 retrieval_results.append(  # noqa: PERF401
                     RetrievalResult(
                         content=doc.get("content", ""),

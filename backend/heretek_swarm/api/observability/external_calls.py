@@ -6,7 +6,7 @@ from datetime import UTC, datetime
 from typing import Any
 
 import structlog
-from fastapi import APIRouter, HTTPException, Query, Request
+from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from sqlalchemy import func, select
 
 from heretek_swarm.models.external_call_log import ExternalCallLog
@@ -17,6 +17,8 @@ from heretek_swarm.schemas.external_call_log import (
     ExternalCallLogListResponse,
     ExternalCallLogResponse,
 )
+
+from heretek_swarm.gateway.auth import verify_auth
 
 from . import (
     _get_external_call_log_session_factory,
@@ -44,6 +46,7 @@ async def get_external_calls(
     ),
     limit: int = Query(default=100, ge=1, le=1000, description="Maximum records to return"),
     offset: int = Query(default=0, ge=0, description="Number of records to skip"),
+    authenticated: str = Depends(verify_auth),
 ) -> ExternalCallLogListResponse:
     """Get external call logs with optional filtering and pagination."""
     client_id = request.client.host if request.client else "unknown"
