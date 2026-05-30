@@ -14,14 +14,17 @@
 
 import { test, expect } from '@playwright/test';
 
-// Test credentials from .env
+// Test credentials from environment
 const API_HOST = 'http://localhost:8000';
-const API_KEY = 'htsk_42a231c6b47abf4cffd8bbe842789fbf';
+const API_KEY = process.env.E2E_API_KEY;
 
 /**
  * Shared test setup - bypass wizard via localStorage and wait for dashboard
  */
 async function setupDashboard(page: any) {
+  if (!API_KEY) {
+    throw new Error('Missing E2E_API_KEY environment variable');
+  }
   await page.goto('/');
   await page.evaluate(() => localStorage.clear());
   await page.evaluate(() => {
