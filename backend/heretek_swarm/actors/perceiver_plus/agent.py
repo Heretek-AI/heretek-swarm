@@ -156,7 +156,7 @@ class PerceiverPlusAgent(
         self._active_deliberations: dict[str, str] = {}
         self._pattern_emitted: set[str] = set()
 
-        logger.info("[{self.agent_id}] Perceiver+ agent initialized")
+        logger.info(f"[{self.agent_id}] Perceiver+ agent initialized")
 
     async def initialize(self) -> None:
         """Initialize the Perceiver+ agent."""
@@ -168,7 +168,7 @@ class PerceiverPlusAgent(
                 memory_system=memory_system,
                 rag_pipeline=rag_pipeline,
             )
-            logger.info("[{self.agent_id}] Unified knowledge access initialized")
+            logger.info(f"[{self.agent_id}] Unified knowledge access initialized")
 
         # Register message handlers with Zero-Trust validation
         self.register_handler("analyze_data", self._handle_analyze_data)
@@ -183,7 +183,7 @@ class PerceiverPlusAgent(
             "knowledge_enhanced_analysis", self._handle_knowledge_enhanced_analysis
         )
 
-        logger.info("[{self.agent_id}] Perceiver+ initialization complete")
+        logger.info(f"[{self.agent_id}] Perceiver+ initialization complete")
 
     async def process_message(self, message: ActorMessage) -> None:
         """
@@ -213,7 +213,7 @@ class PerceiverPlusAgent(
                         sender_id=self.agent_id,
                     )
         else:
-            logger.warning("[{self.agent_id}] Unknown message type: {message.message_type}")
+            logger.warning(f"[{self.agent_id}] Unknown message type: {message.message_type}")
 
     async def _handle_analyze_data(self, message: ActorMessage) -> None:
         """
@@ -226,7 +226,7 @@ class PerceiverPlusAgent(
             # Validate content
             is_valid, _error = self._validate_data_input(message.content)
             if not is_valid:
-                logger.error("[{self.agent_id}] Invalid data analysis request: {error}")
+                logger.error(f"[{self.agent_id}] Invalid data analysis request: {error}")
                 return
 
             data = message.content["data"]
@@ -235,7 +235,7 @@ class PerceiverPlusAgent(
             )
             analytics_types = message.content.get("analytics_types", ["descriptive"])
 
-            logger.info("[{self.agent_id}] Performing comprehensive analysis: {analysis_id}")
+            logger.info(f"[{self.agent_id}] Performing comprehensive analysis: {analysis_id}")
 
             # Perform analyses
             results = []
@@ -246,7 +246,7 @@ class PerceiverPlusAgent(
                     if result.confidence >= self.confidence_threshold:
                         results.append(result)
                 except ValueError:
-                    logger.warning("[{self.agent_id}] Unknown analytics type: {atype}")
+                    logger.warning(f"[{self.agent_id}] Unknown analytics type: {atype}")
 
             # Store results
             for result in results:
@@ -270,10 +270,10 @@ class PerceiverPlusAgent(
                     sender_id=self.agent_id,
                 )
 
-            logger.info("[{self.agent_id}] Completed {len(results)} analyses")
+            logger.info(f"[{self.agent_id}] Completed {len(results)} analyses")
 
         except Exception:
-            logger.exception("[{self.agent_id}] Error analyzing data: {e}")
+            logger.exception(f"[{self.agent_id}] Error analyzing data: {e}")
 
     async def _handle_detect_trends(self, message: ActorMessage) -> None:
         """
@@ -285,12 +285,12 @@ class PerceiverPlusAgent(
         try:
             is_valid, _error = self._validate_data_input(message.content)
             if not is_valid:
-                logger.error("[{self.agent_id}] Invalid trend detection request: {error}")
+                logger.error(f"[{self.agent_id}] Invalid trend detection request: {error}")
                 return
 
             data = message.content["data"]
 
-            logger.info("[{self.agent_id}] Detecting trends")
+            logger.info(f"[{self.agent_id}] Detecting trends")
 
             result = await self._trend_analysis(data, f"trend_{datetime.now(UTC).timestamp()}")
 
@@ -312,7 +312,7 @@ class PerceiverPlusAgent(
                 )
 
         except Exception:
-            logger.exception("[{self.agent_id}] Error detecting trends: {e}")
+            logger.exception(f"[{self.agent_id}] Error detecting trends: {e}")
 
     async def _handle_compute_correlations(self, message: ActorMessage) -> None:
         """
@@ -324,12 +324,12 @@ class PerceiverPlusAgent(
         try:
             is_valid, _error = self._validate_data_input(message.content)
             if not is_valid:
-                logger.error("[{self.agent_id}] Invalid correlation request: {error}")
+                logger.error(f"[{self.agent_id}] Invalid correlation request: {error}")
                 return
 
             data = message.content["data"]
 
-            logger.info("[{self.agent_id}] Computing correlations")
+            logger.info(f"[{self.agent_id}] Computing correlations")
 
             result = await self._correlational_analysis(
                 data, f"corr_{datetime.now(UTC).timestamp()}"
@@ -348,7 +348,7 @@ class PerceiverPlusAgent(
                 )
 
         except Exception:
-            logger.exception("[{self.agent_id}] Error computing correlations: {e}")
+            logger.exception(f"[{self.agent_id}] Error computing correlations: {e}")
 
     async def _handle_run_statistical_test(self, message: ActorMessage) -> None:
         """
@@ -361,7 +361,7 @@ class PerceiverPlusAgent(
             test_type = message.content.get("test_type", "t_test")
             data = message.content.get("data", [])
 
-            logger.info("[{self.agent_id}] Running statistical test: {test_type}")
+            logger.info(f"[{self.agent_id}] Running statistical test: {test_type}")
 
             # For now, run basic statistical analysis
             result = await self._statistical_analysis(data, f"stat_{datetime.now(UTC).timestamp()}")
@@ -380,7 +380,7 @@ class PerceiverPlusAgent(
                 )
 
         except Exception:
-            logger.exception("[{self.agent_id}] Error running statistical test: {e}")
+            logger.exception(f"[{self.agent_id}] Error running statistical test: {e}")
 
     async def _handle_extract_features(self, message: ActorMessage) -> None:
         """
@@ -392,7 +392,7 @@ class PerceiverPlusAgent(
         try:
             is_valid, _error = self._validate_data_input(message.content)
             if not is_valid:
-                logger.error("[{self.agent_id}] Invalid feature extraction request: {error}")
+                logger.error(f"[{self.agent_id}] Invalid feature extraction request: {error}")
                 return
 
             data = message.content["data"]
@@ -400,7 +400,7 @@ class PerceiverPlusAgent(
                 "feature_id", f"features_{datetime.now(UTC).timestamp()}"
             )
 
-            logger.info("[{self.agent_id}] Extracting features")
+            logger.info(f"[{self.agent_id}] Extracting features")
 
             # Extract features
             features = await self._extract_features_from_data(data)
@@ -422,7 +422,7 @@ class PerceiverPlusAgent(
                 )
 
         except Exception:
-            logger.exception("[{self.agent_id}] Error extracting features: {e}")
+            logger.exception(f"[{self.agent_id}] Error extracting features: {e}")
 
     async def _handle_forecast_values(self, message: ActorMessage) -> None:
         """
@@ -435,7 +435,7 @@ class PerceiverPlusAgent(
             data = message.content.get("data", [])
             periods = message.content.get("periods", 5)
 
-            logger.info("[{self.agent_id}] Forecasting {periods} periods")
+            logger.info(f"[{self.agent_id}] Forecasting {periods} periods")
 
             # Simple forecasting
             forecast = await self._forecast_values(data, periods)
@@ -455,7 +455,7 @@ class PerceiverPlusAgent(
                 )
 
         except Exception:
-            logger.exception("[{self.agent_id}] Error forecasting: {e}")
+            logger.exception(f"[{self.agent_id}] Error forecasting: {e}")
 
     async def _handle_get_analytics_summary(self, message: ActorMessage) -> None:
         """
@@ -486,7 +486,7 @@ class PerceiverPlusAgent(
                 )
 
         except Exception:
-            logger.exception("[{self.agent_id}] Error getting analytics summary: {e}")
+            logger.exception(f"[{self.agent_id}] Error getting analytics summary: {e}")
 
     async def _handle_signal_processing(self, message: ActorMessage) -> None:
         """
@@ -500,7 +500,7 @@ class PerceiverPlusAgent(
             method = message.content.get("method", "moving_average")
             window = message.content.get("window", 3)
 
-            logger.info("[{self.agent_id}] Processing signal with {method}")
+            logger.info(f"[{self.agent_id}] Processing signal with {method}")
 
             # Process signal
             processed = self._process_signal(data, method, window)
@@ -522,7 +522,7 @@ class PerceiverPlusAgent(
                 )
 
         except Exception:
-            logger.exception("[{self.agent_id}] Error processing signal: {e}")
+            logger.exception(f"[{self.agent_id}] Error processing signal: {e}")
 
     async def _handle_knowledge_enhanced_analysis(self, message: ActorMessage) -> None:
         """
@@ -540,10 +540,10 @@ class PerceiverPlusAgent(
             limit = message.content.get("limit", 10)
 
             if not query:
-                logger.error("[{self.agent_id}] Knowledge enhanced analysis requires query")
+                logger.error(f"[{self.agent_id}] Knowledge enhanced analysis requires query")
                 return
 
-            logger.info("[{self.agent_id}] Performing knowledge-enhanced analysis: {query[:50]}")
+            logger.info(f"[{self.agent_id}] Performing knowledge-enhanced analysis: {query[:50]}")
 
             # First, query knowledge base for context
             if self.knowledge_access:
@@ -587,7 +587,7 @@ class PerceiverPlusAgent(
                         sender_id=self.agent_id,
                     )
             else:
-                logger.warning("[{self.agent_id}] Knowledge access not initialized")
+                logger.warning(f"[{self.agent_id}] Knowledge access not initialized")
 
         except Exception as e:
             logger.exception(
@@ -614,7 +614,7 @@ class PerceiverPlusAgent(
             KnowledgeQueryResult with merged and reranked entries
         """
         if not self.knowledge_access:
-            logger.warning("[{self.agent_id}] Knowledge access not initialized")
+            logger.warning(f"[{self.agent_id}] Knowledge access not initialized")
             return KnowledgeQueryResult(entries=[], total_results=0)
 
         return await self.knowledge_access.query(

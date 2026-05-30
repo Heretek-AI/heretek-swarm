@@ -150,7 +150,7 @@ class MetisAgent(
         self._active_deliberations: dict[str, str] = {}
         self._pattern_emitted: set[str] = set()
 
-        logger.info("[{self.agent_id}] Metis agent initialized")
+        logger.info(f"[{self.agent_id}] Metis agent initialized")
 
     async def initialize(self) -> None:
         """Initialize the Metis agent."""
@@ -163,7 +163,7 @@ class MetisAgent(
         self.register_handler("get_plan_status", self._handle_get_plan_status)
         self.register_handler("on_demand_analysis", self._handle_on_demand_analysis)
 
-        logger.info("[{self.agent_id}] Metis initialization complete")
+        logger.info(f"[{self.agent_id}] Metis initialization complete")
 
     async def process_message(self, message: ActorMessage) -> None:
         """
@@ -194,7 +194,7 @@ class MetisAgent(
                         correlation_id=message.correlation_id,
                     )
         else:
-            logger.warning("[{self.agent_id}] Unhandled message type: {message.message_type}")
+            logger.warning(f"[{self.agent_id}] Unhandled message type: {message.message_type}")
 
     async def _handle_create_strategic_plan(self, message: ActorMessage) -> None:
         """Handle strategic plan creation requests with validation."""
@@ -213,7 +213,7 @@ class MetisAgent(
                     constraints = validated.get("constraints", [])
 
                 if not objective:
-                    logger.error("[{self.agent_id}] Missing objective for strategic plan")
+                    logger.error(f"[{self.agent_id}] Missing objective for strategic plan")
                     return
             else:
                 # Fallback for unknown message types
@@ -222,10 +222,10 @@ class MetisAgent(
                 constraints = message.content.get("constraints", [])
 
                 if not objective:
-                    logger.error("[{self.agent_id}] Missing objective for strategic plan")
+                    logger.error(f"[{self.agent_id}] Missing objective for strategic plan")
                     return
         except ValueError:
-            logger.error("[{self.agent_id}] Strategic plan validation failed: {e}")
+            logger.error(f"[{self.agent_id}] Strategic plan validation failed: {e}")
             return
 
         plan_id = f"plan_{datetime.now(UTC).strftime('%Y%m%d_%H%M%S')}"
@@ -264,7 +264,7 @@ class MetisAgent(
                     correlation_id=message.correlation_id,
                 )
 
-            logger.info("[{self.agent_id}] Strategic plan {plan_id} created successfully")
+            logger.info(f"[{self.agent_id}] Strategic plan {plan_id} created successfully")
 
         except Exception as e:
             logger.exception(
@@ -298,7 +298,7 @@ class MetisAgent(
                     priorities = validated.get("priorities", {})
 
                 if not plan_id:
-                    logger.error("[{self.agent_id}] Missing plan_id for resource allocation")
+                    logger.error(f"[{self.agent_id}] Missing plan_id for resource allocation")
                     return
             else:
                 # Fallback
@@ -307,14 +307,14 @@ class MetisAgent(
                 priorities = message.content.get("priorities", {})
 
                 if not plan_id:
-                    logger.error("[{self.agent_id}] Missing plan_id for resource allocation")
+                    logger.error(f"[{self.agent_id}] Missing plan_id for resource allocation")
                     return
         except ValueError:
-            logger.error("[{self.agent_id}] Resource allocation validation failed: {e}")
+            logger.error(f"[{self.agent_id}] Resource allocation validation failed: {e}")
             return
 
         if plan_id not in self.active_plans:
-            logger.error("[{self.agent_id}] Plan {plan_id} not found for resource allocation")
+            logger.error(f"[{self.agent_id}] Plan {plan_id} not found for resource allocation")
             return
 
         logger.info(
@@ -344,7 +344,7 @@ class MetisAgent(
                 correlation_id=message.correlation_id,
             )
 
-        logger.info("[{self.agent_id}] Resource allocation complete for plan {plan_id}")
+        logger.info(f"[{self.agent_id}] Resource allocation complete for plan {plan_id}")
 
     async def _handle_assess_risks(self, message: ActorMessage) -> None:
         """Handle risk assessment requests with validation."""
@@ -364,7 +364,7 @@ class MetisAgent(
                 plan_id = message.content.get("plan_id")
                 domain = message.content.get("domain", "general")
         except ValueError:
-            logger.error("[{self.agent_id}] Risk assessment validation failed: {e}")
+            logger.error(f"[{self.agent_id}] Risk assessment validation failed: {e}")
             return
 
         logger.info(
@@ -396,7 +396,7 @@ class MetisAgent(
                 correlation_id=message.correlation_id,
             )
 
-        logger.info("[{self.agent_id}] Risk assessment complete: {len(risks)} risks identified")
+        logger.info(f"[{self.agent_id}] Risk assessment complete: {len(risks)} risks identified")
 
     async def _handle_analyze_scenarios(self, message: ActorMessage) -> None:
         """Handle scenario analysis requests with validation."""
@@ -416,7 +416,7 @@ class MetisAgent(
                 base_scenario = message.content.get("base_scenario", {})
                 variables = message.content.get("variables", [])
         except ValueError:
-            logger.error("[{self.agent_id}] Scenario analysis validation failed: {e}")
+            logger.error(f"[{self.agent_id}] Scenario analysis validation failed: {e}")
             return
 
         analysis_id = f"scenario_{datetime.now(UTC).strftime('%Y%m%d_%H%M%S')}"
@@ -470,7 +470,7 @@ class MetisAgent(
                     metrics = validated.get("metrics", [])
 
                 if not objective:
-                    logger.error("[{self.agent_id}] Missing objective")
+                    logger.error(f"[{self.agent_id}] Missing objective")
                     return
             else:
                 # Fallback
@@ -479,10 +479,10 @@ class MetisAgent(
                 metrics = message.content.get("metrics", [])
 
                 if not objective:
-                    logger.error("[{self.agent_id}] Missing objective")
+                    logger.error(f"[{self.agent_id}] Missing objective")
                     return
         except ValueError:
-            logger.error("[{self.agent_id}] Strategic objective validation failed: {e}")
+            logger.error(f"[{self.agent_id}] Strategic objective validation failed: {e}")
             return
 
         objective_entry = {
@@ -525,21 +525,21 @@ class MetisAgent(
                     plan_id = validated.get("plan_id")
 
                 if not plan_id:
-                    logger.error("[{self.agent_id}] Missing plan_id for status request")
+                    logger.error(f"[{self.agent_id}] Missing plan_id for status request")
                     return
             else:
                 # Fallback
                 plan_id = message.content.get("plan_id")
 
                 if not plan_id:
-                    logger.error("[{self.agent_id}] Missing plan_id for status request")
+                    logger.error(f"[{self.agent_id}] Missing plan_id for status request")
                     return
         except ValueError:
-            logger.error("[{self.agent_id}] Plan status validation failed: {e}")
+            logger.error(f"[{self.agent_id}] Plan status validation failed: {e}")
             return
 
         if plan_id not in self.active_plans:
-            logger.error("[{self.agent_id}] Plan {plan_id} not found")
+            logger.error(f"[{self.agent_id}] Plan {plan_id} not found")
             if message.content.get("reply_to"):
                 await self.send(
                     topic=message.content["reply_to"],
@@ -577,7 +577,7 @@ class MetisAgent(
                 correlation_id=message.correlation_id,
             )
 
-        logger.info("[{self.agent_id}] Plan status retrieved for {plan_id}")
+        logger.info(f"[{self.agent_id}] Plan status retrieved for {plan_id}")
 
     # ========================================================================
     # Strategic Planning Methods
@@ -641,7 +641,7 @@ Format as JSON with keys: summary, phases, resources, risks, metrics
             }
 
         except Exception:
-            logger.error("[{self.agent_id}] LLM failed for strategic planning: {e}")
+            logger.error(f"[{self.agent_id}] LLM failed for strategic planning: {e}")
             # Return minimal plan
             return {
                 "objective": objective,
@@ -759,7 +759,7 @@ Format each risk as JSON object.
             ]
 
         except Exception:
-            logger.error("[{self.agent_id}] LLM failed for risk assessment: {e}")
+            logger.error(f"[{self.agent_id}] LLM failed for risk assessment: {e}")
             return []
 
     async def _generate_scenarios(
@@ -824,7 +824,7 @@ Format each risk as JSON object.
         perspective = message.content.get("perspective", "neutral")
 
         if not context:
-            logger.warning("[{self.agent_id}] on_demand_analysis called with empty context")
+            logger.warning(f"[{self.agent_id}] on_demand_analysis called with empty context")
             if message.content.get("reply_to"):
                 await self.send(
                     topic=message.content["reply_to"],
@@ -1095,7 +1095,7 @@ Format your response as a clear analysis with recommendations.
 
     async def cleanup(self) -> None:
         """Clean up Metis resources."""
-        logger.info("[{self.agent_id}] Metis agent cleanup initiated")
+        logger.info(f"[{self.agent_id}] Metis agent cleanup initiated")
 
         # Clear all state
         self.active_plans.clear()
@@ -1104,4 +1104,4 @@ Format your response as a clear analysis with recommendations.
         self.strategic_objectives.clear()
         self.scenario_analyses.clear()
 
-        logger.info("[{self.agent_id}] Metis agent cleanup complete")
+        logger.info(f"[{self.agent_id}] Metis agent cleanup complete")

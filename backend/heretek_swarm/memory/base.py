@@ -221,7 +221,7 @@ class EphemeralMemory(MemorySystem):
     async def initialize(self) -> None:
         """Initialize the ephemeral memory system."""
         self._initialized = True
-        logger.info("[{self.name}] Ephemeral memory initialized")
+        logger.info(f"[{self.name}] Ephemeral memory initialized")
 
     async def store(
         self,
@@ -271,7 +271,7 @@ class EphemeralMemory(MemorySystem):
         # Update indexes
         await self._update_indexes(entry)
 
-        logger.debug("[{self.name}] Stored memory {memory_id}")
+        logger.debug(f"[{self.name}] Stored memory {memory_id}")
 
         return entry
 
@@ -331,7 +331,7 @@ class EphemeralMemory(MemorySystem):
         # Remove from indexes
         await self._remove_from_indexes(entry)
 
-        logger.debug("[{self.name}] Deleted memory {memory_id}")
+        logger.debug(f"[{self.name}] Deleted memory {memory_id}")
 
         return True
 
@@ -340,7 +340,7 @@ class EphemeralMemory(MemorySystem):
         self._storage.clear()
         self._index.clear()
         self._initialized = False
-        logger.info("[{self.name}] Ephemeral memory closed")
+        logger.info(f"[{self.name}] Ephemeral memory closed")
 
     async def _evict_oldest(self) -> None:
         """Evict the oldest entry."""
@@ -452,7 +452,7 @@ class PersistentMemory(MemorySystem):
         """Initialize the persistent memory system."""
         # In a full implementation, this would connect to the database
         self._initialized = True
-        logger.info("[{self.name}] Persistent memory initialized")
+        logger.info(f"[{self.name}] Persistent memory initialized")
 
     async def store(
         self,
@@ -480,7 +480,7 @@ class PersistentMemory(MemorySystem):
         # In a full implementation, this would store to database
         self._storage[memory_id] = entry
 
-        logger.debug("[{self.name}] Stored persistent memory {memory_id}")
+        logger.debug(f"[{self.name}] Stored persistent memory {memory_id}")
 
         return entry
 
@@ -515,7 +515,7 @@ class PersistentMemory(MemorySystem):
             return False
 
         del self._storage[memory_id]
-        logger.debug("[{self.name}] Deleted persistent memory {memory_id}")
+        logger.debug(f"[{self.name}] Deleted persistent memory {memory_id}")
 
         return True
 
@@ -524,7 +524,7 @@ class PersistentMemory(MemorySystem):
         # In a full implementation, this would close DB connections
         self._storage.clear()
         self._initialized = False
-        logger.info("[{self.name}] Persistent memory closed")
+        logger.info(f"[{self.name}] Persistent memory closed")
 
     def _matches_filters(
         self,

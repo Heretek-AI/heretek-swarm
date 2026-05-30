@@ -353,7 +353,7 @@ class AgentActor:
         # Clear message handlers (no re-registration of defaults per test contract)
         self._message_handlers.clear()
 
-        logger.info("[{self.agent_id}] Actor cleanup complete")
+        logger.info(f"[{self.agent_id}] Actor cleanup complete")
 
     def _register_default_handlers(self) -> None:
         """Register default message handlers."""
@@ -432,7 +432,7 @@ class AgentActor:
             raise ValueError(f"Invalid message format: {e.errors()}") from e
         except KeyError:
             # Unknown message type - skip validation
-            logger.debug("[{self.agent_id}] No validator for message type: {message_type}")
+            logger.debug(f"[{self.agent_id}] No validator for message type: {message_type}")
             return None
 
     def register_handler(self, message_type: str, handler: Callable) -> None:
@@ -474,7 +474,7 @@ class AgentActor:
         """
         # P1-6: Idempotency check - prevent multiple spawns
         if self._running:
-            logger.warning("[{self.agent_id}] Already running, ignoring spawn request")
+            logger.warning(f"[{self.agent_id}] Already running, ignoring spawn request")
             return
 
         try:
@@ -502,7 +502,7 @@ class AgentActor:
                 extra={"mailbox_size": self.mailbox.qsize()},
             )
         except Exception:
-            logger.exception("[{self.agent_id}] Spawn failed: {e}")
+            logger.exception(f"[{self.agent_id}] Spawn failed: {e}")
             self.state = ActorState.ERROR
             self.error_count += 1
             raise
@@ -518,7 +518,7 @@ class AgentActor:
         4. Saves final state
         """
         try:
-            logger.info("[{self.agent_id}] Agent terminating...")
+            logger.info(f"[{self.agent_id}] Agent terminating...")
 
             self._running = False
             # P1-10c fix: Set state to TERMINATED AFTER cleanup completes, not before
@@ -534,9 +534,9 @@ class AgentActor:
             # Now set state to TERMINATED after all cleanup is complete
             self.state = ActorState.TERMINATED
 
-            logger.info("[{self.agent_id}] Agent terminated")
+            logger.info(f"[{self.agent_id}] Agent terminated")
         except Exception:
-            logger.exception("[{self.agent_id}] Terminate failed: {e}")
+            logger.exception(f"[{self.agent_id}] Terminate failed: {e}")
             self.state = ActorState.ERROR
             raise
 

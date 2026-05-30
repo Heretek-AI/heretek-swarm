@@ -208,7 +208,7 @@ class HeavySwarmWorkflow:
             agent: Agent instance
         """
         self.agents[agent_id] = agent
-        logger.debug("[{self.name}] Registered agent: {agent_id}")
+        logger.debug(f"[{self.name}] Registered agent: {agent_id}")
 
     async def execute(
         self,
@@ -325,12 +325,12 @@ class HeavySwarmWorkflow:
             result.state = WorkflowPhase.COMPLETED
 
         except WorkflowPhaseError as e:
-            logger.error("[{self.name}] Workflow failed: {e}")
+            logger.error(f"[{self.name}] Workflow failed: {e}")
             result.state = WorkflowPhase.FAILED
             result.errors = [str(e)]
 
         except Exception as e:
-            logger.exception("[{self.name}] Workflow error: {e}")
+            logger.exception(f"[{self.name}] Workflow error: {e}")
             result.state = WorkflowPhase.FAILED
             result.errors = [str(e)]
 
@@ -377,7 +377,7 @@ class HeavySwarmWorkflow:
             Phase result
         """
         started_at = datetime.now(UTC)
-        logger.info("[{self.name}] Executing phase: {phase.value}")
+        logger.info(f"[{self.name}] Executing phase: {phase.value}")
 
         try:
             # Execute with timeout
@@ -445,7 +445,7 @@ class HeavySwarmWorkflow:
         Returns:
             Research summary with gathered information
         """
-        logger.info("[{self.name}] Research phase: Gathering information")
+        logger.info(f"[{self.name}] Research phase: Gathering information")
 
         research_data = {
             "topic": topic,
@@ -469,7 +469,7 @@ class HeavySwarmWorkflow:
                 )
                 research_data["matched_patterns"] = deliberation_context.get("matched_patterns", [])
             except Exception:
-                logger.warning("[{self.name}] Historian query failed: {e}")
+                logger.warning(f"[{self.name}] Historian query failed: {e}")
 
         # Synthesize knowledge if historian available
         if self.historian in self.agents:
@@ -481,7 +481,7 @@ class HeavySwarmWorkflow:
                 )
                 research_data["knowledge_summary"] = knowledge.get("summary", "")
             except Exception:
-                logger.warning("[{self.name}] Knowledge synthesis failed: {e}")
+                logger.warning(f"[{self.name}] Knowledge synthesis failed: {e}")
 
         # Identify constraints and assumptions from context
         if context:
@@ -528,7 +528,7 @@ class HeavySwarmWorkflow:
         Returns:
             Analysis results from all triad perspectives
         """
-        logger.info("[{self.name}] Analysis phase: Multi-perspective analysis")
+        logger.info(f"[{self.name}] Analysis phase: Multi-perspective analysis")
 
         analysis_data = {
             "topic": topic,
@@ -605,7 +605,7 @@ class HeavySwarmWorkflow:
 
         for agent_id in self.triad_agents:
             if agent_id not in self.agents:
-                logger.warning("[{self.name}] Triad agent not found: {agent_id}")
+                logger.warning(f"[{self.name}] Triad agent not found: {agent_id}")
                 continue
 
             agent = self.agents[agent_id]
@@ -699,7 +699,7 @@ class HeavySwarmWorkflow:
         Returns:
             Alternatives evaluation with rankings
         """
-        logger.info("[{self.name}] Alternatives phase: Generating solutions")
+        logger.info(f"[{self.name}] Alternatives phase: Generating solutions")
 
         alternatives_data = {
             "topic": topic,
@@ -1059,7 +1059,7 @@ Example:
         Returns:
             Verification results with validation status
         """
-        logger.info("[{self.name}] Verification phase: Validating solutions")
+        logger.info(f"[{self.name}] Verification phase: Validating solutions")
 
         verification_data = {
             "topic": topic,
@@ -1088,7 +1088,7 @@ Example:
                 if errors:
                     verification_data["overall_valid"] = False
             except Exception:
-                logger.warning("[{self.name}] Beta error check failed: {e}")
+                logger.warning(f"[{self.name}] Beta error check failed: {e}")
 
         # Charlie: Risk assessment
         if "charlie" in self.agents:
@@ -1098,7 +1098,7 @@ Example:
                 verification_data["risk_assessments"] = risk_assessment.get("risks_identified", [])
                 verification_data["risk_level"] = risk_assessment.get("risk_level", "unknown")
             except Exception:
-                logger.warning("[{self.name}] Charlie risk assessment failed: {e}")
+                logger.warning(f"[{self.name}] Charlie risk assessment failed: {e}")
 
         # Calculate overall confidence
         error_count = len(verification_data["error_checks"])
@@ -1150,7 +1150,7 @@ Example:
         Returns:
             Decision results with consensus outcome
         """
-        logger.info("[{self.name}] Decision phase: Running consensus")
+        logger.info(f"[{self.name}] Decision phase: Running consensus")
 
         consensus_id = f"consensus_{workflow_id}"
 
@@ -1224,7 +1224,7 @@ Example:
 
         for agent_id in self.triad_agents:
             if agent_id not in self.agents:
-                logger.warning("[{self.name}] Triad agent not found for voting: {agent_id}")
+                logger.warning(f"[{self.name}] Triad agent not found for voting: {agent_id}")
                 continue
 
             agent = self.agents[agent_id]

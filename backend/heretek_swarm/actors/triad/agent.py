@@ -89,7 +89,7 @@ class TriadAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, Ag
         """Initialize the agent by registering message handlers."""
         for msg_type, handler in self._triad_handlers():
             self.register_handler(msg_type, handler)
-        logger.info("[{self.agent_id}] {self.__class__.__name__} initialization complete")
+        logger.info(f"[{self.agent_id}] {self.__class__.__name__} initialization complete")
 
     async def process_message(self, message: ActorMessage) -> None:
         """
@@ -192,7 +192,7 @@ class TriadAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, Ag
                     **extras,
                 }
             except Exception:
-                logger.error("[{self.agent_id}] Analysis error: {e}")
+                logger.error(f"[{self.agent_id}] Analysis error: {e}")
 
         # Fallback analysis
         return {
@@ -281,7 +281,7 @@ class StewardAgent(TriadAgent):
         self._policies = self.governance_policies  # alias for test compatibility
         self.resource_allocations: dict[str, float] = {}
 
-        logger.info("[{self.agent_id}] Steward agent initialized")
+        logger.info(f"[{self.agent_id}] Steward agent initialized")
 
     def _triad_handlers(self) -> list[tuple[str, Any]]:
         """Return Steward's message handlers."""
@@ -317,7 +317,7 @@ class StewardAgent(TriadAgent):
                     )
                     topic = topic or "unspecified"
         except (ValueError, Exception):
-            logger.warning("[{self.agent_id}] Deliberation validation issue, using fallback: {e}")
+            logger.warning(f"[{self.agent_id}] Deliberation validation issue, using fallback: {e}")
             # Fallback: support both deliberation_id/topic and session_id/problem field names
             deliberation_id = (
                 message.content.get("deliberation_id")
@@ -390,7 +390,7 @@ class StewardAgent(TriadAgent):
                     correlation_id=message.correlation_id,
                 )
             except Exception:
-                logger.error("[{self.agent_id}] Decision error: {e}")
+                logger.error(f"[{self.agent_id}] Decision error: {e}")
         else:
             # Fallback logic
             await self.send(
@@ -410,7 +410,7 @@ class StewardAgent(TriadAgent):
         requester = message.content.get("requester", message.sender)
         status = message.content.get("status", {})
 
-        logger.debug("[{self.agent_id}] Status report from {reporter_id or requester}")
+        logger.debug(f"[{self.agent_id}] Status report from {reporter_id or requester}")
 
         # Update internal tracking
         if reporter_id:
@@ -444,7 +444,7 @@ class StewardAgent(TriadAgent):
                 "updated_at": datetime.now(UTC).isoformat(),
                 "updated_by": message.sender,
             }
-            logger.info("[{self.agent_id}] Updated policy: {policy_id}")
+            logger.info(f"[{self.agent_id}] Updated policy: {policy_id}")
 
     async def coordinate_triad(
         self,
@@ -745,7 +745,7 @@ class AlphaAgent(TriadAgent):
         self.analysis_history: list[dict[str, Any]] = []
         self.decision_count = 0
 
-        logger.info("[{self.agent_id}] Alpha agent initialized")
+        logger.info(f"[{self.agent_id}] Alpha agent initialized")
 
     def _triad_handlers(self) -> list[tuple[str, Any]]:
         """Return Alpha's message handlers."""
@@ -803,10 +803,10 @@ class AlphaAgent(TriadAgent):
                 request_id = message.content.get("request_id")
                 problem = message.content.get("problem")
         except ValueError:
-            logger.error("[{self.agent_id}] Analysis validation failed: {e}")
+            logger.error(f"[{self.agent_id}] Analysis validation failed: {e}")
             return
 
-        logger.info("[{self.agent_id}] Analyzing: {request_id}")
+        logger.info(f"[{self.agent_id}] Analyzing: {request_id}")
 
         analysis = await self._perform_analysis(problem)
 
@@ -846,10 +846,10 @@ class AlphaAgent(TriadAgent):
                 decision_to_validate = message.content.get("decision")
                 _original_analysis = message.content.get("original_analysis")
         except ValueError:
-            logger.error("[{self.agent_id}] Validation request validation failed: {e}")
+            logger.error(f"[{self.agent_id}] Validation request validation failed: {e}")
             return
 
-        logger.info("[{self.agent_id}] Validating: {request_id}")
+        logger.info(f"[{self.agent_id}] Validating: {request_id}")
 
         validation = await self._validate_decision(decision_to_validate)
 
@@ -885,7 +885,7 @@ class AlphaAgent(TriadAgent):
                     "feedback": validation_result,
                 }
             except Exception:
-                logger.error("[{self.agent_id}] Validation error: {e}")
+                logger.error(f"[{self.agent_id}] Validation error: {e}")
 
         return {
             "valid": True,
@@ -957,7 +957,7 @@ class BetaAgent(TriadAgent):
         self._error_checks: dict[str, Any] = {}  # dict for error check records
         self.error_detections: list[dict[str, Any]] = []
 
-        logger.info("[{self.agent_id}] Beta agent initialized")
+        logger.info(f"[{self.agent_id}] Beta agent initialized")
 
     def _triad_handlers(self) -> list[tuple[str, Any]]:
         """Return Beta's message handlers."""
@@ -1015,7 +1015,7 @@ class BetaAgent(TriadAgent):
         decision_to_validate = message.content.get("decision")
         original_analysis = message.content.get("original_analysis")
 
-        logger.info("[{self.agent_id}] Validating: {request_id}")
+        logger.info(f"[{self.agent_id}] Validating: {request_id}")
 
         validation = await self._validate_decision(
             decision_to_validate,
@@ -1064,7 +1064,7 @@ class BetaAgent(TriadAgent):
         # P1-3: Trim history if it exceeds max size
         self._trim_history(self.error_detections)
         if errors:
-            logger.warning("[{self.agent_id}] Detected {len(errors)} errors")
+            logger.warning(f"[{self.agent_id}] Detected {len(errors)} errors")
 
         reply_topic = message.content.get("reply_to", "errors")
         await self.send(
@@ -1098,7 +1098,7 @@ class BetaAgent(TriadAgent):
                     "perspective": "secondary",
                 }
             except Exception:
-                logger.error("[{self.agent_id}] Validation error: {e}")
+                logger.error(f"[{self.agent_id}] Validation error: {e}")
 
         return {
             "valid": True,
@@ -1125,7 +1125,7 @@ class BetaAgent(TriadAgent):
                         }
                     )
             except Exception:
-                logger.error("[{self.agent_id}] Error detection error: {e}")
+                logger.error(f"[{self.agent_id}] Error detection error: {e}")
 
         return errors
 
@@ -1194,7 +1194,7 @@ class CharlieAgent(TriadAgent):
         self._challenges: dict[str, Any] = {}
         self._risk_assessments: dict[str, Any] = {}
 
-        logger.info("[{self.agent_id}] Charlie agent initialized")
+        logger.info(f"[{self.agent_id}] Charlie agent initialized")
 
     def _triad_handlers(self) -> list[tuple[str, Any]]:
         """Return Charlie's message handlers."""
@@ -1255,7 +1255,7 @@ class CharlieAgent(TriadAgent):
         request_id = message.content.get("request_id") or str(len(self._challenges))
         proposition = message.content.get("proposition")
 
-        logger.info("[{self.agent_id}] Challenging: {request_id}")
+        logger.info(f"[{self.agent_id}] Challenging: {request_id}")
 
         challenges = await self._generate_challenges(proposition)
 
@@ -1287,7 +1287,7 @@ class CharlieAgent(TriadAgent):
         request_id = message.content.get("request_id") or str(len(self._risk_assessments))
         scenario = message.content.get("scenario")
 
-        logger.info("[{self.agent_id}] Assessing risks: {request_id}")
+        logger.info(f"[{self.agent_id}] Assessing risks: {request_id}")
 
         assessment = await self._assess_risks(scenario)
 
@@ -1335,7 +1335,7 @@ class CharlieAgent(TriadAgent):
                     }
                 )
             except Exception:
-                logger.error("[{self.agent_id}] Challenge error: {e}")
+                logger.error(f"[{self.agent_id}] Challenge error: {e}")
 
         return challenges
 
@@ -1352,7 +1352,7 @@ class CharlieAgent(TriadAgent):
                     "mitigations": ["Standard mitigations"],
                 }
             except Exception:
-                logger.error("[{self.agent_id}] Risk assessment error: {e}")
+                logger.error(f"[{self.agent_id}] Risk assessment error: {e}")
 
         return {
             "risks_identified": [],

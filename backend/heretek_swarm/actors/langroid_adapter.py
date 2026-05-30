@@ -540,7 +540,7 @@ class ConversationHandlerMixin:
         if self._active_conversation == conversation_id:
             self._active_conversation = None
 
-        logger.debug("[{self.agent_id}] Ended conversation {conversation_id}")
+        logger.debug(f"[{self.agent_id}] Ended conversation {conversation_id}")
 
     async def send_message(
         self,

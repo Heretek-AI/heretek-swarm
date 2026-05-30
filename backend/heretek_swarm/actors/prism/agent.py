@@ -162,7 +162,7 @@ class PrismAgent(
         self._active_deliberations: dict[str, str] = {}
         self._pattern_emitted: set[str] = set()
 
-        logger.info("[{self.agent_id}] Prism agent initialized")
+        logger.info(f"[{self.agent_id}] Prism agent initialized")
 
     async def initialize(self) -> None:
         """Initialize the Prism agent."""
@@ -174,7 +174,7 @@ class PrismAgent(
         self.register_handler("get_analysis_summary", self._handle_get_analysis_summary)
         self.register_handler("reframe_issue", self._handle_reframe_issue)
 
-        logger.info("[{self.agent_id}] Prism initialization complete")
+        logger.info(f"[{self.agent_id}] Prism initialization complete")
 
     async def process_message(self, message: ActorMessage) -> None:
         """
@@ -204,7 +204,7 @@ class PrismAgent(
                         sender_id=self.agent_id,
                     )
         else:
-            logger.warning("[{self.agent_id}] Unknown message type: {message.message_type}")
+            logger.warning(f"[{self.agent_id}] Unknown message type: {message.message_type}")
 
     def _validate_analysis_request(self, content: dict[str, Any]) -> tuple[bool, str]:
         """
@@ -235,7 +235,7 @@ class PrismAgent(
             # Validate content
             is_valid, _error = self._validate_analysis_request(message.content)
             if not is_valid:
-                logger.error("[{self.agent_id}] Invalid perspective request: {error}")
+                logger.error(f"[{self.agent_id}] Invalid perspective request: {error}")
                 return
 
             issue = message.content["issue"]
@@ -244,7 +244,7 @@ class PrismAgent(
             )
             requested_perspectives = message.content.get("perspective_types", None)
 
-            logger.info("[{self.agent_id}] Generating perspectives for analysis: {analysis_id}")
+            logger.info(f"[{self.agent_id}] Generating perspectives for analysis: {analysis_id}")
 
             # Generate perspectives
             perspectives = await self._generate_perspectives(
@@ -283,7 +283,7 @@ class PrismAgent(
             )
 
         except Exception:
-            logger.exception("[{self.agent_id}] Error generating perspectives: {e}")
+            logger.exception(f"[{self.agent_id}] Error generating perspectives: {e}")
 
     async def _generate_perspectives(
         self,
@@ -416,14 +416,14 @@ Respond in JSON format:
                 "deliberation", ""
             )
             if not content:
-                logger.error("[{self.agent_id}] No reasoning content provided for bias detection")
+                logger.error(f"[{self.agent_id}] No reasoning content provided for bias detection")
                 return
 
             if len(content) > 50000:
-                logger.error("[{self.agent_id}] Content exceeds maximum length")
+                logger.error(f"[{self.agent_id}] Content exceeds maximum length")
                 return
 
-            logger.info("[{self.agent_id}] Detecting biases in reasoning")
+            logger.info(f"[{self.agent_id}] Detecting biases in reasoning")
 
             # Detect biases
             biases = await self._detect_biases_in_content(content)
@@ -448,10 +448,10 @@ Respond in JSON format:
                     sender_id=self.agent_id,
                 )
 
-            logger.info("[{self.agent_id}] Detected {len(biases)} potential biases")
+            logger.info(f"[{self.agent_id}] Detected {len(biases)} potential biases")
 
         except Exception:
-            logger.exception("[{self.agent_id}] Error detecting biases: {e}")
+            logger.exception(f"[{self.agent_id}] Error detecting biases: {e}")
 
     async def _detect_biases_in_content(self, content: str) -> list[BiasDetection]:
         """
@@ -542,7 +542,7 @@ Respond in JSON format:
             biases.extend(self._heuristic_bias_detection(content))
 
         except Exception:
-            logger.warning("[{self.agent_id}] LLM bias detection failed: {e}")
+            logger.warning(f"[{self.agent_id}] LLM bias detection failed: {e}")
             biases.extend(self._heuristic_bias_detection(content))
 
         return biases
@@ -558,7 +558,7 @@ Respond in JSON format:
             # Validate content
             is_valid, _error = self._validate_analysis_request(message.content)
             if not is_valid:
-                logger.error("[{self.agent_id}] Invalid framework request: {error}")
+                logger.error(f"[{self.agent_id}] Invalid framework request: {error}")
                 return
 
             issue = message.content["issue"]
@@ -575,10 +575,10 @@ Respond in JSON format:
                     break
 
             if not framework:
-                logger.error("[{self.agent_id}] Unknown framework: {framework_str}")
+                logger.error(f"[{self.agent_id}] Unknown framework: {framework_str}")
                 return
 
-            logger.info("[{self.agent_id}] Applying framework {framework.value} to issue")
+            logger.info(f"[{self.agent_id}] Applying framework {framework.value} to issue")
 
             # Apply framework
             result = await self._apply_framework_to_issue(issue, framework)
@@ -606,10 +606,10 @@ Respond in JSON format:
                     sender_id=self.agent_id,
                 )
 
-            logger.info("[{self.agent_id}] Framework {framework.value} applied successfully")
+            logger.info(f"[{self.agent_id}] Framework {framework.value} applied successfully")
 
         except Exception:
-            logger.exception("[{self.agent_id}] Error applying framework: {e}")
+            logger.exception(f"[{self.agent_id}] Error applying framework: {e}")
 
     async def _apply_framework_to_issue(
         self,
@@ -650,7 +650,7 @@ Respond in JSON format:
             return apply_framework_fallback(framework)
 
         except Exception as e:
-            logger.warning("[{self.agent_id}] Framework application failed: {e}")
+            logger.warning(f"[{self.agent_id}] Framework application failed: {e}")
             return apply_framework_fallback(framework, str(e))
 
     async def _handle_map_stakeholders(self, message: ActorMessage) -> None:
@@ -663,13 +663,13 @@ Respond in JSON format:
         try:
             is_valid, _error = self._validate_analysis_request(message.content)
             if not is_valid:
-                logger.error("[{self.agent_id}] Invalid stakeholder mapping request: {error}")
+                logger.error(f"[{self.agent_id}] Invalid stakeholder mapping request: {error}")
                 return
 
             issue = message.content["issue"]
             map_id = message.content.get("map_id", f"stakeholders_{datetime.now(UTC).timestamp()}")
 
-            logger.info("[{self.agent_id}] Mapping stakeholders for issue")
+            logger.info(f"[{self.agent_id}] Mapping stakeholders for issue")
 
             # Generate stakeholder map
             stakeholder_map = await self._generate_stakeholder_map(issue)
@@ -691,10 +691,10 @@ Respond in JSON format:
                     sender_id=self.agent_id,
                 )
 
-            logger.info("[{self.agent_id}] Stakeholder mapping complete")
+            logger.info(f"[{self.agent_id}] Stakeholder mapping complete")
 
         except Exception:
-            logger.exception("[{self.agent_id}] Error mapping stakeholders: {e}")
+            logger.exception(f"[{self.agent_id}] Error mapping stakeholders: {e}")
 
     async def _generate_stakeholder_map(self, issue: str) -> dict[str, Any]:
         """
@@ -753,7 +753,7 @@ Respond in JSON:
             return generate_stakeholder_map_fallback()
 
         except Exception as e:
-            logger.warning("[{self.agent_id}] Stakeholder mapping failed: {e}")
+            logger.warning(f"[{self.agent_id}] Stakeholder mapping failed: {e}")
             return generate_stakeholder_map_fallback(str(e))
 
     async def _handle_get_analysis_summary(self, message: ActorMessage) -> None:
@@ -793,7 +793,7 @@ Respond in JSON:
                 )
 
         except Exception:
-            logger.exception("[{self.agent_id}] Error getting analysis summary: {e}")
+            logger.exception(f"[{self.agent_id}] Error getting analysis summary: {e}")
 
     async def _handle_reframe_issue(self, message: ActorMessage) -> None:
         """
@@ -805,12 +805,12 @@ Respond in JSON:
         try:
             is_valid, _error = self._validate_analysis_request(message.content)
             if not is_valid:
-                logger.error("[{self.agent_id}] Invalid reframe request: {error}")
+                logger.error(f"[{self.agent_id}] Invalid reframe request: {error}")
                 return
 
             issue = message.content["issue"]
 
-            logger.info("[{self.agent_id}] Reframing issue")
+            logger.info(f"[{self.agent_id}] Reframing issue")
 
             # Generate reframes
             reframes = await self._generate_reframes(issue)
@@ -828,10 +828,10 @@ Respond in JSON:
                     sender_id=self.agent_id,
                 )
 
-            logger.info("[{self.agent_id}] Issue reframed into {len(reframes)} perspectives")
+            logger.info(f"[{self.agent_id}] Issue reframed into {len(reframes)} perspectives")
 
         except Exception:
-            logger.exception("[{self.agent_id}] Error reframing issue: {e}")
+            logger.exception(f"[{self.agent_id}] Error reframing issue: {e}")
 
     def get_learning_status(self) -> dict[str, Any]:
         """Get collective learning and memory optimization status with phi_training."""
@@ -980,7 +980,7 @@ Respond in JSON:
             return generate_reframe_fallback()
 
         except Exception:
-            logger.warning("[{self.agent_id}] Reframe generation failed: {e}")
+            logger.warning(f"[{self.agent_id}] Reframe generation failed: {e}")
             return []
 
     # Backward compatibility: alias private methods

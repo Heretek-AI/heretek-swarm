@@ -573,14 +573,51 @@ Format as JSON with keys: objectives, test_cases, success_criteria, risks"""
             )
 
     async def _run_test_logic(self, test_case: dict[str, Any]) -> dict[str, Any]:
-        """Execute actual test logic (placeholder for actual test execution)."""
-        await asyncio.sleep(0.1)
+        """Execute test logic using inline assertions or pytest subprocess."""
+        assertions = test_case.get("assertions_list") or []
+        total = max(len(assertions), int(test_case.get("assertions", 1)))
+        passed = 0
+
+        for assertion in assertions:
+            expected = assertion.get("expected")
+            actual = assertion.get("actual")
+            if expected == actual:
+                passed += 1
+
+        test_path = test_case.get("test_path")
+        if test_path:
+            proc = await asyncio.create_subprocess_exec(
+                "python",
+                "-m",
+                "pytest",
+                str(test_path),
+                "-q",
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE,
+            )
+            _stdout, _stderr = await proc.communicate()
+            success = proc.returncode == 0
+            return {
+                "passed": success,
+                "assertions_passed": int(success),
+                "assertions_total": 1,
+                "coverage": test_case.get("expected_coverage", 0.0),
+            }
+
+        if assertions:
+            success = passed >= total
+        elif test_case.get("expected") is not None:
+            success = test_case.get("expected") == test_case.get("actual")
+            passed = int(success)
+            total = 1
+        else:
+            success = False
 
         return {
-            "passed": True,
-            "assertions_passed": test_case.get("assertions", 1),
-            "assertions_total": test_case.get("assertions", 1),
-            "coverage": test_case.get("expected_coverage", 95.0),
+            "passed": success,
+            "assertions_passed": passed,
+            "assertions_total": total,
+            "coverage": test_case.get("expected_coverage", 0.0),
         }
 
     async def _validate_decision_content(

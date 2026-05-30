@@ -279,10 +279,10 @@ class AgentActorStateManagement(AgentActor):
                 )
                 return
         except Exception:
-            logger.exception("[{self.agent_id}] File system load failed: {e}")
+            logger.exception(f"[{self.agent_id}] File system load failed: {e}")
 
         # No state found - actor is starting fresh
-        logger.info("[{self.agent_id}] No previous state found, starting fresh")
+        logger.info(f"[{self.agent_id}] No previous state found, starting fresh")
 
     async def save_checkpoint(
         self,
@@ -303,7 +303,7 @@ class AgentActorStateManagement(AgentActor):
             Created checkpoint, or None if repository not available
         """
         if self._state_repository is None:
-            logger.warning("[{self.agent_id}] Cannot save checkpoint: no state repository")
+            logger.warning(f"[{self.agent_id}] Cannot save checkpoint: no state repository")
             return None
 
         state_data = {
@@ -351,7 +351,7 @@ class AgentActorStateManagement(AgentActor):
             True if restored successfully, False otherwise
         """
         if self._state_repository is None:
-            logger.warning("[{self.agent_id}] Cannot restore checkpoint: no state repository")
+            logger.warning(f"[{self.agent_id}] Cannot restore checkpoint: no state repository")
             return False
 
         try:
@@ -430,16 +430,16 @@ class AgentActorStateManagement(AgentActor):
         """Suspend the actor temporarily."""
         if self.state == ActorState.ACTIVE:
             self.state = ActorState.SUSPENDED
-            logger.info("[{self.agent_id}] Agent suspended")
+            logger.info(f"[{self.agent_id}] Agent suspended")
 
     async def resume(self) -> None:
         """Resume a suspended or errored actor."""
         if self.state == ActorState.SUSPENDED:
             self.state = ActorState.ACTIVE
-            logger.info("[{self.agent_id}] Agent resumed from suspended state")
+            logger.info(f"[{self.agent_id}] Agent resumed from suspended state")
         elif self.state == ActorState.ERROR:
             self.state = ActorState.ACTIVE
-            logger.info("[{self.agent_id}] Agent recovered from error state")
+            logger.info(f"[{self.agent_id}] Agent recovered from error state")
 
     def update_state(self, key: str, value: Any) -> None:
         """
