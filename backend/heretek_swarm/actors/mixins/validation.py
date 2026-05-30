@@ -365,25 +365,33 @@ class ValidationMixin:
 
     def _extract_metrics(self, data: Any) -> dict[str, float]:
         """Extract numerical metrics from data for baseline comparison."""
-        metrics = {}
-
         if isinstance(data, dict):
-            for key, value in data.items():
-                if isinstance(value, (int, float)):
-                    metrics[f"{key}"] = float(value)
-                elif isinstance(value, (list, tuple)):
-                    metrics[f"{key}_len"] = float(len(value))
-                    if value and all(isinstance(x, (int, float)) for x in value):
-                        metrics[f"{key}_sum"] = float(sum(value))
-                        metrics[f"{key}_avg"] = float(sum(value) / len(value))
-        elif isinstance(data, (list, tuple)):
-            metrics["length"] = float(len(data))
-            if data and all(isinstance(x, (int, float)) for x in data):
-                metrics["sum"] = float(sum(data))
-                metrics["avg"] = float(sum(data) / len(data))
-        elif isinstance(data, (int, float)):
-            metrics["value"] = float(data)
+            return self._extract_dict_metrics(data)
+        if isinstance(data, (list, tuple)):
+            return self._extract_list_metrics(data)
+        if isinstance(data, (int, float)):
+            return {"value": float(data)}
+        return {}
 
+    @staticmethod
+    def _extract_dict_metrics(data: dict[str, Any]) -> dict[str, float]:
+        metrics: dict[str, float] = {}
+        for key, value in data.items():
+            if isinstance(value, (int, float)):
+                metrics[str(key)] = float(value)
+            elif isinstance(value, (list, tuple)):
+                metrics[f"{key}_len"] = float(len(value))
+                if value and all(isinstance(x, (int, float)) for x in value):
+                    metrics[f"{key}_sum"] = float(sum(value))
+                    metrics[f"{key}_avg"] = float(sum(value) / len(value))
+        return metrics
+
+    @staticmethod
+    def _extract_list_metrics(data: list | tuple) -> dict[str, float]:
+        metrics: dict[str, float] = {"length": float(len(data))}
+        if data and all(isinstance(x, (int, float)) for x in data):
+            metrics["sum"] = float(sum(data))
+            metrics["avg"] = float(sum(data) / len(data))
         return metrics
 
     def _update_behavioral_history(

@@ -468,81 +468,55 @@ class PerceiverAgent(
     async def _extract_image_features(
         self, image_data: Any, format_hint: str | None
     ) -> dict[str, Any]:
-        """Extract features from image input.
-
-        Uses PIL/Pillow for structured visual features (dimensions, mode,
-        channels, color_stats, dominant_color_rgb).  Optionally enriches with
-        LLM description when vision-capable providers are available.
-        Falls back to metadata-only when PIL is not importable.
-        """
-        # Decode image bytes (handle data URL or raw bytes)
+        """Extract features from image input."""
         image_bytes = self._decode_image_bytes(image_data)
         mime_type = self._detect_image_mime(image_data)
-
-        # Base metadata fields present in every result
         base: dict[str, Any] = {
-            "format": format_hint or "unknown",
-            "mime_type": mime_type,
-            "size_bytes": len(image_bytes),
+            "format": format_hint or "unknown", "mime_type": mime_type, "size_bytes": len(image_bytes),
         }
+        pil_features = self._try_extract_pil(image_bytes)
+        llm_description = await self._try_describe_image_llm(image_data)
+        return self._merge_image_features(base, pil_features, llm_description)
 
-        # --- PIL extraction ---
-        pil_features: dict[str, Any] = {}
+    def _try_extract_pil(self, image_bytes: bytes) -> dict[str, Any]:
         try:
-            from PIL import Image, ImageStat
-            _ = Image, ImageStat  # mark as used
-            pil_features = self._extract_image_pil(image_bytes)
+            from PIL import Image, ImageStat  # noqa: F401
+            return self._extract_image_pil(image_bytes)
         except ImportError:
-            logger.warning(
-                "[%s] PIL/Pillow not available — falling back to metadata",
-                self.agent_id,
-                extra={"event": "perceiver_pil_unavailable"},
-            )
+            logger.warning("[%s] PIL/Pillow not available — falling back to metadata",
+                           self.agent_id, extra={"event": "perceiver_pil_unavailable"})
         except Exception:
-            logger.exception(
-                "[%s] PIL image decode failed",
-                self.agent_id,
-                extra={"event": "perceiver_pil_decode_failed"},
-            )
+            logger.exception("[%s] PIL image decode failed",
+                             self.agent_id, extra={"event": "perceiver_pil_decode_failed"})
+        return {}
 
-        # --- LLM description (best-effort, parallel-adjacent) ---
-        llm_description: str | None = None
-        if self.swarms_agent and self.swarms_agent.llm:
-            try:
-                if isinstance(image_data, str):
-                    llm_description = await asyncio.wait_for(
-                        self._describe_image_llm(image_data),
-                        timeout=60,
-                    )
-            except TimeoutError:
-                logger.warning(
-                    "[%s] Image LLM analysis timed out",
-                    self.agent_id,
-                    extra={"event": "perceiver_llm_timeout"},
-                )
-            except Exception:
-                logger.exception(
-                    "[%s] Image LLM analysis error",
-                    self.agent_id,
-                    extra={"event": "perceiver_llm_error"},
-                )
+    async def _try_describe_image_llm(self, image_data: Any) -> str | None:
+        if not (self.swarms_agent and self.swarms_agent.llm and isinstance(image_data, str)):
+            return None
+        try:
+            return await asyncio.wait_for(self._describe_image_llm(image_data), timeout=60)
+        except TimeoutError:
+            logger.warning("[%s] Image LLM analysis timed out",
+                           self.agent_id, extra={"event": "perceiver_llm_timeout"})
+        except Exception:
+            logger.exception("[%s] Image LLM analysis error",
+                             self.agent_id, extra={"event": "perceiver_llm_error"})
+        return None
 
-        # --- Merge results ---
+    @staticmethod
+    def _merge_image_features(
+        base: dict[str, Any], pil_features: dict[str, Any], llm_description: str | None
+    ) -> dict[str, Any]:
         result = dict(base)
-
         if pil_features:
             result.update(pil_features)
-            if llm_description:
-                result["description"] = llm_description
-                result["analyzed_by"] = "pil+llm"
-            else:
-                result["analyzed_by"] = "pil"
+            result["description"] = llm_description or ""
+            result["analyzed_by"] = "pil+llm" if llm_description else "pil"
         elif llm_description:
             result["description"] = llm_description
             result["analyzed_by"] = "llm"
         else:
             result["analyzed_by"] = "metadata"
-
         return result
 
     @staticmethod
