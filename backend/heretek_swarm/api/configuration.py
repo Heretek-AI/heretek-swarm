@@ -14,6 +14,8 @@ from uuid import UUID
 import structlog
 from fastapi import APIRouter, Depends, HTTPException, Query
 
+logger = structlog.get_logger(__name__)
+
 from heretek_swarm.config.models import (
     AgentConfigCreate,
     AgentConfigUpdate,
@@ -295,11 +297,16 @@ async def test_llm_provider(
         }
 
     except Exception as e:
+        logger.exception(
+            "LLM provider connectivity test failed",
+            provider_id=str(provider_id),
+            provider_name=provider.provider_name,
+        )
         return {
             "provider_id": str(provider_id),
             "provider_name": provider.provider_name,
             "success": False,
-            "error": str(e),
+            "error": "Provider connectivity test failed",
         }
 
 
