@@ -152,31 +152,20 @@ class TaskSynchronizer:
         deadlock_chain: list[str],
         strategy: str = "escalate",
     ) -> dict[str, Any]:
-        agents_notified = []
+        agents_notified: list[str] = []
         escalation_level = EscalationLevel.NONE
         resolved = False
         if strategy == "timeout":
-            for dep in self._dependencies.values():
-                if dep.is_expired:
-                    dep.state = DeadlockState.RESOLVING
-                    await self.release_dependency(dep.dependency_id)
-                    resolved = True
-                    agents_notified.append(dep.waiting_agent_id)
+            resolved, agents_notified = await self._resolve_by_timeout()
             escalation_level = EscalationLevel.COORDINATOR
         elif strategy == "negotiate":
-            for agent_id in deadlock_chain:
-                if agent_id in self._agent_locks:
-                    self._agent_locks[agent_id].clear()
-                    resolved = True
-                    agents_notified.append(agent_id)
+            resolved, agents_notified = await self._resolve_by_negotiation(deadlock_chain)
             escalation_level = EscalationLevel.STEWARD
         elif strategy == "escalate":
             await self.escalate_to_arbiter(deadlock_chain, {})
             escalation_level = EscalationLevel.ARBITER
             resolved = True
-        for dep in self._dependencies.values():
-            if dep.waiting_agent_id in deadlock_chain:
-                dep.state = DeadlockState.RESOLVED
+        self._mark_deadlock_resolved(deadlock_chain)
         await self.record_coordination_usage("deadlock_resolution", 0.02)
         return {
             "resolved": resolved,
@@ -184,6 +173,32 @@ class TaskSynchronizer:
             "agents_notified": agents_notified,
             "escalation_level": escalation_level,
         }
+
+    async def _resolve_by_timeout(self) -> tuple[bool, list[str]]:
+        agents_notified: list[str] = []
+        resolved = False
+        for dep in self._dependencies.values():
+            if dep.is_expired:
+                dep.state = DeadlockState.RESOLVING
+                await self.release_dependency(dep.dependency_id)
+                resolved = True
+                agents_notified.append(dep.waiting_agent_id)
+        return resolved, agents_notified
+
+    async def _resolve_by_negotiation(self, deadlock_chain: list[str]) -> tuple[bool, list[str]]:
+        agents_notified: list[str] = []
+        resolved = False
+        for agent_id in deadlock_chain:
+            if agent_id in self._agent_locks:
+                self._agent_locks[agent_id].clear()
+                resolved = True
+                agents_notified.append(agent_id)
+        return resolved, agents_notified
+
+    def _mark_deadlock_resolved(self, deadlock_chain: list[str]) -> None:
+        for dep in self._dependencies.values():
+            if dep.waiting_agent_id in deadlock_chain:
+                dep.state = DeadlockState.RESOLVED
 
     async def escalate_to_arbiter(
         self,
