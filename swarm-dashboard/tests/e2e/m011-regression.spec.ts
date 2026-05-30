@@ -25,13 +25,23 @@ async function setupDashboard(page: any) {
   if (!API_KEY) {
     throw new Error('Missing E2E_API_KEY environment variable');
   }
+
+  await page.route('**/api/**', async (route: any) => {
+    const headers = route.request().headers();
+    await route.continue({
+      headers: {
+        ...headers,
+        authorization: `Bearer ${API_KEY}`,
+      },
+    });
+  });
+
   await page.goto('/');
   await page.evaluate(() => localStorage.clear());
-  await page.evaluate(() => {
+  await page.evaluate((host: string) => {
     localStorage.setItem('swarm_configured', 'true');
-    localStorage.setItem('swarm_api_host', API_HOST);
-    localStorage.setItem('api_key', API_KEY);
-  });
+    localStorage.setItem('swarm_api_host', host);
+  }, API_HOST);
   await page.reload();
   
   // Wait for dashboard to load (not wizard)
