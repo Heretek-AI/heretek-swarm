@@ -12,6 +12,7 @@ Inspired by RAGFlow's knowledge graph retrieval patterns.
 
 from dataclasses import dataclass, field
 from enum import StrEnum
+import re
 from typing import Any
 
 import structlog
@@ -77,6 +78,27 @@ class SubQuestionDecomposer:
     - Comparative: "Compare X and Y" → [X properties, Y properties]
     """
 
+    # Pre-compiled regex patterns to prevent ReDoS (CWE-1333).
+    # Input length is validated before any regex is applied.
+    _MAX_QUERY_LENGTH = 4096
+
+    _SEQUENTIAL_RE = re.compile(
+        r"\s+(?:and then|followed by|next|after that|secondly|thirdly)\s+",
+        flags=re.IGNORECASE,
+    )
+    _COMPARATIVE_RE = re.compile(
+        r"\s+(?:vs|versus|compared to|against)\s+",
+        flags=re.IGNORECASE,
+    )
+    _CAUSAL_RE = re.compile(
+        r"\s+(?:because|therefore|as a result|consequently|since)\s+",
+        flags=re.IGNORECASE,
+    )
+    _HIERARCHICAL_RE = re.compile(
+        r",\s+(?:including|specifically|such as)\s+",
+        flags=re.IGNORECASE,
+    )
+
     def decompose(self, query: str) -> list[str]:
         """
         Decompose a query into sub-questions.
@@ -87,27 +109,26 @@ class SubQuestionDecomposer:
         Returns:
             List of sub-question strings
         """
-        import re
+        # Guard against ReDoS: reject excessively long inputs before any regex.
+        if len(query) > self._MAX_QUERY_LENGTH:
+            logger.warning(
+                "query_too_long_for_decomposition",
+                length=len(query),
+                max_length=self._MAX_QUERY_LENGTH,
+            )
+            return [query]
 
-        sub_questions = []
+        sub_questions: list[str] = []
 
         # Sequential decomposition: split on "and then", "followed by"
-        sequential_split = re.split(
-            r"\s+(?:and then|followed by|next|after that|secondly|thirdly)\s+",
-            query,
-            flags=re.IGNORECASE,
-        )
+        sequential_split = self._SEQUENTIAL_RE.split(query)
         if len(sequential_split) > 1:
             sub_questions.extend(
                 s.strip().capitalize() + "?" for s in sequential_split if s.strip()
             )
 
         # Comparative decomposition: split on "vs", "versus", "compared to", "X vs Y"
-        comparative_split = re.split(
-            r"\s+(?:vs|versus|compared to|against)\s+",
-            query,
-            flags=re.IGNORECASE,
-        )
+        comparative_split = self._COMPARATIVE_RE.split(query)
         if len(comparative_split) > 1:
             # Reconstruct comparative sub-questions
             parts = comparative_split
@@ -117,41 +138,39 @@ class SubQuestionDecomposer:
                     sub_questions.append(f"{parts[i + 1].strip()}?")
 
         # Causal decomposition: split on "because", "therefore", "resulted in"
-        causal_split = re.split(
-            r"\s+(?:because|therefore|as a result|consequently|since)\s+",
-            query,
-            flags=re.IGNORECASE,
-        )
+        causal_split = self._CAUSAL_RE.split(query)
         if len(causal_split) > 1:
             sub_questions.extend(s.strip().capitalize() + "?" for s in causal_split if s.strip())
 
         # Hierarchical decomposition: split on ", including", ", specifically"
-        hierarchical_split = re.split(
-            r",\s+(?:including|specifically|such as)\s+",
-            query,
-            flags=re.IGNORECASE,
-        )
-        if len(hierarchical_split) > 1:
-            for i, part in enumerate(hierarchical_split):
-                if i == 0:
-                    sub_questions.append(part.strip().rstrip("?") + "?")
-                else:
-                    # Each sub-part gets its own query
-                    sub_questions.append(f"{part.strip().rstrip('.')}?")
+        self._decompose_hierarchical(query, sub_questions)
 
         # If no decomposition worked, return original query
         if not sub_questions:
             return [query]
 
-        # Deduplicate while preserving order
+        return self._deduplicate(sub_questions)
+
+    def _decompose_hierarchical(self, query: str, sub_questions: list[str]) -> None:
+        """Decompose hierarchical patterns: ', including', ', specifically'."""
+        hierarchical_split = self._HIERARCHICAL_RE.split(query)
+        if len(hierarchical_split) > 1:
+            for i, part in enumerate(hierarchical_split):
+                if i == 0:
+                    sub_questions.append(part.strip().rstrip("?") + "?")
+                else:
+                    sub_questions.append(f"{part.strip().rstrip('.')}?")
+
+    @staticmethod
+    def _deduplicate(questions: list[str]) -> list[str]:
+        """Deduplicate sub-questions while preserving order."""
         seen: set[str] = set()
         deduped: list[str] = []
-        for q in sub_questions:
+        for q in questions:
             normalized = q.lower().strip()
             if normalized not in seen:
                 seen.add(normalized)
                 deduped.append(q)
-
         return deduped
 
 

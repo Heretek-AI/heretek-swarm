@@ -1,12 +1,14 @@
 import sys, json
 from collections import Counter
 
+_REPO_PREFIX = 'heretek-swarm/'
+
 data = json.load(sys.stdin)
 issues = data['issues']
 
 # S5655 by file
 s5655 = [i for i in issues if i['rule'] == 'python:S5655']
-by_file = Counter(i['component'].split('heretek-swarm/')[-1] for i in s5655)
+by_file = Counter(i['component'].split(_REPO_PREFIX)[-1] for i in s5655)
 print("=== S5655 by File ===")
 for f, c in by_file.most_common():
     print(f"{c:3d}  {f}")
@@ -23,7 +25,7 @@ for f, c in by_func.most_common():
 
 # S6903 by file
 s6903 = [i for i in issues if i['rule'] == 'python:S6903']
-by_file2 = Counter(i['component'].split('heretek-swarm/')[-1] for i in s6903)
+by_file2 = Counter(i['component'].split(_REPO_PREFIX)[-1] for i in s6903)
 print("\n=== S6903 by File ===")
 for f, c in by_file2.most_common():
     print(f"{c:3d}  {f}")

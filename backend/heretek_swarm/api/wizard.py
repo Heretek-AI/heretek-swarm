@@ -625,7 +625,7 @@ INVALID_API_KEY = "Invalid API key"
 LITE_LLM_NOT_HEALTHY = "LiteLLM proxy not healthy"
 OLLAMA_NOT_RUNNING = "Ollama not running"
 UNKNOWN_PROVIDER_TYPE = "Unknown provider type"
-VALIDATION_FAILED = "Validation failed: {error}"
+VALIDATION_FAILED = "Validation failed"
 
 
 # =============================================================================
@@ -709,7 +709,7 @@ async def validate_credentials(
         logger.error("Provider validation failed", provider=provider_id, error=str(e))
         return {
             "valid": False,
-            "error": VALIDATION_FAILED.format(error=str(e)),
+            "error": VALIDATION_FAILED,
             "provider_id": provider_id,
         }
 

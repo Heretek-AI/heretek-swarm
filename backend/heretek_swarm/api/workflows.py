@@ -16,7 +16,7 @@ import json
 import uuid
 from collections.abc import AsyncGenerator
 from datetime import UTC, datetime
-from typing import Any
+from typing import Annotated, Any
 
 import structlog
 from fastapi import APIRouter, Depends, HTTPException, Query
@@ -59,7 +59,7 @@ def _serialize_node_results(node_results: dict[str, Any]) -> dict[str, Any]:
 
 @router.post("", status_code=201)
 async def create_workflow(
-    workflow_definition: dict[str, Any], authenticated: str = Depends(verify_auth)
+    workflow_definition: dict[str, Any], authenticated: Annotated[str, Depends(verify_auth)]
 ) -> dict[str, Any]:
     """
     Create a new workflow from Canvas UI definition.
@@ -87,7 +87,7 @@ async def create_workflow(
 
 
 @router.get("", status_code=200)
-async def list_workflows(authenticated: str = Depends(verify_auth)) -> dict[str, Any]:
+async def list_workflows(authenticated: Annotated[str, Depends(verify_auth)]) -> dict[str, Any]:
     """
     List all workflows.
 
@@ -114,7 +114,7 @@ async def list_workflows(authenticated: str = Depends(verify_auth)) -> dict[str,
 
 @router.get("/{workflow_id}", status_code=200)
 async def get_workflow(
-    workflow_id: str, authenticated: str = Depends(verify_auth)
+    workflow_id: str, authenticated: Annotated[str, Depends(verify_auth)]
 ) -> dict[str, Any]:
     """
     Get a specific workflow by ID.
@@ -165,7 +165,7 @@ async def get_workflow(
 async def execute_workflow(
     workflow_id: str,
     input_data: dict[str, Any],
-    authenticated: str = Depends(verify_auth),
+    authenticated: Annotated[str, Depends(verify_auth)],
     strategy: str = "dag",
 ) -> dict[str, Any]:
     """
@@ -217,7 +217,7 @@ async def execute_workflow(
 async def update_workflow(
     workflow_id: str,
     workflow_definition: dict[str, Any],
-    authenticated: str = Depends(verify_auth),
+    authenticated: Annotated[str, Depends(verify_auth)],
 ) -> dict[str, Any]:
     """Update an existing workflow definition.
 
@@ -249,7 +249,7 @@ async def update_workflow(
 
 
 @router.delete("/{workflow_id}")
-async def delete_workflow(workflow_id: str, authenticated: str = Depends(verify_auth)):
+async def delete_workflow(workflow_id: str, authenticated: Annotated[str, Depends(verify_auth)]):
     """
     Delete a workflow.
 
@@ -270,7 +270,7 @@ async def delete_workflow(workflow_id: str, authenticated: str = Depends(verify_
 
 @router.get("/{workflow_id}/status", status_code=200)
 async def get_workflow_status(
-    workflow_id: str, authenticated: str = Depends(verify_auth)
+    workflow_id: str, authenticated: Annotated[str, Depends(verify_auth)]
 ) -> dict[str, Any]:
     """
     Get status of a workflow execution.
@@ -309,7 +309,7 @@ async def get_workflow_status(
 
 @router.post("/{workflow_id}/cancel", status_code=200)
 async def cancel_workflow(
-    workflow_id: str, authenticated: str = Depends(verify_auth)
+    workflow_id: str, authenticated: Annotated[str, Depends(verify_auth)]
 ) -> dict[str, Any]:
     """
     Cancel a running workflow execution.
@@ -334,7 +334,7 @@ async def cancel_workflow(
 
 @router.post("/{workflow_id}/validate", status_code=200)
 async def validate_workflow_endpoint(
-    workflow_id: str, authenticated: str = Depends(verify_auth)
+    workflow_id: str, authenticated: Annotated[str, Depends(verify_auth)]
 ) -> dict[str, Any]:
     """
     Validate a workflow graph before execution.
@@ -400,7 +400,7 @@ async def validate_workflow_endpoint(
 
 @router.post("/validate", status_code=200)
 async def validate_workflow_draft(
-    workflow_definition: dict[str, Any], authenticated: str = Depends(verify_auth)
+    workflow_definition: dict[str, Any], authenticated: Annotated[str, Depends(verify_auth)]
 ) -> dict[str, Any]:
     """
     Validate a workflow definition (draft mode).
@@ -506,9 +506,9 @@ async def _stream_workflow_events(
 
 @router.get("/events", response_class=StreamingResponse)
 async def workflow_events_stream(
+    authenticated: Annotated[str, Depends(verify_auth)],
     workflow_id: str | None = Query(None, description="Filter events by workflow ID"),
     execution_id: str | None = Query(None, description="Watch a specific execution ID"),
-    authenticated: str = Depends(verify_auth),
 ) -> StreamingResponse:
     """
     SSE endpoint for streaming workflow execution events.
@@ -543,8 +543,8 @@ async def workflow_events_stream(
 @router.get("/{workflow_id}/events", response_class=StreamingResponse)
 async def workflow_specific_events_stream(
     workflow_id: str,
+    authenticated: Annotated[str, Depends(verify_auth)],
     execution_id: str | None = Query(None, description="Optional execution ID to watch"),
-    authenticated: str = Depends(verify_auth),
 ) -> StreamingResponse:
     """
     SSE endpoint for streaming events from a specific workflow execution.

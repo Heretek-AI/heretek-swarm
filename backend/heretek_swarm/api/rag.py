@@ -157,7 +157,7 @@ async def ingest_batch(
             results.append(
                 {
                     "filename": file.filename,
-                    "error": str(e),
+                    "error": "Ingestion failed for this file",
                 }
             )
 

@@ -1026,7 +1026,7 @@ class ConfigurationServiceCrud:
         """
         llm_providers = await self.list_llm_providers(include_disabled=True)
         embedding_providers = await self.list_embedding_providers(include_disabled=True)
-        agent_configs = await self.list_agent_configs(include_disabled=True)
+        agent_configs = await self.list_agent_configs(include_inactive=True)
         user_configs = await self.list_configs(include_sensitive=include_sensitive)
 
         if not include_sensitive:

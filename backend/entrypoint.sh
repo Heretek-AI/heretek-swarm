@@ -9,7 +9,7 @@ echo " Heretek Swarm — Container Entrypoint"
 echo "========================================="
 
 # Run migrations if DATABASE_URL is set
-if [ -n "$DATABASE_URL" ]; then
+if [[ -n "$DATABASE_URL" ]]; then
     echo ""
     echo "Running database migrations..."
     python /app/scripts/run_migrations.py --database-url "$DATABASE_URL" || {

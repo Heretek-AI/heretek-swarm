@@ -2,7 +2,7 @@
 
 import uuid
 from datetime import UTC, datetime
-from typing import Any
+from typing import Annotated, Any
 
 import structlog
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
@@ -24,7 +24,7 @@ router = APIRouter(prefix="", tags=["observability"])
 @router.get("/alerts")
 async def get_alerts(
     request: Request,
-    authenticated: str = Depends(verify_auth),
+    authenticated: Annotated[str, Depends(verify_auth)],
 ) -> dict[str, Any]:
     """Get active alerts and anomalies.
 

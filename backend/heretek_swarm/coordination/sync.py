@@ -159,7 +159,7 @@ class TaskSynchronizer:
             resolved, agents_notified = await self._resolve_by_timeout()
             escalation_level = EscalationLevel.COORDINATOR
         elif strategy == "negotiate":
-            resolved, agents_notified = await self._resolve_by_negotiation(deadlock_chain)
+            resolved, agents_notified = self._resolve_by_negotiation(deadlock_chain)
             escalation_level = EscalationLevel.STEWARD
         elif strategy == "escalate":
             await self.escalate_to_arbiter(deadlock_chain, {})
@@ -185,7 +185,7 @@ class TaskSynchronizer:
                 agents_notified.append(dep.waiting_agent_id)
         return resolved, agents_notified
 
-    async def _resolve_by_negotiation(self, deadlock_chain: list[str]) -> tuple[bool, list[str]]:
+    def _resolve_by_negotiation(self, deadlock_chain: list[str]) -> tuple[bool, list[str]]:
         agents_notified: list[str] = []
         resolved = False
         for agent_id in deadlock_chain:

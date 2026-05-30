@@ -242,8 +242,6 @@ class NATSClient:
             f.write(key_str)
         self._temp_cert_files.append(key_path)
 
-        import os
-
         skip_verify = os.getenv("HERETEK_TLS_SKIP_HOSTNAME_VERIFY", "").lower() in (
             "1",
             "true",

@@ -517,13 +517,14 @@ async def test_embedding_provider(request: Request, provider_id: str) -> dict[st
             "error": None if reachable else f"HTTP {resp.status_code}",
         }
     except Exception as e:
+        logger.error("embedding_provider_test_failed", provider_id=provider_id, error=str(e))
         latency_ms = round(
             (time.time() - t0 - 0.001) * 1000, 2
         )  # rough, excluding routing overhead
         result = {
             "reachable": False,
             "latency_ms": latency_ms,
-            "error": str(e),
+            "error": "Embedding provider connectivity test failed",
         }
 
     _log_request(

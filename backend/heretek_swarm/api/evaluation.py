@@ -2,7 +2,7 @@
 Evaluation API - Agent Quality Assessment
 """
 
-from typing import Any
+from typing import Annotated, Any
 
 import structlog
 from fastapi import APIRouter, Depends, HTTPException
@@ -36,7 +36,7 @@ def _require_evaluator():
 
 @router.post("/test-cases", status_code=201)
 async def create_test_case(
-    test_case: dict[str, Any], authenticated: str = Depends(verify_auth)
+    test_case: dict[str, Any], authenticated: Annotated[str, Depends(verify_auth)]
 ) -> dict[str, Any]:
     evaluator = _require_evaluator()
 
@@ -59,7 +59,7 @@ async def create_test_case(
 
 @router.post("/test-cases/batch", status_code=201)
 async def create_test_cases_batch(
-    test_cases: list[dict[str, Any]], authenticated: str = Depends(verify_auth)
+    test_cases: list[dict[str, Any]], authenticated: Annotated[str, Depends(verify_auth)]
 ) -> dict[str, Any]:
     evaluator = _require_evaluator()
 
@@ -84,7 +84,7 @@ async def create_test_cases_batch(
 
 
 @router.get("/test-cases", status_code=200)
-async def list_test_cases(authenticated: str = Depends(verify_auth)) -> dict[str, Any]:
+async def list_test_cases(authenticated: Annotated[str, Depends(verify_auth)]) -> dict[str, Any]:
     evaluator = _require_evaluator()
     return {
         "test_cases": [
@@ -102,8 +102,8 @@ async def list_test_cases(authenticated: str = Depends(verify_auth)) -> dict[str
 @router.post("/agents/{agent_id}/evaluate", status_code=201)
 async def evaluate_agent(
     agent_id: str,
+    authenticated: Annotated[str, Depends(verify_auth)],
     test_case_ids: list[str] | None = None,
-    authenticated: str = Depends(verify_auth),
 ) -> dict[str, Any]:
     evaluator = _require_evaluator()
     try:
@@ -120,7 +120,7 @@ async def evaluate_agent(
 
 @router.get("/agents/{agent_id}/summary", status_code=200)
 async def get_agent_evaluation_summary(
-    agent_id: str, authenticated: str = Depends(verify_auth)
+    agent_id: str, authenticated: Annotated[str, Depends(verify_auth)]
 ) -> dict[str, Any]:
     evaluator = _require_evaluator()
     return evaluator.get_agent_summary(agent_id)
@@ -128,7 +128,7 @@ async def get_agent_evaluation_summary(
 
 @router.get("/summaries", status_code=200)
 async def get_all_evaluation_summaries(
-    authenticated: str = Depends(verify_auth),
+    authenticated: Annotated[str, Depends(verify_auth)],
 ) -> dict[str, Any]:
     evaluator = _require_evaluator()
     return {"summaries": evaluator.get_all_summaries()}
@@ -136,7 +136,7 @@ async def get_all_evaluation_summaries(
 
 @router.delete("/test-cases/{test_case_id}", status_code=204)
 async def delete_test_case(
-    test_case_id: str, authenticated: str = Depends(verify_auth)
+    test_case_id: str, authenticated: Annotated[str, Depends(verify_auth)]
 ) -> None:
     evaluator = _require_evaluator()
     if test_case_id not in evaluator.test_cases:

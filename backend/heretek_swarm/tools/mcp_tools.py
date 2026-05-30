@@ -357,7 +357,7 @@ class MCPToolRegistry:
         return True
 
     def _validate_property(
-        self, key: str, value: Any, prop_schema: dict[str, Any]
+        self, _key: str, value: Any, prop_schema: dict[str, Any]
     ) -> bool:
         """Validate a single property against its schema."""
         expected_type = prop_schema.get("type")

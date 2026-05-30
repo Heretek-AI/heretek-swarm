@@ -596,11 +596,14 @@ class MemorySync:
         await self._client.publish(TOPIC_SYNC_REQUEST, request)
 
         try:
-            done, pending = await asyncio.wait(
-                list(pending_futures.values()),
-                timeout=timeout_sec,
-            )
+            async with asyncio.timeout(timeout_sec):
+                done, pending = await asyncio.wait(
+                    list(pending_futures.values()),
+                )
             return await self._collect_sync_results(memory_ids, done, pending)
+        except TimeoutError:
+            logger.warning("sync_state_timeout", memory_ids=memory_ids)
+            return dict.fromkeys(memory_ids)
         except Exception as e:
             logger.error("sync_state_failed", error=str(e))
             return dict.fromkeys(memory_ids)

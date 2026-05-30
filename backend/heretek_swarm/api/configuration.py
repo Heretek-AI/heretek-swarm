@@ -134,10 +134,8 @@ async def create_config(
         new_config = await service.create_config(config, user=authenticated)
         return new_config.model_dump()
     except ValueError as e:
-        raise HTTPException(400, str(e)) from e
-
-
-@router.delete("/{key}")
+        logger.warning("create_config_validation_failed", error=str(e))
+        raise HTTPException(400, "Invalid configuration data") from e
 async def delete_config(
     key: str,
     authenticated: str = Depends(verify_auth),
@@ -229,10 +227,8 @@ async def create_llm_provider(
         new_provider = await service.create_llm_provider(provider, user=authenticated)
         return new_provider.model_dump()
     except ValueError as e:
-        raise HTTPException(400, str(e)) from e
-
-
-@router.put("/llm/providers/{provider_id}")
+        logger.warning("create_llm_provider_validation_failed", error=str(e))
+        raise HTTPException(400, "Invalid LLM provider data") from e
 async def update_llm_provider(
     provider_id: UUID,
     update: LLMProviderUpdate,
@@ -382,10 +378,8 @@ async def create_embedding_provider(
         new_provider = await service.create_embedding_provider(provider, user=authenticated)
         return new_provider.model_dump()
     except ValueError as e:
-        raise HTTPException(400, str(e)) from e
-
-
-@router.put("/embedding/providers/{provider_id}")
+        logger.warning("create_embedding_provider_validation_failed", error=str(e))
+        raise HTTPException(400, "Invalid embedding provider data") from e
 async def update_embedding_provider(
     provider_id: UUID,
     update: EmbeddingProviderUpdate,
@@ -515,10 +509,8 @@ async def create_agent_config(
         new_config = await service.create_agent_config(config, user=authenticated)
         return new_config.model_dump()
     except ValueError as e:
-        raise HTTPException(400, str(e)) from e
-
-
-@router.put("/agent/configs/{config_id}")
+        logger.warning("create_agent_config_validation_failed", error=str(e))
+        raise HTTPException(400, "Invalid agent configuration data") from e
 async def update_agent_config(
     config_id: UUID,
     update: AgentConfigUpdate,
@@ -670,7 +662,7 @@ async def reload_configurations(
         }
     except Exception as e:
         logger.error("Configuration reload failed", error=str(e))
-        raise HTTPException(500, f"Configuration reload failed: {e}") from e
+        raise HTTPException(500, "Configuration reload failed") from e
 
 
 # =============================================================================
@@ -709,10 +701,11 @@ async def configuration_health(
             "cache_hit_rate": cache_stats.get("hit_rate", 0),
         }
     except Exception as e:
+        logger.error("configuration_health_failed", error=str(e))
         return {
             "status": "unhealthy",
             "database_connected": False,
-            "error": str(e),
+            "error": "Configuration health check failed",
         }
 
 

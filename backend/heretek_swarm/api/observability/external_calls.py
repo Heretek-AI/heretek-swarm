@@ -3,7 +3,7 @@
 import json
 import uuid as uuid_module
 from datetime import UTC, datetime
-from typing import Any
+from typing import Annotated, Any
 
 import structlog
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
@@ -35,6 +35,7 @@ router = APIRouter(prefix="", tags=["observability"])
 @router.get("/external-calls", response_model=ExternalCallLogListResponse)
 async def get_external_calls(
     request: Request,
+    authenticated: Annotated[str, Depends(verify_auth)],
     agent_id: str | None = Query(None, description="Filter by agent ID"),
     call_type: str | None = Query(None, description="Filter by call type (http/mcp)"),
     status: str = Query("all", description="Filter by status: success, error, or all"),
@@ -46,7 +47,6 @@ async def get_external_calls(
     ),
     limit: int = Query(default=100, ge=1, le=1000, description="Maximum records to return"),
     offset: int = Query(default=0, ge=0, description="Number of records to skip"),
-    authenticated: str = Depends(verify_auth),
 ) -> ExternalCallLogListResponse:
     """Get external call logs with optional filtering and pagination."""
     client_id = request.client.host if request.client else "unknown"

@@ -180,25 +180,46 @@ class DeliberationOrchestrator:
     def _extract_requirements(results: dict[str, Any]) -> list[str]:
         """Extract requirements from triad results."""
         requirements: list[str] = []
+        requirements.extend(DeliberationOrchestrator._extract_alpha_requirements(results))
+        requirements.extend(DeliberationOrchestrator._extract_beta_requirements(results))
+        requirements.extend(DeliberationOrchestrator._extract_charlie_requirements(results))
+        return requirements
+
+    @staticmethod
+    def _extract_alpha_requirements(results: dict[str, Any]) -> list[str]:
+        """Extract requirements from Alpha agent analyses."""
+        reqs: list[str] = []
         for entry in results.get("alpha", {}).get("analyses", [])[-2:]:
             if isinstance(entry, dict):
                 for key in ("decision", "analysis", "summary"):
                     if key in entry:
-                        requirements.append(f"Alpha {key}: {entry[key]}")
+                        reqs.append(f"Alpha {key}: {entry[key]}")
                         break
+        return reqs
+
+    @staticmethod
+    def _extract_beta_requirements(results: dict[str, Any]) -> list[str]:
+        """Extract requirements from Beta agent analyses."""
+        reqs: list[str] = []
         for entry in results.get("beta", {}).get("analyses", [])[-2:]:
             if isinstance(entry, dict):
                 for key in ("analysis", "validation", "decision"):
                     if key in entry:
-                        requirements.append(f"Beta {key}: {entry[key]}")
+                        reqs.append(f"Beta {key}: {entry[key]}")
                         break
+        return reqs
+
+    @staticmethod
+    def _extract_charlie_requirements(results: dict[str, Any]) -> list[str]:
+        """Extract requirements from Charlie agent challenges."""
+        reqs: list[str] = []
         for entry in results.get("charlie", {}).get("challenges", [])[-2:]:
             if isinstance(entry, dict):
                 if "challenges" in entry:
-                    requirements.append(f"Charlie flags: {entry['challenges']}")
+                    reqs.append(f"Charlie flags: {entry['challenges']}")
                 elif "challenge" in entry:
-                    requirements.append(f"Charlie: {entry['challenge']}")
-        return requirements
+                    reqs.append(f"Charlie: {entry['challenge']}")
+        return reqs
 
     async def _poll_coder_completion(
         self, actors: dict[str, Any], pre_counter: int, timeout: int

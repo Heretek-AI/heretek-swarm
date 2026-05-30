@@ -10,7 +10,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 # Module-level constants for repeated error messages
-_REDIS_URL_REQUIRED_MSG = _REDIS_URL_REQUIRED_MSG
+_REDIS_URL_REQUIRED_MSG = "REDIS_URL is required for autonomous runtime operation."
 _QDRANT_URL_REQUIRED_MSG = "QDRANT_URL is required. Set it to http://host:port or use docker compose."
 
 

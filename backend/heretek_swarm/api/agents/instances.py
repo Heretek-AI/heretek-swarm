@@ -272,7 +272,7 @@ async def get_agent_memory(
                 "by_type": {},
                 "recent_entries": [],
                 "status": "error",
-                "error": str(e),
+                "error": "Failed to retrieve agent memories",
             }
 
     # ---- mem0 backend path (fallback) -----------------------------------------------

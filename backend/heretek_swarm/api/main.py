@@ -590,13 +590,11 @@ async def check_gateway() -> dict[str, Any]:
             "messages_processed": 0,
         }
     except Exception as e:
+        logger.error("gateway_check_failed", error=str(e))
         return {
             "status": "unhealthy",
-            "error": str(e),
+            "error": "Gateway health check failed",
         }
-
-
-async def check_redis() -> dict[str, Any]:
     """Check Redis connection status."""
     try:
         import redis.asyncio as redis
@@ -614,13 +612,11 @@ async def check_redis() -> dict[str, Any]:
             "version": info.get("redis_version", "unknown"),
         }
     except Exception as e:
+        logger.error("redis_check_failed", error=str(e))
         return {
             "status": "unhealthy",
-            "error": str(e),
+            "error": "Redis health check failed",
         }
-
-
-async def check_postgres() -> dict[str, Any]:
     """Check PostgreSQL connection status."""
     try:
         if not memory_store:
@@ -653,13 +649,11 @@ async def check_postgres() -> dict[str, Any]:
             "error": "Not connected",
         }
     except Exception as e:
+        logger.error("postgres_check_failed", error=str(e))
         return {
             "status": "unhealthy",
-            "error": str(e),
+            "error": "PostgreSQL health check failed",
         }
-
-
-async def check_qdrant() -> dict[str, Any]:
     """Check Qdrant vector database status."""
     try:
         import httpx
@@ -680,13 +674,11 @@ async def check_qdrant() -> dict[str, Any]:
             "error": "Connection failed",
         }
     except Exception as e:
+        logger.error("qdrant_check_failed", error=str(e))
         return {
             "status": "unhealthy",
-            "error": str(e),
+            "error": "Qdrant health check failed",
         }
-
-
-async def check_mem0() -> dict[str, Any]:
     """Check mem0 embedded backend status.
 
     mem0 is an embedded logical service running inside the API container
@@ -742,9 +734,10 @@ async def check_mem0() -> dict[str, Any]:
                 "note": _MEM0_NOTE,
             }
     except Exception as e:
+        logger.error("mem0_check_failed", error=str(e))
         return {
             "status": "unhealthy",
-            "error": str(e),
+            "error": "mem0 health check failed",
             "note": _MEM0_NOTE,
         }
 
@@ -935,7 +928,7 @@ async def get_memory_stats(authenticated: str = Depends(verify_auth)):
             "by_agent": {},
             "by_type": {},
             "status": "error",
-            "error": str(e),
+            "error": "Failed to retrieve memory statistics",
         }
 
 
@@ -978,9 +971,10 @@ async def get_litellm_metrics(authenticated: str = Depends(verify_auth)):
                 "message": "Failed to fetch metrics",
             }
     except Exception as e:
+        logger.error("litellm_metrics_failed", error=str(e))
         return {
             "status": "unavailable",
-            "error": str(e),
+            "error": "Failed to fetch LiteLLM metrics",
         }
 
 

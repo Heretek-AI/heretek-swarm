@@ -315,13 +315,13 @@ class TestSecretsLoaderImport:
         """SecretsLoader can be imported from heretek_swarm.config."""
         from heretek_swarm.config.secrets_loader import SecretsLoader
 
-        assert SecretsLoader is not None
+        assert hasattr(SecretsLoader, "load_secrets"), "SecretsLoader must have load_secrets method"
 
     def test_import_from_config_init(self) -> None:
         """SecretsLoader is exported from config/__init__.py."""
         from heretek_swarm.config import SecretsLoader
 
-        assert SecretsLoader is not None
+        assert hasattr(SecretsLoader, "load_secrets"), "SecretsLoader must be importable from config"
 
     def test_default_environment_is_development(self) -> None:
         """Default environment is 'development' when ENVIRONMENT is unset."""

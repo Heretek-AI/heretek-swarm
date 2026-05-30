@@ -221,4 +221,4 @@ async def get_metrics_json(authenticated: str = Depends(verify_auth)):
         }
     except Exception as e:
         logger.error("Failed to get metrics JSON", error=str(e))
-        return {"error": str(e)}
+        return {"error": "Failed to retrieve metrics"}
