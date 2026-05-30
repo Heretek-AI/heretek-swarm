@@ -263,8 +263,8 @@ class NATSEventMesh:
                     try:
                         self._js = self._nc.jetstream()
                         logger.info("JetStream context initialized")
-                    except Exception:
-                        logger.warning("JetStream not available: {e}")
+                    except Exception as e:
+                        logger.warning("JetStream not available", error=str(e))
                         self._js = None
 
                     return True
