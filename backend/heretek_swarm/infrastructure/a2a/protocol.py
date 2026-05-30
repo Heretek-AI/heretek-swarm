@@ -376,20 +376,27 @@ class A2AProtocol:
         min_version: str | None = None,
     ) -> list[str]:
         """Find agents with a specific capability."""
-        capable = []
-
+        capable: list[str] = []
         for agent_id, capabilities in self._registered_agents.items():
-            for cap in capabilities:
-                if cap.name == capability_name:
-                    if min_version:
-                        # Simple version check
-                        if self._version_at_least(cap.version, min_version):
-                            capable.append(agent_id)
-                    else:
-                        capable.append(agent_id)
-                        break
-
+            if self._agent_has_capability(agent_id, capabilities, capability_name, min_version):
+                capable.append(agent_id)
         return capable
+
+    def _agent_has_capability(
+        self,
+        agent_id: str,  # noqa: ARG002
+        capabilities: list[Any],
+        capability_name: str,
+        min_version: str | None,
+    ) -> bool:
+        for cap in capabilities:
+            if cap.name != capability_name:
+                continue
+            if min_version is None:
+                return True
+            if self._version_at_least(cap.version, min_version):
+                return True
+        return False
 
     def _version_at_least(self, version: str, min_version: str) -> bool:
         """Check if version meets minimum requirement."""

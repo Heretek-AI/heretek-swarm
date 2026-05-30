@@ -675,30 +675,33 @@ Provide your analysis in this exact JSON format:
 
     def _analyze_conflict_potential(self, agents: list[str]) -> bool:
         """Analyze potential for conflict between agents."""
-        # Check for opposing sentiments in recent history
+        if self._has_sentiment_divergence(agents):
+            return True
+        return self._has_high_stress(agents)
+
+    def _has_sentiment_divergence(self, agents: list[str]) -> bool:
+        """Check for significant sentiment divergence between agents."""
         recent_sentiments = {}
         for agent_id in agents:
-            moods = self.agent_moods.get(agent_id, [])[-10:]  # Last 10 entries
+            moods = self.agent_moods.get(agent_id, [])[-10:]
             if moods:
                 avg_sentiment = sum(
                     1 if m["sentiment"] == "positive" else -1 if m["sentiment"] == "negative" else 0
                     for m in moods
                 ) / len(moods)
                 recent_sentiments[agent_id] = avg_sentiment
-
-        # Check for significant sentiment divergence
         if len(recent_sentiments) >= 2:
             values = list(recent_sentiments.values())
-            max_diff = max(values) - min(values)
-            if max_diff > 1.5:  # Significant divergence
+            if max(values) - min(values) > 1.5:
                 return True
-
-        # Check stress levels
-        for agent_id in agents:
-            if self.agent_stress_levels.get(agent_id, 0.0) > self.stress_threshold:
-                return True
-
         return False
+
+    def _has_high_stress(self, agents: list[str]) -> bool:
+        """Check if any agent exceeds the stress threshold."""
+        return any(
+            self.agent_stress_levels.get(aid, 0.0) > self.stress_threshold
+            for aid in agents
+        )
 
     async def _handle_get_emotional_state(self, message: ActorMessage) -> None:
         """

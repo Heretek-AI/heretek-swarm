@@ -518,51 +518,29 @@ class AutonomousSwarm:
         return await self._deliberation.run_routed_task(agent_name, task_type, task_data, timeout)
 
     def get_startup_status(self) -> dict[str, str]:
-        """Return startup status of each component for diagnostics.
-
-        Returns a dict mapping component display names to status strings:
-        ``"✓ Connected"``, ``"✓ Initialized"``, ``"✗ Unavailable"``, etc.
-        """
+        """Return startup status of each component for diagnostics."""
         status: dict[str, str] = {}
+        self._add_component_status(status, "Channels", self.channel_registry)
+        self._add_component_status(status, "Memory", self.memory)
+        self._add_component_status(status, "RAG", self.rag)
+        self._add_component_status(status, "Consensus", self.consensus)
+        self._add_component_status(status, "Event Mesh", self.event_mesh, "Connected")
+        self._add_component_status(status, "MCP Tools", self.mcp_tools)
+        self._add_agent_status(status)
+        return status
 
-        # In-memory / always-available
-        if self.channel_registry is not None:
-            status["Channels"] = "✓ Initialized"
-        else:
-            status["Channels"] = "✗ Unavailable"
+    @staticmethod
+    def _add_component_status(
+        status: dict[str, str], name: str, component: object, label: str = "Initialized"
+    ) -> None:
+        status[name] = f"✓ {label}" if component is not None else "✗ Unavailable"
 
-        if self.memory is not None:
-            status["Memory"] = "✓ Initialized"
-        else:
-            status["Memory"] = "✗ Unavailable"
-
-        if self.rag is not None:
-            status["RAG"] = "✓ Initialized"
-        else:
-            status["RAG"] = "✗ Unavailable"
-
-        if self.consensus is not None:
-            status["Consensus"] = "✓ Initialized"
-        else:
-            status["Consensus"] = "✗ Unavailable"
-
-        if self.event_mesh is not None:
-            status["Event Mesh"] = "✓ Connected"
-        else:
-            status["Event Mesh"] = "✗ Unavailable"
-
-        if self.mcp_tools is not None:
-            status["MCP Tools"] = "✓ Initialized"
-        else:
-            status["MCP Tools"] = "✗ Unavailable"
-
+    def _add_agent_status(self, status: dict[str, str]) -> None:
         if self.supervisor is not None:
             agent_count = len(self.supervisor.actors) if hasattr(self.supervisor, "actors") else 0
             status["Agents"] = f"✓ {agent_count} spawned"
         else:
             status["Agents"] = "✗ Unavailable"
-
-        return status
 
     async def run(self) -> None:
         """Main autonomous loop - runs 24/7."""
