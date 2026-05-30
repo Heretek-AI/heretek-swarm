@@ -414,23 +414,7 @@ class IntrospectionModule:
         return belief
 
     def evolve_goals(self, current_state: dict[str, Any]) -> dict[str, Any]:
-        """Update goal priorities and progress based on current system state.
-
-        Args:
-            current_state: Dictionary containing current state information with keys:
-                - completed_tasks: List of completed task IDs
-                - active_tasks: List of active task IDs
-                - resources: Dict of available resources
-                - constraints: List of current constraints
-                - achievements: List of recent achievements
-
-        Returns:
-            Dictionary containing:
-            - updated_goals: List of goal IDs that were updated
-            - priority_changes: Dict mapping goal_id to priority change
-            - status_changes: Dict mapping goal_id to status change
-            - new_blocked_goals: List of newly blocked goal IDs
-        """
+        """Update goal priorities and progress based on current system state."""
         updated_goals: list[str] = []
         priority_changes: dict[str, float] = {}
         status_changes: dict[str, tuple[str, str]] = {}
@@ -446,75 +430,14 @@ class IntrospectionModule:
             old_status = goal.status.value
             old_progress = goal.progress
 
-            # Update progress based on completed tasks
-            if goal.goal_id in completed_tasks or any(
-                sg in completed_tasks for sg in goal.sub_goals
-            ):
-                progress_increment = 0.1
-                goal.progress = min(1.0, goal.progress + progress_increment)
-
-            # Check if goal should be completed
-            if goal.progress >= 1.0 and goal.status != GoalStatus.COMPLETED:
-                goal.status = GoalStatus.COMPLETED
-                goal.completed_at = datetime.now(UTC).isoformat()
-                status_changes[goal_id] = (old_status, GoalStatus.COMPLETED.value)
-                updated_goals.append(goal_id)
-
-            # Adjust priority based on achievements
-            goal_description_lower = goal.description.lower()
-            for achievement in achievements:
-                if any(word in achievement.lower() for word in goal_description_lower.split()):
-                    goal.priority = min(1.0, goal.priority + 0.05)
-
-            # Check for blocking constraints
-            if constraints:
-                constraint_blocks = False
-                for constraint in constraints:
-                    if constraint.lower() in goal_description_lower:
-                        constraint_blocks = True
-                        break
-
-                if constraint_blocks and goal.status == GoalStatus.ACTIVE:
-                    goal.status = GoalStatus.BLOCKED
-                    goal.blocked_by.append("constraint")
-                    status_changes[goal_id] = (old_status, GoalStatus.BLOCKED.value)
-                    new_blocked_goals.append(goal_id)
-                    updated_goals.append(goal_id)
-                elif not constraint_blocks and goal.status == GoalStatus.BLOCKED:
-                    goal.status = GoalStatus.ACTIVE
-                    if "constraint" in goal.blocked_by:
-                        goal.blocked_by.remove("constraint")
-                    status_changes[goal_id] = (old_status, GoalStatus.ACTIVE.value)
-                    updated_goals.append(goal_id)
-
-            # Resource-based priority adjustment
-            if resources:
-                resource_availability = sum(1 for v in resources.values() if v > 0.5) / max(
-                    1, len(resources)
-                )
-                if resource_availability > 0.8 and goal.priority < 0.7:
-                    goal.priority = min(1.0, goal.priority + 0.1)
-                elif resource_availability < 0.3 and goal.priority > 0.3:
-                    goal.priority = max(0.0, goal.priority - 0.1)
-
-            # Record evolution if changes occurred
-            if goal.priority != old_priority or goal.status.value != old_status:
-                evolution_record = GoalEvolutionRecord(
-                    goal_id=goal_id,
-                    old_priority=old_priority,
-                    new_priority=goal.priority,
-                    old_progress=old_progress,
-                    new_progress=goal.progress,
-                    old_status=old_status,
-                    new_status=goal.status.value,
-                    reason="state_evolution",
-                )
-                self._goal_evolution_history.append(evolution_record)
-
-                if goal.priority != old_priority:
-                    priority_changes[goal_id] = goal.priority - old_priority
-
-                updated_goals.append(goal_id)
+            self._update_goal_progress(goal, completed_tasks)
+            self._check_goal_completion(goal, goal_id, old_status, status_changes, updated_goals)
+            self._adjust_priority_from_achievements(goal, achievements)
+            self._check_constraint_blocks(goal, goal_id, old_status, constraints,
+                                          status_changes, new_blocked_goals, updated_goals)
+            self._adjust_priority_from_resources(goal, resources)
+            self._record_goal_evolution(goal, goal_id, old_priority, old_status, old_progress,
+                                        priority_changes, updated_goals)
 
         self._trim_evolution_history()
 
@@ -535,8 +458,101 @@ class IntrospectionModule:
                 "priority_changes_count": len(priority_changes),
             },
         )
-
         return result
+
+    def _update_goal_progress(self, goal: Goal, completed_tasks: set[str]) -> None:
+        """Update goal progress based on completed tasks."""
+        if goal.goal_id in completed_tasks or any(
+            sg in completed_tasks for sg in goal.sub_goals
+        ):
+            goal.progress = min(1.0, goal.progress + 0.1)
+
+    def _check_goal_completion(
+        self, goal: Goal, goal_id: str, old_status: str,
+        status_changes: dict[str, tuple[str, str]], updated_goals: list[str],
+    ) -> None:
+        """Check if goal should be marked completed."""
+        if goal.progress >= 1.0 and goal.status != GoalStatus.COMPLETED:
+            goal.status = GoalStatus.COMPLETED
+            goal.completed_at = datetime.now(UTC).isoformat()
+            status_changes[goal_id] = (old_status, GoalStatus.COMPLETED.value)
+            updated_goals.append(goal_id)
+
+    def _adjust_priority_from_achievements(
+        self, goal: Goal, achievements: list[str]
+    ) -> None:
+        """Adjust goal priority based on achievements."""
+        goal_desc_lower = goal.description.lower()
+        for achievement in achievements:
+            if any(word in achievement.lower() for word in goal_desc_lower.split()):
+                goal.priority = min(1.0, goal.priority + 0.05)
+
+    def _check_constraint_blocks(
+        self, goal: Goal, goal_id: str, old_status: str,
+        constraints: list[str], status_changes: dict[str, tuple[str, str]],
+        new_blocked_goals: list[str], updated_goals: list[str],
+    ) -> None:
+        """Check for blocking constraints and update goal status."""
+        if not constraints:
+            return
+
+        goal_desc_lower = goal.description.lower()
+        constraint_blocks = any(
+            c.lower() in goal_desc_lower for c in constraints
+        )
+
+        if constraint_blocks and goal.status == GoalStatus.ACTIVE:
+            goal.status = GoalStatus.BLOCKED
+            goal.blocked_by.append("constraint")
+            status_changes[goal_id] = (old_status, GoalStatus.BLOCKED.value)
+            new_blocked_goals.append(goal_id)
+            updated_goals.append(goal_id)
+        elif not constraint_blocks and goal.status == GoalStatus.BLOCKED:
+            goal.status = GoalStatus.ACTIVE
+            if "constraint" in goal.blocked_by:
+                goal.blocked_by.remove("constraint")
+            status_changes[goal_id] = (old_status, GoalStatus.ACTIVE.value)
+            updated_goals.append(goal_id)
+
+    def _adjust_priority_from_resources(
+        self, goal: Goal, resources: dict[str, Any]
+    ) -> None:
+        """Adjust goal priority based on resource availability."""
+        if not resources:
+            return
+        resource_availability = sum(1 for v in resources.values() if v > 0.5) / max(
+            1, len(resources)
+        )
+        if resource_availability > 0.8 and goal.priority < 0.7:
+            goal.priority = min(1.0, goal.priority + 0.1)
+        elif resource_availability < 0.3 and goal.priority > 0.3:
+            goal.priority = max(0.0, goal.priority - 0.1)
+
+    def _record_goal_evolution(
+        self, goal: Goal, goal_id: str, old_priority: float, old_status: str,
+        old_progress: float, priority_changes: dict[str, float],
+        updated_goals: list[str],
+    ) -> None:
+        """Record goal evolution if changes occurred."""
+        if goal.priority == old_priority and goal.status.value == old_status:
+            return
+
+        evolution_record = GoalEvolutionRecord(
+            goal_id=goal_id,
+            old_priority=old_priority,
+            new_priority=goal.priority,
+            old_progress=old_progress,
+            new_progress=goal.progress,
+            old_status=old_status,
+            new_status=goal.status.value,
+            reason="state_evolution",
+        )
+        self._goal_evolution_history.append(evolution_record)
+
+        if goal.priority != old_priority:
+            priority_changes[goal_id] = goal.priority - old_priority
+
+        updated_goals.append(goal_id)
 
     def detect_conflicting_beliefs(
         self,

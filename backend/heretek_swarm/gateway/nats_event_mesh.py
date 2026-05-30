@@ -289,82 +289,69 @@ class NATSEventMesh:
                     server_display = server
                     logger.debug("Connecting to %s (attempt %d)", server, attempt + 1)
 
-                    # Build kwargs for nats.connect()
-                    kwargs: dict[str, Any] = {
-                        "name": self.client_name,
-                        "reconnect_time_wait": self.reconnect_time_wait,
-                        "ping_interval": self.ping_interval,
-                        "max_outstanding_pings": self.max_outstanding_pings,
-                        "max_reconnect_attempts": 1,  # Fail fast, we handle retries
-                    }
-
+                    kwargs = self._build_connect_kwargs()
                     if self.tls_enabled:
-                        ssl_ctx = self._build_ssl_context()
-                        kwargs["tls"] = ssl_ctx
-                        # Switch URL prefix from nats:// to tls://
+                        kwargs["tls"] = self._build_ssl_context()
                         if server.startswith("nats://"):
                             server = server.replace("nats://", "tls://", 1)
                             server_display = server
-                            logger.debug(
-                                "mTLS enabled — using tls:// URL", server=server
-                            )
+                            logger.debug("mTLS enabled — using tls:// URL", server=server)
 
                     nc = await nats.connect(server, **kwargs)
-
-                    if self.tls_enabled:
-                        peer_cert_subject = "unknown"
-                        try:
-                            # Extract peer certificate subject for logging
-                            transport = getattr(nc, "_io_reader", None) or getattr(
-                                nc, "_transport", None
-                            )
-                            if transport is not None:
-                                sock = getattr(transport, "get_extra_info", None)
-                                if sock is not None:
-                                    peer_cert = sock("peercert")
-                                    if peer_cert is not None:
-                                        subject_attrs = peer_cert.get("subject", [])
-                                        cn = next(
-                                            (
-                                                v
-                                                for t, v in subject_attrs
-                                                if t == "commonName"
-                                            ),
-                                            "unknown",
-                                        )
-                                        peer_cert_subject = cn
-                        except Exception:
-                            logger.debug(
-                                "Could not extract peer certificate subject"
-                            )
-
-                        logger.info(
-                            "nats_tls_connection_established",
-                            server=server_display,
-                            peer_cert_subject=peer_cert_subject,
-                        )
-                    else:
-                        logger.info("Connected to %s", server_display)
-
+                    self._log_connection_success(nc, server_display)
                     return nc
 
                 except Exception as e:
                     last_error = e
-                    if self.tls_enabled:
-                        logger.error(
-                            "nats_tls_connection_failed",
-                            server=server_display,
-                            error=str(e),
-                        )
-                    logger.warning(
-                        "Failed to connect to %s",
-                        server_display,
-                        error=str(e),
-                        attempt=attempt + 1,
-                    )
+                    self._log_connection_failure(server_display, e, attempt)
                     await asyncio.sleep(self.reconnect_time_wait)
 
         raise last_error or Exception("No servers available")
+
+    def _build_connect_kwargs(self) -> dict[str, Any]:
+        """Build kwargs dict for nats.connect()."""
+        return {
+            "name": self.client_name,
+            "reconnect_time_wait": self.reconnect_time_wait,
+            "ping_interval": self.ping_interval,
+            "max_outstanding_pings": self.max_outstanding_pings,
+            "max_reconnect_attempts": 1,
+        }
+
+    def _log_connection_success(self, nc: Any, server_display: str) -> None:
+        """Log successful connection with optional TLS peer info."""
+        if self.tls_enabled:
+            peer_cert_subject = self._extract_peer_cert_subject(nc)
+            logger.info(
+                "nats_tls_connection_established",
+                server=server_display,
+                peer_cert_subject=peer_cert_subject,
+            )
+        else:
+            logger.info("Connected to %s", server_display)
+
+    @staticmethod
+    def _extract_peer_cert_subject(nc: Any) -> str:
+        """Extract peer certificate subject from NATS connection."""
+        try:
+            transport = getattr(nc, "_io_reader", None) or getattr(nc, "_transport", None)
+            if transport is not None:
+                sock = getattr(transport, "get_extra_info", None)
+                if sock is not None:
+                    peer_cert = sock("peercert")
+                    if peer_cert is not None:
+                        subject_attrs = peer_cert.get("subject", [])
+                        cn = next((v for t, v in subject_attrs if t == "commonName"), "unknown")
+                        return cn
+        except Exception:
+            logger.debug("Could not extract peer certificate subject")
+        return "unknown"
+
+    def _log_connection_failure(self, server: str, error: Exception, attempt: int) -> None:
+        """Log connection failure with optional TLS context."""
+        if self.tls_enabled:
+            logger.error("nats_tls_connection_failed", server=server, error=str(error))
+        logger.warning("Failed to connect to %s", server, error=str(error), attempt=attempt + 1)
 
     def _build_ssl_context(self) -> ssl.SSLContext:
         """Build an SSL context for mTLS.
