@@ -280,13 +280,6 @@ class LiberationShield:
     ) -> ThreatAnalysis:
         """
         Analyze input for security threats.
-
-        Args:
-            input_text: Input text to analyze
-            context: Context information
-
-        Returns:
-            Threat analysis result
         """
         if not input_text or not isinstance(input_text, str):
             return ThreatAnalysis(safe=True)
@@ -294,79 +287,78 @@ class LiberationShield:
         result = ThreatAnalysis(safe=True, sanitized=input_text)
         context = context or {}
 
-        # Prompt injection detection
         if self.enable_prompt_injection_detection:
-            for pattern in PROMPT_INJECTION_PATTERNS:
-                if pattern.search(input_text):
-                    threat = {
-                        "type": SecurityEventType.PROMPT_INJECTION.value,
-                        "severity": Severity.HIGH.value,
-                        "pattern": pattern.pattern,
-                        "message": "Potential prompt injection detected",
-                    }
-                    result.threats.append(threat)
-                    result.safe = self.mode == "transparent"
+            self._scan_for_threat(
+                input_text, PROMPT_INJECTION_PATTERNS,
+                SecurityEventType.PROMPT_INJECTION, Severity.HIGH,
+                "Potential prompt injection detected",
+                "Input was sanitized due to prompt injection pattern",
+                result, context,
+            )
 
-                    self._log_event(
-                        SecurityEventType.PROMPT_INJECTION,
-                        threat,
-                        context,
-                    )
-
-                    # In transparent mode, sanitize the input
-                    if self.mode == "transparent":
-                        result.sanitized = self._sanitize_input(input_text)
-                        result.warnings.append(
-                            "Input was sanitized due to prompt injection pattern"
-                        )
-                    break
-
-        # Jailbreak detection
         if self.enable_jailbreak_detection:
-            for pattern in JAILBREAK_PATTERNS:
-                if pattern.search(input_text):
-                    threat = {
-                        "type": SecurityEventType.JAILBREAK_ATTEMPT.value,
-                        "severity": Severity.CRITICAL.value,
-                        "pattern": pattern.pattern,
-                        "message": "Potential jailbreak attempt detected",
-                    }
-                    result.threats.append(threat)
-                    result.safe = self.mode == "transparent"
+            self._scan_for_threat(
+                input_text, JAILBREAK_PATTERNS,
+                SecurityEventType.JAILBREAK_ATTEMPT, Severity.CRITICAL,
+                "Potential jailbreak attempt detected",
+                "Input was sanitized due to jailbreak pattern",
+                result, context,
+            )
 
-                    self._log_event(
-                        SecurityEventType.JAILBREAK_ATTEMPT,
-                        threat,
-                        context,
-                    )
-
-                    if self.mode == "transparent":
-                        result.sanitized = self._sanitize_input(input_text)
-                        result.warnings.append("Input was sanitized due to jailbreak pattern")
-                    break
-
-        # Anomaly detection
         if self.enable_anomaly_detection:
-            for anomaly_config in ANOMALY_PATTERNS:
-                if anomaly_config["pattern"].search(input_text):
-                    threat = {
-                        "type": SecurityEventType.ANOMALY_DETECTED.value,
-                        "severity": anomaly_config["severity"].value,
-                        "pattern": anomaly_config["pattern"].pattern,
-                        "message": "Unusual behavior pattern detected",
-                    }
-                    result.threats.append(threat)
+            self._scan_anomalies(input_text, result, context)
 
-                    self._log_event(
-                        SecurityEventType.ANOMALY_DETECTED,
-                        threat,
-                        context,
+        return result
+
+    def _scan_for_threat(
+        self,
+        input_text: str,
+        patterns: list[re.Pattern],
+        event_type: SecurityEventType,
+        severity: Severity,
+        message: str,
+        warning: str,
+        result: ThreatAnalysis,
+        context: dict[str, Any],
+    ) -> None:
+        """Scan input for a specific threat category using compiled patterns."""
+        for pattern in patterns:
+            if pattern.search(input_text):
+                threat = {
+                    "type": event_type.value,
+                    "severity": severity.value,
+                    "pattern": pattern.pattern,
+                    "message": message,
+                }
+                result.threats.append(threat)
+                result.safe = self.mode == "transparent"
+                self._log_event(event_type, threat, context)
+                if self.mode == "transparent":
+                    result.sanitized = self._sanitize_input(input_text)
+                    result.warnings.append(warning)
+                break
+
+    def _scan_anomalies(
+        self,
+        input_text: str,
+        result: ThreatAnalysis,
+        context: dict[str, Any],
+    ) -> None:
+        """Scan input for anomaly patterns."""
+        for anomaly_config in ANOMALY_PATTERNS:
+            if anomaly_config["pattern"].search(input_text):
+                threat = {
+                    "type": SecurityEventType.ANOMALY_DETECTED.value,
+                    "severity": anomaly_config["severity"].value,
+                    "pattern": anomaly_config["pattern"].pattern,
+                    "message": "Unusual behavior pattern detected",
+                }
+                result.threats.append(threat)
+                self._log_event(SecurityEventType.ANOMALY_DETECTED, threat, context)
+                if self.mode == "transparent":
+                    result.warnings.append(
+                        f"Anomaly detected: {anomaly_config['severity'].value} severity"
                     )
-
-                    if self.mode == "transparent":
-                        result.warnings.append(
-                            f"Anomaly detected: {anomaly_config['severity'].value} severity"
-                        )
 
         # Calculate threat score
         if result.threats:

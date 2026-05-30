@@ -282,19 +282,6 @@ class PersistentMemory:
     ) -> list[dict[str, Any]]:
         """
         Search memories using semantic similarity.
-
-        Args:
-            query: Search query text
-            user_id: User identifier (defaults to self.user_id)
-            agent_id: Optional agent filter
-            limit: Maximum results to return
-            org_id: Optional organization filter
-            project_id: Optional project filter
-            session_id: Optional session filter
-            scope: Optional Water's hierarchy scope filter
-
-        Returns:
-            List of memory entries with scores
         """
         if not self._initialized:
             await self.initialize()
@@ -302,49 +289,18 @@ class PersistentMemory:
         user_id = user_id or self.user_id
 
         try:
-            filters = {}
-            if agent_id:
-                filters["agent_id"] = agent_id
-            if org_id:
-                filters["org_id"] = org_id
-            if project_id:
-                filters["project_id"] = project_id
-            if session_id:
-                filters["session_id"] = session_id
-            if scope:
-                filters["scope"] = scope
-
+            filters = _build_search_filters(agent_id, org_id, project_id, session_id, scope)
             results = self._memory.search(
-                query=query,
-                user_id=user_id,
-                limit=limit,
+                query=query, user_id=user_id, limit=limit,
                 filters=filters if filters else None,
             )
 
-            # Apply programmatic fallback filters for safety
             if agent_id or org_id or project_id or session_id or scope:
-                filtered_results = []
-                for r in results:
-                    meta = r.get("metadata", {})
-                    if agent_id and meta.get("agent_id") != agent_id:
-                        continue
-                    if org_id and meta.get("org_id") != org_id:
-                        continue
-                    if project_id and meta.get("project_id") != project_id:
-                        continue
-                    if session_id and meta.get("session_id") != session_id:
-                        continue
-                    if scope and meta.get("scope") != scope:
-                        continue
-                    filtered_results.append(r)
-                results = filtered_results
+                results = _apply_search_fallback_filters(
+                    results, agent_id, org_id, project_id, session_id, scope
+                )
 
-            logger.debug(
-                "memory_searched",
-                query=query[:50],
-                results=len(results),
-                user_id=user_id,
-            )
+            logger.debug("memory_searched", query=query[:50], results=len(results), user_id=user_id)
             return results
 
         except Exception as e:
@@ -481,6 +437,69 @@ class PersistentMemory:
         return self._initialized
 
 
+# ---------------------------------------------------------------------------
+# Shared helper functions for search filtering
+# ---------------------------------------------------------------------------
+
+
+def _build_search_filters(
+    agent_id: str | None = None,
+    org_id: str | None = None,
+    project_id: str | None = None,
+    session_id: str | None = None,
+    scope: str | None = None,
+) -> dict[str, str]:
+    """Build a filters dict from optional hierarchy parameters."""
+    filters: dict[str, str] = {}
+    if agent_id:
+        filters["agent_id"] = agent_id
+    if org_id:
+        filters["org_id"] = org_id
+    if project_id:
+        filters["project_id"] = project_id
+    if session_id:
+        filters["session_id"] = session_id
+    if scope:
+        filters["scope"] = scope
+    return filters
+
+
+def _apply_search_fallback_filters(
+    results: list[dict[str, Any]],
+    agent_id: str | None = None,
+    org_id: str | None = None,
+    project_id: str | None = None,
+    session_id: str | None = None,
+    scope: str | None = None,
+) -> list[dict[str, Any]]:
+    """Apply programmatic fallback filters for Water's hierarchy safety."""
+    filtered: list[dict[str, Any]] = []
+    for r in results:
+        meta = r.get("metadata", {})
+        if agent_id and meta.get("agent_id") != agent_id:
+            continue
+        if org_id and meta.get("org_id") != org_id:
+            continue
+        if project_id and meta.get("project_id") != project_id:
+            continue
+        if session_id and meta.get("session_id") != session_id:
+            continue
+        if scope and meta.get("scope") != scope:
+            continue
+        filtered.append(r)
+    return filtered
+
+
+def _metadata_matches_filters(
+    meta: dict[str, Any], filters: dict[str, Any]
+) -> bool:
+    """Check if metadata matches all provided filters."""
+    for key in ["agent_id", "org_id", "project_id", "session_id", "scope"]:
+        if key in filters and meta.get(key) != filters[key]:
+            return False
+    return True
+
+
 async def create_memory_store(
     provider: str = "qdrant",
     user_id: str = "default",
@@ -600,6 +619,11 @@ class Mem0Backend:
             logger.error("mem0_store_failed", error=str(e))
             return ""
 
+    # Water's hierarchy filter keys
+    _HIERARCHY_FILTER_KEYS: ClassVar[list[str]] = [
+        "agent_id", "org_id", "project_id", "session_id", "scope", "memory_scope"
+    ]
+
     def search(self, query: MemoryQuery) -> MemoryResult:
         """
         Search memories.
@@ -615,75 +639,64 @@ class Mem0Backend:
 
         start = time.perf_counter()
         try:
-            # Handle query - mem0 requires a query, so we use a wildcard when only filtering
-            query_text = query.query_text if query.query_text else "*"
-
-            # Build filters dict - mem0 uses "agent_id" at top level for filtering
-            filters = {}
-            if query.filters:
-                # Extract agent_id and Water's hierarchy filters
-                keys = [
-                    "agent_id", "org_id", "project_id", "session_id", "scope", "memory_scope"
-                ]
-                for key in keys:
-                    if key in query.filters:
-                        filters[key] = query.filters[key]
-
-            results = self._memory.search(
-                query=query_text,
-                user_id=self._user_id,
-                limit=query.limit,
-                filters=filters if filters else None,
-            )
+            results = self._execute_mem0_search(query)
             self._latency_stats.append(time.perf_counter() - start)
 
-            # Programmatic fallback filters for Water's hierarchy safety
             if query.filters:
-                filtered_results = []
-                for r in results:
-                    meta = r.get("metadata", {})
-                    # Standard agent_id filter
-                    if (
-                        "agent_id" in query.filters
-                        and meta.get("agent_id") != query.filters["agent_id"]
-                    ):
-                        continue
-                    # Water's hierarchy filters
-                    if "org_id" in query.filters and meta.get("org_id") != query.filters["org_id"]:
-                        continue
-                    if (
-                        "project_id" in query.filters
-                        and meta.get("project_id") != query.filters["project_id"]
-                    ):
-                        continue
-                    if (
-                        "session_id" in query.filters
-                        and meta.get("session_id") != query.filters["session_id"]
-                    ):
-                        continue
-                    if "scope" in query.filters and meta.get("scope") != query.filters["scope"]:
-                        continue
-                    filtered_results.append(r)
-                results = filtered_results
+                results = self._apply_fallback_filters(results, query.filters)
 
-            entries = []
-            for r in results:
-                entries.append(  # noqa: PERF401
-                    MemoryEntry(
-                        id=r.get("id", ""),
-                        content=r.get("content", ""),
-                        metadata=r.get("metadata", {}),
-                        agent_id=r.get("metadata", {}).get("agent_id"),
-                        memory_type=r.get("metadata", {}).get("memory_type"),
-                        tags=r.get("metadata", {}).get("tags", []),
-                    )
-                )
-
+            entries = self._convert_to_entries(results)
             return MemoryResult(total_count=len(entries), entries=entries)
 
         except Exception as e:
             logger.error("mem0_search_failed", error=str(e))
             return MemoryResult()
+
+    def _execute_mem0_search(self, query: MemoryQuery) -> list[dict[str, Any]]:
+        """Execute the raw mem0 search."""
+        query_text = query.query_text if query.query_text else "*"
+        filters = {}
+        if query.filters:
+            for key in self._HIERARCHY_FILTER_KEYS:
+                if key in query.filters:
+                    filters[key] = query.filters[key]
+
+        return self._memory.search(
+            query=query_text,
+            user_id=self._user_id,
+            limit=query.limit,
+            filters=filters if filters else None,
+        )
+
+    @staticmethod
+    def _apply_fallback_filters(
+        results: list[dict[str, Any]], filters: dict[str, Any]
+    ) -> list[dict[str, Any]]:
+        """Apply programmatic fallback filters for Water's hierarchy safety."""
+        filtered: list[dict[str, Any]] = []
+        for r in results:
+            meta = r.get("metadata", {})
+            if not _metadata_matches_filters(meta, filters):
+                continue
+            filtered.append(r)
+        return filtered
+
+    @staticmethod
+    def _convert_to_entries(results: list[dict[str, Any]]) -> list[MemoryEntry]:
+        """Convert raw mem0 results to MemoryEntry objects."""
+        entries: list[MemoryEntry] = []
+        for r in results:
+            entries.append(
+                MemoryEntry(
+                    id=r.get("id", ""),
+                    content=r.get("content", ""),
+                    metadata=r.get("metadata", {}),
+                    agent_id=r.get("metadata", {}).get("agent_id"),
+                    memory_type=r.get("metadata", {}).get("memory_type"),
+                    tags=r.get("metadata", {}).get("tags", []),
+                )
+            )
+        return entries
 
     def get_all(self, agent_id: str) -> list[MemoryEntry]:
         """
