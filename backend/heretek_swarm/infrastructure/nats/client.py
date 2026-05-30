@@ -242,8 +242,15 @@ class NATSClient:
             f.write(key_str)
         self._temp_cert_files.append(key_path)
 
+        import os
+
+        skip_verify = os.getenv("HERETEK_TLS_SKIP_HOSTNAME_VERIFY", "").lower() in (
+            "1",
+            "true",
+            "yes",
+        )
         ssl_ctx = ssl.create_default_context(purpose=ssl.Purpose.SERVER_AUTH)
-        ssl_ctx.check_hostname = False
+        ssl_ctx.check_hostname = not skip_verify
         ssl_ctx.verify_mode = ssl.CERT_REQUIRED
         ssl_ctx.load_verify_locations(cafile=ca_cert_path)
         ssl_ctx.load_cert_chain(certfile=cert_path, keyfile=key_path)

@@ -43,20 +43,20 @@ RUN groupadd -g 1001 appgroup && useradd -u 1001 -g appgroup -s /bin/bash -m app
 
 WORKDIR /app
 
-# Copy installed venv from builder
-COPY --from=builder --chown=appuser:appgroup /app/.venv /app/.venv
+# Copy installed venv from builder (read-only for app files)
+COPY --from=builder --chown=appuser:appgroup --chmod=555 /app/.venv /app/.venv
 
 # Copy the installed package
-COPY --from=builder --chown=appuser:appgroup /app/backend /app/backend
+COPY --from=builder --chown=appuser:appgroup --chmod=444 /app/backend /app/backend
 
 # Copy migrations from build context root
-COPY --chown=appuser:appgroup migrations /app/migrations
+COPY --chown=appuser:appgroup --chmod=444 migrations /app/migrations
 
 # Copy scripts (includes run_migrations.py)
-COPY --chown=appuser:appgroup scripts /app/scripts
+COPY --chown=appuser:appgroup --chmod=555 scripts /app/scripts
 
 # Copy entrypoint
-COPY --chown=appuser:appgroup backend/entrypoint.sh /app/entrypoint.sh
+COPY --chown=appuser:appgroup --chmod=555 backend/entrypoint.sh /app/entrypoint.sh
 RUN chmod +x /app/entrypoint.sh
 
 # Create agent_workspace, heretek_data, and config directories owned by appuser
