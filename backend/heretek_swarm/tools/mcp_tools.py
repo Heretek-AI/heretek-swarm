@@ -325,55 +325,54 @@ class MCPToolRegistry:
 
             return {"success": False, "error": str(e)}
 
+    # Type check dispatch table
+    _TYPE_CHECKS: ClassVar[dict[str, type | tuple[type, ...]]] = {
+        "string": str,
+        "integer": int,
+        "number": (int, float),
+        "boolean": bool,
+        "array": list,
+        "object": dict,
+    }
+
     def _validate_arguments(self, arguments: dict[str, Any], schema: dict[str, Any]) -> bool:
         """
         Validate arguments against JSON schema.
-
-        Args:
-            arguments: Arguments to validate
-            schema: JSON schema to validate against
-
-        Returns:
-            True if valid, False otherwise
         """
         if not schema:
             return True
 
-        # Check required fields
         required = schema.get("required", [])
         for field in required:
             if field not in arguments:
                 return False
 
-        # Check types
         properties = schema.get("properties", {})
         for key, value in arguments.items():
-            if key in properties:
-                prop_schema = properties[key]
-                expected_type = prop_schema.get("type")
+            if key not in properties:
+                continue
+            if not self._validate_property(key, value, properties[key]):
+                return False
 
-                if (expected_type == "string" and not isinstance(value, str)) or (
-                    expected_type == "integer" and not isinstance(value, int)
-                ):
-                    return False
-                if (
-                    (expected_type == "number" and not isinstance(value, (int, float)))
-                    or (expected_type == "boolean" and not isinstance(value, bool))
-                    or (expected_type == "array" and not isinstance(value, list))
-                    or (expected_type == "object" and not isinstance(value, dict))
-                ):
-                    return False
+        return True
 
-                # Check enum values
-                if "enum" in prop_schema and value not in prop_schema["enum"]:
-                    return False
+    def _validate_property(
+        self, key: str, value: Any, prop_schema: dict[str, Any]
+    ) -> bool:
+        """Validate a single property against its schema."""
+        expected_type = prop_schema.get("type")
+        if expected_type and expected_type in self._TYPE_CHECKS:
+            if not isinstance(value, self._TYPE_CHECKS[expected_type]):
+                return False
 
-                # Check min/max for numbers
-                if isinstance(value, (int, float)):
-                    if "minimum" in prop_schema and value < prop_schema["minimum"]:
-                        return False
-                    if "maximum" in prop_schema and value > prop_schema["maximum"]:
-                        return False
+        if "enum" in prop_schema and value not in prop_schema["enum"]:
+            return False
+
+        if isinstance(value, (int, float)):
+            if "minimum" in prop_schema and value < prop_schema["minimum"]:
+                return False
+            if "maximum" in prop_schema and value > prop_schema["maximum"]:
+                return False
 
         return True
 
