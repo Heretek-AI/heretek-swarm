@@ -372,8 +372,6 @@ class LiberationShield:
                 severity_scores.get(t["severity"], 0.5) for t in result.threats
             ) / len(result.threats)
 
-        return result
-
     def _sanitize_input(self, input_text: str) -> str:
         """
         Sanitize input by removing dangerous patterns.
