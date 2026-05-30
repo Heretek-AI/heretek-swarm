@@ -673,14 +673,18 @@ class JetStreamManager:
             )
 
             # Create consumer
-            consumer = await self._js.pull_subscribe(
-                stream=config.stream_name,
-                durable=config.durable_name,
+            consumer_config = js_api.ConsumerConfig(
+                durable_name=config.durable_name,
                 deliver_policy=deliver_policy,
                 ack_policy=ack_policy,
                 max_deliver=config.max_deliver,
                 ack_wait=config.ack_wait,
                 filter_subject=config.filter_subject,
+            )
+            consumer = await self._js.pull_subscribe(
+                stream=config.stream_name,
+                durable=config.durable_name,
+                config=consumer_config,
             )
 
             consumer_id = f"{config.stream_name}_{config.durable_name}"
