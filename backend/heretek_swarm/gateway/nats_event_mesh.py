@@ -379,41 +379,48 @@ class NATSEventMesh:
             cert_str = agent_result["cert"]
             key_str = agent_result["key"]
 
-        # Write PEM data to temp files
-        ca_cert_fd, ca_cert_path = tempfile.mkstemp(
-            suffix=".pem", prefix="heretek_mesh_ca_"
-        )
-        with os.fdopen(ca_cert_fd, "w") as f:
-            f.write(ca_cert_str)
-        self._temp_cert_files.append(ca_cert_path)
+        created_temp_files: list[str] = []
+        try:
+            # Write PEM data to temp files
+            ca_cert_fd, ca_cert_path = tempfile.mkstemp(
+                suffix=".pem", prefix="heretek_mesh_ca_"
+            )
+            with os.fdopen(ca_cert_fd, "w") as f:
+                f.write(ca_cert_str)
+            created_temp_files.append(ca_cert_path)
 
-        cert_fd, cert_path = tempfile.mkstemp(
-            suffix=".pem", prefix="heretek_mesh_cert_"
-        )
-        with os.fdopen(cert_fd, "w") as f:
-            f.write(cert_str)
-        self._temp_cert_files.append(cert_path)
+            cert_fd, cert_path = tempfile.mkstemp(
+                suffix=".pem", prefix="heretek_mesh_cert_"
+            )
+            with os.fdopen(cert_fd, "w") as f:
+                f.write(cert_str)
+            created_temp_files.append(cert_path)
 
-        key_fd, key_path = tempfile.mkstemp(
-            suffix=".pem", prefix="heretek_mesh_key_"
-        )
-        with os.fdopen(key_fd, "w") as f:
-            f.write(key_str)
-        self._temp_cert_files.append(key_path)
+            key_fd, key_path = tempfile.mkstemp(
+                suffix=".pem", prefix="heretek_mesh_key_"
+            )
+            with os.fdopen(key_fd, "w") as f:
+                f.write(key_str)
+            created_temp_files.append(key_path)
 
-        import os
+            skip_verify = os.getenv("HERETEK_TLS_SKIP_HOSTNAME_VERIFY", "").lower() in (
+                "1",
+                "true",
+                "yes",
+            )
+            ssl_ctx = ssl.create_default_context(purpose=ssl.Purpose.SERVER_AUTH)
+            ssl_ctx.minimum_version = ssl.TLSVersion.TLSv1_2
+            ssl_ctx.check_hostname = not skip_verify
+            ssl_ctx.verify_mode = ssl.CERT_REQUIRED
+            ssl_ctx.load_verify_locations(cafile=ca_cert_path)
+            ssl_ctx.load_cert_chain(certfile=cert_path, keyfile=key_path)
 
-        skip_verify = os.getenv("HERETEK_TLS_SKIP_HOSTNAME_VERIFY", "").lower() in (
-            "1",
-            "true",
-            "yes",
-        )
-        ssl_ctx = ssl.create_default_context(purpose=ssl.Purpose.SERVER_AUTH)
-        ssl_ctx.minimum_version = ssl.TLSVersion.TLSv1_2
-        ssl_ctx.check_hostname = not skip_verify
-        ssl_ctx.verify_mode = ssl.CERT_REQUIRED
-        ssl_ctx.load_verify_locations(cafile=ca_cert_path)
-        ssl_ctx.load_cert_chain(certfile=cert_path, keyfile=key_path)
+            self._temp_cert_files.extend(created_temp_files)
+        except Exception:
+            for temp_path in created_temp_files:
+                with contextlib.suppress(Exception):
+                    os.unlink(temp_path)
+            raise
 
         logger.debug(
             "ssl_context_built_for_mtls",
