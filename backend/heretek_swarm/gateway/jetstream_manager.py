@@ -469,12 +469,6 @@ class JetStreamManager:
     async def create_stream(self, config: JetStreamConfig) -> bool:
         """
         Create a JetStream with the given configuration.
-
-        Args:
-            config: Stream configuration
-
-        Returns:
-            True if created successfully
         """
         if not self._connected:
             logger.error("Not connected, cannot create stream")
@@ -486,40 +480,9 @@ class JetStreamManager:
         try:
             import nats.js.api as js_api
 
-            # Map configuration to NATS API
-            storage_type = (
-                js_api.StorageType.FILE
-                if config.storage == StorageType.FILE
-                else js_api.StorageType.MEMORY
-            )
-
-            retention_policy = getattr(
-                js_api.RetentionPolicy,
-                config.retention.value.upper(),
-                js_api.RetentionPolicy.LIMITS,
-            )
-
-            # Parse max_age to nanoseconds
-            max_age_ns = self._parse_duration_to_nanos(config.max_age)
-
-            # Create stream configuration
-            stream_config = js_api.StreamConfig(
-                name=config.stream_name,
-                subjects=config.subjects,
-                storage=storage_type,
-                retention=retention_policy,
-                max_msgs=config.max_messages,
-                max_age=max_age_ns,
-                max_bytes=config.max_bytes,
-                num_replicas=config.replicas,
-                description=config.description,
-                metadata=config.metadata,
-            )
-
-            # Create the stream
+            stream_config = self._build_stream_config(config, js_api)
             stream_info = await self._js.add_stream(config=stream_config)
 
-            # Store local reference
             self._streams[config.stream_name] = StreamInfo(
                 name=config.stream_name,
                 config=config,
@@ -531,13 +494,7 @@ class JetStreamManager:
             )
 
             self._stats["streams_created"] += 1
-
-            logger.info(
-                "JetStream created",
-                stream_name=config.stream_name,
-                subjects=config.subjects,
-            )
-
+            logger.info("JetStream created", stream_name=config.stream_name, subjects=config.subjects)
             await self._audit_stream_operation("create_stream", config.stream_name, True)
             return True
 
@@ -545,6 +502,33 @@ class JetStreamManager:
             logger.error("Failed to create stream: {e}")
             await self._audit_stream_operation("create_stream", config.stream_name, False)
             return False
+
+    def _build_stream_config(self, config: JetStreamConfig, js_api: Any) -> Any:
+        """Build a NATS StreamConfig from a JetStreamConfig."""
+        storage_type = (
+            js_api.StorageType.FILE
+            if config.storage == StorageType.FILE
+            else js_api.StorageType.MEMORY
+        )
+        retention_policy = getattr(
+            js_api.RetentionPolicy,
+            config.retention.value.upper(),
+            js_api.RetentionPolicy.LIMITS,
+        )
+        max_age_ns = self._parse_duration_to_nanos(config.max_age)
+
+        return js_api.StreamConfig(
+            name=config.stream_name,
+            subjects=config.subjects,
+            storage=storage_type,
+            retention=retention_policy,
+            max_msgs=config.max_messages,
+            max_age=max_age_ns,
+            max_bytes=config.max_bytes,
+            num_replicas=config.replicas,
+            description=config.description,
+            metadata=config.metadata,
+        )
 
     def _create_stream_fallback(self, config: JetStreamConfig) -> bool:
         """Create stream in fallback mode."""
