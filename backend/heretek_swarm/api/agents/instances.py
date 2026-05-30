@@ -22,6 +22,17 @@ def get_registry() -> EnhancedAgentRegistry:
     return get_enhanced_registry()
 
 
+def _build_instance_metadata(instance: Any) -> dict[str, Any] | None:
+    """Build metadata dict from an agent instance, avoiding nested conditionals."""
+    if instance.metadata is None:
+        return None
+    return {
+        "type_name": instance.metadata.type_name,
+        "description": instance.metadata.description,
+        "capabilities": instance.metadata.capabilities,
+    }
+
+
 @router.get("/instances")
 async def list_agent_instances(
     registry: Annotated[EnhancedAgentRegistry, Depends(get_registry)],
@@ -96,13 +107,7 @@ async def get_agent_instance(
         "agent_type": instance.agent_type,
         "state": instance.state.value,
         "config": instance.config,
-        "metadata": {
-            "type_name": instance.metadata.type_name if instance.metadata else None,
-            "description": instance.metadata.description if instance.metadata else None,
-            "capabilities": instance.metadata.capabilities if instance.metadata else None,
-        }
-        if instance.metadata
-        else None,
+        "metadata": _build_instance_metadata(instance),
         "actor_status": actor_status,
     }
 

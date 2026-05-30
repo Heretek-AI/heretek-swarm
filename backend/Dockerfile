@@ -59,7 +59,9 @@ COPY --chown=appuser:appgroup --chmod=555 scripts /app/scripts
 COPY --chown=appuser:appgroup --chmod=555 backend/entrypoint.sh /app/entrypoint.sh
 
 # Create agent_workspace, heretek_data, and config directories owned by appuser
-RUN chmod +x /app/entrypoint.sh && mkdir -p /app/agent_workspace /app/heretek_data /config && chown appuser:appgroup /app/agent_workspace /app/heretek_data /config
+RUN chmod +x /app/entrypoint.sh && \
+    mkdir -p /app/agent_workspace /app/heretek_data /config && \
+    chown appuser:appgroup /app/agent_workspace /app/heretek_data /config
 
 # Set up environment
 ENV PATH="/app/.venv/bin:$PATH" \

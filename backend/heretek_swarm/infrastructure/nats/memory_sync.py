@@ -666,7 +666,7 @@ class MemorySync:
 
     async def disconnect(self) -> None:
         """Disconnect and clean up subscriptions."""
-        for _name, sub_id in list(self._subscriptions.items()):
+        for _name, sub_id in self._subscriptions.items():
             await self._client.unsubscribe(sub_id)
         self._subscriptions.clear()
         logger.info("memory_sync_disconnected", agent_id=self._agent_id)

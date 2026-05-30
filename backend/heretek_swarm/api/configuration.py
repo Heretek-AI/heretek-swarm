@@ -292,7 +292,7 @@ async def test_llm_provider(
             "error": result.error if not result.success else None,
         }
 
-    except Exception as e:
+    except Exception:
         logger.exception(
             "LLM provider connectivity test failed",
             provider_id=str(provider_id),

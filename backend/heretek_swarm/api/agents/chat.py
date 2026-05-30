@@ -64,7 +64,6 @@ async def _collect_vote_responses(
 ) -> tuple[list[Contribution], bool]:
     """Collect vote responses from triad agents."""
     contributions: list[Contribution] = []
-    received_agents: set[str] = set()
     timed_out = False
     try:
         response_queue: asyncio.Queue[Contribution] = asyncio.Queue()

@@ -1056,7 +1056,7 @@ class PerceiverAgent(
                 else:
                     structure["json_type"] = type(parsed).__name__
                 structure["json_valid"] = True
-            except (_json.JSONDecodeError, ValueError):
+            except _json.JSONDecodeError:
                 structure["json_valid"] = False
 
         elif fmt == "xml" or fmt == "html":

@@ -265,8 +265,6 @@ async def delete_workflow(workflow_id: str, authenticated: Annotated[str, Depend
     if not engine.delete_workflow(workflow_id):
         raise HTTPException(status_code=404, detail=_WORKFLOW_NOT_FOUND)
 
-    return
-
 
 @router.get("/{workflow_id}/status", status_code=200)
 async def get_workflow_status(
@@ -570,5 +568,5 @@ async def workflow_specific_events_stream(
         },
     )
 # Error detail constants (extracted to avoid duplicate literals)
-_WORKFLOW_NOT_FOUND = _WORKFLOW_NOT_FOUND
+_WORKFLOW_NOT_FOUND = "Workflow not found"
 
