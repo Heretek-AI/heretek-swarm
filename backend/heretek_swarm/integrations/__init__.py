@@ -205,7 +205,7 @@ __all__ = [
 ]
 
 # Package version
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 # Integration ecosystem version
 INTEGRATION_ECOSYSTEM_VERSION = "47.0.0"
