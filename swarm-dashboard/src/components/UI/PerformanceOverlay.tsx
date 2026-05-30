@@ -54,7 +54,7 @@ export function PerformanceOverlay({
   const frameCountRef = useRef(0);
   const lastFpsUpdateRef = useRef(performance.now());
   const frameTimesRef = useRef<number[]>([]);
-  const rafIdRef = useRef<number>();
+  const rafIdRef = useRef<number | undefined>(undefined);
   const componentRendersRef = useRef(0);
 
   // Track network requests

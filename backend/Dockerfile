@@ -10,13 +10,14 @@
 # =============================================================================
 # Stage 1: Builder
 # =============================================================================
-FROM python:3.15-rc-alpine3.22 AS builder
+FROM python:3.14-slim AS builder
 
 WORKDIR /app
 
 # Install system deps for building
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
+    build-essential \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy dependency manifests first for layer caching
@@ -25,13 +26,13 @@ COPY backend ./backend
 
 # Install uv and project dependencies into a venv
 RUN pip install --no-cache-dir --only-binary=":all:" uv && \
-    uv sync --frozen --no-dev --no-editable --no-build && \
-    uv pip install --only-binary=":all:" prometheus-client>=0.19.0 psycopg2-binary>=2.9.0 asyncpg>=0.29.0
+    uv sync --frozen --no-dev --no-editable && \
+    uv pip install --only-binary=":all:" "setuptools>=68.0,<81" prometheus-client>=0.19.0 psycopg2-binary>=2.9.0 asyncpg>=0.29.0
 
 # =============================================================================
 # Stage 2: Production runtime
 # =============================================================================
-FROM python:3.15-rc-alpine3.22 AS production
+FROM python:3.14-slim AS production
 
 # Install curl for HEALTHCHECK and create non-root user
 RUN apt-get update && apt-get install -y --no-install-recommends \

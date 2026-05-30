@@ -53,8 +53,10 @@ export function withDebugMiddleware<T extends object>(
     ) => {
       const currentState = get();
       
-      // Call original set
-      originalSet(partial, replace);
+      // Call original set. Cast replace to the non-replacing overload's type
+      // (false | undefined): at runtime the flag is forwarded unchanged; the
+      // cast only satisfies zustand's overloaded set() signature.
+      originalSet(partial, replace as false | undefined);
       
       // Get new state after update
       const nextState = get();

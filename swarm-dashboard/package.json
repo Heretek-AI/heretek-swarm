@@ -15,6 +15,7 @@
     "test:watch": "cross-env NODE_ENV=test vitest"
   },
   "dependencies": {
+    "@tailwindcss/postcss": "^4.3.0",
     "@xyflow/react": "^12.10.2",
     "axios": "^1.16.1",
     "pino": "^10.3.1",
