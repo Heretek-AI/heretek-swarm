@@ -32,6 +32,7 @@ CREATE TABLE IF NOT EXISTS user_configurations (
     -- Timestamps
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    created_by VARCHAR(255),
     updated_by VARCHAR(255)
 );
 
