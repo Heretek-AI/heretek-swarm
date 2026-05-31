@@ -215,10 +215,15 @@ export const useSetupStore = create<SetupState>()(
       completeSetup: () => {
         const { config } = get();
 
-        // Persist non-sensitive setup values only
+        // Persist setup values. The API key must live under 'api_key' because
+        // the API client interceptor and every data-fetching hook read it from
+        // there to attach the Bearer token; without it the whole dashboard 401s.
         localStorage.setItem('swarm_api_host', config.apiHost);
         localStorage.setItem('swarm_ws_host', config.wsHost);
         localStorage.setItem('swarm_configured', 'true');
+        if (config.apiKey) {
+          localStorage.setItem('api_key', config.apiKey);
+        }
 
         set({
           isConfigured: true,
