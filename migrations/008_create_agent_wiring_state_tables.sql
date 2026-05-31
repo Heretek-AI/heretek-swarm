@@ -564,7 +564,12 @@ SELECT
 FROM agent_consensus_config;
 
 -- View for agents needing attention
-CREATE OR REPLACE VIEW agents_needing_attention AS
+-- Migration 002 defines a view of the same name with a different column set
+-- (SELECT * FROM agent_states). CREATE OR REPLACE VIEW cannot change an
+-- existing view's columns, so drop the old definition before recreating it
+-- with the richer learning/consensus columns below.
+DROP VIEW IF EXISTS agents_needing_attention;
+CREATE VIEW agents_needing_attention AS
 SELECT 
     als.agent_id,
     als.agent_name,
