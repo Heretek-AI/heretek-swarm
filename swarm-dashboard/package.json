@@ -1,20 +1,6 @@
 {
-  "name": "@heretek-ai/swarm-dashboard",
-  "version": "0.1.1",
-  "type": "module",
-  "files": [
-    "dist"
-  ],
-  "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "build:skip-type-check": "vite build",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview",
-    "test": "cross-env NODE_ENV=test vitest run",
-    "test:watch": "cross-env NODE_ENV=test vitest"
-  },
   "dependencies": {
+    "@tailwindcss/postcss": "^4.3.0",
     "@xyflow/react": "^12.10.2",
     "axios": "^1.16.1",
     "pino": "^10.3.1",
@@ -44,5 +30,18 @@
     "typescript": "^6.0.3",
     "vite": "^8.0.14",
     "vitest": "^4.1.7"
-  }
+  },
+  "files": [ "dist" ],
+  "name": "@heretek-ai/swarm-dashboard",
+  "scripts": {
+    "build": "tsc && vite build",
+    "build:skip-type-check": "vite build",
+    "dev": "vite",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview",
+    "test": "cross-env NODE_ENV=test vitest run",
+    "test:watch": "cross-env NODE_ENV=test vitest"
+  },
+  "type": "module",
+  "version": "0.1.1"
 }

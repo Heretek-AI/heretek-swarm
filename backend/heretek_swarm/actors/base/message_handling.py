@@ -1098,6 +1098,9 @@ Please provide your analysis and recommendation for this collective task."""
                 break
             except Exception as e:
                 logger.error(f"[{self.agent_id}] Heartbeat loop error: {e}")
+                # Back off on error so a persistent failure cannot turn this
+                # into a tight loop that starves the event loop.
+                await asyncio.sleep(self.heartbeat_interval)
 
     async def _publish_heartbeat_if_connected(self) -> None:
         """Publish heartbeat to NATS event mesh if connected."""
@@ -1113,7 +1116,7 @@ Please provide your analysis and recommendation for this collective task."""
                 f"[{self.agent_id}] Heartbeat published",  # noqa: G004
                 extra={"state": heartbeat_data["state"]},
             )
-        except Exception:
+        except Exception as e:
             logger.warning(f"[{self.agent_id}] Failed to publish heartbeat: {e}")
 
     def _build_heartbeat_data(self) -> dict[str, object]:
@@ -1153,3 +1156,5 @@ AgentActor._generate_collective_contribution = (  # noqa: SLF001
 AgentActor._get_actor_registry = AgentActorMessageHandling._get_actor_registry  # noqa: SLF001
 AgentActor.run_with_llm = AgentActorMessageHandling.run_with_llm
 AgentActor._heartbeat_loop = AgentActorMessageHandling._heartbeat_loop  # noqa: SLF001
+AgentActor._publish_heartbeat_if_connected = AgentActorMessageHandling._publish_heartbeat_if_connected
+AgentActor._build_heartbeat_data = AgentActorMessageHandling._build_heartbeat_data
