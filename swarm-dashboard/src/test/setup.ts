@@ -12,7 +12,7 @@ import { vi } from 'vitest';
 // jest.fn(), jest.mock(), jest.spyOn(), jest.clearAllMocks(), etc. are bridged
 // through `(global as any).jest = vi` and manual aliases below for Jest-only APIs.
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
 (global as any).jest = vi;
 
 // jest only: jest.requireActual / jest.requireMock → vitest equivalents
@@ -22,7 +22,7 @@ if (!(vi as any).requireActual) {
 if (!(vi as any).requireMock) {
   (vi as any).requireMock = <T>(path: string): T => {
     // vitest mocks are hoisted; return the module as-is after mock resolution
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
+     
     return require(path) as T;
   };
 }

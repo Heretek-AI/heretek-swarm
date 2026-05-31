@@ -15,8 +15,8 @@
  * Inspired by XYFlow node grouping patterns.
  */
 
-import { useCallback, useState, useMemo } from 'react';
-import { Node, Edge } from 'reactflow';
+import { useCallback, useState } from 'react';
+import { Node } from 'reactflow';
 
 // ============================================================================
 // Types
@@ -217,7 +217,7 @@ function calculateBounds(
 /**
  * Calculate group statistics from nodes
  */
-function calculateGroupStatistics(nodeIds: string[], nodes: Node[]): {
+export function calculateGroupStatistics(nodeIds: string[], nodes: Node[]): {
   agentCount: number;
   totalLoad: number;
   averagePhi: number;
