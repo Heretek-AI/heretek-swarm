@@ -22,6 +22,25 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
+def _ensure_provider_prefix(model: str) -> str:
+    """Return a litellm-routable model name, defaulting to the ``openai/`` provider.
+
+    litellm requires an explicit provider prefix (e.g. ``openai/gpt-4o``,
+    ``anthropic/claude-3``) to know how to route a completion. A bare model
+    name such as ``MiniMax-M2.7`` combined with a custom ``OPENAI_BASE_URL``
+    raises ``BadRequestError: LLM Provider NOT provided``, which swarms swallows
+    and turns into an empty response. Since this factory always configures an
+    OpenAI-compatible endpoint (``llm_base_url`` + ``llm_api_key``), prefix bare
+    model names with ``openai/`` so they route through litellm's OpenAI-compatible
+    provider. Names that already carry a ``provider/model`` prefix are returned
+    unchanged.
+    """
+    model = model.strip()
+    if "/" in model:
+        return model
+    return f"openai/{model}"
+
+
 def build_agent_for(
     agent_id: str,
     agent_class_name: str,
@@ -76,7 +95,7 @@ def build_agent_for(
         )
 
     base_url = os.environ.get("OPENAI_BASE_URL", "https://api.openai.com/v1")
-    model = os.environ.get("LLM_MODEL", "gpt-4.1")
+    model = _ensure_provider_prefix(os.environ.get("LLM_MODEL", "gpt-4.1"))
 
     agent = Agent(
         agent_name=agent_id,
