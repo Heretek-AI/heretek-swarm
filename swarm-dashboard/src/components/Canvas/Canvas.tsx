@@ -44,7 +44,7 @@ interface AgentApiResponse {
 
 // Node type registry - maps type string to React component
 // Using 'any' to bypass strict typing mismatch between WorkflowBuilder NodeProps and ReactFlow NodeTypes
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
 const nodeTypes: Record<string, any> = {
   agentNode: AgentNode,
   tool: ToolNode,

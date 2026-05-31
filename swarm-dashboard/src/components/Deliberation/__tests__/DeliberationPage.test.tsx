@@ -23,7 +23,7 @@ const mockWsInstance = {
   close: vi.fn(),
   send: vi.fn(),
 };
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
 (global as any).WebSocket = vi.fn(() => mockWsInstance);
 
 // --- Mock the API modules to avoid real HTTP calls in history tab ---

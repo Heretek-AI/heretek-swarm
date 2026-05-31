@@ -27,7 +27,7 @@ const mockWsInstance = {
   close: vi.fn(),
   send: vi.fn(),
 };
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
 (global as any).WebSocket = vi.fn(() => mockWsInstance);
 
 import { ExternalCallsPanel } from '../ExternalCallsPanel';

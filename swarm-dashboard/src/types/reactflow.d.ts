@@ -4,7 +4,7 @@
  * Provides type safety for ReactFlow components
  */
 
-import { Node, Edge, Position, Connection } from 'reactflow';
+import { Node } from 'reactflow';
 
 // =============================================================================
 // Custom Node Types

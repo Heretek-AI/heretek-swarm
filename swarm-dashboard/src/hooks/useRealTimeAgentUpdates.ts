@@ -191,7 +191,6 @@ export function useRealTimeAgentUpdates(
     enableWorkflowProgress = false,
     enableMetrics = true,
     throttleInterval = 100,
-    wsUrl,
   } = options;
 
   // State
