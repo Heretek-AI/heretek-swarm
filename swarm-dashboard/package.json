@@ -32,9 +32,7 @@
     "vite": "^8.0.14",
     "vitest": "^4.1.7"
   },
-  "files": [
-    "dist"
-  ],
+  "files": [ "dist" ],
   "name": "@heretek-ai/swarm-dashboard",
   "scripts": {
     "build": "tsc && vite build",
