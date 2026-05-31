@@ -15,10 +15,19 @@ Checks performed:
   5. CORS preflight         OPTIONS {api}/api/health          -> ACAO header
   6. Dashboard served       GET  {dash}/                      -> 200, has <div id=root>
   7. Dashboard->API proxy   GET  {dash}/api/health            -> 200 (nginx -> api)
+  8. Proxy redirect origin  GET  {dash}/api/agents (Bearer)   -> 2xx, or 3xx whose
+                            Location stays same-origin as the dashboard
 
 The dashboard proxy check (7) is the real production frontend->backend path and
 is the highest-signal check: if the nginx proxy or path prefix is misconfigured
 the browser app cannot reach the API even though the API itself is healthy.
+
+Check (8) guards a subtler proxy failure: FastAPI 307-redirects a path that is
+missing its trailing slash (e.g. /api/agents -> /api/agents/) and builds the
+Location from the Host header. If nginx forwards a port-less Host the browser is
+redirected to a different origin (http://localhost/ vs http://localhost:3000),
+the redirect becomes opaque, and the dashboard's fetch fails even though curl
+(which follows cross-origin redirects) would see a 200.
 
 Usage:
     python scripts/verify_integration.py \
@@ -137,6 +146,40 @@ def http_request(
         return HttpResponse(exc.code, body, _lower_headers(exc.headers))
 
 
+class _NoRedirect(urllib.request.HTTPRedirectHandler):
+    """Redirect handler that refuses to follow 3xx responses.
+
+    Returning None from ``redirect_request`` tells urllib not to follow the
+    redirect; the original 3xx is then raised as an ``HTTPError`` whose headers
+    (including ``Location``) we can inspect.
+    """
+
+    def redirect_request(self, *args, **kwargs):  # noqa: ANN002, ANN003
+        return None
+
+
+def http_request_no_redirect(
+    url: str,
+    method: str = "GET",
+    headers: dict[str, str] | None = None,
+    timeout: float = 10.0,
+) -> HttpResponse:
+    """Like :func:`http_request` but never follows redirects.
+
+    Lets callers inspect the ``Location`` header of a 3xx response instead of
+    transparently following it (which is what hides cross-origin redirect bugs).
+    """
+    opener = urllib.request.build_opener(_NoRedirect)
+    req = urllib.request.Request(url, method=method, headers=headers or {})
+    try:
+        with opener.open(req, timeout=timeout) as resp:
+            body = resp.read().decode("utf-8", errors="replace")
+            return HttpResponse(resp.status, body, _lower_headers(resp.headers))
+    except urllib.error.HTTPError as exc:  # includes the 3xx we declined to follow
+        body = exc.read().decode("utf-8", errors="replace") if exc.fp else ""
+        return HttpResponse(exc.code, body, _lower_headers(exc.headers))
+
+
 # ---------------------------------------------------------------------------
 # Individual checks (each returns a CheckResult; never raises)
 # ---------------------------------------------------------------------------
@@ -224,6 +267,45 @@ def check_dashboard_api_proxy(dashboard_base: str) -> CheckResult:
     return CheckResult(name, True, f"200 through proxy, status={status!r}")
 
 
+def _same_origin(location: str, base: str) -> bool:
+    """True if a redirect Location stays on the same origin as ``base``.
+
+    Relative Locations ("/api/agents/") are always same-origin. Absolute ones
+    must share scheme+host+port with the dashboard base, otherwise the browser
+    treats the redirect as cross-origin (opaque) and the fetch fails.
+    """
+    if location.startswith("/") and not location.startswith("//"):
+        return True
+    from urllib.parse import urlsplit
+
+    loc = urlsplit(location)
+    ref = urlsplit(base)
+    return (loc.scheme, loc.hostname, loc.port) == (ref.scheme, ref.hostname, ref.port)
+
+
+def check_dashboard_proxy_redirect_same_origin(dashboard_base: str, api_key: str) -> CheckResult:
+    name = "dashboard -> API proxy keeps redirects same-origin (/api/agents)"
+    if not api_key:
+        return CheckResult(name, False, "no API key provided")
+    resp = http_request_no_redirect(
+        f"{dashboard_base}/api/agents", headers={"Authorization": f"Bearer {api_key}"}
+    )
+    if 200 <= resp.status < 300:
+        return CheckResult(name, True, f"{resp.status} (no redirect needed)")
+    if 300 <= resp.status < 400:
+        loc = resp.headers.get("location", "")
+        ok = _same_origin(loc, dashboard_base)
+        if ok:
+            detail = f"{resp.status} -> Location={loc!r}; same-origin as {dashboard_base}"
+        else:
+            detail = (
+                f"{resp.status} -> Location={loc!r}; CROSS-ORIGIN vs {dashboard_base} "
+                "(port-less proxy Host header breaks the browser fetch)"
+            )
+        return CheckResult(name, ok, detail)
+    return CheckResult(name, False, f"unexpected status {resp.status} (expected 2xx or same-origin 3xx)")
+
+
 # ---------------------------------------------------------------------------
 # Orchestration
 # ---------------------------------------------------------------------------
@@ -251,6 +333,12 @@ def run_checks(
             _safe(
                 lambda: check_dashboard_api_proxy(dashboard_base),
                 "dashboard -> API proxy (/api/health via dashboard)",
+            )
+        )
+        report.add(
+            _safe(
+                lambda: check_dashboard_proxy_redirect_same_origin(dashboard_base, api_key),
+                "dashboard -> API proxy keeps redirects same-origin (/api/agents)",
             )
         )
     return report
