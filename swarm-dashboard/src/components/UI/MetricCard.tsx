@@ -161,7 +161,7 @@ export function MetricCardGrid({ children, columns = 4, className = '' }: Metric
   };
 
   return (
-    <div className={`${gridClasses[columns]} gap-4 ${className}`}>
+    <div className={`grid ${gridClasses[columns]} gap-4 ${className}`}>
       {children}
     </div>
   );
