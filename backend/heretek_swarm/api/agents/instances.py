@@ -77,14 +77,41 @@ async def get_agent_instance(
     authenticated: Annotated[str, Depends(verify_auth)],
 ):
     """
-    Get details of a specific agent instance.
+    Get details of a specific agent. Unified lookup: a registered agent
+    type name (e.g. "steward") resolves to the supervisor-managed actor;
+    any other id resolves to a deployed instance in the registry.
 
     Args:
-        instance_id: Instance ID
+        instance_id: Agent type name or instance ID
     """
+    # F-009 (2026-06-01): check supervisor.actors first so the 23 registered
+    # agent type names resolve to the supervisor payload (topics, capabilities,
+    # actor state) rather than 404'ing as "unknown instance id".
+    from heretek_swarm.actors.supervisor import get_supervisor
+
+    supervisor = get_supervisor()
+    if supervisor and instance_id in supervisor.actors:
+        actor = supervisor.actors[instance_id]
+        status = actor.get_status()
+        return {
+            "id": instance_id,
+            "type": actor.__class__.__name__,
+            "status": status.state.value if status else "unknown",
+            "message_count": status.message_count if status else 0,
+            "error_count": status.error_count if status else 0,
+            "last_activity": (
+                status.last_activity if status and status.last_activity else None
+            ),
+            "topics": list(actor.topics),
+            "capabilities": list(actor.capabilities),
+            "source": "supervisor",
+        }
+
     instance = registry.get_instance(instance_id)
     if not instance:
-        raise HTTPException(404, f"Agent instance '{instance_id}' not found")
+        raise HTTPException(
+            404, f"Agent '{instance_id}' not found (not in supervisor or registry)"
+        )
 
     # Get actor status if running
     actor_status = None
@@ -109,6 +136,7 @@ async def get_agent_instance(
         "config": instance.config,
         "metadata": _build_instance_metadata(instance),
         "actor_status": actor_status,
+        "source": "registry",
     }
 
 

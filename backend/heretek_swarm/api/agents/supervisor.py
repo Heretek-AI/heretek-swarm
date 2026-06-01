@@ -1,73 +1,30 @@
 """
 Supervisor-based agent endpoints.
 
-Provides 4 routes mirroring the current main.py agent management endpoints:
-- GET  /              → list all supervisor-managed actors
-- GET  /{agent_id}    → get agent detail from supervisor.actors
-- GET  /{agent_id}/metrics    → get agent performance metrics
-- POST /{agent_id}/terminate  → terminate an agent
+Provides the supervisor-management surface for the swarm:
+- GET  /                       → list all supervisor-managed actors
+- GET  /{agent_id}/metrics     → get agent performance metrics
+- POST /{agent_id}/terminate   → terminate an agent
+
+Note: the bare GET /{agent_id} route was previously exposed here but is
+now shadowed by instances.router's GET /{instance_id}, which serves as
+the unified lookup endpoint — it checks supervisor.actors first (for
+registered agent types like "steward") and falls back to the instance
+registry (for deployed instance ids). The metrics and terminate
+sub-paths remain uniquely owned by this router.
 
 All routes use lazy import of get_supervisor() to avoid circular imports
 (main.py → agents_management → supervisor → get_supervisor from actors.supervisor).
-
-F-009 (2026-06-01 cold-start validation): the {agent_id} path is constrained
-by a positive allow-list regex (the 23 valid agent IDs). A negative-lookahead
-exclusion list was tried first but pydantic_core's regex engine (Rust regex
-crate) does not support look-around. The allow-list has the same effect: it
-restricts /{agent_id} to the 23 known agent IDs so that reserved literal
-segments (instances, available, types, deploy, chat, jetstream, profiling,
-routing_rules, routing_control, metrics, terminate) fall through to the
-sub-routers that own them. If a new agent type is added to
-heretek_swarm.actors, this allow-list must be updated to match.
 """
 
 from datetime import UTC, datetime
-from typing import Annotated
 
 import structlog
-from fastapi import APIRouter, Depends, HTTPException, Path
+from fastapi import APIRouter, Depends, HTTPException
 
 from heretek_swarm.gateway.auth import verify_auth
 
 logger = structlog.get_logger(__name__)
-
-# Positive allow-list of the 23 valid agent IDs that supervisor.actors can
-# contain. This drives the path-constraint regex below; reserved literal
-# segments owned by sibling sub-routers (instances, available, types, etc.)
-# are intentionally absent so requests to those segments fall through.
-VALID_AGENT_IDS = frozenset(
-    {
-        "alpha",
-        "arbiter",
-        "beta",
-        "catalyst",
-        "charlie",
-        "chronos",
-        "coder",
-        "coordinator",
-        "dreamer",
-        "echo",
-        "empath",
-        "examiner",
-        "explorer",
-        "habit-forge",
-        "historian",
-        "metis",
-        "nexus",
-        "perceiver",
-        "perceiver-plus",
-        "prism",
-        "sentinel",
-        "sentinel-prime",
-        "steward",
-    }
-)
-
-# Alternation regex matching ONLY the 23 valid agent IDs. No look-around
-# (pydantic_core's Rust regex engine does not support it). The end-anchor
-# ($) is what actually prevents partial matches: ^sentinel$ will not match
-# "sentinel-prime" because the input has trailing characters after "sentinel".
-AGENT_ID_PATTERN = r"^(" + "|".join(sorted(VALID_AGENT_IDS)) + r")$"
 
 router = APIRouter()
 
@@ -115,55 +72,9 @@ async def list_supervisor_agents(authenticated: str = Depends(verify_auth)):
     return {"agents": agents, "total": len(agents)}
 
 
-@router.get("/{agent_id}")
-async def get_supervisor_agent(
-    agent_id: Annotated[
-        str,
-        Path(
-            pattern=AGENT_ID_PATTERN,
-            description="Agent identifier; must not collide with reserved sub-router literals",
-        ),
-    ],
-    authenticated: str = Depends(verify_auth),
-):
-    """
-    Get details of a specific agent from the supervisor.
-
-    Returns:
-        {id, type, status, topics, capabilities, ...}
-    """
-    from heretek_swarm.actors.supervisor import get_supervisor
-
-    supervisor = get_supervisor()
-    if not supervisor or agent_id not in supervisor.actors:
-        raise HTTPException(404, f"Agent {agent_id} not found")
-
-    actor = supervisor.actors[agent_id]
-    status = actor.get_status()
-
-    return {
-        "id": agent_id,
-        "type": actor.__class__.__name__,
-        "status": status.state.value if status else "unknown",
-        "message_count": status.message_count if status else 0,
-        "error_count": status.error_count if status else 0,
-        "last_activity": (
-            status.last_activity if status and status.last_activity else None
-        ),
-        "topics": list(actor.topics),
-        "capabilities": list(actor.capabilities),
-    }
-
-
 @router.get("/{agent_id}/metrics")
 async def get_supervisor_agent_metrics(
-    agent_id: Annotated[
-        str,
-        Path(
-            pattern=AGENT_ID_PATTERN,
-            description="Agent identifier; must not collide with reserved sub-router literals",
-        ),
-    ],
+    agent_id: str,
     authenticated: str = Depends(verify_auth),
 ):
     """
@@ -195,13 +106,7 @@ async def get_supervisor_agent_metrics(
 
 @router.post("/{agent_id}/terminate")
 async def terminate_supervisor_agent(
-    agent_id: Annotated[
-        str,
-        Path(
-            pattern=AGENT_ID_PATTERN,
-            description="Agent identifier; must not collide with reserved sub-router literals",
-        ),
-    ],
+    agent_id: str,
     authenticated: str = Depends(verify_auth),
 ):
     """
