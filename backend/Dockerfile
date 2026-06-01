@@ -14,9 +14,11 @@ FROM python:3.14-slim AS builder
 
 WORKDIR /app
 
+# Install uv from official image (faster + more reproducible than pip install uv)
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /usr/local/bin/
+
 # Install system deps for building
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    curl \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
 
@@ -24,10 +26,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY pyproject.toml uv.lock ./
 COPY backend ./backend
 
-# Install uv and project dependencies into a venv
-RUN pip install --no-cache-dir --only-binary=":all:" uv && \
-    uv sync --frozen --no-dev --no-editable && \
-    uv pip install --only-binary=":all:" "setuptools>=68.0,<81" prometheus-client>=0.19.0 psycopg2-binary>=2.9.0 asyncpg>=0.29.0
+# Install all project dependencies (managed in pyproject.toml)
+RUN uv sync --frozen --no-dev --no-editable
 
 # =============================================================================
 # Stage 2: Production runtime

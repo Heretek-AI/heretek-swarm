@@ -50,6 +50,11 @@ dependencies = [
     "cryptography>=42.0",
     # JWT authentication
     "PyJWT>=2.8",
+    # Database drivers (sync + async Postgres)
+    "asyncpg>=0.29.0",
+    "psycopg2-binary>=2.9.0",
+    # Build tooling required at install time
+    "setuptools>=68.0,<81",
 ]
 
 [project.optional-dependencies]
