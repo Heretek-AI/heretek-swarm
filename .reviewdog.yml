@@ -35,7 +35,7 @@ runner:
     level: error
 
   markdownlint:
-    cmd: markdownlint '**/*.md' --ignore node_modules --ignore .github
+    cmd: npx --yes markdownlint-cli '**/*.md' --ignore node_modules --ignore .github --ignore .agents
     errorformat:
       - "%f:%l:%c: %m"
     name: markdownlint
