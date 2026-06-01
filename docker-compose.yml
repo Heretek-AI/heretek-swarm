@@ -86,6 +86,38 @@ services:
       - heretek-net
 
   # =============================================================================
+  # Cognee — Memory control plane (M-arch PR #1: sidecar, no integration yet)
+  # =============================================================================
+  # Runs alongside the Heretek API but is NOT depended on by it. Used to validate
+  # Cognee's behavior under production traffic for 1 week before any custom memory
+  # code is deleted. See PLAN.md §M-arch PR #1.
+
+  cognee:
+    image: cognee/cognee:1.1.2
+    environment:
+      LLM_API_KEY: ${OPENAI_API_KEY:?OPENAI_API_KEY must be set}
+      LLM_MODEL: ${LLM_MODEL:-MiniMax-M2.7}
+      LLM_PROVIDER: openai
+      LLM_ENDPOINT: ${OPENAI_BASE_URL:-https://api.minimax.io/v1}
+      VECTOR_DB_PROVIDER: qdrant
+      VECTOR_DB_URL: http://qdrant:6333
+      VECTOR_DB_KEY: ${QDRANT_API_KEY:-}
+      GRAPH_DATABASE_PROVIDER: kuzu
+    volumes:
+      - cognee_data:/data/cognee
+    mem_limit: 1g
+    cpus: "0.5"
+    healthcheck:
+      <<: *healthcheck-defaults
+      test: ["CMD", "curl", "-sf", "http://localhost:8000/health"]
+    restart: unless-stopped
+    depends_on:
+      qdrant:
+        condition: service_started
+    networks:
+      - heretek-net
+
+  # =============================================================================
   # API Service — 23 spawned agents
   # =============================================================================
 
@@ -180,6 +212,7 @@ volumes:
   redis_data:
   qdrant_data:
   nats_data:
+  cognee_data:
   config_keys:
 
 # ============================================================================
