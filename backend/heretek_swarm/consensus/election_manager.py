@@ -37,7 +37,7 @@ class ElectionManager:
         ```python
         mgr = ElectionManager(election_timeout_min=0.5, election_timeout_max=1.0)
         leader = await mgr.trigger_election()
-        print(f"Elected: {leader}")
+        logger.info("election_manager_leader_elected", leader=leader)
         await mgr.stop_all()
         ```
     """

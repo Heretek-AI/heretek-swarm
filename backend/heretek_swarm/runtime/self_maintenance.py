@@ -59,6 +59,16 @@ class DatabaseMaintenanceConfig:
 
 
 @dataclass
+class DeploymentConfig:
+    """Configuration for autonomous deployment pipeline (P3)."""
+
+    run_interval_seconds: int = 21600  # Every 6 hours
+    dry_run: bool = False  # If True, report what would deploy without deploying
+    repo_path: str = "/home/john/Desktop/heretek-swarm"
+    git_branch: str = "main"
+
+
+@dataclass
 class ConfigDriftConfig:
     """Configuration for configuration drift detection."""
 
@@ -78,17 +88,33 @@ class ConfigDriftConfig:
 
 
 @dataclass
+class DeploymentPipelineConfig:
+    """Configuration for the self-deployment pipeline (P3, PLAN.md §4.3)."""
+
+    repo_root: Path = field(
+        default_factory=lambda: Path(__file__).resolve().parent.parent.parent.parent
+    )
+    branch: str = "main"
+    interval_seconds: int = 21_600  # Every 6 hours
+    test_command: str = "python3 -m pytest tests/"
+    integration_command: str = "python3 scripts/verify_integration.py"
+    build_command: str = "docker compose build api"
+    deploy_command: str = "docker compose up -d --force-recreate api"
+    dry_run: bool = False
+
+
+@dataclass
 class SelfMaintenanceConfig:
     """Aggregated configuration for self-maintenance tasks."""
 
-    log_rotation: LogRotationConfig = field(default_factory=LogRotationConfig)
+log_rotation: LogRotationConfig = field(default_factory=LogRotationConfig)
     db_maintenance: DatabaseMaintenanceConfig = field(default_factory=DatabaseMaintenanceConfig)
     config_drift: ConfigDriftConfig = field(default_factory=ConfigDriftConfig)
-    # Scheduler settings
-    run_interval_seconds: int = 3600  # Run all tasks every hour
-    log_rotation_interval_seconds: int = 86400  # Daily log rotation
-    db_maintenance_interval_seconds: int = 43200  # Twice daily DB maintenance
-    config_drift_interval_seconds: int = 7200  # Every 2 hours
+    deployment: DeploymentConfig = field(default_factory=DeploymentConfig)
+    run_interval_seconds: int = 3600
+    log_rotation_interval_seconds: int = 86400
+    db_maintenance_interval_seconds: int = 43200
+    config_drift_interval_seconds: int = 7200
     enabled: bool = True
 
 
@@ -588,12 +614,127 @@ class ConfigDriftDetector:
         else:
             logger.debug("No configuration drift detected")
 
-        return result
+return result
 
-    def get_last_result(self) -> dict[str, Any] | None:
-        """Return the last drift detection result."""
-        return self._last_drift_result
 
+# ------------------------------------------------------------------
+# Deployment Pipeline (P3 — PLAN.md §4.3 Workflow 1)
+# ------------------------------------------------------------------
+
+
+class DeploymentPipeline:
+    """Autonomous deployment pipeline.  Pulls ``main``, runs the test
+    suite, builds images, and redeploys the api on green.  Default
+    6-hour interval integrated into ``SelfMaintenanceScheduler``.
+    """
+
+    def __init__(self, config: DeploymentConfig):
+        self.config = config
+        self._last_result: dict[str, Any] = {"ran_at": None}
+        self._last_green_deploy: datetime | None = None
+
+    async def run_once(self) -> dict[str, Any]:
+        """One deployment cycle: git pull -> test -> build -> deploy."""
+        result: dict[str, Any] = {
+            "ran_at": datetime.now(UTC).isoformat(),
+            "git_pulled": False,
+            "tests_passed": False,
+            "integration_passed": False,
+            "build_succeeded": False,
+            "deployed": False,
+            "error": None,
+        }
+        try:
+            if self.config.dry_run:
+                logger.info("deployment_dry_run", branch=self.config.branch)
+                result["git_pulled"] = True
+            else:
+                proc = await asyncio.create_subprocess_exec(
+                    "git", "pull", "--ff-only", "origin", self.config.branch,
+                    cwd=str(self.config.repo_root),
+                    stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE,
+                )
+                await proc.communicate()
+                if proc.returncode != 0:
+                    result["error"] = "git pull failed"
+                    logger.error("deployment_git_failed", rc=proc.returncode)
+                    return result
+                result["git_pulled"] = True
+                logger.info("deployment_git_pulled")
+
+            # Run tests
+            t = await asyncio.create_subprocess_exec(
+                "python3", "-m", "pytest", "tests/",
+                cwd=str(self.config.repo_root),
+                stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE,
+            )
+            await t.communicate()
+            if t.returncode != 0:
+                result["error"] = "tests failed"
+                logger.error("deployment_tests_failed")
+                return result
+            result["tests_passed"] = True
+
+            # Integration
+            i = await asyncio.create_subprocess_exec(
+                "python3", "scripts/verify_integration.py",
+                cwd=str(self.config.repo_root),
+                stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE,
+            )
+            await i.communicate()
+            if i.returncode != 0:
+                result["error"] = "integration failed"
+                logger.error("deployment_integration_failed")
+                return result
+            result["integration_passed"] = True
+
+            # Build + deploy
+            if not self.config.dry_run:
+                b = await asyncio.create_subprocess_exec(
+                    "docker", "compose", "build", "api",
+                    cwd=str(self.config.repo_root),
+                    stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE,
+                )
+                await b.communicate()
+                if b.returncode != 0:
+                    result["error"] = "build failed"
+                    logger.error("deployment_build_failed")
+                    return result
+                result["build_succeeded"] = True
+
+                d = await asyncio.create_subprocess_exec(
+                    "docker", "compose", "up", "-d", "--force-recreate", "api",
+                    cwd=str(self.config.repo_root),
+                    stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE,
+                )
+                await d.communicate()
+                if d.returncode != 0:
+                    result["error"] = "deploy failed"
+                    logger.error("deployment_deploy_failed")
+                    return result
+                result["deployed"] = True
+                self._last_green_deploy = datetime.now(UTC)
+                logger.info("deployment_succeeded")
+            return result
+        except Exception as e:
+            result["error"] = str(e)
+            logger.error("deployment_error", error=str(e))
+            return result
+
+    def get_last_result(self) -> dict[str, Any]:
+        return self._last_result
+
+    def get_last_green_deploy(self) -> datetime | None:
+        return self._last_green_deploy
+
+
+# ------------------------------------------------------------------
+# Deployment Pipeline (P3 — PLAN.md §4.3 Workflow 1)
+# ------------------------------------------------------------------
+
+
+class DeploymentPipeline:
+...
 
 # ------------------------------------------------------------------
 # Self-Maintenance Scheduler
@@ -631,6 +772,8 @@ class SelfMaintenanceScheduler:
         self._log_rotator = LogRotator(self.config.log_rotation)
         self._db_maintenance = DatabaseMaintenance(self.config.db_maintenance)
         self._drift_detector = ConfigDriftDetector(self.config.config_drift)
+        self._deployment = DeploymentPipeline(self.config.deployment)
+        self._deployment = DeploymentPipeline(self.config.deployment)
 
         # Stats
         self._stats: dict[str, Any] = {
@@ -661,9 +804,11 @@ class SelfMaintenanceScheduler:
             self._log_rotation_loop(),
             self._db_maintenance_loop(),
             self._drift_loop(),
+            self._deployment_loop(),
         ]
 
-        await asyncio.gather(*[asyncio.create_task(t) for t in maintenance_tasks])
+        deployment_tasks = [self._deployment_loop()] if self.config.deployment.interval_seconds > 0 else []
+        await asyncio.gather(*[asyncio.create_task(t) for t in maintenance_tasks + deployment_tasks])
 
     async def stop(self) -> None:
         """Stop all maintenance loops gracefully."""
@@ -804,7 +949,20 @@ class SelfMaintenanceScheduler:
                 ):
                     result = await self._drift_detector.detect_drift(self._get_runtime_config())
                     self._stats["last_drift_result"] = result
-                    self._last_drift_check = now
+self._last_drift_check = now
+
+    async def _deployment_loop(self) -> None:
+        """Dedicated deployment pipeline loop (6h interval)."""
+        interval = self.config.deployment.interval_seconds
+        if interval <= 0:
+            return
+        while self._running and not self._shutdown_event.is_set():
+            try:
+                await asyncio.wait_for(self._shutdown_event.wait(), timeout=interval)
+                break
+            except TimeoutError:
+                result = await self._deployment.run_once()
+                self._stats["last_deployment"] = result
 
     async def store_current_as_baseline(self, config_name: str = "runtime") -> str:
         """
@@ -832,6 +990,7 @@ class SelfMaintenanceScheduler:
             "log_rotation_stats": self._stats["log_rotation"],
             "db_maintenance_stats": self._stats["db_maintenance"],
             "last_drift_result": self._stats["last_drift_result"],
+            "last_deployment": self._stats.get("last_deployment"),
             "integration": ("autonomous_runtime" if self.runtime_ref is not None else "standalone"),
         }
 

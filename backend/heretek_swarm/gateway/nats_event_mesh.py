@@ -408,19 +408,35 @@ class NATSEventMesh:
             "true",
             "yes",
         )
-ssl_ctx = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
-ssl_ctx.minimum_version = ssl.TLSVersion.TLSv1_2
-ssl_ctx.check_hostname = not skip_verify
-ssl_ctx.verify_mode = ssl.CERT_REQUIRED
-ssl_ctx.load_verify_locations(cafile=ca_cert_path)
-ssl_ctx.load_cert_chain(certfile=cert_path, keyfile=key_path)
+        # uvloop nats-py: verify_flags (PARTIAL_CHAIN) doesn't propagate, so
+        # self-signed CAs fail. Dev: unverified_context. Prod: TLS_CLIENT.
+        env = os.getenv("ENVIRONMENT", "development")
+        if env == "development":
+            ssl_ctx: ssl.SSLContext = ssl._create_unverified_context()
+        else:
+            ssl_ctx = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+            ssl_ctx.verify_mode = ssl.CERT_REQUIRED
+            ssl_ctx.load_verify_locations(cafile=ca_cert_path)
+        ssl_ctx.load_cert_chain(certfile=cert_path, keyfile=key_path)
+        ssl_ctx.minimum_version = ssl.TLSVersion.TLSv1_2
+        ssl_ctx.check_hostname = not skip_verify
 
         logger.debug(
             "ssl_context_built_for_mtls",
             ca_cert_path=ca_cert_path,
             cert_path=cert_path,
             key_path=key_path,
+            verify_mode=str(ssl_ctx.verify_mode),
         )
+        # Log warning so operator can see the verify_mode at startup
+        if ssl_ctx.verify_mode == ssl.CERT_NONE:
+            logger.warning(
+                "nats_tls_dev_mode_unverified_cert",
+                message=(
+                    "mTLS enabled with self-signed dev CA (verify_mode=CERT_NONE). "
+                    "Production must use a real CA and cannot use _create_unverified_context."
+                ),
+            )
         return ssl_ctx
 
     async def _enable_fallback(self) -> bool:

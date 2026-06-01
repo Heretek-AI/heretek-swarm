@@ -167,7 +167,7 @@ class RaftElection:
 
         # Check leadership
         if raft.is_leader:
-            print(f"I am leader: {raft.leader_id}")
+            logger.info("raft_leader_elected_local", leader_id=raft.leader_id)
 
         # Request vote from other nodes
         response = await raft.request_vote(

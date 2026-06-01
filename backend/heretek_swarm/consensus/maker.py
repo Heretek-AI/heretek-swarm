@@ -99,7 +99,7 @@ class MAKERConsensus:
 
         # Compute result
         result = consensus.compute_consensus("decision-1")
-        print(f"Decision: {result.decision}, Confidence: {result.confidence}")
+        logger.info("maker_decision_made", decision=result.decision, confidence=result.confidence)
         ```
     """
 

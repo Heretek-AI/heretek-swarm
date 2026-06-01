@@ -276,7 +276,7 @@ class PhiTrainingEnvironment:
 
         # Run training episode
         result = await env.run_episode(agents, scenario)
-        print(f"Phi delta: {result.episode.phi_delta}")
+        logger.info("phi_training_episode_delta", phi_delta=result.episode.phi_delta)
         ```
     """
 
