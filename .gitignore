@@ -190,5 +190,4 @@ backend/agent_workspace/
 opencode.jsonc
 .opencode/openwork.json
 .opencode/agents/openwork.md
-.omo/
 .forensic/
