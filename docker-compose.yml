@@ -26,10 +26,14 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    mem_limit: 2g
+    cpus: "1.0"
     healthcheck:
       <<: *healthcheck-defaults
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-heretek_swarm}"]
     restart: unless-stopped
+    networks:
+      - heretek-net
 
   redis:
     image: redis:7-alpine
@@ -37,10 +41,14 @@ services:
       - "6379:6379"
     volumes:
       - redis_data:/data
+    mem_limit: 1g
+    cpus: "0.5"
     healthcheck:
       <<: *healthcheck-defaults
       test: ["CMD", "redis-cli", "ping"]
     restart: unless-stopped
+    networks:
+      - heretek-net
 
   qdrant:
     image: qdrant/qdrant:v1.9.0
@@ -68,10 +76,14 @@ services:
       - nats_data:/data
       - ./nats-server.conf:/etc/nats/nats-server.conf:ro,z
       - ./certs:/etc/nats/certs:ro,z
+    mem_limit: 512m
+    cpus: "0.5"
     healthcheck:
       <<: *healthcheck-defaults
       test: ["CMD-SHELL", "nc -z localhost 4222 || exit 1"]
     restart: unless-stopped
+    networks:
+      - heretek-net
 
   # =============================================================================
   # API Service — 23 spawned agents
@@ -103,7 +115,7 @@ services:
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
       OPENAI_BASE_URL: ${OPENAI_BASE_URL:-https://api.minimax.io/v1}
       LLM_MODEL: ${LLM_MODEL:-MiniMax-M2.7}
-      CORS_ORIGINS: ${CORS_ORIGINS:?CORS_ORIGINS must be set (comma-separated list)}
+      CORS_ORIGINS: ${CORS_ORIGINS:?CORS_ORIGINS muwst be set (comma-separated list)}
       RATE_LIMIT_ENABLED: ${RATE_LIMIT_ENABLED:-true}
       EMBEDDING_PROVIDER: ${EMBEDDING_PROVIDER:-openai_compatible}
       EMBEDDING_BASE_URL: ${EMBEDDING_BASE_URL:-http://127.0.0.1:13305/api/v1}
@@ -122,10 +134,14 @@ services:
         condition: service_started
       nats:
         condition: service_started
+    mem_limit: 4g
+    cpus: "2.0"
     healthcheck:
       <<: *healthcheck-defaults
       test: ["CMD", "curl", "-sf", "http://localhost:8000/api/health"]
     restart: unless-stopped
+    networks:
+      - heretek-net
 
   # =============================================================================
   # Dashboard — React frontend
@@ -147,13 +163,17 @@ services:
     depends_on:
       - api
     restart: unless-stopped
+    mem_limit: 512m
+    cpus: "0.5"
     healthcheck:
       <<: *healthcheck-defaults
       test: ["CMD", "curl", "-sf", "http://localhost:80/"]
+    networks:
+      - heretek-net
 
 # =============================================================================
 # Volumes
-# =============================================================================
+# ============================================================================
 
 volumes:
   postgres_data:
@@ -161,3 +181,11 @@ volumes:
   qdrant_data:
   nats_data:
   config_keys:
+
+# ============================================================================
+# Networks
+# ============================================================================
+
+networks:
+  heretek-net:
+    driver: bridge

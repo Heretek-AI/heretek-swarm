@@ -15,6 +15,7 @@ Version: 1.0.0
 
 from __future__ import annotations
 
+import asyncio
 from datetime import UTC, datetime
 from typing import TYPE_CHECKING, Any
 
@@ -237,16 +238,21 @@ class PerceiverPlusAgent(
 
             logger.info(f"[{self.agent_id}] Performing comprehensive analysis: {analysis_id}")
 
-            # Perform analyses
-            results = []
-            for atype in analytics_types:
+            # Perform analyses in parallel — each analysis is independent
+            async def _run_one(atype: str) -> Any:
                 try:
                     atype_enum = AnalyticsType(atype)
                     result = await self._perform_analysis(data, atype_enum, analysis_id)
-                    if result.confidence >= self.confidence_threshold:
-                        results.append(result)
+                    return result if result.confidence >= self.confidence_threshold else None
                 except ValueError:
                     logger.warning(f"[{self.agent_id}] Unknown analytics type: {atype}")
+                    return None
+
+            gathered = await asyncio.gather(
+                *(_run_one(a) for a in analytics_types),
+                return_exceptions=False,
+            )
+            results = [r for r in gathered if r is not None]
 
             # Store results
             for result in results:
