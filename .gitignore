@@ -192,3 +192,5 @@ opencode.jsonc
 .opencode/agents/openwork.md
 .omo/
 .forensic/
+.omo
+.omo/ralph-loop.local.md

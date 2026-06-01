@@ -43,22 +43,37 @@ def _get_jwt_secret() -> str:
                 "JWT_SECRET required in production. "
                 "Generate with: export JWT_SECRET=$(openssl rand -hex 32)"
             )
-        # Development fallback — use a static dev secret so JWT works out of the box
-        secret = secrets.token_hex(32)
+        secret = "dev-only-jwt-secret-do-not-use-in-production-9d4f8a2c1b7e3f5a"
         logger.warning(
             "jwt_secret_default_development",
-            message="Using auto-generated JWT_SECRET for development. Set JWT_SECRET env var for persistence.",
+            message=(
+                "Using static dev JWT_SECRET. Set JWT_SECRET env var "
+                "for persistence across processes."
+            ),
         )
 
     return secret
 
 
-def create_jwt_token(username: str, expiry_hours: int = 24) -> str:
+def _get_jwt_audience() -> str:
+    return os.getenv("JWT_AUDIENCE", "heretek-swarm")
+
+
+def _get_jwt_issuer() -> str:
+    return os.getenv("JWT_ISSUER", "heretek-swarm")
+
+
+def create_jwt_token(
+    username: str,
+    expiry_hours: int = 24,
+    scope: str = "agent:read",
+) -> str:
     """Create a signed JWT token for the given username.
 
     Args:
         username: Subject claim (sub).
         expiry_hours: Token lifetime in hours (default 24).
+        scope: OAuth-style scope claim (default "agent:read").
 
     Returns:
         Encoded JWT string.
@@ -68,6 +83,9 @@ def create_jwt_token(username: str, expiry_hours: int = 24) -> str:
         "sub": username,
         "iat": now,
         "exp": now + timedelta(hours=expiry_hours),
+        "aud": _get_jwt_audience(),
+        "iss": _get_jwt_issuer(),
+        "scope": scope,
     }
     secret = _get_jwt_secret()
     return jwt.encode(payload, secret, algorithm="HS256")
@@ -83,13 +101,22 @@ def verify_jwt(token: str) -> str | None:
         Username (sub claim) on success, ``None`` on any failure.
     """
     secret = _get_jwt_secret()
+    audience = _get_jwt_audience()
+    issuer = _get_jwt_issuer()
     try:
-        payload = jwt.decode(token, secret, algorithms=["HS256"])
+        payload = jwt.decode(
+            token,
+            secret,
+            algorithms=["HS256"],
+            audience=audience,
+            issuer=issuer,
+            options={"require": ["exp", "iat", "sub", "aud", "iss"]},
+        )
     except jwt.ExpiredSignatureError:
         logger.warning("auth_jwt_expired")
         return None
-    except jwt.InvalidTokenError:
-        logger.warning("auth_jwt_invalid")
+    except jwt.InvalidTokenError as exc:
+        logger.warning("auth_jwt_invalid", reason=str(exc))
         return None
 
     username = payload.get("sub")

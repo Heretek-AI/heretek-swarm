@@ -16,6 +16,8 @@ from typing import TYPE_CHECKING, Any
 
 import structlog
 
+from heretek_swarm.consensus.verdict import aggregate_triad_ruling
+
 if TYPE_CHECKING:
     from heretek_swarm.runtime.main_loop import AutonomousSwarm
 
@@ -416,16 +418,11 @@ async def _convene_tribunal_on_anomaly(
             beta_output = deliberation_result.get("beta", "")
             charlie_output = deliberation_result.get("charlie", "")
 
-            is_threat = any(
-                keyword in str(output).lower()
-                for output in [alpha_output, beta_output, charlie_output]
-                for keyword in ["threat", "danger", "malicious", "attack", "block", "critical"]
+            ruling_verdict = aggregate_triad_ruling(
+                alpha_output, beta_output, charlie_output
             )
-            is_emergent = any(
-                keyword in str(output).lower()
-                for output in [alpha_output, beta_output, charlie_output]
-                for keyword in ["emergent", "beneficial", "breakthrough", "novel", "innovative"]
-            )
+            is_threat = ruling_verdict.verdict == "threat"
+            is_emergent = ruling_verdict.verdict == "emergent"
 
             if is_emergent and not is_threat:
                 ruling = sentinel.tribunal.issue_ruling(

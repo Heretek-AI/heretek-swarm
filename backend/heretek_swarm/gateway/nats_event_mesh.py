@@ -165,9 +165,9 @@ class NATSEventMesh:
             if tls_enabled is not None
             else os.getenv("HERETEK_MTLS_ENABLED", "false").lower() == "true"
         )
-        self.tls_ca_file = tls_ca_file
-        self.tls_cert_file = tls_cert_file
-        self.tls_key_file = tls_key_file
+        self.tls_ca_file = tls_ca_file or os.getenv("NATS_TLS_CA_FILE")
+        self.tls_cert_file = tls_cert_file or os.getenv("NATS_TLS_CERT_FILE")
+        self.tls_key_file = tls_key_file or os.getenv("NATS_TLS_KEY_FILE")
 
         # Temp cert file tracking for cleanup
         self._temp_cert_files: list[str] = []
@@ -408,12 +408,12 @@ class NATSEventMesh:
             "true",
             "yes",
         )
-        ssl_ctx = ssl.create_default_context(purpose=ssl.Purpose.SERVER_AUTH)
-        ssl_ctx.minimum_version = ssl.TLSVersion.TLSv1_2
-        ssl_ctx.check_hostname = not skip_verify
-        ssl_ctx.verify_mode = ssl.CERT_REQUIRED
-        ssl_ctx.load_verify_locations(cafile=ca_cert_path)
-        ssl_ctx.load_cert_chain(certfile=cert_path, keyfile=key_path)
+ssl_ctx = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+ssl_ctx.minimum_version = ssl.TLSVersion.TLSv1_2
+ssl_ctx.check_hostname = not skip_verify
+ssl_ctx.verify_mode = ssl.CERT_REQUIRED
+ssl_ctx.load_verify_locations(cafile=ca_cert_path)
+ssl_ctx.load_cert_chain(certfile=cert_path, keyfile=key_path)
 
         logger.debug(
             "ssl_context_built_for_mtls",

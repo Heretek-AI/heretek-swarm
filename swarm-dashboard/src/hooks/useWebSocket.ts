@@ -40,6 +40,19 @@ export function useWebSocket(
   const reconnectAttempts = useRef(0);
   const reconnectTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // F-010: store callback identities in refs so `connect`'s useCallback
+  // dep array stays stable across re-renders. See tests/e2e/m030-f010-*.
+  const onMessageRef = useRef(onMessage);
+  const onOpenRef = useRef(onOpen);
+  const onCloseRef = useRef(onClose);
+  const onErrorRef = useRef(onError);
+  useEffect(() => {
+    onMessageRef.current = onMessage;
+    onOpenRef.current = onOpen;
+    onCloseRef.current = onClose;
+    onErrorRef.current = onError;
+  });
+
   // Use environment variable or current hostname (nginx proxies /ws to api:8000)
   const API_URL = import.meta.env.VITE_API_HOST || `http://${window.location.host}`;
   const apiHost = (() => {
@@ -60,19 +73,19 @@ export function useWebSocket(
     const wsUrl = apiKey
       ? `${protocol}//${url.host}/ws/${channel}?token=${encodeURIComponent(apiKey)}`
       : `${protocol}//${url.host}/ws/${channel}`;
-    
+
     try {
       wsRef.current = new WebSocket(wsUrl);
 
       wsRef.current.onopen = () => {
         setConnected(true);
         reconnectAttempts.current = 0;
-        onOpen?.();
+        onOpenRef.current?.();
       };
 
       wsRef.current.onclose = () => {
         setConnected(false);
-        onClose?.();
+        onCloseRef.current?.();
 
         // Attempt reconnection with function reference (safe, not string eval)
         if (reconnectAttempts.current < maxReconnectAttempts) {
@@ -85,7 +98,7 @@ export function useWebSocket(
         try {
           const message: WebSocketMessage = JSON.parse(event.data);
           setLastMessage(message);
-          onMessage?.(message);
+          onMessageRef.current?.(message);
         } catch (error) {
           console.error('Failed to parse WebSocket message:', error);
         }
@@ -93,13 +106,13 @@ export function useWebSocket(
 
       wsRef.current.onerror = (error) => {
         console.error('WebSocket error:', error);
-        onError?.(error);
+        onErrorRef.current?.(error);
       };
     } catch (error) {
       console.error('Failed to create WebSocket:', error);
-      onError?.(error as Event);
+      onErrorRef.current?.(error as Event);
     }
-  }, [channel, API_URL, onOpen, onClose, onError, onMessage, reconnectInterval, maxReconnectAttempts]);
+  }, [channel, apiHost, reconnectInterval, maxReconnectAttempts]);
 
   const sendMessage = useCallback((message: WebSocketMessage) => {
     if (wsRef.current?.readyState === WebSocket.OPEN) {
@@ -122,11 +135,15 @@ export function useWebSocket(
     setConnected(false);
   }, []);
 
-  // Connect on mount
+  // Connect on mount. The dependency array is now stable: `connect`
+  // and `disconnect` only change when channel/apiHost/reconnect-
+  // Interval/maxReconnectAttempts change, not on every render. This
+  // is the F-010 fix: the effect runs once per mount, the WS stays
+  // open across re-renders, and reconnection only happens on real
+  // disconnect events.
   useEffect(() => {
     connect();
 
-    // Cleanup on unmount
     return () => {
       disconnect();
     };

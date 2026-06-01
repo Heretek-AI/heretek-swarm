@@ -26,6 +26,7 @@ import asyncio
 import json
 import re
 from datetime import UTC, datetime
+from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 import structlog
@@ -586,6 +587,22 @@ Format as JSON with keys: objectives, test_cases, success_criteria, risks"""
 
         test_path = test_case.get("test_path")
         if test_path:
+            # G-01: path-traversal guard — only allow test files under
+            # allowed roots. Resolve symlinks / .. to prevent escape.
+            resolved = Path(test_path).resolve()
+            allowed_roots = (Path.cwd() / "tests", Path.cwd() / "backend" / "tests")
+            if not any(str(resolved).startswith(str(root.resolve())) for root in allowed_roots):
+                logger.warning(
+                    "examiner_test_path_outside_allowed_roots",
+                    test_path=test_path,
+                    resolved=str(resolved),
+                )
+                return {
+                    "passed": False,
+                    "error": f"Test path outside allowed directories: {test_path}",
+                    "assertions_passed": 0,
+                    "assertions_total": 1,
+                }
             proc = await asyncio.create_subprocess_exec(
                 "python",
                 "-m",

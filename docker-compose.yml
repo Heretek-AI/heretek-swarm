@@ -88,9 +88,14 @@ services:
       QDRANT_PORT: ${QDRANT_PORT:-6333}
       QDRANT_URL: ${QDRANT_URL:-http://qdrant:6333}
       QDRANT_API_KEY: ${QDRANT_API_KEY:-}
-      HERETEK_NATS_URL: ${HERETEK_NATS_URL:-nats://nats:4222}
-      # When HERETEK_MTLS_ENABLED=true, set HERETEK_NATS_URL=tls://nats:4222
-      HERETEK_MTLS_ENABLED: ${HERETEK_MTLS_ENABLED:-false}
+      HERETEK_NATS_URL: ${HERETEK_NATS_URL:-tls://nats:4222}
+      HERETEK_MTLS_ENABLED: ${HERETEK_MTLS_ENABLED:-true}
+      NATS_TLS_CA_FILE: /etc/nats/certs/ca.crt
+      NATS_TLS_CERT_FILE: /etc/nats/certs/agent.crt
+      NATS_TLS_KEY_FILE: /etc/nats/certs/agent.key
+      JWT_SECRET: ${JWT_SECRET:-jwt_secret_heretek_deploy_2026_random_string}
+      JWT_AUDIENCE: ${JWT_AUDIENCE:-heretek-swarm}
+      JWT_ISSUER: ${JWT_ISSUER:-heretek-swarm}
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
       OPENAI_BASE_URL: ${OPENAI_BASE_URL:-https://api.minimax.io/v1}
       LLM_MODEL: ${LLM_MODEL:-MiniMax-M2.7}
@@ -103,6 +108,7 @@ services:
       EMBEDDING_DIMENSIONS: ${EMBEDDING_DIMENSIONS:-768}
     volumes:
       - config_keys:/config
+      - ./certs:/etc/nats/certs:ro,z
     depends_on:
       postgres:
         condition: service_healthy
