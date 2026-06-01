@@ -1,6 +1,21 @@
 """
 Knowledge Graph Retriever — Graph-based Retrieval-Augmented Generation
 
+.. deprecated::
+    This module is the in-memory implementation of the knowledge graph
+    retriever. It is being replaced by Cognee as part of M-arch PR #3
+    (see PLAN.md §M-arch).
+
+    New code should use :func:`heretek_swarm.rag.cognee_graph.get_graph_retriever`
+    which returns either this in-memory backend (default, preserves
+    existing RAGFlow pattern) or the new Cognee-backed
+    :class:`CogneeGraphRetriever` (opt-in via
+    ``HERETEK_USE_COGNEE_GRAPH=true``).
+
+    This file is scheduled for **deletion** in a follow-up PR after 1
+    week of Cognee sidecar parity. Do not add new code that depends on
+    the in-memory implementation directly — call the factory instead.
+
 Provides graph-augmented RAG that exploits document structure:
 - Document graph: chunks as nodes with parent-child heading relationships
 - Graph traversal: hierarchical expansion from chunk → heading → section → document

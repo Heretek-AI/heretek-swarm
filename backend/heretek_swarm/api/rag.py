@@ -16,6 +16,7 @@ import structlog
 from fastapi import APIRouter, Depends, HTTPException, UploadFile
 
 if TYPE_CHECKING:
+    from heretek_swarm.rag.cognee_graph import GraphRetriever
     from heretek_swarm.rag.knowledge_graph import KnowledgeGraphRetriever
     from heretek_swarm.rag.rag_pipeline import RAGPipeline
 
@@ -485,16 +486,23 @@ def _update_storage_config(pipeline: RAGPipeline, storage: dict[str, Any] | None
 # Knowledge Graph Retrieval Endpoints (RAGFlow pattern)
 # =============================================================================
 
-_knowledge_graph_retriever: KnowledgeGraphRetriever | None = None
+_knowledge_graph_retriever: GraphRetriever | None = None
 
 
-def get_knowledge_graph_retriever() -> KnowledgeGraphRetriever:
-    """Get or initialize the knowledge graph retriever."""
+def get_knowledge_graph_retriever() -> GraphRetriever:
+    """Get or initialize the knowledge graph retriever.
+
+    M-arch PR #3: delegates to the :func:`cognee_graph.get_graph_retriever`
+    factory, which selects between the legacy in-memory
+    :class:`KnowledgeGraphRetriever` (default) and the new
+    :class:`CogneeGraphRetriever` (opt-in via
+    ``HERETEK_USE_COGNEE_GRAPH=true``).
+    """
     global _knowledge_graph_retriever
     if _knowledge_graph_retriever is None:
-        from heretek_swarm.rag.knowledge_graph import KnowledgeGraphRetriever
+        from heretek_swarm.rag.cognee_graph import get_graph_retriever
 
-        _knowledge_graph_retriever = KnowledgeGraphRetriever()
+        _knowledge_graph_retriever = get_graph_retriever()
     return _knowledge_graph_retriever
 
 
