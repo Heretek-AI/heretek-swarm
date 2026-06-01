@@ -35,9 +35,11 @@ logger = structlog.get_logger()
 
 router = APIRouter(prefix="/api/agents")
 
-# Include routers from submodules
-# Supervisor must be first to win the GET /{param} path collision
-router.include_router(supervisor.router, tags=["supervisor"])
+# Include routers from submodules.
+# Order matters: literal-path subrouters (instances, types, stats, deploy, available)
+# must be registered BEFORE the supervisor router, which exposes a catch-all
+# GET /{agent_id}. FastAPI/Starlette resolve paths in registration order, so
+# the catch-all would otherwise shadow the literal /instances, /available, etc.
 router.include_router(chat.router, tags=["chat"])
 router.include_router(core.router, tags=["core"])
 router.include_router(lifecycle.router, tags=["lifecycle"])
@@ -46,3 +48,6 @@ router.include_router(jetstream.router, tags=["jetstream"])
 router.include_router(profiling.router, tags=["profiling"])
 router.include_router(routing_rules.router, tags=["routing_rules"])
 router.include_router(routing_control.router, tags=["routing_control"])
+# Supervisor last so its GET /{agent_id} catch-all only matches IDs not claimed
+# by a literal path above.
+router.include_router(supervisor.router, tags=["supervisor"])

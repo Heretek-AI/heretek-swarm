@@ -325,6 +325,32 @@ class AdaptiveLearningRateController:
     def register_validation_hook(self, callback: Callable) -> None:
         self._validation_hooks.append(callback)
 
+    def get_status(self) -> dict[str, Any]:
+        """
+        Return a serializable status snapshot for the emergent-intelligence
+        status endpoint and observability dashboards.
+        """
+        try:
+            return {
+                "strategy": self.config.strategy.value,
+                "initial_rate": self.config.initial_rate,
+                "min_rate": self.config.min_rate,
+                "max_rate": self.config.max_rate,
+                "mutation_rate": self.config.mutation_rate,
+                "tracked_agents": len(self._agent_states),
+                "adaptation_events": len(self._adaptation_events),
+                "convergence_tracked": len(self._convergence_metrics),
+                "validation_hooks": len(self._validation_hooks),
+                "environment": {
+                    "complexity": self._environment_profile.complexity,
+                    "stability": self._environment_profile.stability,
+                    "selection_pressure": self._environment_profile.selection_pressure,
+                },
+            }
+        except Exception as e:  # noqa: BLE001 — status must never raise
+            logger.warning("adaptive_learning_get_status_error", error=str(e))
+            return {"error": str(e), "tracked_agents": len(self._agent_states)}
+
     def get_or_create_state(self, agent_id: str) -> AgentLearningState:
         if agent_id not in self._agent_states:
             self._agent_states[agent_id] = AgentLearningState(

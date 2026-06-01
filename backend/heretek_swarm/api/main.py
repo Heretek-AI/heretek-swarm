@@ -469,28 +469,43 @@ async def _ws_status_pump() -> None:
     Background pump that reads supervisor actor states every 10s and
     broadcasts agent_status messages to dashboard WebSocket clients.
 
+    Deduplicates broadcasts against the last-seen status string per agent
+    so identical states do not flood the WebSocket every cycle.
+
     Cancelled cleanly on API shutdown via asyncio.CancelledError.
     """
     global supervisor
     from heretek_swarm.api.websockets import send_agent_status_update
 
     logger.info("ws_status_pump_started")
+    last_status: dict[str, str] = {}
     while True:
         try:
             await asyncio.sleep(10)
             if supervisor is None:
                 continue
             actors = list(supervisor.actors.items())
+            sent = 0
             for agent_id, actor in actors:
                 status = actor.get_status()
                 if status is None:
                     continue
+                state_str = status.state.value if status.state else "unknown"
+                if last_status.get(str(agent_id)) == state_str:
+                    continue
+                last_status[str(agent_id)] = state_str
                 # broadcast_agent_status + broadcast_dashboard happen inside
                 await send_agent_status_update(
                     agent_id=str(agent_id),
-                    status=status.state.value if status.state else "unknown",
+                    status=state_str,
                 )
-            logger.info("agent_status_push_cycle", agent_count=len(actors))
+                sent += 1
+            logger.info(
+                "agent_status_push_cycle",
+                agent_count=len(actors),
+                broadcasts=sent,
+                deduped=len(actors) - sent,
+            )
         except asyncio.CancelledError:
             logger.info("ws_status_pump_cancelled")
             raise

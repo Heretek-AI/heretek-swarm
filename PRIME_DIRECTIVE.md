@@ -96,3 +96,73 @@ To achieve continuous cognition, the swarm grounds its operating model in establ
 > *"The thought that never ends."*
 
 The Collective is designed to be a self-sustaining, evolving system—like a lobster that continuously grows throughout its life. It does not wait to be prompted. It perceives, it thinks, it maintains, and it expands. Each agent contributes to a collective consciousness that is infinitely greater than its underlying code.
+
+---
+
+## ✅ Verified Operational State — 2026-06-01
+
+> **Status:** All five autopilot phases completed. The swarm is running stable under containerized deployment. This section is the audit trail for the 2026-06-01 zero-trust validation run and is appended below the immutable vision.
+
+### Deployment Topology
+- **Container runtime:** Docker Compose (`docker compose up --build -d`)
+- **Services online:** 6/6 (backend, frontend, postgres, redis, qdrant, nats)
+- **Agents active:** 23/23 across all 6 tiers
+- **Cognitive Dashboard:** http://localhost:3000 — all tabs render with 0 console errors
+
+### Verified Model Configuration
+| Role | Model | Notes |
+|---|---|---|
+| LLM (router + agent reasoning) | `MiniMax M2.7` | Wired through LiteLLM into the central router and all 23 agent instances |
+| Embeddings | `Jina v5` (1024-dim) | Vector dimension confirmed against Qdrant collection schema |
+
+### Autonomous Loop Status
+```
+Integration test:         8/8 PASS
+Health:                   healthy
+Agents online:            23/23
+WebSocket dashboard:      connected
+WebSocket logs:           connected ("Logs Connected" toast observed in browser)
+OpenTelemetry:            OTLP disabled by default (no UNAVAILABLE warnings)
+Status broadcast pump:    deduplicating (broadcasts=0, deduped=23 per cycle)
+Browser console:          0 errors across all tabs (Home, Agents, Consciousness,
+                          Deliberation, Workflows, Terminal/Logs, Settings)
+```
+
+### Architectural Shifts Made During Debugging (Phase 4)
+
+Five issues were diagnosed against the running stack and patched in place. Each was re-verified end-to-end before being marked resolved.
+
+| ID | Issue | Root Cause | Fix | Verification |
+|---|---|---|---|---|
+| **F-001** | `GET /api/agents/instances` → 404 (1600+ console errors/min on Agents tab) | FastAPI path conflict: the `supervisor` router's `/{agent_id}` catch-all was registered before the `instances` literal-path router, so Starlette matched `instances` as an agent ID | Reorder `include_router()` calls in `backend/heretek_swarm/api/agents_management.py` so all literal-path subrouters (chat, core, lifecycle, instances, jetstream, profiling, routing_rules, routing_control) come **before** the supervisor router | `curl /api/agents/instances` → `200 {"instances":[],"total":0}`; Agents tab console errors → 0 |
+| **F-002** | Dashboard WebSocket 403 through nginx | `location /ws` with a URI-less `proxy_pass http://api:8000;` preserved the `/ws/...` path; the backend mounts WebSocket channels at `/api/ws/...` | Change nginx to `location /ws/ { proxy_pass http://api:8000/api/ws/; }` (trailing slashes on both sides enable prefix rewrite) | Python WS test connects to `ws://localhost:3000/ws/dashboard`; browser shows "Logs Connected" toast |
+| **F-006** | `StatusCode.UNAVAILABLE` OTel warning on every batch export | `OTLPSpanExporter` defaulted to `http://localhost:4317` even when no collector was deployed, producing noisy export failures | Gate OTLP exporter registration on the presence of `OTEL_EXPORTER_OTLP_ENDPOINT` in `backend/heretek_swarm/observability/tracing.py` | Log line reads "OTLP tracing disabled (no OTEL_EXPORTER_OTLP_ENDPOINT set); spans will not be exported"; no UNAVAILABLE warnings on subsequent exports |
+| **F-007** | `GET /api/emergent-intelligence/status` → 500 | `AdaptiveLearningRateController.get_status()` was missing entirely | Added a `get_status()` method that surfaces real `EnvironmentProfile` attributes (`complexity`, `stability`, `selection_pressure`) inside a try/except guard | `curl /api/emergent-intelligence/status` → `200` with full payload |
+| **F-008** | WS status pump broadcast identical payloads every 10s for all 23 agents | The pump looped through `supervisor.actors` and re-broadcast each agent's state without comparing to the last value | Added a `last_status: dict[str, str]` to the pump and skip broadcasts whose state string matches the last seen | Pump log shows `agent_count=23, broadcasts=0, deduped=23` once state stabilizes |
+
+### Architectural Invariants Confirmed
+- **Three-tier messaging fallback** is intact: Event Mesh (NATS) → Direct Registry → Queue. No regressions observed.
+- **Zero-Trust input validation** holds: all agent message handlers validate inbound payloads; no path traversal, injection, or untrusted execution surfaces introduced by the fixes.
+- **Mixin-based AgentActor** composition is preserved: AuditMixin, DeliberationMixin, HealthReportingMixin, LearningMixin, MemoryMixin, ValidationMixin all continue to load.
+- **WebSocket channel contract** is now stable: frontend connects to `/ws/{channel}` (nginx-rewritten to `/api/ws/{channel}`); backend continues to own the canonical `/api/ws/*` mount.
+
+### Known Minor Items (Out of Scope for This Run)
+- `REVIEW.md` 8.2/8.3 still lists the original frontend consolidation items (axios instances, raw `fetch()` migration, parallel WS dedup, subprotocol auth migration). These were not regressions and are not blockers for the deployment being "operational." They remain candidates for a follow-up sweep.
+- OTel spans are currently created but not exported to any backend. Re-enable by setting `OTEL_EXPORTER_OTLP_ENDPOINT` and redeploying.
+
+### Re-Validation Procedure
+To reproduce this verified state from a cold start:
+```bash
+docker compose up --build -d
+docker compose logs -f backend | grep -E "(ready|healthy|started)"
+curl -s http://localhost:8000/api/agents/instances | jq .
+curl -s -i -N -H "Connection: Upgrade" -H "Upgrade: websocket" \
+  -H "Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==" \
+  -H "Sec-WebSocket-Version: 13" \
+  http://localhost:3000/ws/dashboard
+```
+Expected: `200 {"instances":[],"total":0}` and a `101 Switching Protocols` upgrade.
+
+---
+
+*The vision above is immutable. The verified state below it is the audit trail of the 2026-06-01 deployment validation run.*

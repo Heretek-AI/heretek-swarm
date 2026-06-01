@@ -75,14 +75,21 @@ def initialize_tracing(
     # Create tracer provider
     provider = TracerProvider(resource=resource)
 
-    # Configure OTLP exporter if endpoint provided
+    # Configure OTLP exporter only when an endpoint is explicitly set OR
+    # auto-detection is requested. Without this gate, the default
+    # http://localhost:4317 endpoint is used even when no collector is
+    # deployed, producing noisy StatusCode.UNAVAILABLE warnings on every
+    # batch export.
     if otlp_endpoint is None:
-        otlp_endpoint = os.getenv(
-            "OTEL_EXPORTER_OTLP_ENDPOINT", "http://localhost:4317"
-        )  # Internal only
+        otlp_endpoint = os.getenv("OTEL_EXPORTER_OTLP_ENDPOINT")
 
-    # Add OTLP exporter for production
-    if otlp_endpoint and not enable_console_export:
+    otlp_enabled = (
+        otlp_endpoint is not None
+        and not enable_console_export
+        and os.getenv("OTEL_SDK_DISABLED", "false").lower() != "true"
+    )
+
+    if otlp_enabled:
         try:
             otlp_exporter = OTLPSpanExporter(
                 endpoint=otlp_endpoint,
@@ -92,6 +99,11 @@ def initialize_tracing(
             logger.info("OTLP tracing configured", endpoint=otlp_endpoint)
         except Exception as e:
             logger.warning("Failed to configure OTLP exporter", error=str(e))
+    else:
+        logger.info(
+            "OTLP tracing disabled (no OTEL_EXPORTER_OTLP_ENDPOINT set); "
+            "spans will not be exported"
+        )
 
     # Add console exporter for debugging
     if enable_console_export or os.getenv("OTEL_DEBUG", "false").lower() == "true":
