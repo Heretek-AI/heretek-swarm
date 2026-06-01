@@ -743,7 +743,7 @@ class CatalystAgent(
 
             # Trim notifications if needed
             if len(self._notifications) > self._max_notifications:
-                oldest = sorted(self._notifications.keys())[0]
+                oldest = min(self._notifications)
                 del self._notifications[oldest]
 
             logger.info(
@@ -787,7 +787,7 @@ class CatalystAgent(
 
         # Trim if needed
         if len(self._notifications) > self._max_notifications:
-            oldest = sorted(self._notifications.keys())[0]
+            oldest = min(self._notifications)
             del self._notifications[oldest]
 
     def _calculate_risk_score(self, change: ChangeRequest) -> float:

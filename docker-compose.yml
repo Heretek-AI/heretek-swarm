@@ -19,9 +19,9 @@ services:
   postgres:
     image: pgvector/pgvector:pg15
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-postgres}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
-      POSTGRES_DB: ${POSTGRES_DB:-heretek_swarm}
+      POSTGRES_USER: ${POSTGRES_USER:?POSTGRES_USER must be set}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set}
+      POSTGRES_DB: ${POSTGRES_DB:?POSTGRES_DB must be set}
     ports:
       - "5432:5432"
     volumes:
@@ -81,8 +81,8 @@ services:
       - "8000:8000"
     environment:
       <<: *common-env
-      HERETEK_API_KEY: ${HERETEK_API_KEY:-htsk_your_api_key_here}
-      DATABASE_URL: ${DATABASE_URL:-postgresql+asyncpg://postgres:password@postgres:5432/heretek_swarm}
+      HERETEK_API_KEY: ${HERETEK_API_KEY:?HERETEK_API_KEY must be set}
+      DATABASE_URL: ${DATABASE_URL:?DATABASE_URL must be set}
       REDIS_URL: ${REDIS_URL:-redis://redis:6379}
       QDRANT_HOST: ${QDRANT_HOST:-qdrant}
       QDRANT_PORT: ${QDRANT_PORT:-6333}
@@ -93,13 +93,13 @@ services:
       NATS_TLS_CA_FILE: /etc/nats/certs/ca.crt
       NATS_TLS_CERT_FILE: /etc/nats/certs/agent.crt
       NATS_TLS_KEY_FILE: /etc/nats/certs/agent.key
-      JWT_SECRET: ${JWT_SECRET:-jwt_secret_heretek_deploy_2026_random_string}
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET must be set}
       JWT_AUDIENCE: ${JWT_AUDIENCE:-heretek-swarm}
       JWT_ISSUER: ${JWT_ISSUER:-heretek-swarm}
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
       OPENAI_BASE_URL: ${OPENAI_BASE_URL:-https://api.minimax.io/v1}
       LLM_MODEL: ${LLM_MODEL:-MiniMax-M2.7}
-      CORS_ORIGINS: ${CORS_ORIGINS:-*}
+      CORS_ORIGINS: ${CORS_ORIGINS:?CORS_ORIGINS must be set (comma-separated list)}
       RATE_LIMIT_ENABLED: ${RATE_LIMIT_ENABLED:-true}
       EMBEDDING_PROVIDER: ${EMBEDDING_PROVIDER:-openai_compatible}
       EMBEDDING_BASE_URL: ${EMBEDDING_BASE_URL:-http://127.0.0.1:13305/api/v1}

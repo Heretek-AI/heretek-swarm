@@ -9,13 +9,6 @@ Features:
 - Strict type checking with field validation
 - Input sanitization helpers
 - Custom validators for complex constraints
-
-Deprecation note:
-    The constants IMMUTABLE_RULES, BASELINE_CONFIG and the accessor functions
-    get_immutable_rules(), get_baseline_config() have been moved into
-    ValidationMixin (heretek_swarm.actors.mixins.validation) as class-level
-    attributes and classmethods. The names below are backward-compat shims
-    that delegate to the mixin. New code should import from the mixin directly.
 """
 
 import re
@@ -32,32 +25,6 @@ logger = structlog.get_logger(__name__)
 
 # Field description constant
 _TASK_DESCRIPTION = "Task description"
-
-
-# =============================================================================
-# Behavioral Baseline Initialization - Static Rules Bootstrap
-# =============================================================================
-# DEPRECATED: These constants now live in ValidationMixin. These aliases exist
-# for backward compatibility and will be removed in a future release.
-
-IMMUTABLE_RULES = ValidationMixin.IMMUTABLE_RULES
-BASELINE_CONFIG = ValidationMixin.BASELINE_CONFIG
-
-
-def get_immutable_rules() -> list[dict[str, Any]]:
-    """Get the list of immutable security rules.
-
-    DEPRECATED: Use ValidationMixin.get_immutable_rules() instead.
-    """
-    return ValidationMixin.get_immutable_rules()
-
-
-def get_baseline_config() -> dict[str, Any]:
-    """Get the baseline initialization configuration.
-
-    DEPRECATED: Use ValidationMixin.get_baseline_config() instead.
-    """
-    return ValidationMixin.get_baseline_config()
 
 
 class MessageContent(BaseModel):

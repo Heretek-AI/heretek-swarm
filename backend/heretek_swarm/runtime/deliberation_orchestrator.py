@@ -226,7 +226,7 @@ class DeliberationOrchestrator:
         snippets: dict = getattr(coder, "_code_snippets", {})
 
         if tasks:
-            last_key = sorted(tasks.keys())[-1]
+            last_key = max(tasks)
             last_task = tasks[last_key]
             return {
                 "task_id": getattr(last_task, "id", last_key),
@@ -237,7 +237,7 @@ class DeliberationOrchestrator:
             }
 
         if snippets:
-            last_key = sorted(snippets.keys())[-1]
+            last_key = max(snippets)
             last_snippet = snippets[last_key]
             return {
                 "code": getattr(last_snippet, "code", ""),
