@@ -199,7 +199,7 @@ class PerceiverPlusAgent(
                 await handler(message)
             except Exception as e:
                 logger.exception(
-                    f"[{self.agent_id}] Error processing message {message.message_type}: {e}",  # noqa: G004
+                    f"[{self.agent_id}] Error processing message {message.message_type}: {e}",
 
                 )
                 self.error_count += 1
@@ -597,7 +597,7 @@ class PerceiverPlusAgent(
 
         except Exception as e:
             logger.exception(
-                f"[{self.agent_id}] Error in knowledge enhanced analysis: {e}"  # noqa: G004
+                f"[{self.agent_id}] Error in knowledge enhanced analysis: {e}"
             )
 
     async def knowledge_enhanced_query(

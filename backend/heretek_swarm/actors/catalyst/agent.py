@@ -92,10 +92,10 @@ class CatalystAgent(
         agent_id: str | None = None,
         config: dict[str, Any] | None = None,
         # Session 44: Integration components
-        pattern_extractor: PatternExtractor | None = None,  # noqa: ARG002
-        deliberation_engine: SwarmDeliberationEngine | None = None,  # noqa: ARG002
-        access_analyzer: AccessPatternAnalyzer | None = None,  # noqa: ARG002
-        zero_trust_validator: ZeroTrustValidator | None = None,  # noqa: ARG002
+        pattern_extractor: PatternExtractor | None = None,
+        deliberation_engine: SwarmDeliberationEngine | None = None,
+        access_analyzer: AccessPatternAnalyzer | None = None,
+        zero_trust_validator: ZeroTrustValidator | None = None,
     ):
         super().__init__(
             agent_id=agent_id or f"catalyst_{uuid.uuid4().hex[:8]}",

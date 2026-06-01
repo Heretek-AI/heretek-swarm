@@ -39,7 +39,7 @@ class DeliberationOrchestrator:
     async def run_deliberation(
         self,
         prompt: str,
-        timeout: int = 120,  # noqa: ASYNC109
+        timeout: int = 120,
     ) -> dict[str, Any]:
         """
         Run a triad deliberation: route a prompt through Steward → Alpha → Beta → Charlie.
@@ -250,7 +250,7 @@ class DeliberationOrchestrator:
     async def run_consensus(
         self,
         question: str,
-        timeout: float = 120,  # noqa: ASYNC109
+        timeout: float = 120,
         max_rounds: int = 3,
     ) -> dict[str, Any]:
         """
@@ -348,7 +348,7 @@ class DeliberationOrchestrator:
         reasoning_parts = []
         for v in result.votes:
             if v.decision != "abstain" and v.metadata.get("reasoning"):
-                reasoning_parts.append(f"{v.agent_id}: {v.metadata['reasoning']}")  # noqa: PERF401
+                reasoning_parts.append(f"{v.agent_id}: {v.metadata['reasoning']}")
 
         response = {
             "decision": result.decision,
@@ -376,7 +376,7 @@ class DeliberationOrchestrator:
         agent_name: str,
         task_type: str,
         task_data: dict[str, Any],
-        timeout: int = 30,  # noqa: ASYNC109
+        timeout: int = 30,
     ) -> dict[str, Any]:
         """
         Route a task to a specific agent using Steward's ``route_to_agent()``
