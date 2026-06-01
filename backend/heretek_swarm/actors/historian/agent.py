@@ -46,6 +46,7 @@ from heretek_swarm.knowledge.unified_access import KnowledgeQueryResult, Unified
 # Session 44: Memory Optimization Integration
 from heretek_swarm.memory.access_patterns import AccessPatternAnalyzer
 from heretek_swarm.memory.base import DualTierMemory, MemoryEntry
+from heretek_swarm.memory.cognee_reader import CogneeMemoryReader
 
 # Session 44: Zero-Trust Validation
 from heretek_swarm.security.zero_trust import ZeroTrustValidator
@@ -88,6 +89,7 @@ class HistorianAgent(
         deliberation_engine: SwarmDeliberationEngine | None = None,
         access_analyzer: AccessPatternAnalyzer | None = None,
         zero_trust_validator: ZeroTrustValidator | None = None,
+        cognee_reader: CogneeMemoryReader | None = None,
         db_pool: Any | None = None,
         **kwargs,
     ) -> None:
@@ -154,6 +156,10 @@ class HistorianAgent(
         self._pattern_emitted: set[str] = set()
 
         # Optional asyncpg connection pool for Postgres-backed event store
+
+        # M-arch PR #2: optional Cognee reader for graph-augmented context
+        # Default is None → no Cognee calls. Set COGNEE_ENABLED=true to opt in.
+        self.cognee_reader = cognee_reader or CogneeMemoryReader()
         self._db_pool: Any | None = db_pool  # may be injected later via internal_state
 
         # JSONL event log path — read from package-level _HISTORIAN_FILE
@@ -602,14 +608,13 @@ class HistorianAgent(
         if topic:
             query_filters["topic"] = topic
 
-        # Query memory
+        # Query primary memory
         results = await self.memory_system.query(
             filters=query_filters,
             limit=window_size,
         )
 
-        # Update cache (with automatic LRU eviction)
-        context = [
+        context: list[dict[str, Any]] = [
             {
                 "content": e.content,
                 "metadata": e.metadata,
@@ -617,6 +622,39 @@ class HistorianAgent(
             }
             for e in results
         ]
+
+        # M-arch PR #2: supplement with Cognee graph-augmented context.
+        # Reader is a no-op when disabled or unreachable (returns []),
+        # so this never breaks the primary memory path.
+        if self.cognee_reader is not None and self.cognee_reader.enabled:
+            try:
+                cognee_results = await self.cognee_reader.read(
+                    query=topic, top_k=window_size
+                )
+                for hit in cognee_results:
+                    context.append(
+                        {
+                            "content": hit.get("content", ""),
+                            "metadata": {
+                                "source": "cognee",
+                                "score": hit.get("score"),
+                                "dataset": hit.get("dataset"),
+                                **(hit.get("metadata") or {}),
+                            },
+                            "created_at": None,
+                        }
+                    )
+                if cognee_results:
+                    logger.info(
+                        f"[{self.agent_id}] Cognee supplemented {len(cognee_results)} context entries for: {topic}"
+                    )
+            except Exception as e:
+                # Defensive: never let a supplemental source break primary retrieval
+                logger.warning(
+                    f"[{self.agent_id}] Cognee reader failed (suppressed): {e}"
+                )
+
+        # Update cache (with automatic LRU eviction)
         self.context_cache.set(cache_key, context)
 
         logger.debug(

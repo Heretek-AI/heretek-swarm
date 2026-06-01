@@ -55,6 +55,9 @@ dependencies = [
     "psycopg2-binary>=2.9.0",
     # Build tooling required at install time
     "setuptools>=68.0,<81",
+    # Cognee — knowledge graph + vector memory engine (M-arch PR #2)
+    # Optional at runtime: read-only context source, no impact when disabled
+    "cognee>=1.1.0,<2.0",
 ]
 
 [project.optional-dependencies]
