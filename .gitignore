@@ -190,4 +190,5 @@ backend/agent_workspace/
 opencode.jsonc
 .opencode/openwork.json
 .opencode/agents/openwork.md
-.omo/run-continuation/ses_17eae60e8ffebblM5k3wgni8b2.json
+.omo/
+.forensic/
