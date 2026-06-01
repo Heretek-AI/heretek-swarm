@@ -14,6 +14,7 @@ Usage::
 
 import logging
 import os
+from functools import lru_cache
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -22,6 +23,7 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
+@lru_cache(maxsize=128)
 def _ensure_provider_prefix(model: str) -> str:
     """Return a litellm-routable model name, defaulting to the ``openai/`` provider.
 

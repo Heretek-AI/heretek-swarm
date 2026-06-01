@@ -665,8 +665,7 @@ def is_code_safe(code: str) -> bool:
     Returns:
         True if code is safe, False otherwise
     """
-    validator = LLMOutputValidator()
-    return validator.is_safe_code(code)
+    return _is_code_safe_cached(code)
 
 
 def is_text_safe(text: str) -> bool:
@@ -679,5 +678,16 @@ def is_text_safe(text: str) -> bool:
     Returns:
         True if text is safe, False otherwise
     """
-    validator = LLMOutputValidator()
-    return validator.is_safe_text(text)
+    return _is_text_safe_cached(text)
+
+
+@lru_cache(maxsize=512)
+def _is_code_safe_cached(code: str) -> bool:
+    """Cached implementation of is_code_safe."""
+    return LLMOutputValidator().is_safe_code(code)
+
+
+@lru_cache(maxsize=512)
+def _is_text_safe_cached(text: str) -> bool:
+    """Cached implementation of is_text_safe."""
+    return LLMOutputValidator().is_safe_text(text)
