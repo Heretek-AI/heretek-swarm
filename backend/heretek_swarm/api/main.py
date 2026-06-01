@@ -204,8 +204,24 @@ async def _init_config_service() -> None:
 async def _init_supervisor() -> None:
     """Initialize ActorSupervisor."""
     global supervisor
+    import heretek_swarm.actors.supervisor as supervisor_module
 
     supervisor = ActorSupervisor()
+    # Set the global singleton so API endpoints can access the same instance
+    supervisor_module._global_supervisor = supervisor
+
+    # Connect NATS event mesh and set it on the supervisor
+    try:
+        mesh = NATSEventMesh(fallback=True)
+        connected = await mesh.connect()
+        if connected:
+            supervisor._event_mesh = mesh
+            logger.info("NATS event mesh connected to supervisor")
+        else:
+            logger.warning("NATS event mesh not connected, agents will use fallback")
+    except Exception as e:
+        logger.warning("Failed to connect NATS event mesh: %s", e)
+
     logger.info("ActorSupervisor initialized")
 
     # Fire-and-forget: spawn all 23 agents without blocking API startup
@@ -536,7 +552,7 @@ async def security_headers_middleware(request, call_next):
     response.headers["X-Frame-Options"] = "DENY"
     response.headers["X-XSS-Protection"] = "1; mode=block"
     response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
-    response.headers["Content-Security-Policy"] = "default-src 'none'"
+    response.headers["Content-Security-Policy"] = "default-src 'self'; connect-src 'self' ws: wss:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'"
     return response
 
 

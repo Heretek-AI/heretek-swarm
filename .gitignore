@@ -186,3 +186,7 @@ backend/agent_workspace/
 
 # repowise API keys (local)
 .repowise/.env
+.aider*
+opencode.jsonc
+.opencode/openwork.json
+.opencode/agents/openwork.md

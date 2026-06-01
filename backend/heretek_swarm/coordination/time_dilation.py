@@ -208,7 +208,7 @@ class TimePerceptionManager:
 
         # Time anchoring
         self._anchor_source: AnchorSource = AnchorSource.SYSTEM_CLOCK
-        self._last_anchor_time: datetime = field(default_factory=lambda: datetime.now(UTC))
+        self._last_anchor_time: datetime = datetime.now(UTC)
         self._anchor_interval = anchor_interval
         self._drift_threshold_seconds = drift_threshold_seconds
         self._perception_drift: float = 0.0

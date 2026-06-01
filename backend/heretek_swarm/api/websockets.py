@@ -850,8 +850,14 @@ async def agent_status_websocket(
         token: Authentication token (required)
     """
     # SECURITY: Authenticate connection
-    authenticated, _user_id = await _ws_authenticate_and_accept(websocket, token, "agent_status")
+    authenticated, _user_id = await authenticate_websocket(websocket, token)
     if not authenticated:
+        try:
+            await websocket.accept()
+            await websocket.send_json({"type": "error", "error": "Authentication failed"})
+            await websocket.close()
+        except Exception:
+            logger.debug("websocket_close_cleanup_error", exc_info=True)
         return
 
     await websocket.accept()
@@ -925,10 +931,14 @@ async def workflow_progress_websocket(
         token: Authentication token (required)
     """
     # SECURITY: Authenticate connection
-    authenticated, _user_id = await _ws_authenticate_and_accept(
-        websocket, token, "workflow_progress"
-    )
+    authenticated, _user_id = await authenticate_websocket(websocket, token)
     if not authenticated:
+        try:
+            await websocket.accept()
+            await websocket.send_json({"type": "error", "error": "Authentication failed"})
+            await websocket.close()
+        except Exception:
+            logger.debug("websocket_close_cleanup_error", exc_info=True)
         return
 
     await websocket.accept()

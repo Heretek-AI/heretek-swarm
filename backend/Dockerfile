@@ -46,10 +46,10 @@ WORKDIR /app
 COPY --from=builder --chown=appuser:appgroup --chmod=555 /app/.venv /app/.venv
 
 # Copy the installed package
-COPY --from=builder --chown=appuser:appgroup --chmod=444 /app/backend /app/backend
+COPY --from=builder --chown=appuser:appgroup --chmod=555 /app/backend /app/backend
 
 # Copy migrations from build context root
-COPY --chown=appuser:appgroup --chmod=444 migrations /app/migrations
+COPY --chown=appuser:appgroup --chmod=555 migrations /app/migrations
 
 # Copy scripts (includes run_migrations.py)
 COPY --chown=appuser:appgroup --chmod=555 scripts /app/scripts

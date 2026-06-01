@@ -178,15 +178,32 @@ class EnhancedAgentRegistry:
 
             if hasattr(module, class_name):
                 agent_class = getattr(module, class_name)
+            elif hasattr(module, f"{class_name}Agent"):
+                # Try with "Agent" suffix (e.g., BetaAgent for beta.py)
+                agent_class = getattr(module, f"{class_name}Agent")
             else:
-                # Try to find any class that inherits from AgentActor
+                # Try to find a class whose name starts with the expected prefix
                 for _name, obj in inspect.getmembers(module, inspect.isclass):
-                    if issubclass(obj, AgentActor) and obj != AgentActor:
+                    if (
+                        issubclass(obj, AgentActor)
+                        and obj != AgentActor
+                        and obj.__name__.startswith(class_name)
+                    ):
                         agent_class = obj
                         break
 
+                # Last resort: find any AgentActor subclass
+                if not agent_class:
+                    for _name, obj in inspect.getmembers(module, inspect.isclass):
+                        if issubclass(obj, AgentActor) and obj != AgentActor:
+                            agent_class = obj
+                            break
+
             if not agent_class:
                 return None
+
+            # Use the actual class name, not the PascalCase filename conversion
+            class_name = agent_class.__name__
 
             # Extract metadata
             actor_type = getattr(agent_class, "actor_type", class_name)
@@ -387,8 +404,27 @@ class EnhancedAgentRegistry:
             class_name = metadata.type_name
             agent_class = getattr(module, class_name)
 
+            # Filter config to only include params the agent class accepts
+            # This avoids "got multiple values for keyword argument" errors
+            # when agents hardcode topics/capabilities in their constructors
+            import inspect
+
+            sig = inspect.signature(agent_class.__init__)
+            valid_params = set(sig.parameters.keys()) - {"self", "kwargs"}
+            has_kwargs = "kwargs" in sig.parameters
+
+            if has_kwargs:
+                filtered_config = instance.config
+            else:
+                filtered_config = {
+                    k: v for k, v in instance.config.items() if k in valid_params
+                }
+
+            # Always pass agent_id at minimum
+            filtered_config.setdefault("agent_id", instance.instance_id)
+
             # Create agent instance
-            agent = agent_class(**instance.config)
+            agent = agent_class(**filtered_config)
 
             # Spawn via supervisor
             await supervisor.spawn_actor(agent)
