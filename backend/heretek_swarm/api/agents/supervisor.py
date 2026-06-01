@@ -11,13 +11,14 @@ All routes use lazy import of get_supervisor() to avoid circular imports
 (main.py → agents_management → supervisor → get_supervisor from actors.supervisor).
 
 F-009 (2026-06-01 cold-start validation): the {agent_id} path is constrained
-with a regex that excludes reserved literal segments claimed by sibling
-sub-routers (instances, available, types, deploy, chat, jetstream, profiling,
-routing_rules, routing_control, metrics, terminate). Without the constraint,
-instances.router's GET /{instance_id} shadowed the supervisor catch-all and
-every per-agent GET returned "Agent instance 'steward' not found". The
-exclusion pattern is the most surgical way to keep the {agent_id} catch-all
-without breaking the literal paths in other sub-routers.
+by a positive allow-list regex (the 23 valid agent IDs). A negative-lookahead
+exclusion list was tried first but pydantic_core's regex engine (Rust regex
+crate) does not support look-around. The allow-list has the same effect: it
+restricts /{agent_id} to the 23 known agent IDs so that reserved literal
+segments (instances, available, types, deploy, chat, jetstream, profiling,
+routing_rules, routing_control, metrics, terminate) fall through to the
+sub-routers that own them. If a new agent type is added to
+heretek_swarm.actors, this allow-list must be updated to match.
 """
 
 from datetime import UTC, datetime
@@ -30,34 +31,43 @@ from heretek_swarm.gateway.auth import verify_auth
 
 logger = structlog.get_logger(__name__)
 
-# Reserved first-path segments claimed by sibling sub-routers. These must NOT
-# be interpreted as {agent_id} by the supervisor. Keep this list in sync with
-# the literal-path routes in agents/chat.py, core.py, instances.py,
-# jetstream.py, profiling.py, routing_rules.py, routing_control.py.
-RESERVED_AGENT_ID_SEGMENTS = frozenset(
+# Positive allow-list of the 23 valid agent IDs that supervisor.actors can
+# contain. This drives the path-constraint regex below; reserved literal
+# segments owned by sibling sub-routers (instances, available, types, etc.)
+# are intentionally absent so requests to those segments fall through.
+VALID_AGENT_IDS = frozenset(
     {
-        "available",
-        "chat",
-        "deploy",
-        "instances",
-        "jetstream",
-        "metrics",
-        "profiling",
-        "routing-control",
-        "routing-rules",
-        "terminate",
-        "types",
+        "alpha",
+        "arbiter",
+        "beta",
+        "catalyst",
+        "charlie",
+        "chronos",
+        "coder",
+        "coordinator",
+        "dreamer",
+        "echo",
+        "empath",
+        "examiner",
+        "explorer",
+        "habit-forge",
+        "historian",
+        "metis",
+        "nexus",
+        "perceiver",
+        "perceiver-plus",
+        "prism",
+        "sentinel",
+        "sentinel-prime",
+        "steward",
     }
 )
 
-# Regex pattern: match anything that is NOT a reserved literal segment.
-# The negative lookahead excludes the reserved words; the trailing .+
-# requires at least one character of path content.
-AGENT_ID_PATTERN = (
-    r"^(?!(?:"
-    + "|".join(sorted(RESERVED_AGENT_ID_SEGMENTS))
-    + r")$).+"
-)
+# Alternation regex matching ONLY the 23 valid agent IDs. No look-around
+# (pydantic_core's Rust regex engine does not support it). The end-anchor
+# ($) is what actually prevents partial matches: ^sentinel$ will not match
+# "sentinel-prime" because the input has trailing characters after "sentinel".
+AGENT_ID_PATTERN = r"^(" + "|".join(sorted(VALID_AGENT_IDS)) + r")$"
 
 router = APIRouter()
 
