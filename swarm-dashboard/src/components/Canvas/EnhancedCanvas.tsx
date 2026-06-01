@@ -90,21 +90,6 @@ interface ExecutionState {
 // Node Types Configuration
 // =============================================================================
 
-const NODE_TYPES = {
-  agentNode: 'agentNode',
-  triadNode: 'triadNode',
-  historianNode: 'historianNode',
-  toolNode: 'toolNode',
-  memoryNode: 'memoryNode',
-  ragNode: 'ragNode',
-  conditionNode: 'conditionNode',
-  loopNode: 'loopNode',
-  handoffNode: 'handoffNode',
-  mergeNode: 'mergeNode',
-  discordNode: 'discordNode',
-  telegramNode: 'telegramNode',
-  webhookNode: 'webhookNode',
-} as const;
 
 const NODE_COLORS = {
   agent: '#6B7280',
@@ -171,13 +156,11 @@ export function EnhancedCanvas() {
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
-  const [workflows, setWorkflows] = useState<Workflow[]>([]);
   const [currentWorkflow, setCurrentWorkflow] = useState<Workflow | null>(null);
   const [executionState, setExecutionState] = useState<ExecutionState>({
     status: 'idle',
     progress: 0,
   });
-  const [isExecuting, setIsExecuting] = useState(false);
   const [showPalette, setShowPalette] = useState(true);
   const [savedWorkflows, setSavedWorkflows] = useState<Workflow[]>([]);
   const [showExecution, setShowExecution] = useState(false);
@@ -257,7 +240,6 @@ export function EnhancedCanvas() {
   const executeWorkflow = useCallback(async () => {
     if (!currentWorkflow) return;
     
-    setIsExecuting(true);
     setExecutionState({ status: 'running', progress: 0 });
 
     try {
@@ -271,8 +253,6 @@ export function EnhancedCanvas() {
       });
 
       if (!response.ok) throw new Error('Failed to execute workflow');
-      
-      const result = await response.json();
       
       // Simulate execution with progress updates
       for (let i = 0; i < currentWorkflow.nodes.length; i++) {
@@ -297,7 +277,6 @@ export function EnhancedCanvas() {
         message: err instanceof Error ? err.message : 'Unknown error',
       });
     } finally {
-      setIsExecuting(false);
       setTimeout(() => setShowExecution(false), 2000);
     }
   }, [currentWorkflow, setExecutionState, setShowExecution]);

@@ -84,7 +84,6 @@ const API_URL = import.meta.env.VITE_API_HOST || localStorage.getItem('swarm_api
 export function Observability() {
   const [traces, setTraces] = useState<LLMTrace[]>([]);
   const [executions, setExecutions] = useState<AgentExecution[]>([]);
-  const [decisionTree, setDecisionTree] = useState<DecisionNode | null>(null);
   const [metrics, setMetrics] = useState<PerformanceMetric[]>([]);
   const [errors, setErrors] = useState<ErrorLog[]>([]);
   const [selectedTrace, setSelectedTrace] = useState<LLMTrace | null>(null);

@@ -160,15 +160,7 @@ export function AgentMetricsGrid({
   // Calculate total pages
   const totalPages = Math.ceil(filteredAndSortedAgents.length / pageSize);
 
-  // Handle sort change
-  const handleSort = (field: SortField) => {
-    if (sortField === field) {
-      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
-    } else {
-      setSortField(field);
-      setSortOrder("desc");
-    }
-  };
+  // Sort icon — rendered inline in table headers via JSX
 
   // Handle agent selection
   const handleAgentClick = (agentId: string) => {

@@ -58,13 +58,6 @@ const THEORY_CONFIG: TheoryConfig[] = [
   },
 ];
 
-const DEFAULT_VALUES = {
-  GWT: 0,
-  IIT: 0,
-  AST: 0,
-  FEP: 0,
-};
-
 export function ConsciousnessGauge({
   gwtValue = 0,
   iitValue = 0,

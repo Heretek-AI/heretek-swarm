@@ -109,11 +109,6 @@ function formatDuration(ms: number | null): string {
   return `${(ms / 60000).toFixed(1)}m`;
 }
 
-// Truncate string for display
-function truncate(str: string, maxLen: number): string {
-  if (str.length <= maxLen) return str;
-  return str.slice(0, maxLen) + '...';
-}
 
 // Call Entry Row Component
 const CallEntryRow: React.FC<{

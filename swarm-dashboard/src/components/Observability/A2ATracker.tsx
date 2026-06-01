@@ -57,7 +57,6 @@ interface ResourceStats {
 interface A2ATrackerProps {
   natsUrl?: string;
   refreshInterval?: number;
-  maxMessages?: number;
 }
 
 function mapEventType(eventType: string): A2AMessage['type'] {
@@ -288,7 +287,6 @@ const WorkflowStatsPanel: React.FC<{ stats: WorkflowStats }> = ({ stats }) => (
 export function A2ATracker({
   natsUrl = 'nats://localhost:4222',
   refreshInterval = 2000,
-  maxMessages = 200,
 }: A2ATrackerProps) {
   const [agentActivity, setAgentActivity] = useState<AgentActivity[]>([]);
   const [selectedAgent, setSelectedAgent] = useState<string | null>(null);

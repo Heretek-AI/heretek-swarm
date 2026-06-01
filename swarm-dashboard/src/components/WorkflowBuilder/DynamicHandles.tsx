@@ -74,7 +74,6 @@ function DynamicHandleComponent({
   isSelected = false,
   onClick 
 }: DynamicHandleProps) {
-  const handleId = `handle-${handle.id}`;
   const color = getHandleColor(handle.channelType);
   const isInput = handle.type === 'target';
   
@@ -158,7 +157,6 @@ function DynamicHandles({
   handles, 
   selectedHandleId,
   onHandleClick,
-  className = ''
 }: DynamicHandlesGroupProps) {
   // Separate input and output handles
   const { inputHandles, outputHandles } = useMemo(() => {

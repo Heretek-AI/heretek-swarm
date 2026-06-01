@@ -138,7 +138,6 @@ export function AgentStatusGrid({
   agents,
   onAgentClick,
   showDescriptions = true,
-  compact = false,
 }: AgentStatusGridProps) {
   const [selectedAgent, setSelectedAgent] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<AgentStatus | 'all'>('all');

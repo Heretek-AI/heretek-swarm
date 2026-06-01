@@ -515,8 +515,35 @@ ignore = [
     "S106",   # hardcoded password (test fixtures)
     "SLF001", # Private member access (tests need to access internals)
 ]
-"backend/heretek_swarm/actors/{alpha,beta,catalyst,charlie,coder,echo,empath,explorer,handoff,handoff_handlers,historian,metis,perceiver,steward}.py" = [
-    "F403",   # Re-export stubs use wildcard imports
+"backend/heretek_swarm/actors/catalyst/__init__.py" = [
+    "F403",
+]
+"backend/heretek_swarm/actors/coder/__init__.py" = [
+    "F403",
+]
+"backend/heretek_swarm/actors/echo/__init__.py" = [
+    "F403",
+]
+"backend/heretek_swarm/actors/empath/__init__.py" = [
+    "F403",
+]
+"backend/heretek_swarm/actors/explorer/__init__.py" = [
+    "F403",
+]
+"backend/heretek_swarm/actors/handoff/__init__.py" = [
+    "F403",
+]
+"backend/heretek_swarm/actors/historian/__init__.py" = [
+    "F403",
+]
+"backend/heretek_swarm/actors/metis/__init__.py" = [
+    "F403",
+]
+"backend/heretek_swarm/actors/perceiver/__init__.py" = [
+    "F403",
+]
+"backend/heretek_swarm/actors/triad/__init__.py" = [
+    "F403",
 ]
 
 "backend/heretek_swarm/actors/base/state_management.py" = ["E501"]

@@ -78,8 +78,6 @@ function DashboardContent() {
   
   // Setup store integration
   const { 
-    isConfigured, 
-    isRerunning,
     config,
     setRerunning,
     resetSetup,

@@ -183,10 +183,6 @@ function ConsciousnessTabContent({
     );
   }
 
-  // TypeScript narrows consciousness to AgentMetrics here
-  const m = consciousness;
-
-
   return (
     <div className="space-y-4 px-1">
       {/* Phi score — large hero number */}
@@ -539,7 +535,6 @@ function TasksTabContent({
   const {
     status,
     capabilities,
-    topics,
     message_count,
     error_count,
     last_activity,

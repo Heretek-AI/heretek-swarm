@@ -193,3 +193,6 @@ opencode.jsonc
 .omo/
 .omo/ralph-loop.local.md
 .forensic/
+# Added by code-review-graph
+.code-review-graph/
+.gemini/

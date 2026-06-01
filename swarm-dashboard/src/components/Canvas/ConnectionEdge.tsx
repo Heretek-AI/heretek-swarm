@@ -41,7 +41,6 @@ const messageLabels: Record<MessageType, string> = {
 };
 
 function ConnectionEdge({
-  id,
   sourceX,
   sourceY,
   targetX,

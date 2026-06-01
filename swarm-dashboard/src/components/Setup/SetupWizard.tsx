@@ -1041,7 +1041,6 @@ export function SetupWizard({ onComplete }: SetupWizardProps) {
     config,
     isConfigured,
     isRerunning,
-    setStep,
     nextStep,
     prevStep,
     setConfig,
