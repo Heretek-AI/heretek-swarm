@@ -5,7 +5,7 @@
  * lifecycle controls, and configuration management.
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { DataTable, Column } from '../UI/DataTable';
 import { StatusBadge } from '../UI/StatusBadge';
 import { MetricCard, MetricCardGrid } from '../UI/MetricCard';
@@ -227,19 +227,27 @@ export function AgentsPage() {
     return state as AgentState;
   };
 
-  // Filter instances by type
-  const filteredInstances = filterType === 'all' 
-    ? data.instances 
-    : data.instances.filter((inst: AgentInstance) => inst.agent_type === filterType);
+  // Filter instances by type (memoized — only recompute when filter or instances change)
+  const filteredInstances = useMemo(
+    () =>
+      filterType === 'all'
+        ? data.instances
+        : data.instances.filter((inst: AgentInstance) => inst.agent_type === filterType),
+    [data.instances, filterType],
+  );
 
-  // Group instances by type for card view
-  const instancesByType = filteredInstances.reduce((acc, inst) => {
-    if (!acc[inst.agent_type]) {
-      acc[inst.agent_type] = [];
-    }
-    acc[inst.agent_type].push(inst);
-    return acc;
-  }, {} as Record<string, AgentInstance[]>);
+  // Group instances by type for card view (memoized — powers list rendering)
+  const instancesByType = useMemo(
+    () =>
+      filteredInstances.reduce((acc, inst) => {
+        if (!acc[inst.agent_type]) {
+          acc[inst.agent_type] = [];
+        }
+        acc[inst.agent_type].push(inst);
+        return acc;
+      }, {} as Record<string, AgentInstance[]>),
+    [filteredInstances],
+  );
 
   const columns: Column<AgentInstance>[] = [
     {

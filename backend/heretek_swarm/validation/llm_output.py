@@ -16,6 +16,7 @@ import re
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from enum import StrEnum
+from functools import lru_cache
 from typing import Any
 
 import structlog
