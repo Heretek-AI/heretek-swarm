@@ -165,4 +165,57 @@ Expected: `200 {"instances":[],"total":0}` and a `101 Switching Protocols` upgra
 
 ---
 
-*The vision above is immutable. The verified state below it is the audit trail of the 2026-06-01 deployment validation run.*
+## ✅ Re-Verified Operational State — 2026-06-01 (cold-start re-validation)
+
+> **Status:** A second 2026-06-01 validation run was executed: a full `docker compose down -v` + `docker compose up --build -d` cold start, followed by zero-trust audit of all 23 agent routes, LLM/embedding wiring, and a browser session against the Cognitive Dashboard. F-009 was found and fixed; F-010 was characterized but not fixed (out of scope for this run).
+
+### Re-Validation Evidence
+- **Cold start:** All 5 named volumes + 6 containers recreated. `encryption.key` in `/config` regenerated (proves volume wipe was real; pre-restart key `5PjzrUWL…` → post-restart `TtU_5PPU…`).
+- **All 6 containers:** `Up + healthy` within 1s of polling.
+- **`GET /api/health`:** HTTP 200, all sub-services healthy (gateway / redis 7.4.9 / postgres / qdrant).
+- **All 23 per-agent `GET /api/agents/{id}`:** HTTP 200 with `source: "supervisor"` payload (id, type, status, topics, capabilities, message_count, error_count, last_activity).
+- **All 23 per-agent `GET /api/agents/{id}/metrics`:** HTTP 200 with `agent_id, messages_processed, errors, uptime_seconds`.
+- **F-001 regression check:** `GET /api/agents/instances` → 200, `GET /api/agents/available` → 200.
+- **404 case:** `GET /api/agents/does-not-exist` → 404 with detail `"Agent 'does-not-exist' not found (not in supervisor or registry)"`.
+- **LLM wiring (end-to-end, runtime config):** `POST https://api.minimax.io/v1/chat/completions` with `model=MiniMax-M2.7` returned HTTP 200 in 1.226s with real LLM content. Litellm in the api process confirms the same routing.
+- **Embedding wiring (end-to-end, runtime config):** `POST https://api.jina.ai/v1/embeddings` with `model=jina-embeddings-v5-omni-small` returned HTTP 200 in 0.571s with a **1024-dim vector** (matches `EMBEDDING_DIMENSIONS=1024`).
+
+### New Issue Fixed in This Run: F-009
+
+| ID | Issue | Root Cause | Fix | Verification |
+|---|---|---|---|---|
+| **F-009** | `GET /api/agents/{agent_id}` returned HTTP 404 with `"Agent instance '<id>' not found"` for all 23 agent types, even though supervisor.actors contained all 23 | A **partial regression of the F-001 fix** (commit `f0974fab`). F-001 reordered agents_management.py to put literal-path sub-routers before the supervisor router (fixed `/instances` literal collision) but left `instances.router`'s bare-GET `/{instance_id}` parameterized route (line 73) registered before `supervisor.router`'s `GET /{agent_id}`. With matching method+path-shape, the first-registered parameterized router won, so `/api/agents/steward` matched `steward` as an instance_id and never reached supervisor.py. | **`instances.router`'s `GET /{instance_id}` is now the unified lookup endpoint.** It first checks `supervisor.actors` and returns the supervisor-shaped payload (id, type, status, topics, capabilities, `source: "supervisor"`) if the id matches a registered agent type. Falls back to the instance registry for deployed instance ids (`source: "registry"`). Restored F-001's registration order (literal-path sub-routers before supervisor.router). Removed the redundant bare-GET from `supervisor.py`; its `/`, `/{id}/metrics`, and `/{id}/terminate` routes remain. | `GET /api/agents/steward` → 200 with supervisor payload; `GET /api/agents/instances` → 200; `GET /api/agents/available` → 200; `GET /api/agents/does-not-exist` → 404 |
+
+**F-009 commits:** `3207b75b` (initial attempt, look-around exclusion), `c98bb256` (positive allow-list, broken by look-around rejection), `94a309dd` (final: unified-lookup in `instances.router`). The iteration history is preserved in git because each approach taught something the next fixed.
+
+### New Issue Characterized But Not Fixed: F-010
+
+**Symptom:** Browser console reports 74,107 `WebSocket connection to 'ws://localhost:3000/ws/dashboard?token=…' failed: WebSocket is closed before the connection is established` warnings plus the same number of `WebSocket error: [object Event]` errors. Api container logs show the WS connection is **accepted (101 Switching Protocols, server-side `Dashboard WebSocket connected`)**, then **`Dashboard WebSocket disconnected` ~5s later** (clean close, no server error), then **immediate reconnection**. The cycle is infinite because the `onopen` handler resets `reconnectAttempts.current = 0`, so the `maxReconnectAttempts: 10` cap never trips.
+
+**Root cause (diagnosed, not fixed):** The 5s disconnect is **client-side** and is a React anti-pattern in `useRealTimeAgentUpdates.ts` (the high-level hook that wraps `useWebSocket('dashboard', ...)`). At line 289-318 the call site passes **inline arrow functions** for `onOpen`, `onClose`, `onError`. These get **new function identities on every render**. The base `useWebSocket.ts:102` `connect` useCallback lists those callbacks in its dep array: `[channel, API_URL, onOpen, onClose, onError, onMessage, reconnectInterval, maxReconnectAttempts]`. So `connect` is recreated on every render → the mount `useEffect(() => { connect(); return () => disconnect(); }, [connect, disconnect])` at line 126-133 **re-runs every render** → cleanup closes the WS, then the new effect opens a new one. The 5s window matches the api's `asyncio.wait_for(websocket.receive_text(), timeout=5.0)` initial-hello wait in `api/websockets.py:1100` — the browser is opening, the api accepts, the prior close frame arrives, the api logs "disconnected", the browser's WS auto-retry fires.
+
+**Functional impact:** The dashboard's UI works correctly via HTTP polling fallback — the Consciousness tab renders with a "Polling (fallback)" indicator, the Agents/Metrics/Health data refreshes every ~5s. The WS data stream is not flowing to the dashboard.
+
+**Proposed fix (for a follow-up slice, not in this run):** Stabilize the `connect` callback's identity in `useWebSocket.ts` by reading the latest callbacks via refs (not via useCallback dep array). Concretely: keep `onMessage` / `onOpen` / `onClose` / `onError` in `useRef` slots, update them via a separate `useEffect`, and have the `connect` useCallback read from the refs. The mount effect can then use `[]` as its dep array, guaranteeing one connect per mount, with the latest callback references always used.
+
+### Updated Known Minor Items
+- **F-010** (new): Dashboard WS client rebuilds its connection every render due to inline-callback instability. UI works via polling fallback. See above for fix proposal.
+- **Stale DB-registered LLM/embedding providers** (carried forward): `/api/config/{llm,embedding}/providers` returns a stale `openai-default` entry; the runtime env config is correct. The `/test` endpoint exercises the DB config, not runtime. Re-seed DB provider or change `/test` to read runtime env.
+- **`/api/prompt` HTTP timeout (30s) too short for 5-participant deliberation** (carried forward): individual LLM calls work in 1.2s; the 30s ceiling is shorter than a 5×8-15s deliberation. Mitigation: raise the timeout, or stream responses.
+- `REVIEW.md` 8.2/8.3 still lists the original frontend consolidation items (axios instances, raw `fetch()` migration, parallel WS dedup, subprotocol auth migration). Not regressions; candidates for follow-up.
+
+### Re-Validation Procedure (updated for F-009)
+```bash
+docker compose down -v && docker compose up --build -d
+for i in $(seq 1 30); do docker inspect heretek-swarm-api-1 --format '{{.State.Health.Status}}' | grep -q healthy && break; sleep 2; done
+curl -s http://localhost:8000/api/agents/instances | jq .     # 200 {"instances":[],"total":0"}
+curl -s -H "Authorization: Bearer $HERETEK_API_KEY" \
+  http://localhost:8000/api/agents/steward | jq .               # 200, source=supervisor
+curl -s -H "Authorization: Bearer $HERETEK_API_KEY" \
+  http://localhost:8000/api/agents/instances | jq .             # 200, literal list
+```
+Expected: All three return HTTP 200. The per-agent detail route is now served by the unified-lookup logic in `instances.router`.
+
+---
+
+*The vision above is immutable. The verified state below it is the audit trail of the 2026-06-01 deployment validation runs.*
