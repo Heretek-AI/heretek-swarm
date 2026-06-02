@@ -839,7 +839,7 @@ class AutonomousRuntime:
                     # Get metrics from consciousness plugin for this agent
                     agent_data = self._consciousness_plugin.get_agent_metrics(agent_id)
                     if agent_data:
-                        from heretek_swarm.consciousness.agency_metrics import (
+                        from research.consciousness.agency_metrics import (
                             AgentAgencyMetrics,
                         )
 

@@ -336,4 +336,44 @@ describe('ConsciousnessPage', () => {
     const gwtEls = screen.getAllByText('GWT');
     expect(gwtEls.length).toBeGreaterThanOrEqual(1);
   });
+
+  it('shows disabled banner when all REST APIs fail', async () => {
+    mockGetStats.mockRejectedValue(new Error('Not found'));
+    mockGetAgentStates.mockRejectedValue(new Error('Not found'));
+    mockGetNetwork.mockRejectedValue(new Error('Not found'));
+
+    render(<ConsciousnessPage />);
+
+    await waitFor(() => {
+      expect(screen.getByText('Consciousness Plugin Disabled')).toBeInTheDocument();
+    });
+
+    expect(screen.getByText(/consciousness plugin is not active/)).toBeInTheDocument();
+    expect(screen.getByText('CONSCIOUSNESS_ENABLED=true')).toBeInTheDocument();
+  });
+
+  it('shows partial error when some APIs fail', async () => {
+    mockGetStats.mockRejectedValue(new Error('Not found'));
+    // agentStates and network succeed (from defaults)
+
+    render(<ConsciousnessPage />);
+
+    await waitFor(() => {
+      expect(screen.getByText('Some consciousness data could not be loaded. Partial results are shown below.')).toBeInTheDocument();
+    });
+
+    // Should NOT show the disabled banner
+    expect(screen.queryByText('Consciousness Plugin Disabled')).not.toBeInTheDocument();
+  });
+
+  it('shows no error banner when all APIs succeed', async () => {
+    render(<ConsciousnessPage />);
+
+    await waitFor(() => {
+      expect(screen.getByText('Total Agents')).toBeInTheDocument();
+    });
+
+    expect(screen.queryByText('Consciousness Plugin Disabled')).not.toBeInTheDocument();
+    expect(screen.queryByText(/could not be loaded/)).not.toBeInTheDocument();
+  });
 });

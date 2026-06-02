@@ -35,9 +35,10 @@ export function ConsciousnessDashboard() {
   const [timeRange, setTimeRange] = useState<number>(24);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [disabled, setDisabled] = useState(false);
 
   // Fetch statistics
-  const fetchStatistics = useCallback(async () => {
+  const fetchStatistics = useCallback(async (): Promise<boolean> => {
     try {
       const response = await fetch(`${API_URL}/api/consciousness/statistics`, {
         headers: {
@@ -47,13 +48,15 @@ export function ConsciousnessDashboard() {
       if (!response.ok) throw new Error("Failed to fetch statistics");
       const data = await response.json();
       setStatistics(data);
+      return true;
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to fetch statistics");
+      return false;
     }
   }, []);
 
   // Fetch agent states
-  const fetchAgentStates = useCallback(async () => {
+  const fetchAgentStates = useCallback(async (): Promise<boolean> => {
     try {
       const response = await fetch(`${API_URL}/api/consciousness/states`, {
         headers: {
@@ -63,13 +66,15 @@ export function ConsciousnessDashboard() {
       if (!response.ok) throw new Error("Failed to fetch agent states");
       const data = await response.json();
       setAgentStates(data);
+      return true;
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to fetch agent states");
+      return false;
     }
   }, []);
 
   // Fetch network visualization data
-  const fetchNetworkData = useCallback(async () => {
+  const fetchNetworkData = useCallback(async (): Promise<boolean> => {
     try {
       const response = await fetch(`${API_URL}/api/consciousness/visualization/network`, {
         headers: {
@@ -79,10 +84,12 @@ export function ConsciousnessDashboard() {
       if (!response.ok) throw new Error("Failed to fetch network data");
       const data = await response.json();
       setNetworkData(data);
+      return true;
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to fetch network data");
+      return false;
     }
-  }, []);
+  }, []);;
 
   // Fetch agent metrics
   const fetchAgentMetrics = useCallback(async (agentId: string) => {
@@ -123,11 +130,19 @@ export function ConsciousnessDashboard() {
   useEffect(() => {
     const fetchInitialData = async () => {
       setLoading(true);
-      await Promise.all([
+      setError(null);
+      const results = await Promise.all([
         fetchStatistics(),
         fetchAgentStates(),
         fetchNetworkData(),
       ]);
+      const failedCount = results.filter(r => !r).length;
+      setDisabled(failedCount === 3);
+      if (failedCount === 3) {
+        setError('Consciousness metrics are unavailable. The consciousness plugin may be disabled or the backend is unreachable.');
+      } else if (failedCount > 0 && failedCount < 3) {
+        setError('Some consciousness data could not be loaded. Partial results are shown below.');
+      }
       setLoading(false);
     };
 
@@ -200,12 +215,28 @@ export function ConsciousnessDashboard() {
           </p>
         </div>
 
-        {/* Error display */}
-        {error && (
+        {/* Error/Disabled display */}
+        {disabled ? (
+          <div className="mb-6 bg-yellow-900/30 border border-yellow-600/50 rounded-lg p-4">
+            <div className="flex items-center gap-3">
+              <span className="text-2xl">🧠</span>
+              <div>
+                <p className="text-yellow-300 font-semibold">Consciousness Plugin Disabled</p>
+                <p className="text-yellow-400/80 text-sm mt-1">
+                  The consciousness plugin is not active. Enable it by setting{' '}
+                  <code className="bg-yellow-900/50 px-1.5 py-0.5 rounded text-xs">CONSCIOUSNESS_ENABLED=true</code>{' '}
+                  or{' '}
+                  <code className="bg-yellow-900/50 px-1.5 py-0.5 rounded text-xs">PLUGIN_CONSCIOUSNESS_ENABLED=true</code>{' '}
+                  in your environment configuration.
+                </p>
+              </div>
+            </div>
+          </div>
+        ) : error ? (
           <div className="mb-6 bg-red-900/30 border border-red-500 rounded-lg p-4">
             <p className="text-red-400">{error}</p>
           </div>
-        )}
+        ) : null}
 
         {/* Statistics Cards */}
         {statistics && (

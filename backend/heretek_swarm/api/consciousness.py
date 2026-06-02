@@ -23,7 +23,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from heretek_swarm.collective.agency_tracking import AgencyMetricsTracker, create_sample_metrics
 
 # Import agency metrics
-from heretek_swarm.consciousness.agency_metrics import (
+from research.consciousness.agency_metrics import (
     ActionOrigin,
     AgencyMetricsCalculator,
     DecisionPoint,

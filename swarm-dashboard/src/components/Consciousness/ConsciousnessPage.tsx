@@ -51,6 +51,8 @@ export function ConsciousnessPage() {
   const [networkData, setNetworkData] = useState<NetworkVisualization | null>(null);
   const [selectedAgent, setSelectedAgent] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [apiError, setApiError] = useState<string | null>(null);
+  const [disabled, setDisabled] = useState(false);
   const toast = useToast();
 
   // Real-time WebSocket consciousness updates
@@ -94,8 +96,10 @@ export function ConsciousnessPage() {
     try {
       const data = await getConsciousnessStatistics();
       setStatistics(data);
+      return true;
     } catch (error) {
       console.error('Failed to fetch consciousness statistics:', error);
+      return false;
     }
   }, []);
 
@@ -103,8 +107,10 @@ export function ConsciousnessPage() {
     try {
       const data = await getAgentStates();
       setAgentStates(data);
+      return true;
     } catch (error) {
       console.error('Failed to fetch agent states:', error);
+      return false;
     }
   }, []);
 
@@ -112,15 +118,28 @@ export function ConsciousnessPage() {
     try {
       const data = await getNetworkVisualization();
       setNetworkData(data);
+      return true;
     } catch (error) {
       console.error('Failed to fetch network visualization:', error);
+      return false;
     }
   }, []);
 
   const fetchAllData = useCallback(async () => {
     setLoading(true);
+    setApiError(null);
     try {
-      await Promise.all([fetchStatistics(), fetchAgentStates(), fetchNetworkData()]);
+      const results = await Promise.all([fetchStatistics(), fetchAgentStates(), fetchNetworkData()]);
+      const failedCount = results.filter(r => !r).length;
+      if (failedCount === 3) {
+        setDisabled(true);
+        setApiError('Consciousness metrics are unavailable. The consciousness plugin may be disabled or the backend is unreachable.');
+      } else if (failedCount > 0) {
+        setApiError('Some consciousness data could not be loaded. Partial results are shown below.');
+      } else {
+        setDisabled(false);
+        setApiError(null);
+      }
     } catch (error) {
       toast.error('Failed to fetch consciousness data', error instanceof Error ? error.message : 'Unknown error');
     } finally {
@@ -191,6 +210,30 @@ export function ConsciousnessPage() {
           ↻ Refresh
         </button>
       </div>
+
+      {/* Disabled / Error Banner */}
+      {disabled && (
+        <div className="bg-yellow-900/30 border border-yellow-600/50 rounded-xl p-6">
+          <div className="flex items-center gap-3">
+            <span className="text-2xl">🧠</span>
+            <div>
+              <h3 className="text-yellow-300 font-semibold">Consciousness Plugin Disabled</h3>
+              <p className="text-yellow-400/80 text-sm mt-1">
+                The consciousness plugin is not active. Enable it by setting{' '}
+                <code className="bg-yellow-900/50 px-1.5 py-0.5 rounded text-xs">CONSCIOUSNESS_ENABLED=true</code>{' '}
+                or{' '}
+                <code className="bg-yellow-900/50 px-1.5 py-0.5 rounded text-xs">PLUGIN_CONSCIOUSNESS_ENABLED=true</code>{' '}
+                in your environment configuration.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+      {!disabled && apiError && (
+        <div className="bg-red-900/30 border border-red-500/50 rounded-xl p-4">
+          <p className="text-red-400 text-sm">{apiError}</p>
+        </div>
+      )}
 
       {/* Summary Metrics */}
       {statistics && (

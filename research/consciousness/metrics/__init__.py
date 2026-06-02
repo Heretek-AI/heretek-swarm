@@ -8,7 +8,7 @@ agency, and emergence in agent swarms using:
 - Agency metrics for autonomy and self-governance
 
 Usage:
-    from heretek_swarm.consciousness.metrics import (
+    from research.consciousness.metrics import (
         measure_phi,
         measure_adaptive_metrics,
         ConsciousnessMetrics,
@@ -21,12 +21,12 @@ Usage:
     metrics = measure_adaptive_metrics(agent_state)
 """
 
-from heretek_swarm.consciousness.metrics.ast import (
+from research.consciousness.metrics.ast import (
     AdaptiveMetrics,
     EmergenceLevel,
     measure_adaptive_metrics,
 )
-from heretek_swarm.consciousness.metrics.iit import (
+from research.consciousness.metrics.iit import (
     ConsciousnessMetrics,
     PhiResult,
     measure_phi,

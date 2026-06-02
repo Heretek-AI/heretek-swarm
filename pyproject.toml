@@ -147,8 +147,8 @@ Repository = "https://github.com/heretek-ai/heretek-swarm"
 Issues = "https://github.com/heretek-ai/heretek-swarm/issues"
 
 [tool.setuptools.packages.find]
-where = ["backend"]
-include = ["heretek_swarm*"]
+where = ["backend", "."]
+include = ["heretek_swarm*", "research*"]
 
 # ============== UV RESOLUTION OVERRIDES ==============
 # swarms 9.0.4 hard-pins pypdf==5.1.0 (which has known CVEs) and

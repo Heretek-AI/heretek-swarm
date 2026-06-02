@@ -15,7 +15,7 @@ from typing import TYPE_CHECKING, Any
 
 import structlog
 
-from heretek_swarm.consciousness.gwt import (
+from research.consciousness.gwt import (
     GlobalWorkspaceBroadcast,
     GWTConfig,
     create_gwt_content,

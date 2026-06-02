@@ -2,7 +2,7 @@
 Research Tier — Consciousness, Emergence, and Evolved Behavior Code.
 
 .. deprecated::
-    This package re-exports from :mod:`heretek_swarm.consciousness` and
+    This package re-exports from :mod:`research.consciousness` and
     :mod:`heretek_swarm.collective` for backward compatibility. Per
     PLAN.md §M-arch PR #8, the production runtime no longer pays the
     cost of consciousness / emergence / evolution code — the original
@@ -31,7 +31,7 @@ from heretek_swarm.collective import (
     emergent_detection_types,
     evolution_engine,
 )
-from heretek_swarm.consciousness import (
+from research.consciousness import (
     ast,
     fep,
     fep_active_inference,

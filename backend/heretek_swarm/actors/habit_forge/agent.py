@@ -37,7 +37,7 @@ from heretek_swarm.actors.mixins.validation import ValidationMixin
 from heretek_swarm.collective.learning import PatternExtractor, PatternType
 
 # Phi Training Integration
-from heretek_swarm.consciousness.phi_training import (
+from research.consciousness.phi_training import (
     CommunicationTrainingScenario,
     PhiTrainingEnvironment,
     TrainingScenario,

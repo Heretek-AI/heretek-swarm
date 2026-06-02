@@ -495,16 +495,24 @@ class AutonomousSwarm:
         logger.info("starting_autonomous_loop")
         self._running = True
 
+        # Gate consciousness loop behind CONSCIOUSNESS_ENABLED (default: false)
+        consciousness_enabled = os.getenv("CONSCIOUSNESS_ENABLED", "false").lower() == "true"
+
         # Start background tasks
         self._tasks = [
             asyncio.create_task(self._health_monitor_loop()),
-            asyncio.create_task(self._consciousness_loop()),
             asyncio.create_task(self._task_processing_loop()),
             asyncio.create_task(self._memory_maintenance_loop()),
             asyncio.create_task(self._scaling_loop()),
             asyncio.create_task(self._report_agents_loop()),
             asyncio.create_task(self._steward_pulse_loop()),
         ]
+
+        if consciousness_enabled:
+            self._tasks.append(asyncio.create_task(self._consciousness_loop()))
+            logger.info("consciousness_loop_enabled")
+        else:
+            logger.info("consciousness_loop_disabled", hint="Set CONSCIOUSNESS_ENABLED=true to enable")
 
         logger.info("autonomous_loop_started", background_tasks=len(self._tasks))
 
