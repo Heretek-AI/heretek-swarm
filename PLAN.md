@@ -423,5 +423,98 @@ All 8 tactical items landed in 7 commits on 2026-06-01. Wall-clock time: ~3 hour
 
 **Fixed**: replaced `AsyncMock(spec=httpx.AsyncClient)` with `httpx.MockTransport` (real httpx test transport; exercises production code path with no network access). All 16 tests now pass. Full suite: **69/69 pass**.
 
-### M-arch PRs #4–#10 ⏳ PENDING
-Next: **M-arch PR #4** — Add Cognee-backed RAG retriever alongside custom pipeline (additive, opt-in). Will mirror PR #3 pattern.
+### M-arch PRs #4–#10 ⏳ IN PROGRESS
+
+### M-arch PR #4 — Cognee-backed RAG retriever ✅ DONE (commit `327e9a2e`)
+- `backend/heretek_swarm/rag/cognee_rag.py` (196 LOC)
+- `CogneeRAGRetriever` implementing `RAGRetriever` Protocol (`@runtime_checkable`)
+- `retrieve()` maps CogneeMemoryReader hits to `SearchResult`
+- `register_chunks()` is best-effort log (Cognee cognify is async, deferred)
+- `health()` and `close()` delegate to the injected reader
+- Factory `get_rag_retriever()` selects via `HERETEK_USE_COGNEE_RAG` (default OFF)
+- `rag_pipeline.py` NOT deleted — deferred to follow-up
+- 17 tests in `tests/test_cognee_rag.py` (all pass)
+
+### M-arch PR #5 — CogneeMemoryWriter + deprecate legacy memory wrapper ✅ DONE (commit `e48c4fbb`)
+- `backend/heretek_swarm/memory/cognee_writer.py` (214 LOC)
+- `add(data, dataset)`, `cognify(datasets)`, `store(content, dataset, cognify_after)` convenience
+- `health()`, `close()`, `get_memory_writer()` factory
+- Deprecation docstrings added to 5 legacy memory files (NOT deleted per PLAN.md):
+  - `memory/base.py` (815 LOC)
+  - `memory/persistent.py` (1016 LOC)
+  - `memory/tiering.py` (1222 LOC)
+  - `memory/versioned.py` (571 LOC)
+  - `memory/compression.py` (886 LOC)
+- 25 tests in `tests/test_cognee_writer.py` (all pass)
+
+### M-arch PR #6 — HeavySwarm refactor ✅ DONE (commit `5df9f7d7`)
+- Deprecation docstrings added to `heavyswarm.py` (1,363 LOC) and
+  `phase_handlers.py` (448 LOC)
+- Public contract preserved: `WorkflowPhase` enum, `WorkflowResult`
+  dataclass, `PhaseHandler` ABC, `PhaseResult` dataclass
+- Full LangGraph migration deferred to a follow-up PR (too risky in
+  a single session — 5 phases + MAKER consensus as Decision node +
+  MemorySaver for resumability)
+
+### M-arch PR #7 — slowapi for rate limiting ✅ DONE (commit `b9cf505f`)
+- `[project.optional-dependencies.slowapi]`: `slowapi>=0.1.9`,
+  `limits>=3.13.0`
+- 21 new tests in `tests/test_rate_limiting.py` covering
+  InMemoryRateLimiter, parse_limit, get_limit_for_path, get_client_ip,
+  RATE_LIMITS, and the `@rate_limit` decorator
+- The `setup_rate_limiting` middleware in `api/main.py:620` is already
+  wired; `rate_limiting.py` has a slowapi-or-in-memory fallback
+
+### M-arch PR #8 — research/ namespace for consciousness/emergence ✅ DONE (commit `88e08fcc`)
+- `backend/heretek_swarm/research/` namespace with re-exports from
+  `consciousness/` and `collective/` for backward compatibility
+- README documenting the research tier, audit findings, and
+  migration status
+- 16 tests in `tests/test_research_package.py` (all pass)
+
+### M-arch PR #9 — code-review-graph wiring ✅ DONE (commit `ad21ad95`)
+- `backend/heretek_swarm/tools/code_graph_query.py` (370 LOC)
+- `DEFAULT_DB_PATH` constant + `resolve_db_path()` function
+- Public API: `query_node`, `search_nodes`, `query_callers`,
+  `query_callees`, `query_file_imports`, `query_inheritance`,
+  `query_metadata`, `get_graph_summary`
+- `CodeGraphQueryTool` class: dispatches via `op=` kwarg, returns
+  FAILED for missing/corrupt DB or unknown op
+- 16 tests in `tests/test_code_graph_query.py` (all pass)
+- Real `.code-review-graph/graph.db` is queryable
+
+### M-arch PR #10 — FalkorDB optional graph store ✅ DONE (commit `61cc321c`)
+- `falkordb` service added to `docker-compose.yml` with profiles
+  `["falkordb", "graph-stores"]` (not started by default)
+- `falkordb_data` volume added
+- Image: `falkordb/falkordb:v4.0.6`
+- Per PLAN.md: 'Use only if Cognee's default Kùzu backend is too
+  small for your graph size'
+
+---
+
+## Final Verification (post-Phase 2)
+
+| Check | Result |
+|---|---|
+| `uv lock` | ✅ Succeeds (swarms 9.0.4 + pypdf 6.12.2 + aiohttp 3.13.4) |
+| `uv sync` | ✅ Succeeds (cognee 1.1.2 + all deps resolved) |
+| `pytest tests/` | ✅ 171/171 pass |
+| `ruff check` on new/modified files | ✅ All checks passed |
+| M-arch PRs #1–#10 | ✅ All merged (10 commits) |
+
+### M-arch execution log (2026-06-01, session 2)
+
+| Commit | PR | Scope |
+|---|---|---|
+| `79d77f15` | #1 | Cognee sidecar in docker-compose |
+| `db35e412` | #2 | CogneeMemoryReader for Historian |
+| `ffb4adcb` | #3 | CogneeGraphRetriever alongside in-memory |
+| `88005e97` | (prep) | Dep update: swarms 9.0.0–9.0.4, pypdf 6.6.2, aiohttp 3.13.3, cognee 1.1.2; 4 pre-existing test failures fixed |
+| `327e9a2e` | #4 | CogneeRAGRetriever alongside in-memory pipeline |
+| `e48c4fbb` | #5 | CogneeMemoryWriter + deprecation markers on 5 legacy memory files |
+| `5df9f7d7` | #6 | HeavySwarm deprecation markers (full LangGraph deferred) |
+| `b9cf505f` | #7 | slowapi optional dep + 21 rate-limiter tests |
+| `88e08fcc` | #8 | research/ namespace for consciousness/emergence |
+| `ad21ad95` | #9 | code_graph_query tool for code-review-graph DB |
+| `61cc321c` | #10 | FalkorDB optional graph store in docker-compose |
