@@ -310,30 +310,24 @@ class TestLangGraphWorkflowModule:
         assert result["current_phase"] == "verification"
         workflow._execute_phase.assert_awaited_once()
 
-    def test_langgraph_workflow_accepts_injected_workflow(self) -> None:
-        """LangGraphHeavySwarmWorkflow stores the injected workflow on self."""
-        from unittest.mock import MagicMock
-
+    def test_langgraph_workflow_no_heavy_dependency(self) -> None:
+        """LangGraphHeavySwarmWorkflow no longer requires a HeavySwarmWorkflow."""
         from heretek_swarm.orchestration.langgraph_workflow import (
             LangGraphHeavySwarmWorkflow,
         )
 
-        injected = MagicMock()
-        wf = LangGraphHeavySwarmWorkflow(name="test", workflow=injected)
-        assert wf.workflow is injected
+        wf = LangGraphHeavySwarmWorkflow(name="test")
+        assert wf.name == "test"
+        assert not hasattr(wf, "workflow")
 
-    def test_langgraph_workflow_creates_default_when_none(self) -> None:
-        """LangGraphHeavySwarmWorkflow creates a default HeavySwarmWorkflow."""
-        from heretek_swarm.orchestration.heavyswarm import (
-            HeavySwarmWorkflow,
-        )
+    def test_langgraph_workflow_default_name(self) -> None:
+        """LangGraphHeavySwarmWorkflow uses a sensible default name."""
         from heretek_swarm.orchestration.langgraph_workflow import (
             LangGraphHeavySwarmWorkflow,
         )
 
-        wf = LangGraphHeavySwarmWorkflow(name="auto")
-        assert isinstance(wf.workflow, HeavySwarmWorkflow)
-        assert wf.workflow.name == "auto"
+        wf = LangGraphHeavySwarmWorkflow()
+        assert wf.name == "LangGraphHeavySwarm"
 
 
 @pytest.mark.skipif(

@@ -19,16 +19,16 @@ Public contract is preserved:
   * ``WorkflowResult`` dataclass
   * ``HeavySwarmWorkflow`` class (legacy) keeps working unchanged
 
-This is a focused first pass — the legacy ``_research_phase`` etc.
-methods are still the source of truth for the phase logic (delegated
-to via ``legacy_phase_node``). A follow-up PR can port each phase
-to a true LangGraph node and delete the legacy 1,363-LOC file.
+Each phase is a real LangGraph node (defined in ``langgraph_nodes``)
+registered directly on the ``StateGraph`` — no delegation to the
+legacy ``HeavySwarmWorkflow`` phase methods.
 """
 
 from __future__ import annotations
 
 import uuid
 from datetime import UTC, datetime
+from itertools import pairwise
 from typing import Any
 
 import structlog
@@ -39,8 +39,8 @@ from heretek_swarm.orchestration.heavyswarm import (
     WorkflowResult,
 )
 from heretek_swarm.orchestration.langgraph_nodes import (
+    PHASE_NODES,
     WorkflowState,
-    build_phase_nodes,
 )
 
 logger = structlog.get_logger("LangGraphHeavySwarm")
@@ -131,14 +131,16 @@ class LangGraphHeavySwarmWorkflow:
     def __init__(
         self,
         name: str | None = None,
-        workflow: HeavySwarmWorkflow | None = None,
     ) -> None:
         self.name = name or "LangGraphHeavySwarm"
-        self.workflow = workflow or HeavySwarmWorkflow(name=self.name)
         self._graph = self._compile_graph()
 
     def _compile_graph(self):  # pragma: no cover — exercised when langgraph is installed
-        """Compile the StateGraph.
+        """Compile the StateGraph with real phase nodes.
+
+        Uses the standalone node functions from ``langgraph_nodes``
+        (``PHASE_NODES``) rather than the legacy bridge wrappers.
+        ``MemorySaver`` provides checkpoint-based resumability.
 
         Returns ``None`` if langgraph is not installed, so this
         module is importable even without the optional dep. Callers
@@ -151,23 +153,15 @@ class LangGraphHeavySwarmWorkflow:
         except ImportError:
             return None
 
-        phase_nodes = build_phase_nodes(self.workflow)
         graph = StateGraph(WorkflowState)
-        graph.add_node(WorkflowPhase.RESEARCH.value, phase_nodes[WorkflowPhase.RESEARCH])
-        graph.add_node(WorkflowPhase.ANALYSIS.value, phase_nodes[WorkflowPhase.ANALYSIS])
-        graph.add_node(
-            WorkflowPhase.ALTERNATIVES.value, phase_nodes[WorkflowPhase.ALTERNATIVES]
-        )
-        graph.add_node(
-            WorkflowPhase.VERIFICATION.value, phase_nodes[WorkflowPhase.VERIFICATION]
-        )
-        graph.add_node(WorkflowPhase.DECISION.value, phase_nodes[WorkflowPhase.DECISION])
+
+        for phase in _PHASE_ORDER:
+            graph.add_node(phase.value, PHASE_NODES[phase])
 
         graph.set_entry_point(WorkflowPhase.RESEARCH.value)
-        graph.add_edge(WorkflowPhase.RESEARCH.value, WorkflowPhase.ANALYSIS.value)
-        graph.add_edge(WorkflowPhase.ANALYSIS.value, WorkflowPhase.ALTERNATIVES.value)
-        graph.add_edge(WorkflowPhase.ALTERNATIVES.value, WorkflowPhase.VERIFICATION.value)
-        graph.add_edge(WorkflowPhase.VERIFICATION.value, WorkflowPhase.DECISION.value)
+        # Wire linear phase transitions: research -> analysis -> ...
+        for src, dst in pairwise(_PHASE_ORDER):
+            graph.add_edge(src.value, dst.value)
         graph.add_edge(WorkflowPhase.DECISION.value, END)
 
         return graph.compile(checkpointer=MemorySaver())
