@@ -3,10 +3,22 @@ LLM Provider Factory
 
 Factory for creating LLM provider instances based on configuration.
 Supports dynamic provider instantiation and registry.
+
+Provider caching with automatic refresh:
+
+    from heretek_swarm.llm.providers.factory import ProviderManager
+
+    manager = ProviderManager()
+    provider = manager.get_or_create("openai", {"api_key": os.getenv("OPENAI_API_KEY")})
+    # Later — if env vars changed, the provider is automatically refreshed:
+    provider = manager.get_or_create("openai", {"api_key": os.getenv("OPENAI_API_KEY")})
 """
 
 from __future__ import annotations
 
+import hashlib
+import json
+import threading
 from typing import Any
 
 import structlog
@@ -308,3 +320,201 @@ def get_all_provider_info() -> list[dict[str, Any]]:
         List of provider information dictionaries
     """
     return [get_provider_info(pt) for pt in PROVIDER_REGISTRY]
+
+
+# ---------------------------------------------------------------------------
+# Provider caching with automatic refresh on config change
+# ---------------------------------------------------------------------------
+
+
+def _config_hash(provider_type: str, config: dict[str, Any]) -> str:
+    """
+    Deterministic SHA-256 hash of the provider config keys that affect
+    which provider instance is returned.
+
+    Sensitive fields (api_key) ARE included so that a rotated key triggers
+    a refresh.  Only the *set* of key-value pairs matters; extra_config
+    sub-keys are sorted for determinism.
+    """
+    # Build a stable dict: provider_type + all config values, sorted
+    stable: dict[str, Any] = {"_type": provider_type}
+    for k in sorted(config.keys()):
+        v = config[k]
+        # Normalise nested dicts so ordering doesn't matter
+        if isinstance(v, dict):
+            v = dict(sorted(v.items()))
+        stable[k] = v
+    raw = json.dumps(stable, sort_keys=True, default=str)
+    return hashlib.sha256(raw.encode()).hexdigest()
+
+
+class ProviderManager:
+    """
+    Thread-safe manager that caches LLM provider instances and
+    transparently refreshes them when the configuration changes.
+
+    Each unique ``(provider_type, config)`` pair is cached; when a caller
+    requests the same pair but the underlying values have changed (e.g. an
+    API key was rotated via env-var), the old provider is closed and a
+    fresh instance is created.
+
+    Usage::
+
+        mgr = ProviderManager()
+        provider = mgr.get_or_create("openai", {"api_key": key})
+        # … later …
+        # If key changed, provider is silently refreshed:
+        provider = mgr.get_or_create("openai", {"api_key": os.getenv("OPENAI_API_KEY")})
+    """
+
+    def __init__(self) -> None:
+        self._lock = threading.Lock()
+        # (provider_type, config_hash) -> LLMProviderBase
+        self._cache: dict[tuple[str, str], LLMProviderBase] = {}
+        # config_hash -> config dict (kept for diagnostics)
+        self._configs: dict[str, dict[str, Any]] = {}
+
+    def get_or_create(
+        self,
+        provider_type: str,
+        config: dict[str, Any],
+    ) -> LLMProviderBase:
+        """
+        Return a cached provider or create a new one.
+
+        If the config hash differs from the cached entry, the old provider
+        is closed (async fire-and-forget) and a new one is built.
+
+        Args:
+            provider_type: Provider type identifier (e.g. ``"openai"``).
+            config: Provider configuration dictionary.
+
+        Returns:
+            An initialised ``LLMProviderBase`` instance.
+        """
+        digest = _config_hash(provider_type, config)
+        key = (provider_type, digest)
+
+        with self._lock:
+            if key in self._cache:
+                logger.debug(
+                    "provider_cache_hit",
+                    provider_type=provider_type,
+                    config_hash=digest[:12],
+                )
+                return self._cache[key]
+
+        # Cache miss — build outside the lock to avoid holding it during I/O.
+        provider = create_llm_provider(provider_type, config)
+
+        with self._lock:
+            # Double-check: another thread might have inserted while we built.
+            if key in self._cache:
+                # Discard the duplicate we just built.
+                self._close_provider(provider)
+                return self._cache[key]
+
+            # Evict any stale entry for the same provider_type but different hash.
+            stale_keys = [
+                k for k in list(self._cache) if k[0] == provider_type and k[1] != digest
+            ]
+            for stale_key in stale_keys:
+                old = self._cache.pop(stale_key)
+                self._configs.pop(stale_key[1], None)
+                self._close_provider(old)
+
+            self._cache[key] = provider
+            self._configs[digest] = config
+            logger.info(
+                "provider_created",
+                provider_type=provider_type,
+                config_hash=digest[:12],
+                refreshed=bool(stale_keys),
+            )
+            return provider
+
+    def refresh(self, provider_type: str, config: dict[str, Any]) -> LLMProviderBase:
+        """
+        Force-create a provider, replacing any cached entry for the type.
+
+        Unlike ``get_or_create`` this always rebuilds, even if the hash
+        matches — useful after explicit config edits.
+        """
+        digest = _config_hash(provider_type, config)
+        key = (provider_type, digest)
+
+        provider = create_llm_provider(provider_type, config)
+
+        with self._lock:
+            stale_keys = [k for k in list(self._cache) if k[0] == provider_type]
+            for stale_key in stale_keys:
+                old = self._cache.pop(stale_key)
+                self._configs.pop(stale_key[1], None)
+                self._close_provider(old)
+
+            self._cache[key] = provider
+            self._configs[digest] = config
+            logger.info(
+                "provider_force_refreshed",
+                provider_type=provider_type,
+                config_hash=digest[:12],
+            )
+        return provider
+
+    def invalidate(self, provider_type: str | None = None) -> None:
+        """
+        Remove cached providers.
+
+        Args:
+            provider_type: If given, only evict entries for this type;
+                           otherwise evict everything.
+        """
+        with self._lock:
+            if provider_type is not None:
+                stale_keys = [k for k in self._cache if k[0] == provider_type]
+            else:
+                stale_keys = list(self._cache.keys())
+
+            for stale_key in stale_keys:
+                old = self._cache.pop(stale_key)
+                self._configs.pop(stale_key[1], None)
+                self._close_provider(old)
+
+        if stale_keys:
+            logger.info(
+                "provider_cache_invalidated",
+                provider_type=provider_type or "*",
+                count=len(stale_keys),
+            )
+
+    @property
+    def cached_count(self) -> int:
+        """Number of providers currently in the cache."""
+        return len(self._cache)
+
+    def cached_types(self) -> list[str]:
+        """Provider types currently represented in the cache."""
+        with self._lock:
+            return list({k[0] for k in self._cache})
+
+    # -- internal -----------------------------------------------------------
+
+    @staticmethod
+    def _close_provider(provider: LLMProviderBase) -> None:
+        """Fire-and-forget close of an old provider instance."""
+        import asyncio
+
+        try:
+            loop = asyncio.get_running_loop()
+            loop.create_task(provider.close())  # type: ignore[union-attr]  # noqa: RUF006
+        except RuntimeError:
+            # No running loop — best-effort synchronous close.
+            try:
+                import anyio
+                anyio.from_thread.run(provider.close)  # type: ignore[attr-defined]
+            except Exception:
+                logger.debug("Could not close stale provider synchronously")
+
+
+# Module-level default manager for convenience.
+default_provider_manager = ProviderManager()

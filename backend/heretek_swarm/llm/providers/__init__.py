@@ -12,14 +12,22 @@ Multi-provider LLM abstraction layer supporting:
 """
 
 from .base import LLMProviderBase, LLMRequest, LLMResponse, StreamingCallback
-from .factory import create_llm_provider, get_provider_class, list_available_providers
+from .factory import (
+    ProviderManager,
+    create_llm_provider,
+    default_provider_manager,
+    get_provider_class,
+    list_available_providers,
+)
 
 __all__ = [
     "LLMProviderBase",
     "LLMRequest",
     "LLMResponse",
+    "ProviderManager",
     "StreamingCallback",
     "create_llm_provider",
+    "default_provider_manager",
     "get_provider_class",
     "list_available_providers",
 ]
