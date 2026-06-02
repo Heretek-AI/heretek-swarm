@@ -169,6 +169,20 @@ class AutonomousSwarm:
         """
         logger.info("initializing_autonomous_swarm", no_infra=self._no_infra)
 
+        # Auto-enable OTel tracing when OTLP endpoint is configured
+        if os.getenv("OTEL_EXPORTER_OTLP_ENDPOINT"):
+            try:
+                from heretek_swarm.infrastructure.otel.tracing import (
+                    TracingConfig,
+                    init_tracing,
+                )
+
+                config = TracingConfig(exporter="otlp")
+                init_tracing(config)
+                logger.info("otel_tracing_auto_enabled")
+            except Exception as exc:
+                logger.warning("otel_tracing_auto_enable_failed", error=str(exc))
+
         if self._no_infra:
             await self._initialize_no_infra()
             return

@@ -7,32 +7,83 @@ provides the 5 phase nodes (research, analysis, alternatives,
 verification, decision) as standalone callables. They are wired
 together by ``langgraph_workflow.py``.
 
-Public contract (preserved from heavyswarm.py):
-  * :class:`heretek_swarm.orchestration.heavyswarm.WorkflowPhase`
-  * :class:`heretek_swarm.orchestration.heavyswarm.PhaseResult`
-  * :class:`heretek_swarm.orchestration.heavyswarm.WorkflowResult`
-  * :class:`heretek_swarm.orchestration.heavyswarm.HeavySwarmWorkflow`
+Public contract:
+  * :class:`WorkflowPhase`
+  * :class:`PhaseResult`
+  * :class:`WorkflowResult`
 
 The nodes accept and return a ``WorkflowState`` TypedDict that
-matches the public dataclasses. HeavySwarmWorkflow's existing
-instance methods (``_research_phase`` etc.) are wrapped by
-``legacy_phase_node`` so the new graph can delegate to the
-existing 1,363-LOC implementation without rewriting it.
+matches the public dataclasses.
 """
 
 from __future__ import annotations
 
-from dataclasses import asdict
+from dataclasses import asdict, dataclass, field
+from enum import Enum
 from typing import Any, TypedDict
 
 import structlog
 
-from heretek_swarm.orchestration.heavyswarm import (
-    HeavySwarmWorkflow,
-    PhaseResult,
-    WorkflowPhase,
-    WorkflowResult,
-)
+
+class WorkflowPhase(Enum):
+    """HeavySwarm workflow phases."""
+
+    RESEARCH = "research"
+    ANALYSIS = "analysis"
+    ALTERNATIVES = "alternatives"
+    VERIFICATION = "verification"
+    DECISION = "decision"
+    COMPLETED = "completed"
+    FAILED = "failed"
+
+
+@dataclass
+class PhaseResult:
+    """
+    Result from a workflow phase.
+
+    Attributes:
+        phase: Phase identifier
+        success: Whether phase succeeded
+        output: Phase output data
+        metadata: Additional metadata
+        duration_ms: Phase duration in milliseconds
+        errors: List of error messages
+    """
+
+    phase: WorkflowPhase
+    success: bool
+    output: dict[str, Any]
+    metadata: dict[str, Any] = field(default_factory=dict)
+    duration_ms: float = 0.0
+    errors: list[str] = field(default_factory=list)
+
+
+@dataclass
+class WorkflowResult:
+    """
+    Complete workflow result.
+
+    Attributes:
+        workflow_id: Unique workflow identifier
+        topic: Workflow topic/problem
+        state: Final workflow state
+        phase_results: Results from each phase
+        final_decision: Final decision from consensus
+        started_at: Workflow start timestamp
+        completed_at: Workflow completion timestamp
+        total_duration_ms: Total workflow duration
+    """
+
+    workflow_id: str
+    topic: str
+    state: WorkflowPhase
+    phase_results: dict[str, Any] = field(default_factory=dict)
+    final_decision: Any = None
+    started_at: str = ""
+    completed_at: str = ""
+    total_duration_ms: float = 0.0
+
 
 # Public re-exports (M-arch contract: langgraph module must keep the
 # existing public surface importable during the additive migration).
@@ -74,6 +125,7 @@ class WorkflowState(TypedDict, total=False):
 def _phase_result_to_dict(result: PhaseResult) -> dict[str, Any]:
     """Convert a PhaseResult dataclass to a dict for state storage."""
     return asdict(result)
+
 
 
 def research_node(state: WorkflowState) -> WorkflowState:
@@ -450,7 +502,7 @@ _PREVIOUS_PHASE: dict[WorkflowPhase, WorkflowPhase] = {
 }
 
 
-def legacy_phase_node(phase: WorkflowPhase, workflow: HeavySwarmWorkflow | None = None):
+def legacy_phase_node(phase: WorkflowPhase, workflow: Any | None = None):
     """Build a LangGraph node that delegates to ``HeavySwarmWorkflow``.
 
     Args:
@@ -550,7 +602,7 @@ PHASE_NODES = {
 
 
 def build_phase_nodes(
-    workflow: HeavySwarmWorkflow,
+    workflow: Any,
 ) -> dict[WorkflowPhase, Any]:
     """Build a {phase -> LangGraph node} mapping bound to a workflow instance.
 

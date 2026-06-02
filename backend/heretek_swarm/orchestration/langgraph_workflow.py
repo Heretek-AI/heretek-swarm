@@ -6,8 +6,7 @@ M-arch PR #6 follow-up: replace the custom 1,363-LOC
 
 This module:
   * Defines ``LangGraphHeavySwarmWorkflow`` — a thin wrapper around
-    LangGraph's ``StateGraph`` that preserves the public contract
-    of :class:`heretek_swarm.orchestration.heavyswarm.HeavySwarmWorkflow`.
+    LangGraph's ``StateGraph`` that provides the public contract.
   * Compiles a 5-node graph (research → analysis → alternatives →
     verification → decision) with ``MemorySaver`` for resumability.
   * Exposes ``execute(topic, context) -> WorkflowResult`` so callers
@@ -17,11 +16,9 @@ Public contract is preserved:
   * ``WorkflowPhase`` enum (5 phases + COMPLETED + FAILED)
   * ``PhaseResult`` dataclass
   * ``WorkflowResult`` dataclass
-  * ``HeavySwarmWorkflow`` class (legacy) keeps working unchanged
 
 Each phase is a real LangGraph node (defined in ``langgraph_nodes``)
-registered directly on the ``StateGraph`` — no delegation to the
-legacy ``HeavySwarmWorkflow`` phase methods.
+registered directly on the ``StateGraph``.
 """
 
 from __future__ import annotations
@@ -33,13 +30,10 @@ from typing import Any
 
 import structlog
 
-from heretek_swarm.orchestration.heavyswarm import (
-    HeavySwarmWorkflow,
-    WorkflowPhase,
-    WorkflowResult,
-)
 from heretek_swarm.orchestration.langgraph_nodes import (
     PHASE_NODES,
+    WorkflowPhase,
+    WorkflowResult,
     WorkflowState,
 )
 
@@ -221,7 +215,10 @@ class LangGraphHeavySwarmWorkflow:
 def is_langgraph_available() -> bool:
     """Return True if the langgraph optional dep is importable."""
     try:
-        import langgraph
+        import importlib.util
+
+        if importlib.util.find_spec("langgraph") is None:
+            return False
     except ImportError:
         return False
     return True
@@ -238,9 +235,9 @@ def build_langgraph_workflow() -> LangGraphHeavySwarmWorkflow | None:
     return LangGraphHeavySwarmWorkflow()
 
 
-def build_legacy_workflow(**kwargs: Any) -> HeavySwarmWorkflow:
-    """Factory: return a legacy ``HeavySwarmWorkflow`` instance.
+def build_legacy_workflow(**kwargs: Any) -> LangGraphHeavySwarmWorkflow:
+    """Factory: return a ``LangGraphHeavySwarmWorkflow`` instance.
 
     Provided for API symmetry with ``build_langgraph_workflow()``.
     """
-    return HeavySwarmWorkflow(**kwargs)
+    return LangGraphHeavySwarmWorkflow(**kwargs)

@@ -12,6 +12,7 @@ Version: 2.0.0
 
 from __future__ import annotations
 
+import os
 import re
 import uuid
 from datetime import UTC, datetime
@@ -39,6 +40,13 @@ from heretek_swarm.validation.llm_output import (
 )
 
 logger = structlog.get_logger(__name__)
+
+# Tool timeout configuration from environment
+# Default: 120 seconds, Maximum: 300 seconds
+HERETEK_TOOL_TIMEOUT = min(
+    max(1, int(os.environ.get("HERETEK_TOOL_TIMEOUT", "120"))),
+    300,
+)
 
 
 class MessageType(StrEnum):
@@ -241,7 +249,7 @@ class ToolRequest(AgentMessageBase):
         ..., min_length=1, max_length=100, description="Name of the tool to execute"
     )
     arguments: dict[str, Any] = Field(default_factory=dict, description="Arguments for the tool")
-    timeout: StrictInt = Field(default=30, ge=1, le=300, description="Execution timeout in seconds")
+    timeout: StrictInt = Field(default=HERETEK_TOOL_TIMEOUT, ge=1, le=300, description="Execution timeout in seconds")
     execution_id: StrictStr = Field(default_factory=lambda: f"exec_{uuid.uuid4().hex[:8]}")
 
     @field_validator("tool_name")
@@ -519,7 +527,7 @@ class CodeExecutionRequest(AgentMessageBase):
     message_type: StrictStr = Field(default="code_execution_request")
     code: StrictStr = Field(..., min_length=1, description="Code to execute")
     language: StrictStr = Field(default="python", description="Programming language")
-    timeout: StrictInt = Field(default=30, ge=1, le=300, description="Execution timeout in seconds")
+    timeout: StrictInt = Field(default=HERETEK_TOOL_TIMEOUT, ge=1, le=300, description="Execution timeout in seconds")
     sandbox: StrictBool = Field(default=True, description="Whether to execute in sandbox")
 
     @field_validator("code")
@@ -664,7 +672,7 @@ def create_tool_request(
     tool_name: str,
     arguments: dict[str, Any],
     sender_id: str,
-    timeout: int = 30,
+    timeout: int = HERETEK_TOOL_TIMEOUT,
 ) -> ToolRequest:
     """
     Create a validated ToolRequest message.
