@@ -42,8 +42,8 @@ class TestResearchPackageImports:
 
     def test_reexports_are_same_module_objects(self, research) -> None:
         """Re-exports are the same module object as the canonical import."""
-        from heretek_swarm.consciousness import iit_phi as canon_iit_phi
         from heretek_swarm.collective import emergent_detection as canon_emergent
+        from heretek_swarm.consciousness import iit_phi as canon_iit_phi
 
         assert research.iit_phi is canon_iit_phi
         assert research.emergent_detection is canon_emergent
@@ -93,8 +93,8 @@ class TestResearchPackageImports:
 
     def test_legacy_imports_still_work(self) -> None:
         """Legacy imports from heretek_swarm.consciousness still work."""
-        from heretek_swarm.consciousness import iit_phi, gwt
         from heretek_swarm.collective import emergent_detection, evolution_engine
+        from heretek_swarm.consciousness import gwt, iit_phi
 
         assert iit_phi is not None
         assert gwt is not None

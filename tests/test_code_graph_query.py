@@ -13,7 +13,6 @@ import sqlite3
 from pathlib import Path
 
 import pytest
-
 from heretek_swarm.tools.base import ToolContext, ToolStatus
 from heretek_swarm.tools.code_graph_query import (
     DEFAULT_DB_PATH,
@@ -22,7 +21,6 @@ from heretek_swarm.tools.code_graph_query import (
     query_node,
     resolve_db_path,
 )
-
 
 SCHEMA = """
 CREATE TABLE nodes (

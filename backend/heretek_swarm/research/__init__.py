@@ -24,6 +24,13 @@ existing imports keep working during the transition.
 
 from __future__ import annotations
 
+from heretek_swarm.collective import (
+    agency_tracking,
+    emergence_analyzer,
+    emergent_detection,
+    emergent_detection_types,
+    evolution_engine,
+)
 from heretek_swarm.consciousness import (
     ast,
     fep,
@@ -34,13 +41,6 @@ from heretek_swarm.consciousness import (
     iit_phi,
     introspection,
     self_model,
-)
-from heretek_swarm.collective import (
-    agency_tracking,
-    emergence_analyzer,
-    emergent_detection,
-    emergent_detection_types,
-    evolution_engine,
 )
 
 __all__ = [
