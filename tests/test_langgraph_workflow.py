@@ -15,6 +15,8 @@ tests are skipped (the module is opt-in via [langgraph] extra).
 
 from __future__ import annotations
 
+from typing import Any
+
 import pytest
 from heretek_swarm.orchestration import langgraph_nodes
 from heretek_swarm.orchestration.langgraph_nodes import (
@@ -451,11 +453,10 @@ class TestCheckpointerSupport:
     @pytest.mark.asyncio
     async def test_initialize_with_explicit_checkpointer(self) -> None:
         """initialize() accepts an explicit checkpointer instance."""
-        from langgraph.checkpoint.memory import MemorySaver
-
         from heretek_swarm.orchestration.langgraph_workflow import (
             LangGraphHeavySwarmWorkflow,
         )
+        from langgraph.checkpoint.memory import MemorySaver
 
         # Use a real MemorySaver instance instead of a mock
         real_checkpointer = MemorySaver()
