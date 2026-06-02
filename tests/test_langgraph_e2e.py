@@ -13,6 +13,9 @@ verification → decision) including:
 
 from __future__ import annotations
 
+import os
+import unittest.mock as mock
+import uuid
 from typing import Any
 
 import pytest
@@ -29,6 +32,28 @@ from heretek_swarm.orchestration.langgraph_workflow import (
     _build_initial_state,
     _state_to_workflow_result,
 )
+
+# DATABASE_URL (or HERETEK_CHECKPOINT_DB_URL) for Postgres persistence tests.
+GENERIC_DATABASE_URL = os.environ.get(
+    "DATABASE_URL", os.environ.get("HERETEK_CHECKPOINT_DB_URL")
+)
+
+
+async def _pg_is_reachable(url: str | None = None) -> bool:
+    """Return True if we can connect to PostgreSQL with the given (or env) URL."""
+    if url is None:
+        url = GENERIC_DATABASE_URL
+    if not url:
+        return False
+    try:
+        import psycopg
+
+        async with await psycopg.AsyncConnection.connect(url) as conn, conn.cursor() as cur:
+            await cur.execute("SELECT 1")
+            await cur.fetchone()
+        return True
+    except Exception:
+        return False
 
 # Skip entire module if langgraph is not installed.
 pytestmark = pytest.mark.skipif(
@@ -240,7 +265,6 @@ class TestErrorHandling:
     @pytest.mark.asyncio
     async def test_exception_produces_failed_state(self) -> None:
         """If a node raises, the workflow returns FAILED state."""
-        import unittest.mock as mock
 
         async def failing_research(state: dict[str, Any]) -> dict[str, Any]:
             raise RuntimeError("simulated node failure")
@@ -358,3 +382,183 @@ class TestStateHelpers:
         }
         result = _state_to_workflow_result(state)
         assert result.final_decision == {"decision": "GO", "confidence": 0.9}
+
+
+# ---------------------------------------------------------------------------
+# 8. PostgreSQL checkpoint persistence
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.skipif(
+    not __import__("importlib").util.find_spec("langgraph"),
+    reason="langgraph not installed",
+)
+@pytest.mark.skipif(
+    not GENERIC_DATABASE_URL,
+    reason="DATABASE_URL / HERETEK_CHECKPOINT_DB_URL not set",
+)
+class TestPostgresPersistence:
+    """PostgreSQL checkpoint persistence tests — require a live database."""
+
+    @pytest.fixture(autouse=True)
+    async def _require_pg(self) -> None:
+        """Skip all tests in this class if PostgreSQL is unreachable."""
+        if not await _pg_is_reachable():
+            pytest.skip("PostgreSQL is not reachable from this environment")
+
+    @pytest.mark.asyncio
+    async def test_postgres_checkpointer_persists_state(self) -> None:
+        """Workflow with PostgreSQL checkpointer completes and uses AsyncPostgresSaver."""
+        wf = LangGraphHeavySwarmWorkflow(name="pg-persist")
+        result = await wf.execute(topic="PostgreSQL persistence test")
+
+        assert result.state == WorkflowPhase.COMPLETED
+        assert wf._checkpointer is not None
+        from langgraph_checkpoint_postgres.aio import AsyncPostgresSaver
+
+        assert isinstance(wf._checkpointer, AsyncPostgresSaver)
+
+        await wf.close()
+
+    @pytest.mark.asyncio
+    async def test_postgres_checkpointer_survives_restart(self) -> None:
+        """State survives across two workflow instances sharing the same wf_id."""
+        wf_id = f"restart-test-{uuid.uuid4()}"
+
+        wf1 = LangGraphHeavySwarmWorkflow(name="pg-restart-1")
+        result1 = await wf1.execute(
+            topic="Restart survival test", workflow_id=wf_id
+        )
+        assert result1.state == WorkflowPhase.COMPLETED
+        await wf1.close()
+
+        # Second instance with the same workflow_id should pick up the checkpoint
+        wf2 = LangGraphHeavySwarmWorkflow(name="pg-restart-2")
+        result2 = await wf2.execute(
+            topic="Restart survival test", workflow_id=wf_id
+        )
+        assert result2.state == WorkflowPhase.COMPLETED
+        assert result2.workflow_id == wf_id
+        # Both should have completed all five phases
+        for phase in (
+            WorkflowPhase.RESEARCH,
+            WorkflowPhase.ANALYSIS,
+            WorkflowPhase.ALTERNATIVES,
+            WorkflowPhase.VERIFICATION,
+            WorkflowPhase.DECISION,
+        ):
+            assert phase.value in result1.phase_results
+            assert phase.value in result2.phase_results
+        await wf2.close()
+
+    @pytest.mark.asyncio
+    async def test_postgres_checkpoint_table_exists(self) -> None:
+        """After running a workflow, the checkpoint tables exist in the database."""
+        import psycopg
+
+        wf = LangGraphHeavySwarmWorkflow(name="pg-tables")
+        await wf.execute(topic="Table existence check")
+        await wf.close()
+
+        async with await psycopg.AsyncConnection.connect(
+            GENERIC_DATABASE_URL
+        ) as conn, conn.cursor() as cur:
+            await cur.execute(
+                "SELECT table_name FROM information_schema.tables "
+                "WHERE table_name IN ('checkpoint', 'checkpoint_blobs', 'checkpoint_writes') "
+                "ORDER BY table_name"
+            )
+            rows = await cur.fetchall()
+            table_names = {row[0] for row in rows}
+            # The langgraph checkpoint saver creates 'checkpoint' table;
+            # blob/writes tables may or may not exist depending on version.
+            assert "checkpoint" in table_names, (
+                f"Expected 'checkpoint' table; found: {table_names}"
+            )
+
+
+# ---------------------------------------------------------------------------
+# 9. Checkpointer fallback logic
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.skipif(
+    not __import__("importlib").util.find_spec("langgraph"),
+    reason="langgraph not installed",
+)
+class TestCheckpointerFallback:
+    """Verify env-var-driven checkpointer selection and graceful degradation."""
+
+    @pytest.mark.asyncio
+    async def test_in_memory_when_no_env_var(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        """MemorySaver is used when HERETEK_CHECKPOINT_DB_URL is not set."""
+        monkeypatch.delenv("HERETEK_CHECKPOINT_DB_URL", raising=False)
+        monkeypatch.delenv("DATABASE_URL", raising=False)
+
+        wf = LangGraphHeavySwarmWorkflow(name="fallback-noenv")
+        result = await wf.execute(topic="no env var")
+        assert result.state == WorkflowPhase.COMPLETED
+        # _checkpointer stays None (MemorySaver used internally in _compile_graph)
+        assert wf._checkpointer is None
+
+    @pytest.mark.asyncio
+    async def test_graceful_fallback_when_postgres_pkg_missing(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """Falls back to MemorySaver when langgraph-checkpoint-postgres is missing."""
+        import builtins
+
+        monkeypatch.setenv("HERETEK_CHECKPOINT_DB_URL", "postgres://fake:fake@localhost/fakedb")
+
+        real_import = builtins.__import__
+
+        def fake_import(name: str, *args: Any, **kwargs: Any) -> Any:
+            if name == "langgraph_checkpoint_postgres.aio":
+                raise ImportError("simulated missing package")
+            if name == "psycopg_pool":
+                raise ImportError("simulated missing package")
+            return real_import(name, *args, **kwargs)
+
+        monkeypatch.setattr(builtins, "__import__", fake_import)
+
+        wf = LangGraphHeavySwarmWorkflow(name="fallback-pkg")
+        result = await wf.execute(topic="missing package")
+        assert result.state == WorkflowPhase.COMPLETED
+        # Should have fallen back — _checkpointer is None
+        assert wf._checkpointer is None
+
+    @pytest.mark.asyncio
+    async def test_async_initialize_sets_checkpointer(self) -> None:
+        """After initialize(), the _checkpointer field is set (or remains None for MemorySaver)."""
+        wf = LangGraphHeavySwarmWorkflow(name="init-check")
+        assert wf._initialized is False
+        assert wf._checkpointer is None
+
+        await wf.initialize()
+
+        assert wf._initialized is True
+        # With no DB URL, _checkpointer stays None (MemorySaver used inside graph)
+        assert wf._checkpointer is None
+        # But the graph is compiled and ready
+        assert wf._graph is not None
+
+
+# ---------------------------------------------------------------------------
+# 10. MemorySaver default behaviour preserved
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.skipif(
+    not __import__("importlib").util.find_spec("langgraph"),
+    reason="langgraph not installed",
+)
+class TestMemorySaverDefault:
+    """Existing default behaviour — MemorySaver — remains intact."""
+
+    @pytest.mark.asyncio
+    async def test_default_compile_uses_memory_saver(self) -> None:
+        """_compile_graph() produces a graph with a MemorySaver checkpointer."""
+        wf = LangGraphHeavySwarmWorkflow(name="memory-default")
+        checkpointer = wf._graph.checkpointer
+        assert checkpointer is not None
+        assert "MemorySaver" in type(checkpointer).__name__
