@@ -88,12 +88,25 @@ def _state_to_workflow_result(state: WorkflowState) -> WorkflowResult:
         except ValueError:
             duration_ms = 0.0
 
+    # Fall back to phase_results['decision'] for final_decision if the
+    # top-level field is unset. This matches the legacy pattern in
+    # heavyswarm.py:334 where final_decision is read from
+    # decision_result.output.get("consensus_result").
+    final_decision = state.get("final_decision")
+    if final_decision is None:
+        decision_result = (state.get("phase_results") or {}).get(
+            WorkflowPhase.DECISION.value
+        )
+        if decision_result is not None:
+            decision_output = getattr(decision_result, "output", None) or {}
+            final_decision = decision_output.get("consensus_result")
+
     return WorkflowResult(
         workflow_id=state.get("workflow_id", ""),
         topic=state.get("topic", ""),
         state=WorkflowPhase(state.get("current_phase", "completed")),
         phase_results=state.get("phase_results", {}),
-        final_decision=state.get("final_decision"),
+        final_decision=final_decision,
         started_at=started,
         completed_at=completed,
         total_duration_ms=duration_ms,

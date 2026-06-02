@@ -217,9 +217,9 @@ def legacy_phase_node(phase: WorkflowPhase, workflow: HeavySwarmWorkflow | None 
             "phase_results": existing_results,
         }
         if phase == WorkflowPhase.DECISION and phase_result.output:
-            decision = phase_result.output.get("decision") or phase_result.output.get(
-                "consensus"
-            )
+            # Match the legacy key in heavyswarm.py:334
+            # (result.final_decision = decision_result.output.get("consensus_result"))
+            decision = phase_result.output.get("consensus_result")
             if decision is not None:
                 out["final_decision"] = decision
         return out
