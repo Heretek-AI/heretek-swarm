@@ -43,6 +43,7 @@ __all__ = [
     "WorkflowState",
     "alternatives_node",
     "analysis_node",
+    "build_phase_nodes",
     "decision_node",
     "legacy_phase_node",
     "research_node",
@@ -235,3 +236,25 @@ PHASE_NODES = {
     WorkflowPhase.VERIFICATION: verification_node,
     WorkflowPhase.DECISION: decision_node,
 }
+
+
+def build_phase_nodes(
+    workflow: HeavySwarmWorkflow,
+) -> dict[WorkflowPhase, Any]:
+    """Build a {phase -> LangGraph node} mapping bound to a workflow instance.
+
+    Each returned node delegates to ``workflow._execute_phase`` via
+    ``legacy_phase_node``. This is what ``langgraph_workflow.py`` uses
+    to wire the StateGraph so the graph actually runs the legacy
+    phase logic (rather than the no-op stubs in ``PHASE_NODES``).
+    """
+    return {
+        phase: legacy_phase_node(phase, workflow)
+        for phase in (
+            WorkflowPhase.RESEARCH,
+            WorkflowPhase.ANALYSIS,
+            WorkflowPhase.ALTERNATIVES,
+            WorkflowPhase.VERIFICATION,
+            WorkflowPhase.DECISION,
+        )
+    }

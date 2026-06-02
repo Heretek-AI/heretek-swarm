@@ -254,6 +254,86 @@ class TestLangGraphWorkflowModule:
         assert isinstance(wf, HeavySwarmWorkflow)
         assert wf.name == "test"
 
+    def test_build_phase_nodes_returns_all_five(self) -> None:
+        """build_phase_nodes(workflow) returns a callable for every phase."""
+        from unittest.mock import MagicMock
+
+        from heretek_swarm.orchestration.langgraph_nodes import (
+            build_phase_nodes,
+        )
+
+        workflow = MagicMock()
+        nodes = build_phase_nodes(workflow)
+        assert set(nodes.keys()) == {
+            WorkflowPhase.RESEARCH,
+            WorkflowPhase.ANALYSIS,
+            WorkflowPhase.ALTERNATIVES,
+            WorkflowPhase.VERIFICATION,
+            WorkflowPhase.DECISION,
+        }
+        for phase, node_fn in nodes.items():
+            assert callable(node_fn), f"node for {phase!r} is not callable"
+
+    def test_build_phase_nodes_uses_provided_workflow(self) -> None:
+        """Each bridge node delegates to the provided workflow's _execute_phase."""
+        from unittest.mock import AsyncMock, MagicMock
+
+        from heretek_swarm.orchestration.langgraph_nodes import (
+            build_phase_nodes,
+        )
+
+        workflow = MagicMock()
+        workflow._execute_phase = AsyncMock(
+            return_value=PhaseResult(
+                phase=WorkflowPhase.VERIFICATION,
+                success=True,
+                output={"ok": True},
+                duration_ms=1.0,
+            )
+        )
+        workflow._verification_phase = MagicMock()
+
+        nodes = build_phase_nodes(workflow)
+        import asyncio
+
+        result = asyncio.run(
+            nodes[WorkflowPhase.VERIFICATION](
+                {
+                    "topic": "t",
+                    "context": {},
+                    "workflow_id": "wf-x",
+                    "phase_results": {},
+                }
+            )
+        )
+        assert result["current_phase"] == "verification"
+        workflow._execute_phase.assert_awaited_once()
+
+    def test_langgraph_workflow_accepts_injected_workflow(self) -> None:
+        """LangGraphHeavySwarmWorkflow stores the injected workflow on self."""
+        from unittest.mock import MagicMock
+
+        from heretek_swarm.orchestration.langgraph_workflow import (
+            LangGraphHeavySwarmWorkflow,
+        )
+
+        injected = MagicMock()
+        wf = LangGraphHeavySwarmWorkflow(name="test", workflow=injected)
+        assert wf.workflow is injected
+
+    def test_langgraph_workflow_creates_default_when_none(self) -> None:
+        """LangGraphHeavySwarmWorkflow creates a default HeavySwarmWorkflow."""
+        from heretek_swarm.orchestration.heavyswarm import (
+            HeavySwarmWorkflow,
+        )
+        from heretek_swarm.orchestration.langgraph_workflow import (
+            LangGraphHeavySwarmWorkflow,
+        )
+
+        wf = LangGraphHeavySwarmWorkflow(name="auto")
+        assert isinstance(wf.workflow, HeavySwarmWorkflow)
+        assert wf.workflow.name == "auto"
+
 
 @pytest.mark.skipif(
     not __import__("importlib").util.find_spec("langgraph"),

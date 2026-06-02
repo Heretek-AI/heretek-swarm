@@ -39,8 +39,8 @@ from heretek_swarm.orchestration.heavyswarm import (
     WorkflowResult,
 )
 from heretek_swarm.orchestration.langgraph_nodes import (
-    PHASE_NODES,
     WorkflowState,
+    build_phase_nodes,
 )
 
 logger = structlog.get_logger("LangGraphHeavySwarm")
@@ -115,12 +115,16 @@ class LangGraphHeavySwarmWorkflow:
     same ``thread_id`` to ``execute()``.
     """
 
-    def __init__(self, name: str | None = None) -> None:
+    def __init__(
+        self,
+        name: str | None = None,
+        workflow: HeavySwarmWorkflow | None = None,
+    ) -> None:
         self.name = name or "LangGraphHeavySwarm"
+        self.workflow = workflow or HeavySwarmWorkflow(name=self.name)
         self._graph = self._compile_graph()
 
-    @staticmethod
-    def _compile_graph():  # pragma: no cover — exercised when langgraph is installed
+    def _compile_graph(self):  # pragma: no cover — exercised when langgraph is installed
         """Compile the StateGraph.
 
         Returns ``None`` if langgraph is not installed, so this
@@ -134,12 +138,17 @@ class LangGraphHeavySwarmWorkflow:
         except ImportError:
             return None
 
+        phase_nodes = build_phase_nodes(self.workflow)
         graph = StateGraph(WorkflowState)
-        graph.add_node(WorkflowPhase.RESEARCH.value, PHASE_NODES[WorkflowPhase.RESEARCH])
-        graph.add_node(WorkflowPhase.ANALYSIS.value, PHASE_NODES[WorkflowPhase.ANALYSIS])
-        graph.add_node(WorkflowPhase.ALTERNATIVES.value, PHASE_NODES[WorkflowPhase.ALTERNATIVES])
-        graph.add_node(WorkflowPhase.VERIFICATION.value, PHASE_NODES[WorkflowPhase.VERIFICATION])
-        graph.add_node(WorkflowPhase.DECISION.value, PHASE_NODES[WorkflowPhase.DECISION])
+        graph.add_node(WorkflowPhase.RESEARCH.value, phase_nodes[WorkflowPhase.RESEARCH])
+        graph.add_node(WorkflowPhase.ANALYSIS.value, phase_nodes[WorkflowPhase.ANALYSIS])
+        graph.add_node(
+            WorkflowPhase.ALTERNATIVES.value, phase_nodes[WorkflowPhase.ALTERNATIVES]
+        )
+        graph.add_node(
+            WorkflowPhase.VERIFICATION.value, phase_nodes[WorkflowPhase.VERIFICATION]
+        )
+        graph.add_node(WorkflowPhase.DECISION.value, phase_nodes[WorkflowPhase.DECISION])
 
         graph.set_entry_point(WorkflowPhase.RESEARCH.value)
         graph.add_edge(WorkflowPhase.RESEARCH.value, WorkflowPhase.ANALYSIS.value)
