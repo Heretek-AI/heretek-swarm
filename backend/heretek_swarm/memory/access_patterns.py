@@ -13,7 +13,7 @@ Reference: EXPANSION_ROADMAP.md Session 43 - Memory Optimization
 import math
 from collections import defaultdict
 from dataclasses import dataclass, field
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from enum import StrEnum
 from typing import Any
 
@@ -863,7 +863,3 @@ class AccessPatternAnalyzer:
         # Sort by recency score and return top predictions
         predictions.sort(key=lambda x: x[1], reverse=True)
         return [m[0] for m in predictions[:10]]
-
-
-# Import timedelta for prediction calculations
-from datetime import timedelta

@@ -13,7 +13,7 @@ Reference: EXPANSION_ROADMAP.md Session 43 - Memory Optimization
 import asyncio
 import contextlib
 import time
-from collections import OrderedDict
+from collections import OrderedDict, defaultdict
 from dataclasses import dataclass, field
 from datetime import UTC, datetime, timedelta
 from enum import StrEnum
@@ -511,6 +511,7 @@ class PreFetchScheduler:
         self._last_execution_time: datetime | None = None
         self._executed_count = 0
         self._skipped_count = 0
+        self._prefetch_tasks: set[asyncio.Task] = set()
 
         self._running = False
         self._task: asyncio.Task | None = None
@@ -638,7 +639,8 @@ class PreFetchScheduler:
             self._running_count += 1
 
             # Execute asynchronously
-            asyncio.create_task(self._execute_prefetch(schedule))
+            task = asyncio.create_task(self._execute_prefetch(schedule))
+            self._prefetch_tasks.add(task)
 
         # Clean up executed from queue
         self._pending_queue = [s for s in self._pending_queue if not s.executed]
@@ -1032,7 +1034,3 @@ class IntelligentPrefetcher:
         self._prefetch_requests.clear()
         self._prefetch_results.clear()
         logger.info("intelligent_prefetcher_cleared")
-
-
-# Import defaultdict for frequency map
-from collections import defaultdict
