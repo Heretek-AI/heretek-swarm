@@ -22,6 +22,8 @@ def get_registry() -> EnhancedAgentRegistry:
     return get_enhanced_registry()
 
 
+from typing import Any
+
 def _build_instance_metadata(instance: Any) -> dict[str, Any] | None:
     """Build metadata dict from an agent instance, avoiding nested conditionals."""
     if instance.metadata is None:

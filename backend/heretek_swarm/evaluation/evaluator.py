@@ -11,6 +11,8 @@ import structlog
 
 logger = structlog.get_logger(__name__)
 
+from __future__ import annotations
+
 _evaluator_instance: AgentEvaluator | None = None
 
 
