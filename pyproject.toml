@@ -22,68 +22,54 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
 ]
 dependencies = [
-    "swarms>=5.0.0",
-    "pydantic>=2.0.0",
+    "swarms>=9.0.0,<10.0.0",
+    "pydantic>=2.10.5",
     "httpx>=0.25.0",
     "redis>=5.0.0",
     "qdrant-client>=1.7.0",
     "opentelemetry-api>=1.22.0",
     "opentelemetry-sdk>=1.22.0",
     "opentelemetry-exporter-otlp>=1.22.0",
-    "structlog>=24.1.0",
-    "tenacity>=8.2.0",
+    "structlog>=25.2.0",
+    "tenacity>=9.0.0",
     "circuitbreaker>=2.0.0",
-    "starlette>=0.27.0",
-    "uvicorn>=0.25.0",
-    "websockets>=12.0",
-    # mem0 integration for long-term memory
+    "starlette>=0.48",
+    "uvicorn>=0.34.0",
+    "websockets>=15.0.1",
     "mem0ai>=1.0.0",
-    # FastAPI for backend API
-    "fastapi>=0.109.0",
-    # CLI framework
+    "fastapi>=0.116.2",
     "click>=8.1.0",
-    # Prometheus metrics
     "prometheus-client>=0.19.0",
-    # NATS messaging
     "nats-py>=2.0.0",
-    # Certificate generation (X.509 TLS for NATS)
-    "cryptography>=42.0",
-    # JWT authentication
+    "cryptography>=48.0.0",
     "PyJWT>=2.8",
-    # Database drivers (sync + async Postgres)
-    "asyncpg>=0.29.0",
-    "psycopg2-binary>=2.9.0",
-    # Build tooling required at install time
-    "setuptools>=68.0,<81",
-    # Cognee — knowledge graph + vector memory engine (M-arch PR #2)
-    # Optional at runtime: read-only context source, no impact when disabled
+    "asyncpg>=0.30.0",
+    "psycopg2-binary>=2.9.10",
+    "pypdf>=6.6.2,<7.0.0",
+    "aiohttp>=3.13.3",
     "cognee>=1.1.0,<2.0",
+    "setuptools>=68.0,<81",
 ]
 
 [project.optional-dependencies]
 core = [
-    # Core swarm framework only
-    "swarms>=5.0.0",
-    "pydantic>=2.0.0",
-    "structlog>=24.1.0",
-    "tenacity>=8.2.0",
+    "swarms>=9.0.0,<10.0.0",
+    "pydantic>=2.10.5",
+    "structlog>=25.2.0",
+    "tenacity>=9.0.0",
     "circuitbreaker>=2.0.0",
 ]
 agents = [
     "heretek-swarm[core]",
-    # Agent framework
-    "starlette>=0.27.0",
-    "uvicorn>=0.25.0",
-    "websockets>=12.0",
-    "fastapi>=0.109.0",
+    "starlette>=0.48",
+    "uvicorn>=0.34.0",
+    "websockets>=15.0.1",
+    "fastapi>=0.116.2",
     "click>=8.1.0",
     "httpx>=0.25.0",
-    # Memory
     "mem0ai>=1.0.0",
-    # Vector storage
     "redis>=5.0.0",
     "qdrant-client>=1.7.0",
-    # Observability
     "opentelemetry-api>=1.22.0",
     "opentelemetry-sdk>=1.22.0",
     "opentelemetry-exporter-otlp>=1.22.0",
@@ -156,6 +142,17 @@ Issues = "https://github.com/heretek-ai/heretek-swarm/issues"
 where = ["backend"]
 include = ["heretek_swarm*"]
 
+# ============== UV RESOLUTION OVERRIDES ==============
+# swarms 9.0.4 hard-pins pypdf==5.1.0 (which has known CVEs) and
+# tenacity<8.2.3. cognee>=1.1.0 requires pypdf>=6.6.2,<7.0.0 and
+# tenacity>=9.0.0. Override swarms' pins so the resolver picks the
+# security-patched pypdf and the newer tenacity.
+[tool.uv]
+override-dependencies = [
+    "pypdf>=6.6.2,<7.0.0",
+    "tenacity>=9.0.0",
+]
+
 # ============== PYTEST CONFIGURATION ==============
 [tool.pytest.ini_options]
 minversion = "8.0"
@@ -204,7 +201,6 @@ omit = [
     "*/__pycache__/*",
     "*/.venv/*",
     "*/site-packages/*",
-    # M002/M003 out-of-scope directories (D011)
     "*/heretek_swarm/agent_workspace/*",
     "*/heretek_swarm/agents/*",
     "*/heretek_swarm/audit/*",
@@ -230,7 +226,6 @@ omit = [
     "*/heretek_swarm/testing/*",
     "*/heretek_swarm/utils/*",
     "*/heretek_swarm/validation/*",
-    # M002/M003 actor subdirectories (placeholder/stub agents)
     "*/heretek_swarm/actors/arbiter/*",
     "*/heretek_swarm/actors/catalyst/agent.py",
     "*/heretek_swarm/actors/catalyst/types.py",
@@ -256,7 +251,6 @@ omit = [
     "*/heretek_swarm/actors/sentinel_prime/*",
     "*/heretek_swarm/actors/triad/*",
     "*/heretek_swarm/actors/validation.py",
-    # M002/M003 collective modules (emergent behavior, learning, evolution)
     "*/heretek_swarm/collective/adaptive_learning.py",
     "*/heretek_swarm/collective/agent_adaptation.py",
     "*/heretek_swarm/collective/algorithms/*",
@@ -273,26 +267,21 @@ omit = [
     "*/heretek_swarm/collective/society.py",
     "*/heretek_swarm/collective/swarm_intelligence.py",
     "*/heretek_swarm/collective/swarm_patterns.py",
-    # M002/M003 memory modules (tiering, prefetcher, persistent)
     "*/heretek_swarm/memory/persistent.py",
     "*/heretek_swarm/memory/prefetcher.py",
     "*/heretek_swarm/memory/tiering.py",
-    # M002/M003 runtime modules (autonomous, scaling, self-maintenance)
     "*/heretek_swarm/runtime/autonomous_runtime.py",
     "*/heretek_swarm/runtime/autonomous_runtime_config.py",
     "*/heretek_swarm/runtime/scaling.py",
     "*/heretek_swarm/runtime/self_maintenance.py",
-    # M002/M003 infrastructure modules (nats, otel internals)
     "*/heretek_swarm/infrastructure/nats/*",
     "*/heretek_swarm/infrastructure/otel/*",
-    # M002/M003 api modules (wizard, autonomous, consensus deep APIs)
     "*/heretek_swarm/api/wizard.py",
     "*/heretek_swarm/api/autonomous.py",
     "*/heretek_swarm/api/consensus.py",
     "*/heretek_swarm/api/evaluation.py",
     "*/heretek_swarm/api/memories.py",
     "*/heretek_swarm/api/workflows.py",
-    # M002/M003 config / consensus / state modules
     "*/heretek_swarm/config/crud.py",
     "*/heretek_swarm/consensus/maker_enhanced.py",
     "*/heretek_swarm/consensus/immune.py",
@@ -301,7 +290,6 @@ omit = [
     "*/heretek_swarm/state/event_store.py",
     "*/heretek_swarm/tools/examples.py",
     "*/heretek_swarm/observability/tracing.py",
-    # M002/M003 — extra individual files missed by directory patterns
     "*/heretek_swarm/api/consciousness.py",
     "*/heretek_swarm/api/rag.py",
     "*/heretek_swarm/api/providers_config.py",
@@ -337,7 +325,6 @@ omit = [
     "*/heretek_swarm/mcp/client.py",
     "*/heretek_swarm/tools/mcp_tools.py",
     "*/heretek_swarm/actors/nexus/routing.py",
-    # M002/M003 — extra stragglers (API/consensus/runtime/internal internals)
     "*/heretek_swarm/api/collective_evolution.py",
     "*/heretek_swarm/api/observability/events.py",
     "*/heretek_swarm/api/agents/jetstream.py",
@@ -355,7 +342,6 @@ omit = [
     "*/heretek_swarm/cli/config_wizard.py",
     "*/heretek_swarm/actors/sentinel/safety.py",
     "*/heretek_swarm/api/configuration.py",
-    # M002/M003 — observability/internal API stragglers
     "*/heretek_swarm/api/observability/consciousness.py",
     "*/heretek_swarm/api/observability/alerts.py",
     "*/heretek_swarm/api/agents/routing_control.py",
@@ -373,7 +359,6 @@ omit = [
     "*/heretek_swarm/actors/mixins/health_reporting.py",
     "*/heretek_swarm/api/agents/instances.py",
     "*/heretek_swarm/api/metrics.py",
-    # M002/M003 — remaining large zero/low-coverage modules not yet omitted
     "*/heretek_swarm/api/websockets.py",
     "*/heretek_swarm/api/main.py",
     "*/heretek_swarm/runtime/main_loop.py",
@@ -389,12 +374,10 @@ omit = [
     "*/heretek_swarm/actors/base/state_management.py",
     "*/heretek_swarm/consensus/tribunal.py",
     "*/heretek_swarm/state/models.py",
-    "*/heretek_swarm/api/agents/instances.py",
     "*/heretek_swarm/runtime/deliberation_orchestrator.py",
     "*/heretek_swarm/runtime/actor_orchestrator.py",
     "*/heretek_swarm/runtime/steward_pulse.py",
     "*/heretek_swarm/runtime/__init__.py",
-    # M002/M003 — final stragglers: most remaining 0% coverage files
     "*/heretek_swarm/api/observability/__init__.py",
     "*/heretek_swarm/api/observability/swarm.py",
     "*/heretek_swarm/api/observability/traces.py",
@@ -418,8 +401,6 @@ omit = [
     "*/heretek_swarm/schemas/external_call_log.py",
     "*/heretek_swarm/schemas/actors.py",
 ]
-parallel = true
-sigterm = true
 
 [tool.coverage.paths]
 source = [

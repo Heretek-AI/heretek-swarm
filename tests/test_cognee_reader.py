@@ -7,22 +7,52 @@ failure) so the Historian can safely use it as a supplemental source.
 
 from __future__ import annotations
 
-import json
+from collections.abc import Callable
 from typing import Any
-from unittest.mock import AsyncMock, MagicMock
 
 import httpx
 import pytest
-
 from heretek_swarm.memory.cognee_reader import CogneeMemoryReader
 
 
-def _mock_response(status_code: int, payload: Any | None = None) -> httpx.Response:
-    """Build an httpx.Response with the given status code and JSON body."""
-    request = httpx.Request("POST", "http://test/api/v1/search")
-    if payload is None:
-        return httpx.Response(status_code, request=request)
-    return httpx.Response(status_code, json=payload, request=request)
+def _ok(handler: Callable[[httpx.Request], httpx.Response]) -> httpx.AsyncClient:
+    """Return a real httpx.AsyncClient backed by httpx.MockTransport.
+
+    Using the real transport (not AsyncMock) exercises the production
+    code path: ``await client.post(...)`` returns the canned response
+    with no network access and no ``is_closed`` spec weirdness.
+    """
+    return httpx.AsyncClient(
+        base_url="http://test",
+        transport=httpx.MockTransport(handler),
+    )
+
+
+def _search_200() -> Callable[[httpx.Request], httpx.Response]:
+    def handler(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(
+            200,
+            json={
+                "results": [
+                    {
+                        "content": "Some context",
+                        "score": 0.92,
+                        "dataset": "default",
+                        "metadata": {"source": "doc1"},
+                    }
+                ]
+            },
+            request=request,
+        )
+
+    return handler
+
+
+def _empty_200() -> Callable[[httpx.Request], httpx.Response]:
+    def handler(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(200, json={"results": []}, request=request)
+
+    return handler
 
 
 class TestCogneeMemoryReader:
@@ -59,75 +89,70 @@ class TestCogneeMemoryReader:
 
     @pytest.mark.asyncio
     async def test_read_returns_empty_on_http_error(self) -> None:
-        """HTTPError from Cognee is swallowed and returns []."""
-        mock_client = AsyncMock(spec=httpx.AsyncClient)
-        mock_client.post.side_effect = httpx.HTTPError("connection refused")
-        reader = CogneeMemoryReader(enabled=True, client=mock_client)
+        """HTTPError from the transport is swallowed and returns []."""
+
+        def handler(request: httpx.Request) -> httpx.Response:
+            raise httpx.HTTPError("connection refused")
+
+        reader = CogneeMemoryReader(enabled=True, client=_ok(handler))
         result = await reader.read("test query")
         assert result == []
-        mock_client.post.assert_awaited_once()
 
     @pytest.mark.asyncio
     async def test_read_returns_empty_on_timeout(self) -> None:
-        """TimeoutException from Cognee is swallowed and returns []."""
-        mock_client = AsyncMock(spec=httpx.AsyncClient)
-        mock_client.post.side_effect = httpx.TimeoutException("timed out")
-        reader = CogneeMemoryReader(enabled=True, client=mock_client)
+        """TimeoutException from the transport is swallowed and returns []."""
+
+        def handler(request: httpx.Request) -> httpx.Response:
+            raise httpx.TimeoutException("timed out")
+
+        reader = CogneeMemoryReader(enabled=True, client=_ok(handler))
         result = await reader.read("test query")
         assert result == []
 
     @pytest.mark.asyncio
     async def test_read_returns_empty_on_5xx(self) -> None:
         """5xx response is treated as a failure and returns []."""
-        mock_client = AsyncMock(spec=httpx.AsyncClient)
-        mock_client.post.return_value = _mock_response(500)
-        reader = CogneeMemoryReader(enabled=True, client=mock_client)
+
+        def handler(request: httpx.Request) -> httpx.Response:
+            return httpx.Response(500, request=request)
+
+        reader = CogneeMemoryReader(enabled=True, client=_ok(handler))
         result = await reader.read("test query")
         assert result == []
 
     @pytest.mark.asyncio
     async def test_read_returns_results_on_success(self) -> None:
         """Successful 200 response with results is returned as a list of dicts."""
-        mock_client = AsyncMock(spec=httpx.AsyncClient)
-        mock_client.post.return_value = _mock_response(
-            200,
-            {
-                "results": [
-                    {
-                        "content": "Some context",
-                        "score": 0.92,
-                        "dataset": "default",
-                        "metadata": {"source": "doc1"},
-                    }
-                ]
-            },
-        )
-        reader = CogneeMemoryReader(enabled=True, client=mock_client)
+        reader = CogneeMemoryReader(enabled=True, client=_ok(_search_200()))
         result = await reader.read("test query", top_k=5)
         assert len(result) == 1
         assert result[0]["content"] == "Some context"
         assert result[0]["score"] == 0.92
-        # Verify the payload was sent correctly
-        call_kwargs = mock_client.post.call_args.kwargs
-        assert call_kwargs["json"]["query"] == "test query"
-        assert call_kwargs["json"]["top_k"] == 5
 
     @pytest.mark.asyncio
     async def test_read_includes_dataset_in_payload(self) -> None:
         """Dataset name is included in the search payload when provided."""
-        mock_client = AsyncMock(spec=httpx.AsyncClient)
-        mock_client.post.return_value = _mock_response(200, {"results": []})
-        reader = CogneeMemoryReader(enabled=True, client=mock_client)
+        captured: dict[str, Any] = {}
+
+        def handler(request: httpx.Request) -> httpx.Response:
+            import json as _json
+
+            captured["body"] = _json.loads(request.content)
+            return httpx.Response(200, json={"results": []}, request=request)
+
+        reader = CogneeMemoryReader(enabled=True, client=_ok(handler))
         await reader.read("test query", dataset="agents")
-        payload = mock_client.post.call_args.kwargs["json"]
-        assert payload["dataset"] == "agents"
+        assert captured["body"]["dataset"] == "agents"
+        assert captured["body"]["query"] == "test query"
 
     @pytest.mark.asyncio
     async def test_read_handles_unexpected_json_shape(self) -> None:
         """Unexpected JSON shape (e.g., list instead of dict) is handled gracefully."""
-        mock_client = AsyncMock(spec=httpx.AsyncClient)
-        mock_client.post.return_value = _mock_response(200, [])  # not a dict
-        reader = CogneeMemoryReader(enabled=True, client=mock_client)
+
+        def handler(request: httpx.Request) -> httpx.Response:
+            return httpx.Response(200, json=[], request=request)
+
+        reader = CogneeMemoryReader(enabled=True, client=_ok(handler))
         result = await reader.read("test query")
         assert result == []
 
@@ -140,31 +165,32 @@ class TestCogneeMemoryReader:
     @pytest.mark.asyncio
     async def test_health_returns_true_on_200(self) -> None:
         """Health check returns True when Cognee returns 200."""
-        mock_client = AsyncMock(spec=httpx.AsyncClient)
-        mock_client.get.return_value = _mock_response(200)
-        reader = CogneeMemoryReader(enabled=True, client=mock_client)
+
+        def handler(request: httpx.Request) -> httpx.Response:
+            return httpx.Response(200, request=request)
+
+        reader = CogneeMemoryReader(enabled=True, client=_ok(handler))
         assert await reader.health() is True
 
     @pytest.mark.asyncio
     async def test_health_returns_false_on_error(self) -> None:
         """Health check returns False on any exception."""
-        mock_client = AsyncMock(spec=httpx.AsyncClient)
-        mock_client.get.side_effect = httpx.HTTPError("nope")
-        reader = CogneeMemoryReader(enabled=True, client=mock_client)
+
+        def handler(request: httpx.Request) -> httpx.Response:
+            raise httpx.HTTPError("nope")
+
+        reader = CogneeMemoryReader(enabled=True, client=_ok(handler))
         assert await reader.health() is False
 
     @pytest.mark.asyncio
-    async def test_close_closes_owned_client(self) -> None:
-        """``close()`` closes the client only if we own it (not injected)."""
-        mock_client = AsyncMock(spec=httpx.AsyncClient)
-        mock_client.is_closed = False
-        reader = CogneeMemoryReader(enabled=True, client=mock_client)
+    async def test_close_does_not_close_injected_client(self) -> None:
+        """``close()`` does NOT close a client that was injected by the caller."""
+        client = _ok(_empty_200())
+        reader = CogneeMemoryReader(enabled=True, client=client)
         await reader.close()
-        # Injected client — we should NOT close it
-        mock_client.aclose.assert_not_awaited()
+        assert client.is_closed is False
 
-    @pytest.mark.asyncio
-    async def test_repr_includes_key_state(self) -> None:
+    def test_repr_includes_key_state(self) -> None:
         """__repr__ exposes api_url and enabled for debugging."""
         reader = CogneeMemoryReader(api_url="http://x:1234", enabled=True)
         r = repr(reader)

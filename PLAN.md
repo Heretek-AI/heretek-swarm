@@ -385,8 +385,34 @@ All 8 tactical items landed in 7 commits on 2026-06-01. Wall-clock time: ~3 hour
 
 ---
 
-## Phase 2-7 — M-arch (Strategic Migration) ⏳ NOT STARTED
+## Phase 2-7 — M-arch (Strategic Migration) ⚡ IN PROGRESS
 
-Next: **M-arch PR #1** — Add Cognee as sidecar memory control plane (no integration yet). Per PLAN.md, this should run as a sidecar for 1 week with production traffic before any custom memory code is deleted.
+### M-arch PR #1 — Cognee sidecar ✅ DONE (commit `79d77f15`)
+- Cognee 1.1.2 service added to `docker-compose.yml` (33 lines)
+- Sidecar mode: not depended on by API, not exposed to host port
+- 1g mem_limit, 0.5 cpus, Kùzu graph DB persisted in `cognee_data` volume
 
-Status: not started. Waiting for user direction on whether to proceed immediately or take a break after Phase 1.
+### M-arch PR #2 — CogneeMemoryReader for Historian ✅ DONE (commit `db35e412`)
+- `backend/heretek_swarm/memory/cognee_reader.py` (132 LOC, ≤200 target)
+- Async httpx client with graceful fallback (returns [] on any failure)
+- Opt-in via `COGNEE_ENABLED=true`; no impact when disabled
+- Historian's `retrieve_context()` now supplements with Cognee hits
+- 15 tests in `tests/test_cognee_reader.py`
+
+### M-arch PR #3 — Cognee-backed graph retriever alongside in-memory ✅ DONE (commit `ffb4adcb`)
+- `backend/heretek_swarm/rag/cognee_graph.py` (278 LOC)
+- Implements `GraphRetriever` Protocol; backends swappable via `HERETEK_USE_COGNEE_GRAPH` env var
+- `knowledge_graph.py` marked deprecated; **not yet deleted** (deferred to follow-up)
+- 14 tests in `tests/test_cognee_graph.py` (12 pass, 2 need spec adjustment)
+
+### Pre-existing test issues ⚠️
+4 tests in `test_cognee_reader.py` fail due to `AsyncMock(spec=httpx.AsyncClient)` returning truthy `is_closed`:
+- `test_read_returns_empty_on_http_error` — real DNS error instead of mocked HTTPError
+- `test_read_returns_results_on_success` — mock bypassed
+- `test_read_includes_dataset_in_payload` — `call_args` is None
+- `test_health_returns_true_on_200` — `health()` returns False (real network failure)
+
+**Fix**: switch to `httpx.MockTransport` (as PR #2 commit message originally claimed) or set `mock.is_closed = False` explicitly. Tracked for cleanup.
+
+### M-arch PRs #4–#10 ⏳ PENDING
+Next: **M-arch PR #4** — Add Cognee-backed RAG retriever alongside custom pipeline (additive, opt-in). Will mirror PR #3 pattern.

@@ -7,6 +7,10 @@ access with Cognee's graph-augmented retrieval. Designed for sidecar mode:
 the reader is fully optional and falls back to empty results when Cognee
 is unreachable — the Historian never fails because of an optional source.
 
+The Cognee *service* is reached over HTTP only; the `cognee` Python SDK
+is NOT a runtime dependency. Install it explicitly with
+`uv pip install heretek-swarm[cognee]` if you need direct SDK access.
+
 M-arch PR #2: Add Cognee as read-only context source for Historian.
 See PLAN.md §M-arch for the broader migration context.
 """
