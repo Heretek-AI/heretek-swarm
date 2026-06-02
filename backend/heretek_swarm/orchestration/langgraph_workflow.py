@@ -117,9 +117,12 @@ class LangGraphHeavySwarmWorkflow:
     Graph topology:
         research -> analysis -> alternatives -> verification -> decision -> END
 
-    The ``MemorySaver`` checkpointer persists state after every
-    node, so a crashed workflow can be resumed by passing the
-    same ``thread_id`` to ``execute()``.
+    Supports two checkpointer backends:
+    - ``MemorySaver`` (in-memory, default) for development/testing
+    - ``AsyncPostgresSaver`` (PostgreSQL, opt-in) for production crash recovery
+
+    The PostgreSQL checkpointer is activated by setting the
+    ``HERETEK_CHECKPOINT_DB_URL`` environment variable.
     """
 
     def __init__(
@@ -127,14 +130,18 @@ class LangGraphHeavySwarmWorkflow:
         name: str | None = None,
     ) -> None:
         self.name = name or "LangGraphHeavySwarm"
-        self._graph = self._compile_graph()
+        self._graph = self._compile_graph()  # Default with MemorySaver
+        self._checkpointer = None
+        self._initialized = False  # Will be set to True after initialize()
 
-    def _compile_graph(self):  # pragma: no cover — exercised when langgraph is installed
+    def _compile_graph(self, checkpointer=None):  # pragma: no cover — exercised when langgraph is installed
         """Compile the StateGraph with real phase nodes.
 
         Uses the standalone node functions from ``langgraph_nodes``
         (``PHASE_NODES``) rather than the legacy bridge wrappers.
-        ``MemorySaver`` provides checkpoint-based resumability.
+
+        Args:
+            checkpointer: Checkpointer instance to use. If None, uses MemorySaver.
 
         Returns ``None`` if langgraph is not installed, so this
         module is importable even without the optional dep. Callers
@@ -142,10 +149,18 @@ class LangGraphHeavySwarmWorkflow:
         ``invoke()``.
         """
         try:
-            from langgraph.checkpoint.memory import MemorySaver
             from langgraph.graph import END, StateGraph
         except ImportError:
             return None
+
+        # Import MemorySaver as default if no checkpointer provided
+        if checkpointer is None:
+            try:
+                from langgraph.checkpoint.memory import MemorySaver
+                checkpointer = MemorySaver()
+            except ImportError:
+                logger.warning("langgraph_not_installed")
+                return None
 
         graph = StateGraph(WorkflowState)
 
@@ -158,7 +173,93 @@ class LangGraphHeavySwarmWorkflow:
             graph.add_edge(src.value, dst.value)
         graph.add_edge(WorkflowPhase.DECISION.value, END)
 
-        return graph.compile(checkpointer=MemorySaver())
+        return graph.compile(checkpointer=checkpointer)
+
+    async def initialize(self, checkpointer=None) -> None:
+        """Initialize the workflow with optional PostgreSQL checkpointer.
+
+        If ``HERETEK_CHECKPOINT_DB_URL`` is set, creates an
+        ``AsyncPostgresSaver`` and recompiles the graph with it.
+        Otherwise falls back to the default ``MemorySaver``.
+
+        Args:
+            checkpointer: Optional pre-configured checkpointer to use.
+        """
+        if self._initialized:
+            return
+
+        import os
+
+        db_url = os.environ.get("HERETEK_CHECKPOINT_DB_URL")
+
+        if checkpointer is not None:
+            self._checkpointer = checkpointer
+        elif db_url:
+            try:
+                from langgraph_checkpoint_postgres.aio import AsyncPostgresSaver
+                from psycopg_pool import AsyncConnectionPool
+
+                logger.info(
+                    "langgraph_postgres_checkpointer_configuring",
+                    db_url="***",  # Never log credentials
+                )
+
+                # Create connection pool for PostgreSQL
+                pool = AsyncConnectionPool(conninfo=db_url, min_size=1, max_size=10)
+                self._checkpointer = AsyncPostgresSaver(pool)
+
+                # Setup the checkpointer (creates tables if needed)
+                await self._checkpointer.setup()
+                logger.info("langgraph_postgres_checkpointer_ready")
+
+            except ImportError:
+                logger.warning(
+                    "langgraph_checkpoint_postgres_not_installed",
+                    message="HERETEK_CHECKPOINT_DB_URL is set but langgraph-checkpoint-postgres is not installed. "
+                    "Falling back to MemorySaver. Install with: uv pip install langgraph-checkpoint-postgres",
+                )
+                # Fall back to MemorySaver
+                self._checkpointer = None
+            except Exception as e:
+                logger.exception(
+                    "langgraph_postgres_checkpointer_failed",
+                    error=str(e),
+                    message="Failed to connect to PostgreSQL. Falling back to MemorySaver.",
+                )
+                # Fall back to MemorySaver
+                self._checkpointer = None
+
+        # Compile graph with the selected checkpointer (or re-use existing if MemorySaver)
+        if self._checkpointer is not None or self._graph is None:
+            self._graph = self._compile_graph(self._checkpointer)
+        self._initialized = True
+
+        checkpointer_type = type(self._checkpointer).__name__ if self._checkpointer else "MemorySaver"
+        logger.info(
+            "langgraph_workflow_initialized",
+            checkpointer_type=checkpointer_type,
+        )
+
+    async def close(self) -> None:
+        """Close the PostgreSQL checkpointer connection if one was created.
+
+        Should be called when the workflow is no longer needed.
+        """
+        if self._checkpointer is not None:
+            try:
+                # Check if the checkpointer has a close method (AsyncPostgresSaver does)
+                if hasattr(self._checkpointer, "conn") and hasattr(self._checkpointer.conn, "close"):
+                    await self._checkpointer.conn.close()
+                    logger.info("langgraph_postgres_checkpointer_closed")
+                # If it's using a connection pool, close that
+                elif hasattr(self._checkpointer, "pool") and hasattr(self._checkpointer.pool, "close"):
+                    await self._checkpointer.pool.close()
+                    logger.info("langgraph_postgres_checkpointer_pool_closed")
+            except Exception as e:
+                logger.exception(
+                    "langgraph_postgres_checkpointer_close_failed",
+                    error=str(e),
+                )
 
     async def execute(
         self,
@@ -171,7 +272,11 @@ class LangGraphHeavySwarmWorkflow:
         Mirrors the public contract of
         :meth:`HeavySwarmWorkflow.execute`.
         """
-        if self._graph is None:
+        # Lazy initialization on first execute
+        if not self._initialized:
+            await self.initialize()
+
+        if self._graph is None:  # pragma: no cover — only if langgraph import fails
             raise RuntimeError(
                 "langgraph is not installed. Install with "
                 "`uv pip install heretek-swarm[langgraph]` to use "
@@ -182,11 +287,13 @@ class LangGraphHeavySwarmWorkflow:
         thread_id = initial["workflow_id"]
         config = {"configurable": {"thread_id": thread_id}}
 
+        checkpointer_type = type(self._checkpointer).__name__ if self._checkpointer else "MemorySaver"
         logger.info(
             "langgraph_workflow_starting",
             name=self.name,
             workflow_id=thread_id,
             topic=topic,
+            checkpointer_type=checkpointer_type,
         )
 
         try:

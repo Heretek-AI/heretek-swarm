@@ -364,4 +364,157 @@ class TestLangGraphWorkflowExecution:
         assert result.phase_results or result.state == WorkflowPhase.COMPLETED
 
 
+@pytest.mark.skipif(
+    not __import__("importlib").util.find_spec("langgraph"),
+    reason="langgraph not installed",
+)
+class TestCheckpointerSupport:
+    """Tests for dual checkpointer support (MemorySaver and PostgreSQL)."""
+
+    @pytest.mark.asyncio
+    async def test_initialize_sets_memory_saver_by_default(self) -> None:
+        """initialize() uses MemorySaver when no DB URL is set."""
+        from heretek_swarm.orchestration.langgraph_workflow import (
+            LangGraphHeavySwarmWorkflow,
+        )
+
+        wf = LangGraphHeavySwarmWorkflow(name="checkpointer-test")
+        await wf.initialize()
+        assert wf._initialized is True
+        assert wf._checkpointer is None  # Uses MemorySaver internally
+
+    @pytest.mark.asyncio
+    async def test_initialize_logs_checkpointer_type(self) -> None:
+        """initialize() logs the checkpointer type."""
+        from unittest.mock import patch
+
+        from heretek_swarm.orchestration.langgraph_workflow import (
+            LangGraphHeavySwarmWorkflow,
+        )
+
+        wf = LangGraphHeavySwarmWorkflow(name="checkpointer-test")
+        with patch("heretek_swarm.orchestration.langgraph_workflow.logger") as mock_logger:
+            await wf.initialize()
+            mock_logger.info.assert_called_with(
+                "langgraph_workflow_initialized",
+                checkpointer_type="MemorySaver",
+            )
+
+    @pytest.mark.asyncio
+    async def test_execute_lazy_initialization(self) -> None:
+        """execute() calls initialize() lazily on first call."""
+        from heretek_swarm.orchestration.langgraph_workflow import (
+            LangGraphHeavySwarmWorkflow,
+        )
+
+        wf = LangGraphHeavySwarmWorkflow(name="lazy-init-test")
+        assert wf._initialized is False
+        result = await wf.execute(topic="test topic")
+        # The workflow ran successfully, which means initialize() was called
+        assert result.state == WorkflowPhase.COMPLETED
+        # Note: _initialized is set to True inside initialize(), which is called by execute()
+
+    @pytest.mark.asyncio
+    async def test_close_method_exists(self) -> None:
+        """close() method exists and can be called."""
+        from heretek_swarm.orchestration.langgraph_workflow import (
+            LangGraphHeavySwarmWorkflow,
+        )
+
+        wf = LangGraphHeavySwarmWorkflow()
+        await wf.initialize()
+        await wf.close()  # Should not raise
+
+    @pytest.mark.asyncio
+    async def test_execute_logs_checkpointer_type(self) -> None:
+        """execute() logs the checkpointer type in the start message."""
+        from unittest.mock import patch
+
+        from heretek_swarm.orchestration.langgraph_workflow import (
+            LangGraphHeavySwarmWorkflow,
+        )
+
+        wf = LangGraphHeavySwarmWorkflow(name="checkpointer-log-test")
+        with patch("heretek_swarm.orchestration.langgraph_workflow.logger") as mock_logger:
+            await wf.execute(topic="test")
+            # Find the langgraph_workflow_starting call
+            starting_calls = [
+                call for call in mock_logger.info.call_args_list
+                if call[0][0] == "langgraph_workflow_starting"
+            ]
+            assert len(starting_calls) == 1
+            # Verify checkpointer_type is in the kwargs
+            assert "checkpointer_type" in starting_calls[0][1]
+            # The checkpointer_type should be "MemorySaver" since no DB URL is set
+            assert starting_calls[0][1]["checkpointer_type"] == "MemorySaver"
+
+    @pytest.mark.asyncio
+    async def test_initialize_with_explicit_checkpointer(self) -> None:
+        """initialize() accepts an explicit checkpointer instance."""
+        from langgraph.checkpoint.memory import MemorySaver
+
+        from heretek_swarm.orchestration.langgraph_workflow import (
+            LangGraphHeavySwarmWorkflow,
+        )
+
+        # Use a real MemorySaver instance instead of a mock
+        real_checkpointer = MemorySaver()
+        wf = LangGraphHeavySwarmWorkflow(name="explicit-checkpointer-test")
+        await wf.initialize(checkpointer=real_checkpointer)
+        assert wf._checkpointer is real_checkpointer
+
+
+@pytest.mark.skipif(
+    not __import__("importlib").util.find_spec("langgraph_checkpoint_postgres"),
+    reason="langgraph-checkpoint-postgres not installed",
+)
+class TestPostgreSQLCheckpointer:
+    """Tests for PostgreSQL checkpointer support.
+
+    These tests require:
+    1. langgraph-checkpoint-postgres installed
+    2. HERETEK_CHECKPOINT_DB_URL set to a valid PostgreSQL connection string
+    """
+
+    @pytest.mark.asyncio
+    async def test_postgres_checkpointer_initialization(self, monkeypatch) -> None:
+        """initialize() uses PostgreSQL checkpointer when DB URL is set."""
+        import os
+
+        # Skip if no PostgreSQL is available
+        db_url = os.environ.get("HERETEK_CHECKPOINT_DB_URL")
+        if not db_url:
+            pytest.skip("HERETEK_CHECKPOINT_DB_URL not set")
+
+        from heretek_swarm.orchestration.langgraph_workflow import (
+            LangGraphHeavySwarmWorkflow,
+        )
+
+        wf = LangGraphHeavySwarmWorkflow(name="postgres-test")
+        await wf.initialize()
+        assert wf._initialized is True
+        # The checkpointer should be an AsyncPostgresSaver, not None
+        assert wf._checkpointer is not None
+
+    @pytest.mark.asyncio
+    async def test_postgres_checkpointer_workflow_execution(self, monkeypatch) -> None:
+        """Workflow executes successfully with PostgreSQL checkpointer."""
+        import os
+
+        # Skip if no PostgreSQL is available
+        db_url = os.environ.get("HERETEK_CHECKPOINT_DB_URL")
+        if not db_url:
+            pytest.skip("HERETEK_CHECKPOINT_DB_URL not set")
+
+        from heretek_swarm.orchestration.langgraph_workflow import (
+            LangGraphHeavySwarmWorkflow,
+        )
+
+        wf = LangGraphHeavySwarmWorkflow(name="postgres-exec-test")
+        result = await wf.execute(topic="PostgreSQL checkpoint test")
+        assert result.state == WorkflowPhase.COMPLETED
+        assert result.workflow_id
+
+
+
 
