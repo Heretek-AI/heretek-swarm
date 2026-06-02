@@ -1,40 +1,172 @@
-"""Tests for memory/base.py — MemoryEntry dataclass."""
+"""Tests for the memory package — Cognee-backed memory surface.
 
-from heretek_swarm.memory.base import MemoryEntry
+Validates CogneeMemoryReader, CogneeMemoryWriter, access-pattern
+analysis, intelligent prefetching, and package-level exports.
+"""
+
+from __future__ import annotations
+
+import os
+from unittest.mock import patch
+
+from heretek_swarm.memory.cognee_reader import CogneeMemoryReader
+from heretek_swarm.memory.cognee_writer import CogneeMemoryWriter
+
+# ---------------------------------------------------------------------------
+# CogneeMemoryReader tests
+# ---------------------------------------------------------------------------
+
+class TestCogneeMemoryReader:
+    """Tests for CogneeMemoryReader instantiation and graceful fallback."""
+
+    def test_default_config(self):
+        reader = CogneeMemoryReader()
+        assert reader.api_url == "http://cognee:8000"
+        assert reader.enabled is False
+        assert reader.timeout_seconds == 5.0
+
+    def test_custom_api_url(self):
+        reader = CogneeMemoryReader(api_url="http://localhost:9000")
+        assert reader.api_url == "http://localhost:9000"
+
+    def test_custom_enabled(self):
+        reader = CogneeMemoryReader(enabled=True)
+        assert reader.enabled is True
+
+    @patch.dict(os.environ, {"COGNEE_API_URL": "http://env-host:7777"})
+    def test_env_overrides_default(self):
+        reader = CogneeMemoryReader()
+        assert reader.api_url == "http://env-host:7777"
+
+    async def test_read_returns_empty_when_disabled(self):
+        """When Cognee is disabled, read() must return [] without HTTP calls."""
+        reader = CogneeMemoryReader(enabled=False)
+        results = await reader.read("test query")
+        assert results == []
+
+    async def test_read_returns_empty_on_connection_error(self):
+        """When Cognee is enabled but unreachable, read() must return []."""
+        reader = CogneeMemoryReader(
+            api_url="http://127.0.0.1:1",  # nothing listens here
+            enabled=True,
+            timeout_seconds=0.1,
+        )
+        results = await reader.read("test query")
+        assert results == []
+
+    async def test_health_false_when_disabled(self):
+        reader = CogneeMemoryReader(enabled=False)
+        assert await reader.health() is False
+
+    def test_repr(self):
+        reader = CogneeMemoryReader(api_url="http://x:1", enabled=True)
+        r = repr(reader)
+        assert "CogneeMemoryReader" in r
+        assert "http://x:1" in r
 
 
-class TestMemoryEntry:
-    def test_create_entry(self):
-        entry = MemoryEntry(content="test message", agent_id="alpha")
-        assert entry.content == "test message"
-        assert entry.agent_id == "alpha"
-        assert entry.id is not None
+# ---------------------------------------------------------------------------
+# CogneeMemoryWriter tests
+# ---------------------------------------------------------------------------
 
-    def test_entry_created_at(self):
-        entry = MemoryEntry(content="x", agent_id="a")
-        assert entry.created_at is not None
+class TestCogneeMemoryWriter:
+    """Tests for CogneeMemoryWriter instantiation and graceful fallback."""
 
-    def test_entry_with_metadata(self):
-        entry = MemoryEntry(content="data", agent_id="beta", metadata={"key": "value"})
-        assert entry.metadata["key"] == "value"
+    def test_default_config(self):
+        writer = CogneeMemoryWriter()
+        assert writer.api_url == "http://cognee:8000"
+        assert writer.enabled is False
+        assert writer.timeout_seconds == 10.0
 
-    def test_entry_empty_content(self):
-        entry = MemoryEntry(content="", agent_id="gamma")
-        assert entry.content == ""
+    def test_custom_api_url(self):
+        writer = CogneeMemoryWriter(api_url="http://cognee-write:8001")
+        assert writer.api_url == "http://cognee-write:8001"
 
-    def test_entry_default_content_type(self):
-        entry = MemoryEntry(content="plain text", agent_id="delta")
-        assert entry.content_type == "text/plain"
+    def test_custom_enabled(self):
+        writer = CogneeMemoryWriter(enabled=True)
+        assert writer.enabled is True
 
-    def test_entry_auto_id_unique(self):
-        e1 = MemoryEntry(content="a", agent_id="1")
-        e2 = MemoryEntry(content="b", agent_id="2")
-        assert e1.id != e2.id
+    @patch.dict(os.environ, {"COGNEE_API_URL": "http://env-writer:5555"})
+    def test_env_overrides_default(self):
+        writer = CogneeMemoryWriter()
+        assert writer.api_url == "http://env-writer:5555"
 
-    def test_entry_lineage_default(self):
-        entry = MemoryEntry(content="x", agent_id="3")
-        assert entry.lineage == []
+    async def test_store_returns_false_when_disabled(self):
+        """When Cognee is disabled, store() must return False without HTTP."""
+        writer = CogneeMemoryWriter(enabled=False)
+        result = await writer.store("test content")
+        assert result is False
 
-    def test_entry_access_count_default(self):
-        entry = MemoryEntry(content="y", agent_id="4")
-        assert entry.access_count == 0
+    async def test_add_returns_false_when_disabled(self):
+        writer = CogneeMemoryWriter(enabled=False)
+        result = await writer.add("test")
+        assert result is False
+
+    async def test_cognify_returns_false_when_disabled(self):
+        writer = CogneeMemoryWriter(enabled=False)
+        result = await writer.cognify()
+        assert result is False
+
+    async def test_store_returns_false_on_connection_error(self):
+        """When Cognee is enabled but unreachable, store() must return False."""
+        writer = CogneeMemoryWriter(
+            api_url="http://127.0.0.1:1",
+            enabled=True,
+            timeout_seconds=0.1,
+        )
+        result = await writer.store("test content")
+        assert result is False
+
+    async def test_health_false_when_disabled(self):
+        writer = CogneeMemoryWriter(enabled=False)
+        assert await writer.health() is False
+
+    def test_repr(self):
+        writer = CogneeMemoryWriter(api_url="http://x:1", enabled=False)
+        r = repr(writer)
+        assert "CogneeMemoryWriter" in r
+        assert "http://x:1" in r
+
+
+# ---------------------------------------------------------------------------
+# Package-level import tests
+# ---------------------------------------------------------------------------
+
+class TestMemoryPackageExports:
+    """Verify heretek_swarm.memory exports the correct public surface."""
+
+    def test_cognee_reader_importable(self):
+        from heretek_swarm.memory import CogneeMemoryReader as Reader
+        assert Reader is CogneeMemoryReader
+
+    def test_cognee_writer_importable(self):
+        from heretek_swarm.memory import CogneeMemoryWriter as Writer
+        assert Writer is CogneeMemoryWriter
+
+    def test_access_pattern_analyzer_importable(self):
+        from heretek_swarm.memory import AccessPatternAnalyzer as Analyzer
+        assert Analyzer is not None
+
+    def test_intelligent_prefetcher_importable(self):
+        from heretek_swarm.memory import IntelligentPrefetcher as Fetcher
+        assert Fetcher is not None
+
+    def test_eliza_memory_importable(self):
+        from heretek_swarm.memory import MemoryManager as Manager
+        assert Manager is not None
+
+    def test_legacy_dual_tier_memory_not_in_all(self):
+        from heretek_swarm.memory import __all__ as exports
+        assert "DualTierMemory" not in exports
+
+    def test_legacy_memory_entry_not_in_all(self):
+        from heretek_swarm.memory import __all__ as exports
+        assert "MemoryEntry" not in exports
+
+    def test_legacy_persistent_memory_not_in_all(self):
+        from heretek_swarm.memory import __all__ as exports
+        assert "PersistentMemory" not in exports
+
+    def test_all_is_sorted(self):
+        from heretek_swarm.memory import __all__ as exports
+        assert exports == sorted(exports), "__all__ must be alphabetically sorted"
