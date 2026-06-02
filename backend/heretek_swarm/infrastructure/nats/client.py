@@ -8,10 +8,10 @@ import os
 import ssl
 import tempfile
 from collections.abc import Callable
-from pathlib import Path
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from enum import Enum
+from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 import structlog

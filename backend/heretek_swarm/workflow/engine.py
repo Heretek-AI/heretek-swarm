@@ -18,6 +18,7 @@ from typing import TYPE_CHECKING, Any
 import structlog
 
 from heretek_swarm.workflow import node_executors
+from heretek_swarm.workflow.execution_events import get_execution_event_bus
 from heretek_swarm.workflow.models import (
     NodeResult,
     NodeStatus,
@@ -30,7 +31,6 @@ from heretek_swarm.workflow.models import (
     WorkflowStatus,
 )
 from heretek_swarm.workflow.store import FileWorkflowStore
-from heretek_swarm.workflow.execution_events import get_execution_event_bus
 
 if TYPE_CHECKING:
     from heretek_swarm.workflow.strategies import WorkflowExecutionResult

@@ -17,10 +17,6 @@ from heretek_swarm.infrastructure.otel.metrics import (
     init_metrics,
     record_metric,
 )
-from heretek_swarm.observability.tracing import (
-    initialize_tracing,
-    setup_telemetry_middleware,
-)
 from heretek_swarm.infrastructure.otel.tracing import (
     InstrumentedAsyncClient,
     SpanAttributes,
@@ -40,6 +36,10 @@ from heretek_swarm.infrastructure.otel.tracing import (
     set_span_attributes,
     span_context,
     with_span,
+)
+from heretek_swarm.observability.tracing import (
+    initialize_tracing,
+    setup_telemetry_middleware,
 )
 
 __all__ = [

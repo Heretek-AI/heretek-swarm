@@ -14,7 +14,6 @@ from typing import Any
 
 import httpx
 import structlog
-
 from heretek_swarm.infrastructure.otel import instrumented_httpx_client
 
 from .base import (

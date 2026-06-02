@@ -5,6 +5,7 @@
 from __future__ import annotations
 
 import asyncio
+import datetime as _dt
 import json as json_mod
 import sys
 import time
@@ -16,7 +17,6 @@ import structlog
 
 from heretek_swarm.cli.health import _check_service_health
 from heretek_swarm.config.models import InfrastructureService
-import datetime as _dt
 
 logger = structlog.get_logger("cli.status")
 

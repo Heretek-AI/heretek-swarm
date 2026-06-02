@@ -10,9 +10,10 @@ import threading
 from datetime import UTC, datetime, timedelta
 from typing import Any
 
+import structlog
+
 from heretek_swarm.config.models import ConfigCacheEntry
 
-import structlog
 logger = structlog.get_logger(__name__)
 
 

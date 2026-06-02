@@ -5,6 +5,7 @@ Runtime environment for single agent with state management, memory, and tools.
 Reference: MiniMax Audit Lines 153-242 (elizaOS runtime patterns)
 """
 
+import os
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
@@ -12,7 +13,6 @@ from enum import Enum
 from typing import Any
 
 import structlog
-import os
 
 logger = structlog.get_logger(__name__)
 

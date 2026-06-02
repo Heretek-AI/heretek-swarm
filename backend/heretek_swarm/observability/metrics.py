@@ -13,10 +13,10 @@ Features:
 - Prometheus format export
 """
 
+import time
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from typing import Any
-import time
 
 # Import cycle detector and phi training for metrics integration
 try:
@@ -499,6 +499,7 @@ class SwarmMetricsCollector:
     def collect_consciousness_metrics(self) -> ConsciousnessMetricsData:
         """Collect consciousness metrics computed from IIT Phi and FEP calculators."""
         import structlog
+
         from heretek_swarm.consciousness.fep_active_inference import FreeEnergyCalculator
         from heretek_swarm.consciousness.iit_phi import PhiCalculator
 

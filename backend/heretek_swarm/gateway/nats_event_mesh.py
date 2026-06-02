@@ -26,9 +26,9 @@ from enum import Enum
 from pathlib import Path
 from typing import Any
 
-from heretek_swarm.infrastructure.nats.ca import CertificateAuthority
-
 import structlog
+
+from heretek_swarm.infrastructure.nats.ca import CertificateAuthority
 
 logger = structlog.get_logger(__name__)
 

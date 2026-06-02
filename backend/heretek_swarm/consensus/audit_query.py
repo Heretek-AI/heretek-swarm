@@ -12,12 +12,11 @@ Recording is handled by audit_trail.py.
 The audit_models.py module contains shared dataclass definitions.
 """
 
+import json
 from datetime import UTC, datetime
 from typing import Any
 
 import structlog
-
-import json
 
 from .audit_models import (
     AuditEventType,

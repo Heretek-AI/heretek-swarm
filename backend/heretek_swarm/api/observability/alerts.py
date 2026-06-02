@@ -7,9 +7,8 @@ from typing import Annotated, Any
 import structlog
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
 
-from heretek_swarm.security.zero_trust import LayerResult, ZeroTrustResult
-
 from heretek_swarm.gateway.auth import verify_auth
+from heretek_swarm.security.zero_trust import LayerResult, ZeroTrustResult
 
 from . import (
     check_rate_limit,

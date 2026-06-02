@@ -9,6 +9,7 @@ import structlog
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from sqlalchemy import func, select
 
+from heretek_swarm.gateway.auth import verify_auth
 from heretek_swarm.models.external_call_log import ExternalCallLog
 from heretek_swarm.models.external_call_log_encryption import get_encryptor
 from heretek_swarm.schemas.external_call_log import (
@@ -17,8 +18,6 @@ from heretek_swarm.schemas.external_call_log import (
     ExternalCallLogListResponse,
     ExternalCallLogResponse,
 )
-
-from heretek_swarm.gateway.auth import verify_auth
 
 from . import (
     _get_external_call_log_session_factory,
