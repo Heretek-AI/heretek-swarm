@@ -99,10 +99,14 @@ services:
       LLM_MODEL: ${LLM_MODEL:-MiniMax-M2.7}
       LLM_PROVIDER: openai
       LLM_ENDPOINT: ${OPENAI_BASE_URL:-https://api.minimax.io/v1}
-      VECTOR_DB_PROVIDER: qdrant
-      VECTOR_DB_URL: http://qdrant:6333
-      VECTOR_DB_KEY: ${QDRANT_API_KEY:-}
+      VECTOR_DB_PROVIDER: pgvector
+      VECTOR_DB_HOST: postgres
+      VECTOR_DB_PORT: "5432"
+      VECTOR_DB_USERNAME: ${POSTGRES_USER:-postgres}
+      VECTOR_DB_PASSWORD: ${POSTGRES_PASSWORD}
+      VECTOR_DB_NAME: ${POSTGRES_DB:-heretek_swarm}
       GRAPH_DATABASE_PROVIDER: kuzu
+      ENABLE_BACKEND_ACCESS_CONTROL: "false"
     volumes:
       - cognee_data:/data/cognee
     mem_limit: 1g

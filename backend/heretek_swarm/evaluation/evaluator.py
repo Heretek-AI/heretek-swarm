@@ -1,5 +1,7 @@
 """Agent Evaluator Framework for testing agent quality."""
 
+from __future__ import annotations
+
 import asyncio
 import uuid
 from dataclasses import dataclass, field
@@ -10,8 +12,6 @@ from typing import Any, Optional
 import structlog
 
 logger = structlog.get_logger(__name__)
-
-from __future__ import annotations
 
 _evaluator_instance: AgentEvaluator | None = None
 
