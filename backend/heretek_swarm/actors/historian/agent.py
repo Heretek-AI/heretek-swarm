@@ -953,7 +953,7 @@ class HistorianAgent(
                     "error": "timeout",
                     "synthesized_at": datetime.now(UTC).isoformat(),
                 }
-            except Exception:
+            except Exception as e:
                 logger.error(f"[{self.agent_id}] Synthesis error: {e}")
 
         # Fallback synthesis
@@ -1008,7 +1008,7 @@ class HistorianAgent(
                 # Use asyncio.to_thread so file I/O does not block the
                 # event loop — stdlib only, no aiofiles dependency.
                 await asyncio.to_thread(self._write_jsonl_line, self._jsonl_path, line)
-            except Exception:
+            except Exception as e:
                 logger.exception(f"[{self.agent_id}] JSONL writer error")
             finally:
                 self._jsonl_queue.task_done()
@@ -1052,7 +1052,7 @@ class HistorianAgent(
         try:
             async with db_pool.acquire() as conn:
                 await conn.execute(self._CREATE_HISTORIAN_EVENTS_DDL)
-        except Exception:
+        except Exception as e:
             logger.exception(f"[{self.agent_id}] Failed to create historian_events table")
             return
 
@@ -1073,7 +1073,7 @@ class HistorianAgent(
                         json.dumps(record["payload"]),
                     )
                 logger.debug(f"[{self.agent_id}] PG writer: inserted event {record['event_id']}")
-            except Exception:
+            except Exception as e:
                 logger.exception(
                     f"[{self.agent_id}] PG writer error for event {record.get('event_id', '?')}"  # noqa: G004
                 )
@@ -1159,7 +1159,7 @@ class HistorianAgent(
         try:
             async with db_pool.acquire() as conn:
                 rows = await conn.fetch(query, *params)
-        except Exception:
+        except Exception as e:
             logger.exception(f"[{self.agent_id}] read_events query failed")
             return []
 
@@ -1260,7 +1260,7 @@ class HistorianAgent(
             if db_pool is not None:
                 try:
                     await db_pool.close()
-                except Exception:
+                except Exception as e:
                     logger.exception(f"[{self.agent_id}] Error closing db_pool during cleanup")
 
         await self.memory_system.close()

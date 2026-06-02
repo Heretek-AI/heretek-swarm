@@ -640,7 +640,7 @@ Format as JSON with keys: summary, phases, resources, risks, metrics
                 "created_at": datetime.now(UTC).isoformat(),
             }
 
-        except Exception:
+        except Exception as e:
             logger.error(f"[{self.agent_id}] LLM failed for strategic planning: {e}")
             # Return minimal plan
             return {
@@ -758,7 +758,7 @@ Format each risk as JSON object.
                 for i in range(3)
             ]
 
-        except Exception:
+        except Exception as e:
             logger.error(f"[{self.agent_id}] LLM failed for risk assessment: {e}")
             return []
 

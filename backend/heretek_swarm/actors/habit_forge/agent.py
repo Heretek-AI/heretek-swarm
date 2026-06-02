@@ -277,7 +277,7 @@ class HabitForgeAgent(
                     sender_id=self.agent_id,
                 )
 
-        except Exception:
+        except Exception as e:
             logger.exception(f"[{self.agent_id}] Error creating habit: {e}")
 
     async def _handle_track_habit(self, message: ActorMessage) -> None:
@@ -331,7 +331,7 @@ class HabitForgeAgent(
                     sender_id=self.agent_id,
                 )
 
-        except Exception:
+        except Exception as e:
             logger.exception(f"[{self.agent_id}] Error tracking habit: {e}")
 
     async def _check_stage_progression(self, habit: Habit) -> None:
@@ -415,7 +415,7 @@ class HabitForgeAgent(
 
             logger.info(f"[{self.agent_id}] Detected {len(patterns)} behavioral patterns")
 
-        except Exception:
+        except Exception as e:
             logger.exception(f"[{self.agent_id}] Error analyzing patterns: {e}")
 
     async def _analyze_behavior_patterns(
@@ -498,7 +498,7 @@ Respond in JSON format:
                                 impact_score=float(item.get("impact_score", 0.5)),
                             )
                             patterns.append(pattern)
-                except Exception:
+                except Exception as e:
                     logger.warning("habit_forge_llm_json_parse_failed", exc_info=True)
                     # Fall through to heuristic
 
@@ -506,7 +506,7 @@ Respond in JSON format:
             if not patterns:
                 patterns.extend(self._heuristic_pattern_detection(behavior_data))
 
-        except Exception:
+        except Exception as e:
             logger.warning(f"[{self.agent_id}] LLM pattern analysis failed: {e}")
             patterns.extend(self._heuristic_pattern_detection(behavior_data))
 
@@ -649,7 +649,7 @@ Respond in JSON format:
                     sender_id=self.agent_id,
                 )
 
-        except Exception:
+        except Exception as e:
             logger.exception(f"[{self.agent_id}] Error getting habit progress: {e}")
 
     def _calculate_collective_adherence(self) -> float:
@@ -702,7 +702,7 @@ Respond in JSON format:
                     sender_id=self.agent_id,
                 )
 
-        except Exception:
+        except Exception as e:
             logger.exception(f"[{self.agent_id}] Error modifying pattern: {e}")
 
     async def _generate_modification_plan(
@@ -763,7 +763,7 @@ Respond in JSON:
                     end_idx = result.rfind("}") + 1
                     if start_idx >= 0 and end_idx > start_idx:
                         return json.loads(result[start_idx:end_idx])
-                except Exception:
+                except Exception as e:
                     logger.warning("habit_forge_llm_json_parse_failed", exc_info=True)
                     # Fall through to fallback
 
@@ -827,7 +827,7 @@ Respond in JSON:
                     sender_id=self.agent_id,
                 )
 
-        except Exception:
+        except Exception as e:
             logger.exception(f"[{self.agent_id}] Error generating behavior report: {e}")
 
     async def _handle_design_reinforcement(self, message: ActorMessage) -> None:
@@ -867,7 +867,7 @@ Respond in JSON:
                     sender_id=self.agent_id,
                 )
 
-        except Exception:
+        except Exception as e:
             logger.exception(f"[{self.agent_id}] Error designing reinforcement: {e}")
 
     # =========================================================================
@@ -914,7 +914,7 @@ Respond in JSON:
         """
         try:
             self._synthesize_operational_pattern(data)
-        except Exception:
+        except Exception as e:
             logger.exception(
                 "precedent_event_parse_failed",
                 raw_data_keys=list(data.keys()) if data else [],
@@ -1259,7 +1259,7 @@ Respond in JSON:
                     end_idx = result.rfind("}") + 1
                     if start_idx >= 0 and end_idx > start_idx:
                         return json.loads(result[start_idx:end_idx])
-                except Exception:
+                except Exception as e:
                     logger.warning("habit_forge_llm_json_parse_failed", exc_info=True)
                     # Fall through to fallback
 

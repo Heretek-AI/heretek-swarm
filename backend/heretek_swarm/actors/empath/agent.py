@@ -340,7 +340,7 @@ class EmpathAgent(
         except TimeoutError:
             logger.warning(f"[{self.agent_id}] LLM sentiment analysis timed out")
             return self._analyze_sentiment_heuristic(text)
-        except Exception:
+        except Exception as e:
             logger.error(f"[{self.agent_id}] LLM sentiment analysis error: {e}")
             return self._analyze_sentiment_heuristic(text)
 
@@ -375,7 +375,7 @@ Provide your analysis in this exact JSON format:
             json_match = re.search(r"\{.*\}", response, re.DOTALL)
             if json_match:
                 return json.loads(json_match.group())
-        except Exception:
+        except Exception as e:
             logger.warning(f"[{self.agent_id}] Failed to parse LLM sentiment response: {e}")
 
         # Fallback to heuristic analysis
@@ -834,7 +834,7 @@ Return as JSON: {{"resolution": "...", "reasoning": "..."}}
                 json_match = re.search(r"\{.*\}", response, re.DOTALL)
                 if json_match:
                     return json.loads(json_match.group())
-        except Exception:
+        except Exception as e:
             logger.warning(f"[{self.agent_id}] LLM mediation failed: {e}")
 
         # Fallback mediation

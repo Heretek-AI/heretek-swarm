@@ -501,7 +501,7 @@ class AgentActor:
                 f"[{self.agent_id}] Actor spawn complete",  # noqa: G004
                 extra={"mailbox_size": self.mailbox.qsize()},
             )
-        except Exception:
+        except Exception as e:
             logger.exception(f"[{self.agent_id}] Spawn failed: {e}")
             self.state = ActorState.ERROR
             self.error_count += 1
@@ -535,7 +535,7 @@ class AgentActor:
             self.state = ActorState.TERMINATED
 
             logger.info(f"[{self.agent_id}] Agent terminated")
-        except Exception:
+        except Exception as e:
             logger.exception(f"[{self.agent_id}] Terminate failed: {e}")
             self.state = ActorState.ERROR
             raise

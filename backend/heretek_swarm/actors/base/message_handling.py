@@ -40,7 +40,7 @@ class AgentActorMessageHandling(AgentActor):
 
             plugin = get_consciousness_plugin()
             plugin.record_interaction(from_agent, to_agent)
-        except Exception:
+        except Exception as e:
             # Consciousness tracking is non-fatal — do not break message delivery
             logger.debug(
                 "Consciousness tracking unavailable, continuing message delivery",
@@ -843,7 +843,7 @@ Please provide your analysis and recommendation for this collective task."""
                     },
                     "confidence": 0.75,
                 }
-            except Exception:
+            except Exception as e:
                 logger.error(f"[{self.agent_id}] LLM contribution error: {e}")
 
         # Fallback contribution
@@ -976,7 +976,7 @@ Please provide your analysis and recommendation for this collective task."""
             except RuntimeError:
                 # No providers registered in router, fall through to swarms_agent
                 logger.debug(f"[{self.agent_id}] No router providers, using swarms_agent fallback")
-            except Exception:
+            except Exception as e:
                 logger.warning(f"[{self.agent_id}] Router failed, using swarms_agent fallback: {e}")
 
         # Fallback: use the swarms Agent directly
@@ -1012,7 +1012,7 @@ Please provide your analysis and recommendation for this collective task."""
             except TimeoutError:
                 logger.error(f"[{self.agent_id}] LLM call timed out after {timeout}s")
                 raise
-            except Exception:
+            except Exception as e:
                 logger.exception(f"[{self.agent_id}] LLM call failed: {e}")
                 raise
 

@@ -515,7 +515,7 @@ class PerceiverAgent(
         except ImportError:
             logger.warning("[%s] PIL/Pillow not available — falling back to metadata",
                            self.agent_id, extra={"event": "perceiver_pil_unavailable"})
-        except Exception:
+        except Exception as e:
             logger.exception("[%s] PIL image decode failed",
                              self.agent_id, extra={"event": "perceiver_pil_decode_failed"})
         return {}
@@ -528,7 +528,7 @@ class PerceiverAgent(
         except TimeoutError:
             logger.warning("[%s] Image LLM analysis timed out",
                            self.agent_id, extra={"event": "perceiver_llm_timeout"})
-        except Exception:
+        except Exception as e:
             logger.exception("[%s] Image LLM analysis error",
                              self.agent_id, extra={"event": "perceiver_llm_error"})
         return None
@@ -571,7 +571,7 @@ class PerceiverAgent(
                 payload = ""
         try:
             return base64.b64decode(payload)
-        except Exception:
+        except Exception as e:
             return image_data.encode("utf-8")
 
     @staticmethod
@@ -633,7 +633,7 @@ class PerceiverAgent(
                 palette = quantized.getpalette()
                 if palette:
                     dominant_color_rgb = list(palette[:3])
-            except Exception:
+            except Exception as e:
                 dominant_color_rgb = []
 
             return {
@@ -677,7 +677,7 @@ class PerceiverAgent(
                 extra={"size_bytes": size_bytes, "format": fmt},
             )
             return response
-        except Exception:
+        except Exception as e:
             logger.warning(
                 "[%s] LLM unavailable for image description",
                 self.agent_id,
@@ -712,7 +712,7 @@ class PerceiverAgent(
 
         try:
             return base64.b64decode(payload), mime_type
-        except Exception:
+        except Exception as e:
             return audio_data.encode("utf-8"), mime_type
 
     @staticmethod
@@ -862,7 +862,7 @@ class PerceiverAgent(
 
         try:
             return base64.b64decode(payload), mime_type
-        except Exception:
+        except Exception as e:
             return video_data.encode("utf-8"), mime_type
 
     @staticmethod
@@ -1087,7 +1087,7 @@ class PerceiverAgent(
                 if rows:
                     structure["csv_columns"] = len(rows[0])
                     structure["csv_headers"] = rows[0]
-            except Exception:
+            except Exception as e:
                 structure["csv_parse_failed"] = True
 
         elif fmt == "md":
@@ -1521,7 +1521,7 @@ class PerceiverAgent(
                     },
                 },
             )
-        except Exception:
+        except Exception as e:
             logger.warning(f"[{self.agent_id}] Failed to store in Historian: {e}")
 
     async def _handle_extract_features(self, message: ActorMessage) -> None:

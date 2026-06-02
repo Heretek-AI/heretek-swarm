@@ -191,7 +191,7 @@ class TriadAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, Ag
                     "reasoning": "LLM-based analysis",
                     **extras,
                 }
-            except Exception:
+            except Exception as e:
                 logger.error(f"[{self.agent_id}] Analysis error: {e}")
 
         # Fallback analysis
@@ -389,7 +389,7 @@ class StewardAgent(TriadAgent):
                     },
                     correlation_id=message.correlation_id,
                 )
-            except Exception:
+            except Exception as e:
                 logger.error(f"[{self.agent_id}] Decision error: {e}")
         else:
             # Fallback logic
@@ -884,7 +884,7 @@ class AlphaAgent(TriadAgent):
                     "confidence": 0.8,
                     "feedback": validation_result,
                 }
-            except Exception:
+            except Exception as e:
                 logger.error(f"[{self.agent_id}] Validation error: {e}")
 
         return {
@@ -1097,7 +1097,7 @@ class BetaAgent(TriadAgent):
                     "feedback": validation_result,
                     "perspective": "secondary",
                 }
-            except Exception:
+            except Exception as e:
                 logger.error(f"[{self.agent_id}] Validation error: {e}")
 
         return {
@@ -1124,7 +1124,7 @@ class BetaAgent(TriadAgent):
                             "severity": "medium",
                         }
                     )
-            except Exception:
+            except Exception as e:
                 logger.error(f"[{self.agent_id}] Error detection error: {e}")
 
         return errors
@@ -1334,7 +1334,7 @@ class CharlieAgent(TriadAgent):
                         "severity": "medium",
                     }
                 )
-            except Exception:
+            except Exception as e:
                 logger.error(f"[{self.agent_id}] Challenge error: {e}")
 
         return challenges
@@ -1351,7 +1351,7 @@ class CharlieAgent(TriadAgent):
                     "risk_level": "medium",
                     "mitigations": ["Standard mitigations"],
                 }
-            except Exception:
+            except Exception as e:
                 logger.error(f"[{self.agent_id}] Risk assessment error: {e}")
 
         return {
