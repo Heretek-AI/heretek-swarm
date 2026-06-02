@@ -15,7 +15,9 @@ from heretek_swarm.actors.supervisor import ActorSupervisor
 from heretek_swarm.consensus.maker import MAKERConsensus
 from heretek_swarm.memory.cognee_reader import CogneeMemoryReader
 from heretek_swarm.memory.cognee_writer import CogneeMemoryWriter
-from heretek_swarm.orchestration.heavyswarm import HeavySwarmWorkflow
+from heretek_swarm.orchestration.langgraph_workflow import (
+    LangGraphHeavySwarmWorkflow as HeavySwarmWorkflow,
+)
 from heretek_swarm.plugins.consciousness import ConsciousnessPlugin
 from heretek_swarm.plugins.liberation import LiberationPlugin
 

@@ -7,18 +7,19 @@ This package provides multi-agent orchestration patterns including:
 - Workflow management and monitoring
 """
 
-from heretek_swarm.orchestration.heavyswarm import (
-    HeavySwarmWorkflow,
+from heretek_swarm.orchestration.langgraph_nodes import (
     PhaseResult,
     WorkflowPhase,
-    WorkflowPhaseError,
     WorkflowResult,
+)
+from heretek_swarm.orchestration.langgraph_workflow import (
+    LangGraphHeavySwarmWorkflow,
 )
 
 __all__ = [
-    "HeavySwarmWorkflow",
+    "LangGraphHeavySwarmWorkflow",
     "PhaseResult",
     "WorkflowPhase",
-    "WorkflowPhaseError",
     "WorkflowResult",
 ]
+

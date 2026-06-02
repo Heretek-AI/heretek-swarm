@@ -20,7 +20,7 @@ from unittest.mock import MagicMock
 
 import pytest
 from heretek_swarm.orchestration import langgraph_nodes
-from heretek_swarm.orchestration.heavyswarm import (
+from heretek_swarm.orchestration.langgraph_nodes import (
     PhaseResult,
     WorkflowPhase,
 )
@@ -195,33 +195,25 @@ class TestLegacyPhaseNodeBridge:
 
 class TestPublicContractPreserved:
     def test_workflow_phase_enum_preserved(self) -> None:
-        """The WorkflowPhase enum is imported from heavyswarm (no duplication)."""
-        from heretek_swarm.orchestration.heavyswarm import (
-            WorkflowPhase as _wp,  # noqa: N813 — aliased to avoid shadowing the module-level import
+        """The WorkflowPhase enum is importable from langgraph_nodes."""
+        from heretek_swarm.orchestration.langgraph_nodes import (
+            WorkflowPhase as WorkflowPhase2,
         )
-
-        # langgraph_nodes re-imports WorkflowPhase from heavyswarm
-        assert _wp is langgraph_nodes.WorkflowPhase
+        assert WorkflowPhase2 is langgraph_nodes.WorkflowPhase
 
     def test_phase_result_importable(self) -> None:
-        """PhaseResult is importable from both the legacy and new modules."""
-        from heretek_swarm.orchestration.heavyswarm import (
-            PhaseResult as _LegacyPR,
-        )
+        """PhaseResult is importable from langgraph_nodes."""
         from heretek_swarm.orchestration.langgraph_nodes import (
-            PhaseResult as _NewPR,
+            PhaseResult as PhaseResult2,
         )
-        assert _NewPR is _LegacyPR
+        assert PhaseResult2 is langgraph_nodes.PhaseResult
 
     def test_workflow_result_importable(self) -> None:
-        """WorkflowResult is importable from both modules (same class)."""
-        from heretek_swarm.orchestration.heavyswarm import (
-            WorkflowResult as _LegacyWR,
-        )
+        """WorkflowResult is importable from langgraph_nodes."""
         from heretek_swarm.orchestration.langgraph_nodes import (
-            WorkflowResult as _NewWR,
+            WorkflowResult as WorkflowResult2,
         )
-        assert _NewWR is _LegacyWR
+        assert WorkflowResult2 is langgraph_nodes.WorkflowResult
 
 
 class TestLangGraphWorkflowModule:
@@ -243,16 +235,14 @@ class TestLangGraphWorkflowModule:
         assert isinstance(result, bool)
 
     def test_build_legacy_workflow_returns_heavy(self) -> None:
-        """build_legacy_workflow returns a HeavySwarmWorkflow instance."""
-        from heretek_swarm.orchestration.heavyswarm import (
-            HeavySwarmWorkflow,
-        )
+        """build_legacy_workflow returns a LangGraphHeavySwarmWorkflow instance."""
         from heretek_swarm.orchestration.langgraph_workflow import (
+            LangGraphHeavySwarmWorkflow,
             build_legacy_workflow,
         )
 
         wf = build_legacy_workflow(name="test")
-        assert isinstance(wf, HeavySwarmWorkflow)
+        assert isinstance(wf, LangGraphHeavySwarmWorkflow)
         assert wf.name == "test"
 
     def test_build_phase_nodes_returns_all_five(self) -> None:
@@ -399,7 +389,7 @@ class TestLangGraphBridgeRigorous:
         """
         from unittest.mock import AsyncMock, MagicMock
 
-        workflow = MagicMock()
+        mock_wf = MagicMock()
         call_count = {"n": 0}
 
         async def fake_execute_phase(*args: Any, **kwargs: Any) -> PhaseResult:
@@ -416,16 +406,8 @@ class TestLangGraphBridgeRigorous:
                 duration_ms=1.0,
             )
 
-        workflow._execute_phase = AsyncMock(side_effect=fake_execute_phase)
-        for attr in (
-            "_research_phase",
-            "_analysis_phase",
-            "_alternatives_phase",
-            "_verification_phase",
-            "_decision_phase",
-        ):
-            setattr(workflow, attr, MagicMock())
-        return workflow
+        mock_wf._execute_phase = AsyncMock(side_effect=fake_execute_phase)
+        return mock_wf
 
     @pytest.mark.asyncio
     async def test_stategraph_calls_all_five_phases_in_order(self) -> None:
@@ -433,7 +415,6 @@ class TestLangGraphBridgeRigorous:
         all 5 phases in the correct order: research -> analysis ->
         alternatives -> verification -> decision.
         """
-
         from heretek_swarm.orchestration.langgraph_workflow import (
             LangGraphHeavySwarmWorkflow,
         )
@@ -463,10 +444,6 @@ class TestLangGraphBridgeRigorous:
         """
         from unittest.mock import AsyncMock, MagicMock
 
-        from heretek_swarm.orchestration.langgraph_workflow import (
-            LangGraphHeavySwarmWorkflow,
-        )
-
         mock_wf = MagicMock()
 
         async def phase_return(*args: Any, **kwargs: Any) -> PhaseResult:
@@ -492,6 +469,10 @@ class TestLangGraphBridgeRigorous:
         ):
             setattr(mock_wf, attr, MagicMock())
 
+        from heretek_swarm.orchestration.langgraph_workflow import (
+            LangGraphHeavySwarmWorkflow,
+        )
+
         wf = LangGraphHeavySwarmWorkflow(name="consensus-test", workflow=mock_wf)
         result = await wf.execute(topic="deploy?")
 
@@ -505,7 +486,6 @@ class TestLangGraphBridgeRigorous:
         """Phases 2-5 receive the previous phase's output as the
         6th positional arg to workflow._execute_phase.
         """
-
         from heretek_swarm.orchestration.langgraph_workflow import (
             LangGraphHeavySwarmWorkflow,
         )
@@ -542,7 +522,6 @@ class TestLangGraphBridgeRigorous:
         """The bridge passes workflow_id, topic, and context to every
         phase call.
         """
-
         from heretek_swarm.orchestration.langgraph_workflow import (
             LangGraphHeavySwarmWorkflow,
         )
