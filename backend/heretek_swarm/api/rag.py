@@ -568,7 +568,7 @@ async def register_graph_chunks(
     Expects chunk dicts with: chunk_id, document_id, content, heading_path,
     parent_chunk_id, level.
     """
-    from heretek_swarm.rag.knowledge_graph import GraphChunkNode
+    from heretek_swarm.rag.cognee_graph import GraphChunkNode
 
     kg = get_knowledge_graph_retriever()
 
@@ -620,7 +620,7 @@ async def decompose_query(
 
     Supports sequential, comparative, causal, and hierarchical decomposition.
     """
-    from heretek_swarm.rag.knowledge_graph import SubQuestionDecomposer
+    from heretek_swarm.rag.cognee_graph import SubQuestionDecomposer
 
     decomposer = SubQuestionDecomposer()
     sub_questions = decomposer.decompose(query)
