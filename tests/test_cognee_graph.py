@@ -10,7 +10,6 @@ from __future__ import annotations
 
 import importlib.util
 import os
-from typing import Any
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
@@ -159,6 +158,53 @@ class TestCogneeGraphRetriever:
         assert stats["cognee_api_url"] == "http://cognee:8000"
         assert stats["recent_retrievals"] == 0
         assert "uptime_seconds" in stats
+
+    @pytest.mark.asyncio
+    async def test_register_chunks_async_disabled_returns_zero(
+        self, cognee_graph_mod, enabled_reader
+    ) -> None:
+        """async register_chunks returns 0 when reader is disabled (no forwarding)."""
+        enabled_reader.enabled = False
+        r = cognee_graph_mod.CogneeGraphRetriever(enabled_reader)
+
+        class FakeChunk:
+            chunk_id = "c1"
+            document_id = "d1"
+            level = 0
+
+        assert await r.register_chunks_async([FakeChunk(), FakeChunk()]) == 0
+
+    @pytest.mark.asyncio
+    async def test_retrieve_ignores_seed_chunk_ids(
+        self, cognee_graph_mod, enabled_reader
+    ) -> None:
+        """retrieve() accepts seed_chunk_ids for interface parity but ignores it."""
+        enabled_reader.read = AsyncMock(
+            return_value=[
+                {
+                    "id": "chunk-1",
+                    "content": "Some context",
+                    "score": 0.85,
+                    "metadata": {
+                        "document_id": "doc-1",
+                        "heading_path": ["Intro"],
+                    },
+                }
+            ]
+        )
+        r = cognee_graph_mod.CogneeGraphRetriever(enabled_reader)
+
+        # Without seed_chunk_ids
+        result_without = await r.retrieve("test query")
+
+        # With seed_chunk_ids — should not raise, same result
+        result_with = await r.retrieve(
+            "test query", seed_chunk_ids=["chunk-1", "chunk-2"]
+        )
+
+        assert len(result_without) == 1
+        assert len(result_with) == 1
+        assert result_with[0].chunk_id == result_without[0].chunk_id
 
     @pytest.mark.asyncio
     async def test_get_statistics_increments_on_retrieve(

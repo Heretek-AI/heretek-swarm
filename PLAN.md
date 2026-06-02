@@ -331,7 +331,7 @@ All 8 tactical items landed in 7 commits on 2026-06-01. Wall-clock time: ~3 hour
 | `ae38abee` | P0 + P1 + P4 + P7 | Security defaults, sorted→min/max, validation.py dead code, Vite manualChunks |
 | `343ab7eb` | P2 | Dockerfile multi-stage uv, Qdrant pin, mem_limit/cpus/networks, pyproject.toml deps |
 | `5d65e867` | P6 | perceiver_plus analytics loop → asyncio.gather; additional docker-compose resource limits |
-| `354bb3f5` | P3 (backend) | @lru_cache on `_ensure_provider_prefix` (128), `is_code_safe`/`is_text_safe` (512) |
+| `354bb3f5` | P3 (backend) | @lru_cache on `_ensure_provider_prefix` (128) in agents/agent_factory.py, `is_code_safe`/`is_text_safe` (512) |
 | `db09cb08` | P3 (frontend) | useMemo on `filteredInstances` and `instancesByType` in AgentsPage |
 | `30202f20` | Cleanup | `ruff check --fix` removed 17 unused `noqa` directives + 1 unused import |
 | `3a8a3b4a` | Bugfix | 12× F821 fixes in perceiver_plus/agent.py (`except Exception` → `as e`; f-string `{error}` → `{_error}`) |

@@ -94,20 +94,6 @@ class ValidationMixin:
         "flag_anomalies_until_baseline": True,
     }
 
-    @classmethod
-    def get_immutable_rules(cls) -> list[dict[str, str]]:
-        """Get the list of immutable security rules (copied for safety)."""
-        import copy
-
-        return copy.deepcopy(cls.IMMUTABLE_RULES)
-
-    @classmethod
-    def get_baseline_config(cls) -> dict[str, object]:
-        """Get the baseline initialization configuration (copied for safety)."""
-        import copy
-
-        return copy.deepcopy(cls.BASELINE_CONFIG)
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
