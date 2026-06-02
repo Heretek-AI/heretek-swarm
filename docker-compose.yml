@@ -204,7 +204,7 @@ services:
       - heretek-net
 
   # =============================================================================
-  # FalkorDB — optional graph store (M-arch PR #10)
+  # FalkorDB — optional graph store
   # =============================================================================
   falkordb:
     image: falkordb/falkordb:v4.0.6
