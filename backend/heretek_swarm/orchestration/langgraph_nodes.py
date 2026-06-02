@@ -34,6 +34,21 @@ from heretek_swarm.orchestration.heavyswarm import (
     WorkflowResult,
 )
 
+# Public re-exports (M-arch contract: langgraph module must keep the
+# existing public surface importable during the additive migration).
+__all__ = [
+    "PHASE_NODES",
+    "WorkflowPhase",
+    "WorkflowResult",
+    "WorkflowState",
+    "alternatives_node",
+    "analysis_node",
+    "decision_node",
+    "legacy_phase_node",
+    "research_node",
+    "verification_node",
+]
+
 logger = structlog.get_logger("LangGraphNodes")
 
 
@@ -101,38 +116,93 @@ def decision_node(state: WorkflowState) -> WorkflowState:
     return {"current_phase": WorkflowPhase.DECISION.value}
 
 
-def legacy_phase_node(phase: WorkflowPhase):
-    """Build a LangGraph node that delegates to an existing
-    ``HeavySwarmWorkflow._<phase>_phase`` method.
+# Mapping from WorkflowPhase enum to the private method name on
+# HeavySwarmWorkflow. Used by legacy_phase_node to dispatch.
+_PHASE_METHODS: dict[WorkflowPhase, str] = {
+    WorkflowPhase.RESEARCH: "_research_phase",
+    WorkflowPhase.ANALYSIS: "_analysis_phase",
+    WorkflowPhase.ALTERNATIVES: "_alternatives_phase",
+    WorkflowPhase.VERIFICATION: "_verification_phase",
+    WorkflowPhase.DECISION: "_decision_phase",
+}
+
+
+def legacy_phase_node(phase: WorkflowPhase, workflow: HeavySwarmWorkflow | None = None):
+    """Build a LangGraph node that delegates to ``HeavySwarmWorkflow``.
 
     Args:
         phase: The workflow phase this node represents.
+        workflow: Optional pre-configured ``HeavySwarmWorkflow`` instance.
+            If ``None``, the node returns a state-update-only stub
+            (useful for dry-runs and tests where no real workflow
+            is wired up).
 
     Returns:
         A LangGraph-compatible async callable that takes
         ``WorkflowState`` and returns the updated state after
-        running the legacy phase implementation.
+        running the corresponding legacy phase method.
 
     This is the bridge that lets the new StateGraph reuse the
     existing 1,363-LOC HeavySwarmWorkflow implementation without
     requiring a from-scratch rewrite. When a real workflow is
-    available, this node delegates to it; otherwise it returns
-    the state unchanged (useful for dry-runs and tests).
+    provided, this node delegates to it.
     """
-    phase_attr = f"_{phase.value}_phase"
+    phase_method = _PHASE_METHODS.get(phase)
+    phase_attr = phase_method or f"_{phase.value}_phase"
 
     async def node(state: WorkflowState) -> WorkflowState:
-        # Placeholder: in production, this would look up the
-        # workflow instance and call the phase method. We keep
-        # it dependency-free so the graph can be compiled and
-        # tested without the full HeavySwarmWorkflow runtime.
-        logger.info(
-            "legacy_phase_node_dispatched",
-            phase=phase.value,
-            phase_attr=phase_attr,
-            topic=state.get("topic"),
-        )
-        return {"current_phase": phase.value}
+        if workflow is None:
+            logger.info(
+                "legacy_phase_node_stub",
+                phase=phase.value,
+                topic=state.get("topic"),
+            )
+            return {"current_phase": phase.value}
+
+        method = getattr(workflow, phase_attr, None)
+        if method is None:
+            logger.warning(
+                "legacy_phase_method_missing",
+                phase=phase.value,
+                phase_attr=phase_attr,
+            )
+            return {"current_phase": phase.value}
+
+        topic = state.get("topic", "")
+        context = state.get("context", {})
+        workflow_id = state.get("workflow_id", "")
+        try:
+            phase_result = await workflow._execute_phase(
+                workflow_id=workflow_id,
+                phase=phase,
+                phase_func=method,
+                topic=topic,
+                context=context,
+            )
+        except Exception as e:
+            logger.exception(
+                "legacy_phase_node_failed",
+                phase=phase.value,
+                error=str(e),
+            )
+            return {
+                "current_phase": phase.value,
+                "error": f"{phase.value}: {e}",
+            }
+
+        existing_results = dict(state.get("phase_results") or {})
+        existing_results[phase.value] = phase_result
+        out: dict[str, Any] = {
+            "current_phase": phase.value,
+            "phase_results": existing_results,
+        }
+        if phase == WorkflowPhase.DECISION and phase_result.output:
+            decision = phase_result.output.get("decision") or phase_result.output.get(
+                "consensus"
+            )
+            if decision is not None:
+                out["final_decision"] = decision
+        return out
 
     return node
 

@@ -20,6 +20,7 @@ from typing import Any
 import pytest
 from heretek_swarm.orchestration import langgraph_nodes
 from heretek_swarm.orchestration.heavyswarm import (
+    PhaseResult,
     WorkflowPhase,
 )
 
@@ -95,6 +96,97 @@ class TestPhaseNodeMapping:
         """Each entry in PHASE_NODES is a callable."""
         for phase, fn in langgraph_nodes.PHASE_NODES.items():
             assert callable(fn), f"PHASE_NODES[{phase!r}] is not callable"
+
+
+class TestLegacyPhaseNodeBridge:
+    """Tests for legacy_phase_node(phase, workflow) — the bridge
+    that lets the LangGraph StateGraph delegate to the existing
+    HeavySwarmWorkflow implementation.
+    """
+
+    def test_legacy_node_with_workflow_calls_execute_phase(self) -> None:
+        """legacy_phase_node(phase, workflow) calls workflow._execute_phase."""
+        from unittest.mock import AsyncMock, MagicMock
+
+        workflow = MagicMock()
+        workflow._execute_phase = AsyncMock(
+            return_value=PhaseResult(
+                phase=WorkflowPhase.RESEARCH,
+                success=True,
+                output={"summary": "ok"},
+                duration_ms=42.0,
+            )
+        )
+        node = langgraph_nodes.legacy_phase_node(
+            WorkflowPhase.RESEARCH, workflow
+        )
+        import asyncio
+
+        state: dict[str, Any] = {
+            "topic": "t",
+            "context": {"k": "v"},
+            "workflow_id": "wf-1",
+        }
+        result = asyncio.run(node(state))
+        assert result["current_phase"] == "research"
+        workflow._execute_phase.assert_awaited_once()
+        call_kwargs = workflow._execute_phase.await_args.kwargs
+        assert call_kwargs["workflow_id"] == "wf-1"
+        assert call_kwargs["phase"] == WorkflowPhase.RESEARCH
+        assert call_kwargs["topic"] == "t"
+        assert call_kwargs["context"] == {"k": "v"}
+
+    def test_legacy_node_stores_phase_result(self) -> None:
+        """legacy_phase_node stores the PhaseResult in state.phase_results."""
+        from unittest.mock import AsyncMock, MagicMock
+
+        workflow = MagicMock()
+        workflow._execute_phase = AsyncMock(
+            return_value=PhaseResult(
+                phase=WorkflowPhase.ANALYSIS,
+                success=True,
+                output={"perspectives": ["a", "b", "c"]},
+                duration_ms=100.0,
+            )
+        )
+        node = langgraph_nodes.legacy_phase_node(
+            WorkflowPhase.ANALYSIS, workflow
+        )
+        import asyncio
+
+        result = asyncio.run(node({"topic": "t", "context": {}, "workflow_id": "wf"}))
+        assert "phase_results" in result
+        assert WorkflowPhase.ANALYSIS.value in result["phase_results"]
+        pr = result["phase_results"][WorkflowPhase.ANALYSIS.value]
+        assert pr.phase == WorkflowPhase.ANALYSIS
+        assert pr.success is True
+
+    def test_legacy_node_handles_workflow_error(self) -> None:
+        """legacy_phase_node captures exceptions and sets state.error."""
+        from unittest.mock import AsyncMock, MagicMock
+
+        workflow = MagicMock()
+        workflow._execute_phase = AsyncMock(
+            side_effect=RuntimeError("simulated phase failure")
+        )
+        node = langgraph_nodes.legacy_phase_node(
+            WorkflowPhase.VERIFICATION, workflow
+        )
+        import asyncio
+
+        result = asyncio.run(node({"topic": "t", "context": {}, "workflow_id": "wf"}))
+        assert result["current_phase"] == "verification"
+        assert "error" in result
+        assert "simulated phase failure" in result["error"]
+
+    def test_legacy_node_without_workflow_returns_stub(self) -> None:
+        """legacy_phase_node(phase, None) returns a state-update-only stub."""
+        node = langgraph_nodes.legacy_phase_node(WorkflowPhase.RESEARCH, None)
+        import asyncio
+
+        result = asyncio.run(node({"topic": "t", "context": {}}))
+        assert result["current_phase"] == "research"
+        assert "phase_results" not in result or not result.get("phase_results")
 
 
 class TestPublicContractPreserved:
