@@ -917,7 +917,7 @@ test.describe('Canvas Node Label and Edge E2E Tests', () => {
 
 test.describe('A2ATracker Derived-UI E2E Tests', () => {
 
-  test('A2A-TRACKER-06: A2ATracker agent tab shows agents derived from real messages', async ({ page }) => {
+  test('CANVAS-07: Animated edges have CSS animation property', async ({ page }) => {
     /**
      * Verify that Canvas animated edges have the CSS animation property applied.
      * ConnectionEdge sets data.animated=true for A2A edges, which should result
