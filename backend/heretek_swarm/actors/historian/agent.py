@@ -45,8 +45,8 @@ from heretek_swarm.knowledge.unified_access import KnowledgeQueryResult, Unified
 
 # Session 44: Memory Optimization Integration
 from heretek_swarm.memory.access_patterns import AccessPatternAnalyzer
-from heretek_swarm.memory.base import DualTierMemory, MemoryEntry
 from heretek_swarm.memory.cognee_reader import CogneeMemoryReader
+from heretek_swarm.memory.cognee_writer import CogneeMemoryWriter
 
 # Session 44: Zero-Trust Validation
 from heretek_swarm.security.zero_trust import ZeroTrustValidator
@@ -81,7 +81,7 @@ class HistorianAgent(
         name: str = "Historian",
         description: str = "Memory and context provider for the Triad",
         swarms_agent: Agent | None = None,
-        memory_system: DualTierMemory | None = None,
+        cognee_writer: CogneeMemoryWriter | None = None,
         context_window: int = 10,
         context_cache_max_size: int = 100,
         pattern_cache_max_size: int = 50,
@@ -101,7 +101,7 @@ class HistorianAgent(
             name: Human-readable name
             description: Agent description
             swarms_agent: Optional Swarms Agent for LLM capabilities
-            memory_system: Optional dual-tier memory system
+            cognee_writer: Optional Cognee write-path client
             context_window: Number of recent memories to include as context
             context_cache_max_size: Maximum context cache entries (default: 100)
             pattern_cache_max_size: Maximum pattern cache entries (default: 50)
@@ -123,7 +123,7 @@ class HistorianAgent(
             **kwargs,
         )
 
-        self.memory_system = memory_system or DualTierMemory()
+        self._cognee_writer = cognee_writer or CogneeMemoryWriter()
         self.rag_pipeline = kwargs.get("rag_pipeline")
         self.context_window = context_window
 
@@ -176,8 +176,9 @@ class HistorianAgent(
 
     async def initialize(self) -> None:
         """Initialize the Historian agent."""
-        # Initialize memory system
-        await self.memory_system.initialize()
+        # Initialize Cognee writer client
+        # No explicit initialization needed — the writer creates
+        # its httpx client lazily on first use.
 
         # Re-read _HISTORIAN_FILE from the package module at init time
         # so tests can patch it before calling initialize().
@@ -188,13 +189,13 @@ class HistorianAgent(
         # Initialize unified knowledge access layer
         if self.rag_pipeline:
             self.knowledge_access = UnifiedKnowledgeAccess(
-                memory_system=self.memory_system,
+                memory_system=self._cognee_writer,
                 rag_pipeline=self.rag_pipeline,
             )
             logger.info(f"[{self.agent_id}] Unified knowledge access initialized")
         else:
             self.knowledge_access = UnifiedKnowledgeAccess(
-                memory_system=self.memory_system,
+                memory_system=self._cognee_writer,
                 rag_pipeline=None,
             )
             logger.info(f"[{self.agent_id}] Knowledge access initialized (memory only)")
@@ -272,7 +273,7 @@ class HistorianAgent(
 
         logger.debug(f"[{self.agent_id}] Storing memory")
 
-        entry = await self.store_memory(
+        result = await self.store_memory(
             content=content,
             metadata=metadata,
             ttl=ttl,
@@ -284,8 +285,8 @@ class HistorianAgent(
             topic=reply_topic,
             content={
                 "message_type": "store_memory_response",
-                "memory_id": entry.id,
-                "created_at": entry.created_at,
+                "memory_id": result.get("memory_id"),
+                "created_at": result.get("stored_at"),
                 "persistent": persistent,
             },
             correlation_id=message.correlation_id,
@@ -545,39 +546,32 @@ class HistorianAgent(
         ttl: int | None = None,
         persistent: bool = False,
         lineage: list[str] | None = None,
-    ) -> MemoryEntry:
+    ) -> dict[str, Any]:
         """
         Store a memory.
 
         Args:
             content: Memory content
             metadata: Additional metadata
-            ttl: Time to live in seconds
-            persistent: Store in persistent tier
-            lineage: Parent memory IDs
+            ttl: Time to live in seconds (unused, kept for API compat)
+            persistent: Store in persistent tier (unused, kept for API compat)
+            lineage: Parent memory IDs (unused, kept for API compat)
 
         Returns:
-            Stored memory entry
+            Dict with keys: content, stored_at, agent_id, memory_id
         """
-        # Add agent metadata
-        # P2-1 fix: Use timezone-aware datetime
-        full_metadata = {
-            **(metadata or {}),
+        await self._cognee_writer.store(content=str(content))
+
+        stored_at = datetime.now(UTC).isoformat()
+        memory_id = str(uuid.uuid4())
+        logger.debug(f"[{self.agent_id}] Stored memory {memory_id}")
+
+        return {
+            "content": content,
+            "stored_at": stored_at,
             "agent_id": self.agent_id,
-            "stored_at": datetime.now(UTC).isoformat(),
+            "memory_id": memory_id,
         }
-
-        entry = await self.memory_system.store(
-            content=content,
-            metadata=full_metadata,
-            ttl=ttl,
-            lineage=lineage,
-            persistent=persistent,
-        )
-
-        logger.debug(f"[{self.agent_id}] Stored memory {entry.id}")
-
-        return entry
 
     async def retrieve_context(
         self,
@@ -590,7 +584,7 @@ class HistorianAgent(
 
         Args:
             topic: Topic to retrieve context for
-            filters: Additional filters
+            filters: Additional filters (unused, kept for API compat)
             window_size: Number of recent memories
 
         Returns:
@@ -603,29 +597,11 @@ class HistorianAgent(
             logger.debug(f"[{self.agent_id}] Context cache hit for: {topic}")
             return cached
 
-        # Build query filters
-        query_filters = filters or {}
-        if topic:
-            query_filters["topic"] = topic
+        context: list[dict[str, Any]] = []
 
-        # Query primary memory
-        results = await self.memory_system.query(
-            filters=query_filters,
-            limit=window_size,
-        )
-
-        context: list[dict[str, Any]] = [
-            {
-                "content": e.content,
-                "metadata": e.metadata,
-                "created_at": e.created_at,
-            }
-            for e in results
-        ]
-
-        # M-arch PR #2: supplement with Cognee graph-augmented context.
+        # Query Cognee for graph-augmented context.
         # Reader is a no-op when disabled or unreachable (returns []),
-        # so this never breaks the primary memory path.
+        # so this is safe as the sole retrieval path.
         if self.cognee_reader is not None and self.cognee_reader.enabled:
             try:
                 cognee_results = await self.cognee_reader.read(
@@ -646,10 +622,9 @@ class HistorianAgent(
                     )
                 if cognee_results:
                     logger.info(
-                        f"[{self.agent_id}] Cognee supplemented {len(cognee_results)} context entries for: {topic}"
+                        f"[{self.agent_id}] Cognee retrieved {len(cognee_results)} context entries for: {topic}"
                     )
             except Exception as e:
-                # Defensive: never let a supplemental source break primary retrieval
                 logger.warning(
                     f"[{self.agent_id}] Cognee reader failed (suppressed): {e}"
                 )
@@ -674,28 +649,34 @@ class HistorianAgent(
 
         Args:
             query_text: Text to search for
-            filters: Metadata filters
+            filters: Metadata filters (unused, kept for API compat)
             limit: Maximum results
 
         Returns:
             List of matching memories
         """
-        results = await self.memory_system.query(
-            query_text=query_text,
-            filters=filters,
-            limit=limit,
-        )
+        results: list[dict[str, Any]] = []
+        if self.cognee_reader is not None and self.cognee_reader.enabled:
+            try:
+                cognee_results = await self.cognee_reader.read(
+                    query=query_text or "", top_k=limit
+                )
+                results = [
+                    {
+                        "id": hit.get("id", ""),
+                        "content": hit.get("content", ""),
+                        "metadata": hit.get("metadata", {}),
+                        "created_at": hit.get("created_at"),
+                        "lineage": hit.get("lineage", []),
+                    }
+                    for hit in cognee_results
+                ]
+            except Exception as e:
+                logger.warning(
+                    f"[{self.agent_id}] Cognee reader failed (suppressed): {e}"
+                )
 
-        return [
-            {
-                "id": e.id,
-                "content": e.content,
-                "metadata": e.metadata,
-                "created_at": e.created_at,
-                "lineage": e.lineage,
-            }
-            for e in results
-        ]
+        return results
 
     async def track_decision_lineage(
         self,
@@ -761,21 +742,27 @@ class HistorianAgent(
 
         matched = []
 
-        # Query for similar situations
-        results = await self.memory_system.query(
-            query_text=situation,
-            filters={"type": "situation"},
-            limit=5,
-        )
+        # Query for similar situations via Cognee
+        cognee_results: list[dict[str, Any]] = []
+        if self.cognee_reader is not None and self.cognee_reader.enabled:
+            try:
+                cognee_results = await self.cognee_reader.read(
+                    query=situation, top_k=5
+                )
+            except Exception as e:
+                logger.warning(
+                    f"[{self.agent_id}] Cognee reader failed (suppressed): {e}"
+                )
 
-        for entry in results:
+        for hit in cognee_results:
+            content = hit.get("content", "")
             # Compute actual similarity using text comparison
-            similarity = self._compute_similarity(situation, str(entry.content))
+            similarity = self._compute_similarity(situation, str(content))
             if similarity >= threshold:
                 matched.append(
                     {
-                        "situation": entry.content,
-                        "metadata": entry.metadata,
+                        "situation": content,
+                        "metadata": hit.get("metadata", {}),
                         "similarity": similarity,
                     }
                 )
@@ -914,10 +901,16 @@ class HistorianAgent(
         logger.info(f"[{self.agent_id}] Synthesizing knowledge for: {topic}")
 
         # Retrieve relevant memories
-        results = await self.memory_system.query(
-            query_text=topic,
-            limit=limit,
-        )
+        results: list[dict[str, Any]] = []
+        if self.cognee_reader is not None and self.cognee_reader.enabled:
+            try:
+                results = await self.cognee_reader.read(
+                    query=topic, top_k=limit
+                )
+            except Exception as e:
+                logger.warning(
+                    f"[{self.agent_id}] Cognee reader failed (suppressed): {e}"
+                )
 
         if not results:
             return {
@@ -929,7 +922,7 @@ class HistorianAgent(
         # Synthesize (would use LLM in full implementation)
         if self.swarms_agent:
             try:
-                memory_texts = [str(e.content) for e in results]
+                memory_texts = [str(e.get("content", "")) for e in results]
                 synthesis_prompt = f"Synthesize knowledge from these memories: {memory_texts}"
                 # P0-14 fix: Add timeout to LLM call
                 synthesis = await self.run_with_llm(prompt=synthesis_prompt, timeout=timeout)
@@ -968,14 +961,13 @@ class HistorianAgent(
 
     def get_memory_statistics(self) -> dict[str, Any]:
         """Get memory system statistics."""
-        memory_stats = self.memory_system.get_statistics()
-
         return {
-            "total_memories": memory_stats.get("combined_total", 0),
+            "total_memories": 0,
             "decision_lineages": len(self.decision_lineage),
             "pattern_cache": self.pattern_cache.get_statistics(),
             "context_cache": self.context_cache.get_statistics(),
-            "memory_details": memory_stats,
+            "cognee_reader_enabled": self.cognee_reader.enabled if self.cognee_reader else False,
+            "cognee_writer_enabled": self._cognee_writer.enabled if self._cognee_writer else False,
         }
 
     # Session 44: Collective Learning, Consensus Deliberation, and Memory Optimization
@@ -1263,5 +1255,6 @@ class HistorianAgent(
                 except Exception as e:
                     logger.exception(f"[{self.agent_id}] Error closing db_pool during cleanup")
 
-        await self.memory_system.close()
+        await self._cognee_writer.close()
+        await self.cognee_reader.close()
         logger.info(f"[{self.agent_id}] Historian cleanup complete")

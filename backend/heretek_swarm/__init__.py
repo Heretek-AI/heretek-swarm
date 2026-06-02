@@ -13,7 +13,8 @@ __email__ = "ai@heretek.io"
 from heretek_swarm.actors.base import AgentActor
 from heretek_swarm.actors.supervisor import ActorSupervisor
 from heretek_swarm.consensus.maker import MAKERConsensus
-from heretek_swarm.memory.base import MemorySystem
+from heretek_swarm.memory.cognee_reader import CogneeMemoryReader
+from heretek_swarm.memory.cognee_writer import CogneeMemoryWriter
 from heretek_swarm.orchestration.heavyswarm import HeavySwarmWorkflow
 from heretek_swarm.plugins.consciousness import ConsciousnessPlugin
 from heretek_swarm.plugins.liberation import LiberationPlugin
@@ -21,9 +22,10 @@ from heretek_swarm.plugins.liberation import LiberationPlugin
 __all__ = [
     "ActorSupervisor",
     "AgentActor",
+    "CogneeMemoryReader",
+    "CogneeMemoryWriter",
     "ConsciousnessPlugin",
     "HeavySwarmWorkflow",
     "LiberationPlugin",
     "MAKERConsensus",
-    "MemorySystem",
 ]

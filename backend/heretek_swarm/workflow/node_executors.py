@@ -211,49 +211,28 @@ async def execute_memory_node(
     context: WorkflowContext,
 ) -> Any:
     """Execute a memory node (store or retrieve)."""
-    from heretek_swarm.memory.persistent import PersistentMemoryStore
+    from heretek_swarm.memory.cognee_reader import CogneeMemoryReader
+    from heretek_swarm.memory.cognee_writer import CogneeMemoryWriter
 
     operation = node.data.get("operation", "store")
     if operation not in ["store", "retrieve", "search"]:
         raise ValueError(f"Invalid memory operation: {operation}")
 
-    memory_store = PersistentMemoryStore()
-    await memory_store.connect()
-
     if operation == "store":
         content = input_data.get("content", "")
-        memory_type = input_data.get("memory_type", "episodic")
-        metadata = input_data.get("metadata", {})
+        dataset = input_data.get("dataset", "default")
 
-        await memory_store.store(
-            agent_id=context.workflow_id,
-            content=content,
-            memory_type=memory_type,
-            metadata=metadata,
-        )
+        writer = CogneeMemoryWriter()
+        await writer.store(content=content, dataset=dataset)
         return {"stored": True}
 
     if operation == "retrieve":
         query = input_data.get("query", "")
         limit = input_data.get("limit", 10)
 
-        from heretek_swarm.memory.base import MemoryQuery
-
-        search_query = MemoryQuery(
-            query_text=query, agent_ids=[context.workflow_id], limit=limit
-        )
-
-        result = await memory_store.search(search_query)
-        return {
-            "results": [
-                {
-                    "content": entry.content,
-                    "memory_type": entry.memory_type.value,
-                    "importance_score": entry.importance_score,
-                }
-                for entry in result.entries
-            ]
-        }
+        reader = CogneeMemoryReader()
+        results = await reader.read(query=query, top_k=limit)
+        return {"results": results}
 
     if operation == "search":
         return await execute_memory_node(engine, node, input_data, context)

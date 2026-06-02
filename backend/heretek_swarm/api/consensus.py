@@ -58,13 +58,12 @@ async def _snapshot_after_round(
     Non-fatal: snapshot failures must not propagate to the caller.
     """
     try:
-        from heretek_swarm.memory.versioned import get_versioned_store
+        from heretek_swarm.memory.cognee_writer import CogneeMemoryWriter
 
-        await get_versioned_store().create_snapshot(
-            message=f"Round {round_number}: {summary}",
-            deliberation_id=deliberation_id,
-            agent_id=agent_id,
-        )
+        writer = CogneeMemoryWriter()
+        snapshot_content = f"Round {round_number}: {summary}"
+        dataset_name = f"deliberation-{deliberation_id}"
+        await writer.store(content=snapshot_content, dataset=dataset_name)
     except Exception as e:
         logger.warning("memory_snapshot_failed", deliberation_id=deliberation_id, error=str(e))
 

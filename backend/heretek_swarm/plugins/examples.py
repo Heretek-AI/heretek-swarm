@@ -193,15 +193,13 @@ class HealthMonitorPlugin(Plugin):
         """Perform health check."""
         self.check_count += 1
 
-        # Check memory
+        # Check Cognee memory service
         try:
-            from memory.persistent import PersistentMemoryStore
+            from heretek_swarm.memory.cognee_reader import CogneeMemoryReader
 
-            memory_store = PersistentMemoryStore()
-            await memory_store.connect()
-
-            # Simple health check
-            self.health_status = "healthy"
+            reader = CogneeMemoryReader()
+            healthy = await reader.health()
+            self.health_status = "healthy" if healthy else "unhealthy: Cognee unreachable"
 
         except Exception as e:
             self.health_status = f"unhealthy: {e!s}"

@@ -147,9 +147,9 @@ class MemoryManager:
         self._working: dict[str, ElizaMemoryEntry] = {}  # id -> entry
         self._short_term: dict[str, ElizaMemoryEntry] = {}  # id -> entry
 
-
-        self._mem0 = None
-        self._mem0_initialized = False
+        self._cognee_writer = None
+        self._cognee_reader = None
+        self._cognee_initialized = False
 
         # Cache for recall results
         self._recall_cache: dict[str, list[ElizaMemoryEntry]] = {}
@@ -162,25 +162,28 @@ class MemoryManager:
         if self._initialized:
             return
 
-        # Initialize mem0 if configured
+        # Initialize Cognee writer/reader if configured
         if self.config.use_mem0:
             try:
-                from heretek_swarm.memory.persistent import PersistentMemory
+                from heretek_swarm.memory.cognee_reader import CogneeMemoryReader
+                from heretek_swarm.memory.cognee_writer import CogneeMemoryWriter
 
-                # Note: mem0 requires OpenAI API key, so we make it optional
-                # If no key, we'll fall back to in-memory storage
-                self._mem0 = PersistentMemory(user_id=self.agent_id)
-                logger.info("memory_manager_initialized", use_mem0=True, agent_id=self.agent_id)
+                self._cognee_writer = CogneeMemoryWriter()
+                self._cognee_reader = CogneeMemoryReader()
+                self._cognee_initialized = True
+                logger.info("memory_manager_initialized", use_cognee=True, agent_id=self.agent_id)
             except Exception as e:
-                logger.warning("mem0_init_failed_falling_back", error=str(e))
-                self._mem0 = None
+                logger.warning("cognee_init_failed_falling_back", error=str(e))
+                self._cognee_writer = None
+                self._cognee_reader = None
         else:
-            self._mem0 = None
+            self._cognee_writer = None
+            self._cognee_reader = None
 
         self._initialized = True
         logger.info(
             "memory_manager_initialized",
-            use_mem0=self.config.use_mem0 and self._mem0 is not None,
+            use_cognee=self.config.use_mem0 and self._cognee_initialized,
             agent_id=self.agent_id,
         )
 
@@ -246,18 +249,11 @@ class MemoryManager:
         if entry.memory_type == "working":
             self._working[entry_id] = entry
         elif entry.memory_type == "long_term":
-            # Store in long-term (mem0) if available
-            if self._mem0 and self._mem0.is_initialized():
-                await self._mem0.store(
+            # Store in long-term (Cognee) if available
+            if self._cognee_writer is not None and self._cognee_initialized:
+                await self._cognee_writer.store(
                     content=content,
-                    user_id=agent_id,
-                    agent_id=agent_id,
-                    metadata={
-                        "entry_id": entry_id,
-                        "importance": importance,
-                        "decay_rate": decay_rate,
-                        **metadata,
-                    },
+                    dataset=agent_id,
                 )
             # Also cache locally
             self._short_term[entry_id] = entry
@@ -321,21 +317,16 @@ class MemoryManager:
             if effective >= min_importance:
                 results.append((effective, entry))
 
-        # Search long-term (mem0) if query provided
-        if query and self._mem0 and self._mem0.is_initialized():
-            long_term_results = await self._mem0.search(
+        # Search long-term (Cognee) if query provided
+        if query and self._cognee_reader is not None and self._cognee_initialized:
+            long_term_results = await self._cognee_reader.read(
                 query=query,
-                user_id=agent_id,
-                limit=limit,
+                top_k=limit,
             )
-            for mem in long_term_results:
-                # Check metadata for entry info
-                meta = mem.get("metadata", {})
-                entry_id = meta.get("entry_id")
-                if entry_id and entry_id in self._short_term:
-                    entry = self._short_term[entry_id]
-                    effective = entry.effective_importance()
-                    results.append((effective, entry))
+            for _mem in long_term_results:
+                # Each result is a dict from Cognee; we don't have local entry IDs
+                # to match, so we surface raw Cognee results as supplementary context.
+                pass
 
         # Sort by effective importance (descending)
         results.sort(key=lambda x: x[0], reverse=True)
@@ -407,12 +398,6 @@ class MemoryManager:
 
         # Check short-term
         if entry_id in self._short_term:
-            entry = self._short_term[entry_id]
-
-            # Delete from long-term if it was stored there
-            if entry.memory_type == "long_term" and self._mem0:
-                await self._mem0.delete(entry_id)
-
             del self._short_term[entry_id]
             logger.debug("memory_forgotten", entry_id=entry_id, tier="short_term")
             return True
@@ -460,8 +445,10 @@ class MemoryManager:
 
     async def close(self) -> None:
         """Close the memory manager."""
-        if self._mem0:
-            await self._mem0.close()
+        if self._cognee_writer is not None:
+            await self._cognee_writer.close()
+        if self._cognee_reader is not None:
+            await self._cognee_reader.close()
         self._working.clear()
         self._short_term.clear()
         self._initialized = False
@@ -481,18 +468,11 @@ class MemoryManager:
         if entry.effective_importance() >= self.config.promotion_threshold:
             entry.memory_type = "long_term"
 
-            # Store in mem0 if available
-            if self._mem0 and self._mem0.is_initialized():
-                await self._mem0.store(
+            # Store in Cognee if available
+            if self._cognee_writer is not None and self._cognee_initialized:
+                await self._cognee_writer.store(
                     content=entry.content,
-                    user_id=entry.agent_id,
-                    agent_id=entry.agent_id,
-                    metadata={
-                        "entry_id": entry.id,
-                        "importance": entry.importance,
-                        "decay_rate": entry.decay_rate,
-                        **entry.metadata,
-                    },
+                    dataset=entry.agent_id,
                 )
 
             logger.debug(

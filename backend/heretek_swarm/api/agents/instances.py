@@ -219,7 +219,7 @@ async def get_agent_memory(
 
     Queries the persistent memory store for memory entries belonging to
     a specific agent instance. Falls back gracefully through multiple
-    backends: SQLAlchemy (memory_store), mem0, and finally returns
+    backends: Cognee, mem0, and finally returns
     status 'unavailable'.
 
     Args:
@@ -235,57 +235,38 @@ async def get_agent_memory(
         raise HTTPException(404, f"Agent instance '{instance_id}' not found")
 
     # Lazy import to avoid circular import at module level
-    from heretek_swarm.api.main import mem0_backend, memory_store
+    from heretek_swarm.api.main import cognee_reader, mem0_backend
 
-    # ---- SQLAlchemy path (primary, when memory_store is available) ------------------
-    if memory_store is not None:
+    # ---- Cognee path (primary, when cognee_reader is available and enabled) -----
+    if cognee_reader is not None and cognee_reader.enabled:
         try:
-            from sqlalchemy import func, select
+            results = await cognee_reader.read(
+                query=f"agent {instance_id}", top_k=limit
+            )
+            total = len(results)
 
-            from heretek_swarm.memory.persistent import MemoryEntryModel
+            # Derive by_type breakdown from search results metadata
+            by_type: dict[str, int] = {}
+            for entry in results:
+                meta = entry.get("metadata", {})
+                mt = meta.get("memory_type", "unknown")
+                by_type[mt] = by_type.get(mt, 0) + 1
 
-            async with memory_store._session_factory() as session:
-                # Total count for this agent
-                count_stmt = (
-                    select(func.count())
-                    .select_from(MemoryEntryModel)
-                    .where(MemoryEntryModel.agent_id == instance_id)
-                )
-                result = await session.execute(count_stmt)
-                total = result.scalar() or 0
-
-                # By type breakdown
-                type_stmt = (
-                    select(MemoryEntryModel.memory_type, func.count())
-                    .where(MemoryEntryModel.agent_id == instance_id)
-                    .group_by(MemoryEntryModel.memory_type)
-                )
-                type_result = await session.execute(type_stmt)
-                by_type: dict[str, int] = {row[0]: row[1] for row in type_result.all()}
-
-                # Recent entries (newest first)
-                recent_stmt = (
-                    select(MemoryEntryModel)
-                    .where(MemoryEntryModel.agent_id == instance_id)
-                    .order_by(MemoryEntryModel.created_at.desc())
-                    .limit(limit)
-                )
-                recent_result = await session.execute(recent_stmt)
-                recent_entries = [
-                    {
-                        "id": row.id,
-                        "content": row.content,
-                        "memory_type": row.memory_type,
-                        "created_at": row.created_at.isoformat() if row.created_at else None,
-                    }
-                    for row in recent_result.scalars().all()
-                ]
+            recent_entries = [
+                {
+                    "content": entry.get("content", ""),
+                    "score": entry.get("score", 0),
+                    "dataset": entry.get("dataset", "default"),
+                    "metadata": entry.get("metadata", {}),
+                }
+                for entry in results
+            ]
 
             logger.info(
                 "agent_memory_fetched",
                 agent_id=instance_id,
                 total=total,
-                source="sqlalchemy",
+                source="cognee",
             )
             return {
                 "agent_id": instance_id,
@@ -299,7 +280,7 @@ async def get_agent_memory(
                 "agent_memory_failed",
                 agent_id=instance_id,
                 error=str(e),
-                source="sqlalchemy",
+                source="cognee",
             )
             return {
                 "agent_id": instance_id,

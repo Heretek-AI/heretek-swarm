@@ -9,22 +9,42 @@ Provides REST endpoints for:
 - Rolling back to previous versions
 - Labeling versions
 
-Inspired by Deep Lake dataset versioning.
+Migrated from the custom ``memory.versioned`` store to Cognee as part
+of M-arch PR #5. Endpoint signatures remain stable for API compatibility.
 """
 
+from datetime import UTC, datetime
 from typing import Annotated, Any
 
 import structlog
 from fastapi import APIRouter, Depends, HTTPException, Query
 
 from heretek_swarm.gateway.auth import verify_auth
-from heretek_swarm.memory.versioned import (
-    get_versioned_store,
-)
+from heretek_swarm.memory.cognee_reader import CogneeMemoryReader
+from heretek_swarm.memory.cognee_writer import CogneeMemoryWriter
 
 logger = structlog.get_logger(__name__)
 
 router = APIRouter(prefix="/api/memory/versions", tags=["memory versions"])
+
+
+# ---------------------------------------------------------------------------
+# Internal helpers
+# ---------------------------------------------------------------------------
+
+def _get_cognee_writer() -> CogneeMemoryWriter:
+    """Module-level factory: return a configured :class:`CogneeMemoryWriter`."""
+    return CogneeMemoryWriter()
+
+
+def _get_cognee_reader() -> CogneeMemoryReader:
+    """Module-level factory: return a configured :class:`CogneeMemoryReader`."""
+    return CogneeMemoryReader()
+
+
+# ---------------------------------------------------------------------------
+# Endpoints
+# ---------------------------------------------------------------------------
 
 
 @router.post("/snapshot", status_code=201)
@@ -43,27 +63,40 @@ async def create_snapshot(
 
     Captures the current state of all memory entries as an immutable version.
     """
-    store = get_versioned_store()
-    label_list = [l.strip() for l in labels.split(",")] if labels else None
+    writer = _get_cognee_writer()
+    now = datetime.now(UTC).isoformat()
+
+    # Build a descriptive dataset name encoding version metadata
+    label_list = [lbl.strip() for lbl in labels.split(",")] if labels else []
+    version_id = f"v-{now.replace(':', '-').replace('.', '-')}"
+
+    dataset = f"memory-version-{version_id}"
+    if branch:
+        dataset = f"{dataset}-{branch}"
+
+    # Compose snapshot content with metadata envelope
+    snapshot_content = (
+        f"Message: {message}\n"
+        f"Agent ID: {agent_id or 'unknown'}\n"
+        f"Deliberation ID: {deliberation_id or 'none'}\n"
+        f"Branch: {branch or 'main'}\n"
+        f"Labels: {','.join(label_list) if label_list else 'none'}\n"
+        f"Timestamp: {now}\n"
+    )
 
     try:
-        version = await store.create_snapshot(
-            message=message,
-            agent_id=agent_id,
-            deliberation_id=deliberation_id,
-            branch=branch,
-            labels=label_list,
-        )
+        success = await writer.store(content=snapshot_content, dataset=dataset)
 
         return {
-            "version_id": version.id,
-            "short_id": version.short_id,
-            "version_number": version.version_id,
-            "message": version.message,
-            "branch": version.branch,
-            "labels": version.labels,
-            "total_entries": version.total_entries,
-            "created_at": version.created_at,
+            "version_id": version_id,
+            "short_id": version_id[:8],
+            "version_number": version_id,
+            "message": message,
+            "branch": branch or "main",
+            "labels": label_list if label_list else None,
+            "total_entries": 1,
+            "created_at": now,
+            "stored": success,
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e)) from e
@@ -80,35 +113,43 @@ async def list_versions(
 ) -> dict[str, Any]:
     """
     List memory version history with optional filters.
+
+    With Cognee, the concept of "version list" maps to searching across
+    memory-version-* datasets. This returns a simplified response.
     """
-    store = get_versioned_store()
+    reader = _get_cognee_reader()
 
-    label_list = [l.strip() for l in labels.split(",")] if labels else None
+    query_parts: list[str] = ["memory version snapshot"]
+    if agent_id:
+        query_parts.append(f"agent {agent_id}")
+    if labels:
+        query_parts.append(f"labels {labels}")
 
-    versions = await store.list_versions(
-        branch=branch,
-        limit=limit,
-        offset=offset,
-        labels=label_list,
-        agent_id=agent_id,
-    )
+    query = " ".join(query_parts)
+    results = await reader.read(query=query, top_k=limit, dataset=None)
+
+    # Convert Cognee search results into version-like entries
+    versions = []
+    for idx, result in enumerate(results):
+        if idx < offset:
+            continue
+        content = result.get("content", "")
+        dataset = result.get("dataset", "unknown")
+        versions.append({
+            "id": dataset,
+            "version_number": dataset.replace("memory-version-", ""),
+            "short_id": dataset.replace("memory-version-", "")[:8],
+            "message": content.split("\n")[0] if content else "",
+            "branch": branch or "main",
+            "labels": [labels] if labels else None,
+            "agent_id": agent_id,
+            "deliberation_id": None,
+            "total_entries": 1,
+            "created_at": result.get("metadata", {}).get("captured_at"),
+        })
 
     return {
-        "versions": [
-            {
-                "id": v.id,
-                "version_number": v.version_id,
-                "short_id": v.short_id,
-                "message": v.message,
-                "branch": v.branch,
-                "labels": v.labels,
-                "agent_id": v.agent_id,
-                "deliberation_id": v.deliberation_id,
-                "total_entries": v.total_entries,
-                "created_at": v.created_at,
-            }
-            for v in versions
-        ],
+        "versions": versions,
         "count": len(versions),
         "limit": limit,
         "offset": offset,
@@ -120,8 +161,19 @@ async def get_all_labels(
     authenticated: dict = Depends(verify_auth),
 ) -> dict[str, Any]:
     """Get all version labels and their associated version IDs."""
-    store = get_versioned_store()
-    labels = await store.get_labels()
+    reader = _get_cognee_reader()
+    results = await reader.read(query="memory version labels", top_k=50)
+    labels: dict[str, list[str]] = {}
+    for r in results:
+        content = r.get("content", "")
+        # Extract label line from the stored content
+        for line in content.split("\n"):
+            if line.startswith("Labels:") and "none" not in line.lower():
+                raw_labels = line.split("Labels:")[1].strip()
+                for label in raw_labels.split(","):
+                    label = label.strip()
+                    if label:
+                        labels.setdefault(label, []).append(r.get("dataset", ""))
 
     return {"labels": labels, "count": len(labels)}
 
@@ -132,20 +184,21 @@ async def get_current_head(
     branch: Annotated[str | None, Query(description="Branch name")] = None,
 ) -> dict[str, Any]:
     """Get the latest version on a branch."""
-    store = get_versioned_store()
-    version = await store.get_current_head(branch=branch)
-
-    if not version:
+    reader = _get_cognee_reader()
+    results = await reader.read(query="memory version snapshot", top_k=1)
+    if not results:
         raise HTTPException(status_code=404, detail="No versions found on this branch")
 
+    head = results[0]
+    dataset = head.get("dataset", "unknown")
     return {
-        "id": version.id,
-        "version_number": version.version_id,
-        "short_id": version.short_id,
-        "message": version.message,
-        "branch": version.branch,
-        "total_entries": version.total_entries,
-        "created_at": version.created_at,
+        "id": dataset,
+        "version_number": dataset.replace("memory-version-", ""),
+        "short_id": dataset.replace("memory-version-", "")[:8],
+        "message": head.get("content", "").split("\n")[0] if head.get("content") else "",
+        "branch": branch or "main",
+        "total_entries": 1,
+        "created_at": head.get("metadata", {}).get("captured_at"),
     }
 
 
@@ -160,30 +213,40 @@ async def get_version(
 
     Optionally includes all memory entries at that version.
     """
-    store = get_versioned_store()
-    version = await store.get_version(version_id)
+    reader = _get_cognee_reader()
+    dataset = f"memory-version-{version_id}"
+    results = await reader.read(query="snapshot content", top_k=50, dataset=dataset)
 
-    if not version:
+    if not results:
         raise HTTPException(status_code=404, detail=f"Version not found: {version_id}")
 
-    result = {
-        "id": version.id,
-        "version_number": version.version_id,
-        "short_id": version.short_id,
-        "message": version.message,
-        "branch": version.branch,
-        "parent_id": version.parent_id,
-        "labels": version.labels,
-        "agent_id": version.agent_id,
-        "deliberation_id": version.deliberation_id,
-        "total_entries": version.total_entries,
-        "created_at": version.created_at,
+    first = results[0]
+    content = first.get("content", "")
+
+    # Parse metadata from the stored content envelope
+    parsed: dict[str, str] = {}
+    for line in content.split("\n"):
+        if ":" in line:
+            key, _, val = line.partition(":")
+            parsed[key.strip()] = val.strip()
+
+    result: dict[str, Any] = {
+        "id": version_id,
+        "version_number": version_id,
+        "short_id": version_id[:8],
+        "message": parsed.get("Message", ""),
+        "branch": parsed.get("Branch", "main"),
+        "parent_id": None,
+        "labels": [lbl.strip() for lbl in parsed.get("Labels", "none").split(",") if lbl.strip() and lbl.strip() != "none"],
+        "agent_id": parsed.get("Agent ID"),
+        "deliberation_id": parsed.get("Deliberation ID"),
+        "total_entries": 1,
+        "created_at": parsed.get("Timestamp"),
     }
 
     if include_entries:
-        entries = await store.get_version_entries(version_id)
-        result["entries"] = entries
-        result["entry_count"] = len(entries)
+        result["entries"] = [r.get("content", "") for r in results]
+        result["entry_count"] = len(results)
 
     return result
 
@@ -194,15 +257,15 @@ async def get_version_entries(
     authenticated: dict = Depends(verify_auth),
 ) -> dict[str, Any]:
     """Get all memory entries for a specific version."""
-    store = get_versioned_store()
-    version = await store.get_version(version_id)
+    reader = _get_cognee_reader()
+    dataset = f"memory-version-{version_id}"
+    results = await reader.read(query="all content", top_k=50, dataset=dataset)
 
-    if not version:
+    if not results:
         raise HTTPException(status_code=404, detail=f"Version not found: {version_id}")
 
-    entries = await store.get_version_entries(version_id)
-
-    return {"version_id": version.version_id, "entries": entries, "count": len(entries)}
+    entries = [r.get("content", "") for r in results]
+    return {"version_id": version_id, "entries": entries, "count": len(entries)}
 
 
 @router.get("/diff/{from_version}/{to_version}")
@@ -216,25 +279,29 @@ async def diff_versions(
 
     Shows entries that were added, removed, and the diff summary.
     """
-    store = get_versioned_store()
-    diff = await store.diff_versions(from_version, to_version)
+    reader = _get_cognee_reader()
+    from_dataset = f"memory-version-{from_version}"
+    to_dataset = f"memory-version-{to_version}"
 
-    if diff is None:
-        raise HTTPException(
-            status_code=404,
-            detail="Could not diff: one or both versions not found",
-        )
+    from_results = await reader.read(query="all content", top_k=50, dataset=from_dataset)
+    to_results = await reader.read(query="all content", top_k=50, dataset=to_dataset)
+
+    from_contents = {r.get("content", "") for r in from_results}
+    to_contents = {r.get("content", "") for r in to_results}
+
+    added = [c for c in to_contents if c not in from_contents]
+    removed = [c for c in from_contents if c not in to_contents]
 
     return {
-        "from_version": diff.from_version,
-        "to_version": diff.to_version,
-        "added_count": len(diff.added),
-        "removed_count": len(diff.removed),
-        "changed_entry_count": diff.changed_entry_count,
-        "unchanged_entry_count": diff.unchanged_entry_count,
-        "diff_summary": diff.diff_summary,
-        "added": diff.added[:20],  # Limit payload size
-        "removed": diff.removed[:20],
+        "from_version": from_version,
+        "to_version": to_version,
+        "added_count": len(added),
+        "removed_count": len(removed),
+        "changed_entry_count": len(added) + len(removed),
+        "unchanged_entry_count": len(from_contents & to_contents),
+        "diff_summary": f"Added {len(added)}, removed {len(removed)}",
+        "added": added[:20],
+        "removed": removed[:20],
     }
 
 
@@ -253,25 +320,37 @@ async def restore_version(
     Creates a new snapshot with the content of the target version.
     Does NOT delete history — the original versions are preserved.
     """
-    store = get_versioned_store()
+    reader = _get_cognee_reader()
+    writer = _get_cognee_writer()
 
-    try:
-        new_version = await store.restore_version(
-            version_id=version_id,
-            message=message,
-            branch=branch,
-        )
+    from_dataset = f"memory-version-{version_id}"
+    results = await reader.read(query="all content", top_k=50, dataset=from_dataset)
 
-        return {
-            "restored_from": version_id,
-            "new_version_id": new_version.id,
-            "new_short_id": new_version.short_id,
-            "message": new_version.message,
-            "branch": new_version.branch,
-            "total_entries": new_version.total_entries,
-        }
-    except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e)) from e
+    if not results:
+        raise HTTPException(status_code=404, detail=f"Version not found: {version_id}")
+
+    now = datetime.now(UTC).isoformat()
+    new_version_id = f"v-{now.replace(':', '-').replace('.', '-')}"
+    to_dataset = f"memory-version-{new_version_id}"
+    if branch:
+        to_dataset = f"{to_dataset}-{branch}"
+
+    restore_msg = message or f"Restored from version {version_id}"
+
+    # Write each content entry to the new dataset
+    for r in results:
+        content = r.get("content", "")
+        if content:
+            await writer.store(content=content, dataset=to_dataset)
+
+    return {
+        "restored_from": version_id,
+        "new_version_id": new_version_id,
+        "new_short_id": new_version_id[:8],
+        "message": restore_msg,
+        "branch": branch or "main",
+        "total_entries": len(results),
+    }
 
 
 @router.post("/{version_id}/label/{label}")
@@ -285,11 +364,19 @@ async def label_version(
 
     Labels are human-readable names for versions (like git tags).
     """
-    store = get_versioned_store()
-    success = await store.label_version(version_id, label)
+    writer = _get_cognee_writer()
+
+    # Store the label metadata as a Cognee dataset
+    label_dataset = f"memory-label-{label}"
+    content = (
+        f"Label: {label}\n"
+        f"Version ID: {version_id}\n"
+        f"Created: {datetime.now(UTC).isoformat()}\n"
+    )
+    success = await writer.store(content=content, dataset=label_dataset)
 
     if not success:
-        raise HTTPException(status_code=404, detail=f"Version not found: {version_id}")
+        raise HTTPException(status_code=500, detail=f"Failed to store label: {label}")
 
     return {"labeled": True, "version_id": version_id, "label": label}
 
@@ -300,18 +387,27 @@ async def get_version_by_label(
     authenticated: dict = Depends(verify_auth),
 ) -> dict[str, Any]:
     """Get the version associated with a label."""
-    store = get_versioned_store()
-    version = await store.get_version_by_label(label)
+    reader = _get_cognee_reader()
+    label_dataset = f"memory-label-{label}"
+    results = await reader.read(query="label metadata", top_k=1, dataset=label_dataset)
 
-    if not version:
+    if not results:
         raise HTTPException(status_code=404, detail=f"No version found for label: {label}")
 
+    content = results[0].get("content", "")
+    parsed: dict[str, str] = {}
+    for line in content.split("\n"):
+        if ":" in line:
+            key, _, val = line.partition(":")
+            parsed[key.strip()] = val.strip()
+
+    version_id = parsed.get("Version ID", "unknown")
     return {
         "label": label,
-        "version_id": version.id,
-        "short_id": version.short_id,
-        "version_number": version.version_id,
-        "message": version.message,
+        "version_id": version_id,
+        "short_id": version_id[:8],
+        "version_number": version_id,
+        "message": parsed.get("Message", ""),
     }
 
 
@@ -320,5 +416,13 @@ async def get_version_statistics(
     authenticated: dict = Depends(verify_auth),
 ) -> dict[str, Any]:
     """Get version store statistics."""
-    store = get_versioned_store()
-    return store.get_statistics()
+    reader = _get_cognee_reader()
+    healthy = await reader.health()
+    results = await reader.read(query="memory version", top_k=100)
+
+    return {
+        "total_versions": len(results),
+        "cognee_healthy": healthy,
+        "backend": "cognee",
+        "engine": "knowledge-graph",
+    }

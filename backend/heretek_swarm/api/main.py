@@ -76,7 +76,8 @@ from heretek_swarm.consensus.deliberation import Position
 from heretek_swarm.gateway.auth import verify_auth
 from heretek_swarm.gateway.nats_event_mesh import NATSEventMesh
 from heretek_swarm.mcp.server import router as mcp_router
-from heretek_swarm.memory.persistent import PersistentMemory as PersistentMemoryStore
+from heretek_swarm.memory.cognee_reader import CogneeMemoryReader
+from heretek_swarm.memory.cognee_writer import CogneeMemoryWriter
 from heretek_swarm.observability.tracing import setup_telemetry_middleware
 
 # Import mem0 backend
@@ -98,7 +99,8 @@ _QDRANT_URL_REQUIRED_MSG = "QDRANT_URL is required. Set it to http://host:port o
 
 # Global supervisor instance
 supervisor: ActorSupervisor | None = None
-memory_store: PersistentMemoryStore | None = None
+cognee_writer: CogneeMemoryWriter | None = None
+cognee_reader: CogneeMemoryReader | None = None
 mem0_backend: Any | None = None  # Mem0Backend when available
 _nats_mesh: NATSEventMesh | None = None  # NATS event mesh for WebSocket bridge
 _ws_pump_task: asyncio.Task | None = None  # WebSocket status pump background task
@@ -107,7 +109,7 @@ _ws_pump_task: asyncio.Task | None = None  # WebSocket status pump background ta
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Application lifespan handler for startup and shutdown."""
-    global supervisor, memory_store, mem0_backend, _ws_pump_task
+    global supervisor, cognee_writer, cognee_reader, mem0_backend, _ws_pump_task
 
     # Startup
     logger.info("Starting Heretek Swarm API...")
@@ -158,8 +160,11 @@ async def lifespan(app: FastAPI):
     if mem0_backend:
         await mem0_backend.shutdown()
 
-    if memory_store:
-        await memory_store.disconnect()
+    if cognee_writer:
+        await cognee_writer.close()
+
+    if cognee_reader:
+        await cognee_reader.close()
 
     if _nats_mesh:
         await _nats_mesh.disconnect()
@@ -318,19 +323,21 @@ async def _spawn_all_agents() -> None:
 
 
 async def _init_memory_store() -> None:
-    """Initialize PersistentMemoryStore."""
-    global memory_store
+    """Initialize CogneeMemoryWriter and CogneeMemoryReader."""
+    global cognee_writer, cognee_reader
 
     try:
-        database_url = await get_config("database.url", default=os.environ.get("DATABASE_URL"))
-        if not database_url:
-            raise ValueError("DATABASE_URL is required")
-        memory_store = PersistentMemoryStore()
-        await memory_store.connect()
-        logger.info("PersistentMemoryStore connected")
+        cognee_writer = CogneeMemoryWriter()
+        cognee_reader = CogneeMemoryReader()
+        logger.info(
+            "cognee_memory_initialized",
+            writer_enabled=cognee_writer.enabled,
+            reader_enabled=cognee_reader.enabled,
+        )
     except Exception as e:
-        logger.warning("PersistentMemoryStore not available", error=str(e))
-        memory_store = None
+        logger.warning("cognee_memory_init_failed", error=str(e))
+        cognee_writer = None
+        cognee_reader = None
 
 
 async def _init_mem0() -> None:
@@ -674,36 +681,33 @@ async def check_redis() -> dict[str, Any]:
 
 
 async def check_postgres() -> dict[str, Any]:
-    """Check PostgreSQL connection status."""
+    """Check PostgreSQL connection status via Cognee health endpoint."""
     try:
-        if not memory_store:
-            # Try to get database URL and connect directly
-            db_url = os.environ.get("DATABASE_URL", "")
-            if not db_url:
-                raise ValueError("DATABASE_URL environment variable is required")
-            from sqlalchemy import text
-            from sqlalchemy.ext.asyncio import create_async_engine
-
-            engine = create_async_engine(db_url)
-            async with engine.connect() as conn:
-                await conn.execute(text("SELECT 1"))
-            await engine.dispose()
+        # Check Cognee health (which wraps PostgreSQL connectivity)
+        if cognee_reader and await cognee_reader.health():
             return {
                 "status": "healthy",
                 "database": "heretek_swarm",
             }
-        if memory_store and memory_store._engine:
-            from sqlalchemy import text
-
-            async with memory_store._engine.connect() as conn:
-                await conn.execute(text("SELECT 1"))
+        if cognee_writer and await cognee_writer.health():
             return {
                 "status": "healthy",
                 "database": "heretek_swarm",
             }
+        # Fallback: direct database URL check
+        db_url = os.environ.get("DATABASE_URL", "")
+        if not db_url:
+            raise ValueError("DATABASE_URL environment variable is required")
+        from sqlalchemy import text
+        from sqlalchemy.ext.asyncio import create_async_engine
+
+        engine = create_async_engine(db_url)
+        async with engine.connect() as conn:
+            await conn.execute(text("SELECT 1"))
+        await engine.dispose()
         return {
-            "status": "unhealthy",
-            "error": "Not connected",
+            "status": "healthy",
+            "database": "heretek_swarm",
         }
     except Exception as e:
         return {
@@ -941,7 +945,7 @@ async def get_memory_stats(authenticated: str = Depends(verify_auth)):
         - by_agent: Memory count per agent
         - by_type: Memory count per type
     """
-    if not memory_store:
+    if not cognee_reader or not cognee_reader.enabled:
         return {
             "total_memories": 0,
             "by_agent": {},
@@ -950,30 +954,19 @@ async def get_memory_stats(authenticated: str = Depends(verify_auth)):
         }
 
     try:
-        # Get total count
-        from sqlalchemy import func, select
+        # Use CogneeMemoryReader to search across all memory
+        results = await cognee_reader.read(query="agent memory", top_k=100)
+        total = len(results)
 
-        from heretek_swarm.memory.persistent import MemoryEntryModel
-
-        async with memory_store._session_factory() as session:
-            # Total count
-            stmt = select(func.count()).select_from(MemoryEntryModel)
-            result = await session.execute(stmt)
-            total = result.scalar() or 0
-
-            # By agent
-            agent_stmt = select(MemoryEntryModel.agent_id, func.count()).group_by(
-                MemoryEntryModel.agent_id
-            )
-            agent_result = await session.execute(agent_stmt)
-            by_agent = {row[0]: row[1] for row in agent_result.all()}
-
-            # By type
-            type_stmt = select(MemoryEntryModel.memory_type, func.count()).group_by(
-                MemoryEntryModel.memory_type
-            )
-            type_result = await session.execute(type_stmt)
-            by_type = {row[0]: row[1] for row in type_result.all()}
+        # Derive by_agent and by_type from search results metadata
+        by_agent: dict[str, int] = {}
+        by_type: dict[str, int] = {}
+        for entry in results:
+            meta = entry.get("metadata", {})
+            agent_id = meta.get("agent_id", "unknown")
+            mem_type = meta.get("memory_type", "unknown")
+            by_agent[agent_id] = by_agent.get(agent_id, 0) + 1
+            by_type[mem_type] = by_type.get(mem_type, 0) + 1
 
         return {
             "total_memories": total,
