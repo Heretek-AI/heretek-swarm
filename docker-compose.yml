@@ -203,9 +203,28 @@ services:
     networks:
       - heretek-net
 
+  # =============================================================================
+  # FalkorDB — optional graph store (M-arch PR #10)
+  # =============================================================================
+  falkordb:
+    image: falkordb/falkordb:v4.0.6
+    profiles: ["falkordb", "graph-stores"]
+    ports:
+      - "6379:6379"
+    volumes:
+      - falkordb_data:/data
+    mem_limit: 1g
+    cpus: "0.5"
+    healthcheck:
+      <<: *healthcheck-defaults
+      test: ["CMD", "falkordb-cli", "PING"]
+    restart: unless-stopped
+    networks:
+      - heretek-net
+
 # =============================================================================
 # Volumes
-# ============================================================================
+# =============================================================================
 
 volumes:
   postgres_data:
@@ -213,6 +232,7 @@ volumes:
   qdrant_data:
   nats_data:
   cognee_data:
+  falkordb_data:
   config_keys:
 
 # ============================================================================
