@@ -183,7 +183,7 @@ class HistorianAgent(
         # so tests can patch it before calling initialize().
         import heretek_swarm.actors.historian as _h_mod
 
-        self._jsonl_path = _h_mod._HISTORIAN_FILE  # noqa: SLF001
+        self._jsonl_path = _h_mod._HISTORIAN_FILE
 
         # Initialize unified knowledge access layer
         if self.rag_pipeline:
@@ -232,7 +232,7 @@ class HistorianAgent(
                 await handler(message)
             except Exception as e:
                 logger.exception(
-                    f"[{self.agent_id}] Error processing message {message.message_type}: {e}",  # noqa: G004
+                    f"[{self.agent_id}] Error processing message {message.message_type}: {e}",
 
                 )
                 self.error_count += 1
@@ -658,7 +658,7 @@ class HistorianAgent(
         self.context_cache.set(cache_key, context)
 
         logger.debug(
-            f"[{self.agent_id}] Retrieved {len(context)} context entries for: {topic} (cache size: {len(self.context_cache)})"  # noqa: G004,E501
+            f"[{self.agent_id}] Retrieved {len(context)} context entries for: {topic} (cache size: {len(self.context_cache)})"
         )
 
         return context
@@ -784,7 +784,7 @@ class HistorianAgent(
         self.pattern_cache.set(situation, matched)
 
         logger.debug(
-            f"[{self.agent_id}] Matched {len(matched)} patterns for: {situation} (cache size: {len(self.pattern_cache)})"  # noqa: G004,E501
+            f"[{self.agent_id}] Matched {len(matched)} patterns for: {situation} (cache size: {len(self.pattern_cache)})"
         )
 
         return matched
@@ -898,7 +898,7 @@ class HistorianAgent(
         self,
         topic: str,
         limit: int = 20,
-        timeout: int = 60,  # noqa: ASYNC109
+        timeout: int = 60,
     ) -> dict[str, Any]:
         """
         Synthesize knowledge from historical executions.
@@ -979,7 +979,7 @@ class HistorianAgent(
         }
 
     # Session 44: Collective Learning, Consensus Deliberation, and Memory Optimization
-    # integration methods now provided by DeliberationMixin, LearningMixin, MemoryMixin, and PatternMixin.  # noqa: E501
+    # integration methods now provided by DeliberationMixin, LearningMixin, MemoryMixin, and PatternMixin.
 
     # ------------------------------------------------------------------
     # JSONL event log
@@ -1017,7 +1017,7 @@ class HistorianAgent(
     def _write_jsonl_line(path: Path, line: str) -> None:
         """Synchronous file-write helper called from ``asyncio.to_thread``."""
         path.parent.mkdir(parents=True, exist_ok=True)
-        with open(str(path), "a", encoding="utf-8") as f:  # noqa: PTH123
+        with open(str(path), "a", encoding="utf-8") as f:
             f.write(line)
             f.write("\n")
 
@@ -1075,7 +1075,7 @@ class HistorianAgent(
                 logger.debug(f"[{self.agent_id}] PG writer: inserted event {record['event_id']}")
             except Exception as e:
                 logger.exception(
-                    f"[{self.agent_id}] PG writer error for event {record.get('event_id', '?')}"  # noqa: G004
+                    f"[{self.agent_id}] PG writer error for event {record.get('event_id', '?')}"
                 )
             finally:
                 self._jsonl_queue.task_done()
@@ -1224,7 +1224,7 @@ class HistorianAgent(
 
         if not event_type or not agent_id:
             logger.error(
-                f"[{self.agent_id}] log_event missing required fields",  # noqa: G004
+                f"[{self.agent_id}] log_event missing required fields",
                 extra={"content_keys": list(message.content)},
             )
             return

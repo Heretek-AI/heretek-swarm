@@ -34,8 +34,8 @@ from prometheus_client import CONTENT_TYPE_LATEST, generate_latest
 
 logger = structlog.get_logger("observability")
 
-from .prometheus_metrics import PrometheusMetrics  # noqa: E402
-from .tracing import initialize_tracing, span_context  # noqa: E402
+from .prometheus_metrics import PrometheusMetrics
+from .tracing import initialize_tracing, span_context
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -51,7 +51,7 @@ try:
     HERETEK_LOGS_DIR.mkdir(parents=True, exist_ok=True)
 except PermissionError:
     # Container / restricted environment - use /tmp fallback
-    HERETEK_DATA_DIR = Path("/tmp/.heretek-swarm")  # noqa: S108
+    HERETEK_DATA_DIR = Path("/tmp/.heretek-swarm")
     HERETEK_LOGS_DIR = HERETEK_DATA_DIR / "logs"
     HERETEK_LOGS_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -149,7 +149,7 @@ class LokiHandler(logging.Handler):
 
         # Create current log file
         self._current_file = (
-            self.log_dir / f"{service_name}-{datetime.now().strftime('%Y%m%d')}.jsonl"  # noqa: DTZ005
+            self.log_dir / f"{service_name}-{datetime.now().strftime('%Y%m%d')}.jsonl"
         )
 
     async def _get_client(self):
@@ -172,7 +172,7 @@ class LokiHandler(logging.Handler):
 
         # Write to local JSON file
         try:
-            with open(self._current_file, "a") as f:  # noqa: ASYNC230,PTH123
+            with open(self._current_file, "a") as f:
                 for log_entry in logs_to_send:
                     f.write(json.dumps(log_entry) + "\n")
         except Exception as e:
@@ -222,7 +222,7 @@ class LokiHandler(logging.Handler):
             log_entry = self._format_record(record)
 
             # Add to buffer
-            asyncio.create_task(self._add_to_buffer(log_entry))  # noqa: RUF006
+            asyncio.create_task(self._add_to_buffer(log_entry))
 
         except Exception as e:
             logger.debug("observability_emit_failed", error=str(e))

@@ -37,7 +37,7 @@ class LoggingMiddleware(BaseHTTPMiddleware):
     """
 
     # Paths to exclude from logging (health checks, metrics, etc.)
-    EXCLUDED_PATHS = {  # noqa: RUF012
+    EXCLUDED_PATHS = {
         "/api/health/live",
         "/api/health/ready",
         "/metrics",
@@ -47,7 +47,7 @@ class LoggingMiddleware(BaseHTTPMiddleware):
     }
 
     # Header names for tracing
-    TRACE_ID_HEADERS = [  # noqa: RUF012
+    TRACE_ID_HEADERS = [
         "x-trace-id",
         "x-correlation-id",
         "x-request-id",

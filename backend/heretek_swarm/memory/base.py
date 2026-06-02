@@ -32,7 +32,7 @@ import structlog
 logger = structlog.get_logger("MemorySystem")
 
 
-@dataclass  # noqa: RUF049
+@dataclass
 class MemoryTier(StrEnum):
     """Memory tier classification."""
 
@@ -290,7 +290,7 @@ class EphemeralMemory(MemorySystem):
         """Retrieve a memory entry by ID."""
         entry = self._storage.get(memory_id)
 
-        if entry:  # noqa: SIM102
+        if entry:
             # Check expiration
             if self._is_expired(entry):
                 await self.delete(memory_id)
@@ -469,7 +469,7 @@ class PersistentMemory(MemorySystem):
         self,
         content: dict[str, Any],
         metadata: dict[str, Any] | None = None,
-        ttl: int | None = None,  # noqa: ARG002
+        ttl: int | None = None,
         lineage: list[str] | None = None,
     ) -> MemoryEntry:
         """Store a memory entry (no TTL for persistent memory)."""
@@ -766,7 +766,7 @@ class DualTierMemory:
         """Get combined statistics for both tiers."""
         ephemeral_stats = self.ephemeral.get_statistics()
         persistent_stats = {
-            "persistent_total": len(self.persistent._storage),  # noqa: SLF001
+            "persistent_total": len(self.persistent._storage),
         }
 
         return {
@@ -796,7 +796,7 @@ class DualTierMemory:
         # Evict expired entries from ephemeral
         ephemeral_storage = getattr(self.ephemeral, "_storage", {})
         expired_ids = [
-            mid for mid, entry in ephemeral_storage.items() if self.ephemeral._is_expired(entry)  # noqa: SLF001
+            mid for mid, entry in ephemeral_storage.items() if self.ephemeral._is_expired(entry)
         ]
         for mid in expired_ids:
             await self.ephemeral.delete(mid)

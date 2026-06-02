@@ -25,7 +25,7 @@ router = APIRouter(prefix="", tags=["observability"])
 @router.post("/events/replay")
 async def create_replay_job(
     job_data: ReplayJobCreate,
-    replay_manager: Any | None = Depends(get_replay_manager),  # noqa: B008
+    replay_manager: Any | None = Depends(get_replay_manager),
     authenticated: str = Depends(verify_auth),
 ) -> ReplayJobResponse:
     """Create a new message replay job."""
@@ -82,7 +82,7 @@ async def create_replay_job(
 @router.post("/events/replay/{job_id}/execute")
 async def execute_replay_job(
     job_id: str,
-    replay_manager: Any | None = Depends(get_replay_manager),  # noqa: B008
+    replay_manager: Any | None = Depends(get_replay_manager),
     authenticated: str = Depends(verify_auth),
 ) -> dict[str, Any]:
     """Execute a replay job."""
@@ -94,7 +94,7 @@ async def execute_replay_job(
         raise HTTPException(404, f"Replay job '{job_id}' not found")
 
     try:
-        asyncio.create_task(replay_manager.execute_replay(job))  # noqa: RUF006
+        asyncio.create_task(replay_manager.execute_replay(job))
 
         return {
             "status": "started",
@@ -109,7 +109,7 @@ async def execute_replay_job(
 @router.post("/events/replay/{job_id}/pause")
 async def pause_replay_job(
     job_id: str,
-    replay_manager: Any | None = Depends(get_replay_manager),  # noqa: B008
+    replay_manager: Any | None = Depends(get_replay_manager),
     authenticated: str = Depends(verify_auth),
 ) -> dict[str, str]:
     """Pause a replay job."""
@@ -125,7 +125,7 @@ async def pause_replay_job(
 @router.post("/events/replay/{job_id}/resume")
 async def resume_replay_job(
     job_id: str,
-    replay_manager: Any | None = Depends(get_replay_manager),  # noqa: B008
+    replay_manager: Any | None = Depends(get_replay_manager),
     authenticated: str = Depends(verify_auth),
 ) -> dict[str, str]:
     """Resume a paused replay job."""
@@ -141,7 +141,7 @@ async def resume_replay_job(
 @router.post("/events/replay/{job_id}/cancel")
 async def cancel_replay_job(
     job_id: str,
-    replay_manager: Any | None = Depends(get_replay_manager),  # noqa: B008
+    replay_manager: Any | None = Depends(get_replay_manager),
     authenticated: str = Depends(verify_auth),
 ) -> dict[str, str]:
     """Cancel a replay job."""
@@ -157,7 +157,7 @@ async def cancel_replay_job(
 @router.get("/events/replay")
 async def list_replay_jobs(
     active_only: bool = False,
-    replay_manager: Any | None = Depends(get_replay_manager),  # noqa: B008
+    replay_manager: Any | None = Depends(get_replay_manager),
     authenticated: str = Depends(verify_auth),
 ) -> ReplayJobListResponse:
     """List all replay jobs."""
@@ -203,7 +203,7 @@ async def list_replay_jobs(
 @router.get("/events/replay/{job_id}")
 async def get_replay_job(
     job_id: str,
-    replay_manager: Any | None = Depends(get_replay_manager),  # noqa: B008
+    replay_manager: Any | None = Depends(get_replay_manager),
     authenticated: str = Depends(verify_auth),
 ) -> ReplayJobResponse:
     """Get details of a specific replay job."""
@@ -235,7 +235,7 @@ async def get_replay_job(
 @router.post("/events/time-travel")
 async def create_time_travel_request(
     request_data: TimeTravelRequestCreate,
-    replay_manager: Any | None = Depends(get_replay_manager),  # noqa: B008
+    replay_manager: Any | None = Depends(get_replay_manager),
     authenticated: str = Depends(verify_auth),
 ) -> dict[str, Any]:
     """Create a time travel debugging request."""
@@ -269,14 +269,14 @@ async def create_time_travel_request(
 @router.post("/events/time-travel/{request_id}/execute")
 async def execute_time_travel(
     request_id: str,
-    replay_manager: Any | None = Depends(get_replay_manager),  # noqa: B008
+    replay_manager: Any | None = Depends(get_replay_manager),
     authenticated: str = Depends(verify_auth),
 ) -> TimeTravelResponse:
     """Execute time travel state reconstruction."""
     if not replay_manager:
         raise HTTPException(503, "Replay manager not available")
 
-    request = replay_manager._time_travel_requests.get(request_id)  # noqa: SLF001
+    request = replay_manager._time_travel_requests.get(request_id)
     if not request:
         raise HTTPException(404, f"Time travel request '{request_id}' not found")
 
@@ -309,7 +309,7 @@ async def execute_time_travel(
 
 @router.get("/events/stats")
 async def get_event_stats(
-    replay_manager: Any | None = Depends(get_replay_manager),  # noqa: B008
+    replay_manager: Any | None = Depends(get_replay_manager),
     authenticated: str = Depends(verify_auth),
 ) -> dict[str, Any]:
     """Get event replay statistics."""

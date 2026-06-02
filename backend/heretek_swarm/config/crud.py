@@ -181,7 +181,7 @@ class ConfigurationServiceCrud:
             if category:
                 query = query.where(UserConfigurationORM.category == category)
             if not include_sensitive:
-                query = query.where(UserConfigurationORM.is_sensitive == False)  # noqa: E712
+                query = query.where(UserConfigurationORM.is_sensitive == False)
 
             result = await session.execute(
                 query.order_by(UserConfigurationORM.category).limit(limit).offset(offset)
@@ -362,7 +362,7 @@ class ConfigurationServiceCrud:
         async with self._session_factory() as session:
             query = select(LLMProviderORM)
             if not include_disabled:
-                query = query.where(LLMProviderORM.is_enabled == True)  # noqa: E712
+                query = query.where(LLMProviderORM.is_enabled == True)
             result = await session.execute(query.order_by(LLMProviderORM.priority))
             providers = result.scalars().all()
             return [self._orm_to_pydantic(p) for p in providers]
@@ -376,7 +376,7 @@ class ConfigurationServiceCrud:
         """
         async with self._session_factory() as session:
             result = await session.execute(
-                select(LLMProviderORM).where(LLMProviderORM.is_default == True)  # noqa: E712
+                select(LLMProviderORM).where(LLMProviderORM.is_default == True)
             )
             provider = result.scalar_one_or_none()
             return self._orm_to_pydantic(provider) if provider else None
@@ -632,7 +632,7 @@ class ConfigurationServiceCrud:
         async with self._session_factory() as session:
             query = select(EmbeddingProviderORM)
             if not include_disabled:
-                query = query.where(EmbeddingProviderORM.is_enabled == True)  # noqa: E712
+                query = query.where(EmbeddingProviderORM.is_enabled == True)
             result = await session.execute(query.order_by(EmbeddingProviderORM.priority))
             providers = result.scalars().all()
             return [self._orm_to_pydantic(p) for p in providers]
@@ -649,7 +649,7 @@ class ConfigurationServiceCrud:
         async with self._session_factory() as session:
             result = await session.execute(
                 select(EmbeddingProviderORM).where(
-                    EmbeddingProviderORM.is_default == True  # noqa: E712
+                    EmbeddingProviderORM.is_default == True
                 )
             )
             provider = result.scalar_one_or_none()
@@ -862,7 +862,7 @@ class ConfigurationServiceCrud:
             if agent_type:
                 query = query.where(AgentConfigORM.agent_type == agent_type)
             if not include_inactive:
-                query = query.where(AgentConfigORM.is_active == True)  # noqa: E712
+                query = query.where(AgentConfigORM.is_active == True)
             result = await session.execute(query.order_by(AgentConfigORM.agent_type))
             configs = result.scalars().all()
             return [self._orm_to_pydantic(c) for c in configs]
@@ -1009,7 +1009,7 @@ class ConfigurationServiceCrud:
 
     async def export_configurations(
         self: ConfigurationService,
-        config_type: ConfigType | None = None,  # noqa: ARG002
+        config_type: ConfigType | None = None,
         include_sensitive: bool = False,
         exported_by: str | None = None,
     ) -> ConfigurationExport:
@@ -1047,7 +1047,7 @@ class ConfigurationServiceCrud:
         self: ConfigurationService,
         import_data: Any,
         options: ImportOptions | None = None,
-        user: str | None = None,  # noqa: ARG002
+        user: str | None = None,
     ) -> ImportResult:
         """
         Import configurations.
@@ -1293,7 +1293,7 @@ class ConfigurationServiceCrud:
         async with self._session_factory() as session:
             query = select(InfrastructureConfigORM)
             if not include_disabled:
-                query = query.where(InfrastructureConfigORM.is_enabled == True)  # noqa: E712
+                query = query.where(InfrastructureConfigORM.is_enabled == True)
             result = await session.execute(query.order_by(InfrastructureConfigORM.service))
             configs = result.scalars().all()
             return [self._orm_to_pydantic(c) for c in configs]

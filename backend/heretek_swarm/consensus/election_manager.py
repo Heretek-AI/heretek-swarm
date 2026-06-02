@@ -122,7 +122,7 @@ class ElectionManager:
             self._started = True
 
     async def _kick_off_voting(self) -> None:
-        await asyncio.gather(*[raft._start_election() for raft in self._rafts.values()])  # noqa: SLF001
+        await asyncio.gather(*[raft._start_election() for raft in self._rafts.values()])
 
     async def _poll_for_leader(self, cycle: int) -> str | None:
         deadline = self._election_timeout_max

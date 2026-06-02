@@ -163,7 +163,7 @@ class FileGoalStore:
         if not self._path.exists():
             return {}
         try:
-            with open(self._path, encoding="utf-8") as f:  # noqa: PTH123
+            with open(self._path, encoding="utf-8") as f:
                 return json.load(f)
         except (json.JSONDecodeError, OSError) as exc:
             logger.warning(
@@ -182,7 +182,7 @@ class FileGoalStore:
         self._path.parent.mkdir(parents=True, exist_ok=True)
         tmp = self._path.with_suffix(self._path.suffix + ".tmp")
         try:
-            with open(tmp, "w", encoding="utf-8") as f:  # noqa: PTH123
+            with open(tmp, "w", encoding="utf-8") as f:
                 json.dump(data, f, indent=2)
                 f.flush()
                 os.fsync(f.fileno())

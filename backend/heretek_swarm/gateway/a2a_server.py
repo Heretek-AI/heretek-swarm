@@ -432,7 +432,7 @@ class A2AServer:
             "agent_ids": list(self.agents.keys()),
             "message_log_size": len(self._message_log),
             "uptime": "active",
-            "active_tokens": len(token_manager._valid_tokens),  # noqa: SLF001
+            "active_tokens": len(token_manager._valid_tokens),
         }
 
     @staticmethod

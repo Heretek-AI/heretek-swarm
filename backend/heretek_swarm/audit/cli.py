@@ -18,7 +18,7 @@ _REPO_ROOT = Path(__file__).resolve().parent.parent
 if str(_REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(_REPO_ROOT))
 
-from heretek_swarm.audit import (  # noqa: E402
+from heretek_swarm.audit import (
     AuditFinding,
     generate_report,
     scan_directory,
@@ -61,7 +61,7 @@ def cli(
     directory: str,
     output: str | None,
     severity: str,
-    format: str,  # noqa: A002
+    format: str,
     patterns: str | None,
 ) -> None:
     """Run the stub detection audit and generate a report.

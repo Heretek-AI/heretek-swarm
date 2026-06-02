@@ -51,7 +51,7 @@ class DaemonError(Exception):
 # ---------------------------------------------------------------------------
 
 DEFAULT_PID_FILE = Path("/var/run/heretek-swarm.pid")
-DEFAULT_SOCKET_PATH = Path("/tmp/heretek-swarm.sock")  # noqa: S108
+DEFAULT_SOCKET_PATH = Path("/tmp/heretek-swarm.sock")
 
 
 # ---------------------------------------------------------------------------
@@ -279,9 +279,9 @@ async def _run_daemon_loop(ctx: DaemonContext) -> None:
 
     try:
         server = await asyncio.start_unix_server(_client_handler, path=str(socket_path))
-        ctx._server = server  # noqa: SLF001
+        ctx._server = server
         # Make socket accessible to other processes (umask may restrict this).
-        os.chmod(str(socket_path), 0o666)  # noqa: S103,PTH101
+        os.chmod(str(socket_path), 0o666)
 
         logger.info(
             "daemon_socket_listening",

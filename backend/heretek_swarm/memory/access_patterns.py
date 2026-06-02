@@ -866,4 +866,4 @@ class AccessPatternAnalyzer:
 
 
 # Import timedelta for prediction calculations
-from datetime import timedelta  # noqa: E402
+from datetime import timedelta

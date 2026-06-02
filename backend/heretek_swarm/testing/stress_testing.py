@@ -563,8 +563,8 @@ class StressTestExecutor:
 
     async def _test_capability_at(
         self,
-        agent_id: str,  # noqa: ARG002
-        capability: str,  # noqa: ARG002
+        agent_id: str,
+        capability: str,
         value: float,
     ) -> bool:
         """Test if agent can handle capability at given level."""

@@ -159,7 +159,7 @@ async def create_routing_rule(
         # Convert content filters
         content_filters = []
         for cf in rule_data.content_filters:
-            content_filters.append(  # noqa: PERF401
+            content_filters.append(
                 ContentFilter(
                     field=cf["field"],
                     operator=FilterOperator(cf["operator"]),
@@ -235,7 +235,7 @@ async def update_routing_rule(
     # Convert content filters
     content_filters = []
     for cf in rule_data.content_filters:
-        content_filters.append(  # noqa: PERF401
+        content_filters.append(
             ContentFilter(
                 field=cf["field"],
                 operator=FilterOperator(cf["operator"]),

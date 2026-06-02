@@ -445,7 +445,7 @@ class KnowledgeTransformer:
     def _transform_condensed(
         self,
         pattern: ExtractedPattern,
-        target_agent_type: AgentType,  # noqa: ARG002
+        target_agent_type: AgentType,
     ) -> dict[str, Any]:
         """Transform pattern into condensed/compressed format."""
         return {
@@ -499,7 +499,7 @@ class KnowledgeTransformer:
         if profile.excluded_topics:
             for topic in profile.excluded_topics:
                 if topic in str(customized):
-                    warnings.append(f"Content contains excluded topic: {topic}")  # noqa: PERF401
+                    warnings.append(f"Content contains excluded topic: {topic}")
 
         # Check size limits
         content_size = len(str(customized))
@@ -541,7 +541,7 @@ class KnowledgeTransformer:
         self,
         pattern: ExtractedPattern,
         target_agent_type: AgentType,
-        agent_id: str | None,  # noqa: ARG002
+        agent_id: str | None,
     ) -> float:
         """
         Calculate how applicable a pattern is to an agent type.
@@ -682,7 +682,7 @@ class KnowledgeTransformer:
 
         for agent_id in agent_ids:
             for agent_type, keywords in type_keywords.items():
-                if any(keyword in agent_id.lower() for keyword in keywords):  # noqa: SIM102
+                if any(keyword in agent_id.lower() for keyword in keywords):
                     if agent_type not in types:
                         types.append(agent_type)
 
@@ -719,7 +719,7 @@ class KnowledgeTransformer:
     def _predict_outcome(
         self,
         pattern: ExtractedPattern,
-        agent_type: AgentType,  # noqa: ARG002
+        agent_type: AgentType,
     ) -> str:
         """Predict outcome if pattern is applied."""
         if pattern.metadata.pattern_type == PatternType.SUCCESS:
@@ -820,7 +820,7 @@ class KnowledgeTransformer:
         errors = []
 
         # Leadership needs strategic relevance
-        if "strategy" not in str(transformed.knowledge_content).lower():  # noqa: SIM102
+        if "strategy" not in str(transformed.knowledge_content).lower():
             if transformed.target_agent_type == AgentType.LEADERSHIP:
                 errors.append("Leadership knowledge should have strategic relevance")
 
@@ -848,7 +848,7 @@ class KnowledgeTransformer:
         errors = []
 
         # Support knowledge should be actionable
-        if transformed.transformation_type == TransformationType.ACTIONABLE:  # noqa: SIM102
+        if transformed.transformation_type == TransformationType.ACTIONABLE:
             if not transformed.knowledge_content.get("recommended_actions"):
                 errors.append("Support knowledge should have actionable recommendations")
 
@@ -862,7 +862,7 @@ class KnowledgeTransformer:
         errors = []
 
         # Exploration needs discovery-oriented content
-        if "discovery" not in str(transformed.knowledge_content).lower():  # noqa: SIM102
+        if "discovery" not in str(transformed.knowledge_content).lower():
             if transformed.transformation_type == TransformationType.EXPANDED:
                 errors.append("Exploration knowledge should encourage discovery")
 
@@ -911,8 +911,8 @@ class KnowledgeTransformer:
         errors = []
 
         # Coordination needs interaction patterns
-        if "interaction" not in str(transformed.knowledge_content).lower():  # noqa: SIM102
-            if "handoff" not in str(transformed.knowledge_content).lower():  # noqa: SIM102
+        if "interaction" not in str(transformed.knowledge_content).lower():
+            if "handoff" not in str(transformed.knowledge_content).lower():
                 if "communication" not in str(transformed.knowledge_content).lower():
                     errors.append("Coordination knowledge should involve interaction patterns")
 
@@ -1013,6 +1013,6 @@ class KnowledgeTransformationService:
             "total_transformations": len(self._transformation_history),
             "successful": sum(1 for r in self._transformation_history if r.success),
             "failed": sum(1 for r in self._transformation_history if not r.success),
-            "cache_size": len(self.transformer._transformed_cache),  # noqa: SLF001
-            "registered_agents": len(self.transformer._agent_profiles),  # noqa: SLF001
+            "cache_size": len(self.transformer._transformed_cache),
+            "registered_agents": len(self.transformer._agent_profiles),
         }

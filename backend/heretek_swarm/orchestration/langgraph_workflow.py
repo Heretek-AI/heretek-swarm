@@ -227,7 +227,7 @@ class LangGraphHeavySwarmWorkflow:
 def is_langgraph_available() -> bool:
     """Return True if the langgraph optional dep is importable."""
     try:
-        import langgraph  # noqa: F401
+        import langgraph
     except ImportError:
         return False
     return True

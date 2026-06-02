@@ -851,7 +851,7 @@ class Mem0Backend:
         }
         return self._memory.add(messages=messages, **params)
 
-    def search(  # noqa: F811
+    def search(
         self,
         query: str,
         user_id: str | None = None,
@@ -925,7 +925,7 @@ class Mem0Backend:
 
         return self._memory.get(memory_id)
 
-    def get_all(  # noqa: F811
+    def get_all(
         self,
         user_id: str | None = None,
         run_id: str | None = None,

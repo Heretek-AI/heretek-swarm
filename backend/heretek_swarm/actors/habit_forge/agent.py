@@ -187,7 +187,7 @@ class HabitForgeAgent(
                 await handler(message)
             except Exception as e:
                 logger.exception(
-                    f"[{self.agent_id}] Error processing message {message.message_type}: {e}",  # noqa: G004
+                    f"[{self.agent_id}] Error processing message {message.message_type}: {e}",
 
                 )
                 self.error_count += 1
@@ -305,7 +305,7 @@ class HabitForgeAgent(
                 habit.record_completion(context)
 
                 logger.info(
-                    f"[{self.agent_id}] Recorded completion for habit: {habit.name} "  # noqa: G004
+                    f"[{self.agent_id}] Recorded completion for habit: {habit.name} "
                     f"(streak: {habit.streak_current}, adherence: {habit.adherence_rate:.1%})"
                 )
 
@@ -360,7 +360,7 @@ class HabitForgeAgent(
         # Log stage change
         if habit.stage != old_stage:
             logger.info(
-                f"[{self.agent_id}] Habit '{habit.name}' progressed from "  # noqa: G004
+                f"[{self.agent_id}] Habit '{habit.name}' progressed from "
                 f"{old_stage.value} to {habit.stage.value}"
             )
 
@@ -576,15 +576,15 @@ Respond in JSON format:
 
         # Recommendations for counterproductive patterns
         for pattern in counterproductive:
-            recommendations.append(  # noqa: PERF401
+            recommendations.append(
                 f"Address counterproductive pattern '{pattern.description}': "
-                f"Consider modifying trigger '{pattern.triggers[0] if pattern.triggers else 'unknown'}' "  # noqa: E501
+                f"Consider modifying trigger '{pattern.triggers[0] if pattern.triggers else 'unknown'}' "
                 f"or replacing behavior with alternative."
             )
 
         # Reinforcement for productive patterns
         for pattern in productive:
-            recommendations.append(  # noqa: PERF401
+            recommendations.append(
                 f"Reinforce productive pattern '{pattern.description}': "
                 f"Ensure consistent rewards and consider adding social accountability."
             )
@@ -709,7 +709,7 @@ Respond in JSON format:
         self,
         pattern: BehavioralPattern,
         modification_type: str,
-        request_content: dict[str, Any],  # noqa: ARG002
+        request_content: dict[str, Any],
     ) -> dict[str, Any]:
         """
         Generate a plan for modifying a behavioral pattern.
@@ -901,8 +901,8 @@ Respond in JSON:
 
     async def _on_precedent_recorded(
         self,
-        nats_mesh: Any,  # noqa: ARG002
-        subject: str,  # noqa: ARG002
+        nats_mesh: Any,
+        subject: str,
         data: dict[str, Any],
     ) -> None:
         """Handle incoming precedent_recorded NATS event.
@@ -1150,8 +1150,8 @@ Respond in JSON:
                 return {
                     "active_habits": len(self.habit_forge.active_habits),
                     "completed_habits": len(self.habit_forge.completed_habits),
-                    "collective_adherence": self.habit_forge._calculate_collective_adherence(),  # noqa: SLF001
-                    "activation": self.habit_forge._calculate_collective_adherence(),  # noqa: SLF001
+                    "collective_adherence": self.habit_forge._calculate_collective_adherence(),
+                    "activation": self.habit_forge._calculate_collective_adherence(),
                 }
 
         return HabitForgeAgentActor(self)

@@ -38,10 +38,10 @@ async def get_external_calls(
     agent_id: str | None = Query(None, description="Filter by agent ID"),
     call_type: str | None = Query(None, description="Filter by call type (http/mcp)"),
     status: str = Query("all", description="Filter by status: success, error, or all"),
-    start_time: datetime | None = Query(  # noqa: B008
+    start_time: datetime | None = Query(
         None, description="Filter by start time (ISO format)"
     ),
-    end_time: datetime | None = Query(  # noqa: B008
+    end_time: datetime | None = Query(
         None, description="Filter by end time (ISO format)"
     ),
     limit: int = Query(default=100, ge=1, le=1000, description="Maximum records to return"),
@@ -282,7 +282,7 @@ async def get_external_call(
     try:
         call_uuid = uuid_module.UUID(call_id)
     except ValueError:
-        raise HTTPException(status_code=400, detail="Invalid call ID format")  # noqa: B904
+        raise HTTPException(status_code=400, detail="Invalid call ID format")
 
     try:
         session_factory = _get_external_call_log_session_factory()

@@ -199,7 +199,7 @@ class PluginRuntime:
         if metadata_file.exists():
             import json
 
-            with open(metadata_file) as f:  # noqa: PTH123
+            with open(metadata_file) as f:
                 data = json.load(f)
             return PluginMetadata(**data)
 

@@ -81,7 +81,7 @@ class AutonomousRuntimeConfig:
     slack_bot_enabled: bool = False
 
     # API Configuration
-    api_host: str = "0.0.0.0"  # noqa: S104
+    api_host: str = "0.0.0.0"
     api_port: int = 8000
     api_workers: int = 4
 
@@ -171,7 +171,7 @@ async def load_config_from_env() -> AutonomousRuntimeConfig:
 
         loader = get_config_loader()
 
-        if loader._initialized:  # noqa: SLF001
+        if loader._initialized:
             # Load from database with environment fallback
             monitoring_enabled = await loader.get_async(
                 "runtime.monitoring_enabled",
@@ -203,7 +203,7 @@ async def load_config_from_env() -> AutonomousRuntimeConfig:
             )
             api_host = await loader.get_async(
                 "api.host",
-                default=os.getenv("API_HOST", "0.0.0.0"),  # noqa: S104
+                default=os.getenv("API_HOST", "0.0.0.0"),
             )
             api_port = await loader.get_async(
                 "api.port",
@@ -291,7 +291,7 @@ async def load_config_from_env() -> AutonomousRuntimeConfig:
         discord_bot_enabled=os.getenv("DISCORD_BOT_ENABLED", "false").lower() == "true",
         telegram_bot_enabled=os.getenv("TELEGRAM_BOT_ENABLED", "false").lower() == "true",
         slack_bot_enabled=os.getenv("SLACK_BOT_ENABLED", "false").lower() == "true",
-        api_host=os.getenv("API_HOST", "0.0.0.0"),  # noqa: S104
+        api_host=os.getenv("API_HOST", "0.0.0.0"),
         api_port=int(os.getenv("API_PORT", "8000")),
         database_url=os.getenv("DATABASE_URL"),
         redis_url=redis_url,
@@ -344,7 +344,7 @@ def _load_config_from_env_sync_fallback() -> AutonomousRuntimeConfig:
         discord_bot_enabled=os.getenv("DISCORD_BOT_ENABLED", "false").lower() == "true",
         telegram_bot_enabled=os.getenv("TELEGRAM_BOT_ENABLED", "false").lower() == "true",
         slack_bot_enabled=os.getenv("SLACK_BOT_ENABLED", "false").lower() == "true",
-        api_host=os.getenv("API_HOST", "0.0.0.0"),  # noqa: S104
+        api_host=os.getenv("API_HOST", "0.0.0.0"),
         api_port=int(os.getenv("API_PORT", "8000")),
         database_url=os.getenv("DATABASE_URL"),
         redis_url=redis_url,

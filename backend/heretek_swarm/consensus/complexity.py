@@ -69,7 +69,7 @@ _ANALYSIS_KEYWORDS: list[tuple[str, str]] = [
 class ComplexityResult:
     """Result of a complexity assessment."""
 
-    score: float  # 0.0 – 1.0  # noqa: RUF003
+    score: float  # 0.0 – 1.0
     is_complex: bool  # True ⇒ route to MAKER consensus
     matched_keywords: list[str] = field(default_factory=list)
     length_trigger: bool = False
@@ -171,5 +171,5 @@ class ComplexityHeuristic:
         return self.assess(question).is_complex
 
     def score(self, question: str) -> float:
-        """Convenience: returns raw complexity score 0.0–1.0."""  # noqa: RUF002
+        """Convenience: returns raw complexity score 0.0–1.0."""
         return self.assess(question).score

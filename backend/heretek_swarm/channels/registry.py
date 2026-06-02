@@ -312,7 +312,7 @@ class ChannelRegistry:
         self._agent_subscriptions[agent_id].discard(channel_name)
 
         # Remove from channel subscribers
-        if channel_name in self._channels:  # noqa: SIM102
+        if channel_name in self._channels:
             if agent_id in self._channels[channel_name].subscribers:
                 self._channels[channel_name].subscribers.remove(agent_id)
 

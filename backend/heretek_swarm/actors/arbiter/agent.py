@@ -236,25 +236,25 @@ class ArbiterAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, 
 
         # Create bound methods from standalone handler functions
         self._message_handlers = {
-            "report_conflict": lambda msg: handlers._handle_report_conflict(self, msg),  # noqa: SLF001
-            "request_arbitration": lambda msg: handlers._handle_request_arbitration(self, msg),  # noqa: SLF001
-            "mediate_dispute": lambda msg: handlers._handle_mediate_dispute(self, msg),  # noqa: SLF001
-            "resolve_contention": lambda msg: handlers._handle_resolve_contention(self, msg),  # noqa: SLF001
-            "get_conflict_details": lambda msg: handlers._handle_get_conflict_details(self, msg),  # noqa: SLF001
-            "get_active_conflicts": lambda msg: handlers._handle_get_active_conflicts(self, msg),  # noqa: SLF001
-            "propose_resolution": lambda msg: handlers._handle_propose_resolution(self, msg),  # noqa: SLF001
-            "accept_resolution": lambda msg: handlers._handle_accept_resolution(self, msg),  # noqa: SLF001
-            "get_relationship_status": lambda msg: handlers._handle_get_relationship_status(  # noqa: SLF001
+            "report_conflict": lambda msg: handlers._handle_report_conflict(self, msg),
+            "request_arbitration": lambda msg: handlers._handle_request_arbitration(self, msg),
+            "mediate_dispute": lambda msg: handlers._handle_mediate_dispute(self, msg),
+            "resolve_contention": lambda msg: handlers._handle_resolve_contention(self, msg),
+            "get_conflict_details": lambda msg: handlers._handle_get_conflict_details(self, msg),
+            "get_active_conflicts": lambda msg: handlers._handle_get_active_conflicts(self, msg),
+            "propose_resolution": lambda msg: handlers._handle_propose_resolution(self, msg),
+            "accept_resolution": lambda msg: handlers._handle_accept_resolution(self, msg),
+            "get_relationship_status": lambda msg: handlers._handle_get_relationship_status(
                 self, msg
             ),
-            "get_relationship_health": lambda msg: handlers._handle_get_relationship_health(  # noqa: SLF001
+            "get_relationship_health": lambda msg: handlers._handle_get_relationship_health(
                 self, msg
             ),
-            "update_relationship": lambda msg: handlers._handle_update_relationship(self, msg),  # noqa: SLF001
-            "get_arbitration_report": lambda msg: handlers._handle_get_arbitration_report(  # noqa: SLF001
+            "update_relationship": lambda msg: handlers._handle_update_relationship(self, msg),
+            "get_arbitration_report": lambda msg: handlers._handle_get_arbitration_report(
                 self, msg
             ),
-            "register_interaction": lambda msg: handlers._handle_register_interaction(self, msg),  # noqa: SLF001
+            "register_interaction": lambda msg: handlers._handle_register_interaction(self, msg),
         }
 
     def _register_strategies(self) -> None:
@@ -263,22 +263,22 @@ class ArbiterAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, 
         from heretek_swarm.actors.arbiter import strategies
 
         self._resolution_strategies = {
-            ResolutionStrategy.NEGOTIATION: lambda c: strategies._resolve_negotiation(self, c),  # noqa: SLF001
-            ResolutionStrategy.MEDIATION: lambda c: strategies._resolve_mediation(self, c),  # noqa: SLF001
-            ResolutionStrategy.ARBITRATION: lambda c: strategies._resolve_arbitration(self, c),  # noqa: SLF001
-            ResolutionStrategy.PRIORITY_BASED: lambda c: strategies._resolve_priority_based(  # noqa: SLF001
+            ResolutionStrategy.NEGOTIATION: lambda c: strategies._resolve_negotiation(self, c),
+            ResolutionStrategy.MEDIATION: lambda c: strategies._resolve_mediation(self, c),
+            ResolutionStrategy.ARBITRATION: lambda c: strategies._resolve_arbitration(self, c),
+            ResolutionStrategy.PRIORITY_BASED: lambda c: strategies._resolve_priority_based(
                 self, c
             ),
-            ResolutionStrategy.ROUND_ROBIN: lambda c: strategies._resolve_round_robin(self, c),  # noqa: SLF001
-            ResolutionStrategy.RESOURCE_POOLING: lambda c: strategies._resolve_resource_pooling(  # noqa: SLF001
+            ResolutionStrategy.ROUND_ROBIN: lambda c: strategies._resolve_round_robin(self, c),
+            ResolutionStrategy.RESOURCE_POOLING: lambda c: strategies._resolve_resource_pooling(
                 self, c
             ),
-            ResolutionStrategy.TASK_REASSIGNMENT: lambda c: strategies._resolve_task_reassignment(  # noqa: SLF001
+            ResolutionStrategy.TASK_REASSIGNMENT: lambda c: strategies._resolve_task_reassignment(
                 self, c
             ),
-            ResolutionStrategy.ESCALATION: lambda c: strategies._resolve_escalation(self, c),  # noqa: SLF001
-            ResolutionStrategy.COMPROMISE: lambda c: strategies._resolve_compromise(self, c),  # noqa: SLF001
-            ResolutionStrategy.CONSENSUS_VOTE: lambda c: strategies._resolve_consensus_vote(  # noqa: SLF001
+            ResolutionStrategy.ESCALATION: lambda c: strategies._resolve_escalation(self, c),
+            ResolutionStrategy.COMPROMISE: lambda c: strategies._resolve_compromise(self, c),
+            ResolutionStrategy.CONSENSUS_VOTE: lambda c: strategies._resolve_consensus_vote(
                 self, c
             ),
         }
@@ -385,7 +385,7 @@ class ArbiterAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, 
         # Check conflict volume
         if self._stats["total_conflicts"] > 50:
             recommendations.append(
-                f"High conflict volume ({self._stats['total_conflicts']}) - review agent coordination protocols"  # noqa: E501
+                f"High conflict volume ({self._stats['total_conflicts']}) - review agent coordination protocols"
             )
 
         # Check resolution success rate
@@ -409,7 +409,7 @@ class ArbiterAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, 
             )
             if validated_patterns:
                 recommendations.append(
-                    f"Collective learning identified {len(validated_patterns)} failure patterns - review for systemic issues"  # noqa: E501
+                    f"Collective learning identified {len(validated_patterns)} failure patterns - review for systemic issues"
                 )
 
         # Session 44: Add memory optimization insights
@@ -417,7 +417,7 @@ class ArbiterAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, 
             stats = self.access_analyzer.get_statistics()
             if stats.frozen_count > stats.unique_memories * 0.5:
                 recommendations.append(
-                    f"High frozen memory ratio ({stats.frozen_count}/{stats.unique_memories}) - consider archive cleanup"  # noqa: E501
+                    f"High frozen memory ratio ({stats.frozen_count}/{stats.unique_memories}) - consider archive cleanup"
                 )
 
         if not recommendations:
@@ -592,7 +592,7 @@ class ArbiterAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, 
                 argument=argument,
             )
 
-            if success:  # noqa: SIM102
+            if success:
                 # Track memory access for deliberation
                 if self.access_analyzer:
                     self.access_analyzer.record_access(
@@ -715,7 +715,7 @@ class ArbiterAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, 
         """Conduct mediation between two parties."""
         from heretek_swarm.actors.arbiter import strategies
 
-        return await strategies._conduct_mediation(  # noqa: SLF001
+        return await strategies._conduct_mediation(
             self, sender, other_party, dispute, proposed_solution
         )
 
@@ -728,7 +728,7 @@ class ArbiterAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, 
         """Resolve contention over a resource."""
         from heretek_swarm.actors.arbiter import strategies
 
-        return await strategies._resolve_resource_contention(  # noqa: SLF001
+        return await strategies._resolve_resource_contention(
             self, resource, competing_agents, priority_override
         )
 
@@ -740,7 +740,7 @@ class ArbiterAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, 
         """Resolve contention over task ownership."""
         from heretek_swarm.actors.arbiter import strategies
 
-        return await strategies._resolve_task_contention(self, competing_agents, priority_override)  # noqa: SLF001
+        return await strategies._resolve_task_contention(self, competing_agents, priority_override)
 
     async def _resolve_generic_contention(
         self,
@@ -750,7 +750,7 @@ class ArbiterAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, 
         """Resolve generic contention."""
         from heretek_swarm.actors.arbiter import strategies
 
-        return await strategies._resolve_generic_contention(self, contention_type, competing_agents)  # noqa: SLF001
+        return await strategies._resolve_generic_contention(self, contention_type, competing_agents)
 
     async def _prefetch_relevant_conflicts(self, agent_id: str) -> list[str]:
         """

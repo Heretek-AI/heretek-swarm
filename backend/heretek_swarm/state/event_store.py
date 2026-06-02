@@ -469,7 +469,7 @@ class EventStore:
         self._check_snapshot_memory(event.aggregate_id, event.aggregate_type)
 
         # Notify handlers
-        asyncio.create_task(self._notify_handlers(event))  # noqa: RUF006
+        asyncio.create_task(self._notify_handlers(event))
 
         logger.debug("Event appended to memory: {event.event_id}")
         return True

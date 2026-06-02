@@ -221,7 +221,7 @@ class GlobalWorkspace:
         # Check threshold
         if priority < self.competition_threshold:
             logger.debug(
-                f"Content rejected: priority {priority} below threshold {self.competition_threshold}"  # noqa: G004,E501
+                f"Content rejected: priority {priority} below threshold {self.competition_threshold}"
             )
             return ""
 
@@ -439,7 +439,7 @@ class AttentionSchemaManager:
         schema.metacognitive_awareness = self._calculate_metacognitive_awareness(agent_id)
 
         logger.debug(
-            f"Updated attention for {agent_id}",  # noqa: G004
+            f"Updated attention for {agent_id}",
             extra={
                 "focus": focus_target,
                 "intensity": intensity,
@@ -566,7 +566,7 @@ class ConsciousnessPlugin:
         self.running = True
 
         # Start background cleanup task
-        asyncio.create_task(self._cleanup_loop())  # noqa: RUF006
+        asyncio.create_task(self._cleanup_loop())
 
         logger.info("Consciousness Plugin started")
 
@@ -775,7 +775,7 @@ class ConsciousnessPlugin:
             self.metrics_history = self.metrics_history[-1000:]
 
         logger.info(
-            f"Calculated consciousness metrics for {agent_id}",  # noqa: G004
+            f"Calculated consciousness metrics for {agent_id}",
             extra={
                 "composite_score": composite_score,
                 "state": state.value,

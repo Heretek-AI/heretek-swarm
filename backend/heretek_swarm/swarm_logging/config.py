@@ -152,7 +152,7 @@ def setup_logging(
     )
 
     # Configure renderer
-    if json_output:  # noqa: SIM108
+    if json_output:
         # JSON output for Loki/Promtail ingestion
         renderer = JSONRenderer()
     else:

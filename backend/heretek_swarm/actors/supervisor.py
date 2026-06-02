@@ -127,7 +127,7 @@ class ActorSupervisor(AuditMixin, ValidationMixin, HealthReportingMixin, Pattern
         # P2-5 fix: Removed unused _factory - dead code removal
 
         logger.info(
-            f"[{self.name}] Supervisor initialized",  # noqa: G004
+            f"[{self.name}] Supervisor initialized",
             extra={
                 "health_check_interval": health_check_interval,
                 "auto_restart": auto_restart,
@@ -185,7 +185,7 @@ class ActorSupervisor(AuditMixin, ValidationMixin, HealthReportingMixin, Pattern
             if self._event_mesh is not None:
                 # Set both the attribute (checked first by _send_via_event_mesh)
                 # and internal_state (for get_state("_event_mesh") fallback)
-                actor._event_mesh = self._event_mesh  # noqa: SLF001
+                actor._event_mesh = self._event_mesh
                 actor.update_state("_event_mesh", self._event_mesh)
                 logger.info(
                     "agent_spawned_with_mesh",
@@ -195,7 +195,7 @@ class ActorSupervisor(AuditMixin, ValidationMixin, HealthReportingMixin, Pattern
             else:
                 # When supervisor has no mesh, the agent already has a
                 # StubEventMesh from AgentActor.__init__ fallback.
-                agent_mesh = actor._event_mesh or actor.get_state("_event_mesh")  # noqa: SLF001
+                agent_mesh = actor._event_mesh or actor.get_state("_event_mesh")
                 logger.info(
                     "agent_spawned_without_supervisor_mesh",
                     agent_id=actor_id,
@@ -221,7 +221,7 @@ class ActorSupervisor(AuditMixin, ValidationMixin, HealthReportingMixin, Pattern
             self.actor_configs[actor_id] = config
 
             logger.info(
-                f"[{self.name}] Actor {actor_id} spawned",  # noqa: G004
+                f"[{self.name}] Actor {actor_id} spawned",
                 extra={"actor_class": actor_class.__name__, "actor_type": actor_type},
             )
 
@@ -232,7 +232,7 @@ class ActorSupervisor(AuditMixin, ValidationMixin, HealthReportingMixin, Pattern
         except Exception as e:
             # P1-10f fix: Comprehensive exception handling for spawn failures
             logger.exception(
-                f"[{self.name}] Failed to spawn actor {actor_id}: {e}",  # noqa: G004
+                f"[{self.name}] Failed to spawn actor {actor_id}: {e}",
 
             )
             # Clean up partial state if actor was partially registered
@@ -260,7 +260,7 @@ class ActorSupervisor(AuditMixin, ValidationMixin, HealthReportingMixin, Pattern
             await actor.terminate()
         except Exception as e:
             logger.exception(
-                f"[{self.name}] Error terminating actor {actor_id}: {e}",  # noqa: G004
+                f"[{self.name}] Error terminating actor {actor_id}: {e}",
 
             )
             # Still attempt cleanup even if terminate failed
@@ -349,7 +349,7 @@ class ActorSupervisor(AuditMixin, ValidationMixin, HealthReportingMixin, Pattern
                     # Check for terminated actors - CLEAN UP
                     if status.state == ActorState.TERMINATED:
                         logger.warning(
-                            f"[{self.name}] Actor {actor_id} is terminated - cleaning up",  # noqa: G004
+                            f"[{self.name}] Actor {actor_id} is terminated - cleaning up",
                         )
                         await self.terminate_actor(actor_id)
                         continue
@@ -357,7 +357,7 @@ class ActorSupervisor(AuditMixin, ValidationMixin, HealthReportingMixin, Pattern
                     # Check for error state
                     if status.state == ActorState.ERROR:
                         logger.error(
-                            f"[{self.name}] Actor {actor_id} in error state",  # noqa: G004
+                            f"[{self.name}] Actor {actor_id} in error state",
                         )
                         if self.auto_restart:
                             await self._attempt_restart(actor_id)
@@ -365,7 +365,7 @@ class ActorSupervisor(AuditMixin, ValidationMixin, HealthReportingMixin, Pattern
                     # Check for high error count - TAKE ACTION
                     if status.error_count > 10:
                         logger.warning(
-                            f"[{self.name}] Actor {actor_id} has high error count: {status.error_count}",  # noqa: G004,E501
+                            f"[{self.name}] Actor {actor_id} has high error count: {status.error_count}",
                         )
                         if self.auto_restart and status.state != ActorState.ERROR:
                             # Set error state and attempt restart
@@ -394,7 +394,7 @@ class ActorSupervisor(AuditMixin, ValidationMixin, HealthReportingMixin, Pattern
 
         if restart_count >= self.max_restarts:
             logger.error(
-                f"[{self.name}] Actor {actor_id} exceeded max restarts ({self.max_restarts})",  # noqa: G004
+                f"[{self.name}] Actor {actor_id} exceeded max restarts ({self.max_restarts})",
             )
             await self.terminate_actor(actor_id)
             return
@@ -413,7 +413,7 @@ class ActorSupervisor(AuditMixin, ValidationMixin, HealthReportingMixin, Pattern
             return
 
         logger.info(
-            f"[{self.name}] Attempting restart {restart_count + 1}/{self.max_restarts} for {actor_id}",  # noqa: G004,E501
+            f"[{self.name}] Attempting restart {restart_count + 1}/{self.max_restarts} for {actor_id}",
         )
 
         try:
@@ -421,7 +421,7 @@ class ActorSupervisor(AuditMixin, ValidationMixin, HealthReportingMixin, Pattern
             config = self.actor_configs.get(actor_id)
             if config is None:
                 logger.error(
-                    f"[{self.name}] No configuration found for actor {actor_id}",  # noqa: G004
+                    f"[{self.name}] No configuration found for actor {actor_id}",
                 )
                 return
 
@@ -444,7 +444,7 @@ class ActorSupervisor(AuditMixin, ValidationMixin, HealthReportingMixin, Pattern
             if self.db_pool is not None:
                 new_actor.update_state("_db_pool", self.db_pool)
             if self._event_mesh is not None:
-                new_actor._event_mesh = self._event_mesh  # noqa: SLF001
+                new_actor._event_mesh = self._event_mesh
                 new_actor.update_state("_event_mesh", self._event_mesh)
                 logger.info(
                     "agent_restarted_with_mesh",
@@ -457,7 +457,7 @@ class ActorSupervisor(AuditMixin, ValidationMixin, HealthReportingMixin, Pattern
             self.restart_counts[actor_id] = restart_count + 1
 
             logger.info(
-                f"[{self.name}] Actor {actor_id} successfully restarted",  # noqa: G004
+                f"[{self.name}] Actor {actor_id} successfully restarted",
                 extra={"restart_count": self.restart_counts[actor_id]},
             )
 
@@ -468,7 +468,7 @@ class ActorSupervisor(AuditMixin, ValidationMixin, HealthReportingMixin, Pattern
             # D003: Record failure for circuit breaker; log if circuit just opened
             just_opened = self._circuit_breaker.record_failure(tier)
             if just_opened:
-                tier_windows = self._circuit_breaker._windows  # noqa: SLF001
+                tier_windows = self._circuit_breaker._windows
                 logger.error(
                     "circuit_open",
                     extra={
@@ -524,7 +524,7 @@ class ActorSupervisor(AuditMixin, ValidationMixin, HealthReportingMixin, Pattern
             if self.db_pool is not None:
                 new_actor.update_state("_db_pool", self.db_pool)
             if self._event_mesh is not None:
-                new_actor._event_mesh = self._event_mesh  # noqa: SLF001
+                new_actor._event_mesh = self._event_mesh
                 new_actor.update_state("_event_mesh", self._event_mesh)
                 logger.info(
                     "agent_respawned_with_mesh",
@@ -595,7 +595,7 @@ class ActorSupervisor(AuditMixin, ValidationMixin, HealthReportingMixin, Pattern
             message_type: Message type identifier
         """
         logger.info(
-            f"[{self.name}] Broadcasting to {len(self.actors)} actors",  # noqa: G004
+            f"[{self.name}] Broadcasting to {len(self.actors)} actors",
         )
 
         tasks = [actor.broadcast(content, message_type) for actor in self.actors.values()]

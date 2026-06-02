@@ -145,14 +145,14 @@ async def get_all_agents(
     try:
         from heretek_swarm.api import autonomous as autonomous_module
 
-        auto_agents = autonomous_module._autonomous_agents  # noqa: SLF001
+        auto_agents = autonomous_module._autonomous_agents
         for agent_id, agent_data in auto_agents.items():
             if agent_id not in agents:
                 agents[agent_id] = type(
                     "AutoAgentMetrics",
                     (),
                     {
-                        "to_dict": lambda self, a=agent_data: {  # noqa: ARG005
+                        "to_dict": lambda self, a=agent_data: {
                             "agent_id": a["agent_id"],
                             "agent_type": a["agent_type"],
                             "tasks_completed": 0,

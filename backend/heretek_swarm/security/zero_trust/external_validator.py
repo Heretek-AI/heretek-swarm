@@ -28,7 +28,7 @@ class ExternalThreatConfig:
 class ExternalInputValidator:
     """Validator for external inputs with threat detection integration."""
 
-    PROMPT_INJECTION_PATTERNS = [  # noqa: RUF012
+    PROMPT_INJECTION_PATTERNS = [
         (r"ignore\s+(all\s+)?(previous|prior)\s+instructions", "prompt_injection"),
         (r"disregard\s+(your\s+)?(previous|last)\s+instructions", "prompt_injection"),
         (r"new\s+instructions?\s*:", "prompt_injection"),
@@ -37,13 +37,13 @@ class ExternalInputValidator:
         (r"system\s*:\s*", "prompt_injection"),
     ]
 
-    EXFILTRATION_PATTERNS = [  # noqa: RUF012
+    EXFILTRATION_PATTERNS = [
         (r"extract.*(password|secret|key|token|credential)", "exfiltration"),
         (r"(dump|export|download)\s+(all|entire|full)\s+(memory|context|state)", "exfiltration"),
         (r"show\s+me\s+(your|all)\s+(system|prompt|instruction)", "exfiltration"),
     ]
 
-    DOS_PATTERNS = [  # noqa: RUF012
+    DOS_PATTERNS = [
         (r"(repeating|same)\s+(request|input)\s+(\d+|\w+)\s+times", "dos"),
         (r"for\s+(\d+)\s+(iterations?|loops?|cycles?)", "dos"),
     ]

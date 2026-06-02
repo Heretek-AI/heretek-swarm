@@ -153,7 +153,7 @@ class ImpactScoreFactors:
     sustainability: float = 0.0  # Long-term viability
 
     # Weights for each factor
-    WEIGHTS = {  # noqa: RUF012
+    WEIGHTS = {
         "novelty": 0.15,
         "usefulness": 0.20,
         "efficiency_gain": 0.15,
@@ -181,7 +181,7 @@ class PatternValidator:
     """
 
     # Core Triad agents who can approve overrides
-    CORE_TRIAD = {  # noqa: RUF012
+    CORE_TRIAD = {
         CoreTriadRole.STEWARD,
         CoreTriadRole.ALPHA,
         CoreTriadRole.BETA,
@@ -294,7 +294,7 @@ class PatternValidator:
             occurrence_count,
         )
         validation.occurrence_count = (
-            occurrence_count if hasattr(validation, "occurrence_count") else occurrence_count  # noqa: RUF034
+            occurrence_count if hasattr(validation, "occurrence_count") else occurrence_count
         )
 
         # Check if already override-approved
@@ -346,11 +346,11 @@ class PatternValidator:
             reasons.append(f"confidence ({validation.confidence:.2f} < {self.min_confidence})")
         if validation.statistical_significance > self.min_statistical_significance:
             reasons.append(
-                f"significance ({validation.statistical_significance:.3f} > {self.min_statistical_significance})"  # noqa: E501
+                f"significance ({validation.statistical_significance:.3f} > {self.min_statistical_significance})"
             )
         if self._pattern_frequencies.get(validation.pattern_id, 0) < self.frequency_threshold:
             reasons.append(
-                f"frequency ({self._pattern_frequencies.get(validation.pattern_id, 0)} < {self.frequency_threshold})"  # noqa: E501
+                f"frequency ({self._pattern_frequencies.get(validation.pattern_id, 0)} < {self.frequency_threshold})"
             )
         if coherence < self.coherence_threshold:
             reasons.append(f"coherence ({coherence:.2f} < {self.coherence_threshold})")
@@ -605,7 +605,7 @@ class PatternValidator:
     def get_proven_patterns(
         self,
         min_impact: float = 0.0,
-        pattern_class: EmergentPatternClass | None = None,  # noqa: ARG002
+        pattern_class: EmergentPatternClass | None = None,
     ) -> list[str]:
         """
         Get IDs of proven patterns.
@@ -619,7 +619,7 @@ class PatternValidator:
         """
         proven = []
         for vid, validation in self._validations.items():
-            if validation.status == ValidationStatus.PROVEN:  # noqa: SIM102
+            if validation.status == ValidationStatus.PROVEN:
                 if validation.impact_score >= min_impact:
                     proven.append(vid)
 

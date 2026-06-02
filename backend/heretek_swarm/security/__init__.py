@@ -89,7 +89,7 @@ from heretek_swarm.security.zero_trust import (
     AuditLogConfig,
     # Layer 4: Audit Logging
     AuditLogger,
-    BehavioralBaseline,  # noqa: F811
+    BehavioralBaseline,
     ContextValidationConfig,
     # Layer 2: Context Validation
     ContextValidator,
@@ -191,6 +191,6 @@ __all__ = [
 ]
 import structlog
 
-from heretek_swarm.security.threat_detection import ThreatLevel  # noqa: F811
+from heretek_swarm.security.threat_detection import ThreatLevel
 
 logger = structlog.get_logger(__name__)

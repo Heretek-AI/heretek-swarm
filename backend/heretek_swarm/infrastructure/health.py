@@ -36,7 +36,7 @@ class HealthCheckResult(NamedTuple):
     error: str | None = None
 
 
-async def check_postgres_health(host: str, port: int, timeout: float = 5.0) -> HealthCheckResult:  # noqa: ASYNC109
+async def check_postgres_health(host: str, port: int, timeout: float = 5.0) -> HealthCheckResult:
     """
     Check PostgreSQL health using pg_isready or socket connection.
 
@@ -106,7 +106,7 @@ async def check_postgres_health(host: str, port: int, timeout: float = 5.0) -> H
         )
 
 
-async def check_redis_health(host: str, port: int, timeout: float = 5.0) -> HealthCheckResult:  # noqa: ASYNC109
+async def check_redis_health(host: str, port: int, timeout: float = 5.0) -> HealthCheckResult:
     """
     Check Redis health using PING command.
 
@@ -166,7 +166,7 @@ async def check_redis_health(host: str, port: int, timeout: float = 5.0) -> Heal
         )
 
 
-async def check_qdrant_health(host: str, port: int, timeout: float = 5.0) -> HealthCheckResult:  # noqa: ASYNC109
+async def check_qdrant_health(host: str, port: int, timeout: float = 5.0) -> HealthCheckResult:
     """
     Check Qdrant health via /healthz endpoint.
 
@@ -244,7 +244,7 @@ async def check_qdrant_health(host: str, port: int, timeout: float = 5.0) -> Hea
         )
 
 
-async def check_nats_health(host: str, port: int, timeout: float = 5.0) -> HealthCheckResult:  # noqa: ASYNC109
+async def check_nats_health(host: str, port: int, timeout: float = 5.0) -> HealthCheckResult:
     """
     Check NATS health via CONNECT with PING.
 
@@ -354,7 +354,7 @@ async def check_nats_health(host: str, port: int, timeout: float = 5.0) -> Healt
         )
 
 
-async def check_mem0_health(host: str, port: int, timeout: float = 5.0) -> HealthCheckResult:  # noqa: ASYNC109
+async def check_mem0_health(host: str, port: int, timeout: float = 5.0) -> HealthCheckResult:
     """
     Check Mem0 health via /health endpoint.
 
@@ -435,7 +435,7 @@ async def check_infrastructure_health(
     service: InfrastructureService,
     host: str,
     port: int,
-    timeout: float = 5.0,  # noqa: ASYNC109
+    timeout: float = 5.0,
 ) -> HealthCheckResult:
     """
     Dispatch health check based on service type.
@@ -471,7 +471,7 @@ async def check_infrastructure_health(
 
 async def check_all_infrastructure(
     configs: list[dict],
-    timeout: float = 5.0,  # noqa: ASYNC109
+    timeout: float = 5.0,
 ) -> list[HealthCheckResult]:
     """
     Check health of all configured infrastructure services.

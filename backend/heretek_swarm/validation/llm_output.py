@@ -208,7 +208,7 @@ class TextOutput(LLMOutputBase):
 
         # Check for code execution patterns
         for pattern_name, pattern in DANGEROUS_PATTERNS.items():
-            if pattern_name not in [  # noqa: SIM102
+            if pattern_name not in [
                 "sql_injection",
                 "cmd_injection",
             ]:  # Skip context-specific patterns

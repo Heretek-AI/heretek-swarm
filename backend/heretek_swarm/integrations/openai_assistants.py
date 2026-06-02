@@ -593,7 +593,7 @@ class OpenAIAssistantsAdapter:
         self,
         run_id: str,
         poll_interval: float = 1.0,
-        timeout: float = 60.0,  # noqa: ASYNC109
+        timeout: float = 60.0,
     ) -> RunContext:
         """
         Poll a run until completion.
@@ -820,7 +820,7 @@ class OpenAIAssistantsAdapter:
                     {
                         "role": msg.role,
                         "content": content,
-                        "created_at": datetime.fromtimestamp(msg.created_at).isoformat(),  # noqa: DTZ006
+                        "created_at": datetime.fromtimestamp(msg.created_at).isoformat(),
                     }
                 )
 

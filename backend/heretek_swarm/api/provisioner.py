@@ -471,7 +471,7 @@ async def get_provision_status() -> dict[str, Any]:
     import subprocess
 
     try:
-        result = subprocess.run(  # noqa: S603,ASYNC221
+        result = subprocess.run(
             [runtime.value, "ps", "--filter", "name=heretek-", "--format", "{{.Names}}"],
             capture_output=True,
             text=True,
@@ -533,7 +533,7 @@ async def stop_infrastructure() -> dict[str, Any]:
     import subprocess
 
     try:
-        result = subprocess.run(  # noqa: S603,ASYNC221
+        result = subprocess.run(
             [runtime.value, "ps", "--filter", "name=heretek-", "--format", "{{.Names}}"],
             capture_output=True,
             text=True,
@@ -556,7 +556,7 @@ async def stop_infrastructure() -> dict[str, Any]:
 
     for container in containers:
         try:
-            subprocess.run(  # noqa: S603,ASYNC221
+            subprocess.run(
                 [runtime.value, "stop", container],
                 capture_output=True,
                 timeout=30,
@@ -571,7 +571,7 @@ async def stop_infrastructure() -> dict[str, Any]:
         "success": len(failed) == 0,
         "stopped": stopped,
         "failed": failed,
-        "message": f"Stopped {len(stopped)} containers"  # noqa: RUF034
+        "message": f"Stopped {len(stopped)} containers"
         if failed
         else f"Stopped {len(stopped)} containers",
     }

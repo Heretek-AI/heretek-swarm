@@ -169,7 +169,7 @@ class MCPToolRegistry:
         states = data.get("tool_states", {})
         for name, val in states.items():
             if isinstance(val, bool):
-                tool_states[name] = val  # noqa: PERF403
+                tool_states[name] = val
         return tool_states
 
     def _save_tool_states(self) -> None:
@@ -195,7 +195,7 @@ class MCPToolRegistry:
                 os.fsync(tmp_fd)
             finally:
                 os.close(tmp_fd)
-            os.replace(str(tmp_path), str(TOOLS_STATE_FILE))  # noqa: PTH105
+            os.replace(str(tmp_path), str(TOOLS_STATE_FILE))
         except OSError as exc:
             logger.error(
                 "tools_state_save_failed",

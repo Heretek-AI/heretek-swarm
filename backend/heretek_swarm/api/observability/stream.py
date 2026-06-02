@@ -92,10 +92,10 @@ async def websocket_metrics(websocket: WebSocket, interval: int = 5):
     try:
         while True:
             try:
-                swarm = stream._collector.collect_swarm_metrics()  # noqa: SLF001
-                consciousness = stream._collector.collect_consciousness_metrics()  # noqa: SLF001
-                agents = stream._collector.get_all_agent_metrics()  # noqa: SLF001
-                health = stream._collector.calculate_health_score()  # noqa: SLF001
+                swarm = stream._collector.collect_swarm_metrics()
+                consciousness = stream._collector.collect_consciousness_metrics()
+                agents = stream._collector.get_all_agent_metrics()
+                health = stream._collector.calculate_health_score()
 
                 await websocket.send_json(
                     {

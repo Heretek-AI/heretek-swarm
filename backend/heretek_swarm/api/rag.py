@@ -588,7 +588,7 @@ async def register_graph_chunks(
 
     count = kg.register_chunks(nodes)
 
-    return {"registered": count, "graph_size": len(kg._chunk_graph)}  # noqa: SLF001
+    return {"registered": count, "graph_size": len(kg._chunk_graph)}
 
 
 @router.get("/graph/statistics", status_code=200)

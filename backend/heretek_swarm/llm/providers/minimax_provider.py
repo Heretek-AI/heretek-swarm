@@ -136,7 +136,7 @@ class MiniMaxProvider(LLMProviderBase):
         # Convert messages to MiniMax format
         messages = []
         for msg in request.messages:
-            messages.append(  # noqa: PERF401
+            messages.append(
                 {
                     "sender_type": msg.role,
                     "text": msg.content,
@@ -242,7 +242,7 @@ class MiniMaxProvider(LLMProviderBase):
         # Convert messages to MiniMax format
         messages = []
         for msg in request.messages:
-            messages.append(  # noqa: PERF401
+            messages.append(
                 {
                     "sender_type": msg.role,
                     "text": msg.content,
@@ -323,4 +323,4 @@ class MiniMaxProvider(LLMProviderBase):
 
 
 # Import at module level for type annotation
-from heretek_swarm.infrastructure.otel import InstrumentedAsyncClient  # noqa: E402
+from heretek_swarm.infrastructure.otel import InstrumentedAsyncClient

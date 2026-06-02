@@ -112,7 +112,7 @@ class EvolutionEngine:
         self._update_agent_capabilities(agent_id, capability_type, capability_name)
         self._update_evolution_metrics()
 
-        asyncio.create_task(self._call_capability_emerged_callbacks(record))  # noqa: RUF006
+        asyncio.create_task(self._call_capability_emerged_callbacks(record))
 
         logger.info(
             "capability_recorded",
@@ -159,7 +159,7 @@ class EvolutionEngine:
 
     def assess_fitness(
         self,
-        agent_id: str,  # noqa: ARG002
+        agent_id: str,
         performance_history: list[float],
         capability_levels: dict[str, float],
         environment_demand: dict[str, float] | None = None,
@@ -236,8 +236,8 @@ class EvolutionEngine:
     def _update_agent_capabilities(
         self,
         agent_id: str,
-        capability_type: str,  # noqa: ARG002
-        capability_name: str,  # noqa: ARG002
+        capability_type: str,
+        capability_name: str,
     ) -> None:
         if agent_id not in self._agent_snapshots:
             self._agent_snapshots[agent_id] = []
@@ -259,7 +259,7 @@ class EvolutionEngine:
         if prev_snapshot:
             for cap_type in current_caps:
                 if cap_type not in prev_snapshot.capability_levels:
-                    newly_acquired.append(cap_type)  # noqa: PERF401
+                    newly_acquired.append(cap_type)
 
         snapshot = AgentCapabilitySnapshot(
             agent_id=agent_id,
@@ -317,7 +317,7 @@ class EvolutionEngine:
         all_fitness = []
         for snapshots in self._agent_snapshots.values():
             if snapshots:
-                all_fitness.append(snapshots[-1].fitness_score)  # noqa: PERF401
+                all_fitness.append(snapshots[-1].fitness_score)
 
         if all_fitness:
             metrics.avg_fitness = sum(all_fitness) / len(all_fitness)
@@ -341,7 +341,7 @@ class EvolutionEngine:
         if new_phase != metrics.current_phase:
             old_phase = metrics.current_phase
             metrics.current_phase = new_phase
-            asyncio.create_task(self._call_phase_changed_callbacks(old_phase, new_phase))  # noqa: RUF006
+            asyncio.create_task(self._call_phase_changed_callbacks(old_phase, new_phase))
 
         metrics.generations = self._generation_counter
         metrics.selection_fidelity = self._calculate_selection_fidelity()

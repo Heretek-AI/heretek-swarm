@@ -651,7 +651,7 @@ class ExternalThreatDetector:
     ) -> ThreatDetectionResult:
         """Create a threat detection result."""
         timestamp = datetime.now(UTC)
-        threat_id = f"THREAT_{int(timestamp.timestamp())}_{hashlib.sha256(str(timestamp).encode()).hexdigest()[:8]}"  # noqa: E501
+        threat_id = f"THREAT_{int(timestamp.timestamp())}_{hashlib.sha256(str(timestamp).encode()).hexdigest()[:8]}"
 
         # Determine containment actions
         containment_actions = []
@@ -691,7 +691,7 @@ class ExternalThreatDetector:
 
     async def get_threat_intelligence(
         self,
-        time_range: str = "24h",  # noqa: ARG002
+        time_range: str = "24h",
     ) -> ThreatIntelligence:
         """
         Get aggregated threat intelligence.

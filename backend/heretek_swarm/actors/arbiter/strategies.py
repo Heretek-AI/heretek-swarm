@@ -24,17 +24,17 @@ logger = structlog.get_logger("ArbiterAgent")
 
 def register_strategies(agent: ArbiterAgent) -> None:
     """Register all resolution strategies on an ArbiterAgent instance."""
-    agent._resolution_strategies = {  # noqa: SLF001
-        ResolutionStrategy.NEGOTIATION: agent._resolve_negotiation,  # noqa: SLF001
-        ResolutionStrategy.MEDIATION: agent._resolve_mediation,  # noqa: SLF001
-        ResolutionStrategy.ARBITRATION: agent._resolve_arbitration,  # noqa: SLF001
-        ResolutionStrategy.PRIORITY_BASED: agent._resolve_priority_based,  # noqa: SLF001
-        ResolutionStrategy.ROUND_ROBIN: agent._resolve_round_robin,  # noqa: SLF001
-        ResolutionStrategy.RESOURCE_POOLING: agent._resolve_resource_pooling,  # noqa: SLF001
-        ResolutionStrategy.TASK_REASSIGNMENT: agent._resolve_task_reassignment,  # noqa: SLF001
-        ResolutionStrategy.ESCALATION: agent._resolve_escalation,  # noqa: SLF001
-        ResolutionStrategy.COMPROMISE: agent._resolve_compromise,  # noqa: SLF001
-        ResolutionStrategy.CONSENSUS_VOTE: agent._resolve_consensus_vote,  # noqa: SLF001
+    agent._resolution_strategies = {
+        ResolutionStrategy.NEGOTIATION: agent._resolve_negotiation,
+        ResolutionStrategy.MEDIATION: agent._resolve_mediation,
+        ResolutionStrategy.ARBITRATION: agent._resolve_arbitration,
+        ResolutionStrategy.PRIORITY_BASED: agent._resolve_priority_based,
+        ResolutionStrategy.ROUND_ROBIN: agent._resolve_round_robin,
+        ResolutionStrategy.RESOURCE_POOLING: agent._resolve_resource_pooling,
+        ResolutionStrategy.TASK_REASSIGNMENT: agent._resolve_task_reassignment,
+        ResolutionStrategy.ESCALATION: agent._resolve_escalation,
+        ResolutionStrategy.COMPROMISE: agent._resolve_compromise,
+        ResolutionStrategy.CONSENSUS_VOTE: agent._resolve_consensus_vote,
     }
 
 
@@ -77,13 +77,13 @@ async def _resolve_arbitration(agent: ArbiterAgent, conflict: Conflict) -> dict[
     conflict.selected_resolution = decision
     conflict.status = ResolutionStatus.RESOLVED
     conflict.resolved_at = datetime.now(UTC)
-    agent._stats["resolutions_successful"] += 1  # noqa: SLF001
+    agent._stats["resolutions_successful"] += 1
 
     # Session 44: Emit pattern for collective learning
-    await agent._emit_conflict_pattern(conflict, "success")  # noqa: SLF001
+    await agent._emit_conflict_pattern(conflict, "success")
 
     # Session 44: Track memory access for this resolution
-    agent._track_resolution_memory_access(conflict.conflict_id, "write")  # noqa: SLF001
+    agent._track_resolution_memory_access(conflict.conflict_id, "write")
 
     return {"status": "arbitration_complete", "decision": decision}
 
@@ -136,7 +136,7 @@ async def _resolve_task_reassignment(agent: ArbiterAgent, conflict: Conflict) ->
 async def _resolve_escalation(agent: ArbiterAgent, conflict: Conflict) -> dict[str, Any]:
     """Escalation to higher authority."""
     conflict.status = ResolutionStatus.ESCALATED
-    agent._stats["resolutions_escalated"] += 1  # noqa: SLF001
+    agent._stats["resolutions_escalated"] += 1
     return {"status": "escalated", "strategy": "escalation", "escalated_to": "supervisor"}
 
 
@@ -204,9 +204,9 @@ async def _conduct_mediation(
 
     # Update relationship
     key = tuple(sorted([sender, other_party]))
-    if key in agent._relationships:  # noqa: SLF001
-        agent._relationships[key].health_score = min(  # noqa: SLF001
-            1.0, agent._relationships[key].health_score + 0.1  # noqa: SLF001
+    if key in agent._relationships:
+        agent._relationships[key].health_score = min(
+            1.0, agent._relationships[key].health_score + 0.1
         )
 
     return mediation_result

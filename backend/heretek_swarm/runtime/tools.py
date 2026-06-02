@@ -149,7 +149,7 @@ class ToolRegistry:
             for name, tool in self._tools.items()
         ]
 
-    async def execute(self, name: str, timeout: int | None = None, **params) -> Any:  # noqa: ASYNC109
+    async def execute(self, name: str, timeout: int | None = None, **params) -> Any:
         """
         Execute a tool by name.
 
@@ -280,15 +280,15 @@ async def read_file(path: str, allowed_base_paths: list[str] | None = None) -> d
     """
     # Default to current working directory if not specified
     if allowed_base_paths is None:
-        allowed_base_paths = [os.getcwd()]  # noqa: PTH109
+        allowed_base_paths = [os.getcwd()]
 
     # Resolve to absolute path
-    resolved_path = os.path.realpath(os.path.abspath(path))  # noqa: PTH100,ASYNC240
+    resolved_path = os.path.realpath(os.path.abspath(path))
 
     # Validate path is within allowed directories
     path_allowed = False
     for base_path in allowed_base_paths:
-        resolved_base = os.path.realpath(os.path.abspath(base_path))  # noqa: PTH100,ASYNC240
+        resolved_base = os.path.realpath(os.path.abspath(base_path))
         if resolved_path.startswith(resolved_base + os.sep) or resolved_path == resolved_base:
             path_allowed = True
             break
@@ -302,11 +302,11 @@ async def read_file(path: str, allowed_base_paths: list[str] | None = None) -> d
         )
         return {
             "success": False,
-            "error": "Access denied: Path traversal detected. Access is restricted to allowed directories.",  # noqa: E501
+            "error": "Access denied: Path traversal detected. Access is restricted to allowed directories.",
         }
 
     try:
-        with open(path, encoding="utf-8") as f:  # noqa: ASYNC230,PTH123
+        with open(path, encoding="utf-8") as f:
             content = f.read()
 
         return {
@@ -336,15 +336,15 @@ async def write_file(path: str, content: str, allowed_base_paths: list[str] | No
     """
     # Default to current working directory if not specified
     if allowed_base_paths is None:
-        allowed_base_paths = [os.getcwd()]  # noqa: PTH109
+        allowed_base_paths = [os.getcwd()]
 
     # Resolve to absolute path
-    resolved_path = os.path.realpath(os.path.abspath(path))  # noqa: PTH100,ASYNC240
+    resolved_path = os.path.realpath(os.path.abspath(path))
 
     # Validate path is within allowed directories
     path_allowed = False
     for base_path in allowed_base_paths:
-        resolved_base = os.path.realpath(os.path.abspath(base_path))  # noqa: PTH100,ASYNC240
+        resolved_base = os.path.realpath(os.path.abspath(base_path))
         if resolved_path.startswith(resolved_base + os.sep) or resolved_path == resolved_base:
             path_allowed = True
             break
@@ -358,11 +358,11 @@ async def write_file(path: str, content: str, allowed_base_paths: list[str] | No
         )
         return {
             "success": False,
-            "error": "Access denied: Path traversal detected. Access is restricted to allowed directories.",  # noqa: E501
+            "error": "Access denied: Path traversal detected. Access is restricted to allowed directories.",
         }
 
     try:
-        with open(path, "w", encoding="utf-8") as f:  # noqa: ASYNC230,PTH123
+        with open(path, "w", encoding="utf-8") as f:
             f.write(content)
 
         return {
@@ -377,7 +377,7 @@ async def write_file(path: str, content: str, allowed_base_paths: list[str] | No
         }
 
 
-async def run_command(command: str, timeout: int = 30) -> dict:  # noqa: ASYNC109
+async def run_command(command: str, timeout: int = 30) -> dict:
     """
     Execute shell command with security validation.
 
@@ -477,7 +477,7 @@ async def http_request(
     url: str,
     headers: dict | None = None,
     body: dict | None = None,
-    timeout: int = 30,  # noqa: ASYNC109
+    timeout: int = 30,
     max_retries: int = 1,
 ) -> dict:
     """

@@ -331,7 +331,7 @@ class ImmuneResponseBuilding:
     def _generate_response_id(self) -> str:
         """Generate unique response ID."""
         timestamp = datetime.now(UTC).timestamp()
-        return f"IMMUNE_RESP_{int(timestamp)}_{hashlib.sha256(str(timestamp).encode()).hexdigest()[:8]}"  # noqa: E501
+        return f"IMMUNE_RESP_{int(timestamp)}_{hashlib.sha256(str(timestamp).encode()).hexdigest()[:8]}"
 
     def _generate_pattern_id(self, pattern_hash: str) -> str:
         """Generate pattern ID from hash."""
@@ -411,7 +411,7 @@ class ImmuneResponseBuilding:
     def learn_from_response(
         self,
         response: ImmuneResponse,
-        pattern_content: dict[str, Any],  # noqa: ARG002
+        pattern_content: dict[str, Any],
         pattern_type: str,
         severity: str,
     ) -> bool:
@@ -1261,7 +1261,7 @@ class ImmuneResponseEngine:
         all_patterns = self._baseline_store.get_all_patterns()
 
         for pattern in all_patterns:
-            if pattern.status == PatternStatus.PROVISIONAL:  # noqa: SIM102
+            if pattern.status == PatternStatus.PROVISIONAL:
                 if pattern.confirmation_count >= self._confirmation_threshold:
                     recommendations.append(
                         {

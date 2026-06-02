@@ -183,7 +183,7 @@ class OpenAICompatibleProvider(LLMProviderBase):
             tool_calls = []
             if "tool_calls" in message_data:
                 for tc in message_data["tool_calls"]:
-                    tool_calls.append(  # noqa: PERF401
+                    tool_calls.append(
                         ToolCall(
                             id=tc.get("id", ""),
                             name=tc.get("function", {}).get("name", ""),
@@ -294,4 +294,4 @@ class OpenAICompatibleProvider(LLMProviderBase):
 
 
 # Import at module level for type annotation
-from heretek_swarm.infrastructure.otel import InstrumentedAsyncClient  # noqa: E402
+from heretek_swarm.infrastructure.otel import InstrumentedAsyncClient

@@ -186,7 +186,7 @@ class AgentActor:
         tribunal: Any | None = None,
         llm_provider: Any | None = None,
         event_mesh: Any | None = None,
-        **kwargs: Any,  # Accept additional kwargs for forward compatibility  # noqa: ARG002
+        **kwargs: Any,  # Accept additional kwargs for forward compatibility
     ) -> None:
         """
         Initialize an actor.
@@ -282,7 +282,7 @@ class AgentActor:
         self._register_agent_skills()
 
         logger.info(
-            f"[{self.agent_id}] Actor initialized",  # noqa: G004
+            f"[{self.agent_id}] Actor initialized",
             extra={
                 "agent_name": self.name,
                 "topics": self.topics,
@@ -404,7 +404,7 @@ class AgentActor:
                     )
         except Exception as e:
             logger.warning(
-                f"[{self.agent_id}] Skill registration failed",  # noqa: G004
+                f"[{self.agent_id}] Skill registration failed",
                 error=str(e),
             )
 
@@ -426,7 +426,7 @@ class AgentActor:
             return validate_message(message_type, content)
         except ValidationError as e:
             logger.warning(
-                f"[{self.agent_id}] Message validation failed for {message_type}: {e}",  # noqa: G004
+                f"[{self.agent_id}] Message validation failed for {message_type}: {e}",
                 extra={"validation_errors": e.errors()},
             )
             raise ValueError(f"Invalid message format: {e.errors()}") from e
@@ -445,7 +445,7 @@ class AgentActor:
         """
         self._message_handlers[message_type] = handler
         logger.debug(
-            f"[{self.agent_id}] Registered handler for {message_type}",  # noqa: G004
+            f"[{self.agent_id}] Registered handler for {message_type}",
         )
 
     def unregister_handler(self, message_type: str) -> None:
@@ -458,7 +458,7 @@ class AgentActor:
         if message_type in self._message_handlers:
             del self._message_handlers[message_type]
             logger.debug(
-                f"[{self.agent_id}] Unregistered handler for {message_type}",  # noqa: G004
+                f"[{self.agent_id}] Unregistered handler for {message_type}",
             )
 
     async def spawn(self) -> None:
@@ -479,7 +479,7 @@ class AgentActor:
 
         try:
             logger.info(
-                f"[{self.agent_id}] Agent spawned: {self.name}",  # noqa: G004
+                f"[{self.agent_id}] Agent spawned: {self.name}",
                 extra={"state": self.state.value},
             )
 
@@ -498,7 +498,7 @@ class AgentActor:
             await self.initialize()
 
             logger.info(
-                f"[{self.agent_id}] Actor spawn complete",  # noqa: G004
+                f"[{self.agent_id}] Actor spawn complete",
                 extra={"mailbox_size": self.mailbox.qsize()},
             )
         except Exception as e:
@@ -562,7 +562,7 @@ class AgentActor:
             except Exception as e:
                 # P1-10d fix: Log any other exceptions during task cancellation
                 logger.exception(
-                    f"[{self.agent_id}] Error during task cancellation: {e}"  # noqa: G004
+                    f"[{self.agent_id}] Error during task cancellation: {e}"
                 )
 
 

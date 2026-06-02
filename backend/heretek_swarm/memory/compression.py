@@ -297,7 +297,7 @@ class CompressionEngine:
     """
 
     # Compression level mappings
-    LEVEL_MAP = {  # noqa: RUF012
+    LEVEL_MAP = {
         CompressionLevel.FASTEST: 1,
         CompressionLevel.FAST: 3,
         CompressionLevel.BALANCED: 6,
@@ -836,7 +836,7 @@ class ColdDataCompressor:
         uncompressed_candidates = []
         for entry in self._compressed_memories.values():
             if entry.compression_ratio < 0.3:  # Less than 30% savings
-                uncompressed_candidates.append(  # noqa: PERF401
+                uncompressed_candidates.append(
                     {
                         "memory_id": entry.memory_id,
                         "ratio": entry.compression_ratio,
@@ -871,7 +871,7 @@ class ColdDataCompressor:
             )
             if avg_size < 2048:  # Less than 2KB average
                 recommendations.append(
-                    "Many small compressions detected. Consider increasing min_size_for_compression."  # noqa: E501
+                    "Many small compressions detected. Consider increasing min_size_for_compression."
                 )
 
         # Check space saved
@@ -890,4 +890,4 @@ class ColdDataCompressor:
 
 
 # Import defaultdict
-from collections import defaultdict  # noqa: E402
+from collections import defaultdict

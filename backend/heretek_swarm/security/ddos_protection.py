@@ -347,7 +347,7 @@ class RateLimiter:
     def _init_redis(self):
         """Initialize Redis connection."""
         try:
-            import redis.asyncio  # noqa: F401
+            import redis.asyncio
 
             # Will be initialized on first use
             self._redis = None  # Lazy init
@@ -477,8 +477,8 @@ class RateLimiter:
 
         # Reset token bucket
         bucket = self._token_buckets[tier]
-        async with bucket._lock:  # noqa: SLF001
-            bucket._tokens.pop(key, None)  # noqa: SLF001
+        async with bucket._lock:
+            bucket._tokens.pop(key, None)
 
     def get_metrics(self) -> dict[str, Any]:
         """Get rate limiter metrics."""
@@ -892,7 +892,7 @@ class DDoSProtection:
 
         # Run DDoS detection periodically
         ddos_result = None
-        if self.detector._detection_count % 100 == 0:  # Every 100 requests  # noqa: SLF001
+        if self.detector._detection_count % 100 == 0:  # Every 100 requests
             ddos_result = self.detector.detect()
             if ddos_result.is_attack:
                 self.mitigator.apply_mitigation(ddos_result)
@@ -904,11 +904,11 @@ class DDoSProtection:
                 )
 
         # Apply throttle factor if active
-        # NOTE: random for emergency throttle decision - not security-critical (rate limit, not crypto)  # noqa: E501
-        if self.mitigator._emergency_throttle_active:  # noqa: SLF001
+        # NOTE: random for emergency throttle decision - not security-critical (rate limit, not crypto)
+        if self.mitigator._emergency_throttle_active:
             import random
 
-            if random.random() > self.mitigator.get_throttle_factor():  # noqa: S311
+            if random.random() > self.mitigator.get_throttle_factor():
                 return RateLimitResult(
                     allowed=False,
                     tier=tier,

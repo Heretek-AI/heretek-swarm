@@ -63,7 +63,7 @@ class InputValidationConfig:
 class InputValidator:
     """Layer 1: Input Validation — Pydantic v2, UUID v4, size limits, injection patterns."""
 
-    INJECTION_PATTERNS = [  # noqa: RUF012
+    INJECTION_PATTERNS = [
         (r"\bexec\s*\(", "exec() function call detected"),
         (r"\beval\s*\(", "eval() function call detected"),
         (r"\b__import__\s*\(", "__import__() function call detected"),

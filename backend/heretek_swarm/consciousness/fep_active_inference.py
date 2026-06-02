@@ -245,7 +245,7 @@ class FreeEnergyCalculator:
     """
 
     # Free energy thresholds for classification
-    FREE_ENERGY_THRESHOLDS = {  # noqa: RUF012
+    FREE_ENERGY_THRESHOLDS = {
         "very_low": 0.1,
         "low": 0.3,
         "moderate": 0.5,
@@ -254,7 +254,7 @@ class FreeEnergyCalculator:
     }
 
     # Surprise thresholds
-    SURPRISE_THRESHOLDS = {  # noqa: RUF012
+    SURPRISE_THRESHOLDS = {
         "minimal": 0.1,
         "low": 0.3,
         "moderate": 0.5,
@@ -750,8 +750,8 @@ class FreeEnergyCalculator:
 
     def _generate_default_policies(
         self,
-        observations: dict[str, Any],  # noqa: ARG002
-        preferences: dict[str, Any],  # noqa: ARG002
+        observations: dict[str, Any],
+        preferences: dict[str, Any],
     ) -> list[Policy]:
         """
         Generate default policies based on observations and preferences.
@@ -806,7 +806,7 @@ class FreeEnergyCalculator:
     def _calculate_expected_free_energy(
         self,
         policy: Policy,
-        beliefs: BeliefState,  # noqa: ARG002
+        beliefs: BeliefState,
         preferences: dict[str, Any],
     ) -> float:
         """
@@ -986,7 +986,7 @@ class ActiveInferenceAgent:
         self._beliefs.prior = self._beliefs.posterior or self._beliefs.beliefs
 
         # Update beliefs using the calculator
-        self._beliefs = self._calculator._update_beliefs_from_observations(  # noqa: SLF001
+        self._beliefs = self._calculator._update_beliefs_from_observations(
             self._beliefs, observations
         )
 

@@ -299,7 +299,7 @@ class WorkflowValidator:
                             code=ErrorCodes.INVALID_AGENT_TYPE,
                             message=f"Invalid agent type: {agent_type}",
                             node_id=node.get("id"),
-                            suggestion=f"Valid agent types are: {', '.join(REGISTERED_AGENT_TYPES)}",  # noqa: E501
+                            suggestion=f"Valid agent types are: {', '.join(REGISTERED_AGENT_TYPES)}",
                         )
                     )
 
@@ -497,7 +497,7 @@ class WorkflowValidator:
                         code=ErrorCodes.RESOURCE_CONFLICT,
                         message=f"Multiple nodes competing for resource: {resource_id}",
                         node_id=node_ids[0],
-                        suggestion=f"Nodes {', '.join(node_ids)} share the same resource. Ensure proper synchronization.",  # noqa: E501
+                        suggestion=f"Nodes {', '.join(node_ids)} share the same resource. Ensure proper synchronization.",
                     )
                 )
 
@@ -558,7 +558,7 @@ class WorkflowValidator:
                     severity="error",
                     code=ErrorCodes.INVALID_START_NODE,
                     message="No valid start node found (all nodes have incoming connections)",
-                    suggestion="Add an input node or ensure at least one node has no incoming connections",  # noqa: E501
+                    suggestion="Add an input node or ensure at least one node has no incoming connections",
                 )
             )
 
@@ -602,7 +602,7 @@ class WorkflowValidator:
             node_type = node.get("type")
 
             # Check if node has output but isn't connected to anything
-            if node_id in sources and node_id not in targets:  # noqa: SIM102
+            if node_id in sources and node_id not in targets:
                 if node_type in ("agent", "tool", "memory"):
                     result.info.append(
                         ValidationError(
@@ -628,7 +628,7 @@ class WorkflowValidator:
                     severity="info",
                     code=ErrorCodes.COMPLEX_GRAPH,
                     message=f"Workflow has {node_count} nodes",
-                    suggestion="Consider breaking into smaller sub-workflows for better maintainability",  # noqa: E501
+                    suggestion="Consider breaking into smaller sub-workflows for better maintainability",
                 )
             )
 
@@ -638,7 +638,7 @@ class WorkflowValidator:
                 ValidationError(
                     severity="info",
                     code=ErrorCodes.COMPLEX_GRAPH,
-                    message=f"Workflow is densely connected ({edge_count} edges for {node_count} nodes)",  # noqa: E501
+                    message=f"Workflow is densely connected ({edge_count} edges for {node_count} nodes)",
                     suggestion="Consider simplifying the workflow structure",
                 )
             )

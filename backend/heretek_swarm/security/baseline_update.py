@@ -589,7 +589,7 @@ class BaselineTribunal:
         proposal_id: str,
         agent_id: str,
         decision: VoteDecision,
-        reasoning: str | None = None,  # noqa: ARG002
+        reasoning: str | None = None,
     ) -> dict[str, Any]:
         """
         Cast a vote on a baseline change proposal.
@@ -1004,8 +1004,8 @@ class BaselineUpdateService:
         """Get combined statistics."""
         return {
             "tribunal": self._tribunal.get_tribunal_statistics(),
-            "snapshots": len(self._rollback_manager._snapshots),  # noqa: SLF001
-            "pending_rollbacks": len(self._rollback_manager._rollback_operations),  # noqa: SLF001
+            "snapshots": len(self._rollback_manager._snapshots),
+            "pending_rollbacks": len(self._rollback_manager._rollback_operations),
         }
 
 

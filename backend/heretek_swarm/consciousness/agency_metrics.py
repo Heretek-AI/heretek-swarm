@@ -541,7 +541,7 @@ class AgencyMetricsCalculator:
         self,
         individual_actions: int,
         collective_actions: int,
-        individual_success: float,  # noqa: ARG002
+        individual_success: float,
         collective_success: float,
     ) -> float:
         """
@@ -636,7 +636,7 @@ class AgencyMetricsCalculator:
     def calculate_prime_directive_compliance(
         self,
         metrics: AgentAgencyMetrics,
-        decisions: list[DecisionPoint],  # noqa: ARG002
+        decisions: list[DecisionPoint],
     ) -> tuple[float, dict[str, float], list[str]]:
         """
         Calculate Prime Directive compliance.

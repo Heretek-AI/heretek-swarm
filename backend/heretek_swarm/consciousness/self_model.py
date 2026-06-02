@@ -613,7 +613,7 @@ class SelfModel:
             f"- Total Limitations: {len(self.limitations)}",
         ]
         if self.limitations:
-            critical_limits = [l for l in self.limitations.values() if l.severity > 0.7]  # noqa: E741
+            critical_limits = [l for l in self.limitations.values() if l.severity > 0.7]
             if critical_limits:
                 lines.append("  Critical Limitations:")
                 for lim in critical_limits[:3]:

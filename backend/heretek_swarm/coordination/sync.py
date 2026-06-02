@@ -202,8 +202,8 @@ class TaskSynchronizer:
 
     async def escalate_to_arbiter(
         self,
-        deadlock_chain: list[str],  # noqa: ARG002
-        context: dict[str, Any],  # noqa: ARG002
+        deadlock_chain: list[str],
+        context: dict[str, Any],
     ) -> str:
         escalation_id = str(uuid.uuid4())
         await self.record_coordination_usage("arbiter_escalation", 0.05)

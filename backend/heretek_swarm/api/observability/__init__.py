@@ -260,8 +260,8 @@ def get_replay_manager() -> Any | None:
             _replay_manager = get_rm()
 
             # Setup with dependencies
-            _replay_manager._js_manager = js_manager  # noqa: SLF001
-            _replay_manager._event_store = event_store  # noqa: SLF001
+            _replay_manager._js_manager = js_manager
+            _replay_manager._event_store = event_store
 
         except ImportError:
             return None
@@ -349,13 +349,13 @@ router = APIRouter(prefix="/api/observability", tags=["observability"])
 # These imports happen at the bottom so submodules can access shared globals
 # from this package via absolute imports.
 
-from .alerts import router as _alerts_router  # noqa: E402
-from .consciousness import router as _consciousness_router  # noqa: E402
-from .events import router as _events_router  # noqa: E402
-from .external_calls import router as _external_calls_router  # noqa: E402
-from .stream import router as _stream_router  # noqa: E402
-from .swarm import router as _swarm_router  # noqa: E402
-from .traces import router as _traces_router  # noqa: E402
+from .alerts import router as _alerts_router
+from .consciousness import router as _consciousness_router
+from .events import router as _events_router
+from .external_calls import router as _external_calls_router
+from .stream import router as _stream_router
+from .swarm import router as _swarm_router
+from .traces import router as _traces_router
 
 router.include_router(_swarm_router)
 router.include_router(_consciousness_router)

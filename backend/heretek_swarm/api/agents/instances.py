@@ -242,7 +242,7 @@ async def get_agent_memory(
 
             from heretek_swarm.memory.persistent import MemoryEntryModel
 
-            async with memory_store._session_factory() as session:  # noqa: SLF001
+            async with memory_store._session_factory() as session:
                 # Total count for this agent
                 count_stmt = (
                     select(func.count())

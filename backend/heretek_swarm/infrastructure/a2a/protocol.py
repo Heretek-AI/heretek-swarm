@@ -384,7 +384,7 @@ class A2AProtocol:
 
     def _agent_has_capability(
         self,
-        agent_id: str,  # noqa: ARG002
+        agent_id: str,
         capabilities: list[Any],
         capability_name: str,
         min_version: str | None,

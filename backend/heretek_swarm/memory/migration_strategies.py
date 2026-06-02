@@ -60,7 +60,7 @@ class MigrationRemovalPhase(MigrationPhase):
         self,
         memory: Any,
         source_tier: Any,
-        target_tier: Any,  # noqa: ARG002
+        target_tier: Any,
         memories_by_tier: dict[str, dict[str, Any]],
     ) -> tuple[bool, str | None, dict[str, Any]]:
         """Remove memory from source tier"""
@@ -78,7 +78,7 @@ class MigrationUpdatePhase(MigrationPhase):
         memory: Any,
         source_tier: Any,
         target_tier: Any,
-        memories_by_tier: dict[str, dict[str, Any]],  # noqa: ARG002
+        memories_by_tier: dict[str, dict[str, Any]],
     ) -> tuple[bool, str | None, dict[str, Any]]:
         """Update memory with new tier"""
         memory.current_tier = target_tier
@@ -100,7 +100,7 @@ class MigrationAdditionPhase(MigrationPhase):
     async def execute(
         self,
         memory: Any,
-        source_tier: Any,  # noqa: ARG002
+        source_tier: Any,
         target_tier: Any,
         memories_by_tier: dict[str, dict[str, Any]],
     ) -> tuple[bool, str | None, dict[str, Any]]:
@@ -118,9 +118,9 @@ class MigrationVerificationPhase(MigrationPhase):
     async def execute(
         self,
         memory: Any,
-        source_tier: Any,  # noqa: ARG002
+        source_tier: Any,
         target_tier: Any,
-        memories_by_tier: dict[str, dict[str, Any]],  # noqa: ARG002
+        memories_by_tier: dict[str, dict[str, Any]],
     ) -> tuple[bool, str | None, dict[str, Any]]:
         """Verify memory is in correct tier"""
         result = self._verify_func(
@@ -145,7 +145,7 @@ class MigrationRollbackPhase(MigrationPhase):
         self,
         memory: Any,
         original_state: dict[str, Any],
-        memories_by_tier: dict[str, dict[str, Any]],  # noqa: ARG002
+        memories_by_tier: dict[str, dict[str, Any]],
     ) -> dict[str, Any]:
         """Execute rollback"""
         return self._rollback_func(
@@ -177,8 +177,8 @@ class MigrationStrategy:
         source_tier: Any,
         target_tier: Any,
         memories_by_tier: dict[str, dict[str, Any]],
-        trigger: Any,  # noqa: ARG002
-        reason: str,  # noqa: ARG002
+        trigger: Any,
+        reason: str,
     ) -> tuple[bool, str | None, dict[str, Any]]:
         """Execute full migration through all phases"""
         # Phase 1: Validation

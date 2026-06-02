@@ -142,7 +142,7 @@ consensus_auth_manager = ConsensusAuthManager()
 
 
 async def get_authenticated_agent(
-    credentials: HTTPAuthorizationCredentials | None = Depends(security),  # noqa: B008
+    credentials: HTTPAuthorizationCredentials | None = Depends(security),
     x_agent_id: str | None = Header(None, description="Agent ID header"),
 ) -> str:
     """
@@ -752,7 +752,7 @@ async def submit_deliberation_position(
     try:
         position_enum = Position(position.lower())
     except ValueError:
-        raise HTTPException(  # noqa: B904
+        raise HTTPException(
             status_code=400,
             detail=f"Invalid position. Must be one of: {[p.value for p in Position]}",
         )
@@ -804,7 +804,7 @@ async def submit_deliberation_argument(
     try:
         position_enum = Position(position.lower())
     except ValueError:
-        raise HTTPException(  # noqa: B904
+        raise HTTPException(
             status_code=400,
             detail=f"Invalid position. Must be one of: {[p.value for p in Position]}",
         )
@@ -905,7 +905,7 @@ async def run_deliberation_round(
 
     # Fire-and-forget: create memory version snapshot after deliberation round
     # Snapshot must not block the deliberation response
-    asyncio.create_task(  # noqa: RUF006
+    asyncio.create_task(
         _snapshot_after_round(
             deliberation_id=deliberation_id,
             round_number=round_result.round_number,

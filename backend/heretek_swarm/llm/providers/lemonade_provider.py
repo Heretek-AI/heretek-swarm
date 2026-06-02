@@ -276,4 +276,4 @@ class LemonadeProvider(LLMProviderBase):
 
 
 # Import at module level for type annotation
-from heretek_swarm.infrastructure.otel import InstrumentedAsyncClient  # noqa: E402
+from heretek_swarm.infrastructure.otel import InstrumentedAsyncClient

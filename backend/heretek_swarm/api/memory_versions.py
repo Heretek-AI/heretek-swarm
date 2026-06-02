@@ -30,7 +30,7 @@ router = APIRouter(prefix="/api/memory/versions", tags=["memory versions"])
 @router.post("/snapshot", status_code=201)
 async def create_snapshot(
     message: Annotated[str, Query(description="Version commit message")],
-    authenticated: dict = Depends(verify_auth),  # noqa: B008
+    authenticated: dict = Depends(verify_auth),
     agent_id: Annotated[str | None, Query(description="Agent triggering this snapshot")] = None,
     deliberation_id: Annotated[
         str | None, Query(description="Associated deliberation round")
@@ -44,7 +44,7 @@ async def create_snapshot(
     Captures the current state of all memory entries as an immutable version.
     """
     store = get_versioned_store()
-    label_list = [l.strip() for l in labels.split(",")] if labels else None  # noqa: E741
+    label_list = [l.strip() for l in labels.split(",")] if labels else None
 
     try:
         version = await store.create_snapshot(
@@ -71,7 +71,7 @@ async def create_snapshot(
 
 @router.get("")
 async def list_versions(
-    authenticated: dict = Depends(verify_auth),  # noqa: B008
+    authenticated: dict = Depends(verify_auth),
     branch: Annotated[str | None, Query(description="Filter by branch")] = None,
     limit: Annotated[int, Query(description="Max versions to return", ge=1, le=100)] = 20,
     offset: Annotated[int, Query(description="Skip first N versions", ge=0)] = 0,
@@ -83,7 +83,7 @@ async def list_versions(
     """
     store = get_versioned_store()
 
-    label_list = [l.strip() for l in labels.split(",")] if labels else None  # noqa: E741
+    label_list = [l.strip() for l in labels.split(",")] if labels else None
 
     versions = await store.list_versions(
         branch=branch,
@@ -117,7 +117,7 @@ async def list_versions(
 
 @router.get("/labels")
 async def get_all_labels(
-    authenticated: dict = Depends(verify_auth),  # noqa: B008
+    authenticated: dict = Depends(verify_auth),
 ) -> dict[str, Any]:
     """Get all version labels and their associated version IDs."""
     store = get_versioned_store()
@@ -128,7 +128,7 @@ async def get_all_labels(
 
 @router.get("/head")
 async def get_current_head(
-    authenticated: dict = Depends(verify_auth),  # noqa: B008
+    authenticated: dict = Depends(verify_auth),
     branch: Annotated[str | None, Query(description="Branch name")] = None,
 ) -> dict[str, Any]:
     """Get the latest version on a branch."""
@@ -152,7 +152,7 @@ async def get_current_head(
 @router.get("/{version_id}")
 async def get_version(
     version_id: str,
-    authenticated: dict = Depends(verify_auth),  # noqa: B008
+    authenticated: dict = Depends(verify_auth),
     include_entries: Annotated[bool, Query(description="Include full entry list")] = False,
 ) -> dict[str, Any]:
     """
@@ -191,7 +191,7 @@ async def get_version(
 @router.get("/{version_id}/entries")
 async def get_version_entries(
     version_id: str,
-    authenticated: dict = Depends(verify_auth),  # noqa: B008
+    authenticated: dict = Depends(verify_auth),
 ) -> dict[str, Any]:
     """Get all memory entries for a specific version."""
     store = get_versioned_store()
@@ -209,7 +209,7 @@ async def get_version_entries(
 async def diff_versions(
     from_version: str,
     to_version: str,
-    authenticated: dict = Depends(verify_auth),  # noqa: B008
+    authenticated: dict = Depends(verify_auth),
 ) -> dict[str, Any]:
     """
     Compute the diff between two versions.
@@ -241,7 +241,7 @@ async def diff_versions(
 @router.post("/{version_id}/restore", status_code=201)
 async def restore_version(
     version_id: str,
-    authenticated: dict = Depends(verify_auth),  # noqa: B008
+    authenticated: dict = Depends(verify_auth),
     message: Annotated[
         str | None, Query(description="Override message for the restore version")
     ] = None,
@@ -278,7 +278,7 @@ async def restore_version(
 async def label_version(
     version_id: str,
     label: str,
-    authenticated: dict = Depends(verify_auth),  # noqa: B008
+    authenticated: dict = Depends(verify_auth),
 ) -> dict[str, Any]:
     """
     Apply a label to a version.
@@ -297,7 +297,7 @@ async def label_version(
 @router.get("/label/{label}")
 async def get_version_by_label(
     label: str,
-    authenticated: dict = Depends(verify_auth),  # noqa: B008
+    authenticated: dict = Depends(verify_auth),
 ) -> dict[str, Any]:
     """Get the version associated with a label."""
     store = get_versioned_store()
@@ -317,7 +317,7 @@ async def get_version_by_label(
 
 @router.get("/statistics")
 async def get_version_statistics(
-    authenticated: dict = Depends(verify_auth),  # noqa: B008
+    authenticated: dict = Depends(verify_auth),
 ) -> dict[str, Any]:
     """Get version store statistics."""
     store = get_versioned_store()

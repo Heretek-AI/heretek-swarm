@@ -238,7 +238,7 @@ class AgentExpertiseProfiler:
         self.calibration_window = calibration_window
 
         logger.info(
-            f"AgentExpertiseProfiler initialized with calibration_window={calibration_window}"  # noqa: G004
+            f"AgentExpertiseProfiler initialized with calibration_window={calibration_window}"
         )
 
     def register_agent(
@@ -347,7 +347,7 @@ class AgentExpertiseProfiler:
         self._update_domain_statistics(domain, was_correct, confidence)
 
         logger.debug(
-            f"Recorded outcome for {agent_id} in {domain}: "  # noqa: G004
+            f"Recorded outcome for {agent_id} in {domain}: "
             f"correct={was_correct}, confidence={confidence:.2f}, "
             f"new_expertise={domain_expertise.expertise_score:.2f}"
         )
@@ -378,14 +378,14 @@ class AgentExpertiseProfiler:
         domain_expertise.update_peer_trust(peer_id, trust_delta)
 
         logger.info(
-            f"Recorded peer trust for {agent_id} in {domain} from {peer_id}: {trust_delta:+.2f}"  # noqa: G004
+            f"Recorded peer trust for {agent_id} in {domain} from {peer_id}: {trust_delta:+.2f}"
         )
 
         # Update overall peer trust score
         self._update_peer_trust_score(profile)
 
         logger.debug(
-            f"Peer trust updated for {agent_id} from {peer_id} "  # noqa: G004
+            f"Peer trust updated for {agent_id} from {peer_id} "
             f"in {domain}: delta={trust_delta:+.3f}"
         )
 
@@ -795,7 +795,7 @@ class AgentExpertiseProfiler:
         # Calculate average expertise across all agents
         all_expertise = []
         for profile in self.profiles.values():
-            all_expertise.append(profile.overall_reputation)  # noqa: PERF401
+            all_expertise.append(profile.overall_reputation)
 
         avg_expertise = statistics.mean(all_expertise) if all_expertise else 0.5
 
@@ -946,7 +946,7 @@ class AgentExpertiseProfiler:
         """
         import json
 
-        with open(filepath, "w") as f:  # noqa: PTH123
+        with open(filepath, "w") as f:
             json.dump(self.export_profiles(), f, indent=2)
         logger.info("Saved expertise profiles to {filepath}")
 
@@ -959,7 +959,7 @@ class AgentExpertiseProfiler:
         """
         import json
 
-        with open(filepath) as f:  # noqa: PTH123
+        with open(filepath) as f:
             data = json.load(f)
         self.import_profiles(data)
         logger.info("Loaded expertise profiles from {filepath}")

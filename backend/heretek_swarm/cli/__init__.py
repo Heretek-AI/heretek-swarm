@@ -118,10 +118,10 @@ def cli(ctx: click.Context) -> None:
 # =============================================================================
 
 # --- Core Operations ---
-from heretek_swarm.cli.consensus import consensus  # noqa: E402
-from heretek_swarm.cli.deploy import deploy  # noqa: E402
-from heretek_swarm.cli.run import run  # noqa: E402
-from heretek_swarm.cli.serve import serve  # noqa: E402
+from heretek_swarm.cli.consensus import consensus
+from heretek_swarm.cli.deploy import deploy
+from heretek_swarm.cli.run import run
+from heretek_swarm.cli.serve import serve
 
 cli.add_command(run)
 cli.add_command(serve)
@@ -129,12 +129,12 @@ cli.add_command(deploy)
 cli.add_command(consensus)
 
 # --- Configuration ---
-from heretek_swarm.cli.config import config  # noqa: E402
+from heretek_swarm.cli.config import config
 
 cli.add_command(config)
 
 # --- Monitoring ---
-from heretek_swarm.cli.status import status  # noqa: E402
+from heretek_swarm.cli.status import status
 
 cli.add_command(status)
 
@@ -212,7 +212,7 @@ def stop() -> None:
     cleanup_daemon(DEFAULT_PID_FILE, DEFAULT_SOCKET_PATH)
 
 # --- Goal commands ---
-from heretek_swarm.cli.goal_commands import goal  # noqa: E402
+from heretek_swarm.cli.goal_commands import goal
 
 cli.add_command(goal)
 
@@ -220,7 +220,7 @@ cli.add_command(goal)
 # Backward-compatible re-exports (tests and external consumers use these)
 # =============================================================================
 
-from heretek_swarm.cli.config_wizard import (  # noqa: E402
+from heretek_swarm.cli.config_wizard import (
     AVAILABLE_PROVIDERS,
     add_provider,
     list_configured_providers,
@@ -230,13 +230,13 @@ from heretek_swarm.cli.config_wizard import (  # noqa: E402
     set_default_provider,
     validate_provider,
 )
-from heretek_swarm.cli.display import (  # noqa: E402
+from heretek_swarm.cli.display import (
     _display_consensus_results,
     _display_deliberation_results,
     _display_routed_result,
     _print_startup_banner,
 )
-from heretek_swarm.cli.status import (  # noqa: E402
+from heretek_swarm.cli.status import (
     _display_daemon_status,
     _query_daemon_socket,
 )

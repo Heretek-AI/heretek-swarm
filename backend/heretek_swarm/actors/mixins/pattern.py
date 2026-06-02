@@ -65,7 +65,7 @@ class PatternMixin:
 
             self._pattern_emitted.add(item_id)
             logger.info(
-                f"{item_type}_pattern_emitted",  # noqa: G004
+                f"{item_type}_pattern_emitted",
                 item_id=item_id,
                 outcome=outcome,
             )

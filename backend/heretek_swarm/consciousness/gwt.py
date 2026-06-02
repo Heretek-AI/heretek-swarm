@@ -661,12 +661,12 @@ class GlobalWorkspaceBroadcast:
         if not limiter:
             return {"can_broadcast": True, "reason": "no limiter created"}
 
-        limiter._refill_tokens()  # noqa: SLF001
+        limiter._refill_tokens()
         return {
             "can_broadcast": limiter.can_broadcast(),
-            "tokens": limiter._tokens,  # noqa: SLF001
-            "minute_count": limiter._minute_counter,  # noqa: SLF001
-            "burst_used": limiter._burst_used,  # noqa: SLF001
+            "tokens": limiter._tokens,
+            "minute_count": limiter._minute_counter,
+            "burst_used": limiter._burst_used,
         }
 
     def get_stats(self) -> dict[str, Any]:

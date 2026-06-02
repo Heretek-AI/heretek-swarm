@@ -439,7 +439,7 @@ class CoreMCPTools:
         }
 
     async def _handle_memory_retrieve(
-        self, arguments: dict[str, Any], context: dict | None = None  # noqa: ARG002
+        self, arguments: dict[str, Any], context: dict | None = None
     ) -> dict:
         """Handle memory retrieve request."""
         if not self.memory:
@@ -511,7 +511,7 @@ class CoreMCPTools:
         return {"handoff_initiated": True, "to_agent": to_agent}
 
     async def _handle_consensus_propose(
-        self, arguments: dict[str, Any], context: dict | None = None  # noqa: ARG002
+        self, arguments: dict[str, Any], context: dict | None = None
     ) -> dict:
         """Handle consensus propose request."""
         if not self.consensus:
@@ -550,7 +550,7 @@ class CoreMCPTools:
         }
 
     async def _handle_rag_query(
-        self, arguments: dict[str, Any], context: dict | None = None  # noqa: ARG002
+        self, arguments: dict[str, Any], context: dict | None = None
     ) -> dict:
         """Handle RAG query request."""
         if not self.rag:
@@ -577,7 +577,7 @@ class CoreMCPTools:
         }
 
     async def _handle_rag_ingest(
-        self, arguments: dict[str, Any], context: dict | None = None  # noqa: ARG002
+        self, arguments: dict[str, Any], context: dict | None = None
     ) -> dict:
         """Handle RAG ingest request."""
         if not self.rag:
@@ -591,7 +591,7 @@ class CoreMCPTools:
         return {"ingested": True, "source": source}
 
     async def _handle_external_api_call(
-        self, arguments: dict[str, Any], context: dict | None = None  # noqa: ARG002
+        self, arguments: dict[str, Any], context: dict | None = None
     ) -> dict:
         """Handle external API call request."""
         import httpx
@@ -614,7 +614,7 @@ class CoreMCPTools:
             return {"error": str(e)}
 
     async def _handle_notification_send(
-        self, arguments: dict[str, Any], context: dict | None = None  # noqa: ARG002
+        self, arguments: dict[str, Any], context: dict | None = None
     ) -> dict:
         """Handle notification send request."""
         channel = arguments.get("channel")
@@ -636,7 +636,7 @@ class CoreMCPTools:
         return {"sent": True, "channel": channel}
 
     async def _handle_workflow_start(
-        self, arguments: dict[str, Any], context: dict | None = None  # noqa: ARG002
+        self, arguments: dict[str, Any], context: dict | None = None
     ) -> dict:
         """Handle workflow start request."""
         workflow_type = arguments.get("workflow_type")
@@ -662,7 +662,7 @@ class CoreMCPTools:
         return {"workflow_id": workflow_id, "status": "started"}
 
     async def _handle_workflow_status(
-        self, arguments: dict[str, Any], context: dict | None = None  # noqa: ARG002
+        self, arguments: dict[str, Any], context: dict | None = None
     ) -> dict:
         """Handle workflow status request."""
         workflow_id = arguments.get("workflow_id")
@@ -675,7 +675,7 @@ class CoreMCPTools:
         }
 
     async def _handle_system_health(
-        self, arguments: dict[str, Any], context: dict | None = None  # noqa: ARG002
+        self, arguments: dict[str, Any], context: dict | None = None
     ) -> dict:
         """Handle system health request."""
         return {

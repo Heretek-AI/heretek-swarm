@@ -189,7 +189,7 @@ class PrismAgent(
                 await handler(message)
             except Exception as e:
                 logger.exception(
-                    f"[{self.agent_id}] Error processing message {message.message_type}: {e}",  # noqa: G004
+                    f"[{self.agent_id}] Error processing message {message.message_type}: {e}",
 
                 )
                 self.error_count += 1
@@ -279,7 +279,7 @@ class PrismAgent(
                 )
 
             logger.info(
-                f"[{self.agent_id}] Generated {len(perspectives)} perspectives for analysis: {analysis_id}"  # noqa: G004,E501
+                f"[{self.agent_id}] Generated {len(perspectives)} perspectives for analysis: {analysis_id}"
             )
 
         except Exception as e:
@@ -320,7 +320,7 @@ class PrismAgent(
                     perspectives.append(perspective)
             except Exception as e:
                 logger.warning(
-                    f"[{self.agent_id}] Failed to generate {ptype.value} perspective: {e}"  # noqa: G004
+                    f"[{self.agent_id}] Failed to generate {ptype.value} perspective: {e}"
                 )
 
         # Sort by confidence
@@ -399,7 +399,7 @@ Respond in JSON format:
 
         except Exception as e:
             logger.warning(
-                f"[{self.agent_id}] LLM perspective generation failed, using heuristic: {e}"  # noqa: G004
+                f"[{self.agent_id}] LLM perspective generation failed, using heuristic: {e}"
             )
             return self._heuristic_perspective(issue, perspective_type)
 

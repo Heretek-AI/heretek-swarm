@@ -116,7 +116,7 @@ class OllamaProvider(LLMProviderBase):
         # Convert messages to Ollama format
         messages = []
         for msg in request.messages:
-            messages.append(  # noqa: PERF401
+            messages.append(
                 {
                     "role": msg.role,
                     "content": msg.content,
@@ -220,7 +220,7 @@ class OllamaProvider(LLMProviderBase):
         # Convert messages to Ollama format
         messages = []
         for msg in request.messages:
-            messages.append(  # noqa: PERF401
+            messages.append(
                 {
                     "role": msg.role,
                     "content": msg.content,
@@ -309,4 +309,4 @@ class OllamaProvider(LLMProviderBase):
 
 
 # Import at module level for type annotation
-from heretek_swarm.infrastructure.otel import InstrumentedAsyncClient  # noqa: E402
+from heretek_swarm.infrastructure.otel import InstrumentedAsyncClient

@@ -643,15 +643,15 @@ class PatternLibrary:
     async def _persist_to_filesystem(self, entry: PatternEntry) -> None:
         """Persist entry to file system."""
         try:
-            os.makedirs(self.storage_path, exist_ok=True)  # noqa: PTH103
+            os.makedirs(self.storage_path, exist_ok=True)
 
             # Create category subdirectory
-            category_path = os.path.join(self.storage_path, entry.category.value)  # noqa: PTH118
-            os.makedirs(category_path, exist_ok=True)  # noqa: PTH103
+            category_path = os.path.join(self.storage_path, entry.category.value)
+            os.makedirs(category_path, exist_ok=True)
 
             # Write entry file
-            file_path = os.path.join(category_path, f"{entry.entry_id}.json")  # noqa: PTH118
-            with open(file_path, "w") as f:  # noqa: ASYNC230,PTH123
+            file_path = os.path.join(category_path, f"{entry.entry_id}.json")
+            with open(file_path, "w") as f:
                 json.dump(entry.to_dict(), f, indent=2)
 
             logger.debug(
@@ -709,13 +709,13 @@ class PatternLibrary:
         if self.backend == StorageBackend.FILE_SYSTEM:
             # Find and delete file
             for category in PatternCategory:
-                file_path = os.path.join(  # noqa: PTH118
+                file_path = os.path.join(
                     self.storage_path,
                     category.value,
                     f"{entry_id}.json",
                 )
-                if os.path.exists(file_path):  # noqa: PTH110,ASYNC240
-                    os.remove(file_path)  # noqa: PTH107
+                if os.path.exists(file_path):
+                    os.remove(file_path)
                     break
 
         elif self.backend == StorageBackend.REDIS and self._redis:
@@ -893,7 +893,7 @@ class PatternLibraryService:
 
     async def get_best_practices(
         self,
-        agent_type: str | None = None,  # noqa: ARG002
+        agent_type: str | None = None,
         limit: int = 10,
     ) -> QueryResult:
         """
@@ -933,7 +933,7 @@ class PatternLibraryService:
 
     async def search_patterns(
         self,
-        query: str,  # noqa: ARG002
+        query: str,
         limit: int = 20,
     ) -> QueryResult:
         """

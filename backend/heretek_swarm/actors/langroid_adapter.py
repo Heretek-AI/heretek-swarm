@@ -333,7 +333,7 @@ class LangroidAgent:
     async def receive_message(
         self,
         conversation_id: str,
-        timeout: float | None = None,  # noqa: ASYNC109
+        timeout: float | None = None,
     ) -> str | None:
         """
         Receive a message from conversation queue.
@@ -490,7 +490,7 @@ class ConversationHandlerMixin:
 
     async def start_conversation(
         self,
-        user_id: str,  # noqa: ARG002
+        user_id: str,
         initial_message: str | None = None,
     ) -> str:
         """
@@ -518,7 +518,7 @@ class ConversationHandlerMixin:
         self._active_conversation = conversation_id
 
         logger.debug(
-            f"[{self.agent_id}] Started conversation",  # noqa: G004
+            f"[{self.agent_id}] Started conversation",
             extra={"conversation_id": conversation_id},
         )
 

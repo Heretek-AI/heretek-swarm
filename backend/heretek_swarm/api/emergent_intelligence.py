@@ -53,7 +53,7 @@ def get_exporter_instance() -> MetricsExporter:
 
 
 @router.get("/dashboard")
-async def get_dashboard_data(auth: dict = Depends(verify_auth)):  # noqa: B008
+async def get_dashboard_data(auth: dict = Depends(verify_auth)):
     """
     Get real-time metrics dashboard data.
 
@@ -86,7 +86,7 @@ async def get_dashboard_data(auth: dict = Depends(verify_auth)):  # noqa: B008
 
 @router.get("/siq")
 async def get_siq(
-    auth: dict = Depends(verify_auth),  # noqa: B008
+    auth: dict = Depends(verify_auth),
     include_history: bool = Query(False, description="Include historical SIQ data"),
     history_limit: int = Query(20, ge=1, le=100, description="Number of history items"),
 ):
@@ -109,7 +109,7 @@ async def get_siq(
 
         if include_history:
             limit = int(history_limit)
-            result["history"] = [s.to_dict() for s in metrics._siq_history[-limit:]]  # noqa: SLF001
+            result["history"] = [s.to_dict() for s in metrics._siq_history[-limit:]]
 
         return {
             "success": True,
@@ -123,7 +123,7 @@ async def get_siq(
 
 @router.get("/efficiency")
 async def get_collective_efficiency(
-    auth: dict = Depends(verify_auth),  # noqa: B008
+    auth: dict = Depends(verify_auth),
     include_history: bool = Query(False, description="Include historical efficiency data"),
     history_limit: int = Query(20, ge=1, le=100, description="Number of history items"),
 ):
@@ -147,7 +147,7 @@ async def get_collective_efficiency(
 
         if include_history:
             limit = int(history_limit)
-            result["history"] = [e.to_dict() for e in metrics._efficiency_history[-limit:]]  # noqa: SLF001
+            result["history"] = [e.to_dict() for e in metrics._efficiency_history[-limit:]]
 
         return {
             "success": True,
@@ -161,7 +161,7 @@ async def get_collective_efficiency(
 
 @router.get("/knowledge-transfer")
 async def get_knowledge_transfer_metrics(
-    auth: dict = Depends(verify_auth),  # noqa: B008
+    auth: dict = Depends(verify_auth),
     include_history: bool = Query(False, description="Include historical transfer data"),
     history_limit: int = Query(20, ge=1, le=100, description="Number of history items"),
 ):
@@ -185,7 +185,7 @@ async def get_knowledge_transfer_metrics(
 
         if include_history:
             limit = int(history_limit)
-            result["history"] = [t.to_dict() for t in metrics._transfer_history[-limit:]]  # noqa: SLF001
+            result["history"] = [t.to_dict() for t in metrics._transfer_history[-limit:]]
 
         return {
             "success": True,
@@ -201,7 +201,7 @@ async def get_knowledge_transfer_metrics(
 
 @router.get("/emergence-coefficient")
 async def get_emergence_coefficient(
-    auth: dict = Depends(verify_auth),  # noqa: B008
+    auth: dict = Depends(verify_auth),
     include_history: bool = Query(False, description="Include historical emergence data"),
     history_limit: int = Query(20, ge=1, le=100, description="Number of history items"),
 ):
@@ -223,7 +223,7 @@ async def get_emergence_coefficient(
 
         if include_history:
             limit = int(history_limit)
-            result["history"] = [e.to_dict() for e in metrics._emergence_history[-limit:]]  # noqa: SLF001
+            result["history"] = [e.to_dict() for e in metrics._emergence_history[-limit:]]
 
         return {
             "success": True,
@@ -239,9 +239,9 @@ async def get_emergence_coefficient(
 
 @router.get("/emergent-patterns")
 async def get_emergent_patterns(
-    auth: dict = Depends(verify_auth),  # noqa: B008
-    pattern_class: EmergentPatternClass | None = Query(None, description="Filter by pattern class"),  # noqa: B008
-    min_level: EmergenceLevel | None = Query(None, description="Minimum emergence level"),  # noqa: B008
+    auth: dict = Depends(verify_auth),
+    pattern_class: EmergentPatternClass | None = Query(None, description="Filter by pattern class"),
+    min_level: EmergenceLevel | None = Query(None, description="Minimum emergence level"),
     limit: int = Query(100, ge=1, le=500, description="Maximum patterns to return"),
 ):
     """
@@ -277,12 +277,12 @@ async def get_emergent_patterns(
         }
     except Exception as e:
         logger.error("emergent_patterns_error", error=str(e))
-        raise HTTPException(status_code=500, detail=f"Failed to get emergent patterns: {e!s}") from e  # noqa: E501
+        raise HTTPException(status_code=500, detail=f"Failed to get emergent patterns: {e!s}") from e
 
 
 @router.get("/learning-rates")
 async def get_learning_rates(
-    auth: dict = Depends(verify_auth),  # noqa: B008
+    auth: dict = Depends(verify_auth),
     agent_id: str | None = Query(None, description="Filter by specific agent ID"),
 ):
     """
@@ -327,7 +327,7 @@ async def get_learning_rates(
 
 @router.get("/agent-adaptation")
 async def get_agent_adaptation(
-    auth: dict = Depends(verify_auth),  # noqa: B008
+    auth: dict = Depends(verify_auth),
     agent_id: str | None = Query(None, description="Filter by specific agent ID"),
 ):
     """
@@ -359,7 +359,7 @@ async def get_agent_adaptation(
         else:
             data = {
                 "swarm_statistics": adaptor.get_swarm_adaptation_stats(),
-                "total_agents": len(adaptor._agent_states),  # noqa: SLF001
+                "total_agents": len(adaptor._agent_states),
             }
 
         return {
@@ -373,7 +373,7 @@ async def get_agent_adaptation(
 
 
 @router.get("/metrics-definitions")
-async def get_metric_definitions(auth: dict = Depends(verify_auth)):  # noqa: B008
+async def get_metric_definitions(auth: dict = Depends(verify_auth)):
     """
     Get all registered metric definitions.
 
@@ -400,13 +400,13 @@ async def get_metric_definitions(auth: dict = Depends(verify_auth)):  # noqa: B0
         }
     except Exception as e:
         logger.error("metric_definitions_error", error=str(e))
-        raise HTTPException(status_code=500, detail=f"Failed to get metric definitions: {e!s}") from e  # noqa: E501
+        raise HTTPException(status_code=500, detail=f"Failed to get metric definitions: {e!s}") from e
 
 
 @router.get("/metrics/{metric_id}/timeseries")
 async def get_metric_timeseries(
     metric_id: str,
-    auth: dict = Depends(verify_auth),  # noqa: B008
+    auth: dict = Depends(verify_auth),
     start_time: str | None = Query(None, description="Start time (ISO 8601)"),
     end_time: str | None = Query(None, description="End time (ISO 8601)"),
 ):
@@ -436,11 +436,11 @@ async def get_metric_timeseries(
         raise HTTPException(status_code=400, detail=f"Invalid time format: {e!s}") from e
     except Exception as e:
         logger.error("metric_timeseries_error", error=str(e))
-        raise HTTPException(status_code=500, detail=f"Failed to get metric time series: {e!s}") from e  # noqa: E501
+        raise HTTPException(status_code=500, detail=f"Failed to get metric time series: {e!s}") from e
 
 
 @router.get("/export/summary")
-async def export_summary(auth: dict = Depends(verify_auth)):  # noqa: B008
+async def export_summary(auth: dict = Depends(verify_auth)):
     """
     Export metrics summary.
 
@@ -464,7 +464,7 @@ async def export_summary(auth: dict = Depends(verify_auth)):  # noqa: B008
 
 
 @router.get("/status")
-async def get_emergent_intelligence_status(auth: dict = Depends(verify_auth)):  # noqa: B008
+async def get_emergent_intelligence_status(auth: dict = Depends(verify_auth)):
     """
     Get emergent intelligence system status.
 

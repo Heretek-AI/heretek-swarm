@@ -551,7 +551,7 @@ class IntegrationManager:
             from .langgraph import get_langgraph_adapter
 
             adapter = get_langgraph_adapter()
-            if config.config:  # noqa: SIM102
+            if config.config:
                 if hasattr(adapter, "create_graph") and "graph_id" in config.config:
                     adapter.create_graph(
                         config.config["graph_id"],

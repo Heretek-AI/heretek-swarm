@@ -189,7 +189,7 @@ class WorkflowEngine:
     async def execute_workflow(
         self,
         workflow_id: str,
-        input_data: dict[str, Any] | None = None,  # noqa: ARG002
+        input_data: dict[str, Any] | None = None,
         strategy: str = "dag",
     ) -> WorkflowResult:
         """
@@ -285,7 +285,7 @@ class WorkflowEngine:
 
             for node_id in execution_order:
                 # Check for cycles before executing node
-                if self.cycle_detector.detect_cycle(execution_id, node_id):  # noqa: SIM102
+                if self.cycle_detector.detect_cycle(execution_id, node_id):
                     if self.cycle_detector.should_break_cycle(execution_id):
                         # Break cycle and log event
                         event = self.cycle_detector.break_cycle(
@@ -508,7 +508,7 @@ class WorkflowEngine:
         """
         # Check incoming edges for conditions
         for edge in workflow.edges:
-            if edge.target == node.id and edge.condition:  # noqa: SIM102
+            if edge.target == node.id and edge.condition:
                 if not self._evaluate_condition(edge.condition, context):
                     return False
 
@@ -542,7 +542,7 @@ class WorkflowEngine:
             return False
 
     def _get_node_input(
-        self, workflow: Workflow, node: WorkflowNode, context: WorkflowContext  # noqa: ARG002
+        self, workflow: Workflow, node: WorkflowNode, context: WorkflowContext
     ) -> dict[str, Any]:
         """
         Get input data for a node from context.

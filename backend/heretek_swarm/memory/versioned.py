@@ -313,7 +313,7 @@ class VersionedMemoryStore:
             if not v:
                 continue
 
-            if labels and not any(l in v.labels for l in labels):  # noqa: E741
+            if labels and not any(l in v.labels for l in labels):
                 continue
             if agent_id and v.agent_id != agent_id:
                 continue

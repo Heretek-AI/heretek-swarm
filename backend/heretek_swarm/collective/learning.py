@@ -613,7 +613,7 @@ class PatternExtractor:
                         },
                         applicability_conditions=[
                             f"sender_type={sender.split('_')[0] if '_' in sender else sender}",
-                            f"recipient_type={recipient.split('_')[0] if '_' in recipient else recipient}",  # noqa: E501
+                            f"recipient_type={recipient.split('_')[0] if '_' in recipient else recipient}",
                         ],
                     )
                     patterns.append(pattern)
@@ -649,9 +649,9 @@ class PatternExtractor:
                                 pattern_type=PatternType.OPTIMIZATION,
                                 source=PatternSource.MESSAGE_HISTORY,
                                 confidence=0.8,
-                                description=f"High latency detected in {interaction_type} interactions",  # noqa: E501
+                                description=f"High latency detected in {interaction_type} interactions",
                             ),
-                            content=f"Average latency: {avg_latency:.2f}ms across {len(group)} interactions",  # noqa: E501
+                            content=f"Average latency: {avg_latency:.2f}ms across {len(group)} interactions",
                             agents_involved=list(
                                 set([m.sender for m in group] + [m.recipient for m in group])
                             ),
@@ -1336,6 +1336,6 @@ class CollectiveLearning:
                 sum(p.metadata.confidence for p in patterns) / len(patterns) if patterns else 0.0
             ),
             "total_learning_signals": len(self._learning_signals),
-            "message_cache_size": len(self.extractor._message_cache),  # noqa: SLF001
-            "extraction_hooks": len(self.extractor._extraction_hooks),  # noqa: SLF001
+            "message_cache_size": len(self.extractor._message_cache),
+            "extraction_hooks": len(self.extractor._extraction_hooks),
         }

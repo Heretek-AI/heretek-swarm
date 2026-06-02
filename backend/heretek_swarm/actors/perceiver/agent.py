@@ -203,7 +203,7 @@ class PerceiverAgent(
                 await handler(message)
             except Exception as e:
                 logger.exception(
-                    f"[{self.agent_id}] Error processing message {message.message_type}: {e}",  # noqa: G004
+                    f"[{self.agent_id}] Error processing message {message.message_type}: {e}",
 
                 )
                 self.error_count += 1
@@ -226,7 +226,7 @@ class PerceiverAgent(
             return validate_message(message_type, content)
         except ValidationError as e:
             logger.warning(
-                f"[{self.agent_id}] Message validation failed for {message_type}: {e}",  # noqa: G004
+                f"[{self.agent_id}] Message validation failed for {message_type}: {e}",
                 extra={"validation_errors": e.errors()},
             )
             raise ValueError(f"Invalid message format: {e.errors()}") from e
@@ -311,7 +311,7 @@ class PerceiverAgent(
             )
 
             logger.info(
-                f"[{self.agent_id}] Input processed: {input_id[:8]}...",  # noqa: G004
+                f"[{self.agent_id}] Input processed: {input_id[:8]}...",
                 extra={"modality": modality, "quality": quality_score},
             )
 
@@ -510,7 +510,7 @@ class PerceiverAgent(
 
     def _try_extract_pil(self, image_bytes: bytes) -> dict[str, Any]:
         try:
-            from PIL import Image, ImageStat  # noqa: F401
+            from PIL import Image, ImageStat
             return self._extract_image_pil(image_bytes)
         except ImportError:
             logger.warning("[%s] PIL/Pillow not available — falling back to metadata",
@@ -838,7 +838,7 @@ class PerceiverAgent(
         finally:
             if tmp_path:
                 with contextlib.suppress(OSError):
-                    Path(tmp_path).unlink()  # noqa: ASYNC240 — cleanup must be sync in finally
+                    Path(tmp_path).unlink()
 
     @staticmethod
     def _decode_video_bytes(video_data: Any) -> tuple[bytes, str]:
@@ -1023,7 +1023,7 @@ class PerceiverAgent(
         finally:
             if tmp_path:
                 with contextlib.suppress(OSError):
-                    Path(tmp_path).unlink()  # noqa: ASYNC240 — sync unlink in async finally (same pattern as T01/T02)
+                    Path(tmp_path).unlink()
 
     # --- Text file extensions handled by text-stat parser ---
     _TEXT_FORMATS: ClassVar[set[str]] = {"txt", "md", "json", "xml", "html", "csv", "yaml", "yml"}
@@ -1263,7 +1263,7 @@ class PerceiverAgent(
         finally:
             if tmp_path:
                 with contextlib.suppress(OSError):
-                    Path(tmp_path).unlink()  # noqa: ASYNC240
+                    Path(tmp_path).unlink()
 
     async def _extract_pdf_features(
         self, path: str, base: dict[str, Any]
@@ -1431,7 +1431,7 @@ class PerceiverAgent(
         numeric_values = []
         for value in sensor_data.values():
             if isinstance(value, (int, float)):
-                numeric_values.append(value)  # noqa: PERF401
+                numeric_values.append(value)
 
         stats = {}
         if numeric_values:
@@ -1449,7 +1449,7 @@ class PerceiverAgent(
         }
 
     def _assess_input_quality(
-        self, input_data: Any, modality: str, features: dict[str, Any]  # noqa: ARG002
+        self, input_data: Any, modality: str, features: dict[str, Any]
     ) -> float:
         """Assess input quality (0-1 score)."""
         quality_score = 1.0

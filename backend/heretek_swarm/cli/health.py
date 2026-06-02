@@ -241,7 +241,7 @@ def check_container_runtime() -> tuple[str | None, str]:
     """
     for runtime in ["docker", "podman"]:
         try:
-            result = subprocess.run(  # noqa: S603
+            result = subprocess.run(
                 [runtime, "--version"], capture_output=True, text=True, timeout=5
             )
             if result.returncode == 0:
@@ -258,7 +258,7 @@ def check_container_runtime() -> tuple[str | None, str]:
 def check_compose_plugin(runtime: str) -> bool:
     """Check if the compose plugin is available for *runtime*."""
     try:
-        result = subprocess.run(  # noqa: S603
+        result = subprocess.run(
             [runtime, "compose", "version"], capture_output=True, text=True, timeout=5
         )
         return result.returncode == 0

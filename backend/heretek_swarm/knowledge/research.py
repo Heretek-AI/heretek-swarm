@@ -379,7 +379,7 @@ class ResearchModule:
             True if findings are contradictory
         """
         # High confidence findings from different sources that disagree
-        if finding1.confidence >= self.contradiction_threshold:  # noqa: SIM102
+        if finding1.confidence >= self.contradiction_threshold:
             if finding2.confidence >= self.contradiction_threshold:
                 # Check for opposing content
                 content1 = finding1.content.lower()
@@ -403,9 +403,9 @@ class ResearchModule:
                         return True
 
         # Same source type but different conclusions
-        if finding1.source.source_type == finding2.source.source_type:  # noqa: SIM102
-            if finding1.confidence > 0.7 and finding2.confidence > 0.7:  # noqa: SIM102
-                if abs(finding1.confidence - finding2.confidence) < 0.1:  # noqa: SIM102
+        if finding1.source.source_type == finding2.source.source_type:
+            if finding1.confidence > 0.7 and finding2.confidence > 0.7:
+                if abs(finding1.confidence - finding2.confidence) < 0.1:
                     # Similar confidence but content differs significantly
                     if not self._content_similarity(finding1.content, finding2.content):
                         return True

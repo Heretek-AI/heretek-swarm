@@ -238,7 +238,7 @@ class NovelConnectionEngine:
                     connection_id=f"conn-{uuid.uuid4().hex[:8]}",
                     source_concepts=[source],
                     connected_concepts=[target],
-                    connection_description=f"Connection between {source} and {target} via intermediate concepts",  # noqa: E501
+                    connection_description=f"Connection between {source} and {target} via intermediate concepts",
                     association_distance=distance,
                     insight_novelty=NoveltyLevel.INCREMENTAL
                     if distance < 0.7
@@ -276,7 +276,7 @@ class NovelConnectionEngine:
                     connection_id=f"conn-{uuid.uuid4().hex[:8]}",
                     source_concepts=[source],
                     connected_concepts=[target],
-                    connection_description=f"Analogical bridge: {source} maps to {target} through shared structure",  # noqa: E501
+                    connection_description=f"Analogical bridge: {source} maps to {target} through shared structure",
                     association_distance=distance,
                     insight_novelty=NoveltyLevel.SUBSTANTIAL
                     if distance > 0.6
@@ -308,7 +308,7 @@ class NovelConnectionEngine:
                 connection_id=f"conn-{uuid.uuid4().hex[:8]}",
                 source_concepts=[concept],
                 connected_concepts=[f"{domain}_import"],
-                connection_description=f"Import from {domain}: applying {domain} principles to {concept}",  # noqa: E501
+                connection_description=f"Import from {domain}: applying {domain} principles to {concept}",
                 association_distance=distance,
                 insight_novelty=NoveltyLevel.BREAKTHROUGH
                 if distance > 0.8

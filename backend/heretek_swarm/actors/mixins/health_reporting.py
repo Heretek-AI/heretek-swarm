@@ -48,7 +48,7 @@ class HealthReportingMixin:
             "context": context or {},
         }
         self.logger.error(
-            f"Agent error: {error_data['error_type']} - {error_data['error_message']}",  # noqa: G004
+            f"Agent error: {error_data['error_type']} - {error_data['error_message']}",
             extra=error_data,
         )
 

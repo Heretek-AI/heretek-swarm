@@ -29,16 +29,16 @@ logger = structlog.get_logger(__name__)
 
 # Perspective-specific heuristic templates
 VIEWPOINT_TEMPLATES: dict[PerspectiveType, str] = {
-    PerspectiveType.TECHNICAL: "From a technical standpoint, this issue involves implementation considerations...",  # noqa: E501
-    PerspectiveType.USER: "From a user perspective, the key concerns are usability and experience...",  # noqa: E501
-    PerspectiveType.BUSINESS: "From a business perspective, we must consider cost-benefit and ROI...",  # noqa: E501
-    PerspectiveType.SECURITY: "From a security perspective, we need to evaluate risks and vulnerabilities...",  # noqa: E501
-    PerspectiveType.ETHICAL: "From an ethical perspective, we should consider moral implications...",  # noqa: E501
-    PerspectiveType.LONG_TERM: "From a long-term perspective, we need to consider future impacts...",  # noqa: E501
+    PerspectiveType.TECHNICAL: "From a technical standpoint, this issue involves implementation considerations...",
+    PerspectiveType.USER: "From a user perspective, the key concerns are usability and experience...",
+    PerspectiveType.BUSINESS: "From a business perspective, we must consider cost-benefit and ROI...",
+    PerspectiveType.SECURITY: "From a security perspective, we need to evaluate risks and vulnerabilities...",
+    PerspectiveType.ETHICAL: "From an ethical perspective, we should consider moral implications...",
+    PerspectiveType.LONG_TERM: "From a long-term perspective, we need to consider future impacts...",
     PerspectiveType.SHORT_TERM: "From a short-term perspective, immediate concerns include...",
     PerspectiveType.STAKEHOLDER: "From a stakeholder perspective, multiple parties are affected...",
     PerspectiveType.SYSTEMS: "From a systems perspective, we must analyze interconnections...",
-    PerspectiveType.FIRST_PRINCIPLES: "From first principles, we break this down to fundamental truths...",  # noqa: E501
+    PerspectiveType.FIRST_PRINCIPLES: "From first principles, we break this down to fundamental truths...",
 }
 
 
@@ -190,10 +190,10 @@ def detect_biases_heuristic(content: str) -> list[BiasDetection]:
                 biases.append(
                     BiasDetection(
                         bias_type=bias_type,
-                        description=f"Potential {bias_type.value} detected based on language patterns",  # noqa: E501
+                        description=f"Potential {bias_type.value} detected based on language patterns",
                         evidence=[f"Found pattern: '{pattern}'"],
                         severity="low",
-                        recommendation="Consider alternative viewpoints and seek disconfirming evidence",  # noqa: E501
+                        recommendation="Consider alternative viewpoints and seek disconfirming evidence",
                     )
                 )
                 break  # One detection per bias type

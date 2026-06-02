@@ -407,7 +407,7 @@ class StateRepository:
         await repo.initialize()
         return repo
 
-    async def initialize(self, db_pool: Any | None = None) -> None:  # noqa: F811
+    async def initialize(self, db_pool: Any | None = None) -> None:
         """
         Initialize the repository.
 
@@ -512,7 +512,7 @@ class StateRepository:
                     if row:
                         self._stats["db_saves"] += 1
                         logger.debug(
-                            f"State saved for {record.agent_id}",  # noqa: G004
+                            f"State saved for {record.agent_id}",
                             extra={"version": record.version},
                         )
                         return record
@@ -713,7 +713,7 @@ class StateRepository:
                     )
                     self._stats["checkpoints_created"] += 1
                     logger.debug(
-                        f"Checkpoint created for {agent_id}",  # noqa: G004
+                        f"Checkpoint created for {agent_id}",
                         extra={"version": version},
                     )
                     return checkpoint
@@ -837,7 +837,7 @@ class StateRepository:
 
         self._stats["checkpoints_restored"] += 1
         logger.info(
-            f"State restored from checkpoint for {agent_id}",  # noqa: G004
+            f"State restored from checkpoint for {agent_id}",
             extra={"checkpoint_id": str(checkpoint_id)},
         )
         return True
@@ -943,7 +943,7 @@ class EventSourcedRepository(StateRepository):
         event_type: str,
         event_payload: dict[str, Any],
         agent_type: str = "AgentActor",
-        version: int | None = None,  # noqa: ARG002
+        version: int | None = None,
         event_metadata: dict[str, Any] | None = None,
     ) -> AgentStateRecord:
         """

@@ -47,7 +47,7 @@ Respond with a JSON object containing:
 - "reasoning": one sentence explaining your decision
 
 Respond ONLY with the JSON object, no other text.
-Example: {{"decision": "approve", "confidence": 0.8, "reasoning": "This goal is well-scoped and addresses a real gap."}}"""  # noqa: E501
+Example: {{"decision": "approve", "confidence": 0.8, "reasoning": "This goal is well-scoped and addresses a real gap."}}"""
 
 
 _REFINEMENT_PROMPT = """You are participating in round 2 of a goal consensus vote. The first round was too close to call (approval within 50-60%).  # noqa: E501
@@ -73,7 +73,7 @@ Respond with a JSON object containing:
 - "reasoning": one sentence explaining your updated decision
 
 Respond ONLY with the JSON object, no other text.
-Example: {{"decision": "approve", "confidence": 0.85, "reasoning": "The counterarguments are weak; the goal remains sound."}}"""  # noqa: E501
+Example: {{"decision": "approve", "confidence": 0.85, "reasoning": "The counterarguments are weak; the goal remains sound."}}"""
 
 
 # ---------------------------------------------------------------------------
@@ -151,7 +151,7 @@ class GoalConsensus:
         self,
         goal: Goal,
         actors: dict[str, Any],
-        timeout: float = 120,  # noqa: ASYNC109
+        timeout: float = 120,
     ) -> tuple[bool, list[Vote], int]:
         """Run goal-specific consensus voting with 60% threshold.
 
@@ -241,9 +241,9 @@ class GoalConsensus:
     async def _collect_goal_votes(
         self,
         goal: Goal,
-        actors: dict[str, Any],  # noqa: ARG002
+        actors: dict[str, Any],
         prompt: str,
-        timeout: float,  # noqa: ASYNC109
+        timeout: float,
     ) -> list[Vote]:
         """Collect votes from all available agents.
 
@@ -368,7 +368,7 @@ class GoalConsensus:
         goal: Goal,
         actors: dict[str, Any],
         prior_votes: list[Vote],
-        timeout: float,  # noqa: ASYNC109
+        timeout: float,
     ) -> tuple[bool, list[Vote], int]:
         """Steward + Arbiter serve as tie-breakers after 2 rounds.
 
@@ -409,7 +409,7 @@ class GoalConsensus:
                     f"As a tie-breaker after 2 rounds of goal consensus, "
                     f"cast your final vote on: {goal.title}\n\n"
                     f"{goal.description}\n\n"
-                    f'Respond: {{"decision": "approve"|"reject", "confidence": 0.0-1.0, "reasoning": "..."}}'  # noqa: E501
+                    f'Respond: {{"decision": "approve"|"reject", "confidence": 0.0-1.0, "reasoning": "..."}}'
                 )
                 raw = await asyncio.wait_for(
                     actor.run_with_llm(prompt, timeout=30),

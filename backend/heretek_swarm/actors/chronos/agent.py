@@ -37,7 +37,7 @@ _MSG_TIME_PERCEPTION_NOT_ENABLED = "Time perception not enabled"
 _MSG_INVALID_CONTEXT_ID = "Invalid context_id"
 
 # INTG-04: Time Perception & Dilation
-from heretek_swarm.coordination.time_dilation import (  # noqa: E402
+from heretek_swarm.coordination.time_dilation import (
     AnchorSource,
     ExecutionContext,
     OverloadDetector,
@@ -45,8 +45,8 @@ from heretek_swarm.coordination.time_dilation import (  # noqa: E402
     TimePerceptionManager,
 )
 
-from .handlers import ChronosHandlersMixin  # noqa: E402
-from .scheduler import ChronosSchedulerMixin  # noqa: E402
+from .handlers import ChronosHandlersMixin
+from .scheduler import ChronosSchedulerMixin
 
 if TYPE_CHECKING:
     from .types import Deadline, ScheduledTask

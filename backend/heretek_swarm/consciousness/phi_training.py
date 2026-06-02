@@ -654,7 +654,7 @@ class PhiTrainingEnvironment:
     async def _execute_communication_step(
         self,
         agents: list[AgentActor],
-        scenario: TrainingScenario,  # noqa: ARG002
+        scenario: TrainingScenario,
         step: int,
     ) -> dict[str, Any]:
         """Execute communication efficiency training step."""
@@ -700,7 +700,7 @@ class PhiTrainingEnvironment:
     async def _execute_task_collaboration_step(
         self,
         agents: list[AgentActor],
-        scenario: TrainingScenario,  # noqa: ARG002
+        scenario: TrainingScenario,
         step: int,
     ) -> dict[str, Any]:
         """Execute task collaboration training step."""
@@ -715,7 +715,7 @@ class PhiTrainingEnvironment:
     async def _execute_consensus_formation_step(
         self,
         agents: list[AgentActor],
-        scenario: TrainingScenario,  # noqa: ARG002
+        scenario: TrainingScenario,
         step: int,
     ) -> dict[str, Any]:
         """Execute consensus formation training step."""
@@ -735,7 +735,7 @@ class PhiTrainingEnvironment:
     async def _execute_generic_step(
         self,
         agents: list[AgentActor],
-        scenario: TrainingScenario,  # noqa: ARG002
+        scenario: TrainingScenario,
         step: int,
     ) -> dict[str, Any]:
         """Execute generic training step."""

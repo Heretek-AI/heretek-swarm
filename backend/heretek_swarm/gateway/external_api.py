@@ -156,7 +156,7 @@ class RateLimitHandler:
     def check_rate_limit(self, endpoint: str) -> bool:
         """Check if request to endpoint is allowed."""
         now = datetime.now(UTC)
-        if self._rate_limited_until.get(endpoint):  # noqa: SIM102
+        if self._rate_limited_until.get(endpoint):
             if now < self._rate_limited_until[endpoint]:
                 return False
         if endpoint in self._request_times:
@@ -200,7 +200,7 @@ class RateLimitHandler:
         base_delay = self._current_backoff_ms.get(endpoint, self._config.initial_delay_ms)
         if self._config.jitter:
             jitter_range = base_delay * 0.1
-            base_delay += random.uniform(-jitter_range, jitter_range)  # noqa: S311
+            base_delay += random.uniform(-jitter_range, jitter_range)
         return base_delay / 1000.0
 
     async def wait_if_needed(self, endpoint: str) -> None:
@@ -343,7 +343,7 @@ class FallbackManager:
             self._endpoints[endpoint]["consecutive_failures"] = 0
 
 class ResilientAPIClient:
-    """External API client with automatic retry, rate limiting, circuit breaker, and fallback support."""  # noqa: E501
+    """External API client with automatic retry, rate limiting, circuit breaker, and fallback support."""
 
     def __init__(
         self,
@@ -512,7 +512,7 @@ class ResilientAPIClient:
         delay = min(delay, self._retry_config.max_delay_ms)
         if self._retry_config.jitter:
             jitter_range = delay * self._retry_config.jitter_factor
-            delay += random.uniform(-jitter_range, jitter_range)  # noqa: S311
+            delay += random.uniform(-jitter_range, jitter_range)
         if retry_after_ms:
             delay = max(delay, retry_after_ms)
         return delay / 1000.0

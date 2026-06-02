@@ -186,7 +186,7 @@ class PhiCalculator:
     """
 
     # Integration level thresholds
-    INTEGRATION_THRESHOLDS = {  # noqa: RUF012
+    INTEGRATION_THRESHOLDS = {
         "minimal": 0.1,
         "low": 0.3,
         "moderate": 0.5,
@@ -195,7 +195,7 @@ class PhiCalculator:
     }
 
     # Differentiation level thresholds
-    DIFFERENTIATION_THRESHOLDS = {  # noqa: RUF012
+    DIFFERENTIATION_THRESHOLDS = {
         "minimal": 0.1,
         "low": 0.3,
         "moderate": 0.5,
@@ -818,8 +818,8 @@ class PhiCalculator:
         total_weight = 0.0
 
         # Sum all connection weights
-        for source, targets in connectivity.items():  # noqa: B007
-            for target, weight in targets.items():  # noqa: B007
+        for source, targets in connectivity.items():
+            for target, weight in targets.items():
                 total_weight += weight
 
         # Sum severed connection weights (cross-partition connections)

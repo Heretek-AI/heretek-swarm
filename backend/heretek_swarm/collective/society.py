@@ -1246,9 +1246,9 @@ Format your response as:
             "hierarchy": self.hierarchy,
             "active_tasks": len(self._active_tasks),
             "emergent_behaviors": len(self._emergent_behaviors),
-            "collective_memory_size": len(self.collective_memory._memory),  # noqa: SLF001
-            "patterns_discovered": len(self.collective_memory._patterns),  # noqa: SLF001
-            "collective_learnings": len(self.collective_memory._learnings),  # noqa: SLF001
+            "collective_memory_size": len(self.collective_memory._memory),
+            "patterns_discovered": len(self.collective_memory._patterns),
+            "collective_learnings": len(self.collective_memory._learnings),
             "interaction_rules": self.interaction_rules,
             "exploration_mode": self.exploration_mode,
         }

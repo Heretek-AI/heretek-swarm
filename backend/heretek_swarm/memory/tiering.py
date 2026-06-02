@@ -545,7 +545,7 @@ class MemoryTieringSystem:
 
         for memory in self._memories_by_tier[current_tier].values():
             if self._matches_policy(memory, policy):
-                candidates.append(memory)  # noqa: PERF401
+                candidates.append(memory)
 
         return candidates
 
@@ -664,7 +664,7 @@ class MemoryTieringSystem:
 
     def _determine_initial_tier(
         self,
-        data: Any,  # noqa: ARG002
+        data: Any,
         metadata: dict[str, Any] | None,
     ) -> MemoryTier:
         """Determine initial tier for new memory."""
@@ -876,7 +876,7 @@ class MemoryTieringSystem:
             # Check 2: Memory tier is correctly set
             if memory.current_tier != expected_tier:
                 result["errors"].append(
-                    f"Memory tier mismatch: expected {expected_tier.value}, got {memory.current_tier.value}"  # noqa: E501
+                    f"Memory tier mismatch: expected {expected_tier.value}, got {memory.current_tier.value}"
                 )
                 result["checks_performed"].append("tier_field_correct")
                 return result

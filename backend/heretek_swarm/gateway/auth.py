@@ -170,7 +170,7 @@ def get_api_key_from_env() -> str:
 
 
 async def verify_auth(
-    credentials: HTTPAuthorizationCredentials | None = Security(security),  # noqa: B008
+    credentials: HTTPAuthorizationCredentials | None = Security(security),
 ) -> str:
     """
     Verify Bearer token authentication.
@@ -218,7 +218,7 @@ async def verify_auth(
 
 
 async def optional_auth(
-    credentials: HTTPAuthorizationCredentials | None = Security(security),  # noqa: B008
+    credentials: HTTPAuthorizationCredentials | None = Security(security),
 ) -> str | None:
     """
     Optional authentication — returns None if no credentials.

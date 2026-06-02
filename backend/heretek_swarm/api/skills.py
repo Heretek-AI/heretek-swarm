@@ -33,7 +33,7 @@ async def get_all_skills(
     category: SkillCategory | None = None,
     tags: str | None = None,
     query: str | None = None,
-    auth: dict = Depends(verify_auth),  # noqa: B008
+    auth: dict = Depends(verify_auth),
 ) -> dict[str, Any]:
     """
     List all registered skills with optional filters.
@@ -60,7 +60,7 @@ async def get_all_skills(
 
 @router.get("/agents")
 async def get_all_agents_with_skills(
-    auth: dict = Depends(verify_auth),  # noqa: B008
+    auth: dict = Depends(verify_auth),
 ) -> dict[str, Any]:
     """
     List all agents with their registered skills.
@@ -92,7 +92,7 @@ async def get_all_agents_with_skills(
 @router.get("/agents/by-skill/{skill_name}")
 async def get_agents_by_skill(
     skill_name: str,
-    auth: dict = Depends(verify_auth),  # noqa: B008
+    auth: dict = Depends(verify_auth),
 ) -> dict[str, Any]:
     """
     Find all agents that implement a specific skill.
@@ -116,7 +116,7 @@ async def get_agents_by_skill(
 @router.get("/agents/by-category/{category}")
 async def get_agents_by_category(
     category: SkillCategory,
-    auth: dict = Depends(verify_auth),  # noqa: B008
+    auth: dict = Depends(verify_auth),
 ) -> dict[str, Any]:
     """
     Find all agents with skills in a given category.
@@ -134,7 +134,7 @@ async def get_agents_by_category(
 @router.get("/agents/by-tag/{tag}")
 async def get_agents_by_tag(
     tag: str,
-    auth: dict = Depends(verify_auth),  # noqa: B008
+    auth: dict = Depends(verify_auth),
 ) -> dict[str, Any]:
     """
     Find all agents with skills tagged with a specific tag.
@@ -152,7 +152,7 @@ async def get_agents_by_tag(
 @router.get("/agents/{agent_id}")
 async def get_agent_skills(
     agent_id: str,
-    auth: dict = Depends(verify_auth),  # noqa: B008
+    auth: dict = Depends(verify_auth),
 ) -> dict[str, Any]:
     """
     Get all skills registered for a specific agent.
@@ -187,7 +187,7 @@ async def get_agent_skills(
 
 @router.get("/statistics")
 async def get_skill_statistics(
-    auth: dict = Depends(verify_auth),  # noqa: B008
+    auth: dict = Depends(verify_auth),
 ) -> dict[str, Any]:
     """
     Get skill registry statistics.
@@ -205,7 +205,7 @@ async def get_skill_statistics(
 @router.post("")
 async def register_skill(
     skill_data: dict[str, Any],
-    auth: dict = Depends(verify_auth),  # noqa: B008
+    auth: dict = Depends(verify_auth),
 ) -> dict[str, Any]:
     """
     Register a new skill (admin/operator use).
@@ -233,7 +233,7 @@ async def register_skill(
         try:
             category = SkillCategory(category)
         except ValueError:
-            raise HTTPException(  # noqa: B904
+            raise HTTPException(
                 status_code=400,
                 detail=f"Invalid category: {category}. Valid: {[c.value for c in SkillCategory]}",
             )
@@ -263,7 +263,7 @@ async def register_skill(
 async def unregister_skill(
     agent_id: str,
     skill_name: str,
-    auth: dict = Depends(verify_auth),  # noqa: B008
+    auth: dict = Depends(verify_auth),
 ) -> dict[str, Any]:
     """
     Remove a skill registration for an agent.
@@ -283,7 +283,7 @@ async def unregister_skill(
 @router.post("/workspace")
 async def register_workspace(
     workspace_data: dict[str, Any],
-    auth: dict = Depends(verify_auth),  # noqa: B008
+    auth: dict = Depends(verify_auth),
 ) -> dict[str, Any]:
     """
     Register a workspace context for prompt injection.
@@ -327,7 +327,7 @@ async def register_workspace(
 @router.get("/workspace/{workspace_id}")
 async def get_workspace(
     workspace_id: str,
-    auth: dict = Depends(verify_auth),  # noqa: B008
+    auth: dict = Depends(verify_auth),
 ) -> dict[str, Any]:
     """
     Get a workspace context for prompt injection.
@@ -351,7 +351,7 @@ async def get_workspace(
 @router.post("/workspace/inject")
 async def build_injected_prompt(
     request: dict[str, Any],
-    auth: dict = Depends(verify_auth),  # noqa: B008
+    auth: dict = Depends(verify_auth),
 ) -> dict[str, Any]:
     """
     Build a prompt with workspace injection.

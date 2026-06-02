@@ -26,7 +26,7 @@ class OutputValidationConfig:
 class OutputValidator:
     """Layer 3: Output Validation — PII detection, sensitive data filtering, response sanitization."""
 
-    PII_PATTERNS = [  # noqa: RUF012
+    PII_PATTERNS = [
         (r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b", "[EMAIL_REDACTED]"),
         (r"\b\d{3}[-.\s]?\d{3}[-.\s]?\d{4}\b", "[PHONE_REDACTED]"),
         (r"\b\d{3}[-.\s]?\d{2}[-.\s]?\d{4}\b", "[SSN_REDACTED]"),
@@ -35,7 +35,7 @@ class OutputValidator:
         (r'\b(?:api[_-]?key|apikey|token|secret|password)\s*[=:]\s*["\']?[a-zA-Z0-9_-]{16,}["\']?', "[API_KEY_REDACTED]"),
     ]
 
-    SENSITIVE_PATTERNS = [  # noqa: RUF012
+    SENSITIVE_PATTERNS = [
         (r"-----BEGIN\s+(?:RSA\s+)?PRIVATE\s+KEY-----", "[PRIVATE_KEY_REDACTED]"),
         (r"(?:A3T[A-Z0-9]|AKIA|AGPA|AIDA|AROA|AIPA|ANPA|ANVA|ASIA)[A-Z0-9]{16}", "[AWS_KEY_REDACTED]"),
         (r"eyJ[a-zA-Z0-9_-]*\.eyJ[a-zA-Z0-9_-]*\.[a-zA-Z0-9_-]*", "[JWT_REDACTED]"),

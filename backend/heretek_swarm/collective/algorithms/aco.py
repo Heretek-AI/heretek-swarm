@@ -124,7 +124,7 @@ class ACO:
         best_path: list[str] = []
         best_path_quality = 0.0
 
-        for iteration in range(iterations):  # noqa: B007
+        for iteration in range(iterations):
             paths = []
             for _ in range(num_ants):
                 path = self._construct_path(nodes, edges, start_node, end_node)
@@ -178,7 +178,7 @@ class ACO:
 
     def _construct_path(
         self,
-        nodes: list[str],  # noqa: ARG002
+        nodes: list[str],
         edges: list[tuple[str, str]],
         start_node: str,
         end_node: str,
@@ -213,7 +213,7 @@ class ACO:
             if total > 0:
                 probabilities = [p / total for p in probabilities]
 
-            selected = random.choices(neighbors, weights=probabilities, k=1)[0]  # noqa: S311
+            selected = random.choices(neighbors, weights=probabilities, k=1)[0]
             path.append(selected)
             visited.add(selected)
             current = selected

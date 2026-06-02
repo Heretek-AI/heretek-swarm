@@ -756,26 +756,26 @@ class RealTimeMetricsStream:
                 if cycle_metrics:
                     lines.extend(
                         [
-                            "# HELP heretek_workflow_cycles_total Total number of workflow cycles detected",  # noqa: E501
+                            "# HELP heretek_workflow_cycles_total Total number of workflow cycles detected",
                             "# TYPE heretek_workflow_cycles_total counter",
-                            f"heretek_workflow_cycles_total {cycle_metrics.get('total_cycles_detected', 0)}",  # noqa: E501
+                            f"heretek_workflow_cycles_total {cycle_metrics.get('total_cycles_detected', 0)}",
                             "",
-                            "# HELP heretek_workflow_cycles_broken_total Total number of workflow cycles broken",  # noqa: E501
+                            "# HELP heretek_workflow_cycles_broken_total Total number of workflow cycles broken",
                             "# TYPE heretek_workflow_cycles_broken_total counter",
-                            f"heretek_workflow_cycles_broken_total {cycle_metrics.get('total_cycles_broken', 0)}",  # noqa: E501
+                            f"heretek_workflow_cycles_broken_total {cycle_metrics.get('total_cycles_broken', 0)}",
                             "",
-                            "# HELP heretek_workflow_avg_iterations_before_cycle Average iterations before cycle detection",  # noqa: E501
+                            "# HELP heretek_workflow_avg_iterations_before_cycle Average iterations before cycle detection",
                             "# TYPE heretek_workflow_avg_iterations_before_cycle gauge",
-                            f"heretek_workflow_avg_iterations_before_cycle {cycle_metrics.get('avg_iterations_before_cycle', 0)}",  # noqa: E501
+                            f"heretek_workflow_avg_iterations_before_cycle {cycle_metrics.get('avg_iterations_before_cycle', 0)}",
                             "",
                         ]
                     )
                     for strategy, count in cycle_metrics.get("cycles_by_strategy", {}).items():
                         lines.extend(
                             [
-                                "# HELP heretek_workflow_cycles_by_strategy Cycles broken by strategy",  # noqa: E501
+                                "# HELP heretek_workflow_cycles_by_strategy Cycles broken by strategy",
                                 "# TYPE heretek_workflow_cycles_by_strategy gauge",
-                                f'heretek_workflow_cycles_by_strategy{{strategy="{strategy}"}} {count}',  # noqa: E501
+                                f'heretek_workflow_cycles_by_strategy{{strategy="{strategy}"}} {count}',
                                 "",
                             ]
                         )
@@ -795,11 +795,11 @@ class RealTimeMetricsStream:
                         "# TYPE heretek_phi_training_episodes_total counter",
                         "heretek_phi_training_episodes_total 0",
                         "",
-                        "# HELP heretek_phi_training_success_total Successful Phi training episodes",  # noqa: E501
+                        "# HELP heretek_phi_training_success_total Successful Phi training episodes",
                         "# TYPE heretek_phi_training_success_total counter",
                         "heretek_phi_training_success_total 0",
                         "",
-                        "# HELP heretek_phi_training_avg_improvement Average Phi improvement per episode",  # noqa: E501
+                        "# HELP heretek_phi_training_avg_improvement Average Phi improvement per episode",
                         "# TYPE heretek_phi_training_avg_improvement gauge",
                         "heretek_phi_training_avg_improvement 0",
                         "",

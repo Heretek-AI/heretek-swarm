@@ -387,7 +387,7 @@ class MessageReplayManager:
 
                 if job.status == ReplayStatus.PAUSED:
                     # Wait while paused
-                    while job.status == ReplayStatus.PAUSED:  # noqa: ASYNC110
+                    while job.status == ReplayStatus.PAUSED:
                         await asyncio.sleep(0.5)
 
                 # Process message
@@ -419,7 +419,7 @@ class MessageReplayManager:
             self._stats["jobs_failed"] += 1
 
             logger.error(
-                f"Replay failed: {job.job_id}",  # noqa: G004
+                f"Replay failed: {job.job_id}",
                 error=str(e),
             )
             return False

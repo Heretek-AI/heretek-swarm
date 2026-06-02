@@ -52,9 +52,9 @@ import structlog
 
 logger = structlog.get_logger("prometheus_metrics")
 
-import time  # noqa: E402
+import time
 
-from prometheus_client import (  # noqa: E402
+from prometheus_client import (
     CONTENT_TYPE_LATEST,
     REGISTRY,
     CollectorRegistry,
@@ -303,17 +303,17 @@ class PrometheusMetrics:
         agent_type = self._agent_types.pop(agent_id, "unknown")
         heretek_swarm_agents_total.labels(agent_type=agent_type).dec()
         heretek_swarm_agents_active.labels(agent_type=agent_type).dec(
-            max(heretek_swarm_agents_active.labels(agent_type=agent_type)._value.get(), 0)  # noqa: SLF001
+            max(heretek_swarm_agents_active.labels(agent_type=agent_type)._value.get(), 0)
         )
 
     def record_task_completed(
-        self, agent_id: str, agent_type: str = "unknown", task_type: str = "general"  # noqa: ARG002
+        self, agent_id: str, agent_type: str = "unknown", task_type: str = "general"
     ) -> None:
         """Record a task completion."""
         heretek_swarm_tasks_completed_total.labels(agent_id=agent_id, task_type=task_type).inc()
 
     def record_task_failed(
-        self, agent_id: str, agent_type: str = "unknown", task_type: str = "general"  # noqa: ARG002
+        self, agent_id: str, agent_type: str = "unknown", task_type: str = "general"
     ) -> None:
         """Record a task failure."""
         heretek_swarm_tasks_failed_total.labels(agent_id=agent_id, task_type=task_type).inc()
@@ -407,7 +407,7 @@ class PrometheusMetrics:
 
     def record_actor_processing(
         self,
-        agent_id: str,  # noqa: ARG002 — part of API contract, used by callers
+        agent_id: str,
         actor_type: str = "unknown",
         duration_seconds: float = 0.0,
     ) -> None:
@@ -551,14 +551,14 @@ def reset_metrics() -> None:
 def increment_tasks_completed(agent_id: str, task_type: str = "general") -> None:
     """Convenience function to increment completed tasks counter."""
     metrics = get_metrics()
-    agent_type = metrics._agent_types.get(agent_id, "unknown")  # noqa: SLF001
+    agent_type = metrics._agent_types.get(agent_id, "unknown")
     metrics.record_task_completed(agent_id, agent_type, task_type)
 
 
 def increment_tasks_failed(agent_id: str, task_type: str = "general") -> None:
     """Convenience function to increment failed tasks counter."""
     metrics = get_metrics()
-    agent_type = metrics._agent_types.get(agent_id, "unknown")  # noqa: SLF001
+    agent_type = metrics._agent_types.get(agent_id, "unknown")
     metrics.record_task_failed(agent_id, agent_type, task_type)
 
 

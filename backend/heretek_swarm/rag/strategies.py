@@ -192,7 +192,7 @@ class DenseRetrievalStrategy(BaseRetrievalStrategy):
         return RetrievalStrategyType.DENSE
 
     async def retrieve(
-        self, query: str, top_k: int = 5, filters: dict[str, Any] | None = None, **kwargs  # noqa: ARG002
+        self, query: str, top_k: int = 5, filters: dict[str, Any] | None = None, **kwargs
     ) -> list[RetrievalResult]:
         """
         Retrieve using dense vector similarity.
@@ -318,7 +318,7 @@ class SparseRetrievalStrategy(BaseRetrievalStrategy):
     def _calculate_bm25_score(
         self,
         term: str,
-        doc_id: str,  # noqa: ARG002
+        doc_id: str,
         term_frequency: int,
         doc_length: int,
     ) -> float:
@@ -354,7 +354,7 @@ class SparseRetrievalStrategy(BaseRetrievalStrategy):
         return idf * (numerator / denominator) if denominator > 0 else 0.0
 
     async def retrieve(
-        self, query: str, top_k: int = 5, filters: dict[str, Any] | None = None, **kwargs  # noqa: ARG002
+        self, query: str, top_k: int = 5, filters: dict[str, Any] | None = None, **kwargs
     ) -> list[RetrievalResult]:
         """
         Retrieve using BM25 sparse retrieval.
@@ -396,7 +396,7 @@ class SparseRetrievalStrategy(BaseRetrievalStrategy):
                 content = doc.get("content", "")
                 doc_id = doc.get("id", doc.get("source", "unknown"))
                 self._register_document(doc_id, content)
-                retrieval_results.append(  # noqa: PERF401
+                retrieval_results.append(
                     RetrievalResult(
                         content=doc.get("content", ""),
                         score=doc.get("bm25_score", doc.get("score", 0.5)),
@@ -585,7 +585,7 @@ class HybridRetrievalStrategy(BaseRetrievalStrategy):
         return combined_results
 
     async def retrieve(
-        self, query: str, top_k: int = 5, filters: dict[str, Any] | None = None, **kwargs  # noqa: ARG002
+        self, query: str, top_k: int = 5, filters: dict[str, Any] | None = None, **kwargs
     ) -> list[RetrievalResult]:
         """
         Retrieve using hybrid dense + sparse combination.
@@ -718,7 +718,7 @@ class MultiHopRetrievalStrategy(BaseRetrievalStrategy):
         return templates[hop_number % len(templates)]
 
     async def retrieve(
-        self, query: str, top_k: int = 5, filters: dict[str, Any] | None = None, **kwargs  # noqa: ARG002
+        self, query: str, top_k: int = 5, filters: dict[str, Any] | None = None, **kwargs
     ) -> list[RetrievalResult]:
         """
         Retrieve using multi-hop chained queries.
@@ -843,7 +843,7 @@ class ReRankingStrategy(BaseRetrievalStrategy):
         query: str,
         top_k: int = 5,
         initial_results: list[RetrievalResult] | None = None,
-        **kwargs,  # noqa: ARG002
+        **kwargs,
     ) -> list[RetrievalResult]:
         """
         Re-rank initial retrieval results using cross-encoder.
@@ -920,11 +920,11 @@ class QueryClassifier:
     """
 
     # Query type indicators
-    FACTUAL_INDICATORS = ["who", "what", "when", "where", "define", "meaning of"]  # noqa: RUF012
-    EXPLANATORY_INDICATORS = ["how", "why", "explain", "reason", "cause"]  # noqa: RUF012
-    COMPARATIVE_INDICATORS = ["compare", "difference", "better", "vs", "versus"]  # noqa: RUF012
-    PROCEDURAL_INDICATORS = ["how to", "steps", "guide", "tutorial", "process"]  # noqa: RUF012
-    MULTI_STEP_INDICATORS = ["first", "then", "after", "before", "relationship between"]  # noqa: RUF012
+    FACTUAL_INDICATORS = ["who", "what", "when", "where", "define", "meaning of"]
+    EXPLANATORY_INDICATORS = ["how", "why", "explain", "reason", "cause"]
+    COMPARATIVE_INDICATORS = ["compare", "difference", "better", "vs", "versus"]
+    PROCEDURAL_INDICATORS = ["how to", "steps", "guide", "tutorial", "process"]
+    MULTI_STEP_INDICATORS = ["first", "then", "after", "before", "relationship between"]
 
     def classify(self, query: str) -> QueryType:
         """

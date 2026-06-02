@@ -196,8 +196,8 @@ class StubAccessAnalyzer:
         access_type: str = "read",
         agent_id: str | None = None,
         session_id: str | None = None,
-        access_latency_ms: float = 0.0,  # noqa: ARG002
-        success: bool = True,  # noqa: ARG002
+        access_latency_ms: float = 0.0,
+        success: bool = True,
     ) -> _StubAccessProfile:
         """Record a memory access event.  Returns a stub profile."""
         now = datetime.now(UTC).isoformat()
@@ -272,8 +272,8 @@ class StubPatternExtractor:
 
     async def extract_patterns(
         self,
-        time_window_hours: int = 24,  # noqa: ARG002
-        pattern_types: list[Any] | None = None,  # noqa: ARG002
+        time_window_hours: int = 24,
+        pattern_types: list[Any] | None = None,
     ) -> list[_StubExtractedPattern]:
         """Return validated patterns that meet confidence threshold."""
         return [p for p in self._validated_patterns.values() if p.confidence >= 0.7]
@@ -310,7 +310,7 @@ class StubTribunal:
         grounds: str,
         description: str,
         original_consensus_id: str | None = None,
-        metadata: dict[str, Any] | None = None,  # noqa: ARG002
+        metadata: dict[str, Any] | None = None,
     ) -> _StubTribunalCase:
         """Create and return a stub tribunal case."""
         now = datetime.now(UTC).isoformat()
@@ -336,7 +336,7 @@ class StubTribunal:
         evidence_type: Any = None,
         source: str | None = None,
         reliability_score: float = 0.5,
-        metadata: dict[str, Any] | None = None,  # noqa: ARG002
+        metadata: dict[str, Any] | None = None,
     ) -> _StubTribunalEvidence:
         """Submit and return a stub evidence record."""
         evidence_id = f"stub_ev_{len(self._evidence) + 1}"
@@ -366,7 +366,7 @@ class StubTribunal:
         issued_by: str = "tribunal",
         confidence: float = 1.0,
         precedent_id: str | None = None,
-        metadata: dict[str, Any] | None = None,  # noqa: ARG002
+        metadata: dict[str, Any] | None = None,
     ) -> _StubTribunalRuling:
         """Issue and return a stub ruling."""
         now = datetime.now(UTC).isoformat()
@@ -400,8 +400,8 @@ class StubTribunal:
 
     def find_similar_precedents(
         self,
-        grounds: str,  # noqa: ARG002
-        limit: int = 5,  # noqa: ARG002
+        grounds: str,
+        limit: int = 5,
     ) -> list[_StubTribunalRuling]:
         """Return stub similar precedents (empty)."""
         return []
@@ -501,10 +501,10 @@ class StubLLMProvider:
 
     async def generate(
         self,
-        prompt: str,  # noqa: ARG002
+        prompt: str,
         *,
-        timeout: float = 60.0,  # noqa: ARG002,ASYNC109
-        **kwargs: Any,  # noqa: ARG002
+        timeout: float = 60.0,
+        **kwargs: Any,
     ) -> str:
         """Return the canned response string."""
         self.call_count += 1
@@ -512,10 +512,10 @@ class StubLLMProvider:
 
     async def generate_stream(
         self,
-        prompt: str,  # noqa: ARG002
+        prompt: str,
         *,
-        timeout: float = 60.0,  # noqa: ARG002,ASYNC109
-        **kwargs: Any,  # noqa: ARG002
+        timeout: float = 60.0,
+        **kwargs: Any,
     ) -> Any:
         """Yield the canned response as a single chunk."""
         self.call_count += 1
@@ -588,11 +588,11 @@ class StubEventMesh:
 
     async def request(
         self,
-        subject: str,  # noqa: ARG002
+        subject: str,
         data: dict[str, Any],
         *,
-        timeout: float = 5.0,  # noqa: ARG002,ASYNC109
-        **kwargs: Any,  # noqa: ARG002
+        timeout: float = 5.0,
+        **kwargs: Any,
     ) -> dict[str, Any]:
         """Return a stub response for request-reply patterns."""
         return {"status": "ok", "data": data}

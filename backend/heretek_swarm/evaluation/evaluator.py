@@ -201,7 +201,7 @@ class AgentEvaluator:
         tc: TestCase,
     ) -> tuple[TestResult, bool]:
         """Run a single test case and return result plus success flag."""
-        start = datetime.now()  # noqa: DTZ005
+        start = datetime.now()
         error = None
         validation_errors: list[str] = []
 
@@ -226,7 +226,7 @@ class AgentEvaluator:
             validation_errors = [str(e)]
             success = False
 
-        end = datetime.now()  # noqa: DTZ005
+        end = datetime.now()
         execution_time = (end - start).total_seconds() * 1000
         return TestResult(
             test_id=tc.id,
@@ -244,8 +244,8 @@ class AgentEvaluator:
         evaluation_id: str | None = None,
     ) -> EvaluationResult:
         """Evaluate an agent instance against test cases."""
-        eval_id = evaluation_id or f"eval_{agent_id}_{datetime.now().timestamp()}"  # noqa: DTZ005
-        started = datetime.now().isoformat()  # noqa: DTZ005
+        eval_id = evaluation_id or f"eval_{agent_id}_{datetime.now().timestamp()}"
+        started = datetime.now().isoformat()
 
         test_results = []
         passed_count = 0
@@ -265,7 +265,7 @@ class AgentEvaluator:
             output_quality=success_rate,
         )
 
-        completed = datetime.now().isoformat()  # noqa: DTZ005
+        completed = datetime.now().isoformat()
         evaluation = EvaluationResult(
             evaluation_id=eval_id,
             agent_id=agent_id,
@@ -307,9 +307,9 @@ class AgentEvaluator:
 
         executions: list[TestCaseExecution] = []
         for tc in cases:
-            started = datetime.now().isoformat()  # noqa: DTZ005
+            started = datetime.now().isoformat()
             test_result, success = await self._run_single_test_case(agent, tc)
-            ended = datetime.now().isoformat()  # noqa: DTZ005
+            ended = datetime.now().isoformat()
             score = 100.0 if success else 0.0
             criteria = tc.evaluation_criteria or [EvaluationMetric.ACCURACY]
             metric_results = [
@@ -388,7 +388,7 @@ class AgentEvaluator:
         if constraints.required_keys and isinstance(output, dict):
             for key in constraints.required_keys:
                 if key not in output:
-                    errors.append(f"Missing required key: {key}")  # noqa: PERF401
+                    errors.append(f"Missing required key: {key}")
 
         if hasattr(constraints, "max_length") and constraints.max_length:
             output_str = str(output)
@@ -402,7 +402,7 @@ class AgentEvaluator:
 
             for pattern in constraints.forbidden_patterns:
                 if re.search(pattern, output):
-                    errors.append("forbidden pattern detected in output")  # noqa: PERF401
+                    errors.append("forbidden pattern detected in output")
 
         return errors
 

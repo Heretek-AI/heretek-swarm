@@ -124,7 +124,7 @@ class A2AProtocol:
 
         import uvicorn
 
-        config = uvicorn.Config(app, host="0.0.0.0", port=self.port, log_level="info")  # noqa: S104
+        config = uvicorn.Config(app, host="0.0.0.0", port=self.port, log_level="info")
         self._server = uvicorn.Server(config)
 
         logger.info("a2a_server_starting", port=self.port)
@@ -133,7 +133,7 @@ class A2AProtocol:
         self._running = True
 
         # Run server
-        asyncio.create_task(self._server.serve())  # noqa: RUF006
+        asyncio.create_task(self._server.serve())
 
         logger.info("a2a_server_started", port=self.port)
 
@@ -275,7 +275,7 @@ class A2AProtocol:
         await self.event_mesh.broadcast(discovery_msg, exclude=[client_id])
 
     async def _route_message(
-        self, websocket: WebSocket, client_id: str, message: dict[str, Any]  # noqa: ARG002
+        self, websocket: WebSocket, client_id: str, message: dict[str, Any]
     ) -> None:
         """Route message to appropriate handler."""
         msg_type = message.get("type", "unknown")

@@ -204,8 +204,8 @@ class SentinelAgent(
 
     async def _on_baseline_precedent_recorded(
         self,
-        nats_mesh: Any,  # noqa: ARG002 — unused callback parameter
-        subject: str,    # noqa: ARG002 — unused callback parameter
+        nats_mesh: Any,
+        subject: str,
         data: dict[str, Any],
     ) -> None:
         """Handle incoming precedent_recorded NATS events.

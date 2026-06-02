@@ -96,14 +96,14 @@ class ActorFactory:
         self._default_kwargs[name] = kwargs or {}
 
         logger.info(
-            f"[ActorFactory] Registered actor class '{name}'",  # noqa: G004
+            f"[ActorFactory] Registered actor class '{name}'",
             extra={"class_name": cls.__name__},
         )
 
     def create_actor(
         self,
         actor_type: str,
-        actor_id: str | None = None,  # noqa: ARG002
+        actor_id: str | None = None,
         **override_kwargs: Any,
     ) -> AgentActor:
         """
@@ -143,7 +143,7 @@ class ActorFactory:
         self._instances[actor.agent_id] = config
 
         logger.info(
-            f"[ActorFactory] Created actor instance '{actor.agent_id}'",  # noqa: G004
+            f"[ActorFactory] Created actor instance '{actor.agent_id}'",
             extra={"actor_type": actor_type},
         )
 

@@ -646,7 +646,7 @@ class NATSEventMesh:
             self._consumers[consumer_id] = consumer_info
 
             # Start message processing loop
-            asyncio.create_task(  # noqa: RUF006
+            asyncio.create_task(
                 self._process_durable_messages(consumer_info, stream_name, durable_name, callback)
             )
 
@@ -660,8 +660,8 @@ class NATSEventMesh:
     async def _process_durable_messages(
         self,
         consumer: Any,
-        stream_name: str,  # noqa: ARG002
-        durable_name: str,  # noqa: ARG002
+        stream_name: str,
+        durable_name: str,
         callback: Callable[[str, dict[str, Any]], None],
     ) -> None:
         """
@@ -974,7 +974,7 @@ class NATSEventMesh:
         self,
         subject: str,
         data: dict[str, Any],
-        timeout: float = 5.0,  # noqa: ASYNC109
+        timeout: float = 5.0,
     ) -> dict[str, Any] | None:
         """
         Request-reply pattern.
@@ -1105,7 +1105,7 @@ class _InMemoryFallback:
         self,
         subject: str,
         data: dict[str, Any],
-        timeout: float,  # noqa: ARG002,ASYNC109
+        timeout: float,
     ) -> dict[str, Any] | None:
         """Request in-memory (no response by default)."""
         await self.publish(subject, data)
@@ -1882,7 +1882,7 @@ async def shutdown_nats_bridge() -> None:
     """Shutdown global NATS-to-Actor bridge."""
     global _bridge
     if _bridge is not None:
-        for agent_id in list(_bridge._actor_subscriptions.keys()):  # noqa: SLF001
+        for agent_id in list(_bridge._actor_subscriptions.keys()):
             await _bridge.unregister_actor(agent_id)
         await _bridge.mesh.disconnect()
         _bridge = None

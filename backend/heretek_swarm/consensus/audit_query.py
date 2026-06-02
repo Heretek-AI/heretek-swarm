@@ -214,7 +214,7 @@ class AuditQueryMixin:
         consensus_events = [e for e in trail.events if e.consensus_id == consensus_id]
 
         for event in consensus_events:
-            timeline.append(  # noqa: PERF401
+            timeline.append(
                 {
                     "event_id": event.event_id,
                     "event_type": event.event_type.value,
@@ -230,7 +230,7 @@ class AuditQueryMixin:
 
     def export_audit_data(
         self,
-        format: str = "json",  # noqa: A002
+        format: str = "json",
         consensus_id: str | None = None,
         include_events: bool = True,
         include_votes: bool = True,
@@ -361,7 +361,7 @@ class AuditQueryMixin:
         logger.info("Audit data exported: {len(export_data.get('decisions', []))} decisions")
         return export_data
 
-    def export_decision_audit(self, decision_id: str, format: str = "json") -> str:  # noqa: A002
+    def export_decision_audit(self, decision_id: str, format: str = "json") -> str:
         """
         Export a complete decision audit record.
 
@@ -386,7 +386,7 @@ class AuditQueryMixin:
             return json.dumps(audit.to_dict(), indent=2, sort_keys=True)
         raise ValueError(f"Unsupported export format: {format}")
 
-    def export_all_audits(self, format: str = "json") -> str:  # noqa: A002
+    def export_all_audits(self, format: str = "json") -> str:
         """
         Export all decision audit records.
 
@@ -419,7 +419,7 @@ def query_decisions(
 ) -> QueryResult:
     """Query decisions on a provided trail instance."""
     query = AuditQueryMixin()
-    query._trail = trail  # noqa: SLF001
+    query._trail = trail
     return query.query_decisions(
         start_date=start_date,
         end_date=end_date,
@@ -432,7 +432,7 @@ def query_decisions(
 
 def export_audit_data(
     trail: Any,
-    format: str = "json",  # noqa: A002
+    format: str = "json",
     consensus_id: str | None = None,
     include_events: bool = True,
     include_votes: bool = True,
@@ -440,7 +440,7 @@ def export_audit_data(
 ) -> dict[str, Any]:
     """Export audit data from a provided trail instance."""
     query = AuditQueryMixin()
-    query._trail = trail  # noqa: SLF001
+    query._trail = trail
     return query.export_audit_data(
         format=format,
         consensus_id=consensus_id,
@@ -453,12 +453,12 @@ def export_audit_data(
 def get_vote_breakdown(trail: Any, consensus_id: str) -> dict[str, Any]:
     """Get vote breakdown from a provided trail instance."""
     query = AuditQueryMixin()
-    query._trail = trail  # noqa: SLF001
+    query._trail = trail
     return query.get_vote_breakdown(consensus_id)
 
 
 def get_decision_timeline(trail: Any, consensus_id: str) -> list[dict[str, Any]]:
     """Get decision timeline from a provided trail instance."""
     query = AuditQueryMixin()
-    query._trail = trail  # noqa: SLF001
+    query._trail = trail
     return query.get_decision_timeline(consensus_id)

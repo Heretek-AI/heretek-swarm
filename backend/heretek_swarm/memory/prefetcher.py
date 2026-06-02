@@ -638,7 +638,7 @@ class PreFetchScheduler:
             self._running_count += 1
 
             # Execute asynchronously
-            asyncio.create_task(self._execute_prefetch(schedule))  # noqa: RUF006
+            asyncio.create_task(self._execute_prefetch(schedule))
 
         # Clean up executed from queue
         self._pending_queue = [s for s in self._pending_queue if not s.executed]
@@ -857,7 +857,7 @@ class IntelligentPrefetcher:
         next_memories = []
         for i in range(len(pattern) - 1):
             if pattern[i] == pattern[-1]:
-                next_memories.append(pattern[i + 1])  # noqa: PERF401
+                next_memories.append(pattern[i + 1])
 
         if not next_memories:
             return None
@@ -1027,7 +1027,7 @@ class IntelligentPrefetcher:
     def clear(self) -> None:
         """Clear all caches and tracking."""
         self._lru_cache.clear()
-        self._lfu_cache._cache.clear()  # noqa: SLF001
+        self._lfu_cache._cache.clear()
         self._access_patterns.clear()
         self._prefetch_requests.clear()
         self._prefetch_results.clear()
@@ -1035,4 +1035,4 @@ class IntelligentPrefetcher:
 
 
 # Import defaultdict for frequency map
-from collections import defaultdict  # noqa: E402
+from collections import defaultdict

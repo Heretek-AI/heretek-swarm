@@ -27,7 +27,7 @@ import structlog
 
 logger = structlog.get_logger(__name__)
 
-from heretek_swarm.integrations.openai_assistants import MessageRole  # noqa: E402
+from heretek_swarm.integrations.openai_assistants import MessageRole
 
 try:
     from anthropic import Anthropic, AsyncAnthropic
@@ -152,7 +152,7 @@ class ConversationMessage:
                 content.append({"type": "text", "text": self.content})
 
             for tool_call in self.tool_calls:
-                content.append(  # noqa: PERF401
+                content.append(
                     {
                         "type": "tool_use",
                         "id": tool_call.get("id", str(uuid.uuid4())),
@@ -451,7 +451,7 @@ class AnthropicAdapter:
         if tools:
             for tool_name in tools:
                 if tool_name in self.tools:
-                    selected_tools.append(self.tools[tool_name])  # noqa: PERF401
+                    selected_tools.append(self.tools[tool_name])
 
         context = ConversationContext(
             conversation_id=conversation_id,
@@ -648,7 +648,7 @@ class AnthropicAdapter:
     async def _execute_tool(
         self,
         request: ToolUseRequest,
-        context: ConversationContext,  # noqa: ARG002
+        context: ConversationContext,
     ) -> Any:
         """Execute a tool request."""
         tool = self.tools.get(request.tool_name)

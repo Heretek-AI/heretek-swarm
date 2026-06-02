@@ -36,8 +36,8 @@ log_level = os.getenv("LOG_LEVEL", "INFO").upper()
 json_output = os.getenv("LOG_FORMAT", "json").lower() == "json"
 setup_logging(log_level=log_level, json_output=json_output)
 
-from heretek_swarm.actors.supervisor import ActorSupervisor  # noqa: E402
-from heretek_swarm.api import (  # noqa: E402
+from heretek_swarm.actors.supervisor import ActorSupervisor
+from heretek_swarm.api import (
     agents_management,
     autonomous,
     collective_evolution,
@@ -61,23 +61,23 @@ from heretek_swarm.api import (  # noqa: E402
     wizard,
     workflows,
 )
-from heretek_swarm.api.rate_limiting import setup_rate_limiting  # noqa: E402
-from heretek_swarm.api.websockets import manager  # noqa: E402
-from heretek_swarm.config.loader import (  # noqa: E402
+from heretek_swarm.api.rate_limiting import setup_rate_limiting
+from heretek_swarm.api.websockets import manager
+from heretek_swarm.config.loader import (
     get_config,
     initialize_config_loader,
 )
-from heretek_swarm.config.service import (  # noqa: E402
+from heretek_swarm.config.service import (
     get_config_service,
     initialize_config_service,
     shutdown_config_service,
 )
-from heretek_swarm.consensus.deliberation import Position  # noqa: E402
-from heretek_swarm.gateway.auth import verify_auth  # noqa: E402
-from heretek_swarm.gateway.nats_event_mesh import NATSEventMesh  # noqa: E402
-from heretek_swarm.mcp.server import router as mcp_router  # noqa: E402
-from heretek_swarm.memory.persistent import PersistentMemory as PersistentMemoryStore  # noqa: E402
-from heretek_swarm.observability.tracing import setup_telemetry_middleware  # noqa: E402
+from heretek_swarm.consensus.deliberation import Position
+from heretek_swarm.gateway.auth import verify_auth
+from heretek_swarm.gateway.nats_event_mesh import NATSEventMesh
+from heretek_swarm.mcp.server import router as mcp_router
+from heretek_swarm.memory.persistent import PersistentMemory as PersistentMemoryStore
+from heretek_swarm.observability.tracing import setup_telemetry_middleware
 
 # Import mem0 backend
 try:
@@ -88,7 +88,7 @@ except ImportError:
     Mem0Config = None
 
 # Import logging middleware
-from heretek_swarm.api.logging_middleware import setup_logging_middleware  # noqa: E402
+from heretek_swarm.api.logging_middleware import setup_logging_middleware
 
 logger = structlog.get_logger("api.main")
 
@@ -225,7 +225,7 @@ async def _init_supervisor() -> None:
     logger.info("ActorSupervisor initialized")
 
     # Fire-and-forget: spawn all 23 agents without blocking API startup
-    asyncio.create_task(_spawn_all_agents())  # noqa: RUF006
+    asyncio.create_task(_spawn_all_agents())
 
 
 async def _spawn_all_agents() -> None:
@@ -604,7 +604,7 @@ app.include_router(collective_evolution.router)
 app.include_router(mcp_router)
 
 # Setup Prometheus metrics middleware
-from heretek_swarm.observability.prometheus_metrics import setup_metrics_middleware  # noqa: E402
+from heretek_swarm.observability.prometheus_metrics import setup_metrics_middleware
 
 setup_metrics_middleware(app)
 logger.info("Prometheus metrics middleware configured")
@@ -692,10 +692,10 @@ async def check_postgres() -> dict[str, Any]:
                 "status": "healthy",
                 "database": "heretek_swarm",
             }
-        if memory_store and memory_store._engine:  # noqa: SLF001
+        if memory_store and memory_store._engine:
             from sqlalchemy import text
 
-            async with memory_store._engine.connect() as conn:  # noqa: SLF001
+            async with memory_store._engine.connect() as conn:
                 await conn.execute(text("SELECT 1"))
             return {
                 "status": "healthy",
@@ -955,7 +955,7 @@ async def get_memory_stats(authenticated: str = Depends(verify_auth)):
 
         from heretek_swarm.memory.persistent import MemoryEntryModel
 
-        async with memory_store._session_factory() as session:  # noqa: SLF001
+        async with memory_store._session_factory() as session:
             # Total count
             stmt = select(func.count()).select_from(MemoryEntryModel)
             result = await session.execute(stmt)

@@ -97,7 +97,7 @@ class OllamaEmbeddingProvider(EmbeddingProviderBase):
         self,
         texts: str | list[str],
         model: str | None = None,
-        dimensions: int | None = None,  # noqa: ARG002
+        dimensions: int | None = None,
     ) -> EmbeddingResponse:
         """
         Generate embeddings for texts.
@@ -213,4 +213,4 @@ class OllamaEmbeddingProvider(EmbeddingProviderBase):
 
 
 # Import at module level for type annotation
-from heretek_swarm.infrastructure.otel import InstrumentedAsyncClient  # noqa: E402
+from heretek_swarm.infrastructure.otel import InstrumentedAsyncClient

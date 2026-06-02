@@ -41,7 +41,7 @@ Respond with a JSON object containing:
 - "reasoning": one sentence explaining your decision
 
 Respond ONLY with the JSON object, no other text.
-Example: {{"decision": "yes", "confidence": 0.85, "reasoning": "The evidence supports this approach."}}"""  # noqa: E501
+Example: {{"decision": "yes", "confidence": 0.85, "reasoning": "The evidence supports this approach."}}"""
 
 
 # Prompt template for subsequent rounds — includes prior round summary
@@ -66,7 +66,7 @@ Respond with a JSON object containing:
 - "reasoning": one sentence explaining your updated decision
 
 Respond ONLY with the JSON object, no other text.
-Example: {{"decision": "yes", "confidence": 0.85, "reasoning": "The evidence supports this approach."}}"""  # noqa: E501
+Example: {{"decision": "yes", "confidence": 0.85, "reasoning": "The evidence supports this approach."}}"""
 
 # Pattern for extracting JSON from potentially messy LLM output
 _JSON_PATTERN = re.compile(r"\{[^}]+\}")
@@ -101,7 +101,7 @@ class ConsensusCoordinator:
     async def run_consensus(
         self,
         question: str,
-        timeout: float = 120,  # noqa: ASYNC109
+        timeout: float = 120,
         max_rounds: int = 3,
     ) -> ConsensusResult | None:
         """
@@ -310,7 +310,7 @@ class ConsensusCoordinator:
         # Summary of votes
         vote_lines: list[str] = []
         for vote in prior_result.votes:
-            vote_lines.append(  # noqa: PERF401
+            vote_lines.append(
                 f"  {vote.agent_id}: {vote.decision} (confidence: {vote.confidence:.2f})"
             )
         round_summary = f"{len(prior_result.votes)} agents voted:\n" + "\n".join(vote_lines)

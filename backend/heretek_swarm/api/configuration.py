@@ -84,7 +84,7 @@ async def get_all_configs(
     limit: int = Query(100, ge=1, le=1000),
     offset: int = Query(0, ge=0),
     authenticated: str = Depends(verify_auth),
-    service: ConfigurationService = Depends(get_service),  # noqa: B008
+    service: ConfigurationService = Depends(get_service),
 ) -> dict[str, Any]:
     """Get all configurations with optional filtering."""
     configs = await service.list_configs(category=category, limit=limit, offset=offset)
@@ -100,7 +100,7 @@ async def get_all_configs(
 async def get_config(
     key: str,
     authenticated: str = Depends(verify_auth),
-    service: ConfigurationService = Depends(get_service),  # noqa: B008
+    service: ConfigurationService = Depends(get_service),
 ) -> dict[str, Any]:
     """Get a specific configuration by key."""
     config = await service.get_config(key)
@@ -114,7 +114,7 @@ async def update_config(
     key: str,
     update: UserConfigurationUpdate,
     authenticated: str = Depends(verify_auth),
-    service: ConfigurationService = Depends(get_service),  # noqa: B008
+    service: ConfigurationService = Depends(get_service),
 ) -> dict[str, Any]:
     """Update a configuration."""
     config = await service.update_config(key, update, user=authenticated)
@@ -127,7 +127,7 @@ async def update_config(
 async def create_config(
     config: UserConfigurationCreate,
     authenticated: str = Depends(verify_auth),
-    service: ConfigurationService = Depends(get_service),  # noqa: B008
+    service: ConfigurationService = Depends(get_service),
 ) -> dict[str, Any]:
     """Create a new configuration."""
     try:
@@ -139,7 +139,7 @@ async def create_config(
 async def delete_config(
     key: str,
     authenticated: str = Depends(verify_auth),
-    service: ConfigurationService = Depends(get_service),  # noqa: B008
+    service: ConfigurationService = Depends(get_service),
 ) -> dict[str, Any]:
     """Delete a configuration."""
     success = await service.delete_config(key, user=authenticated)
@@ -190,7 +190,7 @@ async def list_llm_provider_types(
 async def list_llm_providers(
     enabled_only: bool = Query(False, description="Only return enabled providers"),
     authenticated: str = Depends(verify_auth),
-    service: ConfigurationService = Depends(get_service),  # noqa: B008
+    service: ConfigurationService = Depends(get_service),
 ) -> dict[str, Any]:
     """List configured LLM providers."""
     providers = await service.list_llm_providers(
@@ -206,7 +206,7 @@ async def list_llm_providers(
 async def get_llm_provider(
     provider_id: UUID,
     authenticated: str = Depends(verify_auth),
-    service: ConfigurationService = Depends(get_service),  # noqa: B008
+    service: ConfigurationService = Depends(get_service),
 ) -> dict[str, Any]:
     """Get a specific LLM provider."""
     provider = await service.get_llm_provider(provider_id)
@@ -219,7 +219,7 @@ async def get_llm_provider(
 async def create_llm_provider(
     provider: LLMProviderCreate,
     authenticated: str = Depends(verify_auth),
-    service: ConfigurationService = Depends(get_service),  # noqa: B008
+    service: ConfigurationService = Depends(get_service),
 ) -> dict[str, Any]:
     """Create a new LLM provider."""
     try:
@@ -233,7 +233,7 @@ async def update_llm_provider(
     provider_id: UUID,
     update: LLMProviderUpdate,
     authenticated: str = Depends(verify_auth),
-    service: ConfigurationService = Depends(get_service),  # noqa: B008
+    service: ConfigurationService = Depends(get_service),
 ) -> dict[str, Any]:
     """Update an LLM provider."""
     provider = await service.update_llm_provider(provider_id, update, user=authenticated)
@@ -246,7 +246,7 @@ async def update_llm_provider(
 async def delete_llm_provider(
     provider_id: UUID,
     authenticated: str = Depends(verify_auth),
-    service: ConfigurationService = Depends(get_service),  # noqa: B008
+    service: ConfigurationService = Depends(get_service),
 ) -> dict[str, Any]:
     """Delete an LLM provider."""
     success = await service.delete_llm_provider(provider_id, user=authenticated)
@@ -259,8 +259,8 @@ async def delete_llm_provider(
 async def test_llm_provider(
     provider_id: UUID,
     test_request: LLMProviderTestRequest,
-    authenticated: str = Depends(verify_auth),  # noqa: PT028
-    service: ConfigurationService = Depends(get_service),  # noqa: B008,PT028
+    authenticated: str = Depends(verify_auth),
+    service: ConfigurationService = Depends(get_service),
 ) -> dict[str, Any]:
     """Test LLM provider connectivity."""
     provider = await service.get_llm_provider(provider_id)
@@ -321,7 +321,7 @@ def _get_embedding_provider_info(provider_type: str) -> dict[str, Any]:
     info_map: dict[str, dict[str, Any]] = {
         "openai": {"type": "openai", "name": "OpenAI", "models": ["text-embedding-3-small"]},
         "google": {"type": "google", "name": "Google AI", "models": ["text-embedding-004"]},
-        "huggingface": {"type": "huggingface", "name": "HuggingFace", "models": ["all-MiniLM-L6-v2"]},  # noqa: E501
+        "huggingface": {"type": "huggingface", "name": "HuggingFace", "models": ["all-MiniLM-L6-v2"]},
         "ollama": {"type": "ollama", "name": "Ollama", "models": ["nomic-embed-text"]},
         "local": {"type": "local", "name": "Local", "models": ["local"]},
     }
@@ -342,7 +342,7 @@ async def list_embedding_provider_types(
 async def list_embedding_providers(
     enabled_only: bool = Query(False, description="Only return enabled providers"),
     authenticated: str = Depends(verify_auth),
-    service: ConfigurationService = Depends(get_service),  # noqa: B008
+    service: ConfigurationService = Depends(get_service),
 ) -> dict[str, Any]:
     """List configured embedding providers."""
     providers = await service.list_embedding_providers(
@@ -358,7 +358,7 @@ async def list_embedding_providers(
 async def get_embedding_provider(
     provider_id: UUID,
     authenticated: str = Depends(verify_auth),
-    service: ConfigurationService = Depends(get_service),  # noqa: B008
+    service: ConfigurationService = Depends(get_service),
 ) -> dict[str, Any]:
     """Get a specific embedding provider."""
     provider = await service.get_embedding_provider(provider_id)
@@ -371,7 +371,7 @@ async def get_embedding_provider(
 async def create_embedding_provider(
     provider: EmbeddingProviderCreate,
     authenticated: str = Depends(verify_auth),
-    service: ConfigurationService = Depends(get_service),  # noqa: B008
+    service: ConfigurationService = Depends(get_service),
 ) -> dict[str, Any]:
     """Create a new embedding provider."""
     try:
@@ -384,7 +384,7 @@ async def update_embedding_provider(
     provider_id: UUID,
     update: EmbeddingProviderUpdate,
     authenticated: str = Depends(verify_auth),
-    service: ConfigurationService = Depends(get_service),  # noqa: B008
+    service: ConfigurationService = Depends(get_service),
 ) -> dict[str, Any]:
     """Update an embedding provider."""
     provider = await service.update_embedding_provider(provider_id, update, user=authenticated)
@@ -397,7 +397,7 @@ async def update_embedding_provider(
 async def delete_embedding_provider(
     provider_id: UUID,
     authenticated: str = Depends(verify_auth),
-    service: ConfigurationService = Depends(get_service),  # noqa: B008
+    service: ConfigurationService = Depends(get_service),
 ) -> dict[str, Any]:
     """Delete an embedding provider."""
     success = await service.delete_embedding_provider(provider_id, user=authenticated)
@@ -410,8 +410,8 @@ async def delete_embedding_provider(
 async def test_embedding_provider(
     provider_id: UUID,
     test_request: EmbeddingProviderTestRequest,
-    authenticated: str = Depends(verify_auth),  # noqa: PT028
-    service: ConfigurationService = Depends(get_service),  # noqa: B008,PT028
+    authenticated: str = Depends(verify_auth),
+    service: ConfigurationService = Depends(get_service),
 ) -> dict[str, Any]:
     """Test embedding provider connectivity."""
     provider = await service.get_embedding_provider(provider_id)
@@ -473,7 +473,7 @@ async def list_agent_configs(
     agent_type: str | None = Query(None, description="Filter by agent type"),
     active_only: bool = Query(True, description="Only return active configs"),
     authenticated: str = Depends(verify_auth),
-    service: ConfigurationService = Depends(get_service),  # noqa: B008
+    service: ConfigurationService = Depends(get_service),
 ) -> dict[str, Any]:
     """List agent configurations."""
     configs = await service.list_agent_configs(
@@ -489,7 +489,7 @@ async def list_agent_configs(
 async def get_agent_config(
     config_id: UUID,
     authenticated: str = Depends(verify_auth),
-    service: ConfigurationService = Depends(get_service),  # noqa: B008
+    service: ConfigurationService = Depends(get_service),
 ) -> dict[str, Any]:
     """Get a specific agent configuration."""
     config = await service.get_agent_config(config_id)
@@ -502,7 +502,7 @@ async def get_agent_config(
 async def create_agent_config(
     config: AgentConfigCreate,
     authenticated: str = Depends(verify_auth),
-    service: ConfigurationService = Depends(get_service),  # noqa: B008
+    service: ConfigurationService = Depends(get_service),
 ) -> dict[str, Any]:
     """Create a new agent configuration."""
     try:
@@ -515,7 +515,7 @@ async def update_agent_config(
     config_id: UUID,
     update: AgentConfigUpdate,
     authenticated: str = Depends(verify_auth),
-    service: ConfigurationService = Depends(get_service),  # noqa: B008
+    service: ConfigurationService = Depends(get_service),
 ) -> dict[str, Any]:
     """Update an agent configuration."""
     config = await service.update_agent_config(config_id, update, user=authenticated)
@@ -528,7 +528,7 @@ async def update_agent_config(
 async def delete_agent_config(
     config_id: UUID,
     authenticated: str = Depends(verify_auth),
-    service: ConfigurationService = Depends(get_service),  # noqa: B008
+    service: ConfigurationService = Depends(get_service),
 ) -> dict[str, Any]:
     """Delete an agent configuration."""
     success = await service.delete_agent_config(config_id, user=authenticated)
@@ -547,7 +547,7 @@ async def get_audit_log(
     entity_type: str | None = Query(None, description="Filter by entity type"),
     limit: int = Query(100, ge=1, le=1000),
     authenticated: str = Depends(verify_auth),
-    service: ConfigurationService = Depends(get_service),  # noqa: B008
+    service: ConfigurationService = Depends(get_service),
 ) -> dict[str, Any]:
     """Get configuration audit log."""
     logs = await service.get_audit_log(entity_type=entity_type, limit=limit)
@@ -565,7 +565,7 @@ async def get_audit_log(
 @router.get("/export")
 async def export_configurations(
     authenticated: str = Depends(verify_auth),
-    service: ConfigurationService = Depends(get_service),  # noqa: B008
+    service: ConfigurationService = Depends(get_service),
 ) -> dict[str, Any]:
     """Export all configurations."""
     export_data = await service.export_configurations(exported_by=authenticated)
@@ -575,9 +575,9 @@ async def export_configurations(
 @router.post("/import")
 async def import_configurations(
     import_data: ConfigurationImport,
-    options: ImportOptions = ImportOptions(),  # noqa: B008
+    options: ImportOptions = ImportOptions(),
     authenticated: str = Depends(verify_auth),
-    service: ConfigurationService = Depends(get_service),  # noqa: B008
+    service: ConfigurationService = Depends(get_service),
 ) -> dict[str, Any]:
     """Import configurations from a bundle."""
     result = await service.import_configurations(import_data, options, user=authenticated)
@@ -592,7 +592,7 @@ async def import_configurations(
 @router.post("/migrate-from-env")
 async def migrate_from_env(
     authenticated: str = Depends(verify_auth),
-    service: ConfigurationService = Depends(get_service),  # noqa: B008
+    service: ConfigurationService = Depends(get_service),
 ) -> dict[str, Any]:
     """Migrate configurations from environment variables to database."""
     return await service.migrate_from_env(user=authenticated)
@@ -601,7 +601,7 @@ async def migrate_from_env(
 @router.post("/seed-from-env")
 async def seed_from_env(
     authenticated: str = Depends(verify_auth),
-    service: ConfigurationService = Depends(get_service),  # noqa: B008
+    service: ConfigurationService = Depends(get_service),
 ) -> dict[str, Any]:
     """
     Re-trigger idempotent seeding of LLM providers, embedding providers,
@@ -626,7 +626,7 @@ async def seed_from_env(
 @router.post("/reload")
 async def reload_configurations(
     authenticated: str = Depends(verify_auth),
-    service: ConfigurationService = Depends(get_service),  # noqa: B008
+    service: ConfigurationService = Depends(get_service),
 ) -> dict[str, Any]:
     """
     Reload configuration cache from database.
@@ -658,7 +658,7 @@ async def reload_configurations(
             "reloaded_by": authenticated,
             "reloaded_at": datetime.now(UTC).isoformat()
             if hasattr(datetime, "utcnow")
-            else datetime.now().isoformat(),  # noqa: DTZ005
+            else datetime.now().isoformat(),
         }
     except Exception as e:
         logger.error("Configuration reload failed", error=str(e))
@@ -673,7 +673,7 @@ async def reload_configurations(
 @router.get("/health")
 async def configuration_health(
     authenticated: str = Depends(verify_auth),
-    service: ConfigurationService = Depends(get_service),  # noqa: B008
+    service: ConfigurationService = Depends(get_service),
 ) -> dict[str, Any]:
     """
     Check configuration service health status.
@@ -717,7 +717,7 @@ async def configuration_health(
 @router.get("/export/bundle")
 async def export_configuration_bundle(
     authenticated: str = Depends(verify_auth),
-    service: ConfigurationService = Depends(get_service),  # noqa: B008
+    service: ConfigurationService = Depends(get_service),
 ) -> dict[str, Any]:
     """
     Export all configurations as a downloadable bundle.
@@ -748,9 +748,9 @@ async def export_configuration_bundle(
 @router.post("/import/bundle")
 async def import_configuration_bundle(
     import_data: ConfigurationImport,
-    options: ImportOptions = ImportOptions(),  # noqa: B008
+    options: ImportOptions = ImportOptions(),
     authenticated: str = Depends(verify_auth),
-    service: ConfigurationService = Depends(get_service),  # noqa: B008
+    service: ConfigurationService = Depends(get_service),
 ) -> dict[str, Any]:
     """
     Import configurations from a bundle.

@@ -335,7 +335,7 @@ class AutonomousRuntime:
             start_time = time.time()
             async with httpx.AsyncClient() as client:
                 await client.get(
-                    f"http://{self.config.api_host}:{self.config.api_port}/api/health/live",  # Local health check  # noqa: E501
+                    f"http://{self.config.api_host}:{self.config.api_port}/api/health/live",  # Local health check
                     timeout=5.0,
                 )
             latency_ms = (time.time() - start_time) * 1000
@@ -638,7 +638,7 @@ class AutonomousRuntime:
 
         try:
             state_file.parent.mkdir(parents=True, exist_ok=True)
-            with open(state_file, "w") as f:  # noqa: ASYNC230,PTH123
+            with open(state_file, "w") as f:
                 import json
 
                 json.dump(state_data, f, indent=2)
@@ -653,7 +653,7 @@ class AutonomousRuntime:
             return
 
         try:
-            with open(state_file) as f:  # noqa: ASYNC230,PTH123
+            with open(state_file) as f:
                 import json
 
                 state_data = json.load(f)
@@ -812,7 +812,7 @@ class AutonomousRuntime:
             # Get statistics and log
             stats = self._consciousness_plugin.get_statistics()
             logger.info(
-                "Consciousness stats: "  # noqa: G004
+                "Consciousness stats: "
                 f"agents={stats.get('total_agents', 0)}, "
                 f"avg_phi={stats.get('iit_average_phi', 0):.4f}, "
                 f"conscious={stats.get('conscious_agents', 0)}"
@@ -1054,7 +1054,7 @@ async def start_autonomous_runtime(config: AutonomousRuntimeConfig) -> Autonomou
     # Setup signal handlers
     def signal_handler(signum, frame):
         logger.info("Received signal {signum}, shutting down...")
-        asyncio.create_task(runtime.stop())  # noqa: RUF006
+        asyncio.create_task(runtime.stop())
 
     signal.signal(signal.SIGINT, signal_handler)
     signal.signal(signal.SIGTERM, signal_handler)

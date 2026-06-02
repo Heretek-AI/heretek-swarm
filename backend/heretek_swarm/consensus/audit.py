@@ -45,7 +45,7 @@ ConsensusAuditTrail.export_decision_audit = AuditQueryMixin.export_decision_audi
 ConsensusAuditTrail.export_all_audits = AuditQueryMixin.export_all_audits
 
 # Patch _get_trail so query methods delegate to self
-ConsensusAuditTrail._get_trail = lambda self: self  # noqa: SLF001
+ConsensusAuditTrail._get_trail = lambda self: self
 
 __all__ = [
     "ArgumentRecord",

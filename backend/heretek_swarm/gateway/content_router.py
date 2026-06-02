@@ -84,7 +84,7 @@ class ContentFilter:
             try:
                 self.operator = FilterOperator(self.operator)
             except ValueError:
-                raise ValueError(f"Invalid operator: {self.operator}")  # noqa: B904
+                raise ValueError(f"Invalid operator: {self.operator}")
 
         # Pre-compile regex for regex operator
         if self.operator == FilterOperator.REGEX:
@@ -496,7 +496,7 @@ class ContentRouter:
     # Operator dispatch table: maps FilterOperator to evaluation function
     _OPERATOR_EVALUATORS: ClassVar[dict] = {}  # populated in __init_subclass__ or lazily
 
-    def _evaluate_filter(self, filter: ContentFilter, payload: dict[str, Any]) -> tuple[bool, Any]:  # noqa: A002
+    def _evaluate_filter(self, filter: ContentFilter, payload: dict[str, Any]) -> tuple[bool, Any]:
         """
         Evaluate a single content filter against payload.
 
@@ -518,7 +518,7 @@ class ContentRouter:
             return False, value
 
     def _apply_operator(
-        self, operator: FilterOperator, value: Any, filter: ContentFilter  # noqa: A002
+        self, operator: FilterOperator, value: Any, filter: ContentFilter
     ) -> tuple[bool, Any]:
         """Apply a filter operator to a value."""
         if operator == FilterOperator.EQ:
@@ -532,7 +532,7 @@ class ContentRouter:
         if operator == FilterOperator.REGEX:
             if not isinstance(value, str):
                 return False, value
-            return bool(filter._compiled_regex.search(value)), value  # noqa: SLF001
+            return bool(filter._compiled_regex.search(value)), value
         if operator == FilterOperator.GT:
             return value > filter.value, value
         if operator == FilterOperator.LT:
@@ -607,7 +607,7 @@ class ContentRouter:
             filters_matched = 0
             all_matched = True
 
-            for filter in rule.content_filters:  # noqa: A001
+            for filter in rule.content_filters:
                 filters_evaluated += 1
                 matched, _ = self._evaluate_filter(filter, payload)
 

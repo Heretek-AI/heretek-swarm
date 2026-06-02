@@ -388,7 +388,7 @@ async def update_provider(
     try:
         provider_uuid = UUID(provider_id)
     except ValueError:
-        raise HTTPException(400, f"Invalid provider ID format: '{provider_id}'")  # noqa: B904
+        raise HTTPException(400, f"Invalid provider ID format: '{provider_id}'")
 
     # Get existing provider
     existing = await service.get_llm_provider(provider_uuid)
@@ -462,7 +462,7 @@ async def delete_provider(provider_id: str) -> Response:
     try:
         provider_uuid = UUID(provider_id)
     except ValueError:
-        raise HTTPException(400, f"Invalid provider ID format: '{provider_id}'")  # noqa: B904
+        raise HTTPException(400, f"Invalid provider ID format: '{provider_id}'")
 
     # Check if provider exists
     existing = await service.get_llm_provider(provider_uuid)
@@ -1123,7 +1123,7 @@ async def submit_config(config: dict[str, Any]) -> dict[str, Any]:
 
     # Emit wizard.completed event for autonomous runtime startup (fire-and-forget)
     # This triggers the runtime to begin agent spawning without requiring user action
-    asyncio.create_task(_emit_wizard_completed_event(tier_config))  # noqa: RUF006
+    asyncio.create_task(_emit_wizard_completed_event(tier_config))
 
     result["success"] = len(result["errors"]) == 0
 
@@ -1265,7 +1265,7 @@ async def get_infrastructure_config(service: str) -> dict[str, Any]:
     try:
         infra_service = InfrastructureService(service.lower())
     except ValueError:
-        raise HTTPException(  # noqa: B904
+        raise HTTPException(
             400,
             f"Invalid service type: {service}. Valid types: postgres, redis, qdrant, nats, mem0",
         )
@@ -1313,7 +1313,7 @@ async def check_service_health(service: str) -> dict[str, Any]:
     try:
         infra_service = InfrastructureService(service.lower())
     except ValueError:
-        raise HTTPException(  # noqa: B904
+        raise HTTPException(
             400,
             f"Invalid service type: {service}. Valid types: postgres, redis, qdrant, nats, mem0",
         )
@@ -1453,7 +1453,7 @@ async def delete_infrastructure_config(service: str) -> Response:
     try:
         infra_service = InfrastructureService(service.lower())
     except ValueError:
-        raise HTTPException(400, f"Invalid service type: {service}")  # noqa: B904
+        raise HTTPException(400, f"Invalid service type: {service}")
 
     try:
         config = await config_service.get_infrastructure_config_by_service(infra_service.value)

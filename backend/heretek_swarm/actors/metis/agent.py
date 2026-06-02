@@ -178,7 +178,7 @@ class MetisAgent(
                 await handler(message)
             except Exception as e:
                 logger.exception(
-                    f"[{self.agent_id}] Error processing message {message.message_type}: {e}",  # noqa: G004
+                    f"[{self.agent_id}] Error processing message {message.message_type}: {e}",
 
                 )
                 self.error_count += 1
@@ -231,7 +231,7 @@ class MetisAgent(
         plan_id = f"plan_{datetime.now(UTC).strftime('%Y%m%d_%H%M%S')}"
 
         logger.info(
-            f"[{self.agent_id}] Creating strategic plan: {plan_id}",  # noqa: G004
+            f"[{self.agent_id}] Creating strategic plan: {plan_id}",
             extra={
                 "objective": objective,
                 "horizon_days": horizon_days,
@@ -268,7 +268,7 @@ class MetisAgent(
 
         except Exception as e:
             logger.exception(
-                f"[{self.agent_id}] Failed to create strategic plan {plan_id}: {e}",  # noqa: G004
+                f"[{self.agent_id}] Failed to create strategic plan {plan_id}: {e}",
 
             )
             if message.content.get("reply_to"):
@@ -318,7 +318,7 @@ class MetisAgent(
             return
 
         logger.info(
-            f"[{self.agent_id}] Allocating resources for plan: {plan_id}",  # noqa: G004
+            f"[{self.agent_id}] Allocating resources for plan: {plan_id}",
             extra={"resources_count": len(resources)},
         )
 
@@ -368,7 +368,7 @@ class MetisAgent(
             return
 
         logger.info(
-            f"[{self.agent_id}] Assessing risks for plan: {plan_id}, domain: {domain}",  # noqa: G004
+            f"[{self.agent_id}] Assessing risks for plan: {plan_id}, domain: {domain}",
         )
 
         # Perform risk assessment
@@ -422,7 +422,7 @@ class MetisAgent(
         analysis_id = f"scenario_{datetime.now(UTC).strftime('%Y%m%d_%H%M%S')}"
 
         logger.info(
-            f"[{self.agent_id}] Running scenario analysis: {analysis_id}",  # noqa: G004
+            f"[{self.agent_id}] Running scenario analysis: {analysis_id}",
             extra={"variables_count": len(variables)},
         )
 
@@ -450,7 +450,7 @@ class MetisAgent(
             )
 
         logger.info(
-            f"[{self.agent_id}] Scenario analysis complete: {len(scenarios)} scenarios generated"  # noqa: G004
+            f"[{self.agent_id}] Scenario analysis complete: {len(scenarios)} scenarios generated"
         )
 
     async def _handle_set_strategic_objective(self, message: ActorMessage) -> None:
@@ -496,7 +496,7 @@ class MetisAgent(
         self.strategic_objectives.append(objective_entry)
 
         logger.info(
-            f"[{self.agent_id}] Strategic objective set: {objective[:50]}...",  # noqa: G004
+            f"[{self.agent_id}] Strategic objective set: {objective[:50]}...",
             extra={"priority": priority},
         )
 
@@ -585,7 +585,7 @@ class MetisAgent(
 
     async def _generate_strategic_plan(
         self,
-        plan_id: str,  # noqa: ARG002
+        plan_id: str,
         objective: str,
         horizon_days: int,
         constraints: list[str],
@@ -622,7 +622,7 @@ Format as JSON with keys: summary, phases, resources, risks, metrics
         try:
             response = await self.run_with_llm(
                 prompt=prompt,
-                system_prompt="You are Metis, a strategic planning specialist AI. Create detailed, actionable strategic plans.",  # noqa: E501
+                system_prompt="You are Metis, a strategic planning specialist AI. Create detailed, actionable strategic plans.",
                 timeout=60,
             )
 
@@ -739,7 +739,7 @@ Format each risk as JSON object.
         try:
             await self.run_with_llm(
                 prompt=prompt,
-                system_prompt="You are Metis, a strategic risk assessment specialist. Identify and analyze potential risks.",  # noqa: E501
+                system_prompt="You are Metis, a strategic risk assessment specialist. Identify and analyze potential risks.",
                 timeout=60,
             )
 
@@ -838,7 +838,7 @@ Format each risk as JSON object.
             return
 
         logger.info(
-            f"[{self.agent_id}] Performing on-demand strategic analysis",  # noqa: G004
+            f"[{self.agent_id}] Performing on-demand strategic analysis",
             extra={"context_preview": context[:80], "perspective": perspective},
         )
 
@@ -861,7 +861,7 @@ Format each risk as JSON object.
             )
 
         logger.info(
-            f"[{self.agent_id}] On-demand strategic analysis complete",  # noqa: G004
+            f"[{self.agent_id}] On-demand strategic analysis complete",
             extra={"confidence": result["confidence"]},
         )
 
@@ -928,7 +928,7 @@ Format your response as a clear analysis with recommendations.
 
         except TimeoutError:
             logger.warning(
-                f"[{self.agent_id}] On-demand analysis timed out",  # noqa: G004
+                f"[{self.agent_id}] On-demand analysis timed out",
                 extra={"context_preview": context[:60]},
             )
             return {
@@ -939,7 +939,7 @@ Format your response as a clear analysis with recommendations.
 
         except Exception as e:
             logger.exception(
-                f"[{self.agent_id}] On-demand analysis failed: {e}",  # noqa: G004
+                f"[{self.agent_id}] On-demand analysis failed: {e}",
 
             )
             return {
@@ -975,7 +975,7 @@ Format your response as a clear analysis with recommendations.
         system_prompt = GoalProposer.proposal_system_prompt()
 
         logger.info(
-            f"[{self.agent_id}] Generating goal proposal",  # noqa: G004
+            f"[{self.agent_id}] Generating goal proposal",
             extra={"goal_id": goal_id},
         )
 
@@ -988,7 +988,7 @@ Format your response as a clear analysis with recommendations.
         except (TimeoutError, RuntimeError, Exception) as exc:
             error_msg = f"LLM call failed: {exc!s}"
             logger.exception(
-                f"[{self.agent_id}] Goal proposal LLM failed: {exc}",  # noqa: G004
+                f"[{self.agent_id}] Goal proposal LLM failed: {exc}",
 
             )
             # Log the failure to the event stream
@@ -1010,7 +1010,7 @@ Format your response as a clear analysis with recommendations.
         if parsed.get("_parse_error"):
             error_msg = parsed.get("error", "Unknown parse error")
             logger.warning(
-                f"[{self.agent_id}] Goal proposal parse failed",  # noqa: G004
+                f"[{self.agent_id}] Goal proposal parse failed",
                 extra={"error": error_msg},
             )
             await self._log_historian_event(
@@ -1046,7 +1046,7 @@ Format your response as a clear analysis with recommendations.
         )
 
         logger.info(
-            f"[{self.agent_id}] Goal proposal generated successfully",  # noqa: G004
+            f"[{self.agent_id}] Goal proposal generated successfully",
             extra={"goal_id": goal_id, "title": goal.title},
         )
 
@@ -1074,7 +1074,7 @@ Format your response as a clear analysis with recommendations.
             )
         except Exception as exc:
             logger.warning(
-                f"[{self.agent_id}] Failed to log historian event '{event_type}': {exc}",  # noqa: G004
+                f"[{self.agent_id}] Failed to log historian event '{event_type}': {exc}",
             )
 
     async def get_strategic_summary(self) -> dict[str, Any]:

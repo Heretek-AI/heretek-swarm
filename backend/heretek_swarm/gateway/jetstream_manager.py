@@ -35,13 +35,13 @@ logger = structlog.get_logger(__name__)
 # Try to import NATS
 try:
     import nats
-    from nats.errors import ConnectionClosedError, NatsError, TimeoutError  # noqa: A004
+    from nats.errors import ConnectionClosedError, NatsError, TimeoutError
 
     NATS_AVAILABLE = True
 except ImportError:
     NATS_AVAILABLE = False
     NatsError = Exception
-    TimeoutError = Exception  # noqa: A001
+    TimeoutError = Exception
     ConnectionClosedError = Exception
 
 
@@ -235,7 +235,7 @@ class JetStreamManager:
     """
 
     # Predefined stream configurations
-    DEFAULT_STREAMS = {  # noqa: RUF012
+    DEFAULT_STREAMS = {
         "AGENT_EVENTS": JetStreamConfig(
             stream_name="AGENT_EVENTS",
             subjects=["agent.*.events", "agent.*.state", "agent.*.lifecycle"],
@@ -687,7 +687,7 @@ class JetStreamManager:
             self._consumers[consumer_id] = consumer
 
             # Start message processing
-            asyncio.create_task(self._process_consumer_messages(consumer, callback, consumer_id))  # noqa: RUF006
+            asyncio.create_task(self._process_consumer_messages(consumer, callback, consumer_id))
 
             self._stats["consumers_created"] += 1
 
@@ -724,7 +724,7 @@ class JetStreamManager:
         self,
         consumer: Any,
         callback: Callable[[str, dict[str, Any]], None],
-        consumer_id: str,  # noqa: ARG002
+        consumer_id: str,
     ) -> None:
         """Process messages from a consumer."""
         while True:

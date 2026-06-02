@@ -17,7 +17,7 @@ from heretek_swarm.infrastructure.otel.metrics import (
     init_metrics,
     record_metric,
 )
-from heretek_swarm.observability.tracing import (  # noqa: F401
+from heretek_swarm.observability.tracing import (
     initialize_tracing,
     setup_telemetry_middleware,
 )

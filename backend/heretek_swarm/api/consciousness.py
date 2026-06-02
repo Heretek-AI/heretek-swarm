@@ -622,7 +622,7 @@ async def get_consciousness_history(
 
     for entry in metrics_history:
         entry_time = datetime.fromisoformat(entry.get("timestamp", "1970-01-01T00:00:00Z"))
-        if entry_time >= cutoff_time:  # noqa: SIM102
+        if entry_time >= cutoff_time:
             if agent_id is None or agent_id in entry.get("agents", {}):
                 history.append(entry)
 

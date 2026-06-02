@@ -61,7 +61,7 @@ class ResearchPhaseHandler(PhaseHandler):
         workflow_id: str,
         topic: str,
         context: dict[str, Any] | None = None,
-        previous_output: dict[str, Any] | None = None,  # noqa: ARG002
+        previous_output: dict[str, Any] | None = None,
     ) -> tuple[bool, dict[str, Any], list[str]]:
         """Execute research phase"""
         logger.info("Research phase: Gathering information")
@@ -133,7 +133,7 @@ class AnalysisPhaseHandler(PhaseHandler):
         self,
         workflow_id: str,
         topic: str,
-        context: dict[str, Any] | None = None,  # noqa: ARG002
+        context: dict[str, Any] | None = None,
         previous_output: dict[str, Any] | None = None,
     ) -> tuple[bool, dict[str, Any], list[str]]:
         """Execute analysis phase"""
@@ -210,7 +210,7 @@ class AnalysisPhaseHandler(PhaseHandler):
         analysis_data["perspectives"] = list(triad_analyses.values())
 
         # Identify key insights
-        for agent_id, analysis in triad_analyses.items():  # noqa: B007
+        for agent_id, analysis in triad_analyses.items():
             if analysis:
                 insights = analysis.get("insights", [])
                 analysis_data["key_insights"].extend(insights)
@@ -297,9 +297,9 @@ class VerificationPhaseHandler(PhaseHandler):
 
     async def execute(
         self,
-        workflow_id: str,  # noqa: ARG002
+        workflow_id: str,
         topic: str,
-        context: dict[str, Any] | None = None,  # noqa: ARG002
+        context: dict[str, Any] | None = None,
         previous_output: dict[str, Any] | None = None,
     ) -> tuple[bool, dict[str, Any], list[str]]:
         """Execute verification phase"""
@@ -328,7 +328,7 @@ class VerificationPhaseHandler(PhaseHandler):
         if "beta" in self.agents:
             beta_agent = self.agents["beta"]
             try:
-                errors_found = await beta_agent._detect_errors(recommended)  # noqa: SLF001
+                errors_found = await beta_agent._detect_errors(recommended)
                 verification_data["error_checks"] = errors_found
                 if errors_found:
                     verification_data["overall_valid"] = False
@@ -339,7 +339,7 @@ class VerificationPhaseHandler(PhaseHandler):
         if "charlie" in self.agents:
             charlie_agent = self.agents["charlie"]
             try:
-                risk_assessment = await charlie_agent._assess_risks(recommended)  # noqa: SLF001
+                risk_assessment = await charlie_agent._assess_risks(recommended)
                 verification_data["risk_assessments"] = risk_assessment.get("risks_identified", [])
                 verification_data["risk_level"] = risk_assessment.get("risk_level", "unknown")
             except Exception as e:
@@ -367,7 +367,7 @@ class DecisionPhaseHandler(PhaseHandler):
         self,
         workflow_id: str,
         topic: str,
-        context: dict[str, Any] | None = None,  # noqa: ARG002
+        context: dict[str, Any] | None = None,
         previous_output: dict[str, Any] | None = None,
     ) -> tuple[bool, dict[str, Any], list[str]]:
         """Execute decision phase"""

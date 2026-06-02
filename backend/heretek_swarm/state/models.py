@@ -458,12 +458,12 @@ class LineageTracker:
         cid = conversation_id or self._last_conversation_id
         if not cid:
             return {"total_messages": 0, "active_messages": 0, "max_depth": 0}
-        messages = [l for l in self._lineages.values() if l.conversation_id == cid]  # noqa: E741
+        messages = [l for l in self._lineages.values() if l.conversation_id == cid]
 
         return {
             "total_messages": len(messages),
             "active_messages": len(messages),  # All messages are "active"
-            "max_depth": max((l.depth for l in messages), default=0),  # noqa: E741
+            "max_depth": max((l.depth for l in messages), default=0),
         }
 
 

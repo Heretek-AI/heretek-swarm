@@ -26,7 +26,7 @@ logger = structlog.get_logger("cli.serve")
         "  heretek-swarm serve --workers 4"
     ),
 )
-@click.option("--host", default="0.0.0.0", help="Host to bind to (default: 0.0.0.0)")  # noqa: S104
+@click.option("--host", default="0.0.0.0", help="Host to bind to (default: 0.0.0.0)")
 @click.option("--port", default=8000, type=int, help="Port to bind to (default: 8000)")
 @click.option("--workers", default=1, type=int, help="Number of worker processes (default: 1)")
 def serve(host: str, port: int, workers: int) -> None:

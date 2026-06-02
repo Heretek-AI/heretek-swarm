@@ -427,7 +427,7 @@ class AutonomousSwarm:
     async def run_deliberation(
         self,
         prompt: str,
-        timeout: int = 120,  # noqa: ASYNC109
+        timeout: int = 120,
     ) -> dict[str, Any]:
         """Run a triad deliberation — delegates to DeliberationOrchestrator."""
         return await self._deliberation.run_deliberation(prompt, timeout)
@@ -435,7 +435,7 @@ class AutonomousSwarm:
     async def run_consensus(
         self,
         question: str,
-        timeout: float = 120,  # noqa: ASYNC109
+        timeout: float = 120,
         max_rounds: int = 3,
     ) -> dict[str, Any]:
         """Run MAKER consensus — delegates to DeliberationOrchestrator."""
@@ -446,7 +446,7 @@ class AutonomousSwarm:
         agent_name: str,
         task_type: str,
         task_data: dict[str, Any],
-        timeout: int = 30,  # noqa: ASYNC109
+        timeout: int = 30,
     ) -> dict[str, Any]:
         """Route a task to a specific agent — delegates to DeliberationOrchestrator."""
         return await self._deliberation.run_routed_task(agent_name, task_type, task_data, timeout)

@@ -133,7 +133,7 @@ class MAKERConsensus:
         self.agent_vote_history: dict[str, list[Vote]] = {}
 
         logger.info(
-            f"MAKER Consensus initialized with ahead_by_k={ahead_by_k}, min_votes={min_votes}",  # noqa: G004
+            f"MAKER Consensus initialized with ahead_by_k={ahead_by_k}, min_votes={min_votes}",
         )
 
     def start_consensus(self, consensus_id: str) -> None:
@@ -185,7 +185,7 @@ class MAKERConsensus:
         self.agent_vote_history[agent_id].append(vote)
 
         logger.debug(
-            f"Vote added from {agent_id}: {decision} (confidence: {confidence})",  # noqa: G004
+            f"Vote added from {agent_id}: {decision} (confidence: {confidence})",
         )
 
     def compute_consensus(
@@ -229,7 +229,7 @@ class MAKERConsensus:
         if result:
             self.process_states[consensus_id] = ConsensusState.COMPLETED
             logger.info(
-                f"Consensus reached for {consensus_id}: "  # noqa: G004
+                f"Consensus reached for {consensus_id}: "
                 f"{result.decision} (confidence: {result.confidence:.2f})",
             )
         else:
@@ -379,7 +379,7 @@ class MAKERConsensus:
     def _apply_enhanced_vote_weights(
         self,
         votes: list[Vote],
-        consensus_id: str,  # noqa: ARG002
+        consensus_id: str,
     ) -> list[tuple[str, float]]:
         """
         Apply enhanced vote weights using evidence quality, expertise, confidence, and historical accuracy.  # noqa: E501
@@ -462,7 +462,7 @@ class MAKERConsensus:
         consensus_id: str,
         agents: list[str],
         decision_func: callable,
-        timeout: float = 30.0,  # noqa: ASYNC109
+        timeout: float = 30.0,
     ) -> ConsensusResult | None:
         """
         Run a complete consensus process with timeout.

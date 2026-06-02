@@ -251,7 +251,7 @@ class BehavioralBaseline:
         quorum_size: int = 3,
         quorum_threshold: float = 0.66,
         quorum_timeout_seconds: float = 300.0,
-        max_baseline_age_days: int = 90,  # noqa: ARG002
+        max_baseline_age_days: int = 90,
     ):
         """
         Initialize the behavioral baseline.
@@ -696,7 +696,7 @@ class BehavioralBaseline:
         Returns:
             Request ID
         """
-        request_id = f"REQ_{int(datetime.now(UTC).timestamp())}_{hashlib.sha256(str(datetime.now(UTC).timestamp()).encode()).hexdigest()[:8]}"  # noqa: E501
+        request_id = f"REQ_{int(datetime.now(UTC).timestamp())}_{hashlib.sha256(str(datetime.now(UTC).timestamp()).encode()).hexdigest()[:8]}"
 
         request = BaselineChangeRequest(
             request_id=request_id,

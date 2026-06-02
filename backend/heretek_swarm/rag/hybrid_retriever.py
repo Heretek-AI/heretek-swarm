@@ -183,7 +183,7 @@ class RateLimiter:
 
             return False
 
-    async def wait_for_token(self, timeout: float = 60.0) -> bool:  # noqa: ASYNC109
+    async def wait_for_token(self, timeout: float = 60.0) -> bool:
         """
         Wait for a rate limit token with timeout.
 

@@ -378,7 +378,7 @@ class SentinelPrimeHelpers:
         correlated.sort(key=lambda x: x.timestamp)
 
         for related in correlated:
-            chain.append(  # noqa: PERF401
+            chain.append(
                 {
                     "incident_id": related.incident_id,
                     "timestamp": related.timestamp.isoformat(),
@@ -464,7 +464,7 @@ class SentinelPrimeHelpers:
         critical_count = self._stats["incidents_by_level"].get("critical", 0)
         if critical_count > 5:
             recommendations.append(
-                f"High critical incident count ({critical_count}) - consider security architecture review"  # noqa: E501
+                f"High critical incident count ({critical_count}) - consider security architecture review"
             )
 
         # Check for specific threat patterns

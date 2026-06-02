@@ -82,7 +82,7 @@ class MessageContent(BaseModel):
             # Allow simple string IDs
             if re.match(r"^[a-zA-Z0-9_-]{1,128}$", v):
                 return v
-            raise ValueError(f"Invalid correlation_id format: {v}. Must be UUID or alphanumeric")  # noqa: B904
+            raise ValueError(f"Invalid correlation_id format: {v}. Must be UUID or alphanumeric")
 
     @field_validator("content")
     @classmethod
@@ -92,7 +92,7 @@ class MessageContent(BaseModel):
             return v
         # Check for potential injection patterns in string values
         for key, value in v.items():
-            if isinstance(value, str):  # noqa: SIM102
+            if isinstance(value, str):
                 # Reject strings with potential code injection
                 if re.search(r"__\w+__|exec\s*\(|eval\s*\(|import\s+os|import\s+sys", value):
                     raise ValueError(f"Potentially dangerous content detected in field: {key}")

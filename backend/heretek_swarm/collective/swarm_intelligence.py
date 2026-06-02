@@ -168,7 +168,7 @@ class SwarmIntelligenceEngine:
         self.decision_history: list[SwarmDecision] = []
 
         logger.info(
-            f"SwarmIntelligenceEngine initialized with max_iterations={self.config.max_iterations}"  # noqa: G004
+            f"SwarmIntelligenceEngine initialized with max_iterations={self.config.max_iterations}"
         )
 
     # =========================================================================
@@ -205,7 +205,7 @@ class SwarmIntelligenceEngine:
 
         self.decision_history.append(decision)
         logger.info(
-            f"PSO completed: {decision.convergence_iterations} iterations, "  # noqa: G004
+            f"PSO completed: {decision.convergence_iterations} iterations, "
             f"confidence={decision.confidence:.2f}"
         )
 
@@ -353,16 +353,16 @@ class SwarmIntelligenceEngine:
             position = initial_positions.get(
                 agent_id,
                 (
-                    random.uniform(-10, 10),  # noqa: S311
-                    random.uniform(-10, 10),  # noqa: S311
-                    random.uniform(-10, 10),  # noqa: S311
+                    random.uniform(-10, 10),
+                    random.uniform(-10, 10),
+                    random.uniform(-10, 10),
                 ),
             )
 
             velocity = (
-                random.uniform(-1, 1),  # noqa: S311
-                random.uniform(-1, 1),  # noqa: S311
-                random.uniform(-1, 1),  # noqa: S311
+                random.uniform(-1, 1),
+                random.uniform(-1, 1),
+                random.uniform(-1, 1),
             )
 
             agent = FlockingAgent(
@@ -589,8 +589,8 @@ class SwarmIntelligenceEngine:
 
         agent_positions = {
             agent_id: (
-                random.randint(0, environment_size[0] - 1),  # noqa: S311
-                random.randint(0, environment_size[1] - 1),  # noqa: S311
+                random.randint(0, environment_size[0] - 1),
+                random.randint(0, environment_size[1] - 1),
             )
             for agent_id in agents
         }
@@ -644,7 +644,7 @@ class SwarmIntelligenceEngine:
 
     def _stigmergic_movement(
         self,
-        agent_id: str,  # noqa: ARG002
+        agent_id: str,
         current_pos: tuple[int, int],
         environment_size: tuple[int, int],
     ) -> tuple[int, int]:
@@ -690,8 +690,8 @@ class SwarmIntelligenceEngine:
         x: int, y: int, environment_size: tuple[int, int]
     ) -> tuple[int, int]:
         """Move randomly within environment bounds."""
-        new_x = max(0, min(environment_size[0] - 1, x + random.randint(-1, 1)))  # noqa: S311
-        new_y = max(0, min(environment_size[1] - 1, y + random.randint(-1, 1)))  # noqa: S311
+        new_x = max(0, min(environment_size[0] - 1, x + random.randint(-1, 1)))
+        new_y = max(0, min(environment_size[1] - 1, y + random.randint(-1, 1)))
         return (new_x, new_y)
 
     def _decay_traces(self) -> None:

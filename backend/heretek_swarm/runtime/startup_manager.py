@@ -154,7 +154,7 @@ class StartupManager:
     def _build_agent_configs(
         self,
         agents: list[str],
-        tier_id: str,  # noqa: ARG002
+        tier_id: str,
     ) -> dict[str, Path]:
         """
         Build agent configuration paths from tier agents list.
@@ -250,7 +250,7 @@ async def run_startup_manager() -> None:
 
     try:
         # Keep running until stopped
-        while manager._running:  # noqa: SLF001,ASYNC110
+        while manager._running:
             await asyncio.sleep(1)
     except asyncio.CancelledError:
         logger.debug("Startup manager run loop cancelled")

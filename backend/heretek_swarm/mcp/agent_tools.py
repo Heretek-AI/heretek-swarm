@@ -153,7 +153,7 @@ def build_tool_handlers(
 
         # Build a synchronous wrapper.
         # If the handler is an async function, use asyncio.run() to bridge
-        # the sync‑to‑async gap.  If it is a plain sync function, call it  # noqa: RUF003
+        # the sync‑to‑async gap.  If it is a plain sync function, call it
         # directly.  This is safe because swarms.Agent executes tools
         # inside asyncio.to_thread() — no overlapping event loop conflict.
         def _make_wrapper(handler):
@@ -169,7 +169,7 @@ def build_tool_handlers(
                 except Exception as exc:
                     logger.error(
                         "agent_tool_handler_error",
-                        tool_name=name,  # noqa: B023
+                        tool_name=name,
                         error=str(exc),
                     )
                     return {"error": str(exc), "success": False}

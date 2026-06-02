@@ -177,7 +177,7 @@ class ExplorerAgent(
 
 
 # Backward-compatible module-level imports
-from heretek_swarm.actors.explorer.types import (  # noqa: E402
+from heretek_swarm.actors.explorer.types import (
     Anomaly,
     AnomalyType,
     IntelligenceReport,

@@ -42,7 +42,7 @@ class ContextValidationConfig:
 class ContextValidator:
     """Layer 2: Context Validation — injection detection, behavioral baseline, anomaly detection."""
 
-    CONTEXT_INJECTION_PATTERNS = [  # noqa: RUF012
+    CONTEXT_INJECTION_PATTERNS = [
         (r"ignore\s+(all\s+)?(previous|prior)\s+instructions", "prompt injection: ignore instructions"),
         (r"disregard\s+(all\s+)?(previous|prior)\s+", "prompt injection: disregard"),
         (r"you\s+are\s+now\s+", "prompt injection: role change"),

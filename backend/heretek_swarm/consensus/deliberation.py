@@ -193,7 +193,7 @@ class Argument:
         evidence_scores = []
         for ref in self.evidence_refs:
             if ref in evidence_dict:
-                evidence_scores.append(evidence_dict[ref].calculate_quality())  # noqa: PERF401
+                evidence_scores.append(evidence_dict[ref].calculate_quality())
 
         evidence_contribution = (
             sum(evidence_scores) / len(evidence_scores) if evidence_scores else 0.0
@@ -249,7 +249,7 @@ class CounterArgument:
         evidence_scores = []
         for ref in self.evidence_refs:
             if ref in evidence_dict:
-                evidence_scores.append(evidence_dict[ref].calculate_quality())  # noqa: PERF401
+                evidence_scores.append(evidence_dict[ref].calculate_quality())
 
         evidence_contribution = (
             sum(evidence_scores) / len(evidence_scores) if evidence_scores else 0.0
@@ -529,7 +529,7 @@ class DeliberationEngine:
         self._tiebreaker_invocations: dict[str, int] = {}
 
         logger.info(
-            f"DeliberationEngine initialized with max_rounds={self.config.max_rounds}, "  # noqa: G004
+            f"DeliberationEngine initialized with max_rounds={self.config.max_rounds}, "
             f"consensus_threshold={self.config.consensus_threshold:.2f}"
         )
 
@@ -557,7 +557,7 @@ class DeliberationEngine:
 
         if len(participants) < self.config.min_participants:
             logger.warning(
-                f"Insufficient participants: {len(participants)} < {self.config.min_participants}"  # noqa: G004
+                f"Insufficient participants: {len(participants)} < {self.config.min_participants}"
             )
 
         self.active_deliberations[deliberation_id] = {
@@ -579,7 +579,7 @@ class DeliberationEngine:
         self.position_change_history[deliberation_id] = []
 
         logger.info(
-            f"Started deliberation {deliberation_id}: '{topic}' "  # noqa: G004
+            f"Started deliberation {deliberation_id}: '{topic}' "
             f"with {len(participants)} participants"
         )
 
@@ -629,7 +629,7 @@ class DeliberationEngine:
             expertise_weight = self.expertise_profiler.get_expertise_score(agent_id, domain)
 
         argument = Argument(
-            argument_id=f"arg-{deliberation_id}-{len(self.active_deliberations[deliberation_id]['arguments']) + 1}",  # noqa: E501
+            argument_id=f"arg-{deliberation_id}-{len(self.active_deliberations[deliberation_id]['arguments']) + 1}",
             agent_id=agent_id,
             position=position,
             reasoning=reasoning,
@@ -664,7 +664,7 @@ class DeliberationEngine:
         }
 
         logger.debug(
-            f"Argument submitted in {deliberation_id}: {argument.argument_id} "  # noqa: G004
+            f"Argument submitted in {deliberation_id}: {argument.argument_id} "
             f"by {agent_id} ({position.value})"
         )
 
@@ -703,7 +703,7 @@ class DeliberationEngine:
             expertise_weight = self.expertise_profiler.get_expertise_score(agent_id, domain)
 
         counter = CounterArgument(
-            counter_id=f"counter-{deliberation_id}-{len(self.active_deliberations[deliberation_id]['counter_arguments']) + 1}",  # noqa: E501
+            counter_id=f"counter-{deliberation_id}-{len(self.active_deliberations[deliberation_id]['counter_arguments']) + 1}",
             original_argument_id=original_argument_id,
             agent_id=agent_id,
             counter_reasoning=counter_reasoning,
@@ -715,7 +715,7 @@ class DeliberationEngine:
         self.active_deliberations[deliberation_id]["counter_arguments"].append(counter)
 
         logger.debug(
-            f"Counter-argument submitted in {deliberation_id}: {counter.counter_id} by {agent_id}"  # noqa: G004
+            f"Counter-argument submitted in {deliberation_id}: {counter.counter_id} by {agent_id}"
         )
 
         return counter.counter_id
@@ -758,7 +758,7 @@ class DeliberationEngine:
         self.evidence_store[deliberation_id][evidence.evidence_id] = evidence
 
         logger.debug(
-            f"Evidence submitted in {deliberation_id}: {evidence.evidence_id} "  # noqa: G004
+            f"Evidence submitted in {deliberation_id}: {evidence.evidence_id} "
             f"(type: {evidence_type.value}, reliability: {reliability_score:.2f})"
         )
 
@@ -826,7 +826,7 @@ class DeliberationEngine:
             self.deliberation_states[deliberation_id] = "completed"
 
         logger.info(
-            f"Round {current_round} complete for {deliberation_id}: "  # noqa: G004
+            f"Round {current_round} complete for {deliberation_id}: "
             f"consensus={consensus_score:.2f}, outcome={outcome.value}"
         )
 
@@ -1008,7 +1008,7 @@ class DeliberationEngine:
         self.position_change_history[deliberation_id].append(change)
 
         logger.debug(
-            f"Position change recorded for {agent_id} in {deliberation_id}: "  # noqa: G004
+            f"Position change recorded for {agent_id} in {deliberation_id}: "
             f"{previous_position.value} -> {new_position.value} (round {round_number})"
         )
 
@@ -1074,7 +1074,7 @@ class DeliberationEngine:
         self._tiebreaker_invocations[deliberation_id] = invocation_count + 1
 
         logger.info(
-            f"Steward {steward_id} invoking tiebreaker for {deliberation_id} "  # noqa: G004
+            f"Steward {steward_id} invoking tiebreaker for {deliberation_id} "
             f"(invocation #{invocation_count + 1}), criteria: {criteria}"
         )
 
@@ -1130,7 +1130,7 @@ class DeliberationEngine:
         self.deliberation_states[deliberation_id] = "completed"
 
         logger.info(
-            f"Tiebreaker result for {deliberation_id}: {final_position.value} "  # noqa: G004
+            f"Tiebreaker result for {deliberation_id}: {final_position.value} "
             f"(consensus: {consensus_score:.2f}, tiebreaker: {criteria})"
         )
 
@@ -1139,7 +1139,7 @@ class DeliberationEngine:
     def _tiebreak_weighted_confidence(
         self,
         deliberation_id: str,
-        arguments: list[Argument],  # noqa: ARG002
+        arguments: list[Argument],
     ) -> Position:
         """
         Break tie using weighted confidence.
@@ -1162,7 +1162,7 @@ class DeliberationEngine:
     def _tiebreak_first_position(
         self,
         deliberation_id: str,
-        arguments: list[Argument],  # noqa: ARG002
+        arguments: list[Argument],
     ) -> Position:
         """
         Break tie using first position.
@@ -1185,7 +1185,7 @@ class DeliberationEngine:
 
     def _tiebreak_most_challenges(
         self,
-        deliberation_id: str,  # noqa: ARG002
+        deliberation_id: str,
         arguments: list[Argument],
     ) -> Position:
         """
@@ -1332,7 +1332,7 @@ class DeliberationEngine:
         )
 
         logger.info(
-            f"Deliberation {deliberation_id} finalized: "  # noqa: G004
+            f"Deliberation {deliberation_id} finalized: "
             f"{final_position.value} (consensus: {consensus_score:.2f})"
         )
 

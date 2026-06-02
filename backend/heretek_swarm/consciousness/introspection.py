@@ -396,10 +396,10 @@ class IntrospectionModule:
 
         # Check for conflicts if confidence changed significantly
         if abs(new_confidence - old_confidence) > 0.2:
-            self.self_model._detect_belief_conflict(belief, old_confidence)  # noqa: SLF001
+            self.self_model._detect_belief_conflict(belief, old_confidence)
 
-        self.self_model._update_count += 1  # noqa: SLF001
-        self.self_model._maybe_take_snapshot()  # noqa: SLF001
+        self.self_model._update_count += 1
+        self.self_model._maybe_take_snapshot()
 
         logger.info(
             "Belief updated from outcome",
@@ -634,10 +634,10 @@ class IntrospectionModule:
 
             # Update parent goal progress if applicable
             if goal.parent_goal_id and goal.parent_goal_id in self.self_model.goals:
-                self.self_model._update_parent_progress(goal.parent_goal_id)  # noqa: SLF001
+                self.self_model._update_parent_progress(goal.parent_goal_id)
 
             # Unblock dependent goals
-            self.self_model._unblock_dependent_goals(goal_id)  # noqa: SLF001
+            self.self_model._unblock_dependent_goals(goal_id)
 
         # Handle success/failure
         success = outcome.get("success")
@@ -672,8 +672,8 @@ class IntrospectionModule:
         self._goal_evolution_history.append(evolution_record)
         self._trim_evolution_history()
 
-        self.self_model._update_count += 1  # noqa: SLF001
-        self.self_model._maybe_take_snapshot()  # noqa: SLF001
+        self.self_model._update_count += 1
+        self.self_model._maybe_take_snapshot()
 
         logger.info(
             "Goal progress tracked",
@@ -727,9 +727,9 @@ class IntrospectionModule:
         # Build evolution history
         evolution_history = []
         for record in self._belief_evolution_history[-50:]:
-            evolution_history.append(record.to_dict())  # noqa: PERF401
+            evolution_history.append(record.to_dict())
         for record in self._goal_evolution_history[-50:]:
-            evolution_history.append(record.to_dict())  # noqa: PERF401
+            evolution_history.append(record.to_dict())
 
         # Sort by timestamp
         evolution_history.sort(key=lambda x: x.get("timestamp", ""), reverse=True)
@@ -805,8 +805,8 @@ class IntrospectionModule:
         self._trim_evolution_history()
 
         if changes:
-            self.self_model._update_count += 1  # noqa: SLF001
-            self.self_model._maybe_take_snapshot()  # noqa: SLF001
+            self.self_model._update_count += 1
+            self.self_model._maybe_take_snapshot()
 
         logger.debug("Confidence decay applied", extra={"affected_beliefs": len(changes)})
 
@@ -897,7 +897,7 @@ class IntrospectionModule:
             True if beliefs are in conflict.
         """
         # Use existing method from SelfModel
-        return self.self_model._are_beliefs_conflicting(b1, b2)  # noqa: SLF001
+        return self.self_model._are_beliefs_conflicting(b1, b2)
 
     def _suggest_resolution(
         self,
@@ -967,7 +967,7 @@ class IntrospectionModule:
         else:  # AVERAGE
             avg_confidence = (b1.confidence + b2.confidence) / 2
             return (
-                f"Consider averaging confidence values: ({b1.confidence:.2f} + {b2.confidence:.2f}) / 2 = {avg_confidence:.2f}",  # noqa: E501
+                f"Consider averaging confidence values: ({b1.confidence:.2f} + {b2.confidence:.2f}) / 2 = {avg_confidence:.2f}",
                 ConflictResolutionStrategy.AVERAGE,
             )
 

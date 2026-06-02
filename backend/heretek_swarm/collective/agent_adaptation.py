@@ -897,7 +897,7 @@ class PatternBasedAgentAdaptor:
                 # NOTE: random for probabilistic adaptation - not security-critical
                 import random
 
-                if random.random() < confidence:  # noqa: S311
+                if random.random() < confidence:
                     weight.current_value = target_value
 
             weight.last_updated = datetime.now(UTC).isoformat()
@@ -910,7 +910,7 @@ class PatternBasedAgentAdaptor:
         self,
         state: AgentAdaptationState,
         pattern: ExtractedPattern,
-        strategy: AdaptationStrategy,  # noqa: ARG002
+        strategy: AdaptationStrategy,
     ) -> bool:
         """Apply strategy selection changes from pattern."""
         pattern_data = pattern.pattern_data
@@ -973,9 +973,9 @@ class PatternBasedAgentAdaptor:
 
     async def _apply_communication_changes(
         self,
-        state: AgentAdaptationState,  # noqa: ARG002
-        pattern: ExtractedPattern,  # noqa: ARG002
-        strategy: AdaptationStrategy,  # noqa: ARG002
+        state: AgentAdaptationState,
+        pattern: ExtractedPattern,
+        strategy: AdaptationStrategy,
     ) -> bool:
         """Apply communication style changes from pattern."""
         # Implementation for communication style adaptation
@@ -983,9 +983,9 @@ class PatternBasedAgentAdaptor:
 
     async def _apply_collaboration_changes(
         self,
-        state: AgentAdaptationState,  # noqa: ARG002
-        pattern: ExtractedPattern,  # noqa: ARG002
-        strategy: AdaptationStrategy,  # noqa: ARG002
+        state: AgentAdaptationState,
+        pattern: ExtractedPattern,
+        strategy: AdaptationStrategy,
     ) -> bool:
         """Apply collaboration preference changes from pattern."""
         # Implementation for collaboration preference adaptation
@@ -993,9 +993,9 @@ class PatternBasedAgentAdaptor:
 
     async def _apply_resource_changes(
         self,
-        state: AgentAdaptationState,  # noqa: ARG002
-        pattern: ExtractedPattern,  # noqa: ARG002
-        strategy: AdaptationStrategy,  # noqa: ARG002
+        state: AgentAdaptationState,
+        pattern: ExtractedPattern,
+        strategy: AdaptationStrategy,
     ) -> bool:
         """Apply resource allocation changes from pattern."""
         # Implementation for resource allocation adaptation
@@ -1003,9 +1003,9 @@ class PatternBasedAgentAdaptor:
 
     async def _apply_risk_changes(
         self,
-        state: AgentAdaptationState,  # noqa: ARG002
-        pattern: ExtractedPattern,  # noqa: ARG002
-        strategy: AdaptationStrategy,  # noqa: ARG002
+        state: AgentAdaptationState,
+        pattern: ExtractedPattern,
+        strategy: AdaptationStrategy,
     ) -> bool:
         """Apply risk tolerance changes from pattern."""
         # Implementation for risk tolerance adaptation
@@ -1082,7 +1082,7 @@ class PatternBasedAgentAdaptor:
             agent_id=event.agent_id,
             action=f"apply_pattern_{event.target.value}",
             actor="pattern_based_adaptor",
-            justification=f"Pattern {pattern.metadata.pattern_id} applied with confidence {pattern.metadata.confidence}",  # noqa: E501
+            justification=f"Pattern {pattern.metadata.pattern_id} applied with confidence {pattern.metadata.confidence}",
             risk_assessment=min(risk, 1.0),
             rollback_available=True,
             rollback_data=event.old_values,
@@ -1091,7 +1091,7 @@ class PatternBasedAgentAdaptor:
     def _score_strategy(
         self,
         profile: StrategyProfile,
-        context: dict[str, Any],  # noqa: ARG002
+        context: dict[str, Any],
     ) -> float:
         """Score a strategy based on context."""
         # Base score from priority

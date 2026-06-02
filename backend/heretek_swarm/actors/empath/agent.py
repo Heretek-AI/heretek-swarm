@@ -198,7 +198,7 @@ class EmpathAgent(
                 await handler(message)
             except Exception as e:
                 logger.exception(
-                    f"[{self.agent_id}] Error processing message {message.message_type}: {e}",  # noqa: G004
+                    f"[{self.agent_id}] Error processing message {message.message_type}: {e}",
 
                 )
                 self.error_count += 1
@@ -231,7 +231,7 @@ class EmpathAgent(
             return validate_message(message_type, content)
         except ValidationError as e:
             logger.warning(
-                f"[{self.agent_id}] Message validation failed for {message_type}: {e}",  # noqa: G004
+                f"[{self.agent_id}] Message validation failed for {message_type}: {e}",
                 extra={"validation_errors": e.errors()},
             )
             raise ValueError(f"Invalid message format: {e.errors()}") from e
@@ -302,7 +302,7 @@ class EmpathAgent(
             )
 
             logger.debug(
-                f"[{self.agent_id}] Sentiment analyzed for {source_agent}",  # noqa: G004
+                f"[{self.agent_id}] Sentiment analyzed for {source_agent}",
                 extra={"sentiment": sentiment_result["sentiment"]},
             )
 
@@ -311,7 +311,7 @@ class EmpathAgent(
             await self._send_error_response(message, f"Sentiment analysis failed: {e}")
 
     async def _analyze_sentiment_llm(
-        self, text: str, source_agent: str | None = None, context: dict[str, Any] | None = None  # noqa: ARG002
+        self, text: str, source_agent: str | None = None, context: dict[str, Any] | None = None
     ) -> dict[str, Any]:
         context = context or {}
         """
@@ -552,7 +552,7 @@ Provide your analysis in this exact JSON format:
         # Check for high stress alert
         if stress_level > self.stress_threshold:
             logger.warning(
-                f"[{self.agent_id}] High stress detected for agent {agent_id}",  # noqa: G004
+                f"[{self.agent_id}] High stress detected for agent {agent_id}",
                 extra={"stress_level": stress_level},
             )
 
@@ -840,7 +840,7 @@ Return as JSON: {{"resolution": "...", "reasoning": "..."}}
         # Fallback mediation
         return {
             "resolution": "Consider taking a break and revisiting this discussion later.",
-            "reasoning": "High stress or conflicting sentiments detected. Cooling-off period recommended.",  # noqa: E501
+            "reasoning": "High stress or conflicting sentiments detected. Cooling-off period recommended.",
         }
 
     async def _handle_get_collective_mood(self, message: ActorMessage) -> None:
@@ -988,7 +988,7 @@ Format your response as a clear analysis with these three elements.
 
         except TimeoutError:
             logger.warning(
-                f"[{self.agent_id}] On-demand sentiment analysis timed out",  # noqa: G004
+                f"[{self.agent_id}] On-demand sentiment analysis timed out",
                 extra={"text_preview": text[:60]},
             )
             return {
@@ -999,7 +999,7 @@ Format your response as a clear analysis with these three elements.
 
         except Exception as e:
             logger.exception(
-                f"[{self.agent_id}] On-demand sentiment analysis failed: {e}",  # noqa: G004
+                f"[{self.agent_id}] On-demand sentiment analysis failed: {e}",
 
             )
             return {
@@ -1040,7 +1040,7 @@ Format your response as a clear analysis with these three elements.
             return
 
         logger.info(
-            f"[{self.agent_id}] Performing on-demand sentiment analysis",  # noqa: G004
+            f"[{self.agent_id}] Performing on-demand sentiment analysis",
             extra={
                 "text_preview": text[:80],
                 "source_agent": source_agent,
@@ -1065,7 +1065,7 @@ Format your response as a clear analysis with these three elements.
             )
 
         logger.info(
-            f"[{self.agent_id}] On-demand sentiment analysis complete",  # noqa: G004
+            f"[{self.agent_id}] On-demand sentiment analysis complete",
             extra={
                 "sentiment": result["sentiment"],
                 "confidence": result["confidence"],

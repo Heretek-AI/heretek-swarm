@@ -762,7 +762,7 @@ class AdversarialDetector:
 
         for pattern, description, category, confidence in patterns:
             for match in pattern.finditer(text):
-                matches.append(  # noqa: PERF401
+                matches.append(
                     DetectionMatch(
                         pattern=pattern.pattern,
                         description=description,
@@ -882,7 +882,7 @@ class AdversarialDetector:
         return list(mappings)
 
     def _generate_recommendation(
-        self, threat_level: ThreatLevel, categories: set[AttackCategory]  # noqa: ARG002
+        self, threat_level: ThreatLevel, categories: set[AttackCategory]
     ) -> str:
         """Generate action recommendation based on threat."""
         if threat_level == ThreatLevel.CRITICAL:
@@ -924,7 +924,7 @@ class OWASPComplianceReporter:
     compliance status and remediation recommendations.
     """
 
-    OWASP_DESCRIPTIONS = {  # noqa: RUF012
+    OWASP_DESCRIPTIONS = {
         OWASPCategory.LLM01_PROMPT_INJECTION: {
             "name": "Prompt Injection",
             "description": "Attackers manipulate LLM inputs to execute unintended actions",

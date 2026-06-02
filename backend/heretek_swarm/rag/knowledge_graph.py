@@ -433,7 +433,7 @@ class KnowledgeGraphRetriever:
         headings: list[dict[str, Any]] = []
         for chunk in doc_chunks:
             if chunk.level == 0:  # Root chunks
-                headings.append(  # noqa: PERF401
+                headings.append(
                     {
                         "heading_path": chunk.heading_path,
                         "level": chunk.level,

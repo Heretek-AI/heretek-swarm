@@ -166,7 +166,7 @@ def _read_embedding_providers() -> tuple[dict, list[dict]]:
     path = get_config_path()
     if not path.exists():
         return {"version": "1.0.0"}, []
-    with open(path, encoding="utf-8") as f:  # noqa: PTH123
+    with open(path, encoding="utf-8") as f:
         data: dict = json.load(f)
     return data, data.get("embeddingProviders", [])
 
@@ -181,7 +181,7 @@ def _write_embedding_providers(full_config: dict, embedding_list: list[dict]) ->
     tmp = path.with_suffix(path.suffix + ".tmp")
     try:
         path.parent.mkdir(parents=True, exist_ok=True)
-        with open(tmp, "w", encoding="utf-8") as f:  # noqa: PTH123
+        with open(tmp, "w", encoding="utf-8") as f:
             json.dump(full_config, f, indent=2)
             f.flush()
             _os.fsync(f.fileno())

@@ -719,7 +719,7 @@ class LoadBalancer:
         self._cleanup_sessions()
 
         # Check for sticky session
-        if session_id and self.strategy == LoadBalancingStrategy.STICKY_SESSION:  # noqa: SIM102
+        if session_id and self.strategy == LoadBalancingStrategy.STICKY_SESSION:
             if session_id in self._session_map:
                 instance_id = self._session_map[session_id]
                 if instance_id in self._healthy_instances:
@@ -783,7 +783,7 @@ class LoadBalancer:
         total_weight = sum(self._weights[iid] for iid in healthy)
         import random
 
-        r = random.uniform(0, total_weight)  # noqa: S311
+        r = random.uniform(0, total_weight)
 
         cumulative = 0
         for instance_id in healthy:

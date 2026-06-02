@@ -528,7 +528,7 @@ Format as JSON with keys: objectives, test_cases, success_criteria, risks"""
                 "risks": [str(e)],
             }
 
-    async def _execute_test_case(self, test_case: dict[str, Any], timeout: int) -> TestCase:  # noqa: ASYNC109
+    async def _execute_test_case(self, test_case: dict[str, Any], timeout: int) -> TestCase:
         """Execute a single test case."""
         start_time = datetime.now(UTC)
 
@@ -681,7 +681,7 @@ Return JSON with keys: valid (bool), confidence (0-1), issues (list), recommenda
             }
 
     async def _analyze_quality_metrics(
-        self, target: str, target_type: str, metrics: list[QualityMetric]  # noqa: ARG002
+        self, target: str, target_type: str, metrics: list[QualityMetric]
     ) -> dict[QualityMetric, float]:
         """Analyze quality metrics for target."""
         results = {}

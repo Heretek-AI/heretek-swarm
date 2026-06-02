@@ -236,7 +236,7 @@ async def update_workflow(
     try:
         workflow = await engine.update_workflow(workflow_id, workflow_definition)
     except ValueError:
-        raise HTTPException(status_code=404, detail=_WORKFLOW_NOT_FOUND)  # noqa: B904
+        raise HTTPException(status_code=404, detail=_WORKFLOW_NOT_FOUND)
 
     logger.info("workflow_updated", workflow_id=workflow.id, name=workflow.name)
 

@@ -118,7 +118,7 @@ class SafeExpressionEvaluator:
     )
 
     # Safe binary operators
-    SAFE_BIN_OPS = {  # noqa: RUF012
+    SAFE_BIN_OPS = {
         ast.Add: operator.add,
         ast.Sub: operator.sub,
         ast.Mult: operator.mul,

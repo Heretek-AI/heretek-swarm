@@ -78,7 +78,7 @@ class Character:
     @classmethod
     def from_json(cls, json_path: Path) -> "Character":
         """Load a character from a JSON file."""
-        with open(json_path, encoding="utf-8") as f:  # noqa: PTH123
+        with open(json_path, encoding="utf-8") as f:
             data = json.load(f)
         return cls.from_dict(data)
 
