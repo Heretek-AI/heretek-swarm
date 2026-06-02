@@ -14,6 +14,9 @@ from typing import Any
 
 import structlog
 
+from heretek_swarm.memory.cognee_reader import CogneeMemoryReader
+from heretek_swarm.memory.cognee_writer import CogneeMemoryWriter
+
 logger = structlog.get_logger(__name__)
 
 
@@ -55,6 +58,8 @@ class AgentRuntime:
         model_provider: str = "openai",
         model_name: str = "gpt-4o",
         character: dict | None = None,
+        cognee_reader: CogneeMemoryReader | None = None,
+        cognee_writer: CogneeMemoryWriter | None = None,
     ):
         self.agent_id = agent_id
         self.model_provider = model_provider
@@ -62,6 +67,8 @@ class AgentRuntime:
         self.character = character or {}
         self.context = AgentContext(agent_id=agent_id)
         self._memory = None  # Injected
+        self._cognee_reader = cognee_reader
+        self._cognee_writer = cognee_writer
         self._tools: dict[str, Callable] = {}
         self._initialized = False
 
@@ -96,19 +103,11 @@ class AgentRuntime:
         try:
             # Get relevant memories
             memories = []
-            if self._memory:
+            if self._cognee_reader:
                 try:
-                    from memory.base import MemoryQuery
-
-                    query = MemoryQuery(
-                        query_text=prompt,
-                        agent_ids=[self.agent_id],
-                        limit=5,
-                    )
-                    result = await self._memory.search(query)
-                    memories = result.entries[:5]
+                    memories = await self._cognee_reader.read(query=prompt, top_k=5)
                 except Exception as e:
-                    logger.warning("memory_search_failed", error=str(e))
+                    logger.warning("cognee_search_failed", error=str(e))
 
             # Build context with memories
             context = self._build_context(memories, prompt)
@@ -158,20 +157,11 @@ class AgentRuntime:
             result = await self._tools[action](**params)
 
             # Store action in memory
-            if self._memory:
+            if self._cognee_writer:
                 try:
-                    from memory.base import MemoryEntry, MemoryTier, MemoryType
-
-                    entry = MemoryEntry(
-                        agent_id=self.agent_id,
-                        content=f"Executed {action} with {params}",
-                        memory_type=MemoryType.EPISODIC,
-                        tier=MemoryTier.PERSISTENT,
-                        metadata={"type": "action", "action": action, "result": str(result)},
-                    )
-                    await self._memory.store(entry)
+                    await self._cognee_writer.store(content=f"Executed {action} with {params}")
                 except Exception as e:
-                    logger.warning("memory_store_failed", error=str(e))
+                    logger.warning("cognee_store_failed", error=str(e))
 
             return result
 
@@ -207,7 +197,7 @@ class AgentRuntime:
 
         # Memories
         if memories:
-            memory_texts = [m.content for m in memories[:5]]
+            memory_texts = [m["content"] for m in memories[:5]]
             context_parts.append("Memories:\n" + "\n".join(f"- {m}" for m in memory_texts))
 
         # Conversation history (last 10)

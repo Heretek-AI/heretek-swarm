@@ -202,32 +202,21 @@ async def search_memory(query: str, agent_id: str, limit: int = 5, memory_backen
         query: Search query
         agent_id: Agent ID
         limit: Max results
-        memory_backend: Memory backend instance
+        memory_backend: CogneeMemoryReader instance
     """
     if not memory_backend:
         return {"error": "Memory backend not available"}
 
-    from memory.base import MemoryQuery
-
-    search_query = MemoryQuery(
-        query_text=query,
-        agent_ids=[agent_id],
-        limit=limit,
-    )
-
-    result = await memory_backend.search(search_query)
+    try:
+        results = await memory_backend.read(query=query, top_k=limit)
+    except Exception as e:
+        logger.warning("cognee_search_failed", error=str(e))
+        return {"query": query, "results": [], "total": 0, "error": str(e)}
 
     return {
         "query": query,
-        "results": [
-            {
-                "content": entry.content,
-                "memory_type": entry.memory_type.value,
-                "importance": entry.importance_score,
-            }
-            for entry in result.entries
-        ],
-        "total": result.total_count,
+        "results": results,
+        "total": len(results),
     }
 
 

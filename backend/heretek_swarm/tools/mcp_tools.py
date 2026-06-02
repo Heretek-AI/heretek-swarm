@@ -392,12 +392,14 @@ class CoreMCPTools:
 
     def __init__(
         self,
-        memory_system=None,
+        cognee_reader=None,
+        cognee_writer=None,
         rag_pipeline=None,
         consensus_engine=None,
         event_mesh=None,
     ):
-        self.memory = memory_system
+        self._cognee_reader = cognee_reader
+        self._cognee_writer = cognee_writer
         self.rag = rag_pipeline
         self.consensus = consensus_engine
         self.event_mesh = event_mesh
@@ -417,51 +419,50 @@ class CoreMCPTools:
     async def _handle_memory_store(
         self, arguments: dict[str, Any], context: dict | None = None
     ) -> dict:
-        """Handle memory store request."""
-        if not self.memory:
-            return {"error": "Memory system not initialized"}
+        """Handle memory store request via CogneeMemoryWriter."""
+        if not self._cognee_writer:
+            return {"error": "Cognee writer not initialized"}
 
         content = arguments.get("content")
-        metadata = arguments.get("metadata", {})
-        importance = arguments.get("importance", 0.5)
+        dataset = arguments.get("dataset", "default")
 
-        result = await self.memory.store(
-            content={"text": content, **metadata},
-            metadata={
-                "importance": importance,
-                "source": context.get("agent_id", "unknown") if context else "unknown",
-            },
+        result = await self._cognee_writer.store(
+            content=content,
+            dataset=dataset,
         )
 
         return {
-            "memory_id": getattr(result, "id", "unknown"),
+            "stored": result,
+            "dataset": dataset,
             "stored_at": datetime.now(UTC).isoformat(),
         }
 
     async def _handle_memory_retrieve(
         self, arguments: dict[str, Any], context: dict | None = None
     ) -> dict:
-        """Handle memory retrieve request."""
-        if not self.memory:
-            return {"error": "Memory system not initialized"}
+        """Handle memory retrieve request via CogneeMemoryReader."""
+        if not self._cognee_reader:
+            return {"error": "Cognee reader not initialized"}
 
         query = arguments.get("query")
-        limit = arguments.get("limit", 10)
-        arguments.get("tier", "all")
+        top_k = arguments.get("limit", 5)
+        dataset = arguments.get("dataset")
 
-        results = await self.memory.query(
-            query_text=query,
-            limit=limit,
+        results = await self._cognee_reader.read(
+            query=query,
+            top_k=top_k,
+            dataset=dataset,
         )
 
         return {
             "entries": [
                 {
-                    "content": entry.content if hasattr(entry, "content") else entry,
-                    "metadata": getattr(entry, "metadata", {}),
-                    "score": getattr(entry, "similarity", 0),
+                    "content": entry.get("content", ""),
+                    "score": entry.get("score", 0),
+                    "dataset": entry.get("dataset", ""),
+                    "metadata": entry.get("metadata", {}),
                 }
-                for entry in (results.entries if hasattr(results, "entries") else results)
+                for entry in results
             ]
         }
 
@@ -682,7 +683,8 @@ class CoreMCPTools:
             "status": "healthy",
             "timestamp": datetime.now(UTC).isoformat(),
             "components": {
-                "memory": "initialized" if self.memory else "not_initialized",
+                "cognee_reader": "initialized" if self._cognee_reader else "not_initialized",
+                "cognee_writer": "initialized" if self._cognee_writer else "not_initialized",
                 "rag": "initialized" if self.rag else "not_initialized",
                 "consensus": "initialized" if self.consensus else "not_initialized",
                 "event_mesh": "initialized" if self.event_mesh else "not_initialized",

@@ -35,7 +35,8 @@ from heretek_swarm.consensus.election_manager import ElectionManager
 from heretek_swarm.consensus.maker import MAKERConsensus
 from heretek_swarm.gateway.nats_event_mesh import NATSEventMeshWithJetStream
 from heretek_swarm.llm.model_garage import ModelGarage
-from heretek_swarm.memory.base import DualTierMemory
+from heretek_swarm.memory.cognee_reader import CogneeMemoryReader
+from heretek_swarm.memory.cognee_writer import CogneeMemoryWriter
 from heretek_swarm.rag.rag_pipeline import RAGPipeline
 from heretek_swarm.routing.model_router import set_global_model_garage
 from heretek_swarm.runtime.actor_orchestrator import ActorOrchestrator
@@ -61,7 +62,8 @@ class AutonomousSwarm:
         config: Configuration dictionary
         supervisor: Actor supervisor for health monitoring
         event_mesh: NATS event mesh for communication
-        memory: Dual-tier memory system
+        _cognee_reader: Cognee read client for graph-augmented retrieval
+        _cognee_writer: Cognee write client for knowledge ingestion
         rag: RAG pipeline for knowledge retrieval
         consensus: MAKER consensus engine
         channel_registry: Communication channel registry
@@ -78,7 +80,8 @@ class AutonomousSwarm:
         # Core components (initialized in initialize())
         self.supervisor: ActorSupervisor | None = None
         self.event_mesh: NATSEventMeshWithJetStream | None = None
-        self.memory: DualTierMemory | None = None
+        self._cognee_reader: CogneeMemoryReader | None = None
+        self._cognee_writer: CogneeMemoryWriter | None = None
         self.rag: RAGPipeline | None = None
         self.consensus: MAKERConsensus | None = None
         self.channel_registry: ChannelRegistry | None = None
@@ -210,8 +213,11 @@ class AutonomousSwarm:
             confidence_threshold=consensus_config.get("red_flag_threshold", 0.3),
         )
         self.mcp_tools = CoreMCPTools(
-            memory_system=None, rag_pipeline=self.rag,
-            consensus_engine=self.consensus, event_mesh=None,
+            cognee_reader=None,
+            cognee_writer=None,
+            rag_pipeline=self.rag,
+            consensus_engine=self.consensus,
+            event_mesh=None,
         )
         from heretek_swarm.mcp.bridge import sync_mcp_registries
         bridged = sync_mcp_registries(self.mcp_tools)
@@ -249,15 +255,19 @@ class AutonomousSwarm:
 
     async def _initialize_memory(self) -> None:
         try:
-            self.memory = DualTierMemory(
-                ephemeral_config=self.config.get("ephemeral", {}),
-                persistent_config=self.config.get("persistent", {}),
+            self._cognee_reader = CogneeMemoryReader()
+            self._cognee_writer = CogneeMemoryWriter()
+            reader_ok = await self._cognee_reader.health()
+            writer_ok = await self._cognee_writer.health()
+            logger.info(
+                "cognee_memory_initialized",
+                reader_ok=reader_ok,
+                writer_ok=writer_ok,
             )
-            await self.memory.initialize()
-            logger.info("memory_system_initialized")
         except Exception as exc:
-            logger.warning("memory_init_failed", error=str(exc))
-            self.memory = None
+            logger.warning("cognee_memory_init_failed", error=str(exc))
+            self._cognee_reader = None
+            self._cognee_writer = None
 
     async def _initialize_rag(self) -> None:
         try:
@@ -323,8 +333,11 @@ class AutonomousSwarm:
     async def _initialize_mcp_tools(self) -> None:
         try:
             self.mcp_tools = CoreMCPTools(
-                memory_system=self.memory, rag_pipeline=self.rag,
-                consensus_engine=self.consensus, event_mesh=self.event_mesh,
+                cognee_reader=self._cognee_reader,
+                cognee_writer=self._cognee_writer,
+                rag_pipeline=self.rag,
+                consensus_engine=self.consensus,
+                event_mesh=self.event_mesh,
             )
             from heretek_swarm.mcp.bridge import sync_mcp_registries
             bridged = sync_mcp_registries(self.mcp_tools)
@@ -455,7 +468,8 @@ class AutonomousSwarm:
         """Return startup status of each component for diagnostics."""
         status: dict[str, str] = {}
         self._add_component_status(status, "Channels", self.channel_registry)
-        self._add_component_status(status, "Memory", self.memory)
+        self._add_component_status(status, "Cognee Reader", self._cognee_reader)
+        self._add_component_status(status, "Cognee Writer", self._cognee_writer)
         self._add_component_status(status, "RAG", self.rag)
         self._add_component_status(status, "Consensus", self.consensus)
         self._add_component_status(status, "Event Mesh", self.event_mesh, "Connected")
@@ -767,8 +781,10 @@ class AutonomousSwarm:
         while self._running:
             try:
                 # Run memory maintenance
-                if self.memory:
-                    await self.memory.run_maintenance()
+                if self._cognee_reader:
+                    await self._cognee_reader.health()
+                if self._cognee_writer:
+                    await self._cognee_writer.health()
 
                 logger.debug("memory_maintenance_completed")
 
@@ -899,6 +915,14 @@ class AutonomousSwarm:
         if self.rag:
             await self.rag.shutdown()
             logger.info("rag_shutdown_complete")
+
+        # Close Cognee clients
+        if self._cognee_reader:
+            await self._cognee_reader.close()
+            logger.info("cognee_reader_closed")
+        if self._cognee_writer:
+            await self._cognee_writer.close()
+            logger.info("cognee_writer_closed")
 
         # Close ModelGarage
         if self.model_garage:
