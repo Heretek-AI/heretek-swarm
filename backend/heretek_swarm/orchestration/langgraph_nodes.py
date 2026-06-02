@@ -126,6 +126,17 @@ _PHASE_METHODS: dict[WorkflowPhase, str] = {
     WorkflowPhase.DECISION: "_decision_phase",
 }
 
+# Each non-first phase receives the previous phase's ``PhaseResult.output``
+# as an extra positional arg (see ``HeavySwarmWorkflow.execute``). The
+# bridge reads this from ``state.phase_results`` so the StateGraph can
+# drive phases independently.
+_PREVIOUS_PHASE: dict[WorkflowPhase, WorkflowPhase] = {
+    WorkflowPhase.ANALYSIS: WorkflowPhase.RESEARCH,
+    WorkflowPhase.ALTERNATIVES: WorkflowPhase.ANALYSIS,
+    WorkflowPhase.VERIFICATION: WorkflowPhase.ALTERNATIVES,
+    WorkflowPhase.DECISION: WorkflowPhase.VERIFICATION,
+}
+
 
 def legacy_phase_node(phase: WorkflowPhase, workflow: HeavySwarmWorkflow | None = None):
     """Build a LangGraph node that delegates to ``HeavySwarmWorkflow``.
@@ -171,14 +182,22 @@ def legacy_phase_node(phase: WorkflowPhase, workflow: HeavySwarmWorkflow | None 
         topic = state.get("topic", "")
         context = state.get("context", {})
         workflow_id = state.get("workflow_id", "")
-        try:
-            phase_result = await workflow._execute_phase(
-                workflow_id=workflow_id,
-                phase=phase,
-                phase_func=method,
-                topic=topic,
-                context=context,
+
+        # Build the call to match HeavySwarmWorkflow._execute_phase's
+        # real signature: (workflow_id, phase, phase_func, *args).
+        # Phases 2-5 receive the previous phase's output as an extra
+        # positional arg (see _PREVIOUS_PHASE above).
+        call_args: list[Any] = [workflow_id, phase, method, topic, context]
+        prev_phase = _PREVIOUS_PHASE.get(phase)
+        if prev_phase is not None:
+            prev_result = (state.get("phase_results") or {}).get(
+                prev_phase.value
             )
+            if prev_result is not None:
+                call_args.append(prev_result.output)
+
+        try:
+            phase_result = await workflow._execute_phase(*call_args)
         except Exception as e:
             logger.exception(
                 "legacy_phase_node_failed",

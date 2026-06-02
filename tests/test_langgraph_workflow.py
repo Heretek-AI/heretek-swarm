@@ -117,6 +117,7 @@ class TestLegacyPhaseNodeBridge:
                 duration_ms=42.0,
             )
         )
+        workflow._research_phase = MagicMock()
         node = langgraph_nodes.legacy_phase_node(
             WorkflowPhase.RESEARCH, workflow
         )
@@ -130,11 +131,13 @@ class TestLegacyPhaseNodeBridge:
         result = asyncio.run(node(state))
         assert result["current_phase"] == "research"
         workflow._execute_phase.assert_awaited_once()
-        call_kwargs = workflow._execute_phase.await_args.kwargs
-        assert call_kwargs["workflow_id"] == "wf-1"
-        assert call_kwargs["phase"] == WorkflowPhase.RESEARCH
-        assert call_kwargs["topic"] == "t"
-        assert call_kwargs["context"] == {"k": "v"}
+        # Real signature: (workflow_id, phase, phase_func, topic, context)
+        call_args = workflow._execute_phase.await_args.args
+        assert call_args[0] == "wf-1"
+        assert call_args[1] == WorkflowPhase.RESEARCH
+        assert call_args[2] is workflow._research_phase
+        assert call_args[3] == "t"
+        assert call_args[4] == {"k": "v"}
 
     def test_legacy_node_stores_phase_result(self) -> None:
         """legacy_phase_node stores the PhaseResult in state.phase_results."""
@@ -192,10 +195,12 @@ class TestLegacyPhaseNodeBridge:
 class TestPublicContractPreserved:
     def test_workflow_phase_enum_preserved(self) -> None:
         """The WorkflowPhase enum is imported from heavyswarm (no duplication)."""
-        from heretek_swarm.orchestration.heavyswarm import WorkflowPhase as _WP
+        from heretek_swarm.orchestration.heavyswarm import (
+            WorkflowPhase as _wp,  # noqa: N813 — aliased to avoid shadowing the module-level import
+        )
 
         # langgraph_nodes re-imports WorkflowPhase from heavyswarm
-        assert _WP is langgraph_nodes.WorkflowPhase
+        assert _wp is langgraph_nodes.WorkflowPhase
 
     def test_phase_result_importable(self) -> None:
         """PhaseResult is importable from both the legacy and new modules."""
