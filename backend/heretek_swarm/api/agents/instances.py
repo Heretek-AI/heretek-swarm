@@ -632,7 +632,7 @@ def _uptime_seconds(created_at: str | None) -> int | None:
     try:
         created = datetime.fromisoformat(created_at)
         return int((datetime.now(UTC) - created).total_seconds())
-    except (ValueError, TypeError):
+    except (ValueError, TypeError) as e:
         return None
 
 

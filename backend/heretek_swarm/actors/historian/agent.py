@@ -266,7 +266,7 @@ class HistorianAgent(
                 metadata = message.content.get("metadata", {})
                 ttl = message.content.get("ttl")
                 persistent = message.content.get("persistent", False)
-        except ValueError:
+        except ValueError as e:
             logger.error(f"[{self.agent_id}] Store memory validation failed: {e}")
             return
 
@@ -318,7 +318,7 @@ class HistorianAgent(
                 topic = message.content.get("topic")
                 filters = message.content.get("filters", {})
                 window_size = message.content.get("window_size", self.context_window)
-        except ValueError:
+        except ValueError as e:
             logger.error(f"[{self.agent_id}] Retrieve context validation failed: {e}")
             return
 
@@ -356,7 +356,7 @@ class HistorianAgent(
                 query_text = message.content.get("query_text")
                 filters = message.content.get("filters", {})
                 limit = message.content.get("limit", 10)
-        except ValueError:
+        except ValueError as e:
             logger.error(f"[{self.agent_id}] Query history validation failed: {e}")
             return
 
@@ -392,7 +392,7 @@ class HistorianAgent(
                 # Fallback to unvalidated access
                 decision_id = message.content.get("decision_id")
                 parent_ids = message.content.get("parent_ids", [])
-        except ValueError:
+        except ValueError as e:
             logger.error(f"[{self.agent_id}] Track lineage validation failed: {e}")
             return
 
@@ -428,7 +428,7 @@ class HistorianAgent(
             else:
                 # Fallback to unvalidated access
                 current_situation = message.content.get("situation")
-        except ValueError:
+        except ValueError as e:
             logger.error(f"[{self.agent_id}] Pattern match validation failed: {e}")
             return
 
@@ -942,7 +942,7 @@ class HistorianAgent(
                     "confidence": 0.8,
                     "synthesized_at": datetime.now(UTC).isoformat(),
                 }
-            except TimeoutError:
+            except TimeoutError as e:
                 # P2-1 fix: Use timezone-aware datetime
                 logger.error(f"[{self.agent_id}] Synthesis timed out after {timeout}s")
                 return {

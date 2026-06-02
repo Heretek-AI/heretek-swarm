@@ -10,7 +10,7 @@ Implements the MCP specification for tool registration, discovery, and invocatio
 from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import UTC, datetime
-from typing import Any
+from typing import Any, ClassVar
 
 import structlog
 

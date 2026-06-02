@@ -316,7 +316,7 @@ def load_config_from_env_sync() -> AutonomousRuntimeConfig:
             # Return environment-only config
             return _load_config_from_env_sync_fallback()
         return loop.run_until_complete(load_config_from_env())
-    except RuntimeError:
+    except RuntimeError as e:
         # No event loop exists
         return _load_config_from_env_sync_fallback()
 

@@ -163,7 +163,7 @@ def scan_file(
 
     try:
         content = path.read_text(encoding="utf-8", errors="ignore")
-    except (OSError, UnicodeDecodeError):
+    except (OSError, UnicodeDecodeError) as e:
         return findings
 
     # Filter pattern names if provided
@@ -205,7 +205,7 @@ def _scan_ast(
 
     try:
         tree = ast.parse(source, filename=filename)
-    except SyntaxError:
+    except SyntaxError as e:
         return findings
 
     active_pattern_names = set(patterns) if patterns else set(AST_PATTERNS)

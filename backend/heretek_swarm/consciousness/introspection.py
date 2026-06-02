@@ -208,7 +208,7 @@ class IntrospectionModule:
             self._belief_update_counts[belief_id] = 0
             try:
                 self._belief_initial_time[belief_id] = datetime.fromisoformat(belief.created_at)
-            except (ValueError, TypeError):
+            except (ValueError, TypeError) as e:
                 self._belief_initial_time[belief_id] = datetime.now(UTC)
 
         logger.info(
@@ -958,7 +958,7 @@ class IntrospectionModule:
                     f"over '{b1.state[:50]}...' (updated: {b1.updated_at[:10]})",
                     ConflictResolutionStrategy.RECENCY_BASED,
                 )
-            except (ValueError, TypeError):
+            except (ValueError, TypeError) as e:
                 return (
                     "Unable to determine recency - falling back to confidence-based resolution",
                     ConflictResolutionStrategy.CONFIDENCE_BASED,

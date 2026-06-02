@@ -235,7 +235,7 @@ class PrismAgent(
             # Validate content
             is_valid, _error = self._validate_analysis_request(message.content)
             if not is_valid:
-                logger.error(f"[{self.agent_id}] Invalid perspective request: {error}")
+                logger.error(f"[{self.agent_id}] Invalid perspective request: {_error}")
                 return
 
             issue = message.content["issue"]
@@ -558,7 +558,7 @@ Respond in JSON format:
             # Validate content
             is_valid, _error = self._validate_analysis_request(message.content)
             if not is_valid:
-                logger.error(f"[{self.agent_id}] Invalid framework request: {error}")
+                logger.error(f"[{self.agent_id}] Invalid framework request: {_error}")
                 return
 
             issue = message.content["issue"]
@@ -663,7 +663,7 @@ Respond in JSON format:
         try:
             is_valid, _error = self._validate_analysis_request(message.content)
             if not is_valid:
-                logger.error(f"[{self.agent_id}] Invalid stakeholder mapping request: {error}")
+                logger.error(f"[{self.agent_id}] Invalid stakeholder mapping request: {_error}")
                 return
 
             issue = message.content["issue"]
@@ -805,7 +805,7 @@ Respond in JSON:
         try:
             is_valid, _error = self._validate_analysis_request(message.content)
             if not is_valid:
-                logger.error(f"[{self.agent_id}] Invalid reframe request: {error}")
+                logger.error(f"[{self.agent_id}] Invalid reframe request: {_error}")
                 return
 
             issue = message.content["issue"]

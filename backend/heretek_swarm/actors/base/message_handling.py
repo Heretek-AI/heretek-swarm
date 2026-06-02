@@ -352,7 +352,7 @@ class AgentActorMessageHandling(AgentActor):
 
                 return reply_message.content
 
-            except TimeoutError:
+            except TimeoutError as e:
                 logger.warning(
                     f"[{self.agent_id}] Request timeout after {timeout}s for correlation_id={correlation_id}",
                     extra={"recipient": recipient, "message_type": message_type},
@@ -385,7 +385,7 @@ class AgentActorMessageHandling(AgentActor):
                     extra={"message_type": message.message_type},
                 )
                 return  # Success, exit retry loop
-            except TimeoutError:
+            except TimeoutError as e:
                 if attempt < max_retries - 1:
                     # P1-10e fix: Retry with exponential backoff
                     logger.warning(
@@ -447,7 +447,7 @@ class AgentActorMessageHandling(AgentActor):
                 # Mark as done
                 self.mailbox.task_done()
 
-            except TimeoutError:
+            except TimeoutError as e:
                 # No messages, continue
                 continue
             except asyncio.CancelledError:
@@ -601,7 +601,7 @@ class AgentActorMessageHandling(AgentActor):
                 reply_topic = validated.reply_to
             else:
                 reply_topic = message.content.get("reply_to", "health")
-        except ValueError:
+        except ValueError as e:
             logger.error(f"[{self.agent_id}] Health check validation failed: {e}")
             return
 
@@ -626,7 +626,7 @@ class AgentActorMessageHandling(AgentActor):
         # P2-7 fix: Validate input before processing
         try:
             self._validate_message_content("suspend", message.content)
-        except ValueError:
+        except ValueError as e:
             logger.error(f"[{self.agent_id}] Suspend validation failed: {e}")
             return
         await self.suspend()
@@ -636,7 +636,7 @@ class AgentActorMessageHandling(AgentActor):
         # P2-7 fix: Validate input before processing
         try:
             self._validate_message_content("resume", message.content)
-        except ValueError:
+        except ValueError as e:
             logger.error(f"[{self.agent_id}] Resume validation failed: {e}")
             return
         await self.resume()
@@ -648,7 +648,7 @@ class AgentActorMessageHandling(AgentActor):
             validated = self._validate_message_content("terminate", message.content)
             if validated and validated.reason:
                 logger.info(f"[{self.agent_id}] Termination requested: {validated.reason}")
-        except ValueError:
+        except ValueError as e:
             logger.error(f"[{self.agent_id}] Terminate validation failed: {e}")
             return
         await self.terminate()
@@ -762,7 +762,7 @@ class AgentActorMessageHandling(AgentActor):
                 input_data = message.content.get("input_data", {})
                 protocol = message.content.get("protocol", {})
                 reply_to = message.content.get("reply_to")
-        except ValueError:
+        except ValueError as e:
             logger.error(f"[{self.agent_id}] Collective task validation failed: {e}")
             return
 
@@ -871,7 +871,7 @@ Please provide your analysis and recommendation for this collective task."""
             supervisor = get_supervisor()
             if supervisor and hasattr(supervisor, "actors"):
                 return supervisor.actors
-        except (ImportError, Exception):
+        except (ImportError, Exception) as e:
             logger.warning("Failed to retrieve supervisor actors", exc_info=True)
         return None
 

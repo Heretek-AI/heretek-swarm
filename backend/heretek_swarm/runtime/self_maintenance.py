@@ -179,10 +179,10 @@ class LogRotator:
                         elif size > compress_threshold:
                             files_to_compress.append(file_path)
 
-                except OSError:
+                except OSError as e:
                     logger.warning("Failed to stat log file {file_path}: {e}")
                     self._stats["errors"] += 1
-        except OSError:
+        except OSError as e:
             logger.error("Failed to list log directory: {e}")
             self._stats["errors"] += 1
 
@@ -200,7 +200,7 @@ class LogRotator:
                     self._stats["files_removed"] += 1
                     self._stats["bytes_freed"] += size
                     logger.debug("Removed old log file: {file_path}")
-                except OSError:
+                except OSError as e:
                     logger.error("Failed to remove {file_path}: {e}")
                     self._stats["errors"] += 1
 
@@ -233,7 +233,7 @@ class LogRotator:
                         f"({original_size / 1024 / 1024:.1f}MB -> "
                         f"{compressed_size / 1024 / 1024:.1f}MB)"
                     )
-                except OSError:
+                except OSError as e:
                     logger.error("Failed to compress {file_path}: {e}")
                     self._stats["errors"] += 1
 
@@ -850,7 +850,7 @@ class SelfMaintenanceScheduler:
                 # If we get here without timeout, shutdown was requested
                 break
 
-            except TimeoutError:
+            except TimeoutError as e:
                 # Normal interval elapsed, loop continues
                 logger.debug("Maintenance interval elapsed, looping")
             except asyncio.CancelledError:
@@ -900,7 +900,7 @@ class SelfMaintenanceScheduler:
                     timeout=self.config.log_rotation_interval_seconds,
                 )
                 break
-            except TimeoutError:
+            except TimeoutError as e:
                 now = datetime.now(UTC)
                 if (
                     self._last_log_rotation is None
@@ -920,7 +920,7 @@ class SelfMaintenanceScheduler:
                     timeout=self.config.db_maintenance_interval_seconds,
                 )
                 break
-            except TimeoutError:
+            except TimeoutError as e:
                 now = datetime.now(UTC)
                 if (
                     self._last_db_maintenance is None
@@ -940,7 +940,7 @@ class SelfMaintenanceScheduler:
                     timeout=self.config.config_drift_interval_seconds,
                 )
                 break
-            except TimeoutError:
+            except TimeoutError as e:
                 now = datetime.now(UTC)
                 if (
                     self._last_drift_check is None
@@ -960,7 +960,7 @@ self._last_drift_check = now
             try:
                 await asyncio.wait_for(self._shutdown_event.wait(), timeout=interval)
                 break
-            except TimeoutError:
+            except TimeoutError as e:
                 result = await self._deployment.run_once()
                 self._stats["last_deployment"] = result
 

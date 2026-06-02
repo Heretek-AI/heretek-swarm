@@ -18,7 +18,7 @@ Reference: mem0ai library for unified memory management
 import os
 import time
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, ClassVar
 
 import structlog
 
@@ -146,7 +146,7 @@ class PersistentMemory:
                 collection=self.config.qdrant_collection,
             )
 
-        except ImportError:
+        except ImportError as e:
             logger.error("mem0 package not installed. Install with: pip install mem0ai")
             raise
         except Exception as e:

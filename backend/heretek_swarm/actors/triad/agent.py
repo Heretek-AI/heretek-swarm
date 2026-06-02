@@ -316,7 +316,7 @@ class StewardAgent(TriadAgent):
                         deliberation_id or f"del_{datetime.now(UTC).strftime('%Y%m%d_%H%M%S')}"
                     )
                     topic = topic or "unspecified"
-        except (ValueError, Exception):
+        except (ValueError, Exception) as e:
             logger.warning(f"[{self.agent_id}] Deliberation validation issue, using fallback: {e}")
             # Fallback: support both deliberation_id/topic and session_id/problem field names
             deliberation_id = (
@@ -635,7 +635,7 @@ class StewardAgent(TriadAgent):
         """Return True if *last_seen* is missing, malformed, or older than *timeout* seconds."""
         try:
             last_dt = datetime.fromisoformat(last_seen).replace(tzinfo=UTC)
-        except (ValueError, TypeError):
+        except (ValueError, TypeError) as e:
             return True
         return (now - last_dt).total_seconds() > timeout
 
@@ -802,7 +802,7 @@ class AlphaAgent(TriadAgent):
                 # Fallback to unvalidated access
                 request_id = message.content.get("request_id")
                 problem = message.content.get("problem")
-        except ValueError:
+        except ValueError as e:
             logger.error(f"[{self.agent_id}] Analysis validation failed: {e}")
             return
 
@@ -845,7 +845,7 @@ class AlphaAgent(TriadAgent):
                 request_id = message.content.get("request_id")
                 decision_to_validate = message.content.get("decision")
                 _original_analysis = message.content.get("original_analysis")
-        except ValueError:
+        except ValueError as e:
             logger.error(f"[{self.agent_id}] Validation request validation failed: {e}")
             return
 

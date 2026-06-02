@@ -24,7 +24,7 @@ import time
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from enum import StrEnum
-from typing import Any
+from typing import Any, ClassVar
 
 import structlog
 from prometheus_client import Counter, Gauge, Histogram
@@ -83,7 +83,7 @@ class ContentFilter:
         if not isinstance(self.operator, FilterOperator):
             try:
                 self.operator = FilterOperator(self.operator)
-            except ValueError:
+            except ValueError as e:
                 raise ValueError(f"Invalid operator: {self.operator}")
 
         # Pre-compile regex for regex operator
@@ -328,7 +328,7 @@ class SafeJSONPath:
                     # Parse index
                     try:
                         index = int(index_str)
-                    except ValueError:
+                    except ValueError as e:
                         return False, f"Invalid array index: {index_str}"
 
                     # Get array element

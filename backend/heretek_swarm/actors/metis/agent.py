@@ -224,7 +224,7 @@ class MetisAgent(
                 if not objective:
                     logger.error(f"[{self.agent_id}] Missing objective for strategic plan")
                     return
-        except ValueError:
+        except ValueError as e:
             logger.error(f"[{self.agent_id}] Strategic plan validation failed: {e}")
             return
 
@@ -309,7 +309,7 @@ class MetisAgent(
                 if not plan_id:
                     logger.error(f"[{self.agent_id}] Missing plan_id for resource allocation")
                     return
-        except ValueError:
+        except ValueError as e:
             logger.error(f"[{self.agent_id}] Resource allocation validation failed: {e}")
             return
 
@@ -363,7 +363,7 @@ class MetisAgent(
                 # Fallback
                 plan_id = message.content.get("plan_id")
                 domain = message.content.get("domain", "general")
-        except ValueError:
+        except ValueError as e:
             logger.error(f"[{self.agent_id}] Risk assessment validation failed: {e}")
             return
 
@@ -415,7 +415,7 @@ class MetisAgent(
                 # Fallback
                 base_scenario = message.content.get("base_scenario", {})
                 variables = message.content.get("variables", [])
-        except ValueError:
+        except ValueError as e:
             logger.error(f"[{self.agent_id}] Scenario analysis validation failed: {e}")
             return
 
@@ -481,7 +481,7 @@ class MetisAgent(
                 if not objective:
                     logger.error(f"[{self.agent_id}] Missing objective")
                     return
-        except ValueError:
+        except ValueError as e:
             logger.error(f"[{self.agent_id}] Strategic objective validation failed: {e}")
             return
 
@@ -534,7 +534,7 @@ class MetisAgent(
                 if not plan_id:
                     logger.error(f"[{self.agent_id}] Missing plan_id for status request")
                     return
-        except ValueError:
+        except ValueError as e:
             logger.error(f"[{self.agent_id}] Plan status validation failed: {e}")
             return
 
@@ -926,7 +926,7 @@ Format your response as a clear analysis with recommendations.
                 "recommendations": recommendations or ["Review the full analysis"],
             }
 
-        except TimeoutError:
+        except TimeoutError as e:
             logger.warning(
                 f"[{self.agent_id}] On-demand analysis timed out",
                 extra={"context_preview": context[:60]},

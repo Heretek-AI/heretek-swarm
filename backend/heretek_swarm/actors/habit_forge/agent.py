@@ -235,7 +235,7 @@ class HabitForgeAgent(
             # Validate content
             is_valid, _error = self._validate_habit_request(message.content)
             if not is_valid:
-                logger.error(f"[{self.agent_id}] Invalid habit creation request: {error}")
+                logger.error(f"[{self.agent_id}] Invalid habit creation request: {_error}")
                 return
 
             # Check habit limit
