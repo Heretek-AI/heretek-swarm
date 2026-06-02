@@ -1,6 +1,16 @@
 """
 HeavySwarm Workflow - 5-Phase Deliberation Pattern.
 
+.. deprecated::
+    The custom 5-phase workflow engine is being replaced by LangGraph
+    as part of M-arch PR #6 (see PLAN.md §M-arch). The public contract
+    — :class:`WorkflowPhase` enum and :class:`WorkflowResult` dataclass
+    — is preserved; only the internal implementation is expected to
+    change. Full LangGraph migration is deferred to a follow-up PR
+    (LangGraph state machine with 5 nodes, MAKER consensus as Decision
+    node, MemorySaver for resumability). This file remains the active
+    code path until the LangGraph replacement ships.
+
 This module implements the HeavySwarm 5-phase workflow for complex analytical tasks:
 1. Research Phase - Gather information and context
 2. Analysis Phase - Analyze the problem from multiple perspectives

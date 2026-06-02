@@ -1,6 +1,15 @@
 """
 Phase Handlers for HeavySwarm Workflow
 
+.. deprecated::
+    These placeholder PhaseHandler classes are being replaced by
+    LangGraph nodes as part of M-arch PR #6 (see PLAN.md §M-arch).
+    The abstract :class:`PhaseHandler` interface and the five concrete
+    handler classes are preserved as documentation of the intended
+    extension point. The active code path lives in
+    :mod:`heretek_swarm.orchestration.heavyswarm` which calls phase
+    logic via instance methods directly.
+
 Provides handler classes for each phase of the workflow.
 
 **Important:** These handlers are currently unused extension points.
