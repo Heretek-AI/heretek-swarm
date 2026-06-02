@@ -17,7 +17,6 @@ from fastapi import APIRouter, Depends, HTTPException, UploadFile
 
 if TYPE_CHECKING:
     from heretek_swarm.rag.cognee_graph import GraphRetriever
-    from heretek_swarm.rag.knowledge_graph import KnowledgeGraphRetriever
     from heretek_swarm.rag.rag_pipeline import RAGPipeline
 
 from heretek_swarm.gateway.auth import verify_auth

@@ -9,7 +9,6 @@ and returns a synthesized response with per-agent contributions.
 import asyncio
 import uuid
 from contextlib import suppress
-from datetime import UTC, datetime
 from typing import Annotated, Any
 
 import structlog

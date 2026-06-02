@@ -230,7 +230,7 @@ def _handle_no_configs(output_json: bool, start_time: float) -> None:
                 "total": 0, "healthy": 0, "unhealthy": 0, "unknown": 0,
                 "duration_ms": round((time.perf_counter() - start_time) * 1000, 1),
             },
-            "timestamp": _dt.datetime.now(_dt.timezone.utc).isoformat().replace("+00:00", "Z"),
+            "timestamp": _dt.datetime.now(_dt.UTC).isoformat().replace("+00:00", "Z"),
         }
         click.echo(json_mod.dumps(result))
         sys.exit(0)
@@ -280,7 +280,7 @@ def _output_json_status(
             "unhealthy": unhealthy, "unknown": unknown,
             "duration_ms": round(total_time_ms, 1),
         },
-        "timestamp": _dt.datetime.now(_dt.timezone.utc).isoformat().replace("+00:00", "Z"),
+        "timestamp": _dt.datetime.now(_dt.UTC).isoformat().replace("+00:00", "Z"),
     }
     _maybe_add_consciousness_metrics(result)
     click.echo(json_mod.dumps(result))

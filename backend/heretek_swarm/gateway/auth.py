@@ -14,7 +14,7 @@ from __future__ import annotations
 
 import os
 import secrets
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta, UTC
 
 import jwt
 import structlog
@@ -78,7 +78,7 @@ def create_jwt_token(
     Returns:
         Encoded JWT string.
     """
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     payload = {
         "sub": username,
         "iat": now,

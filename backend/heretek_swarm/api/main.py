@@ -16,7 +16,7 @@ Reference: MiniMax Audit Lines 585-725
 import asyncio
 import os
 from contextlib import asynccontextmanager, suppress
-from datetime import datetime, timezone
+from datetime import datetime, UTC
 from typing import Any
 
 import structlog
@@ -832,7 +832,7 @@ async def health_check():
             "mem0": await check_mem0(),
         },
         "pool": StateRepository.get_pool_stats(),
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
     }
 
 
@@ -1213,7 +1213,7 @@ async def prompt_endpoint(request: PromptRequest, authenticated: str = Depends(v
             "deliberation_id": deliberation_id,
             "topic": request.prompt[:200],
             "participant_count": len(participants),
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
         })
 
     # Gather positions from each participant via submit_argument
@@ -1272,7 +1272,7 @@ async def prompt_endpoint(request: PromptRequest, authenticated: str = Depends(v
                 "agent_id": agent_id,
                 "position": position_str,
                 "confidence": confidence,
-                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "timestamp": datetime.now(UTC).isoformat(),
             })
 
     # Run a deliberation round to synthesize
@@ -1300,7 +1300,7 @@ async def prompt_endpoint(request: PromptRequest, authenticated: str = Depends(v
                 "type": "deliberation_round_failed",
                 "deliberation_id": deliberation_id,
                 "error": "deliberation_round_engine_failed",
-                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "timestamp": datetime.now(UTC).isoformat(),
             })
 
     # Collect dissent notes
@@ -1326,7 +1326,7 @@ async def prompt_endpoint(request: PromptRequest, authenticated: str = Depends(v
             "participant_count": len(participants),
             "rounds": max(round_count, 1),
             "llm_available": llm_available,
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
         })
 
     logger.info(
