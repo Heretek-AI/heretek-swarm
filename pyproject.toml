@@ -126,6 +126,10 @@ slowapi = [
     "slowapi>=0.1.9",
     "limits>=3.13.0",
 ]
+langgraph = [
+    "langgraph>=0.2.0",
+    "langchain-core>=0.3.0",
+]
 # SOPS is a Go binary, not a pip package.  Install:
 #   curl -sLo ~/.local/bin/sops https://github.com/getsops/sops/releases/download/v3.9.4/sops-v3.9.4.linux.amd64
 #   chmod +x ~/.local/bin/sops
