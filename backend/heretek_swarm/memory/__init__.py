@@ -1,20 +1,24 @@
 """
 Heretek Swarm Memory Package
 
-This package provides dual-tier memory architecture with:
-- Ephemeral memory layer (fast, session-based with TTL)
-- Persistent memory layer (long-term vector storage with mem0)
-- Memory lineage tracking
-- Memory Manager with importance-based decay
-- Memory optimization (Session 43): Access patterns, pre-fetching, compression, tiering
+This package provides the memory subsystem built on Cognee (knowledge graph +
+vector memory engine) plus access-pattern optimization and intelligent pre-fetching.
+
+Public modules:
+    cognee_reader   — Read-only async client for Cognee's search API.
+    cognee_writer   — Write-path async client for Cognee's add/cognify API.
+    access_patterns — Access pattern analysis, tier classification, reporting.
+    prefetcher      — LRU/LFU caches and pattern-based pre-fetch scheduling.
+    eliza_memory    — Importance-decay memory manager (elizaOS pattern).
 """
 
-# Re-export from memory package for test compatibility
-# Note: Using explicit imports to avoid shadowing
+from __future__ import annotations
 
-# Session 43: Memory Optimization Modules
 import structlog
 
+# ---------------------------------------------------------------------------
+# Access-pattern analysis & tiering
+# ---------------------------------------------------------------------------
 from heretek_swarm.memory.access_patterns import (
     AccessPattern,
     AccessPatternAnalyzer,
@@ -22,42 +26,28 @@ from heretek_swarm.memory.access_patterns import (
     AccessStatistics,
     AccessTier,
     MemoryAccessProfile,
+    MemoryAccessRecord,
 )
 
-# Core type definitions (local import)
-from heretek_swarm.memory.base import (
-    DualTierMemory,
-    DualTierMemorySystem,
-    EphemeralMemory,
-    MemoryEntry,
-    MemoryQuery,
-    MemorySystem,
-    MemoryTier,
-    MemoryType,
-)
-from heretek_swarm.memory.base import (
-    PersistentMemory as BasePersistentMemory,
-)
-from heretek_swarm.memory.compression import (
-    ColdDataCompressor,
-    CompressedMemory,
-    CompressionAlgorithm,
-    CompressionConfig,
-    CompressionLevel,
-    CompressionResult,
-    DecompressionResult,
-)
+# ---------------------------------------------------------------------------
+# Cognee-backed read/write clients
+# ---------------------------------------------------------------------------
+from heretek_swarm.memory.cognee_reader import CogneeMemoryReader
+from heretek_swarm.memory.cognee_writer import CogneeMemoryWriter
+
+# ---------------------------------------------------------------------------
+# Eliza-style importance-decay memory manager
+# ---------------------------------------------------------------------------
 from heretek_swarm.memory.eliza_memory import (
     ElizaMemoryEntry,
     MemoryManager,
     MemoryManagerConfig,
     create_memory_manager,
 )
-from heretek_swarm.memory.persistent import (
-    Mem0Config,
-    PersistentMemory,
-    create_memory_store,
-)
+
+# ---------------------------------------------------------------------------
+# Intelligent pre-fetching & caching
+# ---------------------------------------------------------------------------
 from heretek_swarm.memory.prefetcher import (
     IntelligentPrefetcher,
     LFUCache,
@@ -65,86 +55,36 @@ from heretek_swarm.memory.prefetcher import (
     PreFetchPriority,
     PreFetchRequest,
     PreFetchResult,
+    PreFetchScheduler,
     PreFetchStrategy,
-)
-from heretek_swarm.memory.tiering import (
-    MemoryTieringSystem,
-    MigrationPolicy,
-    MigrationRecord,
-    TierConfig,
-    TieredMemory,
-    TieringStatistics,
 )
 
 logger = structlog.get_logger(__name__)
 
 __all__ = [
+    # Access-pattern analysis
     "AccessPattern",
-    # Session 43: Memory Optimization
     "AccessPatternAnalyzer",
     "AccessPatternReport",
     "AccessStatistics",
     "AccessTier",
-    "BasePersistentMemory",
-    "ColdDataCompressor",
-    "CompressedMemory",
-    "CompressionAlgorithm",
-    "CompressionConfig",
-    "CompressionLevel",
-    "CompressionResult",
-    "DecompressionResult",
-    "DualTierConfig",
-    "DualTierMemory",
-    "DualTierMemorySystem",
+    # Cognee-backed clients
+    "CogneeMemoryReader",
+    "CogneeMemoryWriter",
     # Eliza-style memory manager
     "ElizaMemoryEntry",
-    "EmbeddingConfig",
-    # Embeddings
-    "EmbeddingService",
-    "EphemeralConfig",
-    "EphemeralMemory",
-    # Memory stores (for tests)
-    "EphemeralMemoryStore",
+    # Pre-fetching & caching
     "IntelligentPrefetcher",
     "LFUCache",
     "LRUCache",
-    # Mem0 integration
-    "Mem0Config",
     "MemoryAccessProfile",
-    "MemoryEntry",
+    "MemoryAccessRecord",
     "MemoryManager",
     "MemoryManagerConfig",
-    "MemoryQuery",
-    "MemoryResult",
-    # Base classes
-    "MemorySystem",
-    "MemoryTier",
-
-    "MemoryTier_Base",
-    "MemoryTieringSystem",
-    "MemoryType",
-    "MigrationPolicy",
-    "MigrationRecord",
-    "PersistentConfig",
-    "PersistentMemory",
-    "PersistentMemoryStore",
     "PreFetchPriority",
     "PreFetchRequest",
     "PreFetchResult",
+    "PreFetchScheduler",
     "PreFetchStrategy",
-    "TierConfig",
-    "TieredMemory",
-    "TieringStatistics",
     "create_memory_manager",
-    "create_memory_store",
 ]
-
-# Compatibility exports for tests
-try:
-    # Import our Mem0Backend wrapper from persistent.py
-    from heretek_swarm.memory.persistent import Mem0Backend
-
-    MEM0_AVAILABLE = True
-except ImportError:
-    MEM0_AVAILABLE = False
-    Mem0Backend = None  # type: ignore
