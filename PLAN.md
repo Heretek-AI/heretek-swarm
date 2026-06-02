@@ -405,14 +405,23 @@ All 8 tactical items landed in 7 commits on 2026-06-01. Wall-clock time: ~3 hour
 - `knowledge_graph.py` marked deprecated; **not yet deleted** (deferred to follow-up)
 - 14 tests in `tests/test_cognee_graph.py` (12 pass, 2 need spec adjustment)
 
-### Pre-existing test issues ⚠️
-4 tests in `test_cognee_reader.py` fail due to `AsyncMock(spec=httpx.AsyncClient)` returning truthy `is_closed`:
+### Dependency update ✅ DONE (commit `88005e97`)
+- swarms pinned to `>=9.0.0,<10.0.0` — swarms 9.0.4 is the newest version that doesn't hard-pin `litellm==1.76.1` (10+ does, conflicting with cognee's `litellm>=1.83.7`)
+- `pypdf>=6.6.2,<7.0.0` (security-patched; satisfies cognee)
+- `aiohttp>=3.13.3` (fixes 20 known CVEs in 3.9.5)
+- `tenacity>=9.0.0`, `structlog>=25.2.0`, `pydantic>=2.10.5`, `fastapi>=0.116.2`, `starlette>=0.48`, `uvicorn>=0.34.0`, `websockets>=15.0.1`, `asyncpg>=0.30.0`, `psycopg2-binary>=2.9.10`, `cryptography>=48.0.0` (bumped to cognee 1.1.2 minimums and security-patched)
+- `[tool.uv] override-dependencies = ['pypdf>=6.6.2,<7.0.0']` — forces resolver past swarms 9.0.4's hard `pypdf==5.1.0` pin
+- `cognee>=1.1.0,<2.0` kept in main deps (per PLAN.md M-arch)
+- venv: cognee 1.1.2, swarms 9.0.4, pypdf 6.12.2, aiohttp 3.13.4, cryptography 48.0.0, tenacity 9.1.4
+
+### Pre-existing test issues ⚠️ → ✅ FIXED (commit `88005e97`)
+4 tests in `test_cognee_reader.py` failed due to `AsyncMock(spec=httpx.AsyncClient)` returning truthy `is_closed`:
 - `test_read_returns_empty_on_http_error` — real DNS error instead of mocked HTTPError
 - `test_read_returns_results_on_success` — mock bypassed
 - `test_read_includes_dataset_in_payload` — `call_args` is None
 - `test_health_returns_true_on_200` — `health()` returns False (real network failure)
 
-**Fix**: switch to `httpx.MockTransport` (as PR #2 commit message originally claimed) or set `mock.is_closed = False` explicitly. Tracked for cleanup.
+**Fixed**: replaced `AsyncMock(spec=httpx.AsyncClient)` with `httpx.MockTransport` (real httpx test transport; exercises production code path with no network access). All 16 tests now pass. Full suite: **69/69 pass**.
 
 ### M-arch PRs #4–#10 ⏳ PENDING
 Next: **M-arch PR #4** — Add Cognee-backed RAG retriever alongside custom pipeline (additive, opt-in). Will mirror PR #3 pattern.
