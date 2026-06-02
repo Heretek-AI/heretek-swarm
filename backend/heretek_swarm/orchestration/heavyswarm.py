@@ -179,7 +179,7 @@ class HeavySwarmWorkflow:
         self._phase_handlers = self._create_phase_handlers()
 
         logger.info(
-            f"[{self.name}] HeavySwarm workflow initialized",  # noqa: G004
+            f"[{self.name}] HeavySwarm workflow initialized",
             extra={
                 "triad_agents": self.triad_agents,
                 "historian": self.historian,
@@ -241,7 +241,7 @@ class HeavySwarmWorkflow:
         started_at = datetime.now(UTC)
 
         logger.info(
-            f"[{self.name}] Starting workflow {workflow_id}",  # noqa: G004
+            f"[{self.name}] Starting workflow {workflow_id}",
             extra={"topic": topic},
         )
 
@@ -356,7 +356,7 @@ class HeavySwarmWorkflow:
             self.workflow_history.append(result)
 
             logger.info(
-                f"[{self.name}] Workflow {workflow_id} completed",  # noqa: G004
+                f"[{self.name}] Workflow {workflow_id} completed",
                 extra={
                     "state": result.state.value,
                     "duration_ms": result.total_duration_ms,
@@ -478,7 +478,7 @@ class HeavySwarmWorkflow:
                     "relevant_memories", []
                 )
                 research_data["matched_patterns"] = deliberation_context.get("matched_patterns", [])
-            except Exception:
+            except Exception as e:
                 logger.warning(f"[{self.name}] Historian query failed: {e}")
 
         # Synthesize knowledge if historian available
@@ -490,7 +490,7 @@ class HeavySwarmWorkflow:
                     limit=10,
                 )
                 research_data["knowledge_summary"] = knowledge.get("summary", "")
-            except Exception:
+            except Exception as e:
                 logger.warning(f"[{self.name}] Knowledge synthesis failed: {e}")
 
         # Identify constraints and assumptions from context
@@ -499,7 +499,7 @@ class HeavySwarmWorkflow:
             research_data["assumptions"] = context.get("assumptions", [])
 
         logger.info(
-            f"[{self.name}] Research phase complete",  # noqa: G004
+            f"[{self.name}] Research phase complete",
             extra={
                 "historical_context_count": len(research_data["historical_context"]),
                 "constraints_count": len(research_data["constraints"]),
@@ -516,7 +516,7 @@ class HeavySwarmWorkflow:
         self,
         workflow_id: str,
         topic: str,
-        context: dict[str, Any] | None = None,  # noqa: ARG002
+        context: dict[str, Any] | None = None,
         research_data: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
         """
@@ -578,7 +578,7 @@ class HeavySwarmWorkflow:
             )
 
         logger.info(
-            f"[{self.name}] Analysis phase complete",  # noqa: G004
+            f"[{self.name}] Analysis phase complete",
             extra={
                 "perspectives_count": len(analysis_data["perspectives"]),
                 "insights_count": len(analysis_data["key_insights"]),
@@ -686,9 +686,9 @@ class HeavySwarmWorkflow:
 
     async def _alternatives_phase(
         self,
-        workflow_id: str,  # noqa: ARG002
+        workflow_id: str,
         topic: str,
-        context: dict[str, Any] | None = None,  # noqa: ARG002
+        context: dict[str, Any] | None = None,
         analysis_data: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
         """
@@ -753,7 +753,7 @@ class HeavySwarmWorkflow:
         alternatives_data["trade_offs"] = await self._identify_trade_offs(ranked)
 
         logger.info(
-            f"[{self.name}] Alternatives phase complete",  # noqa: G004
+            f"[{self.name}] Alternatives phase complete",
             extra={
                 "alternatives_count": len(alternatives),
                 "recommended": alternatives_data["recommended_alternative"].get(
@@ -981,7 +981,7 @@ Example:
         return self._evaluate_alternative_fallback(alternative)
 
     def _evaluate_alternative_fallback(
-        self, alternative: dict[str, Any]  # noqa: ARG002
+        self, alternative: dict[str, Any]
     ) -> dict[str, Any]:
         """Return zero-score fallback when LLM evaluation is unavailable."""
         return {
@@ -1029,7 +1029,7 @@ Example:
         trade_offs = []
         for i, alt1 in enumerate(alternatives[:-1]):
             for alt2 in alternatives[i + 1 :]:
-                trade_offs.append(  # noqa: PERF401
+                trade_offs.append(
                     {
                         "alternative_1": alt1.get("name", "unknown"),
                         "alternative_2": alt2.get("name", "unknown"),
@@ -1045,9 +1045,9 @@ Example:
 
     async def _verification_phase(
         self,
-        workflow_id: str,  # noqa: ARG002
+        workflow_id: str,
         topic: str,
-        context: dict[str, Any] | None = None,  # noqa: ARG002
+        context: dict[str, Any] | None = None,
         alternatives_data: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
         """
@@ -1093,21 +1093,21 @@ Example:
         if "beta" in self.agents:
             beta_agent = self.agents["beta"]
             try:
-                errors = await beta_agent._detect_errors(recommended)  # noqa: SLF001
+                errors = await beta_agent._detect_errors(recommended)
                 verification_data["error_checks"] = errors
                 if errors:
                     verification_data["overall_valid"] = False
-            except Exception:
+            except Exception as e:
                 logger.warning(f"[{self.name}] Beta error check failed: {e}")
 
         # Charlie: Risk assessment
         if "charlie" in self.agents:
             charlie_agent = self.agents["charlie"]
             try:
-                risk_assessment = await charlie_agent._assess_risks(recommended)  # noqa: SLF001
+                risk_assessment = await charlie_agent._assess_risks(recommended)
                 verification_data["risk_assessments"] = risk_assessment.get("risks_identified", [])
                 verification_data["risk_level"] = risk_assessment.get("risk_level", "unknown")
-            except Exception:
+            except Exception as e:
                 logger.warning(f"[{self.name}] Charlie risk assessment failed: {e}")
 
         # Calculate overall confidence
@@ -1119,7 +1119,7 @@ Example:
         verification_data["confidence"] = max(0.0, base_confidence - penalty)
 
         logger.info(
-            f"[{self.name}] Verification phase complete",  # noqa: G004
+            f"[{self.name}] Verification phase complete",
             extra={
                 "overall_valid": verification_data["overall_valid"],
                 "confidence": verification_data["confidence"],
@@ -1138,7 +1138,7 @@ Example:
         self,
         workflow_id: str,
         topic: str,
-        context: dict[str, Any] | None = None,  # noqa: ARG002
+        context: dict[str, Any] | None = None,
         verification_data: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
         """
@@ -1195,7 +1195,7 @@ Example:
             decision_data["red_flags"] = consensus_result.red_flags
 
         logger.info(
-            f"[{self.name}] Decision phase complete",  # noqa: G004
+            f"[{self.name}] Decision phase complete",
             extra={
                 "decision": decision_data.get("recommended_action"),
                 "confidence": decision_data.get("confidence"),
