@@ -1,6 +1,12 @@
 """
 Memory Tiering System for Heretek Swarm
 
+.. deprecated::
+    Custom multi-tier storage is being replaced by Cognee as part of
+    M-arch PR #5 (see PLAN.md §M-arch). This module remains in place
+    for backward compatibility and will be deleted in a follow-up PR
+    after 1 week of Cognee sidecar parity.
+
 This module provides multi-tier storage management:
 - Multi-tier storage (L1: Redis, L2: PostgreSQL, L3: Compressed Archive)
 - Automatic tier migration based on access patterns

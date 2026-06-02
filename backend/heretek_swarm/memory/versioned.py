@@ -1,6 +1,12 @@
 """
 Versioned Memory Store — Snapshot, Diff, and Rollback for Memory Datasets
 
+.. deprecated::
+    Custom dataset versioning is being replaced by Cognee's built-in
+    timeline control plane as part of M-arch PR #5 (see PLAN.md §M-arch).
+    This module remains in place for backward compatibility and will
+    be deleted in a follow-up PR after 1 week of Cognee sidecar parity.
+
 Provides dataset versioning semantics for memory entries:
 - Snapshot: capture a point-in-time dump of all memory entries
 - Version metadata: commit message, labels, branch, parent version

@@ -1,6 +1,17 @@
 """
 Memory System - Base implementation for dual-tier memory.
 
+.. deprecated::
+    This module is part of the custom in-memory memory wrapper
+    stack that M-arch is replacing with Cognee. It remains in place
+    for backward compatibility (see PLAN.md §M-arch PR #5) and will
+    be deleted in a follow-up PR after 1 week of Cognee sidecar
+    parity. New code should use the Cognee-backed classes:
+      * :class:`heretek_swarm.memory.cognee_reader.CogneeMemoryReader`
+        (read path — added in M-arch PR #2)
+      * :class:`heretek_swarm.memory.cognee_writer.CogneeMemoryWriter`
+        (write path — added in M-arch PR #5)
+
 This module provides:
 - Ephemeral memory layer (fast, session-based with TTL)
 - Persistent memory layer (long-term vector storage)

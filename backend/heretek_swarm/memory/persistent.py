@@ -1,6 +1,14 @@
 """
 Persistent Memory Store with mem0 Integration.
 
+.. deprecated::
+    This module wraps mem0 for long-term storage. It is being replaced
+    by Cognee as part of M-arch PR #5 (see PLAN.md §M-arch). It remains
+    in place for backward compatibility and will be deleted in a
+    follow-up PR after 1 week of Cognee sidecar parity. New code
+    should use :class:`heretek_swarm.memory.cognee_reader.CogneeMemoryReader`
+    and :class:`heretek_swarm.memory.cognee_writer.CogneeMemoryWriter`.
+
 Provides long-term storage with semantic search using mem0's unified memory API.
 Supports multiple vector stores (Qdrant, PostgreSQL, Chroma) and LLM providers.
 

@@ -1,6 +1,13 @@
 """
 Cold Data Compressor for Heretek Swarm
 
+.. deprecated::
+    Custom cold-data compression is being replaced by Cognee's
+    storage layer as part of M-arch PR #5 (see PLAN.md §M-arch).
+    This module remains in place for backward compatibility and
+    will be deleted in a follow-up PR after 1 week of Cognee
+    sidecar parity.
+
 This module provides compression capabilities for infrequently accessed memories:
 - Compress infrequently accessed memories
 - Transparent decompression on access
