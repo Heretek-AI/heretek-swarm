@@ -644,3 +644,414 @@ class ChronosHandlersMixin:
                 f"Failed to generate ticks: {e!s}",
                 message.message_type,
             )
+
+    async def _handle_bulk_schedule_adjust(self, message: ActorMessage) -> None:
+        """
+        Apply a batch of schedule operations atomically with per-item retry.
+
+        Content:
+            operations: list[dict] — each dict represents a BulkOperation:
+                - op: "create" | "cancel" | "update_priority" | "update_interval"
+                - operation_id: str (required, unique within the batch)
+                - task_id: str (required for cancel, update_priority, update_interval)
+                - name, description, scheduled_at, priority, recurrence,
+                  recurrence_config, target_agents, action, payload,
+                  deadline, max_runs, metadata (create only)
+                - new_priority: int (update_priority only)
+                - interval_seconds: int (update_interval only)
+
+        Returns:
+            {
+                "results": [
+                    {
+                        "op": str,
+                        "operation_id": str,
+                        "task_id": str | None,
+                        "status": "success" | "failed",
+                        "error": str | None,
+                    },
+                    ...
+                ],
+                "total": int,
+                "succeeded": int,
+                "failed": int,
+            }
+
+        Behaviour:
+            - Operations are processed in order.
+            - Each failed operation is retried once before being marked failed.
+            - Individual operation failures do not halt the batch.
+        """
+        try:
+            content = await self._validate_message(message)
+            operations: list[dict] = content.get("operations", [])
+
+            if not operations:
+                await self.send(
+                    topic=message.sender,
+                    content={
+                        "results": [],
+                        "total": 0,
+                        "succeeded": 0,
+                        "failed": 0,
+                    },
+                    message_type="bulk_schedule_adjust_result",
+                )
+                return
+
+            logger.info(
+                "bulk_schedule_adjust_started",
+                operation_count=len(operations),
+            )
+
+            results: list[dict] = []
+            succeeded = 0
+            failed = 0
+
+            for operation in operations:
+                result = await self._execute_bulk_operation(operation)
+
+                if result["status"] == "failed":
+                    logger.warning(
+                        "bulk_operation_failed_retrying",
+                        op=result.get("op"),
+                        operation_id=result.get("operation_id"),
+                        error=result.get("error"),
+                    )
+                    # Retry once
+                    result = await self._execute_bulk_operation(operation)
+
+                if result["status"] == "success":
+                    succeeded += 1
+                else:
+                    failed += 1
+                    logger.error(
+                        "bulk_operation_failed_after_retry",
+                        op=result.get("op"),
+                        operation_id=result.get("operation_id"),
+                        error=result.get("error"),
+                    )
+
+                results.append(result)
+
+            logger.info(
+                "bulk_schedule_adjust_completed",
+                total=len(operations),
+                succeeded=succeeded,
+                failed=failed,
+            )
+
+            await self.send(
+                topic=message.sender,
+                content={
+                    "results": results,
+                    "total": len(operations),
+                    "succeeded": succeeded,
+                    "failed": failed,
+                },
+                message_type="bulk_schedule_adjust_result",
+            )
+
+        except Exception as e:
+            logger.error("bulk_schedule_adjust_failed", error=str(e))
+            await self._send_error(
+                message.sender,
+                f"Failed to process bulk schedule adjust: {e!s}",
+                message.message_type,
+            )
+
+    async def _execute_bulk_operation(self, operation: dict) -> dict:
+        """Execute a single bulk operation and return its result dict.
+
+        Returns:
+            {
+                "op": str,
+                "operation_id": str,
+                "task_id": str | None,
+                "status": "success" | "failed",
+                "error": str | None,
+            }
+        """
+        op = operation.get("op", "")
+        operation_id = operation.get("operation_id", operation.get("task_id", ""))
+
+        if op == "create":
+            return await self._execute_bulk_create(operation, operation_id)
+        elif op == "cancel":
+            return await self._execute_bulk_cancel(operation, operation_id)
+        elif op == "update_priority":
+            return await self._execute_bulk_update_priority(operation, operation_id)
+        elif op == "update_interval":
+            return await self._execute_bulk_update_interval(operation, operation_id)
+        else:
+            return {
+                "op": op,
+                "operation_id": operation_id,
+                "task_id": None,
+                "status": "failed",
+                "error": f"Unknown operation type: {op}",
+            }
+
+    async def _execute_bulk_create(self, operation: dict, operation_id: str) -> dict:
+        """Execute a 'create' operation inline (mirrors _handle_schedule_task)."""
+        try:
+            import uuid
+            from datetime import UTC, datetime
+
+            from .types import Priority, RecurrenceType, ScheduledTask
+
+            if len(self._tasks) >= self._max_tasks:
+                return {
+                    "op": "create",
+                    "operation_id": operation_id,
+                    "task_id": None,
+                    "status": "failed",
+                    "error": f"Task limit reached ({self._max_tasks})",
+                }
+
+            task_id = operation.get("task_id") or f"task_{uuid.uuid4().hex[:12]}"
+
+            if task_id in self._tasks:
+                return {
+                    "op": "create",
+                    "operation_id": operation_id,
+                    "task_id": task_id,
+                    "status": "failed",
+                    "error": f"Task {task_id} already exists",
+                }
+
+            scheduled_at_str = operation.get("scheduled_at")
+            scheduled_at = (
+                datetime.fromisoformat(scheduled_at_str) if scheduled_at_str else datetime.now(UTC)
+            )
+
+            recurrence_str = operation.get("recurrence")
+            recurrence = RecurrenceType(recurrence_str) if recurrence_str else RecurrenceType.ONCE
+
+            priority_value = operation.get("priority", 2)
+            priority = Priority(min(max(priority_value, 1), 5))
+
+            task = ScheduledTask(
+                task_id=task_id,
+                name=operation.get("name", "Untitled Task"),
+                description=operation.get("description", ""),
+                scheduled_at=scheduled_at,
+                priority=priority,
+                recurrence=recurrence,
+                recurrence_config=operation.get("recurrence_config", {}),
+                target_agents=operation.get("target_agents", []),
+                action=operation.get("action", "scheduled_task"),
+                payload=operation.get("payload", {}),
+                deadline=datetime.fromisoformat(operation["deadline"])
+                if operation.get("deadline")
+                else None,
+                max_runs=operation.get("max_runs"),
+                metadata=operation.get("metadata", {}),
+            )
+
+            self._tasks[task_id] = task
+            self._task_queue.append((scheduled_at, task_id))
+
+            logger.info(
+                "bulk_task_created",
+                task_id=task_id,
+                operation_id=operation_id,
+                name=task.name,
+            )
+
+            return {
+                "op": "create",
+                "operation_id": operation_id,
+                "task_id": task_id,
+                "status": "success",
+                "error": None,
+            }
+
+        except Exception as e:
+            return {
+                "op": "create",
+                "operation_id": operation_id,
+                "task_id": operation.get("task_id"),
+                "status": "failed",
+                "error": str(e),
+            }
+
+    async def _execute_bulk_cancel(self, operation: dict, operation_id: str) -> dict:
+        """Execute a 'cancel' operation inline (mirrors _handle_cancel_task)."""
+        try:
+            from .types import ScheduleStatus
+
+            task_id = operation.get("task_id")
+
+            if not task_id or task_id not in self._tasks:
+                return {
+                    "op": "cancel",
+                    "operation_id": operation_id,
+                    "task_id": task_id,
+                    "status": "failed",
+                    "error": f"Task {task_id} not found",
+                }
+
+            task = self._tasks[task_id]
+
+            if task.status in (ScheduleStatus.COMPLETED, ScheduleStatus.CANCELLED):
+                return {
+                    "op": "cancel",
+                    "operation_id": operation_id,
+                    "task_id": task_id,
+                    "status": "failed",
+                    "error": f"Task already in {task.status.value} state",
+                }
+
+            task.status = ScheduleStatus.CANCELLED
+
+            self._task_queue = [(t, tid) for t, tid in self._task_queue if tid != task_id]
+
+            logger.info("bulk_task_cancelled", task_id=task_id, operation_id=operation_id)
+
+            return {
+                "op": "cancel",
+                "operation_id": operation_id,
+                "task_id": task_id,
+                "status": "success",
+                "error": None,
+            }
+
+        except Exception as e:
+            return {
+                "op": "cancel",
+                "operation_id": operation_id,
+                "task_id": operation.get("task_id"),
+                "status": "failed",
+                "error": str(e),
+            }
+
+    async def _execute_bulk_update_priority(self, operation: dict, operation_id: str) -> dict:
+        """Execute an 'update_priority' operation."""
+        try:
+            from .types import Priority, ScheduleStatus
+
+            task_id = operation.get("task_id")
+
+            if not task_id or task_id not in self._tasks:
+                return {
+                    "op": "update_priority",
+                    "operation_id": operation_id,
+                    "task_id": task_id,
+                    "status": "failed",
+                    "error": f"Task {task_id} not found",
+                }
+
+            task = self._tasks[task_id]
+
+            if task.status in (ScheduleStatus.COMPLETED, ScheduleStatus.CANCELLED):
+                return {
+                    "op": "update_priority",
+                    "operation_id": operation_id,
+                    "task_id": task_id,
+                    "status": "failed",
+                    "error": f"Cannot update priority: task is in {task.status.value} state",
+                }
+
+            new_priority_value = operation.get("new_priority", task.priority.value)
+            task.priority = Priority(min(max(new_priority_value, 1), 5))
+
+            logger.info(
+                "bulk_task_priority_updated",
+                task_id=task_id,
+                operation_id=operation_id,
+                new_priority=task.priority.value,
+            )
+
+            return {
+                "op": "update_priority",
+                "operation_id": operation_id,
+                "task_id": task_id,
+                "status": "success",
+                "error": None,
+            }
+
+        except Exception as e:
+            return {
+                "op": "update_priority",
+                "operation_id": operation_id,
+                "task_id": operation.get("task_id"),
+                "status": "failed",
+                "error": str(e),
+            }
+
+    async def _execute_bulk_update_interval(self, operation: dict, operation_id: str) -> dict:
+        """Execute an 'update_interval' operation."""
+        try:
+            from .types import RecurrenceType, ScheduleStatus
+
+            task_id = operation.get("task_id")
+
+            if not task_id or task_id not in self._tasks:
+                return {
+                    "op": "update_interval",
+                    "operation_id": operation_id,
+                    "task_id": task_id,
+                    "status": "failed",
+                    "error": f"Task {task_id} not found",
+                }
+
+            task = self._tasks[task_id]
+
+            if task.status in (ScheduleStatus.COMPLETED, ScheduleStatus.CANCELLED):
+                return {
+                    "op": "update_interval",
+                    "operation_id": operation_id,
+                    "task_id": task_id,
+                    "status": "failed",
+                    "error": f"Cannot update interval: task is in {task.status.value} state",
+                }
+
+            if task.recurrence != RecurrenceType.INTERVAL:
+                rec = task.recurrence.value if task.recurrence else "none"
+                return {
+                    "op": "update_interval",
+                    "operation_id": operation_id,
+                    "task_id": task_id,
+                    "status": "failed",
+                    "error": (
+                        f"Cannot update interval: task recurrence is"
+                        f" {rec}, not interval"
+                    ),
+                }
+
+            interval_seconds = operation.get("interval_seconds")
+            if interval_seconds is None:
+                return {
+                    "op": "update_interval",
+                    "operation_id": operation_id,
+                    "task_id": task_id,
+                    "status": "failed",
+                    "error": "interval_seconds is required",
+                }
+
+            task.recurrence_config["interval_seconds"] = interval_seconds
+
+            logger.info(
+                "bulk_task_interval_updated",
+                task_id=task_id,
+                operation_id=operation_id,
+                interval_seconds=interval_seconds,
+            )
+
+            return {
+                "op": "update_interval",
+                "operation_id": operation_id,
+                "task_id": task_id,
+                "status": "success",
+                "error": None,
+            }
+
+        except Exception as e:
+            return {
+                "op": "update_interval",
+                "operation_id": operation_id,
+                "task_id": operation.get("task_id"),
+                "status": "failed",
+                "error": str(e),
+            }

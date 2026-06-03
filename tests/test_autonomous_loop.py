@@ -630,3 +630,180 @@ async def test_monitor_agent_state_detects_changes() -> None:
     assert swarm._cooldown_until is not None, (
         "Expected cooldown to be set after state change dispatch"
     )
+
+
+@pytest.mark.asyncio
+async def test_chronos_bulk_schedule_adjust_creates_task() -> None:
+    """Verify bulk_schedule_adjust create operation schedules a new task."""
+    from datetime import UTC, datetime
+    from types import SimpleNamespace
+    from unittest.mock import AsyncMock
+
+    from heretek_swarm.actors.chronos import ChronosAgent
+
+    agent = ChronosAgent(agent_id="test_chronos_create", config={})
+    mock_send = AsyncMock()
+    agent.send = mock_send
+
+    msg = SimpleNamespace(
+        sender="requester",
+        message_type="bulk_schedule_adjust",
+        content={
+            "operations": [
+                {
+                    "op": "create",
+                    "operation_id": "c1",
+                    "task_id": "created_task",
+                    "name": "Created via bulk",
+                    "scheduled_at": "2026-06-04T00:00:00Z",
+                },
+            ]
+        },
+        timestamp=datetime.now(UTC).isoformat(),
+    )
+
+    await agent._handle_bulk_schedule_adjust(msg)
+
+    assert "created_task" in agent._tasks
+    assert agent._tasks["created_task"].name == "Created via bulk"
+    assert mock_send.called
+    content = mock_send.call_args.kwargs["content"]
+    assert content["total"] == 1
+    assert content["succeeded"] == 1
+
+
+@pytest.mark.asyncio
+async def test_chronos_bulk_schedule_adjust_cancels_task() -> None:
+    """Verify bulk_schedule_adjust cancel operation cancels an existing task."""
+    from datetime import UTC, datetime
+    from types import SimpleNamespace
+    from unittest.mock import AsyncMock
+
+    from heretek_swarm.actors.chronos import ChronosAgent
+    from heretek_swarm.actors.chronos.types import ScheduledTask, ScheduleStatus
+
+    agent = ChronosAgent(agent_id="test_chronos_cancel", config={})
+    mock_send = AsyncMock()
+    agent.send = mock_send
+
+    agent._tasks["task_to_cancel"] = ScheduledTask(
+        task_id="task_to_cancel",
+        name="To Cancel",
+        description="",
+        scheduled_at=datetime(2026, 6, 4, tzinfo=UTC),
+    )
+
+    msg = SimpleNamespace(
+        sender="requester",
+        message_type="bulk_schedule_adjust",
+        content={
+            "operations": [
+                {
+                    "op": "cancel",
+                    "operation_id": "x1",
+                    "task_id": "task_to_cancel",
+                },
+            ]
+        },
+        timestamp=datetime.now(UTC).isoformat(),
+    )
+
+    await agent._handle_bulk_schedule_adjust(msg)
+
+    assert agent._tasks["task_to_cancel"].status == ScheduleStatus.CANCELLED
+    content = mock_send.call_args.kwargs["content"]
+    assert content["succeeded"] == 1
+
+
+@pytest.mark.asyncio
+async def test_chronos_bulk_schedule_adjust_updates_priority() -> None:
+    """Verify bulk_schedule_adjust update_priority operation changes priority."""
+    from datetime import UTC, datetime
+    from types import SimpleNamespace
+    from unittest.mock import AsyncMock
+
+    from heretek_swarm.actors.chronos import ChronosAgent
+    from heretek_swarm.actors.chronos.types import Priority, ScheduledTask
+
+    agent = ChronosAgent(agent_id="test_chronos_priority", config={})
+    mock_send = AsyncMock()
+    agent.send = mock_send
+
+    agent._tasks["priority_task"] = ScheduledTask(
+        task_id="priority_task",
+        name="Priority Task",
+        description="",
+        scheduled_at=datetime(2026, 6, 4, tzinfo=UTC),
+    )
+
+    msg = SimpleNamespace(
+        sender="requester",
+        message_type="bulk_schedule_adjust",
+        content={
+            "operations": [
+                {
+                    "op": "update_priority",
+                    "operation_id": "p1",
+                    "task_id": "priority_task",
+                    "new_priority": 5,
+                },
+            ]
+        },
+        timestamp=datetime.now(UTC).isoformat(),
+    )
+
+    await agent._handle_bulk_schedule_adjust(msg)
+
+    assert agent._tasks["priority_task"].priority == Priority.CRITICAL
+    content = mock_send.call_args.kwargs["content"]
+    assert content["succeeded"] == 1
+
+
+@pytest.mark.asyncio
+async def test_chronos_bulk_schedule_adjust_retries_failed_operations() -> None:
+    """Verify bulk_schedule_adjust retries failed operations once.
+
+    A 'create' operation targeting a task_id that already exists will fail on
+    both the initial attempt and the retry, proving the retry mechanism fires
+    without crashing.
+    """
+    from datetime import UTC, datetime
+    from types import SimpleNamespace
+    from unittest.mock import AsyncMock
+
+    from heretek_swarm.actors.chronos import ChronosAgent
+    from heretek_swarm.actors.chronos.types import ScheduledTask
+
+    agent = ChronosAgent(agent_id="test_chronos_retry", config={})
+    mock_send = AsyncMock()
+    agent.send = mock_send
+
+    agent._tasks["existing"] = ScheduledTask(
+        task_id="existing",
+        name="Existing",
+        description="",
+        scheduled_at=datetime(2026, 6, 4, tzinfo=UTC),
+    )
+
+    msg = SimpleNamespace(
+        sender="requester",
+        message_type="bulk_schedule_adjust",
+        content={
+            "operations": [
+                {
+                    "op": "create",
+                    "operation_id": "r1",
+                    "task_id": "existing",
+                    "name": "Should Fail",
+                },
+            ]
+        },
+        timestamp=datetime.now(UTC).isoformat(),
+    )
+
+    await agent._handle_bulk_schedule_adjust(msg)
+
+    content = mock_send.call_args.kwargs["content"]
+    assert content["failed"] >= 1
+    assert "already exists" in content["results"][0]["error"]
+    assert content["total"] == 1

@@ -26,6 +26,7 @@ from heretek_swarm.actors.chronos.scheduler import ChronosSchedulerMixin
 
 # Re-export types from types.py
 from heretek_swarm.actors.chronos.types import (
+    BulkOperation,
     Deadline,
     Priority,
     RecurrenceType,
@@ -36,6 +37,7 @@ from heretek_swarm.actors.chronos.types import (
 
 __all__ = [
     # Agent
+    "BulkOperation",
     "ChronosAgent",
     "ChronosHandlersMixin",
     # Mixins

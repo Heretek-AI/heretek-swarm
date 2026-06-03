@@ -11,6 +11,51 @@ from typing import Any
 
 import structlog
 
+
+@dataclass
+class BulkOperation:
+    """A single operation within a bulk_schedule_adjust request.
+
+    Attributes:
+        op: Operation type: create, cancel, update_priority, or update_interval
+        operation_id: Unique identifier for this operation within the batch
+        task_id: Target task ID (required for cancel, update_priority, update_interval)
+        name: Task name (create only)
+        description: Task description (create only)
+        scheduled_at: ISO8601 datetime (create only)
+        priority: Task priority 1-5 (create only)
+        new_priority: New priority value 1-5 (update_priority only)
+        recurrence: Recurrence pattern (create only)
+        recurrence_config: Recurrence config dict (create only)
+        interval_seconds: New interval in seconds (update_interval only)
+        target_agents: List of target agent IDs (create only)
+        action: Action name (create only)
+        payload: Action payload dict (create only)
+        deadline: ISO8601 deadline (create only)
+        max_runs: Maximum execution count (create only)
+        metadata: Additional metadata (create only)
+    """
+
+    op: str  # create | cancel | update_priority | update_interval
+    operation_id: str
+    task_id: str | None = None
+    # create operation fields
+    name: str | None = None
+    description: str | None = None
+    scheduled_at: str | None = None
+    priority: int | None = None
+    new_priority: int | None = None  # update_priority
+    recurrence: str | None = None
+    recurrence_config: dict[str, Any] | None = None
+    interval_seconds: int | None = None  # update_interval
+    target_agents: list[str] | None = None
+    action: str | None = None
+    payload: dict[str, Any] | None = None
+    deadline: str | None = None
+    max_runs: int | None = None
+    metadata: dict[str, Any] | None = None
+
+
 logger = structlog.get_logger(__name__)
 
 

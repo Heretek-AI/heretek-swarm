@@ -92,6 +92,7 @@ class ChronosAgent(
     - get_timeline: Get timeline of scheduled items
     - get_schedule: Get schedule for time range
     - register_reminder: Register a time-based reminder
+    - bulk_schedule_adjust: Apply a batch of schedule operations with per-item retry
     """
 
     def __init__(
@@ -172,6 +173,7 @@ class ChronosAgent(
             "anchor_time": self._handle_anchor_time,
             "get_adaptive_timeout": self._handle_get_adaptive_timeout,
             "delegate_context": self._handle_delegate,
+            "bulk_schedule_adjust": self._handle_bulk_schedule_adjust,
         }
 
     async def initialize(self) -> None:
