@@ -448,52 +448,16 @@ class PerceiverAgent(
             return {"error": str(e)}
 
     def _extract_text_features(self, text: str) -> dict[str, Any]:
-        """Extract features from text input."""
-        if not isinstance(text, str):
-            text = str(text)
+        """Extract features from text input.
 
-        # Basic text statistics
-        words = text.split()
-        sentences = text.replace("!", ".").replace("?", ".").split(".")
-        sentences = [s.strip() for s in sentences if s.strip()]
-
-        # Character-level features
-        char_count = len(text)
-        char_count_no_spaces = len(text.replace(" ", ""))
-
-        # Word-level features
-        word_count = len(words)
-        avg_word_length = sum(len(w) for w in words) / word_count if word_count > 0 else 0
-
-        # Sentence-level features
-        sentence_count = len(sentences)
-        avg_sentence_length = word_count / sentence_count if sentence_count > 0 else 0
-
-        # Vocabulary features
-        unique_words = {w.lower() for w in words}
-        vocabulary_richness = len(unique_words) / word_count if word_count > 0 else 0
-
-        # Detect potential language patterns
-        has_code = any(c in text for c in "{}[]()=;") and (
-            "function" in text or "def " in text or "import " in text
-        )
-        has_json = text.strip().startswith(("{", "["))
-        has_xml = text.strip().startswith("<")
-
-        return {
-            "char_count": char_count,
-            "char_count_no_spaces": char_count_no_spaces,
-            "word_count": word_count,
-            "sentence_count": sentence_count,
-            "avg_word_length": round(avg_word_length, 2),
-            "avg_sentence_length": round(avg_sentence_length, 2),
-            "unique_words": len(unique_words),
-            "vocabulary_richness": round(vocabulary_richness, 3),
-            "has_code_structure": has_code,
-            "has_json_format": has_json,
-            "has_xml_format": has_xml,
-            "preview": text[:200] if len(text) > 200 else text,
-        }
+        Thin delegate to
+        :func:`heretek_swarm.actors.perceiver.extraction.extract_text_features`
+        (Phase 2.3 of PLAN.md — god-class extraction). The
+        helper is a pure function with no agent-state dependency,
+        so it lives in the extraction module and the agent retains
+        this method only to keep call sites stable.
+        """
+        return _ext_extract_text_features(text)
 
     async def _extract_image_features(
         self, image_data: Any, format_hint: str | None
