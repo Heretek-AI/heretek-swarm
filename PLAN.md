@@ -1740,6 +1740,126 @@ deployment is a deployment change, not a code change.
   ObservabilityServiceStub. Delegates to opik_compat
   shim (Phase 1.3).
 
+### 2026-06-03 — Phase 0.5: cold-start re-validation via docker compose
+
+Implements the audit's exit criterion for Phase 0.5:
+docker compose up --build -d with all 7 containers
+healthy, the API responding to /api/health, the
+per-agent supervisor lookup, and the F-001 / F-009
+regression checks. The LLM and embeddings are wired to
+the local Ollama at host.docker.internal:11435 (deepseek-v4-flash
+for chat, nomic-embed-text-v2-moe for embeddings).
+
+Verification (run against the live docker-compose stack):
+  * All 7 containers healthy: api, cognee, dashboard,
+    nats, postgres, qdrant, redis.
+  * GET /api/health → 200, all sub-services healthy
+    (gateway / redis 7.4.9 / postgres / qdrant).
+  * GET /api/agents/steward → 200, source=supervisor.
+  * GET /api/agents/does-not-exist → 404 with
+    "Agent 'does-not-exist' not found".
+  * GET /api/agents/instances → 200 (F-001 regression).
+  * Phase 0.1 fix (aggregate_consensus → compute_consensus)
+    exercised live.
+  * Dashboard verified via chrome-devtools MCP: Home
+    page shows 23 active agents; Agents page shows
+    all 23 agents in the legacy agents table.
+  * LLM wiring end-to-end: deepseek-v4-flash:cloud
+    via local Ollama at port 11435.
+  * Embedding wiring end-to-end: nomic-embed-text-v2-moe
+    via local Ollama at port 11435.
+
+### 2026-06-03 — Phase 1.3 / 1.4 call-site migrations
+
+Implements the call-site wiring for Phase 1.3 (opik
+observability) and Phase 1.4 (headroom prompt compression):
+
+* backend/heretek_swarm/llm/model_garage.py — OpenAIProvider.complete
+  now wraps payload['messages'] through headroom.wrap()
+  before the LLM call (Phase 1.4 token compression) and
+  wraps the call in opik_compat.timed() so the LLM-call
+  duration is captured under the 'llm_openai_complete'
+  metric (Phase 1.3).
+* backend/heretek_swarm/actors/mixins/memory.py —
+  _get_memory_tier now falls back to the canonical
+  MemoryStore (Phase 1.1) when the actor didn't wire
+  an access_analyzer, instead of raising TypeError.
+
+### 2026-06-03 — Phase 4 actual: heretek_swarm_core + heretek_swarm_api
+
+Implements the actual sub-package move for Phase 4. The
+new packages are re-export shims over the legacy
+monolith today, so they are drop-in namespaces for new
+code while the actual file moves happen in follow-up
+PRs.
+
+* new: packages/core/src/heretek_swarm_core/__init__.py —
+  re-exports AgentActor, ConsensusEngine, MAKERConsensus
+  / EnhancedMAKERConsensus / SwarmDeliberationEngine /
+  DeliberationEngine, TokenStore / verify_auth, MemoryStore
+  / MemoryType / MemoryEntry / get_default_store, the
+  opik_compat shim, headroom_wrap / headroom_unwrap,
+  HindsightClient, LangGraphHeavySwarmWorkflow,
+  AutonomousSwarm, wire_orchestrators, slowapi limiter,
+  and the 4 service stubs.
+* new: packages/api/src/heretek_swarm_api/__init__.py —
+  re-exports app, consensus_router, wizard_router,
+  ProviderProbe / HttpProbe / StaticProbe, the
+  WebSocketAuthManager / ConnectionManager / ws_manager,
+  AVAILABLE_PROVIDERS / AGENT_TIERS, and the slowapi
+  limiter.
+
+Verification: from heretek_swarm_core import AgentActor,
+ConsensusEngine, MemoryStore, ConsensusServiceStub,
+AutonomousSwarm succeeds; from heretek_swarm_api import
+app, consensus_router, wizard_router, ProviderProbe,
+ws_manager succeeds. The legacy heretek_swarm.* imports
+keep working.
+
+### 2026-06-03 — Phase 5 actual: runnable gRPC services
+
+Implements the actual gRPC extraction of Phase 5:
+
+* new: backend/heretek_swarm/services/grpc_proto/heretek_services.proto
+  — the canonical .proto for the 4 services. Defines
+  ConsensusService, MemoryService, RealtimeService,
+  ObservabilityService with their messages.
+* generated: backend/heretek_swarm/services/grpc_proto/heretek_services_pb2.py
+  and heretek_services_pb2_grpc.py — gRPC stubs.
+* new: backend/heretek_swarm/services/grpc_servers.py
+  (450 LOC) — the gRPC server implementations. Each
+  service has a Servicer class that delegates to the
+  in-process service stub from Phase 5. main() is the
+  CLI entry point:
+    python -m heretek_swarm.services.grpc_servers \\
+      --service consensus --port 50051
+* new: backend/heretek_swarm/services/grpc_clients.py
+  (250 LOC) — the gRPC client wrappers. Used by the api
+  process when the corresponding env var is set
+  (HERETEK_CONSENSUS_GRPC_URL, etc.). When unset, the
+  resolvers return None and the api process falls back
+  to the in-process service stub.
+* new: backend/Dockerfile.grpc-svc — the Dockerfile
+  pattern for building one of the four services as a
+  separate container. Uses an ARG to pick the SERVICE.
+* docker-compose.yml: opt-in consensus_svc on port 50051
+  via the 'sovereign' profile.
+
+Verification (run live this session):
+  * gRPC server runs end-to-end: started on port 50999,
+    CreateRound gRPC call returned the consensus_id and
+    state, and the implementation correctly delegated
+    to the in-process ConsensusServiceStub.
+  * gRPC client imports cleanly; the resolvers return
+    None when the env vars are unset.
+
+### 2026-06-03 — Phase 5 deploy: consensus_svc in docker-compose
+
+The deploy-time surface for the Phase 5 gRPC extraction.
+The new 'consensus_svc' service is opt-in via the
+'sovereign' profile so existing deployments are
+unaffected.
+
 ---
 
 ## Session Summary (2026-06-03)
