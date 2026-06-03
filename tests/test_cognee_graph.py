@@ -97,7 +97,7 @@ class TestCogneeGraphRetriever:
         self, cognee_graph_mod, enabled_reader
     ) -> None:
         """retrieve translates Cognee hits into GraphRetrievalResult instances."""
-        from heretek_swarm.rag.cognee_graph import GraphRetrievalResult
+        GraphRetrievalResult = cognee_graph_mod.GraphRetrievalResult
 
         enabled_reader.read = AsyncMock(
             return_value=[
