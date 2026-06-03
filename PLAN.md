@@ -1165,3 +1165,34 @@ entry. Migrating the existing `actors/mixins/memory.py:31` to call
 `get_default_store()` instead of `self.access_analyzer` is queued
 behind Phase 2.1 (god-class extraction) — the protocol is in place
 but the call sites still use the old shape.
+
+### 2026-06-03 — Phase 1.2: langgraph HeavySwarm cutover (verified)
+
+Implements Phase 1.2 of the audit (§3.1 Replace, heavyswarm.py
+→ langgraph). The cutover was already substantially complete in
+the previous milestone; this commit verifies the live state and
+records the audit's exit criteria.
+
+* `orchestration/langgraph_workflow.py` — `LangGraphHeavySwarmWorkflow`
+  is a thin wrapper over LangGraph's `StateGraph` with five real
+  nodes (research → analysis → alternatives → verification →
+  decision), `MemorySaver` for resumability, and an optional
+  `AsyncPostgresSaver` for cluster durability. Public contract is
+  preserved (`WorkflowPhase`, `PhaseResult`, `WorkflowResult`,
+  `execute(topic, context) -> WorkflowResult`).
+* `orchestration/langgraph_nodes.py` — the five phase node callables
+  with their own `WorkflowState` TypedDict.
+* `orchestration/__init__.py` — re-exports `LangGraphHeavySwarmWorkflow`
+  as the canonical entry point; the legacy `HeavySwarmWorkflow`
+  name is preserved as a re-export alias in `heretek_swarm/__init__.py`.
+* `langgraph>=1.2.4` and `langchain-core>=1.4.0` are installed in
+  `.venv` (already in `uv.lock`); the `langgraph` extra in
+  `pyproject.toml` documents the dep for new installs.
+
+Verification: `LangGraphHeavySwarmWorkflow()` constructs cleanly;
+`from langgraph.graph import StateGraph` resolves; the module
+imports in isolation without raising. The 1,363-LOC
+`orchestration/heavyswarm.py` referenced in the audit is no longer
+present in the tree (replaced by the langgraph wrapper) — the
+exit criterion "largest file in repo < 1,000 LOC" is now closer
+to being met by Phase 2 god-class extraction.
