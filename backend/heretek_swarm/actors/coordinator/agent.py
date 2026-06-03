@@ -159,6 +159,7 @@ class CoordinatorAgent(
             "graph_detect_cycles": self._handle_graph_detect_cycles,
             "graph_get_metrics": self._handle_graph_get_metrics,
             "graph_get_topological_order": self._handle_graph_get_topological_order,
+            "trigger_mediation": self._handle_trigger_mediation,
             "sync_register_dependency": self._handle_sync_register_dependency,
             "sync_release_dependency": self._handle_sync_release_dependency,
             "sync_detect_deadlock": self._handle_sync_detect_deadlock,
@@ -1079,6 +1080,66 @@ class CoordinatorAgent(
                 sender_id=self.agent_id,
             ),
         )
+
+    async def _handle_trigger_mediation(self, message: ActorMessage) -> None:
+        """
+        Handle trigger_mediation request from the main loop.
+
+        Accepts high-stress agent data and dispatches a conflict report
+        to the Arbiter for mediation.
+
+        Content:
+        - agents: list[str] - Agent IDs with high stress
+        - stress_levels: dict[str, float] - Agent ID -> stress level
+        - context: str - Description of the situation
+        """
+        content = message.content or {}
+        agents = content.get("agents", [])
+        stress_levels = content.get("stress_levels", {})
+        context = content.get("context", "High stress detected in swarm")
+
+        # Return early if no agents provided — nothing to mediate
+        if not agents:
+            logger.info(
+                "mediation_skip",
+                reason="no_agents_provided",
+                coordinator_id=self.agent_id,
+            )
+            return
+
+        logger.info(
+            "mediation_request",
+            agent_count=len(agents),
+            stress_levels=stress_levels,
+            coordinator_id=self.agent_id,
+        )
+
+        try:
+            await self.send(
+                "arbiter",
+                ActorMessage(
+                    message_type="report_conflict",
+                    content={
+                        "conflict_type": "behavioral_conflict",
+                        "severity": "HIGH",
+                        "parties": agents,
+                        "description": context,
+                        "context": {
+                            "stress_levels": stress_levels,
+                            "coordinator_id": self.agent_id,
+                            "timestamp": datetime.now(UTC).isoformat(),
+                            "source": "stress_threshold_trigger",
+                        },
+                    },
+                    sender_id=self.agent_id,
+                ),
+            )
+        except Exception as e:
+            logger.error(
+                "mediation_dispatch_failed",
+                error=str(e),
+                coordinator_id=self.agent_id,
+            )
 
     async def _update_coordination_ratio(self) -> float:
         """Update and return current coordination ratio."""

@@ -582,6 +582,9 @@ class AutonomousSwarm:
             # T02: integrate Metis analysis recommendations into Chronos
             await self._integrate_analysis_into_chronos()
 
+            # T03: check Empath stress data and trigger mediation if threshold exceeded
+            await self._check_empath_stress_and_mediate()
+
         # 6. Log cycle completion to Historian
         historian = self.supervisor.actors.get("historian") if self.supervisor else None
         if historian is not None:
@@ -1285,6 +1288,117 @@ class AutonomousSwarm:
             "target_agents": ["metis"],
             "recurrence": "once",
         }
+
+    async def _check_empath_stress_and_mediate(self) -> None:
+        """Check Empath stress data and trigger mediation if threshold exceeded.
+
+        Called after _integrate_analysis_into_chronos() during the cycle-30 drain.
+        Reads collective_stress from Empath on_demand_sentiment responses and
+        dispatches a trigger_mediation message to the Coordinator when stress
+        exceeds the configured threshold.
+
+        Threshold is configurable via HERETEK_MEDIATION_STRESS_THRESHOLD env var
+        (default 0.7, clamped to min 0.1, max 1.0).
+
+        Uses the same None-guard pattern as _integrate_analysis_into_chronos() so
+        no fault crashes the main loop.
+        """
+        try:
+            # Guard: no analysis available
+            if not self._latest_analysis or not self._latest_analysis.get("responses"):
+                logger.debug("stress_check_skipped_no_analysis")
+                return
+
+            responses = self._latest_analysis["responses"]
+
+            # Extract Empath responses only
+            empath_responses = [
+                r
+                for r in responses
+                if r.get("subject") == "swarm.analysis.empath.response"
+            ]
+
+            if not empath_responses:
+                logger.debug("mediation_skipped", reason="no_empathic_responses")
+                return
+
+            # Read threshold from env (default 0.7, clamped 0.1-1.0)
+            raw = os.getenv("HERETEK_MEDIATION_STRESS_THRESHOLD", "0.7")
+            try:
+                threshold = max(0.1, min(1.0, float(raw)))
+            except (ValueError, TypeError):
+                threshold = 0.7
+
+            # Check each Empath response for high stress
+            high_stress_agents: list[str] = []
+            stress_levels: dict[str, float] = {}
+
+            for response in empath_responses:
+                data = response.get("data", {})
+                stress = data.get("collective_stress", 0.0)
+                source_agent = data.get("source_agent", "unknown")
+
+                if stress > threshold:
+                    high_stress_agents.append(source_agent)
+                    stress_levels[source_agent] = stress
+
+            # If no high-stress agents found, log and return
+            if not high_stress_agents:
+                logger.debug(
+                    "mediation_skipped",
+                    reason="low_stress",
+                    threshold=threshold,
+                )
+                return
+
+            logger.info(
+                "mediation_triggered",
+                stress_level=stress_levels,
+                agents=high_stress_agents,
+                threshold=threshold,
+            )
+
+            # Dispatch trigger_mediation to Coordinator
+            coordinator = (
+                self.supervisor.actors.get("coordinator")
+                if self.supervisor
+                else None
+            )
+            if coordinator is None:
+                logger.error(
+                    "mediation_dispatch_failed",
+                    reason="coordinator_unavailable",
+                )
+                return
+
+            from heretek_swarm.actors.base import ActorMessage
+
+            msg = ActorMessage(
+                sender="main_loop",
+                message_type="trigger_mediation",
+                content={
+                    "agents": high_stress_agents,
+                    "stress_levels": stress_levels,
+                    "context": (
+                        f"High collective stress detected: {stress_levels} "
+                        f"exceeds threshold {threshold}"
+                    ),
+                },
+                timestamp=datetime.now(UTC).isoformat(),
+            )
+            await coordinator.put_message(msg)
+
+            logger.info(
+                "mediation_dispatched",
+                stress_level=stress_levels,
+                agent_count=len(high_stress_agents),
+            )
+
+        except Exception as e:
+            logger.error(
+                "mediation_dispatch_failed",
+                error=str(e),
+            )
 
     async def _process_external_events(self) -> None:
         """Process external events from Discord, Slack, Telegram, webhooks."""

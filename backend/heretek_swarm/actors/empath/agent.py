@@ -1021,6 +1021,9 @@ Format your response as a clear analysis with these three elements.
         - sentiment (str): "positive", "negative", or "neutral"
         - tone (str): Descriptive tone label
         - confidence (float): Confidence score 0-1
+        - collective_stress (float): Average stress level across all tracked
+          agents, computed by _update_collective_mood()
+        - source_agent (str): The source agent that triggered the analysis
         """
         text = message.content.get("text", "")
         source_agent = message.content.get("source_agent", "unknown")
@@ -1052,6 +1055,12 @@ Format your response as a clear analysis with these three elements.
             source_agent=source_agent,
         )
 
+        # Integrate text analysis into stress tracking
+        self._check_stress_indicators(source_agent, result)
+
+        # Refresh collective stress metrics
+        self._update_collective_mood()
+
         if message.content.get("reply_to"):
             await self.send(
                 topic=message.content["reply_to"],
@@ -1060,6 +1069,8 @@ Format your response as a clear analysis with these three elements.
                     "sentiment": result["sentiment"],
                     "tone": result["tone"],
                     "confidence": result["confidence"],
+                    "collective_stress": self.collective_stress,
+                    "source_agent": source_agent,
                 },
                 correlation_id=message.correlation_id,
             )
@@ -1069,6 +1080,8 @@ Format your response as a clear analysis with these three elements.
             extra={
                 "sentiment": result["sentiment"],
                 "confidence": result["confidence"],
+                "collective_stress": self.collective_stress,
+                "source_agent": source_agent,
             },
         )
 
