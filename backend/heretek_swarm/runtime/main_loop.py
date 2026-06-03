@@ -20,20 +20,21 @@ import asyncio
 import contextlib
 import os
 from datetime import UTC, datetime
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
 import structlog
-
-if TYPE_CHECKING:
-    from heretek_swarm.goals.store import FileGoalStore
 
 from heretek_swarm.actors.stubs import StubEventMesh
 from heretek_swarm.actors.supervisor import ActorSupervisor
 from heretek_swarm.api.consciousness import get_consciousness_plugin
 from heretek_swarm.channels.registry import ChannelRegistry, GroupRegistry
+from heretek_swarm.consensus.consensus_coordinator import ConsensusCoordinator
+from heretek_swarm.consensus.domain_selector import DomainSelector
 from heretek_swarm.consensus.election_manager import ElectionManager
 from heretek_swarm.consensus.maker import MAKERConsensus
 from heretek_swarm.gateway.nats_event_mesh import NATSEventMeshWithJetStream
+from heretek_swarm.goals.pipeline import run_goal_cycle
+from heretek_swarm.goals.store import FileGoalStore
 from heretek_swarm.llm.model_garage import ModelGarage
 from heretek_swarm.memory.cognee_reader import CogneeMemoryReader
 from heretek_swarm.memory.cognee_writer import CogneeMemoryWriter
@@ -673,7 +674,50 @@ class AutonomousSwarm:
             logger.warning("periodic_analysis_historian_skipped_no_historian")
 
         # --- M011: Autonomous goal pipeline ---
-        await self._run_goal_pipeline_cycle(metis, historian)
+        await self._run_goal_pipeline(metis, historian)
+
+    async def _run_goal_pipeline(self, metis: Any, historian: Any) -> None:
+        """Run the goal pipeline: propose, vote, accept/reject goals.
+
+        Uses a lazily-initialised FileGoalStore and builds a
+        ConsensusCoordinator from the swarm's MAKER consensus engine
+        and the full actor registry.
+
+        Failures are logged at error level and swallowed so the main
+        autonomous loop is never crashed by a goal pipeline fault.
+        """
+        # Lazily initialise the goal store on first use
+        if self._goal_store is None:
+            self._goal_store = FileGoalStore()
+
+        if self.consensus is None or self.supervisor is None:
+            logger.warning(
+                "goal_pipeline_skipped",
+                reason="consensus_or_supervisor_unavailable",
+            )
+            return
+
+        try:
+            domain_selector = DomainSelector()
+            coordinator = ConsensusCoordinator(
+                maker=self.consensus,
+                domain_selector=domain_selector,
+                actors=self.supervisor.actors,
+            )
+
+            await run_goal_cycle(
+                store=self._goal_store,
+                metis=metis,
+                coordinator=coordinator,
+                actors=self.supervisor.actors,
+                historian=historian,
+            )
+            logger.info("goal_pipeline_cycle_completed")
+        except Exception as exc:
+            logger.error(
+                "goal_pipeline_cycle_failed",
+                goal_pipeline_error=str(exc),
+            )
 
     async def _process_external_events(self) -> None:
         """Process external events from Discord, Slack, Telegram, webhooks."""
