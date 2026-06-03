@@ -19,6 +19,7 @@ Based on architecture from:
 import asyncio
 import contextlib
 import os
+import time
 from datetime import UTC, datetime
 from typing import Any
 
@@ -101,6 +102,14 @@ class AutonomousSwarm:
 
         # S04: Periodic analysis cycle counter — triggers Metis/Empath every 30 cycles
         self._analysis_cycle_count = 0
+
+        # S02: Cooldown timer for event-driven analysis dispatch
+        self._cooldown_until: float | None = None  # epoch seconds
+        self._pending_event_conditions: list[dict[str, Any]] = []
+
+        # S01: NATS response queue for periodic analysis results
+        self._response_queue: asyncio.Queue[dict[str, Any]] = asyncio.Queue()
+        self._latest_analysis: dict[str, Any] = {}
 
         # S03: RAFT election manager (initialized in initialize() unless --no-infra)
         self._election_manager = None  # ElectionManager | None
@@ -503,6 +512,7 @@ class AutonomousSwarm:
             asyncio.create_task(self._scaling_loop()),
             asyncio.create_task(self._report_agents_loop()),
             asyncio.create_task(self._steward_pulse_loop()),
+            asyncio.create_task(self._collect_responses()),
         ]
 
         if consciousness_enabled:
@@ -541,11 +551,30 @@ class AutonomousSwarm:
         # 4. Run health checks
         await self._run_health_checks()
 
-        # 5. Periodic analysis (Metis/Empath) every 30 cycles
+        # 5. Event-driven analysis dispatch and periodic heartbeat
+        # First: drain any coalesced pending events (if cooldown has expired)
+        if self._pending_event_conditions and not self._is_in_cooldown():
+            pending = list(self._pending_event_conditions)
+            self._pending_event_conditions = []
+            await self._request_analysis(pending)
+
+        # Second: fallback periodic heartbeat (every 30 cycles)
         self._analysis_cycle_count += 1
         if self._analysis_cycle_count >= 30:
             self._analysis_cycle_count = 0
             await self._trigger_periodic_analysis()
+
+            # Drain any responses that arrived since the last cycle
+            drained: list[dict[str, Any]] = []
+            while not self._response_queue.empty():
+                item = self._response_queue.get_nowait()
+                drained.append(item)
+            if drained:
+                self._latest_analysis = {
+                    "responses": drained,
+                    "collected_at": datetime.now(UTC).isoformat(),
+                }
+                logger.info("responses_drained", count=len(drained))
 
         # 6. Log cycle completion to Historian
         historian = self.supervisor.actors.get("historian") if self.supervisor else None
@@ -607,11 +636,14 @@ class AutonomousSwarm:
     async def _trigger_periodic_analysis(self) -> None:
         """Trigger periodic Metis analysis and Empath sentiment analysis.
 
-        Called every 30 cycles from _process_cycle(). Sends on-demand
-        analysis/sentiment requests to metis and empath agents via
-        put_message().  Uses the None-guard pattern from
-        _process_scheduled_tasks(): missing agents are logged with a
-        warning and skipped gracefully.
+        Called every 30 cycles from _process_cycle(). Builds a cycle-count
+        context string and delegates dispatch to
+        ``_dispatch_analysis_with_conditions()`` so periodic and event-driven
+        analysis share the same dispatch path.
+
+        Also runs the autonomous goal pipeline (``_run_goal_pipeline``) which
+        is specific to the periodic trigger and not fired for event-driven
+        analysis.
         """
         # Build a shared context string from recent cycle activity
         context = (
@@ -619,62 +651,274 @@ class AutonomousSwarm:
             "Provide a concise strategic overview of current swarm state."
         )
 
-        # --- Metis analysis ---
-        metis = self.supervisor.actors.get("metis") if self.supervisor else None
-        if metis is not None:
-            from heretek_swarm.actors.base import ActorMessage
+        # Delegate dispatch to the shared method
+        conditions: list[dict[str, Any]] = [
+            {
+                "type": "periodic_heartbeat",
+                "cycle_count": self._analysis_cycle_count,
+            }
+        ]
+        metis, _, historian = await self._dispatch_analysis_with_conditions(
+            conditions=conditions, context=context
+        )
 
+        # --- M011: Autonomous goal pipeline ---
+        await self._run_goal_pipeline(metis, historian)
+
+    async def _dispatch_analysis_with_conditions(
+        self,
+        conditions: list[dict[str, Any]],
+        context: str,
+    ) -> tuple[Any, Any, Any]:
+        """Shared dispatch logic for both periodic and event-driven analysis.
+
+        Constructs and sends analysis messages to Metis and Empath via
+        ``put_message()``, then logs the dispatch to Historian.
+
+        Uses the None-guard pattern: missing agents are logged with a
+        warning and skipped gracefully.
+
+        Args:
+            conditions: List of condition dicts describing why analysis
+                was triggered (e.g. ``[{"type": "periodic_heartbeat", ...}]``
+                or ``[{"type": "error_spike", ...}]``).
+            context: Human-readable context string passed to both agents.
+
+        Returns:
+            Tuple of (metis_actor, empath_actor, historian_actor) so
+            callers can perform additional agent-specific work.
+        """
+        from heretek_swarm.actors.base import ActorMessage
+
+        timestamp = datetime.now(UTC).isoformat()
+
+        metis = self.supervisor.actors.get("metis") if self.supervisor else None
+        empath = self.supervisor.actors.get("empath") if self.supervisor else None
+        historian = self.supervisor.actors.get("historian") if self.supervisor else None
+
+        # --- Metis analysis ---
+        if metis is not None:
             msg = ActorMessage(
                 sender="main_loop",
                 message_type="on_demand_analysis",
                 content={
                     "context": context,
+                    "conditions": conditions,
                     "perspective": "neutral",
-                    "reply_to": "main_loop_analysis",
+                    "reply_to": "swarm.analysis.metis.response",
                 },
-                timestamp=datetime.now(UTC).isoformat(),
+                timestamp=timestamp,
             )
             await metis.put_message(msg)
-            logger.info("periodic_metis_analysis_dispatched")
+            logger.info("analysis_dispatched_to_metis", condition_count=len(conditions))
         else:
-            logger.warning("periodic_analysis_skipped_no_metis")
+            logger.warning("analysis_skipped_no_metis")
 
         # --- Empath sentiment ---
-        empath = self.supervisor.actors.get("empath") if self.supervisor else None
         if empath is not None:
-            from heretek_swarm.actors.base import ActorMessage
-
             msg = ActorMessage(
                 sender="main_loop",
                 message_type="on_demand_sentiment",
                 content={
                     "text": context,
+                    "conditions": conditions,
                     "source_agent": "main_loop",
-                    "reply_to": "main_loop_sentiment",
+                    "reply_to": "swarm.analysis.empath.response",
                 },
-                timestamp=datetime.now(UTC).isoformat(),
+                timestamp=timestamp,
             )
             await empath.put_message(msg)
-            logger.info("periodic_empath_sentiment_dispatched")
+            logger.info("analysis_dispatched_to_empath", condition_count=len(conditions))
         else:
-            logger.warning("periodic_analysis_skipped_no_empath")
+            logger.warning("analysis_skipped_no_empath")
 
         # --- Log to Historian ---
-        historian = self.supervisor.actors.get("historian") if self.supervisor else None
+        conditions_summary = [
+            {k: v for k, v in c.items() if k != "context"} for c in conditions
+        ]
         if historian is not None:
             await historian.log_event(
-                "periodic_analysis",
-                "main_loop",
-                {
+                event_type="analysis_dispatched",
+                source="main_loop",
+                data={
+                    "dispatch_path": "_dispatch_analysis_with_conditions",
+                    "condition_count": len(conditions),
+                    "conditions": conditions_summary,
                     "metis_dispatched": metis is not None,
                     "empath_dispatched": empath is not None,
                 },
             )
         else:
-            logger.warning("periodic_analysis_historian_skipped_no_historian")
+            logger.warning("analysis_historian_skipped_no_historian")
 
-        # --- M011: Autonomous goal pipeline ---
-        await self._run_goal_pipeline(metis, historian)
+        logger.info(
+            "analysis_dispatch_complete",
+            conditions=len(conditions),
+            metis=metis is not None,
+            empath=empath is not None,
+            historian=historian is not None,
+        )
+
+        return metis, empath, historian
+
+    def _is_in_cooldown(self) -> bool:
+        """Check whether the analysis cooldown timer is still active.
+
+        Returns True if ``_cooldown_until`` is set and the current time
+        has not yet passed it. Returns False when cooldown has expired
+        or has never been set.
+        """
+        if self._cooldown_until is None:
+            return False
+        return time.time() < self._cooldown_until
+
+    def _build_event_context(self, conditions: list[dict[str, Any]]) -> str:
+        """Build a concise context string from event conditions.
+
+        Iterates over each condition in the list and creates a sentence
+        fragment for each type (error_spike, agent_state_change,
+        mailbox_depth) including key details like agent IDs, counts,
+        and thresholds.
+
+        Args:
+            conditions: List of condition dicts with ``type`` and optional
+                detail keys (``agent_id``, ``count``, ``threshold``, etc.).
+
+        Returns:
+            Concise human-readable context string.
+        """
+        parts: list[str] = []
+        for c in conditions:
+            ctype = c.get("type", "unknown")
+            if ctype == "error_spike":
+                agent_id = c.get("agent_id", "unknown")
+                error_count = c.get("count", 0)
+                threshold = c.get("threshold", 0)
+                parts.append(
+                    f"error spike on {agent_id}: {error_count} errors "
+                    f"(threshold {threshold})"
+                )
+            elif ctype == "agent_state_change":
+                agent_id = c.get("agent_id", "unknown")
+                old_state = c.get("old_state", "unknown")
+                new_state = c.get("new_state", "unknown")
+                parts.append(
+                    f"state change on {agent_id}: {old_state} -> {new_state}"
+                )
+            elif ctype == "mailbox_depth":
+                agent_id = c.get("agent_id", "unknown")
+                depth = c.get("count", 0)
+                threshold = c.get("threshold", 0)
+                parts.append(
+                    f"mailbox depth on {agent_id}: {depth} messages "
+                    f"(threshold {threshold})"
+                )
+            elif ctype == "periodic_heartbeat":
+                cycle = c.get("cycle_count", 0)
+                parts.append(f"periodic heartbeat at cycle {cycle}")
+            else:
+                parts.append(f"event: {ctype}")
+
+        return "Event-driven analysis triggered by: " + "; ".join(parts)
+
+    async def _request_analysis(self, conditions: list[dict[str, Any]]) -> None:
+        """Request event-driven analysis with cooldown protection.
+
+        If the cooldown timer is active, the conditions are coalesced
+        into ``_pending_event_conditions`` and the method returns
+        without dispatching. Once cooldown expires, pending + new
+        conditions are merged, dispatched via
+        ``_dispatch_analysis_with_conditions()``, and the cooldown
+        timer is reset.
+
+        Cooldown duration is configured via the
+        ``HERETEK_ANALYSIS_COOLDOWN_SECONDS`` environment variable
+        (default 300 seconds, clamped to minimum 60 seconds).
+
+        Args:
+            conditions: List of condition dicts that triggered this
+                analysis request.
+        """
+        # 1. Check cooldown — coalesce if still active
+        if self._is_in_cooldown():
+            self._pending_event_conditions.extend(conditions)
+            logger.info(
+                "analysis_cooldown_coalesced",
+                cooldown_until=self._cooldown_until,
+                pending_count=len(self._pending_event_conditions),
+            )
+            return
+
+        # 2. Read cooldown duration from env (default 300s, min 60s)
+        raw = os.getenv("HERETEK_ANALYSIS_COOLDOWN_SECONDS", "300")
+        try:
+            cooldown_seconds = max(int(raw), 60)
+        except (ValueError, TypeError):
+            cooldown_seconds = 300
+
+        # 3. Set cooldown timer
+        self._cooldown_until = time.time() + cooldown_seconds
+
+        # 4. Merge pending + new conditions, reset pending
+        all_conditions = list(self._pending_event_conditions) + list(conditions)
+        self._pending_event_conditions = []
+
+        # 5. Build context string
+        context = self._build_event_context(all_conditions)
+
+        # 6. Dispatch to Metis and Empath
+        await self._dispatch_analysis_with_conditions(
+            conditions=all_conditions, context=context
+        )
+
+        logger.info(
+            "event_driven_analysis_dispatched",
+            condition_count=len(all_conditions),
+            cooldown_seconds=cooldown_seconds,
+            cooldown_until=self._cooldown_until,
+        )
+
+    async def _collect_responses(self) -> None:
+        """Subscribe to analysis response topics and collect responses.
+
+        Subscribes to ``swarm.analysis.metis.response`` and
+        ``swarm.analysis.empath.response``, routing each received
+        message through ``_response_queue`` for later drainage in
+        ``_process_cycle``.
+
+        Runs as a long-lived background task that is cancelled when the
+        swarm shuts down.
+        """
+        response_topics = [
+            "swarm.analysis.metis.response",
+            "swarm.analysis.empath.response",
+        ]
+
+        async def _on_response(
+            mesh_or_none: Any,
+            subject: str,
+            data: dict[str, Any],
+        ) -> None:
+            """Callback placed into the event mesh subscription."""
+            await self._response_queue.put(
+                {
+                    "subject": subject,
+                    "data": data,
+                    "timestamp": datetime.now(UTC).isoformat(),
+                }
+            )
+            logger.info(
+                "response_collected",
+                topic=subject,
+                message_type=data.get("message_type", ""),
+            )
+
+        for topic in response_topics:
+            await self.event_mesh.subscribe(topic, _on_response)
+            logger.info("subscribed_to_response_topic", topic=topic)
+
+        # Keep the coroutine alive as a background task
+        await asyncio.Event().wait()
 
     async def _run_goal_pipeline(self, metis: Any, historian: Any) -> None:
         """Run the goal pipeline: propose, vote, accept/reject goals.
