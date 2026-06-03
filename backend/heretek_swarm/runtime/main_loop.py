@@ -398,24 +398,26 @@ class AutonomousSwarm:
             self._election_manager = None
 
     def _rewire_orchestrator_refs(self) -> None:
-        self._actor_orch._supervisor = self.supervisor
-        self._actor_orch._mcp_tools = self.mcp_tools
-        self._actor_orch._channel_registry = self.channel_registry
-        self._actor_orch._event_mesh = self.event_mesh
-        self._deliberation._supervisor = self.supervisor
-        self._deliberation._consensus = self.consensus
+        """Post-hoc wiring of orchestrator dependencies.
+
+        Thin delegate to
+        :func:`heretek_swarm.runtime.wiring.wire_orchestrators`
+        (Phase 2.2 of PLAN.md). The audit's exit criterion is to
+        move from post-hoc attribute assignment to constructor
+        injection; when each orchestrator accepts its supervisor
+        / mcp_tools / event_mesh through ``__init__``, this
+        method becomes a no-op.
+        """
+        _wire_orchestrators_ext(self)
 
     def _thread_event_mesh_to_supervisor(self) -> None:
-        if self.event_mesh is not None:
-            if self.event_mesh.is_connected:
-                self.supervisor._event_mesh = self.event_mesh
-                logger.info("event_mesh_threaded_to_supervisor", mesh_type="NATSEventMeshWithJetStream")
-            else:
-                logger.warning(
-                    "event_mesh_not_connected_at_spawn_time",
-                    message="Event mesh exists but is_connected is False — agents will use stubs.",
-                )
-                self.supervisor._event_mesh = None
+        """Thread the event mesh into the supervisor.
+
+        Thin delegate to
+        :func:`heretek_swarm.runtime.wiring.thread_event_mesh_to_supervisor`
+        (Phase 2.2 of PLAN.md).
+        """
+        _thread_event_mesh_to_supervisor_ext(self)
 
     async def _spawn_all_actors(self) -> None:
         try:
