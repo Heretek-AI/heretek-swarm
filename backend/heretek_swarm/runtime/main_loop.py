@@ -513,6 +513,9 @@ class AutonomousSwarm:
             asyncio.create_task(self._report_agents_loop()),
             asyncio.create_task(self._steward_pulse_loop()),
             asyncio.create_task(self._collect_responses()),
+            asyncio.create_task(self._monitor_error_rate()),
+            asyncio.create_task(self._monitor_agent_state()),
+            asyncio.create_task(self._monitor_mailbox_depth()),
         ]
 
         if consciousness_enabled:
@@ -877,6 +880,181 @@ class AutonomousSwarm:
             cooldown_seconds=cooldown_seconds,
             cooldown_until=self._cooldown_until,
         )
+
+    async def _monitor_error_rate(self) -> None:
+        """Monitor for error spikes across all actors.
+
+        Reads ``HERETEK_ANALYSIS_ERROR_THRESHOLD`` env var (default "1").
+        Each cycle iterates ``self.supervisor.actors``, calls
+        ``actor.get_status()``, and collects agents whose state is
+        ``"error"``.  If the count meets or exceeds the threshold,
+        dispatches an ``error_spike`` condition via
+        ``_request_analysis()``.
+
+        Runs as an independent background task; cooldown and coalescing
+        are handled by ``_request_analysis()``.
+        """
+        while self._running:
+            try:
+                # Read threshold from env each cycle so it can be tuned at runtime
+                raw = os.getenv("HERETEK_ANALYSIS_ERROR_THRESHOLD", "1")
+                try:
+                    threshold = int(raw)
+                except (ValueError, TypeError):
+                    threshold = 1
+
+                if self.supervisor is None:
+                    await asyncio.sleep(self._health_check_interval)
+                    continue
+
+                error_agents: list[str] = []
+                for agent_id, actor in self.supervisor.actors.items():
+                    try:
+                        status = actor.get_status()
+                        if status and status.state.value == "error":
+                            error_agents.append(agent_id)
+                    except Exception:
+                        # Individual actor failure should not crash the monitor
+                        continue
+
+                if len(error_agents) >= threshold:
+                    await self._request_analysis([
+                        {
+                            "type": "error_spike",
+                            "agents": error_agents,
+                            "count": len(error_agents),
+                            "threshold": threshold,
+                        }
+                    ])
+                    logger.info(
+                        "error_spike_detected",
+                        error_agents=error_agents,
+                        count=len(error_agents),
+                        threshold=threshold,
+                    )
+
+                await asyncio.sleep(self._health_check_interval)
+            except asyncio.CancelledError:
+                break
+            except Exception as exc:
+                logger.error("error_rate_monitor_failed", error=str(exc))
+                await asyncio.sleep(self._health_check_interval)
+
+    async def _monitor_agent_state(self) -> None:
+        """Monitor agent state transitions to detect changes worth analysis.
+
+        Maintains an internal ``last_states`` dict tracking each actor's
+        last-known ``state.value``.  On each cycle, compares current
+        states against last known and, for any transitions, dispatches
+        an ``agent_state_change`` condition via ``_request_analysis()``.
+
+        Runs as an independent background task; cooldown and coalescing
+        are handled by ``_request_analysis()``.
+        """
+        last_states: dict[str, str] = {}
+
+        while self._running:
+            try:
+                if self.supervisor is None:
+                    await asyncio.sleep(self._health_check_interval)
+                    continue
+
+                changes: list[dict[str, str]] = []
+                for agent_id, actor in self.supervisor.actors.items():
+                    try:
+                        status = actor.get_status()
+                        if status is None:
+                            continue
+                        current_state = status.state.value
+                        prev_state = last_states.get(agent_id)
+                        if prev_state is not None and current_state != prev_state:
+                            changes.append({
+                                "agent": agent_id,
+                                "from": prev_state,
+                                "to": current_state,
+                            })
+                        last_states[agent_id] = current_state
+                    except Exception:
+                        continue
+
+                if changes:
+                    await self._request_analysis([
+                        {
+                            "type": "agent_state_change",
+                            "changes": changes,
+                        }
+                    ])
+                    logger.info(
+                        "agent_state_change_detected",
+                        changes=changes,
+                    )
+
+                await asyncio.sleep(self._health_check_interval)
+            except asyncio.CancelledError:
+                break
+            except Exception as exc:
+                logger.error("agent_state_monitor_failed", error=str(exc))
+                await asyncio.sleep(self._health_check_interval)
+
+    async def _monitor_mailbox_depth(self) -> None:
+        """Monitor actor mailbox depths for backlog conditions.
+
+        Reads ``HERETEK_ANALYSIS_MAILBOX_THRESHOLD`` env var (default "10").
+        Each cycle inspects each actor's ``mailbox`` attribute and checks
+        ``qsize()``.  If any actor's depth meets or exceeds the threshold,
+        dispatches a ``mailbox_depth`` condition via ``_request_analysis()``.
+
+        Uses ``self._loop_interval * 10`` as the sleep period (faster
+        check cycle than error/state monitors).
+
+        Runs as an independent background task; cooldown and coalescing
+        are handled by ``_request_analysis()``.
+        """
+        while self._running:
+            try:
+                # Read threshold from env each cycle for runtime tuneability
+                raw = os.getenv("HERETEK_ANALYSIS_MAILBOX_THRESHOLD", "10")
+                try:
+                    threshold = int(raw)
+                except (ValueError, TypeError):
+                    threshold = 10
+
+                if self.supervisor is None:
+                    await asyncio.sleep(self._loop_interval * 10)
+                    continue
+
+                deep_agents: list[dict[str, int]] = []
+                for agent_id, actor in self.supervisor.actors.items():
+                    try:
+                        mailbox = getattr(actor, "mailbox", None)
+                        if mailbox is None:
+                            continue
+                        depth = mailbox.qsize()
+                        if depth >= threshold:
+                                deep_agents.append({agent_id: depth})
+                    except Exception:
+                        continue
+
+                if deep_agents:
+                    await self._request_analysis([
+                        {
+                            "type": "mailbox_depth",
+                            "agents": deep_agents,
+                            "threshold": threshold,
+                        }
+                    ])
+                    logger.info(
+                        "mailbox_depth_detected",
+                        deep_agents=deep_agents,
+                        threshold=threshold,
+                    )
+
+                await asyncio.sleep(self._loop_interval * 10)
+            except asyncio.CancelledError:
+                break
+            except Exception as exc:
+                logger.error("mailbox_depth_monitor_failed", error=str(exc))
+                await asyncio.sleep(self._loop_interval * 10)
 
     async def _collect_responses(self) -> None:
         """Subscribe to analysis response topics and collect responses.

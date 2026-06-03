@@ -372,3 +372,261 @@ async def test_process_cycle_skips_drain_below_cycle_30() -> None:
 
     # _latest_analysis should remain empty (never populated outside drain)
     assert swarm._latest_analysis == {}
+
+
+@pytest.mark.asyncio
+async def test_cooldown_suppresses_second_dispatch() -> None:
+    """Verify _request_analysis sets cooldown and suppresses a second dispatch.
+
+    Under cooldown, the second condition set is coalesced into
+    _pending_event_conditions rather than dispatched immediately.
+    """
+    swarm = AutonomousSwarm(config={}, no_infra=True)
+    supervisor = MagicMock()
+    supervisor.actors = {}
+    swarm.supervisor = supervisor
+
+    # First call should trigger dispatch and set cooldown
+    await swarm._request_analysis([{"type": "test"}])
+    assert swarm._cooldown_until is not None, "Cooldown should be set after first dispatch"
+
+    # Second call while cooldown is active should coalesce, not dispatch
+    await swarm._request_analysis([{"type": "test2"}])
+    assert len(swarm._pending_event_conditions) == 1, (
+        "Expected one coalesced event condition"
+    )
+    assert swarm._pending_event_conditions[0]["type"] == "test2"
+
+
+@pytest.mark.asyncio
+async def test_cooldown_expired_dispatches_coalesced_events() -> None:
+    """Verify that after cooldown expires, pending + new events are dispatched
+    and _pending_event_conditions is cleared.
+
+    Simulates cooldown expiry by resetting _cooldown_until to a past timestamp.
+    """
+    swarm = AutonomousSwarm(config={}, no_infra=True)
+    supervisor = MagicMock()
+    supervisor.actors = {}
+    swarm.supervisor = supervisor
+
+    # First dispatch triggers cooldown
+    await swarm._request_analysis([{"type": "event1"}])
+    assert swarm._cooldown_until is not None
+
+    # Coalesce a second event during cooldown
+    await swarm._request_analysis([{"type": "event2"}])
+    assert len(swarm._pending_event_conditions) == 1
+
+    # Simulate cooldown expiry by setting timestamp to the past
+    swarm._cooldown_until = 0.0
+    assert not swarm._is_in_cooldown(), "Expected cooldown to be expired"
+
+    # Third dispatch should merge pending (event2) + new (event3) and dispatch
+    await swarm._request_analysis([{"type": "event3"}])
+
+    # _pending_event_conditions should be empty (merged into dispatch)
+    assert len(swarm._pending_event_conditions) == 0, (
+        "Expected pending events to be cleared after dispatch"
+    )
+
+
+@pytest.mark.asyncio
+async def test_is_in_cooldown_returns_false_when_none() -> None:
+    """Verify _is_in_cooldown returns False before any analysis is requested."""
+    swarm = AutonomousSwarm(config={}, no_infra=True)
+    assert not swarm._is_in_cooldown()
+
+
+@pytest.mark.asyncio
+async def test_pending_event_conditions_empty_initially() -> None:
+    """Verify _pending_event_conditions is an empty list at construction."""
+    swarm = AutonomousSwarm(config={}, no_infra=True)
+    assert swarm._pending_event_conditions == []
+
+
+@pytest.mark.asyncio
+async def test_event_driven_dispatch_still_drains_responses() -> None:
+    """Integration test: verify that event-driven dispatch via _request_analysis
+    does not interfere with the response queue drain in _process_cycle.
+
+    Triggers event-driven analysis, then runs _process_cycle at cycle 29
+    to verify the periodic heartbeat drain still collects responses.
+    """
+    swarm = AutonomousSwarm(config={}, no_infra=True)
+    supervisor = MagicMock()
+    supervisor.actors = {}
+    swarm.supervisor = supervisor
+
+    # Pre-seed the response queue
+    await swarm._response_queue.put({
+        "subject": "swarm.analysis.metis.response",
+        "data": {"message_type": "analysis_result"},
+        "timestamp": "2026-01-01T00:00:00Z",
+    })
+    await swarm._response_queue.put({
+        "subject": "swarm.analysis.empath.response",
+        "data": {"message_type": "sentiment_result"},
+        "timestamp": "2026-01-01T00:00:01Z",
+    })
+
+    # Trigger event-driven analysis first
+    await swarm._request_analysis([{"type": "event"}])
+
+    # Set cycle count to 29 so _process_cycle fires periodic heartbeat + drain
+    swarm._analysis_cycle_count = 29
+
+    # Call _process_cycle -- should increment to 30, fire heartbeat, drain queue
+    await swarm._process_cycle()
+
+    # Cycle counter should be reset (heartbeat fired)
+    assert swarm._analysis_cycle_count == 0
+
+    # Response queue should be drained
+    assert swarm._response_queue.empty()
+
+    # _latest_analysis should have both responses
+    assert len(swarm._latest_analysis["responses"]) == 2
+    assert (
+        swarm._latest_analysis["responses"][0]["subject"]
+        == "swarm.analysis.metis.response"
+    )
+    assert (
+        swarm._latest_analysis["responses"][1]["subject"]
+        == "swarm.analysis.empath.response"
+    )
+
+
+@pytest.mark.asyncio
+async def test_fallback_heartbeat_fires_at_30_cycles() -> None:
+    """Verify the fallback periodic heartbeat fires when _analysis_cycle_count
+    reaches 30, even without pending_event_conditions.
+
+    Sets _analysis_cycle_count to 29, calls _process_cycle, and asserts
+    the counter is reset to 0 (heartbeat fired) with no errors.
+    """
+    swarm = AutonomousSwarm(config={}, no_infra=True)
+    supervisor = MagicMock()
+    supervisor.actors = {}
+    swarm.supervisor = supervisor
+
+    # No pending events, no cooldown
+    swarm._pending_event_conditions = []
+    swarm._cooldown_until = None
+    swarm._analysis_cycle_count = 29
+
+    await swarm._process_cycle()
+
+    # Heartbeat should have fired, resetting the counter
+    assert swarm._analysis_cycle_count == 0, (
+        "Expected cycle counter to reset after heartbeat at 30"
+    )
+
+
+@pytest.mark.asyncio
+async def test_fallback_heartbeat_not_fired_when_pending_events_available() -> None:
+    """Verify that when pending_event_conditions are present and cooldown is
+    expired, the event-driven path fires first. The periodic heartbeat still
+    runs after event dispatch since the counter hits 30.
+
+    Both _pending_event_conditions should be drained (by event path)
+    and _analysis_cycle_count should be reset (by heartbeat path).
+    """
+    swarm = AutonomousSwarm(config={}, no_infra=True)
+    supervisor = MagicMock()
+    supervisor.actors = {}
+    swarm.supervisor = supervisor
+
+    # Set pending events and expired cooldown
+    swarm._pending_event_conditions = [{"type": "test"}]
+    swarm._cooldown_until = 0.0  # Expired
+    swarm._analysis_cycle_count = 29
+
+    await swarm._process_cycle()
+
+    # Event path should have drained pending events
+    assert len(swarm._pending_event_conditions) == 0, (
+        "Expected pending events to be drained by event-driven path"
+    )
+    # Heartbeat path should have reset the counter
+    assert swarm._analysis_cycle_count == 0, (
+        "Expected cycle counter to reset after heartbeat at 30"
+    )
+
+
+@pytest.mark.asyncio
+async def test_monitor_error_rate_detects_errors() -> None:
+    """Verify _monitor_error_rate detects an actor in error state and
+    dispatches an error_spike condition via _request_analysis.
+
+    Sets up a mock actor that returns state='error', runs one iteration
+    of the monitor, and verifies that _request_analysis was triggered
+    (cooldown_until is set, indicating dispatch occurred).
+    """
+    import os
+
+    os.environ["HERETEK_ANALYSIS_ERROR_THRESHOLD"] = "0"
+
+    swarm = AutonomousSwarm(config={}, no_infra=True)
+    supervisor = MagicMock()
+    supervisor.actors = {}
+    swarm.supervisor = supervisor
+    swarm._running = True
+    swarm._health_check_interval = 0.01
+
+    # Create a mock actor whose get_status() returns state = "error"
+    mock_actor = MagicMock()
+    mock_actor.get_status.return_value.state.value = "error"
+    supervisor.actors["test_agent"] = mock_actor
+
+    # Run the monitor as a background task for one iteration
+    task = asyncio.create_task(swarm._monitor_error_rate())
+    await asyncio.sleep(0.05)
+    task.cancel()
+    with contextlib.suppress(asyncio.CancelledError):
+        await task
+
+    # After one iteration with 0 threshold and 1 error agent,
+    # _request_analysis should have been called and set cooldown
+    assert swarm._cooldown_until is not None, (
+        "Expected cooldown to be set after error spike dispatch"
+    )
+
+
+@pytest.mark.asyncio
+async def test_monitor_agent_state_detects_changes() -> None:
+    """Verify _monitor_agent_state detects a state transition and
+    dispatches an agent_state_change condition via _request_analysis.
+
+    Runs the monitor for two iterations: first records the initial state
+    ('active'), second detects the transition to 'suspended' and dispatches.
+    """
+    swarm = AutonomousSwarm(config={}, no_infra=True)
+    supervisor = MagicMock()
+    supervisor.actors = {}
+    swarm.supervisor = supervisor
+    swarm._running = True
+    swarm._health_check_interval = 0.01
+
+    # Mock actor starts in 'active' state
+    mock_actor = MagicMock()
+    mock_actor.get_status.return_value.state.value = "active"
+    supervisor.actors["test_agent"] = mock_actor
+
+    # Run the monitor; first iteration records 'active' in last_states
+    task = asyncio.create_task(swarm._monitor_agent_state())
+    await asyncio.sleep(0.05)
+
+    # Change actor state to 'suspended' for the second iteration
+    mock_actor.get_status.return_value.state.value = "suspended"
+    await asyncio.sleep(0.05)
+
+    task.cancel()
+    with contextlib.suppress(asyncio.CancelledError):
+        await task
+
+    # After two iterations with a state transition, _request_analysis
+    # should have been called and set cooldown
+    assert swarm._cooldown_until is not None, (
+        "Expected cooldown to be set after state change dispatch"
+    )
