@@ -26,6 +26,8 @@ from .db_models import (
 from .db_models import (
     UserConfiguration as UserConfigurationORM,
 )
+from .crud_io import export_configurations as _io_export
+from .crud_io import import_configurations as _io_import
 from .models import (
     AgentConfig,
     AgentConfigCreate,
@@ -1013,34 +1015,17 @@ class ConfigurationServiceCrud:
         include_sensitive: bool = False,
         exported_by: str | None = None,
     ) -> ConfigurationExport:
+        """Export configurations.
+
+        Thin delegate to :func:`heretek_swarm.config.crud_io.export_configurations`
+        (Phase 2.6 of PLAN.md — god-class extraction). The agent
+        retains this method to keep call sites stable.
         """
-        Export configurations.
-
-        Args:
-            config_type: Optional type filter
-            include_sensitive: Whether to include sensitive data
-            exported_by: User performing the export
-
-        Returns:
-            ConfigurationExport bundle
-        """
-        llm_providers = await self.list_llm_providers(include_disabled=True)
-        embedding_providers = await self.list_embedding_providers(include_disabled=True)
-        agent_configs = await self.list_agent_configs(include_disabled=True)
-        user_configs = await self.list_configs(include_sensitive=include_sensitive)
-
-        if not include_sensitive:
-            for provider in llm_providers:
-                provider.api_key = None
-            for provider in embedding_providers:
-                provider.api_key = None
-
-        return ConfigurationExport(
+        return await _io_export(
+            self,
+            config_type=config_type,
+            include_sensitive=include_sensitive,
             exported_by=exported_by,
-            user_configurations=user_configs,
-            llm_providers=llm_providers,
-            embedding_providers=embedding_providers,
-            agent_configs=agent_configs,
         )
 
     async def import_configurations(
@@ -1049,55 +1034,12 @@ class ConfigurationServiceCrud:
         options: ImportOptions | None = None,
         user: str | None = None,
     ) -> ImportResult:
+        """Import configurations.
+
+        Thin delegate to :func:`heretek_swarm.config.crud_io.import_configurations`
+        (Phase 2.6 of PLAN.md).
         """
-        Import configurations.
-
-        Args:
-            import_data: Data to import (ConfigurationImport or dict)
-            options: Import options
-            user: User performing import
-
-        Returns:
-            ImportResult
-        """
-        _ = user
-        opts = options or ImportOptions()
-        payload = import_data.model_dump() if hasattr(import_data, "model_dump") else import_data
-        imported: dict[str, int] = {
-            "user_configurations": 0, "llm_providers": 0,
-            "embedding_providers": 0, "agent_configs": 0,
-        }
-        errors: list[str] = []
-
-        if opts.import_llm_providers and payload.get("llm_providers"):
-            await self._import_rows(
-                payload["llm_providers"], LLMProviderCreate,
-                self.create_llm_provider, imported, "llm_providers", errors, user,
-            )
-
-        if opts.import_embedding_providers and payload.get("embedding_providers"):
-            await self._import_rows(
-                payload["embedding_providers"], EmbeddingProviderCreate,
-                self.create_embedding_provider, imported, "embedding_providers", errors, user,
-            )
-
-        if opts.import_agent_configs and payload.get("agent_configs"):
-            await self._import_rows(
-                payload["agent_configs"], AgentConfigCreate,
-                self.create_agent_config, imported, "agent_configs", errors, user,
-            )
-
-        if opts.import_user_configs and payload.get("user_configurations"):
-            await self._import_rows(
-                payload["user_configurations"], UserConfigurationCreate,
-                self.create_config, imported, "user_configurations", errors, user,
-            )
-
-        return ImportResult(
-            success=len(errors) == 0,
-            imported_count=imported,
-            errors=errors,
-        )
+        return await _io_import(self, import_data, options=options, user=user)
 
     async def _import_rows(
         self: ConfigurationService,
@@ -1109,19 +1051,15 @@ class ConfigurationServiceCrud:
         errors: list[str],
         user: str | None,
     ) -> None:
-        """Import a list of rows using the given create function."""
-        label = key.rstrip("s")  # "llm_providers" -> "llm_provider"
-        for row in rows:
-            try:
-                await create_fn(create_type(**row), user=user)
-                imported[key] += 1
-            except Exception as e:
-                errors.append(f"{label}: {e}")
+        """Import a list of rows using the given create function.
 
-        return ImportResult(
-            success=len(errors) == 0,
-            imported_count=imported,
-            errors=errors,
+        Thin delegate to :func:`heretek_swarm.config.crud_io._import_rows`
+        (Phase 2.6 of PLAN.md).
+        """
+        from .crud_io import _import_rows as _io_import_rows
+
+        return await _io_import_rows(
+            self, rows, create_type, create_fn, imported, key, errors, user
         )
 
     # =====================================================================
