@@ -1290,3 +1290,39 @@ no longer carry a parallel token dict, so a token issued by the
 consensus auth manager is now visible to the WebSocket auth
 manager (and vice versa) — that is the intended behavior
 (a single source of trust for the whole process).
+
+### 2026-06-03 — Phase 2.7: extract /api/prompt to api/deliberation.py
+
+Implements Phase 2.7 of the audit (move `prompt_endpoint` from
+`api/main.py` to a focused module).
+
+The 1,462-LOC `api/main.py` had 39 routes/functions and a
+~315-LOC `prompt_endpoint` that inlined a full deliberation
+pipeline (gathering positions, running a round, broadcasting
+WebSocket events, computing a synthesis, archetype fallbacks).
+The audit (§1.4) flagged it as a god-class candidate; the
+recommendation was for `api/main.py` to become "wiring + health
++ 1 deliberation route" once extractions land.
+
+* New: `backend/heretek_swarm/api/deliberation.py` (440 LOC) —
+  owns `PromptRequest`, `PromptResponse`, the `prompt_endpoint`
+  handler, and the four private helpers
+  (`_archetype_response`, `_classify_position`,
+  `_build_synthesis`, `_synthesize_fallback`). The endpoint
+  resolves the cross-module globals (`supervisor`, `manager`,
+  `deliberation_engine`) lazily inside the handler body so the
+  circular import between `api.main` and `api.deliberation` is
+  broken at import time.
+* `backend/heretek_swarm/api/main.py` — the inline
+  `prompt_endpoint` block (~315 LOC) was replaced by a
+  comment pointing to the new module. The router is registered
+  alongside the other routers. Result: `main.py` is now
+  1,153 LOC (was 1,462). The remaining routes in `main.py`
+  (health, security headers, A2A history) are still inline;
+  splitting those is queued behind further Phase 2 work.
+
+Verification: `from heretek_swarm.api.main import app` succeeds;
+`POST /api/prompt` is registered exactly once in the FastAPI
+app's route table (URL is unchanged for clients); the
+archetype/classification/synthesis helpers are reachable through
+the new module.
