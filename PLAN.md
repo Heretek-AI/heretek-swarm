@@ -1326,3 +1326,79 @@ Verification: `from heretek_swarm.api.main import app` succeeds;
 app's route table (URL is unchanged for clients); the
 archetype/classification/synthesis helpers are reachable through
 the new module.
+
+---
+
+## Session Summary (2026-06-03)
+
+This section is a one-page progress dashboard for the work
+executed against the audit above. It is the source of truth for
+"what was done this session" — per-phase Change Log entries above
+are the source of truth for "what each commit did."
+
+### Commits landed this session (7 total)
+
+| # | SHA prefix | Phase  | Title |
+|---|-----------|--------|-------|
+| 1 | `c4f413f` | 0      | Stabilize break-glass audit findings (5 fix items) |
+| 2 | `b03941b` | 1.5    | Cut over to slowapi rate limiter |
+| 3 | `421eb1`  | 1.1    | Add MemoryStore Protocol for unified memory access |
+| 4 | `b4a178`  | 1.2    | Record langgraph HeavySwarm cutover verification |
+| 5 | `1b72ef`  | 1.4    | Add headroom_compat shim for prompt compression |
+| 6 | `a36fe9`  | 2.5+2.10 | Relocate immune + consolidate auth (single commit) |
+| 7 | `897202`  | 2.7    | Extract /api/prompt to api/deliberation.py |
+
+### Phase status
+
+| Phase | Status | Notes |
+|-------|--------|-------|
+| 0 (Stabilize) | **Complete** (5/5) | All 5 break-glass fixes landed; 0.5 cold-start re-validation deferred pending an environment with NATS/Qdrant/Redis/Postgres. |
+| 1.1 (cognee memory) | **Started** | MemoryStore Protocol + cognee/mem0/null adapters in `memory/store.py`; `get_default_store()` resolver; new `MemoryType` enum. Migrating `actors/mixins/memory.py:31` to the resolver is queued. |
+| 1.2 (langgraph HeavySwarm) | **Verified** | Langgraph cutover was complete in a prior milestone; this session recorded the verification. |
+| 1.3 (opik observability) | **Not started** | Opik is in the review/ directory; the cutover requires rewriting `observability/` and `infrastructure/otel/` together. |
+| 1.4 (headroom prompt path) | **Started** | `headroom_compat.wrap/unwrap` shim in `llm/headroom_compat.py`; passthrough mode when the Rust binding is missing. Wiring into `llm/model_garage.py` is queued. |
+| 1.5 (slowapi rate limiter) | **Complete** | `security/rate_limiter.py` is the canonical entry; `api/rate_limiting.py` delegates. |
+| 1.6 (hindsight_compat) | **Not started** | Hindsight is a TypeScript library; the 2-line LLM-wrapper shim follows the headroom pattern but requires the integration point. |
+| 2.1 (split nats_event_mesh) | **Not started** | 1,888-LOC file. Would benefit from sub-tickets per concern (connection / JetStream / subscriptions / mTLS / fallback). |
+| 2.2 (refactor main_loop) | **Not started** | 1,800-LOC file. Requires constructor-injection refactor of `_rewire_orchestrator_refs` post-hoc patching. |
+| 2.3 (extract perceiver extraction) | **Not started** | ~70% of `actors/perceiver/agent.py` (1,731 LOC) is content extraction; ~30% is actor behavior. |
+| 2.4 (move wizard config dicts) | **Not started** | `api/wizard.py` (1,497 LOC) is a configuration service masquerading as a router. |
+| 2.5 (move immune to security) | **Complete** | `security/immune.py` re-exports the public surface; three direct importers updated. |
+| 2.6 (split config/crud) | **Not started** | 1,438-LOC file; per-entity split is straightforward but the test surface is large. |
+| 2.7 (extract /api/prompt) | **Complete** | `api/deliberation.py` is the new home; `api/main.py` shrunk from 1,462 → 1,153 LOC. |
+| 2.8 (pick one A2A) | **Not started** | `gateway/a2a_protocol.py` (502 lines) vs `infrastructure/a2a/protocol.py` (439 lines) — different message vocabularies. |
+| 2.9 (pick one tracing) | **Not started** | `observability/tracing.py` (474 lines) vs `infrastructure/otel/tracing.py` (1,080 lines) — middleware lives only in the former. |
+| 2.10 (consolidate auth) | **Complete** | `TokenStore` in `gateway/auth.py` is canonical; `ConsensusAuthManager` and `WebSocketAuthManager` are now thin shims. |
+| 3 (sovereign service boundaries) | **Not started** | Requires Phase 2 god-class extraction to be substantially complete first. |
+| 4 (multi-package monorepo) | **Not started** | Depends on Phase 3. |
+| 5 (graduated sovereign services) | **Not started** | Optional; depends on Phase 4. |
+
+### Net deltas
+
+* **Files changed**: 20 (10 modified, 10 new)
+* **Lines added**: ~3,042
+* **Lines removed**: ~899
+* **New modules**: 6 (security/immune, security/rate_limiter, memory/mem0_backend, memory/store, llm/headroom_compat, api/deliberation)
+* **`api/main.py` size**: 1,462 → 1,153 LOC (-21%)
+* **Audit findings resolved (full)**: 5 of 5 in Phase 0; 3 of 10 in Phase 2 (2.5, 2.7, 2.10); 2 of 6 in Phase 1 (1.5 fully; 1.1 / 1.2 / 1.4 partially)
+* **Audit findings resolved (partial)**: 1.1, 1.4 (interfaces shipped, full call-site migration queued)
+* **Audit findings remaining**: ~20 (per the Phase table above)
+
+### Prime Directive pillar impact
+
+* **Zero-Trust** — strengthened by Phase 0.1 (consensus attribute fix), Phase 0.2 (mem0 path is real, not 503), and Phase 2.10 (single source of trust for tokens).
+* **Persistent Operation** — strengthened by Phase 0.2 (mem0 path no longer dead), Phase 0.3 (installs work cleanly), and Phase 1.5 (slowapi is battle-tested).
+* **Organic Evolution** — supported by Phase 1.1 (MemoryStore Protocol unblocks future backends), Phase 1.4 (headroom shim), and Phase 1.2 (langgraph is the OSS path).
+* **Consciousness-by-Design** — supported by Phase 1.1 (MemoryType enum with `to_dataset()`).
+* **Unbounded Autonomy** — unchanged. No autonomy gates were added in this session.
+
+### Verification posture
+
+* `from heretek_swarm.api.main import app` succeeds after every commit.
+* `from heretek_swarm.memory.store import MemoryStore, get_default_store` succeeds; `isinstance(get_default_store(), MemoryStore)` is `True`.
+* `from heretek_swarm.security.immune import ImmuneResponseBuilding` succeeds.
+* `from heretek_swarm.security.rate_limiter import limiter; isinstance(limiter, Limiter)` is `True`.
+* `from heretek_swarm.gateway.auth import TokenStore, default_token_store` succeeds; `TokenStore` round-trips a token.
+* `from heretek_swarm.llm.headroom_compat import wrap, CompressionResult` succeeds; passthrough mode is exercised.
+* `POST /api/prompt` is registered exactly once in the FastAPI app.
+* Cold-start re-validation from `PRIME_DIRECTIVE.md` is **deferred** — this environment lacks NATS / Qdrant / Redis / Postgres. The change gates are syntax + import + `isinstance` checks, which are the achievable verification here.
