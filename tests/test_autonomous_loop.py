@@ -1435,3 +1435,439 @@ async def test_empath_stress_no_empath_responses() -> None:
 
     # Coordinator should NOT have been called (no Empath data)
     mock_coordinator.put_message.assert_not_awaited()
+
+
+@pytest.mark.asyncio
+async def test_store_analysis_to_cognee_appends_record() -> None:
+    """Verify _store_analysis_to_cognee builds a structured record from
+    _latest_analysis and appends it to _analysis_records.
+
+    Also verifies that transient tracking state (_last_chronos_operations,
+    _mediation_dispatched) is cleared after storage.
+    """
+    swarm = AutonomousSwarm(config={}, no_infra=True)
+
+    supervisor = MagicMock()
+    supervisor.actors = {}
+    swarm.supervisor = supervisor
+
+    # Pre-populate transient tracking state
+    swarm._last_chronos_operations = [
+        {"op": "create", "operation_id": "create_abc123"},
+        {"op": "update_priority", "operation_id": "prio_def456"},
+    ]
+    swarm._mediation_dispatched = True
+
+    # Seed _latest_analysis with Metis + Empath responses
+    swarm._latest_analysis = {
+        "responses": [
+            {
+                "subject": "swarm.analysis.metis.response",
+                "data": {
+                    "analysis": "Focus on scaling infrastructure",
+                    "recommendations": ["Add more worker nodes", "Optimize query paths"],
+                    "confidence": 0.85,
+                },
+                "timestamp": "2026-01-01T00:00:00Z",
+            },
+            {
+                "subject": "swarm.analysis.metis.response",
+                "data": {
+                    "analysis": "Check error rates on coordinator",
+                    "recommendations": ["Increase retry budget"],
+                    "confidence": 0.72,
+                },
+                "timestamp": "2026-01-01T00:00:01Z",
+            },
+            {
+                "subject": "swarm.analysis.empath.response",
+                "data": {
+                    "collective_stress": 0.3,
+                    "source_agent": "main_loop",
+                    "conflict_detected": False,
+                    "sentiment": "neutral",
+                },
+                "timestamp": "2026-01-01T00:00:02Z",
+            },
+        ],
+        "collected_at": "2026-01-01T00:00:00Z",
+    }
+
+    # Execute
+    await swarm._store_analysis_to_cognee()
+
+    # 1. Record was appended to the in-memory buffer
+    assert len(swarm._analysis_records) == 1
+    record = swarm._analysis_records[0]
+
+    # 2. Record has the expected structure
+    assert "id" in record
+    assert record["trigger_type"] == "periodic"
+    assert record["collected_at"] == "2026-01-01T00:00:00Z"
+    assert record["mediation_dispatched"] is True
+
+    # 3. Metis analyses captured correctly (2 responses)
+    assert len(record["metis_analyses"]) == 2
+    assert record["metis_analyses"][0]["confidence"] == 0.85
+    assert record["metis_analyses"][1]["confidence"] == 0.72
+    assert len(record["metis_analyses"][0]["recommendations"]) == 2
+    assert len(record["metis_analyses"][1]["recommendations"]) == 1
+
+    # 4. Empath responses captured correctly (1 response)
+    assert len(record["empath_responses"]) == 1
+    assert record["empath_responses"][0]["collective_stress"] == 0.3
+    assert record["empath_responses"][0]["sentiment"] == "neutral"
+
+    # 5. Chronos actions preserved from pre-populated state
+    assert len(record["chronos_actions"]) == 2
+    assert record["chronos_actions"][0]["op"] == "create"
+    assert record["chronos_actions"][1]["op"] == "update_priority"
+
+    # 6. Transient state was cleared after storage
+    assert swarm._last_chronos_operations == []
+    assert swarm._mediation_dispatched is False
+
+
+@pytest.mark.asyncio
+async def test_store_analysis_to_cognee_skipped_when_no_analysis() -> None:
+    """Verify _store_analysis_to_cognee returns early without appending
+    when _latest_analysis is empty or has no responses.
+    """
+    swarm = AutonomousSwarm(config={}, no_infra=True)
+
+    supervisor = MagicMock()
+    supervisor.actors = {}
+    swarm.supervisor = supervisor
+
+    # No _latest_analysis set at all
+    await swarm._store_analysis_to_cognee()
+    assert len(swarm._analysis_records) == 0
+
+    # Empty analysis dict
+    swarm._latest_analysis = {}
+    await swarm._store_analysis_to_cognee()
+    assert len(swarm._analysis_records) == 0
+
+    # Analysis with no responses key
+    swarm._latest_analysis = {"collected_at": "2026-01-01T00:00:00Z"}
+    await swarm._store_analysis_to_cognee()
+    assert len(swarm._analysis_records) == 0
+
+    # Analysis with empty responses list
+    swarm._latest_analysis = {"responses": [], "collected_at": "2026-01-01T00:00:00Z"}
+    await swarm._store_analysis_to_cognee()
+    assert len(swarm._analysis_records) == 0
+
+
+@pytest.mark.asyncio
+async def test_store_analysis_to_cognee_caps_buffer() -> None:
+    """Verify _store_analysis_to_cognee caps the in-memory buffer at
+    _max_analysis_records by dropping the oldest records.
+    """
+    swarm = AutonomousSwarm(config={}, no_infra=True)
+
+    supervisor = MagicMock()
+    supervisor.actors = {}
+    swarm.supervisor = supervisor
+
+    # Set a small max for testing
+    swarm._max_analysis_records = 3
+
+    # Seed a minimal _latest_analysis
+    swarm._latest_analysis = {
+        "responses": [
+            {
+                "subject": "swarm.analysis.metis.response",
+                "data": {"analysis": "test", "recommendations": [], "confidence": 0.5},
+                "timestamp": "2026-01-01T00:00:00Z",
+            }
+        ],
+        "collected_at": "2026-01-01T00:00:00Z",
+    }
+
+    # Store 5 records (buffer caps at 3)
+    for i in range(5):
+        swarm._latest_analysis["collected_at"] = f"2026-01-0{i+1}T00:00:00Z"
+        await swarm._store_analysis_to_cognee()
+
+    assert len(swarm._analysis_records) == 3
+    # Only the last 3 survive (most recent at index -1)
+    assert swarm._analysis_records[-1]["collected_at"] == "2026-01-05T00:00:00Z"
+    assert swarm._analysis_records[0]["collected_at"] == "2026-01-03T00:00:00Z"
+
+
+@pytest.mark.asyncio
+async def test_store_analysis_to_cognee_clears_pending_chronos_on_empty() -> None:
+    """Verify _store_analysis_to_cognee clears tracking state even when
+    Chronos had no operations (empty _last_chronos_operations).
+    """
+    swarm = AutonomousSwarm(config={}, no_infra=True)
+
+    supervisor = MagicMock()
+    supervisor.actors = {}
+    swarm.supervisor = supervisor
+
+    # Set mediation_dispatched to True but no chronos operations
+    swarm._mediation_dispatched = True
+    swarm._last_chronos_operations = []
+
+    swarm._latest_analysis = {
+        "responses": [
+            {
+                "subject": "swarm.analysis.metis.response",
+                "data": {"analysis": "test", "recommendations": [], "confidence": 0.5},
+                "timestamp": "2026-01-01T00:00:00Z",
+            }
+        ],
+        "collected_at": "2026-01-01T00:00:00Z",
+    }
+
+    await swarm._store_analysis_to_cognee()
+
+    assert len(swarm._analysis_records) == 1
+    # Tracking state was cleared
+    assert swarm._mediation_dispatched is False
+    assert swarm._last_chronos_operations == []
+    # The record should have empty chronos_actions
+    assert swarm._analysis_records[0]["chronos_actions"] == []
+    assert swarm._analysis_records[0]["mediation_dispatched"] is True
+
+
+@pytest.mark.asyncio
+async def test_store_analysis_attempts_cognee_write() -> None:
+    """Verify _store_analysis_to_cognee attempts to persist via
+    _cognee_writer.store when a Cognee writer is configured.
+    """
+    from heretek_swarm.memory.cognee_writer import CogneeMemoryWriter
+
+    swarm = AutonomousSwarm(config={}, no_infra=True)
+
+    supervisor = MagicMock()
+    supervisor.actors = {}
+    swarm.supervisor = supervisor
+
+    # Wire a mock Cognee writer
+    swarm._cognee_writer = AsyncMock(spec=CogneeMemoryWriter)
+
+    # Pre-seed _latest_analysis with a Metis response
+    swarm._latest_analysis = {
+        "responses": [
+            {
+                "subject": "swarm.analysis.metis.response",
+                "data": {
+                    "analysis": "Test analysis",
+                    "recommendations": ["Do something"],
+                    "confidence": 0.75,
+                },
+                "timestamp": "2026-01-01T00:00:00Z",
+            }
+        ],
+        "collected_at": "2026-01-01T00:00:00Z",
+    }
+
+    await swarm._store_analysis_to_cognee()
+
+    # Cognee writer was called
+    swarm._cognee_writer.store.assert_awaited_once()
+
+    # Verify the store call had the right params
+    call_kwargs = swarm._cognee_writer.store.call_args.kwargs
+    assert call_kwargs["dataset"] == "analysis_history"
+    assert call_kwargs["cognify_after"] is False
+
+    # Record was also appended to in-memory buffer
+    assert len(swarm._analysis_records) == 1
+
+
+@pytest.mark.asyncio
+async def test_store_analysis_handles_cognee_failure() -> None:
+    """Verify _store_analysis_to_cognee does not raise when the
+    Cognee writer's store() method raises an exception.
+
+    The in-memory buffer should still be populated despite the failure.
+    """
+    from heretek_swarm.memory.cognee_writer import CogneeMemoryWriter
+
+    swarm = AutonomousSwarm(config={}, no_infra=True)
+
+    supervisor = MagicMock()
+    supervisor.actors = {}
+    swarm.supervisor = supervisor
+
+    # Wire a mock Cognee writer that raises
+    mock_writer = AsyncMock(spec=CogneeMemoryWriter)
+    mock_writer.store.side_effect = RuntimeError("Cognee connection lost")
+    swarm._cognee_writer = mock_writer
+
+    # Pre-seed _latest_analysis
+    swarm._latest_analysis = {
+        "responses": [
+            {
+                "subject": "swarm.analysis.metis.response",
+                "data": {
+                    "analysis": "Test analysis",
+                    "recommendations": [],
+                    "confidence": 0.5,
+                },
+                "timestamp": "2026-01-01T00:00:00Z",
+            }
+        ],
+        "collected_at": "2026-01-01T00:00:00Z",
+    }
+
+    # Should NOT raise
+    await swarm._store_analysis_to_cognee()
+
+    # In-memory buffer was still populated
+    assert len(swarm._analysis_records) == 1
+    assert swarm._analysis_records[0]["trigger_type"] == "periodic"
+
+
+@pytest.mark.asyncio
+async def test_store_analysis_handles_no_cognee_writer() -> None:
+    """Verify _store_analysis_to_cognee works correctly when
+    _cognee_writer is None (no_infra mode, no Cognee configured).
+    """
+    swarm = AutonomousSwarm(config={}, no_infra=True)
+
+    supervisor = MagicMock()
+    supervisor.actors = {}
+    swarm.supervisor = supervisor
+
+    # Verify _cognee_writer is None in no_infra mode
+    assert swarm._cognee_writer is None
+
+    # Pre-seed _latest_analysis
+    swarm._latest_analysis = {
+        "responses": [
+            {
+                "subject": "swarm.analysis.metis.response",
+                "data": {
+                    "analysis": "Test analysis",
+                    "recommendations": ["Improve reliability"],
+                    "confidence": 0.8,
+                },
+                "timestamp": "2026-01-01T00:00:00Z",
+            }
+        ],
+        "collected_at": "2026-01-01T00:00:00Z",
+    }
+
+    # Should not crash or raise
+    await swarm._store_analysis_to_cognee()
+
+    # In-memory buffer was populated
+    assert len(swarm._analysis_records) == 1
+    assert len(swarm._analysis_records[0]["metis_analyses"]) == 1
+    assert swarm._analysis_records[0]["metis_analyses"][0]["analysis"] == "Test analysis"
+
+
+@pytest.mark.asyncio
+async def test_full_cycle_drain_and_persistence() -> None:
+    """Full integration test: wire the cycle-30 drain through to
+    the _store_analysis_to_cognee record persistence.
+
+    Pre-seeds the response queue with one Metis and one Empath
+    response, sets _analysis_cycle_count to 29, provides a supervisor
+    with mock actors for all downstream consumers (chronos,
+    coordinator), calls _process_cycle, and verifies that:
+    1. The response queue is drained
+    2. _latest_analysis is populated
+    3. _analysis_records has 1 entry with both metis and empath data
+    4. The cycle counter is reset
+    """
+    from unittest.mock import AsyncMock
+
+    from heretek_swarm.actors.base.core import ActorState, ActorStatus
+
+    swarm = AutonomousSwarm(config={}, no_infra=True)
+
+    supervisor = MagicMock()
+    supervisor.actors = {}
+    swarm.supervisor = supervisor
+
+    # Mock Chronos actor (needed by _integrate_analysis_into_chronos)
+    mock_chronos = AsyncMock()
+    mock_chronos.get_status = MagicMock(return_value=ActorStatus(
+        agent_id="chronos",
+        state=ActorState.ACTIVE,
+        message_count=0,
+        created_at="2026-01-01T00:00:00Z",
+        topics=[],
+        capabilities=[],
+        mailbox_size=0,
+    ))
+    mock_chronos.generate_ticks = AsyncMock(return_value=[])
+    mock_chronos.put_message = AsyncMock()
+    supervisor.actors["chronos"] = mock_chronos
+
+    # Mock Coordinator actor (needed by _check_empath_stress_and_mediate and _run_health_checks)
+    mock_coordinator = AsyncMock()
+    mock_coordinator.get_status = MagicMock(return_value=ActorStatus(
+        agent_id="coordinator",
+        state=ActorState.ACTIVE,
+        message_count=0,
+        created_at="2026-01-01T00:00:00Z",
+        topics=[],
+        capabilities=[],
+        mailbox_size=0,
+    ))
+    mock_coordinator.put_message = AsyncMock()
+    supervisor.actors["coordinator"] = mock_coordinator
+
+    # Mock Historian actor (needed for cycle_complete logging and _run_health_checks)
+    mock_historian = AsyncMock()
+    mock_historian.get_status = MagicMock(return_value=ActorStatus(
+        agent_id="historian",
+        state=ActorState.ACTIVE,
+        message_count=0,
+        created_at="2026-01-01T00:00:00Z",
+        topics=[],
+        capabilities=[],
+        mailbox_size=0,
+    ))
+    mock_historian.log_event = AsyncMock()
+    supervisor.actors["historian"] = mock_historian
+
+    # Pre-seed the response queue with one Metis and one Empath response
+    await swarm._response_queue.put({
+        "subject": "swarm.analysis.metis.response",
+        "data": {
+            "analysis": "Focus on scaling infrastructure",
+            "recommendations": ["Add more worker nodes"],
+            "confidence": 0.85,
+        },
+        "timestamp": "2026-01-01T00:00:00Z",
+    })
+    await swarm._response_queue.put({
+        "subject": "swarm.analysis.empath.response",
+        "data": {
+            "collective_stress": 0.3,
+            "source_agent": "main_loop",
+            "conflict_detected": False,
+            "sentiment": "neutral",
+        },
+        "timestamp": "2026-01-01T00:00:01Z",
+    })
+
+    # Set cycle count to 29 so the next call triggers periodic analysis
+    swarm._analysis_cycle_count = 29
+
+    # Call _process_cycle
+    await swarm._process_cycle()
+
+    # 1. Cycle counter was reset
+    assert swarm._analysis_cycle_count == 0
+
+    # 2. Response queue was drained into _latest_analysis
+    assert len(swarm._latest_analysis["responses"]) == 2
+    assert swarm._response_queue.empty()
+
+    # 3. _analysis_records has 1 entry with both metis and empath data
+    assert len(swarm._analysis_records) == 1
+    record = swarm._analysis_records[0]
+    assert len(record["metis_analyses"]) == 1
+    assert record["metis_analyses"][0]["analysis"] == "Focus on scaling infrastructure"
+    assert len(record["empath_responses"]) == 1
+    assert record["empath_responses"][0]["collective_stress"] == 0.3
+    assert record["trigger_type"] == "periodic"

@@ -18,8 +18,10 @@ Based on architecture from:
 
 import asyncio
 import contextlib
+import json
 import os
 import time
+import uuid
 from datetime import UTC, datetime
 from typing import Any
 
@@ -27,6 +29,7 @@ import structlog
 
 from heretek_swarm.actors.stubs import StubEventMesh
 from heretek_swarm.actors.supervisor import ActorSupervisor
+from heretek_swarm.api.autonomous import push_analysis_record
 from heretek_swarm.api.consciousness import get_consciousness_plugin
 from heretek_swarm.channels.registry import ChannelRegistry, GroupRegistry
 from heretek_swarm.consensus.consensus_coordinator import ConsensusCoordinator
@@ -110,6 +113,12 @@ class AutonomousSwarm:
         # S01: NATS response queue for periodic analysis results
         self._response_queue: asyncio.Queue[dict[str, Any]] = asyncio.Queue()
         self._latest_analysis: dict[str, Any] = {}
+
+        # S05: In-memory analysis record buffer (capped) for API consumption
+        self._analysis_records: list[dict[str, Any]] = []
+        self._last_chronos_operations: list[dict[str, Any]] = []
+        self._mediation_dispatched: bool = False
+        self._max_analysis_records: int = 1000
 
         # S03: RAFT election manager (initialized in initialize() unless --no-infra)
         self._election_manager = None  # ElectionManager | None
@@ -584,6 +593,9 @@ class AutonomousSwarm:
 
             # T03: check Empath stress data and trigger mediation if threshold exceeded
             await self._check_empath_stress_and_mediate()
+
+            # S05: store analysis record in buffer, Cognee, and API store
+            await self._store_analysis_to_cognee()
 
         # 6. Log cycle completion to Historian
         historian = self.supervisor.actors.get("historian") if self.supervisor else None
@@ -1208,6 +1220,9 @@ class AutonomousSwarm:
                 total_operations=len(operations),
             )
 
+            # Save to S05 buffer for _store_analysis_to_cognee
+            self._last_chronos_operations = list(operations)
+
             # Send to Chronos
             chronos = self.supervisor.actors.get("chronos") if self.supervisor else None
             if chronos is None:
@@ -1388,6 +1403,8 @@ class AutonomousSwarm:
             )
             await coordinator.put_message(msg)
 
+            self._mediation_dispatched = True
+
             logger.info(
                 "mediation_dispatched",
                 stress_level=stress_levels,
@@ -1397,6 +1414,111 @@ class AutonomousSwarm:
         except Exception as e:
             logger.error(
                 "mediation_dispatch_failed",
+                error=str(e),
+            )
+
+    async def _store_analysis_to_cognee(self) -> None:
+        """Store structured analysis record in-memory and persist to Cognee.
+
+        Called after the cycle-30 response drain, integration, and mediation
+        check are all done. Builds a structured record from the latest
+        analysis data (Metis analyses, Empath responses, Chronos actions,
+        mediation state), appends it to the in-memory buffer (capped at
+        ``_max_analysis_records``), and best-effort persists to Cognee via
+        ``_cognee_writer`` and pushes to the API store via
+        ``push_analysis_record``.
+        """
+        try:
+            # Guard: no analysis available
+            if not self._latest_analysis or not self._latest_analysis.get("responses"):
+                logger.debug("store_analysis_skipped")
+                return
+
+            responses = self._latest_analysis["responses"]
+
+            # Extract Metis analyses
+            metis_analyses: list[dict[str, Any]] = []
+            for r in responses:
+                if r.get("subject") == "swarm.analysis.metis.response":
+                    data = r.get("data", {})
+                    metis_analyses.append({
+                        "analysis": data.get("analysis", ""),
+                        "recommendations": data.get("recommendations", []),
+                        "confidence": data.get("confidence", 0.0),
+                    })
+
+            # Extract Empath responses
+            empath_responses: list[dict[str, Any]] = []
+            for r in responses:
+                if r.get("subject") == "swarm.analysis.empath.response":
+                    data = r.get("data", {})
+                    empath_responses.append({
+                        "collective_stress": data.get("collective_stress", 0.0),
+                        "source_agent": data.get("source_agent", "unknown"),
+                        "conflict_detected": data.get("conflict_detected", False),
+                        "sentiment": data.get("sentiment", "neutral"),
+                    })
+
+            # Determine trigger type (informational; default to periodic)
+            trigger_type = "periodic"
+
+            # Build record
+            record = {
+                "id": str(uuid.uuid4()),
+                "collected_at": self._latest_analysis.get(
+                    "collected_at", datetime.now(UTC).isoformat()
+                ),
+                "trigger_type": trigger_type,
+                "metis_analyses": metis_analyses,
+                "empath_responses": empath_responses,
+                "chronos_actions": list(self._last_chronos_operations),
+                "mediation_dispatched": self._mediation_dispatched,
+            }
+
+            # Clear transient tracking state
+            self._last_chronos_operations = []
+            self._mediation_dispatched = False
+
+            # Append to in-memory buffer (capped)
+            self._analysis_records.append(record)
+            if len(self._analysis_records) > self._max_analysis_records:
+                self._analysis_records[:] = self._analysis_records[-self._max_analysis_records:]
+
+            logger.info(
+                "analysis_record_stored",
+                id=record["id"],
+                metis_count=len(metis_analyses),
+                empath_count=len(empath_responses),
+                action_count=len(record["chronos_actions"]),
+                mediation_dispatched=record["mediation_dispatched"],
+            )
+
+            # Best-effort Cognee persist
+            if self._cognee_writer is not None:
+                try:
+                    await self._cognee_writer.store(
+                        content=json.dumps(record),
+                        dataset="analysis_history",
+                        cognify_after=False,
+                    )
+                except Exception:
+                    logger.warning(
+                        "analysis_cognee_persist_failed",
+                        id=record["id"],
+                    )
+
+            # Push to API store
+            try:
+                await push_analysis_record(record)
+            except Exception as e:
+                logger.warning(
+                    "analysis_push_to_api_failed",
+                    error=str(e),
+                )
+
+        except Exception as e:
+            logger.error(
+                "analysis_store_failed",
                 error=str(e),
             )
 
