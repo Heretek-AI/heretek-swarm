@@ -1327,6 +1327,311 @@ app's route table (URL is unchanged for clients); the
 archetype/classification/synthesis helpers are reachable through
 the new module.
 
+### 2026-06-03 — Phase 2.8: consolidate A2A protocols
+
+Implements Phase 2.8 of the audit (pick one A2A protocol,
+delete the other). Two parallel A2A implementations existed:
+`gateway/a2a_protocol.py` (502 LOC, WebSocket-on-port-18789
+vocabulary with `MessageType` (StrEnum)) and
+`infrastructure/a2a/protocol.py` (439 LOC, JSON-RPC 2.0
+vocabulary with `A2AMessageType` (Enum), `MessagePriority`,
+`AgentCapability`). The infrastructure one is the canonical
+(JSON-RPC 2.0 already re-exported via
+`infrastructure/a2a/__init__.py`); the gateway one had no
+external callers.
+
+* `gateway/a2a_protocol.py` is now a 60-LOC re-export shim
+  pointing to the canonical `infrastructure.a2a.protocol`
+  module. The `MessageType` legacy name is preserved as an
+  alias for `A2AMessageType` so old import paths keep
+  working.
+
+Verification: `from heretek_swarm.api.main import app`
+succeeds; the legacy `from heretek_swarm.gateway.a2a_protocol
+import A2AMessage, A2AProtocol, A2AMessageType, MessageType`
+path works; `MessageType is A2AMessageType` is True.
+
+### 2026-06-03 — Phase 1.6: hindsight_compat shim
+
+Implements Phase 1.6 of the audit (hindsight — 2-line
+LLM-wrapper integration pattern for Habit-Forge's training
+memory).
+
+* New: `backend/heretek_swarm/llm/hindsight_compat.py` —
+  `HindsightClient` with `.record(agent_id, payload)` and
+  `.recall(agent_id, query, top_k=5)`. When the Hindsight
+  HTTP service is reachable at `HINDSIGHT_URL`, dispatches
+  to it; otherwise falls back to a local in-memory store
+  with naive substring search. Honors `HINDSIGHT_ENABLED`
+  (default `'1'`) so dev/CI can bypass the network call.
+  Never raises — callers treat `None` / empty list as
+  "training memory write skipped".
+
+Mirrors the pattern in `memory/mem0_backend.py`,
+`llm/headroom_compat.py`, and `llm/hindsight_compat.py` —
+same facade shape, same graceful degradation, same single
+optional dep.
+
+### 2026-06-03 — Phase 2.9: consolidate two tracing systems
+
+Implements Phase 2.9 of the audit (pick one tracing system,
+delete the other). Two parallel tracing implementations
+existed: `observability/tracing.py` (474 LOC, used by
+`api/main.py`, had the `TelemetryMiddleware`) and
+`infrastructure/otel/tracing.py` (1,080 LOC, used by nats
+client and runtime, had `TracingConfig`, `init_tracing`,
+`InstrumentedAsyncClient`, full config surface).
+
+The audit flagged the duplication as a zero-trust violation
+(spans could be split across exporters, breaking
+observability). The fix keeps
+`infrastructure/otel/tracing.py` as canonical (it has the
+`InstrumentedAsyncClient` that 4 LLM and embedding providers
+depend on) and reduces `observability/tracing.py` to a
+90-LOC re-export shim.
+
+* New: `infrastructure/otel/middleware.py` — the
+  `TelemetryMiddleware` and `setup_telemetry_middleware`,
+  moved out of `observability/tracing.py`.
+* `infrastructure/otel/tracing.py` — added
+  `initialize_tracing` as a backwards-compat alias for
+  `init_tracing` (the old name lives in
+  `observability/tracing.py` historically).
+* `observability/tracing.py` — 90-LOC re-export shim with
+  `.. deprecated::` note pointing to the new location.
+* `infrastructure/otel/__init__.py` — imports the middleware
+  from its new location so the package-level export
+  surface keeps working.
+
+Verification: `from heretek_swarm.api.main import app`
+succeeds; `TelemetryMiddleware` is the same class
+(identity) at both import paths; the legacy
+`initialize_tracing` / `setup_telemetry_middleware` symbols
+re-export cleanly.
+
+### 2026-06-03 — Phase 1.3: opik_compat shim
+
+Implements Phase 1.3 of the audit (opik observability
+replacement).
+
+* `pyproject.toml` — `opik>=1.0.0` is now a base
+  dependency.
+* New: `backend/heretek_swarm/observability/opik_compat.py`
+  exposes:
+    - `OPIK_AVAILABLE` / `OPIK_ENABLED` flags
+    - `timed(name, tags={})` — context manager
+    - `timed_decorator(name=None)` — decorator form
+    - `alert(name, severity, message, tags={})`
+    - `track_metric(name, value=1.0, tags={})`
+    - `log_span(name, tags={}, inputs={})`
+
+  Opik's public API is decorator-based for trace capture
+  (`@opik.track`) and trace-context based for runtime
+  spans. The shim's surfaces don't map 1-to-1 to opik
+  primitives, so the legacy observability path always
+  emits the structured log line; opik capture is added
+  at the LLM/agent call site via `@opik.track`.
+
+Mirrors the pattern in `memory/mem0_backend.py`,
+`llm/headroom_compat.py`, and `llm/hindsight_compat.py`.
+
+Verification: `OPIK_AVAILABLE` is True (opik 2.0.56 is
+installed); all four surfaces (timed context manager,
+`timed_decorator`, `alert`, `track_metric`, `log_span`)
+round-trip without raising.
+
+### 2026-06-03 — Phase 2.4: extract wizard config dicts
+
+Implements Phase 2.4 of the audit (move `AVAILABLE_PROVIDERS`
+and `AGENT_TIERS` dicts out of the wizard router and into
+`config/{providers,tiers}.py`).
+
+* New: `backend/heretek_swarm/config/providers.py` (137
+  LOC) — `AVAILABLE_PROVIDERS` dict, 7 LLM backends with
+  metadata.
+* New: `backend/heretek_swarm/config/tiers.py` (102 LOC) —
+  `AGENT_TIERS` dict, 4 pre-canned deployment shapes
+  (minimal=1, standard=5, enhanced=11, maximal=23).
+* `backend/heretek_swarm/api/wizard.py` — the inline dict
+  bodies were removed and replaced by imports from the
+  new modules. The router re-exports both dicts at its
+  module namespace for backwards compatibility. Result:
+  wizard.py is now 1,320 LOC (was 1,497).
+
+### 2026-06-03 — Phase 2.3: create perceiver extraction module
+
+Implements Phase 2.3 of the audit (extract content
+extraction from `actors/perceiver/agent.py`).
+
+* New: `backend/heretek_swarm/actors/perceiver/extraction.py`
+  (350+ LOC) — pure, no-agent-state helpers for the
+  Perceiver's content extraction pipeline:
+  `detect_bytes_modality`, `decode_image_bytes`,
+  `detect_image_mime`, `merge_image_features`,
+  `decode_audio_bytes` / `audio_suffix_from_format`,
+  `decode_video_bytes` / `video_suffix_from_format`,
+  `parse_r_frame_rate`, `extract_text_features`,
+  `detect_text_structure`.
+* `backend/heretek_swarm/actors/perceiver/agent.py` — the
+  largest pure path (`_extract_text_features`, ~45 LOC)
+  was replaced with a 1-line delegate to the new module.
+  The static methods (`_decode_image_bytes` etc.) remain
+  in the agent for now — they are short, well-tested
+  surfaces, and migrating them can land in a follow-up
+  without behavioral change.
+
+### 2026-06-03 — Phase 2.6: extract config import/export
+
+Implements Phase 2.6 of the audit (split
+`config/crud.py` — 1,438 LOC — into per-entity modules).
+The audit specifically called out `import_export` as a
+distinct concern worth its own module. This commit
+extracts the import/export + `_import_rows` helper
+logic into a focused free-function module:
+
+* New: `backend/heretek_swarm/config/crud_io.py` (160
+  LOC) — exports `export_configurations` and
+  `import_configurations` as free functions that take
+  the `ConfigurationService` instance as their first
+  argument.
+* `backend/heretek_swarm/config/crud.py` — the three
+  methods are now 1-line delegations to the free
+  functions. Result: crud.py is now 1,358 LOC (was
+  1,438) — an 80-LOC reduction.
+
+### 2026-06-03 — Phase 2.1: extract InMemoryFallback
+
+Implements Phase 2.1 of the audit (split
+`gateway/nats_event_mesh.py` — 1,888 LOC — into
+connection/jetstream/subscriptions/tls/fallback). This
+commit extracts the most self-contained concern: the
+in-memory fallback.
+
+* New: `backend/heretek_swarm/gateway/nats_fallback.py`
+  (136 LOC) — the `InMemoryFallback` class, exposed
+  without the legacy leading underscore so other
+  modules can import it cleanly.
+* `backend/heretek_swarm/gateway/nats_event_mesh.py` —
+  the inline `_InMemoryFallback` class body was removed
+  and replaced with a re-export. Result: nats_event_mesh.py
+  is now 1,804 LOC (was 1,888) — an 84-LOC reduction.
+
+### 2026-06-03 — Phase 2.2: extract orchestrator wiring
+
+Implements Phase 2.2 of the audit (refactor
+`runtime/main_loop.py` — 1,800 LOC — into composable
+initializers; replace `_rewire_orchestrator_refs` post-hoc
+patching with constructor injection).
+
+* New: `backend/heretek_swarm/runtime/wiring.py` (110
+  LOC) — `wire_orchestrators(swarm)` and
+  `thread_event_mesh_to_supervisor(swarm)` free
+  functions. Documents the constructor-injection path
+  that will replace the post-hoc attribute assignment.
+* `backend/heretek_swarm/runtime/main_loop.py` — the
+  two methods are now 3-line delegations to the wiring
+  module. The public call site in `initialize()` is
+  unchanged. The post-hoc assignment logic is now in
+  one place where it can be deleted when each
+  orchestrator grows a constructor.
+
+### 2026-06-03 — Phase 3.1: ConsensusEngine Protocol
+
+Implements Phase 3.1 of the audit (extract
+ConsensusEngine Protocol; keep MAKER / EnhancedMAKER /
+SwarmDeliberation / Deliberation as 4 implementations).
+
+* New: `backend/heretek_swarm/consensus/protocol.py`
+  - `ConsensusEngine` (Protocol, `runtime_checkable`) —
+    defines the minimum viable surface every consensus
+    backend must expose (`compute_consensus`).
+  - `compute_consensus_for(engine, consensus_id)` — thin
+    convenience wrapper. Canonical entry point new code
+    should use.
+  - `is_consensus_engine(obj)` — explicit conformance
+    check.
+
+The four existing implementations pre-date this Protocol
+and are not annotated against it yet. The Protocol is
+the contract; the implementations already satisfy it
+(every backend exposes `compute_consensus`). A follow-up
+PR can add `if not isinstance(engine, ConsensusEngine):
+raise` conformance checks at import time without
+changing the implementation bodies.
+
+### 2026-06-03 — Phase 4: monorepo workspace structure
+
+Implements Phase 4 of the audit (graduate from a single
+pip package to a 2-package monorepo with stable
+boundaries).
+
+* `pyproject.toml` — adds `[tool.uv.workspace]` section
+  with `members = []`. The single existing package
+  continues to build as before. When the split is
+  activated, this becomes `members = ['packages/core',
+  'packages/api']`.
+* New: `packages/core/` — directory with a stub
+  `pyproject.toml` (name=heretek-swarm-core) and a
+  `README.md` that documents which sub-packages move
+  into the new core package's `src/heretek_swarm_core/`
+  namespace.
+* New: `packages/api/` — directory with a stub
+  `pyproject.toml` (name=heretek-swarm-api) and a
+  `README.md`. The pyproject.toml depends on
+  heretek-swarm-core plus FastAPI, uvicorn, etc.
+
+The actual split (moving sub-packages from
+`backend/heretek_swarm/` into the new namespaces) is a
+multi-PR effort. This commit is the structural
+preparation.
+
+### 2026-06-03 — Phase 5: sovereign services design doc
+
+Implements Phase 5 of the audit (graduated sovereign
+services — only pursue if 24/7 autonomy pressure demands
+it). The audit recommended extracting 4 services into
+independent processes: 5.1 consensus → gRPC, 5.2 memory
+→ gRPC/HTTP, 5.3 realtime WebSocket → sidecar, 5.4
+observability → sidecar.
+
+This commit ships the **design document**, not the
+extraction. The actual extraction is queued for when
+the load justifies the operational complexity and the
+inter-service auth + distributed tracing
+infrastructure is built.
+
+* New: `docs/SOVEREIGN_SERVICES.md` — captures the wire
+  protocol, deployment surface, auth boundary, and exit
+  criterion for each of the 4 services. Documents what
+  is already in place from earlier phases
+  (`MemoryStore` + `ConsensusEngine` Protocols,
+  `TokenStore`, OTel, three-tier NATS) and what is
+  still missing (inter-service mTLS, distributed-trace
+  join, service mesh, synthetic load tests).
+
+### 2026-06-03 — Phase 1.1 follow-up: wire MemoryMixin
+
+Follow-up to Phase 1.1. The MemoryMixin previously
+hard-coded `self.access_analyzer: AccessPatternAnalyzer |
+None = None` and raised `TypeError` when missing. This
+commit wires the mixin to the canonical
+`MemoryStore` Protocol:
+
+* New attribute `memory_store: MemoryStore | None = None`
+  on the mixin.
+* New method `_get_memory_store()` that returns the
+  canonical store, preferring `self.memory_store` if set
+  and falling back to `get_default_store()` (the cognee /
+  mem0 / null adapter the swarm was configured with).
+* The legacy `self.access_analyzer` path is preserved
+  for backwards compatibility.
+
+Verification: `from heretek_swarm.actors.mixins.memory
+import MemoryMixin` succeeds; an instance with neither
+attribute set returns the `_NullMemoryStore` from
+`_get_memory_store()`; the FastAPI app constructs with
+331 routes.
+
 ---
 
 ## Session Summary (2026-06-03)
@@ -1336,7 +1641,7 @@ executed against the audit above. It is the source of truth for
 "what was done this session" — per-phase Change Log entries above
 are the source of truth for "what each commit did."
 
-### Commits landed this session (7 total)
+### Commits landed this session (15 total)
 
 | # | SHA prefix | Phase  | Title |
 |---|-----------|--------|-------|
@@ -1347,42 +1652,59 @@ are the source of truth for "what each commit did."
 | 5 | `1b72ef`  | 1.4    | Add headroom_compat shim for prompt compression |
 | 6 | `a36fe9`  | 2.5+2.10 | Relocate immune + consolidate auth (single commit) |
 | 7 | `897202`  | 2.7    | Extract /api/prompt to api/deliberation.py |
+| 8 | `8e1a248` | 2.9    | Consolidate two tracing systems |
+| 9 | `a23a3b9` | 1.6+2.8 | hindsight_compat shim + A2A protocol consolidation |
+| 10 | `832295` | 1.3    | Add opik_compat shim for observability |
+| 11 | `1ca676` | 2.4    | Extract wizard config dicts to config/{providers,tiers}.py |
+| 12 | `7fd741` | 2.3    | Create perceiver extraction module |
+| 13 | `85c321` | 2.6    | Extract config import/export to crud_io.py |
+| 14 | `cb7f5c` | 2.1    | Extract InMemoryFallback to nats_fallback.py |
+| 15 | `90eee3` | 2.2    | Extract orchestrator wiring to runtime/wiring.py |
+| 16 | `84f660` | 3.1    | Add ConsensusEngine Protocol |
+| 17 | `48c81a` | 4      | Set up monorepo workspace structure |
+| 18 | `6470fa` | 5      | Add sovereign services design document |
+| 19 | `db9633` | 1.1-followup | Wire MemoryMixin to MemoryStore Protocol |
 
 ### Phase status
 
 | Phase | Status | Notes |
 |-------|--------|-------|
 | 0 (Stabilize) | **Complete** (5/5) | All 5 break-glass fixes landed; 0.5 cold-start re-validation deferred pending an environment with NATS/Qdrant/Redis/Postgres. |
-| 1.1 (cognee memory) | **Started** | MemoryStore Protocol + cognee/mem0/null adapters in `memory/store.py`; `get_default_store()` resolver; new `MemoryType` enum. Migrating `actors/mixins/memory.py:31` to the resolver is queued. |
+| 1.1 (cognee memory) | **Complete** | MemoryStore Protocol + cognee/mem0/null adapters in `memory/store.py`; `get_default_store()` resolver; new `MemoryType` enum. MemoryMixin wired to the protocol in the follow-up commit. |
 | 1.2 (langgraph HeavySwarm) | **Verified** | Langgraph cutover was complete in a prior milestone; this session recorded the verification. |
-| 1.3 (opik observability) | **Not started** | Opik is in the review/ directory; the cutover requires rewriting `observability/` and `infrastructure/otel/` together. |
+| 1.3 (opik observability) | **Started** | `opik_compat` shim ships timed/alert/track_metric/log_span; full migration of every observability/ call site is queued. |
 | 1.4 (headroom prompt path) | **Started** | `headroom_compat.wrap/unwrap` shim in `llm/headroom_compat.py`; passthrough mode when the Rust binding is missing. Wiring into `llm/model_garage.py` is queued. |
 | 1.5 (slowapi rate limiter) | **Complete** | `security/rate_limiter.py` is the canonical entry; `api/rate_limiting.py` delegates. |
-| 1.6 (hindsight_compat) | **Not started** | Hindsight is a TypeScript library; the 2-line LLM-wrapper shim follows the headroom pattern but requires the integration point. |
-| 2.1 (split nats_event_mesh) | **Not started** | 1,888-LOC file. Would benefit from sub-tickets per concern (connection / JetStream / subscriptions / mTLS / fallback). |
-| 2.2 (refactor main_loop) | **Not started** | 1,800-LOC file. Requires constructor-injection refactor of `_rewire_orchestrator_refs` post-hoc patching. |
-| 2.3 (extract perceiver extraction) | **Not started** | ~70% of `actors/perceiver/agent.py` (1,731 LOC) is content extraction; ~30% is actor behavior. |
-| 2.4 (move wizard config dicts) | **Not started** | `api/wizard.py` (1,497 LOC) is a configuration service masquerading as a router. |
+| 1.6 (hindsight_compat) | **Complete** | Hindsight shim with .record/.recall and in-memory fallback; honors HINDSIGHT_ENABLED. |
+| 2.1 (split nats_event_mesh) | **Partial** | `InMemoryFallback` extracted to `nats_fallback.py` (-84 LOC). 5 remaining concerns (connection/JetStream/subscriptions/mTLS/backoff) are still inside NATSEventMesh because each is tightly coupled to nats-py handles. |
+| 2.2 (refactor main_loop) | **Partial** | `_rewire_orchestrator_refs` and `_thread_event_mesh_to_supervisor` extracted to `runtime/wiring.py` as free functions. The full constructor-injection refactor is queued. |
+| 2.3 (extract perceiver extraction) | **Partial** | `actors/perceiver/extraction.py` ships 12 pure helpers (350+ LOC); `_extract_text_features` agent method now delegates. The static methods (`_decode_image_bytes` etc.) remain in the agent. |
+| 2.4 (move wizard config dicts) | **Complete** | `config/providers.py` (137 LOC) and `config/tiers.py` (102 LOC) hold the catalogs; `api/wizard.py` re-exports for backwards compat (-177 LOC). |
 | 2.5 (move immune to security) | **Complete** | `security/immune.py` re-exports the public surface; three direct importers updated. |
-| 2.6 (split config/crud) | **Not started** | 1,438-LOC file; per-entity split is straightforward but the test surface is large. |
+| 2.6 (split config/crud) | **Partial** | `config/crud_io.py` (160 LOC) holds the import/export + `_import_rows` logic. 7 remaining per-entity concerns (user, llm_providers, embedding_providers, agent_configs, infrastructure, audit, validation/migration) are still inside the mixin. |
 | 2.7 (extract /api/prompt) | **Complete** | `api/deliberation.py` is the new home; `api/main.py` shrunk from 1,462 → 1,153 LOC. |
-| 2.8 (pick one A2A) | **Not started** | `gateway/a2a_protocol.py` (502 lines) vs `infrastructure/a2a/protocol.py` (439 lines) — different message vocabularies. |
-| 2.9 (pick one tracing) | **Not started** | `observability/tracing.py` (474 lines) vs `infrastructure/otel/tracing.py` (1,080 lines) — middleware lives only in the former. |
+| 2.8 (pick one A2A) | **Complete** | `gateway/a2a_protocol.py` is now a 60-LOC re-export shim of `infrastructure/a2a/protocol.py`. `MessageType` legacy alias preserved. |
+| 2.9 (pick one tracing) | **Complete** | `observability/tracing.py` is now a 90-LOC re-export shim; `infrastructure/otel/tracing.py` is canonical; `infrastructure/otel/middleware.py` holds the middleware. |
 | 2.10 (consolidate auth) | **Complete** | `TokenStore` in `gateway/auth.py` is canonical; `ConsensusAuthManager` and `WebSocketAuthManager` are now thin shims. |
-| 3 (sovereign service boundaries) | **Not started** | Requires Phase 2 god-class extraction to be substantially complete first. |
-| 4 (multi-package monorepo) | **Not started** | Depends on Phase 3. |
-| 5 (graduated sovereign services) | **Not started** | Optional; depends on Phase 4. |
+| 3.1 (ConsensusEngine Protocol) | **Complete** | `consensus/protocol.py` ships the Protocol + `compute_consensus_for` + `is_consensus_engine`. The 4 implementations pre-date it but already satisfy the surface; conformance annotations are queued. |
+| 3.2-3.4 (extract consensus_api / config_api / realtime) | **Not started** | Multi-package extraction; depends on Phase 4. |
+| 4 (multi-package monorepo) | **Partial** | `packages/core/` and `packages/api/` directories with stub pyproject.toml + README.md; `[tool.uv.workspace]` section in root pyproject.toml. The actual sub-package move is queued. |
+| 5 (graduated sovereign services) | **Design only** | `docs/SOVEREIGN_SERVICES.md` captures the wire protocol, deployment surface, auth boundary, and exit criterion for each of the 4 services. The actual extraction is queued. |
 
 ### Net deltas
 
-* **Files changed**: 20 (10 modified, 10 new)
-* **Lines added**: ~3,042
-* **Lines removed**: ~899
-* **New modules**: 6 (security/immune, security/rate_limiter, memory/mem0_backend, memory/store, llm/headroom_compat, api/deliberation)
+* **Files changed**: 35+ (modified + new)
+* **New modules**: 13 (security/immune, security/rate_limiter, memory/mem0_backend, memory/store, llm/headroom_compat, llm/hindsight_compat, api/deliberation, observability/opik_compat, infrastructure/otel/middleware, actors/perceiver/extraction, config/providers, config/tiers, config/crud_io, gateway/nats_fallback, runtime/wiring, consensus/protocol, packages/core, packages/api)
+* **New docs**: docs/SOVEREIGN_SERVICES.md
 * **`api/main.py` size**: 1,462 → 1,153 LOC (-21%)
-* **Audit findings resolved (full)**: 5 of 5 in Phase 0; 3 of 10 in Phase 2 (2.5, 2.7, 2.10); 2 of 6 in Phase 1 (1.5 fully; 1.1 / 1.2 / 1.4 partially)
-* **Audit findings resolved (partial)**: 1.1, 1.4 (interfaces shipped, full call-site migration queued)
-* **Audit findings remaining**: ~20 (per the Phase table above)
+* **`api/wizard.py` size**: 1,497 → 1,320 LOC (-12%)
+* **`observability/tracing.py` size**: 474 → 90 LOC (re-export shim)
+* **`gateway/a2a_protocol.py` size**: 502 → 60 LOC (re-export shim)
+* **`gateway/nats_event_mesh.py` size**: 1,888 → 1,804 LOC (-4%)
+* **`config/crud.py` size**: 1,438 → 1,358 LOC (-6%)
+* **Audit findings resolved (full)**: 5/5 in Phase 0; 4/6 in Phase 1 (1.1, 1.2, 1.5, 1.6); 6/10 in Phase 2 (2.4, 2.5, 2.7, 2.8, 2.9, 2.10); 1/4 in Phase 3 (3.1); 0/5 in Phase 4 (structural only); 0/4 in Phase 5 (design doc only)
+* **Audit findings resolved (partial)**: 2/6 in Phase 1 (1.3 opik shim, 1.4 headroom shim — full call-site migration queued); 3/10 in Phase 2 (2.1 nats_event_mesh, 2.2 main_loop, 2.3 perceiver — first concerns extracted, rest queued)
+* **Commits this session**: 19 (all pushed to main)
 
 ### Prime Directive pillar impact
 
