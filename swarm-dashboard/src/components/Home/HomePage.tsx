@@ -10,6 +10,7 @@ import { StatusBadge } from '../UI/StatusBadge';
 import { LoadingSpinner } from '../UI/LoadingSpinner';
 import { ErrorBoundary, SimpleErrorFallback } from '../UI/ErrorBoundary';
 import { EmptyState } from '../UI/EmptyState';
+import { getAutonomousStatus, AutonomousStatus } from '../../api/autonomous';
 
 // API URL configuration
 const API_URL = import.meta.env.VITE_API_URL || import.meta.env.VITE_API_HOST || localStorage.getItem('swarm_api_host') || '';
@@ -57,6 +58,7 @@ interface HomePageData {
     average_free_energy: number;
     active_connections: number;
   };
+  autonomousStatus: AutonomousStatus | null;
 }
 
 export function HomePage() {
@@ -66,6 +68,7 @@ export function HomePage() {
     memory: null,
     recentActivity: [],
     consciousnessMetrics: undefined,
+    autonomousStatus: null,
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -147,6 +150,15 @@ export function HomePage() {
     }
   }, []);
 
+  // Fetch autonomous runtime status
+  const fetchAutonomousStatus = useCallback(async () => {
+    try {
+      return await getAutonomousStatus();
+    } catch {
+      return null;
+    }
+  }, []);
+
   // Generate mock recent activity based on data
   const generateRecentActivity = useCallback((health: SystemHealth | null, agents: AgentSummary | null): RecentActivity[] => {
     const activities: RecentActivity[] = [];
@@ -199,11 +211,12 @@ export function HomePage() {
     setError(null);
 
     try {
-      const [health, agents, memory, consciousness] = await Promise.all([
+      const [health, agents, memory, consciousness, autonomousStatus] = await Promise.all([
         fetchHealth(),
         fetchAgents(),
         fetchMemory(),
         fetchConsciousness(),
+        fetchAutonomousStatus(),
       ]);
 
       setData({
@@ -212,6 +225,7 @@ export function HomePage() {
         memory,
         recentActivity: generateRecentActivity(health, agents),
         consciousnessMetrics: consciousness,
+        autonomousStatus,
       });
       setLastUpdated(new Date());
     } catch (err) {
@@ -219,7 +233,7 @@ export function HomePage() {
     } finally {
       setLoading(false);
     }
-  }, [fetchHealth, fetchAgents, fetchMemory, fetchConsciousness, generateRecentActivity]);
+  }, [fetchHealth, fetchAgents, fetchMemory, fetchConsciousness, fetchAutonomousStatus, generateRecentActivity]);
 
   // Initial fetch and refresh interval
   useEffect(() => {
@@ -326,6 +340,49 @@ export function HomePage() {
                 }`} />
                 <span className="text-gray-400">Qdrant</span>
               </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Autonomous Loop Status Card */}
+        <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <span className="text-lg">🔄</span>
+              <span className="text-sm font-medium text-white">Autonomous Loop</span>
+              {data.autonomousStatus ? (
+                <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                  data.autonomousStatus.connected
+                    ? 'bg-green-500/10 text-green-400 border border-green-500/30'
+                    : 'bg-red-500/10 text-red-400 border border-red-500/30'
+                }`}>
+                  <span className={`w-1.5 h-1.5 rounded-full ${
+                    data.autonomousStatus.connected ? 'bg-green-400' : 'bg-red-400'
+                  }`} />
+                  {data.autonomousStatus.connected ? 'Connected' : 'Disconnected'}
+                </span>
+              ) : (
+                <span className="text-xs text-gray-500">Status unavailable</span>
+              )}
+            </div>
+            <div className="flex items-center gap-4 text-sm text-gray-400">
+              {data.autonomousStatus && (
+                <>
+                  <span>
+                    <span className="text-gray-500">Analyses: </span>
+                    <span className="text-white font-medium">{data.autonomousStatus.total_analyses}</span>
+                  </span>
+                  <span>
+                    <span className="text-gray-500">Agents: </span>
+                    <span className="text-white font-medium">{data.autonomousStatus.agent_count}</span>
+                  </span>
+                  {data.autonomousStatus.last_update && (
+                    <span className="text-xs text-gray-500">
+                      Last analysis: {new Date(data.autonomousStatus.last_update).toLocaleTimeString()}
+                    </span>
+                  )}
+                </>
+              )}
             </div>
           </div>
         </div>
