@@ -166,6 +166,30 @@ override-dependencies = [
     "tenacity>=9.1.4",
 ]
 
+# ============== WORKSPACE (Phase 4 of PLAN.md) ==============
+# The audit's Phase 4 calls for splitting the single pip package
+# into a 2-package monorepo: heretek-swarm-core (actors, mixins,
+# base, memory, consensus, gateway, runtime, llm, embeddings,
+# models, schemas, swarm_logging, config lib portion, utils,
+# validation, channels) and heretek-swarm-api (api, observability
+# router portion, security auth portion, mcp, integrations,
+# plugins, rag orchestration-specific bits).
+#
+# The split is set up here as a uv workspace. The current
+# single-package layout continues to work — the existing
+# heretek_swarm package is still the only built member today.
+# The packages/core and packages/api directories are stubs for
+# the future split; activating them is a follow-up that requires
+# moving the relevant sub-packages from backend/heretek_swarm/
+# into the new locations and updating imports.
+#
+# Until the split is complete, members = [] is correct (no
+# workspace members; the existing single package is the build
+# target). When the split lands, this becomes:
+#   members = ["packages/core", "packages/api"]
+[tool.uv.workspace]
+members = []
+
 # ============== PYTEST CONFIGURATION ==============
 [tool.pytest.ini_options]
 minversion = "8.0"
