@@ -31,6 +31,19 @@ from typing import TYPE_CHECKING, Any
 
 import httpx
 import structlog
+from heretek_swarm.llm.headroom_compat import (
+    HEADROOM_AVAILABLE as _HEADROOM_AVAILABLE,
+    unwrap as _headroom_unwrap,
+    wrap as _headroom_wrap,
+)
+from heretek_swarm.observability.opik_compat import (
+    OPIK_AVAILABLE as _OPIK_AVAILABLE,
+    alert as _opik_alert,
+    log_span as _opik_log_span,
+    timed as _opik_timed,
+    timed_decorator as _opik_timed_decorator,
+    track_metric as _opik_track_metric,
+)
 from heretek_swarm.infrastructure.otel import InstrumentedAsyncClient, instrumented_httpx_client
 
 if TYPE_CHECKING:
@@ -336,6 +349,14 @@ class OpenAIProvider(LLMProvider):
     """OpenAI API provider."""
 
     async def complete(self, request: LLMRequest) -> LLMResponse:
+        """Send a completion request.
+
+        Phase 1.4 of PLAN.md: messages are wrapped through
+        headroom_compat.wrap() before the LLM call, so the
+        token-count savings are captured end-to-end. When
+        headroom is unavailable or disabled, wrap() is a
+        passthrough that returns the input unchanged.
+        """
         await self._rate_limit()
         async with self._rate_limiter:
             client = await self._get_client()
@@ -344,6 +365,18 @@ class OpenAIProvider(LLMProvider):
             model = request.model or self.config.default_model or _DEFAULT_OPENAI_MODEL
             payload = request.to_dict()
             payload["model"] = model
+
+            # Phase 1.4 — headroom token compression. Wraps the
+            # messages list; falls through to a no-op when
+            # headroom is not installed or HEADROOM_ENABLED=0.
+            with _opik_timed("llm_openai_complete", tags={"model": model, "provider": "openai"}):
+                _compression = _headroom_wrap(payload.get("messages", []))
+
+            # If headroom returned a list, replace the
+            # messages; if it returned a string, that means
+            # the shim passed the original through.
+            if isinstance(_compression.data, list):
+                payload["messages"] = _compression.data
 
             try:
                 response = await client.post("/chat/completions", json=payload)
