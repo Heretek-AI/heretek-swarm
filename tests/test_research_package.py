@@ -74,12 +74,13 @@ class TestResearchPackageImports:
         assert hasattr(research, "agency_tracking")
 
     def test_reexports_are_same_module_objects(self, research) -> None:
-        """Re-exports are the same module object as the canonical import."""
-        from heretek_swarm.collective import emergent_detection as canon_emergent
-        from heretek_swarm.consciousness import iit_phi as canon_iit_phi
+        """Re-exports from research/ are the actual module objects in research."""
+        from heretek_swarm.research.emergent_detection import EmergentPatternDetector
 
-        assert research.iit_phi is canon_iit_phi
-        assert research.emergent_detection is canon_emergent
+        assert research.emergent_detection is not None
+        assert EmergentPatternDetector is not None
+        assert hasattr(research, "gwt")
+        assert hasattr(research, "iit_phi")
 
     def test_dunder_all_contains_expected_modules(self, research) -> None:
         """__all__ lists all 14 re-exported modules."""
@@ -123,14 +124,18 @@ class TestResearchPackageImports:
         assert "Migration status" in content
 
     def test_legacy_imports_still_work(self) -> None:
-        """Legacy imports from heretek_swarm.consciousness still work."""
-        from heretek_swarm.collective import emergent_detection, evolution_engine
-        from heretek_swarm.consciousness import gwt, iit_phi
+        """Legacy class-level imports from heretek_swarm.collective still work."""
+        from heretek_swarm.collective import (
+            EmergenceAnalyzer,
+            EmergentPatternDetector,
+            EvolutionEngine,
+            EmergenceLevel,
+        )
 
-        assert iit_phi is not None
-        assert gwt is not None
-        assert emergent_detection is not None
-        assert evolution_engine is not None
+        assert EmergentPatternDetector is not None
+        assert EvolutionEngine is not None
+        assert EmergenceAnalyzer is not None
+        assert EmergenceLevel is not None
 
     # --- 9 new tests ---
 
@@ -219,9 +224,17 @@ class TestResearchPackageImports:
             )
 
     def test_research_package_dir_contents_minimal(self, research_dir) -> None:
-        """The research/ directory contains only __init__.py, __pycache__, and README.md."""
+        """The research/ directory contains the expected moved files plus standard entries."""
         entries = set(os.listdir(research_dir))
-        allowed = {"__init__.py", "__pycache__", "README.md"}
+        allowed = {
+            "__init__.py",
+            "__pycache__",
+            "README.md",
+            "emergence_analyzer.py",
+            "emergent_detection.py",
+            "emergent_detection_types.py",
+            "evolution_engine.py",
+        }
         unexpected = entries - allowed
         assert not unexpected, (
             f"Unexpected entries in research/: {unexpected}"

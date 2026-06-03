@@ -32,7 +32,7 @@ from typing import Any
 
 import structlog
 
-from .emergent_detection_types import EmergenceLevel, EmergentPattern, EmergentPatternClass
+from heretek_swarm.research.emergent_detection_types import EmergenceLevel, EmergentPattern, EmergentPatternClass
 
 logger = structlog.get_logger(__name__)
 

@@ -33,7 +33,7 @@ import structlog
 
 from .adaptive_learning import AdaptiveLearningRateController
 from .agent_adaptation import PatternBasedAgentAdaptor
-from .emergent_detection import EmergenceLevel, EmergentPatternDetector
+from heretek_swarm.research.emergent_detection import EmergenceLevel, EmergentPatternDetector
 from .pattern_library import PatternLibrary
 
 logger = structlog.get_logger(__name__)

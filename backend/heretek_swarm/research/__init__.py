@@ -24,13 +24,13 @@ existing imports keep working during the transition.
 
 from __future__ import annotations
 
-from heretek_swarm.collective import (
-    agency_tracking,
+from heretek_swarm.research import (
     emergence_analyzer,
     emergent_detection,
     emergent_detection_types,
     evolution_engine,
 )
+from heretek_swarm.collective import agency_tracking
 from research.consciousness import (
     ast,
     fep,

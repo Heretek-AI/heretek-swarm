@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Any
 
 import structlog
 
-from heretek_swarm.collective.emergent_detection_types import (
+from heretek_swarm.research.emergent_detection_types import (
     EmergenceLevel,
     EmergentPatternClass,
     PatternProvenance,
@@ -14,7 +14,7 @@ from heretek_swarm.collective.emergent_detection_types import (
 logger = structlog.get_logger(__name__)
 
 if TYPE_CHECKING:
-    from .emergent_detection import (
+    from heretek_swarm.research.emergent_detection import (
         AgentBehaviorSnapshot,
         CollectiveBehavior,
         EmergentPattern,

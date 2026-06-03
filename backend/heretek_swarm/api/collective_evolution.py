@@ -18,7 +18,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from heretek_swarm.collective.adaptive_learning import (
     AdaptiveLearningRateController,
 )
-from heretek_swarm.collective.emergent_detection import (
+from heretek_swarm.research.emergent_detection import (
     EvolutionEngine,
 )
 from heretek_swarm.gateway.auth import verify_auth

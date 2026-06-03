@@ -77,8 +77,8 @@ from .distributed_learning import (
     SyncMessage,
     SyncOperation,
 )
-from .emergence_analyzer import EmergenceAnalyzer
-from .emergent_detection import (
+from heretek_swarm.research.emergence_analyzer import EmergenceAnalyzer
+from heretek_swarm.research.emergent_detection import (
     AgentBehaviorSnapshot,
     CollectiveBehavior,
     DetectionEvent,
@@ -89,7 +89,7 @@ from .emergent_detection import (
     EmergentPatternDetector,
     EvolutionEngine,
 )
-from .emergent_detection_types import (
+from heretek_swarm.research.emergent_detection_types import (
     AgentCapabilitySnapshot,
     CapabilityRecord,
     EvolutionMetrics,

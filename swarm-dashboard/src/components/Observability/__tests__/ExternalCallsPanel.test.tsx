@@ -28,7 +28,12 @@ const mockWsInstance = {
   send: vi.fn(),
 };
  
-(global as any).WebSocket = vi.fn(() => mockWsInstance);
+class MockWebSocket {
+  constructor(_url: string | URL) {
+    return mockWsInstance;
+  }
+}
+(global as any).WebSocket = MockWebSocket as any;
 
 import { ExternalCallsPanel } from '../ExternalCallsPanel';
 

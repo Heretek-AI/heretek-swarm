@@ -36,28 +36,28 @@ class TestResearchNamespace:
         assert research is legacy
 
     def test_emergent_detection_reexported(self) -> None:
-        """heretek_swarm.research.emergent_detection is the legacy module."""
-        from heretek_swarm.collective import emergent_detection as legacy
+        """heretek_swarm.research.emergent_detection is the moved module."""
         from heretek_swarm.research import emergent_detection as research
 
-        assert research is legacy
+        assert research is not None
+        assert hasattr(research, "EmergentPatternDetector")
 
     def test_evolution_engine_reexported(self) -> None:
-        """heretek_swarm.research.evolution_engine is the legacy module."""
-        from heretek_swarm.collective import evolution_engine as legacy
+        """heretek_swarm.research.evolution_engine is the moved module."""
         from heretek_swarm.research import evolution_engine as research
 
-        assert research is legacy
+        assert research is not None
+        assert hasattr(research, "EvolutionEngine")
 
     def test_emergence_analyzer_reexported(self) -> None:
-        """heretek_swarm.research.emergence_analyzer is the legacy module."""
-        from heretek_swarm.collective import emergence_analyzer as legacy
+        """heretek_swarm.research.emergence_analyzer is the moved module."""
         from heretek_swarm.research import emergence_analyzer as research
 
-        assert research is legacy
+        assert research is not None
+        assert hasattr(research, "EmergenceAnalyzer")
 
     def test_agency_tracking_reexported(self) -> None:
-        """heretek_swarm.research.agency_tracking is the legacy module."""
+        """heretek_swarm.research.agency_tracking is the legacy module (stays in collective)."""
         from heretek_swarm.collective import agency_tracking as legacy
         from heretek_swarm.research import agency_tracking as research
 
@@ -106,11 +106,11 @@ class TestResearchNamespace:
         assert research is legacy
 
     def test_emergent_detection_types_reexported(self) -> None:
-        """heretek_swarm.research.emergent_detection_types is the legacy module."""
-        from heretek_swarm.collective import emergent_detection_types as legacy
+        """heretek_swarm.research.emergent_detection_types is the moved module."""
         from heretek_swarm.research import emergent_detection_types as research
 
-        assert research is legacy
+        assert research is not None
+        assert hasattr(research, "EmergenceLevel")
 
     def test_all_attribute_complete(self) -> None:
         """__all__ is non-empty and contains string identifiers."""
