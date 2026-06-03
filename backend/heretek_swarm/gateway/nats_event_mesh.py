@@ -28,6 +28,7 @@ from typing import Any
 
 import structlog
 
+from heretek_swarm.gateway.nats_fallback import InMemoryFallback, _InMemoryFallback
 from heretek_swarm.infrastructure.nats.ca import CertificateAuthority
 
 logger = structlog.get_logger(__name__)
@@ -1020,96 +1021,11 @@ class NATSEventMesh:
         await self.disconnect()
 
 
-class _InMemoryFallback:
-    """In-memory fallback for when NATS is unavailable."""
-
-    def __init__(self) -> None:
-        self._subscriptions: dict[str, list[Callable]] = {}
-        self._sub_counter = 0
-        self._pending: dict[str, asyncio.Future] = {}
-
-    @staticmethod
-    def _matches_subject(pattern: str, subject: str) -> bool:
-        """Check if a published subject matches a subscription pattern.
-
-        Supports NATS wildcard tokens:
-        - ``>`` matches one or more tokens at the end (e.g. ``test.>`` matches
-          ``test.a.b.c``)
-        - ``*`` matches exactly one token (e.g. ``events.*`` matches
-          ``events.click`` but NOT ``events.click.button``)
-        """
-        if pattern == subject:
-            return True
-
-        pat_tokens = pattern.split(".")
-        sub_tokens = subject.split(".")
-
-        for i, pat_tok in enumerate(pat_tokens):
-            if pat_tok == ">":
-                # ``>`` must be the last token and consumes everything remaining
-                return i == len(pat_tokens) - 1 and len(sub_tokens) > i
-            if i >= len(sub_tokens):
-                return False
-            if pat_tok == "*":
-                # Matches exactly one token — just continue
-                continue
-            if pat_tok != sub_tokens[i]:
-                return False
-
-        # All pattern tokens consumed — lengths must match exactly
-        return len(pat_tokens) == len(sub_tokens)
-
-    @property
-    def subscription_count(self) -> int:
-        """Get number of active subscriptions."""
-        return sum(len(subs) for subs in self._subscriptions.values())
-
-    async def publish(self, subject: str, data: dict[str, Any]) -> bool:
-        """Publish to in-memory subscribers."""
-        for pattern, subs in self._subscriptions.items():
-            if not self._matches_subject(pattern, subject):
-                continue
-            for sub in subs:
-                with contextlib.suppress(Exception):
-                    await sub(None, subject, data)
-        return True
-
-    async def send_to_json(self, subject: str, data_dict: dict[str, Any], **_kwargs: Any) -> bool:
-        """Send a message via in-memory fallback (delegates to publish)."""
-        return await self.publish(subject, data_dict)
-
-    async def broadcast_json(self, data_dict: dict[str, Any]) -> bool:
-        """Broadcast via in-memory fallback (delegates to publish on "broadcast")."""
-        return await self.publish("broadcast", data_dict)
-
-    async def subscribe(
-        self,
-        subject: str,
-        callback: Callable[[str, dict[str, Any]], None],
-    ) -> str:
-        """Subscribe in-memory."""
-        sid = f"mem_{self._sub_counter}"
-        self._sub_counter += 1
-
-        if subject not in self._subscriptions:
-            self._subscriptions[subject] = []
-        self._subscriptions[subject].append(callback)
-
-        return sid
-
-    async def unsubscribe(self, _sid: str) -> bool:
-        """Unsubscribe in-memory."""
-        return True
-
-    async def request(
-        self,
-        subject: str,
-        data: dict[str, Any],
-        timeout: float,
-    ) -> dict[str, Any] | None:
-        """Request in-memory (no response by default)."""
-        await self.publish(subject, data)
-        return None
+# _InMemoryFallback was extracted to heretek_swarm.gateway.nats_fallback
+# (Phase 2.1 of PLAN.md). The class still lives in this module's
+# namespace as a backwards-compat alias; new code should import
+# ``InMemoryFallback`` (no leading underscore) from
+# heretek_swarm.gateway.nats_fallback directly.
 
 
 class NATSEventMeshMixin:
