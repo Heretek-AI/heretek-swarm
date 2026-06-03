@@ -3,11 +3,20 @@ MemoryMixin - Memory access tracking and tier management.
 
 Provides methods for tracking memory access patterns,
 determining memory tiers, and prefetching relevant memories.
+
+Follow-up to Phase 1.1 of PLAN.md: the mixin used to hard-code
+``self.access_analyzer: AccessPatternAnalyzer | None = None``
+and raise ``TypeError`` when missing. New code can instead
+use the canonical :class:`heretek_swarm.memory.MemoryStore`
+Protocol via :func:`heretek_swarm.memory.get_default_store`;
+the legacy ``self.access_analyzer`` path still works for
+backwards compatibility.
 """
 
 import structlog
 
 from heretek_swarm.memory.access_patterns import AccessPatternAnalyzer, AccessTier
+from heretek_swarm.memory.store import MemoryStore, get_default_store
 
 logger = structlog.get_logger("MemoryMixin")
 
@@ -26,6 +35,25 @@ class MemoryMixin:
     """
 
     access_analyzer: AccessPatternAnalyzer | None = None
+    # Optional canonical MemoryStore (Phase 1.1 of PLAN.md). When
+    # ``access_analyzer`` is None, ``_get_memory_store`` falls back
+    # to :func:`get_default_store`, which returns the cognee /
+    # mem0 / null adapter the swarm was configured with. New
+    # actors should set this attribute (or rely on the default
+    # resolver) instead of wiring an analyzer explicitly.
+    memory_store: MemoryStore | None = None
+
+    def _get_memory_store(self) -> MemoryStore:
+        """Return the canonical memory store for this actor.
+
+        Prefers ``self.memory_store`` if explicitly set; falls
+        back to ``get_default_store()``; if neither is usable,
+        returns the in-memory null store so the actor stays
+        bootable in dev.
+        """
+        if self.memory_store is not None:
+            return self.memory_store
+        return get_default_store()
 
     def _track_memory_access(
         self,
