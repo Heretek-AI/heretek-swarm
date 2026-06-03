@@ -1632,6 +1632,114 @@ attribute set returns the `_NullMemoryStore` from
 `_get_memory_store()`; the FastAPI app constructs with
 331 routes.
 
+### 2026-06-03 — Phase 3.2: consensus_api service layer
+
+Implements Phase 3.2 of the audit (extract api/consensus.py
+into a consensus_api/ package: routers + service). The
+audit's exit criterion is that the 1,412-LOC consensus
+router is replaced with a thin router that delegates to a
+service layer in the new package.
+
+* new: backend/heretek_swarm/consensus_api/__init__.py
+  re-exports the canonical router (from api/consensus.py)
+  and the ConsensusAuthManager shim at the new namespace.
+
+* new: backend/heretek_swarm/consensus_api/service.py
+  ConsensusService class with the canonical state and
+  lifecycle methods: start_round, submit_vote, aggregate,
+  cancel, list_active, get, get_result, _audit. Plus
+  get_default_service() / reset_default_service().
+
+The full migration of api/consensus.py routes to
+delegate to the service is queued for a follow-up PR
+(it is mechanical — each route becomes a 1-line delegation
+— but touches 33 routes).
+
+### 2026-06-03 — Phase 3.3: config_api with ProviderProbe
+
+Implements Phase 3.3 of the audit (extract api/wizard.py
+into a config_api/ package: routers + probes with
+ProviderProbe Protocol).
+
+* new: backend/heretek_swarm/config_api/__init__.py
+  re-exports the canonical router (from api/wizard.py),
+  WizardState, AVAILABLE_PROVIDERS, AGENT_TIERS.
+
+* new: backend/heretek_swarm/config_api/probes.py
+  ProviderProbe Protocol (runtime_checkable) that defines
+  the canonical surface for LLM / embedding provider
+  validation. Two reference implementations:
+    - HttpProbe: real HTTP GET /models call.
+    - StaticProbe: configuration-only check (no network).
+  Plus get_default_probe() that honors the
+  HERETEK_PROVIDER_PROBE env var.
+
+### 2026-06-03 — Phase 3.4: realtime package
+
+Implements Phase 3.4 of the audit (extract
+api/websockets.py's WebSocketAuthManager and connection
+manager into a realtime/ package).
+
+* new: backend/heretek_swarm/realtime/__init__.py
+  re-exports the canonical WebSocketAuthManager,
+  ConnectionManager, ws_auth_manager, manager, and the
+  authenticate_websocket helper at the new namespace.
+
+The full migration of the connection-manager logic is
+queued behind a follow-up PR (it touches 50+ broadcast
+methods).
+
+### 2026-06-03 — Phase 2.3 follow-up: complete static method delegations
+
+Phase 2.3 follow-up — wire all 11 static methods in the
+Perceiver agent to the extraction module. The 10
+@staticmethods and the 1 _detect_text_structure method now
+all delegate to heretek_swarm.actors.perceiver.extraction.
+The agent's pure-helper surface is ~150 LOC smaller;
+remaining ~1,580 LOC is genuine agent behavior.
+
+### 2026-06-03 — Phase 2.6 follow-up: extract LLM provider CRUD module
+
+Phase 2.6 follow-up — second per-entity module (after
+crud_io.py). 
+
+* new: backend/heretek_swarm/config/crud_llm_providers.py
+  (240 LOC) — get_llm_provider, list_llm_providers,
+  get_default_llm_provider, create_llm_provider,
+  update_llm_provider, delete_llm_provider, and
+  get_llm_provider_api_key as free functions. Internal
+  _row_to_llm_provider mapper.
+
+The mixin method delegation is queued for a follow-up
+PR (touches 8 methods).
+
+### 2026-06-03 — Phase 5: sovereign services skeleton stubs
+
+Implements the in-process skeleton stubs for the 4
+services Phase 5 recommends. The skeletons run in the
+same process as the existing monolith; the gRPC/sidecar
+deployment is a deployment change, not a code change.
+
+* new: backend/heretek_swarm/services/__init__.py
+  re-exports the 4 stubs and their get_*_svc() factories.
+
+* new: backend/heretek_swarm/services/consensus_svc.py
+  ConsensusServiceStub with create_round, add_vote,
+  compute, stream_rounds, cancel. Delegates to
+  ConsensusService from consensus_api (Phase 3.2).
+
+* new: backend/heretek_swarm/services/memory_svc.py
+  MemoryServiceStub. Delegates to MemoryStore Protocol
+  (Phase 1.1) via get_default_store().
+
+* new: backend/heretek_swarm/services/realtime_svc.py
+  RealtimeServiceStub. Delegates to ConnectionManager
+  from realtime (Phase 3.4).
+
+* new: backend/heretek_swarm/services/observability_svc.py
+  ObservabilityServiceStub. Delegates to opik_compat
+  shim (Phase 1.3).
+
 ---
 
 ## Session Summary (2026-06-03)
