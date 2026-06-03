@@ -122,6 +122,37 @@ services:
       - heretek-net
 
   # =============================================================================
+  # Consensus gRPC Service (Phase 5.1) — optional extraction
+  # =============================================================================
+  # Phase 5 of PLAN.md (§1.13) recommends extracting the
+  # consensus engine into a gRPC service when p99 latency
+  # in the monolith is unacceptable. The container runs
+  # heretek-swarm/services/grpc_servers.py with --service
+  # consensus on port 50051. The api process picks this up
+  # when HERETEK_CONSENSUS_GRPC_URL=consensus_svc:50051 is
+  # set; without that env var, the api uses the in-process
+  # ConsensusServiceStub. Uncomment to activate.
+  consensus_svc:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile.grpc-svc
+      args:
+        SERVICE: consensus
+    environment:
+      <<: *common-env
+      HERETEK_API_KEY: ${HERETEK_API_KEY:?HERETEK_API_KEY must be set}
+      DATABASE_URL: ${DATABASE_URL:?DATABASE_URL must be set}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379}
+      QDRANT_URL: ${QDRANT_URL:-http://qdrant:6333}
+    ports:
+      - "50051:50051"
+    mem_limit: 512m
+    cpus: "0.5"
+    profiles: ["sovereign"]  # opt-in via `docker compose --profile sovereign`
+    networks:
+      - heretek-net
+
+  # =============================================================================
   # API Service — 23 spawned agents
   # =============================================================================
 
