@@ -1196,3 +1196,27 @@ imports in isolation without raising. The 1,363-LOC
 present in the tree (replaced by the langgraph wrapper) — the
 exit criterion "largest file in repo < 1,000 LOC" is now closer
 to being met by Phase 2 god-class extraction.
+
+### 2026-06-03 — Phase 1.4: headroom_compat shim (prompt compression)
+
+Implements Phase 1.4 of the audit (§3.1 Replace — headroom in the
+prompt path).
+
+* New: `backend/heretek_swarm/llm/headroom_compat.py` — transparent
+  token-compression facade with the `wrap(messages) /
+  unwrap(result)` API headroom ships. The real `headroom_ai`
+  library is a Rust+PyO3 binding that requires `cargo`; when it is
+  not importable, the shim returns the input unchanged with a
+  `savings_ratio` of `0.0` and `strategy="passthrough"`. The LLM
+  call path stays working in every environment.
+* Honors `HEADROOM_ENABLED` env var (default `1`): set to `0` to
+  bypass compression in dev/CI even when the real library is
+  installed. The `learn` / `mine` flows are intentionally not
+  surfaced here — they are operator-facing, not call-site facing.
+* Mirrors the pattern in `memory/mem0_backend.py` — same facade
+  shape, same graceful degradation, same single optional dep.
+
+Wiring `wrap(...)` into `llm/model_garage.py` (the canonical LLM
+router) is queued behind a follow-up that updates the router's
+call signature. The interface here is stable so that wiring can
+land incrementally.
