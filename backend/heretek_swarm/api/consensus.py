@@ -493,7 +493,12 @@ async def aggregate_consensus(consensus_id: str, agent_id: str = Depends(get_aut
         raise HTTPException(500, "Consensus instance not found")
 
     # Aggregate
-    result = consensus.aggregate_consensus(consensus_id)
+    # NOTE: MAKERConsensus / EnhancedMAKERConsensus expose the aggregation
+    # operation as `compute_consensus`. Earlier revisions of this router
+    # called a non-existent `aggregate_consensus` which raised AttributeError
+    # at runtime. See PLAN.md §1.5 (latent bug, prime-directive zero-trust
+    # violation). The call was previously at api/consensus.py:497.
+    result = consensus.compute_consensus(consensus_id)
 
     # Update store
     data["state"] = result.state.value

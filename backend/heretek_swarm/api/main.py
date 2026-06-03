@@ -80,13 +80,15 @@ from heretek_swarm.memory.cognee_reader import CogneeMemoryReader
 from heretek_swarm.memory.cognee_writer import CogneeMemoryWriter
 from heretek_swarm.observability.tracing import setup_telemetry_middleware
 
-# Import mem0 backend
-try:
-    from memory import MEM0_AVAILABLE, Mem0Backend, Mem0Config
-except ImportError:
-    MEM0_AVAILABLE = False
-    Mem0Backend = None
-    Mem0Config = None
+# Import mem0 backend — see heretek_swarm.memory.mem0_backend
+# (Previously this did `from memory import …` which always failed because
+# `memory` is a sub-package of `heretek_swarm`, not a top-level module.
+# See PLAN.md §1.8 — Prime Directive "Persistent Operation" violation.)
+from heretek_swarm.memory.mem0_backend import (
+    MEM0_AVAILABLE,
+    Mem0Backend,
+    Mem0Config,
+)
 
 # Import logging middleware
 from heretek_swarm.api.logging_middleware import setup_logging_middleware

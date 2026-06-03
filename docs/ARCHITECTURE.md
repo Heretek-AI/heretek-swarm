@@ -136,18 +136,35 @@ backend/
 │   │   │   ├── handlers.py
 │   │   │   ├── helpers.py
 │   │   │   └── types.py
-│   │   ├── alpha.py               # Alpha agent (flat file)
-│   │   ├── beta.py                # Beta agent (flat file)
-│   │   ├── catalyst.py            # Catalyst agent (flat file)
-│   │   ├── charlie.py             # Charlie agent (flat file)
-│   │   ├── coder.py               # Coder agent (flat file)
-│   │   ├── echo.py                # Echo actor (flat file)
-│   │   ├── empath.py              # Empath agent (flat file)
-│   │   ├── explorer.py            # Explorer legacy stub (flat)
-│   │   ├── historian.py           # Historian agent (flat file)
-│   │   ├── metis.py               # Metis agent (flat file)
-│   │   ├── perceiver.py           # Perceiver agent (flat file)
-│   │   ├── steward.py             # Steward agent (flat file, extracted from triad.py)
+│   │   ├── triad/                 # Triad subpackage (Steward, Alpha, Beta, Charlie)
+│   │   │   ├── agent.py
+│   │   │   ├── balancing.py
+│   │   │   └── types.py
+│   │   ├── catalyst/              # CatalystAgent subpackage
+│   │   │   ├── agent.py
+│   │   │   └── types.py
+│   │   ├── coder/                 # CoderAgent subpackage
+│   │   │   ├── agent.py
+│   │   │   └── types.py
+│   │   ├── echo/                  # EchoActor subpackage
+│   │   │   ├── agent.py
+│   │   │   └── types.py
+│   │   ├── empath/                # EmpathAgent subpackage
+│   │   │   ├── agent.py
+│   │   │   └── types.py
+│   │   ├── explorer/              # ExplorerAgent subpackage
+│   │   │   ├── agent.py
+│   │   │   ├── pathfinding.py
+│   │   │   └── types.py
+│   │   ├── historian/             # HistorianAgent subpackage
+│   │   │   ├── agent.py
+│   │   │   └── types.py
+│   │   ├── metis/                 # MetisAgent subpackage
+│   │   │   ├── agent.py
+│   │   │   └── types.py
+│   │   ├── perceiver/             # PerceiverAgent subpackage
+│   │   │   ├── agent.py
+│   │   │   └── types.py
 │   │   ├── factory.py             # ActorFactory
 │   │   ├── supervisor.py          # ActorSupervisor
 │   │   ├── validation.py          # Message validation helpers
@@ -187,15 +204,13 @@ backend/
 │   │   ├── audit.py
 │   │   └── provisioner.py
 │   ├── memory/                    # Memory system implementation
-│   │   ├── base.py                #   Core memory models
-│   │   ├── persistent.py          #   PostgreSQL-backed persistent storage
-│   │   ├── tiering.py             #   Memory tiering with rollback
-│   │   ├── versioned.py           #   Versioned memories
-│   │   ├── compression.py         #   Memory compression strategies
-│   │   ├── eliza_memory.py
-│   │   ├── access_patterns.py
-│   │   ├── migration_strategies.py
-│   │   └── prefetcher.py
+│   │   ├── cognee_writer.py       #   Cognee-backed episodic/semantic write path
+│   │   ├── cognee_reader.py       #   Cognee-backed search/restore
+│   │   ├── mem0_backend.py        #   Mem0ai embedded backend (Qdrant + OpenAI)
+│   │   ├── eliza_memory.py        #   ELIZA-style short-term conversation memory
+│   │   ├── access_patterns.py     #   Per-agent read-pattern analytics
+│   │   ├── prefetcher.py          #   Predictive prefetch into tier-0 cache
+│   │   └── __init__.py            #   MemoryType enum + facade exports
 │   ├── security/                  # Zero-trust security layer
 │   │   ├── zero_trust.py          #   4-layer input/output validation
 │   │   ├── adversarial.py         #   Prompt injection / jailbreak detection
@@ -305,24 +320,24 @@ The Heretek Swarm implements 23 autonomous agents organized into 6 tiers, each w
 
 ### Tier 1: Core Triad (4 Agents)
 
-| Agent   | Role                      | File                                                                   | Capabilities                             |
-|---------|---------------------------|------------------------------------------------------------------------|------------------------------------------|
-| Steward | Governance & Orchestration | [`backend/heretek_swarm/actors/steward.py`](backend/heretek_swarm/actors/steward.py) | Deliberation orchestration, decision collection |
-| Alpha   | Deep Analysis             | [`backend/heretek_swarm/actors/alpha.py`](backend/heretek_swarm/actors/alpha.py)       | Deep analysis, proposal generation       |
-| Beta    | Validation                | [`backend/heretek_swarm/actors/beta.py`](backend/heretek_swarm/actors/beta.py)          | Validation, verification                 |
-| Charlie | Challenge                 | [`backend/heretek_swarm/actors/charlie.py`](backend/heretek_swarm/actors/charlie.py)    | Challenge, stress-testing                |
+| Agent   | Role                      | File                                                                                   | Capabilities                             |
+|---------|---------------------------|----------------------------------------------------------------------------------------|------------------------------------------|
+| Steward | Governance & Orchestration | [`backend/heretek_swarm/actors/triad/agent.py`](backend/heretek_swarm/actors/triad/agent.py) | Deliberation orchestration, decision collection |
+| Alpha   | Deep Analysis             | [`backend/heretek_swarm/actors/triad/agent.py`](backend/heretek_swarm/actors/triad/agent.py) | Deep analysis, proposal generation       |
+| Beta    | Validation                | [`backend/heretek_swarm/actors/triad/agent.py`](backend/heretek_swarm/actors/triad/agent.py) | Validation, verification                 |
+| Charlie | Challenge                 | [`backend/heretek_swarm/actors/triad/agent.py`](backend/heretek_swarm/actors/triad/agent.py) | Challenge, stress-testing                |
 
-The Triad agents were originally in a single `triad.py` file. They have been extracted: Steward is now its own flat file; Alpha, Beta, and Charlie remain flat files. The Triad-specific logic (balancing, types) lives in `backend/heretek_swarm/actors/triad/` subpackage, with `triad/agent.py` providing the `TriadAgent` base class and backward-compatible re-exports.
+The Triad agents live in the `backend/heretek_swarm/actors/triad/` subpackage. `triad/agent.py` provides `StewardAgent`, `AlphaAgent`, `BetaAgent`, and `CharlieAgent`; `triad/balancing.py` holds cross-agent balancing logic and `triad/types.py` the shared Pydantic models. Earlier revisions shipped these as flat `steward.py` / `alpha.py` / `beta.py` / `charlie.py` files at the top of `actors/`; they were consolidated into the subpackage. Backward-compatible re-exports keep older import paths working.
 
 ### Tier 2: Support Agents (5 Agents)
 
 | Agent     | Role                     | File                                                                              | Capabilities                                    |
 |-----------|--------------------------|-----------------------------------------------------------------------------------|-------------------------------------------------|
-| Historian | Memory & Knowledge       | [`backend/heretek_swarm/actors/historian.py`](backend/heretek_swarm/actors/historian.py) | Memory storage, search, lineage tracking        |
-| Metis     | Strategic Planning       | [`backend/heretek_swarm/actors/metis.py`](backend/heretek_swarm/actors/metis.py)             | Strategic planning, resource allocation         |
-| Empath    | Emotional Intelligence   | [`backend/heretek_swarm/actors/empath.py`](backend/heretek_swarm/actors/empath.py)           | Sentiment analysis, conflict mediation          |
-| Perceiver | Multi-Modal Input        | [`backend/heretek_swarm/actors/perceiver.py`](backend/heretek_swarm/actors/perceiver.py)     | Multi-modal input processing                    |
-| Echo      | Communication            | [`backend/heretek_swarm/actors/echo.py`](backend/heretek_swarm/actors/echo.py)               | Multi-channel communication, protocol translation|
+| Historian | Memory & Knowledge       | [`backend/heretek_swarm/actors/historian/agent.py`](backend/heretek_swarm/actors/historian/agent.py) | Memory storage, search, lineage tracking        |
+| Metis     | Strategic Planning       | [`backend/heretek_swarm/actors/metis/agent.py`](backend/heretek_swarm/actors/metis/agent.py)         | Strategic planning, resource allocation         |
+| Empath    | Emotional Intelligence   | [`backend/heretek_swarm/actors/empath/agent.py`](backend/heretek_swarm/actors/empath/agent.py)       | Sentiment analysis, conflict mediation          |
+| Perceiver | Multi-Modal Input        | [`backend/heretek_swarm/actors/perceiver/agent.py`](backend/heretek_swarm/actors/perceiver/agent.py) | Multi-modal input processing                    |
+| Echo      | Communication            | [`backend/heretek_swarm/actors/echo/agent.py`](backend/heretek_swarm/actors/echo/agent.py)           | Multi-channel communication, protocol translation|
 
 ### Tier 3: Exploration Agents (4 Agents)
 
@@ -331,7 +346,7 @@ The Triad agents were originally in a single `triad.py` file. They have been ext
 | Explorer | Intelligence Gathering  | [`backend/heretek_swarm/actors/explorer/agent.py`](backend/heretek_swarm/actors/explorer/agent.py) (subpackage) | Source monitoring, anomaly detection     |
 | Examiner | Quality Assurance       | [`backend/heretek_swarm/actors/examiner/agent.py`](backend/heretek_swarm/actors/examiner/agent.py) (subpackage) | Test plan generation, code analysis      |
 | Dreamer  | Creative Generation     | [`backend/heretek_swarm/actors/dreamer/agent.py`](backend/heretek_swarm/actors/dreamer/agent.py) (subpackage)   | Creative solutions, alternative exploration|
-| Coder    | Implementation          | [`backend/heretek_swarm/actors/coder.py`](backend/heretek_swarm/actors/coder.py) (flat file) | Code generation, review, safe execution  |
+| Coder    | Implementation          | [`backend/heretek_swarm/actors/coder/agent.py`](backend/heretek_swarm/actors/coder/agent.py) (subpackage) | Code generation, review, safe execution  |
 
 ### Tier 4: Safety & Security (3 Agents)
 
@@ -347,7 +362,7 @@ The Triad agents were originally in a single `triad.py` file. They have been ext
 |-------------|-----------------------|---------------------------------------------------------------------------------------|------------------------------------------------|
 | Coordinator | Multi-Agent Sync      | [`backend/heretek_swarm/actors/coordinator/agent.py`](backend/heretek_swarm/actors/coordinator/agent.py) (subpackage) | Workflow coordination, dependency resolution |
 | Nexus       | External Integration  | [`backend/heretek_swarm/actors/nexus/agent.py`](backend/heretek_swarm/actors/nexus/agent.py) (subpackage)   | API integration, webhook management           |
-| Catalyst    | Change Management     | [`backend/heretek_swarm/actors/catalyst.py`](backend/heretek_swarm/actors/catalyst.py) (flat file) | Change requests, impact analysis, rollback    |
+| Catalyst    | Change Management     | [`backend/heretek_swarm/actors/catalyst/agent.py`](backend/heretek_swarm/actors/catalyst/agent.py) (subpackage) | Change requests, impact analysis, rollback    |
 | Chronos     | Scheduling            | [`backend/heretek_swarm/actors/chronos/agent.py`](backend/heretek_swarm/actors/chronos/agent.py) (subpackage)   | Task scheduling, deadline tracking            |
 
 ### Tier 6: Enhancement Agents (3 Agents)
@@ -451,12 +466,13 @@ The Heretek Swarm implements a dual-tier memory architecture with PostgreSQL, Re
 
 ### Key Components
 
-- **MemoryEntry** ([`backend/heretek_swarm/memory/base.py`](backend/heretek_swarm/memory/base.py)) — Core memory data model
-- **Persistent Memory** ([`backend/heretek_swarm/memory/persistent.py`](backend/heretek_swarm/memory/persistent.py)) — PostgreSQL-backed storage
-- **MemoryTiering** ([`backend/heretek_swarm/memory/tiering.py`](backend/heretek_swarm/memory/tiering.py)) — Transactional tier migration with rollback
-- **Versioned Memory** ([`backend/heretek_swarm/memory/versioned.py`](backend/heretek_swarm/memory/versioned.py)) — Memory versioning and history
-- **Memory Compression** ([`backend/heretek_swarm/memory/compression.py`](backend/heretek_swarm/memory/compression.py)) — Compression strategies
-- **Prefetcher** ([`backend/heretek_swarm/memory/prefetcher.py`](backend/heretek_swarm/memory/prefetcher.py)) — Predictive memory loading
+- **MemoryEntry** ([`backend/heretek_swarm/memory/__init__.py`](backend/heretek_swarm/memory/__init__.py)) — `MemoryType` enum and facade exports
+- **Cognee Memory Writer** ([`backend/heretek_swarm/memory/cognee_writer.py`](backend/heretek_swarm/memory/cognee_writer.py)) — 5-stage cognee pipeline (add → cognify → search → improve); Kùzu graph + Qdrant vector + Pydantic datasets
+- **Cognee Memory Reader** ([`backend/heretek_swarm/memory/cognee_reader.py`](backend/heretek_swarm/memory/cognee_reader.py)) — Search/restore facade for the cognee writer
+- **Mem0 Backend** ([`backend/heretek_swarm/memory/mem0_backend.py`](backend/heretek_swarm/memory/mem0_backend.py)) — `mem0ai` embedded backend (Qdrant + OpenAI); lazy init, gracefully disabled when keys are missing
+- **Access Pattern Analyzer** ([`backend/heretek_swarm/memory/access_patterns.py`](backend/heretek_swarm/memory/access_patterns.py)) — Per-agent read-pattern analytics for the prefetcher
+- **Intelligent Prefetcher** ([`backend/heretek_swarm/memory/prefetcher.py`](backend/heretek_swarm/memory/prefetcher.py)) — Predictive memory loading based on access patterns
+- **Eliza-style Memory** ([`backend/heretek_swarm/memory/eliza_memory.py`](backend/heretek_swarm/memory/eliza_memory.py)) — Short-term conversation pattern memory
 
 ---
 

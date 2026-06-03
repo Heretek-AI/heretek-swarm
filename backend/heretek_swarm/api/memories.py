@@ -101,10 +101,12 @@ def _require_mem0():
     Raises:
         HTTPException: 503 if mem0 is not installed or not initialized
     """
-    # Import lazily to avoid circular import at module level
+    # Import lazily to avoid circular import at module level.
+    # See heretek_swarm.memory.mem0_backend for the wrapper; main.py holds
+    # the process-global backend instance after ``_init_mem0`` runs.
     from heretek_swarm.api.main import MEM0_AVAILABLE, mem0_backend
 
-    if not MEM0_AVAILABLE or not mem0_backend:
+    if not MEM0_AVAILABLE or not mem0_backend or mem0_backend.client is None:
         raise HTTPException(503, "mem0 not available")
     return mem0_backend
 
