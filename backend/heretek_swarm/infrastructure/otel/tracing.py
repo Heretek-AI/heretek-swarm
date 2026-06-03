@@ -148,6 +148,17 @@ def init_tracing(config: TracingConfig | None = None) -> TracingConfig:
     return _tracer_config
 
 
+# Backwards-compat alias: this module historically exposed
+# ``initialize_tracing`` in observability/tracing.py with the same
+# signature. Both names point at the same function so old callers
+# keep working.
+def initialize_tracing(
+    config: TracingConfig | None = None,
+) -> TracingConfig:
+    """Backwards-compat alias for :func:`init_tracing`."""
+    return init_tracing(config)
+
+
 def get_tracer(service_name: str | None = None) -> trace.Tracer:
     """
     Get the global tracer instance, initializing if necessary.
