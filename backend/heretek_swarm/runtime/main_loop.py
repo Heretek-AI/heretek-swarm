@@ -579,6 +579,9 @@ class AutonomousSwarm:
                 }
                 logger.info("responses_drained", count=len(drained))
 
+            # T02: integrate Metis analysis recommendations into Chronos
+            await self._integrate_analysis_into_chronos()
+
         # 6. Log cycle completion to Historian
         historian = self.supervisor.actors.get("historian") if self.supervisor else None
         if historian is not None:
@@ -1140,6 +1143,148 @@ class AutonomousSwarm:
                 "goal_pipeline_cycle_failed",
                 goal_pipeline_error=str(exc),
             )
+
+    async def _integrate_analysis_into_chronos(self) -> None:
+        """Translate Metis analysis recommendations into Chronos bulk operations.
+
+        Called after the cycle-30 response drain to convert Metis
+        recommendations from _latest_analysis into schedule operations
+        (create, cancel, update_priority) and dispatch them to the
+        Chronos agent via put_message().
+
+        Uses None-guard and try/except so no fault crashes the main loop.
+        """
+        try:
+            # Guard: no analysis available
+            if not self._latest_analysis or not self._latest_analysis.get("responses"):
+                logger.debug("no_analysis_to_integrate")
+                return
+
+            responses = self._latest_analysis["responses"]
+
+            # Extract Metis responses only
+            metis_responses = [
+                r
+                for r in responses
+                if r.get("subject") == "swarm.analysis.metis.response"
+            ]
+
+            if not metis_responses:
+                logger.debug("no_metis_responses_to_integrate")
+                return
+
+            # Collect all recommendations, deduplicating by normalized text
+            seen: set[str] = set()
+            operations: list[dict[str, Any]] = []
+
+            for response in metis_responses:
+                data = response.get("data", {})
+                recommendations: list[str] = data.get("recommendations", [])
+                if not isinstance(recommendations, list):
+                    continue
+
+                for recommendation in recommendations:
+                    if not isinstance(recommendation, str):
+                        continue
+
+                    normalized = recommendation.lower().strip()
+                    if normalized in seen:
+                        continue
+                    seen.add(normalized)
+
+                    op = self._classify_recommendation(recommendation)
+                    if op is not None:
+                        operations.append(op)
+
+            if not operations:
+                logger.debug("no_operations_to_integrate")
+                return
+
+            logger.info(
+                "integration_building_operations",
+                total_operations=len(operations),
+            )
+
+            # Send to Chronos
+            chronos = self.supervisor.actors.get("chronos") if self.supervisor else None
+            if chronos is None:
+                logger.warning("integration_skipped_no_chronos")
+                return
+
+            from heretek_swarm.actors.base import ActorMessage
+
+            msg = ActorMessage(
+                sender="main_loop",
+                message_type="bulk_schedule_adjust",
+                content={
+                    "operations": operations,
+                },
+                timestamp=datetime.now(UTC).isoformat(),
+            )
+            await chronos.put_message(msg)
+
+            logger.info(
+                "integration_dispatch_complete",
+                total_operations=len(operations),
+            )
+
+        except Exception as e:
+            logger.error(
+                "integration_failed",
+                error=str(e),
+            )
+
+    @staticmethod
+    def _classify_recommendation(recommendation: str) -> dict[str, Any] | None:
+        """Classify a recommendation string into a Chronos bulk operation dict.
+
+        Uses keyword heuristic matching:
+        - cancel/stop/pause/remove -> cancel operation
+        - priorit/urgent/critical/elevate -> update_priority operation
+        - All other strings -> create operation
+
+        Args:
+            recommendation: The recommendation text from Metis analysis.
+
+        Returns:
+            An operation dict suitable for bulk_schedule_adjust, or None
+            if the recommendation could not be classified.
+        """
+        import uuid
+        from datetime import UTC, datetime
+
+        lower = recommendation.lower()
+
+        # Cancel operations
+        if any(kw in lower for kw in ("cancel", "stop", "pause", "remove")):
+            return {
+                "op": "cancel",
+                "operation_id": f"cancel_{uuid.uuid4().hex[:8]}",
+                "task_id": f"rec_{uuid.uuid4().hex[:8]}",
+            }
+
+        # Update priority operations
+        if any(kw in lower for kw in ("priorit", "urgent", "critical", "elevate")):
+            is_critical = any(kw in lower for kw in ("urgent", "critical"))
+            return {
+                "op": "update_priority",
+                "operation_id": f"prio_{uuid.uuid4().hex[:8]}",
+                "task_id": f"rec_{uuid.uuid4().hex[:8]}",
+                "new_priority": 4 if is_critical else 3,
+            }
+
+        # All other recommendations -> create operation
+        scheduled_at = (datetime.now(UTC).timestamp() + 3600)
+        return {
+            "op": "create",
+            "operation_id": f"create_{uuid.uuid4().hex[:8]}",
+            "name": recommendation[:80],
+            "action": "analysis_recommendation",
+            "scheduled_at": datetime.fromtimestamp(scheduled_at, tz=UTC).isoformat(),
+            "priority": 2,
+            "target_agents": ["metis"],
+            "recurrence": "once",
+        }
 
     async def _process_external_events(self) -> None:
         """Process external events from Discord, Slack, Telegram, webhooks."""

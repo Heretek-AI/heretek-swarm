@@ -807,3 +807,448 @@ async def test_chronos_bulk_schedule_adjust_retries_failed_operations() -> None:
     assert content["failed"] >= 1
     assert "already exists" in content["results"][0]["error"]
     assert content["total"] == 1
+
+
+@pytest.mark.asyncio
+async def test_chronos_bulk_schedule_adjust_updates_interval() -> None:
+    """Verify bulk_schedule_adjust update_interval changes interval_seconds
+    on a recurring INTERVAL task.
+    """
+    from datetime import UTC, datetime
+    from types import SimpleNamespace
+    from unittest.mock import AsyncMock
+
+    from heretek_swarm.actors.chronos import ChronosAgent
+    from heretek_swarm.actors.chronos.types import RecurrenceType, ScheduledTask
+
+    agent = ChronosAgent(agent_id="test_chronos_interval", config={})
+    mock_send = AsyncMock()
+    agent.send = mock_send
+
+    agent._tasks["interval_task"] = ScheduledTask(
+        task_id="interval_task",
+        name="Interval Task",
+        description="",
+        scheduled_at=datetime(2026, 6, 4, tzinfo=UTC),
+        recurrence=RecurrenceType.INTERVAL,
+        recurrence_config={"interval_seconds": 300},
+    )
+
+    msg = SimpleNamespace(
+        sender="requester",
+        message_type="bulk_schedule_adjust",
+        content={
+            "operations": [
+                {
+                    "op": "update_interval",
+                    "operation_id": "i1",
+                    "task_id": "interval_task",
+                    "interval_seconds": 600,
+                },
+            ]
+        },
+        timestamp=datetime.now(UTC).isoformat(),
+    )
+
+    await agent._handle_bulk_schedule_adjust(msg)
+
+    assert agent._tasks["interval_task"].recurrence_config["interval_seconds"] == 600
+    content = mock_send.call_args.kwargs["content"]
+    assert content["succeeded"] == 1
+
+
+@pytest.mark.asyncio
+async def test_chronos_bulk_schedule_adjust_mixed_batch() -> None:
+    """Verify bulk_schedule_adjust handles a mixed batch of create, cancel,
+    and update_priority operations in a single call.
+    """
+    from datetime import UTC, datetime
+    from types import SimpleNamespace
+    from unittest.mock import AsyncMock
+
+    from heretek_swarm.actors.chronos import ChronosAgent
+    from heretek_swarm.actors.chronos.types import Priority, ScheduledTask
+
+    agent = ChronosAgent(agent_id="test_chronos_mixed", config={})
+    mock_send = AsyncMock()
+    agent.send = mock_send
+
+    agent._tasks["existing_task"] = ScheduledTask(
+        task_id="existing_task",
+        name="Existing Task",
+        description="",
+        scheduled_at=datetime(2026, 6, 4, tzinfo=UTC),
+    )
+
+    msg = SimpleNamespace(
+        sender="requester",
+        message_type="bulk_schedule_adjust",
+        content={
+            "operations": [
+                {
+                    "op": "create",
+                    "operation_id": "c1",
+                    "task_id": "new_task",
+                    "name": "New Task",
+                    "scheduled_at": "2026-06-05T00:00:00Z",
+                },
+                {
+                    "op": "cancel",
+                    "operation_id": "x1",
+                    "task_id": "existing_task",
+                },
+                {
+                    "op": "update_priority",
+                    "operation_id": "p1",
+                    "task_id": "existing_task",
+                    "new_priority": 5,
+                },
+            ]
+        },
+        timestamp=datetime.now(UTC).isoformat(),
+    )
+
+    # Note: cancel sets status=CANCELLED, then update_priority on a CANCELLED
+    # task should fail because the handler checks for completed/cancelled state.
+    await agent._handle_bulk_schedule_adjust(msg)
+
+    # create succeeded
+    assert "new_task" in agent._tasks
+    assert agent._tasks["new_task"].name == "New Task"
+
+    # cancel succeeded
+    from heretek_swarm.actors.chronos.types import ScheduleStatus
+    assert agent._tasks["existing_task"].status == ScheduleStatus.CANCELLED
+
+    # update_priority failed because the task was already cancelled by the
+    # preceding cancel operation in the batch.  But the batch itself completed
+    # without crashing and reported results for all 3 operations.
+    content = mock_send.call_args.kwargs["content"]
+    assert content["total"] == 3
+    assert content["succeeded"] >= 1  # create + cancel = 2, or create = 1 + cancel = 1
+
+
+@pytest.mark.asyncio
+async def test_chronos_bulk_schedule_adjust_handles_unknown_task() -> None:
+    """Verify bulk_schedule_adjust reports failure with error message
+    when operating on a nonexistent task_id.
+    """
+    from datetime import UTC, datetime
+    from types import SimpleNamespace
+    from unittest.mock import AsyncMock
+
+    from heretek_swarm.actors.chronos import ChronosAgent
+
+    agent = ChronosAgent(agent_id="test_chronos_unknown", config={})
+    mock_send = AsyncMock()
+    agent.send = mock_send
+
+    msg = SimpleNamespace(
+        sender="requester",
+        message_type="bulk_schedule_adjust",
+        content={
+            "operations": [
+                {
+                    "op": "cancel",
+                    "operation_id": "x1",
+                    "task_id": "nonexistent",
+                },
+                {
+                    "op": "update_priority",
+                    "operation_id": "p1",
+                    "task_id": "also_missing",
+                    "new_priority": 5,
+                },
+            ]
+        },
+        timestamp=datetime.now(UTC).isoformat(),
+    )
+
+    await agent._handle_bulk_schedule_adjust(msg)
+
+    content = mock_send.call_args.kwargs["content"]
+    assert content["total"] == 2
+    assert content["succeeded"] == 0
+    assert content["failed"] == 2
+
+    # Both operations should have "not found" in their error messages
+    for result in content["results"]:
+        assert "not found" in result["error"].lower()
+
+
+@pytest.mark.asyncio
+async def test_chronos_bulk_schedule_adjust_max_tasks() -> None:
+    """Verify bulk_schedule_adjust create operation fails with max-tasks error
+    when the task limit is reached.
+    """
+    from datetime import UTC, datetime
+    from types import SimpleNamespace
+    from unittest.mock import AsyncMock
+
+    from heretek_swarm.actors.chronos import ChronosAgent
+    from heretek_swarm.actors.chronos.types import ScheduledTask
+
+    agent = ChronosAgent(agent_id="test_chronos_maxtasks", config={})
+    agent._max_tasks = 1  # Override to a small limit
+    mock_send = AsyncMock()
+    agent.send = mock_send
+
+    # Fill the task limit
+    agent._tasks["filler"] = ScheduledTask(
+        task_id="filler",
+        name="Filler",
+        description="",
+        scheduled_at=datetime(2026, 6, 4, tzinfo=UTC),
+    )
+
+    msg = SimpleNamespace(
+        sender="requester",
+        message_type="bulk_schedule_adjust",
+        content={
+            "operations": [
+                {
+                    "op": "create",
+                    "operation_id": "c1",
+                    "task_id": "over_limit",
+                    "name": "Over Limit",
+                },
+            ]
+        },
+        timestamp=datetime.now(UTC).isoformat(),
+    )
+
+    await agent._handle_bulk_schedule_adjust(msg)
+
+    content = mock_send.call_args.kwargs["content"]
+    assert content["total"] == 1
+    assert content["succeeded"] == 0
+    assert content["failed"] == 1
+    assert "task limit" in content["results"][0]["error"].lower()
+
+
+@pytest.mark.asyncio
+async def test_integrate_analysis_invokes_chronos_on_valid_response() -> None:
+    """Verify _integrate_analysis_into_chronos translates Metis
+    recommendations into a bulk_schedule_adjust message sent to Chronos.
+
+    Pre-seeds _latest_analysis with a Metis response containing
+    recommendations, provides a mock Chronos actor in the supervisor,
+    calls the integration method, and verifies the Chronos agent
+    received a put_message call with message_type='bulk_schedule_adjust'
+    and the correct operations.
+    """
+    from unittest.mock import AsyncMock
+
+    swarm = AutonomousSwarm(config={}, no_infra=True)
+
+    supervisor = MagicMock()
+    supervisor.actors = {}
+    swarm.supervisor = supervisor
+
+    # Mock Chronos actor
+    mock_chronos = AsyncMock()
+    mock_chronos.put_message = AsyncMock()
+    supervisor.actors["chronos"] = mock_chronos
+
+    # Pre-seed _latest_analysis with a Metis response containing recommendations
+    swarm._latest_analysis = {
+        "responses": [
+            {
+                "subject": "swarm.analysis.metis.response",
+                "data": {
+                    "recommendations": [
+                        "Monitor the scaling metrics for potential bottlenecks",
+                        "Prioritize the backlog cleanup task",
+                        "Cancel the outdated weekly report job",
+                    ]
+                },
+                "timestamp": "2026-01-01T00:00:00Z",
+            }
+        ],
+        "collected_at": "2026-01-01T00:00:00Z",
+    }
+
+    # Call the integration method
+    await swarm._integrate_analysis_into_chronos()
+
+    # Verify Chronos received a bulk_schedule_adjust message
+    mock_chronos.put_message.assert_awaited_once()
+    call_args = mock_chronos.put_message.call_args[0][0]
+    assert call_args.message_type == "bulk_schedule_adjust"
+    assert "operations" in call_args.content
+    assert len(call_args.content["operations"]) == 3
+
+    # Verify operation types match the heuristic classification
+    ops = call_args.content["operations"]
+    ops_by_type: dict[str, int] = {}
+    for op in ops:
+        ops_by_type[op["op"]] = ops_by_type.get(op["op"], 0) + 1
+    assert ops_by_type.get("create", 0) == 1  # "Monitor the scaling metrics..."
+    assert ops_by_type.get("update_priority", 0) == 1  # "Prioritize..."
+    assert ops_by_type.get("cancel", 0) == 1  # "Cancel..."
+
+
+@pytest.mark.asyncio
+async def test_integrate_analysis_skips_when_no_responses() -> None:
+    """Verify _integrate_analysis_into_chronos returns early when
+    _latest_analysis is empty or has no responses.
+    """
+    from unittest.mock import AsyncMock
+
+    swarm = AutonomousSwarm(config={}, no_infra=True)
+
+    supervisor = MagicMock()
+    supervisor.actors = {}
+    swarm.supervisor = supervisor
+
+    mock_chronos = AsyncMock()
+    swarm.supervisor.actors["chronos"] = mock_chronos
+
+    # Case 1: _latest_analysis is empty
+    swarm._latest_analysis = {}
+    await swarm._integrate_analysis_into_chronos()
+    mock_chronos.put_message.assert_not_awaited()
+
+    # Case 2: _latest_analysis has no 'responses' key
+    swarm._latest_analysis = {"collected_at": "2026-01-01T00:00:00Z"}
+    await swarm._integrate_analysis_into_chronos()
+    mock_chronos.put_message.assert_not_awaited()
+
+    # Case 3: responses is empty list
+    swarm._latest_analysis = {"responses": [], "collected_at": "2026-01-01T00:00:00Z"}
+    await swarm._integrate_analysis_into_chronos()
+    mock_chronos.put_message.assert_not_awaited()
+
+    # Case 4: only Empath responses (no Metis subject)
+    swarm._latest_analysis = {
+        "responses": [
+            {
+                "subject": "swarm.analysis.empath.response",
+                "data": {"sentiment": "positive"},
+                "timestamp": "2026-01-01T00:00:00Z",
+            }
+        ],
+        "collected_at": "2026-01-01T00:00:00Z",
+    }
+    await swarm._integrate_analysis_into_chronos()
+    mock_chronos.put_message.assert_not_awaited()
+
+    # Case 5: Metis response with empty recommendations list
+    swarm._latest_analysis = {
+        "responses": [
+            {
+                "subject": "swarm.analysis.metis.response",
+                "data": {"recommendations": []},
+                "timestamp": "2026-01-01T00:00:00Z",
+            }
+        ],
+        "collected_at": "2026-01-01T00:00:00Z",
+    }
+    await swarm._integrate_analysis_into_chronos()
+    mock_chronos.put_message.assert_not_awaited()
+
+
+@pytest.mark.asyncio
+async def test_integrate_analysis_does_not_crash_on_missing_chronos() -> None:
+    """Verify _integrate_analysis_into_chronos does not crash when
+    the Chronos agent is not registered in the supervisor.
+
+    The method should log a warning and return gracefully.
+    """
+    swarm = AutonomousSwarm(config={}, no_infra=True)
+
+    supervisor = MagicMock()
+    supervisor.actors = {}  # No chronos actor
+    swarm.supervisor = supervisor
+
+    # Pre-seed valid analysis data
+    swarm._latest_analysis = {
+        "responses": [
+            {
+                "subject": "swarm.analysis.metis.response",
+                "data": {"recommendations": ["Monitor the scaling metrics"]},
+                "timestamp": "2026-01-01T00:00:00Z",
+            }
+        ],
+        "collected_at": "2026-01-01T00:00:00Z",
+    }
+
+    # Should not raise any exception
+    await swarm._integrate_analysis_into_chronos()
+
+
+@pytest.mark.asyncio
+async def test_full_cycle_drain_and_integration() -> None:
+    """Full integration test: wire the cycle-30 drain through to the
+    Chronos integration layer.
+
+    Pre-seeds the response queue with a Metis response that contains
+    recommendations, sets _analysis_cycle_count to 29, calls
+    _process_cycle, and verifies that:
+    1. The response queue is drained
+    2. _latest_analysis is populated
+    3. The chronos actor receives a bulk_schedule_adjust message
+    4. The cycle counter is reset
+    """
+    from unittest.mock import AsyncMock
+
+    swarm = AutonomousSwarm(config={}, no_infra=True)
+
+    supervisor = MagicMock()
+    supervisor.actors = {}
+    swarm.supervisor = supervisor
+
+    # Mock Chronos actor. Use AsyncMock for async methods (generate_ticks, put_message)
+    # but override get_status() as a sync mock since _run_health_checks calls it without await.
+    from heretek_swarm.actors.base.core import ActorState, ActorStatus
+
+    mock_chronos = AsyncMock()
+    # Override get_status as sync: _run_health_checks calls it without await
+    mock_chronos.get_status = MagicMock(return_value=ActorStatus(
+        agent_id="chronos",
+        state=ActorState.ACTIVE,
+        message_count=0,
+        created_at="2026-01-01T00:00:00Z",
+        topics=[],
+        capabilities=[],
+        mailbox_size=0,
+    ))
+    mock_chronos.generate_ticks = AsyncMock(return_value=[])
+    mock_chronos.put_message = AsyncMock()
+    supervisor.actors["chronos"] = mock_chronos
+
+    # Pre-seed the response queue with a Metis response
+    await swarm._response_queue.put({
+        "subject": "swarm.analysis.metis.response",
+        "data": {
+            "recommendations": [
+                "Monitor the scaling metrics for bottlenecks",
+                "Prioritize the security audit",
+            ]
+        },
+        "timestamp": "2026-01-01T00:00:00Z",
+    })
+
+    # Set cycle count to 29 so the next call triggers periodic analysis
+    swarm._analysis_cycle_count = 29
+
+    # Call _process_cycle
+    await swarm._process_cycle()
+
+    # 1. Cycle counter was reset
+    assert swarm._analysis_cycle_count == 0
+
+    # 2. Response queue was drained into _latest_analysis
+    assert len(swarm._latest_analysis["responses"]) == 1
+    assert swarm._response_queue.empty()
+
+    # 3. Chronos received a bulk_schedule_adjust
+    mock_chronos.put_message.assert_awaited_once()
+    call_args = mock_chronos.put_message.call_args[0][0]
+    assert call_args.message_type == "bulk_schedule_adjust"
+    assert len(call_args.content["operations"]) == 2
+
+    # 4. Operation types correspond to recommendations
+    ops = call_args.content["operations"]
+    assert ops[0]["op"] == "create"  # "Monitor..." -> create
+    assert ops[1]["op"] == "update_priority"  # "Prioritize..." -> update_priority
