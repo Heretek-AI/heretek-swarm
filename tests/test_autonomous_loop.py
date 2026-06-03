@@ -1252,3 +1252,186 @@ async def test_full_cycle_drain_and_integration() -> None:
     ops = call_args.content["operations"]
     assert ops[0]["op"] == "create"  # "Monitor..." -> create
     assert ops[1]["op"] == "update_priority"  # "Prioritize..." -> update_priority
+
+
+@pytest.mark.asyncio
+async def test_empath_stress_triggers_mediation() -> None:
+    """Verify _check_empath_stress_and_mediate dispatches trigger_mediation
+    when collective_stress exceeds the default threshold of 0.7.
+
+    Pre-seeds _latest_analysis with an Empath response where
+    collective_stress > 0.7, mocks a Coordinator actor,
+    calls the method, and verifies put_message was called with
+    message_type='trigger_mediation' and the high-stress agent.
+    """
+    swarm = AutonomousSwarm(config={}, no_infra=True)
+
+    supervisor = MagicMock()
+    supervisor.actors = {}
+    swarm.supervisor = supervisor
+
+    # Mock Coordinator actor
+    mock_coordinator = AsyncMock()
+    mock_coordinator.put_message = AsyncMock()
+    supervisor.actors["coordinator"] = mock_coordinator
+
+    # Pre-seed _latest_analysis with high-stress Empath response
+    swarm._latest_analysis = {
+        "responses": [
+            {
+                "subject": "swarm.analysis.empath.response",
+                "data": {
+                    "collective_stress": 0.85,
+                    "source_agent": "test_agent_1",
+                    "sentiment": "negative",
+                },
+                "timestamp": "2026-01-01T00:00:00Z",
+            }
+        ],
+        "collected_at": "2026-01-01T00:00:00Z",
+    }
+
+    # Call the stress check method
+    await swarm._check_empath_stress_and_mediate()
+
+    # Verify the Coordinator received a trigger_mediation message
+    mock_coordinator.put_message.assert_awaited_once()
+    call_args = mock_coordinator.put_message.call_args[0][0]
+    assert call_args.message_type == "trigger_mediation"
+    assert "test_agent_1" in call_args.content["agents"]
+    assert call_args.content["stress_levels"]["test_agent_1"] == 0.85
+    assert "context" in call_args.content
+
+
+@pytest.mark.asyncio
+async def test_empath_low_stress_does_not_trigger() -> None:
+    """Verify _check_empath_stress_and_mediate does NOT dispatch
+    mediation when collective_stress is below the threshold.
+
+    Same setup as the positive test but collective_stress < 0.7.
+    Coordinator.put_message should NOT be called.
+    """
+    swarm = AutonomousSwarm(config={}, no_infra=True)
+
+    supervisor = MagicMock()
+    supervisor.actors = {}
+    swarm.supervisor = supervisor
+
+    mock_coordinator = AsyncMock()
+    mock_coordinator.put_message = AsyncMock()
+    supervisor.actors["coordinator"] = mock_coordinator
+
+    # Pre-seed _latest_analysis with low-stress Empath response
+    swarm._latest_analysis = {
+        "responses": [
+            {
+                "subject": "swarm.analysis.empath.response",
+                "data": {
+                    "collective_stress": 0.3,
+                    "source_agent": "test_agent_1",
+                    "sentiment": "positive",
+                },
+                "timestamp": "2026-01-01T00:00:00Z",
+            }
+        ],
+        "collected_at": "2026-01-01T00:00:00Z",
+    }
+
+    await swarm._check_empath_stress_and_mediate()
+
+    # Verify put_message was NOT called (low stress, no mediation)
+    mock_coordinator.put_message.assert_not_awaited()
+
+
+@pytest.mark.asyncio
+async def test_empath_stress_missing_coordinator_does_not_crash() -> None:
+    """Verify _check_empath_stress_and_mediate does not crash when
+    the Coordinator agent is not registered in the supervisor.
+
+    Pre-seeds high-stress Empath data but omits the coordinator
+    from supervisor.actors. The method should log an error and
+    return gracefully.
+    """
+    swarm = AutonomousSwarm(config={}, no_infra=True)
+
+    supervisor = MagicMock()
+    supervisor.actors = {}  # No coordinator actor
+    swarm.supervisor = supervisor
+
+    # Pre-seed _latest_analysis with high-stress Empath response
+    swarm._latest_analysis = {
+        "responses": [
+            {
+                "subject": "swarm.analysis.empath.response",
+                "data": {
+                    "collective_stress": 0.85,
+                    "source_agent": "test_agent_1",
+                    "sentiment": "negative",
+                },
+                "timestamp": "2026-01-01T00:00:00Z",
+            }
+        ],
+        "collected_at": "2026-01-01T00:00:00Z",
+    }
+
+    # Should not raise any exception
+    await swarm._check_empath_stress_and_mediate()
+
+
+@pytest.mark.asyncio
+async def test_empath_stress_empty_latest_analysis() -> None:
+    """Verify _check_empath_stress_and_mediate returns early without
+    crashing when _latest_analysis is an empty dict."""
+    swarm = AutonomousSwarm(config={}, no_infra=True)
+
+    supervisor = MagicMock()
+    supervisor.actors = {}
+    swarm.supervisor = supervisor
+
+    mock_coordinator = AsyncMock()
+    mock_coordinator.put_message = AsyncMock()
+    supervisor.actors["coordinator"] = mock_coordinator
+
+    # _latest_analysis is empty dict (no responses)
+    swarm._latest_analysis = {}
+
+    await swarm._check_empath_stress_and_mediate()
+
+    # Coordinator should NOT have been called
+    mock_coordinator.put_message.assert_not_awaited()
+
+
+@pytest.mark.asyncio
+async def test_empath_stress_no_empath_responses() -> None:
+    """Verify _check_empath_stress_and_mediate returns early without
+    dispatching mediation when _latest_analysis contains only Metis
+    responses (no Empath responses to check stress against).
+    """
+    swarm = AutonomousSwarm(config={}, no_infra=True)
+
+    supervisor = MagicMock()
+    supervisor.actors = {}
+    swarm.supervisor = supervisor
+
+    mock_coordinator = AsyncMock()
+    mock_coordinator.put_message = AsyncMock()
+    supervisor.actors["coordinator"] = mock_coordinator
+
+    # Only Metis responses, no Empath
+    swarm._latest_analysis = {
+        "responses": [
+            {
+                "subject": "swarm.analysis.metis.response",
+                "data": {
+                    "recommendations": ["Monitor scaling metrics"],
+                },
+                "timestamp": "2026-01-01T00:00:00Z",
+            }
+        ],
+        "collected_at": "2026-01-01T00:00:00Z",
+    }
+
+    await swarm._check_empath_stress_and_mediate()
+
+    # Coordinator should NOT have been called (no Empath data)
+    mock_coordinator.put_message.assert_not_awaited()
