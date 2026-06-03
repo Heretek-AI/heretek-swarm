@@ -90,12 +90,25 @@ class MemoryMixin:
         Returns:
             AccessTier classification (HOT, WARM, COLD)
         """
-        if not self.access_analyzer:
-            raise TypeError("_get_memory_tier requires access_analyzer")
-
+        # Phase 1.1 follow-up: if access_analyzer is not wired,
+        # fall back to the canonical MemoryStore's read; if
+        # even that is unavailable, return COLD as the safe default
+        # so the actor stays bootable.
         memory_id = f"{item_type}_{item_id}"
-        profile = self.access_analyzer.get_profile(memory_id)
-        return profile.tier if profile else AccessTier.COLD
+        if self.access_analyzer is not None:
+            profile = self.access_analyzer.get_profile(memory_id)
+            return profile.tier if profile else AccessTier.COLD
+        try:
+            import asyncio
+            store = self._get_memory_store()
+            entry = asyncio.get_event_loop().run_until_complete(
+                store.read(memory_id)
+            ) if asyncio.get_event_loop().is_running() is False else None
+            if entry is not None and entry.metadata.get("tier"):
+                return AccessTier(entry.metadata["tier"])
+        except Exception:
+            pass
+        return AccessTier.COLD
 
     async def _prefetch_relevant(
         self,
