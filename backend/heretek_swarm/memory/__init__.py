@@ -7,6 +7,9 @@ vector memory engine) plus access-pattern optimization and intelligent pre-fetch
 Public modules:
     cognee_reader   — Read-only async client for Cognee's search API.
     cognee_writer   — Write-path async client for Cognee's add/cognify API.
+    mem0_backend    — Mem0ai embedded backend (Qdrant + OpenAI).
+    store           — MemoryStore Protocol + get_default_store() resolver
+                      (Phase 1.1 of PLAN.md; canonical entry point for new code).
     access_patterns — Access pattern analysis, tier classification, reporting.
     prefetcher      — LRU/LFU caches and pattern-based pre-fetch scheduling.
     eliza_memory    — Importance-decay memory manager (elizaOS pattern).
@@ -34,6 +37,22 @@ from heretek_swarm.memory.access_patterns import (
 # ---------------------------------------------------------------------------
 from heretek_swarm.memory.cognee_reader import CogneeMemoryReader
 from heretek_swarm.memory.cognee_writer import CogneeMemoryWriter
+
+# ---------------------------------------------------------------------------
+# Mem0 backend
+# ---------------------------------------------------------------------------
+from heretek_swarm.memory.mem0_backend import MEM0_AVAILABLE, Mem0Backend, Mem0Config
+
+# ---------------------------------------------------------------------------
+# Canonical MemoryStore Protocol + resolver (Phase 1.1)
+# ---------------------------------------------------------------------------
+from heretek_swarm.memory.store import (
+    MemoryEntry,
+    MemoryStore,
+    MemoryType,
+    get_default_store,
+    reset_default_store,
+)
 
 # ---------------------------------------------------------------------------
 # Eliza-style importance-decay memory manager
@@ -71,6 +90,16 @@ __all__ = [
     # Cognee-backed clients
     "CogneeMemoryReader",
     "CogneeMemoryWriter",
+    # Mem0 backend
+    "MEM0_AVAILABLE",
+    "Mem0Backend",
+    "Mem0Config",
+    # Canonical MemoryStore Protocol
+    "MemoryEntry",
+    "MemoryStore",
+    "MemoryType",
+    "get_default_store",
+    "reset_default_store",
     # Eliza-style memory manager
     "ElizaMemoryEntry",
     # Pre-fetching & caching

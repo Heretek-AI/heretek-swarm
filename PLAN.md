@@ -1100,3 +1100,68 @@ references the audit item, the files changed, and the verification done.
   syntax/import gates in 0.1–0.4 are the achievable verification in
   this environment. A real cold-start run is queued behind the
   orchestration work in Phase 1/2.
+
+### 2026-06-03 — Phase 1.5: slowapi rate limiter (cut over)
+
+Implements Phase 1.5 of the audit (§3.1 Replace).
+
+* `pyproject.toml` — promote `slowapi>=0.1.9` and `limits>=5.8.0`
+  from the `slowapi` extra into the base dependency list. The
+  hand-rolled `RateLimiter` in `security/ddos_protection.py` is no
+  longer the canonical request-path rate limiter; new code should
+  call into `heretek_swarm.security.rate_limiter`.
+* New: `backend/heretek_swarm/security/rate_limiter.py` — clean
+  public API wrapping slowapi. Exposes the process-wide `limiter`
+  instance, a custom 429 handler that sets `Retry-After` (slowapi's
+  default does not), and an idempotent `install_rate_limiter(app)`
+  helper. Strategy is `moving-window` (best fit for the limits
+  library).
+* `backend/heretek_swarm/api/rate_limiting.py` — the FastAPI app
+  wiring layer now delegates to `install_rate_limiter`, so there is
+  one source of truth. Honors `REDIS_URL` when set so cluster-wide
+  limits work; otherwise uses slowapi's in-memory storage. Removed
+  the always-true `SLOWAPI_AVAILABLE` branch (slowapi is now a base
+  dep).
+* `backend/heretek_swarm/api/main.py` — `install_rate_limiter` runs
+  once during app construction, right after the logging middleware.
+
+Verification: `from heretek_swarm.api.main import app` succeeds; the
+app's `state.limiter` is a `slowapi.Limiter` (MovingWindow strategy).
+The legacy `InMemoryRateLimiter` + `RateLimitMiddleware` classes in
+`api/rate_limiting.py` are kept for backwards compatibility with
+existing route decorators; the `security/ddos_protection.RateLimiter`
+stays in place for DDoS-pattern detection (sliding window, geo-anomaly,
+mitigation) which slowapi does not provide.
+
+### 2026-06-03 — Phase 1.1: MemoryStore Protocol (cognee cutover)
+
+Implements Phase 1.1 of the audit (§3.1 Replace, §1.11 5 backends
+no shared interface).
+
+* New: `backend/heretek_swarm/memory/store.py` — defines
+  `MemoryStore(Protocol)` with the minimum viable surface
+  (`add`, `read`, `search`, `health`, `close`); the `MemoryType` enum
+  (EPISODIC/SEMANTIC/PROCEDURAL/WORKING) with a `to_dataset(identifier)`
+  helper that produces a cognee dataset name; a `get_default_store()`
+  resolver that returns the cognee adapter when `COGNEE_ENABLED=1`,
+  the mem0 adapter when `MEM0_ENABLED=1`, or a `_NullMemoryStore`
+  fallback so the swarm stays bootable in dev.
+* `_CogneeAdapter` and `_Mem0Adapter` adapt the existing
+  `CogneeMemoryWriter` and `Mem0Backend` to the protocol. The
+  adapters do not delete the legacy classes — they coexist so the
+  existing call sites keep working.
+* `backend/heretek_swarm/memory/__init__.py` — re-exports
+  `MemoryStore`, `MemoryType`, `MemoryEntry`, `get_default_store`,
+  `reset_default_store`, `Mem0Backend`, `Mem0Config`, `MEM0_AVAILABLE`
+  so new code has a single import surface.
+* `MemoryType.to_dataset('agent-1')` returns `'episodic-agent-1'`,
+  etc., so the cognee 5-stage pipeline (add → cognify → search →
+  improve) can route by tier.
+
+Verification: `isinstance(get_default_store(), MemoryStore)` is
+`True`; `MemoryType` exports its four values; a round-trip
+`add()` + `search()` against the null backend returns the inserted
+entry. Migrating the existing `actors/mixins/memory.py:31` to call
+`get_default_store()` instead of `self.access_analyzer` is queued
+behind Phase 2.1 (god-class extraction) — the protocol is in place
+but the call sites still use the old shape.
